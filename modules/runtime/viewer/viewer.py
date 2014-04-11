@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import numpy as np
+import math
 import logging
 from bark.viewer import Viewer
 from bark.geometry import *
@@ -11,7 +12,7 @@ from bark.models.dynamic import *
 from bark.world.opendrive import *
 from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
-import math
+
 
 logger = logging.getLogger()
 
@@ -86,7 +87,7 @@ class BaseViewer(Viewer):
         if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
-            pose = BaseViewer.generatePoseFromState(state)
+            pose = generatePoseFromState(state)
 
             center = [pose[0],  pose[1]]
             self._update_world_dynamic_range(center)
@@ -159,7 +160,7 @@ class BaseViewer(Viewer):
             lh = len(history)
             for idx, state_action in enumerate(history):
                 state = state_action[0]
-                pose = BaseViewer.generatePoseFromState(state)
+                pose = generatePoseFromState(state)
                 transformed_polygon = shape.Transform(pose)
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
@@ -255,7 +256,7 @@ class BaseViewer(Viewer):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             shape = agent.shape
-            pose = BaseViewer.generatePoseFromState(agent.state)
+            pose = generatePoseFromState(agent.state)
             transformed_polygon = shape.Transform(pose)
 
             centerx = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist)) * math.cos(pose[2]) + pose[0]
@@ -269,21 +270,25 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
     
-    def drawSafetyResponses(self, world,ego_id, safety_responses):
-      ego_agent=world.agents[ego_id]
+    def drawSafetyResponses(self, world, ego_id, safety_responses):
+      ego_agent = world.agents[ego_id]
       shape = ego_agent.shape
-      pose = BaseViewer.generatePoseFromState(ego_agent.state)
+      pose = generatePoseFromState(ego_agent.state)
       transformed_polygon = shape.Transform(pose)
-      self.drawLine2d(transformed_polygon, self.color_eval_agents_line, linewidth=3)
+      self.drawLine2d(
+          transformed_polygon,
+          self.color_eval_agents_line,
+          linewidth=3)
 
       # draw response for other agents
       relevent_agents = [
           agent for agent in world.agents.values() if agent.id in safety_responses]
       for agent in relevent_agents:
         shape = agent.shape
-        pose = BaseViewer.generatePoseFromState(agent.state)
+        pose = generatePoseFromState(agent.state)
         transformed_polygon = shape.Transform(pose)
 
+        # if isinstance(safety_responses[agent.id], bool):
         safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
             1, 0.4, 0, 1)
         self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
@@ -297,11 +302,10 @@ class BaseViewer(Viewer):
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
 
-    @staticmethod
-    def generatePoseFromState(state):
-      # pybind creates column based vectors, initialization maybe row-based -> we consider both
-      pose = np.zeros(3)
-      pose[0] = state[int(StateDefinition.X_POSITION)]
-      pose[1] = state[int(StateDefinition.Y_POSITION)]
-      pose[2] = state[int(StateDefinition.THETA_POSITION)]
-      return pose
+def generatePoseFromState(state):
+  # pybind creates column based vectors, initialization maybe row-based -> we consider both
+  pose = np.zeros(3)
+  pose[0] = state[int(StateDefinition.X_POSITION)]
+  pose[1] = state[int(StateDefinition.Y_POSITION)]
+  pose[2] = state[int(StateDefinition.THETA_POSITION)]
+  return pose
