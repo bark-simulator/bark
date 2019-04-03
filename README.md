@@ -43,11 +43,6 @@ To run the [OpenDrive example map "standard crossing"](http://www.opendrive.org/
 <img src="docs/source/gifs/open_drive8_near.gif" alt="BArk" />
 </p>
 
-## Generate Sphinx-Documentation
-In order to generate more detailed documentation, run
-```
-cd docs
-make html
-```
+## Documentation
 
-that outputs `/docs/build/html/index.html` (make sure to be in the virtual environment!).
+A detailed documentation is found under https://bark-simulator.readthedocs.io/en/latest/about.html
