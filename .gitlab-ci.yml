@@ -1,0 +1,30 @@
+image: git.fortiss.org:5001/autosim/fortiss-behave/docker:latest
+
+stages:
+  - dependencies
+  - build
+#- test
+
+cache:
+  paths:
+    - bazel-source/output
+    - bazel-*
+    - python/venv/*
+
+bazel-build:
+  stage: dependencies
+  script:
+    - virtualenv -p python3 ./python/venv  --system-site-packages
+    - source ./python/venv/bin/activate
+    - pip install -r tools/installers/requirements.txt
+    - bazel test //...
+
+    # build docs
+    - cd docs/
+    - make singlehtml
+  artifacts:
+    paths:
+      - docs/build/singlehtml/index.html
+      - docs/build/singlehtml/_images/
+      - docs/build/singlehtml/_static/
+    expire_in: 4 week

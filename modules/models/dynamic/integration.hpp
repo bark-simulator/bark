@@ -1,0 +1,27 @@
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+
+
+#ifndef MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
+#define MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
+#include <Eigen/Core>
+
+namespace modules {
+namespace models {
+namespace dynamic {
+
+State euler_int(DynamicModel *model, const State &x, const Input &u, float dt) {
+  return x + dt * model->StateSpaceModel(x, u);
+}
+
+State rk4(DynamicModel *model, const State &x, const Input &u, float dt) {
+  return x;
+}
+
+}  // namespace dynamic
+}  // namespace models
+}  // namespace modules
+
+#endif  // MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_

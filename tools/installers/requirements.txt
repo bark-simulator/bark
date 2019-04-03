@@ -1,0 +1,13 @@
+matplotlib
+numpy
+lxml
+scipy
+websocket
+websocket-client
+websockets
+tornado
+pygame
+tqdm
+sphinx
+recommonmark
+sphinx_rtd_theme

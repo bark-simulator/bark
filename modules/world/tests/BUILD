@@ -1,0 +1,107 @@
+cc_test(
+    name = "opendrive_tests",
+    srcs = [
+        "opendrive_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world/opendrive",
+        "//modules/world:world",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "agent_test",
+    srcs = [
+        "agent_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world:world",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "world_test",
+    srcs = [
+        "world_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world:world",
+        "//modules/world/map:map_interface",
+        "//modules/world/map:roadgraph",
+        "//modules/world/opendrive:opendrive",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
+        "//modules/models/execution/mpc:mpc",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "roadgraph_test",
+    srcs = [
+        "roadgraph_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/world/map:roadgraph",
+        "//modules/world/opendrive",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "map_interface_test",
+    srcs = [
+        "map_interface_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/world/map:roadgraph",
+        "//modules/world/map:map_interface",
+        "//modules/world/opendrive",
+        "@gtest//:main",
+    ],
+)
+
+py_test(
+  name = "py_opendrive_tests",
+  srcs = ["py_opendrive_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../../../python/'],
+  deps = [],
+)
+
+py_test(
+  name = "py_agent_tests",
+  srcs = ["py_agent_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters"],
+)
+
+py_test(
+  name = "py_world_tests",
+  srcs = ["py_world_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:roadgraph_generator"],
+)
+
+py_test(
+  name = "py_roadgraph_test",
+  srcs = ["py_roadgraph_test.py"],
+  data = ['//python:bark.so'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters"],
+)
