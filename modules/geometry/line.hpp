@@ -313,6 +313,27 @@ inline bool Collide(const Line &l1, const Line &l2) {
   return !shape_intersect.empty();
 }
 
+inline Line calculate_center_line(const Line& inner_line, const Line& outer_line) {
+  // select line with more points for looping to avoid resolution reduction
+  Line line_more_points = outer_line;
+  Line line_less_points = inner_line;
+  if ( inner_line.obj_.size() > outer_line.obj_.size() ) {
+    line_more_points = inner_line;
+    line_less_points = outer_line;
+  }
+
+  Line center_line;
+  // TODO(@hart): use horizon
+  for ( Point2d& point_loop : line_more_points.obj_ ) {
+    Point2d nearest_point_other = geometry::get_nearest_point(line_less_points,
+                                                              point_loop);
+    geometry::Point2d middle_point = (point_loop + nearest_point_other) / 2;
+    center_line.add_point(middle_point);
+  }
+
+  return center_line;
+}
+
 
 // An oriented point can have a linestring (the nearest point on it) on the left or right side, left side < 0, right side > 0
 inline double signed_distance(const Line &line, const Point2d &p, const float& orientation) {

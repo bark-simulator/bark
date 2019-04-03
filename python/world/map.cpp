@@ -13,16 +13,28 @@
 
 using namespace modules::world::map;
 using modules::world::opendrive::LaneId;
+using modules::geometry::Point2d;
 
 
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
       .def("set_open_drive_map", &MapInterface::set_open_drive_map)
-      .def("get_nearest_lanes", &MapInterface::get_nearest_lanes)
+      .def("get_nearest_lanes", [](const MapInterface& m,
+                                    const Point2d& point,
+                                    const unsigned& num_lanes) {
+          std::vector<LanePtr> lanes;
+          m.get_nearest_lanes(point, num_lanes, lanes);
+          return lanes;
+      }) 
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
-      .def("get_open_drive_map", &MapInterface::get_open_drive_map);
+      .def("get_open_drive_map", &MapInterface::get_open_drive_map)
+      .def("get_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
+          Line inner_line, outer_line, center_line;
+          bool result = m.get_driving_corridor(startid, goalid, inner_line, outer_line, center_line);
+          return std::make_tuple(inner_line, outer_line, center_line);
+      });
 
   py::class_<RouteGenerator, std::shared_ptr<RouteGenerator>>(m, "RouteGenerator")
       .def(py::init<LaneId, const MapInterfacePtr&>())

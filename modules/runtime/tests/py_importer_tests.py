@@ -66,6 +66,11 @@ class ImporterTests(unittest.TestCase):
         plt.axis("equal")
         plt.show()
 
+        # driving corridor calculation test
+        lanes = map_interface.get_nearest_lanes(Point2d(-11,-8),1)
+        left_line, right_line, center_line = map_interface.get_driving_corridor(lanes[0].lane_id,2)
+        plt.plot(center_line.toArray()[:,0],center_line.toArray()[:,1])
+        plt.show()
         
         # TODO: plot cpp map
         #cwd = os.getcwd()

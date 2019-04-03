@@ -36,7 +36,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
 bool modules::world::map::MapInterface::get_nearest_lanes(
   const Point2d& point,
   const unsigned& num_lanes,
-  std::vector<LanePtr>& lanes) {
+  std::vector<LanePtr>& lanes) const {
   if (!open_drive_map_) {
     return false;
   }
@@ -60,7 +60,7 @@ bool modules::world::map::MapInterface::get_nearest_lanes(
   return true;
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid) {
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid) const {
   std::vector<LanePtr> inner, outer;
   std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
   if (!horizon.empty()) {
@@ -78,6 +78,39 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
     }
   }
   return std::make_pair(inner, outer);
+}
+
+bool modules::world::map::MapInterface::get_driving_corridor(const LaneId& startid, const LaneId& goalid,
+                                                             Line& inner_line, Line& outer_line, Line& center_line)  const{
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
+      get_lane_boundary_horizon(startid, goalid);
+
+    if (route.first[0]) {
+      inner_line = route.first[0]->get_line();
+      // inner lane
+      for (int i = 1; i < route.first.size(); i++) {
+        if (route.first[i] != NULL) {
+          inner_line.concatenate_linestring(route.first[i]->get_line());
+        }
+      }
+    }
+    if (route.second[0]) {
+      outer_line = route.second[0]->get_line();
+      // inner lane
+      for (int i = 1; i < route.second.size(); i++) {
+        if (route.second[i] != NULL) {
+          outer_line.concatenate_linestring(route.second[i]->get_line());
+        }
+      }
+    }
+
+    // TODO(@hart): implement working function
+    if (route.first[0] != NULL && route.second[0] != NULL) {
+      center_line = geometry::calculate_center_line(inner_line, outer_line);
+      return true;
+    } else {
+      return false;
+    }
 }
 
 }  // namespace map
