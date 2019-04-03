@@ -47,6 +47,9 @@ class World : public commons::BaseType {
     clear_agents();
     clear_objects();
   }
+
+  bool CheckCollision() const;
+
   bool Valid() const;
   void Step(float delta_time);
   void UpdateLocalRoutes();

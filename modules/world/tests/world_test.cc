@@ -24,16 +24,17 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::models::execution;
 using namespace modules::world::opendrive;
-using modules::world::map::MapInterfacePtr;
 using modules::world::map::MapInterface;
-using modules::world::map::RoadgraphPtr;
+using modules::world::map::MapInterfacePtr;
 using modules::world::map::Roadgraph;
-using modules::world::opendrive::LaneId;
+using modules::world::map::RoadgraphPtr;
 using modules::world::map::RouteGenerator;
+using modules::world::opendrive::LaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 
-TEST(world, world_init) {
+TEST(world, world_init)
+{
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel());
@@ -50,7 +51,8 @@ TEST(world, world_init) {
   world->add_agent(agent);
 }
 
-TEST(world, world_step) {
+TEST(world, world_step)
+{
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel());
@@ -116,4 +118,29 @@ TEST(world, world_step) {
   for (int i = 0; i < 10; ++i) {
     world->Step(1);
   }*/
+}
+
+TEST(world, world_collision)
+{
+  DefaultParams params;
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel());
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+  
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 1.0, 0.0, 0.0, 5.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+
+  WorldPtr world(new World(&params));
+  world->add_agent(agent1);
+  world->add_agent(agent2);
+
+  ASSERT_TRUE(world->CheckCollision());
+  
 }

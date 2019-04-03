@@ -48,6 +48,21 @@ void World::MoveAgents(float delta_time) {
   world_time_ += delta_time;
 }
 
+bool World::CheckCollision() const {
+
+  using namespace modules::geometry;
+  Polygon poly_agent1;
+
+  for (auto agent : agents_) {
+    poly_agent1 = agent.second->GetPolygonFromState(agent.second->get_current_state());
+
+    if (Collide(poly_agent1, poly_agent1)) { // current mock, checking agent with itself
+      return true;
+    }
+  }
+  return false;
+}
+
 void World::Step(float delta_time) {
   UpdateLocalRoutes();
   MoveAgents(delta_time);

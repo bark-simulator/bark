@@ -64,6 +64,8 @@ class Agent : public Object {
 
   State get_current_state() const { return history_.back().first; }
 
+  geometry::Polygon GetPolygonFromState(const State& state) const;
+
   const modules::world::map::RouteGeneratorPtr& get_route_generator() const {
     return route_generator_;
   }
