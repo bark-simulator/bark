@@ -45,6 +45,7 @@ bool LocalMap::generate(Point2d point,
       geometry::calculate_center_line(current_driving_corridor_.inner,
                                       current_driving_corridor_.outer);
   }
+  current_driving_corridor_.computed = true;
 }
 
 }  // namespace map
