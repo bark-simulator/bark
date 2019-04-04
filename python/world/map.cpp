@@ -7,7 +7,7 @@
 #include <string>
 #include "map.hpp"
 #include "modules/world/map/map_interface.hpp"
-#include "modules/world/map/route_generator.hpp"
+#include "modules/world/map/local_map.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
 
@@ -24,14 +24,14 @@ void python_map(py::module m) {
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map);
 
-  py::class_<RouteGenerator, std::shared_ptr<RouteGenerator>>(m, "RouteGenerator")
+  py::class_<LocalMap, std::shared_ptr<LocalMap>>(m, "LocalMap")
       .def(py::init<LaneId, const MapInterfacePtr&>())
-      .def_property_readonly("inner_line", &RouteGenerator::get_inner_line)
-      .def_property_readonly("outer_line", &RouteGenerator::get_outer_line)
-      .def_property_readonly("center_line", &RouteGenerator::get_center_line)
-      .def("set_goal_lane_id", &RouteGenerator::set_goal_lane_id)
-      .def("set_map_interface", &RouteGenerator::set_map_interface)
-      .def("generate", &RouteGenerator::generate);
+      .def_property_readonly("inner_line", &LocalMap::get_inner_line)
+      .def_property_readonly("outer_line", &LocalMap::get_outer_line)
+      .def_property_readonly("center_line", &LocalMap::get_center_line)
+      .def("set_goal_lane_id", &LocalMap::set_goal_lane_id)
+      .def("set_map_interface", &LocalMap::set_map_interface)
+      .def("generate", &LocalMap::generate);
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())

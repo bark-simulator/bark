@@ -31,12 +31,6 @@ void World::add_object(const objects::ObjectPtr& object) {
   objects_[object->agent_id_] = object;
 }
 
-void World::UpdateLocalRoutes() {
-  for (auto agent : agents_) {
-    agent.second->UpdateLocalRoute();
-  }
-}
-
 void World::MoveAgents(float delta_time) {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : agents_) {
@@ -49,7 +43,6 @@ void World::MoveAgents(float delta_time) {
 }
 
 void World::Step(float delta_time) {
-  UpdateLocalRoutes();
   MoveAgents(delta_time);
   // TODO(@fortiss): add post world collision check
 }

@@ -32,7 +32,7 @@ behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
-route_generator_(new RouteGenerator(goal_lane_id, map_interface)),
+local_map_(new LocalMap(goal_lane_id, map_interface)),
 goal_lane_id_(goal_lane_id) {
   max_history_length_ = params->get_int(
     "MaxHistoryLength",
@@ -41,6 +41,7 @@ goal_lane_id_(goal_lane_id) {
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push(pair);
+  UpdateLocalRoute();
 }
 
 Agent::Agent(const Agent& other_agent) :
@@ -49,7 +50,7 @@ Agent::Agent(const Agent& other_agent) :
   dynamic_model_(other_agent.dynamic_model_),
   execution_model_(other_agent.execution_model_),
   history_(other_agent.history_),
-  route_generator_(other_agent.route_generator_),
+  local_map_(other_agent.local_map_),
   goal_lane_id_(other_agent.goal_lane_id_) {}
 
 
@@ -94,7 +95,7 @@ void Agent::UpdateLocalRoute() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
-  if (!route_generator_->generate(agent_xy, goal_lane_id_)) {
+  if (!local_map_->generate(agent_xy, goal_lane_id_)) {
     std::cout << "Routing generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
