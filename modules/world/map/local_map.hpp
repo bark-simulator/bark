@@ -26,12 +26,11 @@ using namespace modules::geometry;
 struct DrivingCorridor {
   DrivingCorridor() : outer(Line()),
                       inner(Line()),
-                      center(Line()){
-
-  }
+                      center(Line()),
+                      computed(false) {}
   Line outer, inner, center;
   std::vector<int> lane_ids_;
-
+  bool computed;
   // TODO(@fortiss): what IF functions would we like here
 };
 
@@ -62,6 +61,9 @@ class LocalMap {
   Line get_inner_line() const { return current_driving_corridor_.inner; }
   Line get_outer_line() const { return current_driving_corridor_.outer; }
   Line get_center_line() const { return current_driving_corridor_.center; }
+  bool has_generated_driving_corridor() {
+    return current_driving_corridor_.computed;
+  }
 
  private:
   DrivingCorridor current_driving_corridor_;

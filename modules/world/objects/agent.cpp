@@ -41,7 +41,8 @@ goal_lane_id_(goal_lane_id) {
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push(pair);
-  UpdateLocalRoute();
+  if (local_map_->has_generated_driving_corridor())
+    UpdateLocalRoute();
 }
 
 Agent::Agent(const Agent& other_agent) :
