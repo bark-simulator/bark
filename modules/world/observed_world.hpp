@@ -12,7 +12,7 @@
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/world.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/map/route_generator.hpp"
+#include "modules/world/map/local_map.hpp"
 
 namespace modules {
 namespace world {
@@ -20,7 +20,8 @@ namespace world {
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::Agent;
-using world::map::RouteGenerator;
+using world::map::LocalMap;
+using world::map::LocalMapPtr;
 using world::map::MapInterfacePtr;
 using modules::geometry::Point2d;
 using modules::models::dynamic::State;
@@ -39,8 +40,8 @@ class ObservedWorld : protected World {
     double get_world_time() const { return World::get_world_time(); }
 
 
-    const RouteGenerator& get_local_map() const {
-      return *World::get_agent(ego_agent_id_)->get_route_generator();
+    const LocalMapPtr get_local_map() const {
+      return ObservedWorld::get_ego_agent()->get_local_map();
     }
 
     std::shared_ptr<const Agent> get_ego_agent() const {

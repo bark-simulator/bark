@@ -41,8 +41,8 @@ class ObservedWorld : protected World {
       ego_agent_id_(ego_agent_id) {}
     ~ObservedWorld() {}
     double get_world_time() const { return World::get_world_time(); }
-    const RouteGenerator& get_local_map() const {
-      return *World::get_agent(ego_agent_id_)->get_route_generator();
+    const LocalMap& get_local_map() const {
+      return *World::get_agent(ego_agent_id_)->get_local_map();
     }
     AgentPtr get_ego_agent() const {
       return World::get_agent(ego_agent_id_);
@@ -126,10 +126,10 @@ class MapInterface {
 ```
 
 
-Based on the Roadgraph-interface, the RouteGenerator searches a valid route for an agent given its `goal_lane_id`. It then and concatenates the lane geometry to 2D lines which can easily be used in the behavior generation models.
+Based on the Roadgraph-interface, the LocalMap searches a valid route for an agent given its `goal_lane_id`. It then and concatenates the lane geometry to 2D lines which can easily be used in the behavior generation models.
 
 ```cpp
-class RouteGenerator {
+class LocalMap {
 	public:
 		bool generate(Point2d point,
 			      LaneId goal_lane_id,

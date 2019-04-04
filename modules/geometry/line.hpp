@@ -325,6 +325,24 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
   return bg::distance(line.obj_, p)*sign;
 }
 
+inline Line calculate_center_line(const Line& outer_line_,
+                                  const Line& inner_line_) {
+  Line center_line_;
+  Line line_more_points = outer_line_;
+  Line line_less_points = inner_line_;
+  if ( inner_line_.obj_.size() > outer_line_.obj_.size() ) {
+    line_more_points = inner_line_;
+    line_less_points = outer_line_;
+  }
+  for ( Point2d& point_loop : line_more_points.obj_ ) {
+    Point2d nearest_point_other = geometry::get_nearest_point(line_less_points,
+                                                              point_loop);
+    geometry::Point2d middle_point = (point_loop + nearest_point_other) / 2;
+    center_line_.add_point(middle_point);
+  }
+  return center_line_;
+}
+
 }  // namespace geometry
 }  // namespace modules
 #endif  // MODULES_GEOMETRY_LINE_HPP_
