@@ -2,6 +2,8 @@
 <img src="docs/source/bark_logo.png" alt="BArk" />
 </p>
 
+[![CircleCI](https://circleci.com/gh/bark-simulator/bark.svg?style=svg)](https://circleci.com/gh/bark-simulator/bark)
+
 # BArk - a tool for **B**ehavior benchm**Ark**ing
 BArk provides a semantic simulation tool/framework for autonomous agents with a special focus on autonomous driving.
 
