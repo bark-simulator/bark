@@ -28,7 +28,7 @@ dynamic::Trajectory behavior::BehaviorConstantVelocity::Plan(
                           ego_vehicle_state(StateDefinition::Y_POSITION));
 
   
-  geometry::Line line = observed_world.get_local_map()->get_center_line();
+  geometry::Line line = observed_world.get_local_map()->get_driving_corridor().get_center();
   // check whether linestring is empty
   if (line.obj_.size()>0) {
     float s_start = get_nearest_s(line, pose);

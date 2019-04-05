@@ -67,9 +67,22 @@ Line LocalMap::line_horizon(const Line& line,
   return new_line;
 }
 
-DrivingCorridor LocalMap::compute_horizon(const Point2d& p, double horizon) {
+bool LocalMap::compute_horizon_corridor(const Point2d& p, double horizon) {
   // TODO(@hart): create horizon lines for the current driving corridor
-  return horizon_driving_corridor_;
+  horizon_driving_corridor_.inner = line_horizon(driving_corridor_.inner,
+                                                 p,
+                                                 horizon);
+  horizon_driving_corridor_.outer = line_horizon(driving_corridor_.outer,
+                                                 p,
+                                                 horizon);
+  if (horizon_driving_corridor_.inner.obj_.size() > 0 &&
+      horizon_driving_corridor_.outer.obj_.size() > 0) {
+    horizon_driving_corridor_.center =
+      geometry::calculate_center_line(horizon_driving_corridor_.inner,
+                                      horizon_driving_corridor_.outer);
+    return true;
+  }
+  return false;
 }
 
 }  // namespace map

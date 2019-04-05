@@ -49,7 +49,7 @@ class World : public commons::BaseType {
   }
   bool Valid() const;
   void Step(float delta_time);
-  void UpdateLocalRoutes();
+  void UpdateHorizonDrivingCorridors();
   void MoveAgents(float delta_time);
   virtual World *Clone() const;
 

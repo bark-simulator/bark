@@ -28,6 +28,16 @@ struct DrivingCorridor {
                       inner(Line()),
                       center(Line()),
                       computed(false) {}
+  //! getter
+  Line get_outer() { return outer; }
+  Line get_inner() { return inner; }
+  Line get_center() { return center; }
+
+  //! getter
+  void set_outer(const Line& o) { outer = o; }
+  void set_inner(const Line& o) { inner = o; }
+  void set_center(const Line& o) { center = o; }
+
   Line outer, inner, center;
   std::vector<int> lane_ids_;
   bool computed;
@@ -37,7 +47,7 @@ struct DrivingCorridor {
 class LocalMap {
  public:
   explicit LocalMap(LaneId goal_lane_id,
-                          const MapInterfacePtr& map_interface) :
+                    const MapInterfacePtr& map_interface) :
     driving_corridor_(DrivingCorridor()),
     horizon_driving_corridor_(DrivingCorridor()),
     map_interface_(map_interface),
@@ -64,11 +74,15 @@ class LocalMap {
                     const Point2d& p,
                     double horizon);
 
-  DrivingCorridor compute_horizon(const Point2d& p, double horizon);
+  bool compute_horizon_corridor(const Point2d& p, double horizon);
 
-  Line get_inner_line() const { return driving_corridor_.inner; }
-  Line get_outer_line() const { return driving_corridor_.outer; }
-  Line get_center_line() const { return driving_corridor_.center; }
+  DrivingCorridor get_driving_corridor() const {
+    return driving_corridor_;
+  }
+
+  DrivingCorridor get_horizon_driving_corridor() const {
+    return horizon_driving_corridor_;
+  }
 
   bool has_generated_driving_corridor() {
     return driving_corridor_.computed;
