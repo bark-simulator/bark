@@ -2,6 +2,7 @@
 <img src="docs/source/bark_logo.png" alt="BArk" />
 </p>
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8bae43c5b8904e4fa0519c27bf578da7)](https://app.codacy.com/app/bark-simulator/bark?utm_source=github.com&utm_medium=referral&utm_content=bark-simulator/bark&utm_campaign=Badge_Grade_Dashboard)
 [![CircleCI](https://circleci.com/gh/bark-simulator/bark.svg?style=svg)](https://circleci.com/gh/bark-simulator/bark)
 
 # BArk - a tool for **B**ehavior benchm**Ark**ing
