@@ -16,11 +16,14 @@ using geometry::get_nearest_idx;
 using geometry::distance;
 
 void LocalMap::concatenate_lines(const std::vector<LanePtr>& lanes,
-                                 Line& line_of_corridor) {
+                                 Line& line_of_corridor,
+                                 std::vector< std::pair<int, LaneId> >& lane_ids) {                       
   if (lanes.size() > 0) {
       line_of_corridor = lanes.at(0)->get_line();
+      lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
       for (int i = 1; i < lanes.size(); i++) {
         if (lanes.at(i) != NULL) {
+          lane_ids.push_back(std::pair<int, LaneId>(line_of_corridor.size(), lanes.at(i)->get_id()));
           line_of_corridor.concatenate_linestring(lanes.at(i)->get_line());
         }
       }
@@ -38,8 +41,9 @@ bool LocalMap::generate(Point2d point,
     map_interface_->get_lane_boundary_horizon(current_lane->get_id(),
                                               goal_lane_id_);
 
-  concatenate_lines(route.first, driving_corridor_.inner);
-  concatenate_lines(route.second, driving_corridor_.outer);
+  std::vector< std::pair<int, LaneId> > dummy; 
+  concatenate_lines(route.first, driving_corridor_.inner, driving_corridor_.lane_ids_);
+  concatenate_lines(route.second, driving_corridor_.outer, dummy);
 
   if (route.first[0] != NULL && route.second[0] != NULL) {
     driving_corridor_.center =

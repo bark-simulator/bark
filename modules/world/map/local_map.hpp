@@ -39,7 +39,7 @@ struct DrivingCorridor {
   void set_center(const Line& o) { center = o; }
 
   Line outer, inner, center;
-  std::vector<int> lane_ids_;
+  std::vector< std::pair<int, LaneId> > lane_ids_; //1st entry is the index from where the 2nd value lane id is valid
   bool computed;
   // TODO(@fortiss): what IF functions would we like here
 };
@@ -64,7 +64,8 @@ class LocalMap {
   void set_map_interface(MapInterfacePtr map) { map_interface_ = map; }
 
   void concatenate_lines(const std::vector<LanePtr>& lanes,
-                         Line& line_of_corridor);
+                         Line& line_of_corridor,
+                         std::vector< std::pair<int, LaneId> >& lane_ids);
 
   bool generate(Point2d point,
                 LaneId goal_lane_id,
