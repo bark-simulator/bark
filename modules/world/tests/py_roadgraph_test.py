@@ -12,7 +12,6 @@ from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
-from modules.runtime.commons.parameters import ParameterServe
 from bark.world.opendrive import *
 
 
