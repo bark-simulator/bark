@@ -22,7 +22,10 @@ class Model3D {
   } Type;
 
   Model3D() : type_(NONE) {}
-  explicit Model3D(Type type) : type_(type) {}
+  explicit Model3D(Type type) : type_(type),
+                                scale_x_(0.0),
+                                scale_y_(0.0),
+                                scale_z_(0.0) {}
   ~Model3D() {}
 
   Type get_type() { return type_; }

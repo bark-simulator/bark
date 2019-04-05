@@ -18,7 +18,6 @@ from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
-from bark.commons import Params
 from modules.runtime.commons.parameters import ParameterServer
 
 
@@ -37,7 +36,6 @@ class AgentTests(unittest.TestCase):
             Point2d(0, 0)
         ])
         init_state = np.zeros(4)
-        init_state2 = np.zeros(4)
         agent = Agent(init_state, behavior, dynamic, execution, shape,
                       params.AddChild("agent"))
         params.save("written_agents_param_test.json")

@@ -59,13 +59,13 @@ class BaseViewer(Viewer):
         self.drawMap(world.map.get_open_drive_map())
         
         # draw agents
-        for id, agent in world.agents.items():
+        for _, agent in world.agents.items():
             self.drawAgent(agent)
 
 
     def drawMap(self, map):
         # draw the boundary of each lane
-        for i, road in map.get_roads().items():
+        for _, road in map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
                     self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
