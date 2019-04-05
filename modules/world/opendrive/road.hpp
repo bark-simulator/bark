@@ -24,7 +24,7 @@ using LaneSections = std::vector<LaneSectionPtr>;
 
 class Road {
  public:
-  Road(std::string name, RoadId id) : id_(id), name_(name) {}
+  Road(const std::string& name, RoadId id) : id_(id), name_(name) {}
   Road() {}
   virtual ~Road() {}
 
@@ -50,7 +50,7 @@ class Road {
 
   //! setter
   void set_id(RoadId id) { id_ = id; }
-  void set_name(std::string name) { name_ = name; }
+  void set_name(const std::string& name) { name_ = name; }
   void set_plan_view(PlanViewPtr p) { reference_ = p; }
   void set_link(Link l) { link_ = l; }
 

@@ -8,7 +8,7 @@ import os
 from bark.viewer import Viewer
 from bark.models.dynamic import StateDefinition
 from modules.runtime.viewer.viewer import BaseViewer
-from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath 
+from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath
 
 class Panda3dViewer(BaseViewer, ShowBase):
     def __init__(self, params=None, **kwargs):
@@ -88,7 +88,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def setDrawer(self, budget=100000):
         """Initializes the MeshDrawer() generator to draw lines in Panda3d
-        
+
         Keyword Arguments:
             budget {int} -- maximum triangles for rendering the mesh (default: {100000})
         """
@@ -155,7 +155,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def updateCamera(self, lookAt=False):
         """Updates the camera position from calls using variables self.cam_pose and self.cam_or
-        
+
         Keyword Arguments:
             lookAt {bool} -- If true the orientation is calculated by the agents position (default: {False})
         """
@@ -172,7 +172,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
         Arguments:
             task {task} -- Panda3d Task
-        
+
         Returns:
             Task.cont -- Panda3d Task Return
         """
@@ -185,7 +185,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             self.setAgentCam(self.perspective[0],
                              self.agent_poses[self.follow_agent_id])
         return Task.cont
-    def initCam(self, poses=None, orientation=[0, 270, 0]):#TODO Calculate from map parameter before
+    def initCam(self, poses=None, orientation=None):#TODO Calculate from map parameter before
         poses = poses or [0, 0, 700]
         orientation = orientation or [0, 270, 0]
         self.cam_pose = np.array(poses, dtype=float)
@@ -206,7 +206,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def setAutoZoomCam(self, agent_poses):
         """This function calculates the camera position so that all agents are visible
-        
+
         Arguments:
             agent_poses {[dict]} -- [look up table of all agent poses]
         """
@@ -235,7 +235,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def setAgentCam(self, perspective, agent_poses):
         """Sets up the class variable for the camerea position and orientation
-        
+
         Arguments:
             perspective {list} -- List of strings describing the perspective currently ["bird_agent","third","first"] which is used as an index for the parameters dict
             agent_poses {np.array([x,y,theta])} -- Describes the agent position
@@ -255,7 +255,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         ],
                                dtype=float)
         self.updateCamera(lookAt=self.agent_cam_parameter[perspective][5])
-    
+
     def calcLineThickness(self,cameras=None):
         """Uses a linear approximation between two cameras to calculate the line thickness
 

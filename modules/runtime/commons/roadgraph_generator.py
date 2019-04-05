@@ -70,7 +70,7 @@ class RoadgraphGenerator:
 
 
         # map.junctions
-        for junction_id, junction in road_map.get_junctions().items():
+        for _, junction in road_map.get_junctions().items():
             for _, connection in junction.get_connections().items():
                 incoming_road = road_map.get_roads()[connection.incoming_road]
                 connecting_road = road_map.get_roads()[connection.connecting_road]

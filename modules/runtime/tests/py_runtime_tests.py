@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -82,7 +82,7 @@ class RuntimeTests(unittest.TestCase):
         for _, agent in runtime.world.agents.items():
             print(agent.followed_trajectory)
         """
-        
+
 
 
 if __name__ == '__main__':
