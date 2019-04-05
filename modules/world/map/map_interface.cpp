@@ -68,8 +68,8 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
       std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
       outer.push_back(roadgraph_->get_lane_graph()[v.first].lane);
       
-      std::pair<LaneId, bool> innerid = roadgraph_->get_inner_neighbor(h);
-      std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid.first);
+      LaneId innerid = roadgraph_->get_inner_neighbor(h);
+      std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid);
       if (v_inner.second) {
         inner.push_back(roadgraph_->get_lane_graph()[v_inner.first].lane);
       } else {
