@@ -38,6 +38,8 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   auto length() { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
+  int size() { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
+
   void append_linestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
