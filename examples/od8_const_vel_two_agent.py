@@ -1,9 +1,8 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import unittest
 import numpy as np
 import time
 import os
@@ -16,9 +15,8 @@ from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.viewer.pygame_viewer import PygameViewer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
+# from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
@@ -59,7 +57,7 @@ agent1 = Agent(init_state,
 world.add_agent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, -11, -8, 3.14*3.0/4.0, 5.2]) 
+init_state2 = np.array([0, -11, -8, 3.14*3.0/4.0, 5.2])
 agent_params2 = param_server.addChild("agent2")
 agent2 = Agent(init_state2,
                behavior_model2,
@@ -71,7 +69,7 @@ agent2 = Agent(init_state2,
                map_interface)
 world.add_agent(agent2)
 
-# viewer 
+# viewer
 viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 200])
 
 # World Simulation

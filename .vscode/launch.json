@@ -41,7 +41,7 @@
             "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/od8_const_vel_two_agent.runfiles/__main__/python",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
-            "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"},
+            "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}
             }
     ]
 }

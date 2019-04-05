@@ -1,10 +1,9 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
 import unittest
-import numpy as np
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
@@ -13,7 +12,6 @@ from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
-from modules.runtime.commons.parameters import ParameterServer
 from bark.world.opendrive import *
 
 
@@ -23,7 +21,6 @@ class RoadgraphTests(unittest.TestCase):
         lane1 = Lane()
         lane2 = Lane()
         road_id = 0
-        lane_edge_type = 1
 
         # add vertices and connect edges
         u = road_graph.add_lane(road_id, lane1)
