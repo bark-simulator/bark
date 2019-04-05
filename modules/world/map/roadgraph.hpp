@@ -171,15 +171,25 @@ class Roadgraph {
     }
   }
 
-  LaneId get_inner_neighbor(const LaneId& lane_id) {
-    std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
-    boost::graph_traits<LaneGraph>::out_edge_iterator i, end;
-    for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_); i != end; ++i) {
-      if(g_[*i].edge_type == INNER_NEIGHBOR_EDGE) {
-        vertex_t target = boost::target(*i,g_);
-        return g_[target].global_lane_id;
-      }
-    }
+  //! LaneId of the neighboring lane and a flag if it exists or not
+  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) {
+    std::vector<std::pair<LaneId, bool> > neighbors =
+     get_neighbor_from_edgetype(lane_id, INNER_NEIGHBOR_EDGE); 
+    std::pair<LaneId, bool> neighbor = neighbors.front(); //inner neighbor is unique
+    // handle special case: one lane next to the planview, move to the next outer lane
+    if(neighbor.second) { //neighboring lane exists
+      LanePtr lp = get_laneptr(neighbor.first);
+      if(lp->get_lane_position() == 99999) { //lane pos 0 is the planview: neighbor is the planview //TODO 999 is a quickfix
+        std::vector<std::pair<LaneId, bool> > next_neighbors = 
+          get_neighbor_from_edgetype(neighbor.first, OUTER_NEIGHBOR_EDGE);
+        for(auto nn : next_neighbors) { //find the non-queried lane id
+          if(nn.first != lane_id) {
+            return nn;
+          }
+        }
+      } 
+    } 
+    return neighbor;
   }
 
 
