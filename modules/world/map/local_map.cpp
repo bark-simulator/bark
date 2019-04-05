@@ -53,12 +53,14 @@ DrivingCorridor LocalMap::line_horizon(const Line& line,
                                        double horizon) {
   Line new_line;
   int nearest_idx = get_nearest_idx(line, p);
-  double horizon_length = 0.0;
-  int idx = nearest_idx;
-  for (double s = 0.0; s <= horizon_length;) {
-    new_line.add_point(line[idx]);
-    idx++;
-    // TODO(@hart): s inc
+  int max_idx = line.size()
+  double s = 0.0;
+  for (int idx = nearest_idx; nearest_idx < max_idx - 1; idx++) {
+    double d = distance(line[idx], line[idx+1]);
+    new_line.add_point(line[idx+1]);
+    s += d;
+    if ( s > horizon )
+      return new_line;
   }
   return new_line;
 }

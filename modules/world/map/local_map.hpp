@@ -63,6 +63,7 @@ class LocalMap {
   Line get_inner_line() const { return current_driving_corridor_.inner; }
   Line get_outer_line() const { return current_driving_corridor_.outer; }
   Line get_center_line() const { return current_driving_corridor_.center; }
+  
   bool has_generated_driving_corridor() {
     return current_driving_corridor_.computed;
   }
