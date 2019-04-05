@@ -114,11 +114,10 @@
   "[cpp]": {
       "editor.tabSize": 2
   },
-  "[python]":{
+  "[python]": {
       "editor.tabSize": 4
   },
   "licenser.license": "MIT",
   "licenser.author": "fortiss GmbH",
-  "licenser.projectName": "BARK",
-
+  "licenser.projectName": "BARK"
 }

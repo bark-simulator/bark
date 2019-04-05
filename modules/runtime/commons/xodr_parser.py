@@ -3,10 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import os
-import json
 import numpy as np
-import copy
 from lxml import etree
 import pprint
 from bark.world.opendrive import *
@@ -276,7 +273,7 @@ class XodrParser(object):
             new_pre_info.type = link["predecessor"]["element_type"]
             new_link.predecessor = new_pre_info
         except:
-            pass
+            print("Roadlink has no predeseccor.")
 
         try:
             new_suc_info = LinkInfo()
@@ -284,7 +281,7 @@ class XodrParser(object):
             new_suc_info.type = link["successor"]["element_type"]
             new_link.successor = new_suc_info
         except:
-            pass
+            print("Roadlink has no successor.")
         return new_link
 
     def create_cpp_road(self, road):
@@ -305,13 +302,13 @@ class XodrParser(object):
             new_suc.id = int(link["successor"])
             new_link.successor = new_suc
         except:
-            pass
+            print("Roadlink has no successor.")
         try:
             new_pre = LinkInfo()
             new_pre.id = int(link["predecessor"])
             new_link.predecessor = new_pre
         except:
-            pass
+            print("Roadlink has no predeseccor.")
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_start,
@@ -335,7 +332,7 @@ class XodrParser(object):
     def create_cpp_lane_section(self, new_road, road):
         for lane_section in road["lane_sections"]:
             new_lane_section = LaneSection(float(lane_section["s"]))
-            for i, lane in enumerate(lane_section["lanes"]):
+            for _, lane in enumerate(lane_section["lanes"]):
                 new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]))
             new_road.add_lane_section(new_lane_section)
         return new_road

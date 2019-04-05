@@ -4,7 +4,6 @@
 # https://opensource.org/licenses/MIT
 
 import unittest
-import os
 import numpy as np
 from bark.world.agent import *
 from bark.models.behavior import *

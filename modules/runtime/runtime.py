@@ -3,10 +3,8 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import time
 from tqdm import trange
 import copy
-from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.commons import return_execution_time
 from bark.world.opendrive import *
 from bark.world import *

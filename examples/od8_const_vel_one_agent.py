@@ -4,7 +4,6 @@
 # https://opensource.org/licenses/MIT
 
 
-import unittest
 import numpy as np
 import time
 import os
@@ -17,7 +16,6 @@ from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 #from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
