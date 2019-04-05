@@ -158,8 +158,9 @@ TEST(roadgraph, get_inner_neighbor_test)
   r.add_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
 
-  LaneId in = r.get_inner_neighbor(l10);
-  ASSERT_TRUE(in == l00);
+  std::pair<LaneId, bool> in = r.get_inner_neighbor(l10);
+  ASSERT_TRUE(in.first == l00);
+  ASSERT_TRUE(in.second);
 }
 
 TEST(roadgraph, find_path_test)
