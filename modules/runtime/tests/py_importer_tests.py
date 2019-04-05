@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -16,19 +16,18 @@ from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
 from bark.world.opendrive import *
 from bark.world.map import *
-from modules.runtime.runtime import Runtime
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
 class ImporterTests(unittest.TestCase):
     def test_python_map(self):
         pass
-        #xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
-        #xodr_parser.print_python_map()
+        # xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
+        # xodr_parser.print_python_map()
 
     def test_map(self):
         xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
-        #xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
+        # xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
         params = ParameterServer()
         world = World(params)
 
@@ -39,13 +38,6 @@ class ImporterTests(unittest.TestCase):
 
 
         for _, road in xodr_parser.map.get_roads().items():
-            """
-            pv_np = road.plan_view.get_reference_line().toArray()
-            m = cm.ScalarMappable(
-                norm=mpl.colors.Normalize(vmin=501, vmax=517), cmap=cm.jet)
-            plt.plot(pv_np[:, 0], pv_np[:, 1])
-            plt.text(pv_np[-1, 0], pv_np[-1, 1], 'sample {i}'.format(i=i))
-            """
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
                     line_np = lane.line.toArray()
@@ -60,10 +52,10 @@ class ImporterTests(unittest.TestCase):
         plt.axis("equal")
         plt.show()
 
-        # TODO: plot cpp map
-        #cwd = os.getcwd()
-        #print (cwd)
-        #roadgraph.print_graph("/home/kessler/"+"test1234.dot")
+        # TODO(@fortiss): plot cpp map
+        # cwd = os.getcwd()
+        # print (cwd)
+        # roadgraph.print_graph("/home/kessler/"+"test1234.dot")
 
 
 if __name__ == '__main__':

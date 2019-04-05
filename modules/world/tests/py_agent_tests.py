@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -39,7 +39,7 @@ class AgentTests(unittest.TestCase):
         agent = Agent(init_state, behavior, dynamic, execution, shape,
                       params.AddChild("agent"))
         params.save("written_agents_param_test.json")
-        test = 0
+        print(agent)
 
     def test_draw_agents(self):
         params = ParameterServer()
@@ -62,13 +62,8 @@ class AgentTests(unittest.TestCase):
                       params.AddChild("agent"))
         agent2 = Agent(init_state2, behavior, dynamic, execution, shape2,
                        params.AddChild("agent"))
-                       
-    """ TODO(Fortiss): reimplement test
-    viewer = MPViewer()
-    viewer.drawAgent(agent)
-    viewer.drawAgent(agent2)
-    viewer.show()
-    """
+        print(agent, agent2)
+
 
 
 if __name__ == '__main__':

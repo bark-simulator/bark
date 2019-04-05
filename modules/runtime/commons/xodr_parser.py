@@ -1,9 +1,8 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import numpy as np
 from lxml import etree
 import pprint
 from bark.world.opendrive import *
@@ -31,13 +30,13 @@ class XodrParser(object):
 
     def load_xodr(self, file_name):
         """Function that loads XODR and returns root node of
-    
+
     Arguments:
       file_name {[string]} -- [File name of XODR]
-    
+
     Raises:
       TypeError -- [If the file could be parsed]
-    
+
     Returns:
       [etree] -- [Returns the root node of the etree]
     """
@@ -88,7 +87,7 @@ class XodrParser(object):
         lane_dict = {}
         for lane in lanes:
             lane_dict[int(lane.get("id"))] = lane
-            
+
         for id, lane in lane_dict.items():
             if str(lane.get("type")) != "driving":
                 continue
@@ -224,10 +223,10 @@ class XodrParser(object):
 
     def parse_xml(self, xodr_obj):
         """Imports the XODR file to python
-    
+
     Arguments:
       xodr_obj {etree} -- containing map information
-    
+
     Returns:
       python dict -- containing all neccessary map information
     """
@@ -320,7 +319,7 @@ class XodrParser(object):
                 float(lane["width"]["c"]), float(lane["width"]["d"]))
             lane_width = LaneWidth(s_start, s_end, offset)
             lane_widths.append(lane_width)
-            
+
             # TODO (@hart): make sampling flexible
             new_lane = new_road.plan_view.create_lane(int(lane["id"]), lane_widths, 1.0)
             new_lane.link = self.create_lane_link(lane["link"])
@@ -360,10 +359,10 @@ class XodrParser(object):
 
     def convert_to_map(self, python_map):
         """Loops through python_map and converts it to a cpp map
-    
+
     Arguments:
       python_map {dict} -- containing all the map info
-    
+
     Returns:
       CPP Map -- Map for usage with CPP
     """
