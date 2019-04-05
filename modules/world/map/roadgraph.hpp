@@ -63,35 +63,6 @@ class Roadgraph {
     return laneptr->get_id();
   }
 
-  //!TODO @tobias make private 
-  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id) {
-    std::pair<vertex_t, bool> retval;
-    retval.second = false;
-    boost::graph_traits<LaneGraph>::vertex_iterator i, end;
-    for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i) {
-      if (g_[*i].global_lane_id == lane_id) {
-        retval.first = *i;
-        retval.second = true;
-        break;
-      }
-    }
-    return retval;
-  }
-
-//!TODO @tobias make private 
-  bool add_edge_of_type(const LaneId& source_id, const LaneId& target_id, const LaneEdgeType& edgetype) {
-    LaneEdge edge = LaneEdge(edgetype);
-    std::pair<vertex_t,bool> source_lane = get_vertex_by_lane_id(source_id);
-    std::pair<vertex_t,bool> target_lane = get_vertex_by_lane_id(target_id);
-    if(source_lane.second && target_lane.second) {
-      boost::add_edge(source_lane.first, target_lane.first, edge, g_);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
   bool add_inner_neighbor(const LaneId& inner_id, const LaneId& outer_id) {
     return add_edge_of_type( outer_id, inner_id, INNER_NEIGHBOR_EDGE);
   }
@@ -171,17 +142,32 @@ class Roadgraph {
     }
   }
 
-  LaneId get_inner_neighbor(const LaneId& lane_id) {
-    std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
-    boost::graph_traits<LaneGraph>::out_edge_iterator i, end;
-    for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_); i != end; ++i) {
-      if(g_[*i].edge_type == INNER_NEIGHBOR_EDGE) {
-        vertex_t target = boost::target(*i,g_);
-        return g_[target].global_lane_id;
-      }
-    }
+  //! LaneId of the neighboring lane and a flag if it exists or not
+  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) {
+    std::vector<std::pair<LaneId, bool> > neighbors =
+     get_neighbor_from_edgetype(lane_id, INNER_NEIGHBOR_EDGE); 
+    std::pair<LaneId, bool> neighbor = neighbors.front(); //inner neighbor is unique
+    // handle special case: one lane next to the planview, move to the next outer lane
+    if(neighbor.second) { //neighboring lane exists
+      LanePtr lp = get_laneptr(neighbor.first);
+      if(lp->get_lane_position() == 0) { //lane pos 0 is the planview: neighbor is the planview
+        std::vector<std::pair<LaneId, bool> > next_neighbors = 
+          get_neighbor_from_edgetype(neighbor.first, OUTER_NEIGHBOR_EDGE);
+        for(auto nn : next_neighbors) { //find the non-queried lane id
+          if(nn.first != lane_id) {
+            return nn;
+          }
+        }
+      } 
+    } 
+    return neighbor;
   }
 
+  //! LaneId of the neighboring lane and a flag if it exists or not
+  std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id) {
+    std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
+    return tmp.front(); // for a non planview edge the outer neighbor is unique
+  }
 
   bool has_lane(const LaneId& lane_id){
     boost::graph_traits<LaneGraph>::vertex_iterator i, end;
@@ -193,52 +179,9 @@ class Roadgraph {
     return false;
   }
 
-
-template <class RoadIdMap, class LaneIdMap, class LaneMap>
-class my_vertex_writer_graph {
-public:
-  my_vertex_writer_graph(RoadIdMap r, LaneIdMap l, LaneMap lanemap) : rm(r), lm(l), lanemap_(lanemap) {}
-  template <class LaneVertex>
-  void operator()(std::ostream &out, const LaneVertex& s) const {
-    out << "[" << 
-		   "label=\"" << "road_id=" << rm[s] << " lane_id=" << lm[s] << " lane_pos=" << lanemap_[s]->get_lane_position() << 
-		   "\"]";
-  }
-private:
-  RoadIdMap rm;
-  LaneIdMap lm;
-  LaneMap lanemap_;
-};
-
-template <class RoadIdMap, class LaneIdMap, class LaneMap>
-inline my_vertex_writer_graph<RoadIdMap, LaneIdMap, LaneMap>
-make_vertex_label_writer_graph(RoadIdMap r, LaneIdMap l, LaneMap lm) {
-  return my_vertex_writer_graph<RoadIdMap, LaneIdMap, LaneMap> (r, l, lm);
-}
-
-
-template <class TypeMap>
-class my_edge_writer_text {
-public:
-  my_edge_writer_text(TypeMap t) : tm(t) {}
-  template <class LaneEdge>
-  void operator()(std::ostream &out, const LaneEdge& e) const {
-    const char* color = tm[e]==0?"red":"blue";
-    out << "[label=\"" << tm[e] << "\"" <<  "color=\"" << color << "\"" << "]";
-  }
-private:
-  TypeMap tm;
-};
-
-template <class TypeMap>
-inline my_edge_writer_text<TypeMap>
-make_edge_label_writer_text(TypeMap t) {
-  return my_edge_writer_text<TypeMap> (t);
-}
-
   void print_graph(const char* filename) {
     std::ofstream dotfile(filename);
-	  print_graph(dotfile);
+    print_graph(dotfile);
     dotfile.close();
   }
 
@@ -248,9 +191,6 @@ make_edge_label_writer_text(TypeMap t) {
 		, make_edge_label_writer_text(get(&LaneEdge::edge_type, g_))
     );
   }
-
-  
-
 
   LaneGraph get_lane_graph() const {
     return g_;
@@ -307,14 +247,96 @@ make_edge_label_writer_text(TypeMap t) {
     return edge_descriptors;
   }
 
-
   edge_t get_edge_descr(vertex_t from, vertex_t to) {
     return boost::edge(from, to, g_).first;
   }
 
+  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id) {
+    std::pair<vertex_t, bool> retval;
+    retval.second = false;
+    boost::graph_traits<LaneGraph>::vertex_iterator i, end;
+    for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i) {
+      if (g_[*i].global_lane_id == lane_id) {
+        retval.first = *i;
+        retval.second = true;
+        break;
+      }
+    }
+    return retval;
+  }
 
  private:
   LaneGraph g_;
+
+  bool add_edge_of_type(const LaneId& source_id, const LaneId& target_id, const LaneEdgeType& edgetype) {
+    LaneEdge edge = LaneEdge(edgetype);
+    std::pair<vertex_t,bool> source_lane = get_vertex_by_lane_id(source_id);
+    std::pair<vertex_t,bool> target_lane = get_vertex_by_lane_id(target_id);
+    if(source_lane.second && target_lane.second) {
+      boost::add_edge(source_lane.first, target_lane.first, edge, g_);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  std::vector<std::pair<LaneId, bool> > get_neighbor_from_edgetype(const LaneId& lane_id, const LaneEdgeType edge_type) { //! we can have two outer neighbors
+    std::vector<std::pair<LaneId, bool> > retval;
+    std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
+    boost::graph_traits<LaneGraph>::out_edge_iterator i, end;
+    for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_); i != end; ++i) {
+      if(g_[*i].edge_type == edge_type) {
+        vertex_t target = boost::target(*i,g_);
+        retval.push_back(std::make_pair(g_[target].global_lane_id, true));
+      }
+    }
+    if (retval.empty()) {
+      retval.push_back(std::make_pair(0, false));
+    }
+    return retval;
+  }
+
+  template <class RoadIdMap, class LaneIdMap, class LaneMap>
+  class my_vertex_writer_graph {
+  public:
+    my_vertex_writer_graph(RoadIdMap r, LaneIdMap l, LaneMap lanemap) : rm(r), lm(l), lanemap_(lanemap) {}
+    template <class LaneVertex>
+    void operator()(std::ostream &out, const LaneVertex& s) const {
+      out << "[" << 
+        "label=\"" << "road_id=" << rm[s] << " lane_id=" << lm[s] << " lane_pos=" << lanemap_[s]->get_lane_position() << 
+        "\"]";
+    }
+  private:
+    RoadIdMap rm;
+    LaneIdMap lm;
+    LaneMap lanemap_;
+  };
+
+  template <class RoadIdMap, class LaneIdMap, class LaneMap>
+  inline my_vertex_writer_graph<RoadIdMap, LaneIdMap, LaneMap>
+  make_vertex_label_writer_graph(RoadIdMap r, LaneIdMap l, LaneMap lm) {
+    return my_vertex_writer_graph<RoadIdMap, LaneIdMap, LaneMap> (r, l, lm);
+  }
+
+  template <class TypeMap>
+  class my_edge_writer_text {
+  public:
+    my_edge_writer_text(TypeMap t) : tm(t) {}
+    template <class LaneEdge>
+    void operator()(std::ostream &out, const LaneEdge& e) const {
+      const char* color = tm[e]==0?"red":"blue";
+      out << "[label=\"" << tm[e] << "\"" <<  "color=\"" << color << "\"" << "]";
+    }
+  private:
+    TypeMap tm;
+  };
+
+  template <class TypeMap>
+  inline my_edge_writer_text<TypeMap>
+  make_edge_label_writer_text(TypeMap t) {
+    return my_edge_writer_text<TypeMap> (t);
+  }
+
 };
 
 typedef std::shared_ptr<Roadgraph> RoadgraphPtr;
