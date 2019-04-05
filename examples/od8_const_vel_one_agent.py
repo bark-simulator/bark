@@ -20,6 +20,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+#from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
@@ -58,23 +59,28 @@ agent = Agent(init_state,
 world.add_agent(agent)
 
 # viewer
+
 viewer = PygameViewer(params=param_server,
                       x_range=[-50, 50],
                       y_range=[-50, 50],
                       follow_agent_id=agent.id,
                       screen_dims=[500, 500])
-
+"""
+viewer = MPViewer(params=param_server)
+"""
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time in simulation",
                                            0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
-                                                  1]
+                                                  100]
 
 for _ in range(0, 100):
+    viewer.clear()
     world.step(sim_step_time)
     viewer.drawWorld(world)
+    viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)
 
 param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
