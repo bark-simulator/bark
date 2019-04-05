@@ -206,7 +206,7 @@ inline Point2d get_normal_at_s(Line l, float s) {
 }
 
 
-inline boost::tuple<Point2d, double, int> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
+inline boost::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
   // edge cases: empty or one-point line
   if (l.obj_.empty()) {
     return boost::make_tuple(Point2d(0, 0), 0.0, 0);
@@ -293,7 +293,7 @@ inline Point2d get_nearest_point(Line l, const Point2d &p) {
 inline float get_nearest_s(Line l, const Point2d &p) {
   return boost::get<1>(get_nearest_point_and_s(l, p));
 }
-inline Point2d get_nearest_idx(Line l, const Point2d &p) {
+inline uint get_nearest_idx(Line l, const Point2d &p) {
   return boost::get<2>(get_nearest_point_and_s(l, p));
 }
 //! Point - Line collision checker using boost::intersection
