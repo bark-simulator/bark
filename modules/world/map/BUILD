@@ -34,12 +34,12 @@ cc_library(
 )
 
 cc_library(
-    name = "route_generator",
+    name = "local_map",
     srcs = [
-        "route_generator.cpp"
+        "local_map.cpp"
     ],
     hdrs = [
-        "route_generator.hpp",
+        "local_map.hpp",
     ],
     deps = [
         "//modules/geometry",

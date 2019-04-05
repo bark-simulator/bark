@@ -64,7 +64,8 @@ class AgentTests(unittest.TestCase):
                       params.AddChild("agent"))
         agent2 = Agent(init_state2, behavior, dynamic, execution, shape2,
                        params.AddChild("agent"))
-        """ TODO(Fortiss): reimplement test
+                       
+    """ TODO(Fortiss): reimplement test
     viewer = MPViewer()
     viewer.drawAgent(agent)
     viewer.drawAgent(agent2)

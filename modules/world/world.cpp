@@ -17,24 +17,18 @@ World::World(commons::Params* params) :
   world_time_(0.0) {}
 
 World::World(const World& world)  :
-         commons::BaseType(world.get_params()), 
+         commons::BaseType(world.get_params()),
          map_(world.get_map()),
          agents_(world.get_agents()),
          objects_(world.get_objects()),
          world_time_(world.get_world_time()) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
-  agents_[agent->agent_id_] = agent; 
+  agents_[agent->agent_id_] = agent;
 }
 
 void World::add_object(const objects::ObjectPtr& object) {
   objects_[object->agent_id_] = object;
-}
-
-void World::UpdateLocalRoutes() {
-  for (auto agent : agents_) {
-    agent.second->UpdateLocalRoute();
-  }
 }
 
 void World::MoveAgents(float delta_time) {
@@ -48,8 +42,16 @@ void World::MoveAgents(float delta_time) {
   world_time_ += delta_time;
 }
 
+void World::UpdateHorizonDrivingCorridors() {
+  for (auto agent : agents_) {
+    // TODO(@hart): parameter
+    // TODO(@hart): check if update is required
+    agent.second->UpdateDrivingCorridor(40.0);
+  }
+}
+
 void World::Step(float delta_time) {
-  UpdateLocalRoutes();
+  UpdateHorizonDrivingCorridors();
   MoveAgents(delta_time);
   // TODO(@fortiss): add post world collision check
 }

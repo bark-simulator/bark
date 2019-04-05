@@ -15,8 +15,8 @@ from modules.runtime.viewer.viewer import BaseViewer
 
 class MPViewer(BaseViewer):
     # we do not need an init function as pybind11 implements it
-    def __init__(self, parameters=None, axes=None):
-        super(MPViewer, self).__init__(params=parameters)
+    def __init__(self, params=None, axes=None):
+        super(MPViewer, self).__init__(params=params)
         # setup matplot lib figure
         # scene rectangle -> to be defined
         # other parameters (line width scaling, ...)
@@ -79,14 +79,12 @@ class MPViewer(BaseViewer):
             return color
 
     def show(self, block=True):
-        #self.axes.set_xlim([self.sw_corner[0], self.ne_corner[0]])
-        #self.axes.set_ylim([self.sw_corner[1], self.ne_corner[1]])
-
         self.axes.set_aspect('equal')
+        plt.draw()
         if block:
             plt.show(block=True)
         else:
             plt.pause(0.05)
 
     def clear(self):
-        plt.clf()
+        plt.gca().cla()
