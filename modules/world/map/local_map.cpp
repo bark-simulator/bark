@@ -51,6 +51,22 @@ bool LocalMap::generate(Point2d point,
                                       driving_corridor_.outer);
   }
   driving_corridor_.computed = true;
+
+  return true;
+}
+
+DrivingCorridor LocalMap::compute_driving_corridor_from_laneids(std::vector<LaneId> lane_ids) {
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
+    map_interface_->get_lane_boundaries_from_path(lane_ids);
+  DrivingCorridor dc;
+  std::vector< std::pair<int, LaneId> > dummy; 
+  concatenate_lines(route.first, dc.inner, dc.lane_ids_);
+  concatenate_lines(route.second, dc.outer, dummy);
+  if (route.first[0] != NULL && route.second[0] != NULL) {
+    dc.center = geometry::calculate_center_line(dc.inner, dc.outer);
+  }
+  dc.computed = true;
+  return dc;
 }
 
 Line LocalMap::line_horizon(const Line& line,

@@ -61,8 +61,12 @@ bool modules::world::map::MapInterface::get_nearest_lanes(
 }
 
 std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid) {
-  std::vector<LanePtr> inner, outer;
   std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
+  return get_lane_boundaries_from_path(horizon);
+}
+
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundaries_from_path(const std::vector<LaneId> horizon) {
+  std::vector<LanePtr> inner, outer;
   if (!horizon.empty()) {
     for (auto &h : horizon) {
       std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
