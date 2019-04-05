@@ -41,7 +41,7 @@ class MapInterface {
 
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid);
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundaries_from_path(const std::vector<LaneId> horizon);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundaries_from_path(const std::vector<LaneId>& horizon);
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
     open_drive_map_ = map;

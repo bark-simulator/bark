@@ -1,11 +1,9 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-import matplotlib
 from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
 
 from bark.viewer import *
@@ -21,7 +19,7 @@ class MPViewer(BaseViewer):
         # scene rectangle -> to be defined
         # other parameters (line width scaling, ...)
         if axes is None:
-            fig, ax = plt.subplots()
+            _, ax = plt.subplots()
         else:
             ax = axes
         self.axes = ax

@@ -21,7 +21,7 @@ namespace opendrive {
 
 class PlanView {
  public:
-  PlanView() {}
+  PlanView() : length_(0.0) {}
   ~PlanView() {}
 
   geometry::Line create_line(int id, LaneWidth lane_width, float s_inc = 0.5f);

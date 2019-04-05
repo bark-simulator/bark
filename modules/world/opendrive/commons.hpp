@@ -36,8 +36,8 @@ struct Link {
   //! getter
   LinkInfo get_predecessor() const { return predecessor_; }
   LinkInfo get_successor() const { return successor_; }
-  void set_predecessor(LinkInfo info) { predecessor_ = info; }
-  void set_successor(LinkInfo info) { successor_ = info; }
+  void set_predecessor(const LinkInfo& info) { predecessor_ = info; }
+  void set_successor(const LinkInfo& info) { successor_ = info; }
 };
 
 inline std::string print(const Link &l) {

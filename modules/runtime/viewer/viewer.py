@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -52,20 +52,20 @@ class BaseViewer(Viewer):
         pass
 
     def drawAgents(self, world):
-        for id, agent in world.agents.items():
+        for _, agent in world.agents.items():
             self.drawAgent(agent)
-            
+
     def drawWorld(self, world):
         self.drawMap(world.map.get_open_drive_map())
-        
+
         # draw agents
-        for id, agent in world.agents.items():
+        for _, agent in world.agents.items():
             self.drawAgent(agent)
 
 
     def drawMap(self, map):
         # draw the boundary of each lane
-        for i, road in map.get_roads().items():
+        for _, road in map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
                     self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
@@ -82,7 +82,7 @@ class BaseViewer(Viewer):
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
             transformed_polygon = shape.transform(pose)
             self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
-        
+
         if self.draw_route:
             self.drawRoute(agent)
 

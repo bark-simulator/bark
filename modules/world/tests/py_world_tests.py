@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -14,14 +14,13 @@ from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from bark.world.opendrive import *
 
 
 class WorldTests(unittest.TestCase):
     """This test should create and obstacle, map and agent insert it into the world.
      FM, the world should be stepped several times in order to verify the functionality.
-  """
+    """
 
     def test_world(self):
 
@@ -57,25 +56,13 @@ class WorldTests(unittest.TestCase):
         lane_section.add_lane(lane)
         newRoad.add_lane_section(lane_section)
         road_map.add_road(newRoad)
-        
+
         r = Roadgraph()
         map_interface = MapInterface()
         map_interface.set_open_drive_map(road_map)
         map_interface.set_roadgraph(r)
         world = World(params)
         world.add_agent(agent)
-
-        # TODO: obsolete; see examples test
-        """
-        for key, agent in world.agents.items():
-            print(agent.followed_trajectory)
-
-        # step agent
-        world.step(0.25)
-
-        for key, agent in world.agents.items():
-            print(agent.followed_trajectory)
-        """
 
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ namespace opendrive {
 
 class Junction {
  public:
-  Junction(std::string name, uint32_t id) : id_(id), name_(name) {}
+  Junction(const std::string& name, uint32_t id) : id_(id), name_(name) {}
   Junction() {}
   ~Junction() {}
 

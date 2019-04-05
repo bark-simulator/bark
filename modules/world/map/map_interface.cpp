@@ -65,7 +65,7 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
   return get_lane_boundaries_from_path(horizon);
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundaries_from_path(const std::vector<LaneId> horizon) {
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundaries_from_path(const std::vector<LaneId>& horizon) {
   std::vector<LanePtr> inner, outer;
   if (!horizon.empty()) {
     for (auto &h : horizon) {
