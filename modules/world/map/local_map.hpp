@@ -58,6 +58,8 @@ class LocalMap {
                 LaneId goal_lane_id,
                 double horizon = numeric_double_limits::max());
 
+  DrivingCorridor get_horizon(const Point2d& p, double horizon);
+
   Line get_inner_line() const { return current_driving_corridor_.inner; }
   Line get_outer_line() const { return current_driving_corridor_.outer; }
   Line get_center_line() const { return current_driving_corridor_.center; }

@@ -12,7 +12,7 @@ namespace world {
 namespace map {
 
 using modules::world::opendrive::LanePtr;
-
+using geometry::get_nearest_idx;
 
 void LocalMap::concatenate_lines(const std::vector<LanePtr>& lanes,
                                  Line& line_of_corridor) {
@@ -26,7 +26,6 @@ void LocalMap::concatenate_lines(const std::vector<LanePtr>& lanes,
   }
 }
 
-// TODO(@hart): call this function only when the agent is created or the goal has changed
 bool LocalMap::generate(Point2d point,
                         LaneId goal_lane_id,
                         double horizon) {
@@ -37,6 +36,7 @@ bool LocalMap::generate(Point2d point,
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
     map_interface_->get_lane_boundary_horizon(current_lane->get_id(),
                                               goal_lane_id_);
+
   concatenate_lines(route.first, current_driving_corridor_.inner);
   concatenate_lines(route.second, current_driving_corridor_.outer);
 
@@ -46,6 +46,21 @@ bool LocalMap::generate(Point2d point,
                                       current_driving_corridor_.outer);
   }
   current_driving_corridor_.computed = true;
+}
+
+DrivingCorridor LocalMap::line_horizon(const Line& line,
+                                       const Point2d& p,
+                                       double horizon) {
+  Line new_line;
+  int nearest_idx = get_nearest_idx(line, p);
+  double horizon_length = 0.0;
+  int idx = nearest_idx;
+  for (double s = 0.0; s <= horizon_length;) {
+    new_line.add_point(line[idx]);
+    idx++;
+    // TODO(@hart): s inc
+  }
+  return new_line;
 }
 
 }  // namespace map
