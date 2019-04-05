@@ -78,8 +78,10 @@ Line LocalMap::line_horizon(const Line& line,
   int max_idx = line.obj_.size();
   double s = 0.0;
   for (int idx = nearest_idx; nearest_idx < max_idx - 1; idx++) {
-    double d = distance(line.obj_.at(idx), line.obj_.at(idx+1));
-    new_line.add_point(line.obj_.at(idx+1));
+    int idx_ = idx % max_idx;  // in case of circle
+    int idx_next = (idx+1) % max_idx;  // in case of circle
+    double d = distance(line.obj_.at(idx_), line.obj_.at(idx_next));
+    new_line.add_point(line.obj_.at(idx_next));
     s += d;
     if ( s > horizon )
       return new_line;
@@ -88,7 +90,6 @@ Line LocalMap::line_horizon(const Line& line,
 }
 
 bool LocalMap::compute_horizon_corridor(const Point2d& p, double horizon) {
-  // TODO(@hart): create horizon lines for the current driving corridor
   horizon_driving_corridor_.inner = line_horizon(driving_corridor_.inner,
                                                  p,
                                                  horizon);

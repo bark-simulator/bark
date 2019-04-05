@@ -77,7 +77,7 @@ viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 2
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           1]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]

@@ -46,7 +46,7 @@ void World::UpdateHorizonDrivingCorridors() {
   for (auto agent : agents_) {
     // TODO(@hart): parameter
     // TODO(@hart): check if update is required
-    agent.second->UpdateDrivingCorridor(20.0);
+    agent.second->UpdateDrivingCorridor(40.0);
   }
 }
 
