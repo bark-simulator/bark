@@ -150,7 +150,7 @@ class Roadgraph {
     // handle special case: one lane next to the planview, move to the next outer lane
     if(neighbor.second) { //neighboring lane exists
       LanePtr lp = get_laneptr(neighbor.first);
-      if(lp->get_lane_position() == 0) { //lane pos 0 is the planview: neighbor is the planview
+      if(lp->get_lane_position() == 99999) { //lane pos 0 is the planview: neighbor is the planview //TODO 999 is a quickfix
         std::vector<std::pair<LaneId, bool> > next_neighbors = 
           get_neighbor_from_edgetype(neighbor.first, OUTER_NEIGHBOR_EDGE);
         for(auto nn : next_neighbors) { //find the non-queried lane id
