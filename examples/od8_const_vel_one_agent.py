@@ -20,7 +20,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
+#from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
