@@ -51,7 +51,7 @@ void World::UpdateHorizonDrivingCorridors() {
 }
 
 void World::Step(float delta_time) {
-  UpdateHorizonDrivingCorridors();
+  //UpdateHorizonDrivingCorridors();
   MoveAgents(delta_time);
   // TODO(@fortiss): add post world collision check
 }

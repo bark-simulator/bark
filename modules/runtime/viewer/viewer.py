@@ -71,7 +71,7 @@ class BaseViewer(Viewer):
                     self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
 
 
-    def drawAgent(self , agent):
+    def drawAgent(self, agent):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
@@ -94,6 +94,6 @@ class BaseViewer(Viewer):
     def drawRoute(self, agent):
         # TODO(@hart): visualize the global as well as the local driving corridor
         self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
-        self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), self.route_color)
+        # self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), self.route_color)
 
 
