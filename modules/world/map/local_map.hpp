@@ -71,6 +71,8 @@ class LocalMap {
                 LaneId goal_lane_id,
                 double horizon = numeric_double_limits::max());
 
+  DrivingCorridor compute_driving_corridor_from_laneids(std::vector<LaneId> lane_ids); //! TODO could be made static
+
   Line line_horizon(const Line& line,
                     const Point2d& p,
                     double horizon);
