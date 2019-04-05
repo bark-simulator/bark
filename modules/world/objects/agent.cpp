@@ -41,8 +41,11 @@ goal_lane_id_(goal_lane_id) {
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push(pair);
-  if (local_map_->has_generated_driving_corridor())
-    UpdateLocalRoute();
+  if (map_interface != NULL){
+    GenerateLocalMap();
+    // TODO(@hart): parameter
+    UpdateDrivingCorridor(20.0);
+  }
 }
 
 Agent::Agent(const Agent& other_agent) :
@@ -59,13 +62,11 @@ void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
   //! plan behavior for given horizon T using step-size dt
   behavior_model_->Plan(dt, observed_world);
 
-  //! make dynamically feasible/validate
   // TODO(@hart): observed world has ego-agent, thus: history_ is known
   execution_model_->Execute(observed_world.get_world_time(),
                             behavior_model_->get_last_trajectory(),
                             dynamic_model_,
                             history_.back().first);
-
 
   //! find closest state in execution-trajectory
   int index_new_world_time = 0;
@@ -92,12 +93,22 @@ void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
   }
 }
 
-void Agent::UpdateLocalRoute() {
+void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->generate(agent_xy, goal_lane_id_)) {
-    std::cout << "Routing generation for agent "
+    std::cout << "LocalMap generation for agent "
+              << get_agent_id() << " failed." << std::endl;
+  }
+}
+
+void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
+  State agent_state = get_current_state();
+  Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
+                   agent_state(StateDefinition::Y_POSITION));
+  if (!local_map_->compute_horizon_corridor(agent_xy, horizon)) {
+    std::cout << "Horizon DrivingCorridor generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
 }
