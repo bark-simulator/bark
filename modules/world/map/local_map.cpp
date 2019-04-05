@@ -13,6 +13,7 @@ namespace map {
 
 using modules::world::opendrive::LanePtr;
 using geometry::get_nearest_idx;
+using geometry::distance;
 
 void LocalMap::concatenate_lines(const std::vector<LanePtr>& lanes,
                                  Line& line_of_corridor) {
@@ -37,32 +38,38 @@ bool LocalMap::generate(Point2d point,
     map_interface_->get_lane_boundary_horizon(current_lane->get_id(),
                                               goal_lane_id_);
 
-  concatenate_lines(route.first, current_driving_corridor_.inner);
-  concatenate_lines(route.second, current_driving_corridor_.outer);
+  concatenate_lines(route.first, driving_corridor_.inner);
+  concatenate_lines(route.second, driving_corridor_.outer);
 
   if (route.first[0] != NULL && route.second[0] != NULL) {
-    current_driving_corridor_.center =
-      geometry::calculate_center_line(current_driving_corridor_.inner,
-                                      current_driving_corridor_.outer);
+    driving_corridor_.center =
+      geometry::calculate_center_line(driving_corridor_.inner,
+                                      driving_corridor_.outer);
   }
-  current_driving_corridor_.computed = true;
+  driving_corridor_.computed = true;
 }
 
-DrivingCorridor LocalMap::line_horizon(const Line& line,
-                                       const Point2d& p,
-                                       double horizon) {
+Line LocalMap::line_horizon(const Line& line,
+                            const Point2d& p,
+                            double horizon) {
+  // TODO(@hart): do not access via member obj_
   Line new_line;
   int nearest_idx = get_nearest_idx(line, p);
-  int max_idx = line.size()
+  int max_idx = line.obj_.size();
   double s = 0.0;
   for (int idx = nearest_idx; nearest_idx < max_idx - 1; idx++) {
-    double d = distance(line[idx], line[idx+1]);
-    new_line.add_point(line[idx+1]);
+    double d = distance(line.obj_.at(idx), line.obj_.at(idx+1));
+    new_line.add_point(line.obj_.at(idx+1));
     s += d;
     if ( s > horizon )
       return new_line;
   }
   return new_line;
+}
+
+DrivingCorridor LocalMap::compute_horizon(const Point2d& p, double horizon) {
+  // TODO(@hart): create horizon lines for the current driving corridor
+  return horizon_driving_corridor_;
 }
 
 }  // namespace map

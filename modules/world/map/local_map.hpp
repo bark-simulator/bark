@@ -38,12 +38,14 @@ class LocalMap {
  public:
   explicit LocalMap(LaneId goal_lane_id,
                           const MapInterfacePtr& map_interface) :
-    current_driving_corridor_(DrivingCorridor()),
+    driving_corridor_(DrivingCorridor()),
+    horizon_driving_corridor_(DrivingCorridor()),
     map_interface_(map_interface),
     goal_lane_id_(goal_lane_id) {}
 
   LocalMap(const LocalMap& lm) :
-    current_driving_corridor_(lm.current_driving_corridor_),
+    driving_corridor_(lm.driving_corridor_),
+    horizon_driving_corridor_(lm.horizon_driving_corridor_),
     map_interface_(lm.map_interface_),
     goal_lane_id_(lm.goal_lane_id_) {}
 
@@ -58,18 +60,23 @@ class LocalMap {
                 LaneId goal_lane_id,
                 double horizon = numeric_double_limits::max());
 
-  DrivingCorridor get_horizon(const Point2d& p, double horizon);
+  Line line_horizon(const Line& line,
+                    const Point2d& p,
+                    double horizon);
 
-  Line get_inner_line() const { return current_driving_corridor_.inner; }
-  Line get_outer_line() const { return current_driving_corridor_.outer; }
-  Line get_center_line() const { return current_driving_corridor_.center; }
-  
+  DrivingCorridor compute_horizon(const Point2d& p, double horizon);
+
+  Line get_inner_line() const { return driving_corridor_.inner; }
+  Line get_outer_line() const { return driving_corridor_.outer; }
+  Line get_center_line() const { return driving_corridor_.center; }
+
   bool has_generated_driving_corridor() {
-    return current_driving_corridor_.computed;
+    return driving_corridor_.computed;
   }
 
  private:
-  DrivingCorridor current_driving_corridor_;
+  DrivingCorridor driving_corridor_;
+  DrivingCorridor horizon_driving_corridor_;
   MapInterfacePtr map_interface_;
   LaneId goal_lane_id_;
 };
