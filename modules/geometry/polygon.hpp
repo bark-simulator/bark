@@ -34,6 +34,8 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 
   virtual Shape<bg::model::polygon<T>, T> *Clone() const;
 
+  void UpdateDistancesToCenter();
+
   float rear_dist_;
   float front_dist_;
   float left_dist_;
@@ -41,19 +43,24 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 };
 
 template<typename T>
-inline Polygon_t(const Pose &center, std::vector<T> points) :
+inline Polygon_t<T>::Polygon_t(const Pose &center, std::vector<T> points) :
            Shape<bg::model::polygon<T>, T>(center, points, 0),
            rear_dist_(0.0f),
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
     
-    boost::geometry::model::box<T> box;
-    boost::geometry::envelope(obj_, box);
+    UpdateDistancesToCenter();
+}
+
+template<typename T>
+void Polygon_t<T>::UpdateDistancesToCenter() {
+   boost::geometry::model::box<T> box;
+    boost::geometry::envelope(Shape<bg::model::polygon<T>, T>::obj_, box);
 
     boost::geometry::correct(box);
-    x_center = center[0];
-    y_center = center[1];
+    auto center_x = Shape<bg::model::polygon<T>, T>::center_[0];
+    auto center_y = Shape<bg::model::polygon<T>, T>::center_[1];
 
     rear_dist_ = abs(bg::get<bg::min_corner, 0>(box) - center_x);
     front_dist_ = abs(bg::get<bg::max_corner, 0>(box) - center_x);
