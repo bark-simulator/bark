@@ -26,7 +26,7 @@ class Scenario:
         """get initial world state of scenario to start simulation from here
         
         Returns:
-            [barl.world.World] 
+            [bark.world.World]
         """
         return self.world_state
 
