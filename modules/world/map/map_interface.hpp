@@ -35,13 +35,13 @@ class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
 
-  bool get_nearest_lanes(const modules::geometry::Point2d& point,
+  bool FindNearestLanes(const modules::geometry::Point2d& point,
                          const unsigned& num_lanes,
                          std::vector<opendrive::LanePtr>& lanes);
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid);
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundaries_from_path(const std::vector<LaneId>& horizon);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundaries(const std::vector<LaneId>& horizon);
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
     open_drive_map_ = map;

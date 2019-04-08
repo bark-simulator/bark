@@ -99,11 +99,11 @@ Therefore, it utilizes an `R-Tree` in order to find the nearest map objects, suc
 class MapInterface {
 	public:
 		bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
-		bool get_nearest_lanes(const modules::geometry::Point2d& point,
+		bool FindNearestLanes(const modules::geometry::Point2d& point,
                                        const unsigned& num_lanes,
                                        std::vector<opendrive::LanePtr>& lanes);
 		std::pair< std::vector<LanePtr>, std::vector<LanePtr> >  
-			get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid);
+			ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid);
 		
 	private:
 	       OpenDriveMapPtr open_drive_map_;
@@ -113,14 +113,14 @@ class MapInterface {
 ```
 
 ```eval_rst
-  .. cpp:function:: std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid)
+  .. cpp:function:: std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid)
   
   Generates a route using boost-graph (the LaneGraph) and returns the left-, right-boundary as well as the centerline.
 ```
 
 
 ```eval_rst
-  .. cpp:function:: bool get_nearest_lanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::LanePtr>& lanes)
+  .. cpp:function:: bool FindNearestLanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::LanePtr>& lanes)
   
   A function that returns the nearest lanes for a given point.
 ```
