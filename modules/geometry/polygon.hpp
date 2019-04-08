@@ -25,7 +25,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
                 front_dist_(0.0f),
                 left_dist_(0.0f),
                 right_dist_(0.0f) {}
-  Polygon_t(const Pose &center, std::vector<T> points);
+  Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(
       const Pose &center,
       const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points) : Shape<bg::model::polygon<T>, T>(center, points, 0) {}
@@ -43,7 +43,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 };
 
 template<typename T>
-inline Polygon_t<T>::Polygon_t(const Pose &center, std::vector<T> points) :
+inline Polygon_t<T>::Polygon_t(const Pose &center, const std::vector<T> points) :
            Shape<bg::model::polygon<T>, T>(center, points, 0),
            rear_dist_(0.0f),
            front_dist_(0.0f),
