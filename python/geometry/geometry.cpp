@@ -101,7 +101,11 @@ void python_geometry(py::module m) {
       .def("rotate", &modules::geometry::Polygon::rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Polygon::translate, "translates center point.")
       .def("transform", &modules::geometry::Polygon::transform, "translates and rotates object.")
-      .def_readwrite("center", &modules::geometry::Polygon::center_, "center point.");
+      .def_readonly("center", &modules::geometry::Polygon::center_, "center point.")
+      .def_readonly("right_dist", &modules::geometry::Polygon::right_dist_, "center point.")
+      .def_readonly("left_dist", &modules::geometry::Polygon::left_dist_, "center point.")
+      .def_readonly("front_dist", &modules::geometry::Polygon::front_dist_, "center point.")
+      .def_readonly("rear_dist", &modules::geometry::Polygon::rear_dist_, "center point.");
 
   python_standard_shapes(m.def_submodule("standard_shapes", "Define several standard car, pedestrians,... shapes"));
 
