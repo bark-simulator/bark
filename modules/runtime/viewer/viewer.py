@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -52,25 +52,26 @@ class BaseViewer(Viewer):
         pass
 
     def drawAgents(self, world):
-        for id, agent in world.agents.items():
-            self.drawAgent(agent)
-            
-    def drawWorld(self, world):
-        # draw agents
-        for id, agent in world.agents.items():
+        for _, agent in world.agents.items():
             self.drawAgent(agent)
 
+    def drawWorld(self, world):
         self.drawMap(world.map.get_open_drive_map())
+
+        # draw agents
+        for _, agent in world.agents.items():
+            self.drawAgent(agent)
+
 
     def drawMap(self, map):
         # draw the boundary of each lane
-        for i, road in map.get_roads().items():
+        for _, road in map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
                     self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
 
 
-    def drawAgent(self , agent):
+    def drawAgent(self, agent):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
@@ -81,14 +82,18 @@ class BaseViewer(Viewer):
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
             transformed_polygon = shape.transform(pose)
             self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
-        
+
         if self.draw_route:
             self.drawRoute(agent)
 
+    def drawDrivingCorridor(self, corridor, color):
+        self.drawLine2d(corridor.center, color, 1)
+        self.drawLine2d(corridor.inner, color, 1)
+        self.drawLine2d(corridor.outer, color, 1)
 
     def drawRoute(self, agent):
-        route_center_line = agent.route.center_line
-        self.drawLine2d(route_center_line,self.route_color, 0)
-
+        # TODO(@hart): visualize the global as well as the local driving corridor
+        self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
+        self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
 
 

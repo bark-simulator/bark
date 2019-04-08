@@ -7,7 +7,7 @@
 #include <string>
 #include "map.hpp"
 #include "modules/world/map/map_interface.hpp"
-#include "modules/world/map/route_generator.hpp"
+#include "modules/world/map/local_map.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
 
@@ -20,11 +20,11 @@ void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
       .def("set_open_drive_map", &MapInterface::set_open_drive_map)
-      .def("get_nearest_lanes", [](const MapInterface& m,
+      .def("find_nearest_lanes", [](const MapInterface& m,
                                     const Point2d& point,
                                     const unsigned& num_lanes) {
           std::vector<LanePtr> lanes;
-          m.get_nearest_lanes(point, num_lanes, lanes);
+          m.FindNearestLanes(point, num_lanes, lanes);
           return lanes;
       }) 
       .def("set_roadgraph", &MapInterface::set_roadgraph)
@@ -36,14 +36,24 @@ void python_map(py::module m) {
           return std::make_tuple(inner_line, outer_line, center_line);
       });
 
-  py::class_<RouteGenerator, std::shared_ptr<RouteGenerator>>(m, "RouteGenerator")
+  py::class_<DrivingCorridor,
+             std::shared_ptr<DrivingCorridor>>(m, "DrivingCorridor")
+      .def(py::init<>())
+      .def_property("inner", &DrivingCorridor::get_inner,
+        &DrivingCorridor::set_inner)
+      .def_property("outer", &DrivingCorridor::get_outer,
+        &DrivingCorridor::set_outer)
+      .def_property("center", &DrivingCorridor::get_center,
+        &DrivingCorridor::set_center);
+
+  py::class_<LocalMap, std::shared_ptr<LocalMap>>(m, "LocalMap")
       .def(py::init<LaneId, const MapInterfacePtr&>())
-      .def_property_readonly("inner_line", &RouteGenerator::get_inner_line)
-      .def_property_readonly("outer_line", &RouteGenerator::get_outer_line)
-      .def_property_readonly("center_line", &RouteGenerator::get_center_line)
-      .def("set_goal_lane_id", &RouteGenerator::set_goal_lane_id)
-      .def("set_map_interface", &RouteGenerator::set_map_interface)
-      .def("generate", &RouteGenerator::generate);
+      .def("set_goal_lane_id", &LocalMap::set_goal_lane_id)
+      .def("get_horizon_driving_corridor",
+        &LocalMap::get_horizon_driving_corridor)
+      .def("get_driving_corridor", &LocalMap::get_driving_corridor)
+      .def("set_map_interface", &LocalMap::set_map_interface)
+      .def("generate", &LocalMap::Generate);
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())

@@ -1,5 +1,5 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -13,7 +13,7 @@ from modules.runtime.viewer.viewer import BaseViewer
 
 class PygameViewer(BaseViewer):
     def __init__(self, params=None, **kwargs):
-        super(PygameViewer, self).__init__(params=params)  
+        super(PygameViewer, self).__init__(params=params)
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
@@ -37,10 +37,10 @@ class PygameViewer(BaseViewer):
 
     def _update_world_view_range(self, world):
         if self.follow_agent_id is None:
-            return 
+            return
         follow_agent = world.agents[self.follow_agent_id]
         state = follow_agent.followed_trajectory[-1,:]
-        pose = np.zeros(3)  
+        pose = np.zeros(3)
         pose[0] = state[int(StateDefinition.X_POSITION)]
         pose[1] = state[int(StateDefinition.Y_POSITION)]
         pose[2] = state[int(StateDefinition.THETA_POSITION)]
@@ -63,7 +63,6 @@ class PygameViewer(BaseViewer):
             return
         line2d_np = line2d.toArray()
         line_transformed_np = np.apply_along_axis(self.pointToPG, axis=1, arr=line2d_np)
-        lines_separated = []
         for line_slice in np.ma.clump_unmasked(np.ma.masked_invalid(line_transformed_np)):
             line_np = line_transformed_np[line_slice]
             if len(line_np.tolist()) < 2:
@@ -132,13 +131,13 @@ class PygameViewer(BaseViewer):
         delta_screen = screen_range[1] - screen_range[0]
 
         return round(
-            ( world_coordinate - world_coordinate_range[0] ) / delta_world * delta_screen + screen_range[0] 
+            ( world_coordinate - world_coordinate_range[0] ) / delta_world * delta_screen + screen_range[0]
         )
 
 
     def x_worldToPyGameCoordinate(self, x_world):
         return self._map_world_coordinate_to_screen_coordinate(x_world, self.dynamic_world_x_range,(0,self.screen_width))
-        
+
     def y_worldToPyGameCoordinate(self, y_world):
         return self.screen_height - self._map_world_coordinate_to_screen_coordinate(y_world, self.dynamic_world_y_range,(0,self.screen_height))
 
@@ -146,7 +145,7 @@ class PygameViewer(BaseViewer):
         if isinstance(point, Point2d):
             x = self.x_worldToPyGameCoordinate(point.x())
             y = self.y_worldToPyGameCoordinate(point.y())
-                   
+
         elif isinstance(point, np.ndarray):
             x = self.x_worldToPyGameCoordinate(point[0])
             y = self.y_worldToPyGameCoordinate(point[1])
