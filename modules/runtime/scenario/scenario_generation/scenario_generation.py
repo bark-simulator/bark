@@ -1,15 +1,4 @@
-
-
-
-
-
-
-
-
-
-
-
-
+from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
     def __init__(self, params, num_scenarios, random_seed=None):
@@ -17,7 +6,24 @@ class ScenarioGeneration:
         self.num_scenarios = num_scenarios
         self.random_seed = random_seed
         self.current_scenario_idx = 0
+
+        if params is None:
+            self.params = ParameterServer()
+        else:
+            self.params = params
+        self.initialize_params(params=self.params)
+
         self.scenario_list = self.create_scenarios(params, num_scenarios, random_seed)
+
+    def initialize_params(self, params):
+        """Initialize params or default params necessary for scenario creation
+        
+        Arguments:
+            params {[modules.runtime.commons.parameters.ParameterServer]} --
+                 [a parameter server instance to init params from]
+
+        """
+        raise NotImplementedError("Implement this function in a subclass")
 
     def get_next_scenario(self):
         if self.current_scenario_idx >= self.num_scenarios:
