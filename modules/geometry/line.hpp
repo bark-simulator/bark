@@ -46,7 +46,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     recompute_s();
   }
   
-  void concatenate_linestring(const Line_t &other_line) {
+  void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
     // Get first and last point
     auto last_point_this = Shape<bg::model::linestring<T>, T>::obj_[Shape<bg::model::linestring<T>, T>::obj_.size() - 1];
@@ -295,7 +295,7 @@ inline Point2d get_nearest_point(Line l, const Point2d &p) {
 inline float get_nearest_s(Line l, const Point2d &p) {
   return boost::get<1>(get_nearest_point_and_s(l, p));
 }
-inline uint get_nearest_idx(Line l, const Point2d &p) {
+inline uint FindNearestIdx(Line l, const Point2d &p) {
   return boost::get<2>(get_nearest_point_and_s(l, p));
 }
 //! Point - Line collision checker using boost::intersection
@@ -329,7 +329,7 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
   return bg::distance(line.obj_, p)*sign;
 }
 
-inline Line calculate_center_line(const Line& outer_line_,
+inline Line ComputeCenterLine(const Line& outer_line_,
                                   const Line& inner_line_) {
   Line center_line_;
   Line line_more_points = outer_line_;

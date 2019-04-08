@@ -19,7 +19,7 @@ void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
       .def("set_open_drive_map", &MapInterface::set_open_drive_map)
-      .def("get_nearest_lanes", &MapInterface::get_nearest_lanes)
+      .def("FindNearestLanes", &MapInterface::FindNearestLanes)
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map);
@@ -41,7 +41,7 @@ void python_map(py::module m) {
         &LocalMap::get_horizon_driving_corridor)
       .def("get_driving_corridor", &LocalMap::get_driving_corridor)
       .def("set_map_interface", &LocalMap::set_map_interface)
-      .def("generate", &LocalMap::generate);
+      .def("generate", &LocalMap::Generate);
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())

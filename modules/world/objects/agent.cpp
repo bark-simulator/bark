@@ -41,7 +41,7 @@ goal_lane_id_(goal_lane_id) {
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push(pair);
-  if (map_interface != NULL){
+  if (map_interface != NULL) {
     GenerateLocalMap();
     // TODO(@hart): parameter
     UpdateDrivingCorridor(20.0);
@@ -97,7 +97,7 @@ void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->generate(agent_xy, goal_lane_id_)) {
+  if (!local_map_->Generate(agent_xy, goal_lane_id_)) {
     std::cout << "LocalMap generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
@@ -107,7 +107,7 @@ void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->compute_horizon_corridor(agent_xy, horizon)) {
+  if (!local_map_->ComputeHorizonCorridor(agent_xy, horizon)) {
     std::cout << "Horizon DrivingCorridor generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
