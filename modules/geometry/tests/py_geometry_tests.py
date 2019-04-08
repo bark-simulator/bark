@@ -10,6 +10,7 @@ if os.environ.get('DISPLAY', '') == '':
     print('no display found. Using non-interactive Agg backend')
     mpl.use('Agg')
 from bark.geometry import *
+from bark.geometry.standard_shapes import *
 import math
 import numpy as np
 
@@ -129,6 +130,16 @@ class GeometryTests(unittest.TestCase):
         arr = np.array([[0, 0], [0, 2], [4, 2], [4, 0], [0, 0]])
         poly = Polygon2d([1, 3, 1], arr)
         self.assertTrue(poly.valid())
+
+    def test_distances_to_center(self):
+
+        shape = CarLimousine()
+
+        self.assertAlmostEqual(shape.front_dist, 3.849999, places=4)
+        self.assertAlmostEqual(shape.rear_dist, 1.118999, places=4)
+        self.assertAlmostEqual(shape.left_dist, 0.955999, places=4)
+        self.assertAlmostEqual(shape.right_dist, 0.955999, places=4)
+
 
 
 if __name__ == '__main__':
