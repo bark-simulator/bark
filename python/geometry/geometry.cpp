@@ -49,30 +49,34 @@ void python_geometry(py::module m) {
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::distance),
         "Returns euclidean distance between polygon and point2d.");
 
-  m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line."),
+  m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
 
-      py::class_<modules::geometry::Line>(m, "Line2d")
-          .def(py::init<>(), "Create empty line")
-          .def("addPoint", &modules::geometry::Line::add_point, "add a point")
-          .def("addPoint", [](modules::geometry::Line &line, py::list list) {
-            if (list.size() != 2) {
-              printf("Error: List size of two required.");
-              return;
-            }
-            line.add_point(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
-          })
-          .def("__repr__", [](const modules::geometry::Line &l) {
-            std::stringstream ss;
-            ss << "<bark.Line2d> Points: ";
-            ss << l.ShapeToString();
-            return ss.str();
-          })
-          .def("toArray", &modules::geometry::Line::toArray, "returns numpy array.")
-          .def("valid", &modules::geometry::Line::Valid, "checks if line is valid.")
-          .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
-          .def("translate", &modules::geometry::Line::translate, "translates object.")
-          .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
-          .def_readwrite("center", &modules::geometry::Line::center_, "center point.");
+  m.def("get_point_at_s", &modules::geometry::get_point_at_s, "get the Point2d at position s of the line");
+
+  m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s, "get the angle at position s of the line");
+  
+  py::class_<modules::geometry::Line>(m, "Line2d")
+      .def(py::init<>(), "Create empty line")
+      .def("addPoint", &modules::geometry::Line::add_point, "add a point")
+      .def("addPoint", [](modules::geometry::Line &line, py::list list) {
+        if (list.size() != 2) {
+          printf("Error: List size of two required.");
+          return;
+        }
+        line.add_point(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
+      })
+      .def("__repr__", [](const modules::geometry::Line &l) {
+        std::stringstream ss;
+        ss << "<bark.Line2d> Points: ";
+        ss << l.ShapeToString();
+        return ss.str();
+      })
+      .def("toArray", &modules::geometry::Line::toArray, "returns numpy array.")
+      .def("valid", &modules::geometry::Line::Valid, "checks if line is valid.")
+      .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
+      .def("translate", &modules::geometry::Line::translate, "translates object.")
+      .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
+      .def_readwrite("center", &modules::geometry::Line::center_, "center point.");
 
   py::class_<modules::geometry::Polygon>(m, "Polygon2d")
       .def(py::init<>(), "Create empty polygon")
