@@ -29,9 +29,15 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         self.map_file_name = params_temp["MapFilename", "Path to the open drive map", 
                      "modules/runtime/tests/data/Crossing8Course.xodr"]
-        self.scenario_region = params_temp["ScenarioRegion", "A region within the scenario \
-                        takes place outside of this region no vehicles are spawned. \
-                         Provide a upper left and lower right bbox corners ", [[-100,100],[100,-100]] ]
+        self.ego_source = params_temp["EgoSource", "A point around which the ego agent spawns. A lane must be near this point (<0.5m) \
+                         Provide x,y coordinates as list", [-11,-8] ]
+        self.others_source = params_temp["OthersSource", "A list of points around which other vehicles spawn. \
+                                         Points should be on different lanes. Lanes must be near these points (<0.5m) \
+                                         Provide a list of lists with x,y-coordinates", [[-12,-9],[5,6]]  ]
+        self.others_sink = params_temp["OthersSink", "A list of points around which other vehicles are deleted. \
+                                        Points should be on different lanes and match the order of the source points. \
+                                        Lanes must be near these points (<0.5m) \
+                                        Provide a list of lists with x,y-coordinates", [[-12,-9],[5,6]]  ]               
 
         self.vehicle_min_distance = params_temp["VehicleMinDistance", "Minimum distance between vehicles", 2]
         self.vehicle_max_distance = params_temp["VehicleMinDistance", "Maximum distance between vehicles", 5]
@@ -63,8 +69,14 @@ class UniformVehicleDistribution(ScenarioGeneration):
         description["ScenarioGenerator"] = "UniformVehicleDistribution"
         description["GenerationParams"] = params.convert_to_dict()
         scenario = Scenario(world_state=world, description={"ScenarioGenerator": "UniformVehicleDistribution"})
+        return scenario
 
 
+    def center_line_between_source_and_sink(source, sink):
+        lane_source = map_interface.get_nearest_lanes(Point2d(source[0],source[1]),1)[0]
+        lane_sink = map_interface.get_nearest_lanes(Point2d(sink[0],sink[1]),1)[0]
+        left_line, right_line, center_line = map_interface.get_driving_corridor(lane_source.lane_id, lane_sink.lane_id)
+        return center_line
 
     def setup_map(self, world, map_file_name):
         xodr_parser = XodrParser(map_file_name )
