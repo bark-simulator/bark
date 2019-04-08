@@ -145,7 +145,7 @@ LanePtr PlanView::create_lane(LanePosition lane_position, LaneWidths lane_widths
     ret_lane->set_line(tmp_line);
   }
 
-  // ret_lane->calculate_center_line();
+  // ret_lane->ComputeCenterLine();
   return ret_lane;
 }
 

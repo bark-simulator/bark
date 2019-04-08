@@ -9,7 +9,7 @@
 
 #include "modules/commons/base_type.hpp"
 #include "modules/geometry/polygon.hpp"
-#include "modules/world/map/route_generator.hpp"
+#include "modules/world/map/local_map.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -66,12 +66,12 @@ class Agent : public Object {
 
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
-  const modules::world::map::RouteGeneratorPtr& get_route_generator() const {
-    return route_generator_;
+  const modules::world::map::LocalMapPtr& get_local_map() const {
+    return local_map_;
   }
 
-  void set_route_generator(const modules::world::map::RouteGeneratorPtr& rg) {
-    route_generator_ = rg;
+  void set_local_map(const modules::world::map::LocalMapPtr& rg) {
+    local_map_ = rg;
   }
 
   void set_behavior_model(const BehaviorModelPtr &behavior_model_ptr) {
@@ -80,7 +80,8 @@ class Agent : public Object {
 
   void Move(const float &dt, const ObservedWorld &observed_world);
 
-  void UpdateLocalRoute();
+  void GenerateLocalMap();
+  void UpdateDrivingCorridor(double horizon);
 
   virtual Agent *Clone() const;
 
@@ -90,7 +91,7 @@ class Agent : public Object {
   models::execution::ExecutionModelPtr execution_model_;
 
   // TODO(@fortiss): this should be the local map the planners work with
-  modules::world::map::RouteGeneratorPtr route_generator_;
+  modules::world::map::LocalMapPtr local_map_;
 
   models::dynamic::StateInputHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter

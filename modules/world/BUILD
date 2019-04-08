@@ -5,7 +5,7 @@ cc_library(
     deps = [
         "//modules/world/opendrive:opendrive",
         "//modules/world/map:roadgraph",
-        "//modules/world/map:route_generator",
+        "//modules/world/map:local_map",
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/models/execution:execution",

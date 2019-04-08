@@ -1,17 +1,16 @@
 # Copyright (c) 2019 fortiss GmbH
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
 import unittest
-import os
-#import matplotlib as mpl
-#import matplotlib.pyplot as plt
+# import matplotlib as mpl
+# import matplotlib.pyplot as plt
 from scipy.special import fresnel
 import numpy as np
-#if os.environ.get('DISPLAY','') == '':
-#    print('no display found. Using non-interactive Agg backend')
-#    mpl.use('Agg')
+# if os.environ.get('DISPLAY','') == '':
+#     print('no display found. Using non-interactive Agg backend')
+#     mpl.use('Agg')
 from bark.world import *
 from bark.world.opendrive import *
 from bark.geometry import *
@@ -35,8 +34,9 @@ class EnvironmentTests(unittest.TestCase):
 
         lane = pv.create_lane(-1, [lane_width], 0.5)
         #plt.plot(lane.line.toArray()[:, 0], lane.line.toArray()[:, 1])
-
+        print(lane)
         lane = pv.create_lane(1, [lane_width], 0.5)
+        print(lane)
         #plt.plot(lane.line.toArray()[:, 0], lane.line.toArray()[:, 1])
         #plt.axis('equal')
         #plt.show(block=True)
