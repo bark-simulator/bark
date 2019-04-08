@@ -14,6 +14,7 @@ World::World(commons::Params* params) :
   commons::BaseType(params),
   map_(),
   agents_(),
+  collision_checker_(),
   world_time_(0.0) {}
 
 World::World(const World& world)  :
@@ -21,6 +22,7 @@ World::World(const World& world)  :
          map_(world.get_map()),
          agents_(world.get_agents()),
          objects_(world.get_objects()),
+         collision_checker_(world.get_collision_checker()),
          world_time_(world.get_world_time()) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
@@ -44,11 +46,11 @@ void World::MoveAgents(float delta_time) {
 
 
 bool World::CheckCollision() const {
-
-  return CheckCollisionWithAgents();
+  // TODO: define a list of collision checkers and loop through them
+  return collision_checker_->checkCollision(*this);
 }
 
-bool World::CheckCollisionWithAgents() const {
+/*bool World::CheckCollisionWithAgents() const {
   modules::geometry::Polygon poly_agent1;
   modules::geometry::Polygon poly_agent2;
   bool collision = false;
@@ -76,6 +78,7 @@ bool World::CheckCollisionWithRoad() const {
   // TODO(@esterle): implement collision check
   return false;
 }
+*/
 
 void World::UpdateHorizonDrivingCorridors() {
   for (auto agent : agents_) {

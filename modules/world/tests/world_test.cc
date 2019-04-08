@@ -17,6 +17,7 @@
 #include "modules/commons/params/default_params.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
+#include "modules/world/collision/collision_checker_agents.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::geometry;
@@ -31,6 +32,7 @@ using modules::world::map::Roadgraph;
 using modules::world::opendrive::LaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
+using namespace modules::world::collision;
 
 TEST(world, world_init)
 {
@@ -125,6 +127,7 @@ TEST(world, world_collision)
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel());
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  CollisionCheckerPtr col_checker(new CollisioncheckerAgents(&params));
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
@@ -139,6 +142,8 @@ TEST(world, world_collision)
   WorldPtr world(new World(&params));
   world->add_agent(agent1);
   world->add_agent(agent2);
+
+  world->set_collision_checker(col_checker);
 
   ASSERT_TRUE(world->CheckCollision());
   
