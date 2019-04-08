@@ -33,7 +33,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
   return true;
 }
 
-bool modules::world::map::MapInterface::get_nearest_lanes(
+bool modules::world::map::MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
   std::vector<LanePtr>& lanes) {
@@ -60,12 +60,12 @@ bool modules::world::map::MapInterface::get_nearest_lanes(
   return true;
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid) {
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid) {
   std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
-  return get_lane_boundaries_from_path(horizon);
+  return ComputeLaneBoundaries(horizon);
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundaries_from_path(const std::vector<LaneId>& horizon) {
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundaries(const std::vector<LaneId>& horizon) {
   std::vector<LanePtr> inner, outer;
   if (!horizon.empty()) {
     for (auto &h : horizon) {

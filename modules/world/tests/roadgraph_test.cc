@@ -271,7 +271,7 @@ TEST(roadgraph, get_driving_corridor_test)
 
   // TODO(@fortiss): add new assertions as this has moved to MapInterface
   /*
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > horizon = r.get_lane_boundary_horizon(l10, l11);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > horizon = r.ComputeLaneBoundariesHorizon(l10, l11);
 
   ASSERT_TRUE(horizon.first.size()==2);
   ASSERT_TRUE(horizon.second.size()==2);
