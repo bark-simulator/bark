@@ -9,7 +9,9 @@ cc_library(
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/models/execution:execution",
-		    "//modules/models/dynamic:dynamic",
+	    "//modules/models/dynamic:dynamic",
+        "//modules/world/collision:base_collision_checker",
+            
     ],
     visibility = ["//visibility:public"],
 )
