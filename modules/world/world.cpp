@@ -49,10 +49,9 @@ bool World::CheckCollision() const {
 }
 
 bool World::CheckCollisionWithAgents() const {
-
-  using namespace modules::geometry;
-  Polygon poly_agent1;
-  Polygon poly_agent2;
+  modules::geometry::Polygon poly_agent1;
+  modules::geometry::Polygon poly_agent2;
+  bool collision = false;
 
   for (auto agent_outer : agents_) {
     poly_agent1 = agent_outer.second->GetPolygonFromState(agent_outer.second->get_current_state());
@@ -61,12 +60,16 @@ bool World::CheckCollisionWithAgents() const {
       poly_agent2 = agent_inner.second->GetPolygonFromState(agent_inner.second->get_current_state());
 
       if (agent_inner.first != agent_outer.first) {
-        if (Collide(poly_agent1, poly_agent2))
-          return true;
+        if (Collide(poly_agent1, poly_agent2)) {
+          collision = true;
+          break;
+        }
       }
+      if (collision == true)
+        break;
     }
   }
-  return false;
+  return collision;
 }
 
 bool World::CheckCollisionWithRoad() const {
