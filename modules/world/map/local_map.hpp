@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_MAP_local_map_HPP_
-#define MODULES_WORLD_MAP_local_map_HPP_
+#ifndef MODULES_WORLD_MAP_LOCAL_MAP_HPP_
+#define MODULES_WORLD_MAP_LOCAL_MAP_HPP_
 
 #include <vector>
 #include <string>
@@ -39,9 +39,9 @@ struct DrivingCorridor {
   void set_center(const Line& o) { center = o; }
 
   Line outer, inner, center;
-  std::vector< std::pair<int, LaneId> > lane_ids_; //1st entry is the index from where the 2nd value lane id is valid
+  // 1st entry is the index from where the 2nd value lane id is valid
+  std::vector<std::pair<int, LaneId>> lane_ids_;
   bool computed;
-  // TODO(@fortiss): what IF functions would we like here
 };
 
 class LocalMap {
@@ -59,37 +59,34 @@ class LocalMap {
     map_interface_(lm.map_interface_),
     goal_lane_id_(lm.goal_lane_id_) {}
 
+  //! Setter
   void set_goal_lane_id(LaneId goal_lane_id) { goal_lane_id_ = goal_lane_id_; }
-
   void set_map_interface(MapInterfacePtr map) { map_interface_ = map; }
 
-  void concatenate_lines(const std::vector<LanePtr>& lanes,
-                         Line& line_of_corridor,
-                         std::vector< std::pair<int, LaneId> >& lane_ids);
-
-  bool generate(Point2d point,
-                LaneId goal_lane_id,
-                double horizon = numeric_double_limits::max());
-
-  DrivingCorridor compute_driving_corridor_from_laneids(std::vector<LaneId> lane_ids); //! TODO could be made static
-
-  Line line_horizon(const Line& line,
-                    const Point2d& p,
-                    double horizon);
-
-  bool compute_horizon_corridor(const Point2d& p, double horizon);
-
+  //! Getter
   DrivingCorridor get_driving_corridor() const {
     return driving_corridor_;
   }
-
   DrivingCorridor get_horizon_driving_corridor() const {
     return horizon_driving_corridor_;
   }
-
   bool has_generated_driving_corridor() {
     return driving_corridor_.computed;
   }
+
+  //! Functions
+  void ConcatenateLines(const std::vector<LanePtr>& lanes,
+                        Line& line_of_corridor,
+                        std::vector< std::pair<int, LaneId> >& lane_ids);
+  bool Generate(Point2d point,
+                LaneId goal_lane_id,
+                double horizon = numeric_double_limits::max());
+  DrivingCorridor ComputeDrivingCorridor(std::vector<LaneId> lane_ids);
+  Line CalculateLineHorizon(const Line& line,
+                    const Point2d& p,
+                    double horizon);
+
+  bool ComputeHorizonCorridor(const Point2d& p, double horizon);
 
  private:
   DrivingCorridor driving_corridor_;
@@ -105,4 +102,5 @@ using LocalMapPtr = std::shared_ptr<LocalMap>;
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_MAP_local_map_HPP_
+#endif  // MODULES_WORLD_MAP_LOCAL_MAP_HPP_
+
