@@ -30,9 +30,9 @@ void python_map(py::module m) {
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
-      .def("get_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
+      .def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
           Line inner_line, outer_line, center_line;
-          bool result = m.get_driving_corridor(startid, goalid, inner_line, outer_line, center_line);
+          bool result = m.CalculateDrivingCorridor(startid, goalid, inner_line, outer_line, center_line);
           return std::make_tuple(inner_line, outer_line, center_line);
       });
 
