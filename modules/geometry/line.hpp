@@ -38,13 +38,15 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   auto length() { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
+  int size() { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
+
   void append_linestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
     recompute_s();
   }
   
-  void concatenate_linestring(const Line_t &other_line) {
+  void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
     // Get first and last point
     auto last_point_this = Shape<bg::model::linestring<T>, T>::obj_[Shape<bg::model::linestring<T>, T>::obj_.size() - 1];
@@ -206,12 +208,12 @@ inline Point2d get_normal_at_s(Line l, float s) {
 }
 
 
-inline boost::tuple<Point2d, double> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
+inline boost::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
   // edge cases: empty or one-point line
   if (l.obj_.empty()) {
-    return boost::make_tuple(Point2d(0, 0), 0.0);
+    return boost::make_tuple(Point2d(0, 0), 0.0, 0);
   } else if (l.obj_.size() == 1) {
-    return boost::make_tuple(l.obj_.at(0), 0.0);
+    return boost::make_tuple(l.obj_.at(0), 0.0, 0);
   }
 
   // nominal case:
@@ -285,7 +287,7 @@ inline boost::tuple<Point2d, double> get_nearest_point_and_s(Line l, const Point
   // const double dist_boost = bg::distance(l.obj_, p);
 
   // return
-  return boost::make_tuple(retval, s);
+  return boost::make_tuple(retval, s, min_segment_idx);
 }
 inline Point2d get_nearest_point(Line l, const Point2d &p) {
   return boost::get<0>(get_nearest_point_and_s(l, p));
@@ -293,7 +295,9 @@ inline Point2d get_nearest_point(Line l, const Point2d &p) {
 inline float get_nearest_s(Line l, const Point2d &p) {
   return boost::get<1>(get_nearest_point_and_s(l, p));
 }
-
+inline uint FindNearestIdx(Line l, const Point2d &p) {
+  return boost::get<2>(get_nearest_point_and_s(l, p));
+}
 //! Point - Line collision checker using boost::intersection
 inline bool Collide(const Line &l, const LinePoint &p) {
   std::vector<LinePoint> shape_intersect;
@@ -344,6 +348,24 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
   double sign = (diff > 0) ? 1 : ((diff < 0) ? -1 : 0);
 
   return bg::distance(line.obj_, p)*sign;
+}
+
+inline Line ComputeCenterLine(const Line& outer_line_,
+                                  const Line& inner_line_) {
+  Line center_line_;
+  Line line_more_points = outer_line_;
+  Line line_less_points = inner_line_;
+  if ( inner_line_.obj_.size() > outer_line_.obj_.size() ) {
+    line_more_points = inner_line_;
+    line_less_points = outer_line_;
+  }
+  for ( Point2d& point_loop : line_more_points.obj_ ) {
+    Point2d nearest_point_other = geometry::get_nearest_point(line_less_points,
+                                                              point_loop);
+    geometry::Point2d middle_point = (point_loop + nearest_point_other) / 2;
+    center_line_.add_point(middle_point);
+  }
+  return center_line_;
 }
 
 }  // namespace geometry

@@ -33,7 +33,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
   return true;
 }
 
-bool modules::world::map::MapInterface::get_nearest_lanes(
+bool modules::world::map::MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
   std::vector<LanePtr>& lanes) const {
@@ -60,16 +60,20 @@ bool modules::world::map::MapInterface::get_nearest_lanes(
   return true;
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid) const {
-  std::vector<LanePtr> inner, outer;
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid) {
   std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
+  return ComputeLaneBoundaries(horizon);
+}
+
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundaries(const std::vector<LaneId>& horizon) {
+  std::vector<LanePtr> inner, outer;
   if (!horizon.empty()) {
     for (auto &h : horizon) {
       std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
       outer.push_back(roadgraph_->get_lane_graph()[v.first].lane);
       
-      LaneId innerid = roadgraph_->get_inner_neighbor(h);
-      std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid);
+      std::pair<LaneId, bool> innerid = roadgraph_->get_inner_neighbor(h);
+      std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid.first);
       if (v_inner.second) {
         inner.push_back(roadgraph_->get_lane_graph()[v_inner.first].lane);
       } else {
@@ -80,7 +84,7 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
   return std::make_pair(inner, outer);
 }
 
-bool modules::world::map::MapInterface::get_driving_corridor(const LaneId& startid, const LaneId& goalid,
+bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
                                                              Line& inner_line, Line& outer_line, Line& center_line)  const{
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
       get_lane_boundary_horizon(startid, goalid);

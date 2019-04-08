@@ -41,7 +41,7 @@ void python_agent(py::module m)
       .def("__repr__", [](const Agent &a) {
         return "bark.agent.Agent";
       })
-      .def_property("route", &Agent::get_route_generator, &Agent::set_route_generator)
+      .def_property("local_map", &Agent::get_local_map, &Agent::set_local_map)
       .def_property_readonly("history", &Agent::get_state_input_history)
       .def_property_readonly("shape", &Agent::get_shape)
       .def_property_readonly("id", &Agent::get_agent_id)

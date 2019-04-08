@@ -41,8 +41,8 @@ class ObservedWorld : protected World {
       ego_agent_id_(ego_agent_id) {}
     ~ObservedWorld() {}
     double get_world_time() const { return World::get_world_time(); }
-    const RouteGenerator& get_local_map() const {
-      return *World::get_agent(ego_agent_id_)->get_route_generator();
+    const LocalMap& get_local_map() const {
+      return *World::get_agent(ego_agent_id_)->get_local_map();
     }
     AgentPtr get_ego_agent() const {
       return World::get_agent(ego_agent_id_);
@@ -99,11 +99,11 @@ Therefore, it utilizes an `R-Tree` in order to find the nearest map objects, suc
 class MapInterface {
 	public:
 		bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
-		bool get_nearest_lanes(const modules::geometry::Point2d& point,
+		bool FindNearestLanes(const modules::geometry::Point2d& point,
                                        const unsigned& num_lanes,
                                        std::vector<opendrive::LanePtr>& lanes);
 		std::pair< std::vector<LanePtr>, std::vector<LanePtr> >  
-			get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid);
+			ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid);
 		
 	private:
 	       OpenDriveMapPtr open_drive_map_;
@@ -113,23 +113,23 @@ class MapInterface {
 ```
 
 ```eval_rst
-  .. cpp:function:: std::pair< std::vector<LanePtr>, std::vector<LanePtr> > get_lane_boundary_horizon(const LaneId& startid, const LaneId& goalid)
+  .. cpp:function:: std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid)
   
   Generates a route using boost-graph (the LaneGraph) and returns the left-, right-boundary as well as the centerline.
 ```
 
 
 ```eval_rst
-  .. cpp:function:: bool get_nearest_lanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::LanePtr>& lanes)
+  .. cpp:function:: bool FindNearestLanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::LanePtr>& lanes)
   
   A function that returns the nearest lanes for a given point.
 ```
 
 
-Based on the Roadgraph-interface, the RouteGenerator searches a valid route for an agent given its `goal_lane_id`. It then and concatenates the lane geometry to 2D lines which can easily be used in the behavior generation models.
+Based on the Roadgraph-interface, the LocalMap searches a valid route for an agent given its `goal_lane_id`. It then and concatenates the lane geometry to 2D lines which can easily be used in the behavior generation models.
 
 ```cpp
-class RouteGenerator {
+class LocalMap {
 	public:
 		bool generate(Point2d point,
 			      LaneId goal_lane_id,
