@@ -103,11 +103,11 @@ TEST(query_lanes, map_interface) {
   MapInterface map_interface;
   map_interface.interface_from_opendrive(map);
   std::vector<LanePtr> nearest_lanes;
-  bool success = map_interface.get_nearest_lanes(Point2d(0, 0), 2, nearest_lanes);
+  bool success = map_interface.FindNearestLanes(Point2d(0, 0), 2, nearest_lanes);
   EXPECT_TRUE(success);
   EXPECT_EQ(nearest_lanes.size(), (uint) 2);
 
-  success = map_interface.get_nearest_lanes(Point2d(0, 0), 3, nearest_lanes);
+  success = map_interface.FindNearestLanes(Point2d(0, 0), 3, nearest_lanes);
   EXPECT_TRUE(success);
   EXPECT_EQ(nearest_lanes.size(), (uint) 3);
 }

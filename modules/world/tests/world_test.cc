@@ -11,7 +11,7 @@
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/map/route_generator.hpp"
+#include "modules/world/map/local_map.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/commons/params/default_params.hpp"
@@ -26,9 +26,8 @@ using namespace modules::models::execution;
 using namespace modules::world::opendrive;
 using modules::world::map::MapInterface;
 using modules::world::map::MapInterfacePtr;
-using modules::world::map::Roadgraph;
 using modules::world::map::RoadgraphPtr;
-using modules::world::map::RouteGenerator;
+using modules::world::map::Roadgraph;
 using modules::world::opendrive::LaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
