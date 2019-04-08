@@ -49,6 +49,8 @@ class World : public commons::BaseType {
   }
 
   bool CheckCollision() const;
+  bool CheckCollisionWithRoad() const;
+  bool CheckCollisionWithAgents() const;
 
   bool Valid() const;
   void Step(float delta_time);

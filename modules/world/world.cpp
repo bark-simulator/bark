@@ -48,18 +48,36 @@ void World::MoveAgents(float delta_time) {
   world_time_ += delta_time;
 }
 
+
 bool World::CheckCollision() const {
+
+  return CheckCollisionWithAgents();
+}
+
+bool World::CheckCollisionWithAgents() const {
 
   using namespace modules::geometry;
   Polygon poly_agent1;
+  Polygon poly_agent2;
 
-  for (auto agent : agents_) {
-    poly_agent1 = agent.second->GetPolygonFromState(agent.second->get_current_state());
+  for (auto agent_outer : agents_) {
+    poly_agent1 = agent_outer.second->GetPolygonFromState(agent_outer.second->get_current_state());
 
-    if (Collide(poly_agent1, poly_agent1)) { // current mock, checking agent with itself
-      return true;
+    for (auto agent_inner : agents_) {
+      poly_agent2 = agent_inner.second->GetPolygonFromState(agent_inner.second->get_current_state());
+
+      if (agent_inner.first != agent_outer.first) {
+        if (Collide(poly_agent1, poly_agent2)) { // current mock, checking agent with itself
+          return true;
+        }
+      }
     }
   }
+  return false;
+}
+
+bool World::CheckCollisionWithRoad() const {
+
   return false;
 }
 
