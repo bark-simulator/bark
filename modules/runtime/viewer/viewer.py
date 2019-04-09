@@ -76,7 +76,7 @@ class BaseViewer(Viewer):
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
             # pybind creates column based vectors, initialization maybe row-based -> we consider both
-            state = agent.followed_trajectory[-1,:]
+            state = agent.state
             pose[0] = state[int(StateDefinition.X_POSITION)]
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
