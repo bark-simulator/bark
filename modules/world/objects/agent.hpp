@@ -52,6 +52,10 @@ class Agent : public Object {
 
   BehaviorModelPtr get_behavior_model() const { return behavior_model_; }
 
+  ExecutionModelPtr get_execution_model() const { return execution_model_; }
+
+  DynamicModelPtr get_dynamic_model() const { return dynamic_model_; }
+
   StateInputHistory get_state_input_history() const { return history_; }
 
   Trajectory get_execution_trajectory() const {
