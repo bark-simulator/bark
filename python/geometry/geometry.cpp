@@ -51,10 +51,15 @@ void python_geometry(py::module m) {
 
   m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
 
-  m.def("get_point_at_s", &modules::geometry::get_point_at_s, "get the Point2d at position s of the line");
+  m.def("get_point_at_s", &modules::geometry::get_point_at_s,
+                                 "get the Point2d at position s of the line");
 
-  m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s, "get the angle at position s of the line");
+  m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s,
+                                   "get the angle at position s of the line");
   
+  m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
+                        "get the point nearest to another point and its position on the line s ");
+
   py::class_<modules::geometry::Line>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
       .def("addPoint", &modules::geometry::Line::add_point, "add a point")
@@ -109,9 +114,10 @@ void python_geometry(py::module m) {
 
   python_standard_shapes(m.def_submodule("standard_shapes", "Define several standard car, pedestrians,... shapes"));
 
-  py::class_<modules::geometry::Model3D>(m, "3Model")
+  py::class_<modules::geometry::Model3D>(m, "Model3d")
       .def(py::init<>(), "Create none 3d model")
-      .def(py::init<modules::geometry::Model3D::Type>(), "Create 3D model with specific type ");
+      .def(py::init<modules::geometry::Model3D::Type>(), "Create 3D model with specific type ")
+      .def_property_readonly("type",&modules::geometry::Model3D::get_type);
 
   py::enum_<modules::geometry::Model3D::Type>(m, "modules::geometry::Model3DType", py::arithmetic())
       .value("NONE", modules::geometry::Model3D::Type::NONE)
