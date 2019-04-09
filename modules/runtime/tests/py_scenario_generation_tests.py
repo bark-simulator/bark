@@ -11,9 +11,7 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution i
 class ScenarioGenerationTests(unittest.TestCase):
     def test_uniform_vehicle_distribution_default_params(self):
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0)
-        scenario_generation.params.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "params",
-                  "uniform_vehicle_distribution_defaults.json"))
+        scenario_generation.params.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tmp_uniform_vehicle_distribution_defaults.json"))
         
 if __name__ == '__main__':
     unittest.main()
