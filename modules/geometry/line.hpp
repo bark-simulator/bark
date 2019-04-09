@@ -45,6 +45,10 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
     recompute_s();
   }
+
+  void reverse() {
+    boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
+  }
   
   void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
