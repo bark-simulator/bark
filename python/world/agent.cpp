@@ -46,7 +46,12 @@ void python_agent(py::module m)
       .def_property_readonly("shape", &Agent::get_shape)
       .def_property_readonly("id", &Agent::get_agent_id)
       .def_property_readonly("followed_trajectory", &Agent::get_execution_trajectory)
-      .def_property_readonly("planned_trajectory", &Agent::get_behavior_trajectory);
+      .def_property_readonly("planned_trajectory", &Agent::get_behavior_trajectory)
+      .def_property_readonly("behavior_model", &Agent::get_behavior_model)
+      .def_property_readonly("execution_model", &Agent::get_execution_model)
+      .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
+      .def_property_readonly("model3d", &Agent::get_model_3d)
+      .def_property_readonly("state", &Agent::get_current_state);
 
   py::class_<Object, ObjectPtr>(m, "Object")
       .def(
