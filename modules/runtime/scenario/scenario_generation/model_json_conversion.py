@@ -1,3 +1,8 @@
+# Copyright (c) 2019 fortiss GmbH
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
