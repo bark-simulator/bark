@@ -20,15 +20,9 @@ namespace geometry {
 //! templated polygon class with a boost polygon as a member function
 template <typename T>
 struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
-  Polygon_t() : Shape<bg::model::polygon<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0),
-                rear_dist_(0.0f),
-                front_dist_(0.0f),
-                left_dist_(0.0f),
-                right_dist_(0.0f) {}
+  Polygon_t();
   Polygon_t(const Pose &center, const std::vector<T> points);
-  Polygon_t(
-      const Pose &center,
-      const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points) : Shape<bg::model::polygon<T>, T>(center, points, 0) {}
+  Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
@@ -43,13 +37,30 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 };
 
 template<typename T>
+inline Polygon_t<T>::Polygon_t() : Shape<bg::model::polygon<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0),
+                rear_dist_(0.0f),
+                front_dist_(0.0f),
+                left_dist_(0.0f),
+                right_dist_(0.0f) {}
+
+template<typename T>
 inline Polygon_t<T>::Polygon_t(const Pose &center, const std::vector<T> points) :
            Shape<bg::model::polygon<T>, T>(center, points, 0),
            rear_dist_(0.0f),
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
-    
+    UpdateDistancesToCenter();
+}
+
+template<typename T>
+inline Polygon_t<T>::Polygon_t(const Pose &center,
+      const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points) :
+           Shape<bg::model::polygon<T>, T>(center, points, 0),
+           rear_dist_(0.0f),
+           front_dist_(0.0f),
+           left_dist_(0.0f),
+           right_dist_(0.0f) { 
     UpdateDistancesToCenter();
 }
 
