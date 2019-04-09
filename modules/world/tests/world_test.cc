@@ -156,6 +156,7 @@ TEST(world, world_no_collision)
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel());
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  CollisionCheckerPtr col_checker(new CollisioncheckerAgents(&params));
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
@@ -171,6 +172,8 @@ TEST(world, world_no_collision)
   world->add_agent(agent1);
   world->add_agent(agent2);
 
+  world->set_collision_checker(col_checker);
+  
   ASSERT_FALSE(world->CheckCollision());
   
 }
