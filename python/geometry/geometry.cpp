@@ -81,6 +81,7 @@ void python_geometry(py::module m) {
       .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Line::translate, "translates object.")
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
+      .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
       .def_readwrite("center", &modules::geometry::Line::center_, "center point.");
 
   py::class_<modules::geometry::Polygon>(m, "Polygon2d")
