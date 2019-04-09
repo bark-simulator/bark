@@ -15,7 +15,7 @@ namespace collision
   bool CollisioncheckerAgents::checkCollision(const world::World& world) const {
     modules::geometry::Polygon poly_agent1;
     modules::geometry::Polygon poly_agent2;
-    bool collision = false;
+    bool colliding = false;
 
     for (auto agent_outer : world.get_agents()) {
       poly_agent1 = agent_outer.second->GetPolygonFromState(agent_outer.second->get_current_state());
@@ -25,15 +25,15 @@ namespace collision
 
         if (agent_inner.first != agent_outer.first) {
           if (Collide(poly_agent1, poly_agent2)) {
-            collision = true;
+            colliding = true;
             break;
           }
         }
-        if (collision == true)
+        if (colliding == true)
           break;
       }
     }
-    return collision;
+    return colliding;
   };
 
 }

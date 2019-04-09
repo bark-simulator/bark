@@ -143,7 +143,7 @@ TEST(world, world_collision)
   world->add_agent(agent1);
   world->add_agent(agent2);
 
-  world->set_collision_checker(col_checker);
+  world->add_collision_checker(col_checker);
 
   ASSERT_TRUE(world->CheckCollision());
   
@@ -172,8 +172,34 @@ TEST(world, world_no_collision)
   world->add_agent(agent1);
   world->add_agent(agent2);
 
-  world->set_collision_checker(col_checker);
+  world->add_collision_checker(col_checker);
+
+  ASSERT_FALSE(world->CheckCollision());
   
+}
+
+
+TEST(world, world_no_collision_checker)
+{
+  DefaultParams params;
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel());
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+  
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 10.0, 0.0, 0.0, 5.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+
+  WorldPtr world(new World(&params));
+  world->add_agent(agent1);
+  world->add_agent(agent2);
+
   ASSERT_FALSE(world->CheckCollision());
   
 }

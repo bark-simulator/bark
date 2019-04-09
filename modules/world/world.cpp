@@ -14,7 +14,7 @@ World::World(commons::Params* params) :
   commons::BaseType(params),
   map_(),
   agents_(),
-  collision_checker_(),
+  collision_checkers_(),
   world_time_(0.0) {}
 
 World::World(const World& world)  :
@@ -22,7 +22,7 @@ World::World(const World& world)  :
          map_(world.get_map()),
          agents_(world.get_agents()),
          objects_(world.get_objects()),
-         collision_checker_(world.get_collision_checker()),
+         collision_checkers_(world.get_collision_checkers()),
          world_time_(world.get_world_time()) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
@@ -31,6 +31,10 @@ void World::add_agent(const objects::AgentPtr& agent) {
 
 void World::add_object(const objects::ObjectPtr& object) {
   objects_[object->agent_id_] = object;
+}
+
+void World::add_collision_checker(const CollisionCheckerPtr& cchecker) {
+  collision_checkers_.push_back(cchecker);
 }
 
 void World::MoveAgents(float delta_time) {
@@ -46,8 +50,14 @@ void World::MoveAgents(float delta_time) {
 
 
 bool World::CheckCollision() const {
-  // TODO: define a list of collision checkers and loop through them
-  return collision_checker_->checkCollision(*this);
+  bool colliding = false;
+  for(auto checker : collision_checkers_) {
+    if (checker->checkCollision(*this)) {
+      colliding = true;
+      break; // for now, we just exit if one checker yields a collision
+    }
+  }
+  return colliding;
 }
 
 void World::UpdateHorizonDrivingCorridors() {
