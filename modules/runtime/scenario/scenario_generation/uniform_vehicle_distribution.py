@@ -1,3 +1,8 @@
+# Copyright (c) 2019 fortiss GmbH
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation import ScenarioGeneration
 from modules.runtime.scenario.scenario_generation.model_json_conversion import ModelJsonConversion
@@ -34,17 +39,17 @@ class UniformVehicleDistribution(ScenarioGeneration):
         self.others_sink = params_temp["OthersSink", "A list of points around which other vehicles are deleted. \
                                         Points should be on different lanes and match the order of the source points. \
                                         Lanes must be near these points (<0.5m) \
-                                        Provide a list of lists with x,y-coordinates", [[-158.845,-74.6876],[-12.4499,-16.6865]]  ]   
+                                        Provide a list of lists with x,y-coordinates", [[-191.789,-50.1725],[-13.61,-19.4288]]  ]   
         assert(len(self.others_sink), len(self.others_source))            
 
-        self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (2, 5)]
+        self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (2, 10)]
         self.velocity_range = params_temp["VehicleVelocityRange", "Lower and upper bound of velocity in km/h given as tuple from which velocities are sampled uniformly", (20,30)]
 
         json_converter = ModelJsonConversion()
         self.agent_params = params_temp["VehicleModel", "How to model the agent", \
              json_converter.agent_to_json(self.default_agent_model())]
 
-
+        np.random.seed(self.random_seed)
 
 
     def create_scenarios(self, params, num_scenarios, random_seed):
@@ -76,11 +81,17 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
     def place_agents_along_linestring(self, world, linestring, s_start, s_end, agent_params):
         s = s_start
+        if s_end < s_start:
+            linestring.reverse()
+            s = s_end
+            s_end = s_start
+
         while s < s_end:
             # set agent state on linestring with random velocity
             xy_point =  get_point_at_s(linestring, s)
             angle = get_tangent_angle_at_s(linestring, s)
-            velocity = self.sample_velocity_uniform(self.random_seed, self.velocity_range)
+            
+            velocity = self.sample_velocity_uniform(self.velocity_range)
             agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
 
             agent_params = self.agent_params.copy()
@@ -92,17 +103,15 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
             # move forward on linestring based on vehicle size and max/min distance
             s += bark_agent.shape.front_dist + bark_agent.shape.rear_dist + \
-                        self.sample_distance_uniform(self.random_seed, self.vehicle_distance_range)
+                        self.sample_distance_uniform(self.vehicle_distance_range)
 
 
 
 
-    def sample_velocity_uniform(self, seed, velocity_range):
-        np.random.seed(seed)
+    def sample_velocity_uniform(self, velocity_range):
         return np.random.uniform(velocity_range[0], velocity_range[1])
 
-    def sample_distance_uniform(self, seed, distance_range):
-        np.random.seed(seed)
+    def sample_distance_uniform(self, distance_range):
         return np.random.uniform(distance_range[0], distance_range[1])
 
 
