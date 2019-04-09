@@ -15,9 +15,10 @@
 
 using namespace modules::models::dynamic;
 using namespace modules::geometry;
-using namespace modules::world::opendrive;
 using namespace modules::commons;
+using namespace modules::world::opendrive;
 using namespace modules::models::behavior;
+using namespace modules::models::execution;
 using namespace modules::world::objects;
 using namespace modules::world;
 
@@ -87,3 +88,30 @@ TEST(agent, standard_agent) {
     
 }
 */
+
+TEST(agent, PolygonFromState) {
+
+  DefaultParams params;
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel());
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+
+  Polygon shape(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+  
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, shape, &params));
+
+  Polygon poly_out = agent1->GetPolygonFromState(agent1->get_current_state());
+  
+  EXPECT_TRUE(equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 5.0, 2.0, 3.14, 0.0, 0.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, shape, &params));
+
+  Polygon poly_out2 = agent2->GetPolygonFromState(agent2->get_current_state());
+  
+  EXPECT_FALSE(equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
+
+}

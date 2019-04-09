@@ -42,6 +42,7 @@ cc_test(
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
         "//modules/models/execution/mpc:mpc",
+        "//modules/world/collision:collision_checker_agents",
         "@gtest//:main",
     ],
 )
