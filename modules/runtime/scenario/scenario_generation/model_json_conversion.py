@@ -24,15 +24,14 @@ class ModelJsonConversion:
         self.model_list_shape = self.extract_models(
             "bark.geometry.standard_shapes", "\w+")
 
-    def agent_from_json(self, dict_state, agent_json, param_server):
-        bark_agent = Agent(np.array(agent_setting["state"]), 
-        self.convert_model(agent_json["behavior_model"],self.param_server), 
-        self.convert_model(agent_json["dynamic_model"],None),
-        self.convert_model(agent_json["execution_model"],self.param_server), 
+    def agent_from_json(self, agent_json, param_server):
+        bark_agent = Agent(np.array(agent_json["state"]), 
+        self.convert_model(agent_json["behavior_model"], param_server), 
+        self.convert_model(agent_json["dynamic_model"], None),
+        self.convert_model(agent_json["execution_model"], param_server), 
         Polygon2d(agent_json["shape"]["center_pose"],
                 np.array(agent_json["shape"]["polygon_points"])),
-            param_server.addChild("agent"), Model3d(eval(agent_setting["model_type"])))
-        bark_agent.id = agent_json["id"]
+            param_server.addChild("agent"))
         return bark_agent
 
     def agent_to_json(self, agent):
@@ -40,7 +39,6 @@ class ModelJsonConversion:
         agent_json["behavior_model"] = self.convert_model(agent.behavior_model)
         agent_json["dynamic_model"] = self.convert_model(agent.dynamic_model)
         agent_json["execution_model"] = self.convert_model(agent.execution_model)
-        agent_json["model_type"] = str(agent.model3d.type)
         agent_json["id"] = agent.id
         agent_json["state"] = agent.state.tolist()
         agent_json["shape"] = {}
@@ -48,7 +46,7 @@ class ModelJsonConversion:
         agent_json["shape"]["center_pose"] = agent.shape.center.tolist()
         agent_json["followed_trajectory"] = agent.followed_trajectory.tolist()
         agent_json["planned_trajectory"] = agent.planned_trajectory.tolist()
-        return state_dict
+        return agent_json
 
     def convert_model(self, model, params=None):
         if isinstance(model,str):
