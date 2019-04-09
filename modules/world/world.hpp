@@ -25,6 +25,7 @@ using world::collision::CollisionCheckerPtr;
 
 typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
+typedef std::vector<CollisionCheckerPtr> CollisionCheckerVector;
 
 class World : public commons::BaseType {
  public:
@@ -38,13 +39,14 @@ class World : public commons::BaseType {
   AgentMap get_agents() const { return agents_; }
   AgentPtr get_agent(AgentId id) const { return agents_.at(id); }
   ObjectMap get_objects() const { return objects_; }
-  CollisionCheckerPtr get_collision_checker() const { return collision_checker_; }
+  CollisionCheckerVector get_collision_checkers() const { return collision_checkers_; }
 
   void set_map(const world::map::MapInterfacePtr& map) { map_ = map; }
-  void set_collision_checker(const CollisionCheckerPtr& cchecker) { collision_checker_ = cchecker; }
   
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);
+
+  void add_collision_checker(const CollisionCheckerPtr& cchecker); //{ collision_checker_ = cchecker; }
 
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
@@ -65,7 +67,7 @@ class World : public commons::BaseType {
   world::map::MapInterfacePtr map_;
   AgentMap agents_;
   ObjectMap objects_;
-  CollisionCheckerPtr collision_checker_;
+  CollisionCheckerVector collision_checkers_;
   double world_time_;
 };
 
