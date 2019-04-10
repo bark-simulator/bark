@@ -70,14 +70,20 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
   if (!horizon.empty()) {
     for (auto &h : horizon) {
       std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
-      outer.push_back(roadgraph_->get_lane_graph()[v.first].lane);
+      auto l = roadgraph_->get_lane_graph()[v.first].lane;
+      assert(l.get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
+      outer.push_back();
       
       std::pair<LaneId, bool> innerid = roadgraph_->get_inner_neighbor(h);
-      std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid.first);
-      if (v_inner.second) {
-        inner.push_back(roadgraph_->get_lane_graph()[v_inner.first].lane);
-      } else {
-        inner.push_back(NULL);
+        if(innerid.second) {
+          std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid.first);
+          if (v_inner.second) {
+            inner.push_back(roadgraph_->get_lane_graph()[v_inner.first].lane);
+          } else {
+            inner.push_back(NULL);
+          }
+      } else { //you are probably at the planview and do not have inner lanes? 
+
       }
     }
   }

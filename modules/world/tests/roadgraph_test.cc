@@ -201,8 +201,12 @@ TEST(roadgraph, get_inner_neighbor_test_planview)
   r.add_outer_neighbor(l0, lm1);
 
   std::pair<LaneId, bool> in = r.get_inner_neighbor(l1);
-  //ASSERT_TRUE(in.first == lm1); //Workaround until bug in map generation is fixed
-  //ASSERT_TRUE(in.second);
+  ASSERT_TRUE(in.first == l0);
+  ASSERT_TRUE(in.second);
+
+  std::pair<LaneId, bool> in2 = r.get_inner_neighbor(lm1);
+  ASSERT_TRUE(in2.first == l0);
+  ASSERT_TRUE(in2.second);
 }
 
 TEST(roadgraph, find_path_test)
