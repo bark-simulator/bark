@@ -43,6 +43,7 @@ cc_test(
         "//modules/models/execution/interpolation:interpolation",
         "//modules/models/execution/mpc:mpc",
         "//modules/world/collision:collision_checker_agents",
+        "//modules/world/collision:collision_checker_driving_corridor",
         "@gtest//:main",
     ],
 )
