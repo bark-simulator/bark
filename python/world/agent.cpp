@@ -51,7 +51,8 @@ void python_agent(py::module m)
       .def_property_readonly("execution_model", &Agent::get_execution_model)
       .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
       .def_property_readonly("model3d", &Agent::get_model_3d)
-      .def_property_readonly("state", &Agent::get_current_state);
+      .def_property_readonly("state", &Agent::get_current_state)
+      .def_property_readonly("goal_lane_id", &Agent::get_goal_lane_id);
 
   py::class_<Object, ObjectPtr>(m, "Object")
       .def(

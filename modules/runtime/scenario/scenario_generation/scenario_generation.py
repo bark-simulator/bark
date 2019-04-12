@@ -39,7 +39,7 @@ class ScenarioGeneration:
         return scenario
 
     def get_scenario(self, idx):
-        return self.scenario_list[idx]
+        return self.scenario_list[idx].copy()
 
     def create_scenarios(self, params, num_scenarios, random_seed):
         """ Creates a list of scenario class instances which should be deterministically reproducible given the random seed, the params and the number of scenarios
