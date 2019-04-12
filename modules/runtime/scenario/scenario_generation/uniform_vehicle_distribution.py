@@ -42,7 +42,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                         Provide a list of lists with x,y-coordinates", [[-191.789,-50.1725],[-13.61,-19.4288]]  ]   
         assert(len(self.others_sink), len(self.others_source))            
 
-        self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (2, 10)]
+        self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (15, 20)]
         self.velocity_range = params_temp["VehicleVelocityRange", "Lower and upper bound of velocity in km/h given as tuple from which velocities are sampled uniformly", (20,30)]
 
         json_converter = ModelJsonConversion()
@@ -69,17 +69,17 @@ class UniformVehicleDistribution(ScenarioGeneration):
         self.setup_map(world, self.map_file_name)
 
         for idx, source in enumerate(self.others_source):
-            connecting_center_line, s_start, s_end = self.center_line_between_source_and_sink( world.map,
-                                                                        source, self.others_sink[idx])
+            connecting_center_line, s_start, s_end, _, lane_id_end = \
+                     self.center_line_between_source_and_sink( world.map,  source, self.others_sink[idx])
             self.place_agents_along_linestring(world, connecting_center_line, s_start, s_end, \
-                                                                             self.agent_params)
+                                                                             self.agent_params, lane_id_end)
 
         description=self.params.convert_to_dict()
         description["ScenarioGenerator"] = "UniformVehicleDistribution"
         scenario = Scenario(world_state=world, description={"ScenarioGenerator": "UniformVehicleDistribution"})
         return scenario
 
-    def place_agents_along_linestring(self, world, linestring, s_start, s_end, agent_params):
+    def place_agents_along_linestring(self, world, linestring, s_start, s_end, agent_params, goal_lane_id):
         s = s_start
         if s_end < s_start:
             linestring.reverse()
@@ -96,6 +96,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
             agent_params = self.agent_params.copy()
             agent_params["state"] = agent_state
+            agent_params["goal_lane_id"] = goal_lane_id
+            agent_params["map_interface"] = world.map
 
             converter = ModelJsonConversion()
             bark_agent = converter.agent_from_json(agent_params, self.params)
@@ -122,7 +124,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         _, s_start, _ = get_nearest_point_and_s(center_line, Point2d(source[0],source[1]))
         _, s_end, _ = get_nearest_point_and_s(center_line, Point2d(sink[0],sink[1]))
-        return center_line, s_start, s_end
+        return center_line, s_start, s_end, lane_source.lane_id, lane_sink.lane_id
 
     def setup_map(self, world, map_file_name):
         xodr_parser = XodrParser(map_file_name )

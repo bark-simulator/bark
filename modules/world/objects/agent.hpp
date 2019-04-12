@@ -58,6 +58,8 @@ class Agent : public Object {
 
   StateInputHistory get_state_input_history() const { return history_; }
 
+  LaneId get_goal_lane_id() const {return goal_lane_id_;}
+
   Trajectory get_execution_trajectory() const {
     return execution_model_->get_last_trajectory();
   }
