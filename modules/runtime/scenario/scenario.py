@@ -33,10 +33,10 @@ class Scenario:
             description {[dict]} -- [pass a dictionary with type and other info of this scenario....to be defined what it must contain]
         """
 
-    def get_description():
+    def get_description(self):
         return self.description
 
-    def add_goal_criterion(goal_criterion):
+    def add_goal_criterion(self, goal_criterion):
         """add a goal specification to this scenario, e.g. drive into a certain goal region, or maximum amount of time 10s, multiple criteria can be added subsequently
         
         Arguments:
@@ -44,6 +44,10 @@ class Scenario:
         """
 
         self.goal_criteria.append(goal_criterion)
+
+
+    def copy(self):
+        return Scenario(world_state=self.world_state.copy(), description=self.description.copy())
 
 
 

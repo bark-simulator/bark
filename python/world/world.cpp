@@ -35,7 +35,8 @@ void python_world(py::module m) {
     .def_property_readonly("objects", &World::get_objects)
     .def_property_readonly("time", &World::get_world_time)
     .def_property_readonly("agent", &World::get_agent)
-    .def_property("map", &World::get_map, &World::set_map);
+    .def_property("map", &World::get_map, &World::set_map)
+    .def("copy",&World::Clone);
 
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
