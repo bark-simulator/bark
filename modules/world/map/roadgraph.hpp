@@ -147,26 +147,27 @@ class Roadgraph {
     std::vector<std::pair<LaneId, bool> > neighbors =
      get_neighbor_from_edgetype(lane_id, INNER_NEIGHBOR_EDGE); 
     std::pair<LaneId, bool> neighbor = neighbors.front(); //inner neighbor is unique
-    // handle special case: one lane next to the planview, move to the next outer lane
-    if(neighbor.second) { //neighboring lane exists
-      LanePtr lp = get_laneptr(neighbor.first);
-      if(lp->get_lane_position() == 99999) { //lane pos 0 is the planview: neighbor is the planview //TODO 999 is a quickfix
-        std::vector<std::pair<LaneId, bool> > next_neighbors = 
-          get_neighbor_from_edgetype(neighbor.first, OUTER_NEIGHBOR_EDGE);
-        for(auto nn : next_neighbors) { //find the non-queried lane id
-          if(nn.first != lane_id) {
-            return nn;
-          }
-        }
-      } 
-    } 
     return neighbor;
   }
 
   //! LaneId of the neighboring lane and a flag if it exists or not
+  //! @note make sure to not call this function on the planview lane!
   std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id) {
     std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
     return tmp.front(); // for a non planview edge the outer neighbor is unique
+  }
+
+  //! LaneId of the neighboring lane and a flag if it exists or not, usecase: lane_id is the planview
+  //! @param lane_id queried lane id
+  //! @param from the query answer return the lane id that is not but_not
+  std::pair<LaneId, bool> get_outer_neighbor_but_not(const LaneId& lane_id, const LaneId& but_not) {
+    std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
+    for (auto &t : tmp) {
+      if (t.first != but_not) {
+        return t;
+      }
+    }
+    return std::make_pair<LaneId, bool>(0, false); //error case
   }
 
   bool has_lane(const LaneId& lane_id){
