@@ -33,14 +33,18 @@ dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
 local_map_(new LocalMap(goal_lane_id, map_interface)),
+max_history_length_(10),
 goal_lane_id_(goal_lane_id) {
-  max_history_length_ = params->get_int(
+  if(params) {
+    max_history_length_ = params->get_int(
     "MaxHistoryLength",
     "Maximum number of state-input pairs in state-input history",
      50);
+  }
+  
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
-  history_.push(pair);
+  history_.push_back(pair);
   if (map_interface != NULL) {
     GenerateLocalMap();
     // TODO(@hart): parameter
@@ -85,11 +89,11 @@ void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
   models::dynamic::StateInputPair state_input_pair(
       State(execution_model_->get_last_trajectory().row(index_new_world_time)),
       models::dynamic::Input::Zero(1, 1));
-  history_.push(state_input_pair);
+  history_.push_back(state_input_pair);
 
   //! remove states if queue becomes to large
   if (history_.size() > max_history_length_) {
-    history_.pop();
+    history_.erase(history_.begin());
   }
 }
 

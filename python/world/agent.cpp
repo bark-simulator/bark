@@ -71,7 +71,7 @@ void python_agent(py::module m)
                                   a->get_current_state(), // 9
                                   a->get_goal_lane_id()); // 10
         },
-        [](py::tuple t) -> AgentPtr { // __setstate__
+        [](py::tuple t) -> Agent { // __setstate__
             if (t.size() != 11)
                 throw std::runtime_error("Invalid agent state!");
 
@@ -79,14 +79,17 @@ void python_agent(py::module m)
             using modules::models::dynamic::SingleTrackModel;
             using modules::models::execution::ExecutionModelInterpolate;
 
+
             /* Create a new C++ instance */
-            return std::make_shared<Agent>(t[9].cast<State>(),
+            Agent agent(t[9].cast<State>(),
                     std::make_shared<BehaviorConstantVelocity>(t[6].cast<BehaviorConstantVelocity>()), // todo resolve polymorphism
                     std::make_shared<SingleTrackModel>(t[8].cast<SingleTrackModel>()), // todo resolve polymorphism
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
                     t[10].cast<LaneId>());
+            agent.set_agent_id(t[3].cast<AgentId>());
+            return agent;
             // todo: deserialize planned, followed trajectory and map interface
         }));
 

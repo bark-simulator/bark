@@ -51,7 +51,7 @@ void python_map(py::module m) {
           return py::make_tuple(d.get_inner(), d.get_outer(), d.get_center(), d.computed);
       },
       [](const py::tuple &t)  { // __setstate__
-          if (t.size() != 3)
+          if (t.size() != 4)
               throw std::runtime_error("Invalid driving corridor state!");
 
           DrivingCorridor d;
