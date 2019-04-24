@@ -160,14 +160,14 @@ class Roadgraph {
   //! LaneId of the neighboring lane and a flag if it exists or not, usecase: lane_id is the planview
   //! @param lane_id queried lane id
   //! @param from the query answer return the lane id that is not but_not
-  std::pair<LaneId, bool> get_outer_neighbor_but not(const LaneId& lane_id, const LaneId& but_not) {
+  std::pair<LaneId, bool> get_outer_neighbor_but_not(const LaneId& lane_id, const LaneId& but_not) {
     std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
     for (auto &t : tmp) {
       if (t.first != but_not) {
         return t;
       }
     }
-    return std::make_pair<LaneId, bool>(NULL, false); //error case
+    return std::make_pair<LaneId, bool>(0, false); //error case
   }
 
   bool has_lane(const LaneId& lane_id){
