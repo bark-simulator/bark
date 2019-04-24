@@ -98,6 +98,10 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::toArray() c
   return mat;
 }
 
+inline bool equals(const Polygon &poly1, const Polygon &poly2) {
+  return bg::equals(poly1.obj_, poly2.obj_);
+}
+
 inline float distance(const Polygon &poly, const Point2d &p) {
   return bg::distance(poly.obj_, p);
 }
