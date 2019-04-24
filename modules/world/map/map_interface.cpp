@@ -71,8 +71,8 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
     for (auto &h : horizon) {
       std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
       auto l = roadgraph_->get_lane_graph()[v.first].lane;
-      assert(l.get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
-      outer.push_back();
+      assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
+      outer.push_back(l);
       
       std::pair<LaneId, bool> innerid = roadgraph_->get_inner_neighbor(h);
         if(innerid.second) {
