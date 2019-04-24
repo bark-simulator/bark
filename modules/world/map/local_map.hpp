@@ -29,9 +29,9 @@ struct DrivingCorridor {
                       center(Line()),
                       computed(false) {}
   //! getter
-  Line get_outer() { return outer; }
-  Line get_inner() { return inner; }
-  Line get_center() { return center; }
+  Line get_outer() const { return outer; }
+  Line get_inner() const { return inner; }
+  Line get_center() const { return center; }
 
   //! getter
   void set_outer(const Line& o) { outer = o; }
@@ -46,13 +46,18 @@ struct DrivingCorridor {
 
 class LocalMap {
  public:
-  explicit LocalMap(LaneId goal_lane_id,
+  LocalMap(LaneId goal_lane_id,
                     const MapInterfacePtr& map_interface) :
     driving_corridor_(DrivingCorridor()),
     horizon_driving_corridor_(DrivingCorridor()),
     map_interface_(map_interface),
     goal_lane_id_(goal_lane_id) {}
 
+  LocalMap(LaneId goal_lane_id,
+                    const DrivingCorridor& driving_corridor) :
+    driving_corridor_(driving_corridor),
+    goal_lane_id_(goal_lane_id) {}
+ 
   LocalMap(const LocalMap& lm) :
     driving_corridor_(lm.driving_corridor_),
     horizon_driving_corridor_(lm.horizon_driving_corridor_),
@@ -72,6 +77,10 @@ class LocalMap {
   }
   bool has_generated_driving_corridor() {
     return driving_corridor_.computed;
+  }
+
+  LaneId get_goal_lane_id() const {
+    return goal_lane_id_;
   }
 
   //! Functions
