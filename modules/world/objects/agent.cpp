@@ -93,6 +93,18 @@ void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
   }
 }
 
+geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
+
+  using namespace modules::geometry;
+  using namespace modules::geometry::standard_shapes;
+
+  Pose agent_pose(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION), state(StateDefinition::THETA_POSITION));
+  
+  geometry::Polygon *polygon = dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose));
+
+  return *polygon;  
+}
+
 void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
