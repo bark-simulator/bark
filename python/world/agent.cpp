@@ -8,6 +8,9 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
+#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/dynamic/single_track.hpp"
+#include "modules/models/execution/interpolation/interpolate.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -52,7 +55,40 @@ void python_agent(py::module m)
       .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
       .def_property_readonly("model3d", &Agent::get_model_3d)
       .def_property_readonly("state", &Agent::get_current_state)
-      .def_property_readonly("goal_lane_id", &Agent::get_goal_lane_id);
+      .def_property_readonly("goal_lane_id", &Agent::get_goal_lane_id)
+      .def(py::pickle(
+        [](const AgentPtr a) { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(a->get_local_map(), // 0
+                                  a->get_state_input_history(), // 1
+                                  a->get_shape(), // 2
+                                  a->get_agent_id(), // 3
+                                  a->get_execution_trajectory(), // 4
+                                  a->get_behavior_trajectory(), // 5
+                                  *(a->get_behavior_model()), // 6
+                                  *(a->get_execution_model()), // 7
+                                  *(a->get_dynamic_model()), // 8
+                                  a->get_current_state(), // 9
+                                  a->get_goal_lane_id()); // 10
+        },
+        [](py::tuple t) -> AgentPtr { // __setstate__
+            if (t.size() != 11)
+                throw std::runtime_error("Invalid agent state!");
+
+            using modules::models::behavior::BehaviorConstantVelocity;
+            using modules::models::dynamic::SingleTrackModel;
+            using modules::models::execution::ExecutionModelInterpolate;
+
+            /* Create a new C++ instance */
+            return std::make_shared<Agent>(t[9].cast<State>(),
+                    std::make_shared<BehaviorConstantVelocity>(t[6].cast<BehaviorConstantVelocity>()), // todo resolve polymorphism
+                    std::make_shared<SingleTrackModel>(t[8].cast<SingleTrackModel>()), // todo resolve polymorphism
+                    std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
+                    t[2].cast<modules::geometry::Polygon>(),
+                    nullptr, // we have to set the params object afterwards as it relies on a python object
+                    t[10].cast<LaneId>());
+            // todo: deserialize planned, followed trajectory and map interface
+        }));
 
   py::class_<Object, ObjectPtr>(m, "Object")
       .def(

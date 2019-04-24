@@ -29,7 +29,18 @@ void python_geometry(py::module m) {
       })
       .def("y", [](modules::geometry::Point2d &p) {
         return p.get<1>();
-      });
+      })
+      .def(py::pickle(
+        [](const modules::geometry::Point2d& p) { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(p.get<0>(), p.get<1>());
+        },
+        [](py::tuple t)  { // __setstate__
+            if (t.size() != 2)
+                throw std::runtime_error("Invalid point state!");
+
+            return modules::geometry::Point2d(t[0].cast<float>(), t[1].cast<float>());
+        }));
 
   m.def("distance", py::overload_cast<const modules::geometry::Point2d &, const modules::geometry::Point2d &>(&modules::geometry::distance),
         "Returns euclidean distance between two modules::geometry::Point2d.");
@@ -82,7 +93,23 @@ void python_geometry(py::module m) {
       .def("translate", &modules::geometry::Line::translate, "translates object.")
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
       .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
-      .def_readwrite("center", &modules::geometry::Line::center_, "center point.");
+      .def_readwrite("center", &modules::geometry::Line::center_, "center point.")
+      .def(py::pickle(
+        [](const modules::geometry::Line& l) -> py::tuple { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(l.toArray());
+        },
+        [](const py::tuple& t)  { // __setstate__
+            if (t.size() != 1)
+                throw std::runtime_error("Invalid line state!");
+
+            modules::geometry::Line l;
+            auto points = t[0].cast<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>();
+            for(int i = 0; i < points.rows(); ++i) {
+              l.add_point(modules::geometry::Point2d(points(i,0), points(i,1)));
+            }
+            return l;
+        }));
 
   py::class_<modules::geometry::Polygon>(m, "Polygon2d")
       .def(py::init<>(), "Create empty polygon")
@@ -111,7 +138,24 @@ void python_geometry(py::module m) {
       .def_readonly("right_dist", &modules::geometry::Polygon::right_dist_, "center point.")
       .def_readonly("left_dist", &modules::geometry::Polygon::left_dist_, "center point.")
       .def_readonly("front_dist", &modules::geometry::Polygon::front_dist_, "center point.")
-      .def_readonly("rear_dist", &modules::geometry::Polygon::rear_dist_, "center point.");
+      .def_readonly("rear_dist", &modules::geometry::Polygon::rear_dist_, "center point.")
+      .def(py::pickle(
+        [](const modules::geometry::Polygon& p) -> py::tuple { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(p.toArray(), p.center_);
+        },
+        [](py::tuple  &t)  { // __setstate__
+            if (t.size() != 2)
+                throw std::runtime_error("Invalid point state!");
+
+            modules::geometry::Polygon p;
+            auto points = t[0].cast<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>();
+            for(int i = 0; i < points.rows(); ++i) {
+              p.add_point(modules::geometry::Point2d(points(i,0), points(i,1)));
+            }
+            p.center_ = t[1].cast<modules::geometry::Pose>();
+            return p;
+        }));
 
   python_standard_shapes(m.def_submodule("standard_shapes", "Define several standard car, pedestrians,... shapes"));
 

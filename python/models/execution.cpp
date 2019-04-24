@@ -30,7 +30,19 @@ void python_execution(py::module m) {
       .def(py::init<Params *>())
       .def("__repr__", [](const ExecutionModelInterpolate &m) {
         return "bark.dynamic.ExecutionModelInterpolate";
-      });
+      })
+      .def(py::pickle(
+        [](const ExecutionModelInterpolate &m) -> std::string { 
+            return "ExecutionModelInterpolate"; // 0
+        },
+        [](std::string s) { // __setstate__
+            if (s != "ExecutionModelInterpolate" )
+                throw std::runtime_error("Invalid tyoe of execution model!");
+
+            /* Create a new C++ instance */
+            return new ExecutionModelInterpolate(nullptr); // param pointer must be set via python
+        }));
+     
 
   py::class_<ExecutionModelMpc,
              ExecutionModel,
