@@ -79,7 +79,7 @@ void python_map(py::module m) {
             if (t.size() != 2)
                 throw std::runtime_error("Invalid local map state!");
 
-            return LocalMap(t[0].cast<LaneId>(), t[1].cast<DrivingCorridor>());
+            return new LocalMap(t[0].cast<LaneId>(), t[1].cast<DrivingCorridor>());
         }));
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")

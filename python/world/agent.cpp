@@ -78,6 +78,7 @@ void python_agent(py::module m)
             using modules::models::behavior::BehaviorConstantVelocity;
             using modules::models::dynamic::SingleTrackModel;
             using modules::models::execution::ExecutionModelInterpolate;
+            using modules::world::map::LocalMap;
 
 
             /* Create a new C++ instance */
@@ -89,6 +90,7 @@ void python_agent(py::module m)
                     nullptr, // we have to set the params object afterwards as it relies on a python object
                     t[10].cast<LaneId>());
             agent.set_agent_id(t[3].cast<AgentId>());
+            agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;
             // todo: deserialize planned, followed trajectory and map interface
         }));
