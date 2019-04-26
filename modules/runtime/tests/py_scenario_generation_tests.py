@@ -7,11 +7,19 @@
 import unittest
 import os
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.scenario_generation import ScenarioGeneration
+
 
 class ScenarioGenerationTests(unittest.TestCase):
     def test_uniform_vehicle_distribution_default_params(self):
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0)
-        scenario_generation.params.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tmp_uniform_vehicle_distribution_defaults.json"))
+        scenario_generation.dump_scenario_list("test.scenario")
+
+        scenario_loader = ScenarioGeneration()
+        scenario_loader.load_scenario_list("test.scenario")
+
+        self.assertEqual(len(scenario_loader.scenario_list),3)
+        self.assertEqual(len(scenario_loader.scenario_list[0].agent_list), len(scenario_generation.scenario_list[0].agent_list))
         
 if __name__ == '__main__':
     unittest.main()

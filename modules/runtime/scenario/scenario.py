@@ -3,20 +3,22 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+from bark.world.agent import *
+from bark.models.behavior import *
+from bark.world import *
+from bark.world.map import *
+from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
+from modules.runtime.commons.xodr_parser import XodrParser
+
+import copy
+
+
 class Scenario:
-    def __init__(self, world_state=None, description=None):
-        self.world_state = world_state
-        self.description = description
-        self.goal_criteria = []
-
-    def set_world_state(self, world_state):
-        """ sets initial world state of this scenario
-        
-        Arguments:
-            world_state {[bark.world.World]} -- [pass a full world instance giving the actual world state]
-        """
-
-        self.world_state = world_state
+    def __init__(self, agent_list=None, map_file_name=None, json_params=None):
+        self.agent_list = agent_list or []
+        self.map_file_name = map_file_name
+        self.json_params = json_params
 
     def get_world_state(self):
         """get initial world state of scenario to start simulation from here
@@ -24,30 +26,30 @@ class Scenario:
         Returns:
             [bark.world.World]
         """
-        return self.world_state
-
-    def set_description(description):
-        """set scenario description
-        
-        Arguments:
-            description {[dict]} -- [pass a dictionary with type and other info of this scenario....to be defined what it must contain]
-        """
-
-    def get_description(self):
-        return self.description
-
-    def add_goal_criterion(self, goal_criterion):
-        """add a goal specification to this scenario, e.g. drive into a certain goal region, or maximum amount of time 10s, multiple criteria can be added subsequently
-        
-        Arguments:
-            goal_criterion {[todo]} -- [todo]
-        """
-
-        self.goal_criteria.append(goal_criterion)
-
+        return self._build_world_state()
 
     def copy(self):
-        return Scenario(world_state=self.world_state.copy(), description=self.description.copy())
+        return Scenario(agent_list=copy.deepcopy(self.agent_list), map_file_name=self.map_file_name, json_params=self.json_params.copy())
+
+    def _build_world_state(self):
+        param_server = ParameterServer(json=self.json_params)
+        param_server
+        world = World(param_server)
+        world = self.setup_map(world,self.map_file_name)
+
+        for agent in self.agent_list:
+            world.add_agent(agent)
+
+        return world
+
+    def setup_map(self, world, map_file_name):
+        xodr_parser = XodrParser(map_file_name )
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        map_interface.set_roadgraph(xodr_parser.roadgraph)
+        world.set_map(map_interface)
+        
+        return world
 
 
 

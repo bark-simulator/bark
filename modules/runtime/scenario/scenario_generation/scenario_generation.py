@@ -3,12 +3,12 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import pickle
 from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
-    def __init__(self, params, num_scenarios, random_seed=None):
+    def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self.params = params
-        self.num_scenarios = num_scenarios
         self.random_seed = random_seed
         self.current_scenario_idx = 0
 
@@ -28,7 +28,7 @@ class ScenarioGeneration:
                  [a parameter server instance to init params from]
 
         """
-        raise NotImplementedError("Implement this function in a subclass")
+        pass
 
     def get_next_scenario(self):
         if self.current_scenario_idx >= self.num_scenarios:
@@ -52,4 +52,17 @@ class ScenarioGeneration:
         Returns:
             scenario_list {[a list of instances of type scenario class]} -- [each scenario in this list defines one initial world condition]
         """
-        raise NotImplementedError("Implement this function in a subclass")
+        return None
+
+    @property
+    def num_scenarios(self):
+        return len(self.scenario_list)
+
+
+    def dump_scenario_list(self, filename):
+        with open(filename, "wb") as file:
+            pickle.dump(self.scenario_list, file)
+
+    def load_scenario_list(self, filename):
+        with open(filename, "rb") as file:
+            self.scenario_list = pickle.load(file)
