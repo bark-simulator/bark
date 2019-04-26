@@ -31,3 +31,22 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "collision_checker_driving_corridor",
+    hdrs = [
+        "collision_checker_driving_corridor.hpp"
+    ],
+    srcs = [
+        "collision_checker_driving_corridor.cpp"
+    ],
+    deps = [
+        "//modules/world/collision:base_collision_checker",
+        "//modules/geometry",
+        "//modules/commons:commons",
+        "@boost//:geometry",
+        "//modules/world:world",
+
+    ],
+    visibility = ["//visibility:public"],
+)
+
