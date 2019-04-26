@@ -5,6 +5,7 @@ import numpy as np
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
+from bark.world.map import *
 from bark.geometry import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -74,6 +75,30 @@ class PickleTests(unittest.TestCase):
         da = pickle_unpickle(d)
         self.assertTrue(isinstance(da,SingleTrackModel))
 
+    def test_driving_corridor_pickle(self):
+        cor = DrivingCorridor()
+
+        l1 = Line2d()
+        l1.addPoint(Point2d(10,4))
+
+        l2 = Line2d()
+        l2.addPoint(Point2d(10,4))
+        l2.addPoint(Point2d(1.555555, 1.244222))
+
+        l3 = Line2d()
+        l3.addPoint(Point2d(10,4))
+        l3.addPoint(Point2d(1.555555, 1.244222))
+        l3.addPoint(Point2d(20, 45))
+
+        cor.inner = l1
+        cor.outer = l2
+        cor.center = l3
+
+        cor_after = pickle_unpickle(cor)
+
+        self.assertTrue(np.array_equal(cor.inner.toArray(), cor_after.inner.toArray()))
+        self.assertTrue(np.array_equal(cor.outer.toArray(), cor_after.outer.toArray()))
+        self.assertTrue(np.array_equal(cor.center.toArray(), cor_after.center.toArray()))
 
     def test_agent_pickle(self):
 
@@ -89,6 +114,16 @@ class PickleTests(unittest.TestCase):
 
         self.assertEqual(agent_after.id , agent.id)
         self.assertTrue(np.array_equal(agent_after.state, agent.state) )
+
+        agent_list = []
+        agent_list.append(agent)
+
+        agent_list_after = pickle_unpickle(agent_list)
+
+        self.assertEqual(agent_list_after[0].id , agent.id)
+        self.assertTrue(np.array_equal(agent_list_after[0].state, agent.state) )
+
+
 
 
 
