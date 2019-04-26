@@ -57,21 +57,21 @@ void python_agent(py::module m)
       .def_property_readonly("state", &Agent::get_current_state)
       .def_property_readonly("goal_lane_id", &Agent::get_goal_lane_id)
       .def(py::pickle(
-        [](const AgentPtr a) { // __getstate__
+        [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(a->get_local_map(), // 0
-                                  a->get_state_input_history(), // 1
-                                  a->get_shape(), // 2
-                                  a->get_agent_id(), // 3
-                                  a->get_execution_trajectory(), // 4
-                                  a->get_behavior_trajectory(), // 5
-                                  *(a->get_behavior_model()), // 6
-                                  *(a->get_execution_model()), // 7
-                                  *(a->get_dynamic_model()), // 8
-                                  a->get_current_state(), // 9
-                                  a->get_goal_lane_id()); // 10
+            return py::make_tuple(a.get_local_map(), // 0
+                                  a.get_state_input_history(), // 1
+                                  a.get_shape(), // 2
+                                  a.get_agent_id(), // 3
+                                  a.get_execution_trajectory(), // 4
+                                  a.get_behavior_trajectory(), // 5
+                                  a.get_behavior_model(), // 6
+                                  a.get_execution_model(), // 7
+                                  a.get_dynamic_model(), // 8
+                                  a.get_current_state(), // 9
+                                  a.get_goal_lane_id()); // 10
         },
-        [](py::tuple t) -> Agent { // __setstate__
+        [](py::tuple t) { // __setstate__
             if (t.size() != 11)
                 throw std::runtime_error("Invalid agent state!");
 
