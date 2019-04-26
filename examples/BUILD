@@ -27,17 +27,36 @@ py_test(
 )
 
 py_test(
-  name = "od8_scen_gen_uniform",
-  srcs = ["od8_scen_gen_uniform.py"],
+  name = "scenario_generation_dump",
+  srcs = ["scenario_generation_dump.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:pygame_viewer",
-          "//modules/runtime/viewer:matplotlib_viewer",
           "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime:runtime",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
+py_test(
+  name = "scenario_generation_load",
+  srcs = ["scenario_generation_load.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          ':scenarios'],
+  imports = ['../python/'],
+  deps = [":scenario_generation_dump",
+          "//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/commons:roadgraph_generator",
+          "//modules/runtime/viewer:pygame_viewer",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
+filegroup(
+    name="scenarios",
+    srcs=glob(["scenarios/*.bark_scenarios"]),
+)
