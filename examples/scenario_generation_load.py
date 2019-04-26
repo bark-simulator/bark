@@ -16,7 +16,7 @@ viewer = PygameViewer(params=param_server, x_range=[-200,0], y_range=[-100,100])
 
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
-                                        1]
+                                        0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                 "execution in real-time or faster",
                                                 1]
@@ -25,9 +25,10 @@ scenario_generation.load_scenario_list(filename="examples/scenarios/test.bark_sc
 
 
 for _ in range(0,5): # run 5 scenarios in a row, repeating after 3
-    scenario = scenario_generation.get_next_scenario()
+    scenario, idx = scenario_generation.get_next_scenario()
     world_state = scenario.get_world_state()
-    for _ in range(0, 3): # run each scenario for 3 steps
+    print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
+    for _ in range(0, 10): # run each scenario for 3 steps
         world_state.step(sim_step_time)
         viewer.drawWorld(world_state)
         viewer.show(block=False)
