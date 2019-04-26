@@ -35,8 +35,9 @@ class ScenarioGeneration:
             self.current_scenario_idx = 0
             print("Resetting scenario index to zero")
         scenario = self.get_scenario(self.current_scenario_idx)
+        scenario_idx = self.current_scenario_idx
         self.current_scenario_idx += 1
-        return scenario
+        return scenario, scenario_idx
 
     def get_scenario(self, idx):
         return self.scenario_list[idx].copy()
