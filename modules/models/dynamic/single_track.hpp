@@ -8,7 +8,6 @@
 #define MODULES_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
 
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/models/dynamic/integration.hpp"
 
 namespace modules {
 namespace models {

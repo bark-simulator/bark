@@ -52,10 +52,17 @@ class ImporterTests(unittest.TestCase):
         plt.axis("equal")
         plt.show()
 
-        # TODO(@fortiss): plot cpp map
-        # cwd = os.getcwd()
-        # print (cwd)
-        # roadgraph.print_graph("/home/kessler/"+"test1234.dot")
+        # driving corridor calculation test
+        lanes = map_interface.find_nearest_lanes(Point2d(-11,-8),1)
+        left_line, right_line, center_line = map_interface.calculate_driving_corridor(lanes[0].lane_id,2)
+        plt.plot(center_line.toArray()[:,0],center_line.toArray()[:,1])
+        plt.show()
+        
+        # TODO: plot cpp map
+        #cwd = os.getcwd()
+        #print (cwd)
+        #roadgraph.print_graph("/home/kessler/"+"test1234.dot")
+        
 
 
 if __name__ == '__main__':

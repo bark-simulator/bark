@@ -21,7 +21,18 @@ void python_dynamic(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const SingleTrackModel &m) {
         return "bark.dynamic.SingleTrackModel";
-      });
+      })
+      .def(py::pickle(
+        [](const SingleTrackModel &m) -> std::string { 
+            return "SingleTrackModel"; // 0
+        },
+        [](std::string s) { // __setstate__
+            if (s != "SingleTrackModel")
+                throw std::runtime_error("Invalid dynamic modelstate!");
+
+            /* Create a new C++ instance */
+            return new SingleTrackModel();
+      }));
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())
       .value("TIME_POSITION", TIME_POSITION)

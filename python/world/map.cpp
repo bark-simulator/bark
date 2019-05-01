@@ -13,16 +13,28 @@
 
 using namespace modules::world::map;
 using modules::world::opendrive::LaneId;
+using modules::geometry::Point2d;
 
 
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
       .def("set_open_drive_map", &MapInterface::set_open_drive_map)
-      .def("FindNearestLanes", &MapInterface::FindNearestLanes)
+      .def("find_nearest_lanes", [](const MapInterface& m,
+                                    const Point2d& point,
+                                    const unsigned& num_lanes) {
+          std::vector<LanePtr> lanes;
+          m.FindNearestLanes(point, num_lanes, lanes);
+          return lanes;
+      }) 
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
-      .def("get_open_drive_map", &MapInterface::get_open_drive_map);
+      .def("get_open_drive_map", &MapInterface::get_open_drive_map)
+      .def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
+          Line inner_line, outer_line, center_line;
+          bool result = m.CalculateDrivingCorridor(startid, goalid, inner_line, outer_line, center_line);
+          return std::make_tuple(inner_line, outer_line, center_line);
+      });
 
   py::class_<DrivingCorridor,
              std::shared_ptr<DrivingCorridor>>(m, "DrivingCorridor")
@@ -32,7 +44,23 @@ void python_map(py::module m) {
       .def_property("outer", &DrivingCorridor::get_outer,
         &DrivingCorridor::set_outer)
       .def_property("center", &DrivingCorridor::get_center,
-        &DrivingCorridor::set_center);
+        &DrivingCorridor::set_center)
+      .def(py::pickle(
+      [](const DrivingCorridor& d) -> py::tuple { // __getstate__
+          /* Return a tuple that fully encodes the state of the object */
+          return py::make_tuple(d.get_inner(), d.get_outer(), d.get_center(), d.computed);
+      },
+      [](const py::tuple &t)  { // __setstate__
+          if (t.size() != 4)
+              throw std::runtime_error("Invalid driving corridor state!");
+
+          DrivingCorridor d;
+          d.set_inner(t[0].cast<Line>());
+          d.set_outer(t[1].cast<Line>());
+          d.set_center(t[2].cast<Line>());
+          d.computed = t[3].cast<bool>();
+          return d;
+      }));
 
   py::class_<LocalMap, std::shared_ptr<LocalMap>>(m, "LocalMap")
       .def(py::init<LaneId, const MapInterfacePtr&>())
@@ -41,7 +69,18 @@ void python_map(py::module m) {
         &LocalMap::get_horizon_driving_corridor)
       .def("get_driving_corridor", &LocalMap::get_driving_corridor)
       .def("set_map_interface", &LocalMap::set_map_interface)
-      .def("generate", &LocalMap::Generate);
+      .def("generate", &LocalMap::Generate)
+      .def(py::pickle(
+        [](const LocalMap& l) -> py::tuple { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(l.get_goal_lane_id(), l.get_driving_corridor());
+        },
+        [](py::tuple &t)  { // __setstate__
+            if (t.size() != 2)
+                throw std::runtime_error("Invalid local map state!");
+
+            return new LocalMap(t[0].cast<LaneId>(), t[1].cast<DrivingCorridor>());
+        }));
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())

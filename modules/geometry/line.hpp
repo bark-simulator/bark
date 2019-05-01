@@ -45,6 +45,10 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
     recompute_s();
   }
+
+  void reverse() {
+    boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
+  }
   
   void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
@@ -208,12 +212,12 @@ inline Point2d get_normal_at_s(Line l, float s) {
 }
 
 
-inline boost::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
+inline std::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
   // edge cases: empty or one-point line
   if (l.obj_.empty()) {
-    return boost::make_tuple(Point2d(0, 0), 0.0, 0);
+    return std::make_tuple(Point2d(0, 0), 0.0, 0);
   } else if (l.obj_.size() == 1) {
-    return boost::make_tuple(l.obj_.at(0), 0.0, 0);
+    return std::make_tuple(l.obj_.at(0), 0.0, 0);
   }
 
   // nominal case:
@@ -287,16 +291,16 @@ inline boost::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const
   // const double dist_boost = bg::distance(l.obj_, p);
 
   // return
-  return boost::make_tuple(retval, s, min_segment_idx);
+  return std::make_tuple(retval, s, min_segment_idx);
 }
 inline Point2d get_nearest_point(Line l, const Point2d &p) {
-  return boost::get<0>(get_nearest_point_and_s(l, p));
+  return std::get<0>(get_nearest_point_and_s(l, p));
 }
 inline float get_nearest_s(Line l, const Point2d &p) {
-  return boost::get<1>(get_nearest_point_and_s(l, p));
+  return std::get<1>(get_nearest_point_and_s(l, p));
 }
 inline uint FindNearestIdx(Line l, const Point2d &p) {
-  return boost::get<2>(get_nearest_point_and_s(l, p));
+  return std::get<2>(get_nearest_point_and_s(l, p));
 }
 //! Point - Line collision checker using boost::intersection
 inline bool Collide(const Line &l, const LinePoint &p) {
@@ -316,7 +320,6 @@ inline bool Collide(const Line &l1, const Line &l2) {
   bg::intersection(l1.obj_, l2.obj_, shape_intersect);
   return !shape_intersect.empty();
 }
-
 
 // An oriented point can have a linestring (the nearest point on it) on the left or right side, left side < 0, right side > 0
 inline double signed_distance(const Line &line, const Point2d &p, const float& orientation) {

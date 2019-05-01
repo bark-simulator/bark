@@ -24,6 +24,7 @@ using modules::world::opendrive::LanePtr;
 using modules::world::opendrive::LaneId;
 using modules::world::opendrive::OpenDriveMapPtr;
 using modules::geometry::Point2d;
+using modules::geometry::Line;
 
 using rtree_lane_model = boost::geometry::model::segment<Point2d>;
 using rtree_lane_id = LanePtr;
@@ -37,11 +38,15 @@ class MapInterface {
 
   bool FindNearestLanes(const modules::geometry::Point2d& point,
                          const unsigned& num_lanes,
-                         std::vector<opendrive::LanePtr>& lanes);
+                         std::vector<opendrive::LanePtr>& lanes) const;
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
+                                  const LaneId& startid, const LaneId& goalid) const;
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundaries(const std::vector<LaneId>& horizon);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundaries(const std::vector<LaneId>& horizon) const;
+
+  bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
+                            Line& inner_line, Line& outer_line, Line& center_line) const;
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
     open_drive_map_ = map;
