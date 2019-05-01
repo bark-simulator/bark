@@ -30,7 +30,7 @@ using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 typedef std::pair<State, Input> StateInputPair;
-typedef std::queue<StateInputPair> StateInputHistory;
+typedef std::vector<StateInputPair> StateInputHistory;
 
 class DynamicModel {
  public:

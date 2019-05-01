@@ -12,6 +12,8 @@ class ParameterWrapper():
     def __init__(self, **kwargs):
         if "filename" in kwargs:
             self.load(kwargs["filename"])
+        elif "json" in kwargs:
+            self.convert_to_param(kwargs["json"])
         else:
             self.store = dict()
         self.param_descriptions = dict()

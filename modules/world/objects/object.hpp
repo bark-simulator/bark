@@ -34,14 +34,16 @@ class Object : public commons::BaseType {
   geometry::Polygon get_shape() const { return shape_; }
   geometry::Model3D get_model_3d() const { return model_3d_; }
 
-  AgentId get_agent_id() { return agent_id_; }
+  AgentId get_agent_id() const { return agent_id_; }
+
+  void set_agent_id(const AgentId& agent_id) { agent_id_ = agent_id;}
 
   virtual Object *Clone() const;
 
  private:
   geometry::Polygon shape_;
   geometry::Model3D model_3d_;
-  const AgentId agent_id_;
+  AgentId agent_id_;
 
   static AgentId agent_count; 
 };
