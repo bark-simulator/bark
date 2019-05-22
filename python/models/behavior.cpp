@@ -6,11 +6,14 @@
 
 #include "behavior.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/behavior/state_delta/state_delta.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
+using modules::models::behavior::BehaviorStateDelta;
+
 using std::shared_ptr;
 void python_behavior(py::module m) {
   py::class_<BehaviorModel,
@@ -42,4 +45,12 @@ void python_behavior(py::module m) {
             /* Create a new C++ instance */
             return new BehaviorConstantVelocity(nullptr); // param pointer must be set afterwards
         }));
+
+  py::class_<BehaviorStateDelta,
+             BehaviorModel,
+             shared_ptr<BehaviorStateDelta>>(m, "BehaviorStateDelta")
+      .def(py::init<const modules::models::dynamic::State&, modules::commons::Params *>())
+      .def("__repr__", [](const BehaviorStateDelta &b) {
+        return "bark.behavior.BehaviorStateDelta";
+      });
 }
