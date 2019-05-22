@@ -11,15 +11,21 @@ from bark.geometry import *
 
 
 class Runtime(object):
-    def __init__(self, world, step_time):
-        self.world = world
+    def __init__(self, step_time, viewer):
         self.step_time = step_time
+        self.viewer = viewer
 
-    @return_execution_time
-    def step(self, step_time):
+    def reset(self, scenario):
+        self.scenario = scenario
+        self.world = self.scenario.get_world_state()
+
+    def step(self):
         self.world.step(step_time)
 
+    def render():
+        self.viewer = viewer.drawWorld(self.world)
+        self.viewer.show(block=False)
+
     def run(self, steps):
-        for step_count in trange(steps, leave=True):
-            print("%s: World step took %s seconds." %
-                  (step_count, round(self.step(self.step_time), 2)))
+        for step_count in range(steps):
+            self.step()
