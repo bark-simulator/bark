@@ -15,8 +15,9 @@ import copy
 
 
 class Scenario:
-    def __init__(self, agent_list=None, map_file_name=None, json_params=None):
+    def __init__(self, agent_list=None, eval_agent_ids=None, map_file_name=None, json_params=None):
         self.agent_list = agent_list or []
+        self.eval_agent_ids = eval_agent_ids or []
         self.map_file_name = map_file_name
         self.json_params = json_params
 
@@ -29,7 +30,8 @@ class Scenario:
         return self._build_world_state()
 
     def copy(self):
-        return Scenario(agent_list=copy.deepcopy(self.agent_list), map_file_name=self.map_file_name, json_params=self.json_params.copy())
+        return Scenario(agent_list=copy.deepcopy(self.agent_list), eval_agent_ids=self.eval_agents_ids.copy(),
+                                 map_file_name=self.map_file_name, json_params=self.json_params.copy())
 
     def _build_world_state(self):
         param_server = ParameterServer(json=self.json_params)
