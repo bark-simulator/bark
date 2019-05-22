@@ -37,7 +37,7 @@ void World::add_collision_checker(const CollisionCheckerPtr& cchecker) {
   collision_checkers_.push_back(cchecker);
 }
 
-void World::MoveAgents(float delta_time) {
+void World::MoveAgents(const float& delta_time) {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : agents_) {
       //! clone current world
@@ -68,10 +68,25 @@ void World::UpdateHorizonDrivingCorridors() {
   }
 }
 
-void World::Step(float delta_time) {
+void World::Step(const float& delta_time) {
   UpdateHorizonDrivingCorridors();
   MoveAgents(delta_time);
   // TODO(@fortiss): add post world collision check
+}
+
+std::vector<ObservedWorld> World::Observe(const std::vector<AgentId>& agent_ids) {
+  WorldPtr current_world_state(this->Clone());
+  std::vector<ObservedWorld> observed_worlds;
+  for (auto agent_id : agent_ids) {
+      if(agents_.find(agent_id) == agents_.end()) {
+        std::cout << "Unvalid agent id " << agent_id << ". Skipping ...." << std::endl;
+        continue;
+      }
+      ObservedWorld observed_world(*current_world_state,
+                                   agent_id);
+      observed_worlds.push_back(observed_world);
+  }
+  return observed_worlds;
 }
 
 }  // namespace world

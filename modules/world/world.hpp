@@ -58,9 +58,11 @@ class World : public commons::BaseType {
   bool CheckCollision() const;
 
   bool Valid() const;
-  void Step(float delta_time);
+  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
+  void Step(const float& delta_time);
   void UpdateHorizonDrivingCorridors();
-  void MoveAgents(float delta_time);
+  void MoveAgents(const float& delta_time);
+
   virtual World *Clone() const;
 
  private:

@@ -28,13 +28,14 @@ void python_world(py::module m) {
       return "bark.world.World";
     })
     .def("step", &World::Step)
+    .def("observe", &World::Observe)
     .def("add_agent", &World::add_agent)
     .def("add_object", &World::add_object)
     .def("set_map", &World::set_map)
     .def_property_readonly("agents", &World::get_agents)
     .def_property_readonly("objects", &World::get_objects)
     .def_property_readonly("time", &World::get_world_time)
-    .def_property_readonly("agent", &World::get_agent)
+    .def("get_agent", &World::get_agent)
     .def_property("map", &World::get_map, &World::set_map)
     .def("copy",&World::Clone);
 
