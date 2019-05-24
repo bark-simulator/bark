@@ -3,20 +3,22 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from tqdm import trange
-from modules.runtime.commons.commons import return_execution_time
 from bark.world.opendrive import *
 from bark.world import *
 from bark.geometry import *
 
 
 class Runtime(object):
-    def __init__(self, step_time, viewer):
+    def __init__(self, step_time, viewer, scenario_generator=None):
         self.step_time = step_time
         self.viewer = viewer
+        self.scenario_generator = scenario_generator
 
-    def reset(self, scenario):
-        self.scenario = scenario
+    def reset(self, scenario=None):
+        if scenario:
+            self.scenario = scenario
+        else:
+            self.scenario = self.scenario_generator.get_next_scenario()
         self.world = self.scenario.get_world_state()
 
     def step(self):
