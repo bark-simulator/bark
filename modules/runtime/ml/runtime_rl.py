@@ -2,7 +2,7 @@
 
 
 
-from bark.runtime.runtime import Runtime
+from modules.runtime.runtime import Runtime
 from gym.spaces import Box
 
 
@@ -13,11 +13,11 @@ class RuntimeRL(Runtime):
         self.nn_observer = nn_observer
         self.reward_observer = reward_observer
 
-    def reset(self, scenario=None)
+    def reset(self, scenario=None):
         super().reset(scenario=scenario)
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agents_ids)
 
-    def step(self, action=None)
+    def step(self, action=None):
         self.world = self.action_wrapper.action_to_behavior(world=self.world, agents_to_act=self.scenario.eval_agents_ids, action=action)
         self.world.step()
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agents_ids)
