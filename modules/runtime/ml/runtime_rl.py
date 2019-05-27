@@ -15,12 +15,12 @@ class RuntimeRL(Runtime):
 
     def reset(self, scenario=None):
         super().reset(scenario=scenario)
-        return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agents_ids)
+        return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agent_ids)
 
-    def step(self, action=None):
-        self.world = self.action_wrapper.action_to_behavior(world=self.world, agents_to_act=self.scenario.eval_agents_ids, action=action)
-        self.world.step()
-        return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agents_ids)
+    def step(self, action):
+        self.world = self.action_wrapper.action_to_behavior(world=self.world, agents_to_act=self.scenario.eval_agent_ids, action=action)
+        self.world.step(self.step_time)
+        return self.get_nstate_reward_action_tuple(world=self.world, controlled_agents=self.scenario.eval_agent_ids)
 
     def action_space(self):
         return self.action_wrapper.action_space

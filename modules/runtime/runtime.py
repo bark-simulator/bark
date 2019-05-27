@@ -13,12 +13,13 @@ class Runtime(object):
         self.step_time = step_time
         self.viewer = viewer
         self.scenario_generator = scenario_generator
+        self.scenario_idx = None
 
     def reset(self, scenario=None):
         if scenario:
             self.scenario = scenario
         else:
-            self.scenario = self.scenario_generator.get_next_scenario()
+            self.scenario, self.scenario_idx = self.scenario_generator.get_next_scenario()
         self.world = self.scenario.get_world_state()
 
     def step(self):

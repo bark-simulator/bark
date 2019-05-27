@@ -1,7 +1,7 @@
 
 
 from gym import spaces
-from bark.models.behavior import BehaviorDeltaState
+from bark.models.behavior import BehaviorStateDelta
 
 class ActionWrapper:
     def action_to_behavior(self, world, agents_to_act, action):
@@ -14,7 +14,7 @@ class ActionWrapper:
 
 class OpenAI(ActionWrapper):
     def action_to_behavior(self, world, agents_to_act, action):
-        if(len(self.scenario.eval_agent_ids) != 1):
+        if(len(agents_to_act) != 1):
             raise ValueError("Invalid number of actions given: {}".format(agents_to_act))
 
 
@@ -27,12 +27,12 @@ class MotionPrimitives(OpenAI):
         super(MotionPrimitives, self).action_to_behavior(world=world, agents_to_act=agents_to_act, action=action)
         ego_agent_id = agents_to_act[0]
         # todo implement motion primitive model
-        world.agents[ego_agent_id].behavior_model = BehaviorDeltaState(action)
+        world.agents[ego_agent_id].behavior_model = BehaviorStateDelta(action, None)
         return world
 
     @property
     def action_space(self):
-        return space.Discrete(len(self.motion_primitives))
+        return spaces.Discrete(len(self.motion_primitives))
 
         
 

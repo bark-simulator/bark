@@ -30,7 +30,7 @@ class Scenario:
         return self._build_world_state()
 
     def copy(self):
-        return Scenario(agent_list=copy.deepcopy(self.agent_list), eval_agent_ids=self.eval_agents_ids.copy(),
+        return Scenario(agent_list=copy.deepcopy(self.agent_list), eval_agent_ids=self.eval_agent_ids.copy(),
                                  map_file_name=self.map_file_name, json_params=self.json_params.copy())
 
     def _build_world_state(self):

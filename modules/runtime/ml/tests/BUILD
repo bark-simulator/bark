@@ -2,9 +2,9 @@
 py_test(
     name = "py_runtime_rl_tests",
     srcs = ["py_runtime_rl_tests.py"],
-    data = ['//python:bark.so'],
-    imports = ['../../../python',
-               '//modules/runtime/tests:xodr_data'],
+    data = ['//python:bark.so',
+            '//modules/runtime/tests:xodr_data'],
+    imports = ['../../../python'],
     deps = ["//modules/runtime/ml:ml",
             "//modules/runtime/commons:parameters",
             "//modules/runtime/commons:commons",
@@ -13,3 +13,5 @@ py_test(
             "//modules/runtime/commons:roadgraph_generator"],
     visibility = ["//visibility:public"],
 )
+
+
