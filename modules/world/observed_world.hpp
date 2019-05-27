@@ -48,6 +48,12 @@ class ObservedWorld : protected World {
       return World::get_agent(ego_agent_id_);
     }
 
+    AgentMap get_other_agents() const {
+      auto tmp_map = World::get_agents();
+      tmp_map.erase(ego_agent_id_);
+      return tmp_map;
+    }
+
     const MapInterfacePtr get_map() const { return World::get_map(); }
 
     State get_ego_state() const {

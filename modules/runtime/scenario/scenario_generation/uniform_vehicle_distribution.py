@@ -19,6 +19,7 @@ from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.commons.xodr_parser import XodrParser
 
 import numpy as np
+import math
 
 
 class UniformVehicleDistribution(ScenarioGeneration):
@@ -77,6 +78,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
         description=self.params.convert_to_dict()
         description["ScenarioGenerator"] = "UniformVehicleDistribution"
         scenario.agent_list = agent_list
+        num_agents = len(scenario.agent_list)
+        scenario.eval_agent_ids = [scenario.agent_list[math.floor(num_agents/2)].id] # only one agent is ego in the middle of all other agents
 
         return scenario
 
