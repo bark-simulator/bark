@@ -24,9 +24,10 @@ class RuntimeRLTests(unittest.TestCase):
                         reward_observer=None, step_time=0.2, viewer=PygameViewer,
                         scenario_generator=scenario_generation)
 
-        runtimerl.reset()
+        nn_state = runtimerl.reset()
+        print(nn_state)
 
-        next_state, reward, done, success = runtimerl.step(np.array([1,2,3,4,4]))
+        next_nn_state, reward, done, success = runtimerl.step(np.array([1,2,3,4,4]))
         
         
 if __name__ == '__main__':
