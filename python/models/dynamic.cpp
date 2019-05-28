@@ -39,6 +39,7 @@ void python_dynamic(py::module m) {
       .value("X_POSITION", X_POSITION)
       .value("Y_POSITION", Y_POSITION)
       .value("THETA_POSITION", THETA_POSITION)
+      .value("VEL_POSITION", VEL_POSITION)
       .value("MIN_STATE_SIZE", MIN_STATE_SIZE)
       .value("Z_POSITION", Z_POSITION)
       .export_values();
