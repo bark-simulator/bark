@@ -1,5 +1,5 @@
 ```eval_rst
-.. image:: bark_logo.png
+.. image:: bark_logo.jpg
    :scale: 100 %
    :align: center
 ```
@@ -43,5 +43,5 @@ There are already simulation solutions around, which also provide validation and
 * **Atari game simulations** are primarily focused on fundamental research on decision making. 
 
 * **Robotics benchmarking libraries** like Drake (MIT) or OMPL do not cover agent models for behavior benchmarks.
- 
+
 
