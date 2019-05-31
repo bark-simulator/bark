@@ -16,16 +16,16 @@ namespace goal_definition {
 
 class GoalDefinition  {
   public:
-    GoalDefinition(const Polygon& goal_shape) : goal_shape_(goal_shape) {}
+    GoalDefinition(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
 
-    bool AtGoal(const Polygon& agent_shape) const {
+    bool AtGoal(const modules::geometry::Polygon& agent_shape) const {
       return modules::geometry::Collide(agent_shape, goal_shape);
     }
 
-    const Polygon& get_shape() const {return goal_shape_;}
+    const modules::geometry::Polygon& get_shape() const {return goal_shape_;}
 
   private:
-    Polygon goal_shape_;
+    modules::geometry::Polygon goal_shape_;
 
 };
 
