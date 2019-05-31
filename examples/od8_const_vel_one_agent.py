@@ -11,6 +11,7 @@ from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
 from bark.world.map import *
+from bark.world.goal_definition import GoalDefinition
 from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
@@ -46,13 +47,14 @@ world.set_map(map_interface)
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 150/3.6])
 agent_params = param_server.addChild("agent1")
+goal_polygon = p2 = Polygon2d([1.25, 1, 0], [ Point2d(0, 0), Point2d(0, 2),Point2d(4, 2),Point2d(4, 0),Point2d(0, 0)])
 agent = Agent(init_state,
               behavior_model,
               dynamic_model,
               execution_model,
               agent_2d_shape,
               agent_params,
-              2, # goal_lane_id
+              GoalDefinition(goal_polygon), # goal_lane_id
               map_interface)
 world.add_agent(agent)
 
