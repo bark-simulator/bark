@@ -44,7 +44,7 @@ class StateConcatenation(OpenAI):
             concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.reshape(agent_rel_state, (self._len_relative_agent_state, 1))
             concat_pos += self._len_relative_agent_state
         
-        return concatenated_state, None, None
+        return concatenated_state
 
     def observation_space(self):
         pass
