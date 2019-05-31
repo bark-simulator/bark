@@ -11,6 +11,7 @@ cc_library(
         "//modules/models/execution:execution",
 	    "//modules/models/dynamic:dynamic",
         "//modules/world/collision:base_collision_checker",
+        "//modules/world/goal_definition:goal_definition"
             
     ],
     visibility = ["//visibility:public"],
