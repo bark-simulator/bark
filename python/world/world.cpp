@@ -11,6 +11,7 @@
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
 #include "python/world/opendrive.hpp"
+#include "python/world/goal_definition.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -51,6 +52,7 @@ void python_world(py::module m) {
   python_agent(m.def_submodule("agent", "Agent wrapping"));
   python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
   python_map(m.def_submodule("map", "mapInterface wrapping"));
+  python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
 
   py::class_<vertex_t>(m, "vertex_t")
     .def(py::init<>());

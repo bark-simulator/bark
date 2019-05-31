@@ -38,7 +38,7 @@ void python_agent(py::module m)
           py::arg("execution_model"),
           py::arg("shape"),
           py::arg("params"),
-          py::arg("lane_id") = LaneId(0),
+          py::arg("goal_definition"),
           py::arg("map_interface") = nullptr,
           py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent &a) {
@@ -55,7 +55,6 @@ void python_agent(py::module m)
       .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
       .def_property_readonly("model3d", &Agent::get_model_3d)
       .def_property_readonly("state", &Agent::get_current_state)
-      .def_property_readonly("goal_lane_id", &Agent::get_goal_lane_id)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
@@ -69,7 +68,7 @@ void python_agent(py::module m)
                                   a.get_execution_model(), // 7
                                   a.get_dynamic_model(), // 8
                                   a.get_current_state(), // 9
-                                  a.get_goal_lane_id()); // 10
+                                  a.get_goal_definition()); // 10
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 11)
@@ -88,7 +87,7 @@ void python_agent(py::module m)
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
-                    t[10].cast<LaneId>());
+                    t[10].cast<GoalDefinition>());
             agent.set_agent_id(t[3].cast<AgentId>());
             agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;
