@@ -24,7 +24,7 @@ Agent::Agent(const State &initial_state,
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        LaneId goal_lane_id,
+        const GoalDefinition& goal_definition,
         const MapInterfacePtr& map_interface,
         const geometry::Model3D &model_3d) :
 Object(shape, params, model_3d),
@@ -32,9 +32,9 @@ behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
-local_map_(new LocalMap(goal_lane_id, map_interface)),
+local_map_(new LocalMap(goal_definition, map_interface)),
 max_history_length_(10),
-goal_lane_id_(goal_lane_id) {
+goal_definition_(goal_definition) {
   if(params) {
     max_history_length_ = params->get_int(
     "MaxHistoryLength",
