@@ -88,6 +88,10 @@ class LocalMap {
     return goal_lane_id_;
   }
 
+  GoalDefinition get_goal_definition() const {
+    return goal_definition_;
+  }
+
   //! Functions
   void ConcatenateLines(const std::vector<LanePtr>& lanes,
                         Line& line_of_corridor,

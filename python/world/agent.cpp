@@ -14,6 +14,7 @@
 
 namespace py = pybind11;
 using namespace modules::world::objects;
+using namespace modules::world::goal_definition;
 using namespace modules::models::dynamic;
 using namespace modules::commons;
 using namespace modules::models::behavior;
@@ -29,7 +30,7 @@ void python_agent(py::module m)
           const DynamicModelPtr &,
           const ExecutionModelPtr &,
           const Polygon &, Params *,
-          const LaneId &,
+          const GoalDefinition &,
           const MapInterfacePtr &,
           const Model3D &>(),
           py::arg("initial_state"),

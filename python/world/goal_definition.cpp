@@ -5,6 +5,7 @@
 
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::goal_definition;
@@ -13,7 +14,7 @@ using namespace modules::geometry;
 void python_goal_definition(py::module m)
 {
   py::class_<GoalDefinition>(m, "GoalDefinition")
-      .def(py::init<const& Polygon>())
+      .def(py::init<const modules::geometry::Polygon&>())
       .def("__repr__", [](const GoalDefinition &g) {
         return "bark.world.goal_definition.GoalDefinition";
       })
