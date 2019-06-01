@@ -109,6 +109,11 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
   return *polygon;  
 }
 
+bool Agent::AtGoal() const {
+  auto agent_state_polygon = GetPolygonFromState(get_current_state());
+  return get_goal_definition().AtGoal(agent_state_polygon);
+}
+
 void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
