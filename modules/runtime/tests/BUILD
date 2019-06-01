@@ -37,3 +37,12 @@ py_test(
           "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
+
+py_test(
+  name = "py_evaluation_tests",
+  srcs = ["py_evaluation_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime"],
+)
