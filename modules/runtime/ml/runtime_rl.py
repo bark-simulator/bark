@@ -11,10 +11,11 @@ class RuntimeRL(Runtime):
         super().__init__(step_time=step_time, viewer=viewer, scenario_generator=scenario_generator)
         self.action_wrapper = action_wrapper
         self.nn_observer = nn_observer
-        self.reward_observer = reward_observer
+        self.evaluator = evaluator
 
     def reset(self, scenario=None):
         super().reset(scenario=scenario)
+        self.world = self.evaluator.add_world_evaluators(self.world):
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agent_ids)
 
     def step(self, action):
