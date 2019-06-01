@@ -59,7 +59,7 @@ Agent::Agent(const Agent& other_agent) :
   execution_model_(other_agent.execution_model_),
   history_(other_agent.history_),
   local_map_(other_agent.local_map_),
-  goal_lane_id_(other_agent.goal_lane_id_) {}
+  goal_definition_(other_agent.goal_definition_) {}
 
 
 void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
@@ -113,7 +113,7 @@ void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->Generate(agent_xy, goal_lane_id_)) {
+  if (!local_map_->Generate(agent_xy)) {
     std::cout << "LocalMap generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }

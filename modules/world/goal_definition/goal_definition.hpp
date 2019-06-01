@@ -19,7 +19,7 @@ class GoalDefinition  {
     GoalDefinition(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
 
     bool AtGoal(const modules::geometry::Polygon& agent_shape) const {
-      return modules::geometry::Collide(agent_shape, goal_shape);
+      return modules::geometry::Collide(agent_shape, goal_shape_);
     }
 
     const modules::geometry::Polygon& get_shape() const {return goal_shape_;}

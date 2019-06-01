@@ -32,13 +32,14 @@ void LocalMap::ConcatenateLines(const std::vector<LanePtr>& lanes,
 }
 
 LaneId LocalMap::GoalLaneIdFromGoalDefinition(const GoalDefinition& goal_definition) {
-  modules::geometry::Point2d goal_center = goal_definition.get_shape().center_;
+  modules::geometry::Point2d goal_center(goal_definition.get_shape().center_(0,1),
+                                         goal_definition.get_shape().center_(1,1));
   std::vector<opendrive::LanePtr> nearest_lanes;
 
   if(map_interface_->FindNearestLanes(goal_center, 1, nearest_lanes)) {
       return nearest_lanes[0]->get_id();
   }
-  printf("No matching lane for goal definition found. Defaulting to LaneId 0.")
+  printf("No matching lane for goal definition found. Defaulting to LaneId 0.");
   return LaneId(0);
 }
 
