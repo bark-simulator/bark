@@ -63,7 +63,7 @@ void python_map(py::module m) {
       }));
 
   py::class_<LocalMap, std::shared_ptr<LocalMap>>(m, "LocalMap")
-      .def(py::init<LaneId, const MapInterfacePtr&>())
+      .def(py::init<const GoalDefinition&, const MapInterfacePtr&>())
       .def("set_goal_lane_id", &LocalMap::set_goal_lane_id)
       .def("get_horizon_driving_corridor",
         &LocalMap::get_horizon_driving_corridor)
