@@ -37,6 +37,10 @@ void World::add_collision_checker(const CollisionCheckerPtr& cchecker) {
   collision_checkers_.push_back(cchecker);
 }
 
+void World::add_evaluator(const std::string& name, const EvaluatorPtr& evaluator) {
+  evaluators_[name] = evaluator;
+}
+
 void World::MoveAgents(const float& delta_time) {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : agents_) {
@@ -46,6 +50,14 @@ void World::MoveAgents(const float& delta_time) {
       agent.second->Move(delta_time, observed_world);
   }
   world_time_ += delta_time;
+}
+
+std::map<std::string, float> World::Evaluate() const {
+  std::map<std::string, float> evaluation_results;
+  for(auto const& evaluator : evaluators_) {
+      evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this); 
+    }
+  return evaluation_results;
 }
 
 

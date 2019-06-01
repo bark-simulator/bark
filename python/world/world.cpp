@@ -12,6 +12,7 @@
 #include "python/world/map.hpp"
 #include "python/world/opendrive.hpp"
 #include "python/world/goal_definition.hpp"
+#include "python/world/evaluation.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -33,6 +34,8 @@ void python_world(py::module m) {
     .def("add_agent", &World::add_agent)
     .def("add_object", &World::add_object)
     .def("set_map", &World::set_map)
+    .def("add_evaluator", &World::add_evaluator)
+    .def("evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::get_agents)
     .def_property_readonly("objects", &World::get_objects)
     .def_property_readonly("time", &World::get_world_time)
@@ -53,6 +56,7 @@ void python_world(py::module m) {
   python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
   python_map(m.def_submodule("map", "mapInterface wrapping"));
   python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
+  python_evaluation(m.def_submodule("evaluation", "evaluators"));
 
   py::class_<vertex_t>(m, "vertex_t")
     .def(py::init<>());
