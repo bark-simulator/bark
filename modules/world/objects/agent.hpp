@@ -87,6 +87,8 @@ class Agent : public Object {
 
   void Move(const float &dt, const ObservedWorld &observed_world);
 
+  bool AtGoal() const;
+
   void GenerateLocalMap();
   void UpdateDrivingCorridor(double horizon);
 
