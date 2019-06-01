@@ -13,4 +13,4 @@ namespace py = pybind11;
 
 void python_goal_definition(py::module m);
 
-#endif  // PYTHON_PYTHON_BINDINGS_WORLD_AGENT_HPP_
+#endif  // PYTHON_PYTHON_BINDINGS_WORLD_GOAL_DEFINITION_HPP_
