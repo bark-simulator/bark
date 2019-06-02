@@ -35,6 +35,7 @@ void python_world(py::module m) {
     .def("add_object", &World::add_object)
     .def("set_map", &World::set_map)
     .def("add_evaluator", &World::add_evaluator)
+    .def_property_readonly("evaluators", &World::get_evaluators)
     .def("evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::get_agents)
     .def_property_readonly("objects", &World::get_objects)

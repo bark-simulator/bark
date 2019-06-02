@@ -29,7 +29,7 @@ class BaseCollisionChecker : public modules::commons::BaseType
 };
 
 typedef std::shared_ptr<BaseCollisionChecker> CollisionCheckerPtr;
-typedef std::vector<CollisionCheckerPtr> CollisionCheckerVector;
+
 
 } // namespace collision
 } // namespace world

@@ -23,7 +23,7 @@ namespace evaluation
 class EvaluatorGoalReached : public BaseEvaluator
 {
   public:
-    EvaluatorGoalReached(const AgentId& agent_id)  {};
+    EvaluatorGoalReached(const AgentId& agent_id) : agent_id_(agent_id)  {};
     virtual ~EvaluatorGoalReached() {};
 
     virtual float Evaluate(const world::World& world) const { return static_cast<float>(world.get_agents()[agent_id_]->AtGoal());}
