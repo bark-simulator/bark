@@ -61,7 +61,8 @@ class World : public commons::BaseType {
 
   bool CheckCollision() const;
 
-  std::map<std::string, float> Evaluate() const;
+  typedef std::map<std::string, modules::world::evaluation::EvaluationReturn> EvaluationMap ;
+  EvaluationMap Evaluate() const;
 
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);

@@ -7,7 +7,7 @@
 #define MODULES_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 
 #include <memory>
-
+#include <boost/variant.hpp>
 #include "modules/commons/base_type.hpp"
 
 namespace modules
@@ -19,15 +19,16 @@ class World;
 namespace evaluation
 {
 
+typedef boost::variant<float,bool> EvaluationReturn; 
+
 class BaseEvaluator 
 {
   public:
     BaseEvaluator()  {};
     virtual ~BaseEvaluator() {};
 
-    virtual float Evaluate(const world::World& world) const = 0;
+    virtual EvaluationReturn Evaluate(const world::World& world) const = 0;
 };
-
 typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 
 } // namespace collision
