@@ -18,9 +18,9 @@ class PyBaseEvaluator : public BaseEvaluator {
  public:
   using BaseEvaluator::BaseEvaluator;
 
-  float Evaluate(const World& world) const override {
+  EvaluationReturn Evaluate(const World& world) const override {
     PYBIND11_OVERLOAD_PURE(
-        float,
+        EvaluationReturn,
         BaseEvaluator,
         Evaluate,
         world);
