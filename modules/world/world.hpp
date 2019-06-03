@@ -13,7 +13,6 @@
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
-#include "modules/world/collision/base_collision_checker.hpp"
 #include "modules/world/evaluation/base_evaluator.hpp"
 
 namespace modules {
@@ -22,13 +21,11 @@ namespace world {
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
-using world::collision::CollisionCheckerPtr;
 using world::evaluation::EvaluatorPtr;
 
 typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
 
-typedef std::vector<CollisionCheckerPtr> CollisionCheckerVector;
 class World : public commons::BaseType {
  public:
   explicit World(commons::Params *params);
@@ -41,7 +38,6 @@ class World : public commons::BaseType {
   AgentMap get_agents() const { return agents_; }
   AgentPtr get_agent(AgentId id) const { return agents_.at(id); }
   ObjectMap get_objects() const { return objects_; }
-  CollisionCheckerVector get_collision_checkers() const { return collision_checkers_; }
   std::map<std::string, EvaluatorPtr> get_evaluators() const { return evaluators_;}
 
   void set_map(const world::map::MapInterfacePtr& map) { map_ = map; }
@@ -49,7 +45,6 @@ class World : public commons::BaseType {
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);
 
-  void add_collision_checker(const CollisionCheckerPtr& cchecker); 
   void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator); 
 
   void clear_agents() { agents_.clear(); }
@@ -58,8 +53,6 @@ class World : public commons::BaseType {
     clear_agents();
     clear_objects();
   }
-
-  bool CheckCollision() const;
 
   typedef std::map<std::string, modules::world::evaluation::EvaluationReturn> EvaluationMap ;
   EvaluationMap Evaluate() const;
@@ -76,7 +69,6 @@ class World : public commons::BaseType {
   world::map::MapInterfacePtr map_;
   AgentMap agents_;
   ObjectMap objects_;
-  CollisionCheckerVector collision_checkers_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
 };
