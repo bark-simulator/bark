@@ -16,6 +16,7 @@ namespace goal_definition {
 
 class GoalDefinition  {
   public:
+    GoalDefinition() : goal_shape_() {}
     GoalDefinition(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
 
     bool AtGoal(const modules::geometry::Polygon& agent_shape) const {

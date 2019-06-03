@@ -43,7 +43,7 @@ class Agent : public Object {
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        const GoalDefinition& goal_definition,
+        const GoalDefinition& goal_definition = GoalDefinition(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
         const geometry::Model3D &model_3d = geometry::Model3D());
 

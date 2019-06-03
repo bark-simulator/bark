@@ -52,7 +52,7 @@ class EvaluationTests(unittest.TestCase):
 
 
         info = world.evaluate()
-        self.assertEqual(info["success"], 1.0)
+        self.assertEqual(info["success"], True)
         
         
 if __name__ == '__main__':
