@@ -36,7 +36,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     return Shape<bg::model::linestring<T>, T>::add_point(p) && recompute_s();
   }
 
-  auto length() { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
+  auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
   int size() { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
 
