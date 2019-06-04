@@ -19,6 +19,7 @@ void python_goal_definition(py::module m)
       .def("__repr__", [](const GoalDefinition &g) {
         return "bark.world.goal_definition.GoalDefinition";
       })
+      .def_property_readonly("goal_shape", &GoalDefinition::get_shape)
       .def(py::pickle(
         [](const GoalDefinition& g) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */

@@ -11,6 +11,7 @@ from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
+from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
 
 def pickle_unpickle(object):
@@ -108,12 +109,16 @@ class PickleTests(unittest.TestCase):
         dynamic = SingleTrackModel()
         shape = CarLimousine()
         init_state = np.array([0, 0, 0, 0, 5])
-        agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), lane_id = 0)
+        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+        goal_definition = GoalDefinition(goal_polygon)
+        agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
         agent_after = pickle_unpickle(agent)
 
         self.assertEqual(agent_after.id , agent.id)
         self.assertTrue(np.array_equal(agent_after.state, agent.state) )
+        self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
+                                        agent.goal_definition.goal_shape.center))
 
         agent_list = []
         agent_list.append(agent)
