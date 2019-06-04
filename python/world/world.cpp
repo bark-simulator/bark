@@ -53,10 +53,10 @@ void python_world(py::module m) {
         return "bark.world.ObservedWorld";
       });
 
+  python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
   python_agent(m.def_submodule("agent", "Agent wrapping"));
   python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
   python_map(m.def_submodule("map", "mapInterface wrapping"));
-  python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
   python_evaluation(m.def_submodule("evaluation", "evaluators"));
 
   py::class_<vertex_t>(m, "vertex_t")

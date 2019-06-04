@@ -14,6 +14,7 @@ using namespace modules::geometry;
 void python_goal_definition(py::module m)
 {
   py::class_<GoalDefinition>(m, "GoalDefinition")
+      .def(py::init<>())
       .def(py::init<const Polygon&>())
       .def("__repr__", [](const GoalDefinition &g) {
         return "bark.world.goal_definition.GoalDefinition";
