@@ -7,7 +7,7 @@ from gym.spaces import Box
 
 
 class RuntimeRL(Runtime):
-    def __init__(self, action_wrapper, nn_observer, reward_observer, step_time, viewer, scenario_generator=None):
+    def __init__(self, action_wrapper, nn_observer, evaluator, step_time, viewer, scenario_generator=None):
         super().__init__(step_time=step_time, viewer=viewer, scenario_generator=scenario_generator)
         self.action_wrapper = action_wrapper
         self.nn_observer = nn_observer
@@ -15,7 +15,7 @@ class RuntimeRL(Runtime):
 
     def reset(self, scenario=None):
         super().reset(scenario=scenario)
-        self.world = self.evaluator.add_world_evaluators(self.world):
+        self.world = self.evaluator.add_world_evaluators(self.world, self.scenario.eval_agent_ids)
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agent_ids)
 
     def step(self, action):
@@ -30,8 +30,8 @@ class RuntimeRL(Runtime):
         return self.nn_observer.observation_space
 
     def get_nstate_reward_action_tuple(self, world, controlled_agents ):
-        next_state, done, success = self.nn_observer.observe(world=self.world, agents_to_observe=controlled_agents)
-        reward = self.reward_observer.get_reward(world=world, agents_to_observe=controlled_agents)
-        return next_state, reward, done, success
+        next_state = self.nn_observer.observe(world=self.world, agents_to_observe=controlled_agents)
+        reward, done, info = self.evaluator.get_evaluation(world=world)
+        return next_state, reward, done, info
 
 

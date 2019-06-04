@@ -11,6 +11,7 @@
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
+#include "modules/world/goal_definition/goal_definition.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -39,7 +40,7 @@ void python_agent(py::module m)
           py::arg("execution_model"),
           py::arg("shape"),
           py::arg("params"),
-          py::arg("goal_definition"),
+          py::arg("goal_definition") = GoalDefinition(),
           py::arg("map_interface") = nullptr,
           py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent &a) {

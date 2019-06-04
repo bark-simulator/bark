@@ -152,9 +152,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                     dynamic_model,
                     execution_model,
                     agent_2d_shape,
-                    param_server,
-                    2,
-                    None)
+                    param_server)
 
         return agent_default
 
