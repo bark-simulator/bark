@@ -37,7 +37,7 @@ inline Point2d operator+(const Point2d& lhs, const Point2d& rhs) { return Point2
 inline Point2d operator+(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)+ rhs , bg::get<1>(lhs) + rhs); }
 
 inline Point2d operator-(const Point2d& lhs, const Point2d& rhs) { return Point2d(bg::get<0>(lhs) - bg::get<0>(rhs), bg::get<1>(lhs) - bg::get<1>(rhs)); }
-inline Point2d operator-(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)- rhs, bg::get<1>(lhs) + rhs); }
+inline Point2d operator-(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)- rhs, bg::get<1>(lhs) - rhs); }
 
 inline Point2d operator*(const Point2d& point, const float& factor) { return Point2d(bg::get<0>(point) * factor , bg::get<1>(point) * factor); }
 inline Point2d operator/(const Point2d& point, const float& divisor) { return Point2d(bg::get<0>(point) / divisor , bg::get<1>(point) / divisor); }
