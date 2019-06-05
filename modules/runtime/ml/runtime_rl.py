@@ -16,10 +16,11 @@ class RuntimeRL(Runtime):
     def reset(self, scenario=None):
         super().reset(scenario=scenario)
         self.world = self.evaluator.add_world_evaluators(self.world, self.scenario.eval_agent_ids)
+        self.world = self.action_wrapper.set_eval_agent_behavior(self.world, self.scenario.eval_agent_ids)
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agent_ids)
 
     def step(self, action):
-        self.world = self.action_wrapper.action_to_behavior(world=self.world, agents_to_act=self.scenario.eval_agent_ids, action=action)
+        self.world = self.action_wrapper.action_to_behavior(world=self.world, action=action)
         self.world.step(self.step_time)
         return self.get_nstate_reward_action_tuple(world=self.world, controlled_agents=self.scenario.eval_agent_ids)
 

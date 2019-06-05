@@ -28,7 +28,7 @@ class RuntimeRLTests(unittest.TestCase):
 
         nn_state = runtimerl.reset()
 
-        next_nn_state, reward, done, info = runtimerl.step(np.array([1,2,3,4,4]))
+        next_nn_state, reward, done, info = runtimerl.step(action_wrapper.action_space.sample())
         print(reward, done, info)
         
 if __name__ == '__main__':

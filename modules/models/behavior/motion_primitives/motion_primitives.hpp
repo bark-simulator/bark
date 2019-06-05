@@ -8,6 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_STATE_DELTA_STATE_DELTA_HPP_
 
 #include "modules/models/behavior/behavior_model.hpp"
+#include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules {
@@ -16,27 +17,36 @@ namespace behavior {
 
 using dynamic::Trajectory;
 using dynamic::State;
+using dynamic::DynamicModelPtr;
+using dynamic::Input;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
-class BehaviorStateDelta : public BehaviorModel {
+class BehaviorMotionPrimitives : public BehaviorModel {
  public:
-  explicit BehaviorStateDelta(const State& state_delta, commons::Params *params) :
-    BehaviorModel(params),
-    state_delta_(state_delta) {}
+  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params);
 
-  virtual ~BehaviorStateDelta() {}
+  virtual ~BehaviorMotionPrimitives() {}
 
-  Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(float delta_time,
                  const ObservedWorld& observed_world);
+
+  typedef unsigned int MotionIdx;
+  MotionIdx AddMotionPrimitive(const Input& dynamic_input, const float time_span);
+  void ActionToBehavior(const MotionIdx& motion_idx);
 
   virtual BehaviorModel *Clone() const;
 private:
-  State state_delta_;
+  DynamicModelPtr dynamic_model_;
+  std::vector<Trajectory> motion_primitives_; 
+  MotionIdx active_motion_;
+
+  // Parameters
+  float integration_time_delta_;
 };
 
-inline BehaviorModel *BehaviorStateDelta::Clone() const {
-  return new BehaviorStateDelta(*this);
+inline BehaviorModel *BehaviorMotionPrimitives::Clone() const {
+  return new BehaviorMotionPrimitives(*this);
 }
 
 }  // namespace behavior

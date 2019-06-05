@@ -1,10 +1,17 @@
 
 
+import numpy as np
+
 from gym import spaces
-from bark.models.behavior import BehaviorStateDelta
+from bark.models.behavior import BehaviorMotionPrimitives
+from bark.models.dynamic import SingleTrackModel
+from modules.runtime.commons.parameters import ParameterServer
 
 class ActionWrapper:
-    def action_to_behavior(self, world, agents_to_act, action):
+    def action_to_behavior(self, world, actions):
+        pass
+
+    def set_eval_agent_behavior(self, world, agents_to_act):
         pass
 
     @property
@@ -13,26 +20,36 @@ class ActionWrapper:
 
 
 class OpenAI(ActionWrapper):
-    def action_to_behavior(self, world, agents_to_act, action):
+    def set_eval_agent_behavior(self, world, agents_to_act):
         if(len(agents_to_act) != 1):
             raise ValueError("Invalid number of actions given: {}".format(agents_to_act))
 
 
 class MotionPrimitives(OpenAI):
     def __init__(self):
+        self.params = ParameterServer()
         # todo: make parameterizable
-        self.motion_primitives = [(2,0),(-5,0),(2,30/2*3.14)] # (acceleration, steering angle)
+        self.control_inputs = [[2,0],[-5,0],[2,30/2*3.14]] # (acceleration, steering angle)
+        self.time_span = 0.5
+        self.behavior_model = None
 
-    def action_to_behavior(self, world, agents_to_act, action):
-        super(MotionPrimitives, self).action_to_behavior(world=world, agents_to_act=agents_to_act, action=action)
+    def set_eval_agent_behavior(self, world, agents_to_act):
+        super(MotionPrimitives, self).set_eval_agent_behavior(world=world, agents_to_act=agents_to_act)
+        self.behavior_model = BehaviorMotionPrimitives(SingleTrackModel(), self.params)
+        for control_input in self.control_inputs:
+            self.behavior_model.add_motion_primitive(np.array(control_input), self.time_span)
         ego_agent_id = agents_to_act[0]
-        # todo implement motion primitive model
-        world.agents[ego_agent_id].behavior_model = BehaviorStateDelta(action, None)
+        world.agents[ego_agent_id].behavior_model = self.behavior_model
+        return world
+
+    def action_to_behavior(self, world, action):
+        if self.behavior_model:
+            self.behavior_model.action_to_behavior(action)
         return world
 
     @property
     def action_space(self):
-        return spaces.Discrete(len(self.motion_primitives))
+        return spaces.Discrete(len(self.control_inputs))
 
         
 

@@ -1,10 +1,10 @@
 cc_library(
-    name = "state_delta",
+    name = "motion_primitives",
     srcs = [
-        "state_delta.cpp",
+        "motion_primitives.cpp",
     ],
     hdrs = [
-        "state_delta.hpp",
+        "motion_primitives.hpp",
     ],
     deps = [
         "//modules/commons:commons",
