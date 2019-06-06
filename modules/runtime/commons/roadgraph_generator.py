@@ -23,7 +23,7 @@ class RoadgraphGenerator:
                 for lane_id, lane in lane_section.get_lanes().items():
                     self.roadgraph.add_lane(road_id, lane)
 
-        # add edges
+        # add successors,predecessors
         for road_id, road in road_map.get_roads().items():
             successor_road_id = road.link.successor.id # this is the position!!!!!! (-4, 4)
             predecessor_road_id = road.link.predecessor.id # this is the position!!!!!! (-4, 4)
@@ -59,7 +59,10 @@ class RoadgraphGenerator:
                     except:
                         print("Road has no predeseccor road.")
 
-                    # neighbor edges
+        # add neighbor edges
+        for road_id, road in road_map.get_roads().items():
+            for _, lane_section in enumerate(road.lane_sections):
+                for lane_id, lane in lane_section.get_lanes().items():
                     if lane.lane_position is not 0:
                         inner_lane_pos = abs(lane.lane_position) - 1
                         inner_lane_id = self.get_lane_id_by_pos(lane_section, inner_lane_pos)

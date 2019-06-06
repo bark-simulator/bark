@@ -41,7 +41,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                         Points should be on different lanes and match the order of the source points. \
                                         Lanes must be near these points (<0.5m) \
                                         Provide a list of lists with x,y-coordinates", [[-191.789,-50.1725]]  ]   
-        assert(len(self.others_sink), len(self.others_source))            
+        assert len(self.others_sink) == len(self.others_source)         
 
         self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (40, 50)]
         self.velocity_range = params_temp["VehicleVelocityRange", "Lower and upper bound of velocity in km/h given as tuple from which velocities are sampled uniformly", (20,30)]
