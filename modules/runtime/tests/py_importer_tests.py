@@ -26,7 +26,7 @@ class ImporterTests(unittest.TestCase):
         # xodr_parser.print_python_map()
 
     def test_map(self):
-        xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
+        xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
         # xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
         params = ParameterServer()
         world = World(params)
