@@ -97,6 +97,10 @@ bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& s
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
       ComputeLaneBoundariesHorizon(startid, goalid);
 
+    if(route.first.empty() || route.second.empty()) {
+      return false;
+    }
+
     if (route.first[0]) {
       inner_line = route.first[0]->get_line();
       // inner lane

@@ -13,7 +13,7 @@ import time
 import os
 
 scenario_dump_folder = "/home/bernhard/scenario_tests/"
-scenario_param_file ="uniform_vehicle_distribution_parameters.json" # must be within scenario dump folder
+scenario_param_file ="highway_merging.json" # must be within scenario dump folder
 
 param_server = ParameterServer(filename= os.path.join(scenario_dump_folder,scenario_param_file))
 
@@ -21,14 +21,14 @@ scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0,
 scenario_generation.params.save(os.path.join(scenario_dump_folder,scenario_param_file)) 
 
 
-viewer = PygameViewer(params=param_server, x_range=[-200,0], y_range=[-100,100])
+viewer = PygameViewer(params=param_server, x_range=[5000,5200], y_range=[4000,5400])
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                 "execution in real-time or faster", 1]
 
-for _ in range(0,5): # run 5 scenarios in a row, repeating after 3
+for _ in range(0,2): # run 5 scenarios in a row, repeating after 3
     scenario, idx = scenario_generation.get_next_scenario()
     world_state = scenario.get_world_state()
     print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
