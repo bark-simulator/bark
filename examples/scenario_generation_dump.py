@@ -12,7 +12,7 @@ from modules.runtime.viewer.pygame_viewer import PygameViewer
 import time
 import os
 
-scenario_dump_folder = "/home/bernhard/scenario_tests/"
+scenario_dump_folder = "examples/scenarios/"
 scenario_param_file ="highway_merging.json" # must be within scenario dump folder
 
 param_server = ParameterServer(filename= os.path.join(scenario_dump_folder,scenario_param_file))
@@ -21,7 +21,7 @@ scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0,
 scenario_generation.params.save(os.path.join(scenario_dump_folder,scenario_param_file)) 
 
 
-viewer = PygameViewer(params=param_server, x_range=[5000,5200], y_range=[4000,5400])
+viewer = PygameViewer(params=param_server, x_range=[5000,5400], y_range=[4200,4600])
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.05]
