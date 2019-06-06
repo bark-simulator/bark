@@ -33,8 +33,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         self.map_file_name = params_temp["MapFilename", "Path to the open drive map", 
                      "modules/runtime/tests/data/Crossing8Course.xodr"]
-        self.ego_goal = params_temp["EgoSource", "A point around which the ego agent spawns. A lane must be near this point (<0.5m) \
-                         Provide x,y coordinates as list", [-191.789,-50.1725] ]
+        self.ego_goal = params_temp["EgoGoal", "The center of the ego agent's goal region polygon", [-191.789,-50.1725] ]
         self.others_source = params_temp["OthersSource", "A list of points around which other vehicles spawn. \
                                          Points should be on different lanes. Lanes must be near these points (<0.5m) \
                                          Provide a list of lists with x,y-coordinates", [[-16.626,-14.8305]]  ]
@@ -49,7 +48,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         json_converter = ModelJsonConversion()
         self.agent_params = params_temp["VehicleModel", "How to model the agent", \
-             json_converter.agent_to_json(self.default_agent_model())]
+             json_converter.agent_to_json(self.default_agent_model())].convert_to_dict()
 
         np.random.seed(self.random_seed)
 

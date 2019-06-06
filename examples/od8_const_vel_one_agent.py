@@ -24,7 +24,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 
 
 # Parameters Definitions
-param_server = ParameterServer()
+param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent_written.json")
 # set parameter that is accessible in Python as well as cpp
 # param_server.setReal("wheel_base", 0.8)
 
@@ -45,7 +45,7 @@ world.set_map(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 150/3.6])
+init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 10/3.6])
 agent_params = param_server.addChild("agent1")
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
