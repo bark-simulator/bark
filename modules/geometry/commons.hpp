@@ -194,6 +194,7 @@ inline std::string Shape<G, T>::ShapeToString() const {
   return ss.str();
 }
 
+
 // template<typename G, typename T>
 // inline bool Shape<G,T>::Collide(const G& shape1, const G& shape2)
 //{
