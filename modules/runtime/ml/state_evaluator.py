@@ -5,7 +5,7 @@ class StateEvaluator:
     def get_evaluation(self, world):
         return # reward, done, info
 
-    def add_world_evaluators(self, world, agents_to_evaluate):
+    def reset(self, world, agents_to_evaluate):
         return # world
 
 
@@ -26,7 +26,7 @@ class GoalReached(StateEvaluator):
                  "collision_driving_corridor": eval_results["collision_driving_corridor"]}
         return reward, done, info
         
-    def add_world_evaluators(self, world, agents_to_evaluate):
+    def reset(self, world, agents_to_evaluate):
         if len(agents_to_evaluate) != 1:
             raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}".format(len(agents_to_evaluate)))

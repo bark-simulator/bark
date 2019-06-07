@@ -2,10 +2,20 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+import math
 
 class NNStateObserver:
+    def __init__(self):
+        self.world_x_range = None
+        self.world_y_range = None
+
     def observe(self, world, agents_to_observe):
         pass
+
+    def reset(self, world, agents_to_observe):
+        bb = world.bounding_box
+        self.world_x_range = [bb[0].x(), bb[1].x()]
+        self.world_y_range = [bb[0].y(), bb[1].y()]
 
     @property
     def observation_space(self):
@@ -25,6 +35,10 @@ class StateConcatenation(OpenAI):
                                           int(StateDefinition.Y_POSITION),
                                           int(StateDefinition.THETA_POSITION),
                                           int(StateDefinition.VEL_POSITION)]
+
+        self.velocity_range = [0, 100]
+        self.theta_range = [0, 2*math.pi]
+        self.normalize = True
 
     def observe(self, world, agents_to_observe):
         super(StateConcatenation, self).observe(world=world, agents_to_observe=agents_to_observe)
@@ -48,6 +62,21 @@ class StateConcatenation(OpenAI):
 
     def observation_space(self):
         pass
+
+    def _norm(self, agent_state):
+        if not self.normalize:
+            return agent_state
+        agent_state[int(StateDefinition.X_POSITION)] = \
+            self._norm_to_range(agent_state[int(StateDefinition.X_POSITION)], self.world_x_range)
+        agent_state[int(StateDefinition.Y_POSITION)] = \
+            self._norm_to_range(agent_state[int(StateDefinition.Y_POSITION)], self.world_y_range)
+        agent_state[int(StateDefinition.THETA_POSITION)] = \
+            self._norm_to_range(agent_state[int(StateDefinition.THETA_POSITION)], self.theta_range)
+        agent_state[int(StateDefinition.VEL_POSITION)] = \
+            self._norm_to_range(agent_state[int(StateDefinition.VEL_POSITION)], self.velocity_range)
+        return agent_state
+    def _norm_to_range(self, value, range):
+        return (value - range[0])/(range[1]-range[0])
 
     def _calculate_relative_agent_state(self, ego_agent_state, agent_state):
         return agent_state[np.array(self.observed_state_dimensions)]
