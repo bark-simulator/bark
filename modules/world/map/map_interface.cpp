@@ -30,6 +30,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
       }
     }
   }
+  bounding_box_ = open_drive_map_->bounding_box();
   return true;
 }
 
