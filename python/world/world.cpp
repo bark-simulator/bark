@@ -40,6 +40,7 @@ void python_world(py::module m) {
     .def_property_readonly("agents", &World::get_agents)
     .def_property_readonly("objects", &World::get_objects)
     .def_property_readonly("time", &World::get_world_time)
+    .def_property_readonly("bounding_box", &World::bounding_box)
     .def("get_agent", &World::get_agent)
     .def_property("map", &World::get_map, &World::set_map)
     .def("copy",&World::Clone);
