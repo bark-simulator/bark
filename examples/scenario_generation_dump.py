@@ -21,7 +21,7 @@ scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0,
 scenario_generation.params.save(os.path.join(scenario_dump_folder,scenario_param_file)) 
 
 
-viewer = PygameViewer(params=param_server, x_range=[4950,5250], y_range=[5100,5300])
+viewer = PygameViewer(params=param_server, use_world_bounds=True)
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.05]
