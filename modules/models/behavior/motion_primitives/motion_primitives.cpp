@@ -12,6 +12,8 @@ namespace modules {
 namespace models {
 namespace behavior {
 
+using modules::models::dynamic::StateDefinition;
+
 BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params) : 
     BehaviorModel(params),
     dynamic_model_(dynamic_model),
@@ -25,37 +27,24 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     float delta_time,
     const world::ObservedWorld& observed_world) {
 
-  using namespace dynamic;
-
-  //! TODO(@fortiss): parameters
-  const int num_traj_time_points = 2;
-  dynamic::Trajectory traj(num_traj_time_points, int(StateDefinition::MIN_STATE_SIZE));
-  /*
-  dynamic::State ego_vehicle_state = observed_world.get_ego_state();
   
+  dynamic::Trajectory traj = motion_primitives_[active_motion_].replicate(1,1);
+  dynamic::State ego_vehicle_state = observed_world.get_ego_state();
   double start_time = observed_world.get_world_time();
+  for (int row_idx=0; row_idx<traj.rows(); ++row_idx) {
+    // add current state
+    traj(row_idx, StateDefinition::TIME_POSITION) = ego_vehicle_state(StateDefinition::TIME_POSITION) + traj(row_idx, StateDefinition::TIME_POSITION);
+    traj(row_idx, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION) + traj(row_idx, StateDefinition::X_POSITION);
+    traj(row_idx, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION) + traj(row_idx, StateDefinition::Y_POSITION);
+    traj(row_idx, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION) + traj(row_idx, StateDefinition::THETA_POSITION);
+    traj(row_idx, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION) + traj(row_idx, StateDefinition::VEL_POSITION);
+  }
 
-  // add current state
-  traj(0, StateDefinition::TIME_POSITION) = start_time;
-  traj(0, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION);
-  traj(0, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION);
-  traj(0, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION);
-  traj(0, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION);
-
-  // add current state
-  traj(1, StateDefinition::TIME_POSITION) = start_time + delta_time;
-  traj(1, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION) + state_delta_(StateDefinition::X_POSITION);
-  traj(1, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION) + state_delta_(StateDefinition::Y_POSITION);;
-  traj(1, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION) + state_delta_(StateDefinition::THETA_POSITION);;
-  traj(1, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION) + state_delta_(StateDefinition::VEL_POSITION);;
-
-  this->set_last_trajectory(traj);*/
+  this->set_last_trajectory(traj);
   return traj;
 }
 
-BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input, const float time_span) {
-  using modules::models::dynamic::StateDefinition;
-  
+BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input, const float time_span) {  
   const float dt = integration_time_delta_; 
   const int num_trajectory_points = static_cast<int>(std::ceil(time_span / dt));
 
@@ -71,7 +60,7 @@ BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive
     old_state(StateDefinition::THETA_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::THETA_POSITION);
     old_state(StateDefinition::VEL_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::VEL_POSITION);
 
-    auto state = motion_primitive.row(trajectory_idx) = dynamic::euler_int(*dynamic_model_, old_state, dynamic_input, dt);
+    auto state = dynamic::euler_int(*dynamic_model_, old_state, dynamic_input, dt);
     motion_primitive(trajectory_idx, StateDefinition::TIME_POSITION) = trajectory_idx*dt;
     motion_primitive(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
     motion_primitive(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
