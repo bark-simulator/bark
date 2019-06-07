@@ -20,8 +20,8 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    40,
-                    50
+                    5,
+                    10
                 ],
                 "VehicleVelocityRange": [
                     20,

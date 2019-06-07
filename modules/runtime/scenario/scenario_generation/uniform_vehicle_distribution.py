@@ -48,7 +48,9 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         json_converter = ModelJsonConversion()
         self.agent_params = params_temp["VehicleModel", "How to model the agent", \
-             json_converter.agent_to_json(self.default_agent_model())].convert_to_dict()
+             json_converter.agent_to_json(self.default_agent_model())]
+        if not isinstance(self.agent_params, dict):
+            self.agent_params = self.agent_params.convert_to_dict()
 
         np.random.seed(self.random_seed)
 

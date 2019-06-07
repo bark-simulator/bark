@@ -15,13 +15,13 @@ import os
 scenario_dump_folder = "examples/scenarios/"
 scenario_param_file ="highway_merging.json" # must be within scenario dump folder
 
-param_server = ParameterServer(filename= os.path.join(scenario_dump_folder,scenario_param_file))
+param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
 
 scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
 scenario_generation.params.save(os.path.join(scenario_dump_folder,scenario_param_file)) 
 
 
-viewer = PygameViewer(params=param_server, x_range=[5000,5400], y_range=[4200,4600])
+viewer = PygameViewer(params=param_server, x_range=[4950,5250], y_range=[5100,5300])
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.05]

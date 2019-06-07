@@ -38,5 +38,6 @@ cc_test(
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "@gtest//:main",
+        "@com_github_eigen_eigen//:eigen",
     ],
 )

@@ -24,7 +24,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 
 
 # Parameters Definitions
-param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent_written.json")
+param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent.json")
 # set parameter that is accessible in Python as well as cpp
 # param_server.setReal("wheel_base", 0.8)
 
@@ -84,6 +84,4 @@ for _ in range(0, 100):
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)
 
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "params",
-                  "od8_const_vel_one_agent_written.json"))
+param_server.save("examples/params/od8_const_vel_one_agent_written.json")
