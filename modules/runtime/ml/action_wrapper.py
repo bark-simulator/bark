@@ -11,7 +11,7 @@ class ActionWrapper:
     def action_to_behavior(self, world, actions):
         pass
 
-    def set_eval_agent_behavior(self, world, agents_to_act):
+    def reset(self, world, agents_to_act):
         pass
 
     @property
@@ -20,7 +20,7 @@ class ActionWrapper:
 
 
 class OpenAI(ActionWrapper):
-    def set_eval_agent_behavior(self, world, agents_to_act):
+    def reset(self, world, agents_to_act):
         if(len(agents_to_act) != 1):
             raise ValueError("Invalid number of actions given: {}".format(agents_to_act))
 
@@ -33,8 +33,8 @@ class MotionPrimitives(OpenAI):
         self.time_span = 0.5
         self.behavior_model = None
 
-    def set_eval_agent_behavior(self, world, agents_to_act):
-        super(MotionPrimitives, self).set_eval_agent_behavior(world=world, agents_to_act=agents_to_act)
+    def reset(self, world, agents_to_act):
+        super(MotionPrimitives, self).reset(world=world, agents_to_act=agents_to_act)
         self.behavior_model = BehaviorMotionPrimitives(SingleTrackModel(), self.params)
         for control_input in self.control_inputs:
             self.behavior_model.add_motion_primitive(np.array(control_input), self.time_span)
