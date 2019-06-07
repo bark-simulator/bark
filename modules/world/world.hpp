@@ -40,7 +40,9 @@ class World : public commons::BaseType {
   ObjectMap get_objects() const { return objects_; }
   std::map<std::string, EvaluatorPtr> get_evaluators() const { return evaluators_;}
 
-  void set_map(const world::map::MapInterfacePtr& map) { map_ = map; }
+  void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
+
+  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const { return map_->BoundingBox();}
   
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);

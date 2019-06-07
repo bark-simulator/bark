@@ -129,6 +129,7 @@ bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& s
     }
 }
 
+
 }  // namespace map
 }  // namespace world
 }  // namespace modules
