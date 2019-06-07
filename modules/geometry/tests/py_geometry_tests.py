@@ -38,6 +38,7 @@ class GeometryTests(unittest.TestCase):
         arr = l.toArray()
         print(arr)
 
+
         p = Polygon2d()
         p.addPoint([0, 0])
         p.addPoint([1, 0])
@@ -55,6 +56,19 @@ class GeometryTests(unittest.TestCase):
         p.addPoint([0, 0])
         # right orientation
         self.assertTrue(p.valid())
+
+    def test_bounding_box(self):
+        p = Polygon2d()
+        p.addPoint([0, 0])
+        p.addPoint([0, 1])
+        p.addPoint([1, 1])
+        p.addPoint([0, 0])
+        # right orientation
+        self.assertTrue(p.valid())
+
+        bb = p.bounding_box
+        self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb[0].x(), bb[0].y()])))
+        self.assertTrue(np.array_equal(np.array([1,1]),np.array([bb[1].x(), bb[1].y()])))
 
     def test_distance(self):
 

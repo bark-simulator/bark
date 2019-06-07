@@ -96,6 +96,17 @@ struct Shape {
     return true;
   }
 
+  std::pair<T, T> bounding_box() const {
+    boost::geometry::model::box<T> box;
+    boost::geometry::envelope(obj_, box);
+    boost::geometry::correct(box);
+
+    return std::make_pair(
+      T(bg::get<bg::min_corner, 0>(box), bg::get<bg::min_corner, 1>(box)),
+      T(bg::get<bg::max_corner, 0>(box), bg::get<bg::max_corner, 1>(box))
+    );
+  }
+
   G obj_;
   int32_t id_;
   Pose center_;  // fixed center pose of shape
