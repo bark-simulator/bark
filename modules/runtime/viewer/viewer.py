@@ -14,11 +14,11 @@ class BaseViewer(Viewer):
         Viewer.__init__(self)
         # color parameters
         # agents
-        self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0,102/255,0)]
-        self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (102/255,0,0)]
+        self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0.7,0.7,0.7)]
+        self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
-        self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", True]
+        self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
