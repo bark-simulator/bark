@@ -16,6 +16,7 @@ class NNStateObserver:
         bb = world.bounding_box
         self.world_x_range = [bb[0].x(), bb[1].x()]
         self.world_y_range = [bb[0].y(), bb[1].y()]
+        return world
 
     @property
     def observation_space(self):
@@ -46,7 +47,7 @@ class StateConcatenation(OpenAI):
         
         # create one 
         num_other_agents = len(ego_observed_world.other_agents)
-        ego_state = ego_observed_world.ego_agent.state
+        ego_state = self._norm(ego_observed_world.ego_agent.state)
         concatenated_state = np.zeros((ego_state.size+num_other_agents*self._len_relative_agent_state,1))
         # fill vector, use relative state difference for ego
         
@@ -54,7 +55,7 @@ class StateConcatenation(OpenAI):
 
         concat_pos = self._len_relative_agent_state
         for agent_id, agent in ego_observed_world.other_agents.items():
-            agent_rel_state = self._calculate_relative_agent_state(ego_state, agent.state)
+            agent_rel_state = self._calculate_relative_agent_state(ego_state, self._norm(agent.state))
             concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.reshape(agent_rel_state, (self._len_relative_agent_state, 1))
             concat_pos += self._len_relative_agent_state
         

@@ -17,7 +17,7 @@ class RuntimeRL(Runtime):
         super().reset(scenario=scenario)
         self.world = self.evaluator.reset(self.world, self.scenario.eval_agent_ids)
         self.world = self.action_wrapper.reset(self.world, self.scenario.eval_agent_ids)
-        self.world = self.nn_observer.reset(world=self.world, self.scenario.eval_agent_ids)
+        self.world = self.nn_observer.reset(self.world, self.scenario.eval_agent_ids)
         return self.nn_observer.observe(world=self.world, agents_to_observe=self.scenario.eval_agent_ids)
 
     def step(self, action):
