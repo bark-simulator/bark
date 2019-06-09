@@ -32,7 +32,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         params_temp = self.params["Scenario"]["Generation"]["UniformVehicleDistribution"]
 
         self.map_file_name = params_temp["MapFilename", "Path to the open drive map", 
-                     "modules/runtime/tests/data/Crossing8Course.xodr"]
+                     "modules/runtime/tests/data/.xodr"]
         self.ego_goal = params_temp["EgoGoal", "The center of the ego agent's goal region polygon", [-191.789,-50.1725] ]
         self.others_source = params_temp["OthersSource", "A list of points around which other vehicles spawn. \
                                          Points should be on different lanes. Lanes must be near these points (<0.5m) \

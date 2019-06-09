@@ -128,10 +128,10 @@ class PygameViewer(BaseViewer):
         else:
             return (color[0] * 255, color[1] * 255, color[2] * 255)
 
-    def drawWorld(self, world):
+    def drawWorld(self, world, eval_agent_ids=None):
         self.clear()
         self._update_world_view_range(world)
-        super(PygameViewer, self).drawWorld(world)
+        super(PygameViewer, self).drawWorld(world, eval_agent_ids)
         self.show()
 
     def show(self, block=True):
