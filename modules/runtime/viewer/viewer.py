@@ -61,7 +61,7 @@ class BaseViewer(Viewer):
 
         # draw agents
         for _, agent in world.agents.items():
-            if agent.id in eval_agent_ids:
+            if eval_agent_ids and agent.id in eval_agent_ids:
                 color = self.color_eval_agents
             else:
                 color = self.color_other_agents
