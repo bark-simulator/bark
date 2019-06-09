@@ -14,7 +14,8 @@ class BaseViewer(Viewer):
         Viewer.__init__(self)
         # color parameters
         # agents
-        self.color_agents = params["Visualization"]["Agents"]["ColorVehicle", "Color of agents", (0,102/255,0)]
+        self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0,102/255,0)]
+        self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (102/255,0,0)]
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", True]
@@ -55,12 +56,16 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
 
-    def drawWorld(self, world):
+    def drawWorld(self, world, eval_agent_ids=None):
         self.drawMap(world.map.get_open_drive_map())
 
         # draw agents
         for _, agent in world.agents.items():
-            self.drawAgent(agent)
+            if agent.id in eval_agent_ids:
+                color = self.color_eval_agents
+            else:
+                color = self.color_other_agents
+            self.drawAgent(agent, color)
 
 
     def drawMap(self, map):
@@ -71,7 +76,7 @@ class BaseViewer(Viewer):
                     self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
 
 
-    def drawAgent(self, agent):
+    def drawAgent(self, agent, color):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
@@ -81,7 +86,7 @@ class BaseViewer(Viewer):
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
             transformed_polygon = shape.transform(pose)
-            self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
+            self.drawPolygon2d(transformed_polygon, color, 1.0)
 
         if self.draw_route:
             self.drawRoute(agent)
@@ -95,5 +100,7 @@ class BaseViewer(Viewer):
         # TODO(@hart): visualize the global as well as the local driving corridor
         self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
         self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
+
+
 
 

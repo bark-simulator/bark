@@ -14,6 +14,7 @@ class Runtime(object):
         self.viewer = viewer
         self.scenario_generator = scenario_generator
         self.scenario_idx = None
+        self.scenario = None
 
     def reset(self, scenario=None):
         if scenario:
@@ -25,8 +26,8 @@ class Runtime(object):
     def step(self):
         self.world.step(step_time)
 
-    def render():
-        self.viewer = viewer.drawWorld(self.world)
+    def render(self):
+        self.viewer.drawWorld(self.world, self.scenario.eval_agent_ids)
         self.viewer.show(block=False)
 
     def run(self, steps):
