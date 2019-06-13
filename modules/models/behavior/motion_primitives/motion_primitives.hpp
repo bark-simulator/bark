@@ -38,7 +38,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   virtual BehaviorModel *Clone() const;
 private:
   DynamicModelPtr dynamic_model_;
-  std::vector<Trajectory> motion_primitives_; 
+  std::vector<Input> motion_primitives_; 
   MotionIdx active_motion_;
 
   // Parameters

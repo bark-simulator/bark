@@ -21,6 +21,7 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::models::dynamic;
 using namespace modules::world;
+using namespace modules::geometry;
 
 class DummyObservedWorld :public ObservedWorld {
   public:
@@ -63,12 +64,20 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   u2 << 0, 1;
   BehaviorMotionPrimitives::MotionIdx idx2 = behavior.AddMotionPrimitive(u2, 0.5);
   
+  // X Longitudinal
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 0.0;
   DummyObservedWorld world(init_state);
   behavior.ActionToBehavior(idx1);
   Trajectory traj1 = behavior.Plan(0.5, world);
   EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::X_POSITION), 2/2*0.5*0.5, 0.01);
+
+  // Y Longitudinal
+  init_state << 0.0, 0.0, 0.0, B_PI_2, 0.0;
+  DummyObservedWorld world2(init_state);
+  behavior.ActionToBehavior(idx1);
+  traj1 = behavior.Plan(0.5, world2);
+  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::Y_POSITION), 2/2*0.5*0.5, 0.01);
 
 
 
