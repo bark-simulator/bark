@@ -10,6 +10,7 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/geometry.hpp>
@@ -46,6 +47,16 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     recompute_s();
   }
 
+  std::vector<T> get_points_in_s_interval(float begin, float end) const {
+    std::vector<T> points;
+    uint begin_idx = std::lower_bound(s_.begin(), s_.end(), begin) - s_.begin();
+    uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
+    std::copy(Shape<bg::model::linestring<T>, T>::obj_.begin() + begin_idx,
+              Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
+              std::back_inserter(points));
+    return points;
+  }
+
   void reverse() {
     boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
   }
@@ -68,7 +79,6 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       boost::geometry::reverse(new_line.obj_);
       append_linestring(new_line);
     }
-
   }
 
   typedef typename std::vector<T>::iterator point_iterator;
@@ -209,6 +219,18 @@ inline Point2d get_normal_at_s(Line l, float s) {
   float tangent = get_tangent_angle_at_s(l, s);
   Point2d t(cos(tangent+asin(1)), sin(tangent+asin(1)));  // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
   return t;
+}
+
+
+inline Line line_from_s_interval(Line line, float begin, float end) {
+  Line new_line;
+  new_line.add_point(get_point_at_s(line, begin));
+  std::vector<Point2d> points = line.get_points_in_s_interval(begin, end);
+  for (auto const &point : points) {
+    new_line.add_point(point);
+  }
+  new_line.add_point(get_point_at_s(line, end));
+  return new_line;
 }
 
 
