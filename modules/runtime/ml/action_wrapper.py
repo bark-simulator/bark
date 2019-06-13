@@ -29,7 +29,7 @@ class MotionPrimitives(OpenAI):
     def __init__(self):
         self.params = ParameterServer()
         # todo: make parameterizable
-        self.control_inputs = [[2,0],[-5,0],[2,30/2*3.14]] # (acceleration, steering angle)
+        self.control_inputs = [[0,0],[-20,0],[2,0],[-5,0],[0,60/2*3.14],[0,-120/2*3.14]] # (acceleration, steering angle)
         self.time_span = 0.5
         self.behavior_model = None
 
