@@ -26,60 +26,45 @@ BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynami
 dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     float delta_time,
     const world::ObservedWorld& observed_world) {
-
-  
-  dynamic::Trajectory traj = motion_primitives_[active_motion_].replicate(1,1);
   dynamic::State ego_vehicle_state = observed_world.get_ego_state();
   double start_time = observed_world.get_world_time();
-  for (int row_idx=0; row_idx<traj.rows(); ++row_idx) {
-    // add current state
-    traj(row_idx, StateDefinition::TIME_POSITION) = ego_vehicle_state(StateDefinition::TIME_POSITION) + traj(row_idx, StateDefinition::TIME_POSITION);
-    traj(row_idx, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION) + traj(row_idx, StateDefinition::X_POSITION);
-    traj(row_idx, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION) + traj(row_idx, StateDefinition::Y_POSITION);
-    traj(row_idx, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION) + traj(row_idx, StateDefinition::THETA_POSITION);
-    traj(row_idx, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION) + traj(row_idx, StateDefinition::VEL_POSITION);
+   const float dt = integration_time_delta_; 
+  const int num_trajectory_points = static_cast<int>(std::ceil(delta_time / dt));
+
+  dynamic::Trajectory traj(num_trajectory_points, int(dynamic::StateDefinition::MIN_STATE_SIZE));
+
+  auto old_state = ego_vehicle_state; 
+  int trajectory_idx=0;
+  for (; trajectory_idx<num_trajectory_points; ++trajectory_idx) {
+    if(trajectory_idx != 0) {
+      old_state(StateDefinition::TIME_POSITION) = traj(trajectory_idx-1, StateDefinition::TIME_POSITION);
+      old_state(StateDefinition::X_POSITION) = traj(trajectory_idx-1, StateDefinition::X_POSITION);
+      old_state(StateDefinition::Y_POSITION) = traj(trajectory_idx-1, StateDefinition::Y_POSITION);
+      old_state(StateDefinition::THETA_POSITION) = traj(trajectory_idx-1, StateDefinition::THETA_POSITION);
+      old_state(StateDefinition::VEL_POSITION) = traj(trajectory_idx-1, StateDefinition::VEL_POSITION);
+    }
+
+    float integration_time = dt;
+    if(trajectory_idx == num_trajectory_points-1) {
+      integration_time = delta_time - trajectory_idx*dt;
+    }
+    
+    auto state = dynamic::euler_int(*dynamic_model_, old_state, motion_primitives_[active_motion_], integration_time);
+    traj(trajectory_idx, StateDefinition::TIME_POSITION) = (trajectory_idx+1)*dt;
+    traj(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
+    traj(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
+    traj(trajectory_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);
+    traj(trajectory_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
   }
+
+  std::cout << traj << std::endl;
 
   this->set_last_trajectory(traj);
   return traj;
 }
 
 BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input, const float time_span) {  
-  const float dt = integration_time_delta_; 
-  const int num_trajectory_points = static_cast<int>(std::ceil(time_span / dt));
-
-  dynamic::Trajectory motion_primitive(num_trajectory_points, int(dynamic::StateDefinition::MIN_STATE_SIZE));
-
-  auto old_state = State(int(dynamic::StateDefinition::MIN_STATE_SIZE)); 
-  old_state.setZero();
-  int trajectory_idx=0;
-  for (; trajectory_idx<num_trajectory_points; ++trajectory_idx) {
-    if(trajectory_idx != 0) {
-      old_state(StateDefinition::TIME_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::TIME_POSITION);
-      old_state(StateDefinition::X_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::X_POSITION);
-      old_state(StateDefinition::Y_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::Y_POSITION);
-      old_state(StateDefinition::THETA_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::THETA_POSITION);
-      old_state(StateDefinition::VEL_POSITION) = motion_primitive(trajectory_idx-1, StateDefinition::VEL_POSITION);
-    }
-
-    float integration_time = dt;
-    if(trajectory_idx == num_trajectory_points-1) {
-      integration_time = time_span - trajectory_idx*dt;
-    }
-    
-    auto state = dynamic::euler_int(*dynamic_model_, old_state, dynamic_input, integration_time);
-    motion_primitive(trajectory_idx, StateDefinition::TIME_POSITION) = (trajectory_idx+1)*dt;
-    motion_primitive(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
-    motion_primitive(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
-    motion_primitive(trajectory_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);
-    motion_primitive(trajectory_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
-
-    std::cout << old_state << state << std::endl;
-  }
-
-  std::cout << motion_primitive << std::endl;
-
-  motion_primitives_.push_back(motion_primitive);
+  motion_primitives_.push_back(dynamic_input);
   return motion_primitives_.size()-1;
 }
 
