@@ -23,7 +23,7 @@ class RuntimeRLTests(unittest.TestCase):
         state_observer = StateConcatenation()
         action_wrapper = MotionPrimitives()
         evaluator = GoalReached()
-        viewer = PygameViewer(params=params, x_range=[-20,20], y_range=[-20,20], follow_agent_id=True) 
+        viewer = PygameViewer(params=params, use_world_bounds=True) # x_range=[-40,40], y_range=[-40,40], follow_agent_id=True) 
 
         runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
                         evaluator=evaluator, step_time=0.2, viewer=viewer,
