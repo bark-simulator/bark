@@ -3,16 +3,17 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/collision/collision_checker_driving_corridor.hpp"
+#include "modules/world/evaluation/evaluator_collision_driving_corridor.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules
 {
 namespace world
 {
-namespace collision
+namespace evaluation
 {
-bool CollisioncheckerDrivingCorridor::checkCollision(const world::World &world) const
+
+EvaluationReturn EvaluatorCollisionDrivingCorridor::Evaluate(const world::World &world) const
 {
   // checks collision with inner and outer line of driving corridor
   // assumption: agent is initially inside the local map and the world steps are fine

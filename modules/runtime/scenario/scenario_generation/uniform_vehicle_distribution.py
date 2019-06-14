@@ -9,6 +9,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion import M
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
+from bark.world.goal_definition import GoalDefinition
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -19,6 +20,7 @@ from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.commons.xodr_parser import XodrParser
 
 import numpy as np
+import math
 
 
 class UniformVehicleDistribution(ScenarioGeneration):
@@ -31,8 +33,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         self.map_file_name = params_temp["MapFilename", "Path to the open drive map", 
                      "modules/runtime/tests/data/Crossing8Course.xodr"]
-        self.ego_source = params_temp["EgoSource", "A point around which the ego agent spawns. A lane must be near this point (<0.5m) \
-                         Provide x,y coordinates as list", [-11,-8] ]
+        self.ego_goal = params_temp["EgoGoal", "The center of the ego agent's goal region polygon", [-191.789,-50.1725] ]
         self.others_source = params_temp["OthersSource", "A list of points around which other vehicles spawn. \
                                          Points should be on different lanes. Lanes must be near these points (<0.5m) \
                                          Provide a list of lists with x,y-coordinates", [[-16.626,-14.8305]]  ]
@@ -40,7 +41,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                         Points should be on different lanes and match the order of the source points. \
                                         Lanes must be near these points (<0.5m) \
                                         Provide a list of lists with x,y-coordinates", [[-191.789,-50.1725]]  ]   
-        assert(len(self.others_sink), len(self.others_source))            
+        assert len(self.others_sink) == len(self.others_source)         
 
         self.vehicle_distance_range = params_temp["VehicleDistanceRange", "Distance range between vehicles in meter given as tuple from which distances are sampled uniformly", (40, 50)]
         self.velocity_range = params_temp["VehicleVelocityRange", "Lower and upper bound of velocity in km/h given as tuple from which velocities are sampled uniformly", (20,30)]
@@ -48,6 +49,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
         json_converter = ModelJsonConversion()
         self.agent_params = params_temp["VehicleModel", "How to model the agent", \
              json_converter.agent_to_json(self.default_agent_model())]
+        if not isinstance(self.agent_params, dict):
+            self.agent_params = self.agent_params.convert_to_dict()
 
         np.random.seed(self.random_seed)
 
@@ -71,16 +74,21 @@ class UniformVehicleDistribution(ScenarioGeneration):
         for idx, source in enumerate(self.others_source):
             connecting_center_line, s_start, s_end, _, lane_id_end = \
                      self.center_line_between_source_and_sink( world.map,  source, self.others_sink[idx])
+            goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+            goal_polygon = goal_polygon.translate(Point2d(self.ego_goal[0], self.ego_goal[1]))
+            goal_definition = GoalDefinition(goal_polygon)
             agent_list.extend( self.place_agents_along_linestring(world, connecting_center_line, s_start, s_end, \
-                                                                             self.agent_params, lane_id_end) )
+                                                                             self.agent_params, goal_definition) )
 
         description=self.params.convert_to_dict()
         description["ScenarioGenerator"] = "UniformVehicleDistribution"
         scenario.agent_list = agent_list
+        num_agents = len(scenario.agent_list)
+        scenario.eval_agent_ids = [scenario.agent_list[math.floor(num_agents/2)].id] # only one agent is ego in the middle of all other agents
 
         return scenario
 
-    def place_agents_along_linestring(self, world, linestring, s_start, s_end, agent_params, goal_lane_id):
+    def place_agents_along_linestring(self, world, linestring, s_start, s_end, agent_params, goal_definition):
         s = s_start
         if s_end < s_start:
             linestring.reverse()
@@ -99,7 +107,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
             agent_params = self.agent_params.copy()
             agent_params["state"] = agent_state
-            agent_params["goal_lane_id"] = goal_lane_id
+            agent_params["goal_definition"] = goal_definition
             agent_params["map_interface"] = world.map
 
             converter = ModelJsonConversion()
@@ -145,9 +153,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                     dynamic_model,
                     execution_model,
                     agent_2d_shape,
-                    param_server,
-                    2,
-                    None)
+                    param_server)
 
         return agent_default
 

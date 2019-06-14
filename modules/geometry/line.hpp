@@ -350,6 +350,17 @@ inline Line ComputeCenterLine(const Line& outer_line_,
   return center_line_;
 }
 
+
+template <typename T>
+std::pair<T, T> merge_bounding_boxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
+  Line_t<T> line; // just use a line and add all points
+  line.add_point(bb1.first); 
+  line.add_point(bb1.second);
+  line.add_point(bb2.first);
+  line.add_point(bb2.second);    
+  return line.bounding_box();
+}
+
 }  // namespace geometry
 }  // namespace modules
 #endif  // MODULES_GEOMETRY_LINE_HPP_

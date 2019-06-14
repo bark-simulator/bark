@@ -12,7 +12,7 @@ import time
 
 param_server = ParameterServer()
 
-viewer = PygameViewer(params=param_server, x_range=[-200,0], y_range=[-100,100])
+viewer = PygameViewer(params=param_server, x_range=[4950,5250], y_range=[5100,5300])
 
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
@@ -21,7 +21,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                 "execution in real-time or faster",
                                                 1]
 scenario_generation = ScenarioGeneration()
-scenario_generation.load_scenario_list(filename="examples/scenarios/test.bark_scenarios")
+scenario_generation.load_scenario_list(filename="examples/scenarios/highway_merging.bark_scenarios")
 
 
 for _ in range(0,5): # run 5 scenarios in a row, repeating after 3

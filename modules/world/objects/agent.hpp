@@ -30,6 +30,7 @@ using models::dynamic::StateInputHistory;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::LaneId;
 using modules::world::map::MapInterfacePtr;
+using modules::world::goal_definition::GoalDefinition;
 
 class Agent : public Object {
  public:
@@ -42,7 +43,7 @@ class Agent : public Object {
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        LaneId goal_lane_id = LaneId(0),
+        const GoalDefinition& goal_definition = GoalDefinition(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
         const geometry::Model3D &model_3d = geometry::Model3D());
 
@@ -58,7 +59,7 @@ class Agent : public Object {
 
   StateInputHistory get_state_input_history() const { return history_; }
 
-  LaneId get_goal_lane_id() const {return goal_lane_id_;}
+  const GoalDefinition& get_goal_definition() const {return goal_definition_;}
 
   Trajectory get_execution_trajectory() const {
     return execution_model_->get_last_trajectory();
@@ -86,6 +87,8 @@ class Agent : public Object {
 
   void Move(const float &dt, const ObservedWorld &observed_world);
 
+  bool AtGoal() const;
+
   void GenerateLocalMap();
   void UpdateDrivingCorridor(double horizon);
 
@@ -102,7 +105,7 @@ class Agent : public Object {
   models::dynamic::StateInputHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter
   uint32_t max_history_length_;
-  LaneId goal_lane_id_;
+  modules::world::goal_definition::GoalDefinition goal_definition_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;

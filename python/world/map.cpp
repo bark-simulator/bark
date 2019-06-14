@@ -63,7 +63,7 @@ void python_map(py::module m) {
       }));
 
   py::class_<LocalMap, std::shared_ptr<LocalMap>>(m, "LocalMap")
-      .def(py::init<LaneId, const MapInterfacePtr&>())
+      .def(py::init<const GoalDefinition&, const MapInterfacePtr&>())
       .def("set_goal_lane_id", &LocalMap::set_goal_lane_id)
       .def("get_horizon_driving_corridor",
         &LocalMap::get_horizon_driving_corridor)
@@ -73,13 +73,13 @@ void python_map(py::module m) {
       .def(py::pickle(
         [](const LocalMap& l) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(l.get_goal_lane_id(), l.get_driving_corridor());
+            return py::make_tuple(l.get_goal_lane_id(), l.get_goal_definition(), l.get_driving_corridor());
         },
         [](py::tuple &t)  { // __setstate__
-            if (t.size() != 2)
+            if (t.size() != 3)
                 throw std::runtime_error("Invalid local map state!");
 
-            return new LocalMap(t[0].cast<LaneId>(), t[1].cast<DrivingCorridor>());
+            return new LocalMap(t[0].cast<LaneId>(),t[1].cast<GoalDefinition>(), t[2].cast<DrivingCorridor>());
         }));
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")

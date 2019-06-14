@@ -47,6 +47,19 @@ class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too 
   Junctions get_junctions() const { return junctions_; }
   Lanes get_lanes() const { return lanes_;}
 
+  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const {
+    modules::geometry::Line all_lanes_linestrings;
+    for (auto &road : get_roads()) {
+      for (auto &lane_section : road.second->get_lane_sections()) {
+        for (auto &lane : lane_section->get_lanes()) {
+          auto linestring = lane.second->get_line();
+          all_lanes_linestrings.append_linestring(linestring);
+        }
+      }
+    }
+    return all_lanes_linestrings.bounding_box();
+  }
+
  private:
   Roads roads_;
   Lanes lanes_;

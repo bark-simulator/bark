@@ -11,6 +11,8 @@
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
 #include "python/world/opendrive.hpp"
+#include "python/world/goal_definition.hpp"
+#include "python/world/evaluation.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -28,26 +30,35 @@ void python_world(py::module m) {
       return "bark.world.World";
     })
     .def("step", &World::Step)
+    .def("observe", &World::Observe)
     .def("add_agent", &World::add_agent)
     .def("add_object", &World::add_object)
     .def("set_map", &World::set_map)
+    .def("add_evaluator", &World::add_evaluator)
+    .def_property_readonly("evaluators", &World::get_evaluators)
+    .def("evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::get_agents)
     .def_property_readonly("objects", &World::get_objects)
     .def_property_readonly("time", &World::get_world_time)
-    .def_property_readonly("agent", &World::get_agent)
+    .def_property_readonly("bounding_box", &World::bounding_box)
+    .def("get_agent", &World::get_agent)
     .def_property("map", &World::get_map, &World::set_map)
     .def("copy",&World::Clone);
 
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
       .def(py::init<const World&, const AgentId&>())
+      .def_property_readonly("ego_agent", &ObservedWorld::get_ego_agent)
+      .def_property_readonly("other_agents", &ObservedWorld::get_other_agents)
       .def("__repr__", [](const ObservedWorld &a) {
         return "bark.world.ObservedWorld";
       });
 
+  python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
   python_agent(m.def_submodule("agent", "Agent wrapping"));
   python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
   python_map(m.def_submodule("map", "mapInterface wrapping"));
+  python_evaluation(m.def_submodule("evaluation", "evaluators"));
 
   py::class_<vertex_t>(m, "vertex_t")
     .def(py::init<>());

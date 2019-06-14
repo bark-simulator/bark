@@ -24,7 +24,7 @@ Agent::Agent(const State &initial_state,
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        LaneId goal_lane_id,
+        const GoalDefinition& goal_definition,
         const MapInterfacePtr& map_interface,
         const geometry::Model3D &model_3d) :
 Object(shape, params, model_3d),
@@ -32,9 +32,9 @@ behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
-local_map_(new LocalMap(goal_lane_id, map_interface)),
+local_map_(new LocalMap(goal_definition, map_interface)),
 max_history_length_(10),
-goal_lane_id_(goal_lane_id) {
+goal_definition_(goal_definition) {
   if(params) {
     max_history_length_ = params->get_int(
     "MaxHistoryLength",
@@ -59,7 +59,7 @@ Agent::Agent(const Agent& other_agent) :
   execution_model_(other_agent.execution_model_),
   history_(other_agent.history_),
   local_map_(other_agent.local_map_),
-  goal_lane_id_(other_agent.goal_lane_id_) {}
+  goal_definition_(other_agent.goal_definition_) {}
 
 
 void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
@@ -109,11 +109,16 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
   return *polygon;  
 }
 
+bool Agent::AtGoal() const {
+  auto agent_state_polygon = GetPolygonFromState(get_current_state());
+  return get_goal_definition().AtGoal(agent_state_polygon);
+}
+
 void Agent::GenerateLocalMap() {
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->Generate(agent_xy, goal_lane_id_)) {
+  if (!local_map_->Generate(agent_xy)) {
     std::cout << "LocalMap generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }

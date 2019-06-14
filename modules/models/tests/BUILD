@@ -26,3 +26,18 @@ cc_test(
         "@gtest//:main",
     ],
 )
+
+cc_test(
+    name = "behavior_test",
+    srcs = [
+        "behavior_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/models/dynamic:dynamic",
+        "//modules/models/behavior/motion_primitives:motion_primitives",
+        "@gtest//:main",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+)

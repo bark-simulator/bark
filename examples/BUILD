@@ -2,7 +2,8 @@ py_test(
   name = "od8_const_vel_one_agent",
   srcs = ["od8_const_vel_one_agent.py"],
   data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
@@ -16,7 +17,8 @@ py_test(
   name = "od8_const_vel_two_agent",
   srcs = ["od8_const_vel_two_agent.py"],
   data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
@@ -30,7 +32,8 @@ py_test(
   name = "scenario_generation_dump",
   srcs = ["scenario_generation_dump.py"],
   data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
@@ -59,4 +62,9 @@ py_test(
 filegroup(
     name="scenarios",
     srcs=glob(["scenarios/*.bark_scenarios"]),
+)
+
+filegroup(
+    name="params",
+    srcs=glob(["params/**"]),
 )
