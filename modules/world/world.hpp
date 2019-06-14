@@ -13,7 +13,7 @@
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
-#include "modules/world/collision/base_collision_checker.hpp"
+#include "modules/world/evaluation/base_evaluator.hpp"
 
 namespace modules {
 namespace world {
@@ -21,11 +21,10 @@ namespace world {
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
-using world::collision::CollisionCheckerPtr;
+using world::evaluation::EvaluatorPtr;
 
 typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
-typedef std::vector<CollisionCheckerPtr> CollisionCheckerVector;
 
 class World : public commons::BaseType {
  public:
@@ -39,14 +38,16 @@ class World : public commons::BaseType {
   AgentMap get_agents() const { return agents_; }
   AgentPtr get_agent(AgentId id) const { return agents_.at(id); }
   ObjectMap get_objects() const { return objects_; }
-  CollisionCheckerVector get_collision_checkers() const { return collision_checkers_; }
+  std::map<std::string, EvaluatorPtr> get_evaluators() const { return evaluators_;}
 
-  void set_map(const world::map::MapInterfacePtr& map) { map_ = map; }
+  void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
+
+  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const { return map_->BoundingBox();}
   
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);
 
-  void add_collision_checker(const CollisionCheckerPtr& cchecker); //{ collision_checker_ = cchecker; }
+  void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator); 
 
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
@@ -55,19 +56,22 @@ class World : public commons::BaseType {
     clear_objects();
   }
 
-  bool CheckCollision() const;
+  typedef std::map<std::string, modules::world::evaluation::EvaluationReturn> EvaluationMap ;
+  EvaluationMap Evaluate() const;
 
   bool Valid() const;
-  void Step(float delta_time);
+  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
+  void Step(const float& delta_time);
   void UpdateHorizonDrivingCorridors();
-  void MoveAgents(float delta_time);
+  void MoveAgents(const float& delta_time);
+
   virtual World *Clone() const;
 
  private:
   world::map::MapInterfacePtr map_;
   AgentMap agents_;
   ObjectMap objects_;
-  CollisionCheckerVector collision_checkers_;
+  std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
 };
 

@@ -1,12 +1,3 @@
-py_test(
-  name = "py_runtime_tests",
-  srcs = ["py_runtime_tests.py"],
-  data = ['//python:bark.so'],
-  imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:roadgraph_generator",
-          "//modules/runtime:runtime"],
-)
 
 filegroup(
    name="xodr_data",
@@ -36,4 +27,13 @@ py_test(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
+py_test(
+  name = "py_evaluation_tests",
+  srcs = ["py_evaluation_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime"],
 )

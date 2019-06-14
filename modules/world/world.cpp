@@ -14,7 +14,6 @@ World::World(commons::Params* params) :
   commons::BaseType(params),
   map_(),
   agents_(),
-  collision_checkers_(),
   world_time_(0.0) {}
 
 World::World(const World& world)  :
@@ -22,7 +21,6 @@ World::World(const World& world)  :
          map_(world.get_map()),
          agents_(world.get_agents()),
          objects_(world.get_objects()),
-         collision_checkers_(world.get_collision_checkers()),
          world_time_(world.get_world_time()) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
@@ -33,11 +31,11 @@ void World::add_object(const objects::ObjectPtr& object) {
   objects_[object->agent_id_] = object;
 }
 
-void World::add_collision_checker(const CollisionCheckerPtr& cchecker) {
-  collision_checkers_.push_back(cchecker);
+void World::add_evaluator(const std::string& name, const EvaluatorPtr& evaluator) {
+  evaluators_[name] = evaluator;
 }
 
-void World::MoveAgents(float delta_time) {
+void World::MoveAgents(const float& delta_time) {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : agents_) {
       //! clone current world
@@ -48,16 +46,12 @@ void World::MoveAgents(float delta_time) {
   world_time_ += delta_time;
 }
 
-
-bool World::CheckCollision() const {
-  bool colliding = false;
-  for(auto checker : collision_checkers_) {
-    if (checker->checkCollision(*this)) {
-      colliding = true;
-      break; // for now, we just exit if one checker yields a collision
+World::EvaluationMap World::Evaluate() const {
+  World::EvaluationMap evaluation_results;
+  for(auto const& evaluator : evaluators_) {
+      evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this); 
     }
-  }
-  return colliding;
+  return evaluation_results;
 }
 
 void World::UpdateHorizonDrivingCorridors() {
@@ -68,10 +62,25 @@ void World::UpdateHorizonDrivingCorridors() {
   }
 }
 
-void World::Step(float delta_time) {
+void World::Step(const float& delta_time) {
   UpdateHorizonDrivingCorridors();
   MoveAgents(delta_time);
   // TODO(@fortiss): add post world collision check
+}
+
+std::vector<ObservedWorld> World::Observe(const std::vector<AgentId>& agent_ids) {
+  WorldPtr current_world_state(this->Clone());
+  std::vector<ObservedWorld> observed_worlds;
+  for (auto agent_id : agent_ids) {
+      if(agents_.find(agent_id) == agents_.end()) {
+        std::cout << "Unvalid agent id " << agent_id << ". Skipping ...." << std::endl;
+        continue;
+      }
+      ObservedWorld observed_world(*current_world_state,
+                                   agent_id);
+      observed_worlds.push_back(observed_world);
+  }
+  return observed_worlds;
 }
 
 }  // namespace world

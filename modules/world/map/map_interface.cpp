@@ -30,6 +30,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
       }
     }
   }
+  bounding_box_ = open_drive_map_->bounding_box();
   return true;
 }
 
@@ -97,6 +98,10 @@ bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& s
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
       ComputeLaneBoundariesHorizon(startid, goalid);
 
+    if(route.first.empty() || route.second.empty()) {
+      return false;
+    }
+
     if (route.first[0]) {
       inner_line = route.first[0]->get_line();
       // inner lane
@@ -124,6 +129,7 @@ bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& s
       return false;
     }
 }
+
 
 }  // namespace map
 }  // namespace world
