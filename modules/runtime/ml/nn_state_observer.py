@@ -2,6 +2,7 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
 
@@ -31,18 +32,20 @@ class OpenAI(NNStateObserver):
 
 
 class StateConcatenation(OpenAI):
-    def __init__(self):
+    def __init__(self, params=ParameterServer()):
         # todo make parameterizable
         self.nn_state_dimensions = [int(StateDefinition.X_POSITION),
                                           int(StateDefinition.Y_POSITION),
                                           int(StateDefinition.THETA_POSITION),
                                           int(StateDefinition.VEL_POSITION)]
 
-        self.velocity_range = [0, 100]
-        self.theta_range = [0, 2*math.pi]
-        self.normalize = True
-        self.max_num_other_agents = 4
-        self.max_distance_other_agents = 40.0
+        self.params = params
+        self.velocity_range = self.params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange","Gives boundaries for min and max velocity for normalization", [0, 100]]
+        self.theta_range = self.params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange","Gives boundaries for min and max theta for normalization", [0, 2*math.pi]]
+        self.normalize = self.params["Runtime"]["RL"]["StateConcatenation"]["Normalize","Should normalization be performed", True]
+        self.max_num_other_agents = self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents","The concatenation state size is ego agent plus max num other agents", 4]
+        self.max_distance_other_agents = self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance","Agents farer than this value are not observed; \
+                                                                                     if not max other agents are seen, remaining concatenation state is set to zero", 30]
 
     def observe(self, world, agents_to_observe):
         super(StateConcatenation, self).observe(world=world, agents_to_observe=agents_to_observe)
