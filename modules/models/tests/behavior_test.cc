@@ -49,7 +49,7 @@ TEST(behavior_motion_primitives_add, behavior_test) {
   BehaviorMotionPrimitives behavior(dynamics, &params);
   Input u(2);
   u << 0, 0;
-  behavior.AddMotionPrimitive(u, 0.5);
+  behavior.AddMotionPrimitive(u);
 }
 
 TEST(behavior_motion_primitives_plan, behavior_test) {
@@ -59,10 +59,10 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   BehaviorMotionPrimitives behavior(dynamics, &params);
   Input u1(2);
   u1 << 2, 0;
-  BehaviorMotionPrimitives::MotionIdx idx1 = behavior.AddMotionPrimitive(u1, 0.5);
+  BehaviorMotionPrimitives::MotionIdx idx1 = behavior.AddMotionPrimitive(u1);
   Input u2(2);
   u2 << 0, 1;
-  BehaviorMotionPrimitives::MotionIdx idx2 = behavior.AddMotionPrimitive(u2, 0.5);
+  BehaviorMotionPrimitives::MotionIdx idx2 = behavior.AddMotionPrimitive(u2);
   
   // X Longitudinal
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
