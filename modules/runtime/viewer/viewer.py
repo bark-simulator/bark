@@ -66,7 +66,7 @@ class BaseViewer(Viewer):
             diffy = abs(self.dynamic_world_y_range[1] - self.dynamic_world_y_range[0])
 
             # enforce that in both dimensions  the same range is covered
-            if diffx > diffy: 
+            if diffx > diffy:
                 self.dynamic_world_y_range[0] -= (diffx - diffy)/2
                 self.dynamic_world_y_range[1] += (diffx - diffy)/2
             else:
@@ -146,7 +146,3 @@ class BaseViewer(Viewer):
         # TODO(@hart): visualize the global as well as the local driving corridor
         self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
         self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
-
-
-
-
