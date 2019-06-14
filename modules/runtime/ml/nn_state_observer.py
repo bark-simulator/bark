@@ -68,7 +68,6 @@ class StateConcatenation(OpenAI):
         # add max number of agents to state concatenation vector
         concat_pos = self._len_relative_agent_state
         nearest_distances = sorted(nearest_distances.items(), key=operator.itemgetter(0))
-        print(nearest_distances)
         for agent_idx in range(0, self.max_num_other_agents):
             if agent_idx<len(nearest_distances) and nearest_distances[agent_idx][0] <= self.max_distance_other_agents**2:
                 agent_id = nearest_distances[agent_idx][1]

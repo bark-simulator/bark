@@ -20,12 +20,12 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    5,
-                    10
+                    30,
+                    40
                 ],
                 "VehicleVelocityRange": [
-                    20,
-                    30
+                    30,
+                    40
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorConstantVelocity",
