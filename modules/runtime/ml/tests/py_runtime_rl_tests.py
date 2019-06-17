@@ -20,13 +20,13 @@ class RuntimeRLTests(unittest.TestCase):
     def test_motion_primitives_concat_state(self):
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
-        state_observer = StateConcatenation()
-        action_wrapper = MotionPrimitives()
-        evaluator = GoalReached()
+        state_observer = StateConcatenation(params=params)
+        action_wrapper = MotionPrimitives(params=params)
+        evaluator = GoalReached(params=params)
         viewer = PygameViewer(params=params, x_range=[-40,40], y_range=[-40,40], follow_agent_id=True) #use_world_bounds=True) # 
 
         runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
-                        evaluator=evaluator, step_time=0.05, viewer=viewer,
+                        evaluator=evaluator, step_time=0.2, viewer=viewer,
                         scenario_generator=scenario_generation)
 
 
@@ -40,6 +40,6 @@ class RuntimeRLTests(unittest.TestCase):
                          =================================================".format( next_nn_state, reward, done, info))
                     break
                 
-        
+        params.save(filename="modules/runtime/tests/data/highway_merging_written.json")
 if __name__ == '__main__':
     unittest.main()
