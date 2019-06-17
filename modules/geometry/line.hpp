@@ -60,7 +60,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   void reverse() {
     boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
   }
-  
+
   void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
     // Get first and last point
@@ -222,7 +222,7 @@ inline Point2d get_normal_at_s(Line l, float s) {
 }
 
 
-inline Line line_from_s_interval(Line line, float begin, float end) {
+inline Line get_line_from_s_interval(Line line, float begin, float end) {
   Line new_line;
   new_line.add_point(get_point_at_s(line, begin));
   std::vector<Point2d> points = line.get_points_in_s_interval(begin, end);
@@ -376,10 +376,10 @@ inline Line ComputeCenterLine(const Line& outer_line_,
 template <typename T>
 std::pair<T, T> merge_bounding_boxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
   Line_t<T> line; // just use a line and add all points
-  line.add_point(bb1.first); 
+  line.add_point(bb1.first);
   line.add_point(bb1.second);
   line.add_point(bb2.first);
-  line.add_point(bb2.second);    
+  line.add_point(bb2.second);
   return line.bounding_box();
 }
 
