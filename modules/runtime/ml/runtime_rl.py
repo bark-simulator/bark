@@ -25,9 +25,11 @@ class RuntimeRL(Runtime):
         self.world.step(self.step_time)
         return self.get_nstate_reward_action_tuple(world=self.world, controlled_agents=self.scenario.eval_agent_ids)
 
+    @property
     def action_space(self):
         return self.action_wrapper.action_space
 
+    @property
     def observation_space(self):
         return self.nn_observer.observation_space
 
