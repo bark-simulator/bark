@@ -18,7 +18,7 @@ import numpy as np
 
 class RuntimeRLTests(unittest.TestCase):
     def test_motion_primitives_concat_state(self):
-        params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
+        params = ParameterServer(filename="modules/runtime/tests/data/highway_merging_with_rl_and_vis.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
         state_observer = StateConcatenation(params=params)
         action_wrapper = MotionPrimitives(params=params)
@@ -40,6 +40,6 @@ class RuntimeRLTests(unittest.TestCase):
                          =================================================".format( next_nn_state, reward, done, info))
                     break
                 
-        params.save(filename="modules/runtime/tests/data/highway_merging_written.json")
+        params.save(filename="highway_merging_written.json")
 if __name__ == '__main__':
     unittest.main()
