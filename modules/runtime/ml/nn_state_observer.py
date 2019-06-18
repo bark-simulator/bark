@@ -64,8 +64,8 @@ class StateConcatenation(OpenAI):
             nearest_distances[dist] = agent_id
 
         # preallocate numpyarray and add ego state
-        concatenated_state = np.zeros((1, self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state))
-        concatenated_state[0, 0:self._len_ego_state] = self._reduce_to_ego_nn_state(self._norm(ego_state)) 
+        concatenated_state = np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state)
+        concatenated_state[0:self._len_ego_state] = self._reduce_to_ego_nn_state(self._norm(ego_state)) 
         
         # add max number of agents to state concatenation vector
         concat_pos = self._len_relative_agent_state
@@ -76,17 +76,17 @@ class StateConcatenation(OpenAI):
                 agent = ego_observed_world.other_agents[agent_id]
                 agent_rel_state = self._reduce_to_other_nn_state( \
                                 self._calculate_relative_agent_state(ego_state, self._norm(agent.state)))
-                concatenated_state[0, concat_pos:concat_pos + self._len_relative_agent_state] = agent_rel_state
+                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = agent_rel_state
             else:
-                concatenated_state[0, concat_pos:concat_pos + self._len_relative_agent_state] = np.zeros((1, self._len_relative_agent_state, ))
+                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.zeros(self._len_relative_agent_state)
             concat_pos += self._len_relative_agent_state
         
         return concatenated_state
 
     @property
     def observation_space(self):
-        return spaces.Box(low=np.zeros((1, self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state)), \
-                            high = np.ones((1, self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state)) )
+        return spaces.Box(low=np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state), \
+                            high = np.ones(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state) )
 
     def _norm(self, agent_state):
         if not self.normalize:

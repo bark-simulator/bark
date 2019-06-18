@@ -13,19 +13,9 @@ from modules.runtime.viewer.viewer import BaseViewer
 
 class MPViewer(BaseViewer):
     # we do not need an init function as pybind11 implements it
-    def __init__(self, params=None, axes=None):
-        super(MPViewer, self).__init__(params=params)
-        # setup matplot lib figure
-        # scene rectangle -> to be defined
-        # other parameters (line width scaling, ...)
-        if axes is None:
-            _, ax = plt.subplots()
-        else:
-            ax = axes
-        self.axes = ax
-        self.axes.set_aspect('equal')
-        self.sw_corner = [0, 0]
-        self.ne_corner = [20, 20]
+    def __init__(self, params=None, **kwargs):
+        super(MPViewer, self).__init__(params=params, **kwargs)
+        self.axes = kwargs.pop("axes", plt.subplots()[1])
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -76,13 +66,22 @@ class MPViewer(BaseViewer):
         else:
             return color
 
-    def show(self, block=True):
-        self.axes.set_aspect('equal')
+    def drawWorld(self, world, eval_agent_ids=None):
+        self.clear()
+        super(MPViewer, self).drawWorld(world, eval_agent_ids)
+        self._set_camera_window()
+        self.show()
+
+    def show(self, block=False):
         plt.draw()
         if block:
             plt.show(block=True)
         else:
-            plt.pause(0.05)
+            plt.pause(0.001)
+
+    def _set_camera_window(self):
+        self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
+        self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
 
     def clear(self):
-        plt.gca().cla()
+        self.axes.cla()

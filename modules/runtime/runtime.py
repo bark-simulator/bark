@@ -28,7 +28,6 @@ class Runtime(object):
 
     def render(self):
         self.viewer.drawWorld(self.world, self.scenario.eval_agent_ids)
-        self.viewer.show(block=False)
 
     def run(self, steps):
         for step_count in range(steps):

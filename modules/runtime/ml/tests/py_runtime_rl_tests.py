@@ -12,7 +12,7 @@ from modules.runtime.ml.nn_state_observer import StateConcatenation
 from modules.runtime.ml.action_wrapper import MotionPrimitives
 from modules.runtime.ml.state_evaluator import GoalReached
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
 import numpy as np
 
 
@@ -23,10 +23,10 @@ class RuntimeRLTests(unittest.TestCase):
         state_observer = StateConcatenation(params=params)
         action_wrapper = MotionPrimitives(params=params)
         evaluator = GoalReached(params=params)
-        viewer = PygameViewer(params=params, x_range=[-40,40], y_range=[-40,40], follow_agent_id=True) #use_world_bounds=True) # 
+        viewer = MPViewer(params=params, x_range=[-40,40], y_range=[-40,40], follow_agent_id=True) #use_world_bounds=True) # 
 
         runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
-                        evaluator=evaluator, step_time=0.2, viewer=viewer,
+                        evaluator=evaluator, step_time=0.05, viewer=viewer,
                         scenario_generator=scenario_generation)
 
 
