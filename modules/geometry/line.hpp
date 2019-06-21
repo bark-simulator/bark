@@ -50,7 +50,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   std::vector<T> get_points_in_s_interval(float begin, float end) const {
     std::vector<T> points;
     uint begin_idx = std::lower_bound(s_.begin(), s_.end(), begin) - s_.begin();
-    uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
+    uint end_idx = std::upper_bound(s_.begin(), s_.end(), end) - s_.begin();
     std::copy(Shape<bg::model::linestring<T>, T>::obj_.begin() + begin_idx,
               Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
               std::back_inserter(points));

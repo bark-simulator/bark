@@ -555,6 +555,22 @@ TEST(line, get_line_from_s_interval) {
   EXPECT_TRUE(point_2 == p2);
   EXPECT_TRUE(Point2d(0.0, 2.5) == p3);
 }
+TEST(line, get_line_from_s_interval_entire_line) {
+  using namespace modules::geometry;
+
+  Point2d point_1(0.0, 0.0);
+  Point2d point_2(0.0, 2.0);
+
+  Line_t<Point2d> line;
+
+  line.add_point(point_1);
+  line.add_point(point_2);
+
+  Line_t<Point2d> line_segment = get_line_from_s_interval(line, 0.0, 2.0);
+
+  EXPECT_TRUE(Point2d(0.0, 0.0) == point_1);
+  EXPECT_TRUE(Point2d(0.0, 2.0) == point_2);
+}
 
 TEST(line, get_nearest_point_1) {
   using namespace std;
