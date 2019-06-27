@@ -18,7 +18,7 @@ import numpy as np
 
 # tfa
 from tf_agents.environments import tf_py_environment
-
+from tf_agents.environments import utils
 
 class RuntimeRLTests(unittest.TestCase):
     def test_motion_primitives_concat_state(self):
