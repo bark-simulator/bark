@@ -70,13 +70,13 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
     boost::geometry::envelope(Shape<bg::model::polygon<T>, T>::obj_, box);
 
     boost::geometry::correct(box);
-    auto center_x = Shape<bg::model::polygon<T>, T>::center_[0];
-    auto center_y = Shape<bg::model::polygon<T>, T>::center_[1];
+    float center_x = Shape<bg::model::polygon<T>, T>::center_[0];
+    float center_y = Shape<bg::model::polygon<T>, T>::center_[1];
 
-    rear_dist_ = abs(bg::get<bg::min_corner, 0>(box) - center_x);
-    front_dist_ = abs(bg::get<bg::max_corner, 0>(box) - center_x);
-    left_dist_ = abs(bg::get<bg::min_corner, 1>(box) - center_y);
-    right_dist_ = abs(bg::get<bg::max_corner, 1>(box) - center_y);
+    rear_dist_ = std::abs(bg::get<bg::min_corner, 0>(box) - center_x);
+    front_dist_ = std::abs(bg::get<bg::max_corner, 0>(box) - center_x);
+    left_dist_ = std::abs(bg::get<bg::min_corner, 1>(box) - center_y);
+    right_dist_ = std::abs(bg::get<bg::max_corner, 1>(box) - center_y);
 }
 
 template <typename T>
