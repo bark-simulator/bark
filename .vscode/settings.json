@@ -119,5 +119,6 @@
   },
   "licenser.license": "MIT",
   "licenser.author": "fortiss GmbH",
-  "licenser.projectName": "BARK"
+"licenser.projectName": "BARK",
+"C_Cpp.dimInactiveRegions": false
 }

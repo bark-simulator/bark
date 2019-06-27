@@ -48,6 +48,8 @@ class MapInterface {
   bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
                             Line& inner_line, Line& outer_line, Line& center_line) const;
 
+  std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
+
   bool set_open_drive_map(OpenDriveMapPtr map) {
     open_drive_map_ = map;
     interface_from_opendrive(open_drive_map_);
@@ -66,6 +68,7 @@ class MapInterface {
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
   rtree_lane rtree_lane_;
+  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box_;
 };
 
 using MapInterfacePtr = std::shared_ptr<MapInterface>;

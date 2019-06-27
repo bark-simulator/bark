@@ -11,6 +11,7 @@
 #include <ostream>
 #include <limits>
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/geometry/geometry.hpp"
 
@@ -20,6 +21,7 @@ namespace map {
 
 using modules::world::opendrive::LaneId;
 using modules::world::opendrive::LanePtr;
+using modules::world::goal_definition::GoalDefinition;
 using numeric_double_limits = std::numeric_limits<double>;
 using namespace modules::geometry;
 
@@ -46,22 +48,25 @@ struct DrivingCorridor {
 
 class LocalMap {
  public:
-  LocalMap(LaneId goal_lane_id,
+  LocalMap(const GoalDefinition& goal_definition,
                     const MapInterfacePtr& map_interface) :
     driving_corridor_(DrivingCorridor()),
     horizon_driving_corridor_(DrivingCorridor()),
     map_interface_(map_interface),
-    goal_lane_id_(goal_lane_id) {}
+    goal_definition_(goal_definition),
+    goal_lane_id_(LaneId()) {}
 
-  LocalMap(LaneId goal_lane_id,
+  LocalMap(LaneId goal_lane_id, const GoalDefinition& goal_definition,
                     const DrivingCorridor& driving_corridor) :
     driving_corridor_(driving_corridor),
+    goal_definition_(goal_definition),
     goal_lane_id_(goal_lane_id) {}
  
   LocalMap(const LocalMap& lm) :
     driving_corridor_(lm.driving_corridor_),
     horizon_driving_corridor_(lm.horizon_driving_corridor_),
     map_interface_(lm.map_interface_),
+    goal_definition_(lm.goal_definition_),
     goal_lane_id_(lm.goal_lane_id_) {}
 
   //! Setter
@@ -83,12 +88,18 @@ class LocalMap {
     return goal_lane_id_;
   }
 
+  GoalDefinition get_goal_definition() const {
+    return goal_definition_;
+  }
+
   //! Functions
   void ConcatenateLines(const std::vector<LanePtr>& lanes,
                         Line& line_of_corridor,
                         std::vector< std::pair<int, LaneId> >& lane_ids);
-  bool Generate(Point2d point,
-                LaneId goal_lane_id,
+
+  LaneId GoalLaneIdFromGoalDefinition(const modules::world::goal_definition::GoalDefinition& goal_definition);
+
+  bool Generate(Point2d point,            
                 double horizon = numeric_double_limits::max());
   DrivingCorridor ComputeDrivingCorridor(std::vector<LaneId> lane_ids);
   Line CalculateLineHorizon(const Line& line,
@@ -101,6 +112,7 @@ class LocalMap {
   DrivingCorridor driving_corridor_;
   DrivingCorridor horizon_driving_corridor_;
   MapInterfacePtr map_interface_;
+  modules::world::goal_definition::GoalDefinition goal_definition_;
   LaneId goal_lane_id_;
 };
 

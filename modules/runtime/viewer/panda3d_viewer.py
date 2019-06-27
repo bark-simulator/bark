@@ -355,8 +355,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
         else:
             return Vec4(color[0], color[1], color[2], 1)
 
-    def drawWorld(self, world):
+    def drawWorld(self, world, eval_agent_ids=None):
         self.generator.begin(base.cam, self.render)
-        super(Panda3dViewer, self).drawWorld(world)
+        super(Panda3dViewer, self).drawWorld(world, eval_agent_ids)
         self.generator.end()
         self.taskMgr.step()

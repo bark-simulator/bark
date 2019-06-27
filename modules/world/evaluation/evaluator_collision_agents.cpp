@@ -3,16 +3,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/collision/collision_checker_agents.hpp"
+#include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules
 {
 namespace world
 {
-namespace collision
+namespace evaluation
 {
-  bool CollisioncheckerAgents::checkCollision(const world::World& world) const {
+  EvaluationReturn EvaluatorCollisionAgents::Evaluate(const world::World& world) const {
     modules::geometry::Polygon poly_agent1;
     modules::geometry::Polygon poly_agent2;
     bool colliding = false;

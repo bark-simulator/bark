@@ -11,6 +11,7 @@ from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
 from bark.world.map import *
+from bark.world.goal_definition import GoalDefinition
 from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
@@ -23,7 +24,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 
 
 # Parameters Definitions
-param_server = ParameterServer()
+param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent.json")
 # set parameter that is accessible in Python as well as cpp
 # param_server.setReal("wheel_base", 0.8)
 
@@ -44,26 +45,28 @@ world.set_map(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 150/3.6])
+init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 10/3.6])
 agent_params = param_server.addChild("agent1")
+goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
 agent = Agent(init_state,
               behavior_model,
               dynamic_model,
               execution_model,
               agent_2d_shape,
               agent_params,
-              2, # goal_lane_id
+              GoalDefinition(goal_polygon), # goal_lane_id
               map_interface)
 world.add_agent(agent)
 
 # viewer
-"""
+
 viewer = PygameViewer(params=param_server,
                       x_range=[-50, 50],
                       y_range=[-50, 50],
                       follow_agent_id=agent.id,
                       screen_dims=[500, 500])
-"""
+
 """
 viewer = Panda3dViewer(params=param_server,
                       x_range=[-150, 150],
@@ -87,6 +90,4 @@ for _ in range(0, 100):
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)
 
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "params",
-                  "od8_const_vel_one_agent_written.json"))
+param_server.save("examples/params/od8_const_vel_one_agent_written.json")

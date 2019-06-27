@@ -37,7 +37,7 @@ inline Point2d operator+(const Point2d& lhs, const Point2d& rhs) { return Point2
 inline Point2d operator+(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)+ rhs , bg::get<1>(lhs) + rhs); }
 
 inline Point2d operator-(const Point2d& lhs, const Point2d& rhs) { return Point2d(bg::get<0>(lhs) - bg::get<0>(rhs), bg::get<1>(lhs) - bg::get<1>(rhs)); }
-inline Point2d operator-(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)- rhs, bg::get<1>(lhs) + rhs); }
+inline Point2d operator-(const Point2d& lhs, const float& rhs) { return Point2d(bg::get<0>(lhs)- rhs, bg::get<1>(lhs) - rhs); }
 
 inline Point2d operator*(const Point2d& point, const float& factor) { return Point2d(bg::get<0>(point) * factor , bg::get<1>(point) * factor); }
 inline Point2d operator/(const Point2d& point, const float& divisor) { return Point2d(bg::get<0>(point) / divisor , bg::get<1>(point) / divisor); }
@@ -94,6 +94,17 @@ struct Shape {
   bool add_point(const T &p) {
     bg::append(obj_, p);
     return true;
+  }
+
+  std::pair<T, T> bounding_box() const {
+    boost::geometry::model::box<T> box;
+    boost::geometry::envelope(obj_, box);
+    boost::geometry::correct(box);
+
+    return std::make_pair(
+      T(bg::get<bg::min_corner, 0>(box), bg::get<bg::min_corner, 1>(box)),
+      T(bg::get<bg::max_corner, 0>(box), bg::get<bg::max_corner, 1>(box))
+    );
   }
 
   G obj_;
@@ -182,6 +193,7 @@ inline std::string Shape<G, T>::ShapeToString() const {
   ss << toArray().format(OctaveFmt);
   return ss.str();
 }
+
 
 // template<typename G, typename T>
 // inline bool Shape<G,T>::Collide(const G& shape1, const G& shape2)

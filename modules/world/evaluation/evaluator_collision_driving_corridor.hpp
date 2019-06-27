@@ -6,7 +6,8 @@
 #ifndef MODULES_WORLD_COLLISION_COLLISION_CHECK_DRIVING_CORRIDOR_HPP_
 #define MODULES_WORLD_COLLISION_COLLISION_CHECK_DRIVING_CORRIDOR_HPP_
 
-#include "modules/world/collision/base_collision_checker.hpp"
+#include "modules/world/evaluation/base_evaluator.hpp"
+
 
 namespace modules
 {
@@ -14,16 +15,16 @@ namespace world
 {
 class World;
 
-namespace collision
+namespace evaluation
 {
 
-class CollisioncheckerDrivingCorridor : public BaseCollisionChecker
+class EvaluatorCollisionDrivingCorridor : public BaseEvaluator
 {
    public:
-    explicit CollisioncheckerDrivingCorridor(commons::Params *params) : BaseCollisionChecker(params) {}
-    virtual ~CollisioncheckerDrivingCorridor() {}
+    EvaluatorCollisionDrivingCorridor() {}
+    virtual ~EvaluatorCollisionDrivingCorridor() {}
 
-    bool checkCollision(const world::World& observed_world) const;
+    virtual EvaluationReturn Evaluate(const world::World& world) const;
 
 };
 

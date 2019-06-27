@@ -71,6 +71,9 @@ void python_geometry(py::module m) {
   m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
                         "get the point nearest to another point and its position on the line s ");
 
+  m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 
+                        "merge two bounding boxes consisting of pairs of min and max corners");
+
   py::class_<modules::geometry::Line>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
       .def("addPoint", &modules::geometry::Line::add_point, "add a point")
@@ -93,6 +96,7 @@ void python_geometry(py::module m) {
       .def("translate", &modules::geometry::Line::translate, "translates object.")
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
       .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
+      .def_property_readonly("bounding_box", &modules::geometry::Line::bounding_box)
       .def_readwrite("center", &modules::geometry::Line::center_, "center point.")
       .def(py::pickle(
         [](const modules::geometry::Line& l) -> py::tuple { // __getstate__
@@ -139,6 +143,7 @@ void python_geometry(py::module m) {
       .def_readonly("left_dist", &modules::geometry::Polygon::left_dist_, "center point.")
       .def_readonly("front_dist", &modules::geometry::Polygon::front_dist_, "center point.")
       .def_readonly("rear_dist", &modules::geometry::Polygon::rear_dist_, "center point.")
+      .def_property_readonly("bounding_box", &modules::geometry::Polygon::bounding_box)
       .def(py::pickle(
         [](const modules::geometry::Polygon& p) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */

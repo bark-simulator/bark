@@ -30,7 +30,7 @@ TEST(single_track_model, dynamic_test) {
 
   float dt = 0.1;
   for (int i = 0; i < 10; i++) {
-    x = euler_int(m, x, u, dt);
+    x = euler_int(*m, x, u, dt);
     cout << x << endl;
   }
 }
