@@ -69,7 +69,7 @@ class MPViewer(BaseViewer):
     def drawWorld(self, world, eval_agent_ids=None):
         self.clear()
         super(MPViewer, self).drawWorld(world, eval_agent_ids)
-        self._set_camera_window()
+        self._set_visualization_options()
         self.show()
 
     def show(self, block=False):
@@ -79,9 +79,13 @@ class MPViewer(BaseViewer):
         else:
             plt.pause(0.001)
 
-    def _set_camera_window(self):
+    def _set_visualization_options(self):
+        # x and y limits
         self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
         self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
+
+        self.axes.get_xaxis().set_visible(False)
+        self.axes.get_yaxis().set_visible(False)
 
     def clear(self):
         self.axes.cla()

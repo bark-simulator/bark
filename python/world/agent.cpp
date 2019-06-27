@@ -57,7 +57,7 @@ void python_agent(py::module m)
       .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
       .def_property_readonly("model3d", &Agent::get_model_3d)
       .def_property_readonly("state", &Agent::get_current_state)
-      .def_property_readonly("goal_definition", &Agent::get_goal_definition)
+      .def_property("goal_definition", &Agent::get_goal_definition, &Agent::set_goal_definition)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
