@@ -12,8 +12,8 @@ class StateEvaluator:
 class GoalReached(StateEvaluator):
     def __init__(self, params=ParameterServer()):
         self.params = params
-        self.goal_reward = params["goal_reward", "The reward given for goals", 0.01]
-        self.collision_reward = params["collision_reward", "The (possibly negative) \
+        self.goal_reward = params["Runtime"]["RL"]["StateEvaluator"]["GoalReward", "The reward given for goals", 0.01]
+        self.collision_reward = params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward", "The (negative) \
                                                      reward given for collisions", -1]
 
     def get_evaluation(self, world):

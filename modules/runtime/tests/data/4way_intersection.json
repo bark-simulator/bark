@@ -2,38 +2,30 @@
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "MapFilename": "modules/runtime/tests/data/4way_intersection.xodr",
                 "EgoGoal": [
-                    5110,
-                    5017
+                    189,
+                    167
                 ],
                 "OthersSource": [
                     [
-                        5111.626,
-                        5006.8305
-                    ],
-                    [
-                        5116,
-                        5062
+                        174,
+                        152
                     ]
                 ],
                 "OthersSink": [
                     [
-                        5110.789,
-                        5293.1725
-                    ],
-                    [
-                        5116,
-                        5300
+                        174,
+                        188
                     ]
                 ],
                 "VehicleDistanceRange": [
                     1,
-                    20
+                    2
                 ],
                 "VehicleVelocityRange": [
-                    20,
-                    20
+                    10,
+                    10
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorConstantVelocity",
