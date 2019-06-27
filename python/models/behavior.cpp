@@ -6,11 +6,14 @@
 
 #include "behavior.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
+using modules::models::behavior::BehaviorMotionPrimitives;
+
 using std::shared_ptr;
 void python_behavior(py::module m) {
   py::class_<BehaviorModel,
@@ -42,4 +45,14 @@ void python_behavior(py::module m) {
             /* Create a new C++ instance */
             return new BehaviorConstantVelocity(nullptr); // param pointer must be set afterwards
         }));
+
+  py::class_<BehaviorMotionPrimitives,
+             BehaviorModel,
+             shared_ptr<BehaviorMotionPrimitives>>(m, "BehaviorMotionPrimitives")
+      .def(py::init<const modules::models::dynamic::DynamicModelPtr&, modules::commons::Params *>())
+      .def("__repr__", [](const BehaviorMotionPrimitives &b) {
+        return "bark.behavior.BehaviorMotionPrimitives";
+      })
+      .def("add_motion_primitive", &BehaviorMotionPrimitives::AddMotionPrimitive)
+      .def("action_to_behavior", &BehaviorMotionPrimitives::ActionToBehavior);
 }

@@ -9,6 +9,7 @@ import os
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
+from bark.world.goal_definition import GoalDefinition
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -46,6 +47,8 @@ world.set_map(map_interface)
 # Agent Definition
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 50/3.6])
+goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -53,7 +56,7 @@ agent1 = Agent(init_state,
                execution_model,
                agent_2d_shape,
                agent_params,
-               2,
+               GoalDefinition(goal_polygon),
                map_interface)
 world.add_agent(agent1)
 
@@ -66,7 +69,7 @@ agent2 = Agent(init_state2,
                execution_model2,
                agent_2d_shape2,
                agent_params2,
-               2,
+               GoalDefinition(goal_polygon),
                map_interface)
 world.add_agent(agent2)
 
@@ -81,7 +84,7 @@ viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 2
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.05]
+                                           1]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]

@@ -12,3 +12,4 @@ sphinx
 recommonmark
 sphinx_rtd_theme
 panda3d
+gym

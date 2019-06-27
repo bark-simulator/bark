@@ -36,7 +36,7 @@ class ModelJsonConversion:
         self.convert_model(agent_json["execution_model"], param_server), 
         Polygon2d(agent_json["shape"]["center_pose"],
                 np.array(agent_json["shape"]["polygon_points"])),
-            param_server.addChild("agent"), agent_json["goal_lane_id"], agent_json["map_interface"])
+            param_server.addChild("agent"), agent_json["goal_definition"], agent_json["map_interface"])
         return bark_agent
 
     def agent_to_json(self, agent):
@@ -51,7 +51,6 @@ class ModelJsonConversion:
         agent_json["shape"]["center_pose"] = agent.shape.center.tolist()
         agent_json["followed_trajectory"] = agent.followed_trajectory.tolist()
         agent_json["planned_trajectory"] = agent.planned_trajectory.tolist()
-        agent_json["goal_lane_Id"] = agent.goal_lane_id
         return agent_json
 
     def convert_model(self, model, params=None):

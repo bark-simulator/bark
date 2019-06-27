@@ -44,6 +44,7 @@ cc_library(
     deps = [
         "//modules/geometry",
         "//modules/world/opendrive",
+        "//modules/world/goal_definition:goal_definition",
         "@boost//:geometry",
         "@boost//:graph",
         ":map_interface"

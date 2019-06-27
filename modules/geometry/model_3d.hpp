@@ -21,15 +21,15 @@ class Model3D {
     PEDESTRIAN = 3
   } Type;
 
-  Model3D() : type_(NONE),
-              scale_x_(0.0),
+  Model3D() : scale_x_(0.0),
               scale_y_(0.0),
-              scale_z_(0.0) {}
-              
-  explicit Model3D(Type type) : type_(type),
-                                scale_x_(0.0),
+              scale_z_(0.0),
+              type_(NONE) {}
+
+  explicit Model3D(Type type) : scale_x_(0.0),
                                 scale_y_(0.0),
-                                scale_z_(0.0) {}
+                                scale_z_(0.0),
+                                type_(type) {}
   ~Model3D() {}
 
   Type get_type() { return type_; }

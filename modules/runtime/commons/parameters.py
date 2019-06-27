@@ -8,8 +8,9 @@ import os
 from bark.commons import Params
 
 
-class ParameterWrapper():
+class ParameterServer(Params):
     def __init__(self, **kwargs):
+        Params.__init__(self)
         if "filename" in kwargs:
             self.load(kwargs["filename"])
         elif "json" in kwargs:
@@ -35,7 +36,7 @@ class ParameterWrapper():
                 self.store[new_key] = default_val
                 return self.store[new_key]
             else:  # else it is a Params instance
-                self.store[new_key] = ParameterWrapper()
+                self.store[new_key] = ParameterServer()
                 return self.store[new_key]
 
     def __setitem__(self, key, value):
@@ -47,7 +48,7 @@ class ParameterWrapper():
         self.store[new_key] = value
 
     def __delitem__(self, key):
-        del self.store[self.key]
+        del self.store[key]
 
     def __iter__(self):
         return iter(self.store)
@@ -64,7 +65,7 @@ class ParameterWrapper():
         self.store = dict()
         for key, value in new_dict.items():
             if isinstance(value, dict):
-                param = ParameterWrapper()
+                param = ParameterServer()
                 self.store[key] = param.convert_to_param(value)
             else:
                 self.store[key] = value
@@ -74,7 +75,7 @@ class ParameterWrapper():
     def convert_to_dict(self, print_description=False):
         dict = {}
         for key, value in self.store.items():
-            if isinstance(value, ParameterWrapper):
+            if isinstance(value, ParameterServer):
                 v = value.convert_to_dict(print_description)
                 if len(v) == 0:
                     if print_description:
@@ -98,13 +99,14 @@ class ParameterWrapper():
         return dict
 
     def save(self, filename, print_description=False):
-        if not os.path.exists(os.path.dirname(filename)):
-            try:
-                os.makedirs(os.path.dirname)
-            except:
-                print("Could not dump parameters, no rights to create file directory.")
-                return
+        #if not os.path.exists(os.path.dirname(filename)):
+            #try:
+           #     os.makedirs(os.path.dirname(filename))
+          #  except:
+         #       print("Could not dump parameters, no rights to create file directory.")
+        #        return
         with open(filename, 'w') as outfile:
+            print("Writing parameters to {}".format(os.path.abspath(filename)))
             outfile.write(
                 json.dumps(
                     self.convert_to_dict(print_description=print_description),
@@ -117,8 +119,8 @@ class ParameterWrapper():
             key = hierarchy[0]
             hierarchy.pop(0)
             if key in self.store:
-                #if isinstance(self.store[key], ParameterWrapper):
-                if type(self.store[key]) == ParameterWrapper:
+                #if isinstance(self.store[key], ParameterServer):
+                if type(self.store[key]) == ParameterServer:
                     #raise ValueError("get here")
                     return self.store[key].get_val_iter(
                         hierarchy, description, default_value)
@@ -129,7 +131,7 @@ class ParameterWrapper():
                     self.store[key] = default_value
                     return default_value
                 else:
-                    self.store[key] = ParameterWrapper()
+                    self.store[key] = ParameterServer()
                     return self.store[key].get_val_iter(
                         hierarchy, description, default_value)
         return
@@ -141,15 +143,7 @@ class ParameterWrapper():
         #for key in hierarchy:
         #	helper = helper[key, description, default_value]
         #return helper
-
-
-class ParameterServer(Params, ParameterWrapper):
-    # we do not need an init function as pybind11 implements it
-
-    def __init__(self, **kwargs):
-        Params.__init__(self)
-        ParameterWrapper.__init__(self, **kwargs)
-
+        
     # get values
     def get_bool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
