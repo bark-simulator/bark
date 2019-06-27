@@ -61,7 +61,7 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
   return traj;
 }
 
-BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input, const float time_span) {  
+BehaviorMotionPrimitives::MotionIdx BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input) {  
   motion_primitives_.push_back(dynamic_input);
   return motion_primitives_.size()-1;
 }

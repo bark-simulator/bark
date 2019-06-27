@@ -272,7 +272,7 @@ class XodrParser(object):
             new_pre_info.type = link["predecessor"]["element_type"]
             new_link.predecessor = new_pre_info
         except:
-            print("Roadlink has no predeseccor.")
+            pass
 
         try:
             new_suc_info = LinkInfo()
@@ -280,7 +280,7 @@ class XodrParser(object):
             new_suc_info.type = link["successor"]["element_type"]
             new_link.successor = new_suc_info
         except:
-            print("Roadlink has no successor.")
+            pass
         return new_link
 
     def create_cpp_road(self, road):
