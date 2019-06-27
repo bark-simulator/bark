@@ -18,7 +18,7 @@ from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-# from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
+from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
@@ -63,6 +63,12 @@ viewer = PygameViewer(params=param_server,
                       y_range=[-50, 50],
                       follow_agent_id=agent.id,
                       screen_dims=[500, 500])
+"""
+"""
+viewer = Panda3dViewer(params=param_server,
+                      x_range=[-150, 150],
+                      y_range=[-150, 150],
+                      follow_agent_id=agent.id)
 """
 viewer = MPViewer(params=param_server)
 
