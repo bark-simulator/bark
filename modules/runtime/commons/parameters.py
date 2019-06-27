@@ -99,13 +99,14 @@ class ParameterServer(Params):
         return dict
 
     def save(self, filename, print_description=False):
-        if not os.path.exists(os.path.dirname(filename)):
-            try:
-                os.makedirs(os.path.dirname(filename))
-            except:
-                print("Could not dump parameters, no rights to create file directory.")
-                return
+        #if not os.path.exists(os.path.dirname(filename)):
+            #try:
+           #     os.makedirs(os.path.dirname(filename))
+          #  except:
+         #       print("Could not dump parameters, no rights to create file directory.")
+        #        return
         with open(filename, 'w') as outfile:
+            print("Writing parameters to {}".format(os.path.abspath(filename)))
             outfile.write(
                 json.dumps(
                     self.convert_to_dict(print_description=print_description),

@@ -8,6 +8,7 @@ py_library(
             "//modules/runtime/viewer:pygame_viewer",
             "//modules/runtime/viewer:py_viewer",
             "//modules/runtime/viewer:panda3d_viewer",
-            "//modules/runtime/viewer:matplotlib_viewer"],
+            "//modules/runtime/viewer:matplotlib_viewer",
+            "//modules/runtime/scenario:scenario"],
     visibility = ["//visibility:public"],
 )

@@ -2,6 +2,7 @@
 from gym import spaces
 import numpy as np
 from bark.models.dynamic import StateDefinition
+from modules.runtime.commons.parameters import ParameterServer
 import math
 import operator
 
@@ -31,18 +32,20 @@ class OpenAI(NNStateObserver):
 
 
 class StateConcatenation(OpenAI):
-    def __init__(self):
+    def __init__(self, params=ParameterServer()):
         # todo make parameterizable
         self.nn_state_dimensions = [int(StateDefinition.X_POSITION),
                                           int(StateDefinition.Y_POSITION),
                                           int(StateDefinition.THETA_POSITION),
                                           int(StateDefinition.VEL_POSITION)]
 
-        self.velocity_range = [0, 100]
-        self.theta_range = [0, 2*math.pi]
-        self.normalize = True
-        self.max_num_other_agents = 4
-        self.max_distance_other_agents = 40.0
+        self.params = params
+        self.velocity_range = self.params["Runtime"]["RL"]["StateConcatenation"]["VelocityRange","Gives boundaries for min and max velocity for normalization", [0, 100]]
+        self.theta_range = self.params["Runtime"]["RL"]["StateConcatenation"]["ThetaRange","Gives boundaries for min and max theta for normalization", [0, 2*math.pi]]
+        self.normalize = self.params["Runtime"]["RL"]["StateConcatenation"]["Normalize","Should normalization be performed", True]
+        self.max_num_other_agents = self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherAgents","The concatenation state size is ego agent plus max num other agents", 4]
+        self.max_distance_other_agents = self.params["Runtime"]["RL"]["StateConcatenation"]["MaxOtherDistance","Agents farer than this value are not observed; \
+                                                                                     if not max other agents are seen, remaining concatenation state is set to zero", 30]
 
     def observe(self, world, agents_to_observe):
         super(StateConcatenation, self).observe(world=world, agents_to_observe=agents_to_observe)
@@ -61,30 +64,29 @@ class StateConcatenation(OpenAI):
             nearest_distances[dist] = agent_id
 
         # preallocate numpyarray and add ego state
-        concatenated_state = np.zeros((self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state,1))
-        concatenated_state[0:self._len_ego_state] = np.reshape(self._reduce_to_ego_nn_state( \
-                                            self._norm(ego_state)) , (self._len_ego_state ,1))
+        concatenated_state = np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state)
+        concatenated_state[0:self._len_ego_state] = self._reduce_to_ego_nn_state(self._norm(ego_state)) 
         
         # add max number of agents to state concatenation vector
         concat_pos = self._len_relative_agent_state
         nearest_distances = sorted(nearest_distances.items(), key=operator.itemgetter(0))
-        print(nearest_distances)
         for agent_idx in range(0, self.max_num_other_agents):
             if agent_idx<len(nearest_distances) and nearest_distances[agent_idx][0] <= self.max_distance_other_agents**2:
                 agent_id = nearest_distances[agent_idx][1]
                 agent = ego_observed_world.other_agents[agent_id]
                 agent_rel_state = self._reduce_to_other_nn_state( \
                                 self._calculate_relative_agent_state(ego_state, self._norm(agent.state)))
-                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.reshape(agent_rel_state, (self._len_relative_agent_state, 1))
+                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = agent_rel_state
             else:
-                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.zeros((self._len_relative_agent_state, 1))
+                concatenated_state[concat_pos:concat_pos + self._len_relative_agent_state] = np.zeros(self._len_relative_agent_state)
             concat_pos += self._len_relative_agent_state
         
         return concatenated_state
 
+    @property
     def observation_space(self):
-        return spaces.Box(low=np.zeros((self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state,1)), \
-                            high = np.ones((self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state,1)) )
+        return spaces.Box(low=np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state), \
+                            high = np.ones(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state) )
 
     def _norm(self, agent_state):
         if not self.normalize:

@@ -85,6 +85,13 @@ class Agent : public Object {
     behavior_model_ = behavior_model_ptr;
   }
 
+  void set_goal_definition(const GoalDefinition &goal_definition) {
+    goal_definition_ = goal_definition;
+    GenerateLocalMap();
+    // TODO(@hart): parameter
+    UpdateDrivingCorridor(20.0);
+  }
+
   void Move(const float &dt, const ObservedWorld &observed_world);
 
   bool AtGoal() const;

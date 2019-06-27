@@ -5,35 +5,27 @@
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoal": [
                     5110,
-                    5017
+                    5217
                 ],
                 "OthersSource": [
                     [
                         5111.626,
                         5006.8305
-                    ],
-                    [
-                        5116,
-                        5062
                     ]
                 ],
                 "OthersSink": [
                     [
                         5110.789,
                         5293.1725
-                    ],
-                    [
-                        5116,
-                        5300
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    1,
-                    20
+                    20,
+                    30
                 ],
                 "VehicleVelocityRange": [
-                    20,
-                    20
+                    30,
+                    40
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorConstantVelocity",
@@ -132,5 +124,89 @@
     },
     "agent": {
         "MaxHistoryLength": 50
-    }
+    },
+    "Runtime": {
+        "RL": {
+            "StateConcatenation": {
+                "VelocityRange": [
+                    0,
+                    100
+                ],
+                "ThetaRange": [
+                    0,
+                    6.283185307179586
+                ],
+                "Normalize": true,
+                "MaxOtherAgents": 4,
+                "MaxOtherDistance": 100
+            },
+            "ActionWrapper": {
+                "MotionPrimitives": [
+                    [
+                        0,
+                        94.2
+                    ],
+                    [
+                        0,
+                        -188.4
+                    ]
+                ]
+            },
+            "StateEvaluator": {
+                "GoalReward": 0.01,
+                "CollisionReward": -1
+            }
+        }
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.9
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            },
+            "AlphaVehicle": 0.8,
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ]
+        },
+        "Map": {
+            "Lanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        }
+    },
+    "integration_time_delta": 0.009999999776482582
 }

@@ -32,7 +32,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
                  const ObservedWorld& observed_world);
 
   typedef unsigned int MotionIdx;
-  MotionIdx AddMotionPrimitive(const Input& dynamic_input, const float time_span);
+  MotionIdx AddMotionPrimitive(const Input& dynamic_input);
   void ActionToBehavior(const MotionIdx& motion_idx);
 
   virtual BehaviorModel *Clone() const;

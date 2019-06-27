@@ -45,10 +45,8 @@ goal_definition_(goal_definition) {
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push_back(pair);
-  if (map_interface != NULL) {
-    GenerateLocalMap();
-    // TODO(@hart): parameter
-    UpdateDrivingCorridor(20.0);
+  if(map_interface != nullptr) {
+    set_goal_definition(goal_definition);
   }
 }
 

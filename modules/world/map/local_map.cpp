@@ -44,6 +44,10 @@ LaneId LocalMap::GoalLaneIdFromGoalDefinition(const GoalDefinition& goal_definit
 }
 
 bool LocalMap::Generate(Point2d point, double horizon) {
+  if(map_interface_ == nullptr) {
+    return false;
+  }
+
   goal_lane_id_ = GoalLaneIdFromGoalDefinition(goal_definition_);
 
   std::vector<LanePtr> lanes;
