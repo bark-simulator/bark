@@ -12,13 +12,11 @@ from modules.runtime.viewer.pygame_viewer import PygameViewer
 import time
 import os
 
-scenario_dump_folder = "examples/scenarios/"
-scenario_param_file ="highway_merging.json" # must be within scenario dump folder
+scenario_param_file ="highway_merging.json" # must be within examples params folder
 
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
 
 scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
-scenario_generation.params.save(os.path.join(scenario_dump_folder,scenario_param_file)) 
 
 
 viewer = PygameViewer(params=param_server, use_world_bounds=True)
@@ -38,4 +36,4 @@ for _ in range(0,2): # run 5 scenarios in a row, repeating after 3
         viewer.show(block=False)
         time.sleep(sim_step_time/sim_real_time_factor)
 
-scenario_generation.dump_scenario_list(os.path.join(scenario_dump_folder,"{}.bark_scenarios".format(os.path.splitext(scenario_param_file)[0])))
+scenario_generation.dump_scenario_list(os.path.join("examples/scenarios/","{}_dump.bark_scenarios".format(os.path.splitext(scenario_param_file)[0])))
