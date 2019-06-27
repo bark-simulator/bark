@@ -48,7 +48,7 @@ class ParameterServer(Params):
         self.store[new_key] = value
 
     def __delitem__(self, key):
-        del self.store[self.key]
+        del self.store[key]
 
     def __iter__(self):
         return iter(self.store)

@@ -64,7 +64,7 @@ class RoadgraphGenerator:
             for _, lane_section in enumerate(road.lane_sections):
                 for lane_id, lane in lane_section.get_lanes().items():
                     if lane.lane_position is not 0:
-                        inner_lane_pos = abs(lane.lane_position) - 1
+                        inner_lane_pos = lane.lane_position - 1 if lane.lane_position > 0 else lane.lane_position + 1
                         inner_lane_id = self.get_lane_id_by_pos(lane_section, inner_lane_pos)
                         if inner_lane_id is not None:
                             self.roadgraph.add_inner_neighbor(inner_lane_id, lane_id)
