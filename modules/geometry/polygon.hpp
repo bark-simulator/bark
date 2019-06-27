@@ -60,14 +60,13 @@ inline Polygon_t<T>::Polygon_t(const Pose &center,
            rear_dist_(0.0f),
            front_dist_(0.0f),
            left_dist_(0.0f),
-           right_dist_(0.0f) { 
-    
+           right_dist_(0.0f) {
     UpdateDistancesToCenter();
 }
 
 template<typename T>
 void Polygon_t<T>::UpdateDistancesToCenter() {
-   boost::geometry::model::box<T> box;
+    boost::geometry::model::box<T> box;
     boost::geometry::envelope(Shape<bg::model::polygon<T>, T>::obj_, box);
 
     boost::geometry::correct(box);

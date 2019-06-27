@@ -21,7 +21,7 @@ void LocalMap::ConcatenateLines(const std::vector<LanePtr>& lanes,
   if (lanes.size() > 0) {
       line_of_corridor = lanes.at(0)->get_line();
       lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
-      for (int i = 1; i < lanes.size(); i++) {
+      for (uint i = 1; i < lanes.size(); i++) {
         if (lanes.at(i) != NULL) {
           lane_ids.push_back(std::pair<int, LaneId>(line_of_corridor.size(),
                                                     lanes.at(i)->get_id()));
