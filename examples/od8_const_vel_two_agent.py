@@ -16,6 +16,7 @@ from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
+from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 # from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
@@ -70,6 +71,11 @@ agent2 = Agent(init_state2,
 world.add_agent(agent2)
 
 # viewer
+"""
+viewer = Panda3dViewer(params=param_server,
+                      x_range=[-200, 200],
+                      y_range=[-200, 200],)
+"""
 viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 200])
 
 # World Simulation
