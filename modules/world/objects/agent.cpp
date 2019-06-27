@@ -31,8 +31,8 @@ Object(shape, params, model_3d),
 behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
-history_(),
 local_map_(new LocalMap(goal_definition, map_interface)),
+history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
   if(params) {
@@ -41,7 +41,7 @@ goal_definition_(goal_definition) {
     "Maximum number of state-input pairs in state-input history",
      50);
   }
-  
+
   models::dynamic::StateInputPair pair;
   pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
   history_.push_back(pair);
@@ -55,8 +55,8 @@ Agent::Agent(const Agent& other_agent) :
   behavior_model_(other_agent.behavior_model_),
   dynamic_model_(other_agent.dynamic_model_),
   execution_model_(other_agent.execution_model_),
-  history_(other_agent.history_),
   local_map_(other_agent.local_map_),
+  history_(other_agent.history_),
   goal_definition_(other_agent.goal_definition_) {}
 
 
@@ -101,10 +101,10 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
   using namespace modules::geometry::standard_shapes;
 
   Pose agent_pose(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION), state(StateDefinition::THETA_POSITION));
-  
+
   geometry::Polygon *polygon = dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose));
 
-  return *polygon;  
+  return *polygon;
 }
 
 bool Agent::AtGoal() const {

@@ -36,9 +36,9 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     return Shape<bg::model::linestring<T>, T>::add_point(p) && recompute_s();
   }
 
-  auto length() { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
+  auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
-  int size() { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
+  int size() const { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
 
   void append_linestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
@@ -49,7 +49,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   void reverse() {
     boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
   }
-  
+
   void ConcatenateLinestring(const Line_t &other_line) {
     using boost::geometry::append;
     // Get first and last point
@@ -74,7 +74,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   typedef typename std::vector<T>::iterator point_iterator;
   typedef typename std::vector<T>::const_iterator const_point_iterator;
   point_iterator begin() { return Shape<bg::model::linestring<T>, T>::obj_.begin(); }
-  const_point_iterator  begin() const { Shape<bg::model::linestring<T>, T>::obj_.begin(); }
+  const_point_iterator  begin() const { return Shape<bg::model::linestring<T>, T>::obj_.begin(); }
   point_iterator end() { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
   const_point_iterator end() const { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
 
