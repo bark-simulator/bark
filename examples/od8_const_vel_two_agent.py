@@ -74,22 +74,22 @@ agent2 = Agent(init_state2,
 world.add_agent(agent2)
 
 # viewer
-"""
+
 viewer = Panda3dViewer(params=param_server,
                       x_range=[-200, 200],
-                      y_range=[-200, 200],)
+                      y_range=[-200, 200], follow_agent_id=True)
 """
 viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 200])
-
+"""
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           1]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-for _ in range(0, 30):
+for _ in range(0, 300):
     world.step(sim_step_time)
     viewer.drawWorld(world)
     viewer.show(block=False)

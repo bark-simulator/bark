@@ -14,9 +14,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
     def __init__(self, params=None, **kwargs):
         # Load 3d-Model and parameter
         super(Panda3dViewer, self).__init__(params=params)
-        self.world_x_range = kwargs.pop("x_range", [-40, 40])
-        self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.follow_agent_id = kwargs.pop("follow_agent_id", -1)
+        self.camera_mode = 0
         self.screen_dims = kwargs.pop("screen_dims", [1024, 1024])
         self.path = os.path.join(os.path.dirname(os.path.abspath(__file__))) # TODO(@fortiss): load into parameter at a earlier stage
         self.agent_model_path = kwargs.pop("model_path",
@@ -80,10 +78,10 @@ class Panda3dViewer(BaseViewer, ShowBase):
             0: ["bird_agent", "third", "first"]
         }
         self.perspective = self.perspectives[self.camIndex(
-            self.follow_agent_id)]
+            self.camera_mode)]
 
         self.line_thickness = self.line_thicknesses[self.camIndex(
-            self.follow_agent_id)][0]
+            self.camera_mode)][0]
         self.addButtons()
 
     def setDrawer(self, budget=100000):
@@ -141,12 +139,12 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def switchCamera(self):
         # Switches between global and agent cameras
-        self.follow_agent_id = self.camera_list.pop(0)
-        self.camera_list.append(self.follow_agent_id)
+        self.camera_mode = self.camera_list.pop(0)
+        self.camera_list.append(self.camera_mode)
         self.perspective = self.perspectives[self.camIndex(
-            self.follow_agent_id)].copy()
+            self.camera_mode)].copy()
         self.line_thickness = self.line_thicknesses[self.camIndex(
-            self.follow_agent_id)][0]
+            self.camera_mode)][0]
 
     def switchView(self):
         # Switches between the perspectives defined by the camera
@@ -163,7 +161,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.camera.setPos(self.cam_pose[0], self.cam_pose[1],
                            self.cam_pose[2])
         if lookAt:
-            self.camera.lookAt(self.agent_nodes[self.follow_agent_id])
+            self.camera.lookAt(self.agent_nodes[self.camera_mode])
         else:
             self.camera.setHpr(self.cam_or[2], self.cam_or[1], self.cam_or[0])
 
@@ -176,12 +174,12 @@ class Panda3dViewer(BaseViewer, ShowBase):
         Returns:
             Task.cont -- Panda3d Task Return
         """
-        if self.follow_agent_id is -1:  # Transition into camera control view
+        if self.camera_mode is -1:  # Transition into camera control view
             self.setMouseControl()
-        if self.follow_agent_id is -2:  # Global Camera
+        if self.camera_mode is -2:  # Global Camera
             if (self.perspective[0] is self.perspectives[-2][1]):
                 self.setAutoZoomCam(self.agent_poses)
-        if self.follow_agent_id >= 0:  # Camera for all agents
+        if self.camera_mode >= 0:  # Camera for all agents
             self.setAgentCam(self.perspective[0],
                              self.agent_poses[self.follow_agent_id])
         return Task.cont
@@ -200,9 +198,9 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.mat.invertInPlace()
         base.mouseInterfaceNode.setMat(self.mat)
         base.enableMouse()
-        self.follow_agent_id = -2
+        self.camera_mode = -2
         self.perspective = self.perspectives[self.camIndex(
-            self.follow_agent_id)].copy()
+            self.camera_mode)].copy()
 
     def setAutoZoomCam(self, agent_poses):
         """This function calculates the camera position so that all agents are visible
@@ -287,7 +285,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
                 self.line_thickness, self.getColor(color))
         self.generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(color))
 
-    def drawAgent(self, agent):
+    def drawAgent(self, agent, color):
         """Draws an agent object with a model previosly set in set with self.agent_model_path
         Arguments:
             agent -- Agent object from world
@@ -310,7 +308,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.agent_poses[agent.id][2] = state[int(
             StateDefinition.THETA_POSITION)]
         transformed_polygon = agent.shape.transform(self.agent_poses[agent.id])
-        self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
+        self.drawPolygon2d(transformed_polygon, color, 1.0)
 
         # Fitting of 3d-Model frame to agent positon
         angle = ((self.agent_poses[agent.id][2] * 180) / pi +

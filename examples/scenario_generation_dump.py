@@ -22,7 +22,7 @@ scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0,
 viewer = PygameViewer(params=param_server, use_world_bounds=True)
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
-                                        0.05]
+                                        1]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                 "execution in real-time or faster", 1]
 

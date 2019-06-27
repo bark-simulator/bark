@@ -13,6 +13,8 @@ from modules.runtime.ml.action_wrapper import MotionPrimitives
 from modules.runtime.ml.state_evaluator import GoalReached
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
+from modules.runtime.viewer.pygame_viewer import PygameViewer
 import numpy as np
 
 
@@ -23,7 +25,7 @@ class RuntimeRLTests(unittest.TestCase):
         state_observer = StateConcatenation(params=params)
         action_wrapper = MotionPrimitives(params=params)
         evaluator = GoalReached(params=params)
-        viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) #use_world_bounds=True) # 
+        viewer = Panda3dViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) # 
 
         runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
                         evaluator=evaluator, step_time=0.05, viewer=viewer,
@@ -32,13 +34,13 @@ class RuntimeRLTests(unittest.TestCase):
 
         for _ in range(0,5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
-            for _ in range(0, 1000): # run each scenario for 10 steps
+            for _ in range(0, 100): # run each scenario for 10 steps
                 next_nn_state, reward, done, info = runtimerl.step(action_wrapper.action_space.sample())
                 runtimerl.render()
                 if info["success"] or done:
                     print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
                          =================================================".format( next_nn_state, reward, done, info))
-                    break
+                    #break
                 
         params.save(filename="highway_merging_written.json")
 if __name__ == '__main__':

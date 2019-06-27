@@ -19,7 +19,7 @@ class BaseViewer(Viewer):
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
-        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", False]
+        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
@@ -33,19 +33,27 @@ class BaseViewer(Viewer):
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
         self.use_world_bounds = kwargs.pop("use_world_bounds", False)
-        self.follow_agent_id = kwargs.pop("follow_agent_id", None)
+        self.follow_agent = kwargs.pop("follow_agent", True) 
+        self._update_follow_agent_id()
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
 
+    def _update_follow_agent_id(self, eval_agent_ids=None):
+        if isinstance(self.follow_agent, bool) and \
+                    eval_agent_ids is not None and \
+                    len(eval_agent_ids) == 1:
+            self.follow_agent_id = eval_agent_ids[0]
+        elif isinstance(self.follow_agent, int):
+            self.follow_agent_id = self.follow_agent
+        else:
+            raise ValueError("Invalid combinations of arguments in follow agent id determination.")
+
+
     def _update_world_view_range(self, world, eval_agent_ids=None):
+        self._update_follow_agent_id(eval_agent_ids=eval_agent_ids)
         if self.follow_agent_id is not None:
-            if isinstance(self.follow_agent_id, bool) and \
-                     eval_agent_ids is not None and \
-                     len(eval_agent_ids) == 1:
-                follow_agent =world.agents[eval_agent_ids[0]]
-            else:
-                follow_agent = world.agents[self.follow_agent_id]
+            follow_agent = world.agents[self.follow_agent_id]
             state = follow_agent.state
             pose = np.zeros(3)
             pose[0] = state[int(StateDefinition.X_POSITION)]
