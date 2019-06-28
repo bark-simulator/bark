@@ -1,19 +1,16 @@
-from modules.runtime.runtime import Runtime
-
 import numpy as np
 import tensorflow as tf
 
 # tfa specific
 from tf_agents.environments import py_environment
 from tf_agents.specs import array_spec
-from tf_agents.environments import wrappers
 from tf_agents.trajectories import time_step as ts
 
 tf.compat.v1.enable_v2_behavior()
 
 class TFAWrapper(py_environment.PyEnvironment):
   """Wrapper for TensorFlow Agents (https://github.com/tensorflow/agents)
-  
+
   Arguments:
     py_environment -- Base class for environment from tf_agents
   """
@@ -37,9 +34,9 @@ class TFAWrapper(py_environment.PyEnvironment):
   def observation_spec(self):
     return self._observation_spec
 
-  def render(self): 
+  def render(self):
     return self.env.render()
-  
+
   def _reset(self):
     self._state = np.array(self.env.reset(), dtype=np.float32)
     self._episode_ended = False
