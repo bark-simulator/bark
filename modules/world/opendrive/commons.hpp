@@ -11,11 +11,12 @@
 #include <string>
 #include <vector>
 
+#include <boost/geometry.hpp>
+#include "modules/geometry/line.hpp"
 
 namespace modules {
 namespace world {
 namespace opendrive {
-
 
 using LaneId = uint32_t;
 using LanePosition = int32_t;
@@ -51,6 +52,8 @@ struct LaneOffset {
   float a, b, c, d;
 };
 
+
+
 inline float polynom(float x, float a, float b, float c, float d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
@@ -71,6 +74,35 @@ struct Connection {
   LaneLinks lane_links_;
 };
 
+enum LaneType {
+  NONE = 0,
+  DRIVING = 1,
+  //STOP = 2,
+  //SHOULDER = 3,
+  BIKING = 4,
+  SIDEWALK = 5,
+  BORDER = 6,
+  /*RESTRICTED = 7,
+  PARKING = 8,
+  BIDIRECTIONAL = 9,
+  MEDIAN = 10,
+  SPECIAL1 = 11,
+  SPECIAL2 = 12,
+  SPECIAL3 = 13,
+  ROAD_WORKS = 14,
+  TRAM = 15,
+  RAIL = 16,
+  ENTRY = 17,
+  EXIT = 18,
+  OFF_RAMP = 19,
+  ON_RAMP = 20,
+  CONNECTING_RAMP = 21,
+  BUS = 22,
+  TAXI = 23,
+  HOV = 24
+  */
+};
+
 struct RoadMark {
   std::string type_;
   std::string color_;
@@ -89,7 +121,59 @@ struct LaneWidth {
   LaneOffset off;
 };
 
-using LaneWidths = std::vector<LaneWidth>;
+
+inline geometry::Line create_line_with_offset_from_line(geometry::Line previous_line, int id, LaneWidth lane_width_current_lane, float s_inc = 0.5f) {
+
+  namespace bg = boost::geometry;
+
+  LaneOffset off = lane_width_current_lane.off;
+
+  float s = lane_width_current_lane.s_start;
+  float scale = 0.0f;
+  geometry::Line tmp_line;
+  geometry::Point2d normal(0.0f, 0.0f);
+  int sign = id > 0 ? -1 : 1;
+
+  // TODO(fortiss): check if sampling does work with relative s, probably not
+  if (off.b != 0.0f || off.c != 0.0f || off.d != 0.0f || (lane_width_current_lane.s_end - lane_width_current_lane.s_start) != 1.0) {
+    for (; s < lane_width_current_lane.s_end; s += s_inc) {
+      geometry::Point2d point = get_point_at_s(previous_line, s);
+      normal = get_normal_at_s(previous_line, s);
+      scale = -sign * polynom(s, off.a, off.b, off.c, off.d);
+      tmp_line.add_point(geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                                  bg::get<1>(point) + scale * bg::get<1>(normal)));
+    }
+
+    // fill last point if increment does not match
+    double delta_s = fabs(lane_width_current_lane.s_end-s);
+    if(delta_s>0.0){
+      geometry::Point2d point = get_point_at_s(previous_line, lane_width_current_lane.s_end);
+      normal = get_normal_at_s(previous_line, lane_width_current_lane.s_end);
+      scale = -sign * polynom(lane_width_current_lane.s_end, off.a, off.b, off.c, off.d);
+      tmp_line.add_point(geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                                  bg::get<1>(point) + scale * bg::get<1>(normal)));
+    }
+  } else {
+      for (uint32_t i = 0; i < previous_line.obj_.size() - 1; i++) {
+        normal = get_normal_at_s(previous_line, previous_line.s_[i]);
+        scale = -sign * polynom(s, off.a, off.b, off.c, off.d);
+        tmp_line.add_point(geometry::Point2d(bg::get<0>(previous_line.obj_[i]) + scale * bg::get<0>(normal),
+                                  bg::get<1>(previous_line.obj_[i]) + scale * bg::get<1>(normal)));
+        s += geometry::distance(previous_line.obj_[i + 1], previous_line.obj_[i]);
+      }
+      // add last point
+      normal = get_normal_at_s(previous_line, previous_line.s_[previous_line.obj_.size() - 1]);
+      int size = previous_line.obj_.size() - 1;
+      float length = bg::length(previous_line.obj_);
+      scale = -sign * polynom(length, off.a, off.b, off.c, off.d);
+      tmp_line.add_point(geometry::Point2d(bg::get<0>(previous_line.obj_[size]) + scale * bg::get<0>(normal),
+                                bg::get<1>(previous_line.obj_[size]) + scale * bg::get<1>(normal)));
+  }
+
+  return tmp_line;
+}
+
+//using LaneWidths = std::vector<LaneWidth>;
 
 }  // namespace opendrive
 }  // namespace world

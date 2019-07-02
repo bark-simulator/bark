@@ -19,6 +19,19 @@ void LaneSection::add_lane(const LanePtr& lane)  {
     lanes_[lane->get_id()] = lane;
 }
 
+LanePtr LaneSection::get_lane_by_position(LanePosition pos) {
+
+  LanePtr ret_lane_ptr = nullptr;
+
+  for ( auto const& lane : lanes_ ) {
+    if (pos == lane.second->get_lane_position()) {
+      ret_lane_ptr = lane.second;
+    }
+  } 
+  return ret_lane_ptr;
+}
+
+
 // TODO (@hart): replace dummy by real ray-check
 LanePtr LaneSection::get_nearest_lane_on_n(double x, double y, double vx, double vy) {
   float x_new = x + vx;

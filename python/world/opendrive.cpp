@@ -21,8 +21,7 @@ void python_opendrive(py::module m) {
       .def("add_line", &PlanView::add_line, "Add line to planview")
       .def("add_spiral", &PlanView::add_spiral, "Add spiral to planview")
       .def("add_arc", &PlanView::add_arc, "Add arc to planview")
-      .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array")
-      .def("create_lane", &PlanView::create_lane, "Creates lane with offset");
+      .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array");
 
   py::class_<LinkInfo>(m, "LinkInfo")
       .def(py::init<>())
@@ -42,6 +41,14 @@ void python_opendrive(py::module m) {
           return ss.str();
       });
 
+  py::enum_<LaneType>(m, "LaneType", py::arithmetic())
+      .value("none", LaneType::NONE)
+      .value("driving", LaneType::DRIVING)
+      .value("biking", LaneType::BIKING)
+      .value("sidewalk", LaneType::SIDEWALK)
+      .value("border", LaneType::BORDER)
+      .export_values();
+
   py::class_<RoadMark>(m, "RoadMark")
       .def(py::init<>())
       .def_readwrite("type", &RoadMark::type_)
@@ -53,10 +60,12 @@ void python_opendrive(py::module m) {
       .def(py::init<LanePosition&>())
       .def_property("lane_id", &Lane::get_id, &Lane::set_id)
       .def_property("lane_position", &Lane::get_lane_position, &Lane::set_lane_position)
+      .def_property("lane_type", &Lane::get_lane_type, &Lane::set_lane_type)
       .def_property("link", &Lane::get_link, &Lane::set_link)
       .def_property("line", &Lane::get_line, &Lane::set_line)
       .def_property("road_mark", &Lane::get_road_mark, &Lane::set_road_mark)
       .def_property("speed", &Lane::get_speed, &Lane::set_speed)
+      .def("create_lane_from_lane_width", &create_lane_from_lane_width, "Create lane")
       .def(
           "__repr__",
           [](const Lane &l) {
@@ -72,15 +81,13 @@ void python_opendrive(py::module m) {
   py::class_<LaneWidth>(m, "LaneWidth")
       .def(py::init<float, float, LaneOffset>());
 
-  py::class_<LaneWidths>(m, "LaneWidths")
-      .def(py::init<>());
-
   py::class_<LaneSection, std::shared_ptr<LaneSection>>(m, "LaneSection")
       .def(py::init<float>())
       .def("add_lane", &LaneSection::add_lane, "Add lane element")
       .def("get_lanes", &LaneSection::get_lanes, "Get all lane elements")
       .def("get_left_lane", &LaneSection::get_left_lane, "Get left lane")
-      .def("get_right_lane", &LaneSection::get_right_lane, "Get right lane");
+      .def("get_right_lane", &LaneSection::get_right_lane, "Get right lane")
+      .def("get_lane_by_position", &LaneSection::get_lane_by_position, "Get lane by lane position");
 
   py::class_<Road, std::shared_ptr<Road>>(m, "Road")
       .def(py::init<>())
