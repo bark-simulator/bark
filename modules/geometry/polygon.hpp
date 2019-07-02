@@ -173,6 +173,21 @@ inline bool Collide(const Polygon &poly1, const Polygon &poly2) {
   }
 }
 
+inline bool intersection(const Polygon &polygon1, const Polygon &polygon2, std::vector<Polygon> &polygons_out) {
+  std::deque<bg::model::polygon<PolygonPoint>> bg_polygons_out;
+  if (bg::intersection(polygon1.obj_, polygon2.obj_, bg_polygons_out)) {
+    for (auto const &bg_polygon_out : bg_polygons_out) {
+      Polygon polygon_out;
+      polygon_out.obj_ = bg_polygon_out;
+      polygon_out.UpdateDistancesToCenter();
+      polygons_out.push_back(polygon_out);
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
 }  // namespace geometry
 }  // namespace modules
 
