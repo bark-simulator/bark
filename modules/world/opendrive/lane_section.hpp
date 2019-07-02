@@ -24,6 +24,9 @@ class LaneSection {
   ~LaneSection() {}
 
   Lanes get_lanes() const {return lanes_;}
+
+  LanePtr get_lane_by_position(LanePosition pos);
+
   LanePtr get_nearest_lane_on_n(double x, double y, double vx, double vy);
   LanePtr get_lane_with_offset(const models::dynamic::State& state, double angle_offset);
   

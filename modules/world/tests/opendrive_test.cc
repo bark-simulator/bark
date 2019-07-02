@@ -46,9 +46,13 @@ TEST(lane, open_drive) {
 
   //! vertical
   p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
-  LaneWidths lane_widths_1 = {{0, 1, off}};
+  LaneWidth lane_width = {0, 1, off};
 
-  LanePtr lane = p.create_lane(1, lane_widths_1, 0.05f);  // left side
+  LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(), lane_width, 0.05f); // left side
+
+  lane->set_lane_type(LaneType::DRIVING);
+  EXPECT_EQ(lane->get_lane_type(), LaneType::DRIVING);
+
   Line line = lane->get_line();
 
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), -1.5, 0.1);
@@ -56,7 +60,8 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), -1.5, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
 
-  lane = p.create_lane(-1, lane_widths_1, 0.05f);  // right side
+  lane = create_lane_from_lane_width(-1, p.get_reference_line(), lane_width, 0.05f); // right side
+
   line = lane->get_line();
   
   std::cout << bg::get<1>(line.obj_[line.obj_.size() - 1]) << std::endl;
@@ -71,7 +76,9 @@ TEST(lane, open_drive) {
 
   //! horizontal
   p2.add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-  lane = p2.create_lane(1, lane_widths_1, 0.05f);  // left side
+
+  lane = create_lane_from_lane_width(1, p2.get_reference_line(), lane_width, 0.05f); // left side
+
   line = lane->get_line();
 
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
@@ -79,7 +86,8 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 1.5, 0.1);
 
-  lane = p2.create_lane(-1, lane_widths_1, 0.05f);  // right side
+  lane = create_lane_from_lane_width(-1, p2.get_reference_line(), lane_width, 0.05f); // right side
+
   line = lane->get_line();
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[0]), -1.5, 0.1);
@@ -119,9 +127,9 @@ TEST(road, open_drive) {
 
   //! Lane
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidths lane_widths_1 = {{0, 1, off}};
-  LanePtr lane = p->create_lane(-1, lane_widths_1, 0.05);
-  LanePtr lane2 = p->create_lane(1, lane_widths_1, 0.05);
+  LaneWidth lane_width = {0, 1, off};
+  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width, 0.05f);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width, 0.05f);
 
   ls->add_lane(lane);
   ls2->add_lane(lane2);
@@ -180,9 +188,11 @@ TEST(map, open_drive) {
 
   //! Lane
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidths lane_widths_1 = {{0, 1, off}};
-  LanePtr lane = p->create_lane(-1, lane_widths_1, 0.05);
-  LanePtr lane2 = p->create_lane(1, lane_widths_1, 0.05);
+  LaneWidth lane_width_1 = {0, 1, off};
+
+  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05f);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05f);
+  
   ls->add_lane(lane);
   ls->add_lane(lane2);
   ls2->add_lane(lane);
@@ -205,10 +215,10 @@ TEST(map, open_drive) {
 
   //! Lane
   LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidths lane_widths_2 = {{0, 1, off2}};
+  LaneWidth lane_width_2 = {0, 1, off2};
 
-  LanePtr lane3 = p2->create_lane(-1, lane_widths_2, 0.05);
-  LanePtr lane4 = p2->create_lane(1, lane_widths_2, 0.05);
+  LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(), lane_width_2, 0.05f);
+  LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05f);
 
   ls3->add_lane(lane3);
   ls3->add_lane(lane4);

@@ -26,7 +26,7 @@ class ImporterTests(unittest.TestCase):
         # xodr_parser.print_python_map()
 
     def test_map(self):
-        xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
         # xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
         params = ParameterServer()
         world = World(params)
@@ -40,12 +40,21 @@ class ImporterTests(unittest.TestCase):
         for _, road in xodr_parser.map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
+
+                    if lane.lane_type == LaneType.driving:
+                        color="grey"
+                    elif lane.lane_type == LaneType.sidewalk:
+                        color="green"
+                    else:
+                        continue
+                    
                     line_np = lane.line.toArray()
                     plt.text(line_np[-1, 0], line_np[-1, 1], 'center_{i}_{j}'.format(i=lane.lane_id,j=lane.lane_position))
+                    
                     plt.plot(
                         line_np[:, 0],
                         line_np[:, 1],
-                        color="grey",
+                        color=color,
                         alpha=1.0)
 
 
