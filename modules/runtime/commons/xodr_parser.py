@@ -89,11 +89,11 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            if str(lane.get("type")) != "driving":
+            if str(lane.get("type")) not in LaneType.__members__.keys(): # skip if lane type currently not supported
                 continue
             new_lane = {}
             new_lane["id"] = id
-            new_lane["type"] = lane.get("type")
+            new_lane["type"] = LaneType.__members__[str(lane.get("type"))] # assign enum type
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
@@ -311,28 +311,62 @@ class XodrParser(object):
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_start,
-                        s_end):
+                        s_end, reference_line):
         try:
             lane_widths = []
-            offset = LaneOffset(
-                float(lane["width"]["a"]), float(lane["width"]["b"]),
-                float(lane["width"]["c"]), float(lane["width"]["d"]))
+            a = float(lane["width"]["a"])
+            b = float(lane["width"]["b"])
+            c = float(lane["width"]["c"])
+            d = float(lane["width"]["d"])
+            offset = LaneOffset(a, b, c, d)
             lane_width = LaneWidth(s_start, s_end, offset)
-            lane_widths.append(lane_width)
 
-            # TODO (@hart): make sampling flexible
-            new_lane = new_road.plan_view.create_lane(int(lane["id"]), lane_widths, 1.0)
+            # TODO (@hart): make sampling flexible           
+            new_lane = Lane.create_lane_from_lane_width(int(lane["id"]), reference_line, lane_width, 1.0)
+
+            new_lane.lane_type = lane["type"]
             new_lane.link = self.create_lane_link(lane["link"])
             new_lane_section.add_lane(new_lane)
         except:
             raise ValueError("Something went wrong with creating the lane.")
         return new_lane_section
 
+    def sortedIndices(self, lst):
+        return sorted(range(len(lst)), key = lambda x:(abs(lst[x])))
+
     def create_cpp_lane_section(self, new_road, road):
         for lane_section in road["lane_sections"]:
             new_lane_section = LaneSection(float(lane_section["s"]))
-            for _, lane in enumerate(lane_section["lanes"]):
-                new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]))
+            # sort lanes
+            #for idx_iterator in range(len(lane_section["lanes"])):
+            #    if lane_section["lanes"][idx_iterator]['id'] in list_id_read_in_lanes:
+
+            unordered_id_list = [l['id'] for l in lane_section["lanes"]]
+            indices = self.sortedIndices(unordered_id_list)
+
+            #for idx, lane in enumerate(lane_section["lanes"]):
+            for idx_iterator in indices:
+                lane = lane_section["lanes"][idx_iterator]
+                if lane['id'] == 0:
+                    # plan view
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]), new_road.plan_view.get_reference_line())
+                elif lane['id'] == -1 or lane['id'] == 1:
+                    # use plan view for offset calculation
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]), new_road.plan_view.get_reference_line())
+                else:
+                    # use previous line for offset calculation
+                    #temp_lanes = new_lane_section.get_lanes()
+
+                    if lane['id'] > 0:
+                        previous_line = new_lane_section.get_lane_by_position(lane['id']-1).line
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, previous_line.length(), previous_line)                                
+                    elif lane['id'] < 0:
+                        previous_line = new_lane_section.get_lane_by_position(lane['id']+1).line
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, previous_line.length(), previous_line)
+                    else:
+                        print("Calculating previous lane does not work well.")
+
+
             new_road.add_lane_section(new_lane_section)
         return new_road
 

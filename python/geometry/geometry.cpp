@@ -95,6 +95,7 @@ void python_geometry(py::module m) {
       .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Line::translate, "translates object.")
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
+      .def("length", &modules::geometry::Line::length, "calculates length of line.")
       .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
       .def_property_readonly("bounding_box", &modules::geometry::Line::bounding_box)
       .def_readwrite("center", &modules::geometry::Line::center_, "center point.")
