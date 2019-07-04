@@ -177,9 +177,9 @@ inline bool intersection(const Polygon &polygon1, const Polygon &polygon2, std::
   std::deque<bg::model::polygon<PolygonPoint>> bg_polygons_out;
   if (bg::intersection(polygon1.obj_, polygon2.obj_, bg_polygons_out)) {
     for (auto const &bg_polygon_out : bg_polygons_out) {
-      Polygon polygon_out;
-      polygon_out.obj_ = bg_polygon_out;
-      polygon_out.UpdateDistancesToCenter();
+      PolygonPoint center;
+      bg::centroid(bg_polygon_out, center);
+      Polygon polygon_out(Pose(bg::get<0>(center), bg::get<1>(center), 0), bg_polygon_out.outer());
       polygons_out.push_back(polygon_out);
     }
     return true;
