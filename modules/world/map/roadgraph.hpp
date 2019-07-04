@@ -49,7 +49,7 @@ struct LaneEdge {
 };
 
 
-typedef boost::adjacency_list<vecS, vecS, directedS, LaneVertex, LaneEdge> LaneGraph;
+typedef boost::adjacency_list<vecS, vecS, bidirectionalS, LaneVertex, LaneEdge> LaneGraph;
 typedef boost::graph_traits<LaneGraph>::vertex_descriptor vertex_t;
 typedef boost::graph_traits<LaneGraph>::edge_descriptor edge_t;
 
@@ -87,6 +87,20 @@ class Roadgraph {
       }
     }
     return successor_lanes;
+  }
+
+  std::vector<LaneId> get_predecessor_lanes(const LaneId& lane_id)
+  {
+    std::pair<vertex_t,bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
+    boost::graph_traits<LaneGraph>::in_edge_iterator i, end;
+    std::vector<LaneId> predecessor_lanes;
+    for (boost::tie(i, end) = boost::in_edges(lane_vertex_pair.first, g_); i != end; ++i) {
+      if(g_[*i].edge_type == SUCCESSOR_EDGE) {
+        vertex_t source = boost::source(*i,g_);
+        predecessor_lanes.push_back(g_[source].global_lane_id);
+      }
+    }
+    return predecessor_lanes;
   }
 
   std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid) {
