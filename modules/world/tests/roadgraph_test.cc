@@ -140,6 +140,30 @@ TEST(roadgraph, get_successor_lane_test)
   ASSERT_TRUE(suc[0] == l01);
 }
 
+TEST(roadgraph, get_predecessor_lane_test)
+{
+  using namespace modules::world::map;
+  Roadgraph r;
+
+  RoadId rid0 = 0;
+  LanePtr lane_00(new Lane());
+  LanePtr lane_10(new Lane());
+  LaneId l00 = r.add_lane(rid0, lane_00);
+  LaneId l10 = r.add_lane(rid0, lane_10);
+
+  RoadId rid1 = 1;
+  LanePtr lane_01(new Lane());
+  LaneId l01 = r.add_lane(rid1, lane_01);
+
+  r.add_successor(l00, l01);
+  r.add_inner_neighbor(l00, l10);
+
+  std::vector<LaneId> pre = r.get_predecessor_lanes(l01);
+  ASSERT_TRUE(pre.size() == 1);
+  ASSERT_TRUE(pre[0] == l00);
+}
+
+
 TEST(roadgraph, get_inner_neighbor_test)
 {
   using namespace modules::world::map;
