@@ -712,6 +712,54 @@ TEST(line, segment_get_normal_1) {
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
+
+TEST(polygon, intersection_of_two_polygons_that_overlap) {
+  using namespace modules::geometry;
+
+  Polygon polygon1(Pose(0, 0, 0), {Point2d(-2, -1), Point2d(-2, 1), Point2d(2, 1), Point2d(2, -1), Point2d(-2, -1)});
+  Polygon polygon2(Pose(0, 0, 0), {Point2d(-1, -2), Point2d(-1, 2), Point2d(1, 2), Point2d(1, -2), Point2d(-1, -2)});
+
+  std::vector<Polygon> intersections;
+  intersection(polygon1, polygon2, intersections);
+
+  ASSERT_EQ(1u, intersections.size());
+
+  Polygon expected(Pose(0, 0, 0), {Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1), Point2d(-1, -1)});
+
+  ASSERT_TRUE(equals(expected, intersections.front()));
+}
+
+TEST(polygon, intersection_of_two_disjunct_polygons) {
+  using namespace modules::geometry;
+
+  Polygon polygon1(Pose(0, 0, 0), {Point2d(-2, -1), Point2d(-2, 1), Point2d(-1, 1), Point2d(-1, -1), Point2d(-2, -1)});
+  Polygon polygon2(Pose(0, 0, 0), {Point2d(2, -1), Point2d(1, -1), Point2d(1, 1), Point2d(2, 1), Point2d(2, -1)});
+
+  std::vector<Polygon> intersections;
+  intersection(polygon1, polygon2, intersections);
+
+  ASSERT_EQ(0u, intersections.size());
+}
+
+TEST(polygon, union_of_two_polygons) {
+  using namespace modules::geometry;
+
+  Polygon polygon1(Pose(0, 0, 0), {Point2d(-2, -1), Point2d(-2, 1), Point2d(2, 1), Point2d(2, -1), Point2d(-2, -1)});
+  Polygon polygon2(Pose(0, 0, 0), {Point2d(-1, -2), Point2d(-1, 2), Point2d(1, 2), Point2d(1, -2), Point2d(-1, -2)});
+
+  std::vector<Polygon> unions;
+  union_(polygon1, polygon2, unions);
+
+  ASSERT_EQ(1u, unions.size());
+
+  Polygon expected(Pose(0, 0, 0),
+    {Point2d(-2, -1), Point2d(-2, 1), Point2d(-1, 1), Point2d(-1, 2), Point2d(1, 2), Point2d(1, 1), Point2d(2, 1), Point2d(2, -1),
+     Point2d(1, -1), Point2d(1, -2), Point2d(-1, -2), Point2d(-1, -1), Point2d(-2, -1)});
+  expected.Valid();
+
+  ASSERT_TRUE(equals(expected, unions.front()));
+}
+
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
