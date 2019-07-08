@@ -97,6 +97,7 @@ class PygameViewer(BaseViewer):
         if self.screen is None:
             return
         pg.display.update()
+        pg.event.get() # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
         if self.screen is None:
