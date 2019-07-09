@@ -103,15 +103,46 @@ enum LaneType {
   */
 };
 
+namespace roadmark {
+
+enum RoadMarkType {
+  NONE = 0,
+  SOLID = 1,
+  BROKEN = 2,
+  /*SOLID_SOLID = 3, // (for double solid line)
+  SOLID_BROKEN = 4, // (from inside to outside, exception: center lane – from left to right)
+  BROKEN_SOLID = 5, // (from inside to outside, exception: center lane – from left to right)
+  BROKEN_BROKEN = 6, // (from inside to outside, exception: center lane – from left to right)
+  BOTTS_DOTS = 7,
+  GRASS = 8, // (meaning a grass edge)
+  CURB = 9,
+  CUSTOM = 10, //  (if detailed description is given in child tags)
+  EDGE = 11, // (describing the limit of usable space on a road)
+  */
+};
+
+enum RoadMarkColor {
+  STANDARD = 0, // (equivalent to "white")
+  /*BLUE = 1,
+  GREEN = 2,
+  RED = 3,
+  */
+  WHITE = 4,
+  YELLOW = 5,
+  //ORANGE = 6,
+};
+
+} // namespace roadmark
+
 struct RoadMark {
-  std::string type_;
-  std::string color_;
+  roadmark::RoadMarkType type_;
+  roadmark::RoadMarkColor color_;
   float width_;
 };
 
 inline std::string print(const RoadMark &r) {
   std::stringstream ss;
-  ss << "RoadMark: type: " << r.type_ << ", id: " << r.color_ << ", width: " << r.width_ << std::endl;
+  ss << "RoadMark: type: " << r.type_ << ", color: " << r.color_ << ", width: " << r.width_ << std::endl;
   return ss.str();
 }
 
