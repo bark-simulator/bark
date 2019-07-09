@@ -48,12 +48,32 @@ void python_opendrive(py::module m) {
       .value("sidewalk", LaneType::SIDEWALK)
       .value("border", LaneType::BORDER)
       .export_values();
+  
+  py::enum_<roadmark::RoadMarkType>(m, "RoadMarkType", py::arithmetic())
+      .value("none", roadmark::RoadMarkType::NONE)
+      .value("solid", roadmark::RoadMarkType::SOLID)
+      .value("broken", roadmark::RoadMarkType::BROKEN)
+      .export_values();
+  
+  py::enum_<roadmark::RoadMarkColor>(m, "RoadMarkColor", py::arithmetic())
+      .value("standard", roadmark::RoadMarkColor::STANDARD)
+      .value("white", roadmark::RoadMarkColor::WHITE)
+      .value("yellow", roadmark::RoadMarkColor::YELLOW)
+      .export_values();
 
   py::class_<RoadMark>(m, "RoadMark")
       .def(py::init<>())
       .def_readwrite("type", &RoadMark::type_)
       .def_readwrite("color", &RoadMark::color_)
-      .def_readwrite("width", &RoadMark::width_);
+      .def_readwrite("width", &RoadMark::width_)
+      .def(
+          "__repr__",
+          [](const RoadMark &rm) {
+          std::stringstream ss;
+          ss << "<bark.RoadMark> RoadMark: ";
+          ss << modules::world::opendrive::print(rm);
+          return ss.str();
+      });
 
   py::class_<Lane, std::shared_ptr<Lane>>(m, "Lane")
       .def(py::init<>())
