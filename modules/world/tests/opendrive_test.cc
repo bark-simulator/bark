@@ -192,7 +192,12 @@ TEST(map, open_drive) {
 
   LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05f);
   LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05f);
-  
+
+  RoadMark rm {roadmark::RoadMarkType::SOLID, roadmark::RoadMarkColor::STANDARD, 0.1};
+
+  std::cout << print(rm) << std::endl;
+  lane2->set_road_mark(rm);
+
   ls->add_lane(lane);
   ls->add_lane(lane2);
   ls2->add_lane(lane);

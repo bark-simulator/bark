@@ -16,7 +16,7 @@ We recomment to install JDK it manually from the OpenJDK download page
 * Unarchive the OpenJDK tar, and place the resulting folder (i.e. jdk-12.jdk) into your /Library/Java/JavaVirtualMachines/ folder since this is the standard and expected location of JDK installs. You can also install anywhere you want in reality.
 
 ### Bazel on Mac:
-See https://docs.bazel.build/versions/master/install-os-x.html, we recomment installing using the binary installer
+See https://docs.bazel.build/versions/master/install-os-x.html, we recommend installing using the binary installer
 
 
 ## Linux/MacOS
