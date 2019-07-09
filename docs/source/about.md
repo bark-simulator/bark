@@ -1,6 +1,5 @@
 ```eval_rst
 .. image:: bark_logo.jpg
-   :scale: 100 %
    :align: center
 ```
 
