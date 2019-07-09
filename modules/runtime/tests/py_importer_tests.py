@@ -49,6 +49,8 @@ class ImporterTests(unittest.TestCase):
                         continue
                     
                     line_np = lane.line.toArray()
+                    
+                    print(lane.road_mark)
                     plt.text(line_np[-1, 0], line_np[-1, 1], 'center_{i}_{j}'.format(i=lane.lane_id,j=lane.lane_position))
                     
                     plt.plot(
@@ -59,7 +61,7 @@ class ImporterTests(unittest.TestCase):
 
 
         plt.axis("equal")
-        plt.show()
+        #plt.show()
 
         # driving corridor calculation test
         #lanes = map_interface.find_nearest_lanes(Point2d(-11,-8),1)

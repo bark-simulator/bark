@@ -56,11 +56,11 @@ class XodrParser(object):
 
     def parse_lane_road_mark(self, road_mark):
         new_road_mark = {}
-        new_road_mark["s_offset"] = road_mark.find("sOffset")
-        new_road_mark["type"] = road_mark.find("type")
-        new_road_mark["weight"] = road_mark.find("weight")
-        new_road_mark["color"] = road_mark.find("color")
-        new_road_mark["width"] = road_mark.find("width")
+        new_road_mark["s_offset"] = road_mark.get("sOffset")
+        new_road_mark["type"] = RoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
+        new_road_mark["weight"] = road_mark.get("weight")
+        new_road_mark["color"] = RoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
+        new_road_mark["width"] = road_mark.get("width")
         return new_road_mark
 
     def parse_lane_width(self, lane_width):
@@ -73,6 +73,7 @@ class XodrParser(object):
         return new_lane_width
 
     def zero_lane_width(self):
+        # TODO: do we really need this?
         new_lane_width = {}
         new_lane_width["s_offset"] = 0.0
         new_lane_width["a"] = 0.0
@@ -98,8 +99,7 @@ class XodrParser(object):
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
             if lane.find("roadMark") is not None:
-                new_lane["road_mark"] = self.parse_lane_road_mark(
-                    lane.find("roadMark"))
+                new_lane["road_mark"] = self.parse_lane_road_mark(lane.find("roadMark"))
             if lane.find("width") is not None:
                     new_lane["width"] = self.parse_lane_width(lane.find("width"))
             else:
@@ -326,7 +326,17 @@ class XodrParser(object):
 
             new_lane.lane_type = lane["type"]
             new_lane.link = self.create_lane_link(lane["link"])
+
+            # not every lane contains a road-mark
+            if "road_mark" in lane:
+                rm = RoadMark()
+                rm.type = lane['road_mark']['type']
+                rm.color = lane['road_mark']['color']
+                rm.width = float(lane['road_mark']['width'])
+                new_lane.road_mark = rm
+            
             new_lane_section.add_lane(new_lane)
+
         except:
             raise ValueError("Something went wrong with creating the lane.")
         return new_lane_section
