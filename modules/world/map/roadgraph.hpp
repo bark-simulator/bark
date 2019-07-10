@@ -14,6 +14,7 @@
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include "modules/world/opendrive/opendrive.hpp"
 
 namespace modules {
@@ -103,33 +104,46 @@ class Roadgraph {
     return predecessor_lanes;
   }
 
+  struct DrivingLaneTypePredicate { // both edge and vertex
+    bool operator()(LaneGraph::edge_descriptor) const      { return true; } // all
+    bool operator()(LaneGraph::vertex_descriptor vd) const { return (*g)[vd].lane->get_lane_type()==LaneType::DRIVING; }
+    LaneGraph* g;
+  };
+  
+
   std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid) {
     std::vector<LaneId> path;
 
     std::pair<vertex_t, bool> start_vertex = get_vertex_by_lane_id(startid);
     std::pair<vertex_t, bool> goal_vertex = get_vertex_by_lane_id(goalid);
 
+    // filter graph
+    DrivingLaneTypePredicate predicate {&g_};
+    using Filtered = boost::filtered_graph<LaneGraph, DrivingLaneTypePredicate, DrivingLaneTypePredicate>;
+    Filtered fg(g_, predicate, predicate);
+
     if (start_vertex.second && goal_vertex.second)
     {
-      std::vector<vertex_t> p(boost::num_vertices(g_));
-      std::vector<int> d(boost::num_vertices(g_));
-      boost::property_map<LaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, g_);
 
-      boost::dijkstra_shortest_paths(g_, start_vertex.first,
-                                     predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g_)))
-                                         .distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g_)))
+      std::vector<vertex_t> p(boost::num_vertices(fg));
+      std::vector<int> d(boost::num_vertices(fg));
+      boost::property_map<LaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, fg);
+
+      boost::dijkstra_shortest_paths(fg, start_vertex.first,
+                                     predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, fg)))
+                                         .distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, fg)))
                                          .weight_map(weightmap));
 
       // get shortest path from predecessor map
-      int stop_the_loop = boost::num_vertices(g_);
+      int stop_the_loop = boost::num_vertices(fg);
       int idx = 0;
       boost::graph_traits< LaneGraph >::vertex_descriptor current = goal_vertex.first;
       while(current!=start_vertex.first && idx < stop_the_loop) {
-        path.push_back(g_[current].global_lane_id);
+        path.push_back(fg[current].global_lane_id);
         current=p[current];
         ++idx;
       }
-      path.push_back(g_[start_vertex.first].global_lane_id);
+      path.push_back(fg[start_vertex.first].global_lane_id);
       std::reverse(path.begin(), path.end());
 
       //for (auto &p : path) {
