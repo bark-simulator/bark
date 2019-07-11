@@ -45,12 +45,16 @@ class ImporterTests(unittest.TestCase):
                         color="grey"
                     elif lane.lane_type == LaneType.sidewalk:
                         color="green"
+                    elif lane.lane_type == LaneType.border:
+                        color="red"
+                    elif lane.lane_type == LaneType.none:
+                        color="blue"
                     else:
                         continue
                     
                     line_np = lane.line.toArray()
                     
-                    print(lane.road_mark)
+                    #print(lane.road_mark)
                     plt.text(line_np[-1, 0], line_np[-1, 1], 'center_{i}_{j}'.format(i=lane.lane_id,j=lane.lane_position))
                     
                     plt.plot(
@@ -61,7 +65,7 @@ class ImporterTests(unittest.TestCase):
 
 
         plt.axis("equal")
-        #plt.show()
+        plt.show()
 
         # driving corridor calculation test
         #lanes = map_interface.find_nearest_lanes(Point2d(-11,-8),1)
