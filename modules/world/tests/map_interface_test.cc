@@ -111,3 +111,31 @@ TEST(query_lanes, map_interface) {
   EXPECT_TRUE(success);
   EXPECT_EQ(nearest_lanes.size(), (uint) 3);
 }
+
+TEST(point_in_lane, map_interface) {
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+  using namespace modules::geometry;
+
+  OpenDriveMapPtr open_drive_map(new OpenDriveMap());
+  build_two_road_junction_map(open_drive_map);
+  
+  RoadgraphPtr roadgraph(new Roadgraph());
+
+  MapInterface map_interface;
+  map_interface.set_open_drive_map(open_drive_map);
+  map_interface.set_roadgraph(roadgraph);
+
+  std::vector<LanePtr> nearest_lanes;
+  Point2d point = Point2d(0, 0);
+  bool success = map_interface.FindNearestLanes(point, 2, nearest_lanes);
+
+  std::cout << "Hello world" << std::endl;
+
+  success = map_interface.isInLane(point, (nearest_lanes.at(0))->get_id());
+  std::cout << "Lane " << print(*(nearest_lanes.at(0))) << " contains point: " << success << std::endl;
+  success = map_interface.isInLane(point, (nearest_lanes.at(1))->get_id());
+  std::cout << "Lane " << print(*(nearest_lanes.at(1))) << " contains point: " << success << std::endl;
+
+  std::cout << "Hello end world" << std::endl;
+}
