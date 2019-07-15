@@ -77,7 +77,7 @@ bool LocalMap::Generate(Point2d point, double horizon) {
 
 DrivingCorridor LocalMap::ComputeDrivingCorridor(std::vector<LaneId> lane_ids) {
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
-    map_interface_->ComputeLaneBoundaries(lane_ids);
+    map_interface_->get_roadgraph()->ComputeRouteBoundaries(lane_ids);
   DrivingCorridor dc;
   std::vector< std::pair<int, LaneId> > dummy;
   ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
