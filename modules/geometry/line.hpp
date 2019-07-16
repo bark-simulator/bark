@@ -49,8 +49,8 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   std::vector<T> get_points_in_s_interval(float begin, float end) const {
     std::vector<T> points;
-    uint begin_idx = std::lower_bound(s_.begin(), s_.end(), begin) - s_.begin();
-    uint end_idx = std::upper_bound(s_.begin(), s_.end(), end) - s_.begin();
+    uint begin_idx = std::upper_bound(s_.begin(), s_.end(), begin) - s_.begin();
+    uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
     std::copy(Shape<bg::model::linestring<T>, T>::obj_.begin() + begin_idx,
               Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
               std::back_inserter(points));
@@ -92,6 +92,13 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   const_point_iterator  begin() const { return Shape<bg::model::linestring<T>, T>::obj_.begin(); }
   point_iterator end() { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
   const_point_iterator end() const { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
+
+  typedef typename std::vector<T>::reverse_iterator reverse_point_iterator;
+  typedef typename std::vector<T>::const_reverse_iterator const_reverse_point_iterator;
+  reverse_point_iterator rbegin() { return Shape<bg::model::linestring<T>, T>::obj_.rbegin(); }
+  const_reverse_point_iterator rbegin() const { return Shape<bg::model::linestring<T>, T>::obj_.rbegin(); }
+  reverse_point_iterator rend() { return Shape<bg::model::linestring<T>, T>::obj_.rend(); }
+  const_reverse_point_iterator rend() const { return Shape<bg::model::linestring<T>, T>::obj_.rend(); }
 
   std::vector<float> s_;  //! local coordinates 0..[total distance] along the lines
 
