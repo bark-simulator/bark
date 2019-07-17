@@ -95,8 +95,7 @@ py_test(
   srcs = ["py_world_tests.py"],
   data = ['//python:bark.so'],
   imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:roadgraph_generator"],
+  deps = ["//modules/runtime/commons:parameters"],
 )
 
 py_test(

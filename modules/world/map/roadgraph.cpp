@@ -22,10 +22,8 @@ void Roadgraph::generate(OpenDriveMapPtr map) {
       }
     }
     
-    std::cout << "added all vertices" << std::endl;
     // add successors, predecessors
     for (auto const& road_element : map->get_roads()) { // std::map
-      std::cout << "looping road element " << road_element.first << std::endl;
       RoadId successor_road_id = road_element.second->get_link().get_successor().id_; // this is the position!!!!!! (-4, 4)
       RoadId predecessor_road_id = road_element.second->get_link().get_predecessor().id_; // this is the position!!!!!! (-4, 4)
       if (successor_road_id > 1000) {
@@ -47,29 +45,29 @@ void Roadgraph::generate(OpenDriveMapPtr map) {
       
       // TODO (@hart): there could be mult. lane_sections
       for (auto const& lane_section_element : road_element.second->get_lane_sections()) { // std::vector
-        std::cout << "looping lane_section_element " << std::endl;
         for (auto const& lane_element : lane_section_element->get_lanes()) { // std::map
-          std::cout << "looping lane_element: " << lane_element.first << std::endl;
 
           // add successor edge
-          // LanePosition successor_lane_position = lane_element.second->get_link().get_successor().position_;
-          // LanePtr successor_lane = lane_section_element->get_lane_by_position(successor_lane_position);
+          LanePosition successor_lane_position = lane_element.second->get_link().to_position;
+          if (successor_lane_position == 0) {
+            continue;
+          }
 
-            LanePosition successor_lane_position = lane_element.second->get_link().to_position;
-            LanePtr successor_lane = successor_lane_section->get_lane_by_position(successor_lane_position);
-            // LanePtr successor_lane = lane_section_element->get_lanes().at(successor_lane_position);
+          LanePtr successor_lane = successor_lane_section->get_lane_by_position(successor_lane_position);
+          // LanePtr successor_lane = lane_section_element->get_lanes().at(successor_lane_position);
 
-            if (successor_lane) {
-              bool success = add_successor(lane_element.first, successor_lane->get_id());
-            }
-          
+          if (successor_lane) {
+            bool success = add_successor(lane_element.first, successor_lane->get_id());
+          }
+        
           // does not always have predecessor
           try {
-            //LanePosition predecessor_lane_position = lane_element.second->get_link().get_predecessor().position_;
             // search for predecessor_lane_position in previos lane section
-            // LanePtr predecessor_lane = lane_section_element->get_lane_by_position(predecessor_lane_position);
             if (predecessor_lane_section) {
               LanePosition predecessor_lane_position = lane_element.second->get_link().from_position;
+              if (predecessor_lane_position == 0) {
+                continue;
+              }
               LanePtr predecessor_lane = predecessor_lane_section->get_lane_by_position(predecessor_lane_position);
               // if found add; convert predecessor to successor
               if (predecessor_lane) {
@@ -84,7 +82,6 @@ void Roadgraph::generate(OpenDriveMapPtr map) {
       }
     }
 
-    std::cout << "adding neighbor edges" << std::endl;
     // add neighbor edges
     for (auto const& road_element : map->get_roads()) { // std::map
       for (auto const& lane_section_element : road_element.second->get_lane_sections()) { // std::vector
@@ -108,30 +105,21 @@ void Roadgraph::generate(OpenDriveMapPtr map) {
       }
     }
 
-    std::cout << "adding junctions" << std::endl;
     // map junctions
     for (auto const& road_element : map->get_junctions()) { // std::map
-      std::cout << "looping road element " << road_element.first << std::endl;
       for (auto const& connection_element : road_element.second->get_connections()) { // std::map
-        std::cout << "looping connection element " << connection_element.first << std::endl;
 
         RoadPtr incoming_road = map->get_road(connection_element.second.incoming_road_);
         RoadPtr connecting_road = map->get_road(connection_element.second.connecting_road_);
-        std::cout << "passed road ptr" << std::endl;
         LaneSectionPtr pre_lane_section = incoming_road->get_lane_sections().front();
         LaneSectionPtr successor_lane_section = connecting_road->get_lane_sections().front();
-        std::cout << "passed LaneSectionPtr" << std::endl;
         for (auto const& lane_link_element : connection_element.second.get_lane_links()) {
           // add successor edge
-          std::cout << "looping lane_link_element" << std::endl;
           if (pre_lane_section && successor_lane_section) {
             try {
               LanePtr pre_lane = pre_lane_section->get_lane_by_position(lane_link_element.from_position);
-              std::cout << "found pre_lane" << std::endl;
               LanePtr successor_lane = successor_lane_section->get_lane_by_position(lane_link_element.to_position);
-              std::cout << "found successor_lane" << std::endl;
               if (pre_lane && successor_lane) {
-                std::cout << "adding successor" << std::endl;
                 bool success = add_successor(pre_lane->get_id(), successor_lane->get_id());
               }
             }
