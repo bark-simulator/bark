@@ -22,29 +22,30 @@ using LaneId = uint32_t;
 using LanePosition = int32_t;
 using RoadId = uint32_t;
 
-struct LinkInfo {
-  LinkInfo() : position_(1000000), type_("") {}
-  LinkInfo(const LanePosition& pos, const std::string& type) : position_(pos), type_(type) {}
-  LanePosition position_;
+struct RoadLinkInfo {
+  RoadLinkInfo() : id_(1000000), type_("") {}
+  RoadLinkInfo(const RoadId& id, const std::string& type) : id_(id), type_(type) {}
+  RoadId id_;
   std::string type_;
 };
 
-struct Link {
-  Link() : predecessor_(), successor_() {}
-  Link(const LinkInfo& predecessor, const LinkInfo& successor) : predecessor_(predecessor), successor_(successor) {}
-  LinkInfo predecessor_;
-  LinkInfo successor_;
+struct RoadLink {
+  RoadLink() : predecessor_(), successor_() {}
+  RoadLink(const RoadLinkInfo& predecessor, const RoadLinkInfo& successor) : predecessor_(predecessor), successor_(successor) {}
+  RoadLinkInfo predecessor_;
+  RoadLinkInfo successor_;
   //! getter
-  LinkInfo get_predecessor() const { return predecessor_; }
-  LinkInfo get_successor() const { return successor_; }
-  void set_predecessor(const LinkInfo& info) { predecessor_ = info; }
-  void set_successor(const LinkInfo& info) { successor_ = info; }
+  RoadLinkInfo get_predecessor() const { return predecessor_; }
+  RoadLinkInfo get_successor() const { return successor_; }
+  void set_predecessor(const RoadLinkInfo& info) { predecessor_ = info; }
+  void set_successor(const RoadLinkInfo& info) { successor_ = info; }
 };
 
-inline std::string print(const Link &l) {
+
+inline std::string print(const RoadLink &l) {
   std::stringstream ss;
-  ss << "Link.predecessor: " << l.predecessor_.position_ << "of type" << l.predecessor_.type_ << "; ";
-  ss << "Link.successor: " << l.successor_.position_ << "of type" << l.successor_.type_ << std::endl;
+  ss << "RoadLink.predecessor: " << l.predecessor_.id_ << "of type" << l.predecessor_.type_ << "; ";
+  ss << "RoadLink.successor: " << l.successor_.id_ << "of type" << l.successor_.type_ << std::endl;
   return ss.str();
 }
 
@@ -58,10 +59,18 @@ inline float polynom(float x, float a, float b, float c, float d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
 
+// TODO: use type LaneId here
 struct LaneLink {
-  int from_id;
-  int to_id;
+  LanePosition from_position;
+  LanePosition to_position;
 };
+
+inline std::string print(const LaneLink &l) {
+  std::stringstream ss;
+  ss << "LaneLink.from_position: " << l.from_position << "; ";
+  ss << "LaneLink.to_position: " << l.to_position << std::endl;
+  return ss.str();
+}
 
 using LaneLinks = std::vector<LaneLink>;
 
@@ -69,7 +78,7 @@ struct Connection {
   void add_lane_link(LaneLink link) { lane_links_.push_back(link); }
   LaneLinks get_lane_links() const { return lane_links_; }
   uint32_t id_;
-  uint32_t incoming_road_;
+  uint32_t incoming_road_; // TODO: use type RoadId here
   uint32_t connecting_road_;
   LaneLinks lane_links_;
 };

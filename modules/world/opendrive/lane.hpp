@@ -31,7 +31,7 @@ class Lane {
   //! setter functions
   void set_id(const LaneId lane_id) { lane_id_ = lane_id; }
   void set_line(const geometry::Line line) { line_ = line; }
-  void set_link(const Link link) { link_ = link; }
+  void set_link(const LaneLink link) { link_ = link; }
   void set_speed(float speed) { speed_ = speed; }
   void set_lane_type(const LaneType lt) { lane_type_ = lt; }
   void set_road_mark(const RoadMark rm) { road_mark_ = rm; }
@@ -41,7 +41,7 @@ class Lane {
   //! getter functions
   geometry::Line get_line() { return line_; }
 
-  Link get_link() const { return link_; }
+  LaneLink get_link() const { return link_; }
   RoadMark get_road_mark() const { return road_mark_; }
   float get_speed() const { return speed_; }
   LaneType get_lane_type() const { return lane_type_;}
@@ -57,7 +57,7 @@ class Lane {
  private:
   LaneId lane_id_;
   LanePosition lane_position_;
-  Link link_;
+  LaneLink link_;
   geometry::Line line_;
 
   LaneType lane_type_;

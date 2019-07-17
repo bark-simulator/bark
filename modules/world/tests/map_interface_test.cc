@@ -16,11 +16,11 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
   p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
   //! Road-Link
-  LinkInfo pre;
-  pre.position_ = 1;
+  RoadLinkInfo pre;
+  pre.id_ = 1;
   pre.type_ = "road";
 
-  Link l;  // can either link to another road or to a junction
+  RoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
   l.set_successor(pre);
 
@@ -50,7 +50,7 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
   p2->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
   //! Road-Link
-  Link l2 = {};  // can either link to another road or to a junction
+  RoadLink l2 = {};  // can either link to another road or to a junction
 
   //! Lane-Section 1
   LaneSectionPtr ls3(new LaneSection(0.0));
