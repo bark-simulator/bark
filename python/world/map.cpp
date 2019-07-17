@@ -98,5 +98,6 @@ void python_map(py::module m) {
     .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)
     .def("find_path", &Roadgraph::find_path)
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
-    .def("add_successor", &Roadgraph::add_successor);
+    .def("add_successor", &Roadgraph::add_successor)
+    .def("generate", &Roadgraph::generate);
 }

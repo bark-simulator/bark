@@ -26,7 +26,7 @@ class ImporterTests(unittest.TestCase):
         # xodr_parser.print_python_map()
 
     def test_map(self):
-        xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
+        xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
         # xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr")
         params = ParameterServer()
         world = World(params)
@@ -77,7 +77,7 @@ class ImporterTests(unittest.TestCase):
         #cwd = os.getcwd()
         #print (cwd)
         roadgraph = xodr_parser.roadgraph
-        roadgraph.print_graph("/home/bernhard/"+"test1234.dot")
+        roadgraph.print_graph("/home/esterle/roadgraph/"+"CulDeSac_cpp.dot")
         
 
 

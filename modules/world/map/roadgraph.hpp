@@ -285,55 +285,15 @@ class Roadgraph {
   }
 
 
-  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id) {
-      LanePtr inner, outer;
-      std::pair<vertex_t, bool> v = get_vertex_by_lane_id(lane_id);
-      auto l = get_lane_graph()[v.first].lane;
-      assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
-      outer = l;
-      
-      std::pair<LaneId, bool> innerid = get_inner_neighbor(lane_id);
-        if(innerid.second) {
-          std::pair<vertex_t, bool> v_inner = get_vertex_by_lane_id(innerid.first);
-          if (v_inner.second) {
-            inner = get_lane_graph()[v_inner.first].lane;
-          } else {
-            inner = NULL;
-          }
-      } else { //you are probably at the planview and do not have inner lanes? 
-
-      }
-      return std::make_pair(inner, outer);
-
-  }
+  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id);
 
   // TODO Klemens: change to LanePtr to Line
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon) {
-    std::vector<LanePtr> inner, outer;
-    if (!horizon.empty()) {
-      for (auto &h : horizon) {
-        auto lane_boundaries =  ComputeLaneBoundaries(h);
-        inner.push_back(lane_boundaries.first);
-        outer.push_back(lane_boundaries.second);
-      }
-    }
-    return std::make_pair(inner, outer);
-  }
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon);
 
-  void ComputeLanePolygon(const LaneId& lane_id) {
+  void ComputeLanePolygon(const LaneId& lane_id);
 
-    std::pair< LanePtr, LanePtr > lb = ComputeLaneBoundaries(lane_id);
-    
-    PolygonPtr polygon = std::make_shared<modules::geometry::Polygon>();
-    // inner
-    for (auto const& p: lb.first->get_line()) {
-      polygon->add_point(p);
-    }
-    // outer
-    for (auto const& p: lb.second->get_line()) {
-      polygon->add_point(p);
-    }
-  }
+  void generate(OpenDriveMapPtr map);
+
 
  private:
   LaneGraph g_;
