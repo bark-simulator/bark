@@ -16,7 +16,6 @@ from bark.models.execution import *
 from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.commons.xodr_parser import XodrParser
 
 import numpy as np

@@ -26,7 +26,6 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
 
   RoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
-  l.set_successor(pre);
 
   //! Lane-Section 1
   LaneSectionPtr ls(new LaneSection(0.0));
@@ -35,14 +34,16 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
   LaneSectionPtr ls2(new LaneSection(10.0));
 
   //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10, off};
-  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
-  ls->add_lane(lane);
-  ls->add_lane(lane2);
-  ls2->add_lane(lane);
-  ls2->add_lane(lane2);
+  {
+    LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+    LaneWidth lane_width_1 = {0, 10, off};
+    LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
+    LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+    ls->add_lane(lane);
+    ls->add_lane(lane2);
+    ls2->add_lane(lane);
+    ls2->add_lane(lane2);
+  }
 
   RoadPtr r(new Road("highway", 100));
   r->set_plan_view(p);

@@ -8,7 +8,6 @@ import pprint
 from bark.world.opendrive import *
 from bark.world.map import *
 from bark.geometry import *
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 
 
 class XodrParser(object):
