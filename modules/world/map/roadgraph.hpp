@@ -292,7 +292,15 @@ class Roadgraph {
 
   void ComputeLanePolygon(const LaneId& lane_id);
 
-  void generate(OpenDriveMapPtr map);
+  void GenerateVertices(OpenDriveMapPtr map);
+
+  void GeneratePreAndSuccessors(OpenDriveMapPtr map);
+
+  void GenerateNeighbours(OpenDriveMapPtr map);
+
+  void GenerateFromJunctions(OpenDriveMapPtr map);
+
+  void Generate(OpenDriveMapPtr map);
 
 
  private:
