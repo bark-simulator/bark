@@ -87,7 +87,7 @@ struct Shape {
   // return object transform
   Shape<G, T> *transform(const Pose &pose) const;
 
-  virtual bool Valid();
+  virtual bool Valid() const;
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const = 0;
 
@@ -113,7 +113,7 @@ struct Shape {
 };
 
 template <typename G, typename T>
-inline bool Shape<G, T>::Valid() {
+inline bool Shape<G, T>::Valid() const {
   std::string message;
   bool valid = boost::geometry::is_valid(obj_, message);
   if (!valid) {
