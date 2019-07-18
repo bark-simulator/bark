@@ -10,92 +10,6 @@
 #include "modules/world/opendrive/opendrive.hpp"
 
 
-void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPtr &map) {
-  using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
-
-  //! ROAD 1
-  PlanViewPtr p(new PlanView());
-  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-
-  //! Road-Link
-  RoadLinkInfo pre;
-  pre.id_ = 1;
-  pre.type_ = "road";
-
-  RoadLink l;  // can either link to another road or to a junction
-  l.set_predecessor(pre);
-
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
-
-  //! Lane-Section 2
-  LaneSectionPtr ls2(new LaneSection(10.0));
-
-  //! Lane
-  {
-    LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-    LaneWidth lane_width_1 = {0, 10, off};
-    LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
-    LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
-    ls->add_lane(lane);
-    ls->add_lane(lane2);
-    ls2->add_lane(lane);
-    ls2->add_lane(lane2);
-  }
-
-  RoadPtr r(new Road("highway", 100));
-  r->set_plan_view(p);
-  r->set_link(l);
-  r->add_lane_section(ls);
-
-  //! ROAD 2
-  PlanViewPtr p2(new PlanView());
-  p2->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-
-  //! Road-Link
-  RoadLink l2 = {};  // can either link to another road or to a junction
-
-  //! Lane-Section 1
-  LaneSectionPtr ls3(new LaneSection(0.0));
-
-  //! Lane
-  LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_2 = {0, 10, off2};
-
-  LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(), lane_width_2, 0.05);
-  LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
-
-  ls3->add_lane(lane3);
-  ls3->add_lane(lane4);
-
-  //! new road
-  RoadPtr r2(new Road("highway", 200));
-  r2->set_plan_view(p2);
-  r2->set_link(l2);
-  r2->add_lane_section(ls3);
-
-  // connect roads
-  JunctionPtr j(new Junction("kreuz", 1));
-  Connection con;
-  con.incoming_road_ = 100;
-  con.connecting_road_ = 200;
-  con.id_ = 1;
-
-  LaneLink link_1 = {-1, -1};
-  LaneLink link_2 = {1, 1};
-
-  con.add_lane_link(link_1);
-  con.add_lane_link(link_2);
-  j->add_connection(con);
-
-  map->add_road(r);
-  map->add_road(r2);
-  map->add_junction(j);
-}
-
-
 TEST(roadgraph, road_creation)
 {
   using namespace modules::world::map;
@@ -392,7 +306,7 @@ TEST(roadgraph, get_driving_corridor_test)
   */
 }
 
-TEST(roadgraph, generate_roadgraph_from_two_lane_map)
+TEST(roadgraph, generate_roadgraph_neighbours)
 {
   using namespace modules::geometry;
   using namespace modules::world::opendrive;
@@ -424,33 +338,71 @@ TEST(roadgraph, generate_roadgraph_from_two_lane_map)
   open_drive_map->add_road(r);
 
   Roadgraph rg;
-  rg.generate(open_drive_map);
+  rg.Generate(open_drive_map);
 
   std::pair<LaneId, bool> in1 = rg.get_inner_neighbor(lane1->get_id());
-  // There is no inner neighbor, as lane1 and lane2 are left and right of the planview
+  // There is no inner neighbor for lane1, as lane1 and lane2 are left and right of the planview
   ASSERT_FALSE(in1.second);
 
   std::pair<LaneId, bool> out2 = rg.get_outer_neighbor(lane2->get_id());
   ASSERT_TRUE(out2.second);
   ASSERT_TRUE(out2.first == lane3->get_id());
 
-
 }
 
 
-TEST(roadgraph, generate_roadgraph_from_two_road_junction_map)
+TEST(roadgraph, generate_roadgraph_successors)
 {
-
+  using namespace modules::geometry;
   using namespace modules::world::opendrive;
   using namespace modules::world::map;
-  using namespace modules::geometry;
 
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
-  build_two_road_junction_map(open_drive_map);
+  //! ROAD 1
+  PlanViewPtr p(new PlanView());
+  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls(new LaneSection(0.0));
+  
+  //! Lane
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+  LanePtr lane1 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  ls->add_lane(lane1);
+
+  RoadPtr r(new Road("highway", 100));
+  r->set_plan_view(p);
+  r->add_lane_section(ls);
+
+  //! ROAD 2
+  PlanViewPtr p2(new PlanView());
+  p2->add_line(Point2d(10.0f, 0.0f), 0.0f, 20.0f);
+
+  //! Lane-Section 2
+  LaneSectionPtr ls2(new LaneSection(0.0));
+  
+  //! Lane
+  LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_2 = {0, 10, off};
+  LanePtr lane2 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  ls2->add_lane(lane2);
+
+  RoadPtr r2(new Road("highway", 101));
+  r2->set_plan_view(p2);
+  r2->add_lane_section(ls2);
+  
+  RoadLinkInfo rli_pre(r->get_id(), "road");
+  RoadLink rl;
+  rl.set_predecessor(rli_pre);
+  r2->set_link(rl);
+
+  open_drive_map->add_road(r);
 
   Roadgraph rg;
-  rg.generate(open_drive_map);
+  rg.Generate(open_drive_map);
 
-  rg.print_graph("/home/esterle/generate_roadgraph_from_map.dot");
-
+  std::vector<LaneId> suc = rg.get_successor_lanes(lane1->get_id());
+  ASSERT_TRUE(suc.size() == 1);
+  ASSERT_TRUE(suc[0] == lane2->get_id());
 }
