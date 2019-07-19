@@ -369,6 +369,10 @@ TEST(roadgraph, generate_roadgraph_successors)
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width_1 = {0, 10, off};
   LanePtr lane1 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  LaneLink ll1;
+  ll1.from_position = 1;
+  ll1.to_position = 1;
+  lane1->set_link(ll1);
   ls->add_lane(lane1);
 
   RoadPtr r(new Road("highway", 100));
@@ -386,23 +390,29 @@ TEST(roadgraph, generate_roadgraph_successors)
   LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width_2 = {0, 10, off};
   LanePtr lane2 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  LaneLink ll2;
+  ll2.from_position = 1;
+  ll2.to_position = 1;
+  lane2->set_link(ll2);
   ls2->add_lane(lane2);
 
   RoadPtr r2(new Road("highway", 101));
   r2->set_plan_view(p2);
   r2->add_lane_section(ls2);
   
-  RoadLinkInfo rli_pre(r->get_id(), "road");
+  RoadLinkInfo rli_succ(r2->get_id(), "road");
   RoadLink rl;
-  rl.set_predecessor(rli_pre);
-  r2->set_link(rl);
+  rl.set_successor(rli_succ);
+  r->set_link(rl);
 
   open_drive_map->add_road(r);
+  open_drive_map->add_road(r2);
 
   Roadgraph rg;
   rg.Generate(open_drive_map);
 
   std::vector<LaneId> suc = rg.get_successor_lanes(lane1->get_id());
+  std::cout << "suc: " << suc.size() << std::endl;
   ASSERT_TRUE(suc.size() == 1);
   ASSERT_TRUE(suc[0] == lane2->get_id());
 }

@@ -34,21 +34,27 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map)
     {
       continue;
     }
+
     RoadPtr successor_road = map->get_roads().at(successor_road_id);
+    LaneSectionPtr successor_lane_section = successor_road->get_lane_sections().front();
 
     // make sure that there is a predecessor!!
     LaneSectionPtr predecessor_lane_section = nullptr;
-    try
-    {
+
+    // TODO: That's pretty ugly, move check for road_id to map
+    try {
+    auto iter(map->get_roads().lower_bound(predecessor_road_id));
+    if (iter == map->get_roads().end() || predecessor_road_id < iter->first) {    // not found
       RoadPtr predecessor_road = map->get_roads().at(predecessor_road_id);
       predecessor_lane_section = predecessor_road->get_lane_sections().back();
     }
-    catch (const std::out_of_range &oor)
-    {
+    else {
       std::cerr << "Road has no predeseccor road. \n";
     }
+    }
+    catch (...) {
 
-    LaneSectionPtr successor_lane_section = successor_road->get_lane_sections().front();
+    }
 
     // TODO (@hart): there could be mult. lane_sections
     for (auto const &lane_section_element : road_element.second->get_lane_sections())
