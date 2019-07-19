@@ -49,10 +49,27 @@ struct LaneEdge {
   LaneEdge(LaneEdgeType edge_type_in) : edge_type(edge_type_in), weight(edge_type_in==SUCCESSOR_EDGE?1:10) {}
 };
 
-
 typedef boost::adjacency_list<vecS, vecS, bidirectionalS, LaneVertex, LaneEdge> LaneGraph;
 typedef boost::graph_traits<LaneGraph>::vertex_descriptor vertex_t;
 typedef boost::graph_traits<LaneGraph>::edge_descriptor edge_t;
+
+struct DrivingLaneTypePredicate { // both edge and vertex
+  bool operator()(LaneGraph::edge_descriptor ed) const      { 
+    bool filtered_s = (*g)[boost::source(ed, *g)].lane->get_lane_type()==LaneType::DRIVING;
+    bool filtered_t = (*g)[boost::target(ed, *g)].lane->get_lane_type()==LaneType::DRIVING;
+        
+    bool filtered = filtered_s && filtered_t;
+    return filtered; 
+  } 
+      
+  bool operator()(LaneGraph::vertex_descriptor vd) const {
+    bool filtered = (*g)[vd].lane->get_lane_type()==LaneType::DRIVING; 
+    return filtered;
+  }
+  LaneGraph* g;
+};
+
+typedef boost::filtered_graph<LaneGraph, DrivingLaneTypePredicate, DrivingLaneTypePredicate> FilteredLaneGraph;
 
 class Roadgraph {
  public:
@@ -104,12 +121,16 @@ class Roadgraph {
     return predecessor_lanes;
   }
 
-  struct DrivingLaneTypePredicate { // both edge and vertex
-    bool operator()(LaneGraph::edge_descriptor) const      { return true; } // all
-    bool operator()(LaneGraph::vertex_descriptor vd) const { return (*g)[vd].lane->get_lane_type()==LaneType::DRIVING; }
-    LaneGraph* g;
-  };
   
+  bool check_id_in_filtered_graph(const FilteredLaneGraph& fg, const LaneId& lane_id) {
+    boost::graph_traits<FilteredLaneGraph>::vertex_iterator i, end;
+    for (boost::tie(i, end) = boost::vertices(fg); i != end; ++i) {
+      if (fg[*i].global_lane_id == lane_id) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid) {
     std::vector<LaneId> path;
@@ -119,15 +140,24 @@ class Roadgraph {
 
     // filter graph
     DrivingLaneTypePredicate predicate {&g_};
-    using Filtered = boost::filtered_graph<LaneGraph, DrivingLaneTypePredicate, DrivingLaneTypePredicate>;
-    Filtered fg(g_, predicate, predicate);
+    FilteredLaneGraph fg(g_, predicate, predicate);
+    bool start_goal_valid_in_fg = check_id_in_filtered_graph(fg, startid) && check_id_in_filtered_graph(fg, goalid);
 
-    if (start_vertex.second && goal_vertex.second)
+    if (start_vertex.second && goal_vertex.second && start_goal_valid_in_fg)
     {
 
-      std::vector<vertex_t> p(boost::num_vertices(fg));
-      std::vector<int> d(boost::num_vertices(fg));
-      boost::property_map<LaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, fg);
+      // std::cout << "start_vertex: " << start_vertex.first << " id " << g_[start_vertex.first].lane->get_id()<< std::endl;
+      // std::cout << "goal_vertex: " << goal_vertex.first << " id " << g_[goal_vertex.first].lane->get_id() <<std::endl;
+      // std::cout << "goal_vertex type: " << g_[goal_vertex.first].lane->get_lane_type() << std::endl;
+      // std::cout << "goal_vertex type: " << fg[goal_vertex.first].lane->get_lane_type() << std::endl;
+
+      size_t num_vertices = boost::num_vertices(fg);
+
+      std::vector<vertex_t> p(num_vertices);
+
+      std::vector<int> d(num_vertices);
+
+      boost::property_map<FilteredLaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, fg);
 
       boost::dijkstra_shortest_paths(fg, start_vertex.first,
                                      predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, fg)))
@@ -135,23 +165,41 @@ class Roadgraph {
                                          .weight_map(weightmap));
 
       // get shortest path from predecessor map
-      int stop_the_loop = boost::num_vertices(fg);
+      int stop_the_loop = num_vertices;
       int idx = 0;
       boost::graph_traits< LaneGraph >::vertex_descriptor current = goal_vertex.first;
       while(current!=start_vertex.first && idx < stop_the_loop) {
         path.push_back(fg[current].global_lane_id);
+        // std::cout << "current vertex " << current << " id " << fg[current].global_lane_id << std::endl;
+        if (current == p[current]) {
+          std::cerr << "loop on itself -- probably not a valid path";
+          return std::vector<LaneId> ();
+        }
         current=p[current];
         ++idx;
       }
+      // std::cout << "current vertex " << current << " id " << fg[current].global_lane_id << std::endl;
+
       path.push_back(fg[start_vertex.first].global_lane_id);
       std::reverse(path.begin(), path.end());
 
-      //for (auto &p : path) {
-      //    std::cout << p << " ";
-      //}
-      //std::cout << std::endl;
-    }
+      // std::cout << "p: " << std::endl;
+      // for (auto &pi : p) {
+      //     std::cout << pi << " ";
+      // }
+      // std::cout << std::endl;
 
+      // std::cout << "d: " << std::endl;
+      // for (auto &di : d) {
+      //     std::cout << di << " ";
+      // }
+
+      // std::cout << "pathi: " << std::endl;
+      // for (auto &pathi : path) {
+      //     std::cout << pathi << " ";
+      // }
+
+    }
     return path;
   }
 
