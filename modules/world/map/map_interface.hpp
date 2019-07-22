@@ -35,15 +35,16 @@ using rtree_lane = boost::geometry::index::rtree<rtree_lane_value,
 class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
+  
+  bool isInLane(const modules::geometry::Point2d& point, LaneId id) const;
 
   bool FindNearestLanes(const modules::geometry::Point2d& point,
                          const unsigned& num_lanes,
-                         std::vector<opendrive::LanePtr>& lanes) const;
+                         std::vector<opendrive::LanePtr>& lanes,
+                         bool type_driving_only = true) const;
 
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
                                   const LaneId& startid, const LaneId& goalid) const;
-
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundaries(const std::vector<LaneId>& horizon) const;
 
   bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
                             Line& inner_line, Line& outer_line, Line& center_line) const;
@@ -60,7 +61,6 @@ class MapInterface {
     roadgraph_ = roadgraph;
     return true;
   }
-
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
 
@@ -69,6 +69,8 @@ class MapInterface {
   RoadgraphPtr roadgraph_;
   rtree_lane rtree_lane_;
   std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box_;
+
+  static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == LaneType::DRIVING); }
 };
 
 using MapInterfacePtr = std::shared_ptr<MapInterface>;

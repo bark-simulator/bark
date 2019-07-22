@@ -66,6 +66,6 @@ We run two Debuggers in parallel. First, check if the shared object "bark.so" co
 ```
 For debugging;
 1. Add a breakpoint in the python file you want to debug, somewhere before an interesting code section, run the launch configuration "Python: Current File" (see before) and wait until the breakpoint is reached.
-2. Run the "(gdb) Attach" launch configuration, select the python interpreter whose path contains "/.vscode/"
+2. Run the "(gdb) Attach" launch configuration, select the python interpreter whose path contains "/.vscode/". You will be promted to enter your user password.
 3. Set breakpoints in the C++ Files
-4. Now, with the F5 vscode automatically jumps between the two debuggers between python and c++ code. 
+4. The python debugger is currently stopped at a break point. Switch back from the debugger "(gdb) Attach" to the other debugger "Python: Current File" and press F5 (Continue). Now, vscode automatically jumps between the two debuggers between python and c++ code.

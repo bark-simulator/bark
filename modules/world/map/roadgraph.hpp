@@ -14,7 +14,9 @@
 #include <boost/graph/topological_sort.hpp>
 #include <boost/graph/graphviz.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/filtered_graph.hpp>
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace modules {
 namespace world {
@@ -23,6 +25,7 @@ namespace map {
 using namespace modules::world::opendrive;
 using namespace boost;
 
+typedef std::shared_ptr<modules::geometry::Polygon> PolygonPtr;
 
 struct LaneVertex {
   RoadId road_id;
@@ -30,8 +33,9 @@ struct LaneVertex {
   LaneId get_global_line_id() { return global_lane_id; }
   LanePtr get_lane() { return lane; }
   LanePtr lane;
-  LaneVertex() : road_id(0), global_lane_id(0), lane(NULL) {}
-  LaneVertex(int road_id_in, int global_lane_id_in, LanePtr lane_in) : road_id(road_id_in), global_lane_id(global_lane_id_in), lane(lane_in) {}
+  PolygonPtr polygon;
+  LaneVertex() : road_id(0), global_lane_id(0), lane(NULL), polygon(NULL) {}
+  LaneVertex(int road_id_in, int global_lane_id_in, LanePtr lane_in) : road_id(road_id_in), global_lane_id(global_lane_id_in), lane(lane_in), polygon(NULL) {}
 };
 
 enum LaneEdgeType {
@@ -48,237 +52,111 @@ struct LaneEdge {
   LaneEdge(LaneEdgeType edge_type_in) : edge_type(edge_type_in), weight(edge_type_in==SUCCESSOR_EDGE?1:10) {}
 };
 
-
 typedef boost::adjacency_list<vecS, vecS, bidirectionalS, LaneVertex, LaneEdge> LaneGraph;
 typedef boost::graph_traits<LaneGraph>::vertex_descriptor vertex_t;
 typedef boost::graph_traits<LaneGraph>::edge_descriptor edge_t;
+
+struct DrivingLaneTypePredicate { // both edge and vertex
+  bool operator()(LaneGraph::edge_descriptor ed) const      { 
+    bool filtered_s = (*g)[boost::source(ed, *g)].lane->get_lane_type()==LaneType::DRIVING;
+    bool filtered_t = (*g)[boost::target(ed, *g)].lane->get_lane_type()==LaneType::DRIVING;
+        
+    bool filtered = filtered_s && filtered_t;
+    return filtered; 
+  } 
+      
+  bool operator()(LaneGraph::vertex_descriptor vd) const {
+    bool filtered = (*g)[vd].lane->get_lane_type()==LaneType::DRIVING; 
+    return filtered;
+  }
+  LaneGraph* g;
+};
+
+typedef boost::filtered_graph<LaneGraph, DrivingLaneTypePredicate, DrivingLaneTypePredicate> FilteredLaneGraph;
 
 class Roadgraph {
  public:
   Roadgraph() {}
 
-  LaneId add_lane(const RoadId& road_id, const LanePtr& laneptr) {
-    LaneVertex lane = LaneVertex(road_id, laneptr->get_id(), laneptr);
-    boost::add_vertex(lane, g_);
-    return laneptr->get_id();
-  }
+  LaneId add_lane(const RoadId& road_id, const LanePtr& laneptr);
 
-  bool add_inner_neighbor(const LaneId& inner_id, const LaneId& outer_id) {
-    return add_edge_of_type( outer_id, inner_id, INNER_NEIGHBOR_EDGE);
-  }
+  bool add_inner_neighbor(const LaneId& inner_id, const LaneId& outer_id);
 
-  bool add_outer_neighbor(const LaneId& inner_id, const LaneId& outer_id) {
-    return add_edge_of_type( inner_id, outer_id, OUTER_NEIGHBOR_EDGE);
-  }
+  bool add_outer_neighbor(const LaneId& inner_id, const LaneId& outer_id);
 
-  bool add_successor(const LaneId& prev, const LaneId& succ) {
-    return add_edge_of_type( prev, succ, SUCCESSOR_EDGE);
-  }
+  bool add_successor(const LaneId& prev, const LaneId& succ);
 
-  std::vector<LaneId> get_successor_lanes(const LaneId& lane_id)
-  {
-    std::pair<vertex_t,bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
-    boost::graph_traits<LaneGraph>::out_edge_iterator i, end;
-    std::vector<LaneId> successor_lanes;
-    for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_); i != end; ++i) {
-      if(g_[*i].edge_type == SUCCESSOR_EDGE) {
-        vertex_t target = boost::target(*i,g_);
-        successor_lanes.push_back(g_[target].global_lane_id);
-      }
-    }
-    return successor_lanes;
-  }
+  std::vector<LaneId> get_successor_lanes(const LaneId& lane_id) const;
 
-  std::vector<LaneId> get_predecessor_lanes(const LaneId& lane_id)
-  {
-    std::pair<vertex_t,bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
-    boost::graph_traits<LaneGraph>::in_edge_iterator i, end;
-    std::vector<LaneId> predecessor_lanes;
-    for (boost::tie(i, end) = boost::in_edges(lane_vertex_pair.first, g_); i != end; ++i) {
-      if(g_[*i].edge_type == SUCCESSOR_EDGE) {
-        vertex_t source = boost::source(*i,g_);
-        predecessor_lanes.push_back(g_[source].global_lane_id);
-      }
-    }
-    return predecessor_lanes;
-  }
+  std::vector<LaneId> get_predecessor_lanes(const LaneId& lane_id) const;
 
-  std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid) {
-    std::vector<LaneId> path;
+  bool check_id_in_filtered_graph(const FilteredLaneGraph& fg, const LaneId& lane_id) const;
 
-    std::pair<vertex_t, bool> start_vertex = get_vertex_by_lane_id(startid);
-    std::pair<vertex_t, bool> goal_vertex = get_vertex_by_lane_id(goalid);
+  std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid);
 
-    if (start_vertex.second && goal_vertex.second)
-    {
-      std::vector<vertex_t> p(boost::num_vertices(g_));
-      std::vector<int> d(boost::num_vertices(g_));
-      boost::property_map<LaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, g_);
-
-      boost::dijkstra_shortest_paths(g_, start_vertex.first,
-                                     predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, g_)))
-                                         .distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, g_)))
-                                         .weight_map(weightmap));
-
-      // get shortest path from predecessor map
-      int stop_the_loop = boost::num_vertices(g_);
-      int idx = 0;
-      boost::graph_traits< LaneGraph >::vertex_descriptor current = goal_vertex.first;
-      while(current!=start_vertex.first && idx < stop_the_loop) {
-        path.push_back(g_[current].global_lane_id);
-        current=p[current];
-        ++idx;
-      }
-      path.push_back(g_[start_vertex.first].global_lane_id);
-      std::reverse(path.begin(), path.end());
-
-      //for (auto &p : path) {
-      //    std::cout << p << " ";
-      //}
-      //std::cout << std::endl;
-    }
-
-    return path;
-  }
-
-  //std::vector<LaneId> find_path(const LaneId& start, const RoadId& goal)
-  //{
-  //  std::vector<LaneId> path;
-  //  return path;
-  //}
-
-  LanePtr get_laneptr(const LaneId& id){
-    std::pair<vertex_t,bool> lane_vertex_pair = get_vertex_by_lane_id(id);
-    if(lane_vertex_pair.second) {
-      return g_[lane_vertex_pair.first].lane;
-    } else {
-      return NULL;
-    }
-  }
+  LanePtr get_laneptr(const LaneId& id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not
-  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) {
-    std::vector<std::pair<LaneId, bool> > neighbors =
-     get_neighbor_from_edgetype(lane_id, INNER_NEIGHBOR_EDGE); 
-    std::pair<LaneId, bool> neighbor = neighbors.front(); //inner neighbor is unique
-    return neighbor;
-  }
+  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not
   //! @note make sure to not call this function on the planview lane!
-  std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id) {
-    std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
-    return tmp.front(); // for a non planview edge the outer neighbor is unique
-  }
+  std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not, usecase: lane_id is the planview
   //! @param lane_id queried lane id
   //! @param from the query answer return the lane id that is not but_not
-  std::pair<LaneId, bool> get_outer_neighbor_but_not(const LaneId& lane_id, const LaneId& but_not) {
-    std::vector<std::pair<LaneId, bool> > tmp = get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
-    for (auto &t : tmp) {
-      if (t.first != but_not) {
-        return t;
-      }
-    }
-    return std::make_pair<LaneId, bool>(0, false); //error case
-  }
+  std::pair<LaneId, bool> get_outer_neighbor_but_not(const LaneId& lane_id, const LaneId& but_not);
 
-  bool has_lane(const LaneId& lane_id){
-    boost::graph_traits<LaneGraph>::vertex_iterator i, end;
-    for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i) {
-      if (g_[*i].global_lane_id == lane_id) {
-        return true;
-      }
-    }
-    return false;
-  }
+  bool has_lane(const LaneId& lane_id) const;
 
-  void print_graph(const char* filename) {
-    std::ofstream dotfile(filename);
-    print_graph(dotfile);
-    dotfile.close();
-  }
+  void print_graph(const char* filename);
 
-  void print_graph(std::ofstream& dotfile){
-    	write_graphviz(dotfile, g_
-		, make_vertex_label_writer_graph(boost::get(&LaneVertex::road_id, g_), boost::get(&LaneVertex::global_lane_id, g_), boost::get(&LaneVertex::lane, g_))
-		, make_edge_label_writer_text(get(&LaneEdge::edge_type, g_))
-    );
-  }
+  void print_graph(std::ofstream& dotfile);
 
   LaneGraph get_lane_graph() const {
     return g_;
   }
 
-  LaneVertex get_vertex(vertex_t v_des) {
+  LaneVertex get_vertex(vertex_t v_des) const {
     return g_[v_des];
   }
 
-  std::vector<vertex_t> get_vertices() {
-    std::vector<vertex_t> vertex_descriptors;
-    boost::graph_traits<LaneGraph>::vertex_iterator i, end;
-    for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i) {
-      vertex_descriptors.push_back(*i);
-    }
-    return vertex_descriptors;
-  }
+  std::vector<vertex_t> get_vertices() const;
 
-  LaneEdge get_edge(edge_t e_des) {
+  LaneEdge get_edge(edge_t e_des) const {
     return g_[e_des];
   }
 
-  std::vector<vertex_t> get_next_vertices(vertex_t current_vertex) {
-    std::vector<vertex_t> vertex_descriptors;
-    boost::graph_traits<LaneGraph>::out_edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = boost::out_edges(current_vertex, g_); ei != ei_end; ei++) {
-      vertex_t target = boost::target(*ei, g_);
-      vertex_descriptors.push_back(target);
-    }
-    return vertex_descriptors;
-  }
+  std::vector<vertex_t> get_next_vertices(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_out_edges(vertex_t current_vertex) {
-    std::vector<edge_t> edge_descriptors;
-    boost::graph_traits<LaneGraph>::out_edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = boost::out_edges(current_vertex, g_); ei != ei_end; ei++) {
-      vertex_t source = boost::source(*ei, g_);
-      vertex_t target = boost::target(*ei, g_);
-      auto edge = boost::edge(source, target, g_);
-      edge_descriptors.push_back(edge.first);
-    }
-    return edge_descriptors;
-  }
+  std::vector<edge_t> get_out_edges(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_edges() {
-    std::vector<edge_t> edge_descriptors;
-    boost::graph_traits<LaneGraph>::edge_iterator ei, ei_end;
-    for (boost::tie(ei, ei_end) = boost::edges(g_); ei != ei_end; ei++) {
-      vertex_t source = boost::source(*ei, g_);
-      vertex_t target = boost::target(*ei, g_);
-      auto edge = boost::edge(source, target, g_);
-      edge_descriptors.push_back(edge.first);
-    }
-    return edge_descriptors;
-  }
+  std::vector<edge_t> get_edges() const;
 
-  edge_t get_edge_descr(vertex_t from, vertex_t to) {
-    return boost::edge(from, to, g_).first;
-  }
+  edge_t get_edge_descr(vertex_t from, vertex_t to) const;
 
-  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id) {
-    std::pair<vertex_t, bool> retval;
-    retval.second = false;
-    boost::graph_traits<LaneGraph>::vertex_iterator i, end;
-    for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i) {
-      if (g_[*i].global_lane_id == lane_id) {
-        retval.first = *i;
-        retval.second = true;
-        break;
-      }
-    }
-    return retval;
-  }
+  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id) const;
+
+  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id) const;
+
+  // TODO Klemens: change to LanePtr to Line
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon) const;
+
+  std::pair<PolygonPtr, bool> ComputeLanePolygon(const LaneId& lane_id) const;
+
+  void GenerateVertices(OpenDriveMapPtr map);
+
+  void GeneratePreAndSuccessors(OpenDriveMapPtr map);
+
+  void GenerateNeighbours(OpenDriveMapPtr map);
+
+  void GenerateFromJunctions(OpenDriveMapPtr map);
+
+  void GeneratePolygonsForVertices();
+
+  void Generate(OpenDriveMapPtr map);
+
 
  private:
   LaneGraph g_;
@@ -295,7 +173,7 @@ class Roadgraph {
     }
   }
 
-  std::vector<std::pair<LaneId, bool> > get_neighbor_from_edgetype(const LaneId& lane_id, const LaneEdgeType edge_type) { //! we can have two outer neighbors
+  std::vector<std::pair<LaneId, bool> > get_neighbor_from_edgetype(const LaneId& lane_id, const LaneEdgeType edge_type) const { //! we can have two outer neighbors
     std::vector<std::pair<LaneId, bool> > retval;
     std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
     boost::graph_traits<LaneGraph>::out_edge_iterator i, end;

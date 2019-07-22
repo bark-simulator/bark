@@ -143,9 +143,12 @@ class BaseViewer(Viewer):
             self.drawRoute(agent)
 
     def drawDrivingCorridor(self, corridor, color):
-        self.drawLine2d(corridor.center, color, 1)
-        self.drawLine2d(corridor.inner, color, 1)
-        self.drawLine2d(corridor.outer, color, 1)
+        if corridor.center.valid() and corridor.inner.valid() and corridor.outer.valid():
+            self.drawLine2d(corridor.center, color, 1)
+            self.drawLine2d(corridor.inner, color, 1)
+            self.drawLine2d(corridor.outer, color, 1)
+        else:
+            print("Cannot draw Driving Corridor, as it is empty")        
 
     def drawRoute(self, agent):
         # TODO(@hart): visualize the global as well as the local driving corridor

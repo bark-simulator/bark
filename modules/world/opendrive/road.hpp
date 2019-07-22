@@ -32,7 +32,7 @@ class Road {
   std::shared_ptr<PlanView> get_plan_view() const { return reference_; }
   std::string get_name() const { return name_; }
   RoadId get_id() const { return id_; }
-  Link get_link() const { return link_; }
+  RoadLink get_link() const { return link_; }
   LaneSections get_lane_sections() const { return lane_sections_; }
 
   // TODO (@hart): implement function get_next_roads()
@@ -52,7 +52,7 @@ class Road {
   void set_id(RoadId id) { id_ = id; }
   void set_name(const std::string& name) { name_ = name; }
   void set_plan_view(PlanViewPtr p) { reference_ = p; }
-  void set_link(Link l) { link_ = l; }
+  void set_link(RoadLink l) { link_ = l; }
 
   void add_lane_section(LaneSectionPtr l) {
     // additionally we need lane 0 in LaneSection
@@ -63,7 +63,7 @@ class Road {
  private:
   RoadId id_;
   std::string name_;
-  Link link_;
+  RoadLink link_;
   PlanViewPtr reference_;
   LaneSections lane_sections_;
 };
