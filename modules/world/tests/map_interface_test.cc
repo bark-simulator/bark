@@ -123,24 +123,59 @@ TEST(point_in_lane, map_interface) {
   using namespace modules::geometry;
 
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
-  build_two_road_junction_map(open_drive_map);
+    //! ROAD 1
+  PlanViewPtr p(new PlanView());
+  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls(new LaneSection(0.0));
+
+  //! PlanView
+  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_0 = {0, 10, off0};
+  LanePtr lane0 = create_lane_from_lane_width(0, p->get_reference_line(), lane_width_0, 0.05);
+  lane0->set_lane_type(LaneType::DRIVING);
+
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+
+  //! Lanes
+  LanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
+  lane1->set_lane_type(LaneType::DRIVING);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  lane2->set_lane_type(LaneType::DRIVING);
+  LanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
+  lane3->set_lane_type(LaneType::DRIVING);
+
+  ls->add_lane(lane0);
+  ls->add_lane(lane1);
+  ls->add_lane(lane2);
+  ls->add_lane(lane3);
+
+  RoadPtr r(new Road("highway", 100));
+  r->set_plan_view(p);
+  r->add_lane_section(ls);
+
+  open_drive_map->add_road(r);
   
   RoadgraphPtr roadgraph(new Roadgraph());
+  roadgraph->Generate(open_drive_map);
 
   MapInterface map_interface;
   map_interface.set_open_drive_map(open_drive_map);
   map_interface.set_roadgraph(roadgraph);
 
   std::vector<LanePtr> nearest_lanes;
-  Point2d point = Point2d(0, 0);
-  bool success = map_interface.FindNearestLanes(point, 2, nearest_lanes);
-
-  std::cout << "Hello world" << std::endl;
+  Point2d point = Point2d(0.5, 0.5);
+  bool success = map_interface.FindNearestLanes(point, 3, nearest_lanes);
 
   success = map_interface.isInLane(point, (nearest_lanes.at(0))->get_id());
-  std::cout << "Lane " << print(*(nearest_lanes.at(0))) << " contains point: " << success << std::endl;
-  success = map_interface.isInLane(point, (nearest_lanes.at(1))->get_id());
-  std::cout << "Lane " << print(*(nearest_lanes.at(1))) << " contains point: " << success << std::endl;
+  EXPECT_FALSE(success);
 
-  std::cout << "Hello end world" << std::endl;
+  success = map_interface.isInLane(point, (nearest_lanes.at(1))->get_id());
+  EXPECT_TRUE(success);
+
+  success = map_interface.isInLane(point, (nearest_lanes.at(2))->get_id());
+  EXPECT_FALSE(success);
+
 }
