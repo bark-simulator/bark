@@ -74,7 +74,7 @@ bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
   if (v.second) {
     auto polygon = roadgraph_->get_lane_graph()[v.first].polygon;
-    if (polygon) {
+    if (!polygon) {
       // found vertex has no polygon
       return false;
     }
