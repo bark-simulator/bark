@@ -85,7 +85,7 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            if str(lane.get("type")) not in ["driving"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
+            if str(lane.get("type")) not in ["driving", "border", "sidewalk"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
                 continue
             new_lane = {}
             new_lane["id"] = id
