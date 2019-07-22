@@ -19,6 +19,7 @@ cc_library(
 cc_library(
     name = "roadgraph",
     srcs = [
+        "roadgraph.cpp",
     ],
     hdrs = [
         "roadgraph.hpp",
