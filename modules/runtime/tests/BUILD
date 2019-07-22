@@ -13,7 +13,6 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime:runtime"],
 )
 
@@ -25,7 +24,6 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 

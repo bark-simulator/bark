@@ -106,16 +106,16 @@ TEST(road, open_drive) {
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
 
-  LinkInfo pre;
-  pre.position_ = 2;
+  RoadLinkInfo pre;
+  pre.id_ = 2;
   pre.type_ = "road";
 
-  LinkInfo suc;
-  suc.position_ = 1;
+  RoadLinkInfo suc;
+  suc.id_ = 1;
   suc.type_ = "road";
 
   //! Road-Link
-  Link l;  // can either link to another road or to a junction
+  RoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
   l.set_successor(suc);
 
@@ -173,11 +173,11 @@ TEST(map, open_drive) {
 
   //! Road-Link
 
-  LinkInfo pre;
-  pre.position_ = 1;
+  RoadLinkInfo pre;
+  pre.id_ = 1;
   pre.type_ = "road";
 
-  Link l;  // can either link to another road or to a junction
+  RoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
   l.set_successor(pre);
   //! Lane-Section 1
@@ -213,7 +213,7 @@ TEST(map, open_drive) {
   p2->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
   //! Road-Link
-  Link l2 = {};  // can either link to another road or to a junction
+  RoadLink l2 = {};  // can either link to another road or to a junction
 
   //! Lane-Section 1
   LaneSectionPtr ls3(new LaneSection(0.0));
