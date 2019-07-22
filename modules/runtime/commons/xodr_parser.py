@@ -8,7 +8,6 @@ import pprint
 from bark.world.opendrive import *
 from bark.world.map import *
 from bark.geometry import *
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 
 
 class XodrParser(object):
@@ -19,11 +18,7 @@ class XodrParser(object):
         self.map = OpenDriveMap()
         self.convert_to_map(self.python_map)
         self.roadgraph = Roadgraph()
-        self.generate_roadgraph()
-
-    def generate_roadgraph(self):
-        rg = RoadgraphGenerator(self.roadgraph)
-        rg.generate(self.map)
+        self.roadgraph.Generate(self.map)
 
     def load_file(self, file_name):
         return open(file_name, 'r')
@@ -90,7 +85,7 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            if str(lane.get("type")) not in LaneType.__members__.keys(): # skip if lane type currently not supported
+            if str(lane.get("type")) not in ["driving"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
                 continue
             new_lane = {}
             new_lane["id"] = id
@@ -265,9 +260,9 @@ class XodrParser(object):
 
     def create_cpp_road_link(self, link):
         # TODO(hart): insert road_link
-        new_link = Link()
+        new_link = RoadLink()
         try:
-            new_pre_info = LinkInfo()
+            new_pre_info = RoadLinkInfo()
             new_pre_info.id = int(link["predecessor"]["element_id"])
             new_pre_info.type = link["predecessor"]["element_type"]
             new_link.predecessor = new_pre_info
@@ -275,7 +270,7 @@ class XodrParser(object):
             pass
 
         try:
-            new_suc_info = LinkInfo()
+            new_suc_info = RoadLinkInfo()
             new_suc_info.id = int(link["successor"]["element_id"])
             new_suc_info.type = link["successor"]["element_type"]
             new_link.successor = new_suc_info
@@ -294,20 +289,17 @@ class XodrParser(object):
         return new_road
 
     def create_lane_link(self, link):
-        new_link = Link()
+        new_link = LaneLink()
 
         try:
-            new_suc = LinkInfo()
-            new_suc.id = int(link["successor"])
-            new_link.successor = new_suc
+            new_link.from_position = int(link["predecessor"])
         except:
-            print("Roadlink has no successor.")
+            print("No LaneLink.predecessor")
         try:
-            new_pre = LinkInfo()
-            new_pre.id = int(link["predecessor"])
-            new_link.predecessor = new_pre
+            new_link.to_position = int(link["successor"])
         except:
-            print("Roadlink has no predeseccor.")
+            print("No LaneLink.successor")
+            
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_start,
@@ -395,8 +387,8 @@ class XodrParser(object):
             # TODO(hart): contact point
             for lane_link in connection["lane_links"]:
                 new_lane_link = LaneLink()
-                new_lane_link.from_id = int(lane_link["from"])
-                new_lane_link.to_id = int(lane_link["to"])
+                new_lane_link.from_position = int(lane_link["from"])
+                new_lane_link.to_position = int(lane_link["to"])
                 new_connection.add_lane_link(new_lane_link)
             new_junction.add_connection(new_connection)
         return new_junction

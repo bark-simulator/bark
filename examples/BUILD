@@ -9,7 +9,6 @@ py_test(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime:runtime",],
 )
 
@@ -24,7 +23,6 @@ py_test(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime:runtime",],
 )
 
@@ -38,7 +36,6 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime:runtime",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
@@ -53,7 +50,6 @@ py_test(
   deps = [":scenario_generation_dump",
           "//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/commons:roadgraph_generator",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
           "//modules/runtime:runtime",

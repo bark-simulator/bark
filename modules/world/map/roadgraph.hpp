@@ -16,6 +16,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace modules {
 namespace world {
@@ -24,6 +25,7 @@ namespace map {
 using namespace modules::world::opendrive;
 using namespace boost;
 
+typedef std::shared_ptr<modules::geometry::Polygon> PolygonPtr;
 
 struct LaneVertex {
   RoadId road_id;
@@ -31,8 +33,9 @@ struct LaneVertex {
   LaneId get_global_line_id() { return global_lane_id; }
   LanePtr get_lane() { return lane; }
   LanePtr lane;
-  LaneVertex() : road_id(0), global_lane_id(0), lane(NULL) {}
-  LaneVertex(int road_id_in, int global_lane_id_in, LanePtr lane_in) : road_id(road_id_in), global_lane_id(global_lane_id_in), lane(lane_in) {}
+  PolygonPtr polygon;
+  LaneVertex() : road_id(0), global_lane_id(0), lane(NULL), polygon(NULL) {}
+  LaneVertex(int road_id_in, int global_lane_id_in, LanePtr lane_in) : road_id(road_id_in), global_lane_id(global_lane_id_in), lane(lane_in), polygon(NULL) {}
 };
 
 enum LaneEdgeType {
@@ -341,6 +344,25 @@ class Roadgraph {
     }
     return retval;
   }
+
+
+  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id);
+
+  // TODO Klemens: change to LanePtr to Line
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon);
+
+  void ComputeLanePolygon(const LaneId& lane_id);
+
+  void GenerateVertices(OpenDriveMapPtr map);
+
+  void GeneratePreAndSuccessors(OpenDriveMapPtr map);
+
+  void GenerateNeighbours(OpenDriveMapPtr map);
+
+  void GenerateFromJunctions(OpenDriveMapPtr map);
+
+  void Generate(OpenDriveMapPtr map);
+
 
  private:
   LaneGraph g_;

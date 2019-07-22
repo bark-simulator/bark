@@ -410,5 +410,113 @@ TEST(roadgraph, get_driving_corridor_test)
   */
 }
 
+TEST(roadgraph, generate_roadgraph_neighbours)
+{
+  using namespace modules::geometry;
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+
+  OpenDriveMapPtr open_drive_map(new OpenDriveMap());
+    //! ROAD 1
+  PlanViewPtr p(new PlanView());
+  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls(new LaneSection(0.0));
+
+  //! Lane
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+  LanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  LanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
+
+  ls->add_lane(lane1);
+  ls->add_lane(lane2);
+  ls->add_lane(lane3);
+
+  RoadPtr r(new Road("highway", 100));
+  r->set_plan_view(p);
+  r->add_lane_section(ls);
+
+  open_drive_map->add_road(r);
+
+  Roadgraph rg;
+  rg.Generate(open_drive_map);
+
+  std::pair<LaneId, bool> in1 = rg.get_inner_neighbor(lane1->get_id());
+  // There is no inner neighbor for lane1, as lane1 and lane2 are left and right of the planview
+  ASSERT_FALSE(in1.second);
+
+  std::pair<LaneId, bool> out2 = rg.get_outer_neighbor(lane2->get_id());
+  ASSERT_TRUE(out2.second);
+  ASSERT_TRUE(out2.first == lane3->get_id());
+
+}
 
 
+TEST(roadgraph, generate_roadgraph_successors)
+{
+  using namespace modules::geometry;
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+
+  OpenDriveMapPtr open_drive_map(new OpenDriveMap());
+  //! ROAD 1
+  PlanViewPtr p(new PlanView());
+  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls(new LaneSection(0.0));
+  
+  //! Lane
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+  LanePtr lane1 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  LaneLink ll1;
+  ll1.from_position = 1;
+  ll1.to_position = 1;
+  lane1->set_link(ll1);
+  ls->add_lane(lane1);
+
+  RoadPtr r(new Road("highway", 100));
+  r->set_plan_view(p);
+  r->add_lane_section(ls);
+
+  //! ROAD 2
+  PlanViewPtr p2(new PlanView());
+  p2->add_line(Point2d(10.0f, 0.0f), 0.0f, 20.0f);
+
+  //! Lane-Section 2
+  LaneSectionPtr ls2(new LaneSection(0.0));
+  
+  //! Lane
+  LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_2 = {0, 10, off};
+  LanePtr lane2 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  LaneLink ll2;
+  ll2.from_position = 1;
+  ll2.to_position = 1;
+  lane2->set_link(ll2);
+  ls2->add_lane(lane2);
+
+  RoadPtr r2(new Road("highway", 101));
+  r2->set_plan_view(p2);
+  r2->add_lane_section(ls2);
+  
+  RoadLinkInfo rli_succ(r2->get_id(), "road");
+  RoadLink rl;
+  rl.set_successor(rli_succ);
+  r->set_link(rl);
+
+  open_drive_map->add_road(r);
+  open_drive_map->add_road(r2);
+
+  Roadgraph rg;
+  rg.Generate(open_drive_map);
+
+  std::vector<LaneId> suc = rg.get_successor_lanes(lane1->get_id());
+  std::cout << "suc: " << suc.size() << std::endl;
+  ASSERT_TRUE(suc.size() == 1);
+  ASSERT_TRUE(suc[0] == lane2->get_id());
+}

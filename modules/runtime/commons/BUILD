@@ -21,15 +21,6 @@ py_library(
     srcs = ["xodr_parser.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
-    deps = [":roadgraph_generator"],
-    visibility = ["//visibility:public"],
-)
-
-py_library(
-    name = "roadgraph_generator",
-    srcs = ["roadgraph_generator.py"],
-    data = ['//python:bark.so'],
-    imports = ['../../../python'],
     deps = [],
     visibility = ["//visibility:public"],
 )

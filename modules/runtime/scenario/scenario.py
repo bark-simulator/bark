@@ -8,7 +8,6 @@ from bark.models.behavior import *
 from bark.world import *
 from bark.world.map import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 from modules.runtime.commons.xodr_parser import XodrParser
 
 import copy

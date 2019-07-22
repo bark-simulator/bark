@@ -23,20 +23,20 @@ void python_opendrive(py::module m) {
       .def("add_arc", &PlanView::add_arc, "Add arc to planview")
       .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array");
 
-  py::class_<LinkInfo>(m, "LinkInfo")
+  py::class_<RoadLinkInfo>(m, "RoadLinkInfo")
       .def(py::init<>())
-      .def_readwrite("id", &LinkInfo::position_)
-      .def_readwrite("type", &LinkInfo::type_);
+      .def_readwrite("id", &RoadLinkInfo::id_)
+      .def_readwrite("type", &RoadLinkInfo::type_);
 
-  py::class_<Link>(m, "Link")
+  py::class_<RoadLink>(m, "RoadLink")
       .def(py::init<>())
-      .def_property("predecessor", &Link::get_predecessor, &Link::set_predecessor)
-      .def_property("successor", &Link::get_successor, &Link::set_successor)
+      .def_property("predecessor", &RoadLink::get_predecessor, &RoadLink::set_predecessor)
+      .def_property("successor", &RoadLink::get_successor, &RoadLink::set_successor)
       .def(
           "__repr__",
-          [](const Link &l) {
+          [](const RoadLink &l) {
           std::stringstream ss;
-          ss << "<bark.Link> Link: ";
+          ss << "<bark.RoadLink> RoadLink: ";
           ss << modules::world::opendrive::print(l);
           return ss.str();
       });
@@ -128,8 +128,8 @@ void python_opendrive(py::module m) {
 
   py::class_<LaneLink>(m, "LaneLink")
       .def(py::init<>())
-      .def_readwrite("from_id", &LaneLink::from_id)
-      .def_readwrite("to_id", &LaneLink::to_id);
+      .def_readwrite("from_position", &LaneLink::from_position)
+      .def_readwrite("to_position", &LaneLink::to_position);
 
   py::class_<Connection>(m, "Connection")
       .def(py::init<>())
