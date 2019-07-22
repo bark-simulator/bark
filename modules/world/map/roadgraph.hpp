@@ -86,29 +86,29 @@ class Roadgraph {
 
   bool add_successor(const LaneId& prev, const LaneId& succ);
 
-  std::vector<LaneId> get_successor_lanes(const LaneId& lane_id);
+  std::vector<LaneId> get_successor_lanes(const LaneId& lane_id) const;
 
-  std::vector<LaneId> get_predecessor_lanes(const LaneId& lane_id);
+  std::vector<LaneId> get_predecessor_lanes(const LaneId& lane_id) const;
 
-  bool check_id_in_filtered_graph(const FilteredLaneGraph& fg, const LaneId& lane_id);
+  bool check_id_in_filtered_graph(const FilteredLaneGraph& fg, const LaneId& lane_id) const;
 
   std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid);
 
-  LanePtr get_laneptr(const LaneId& id);
+  LanePtr get_laneptr(const LaneId& id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not
-  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id);
+  std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not
   //! @note make sure to not call this function on the planview lane!
-  std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id);
+  std::pair<LaneId, bool> get_outer_neighbor(const LaneId& lane_id) const;
 
   //! LaneId of the neighboring lane and a flag if it exists or not, usecase: lane_id is the planview
   //! @param lane_id queried lane id
   //! @param from the query answer return the lane id that is not but_not
   std::pair<LaneId, bool> get_outer_neighbor_but_not(const LaneId& lane_id, const LaneId& but_not);
 
-  bool has_lane(const LaneId& lane_id);
+  bool has_lane(const LaneId& lane_id) const;
 
   void print_graph(const char* filename);
 
@@ -118,32 +118,32 @@ class Roadgraph {
     return g_;
   }
 
-  LaneVertex get_vertex(vertex_t v_des) {
+  LaneVertex get_vertex(vertex_t v_des) const {
     return g_[v_des];
   }
 
-  std::vector<vertex_t> get_vertices();
+  std::vector<vertex_t> get_vertices() const;
 
-  LaneEdge get_edge(edge_t e_des) {
+  LaneEdge get_edge(edge_t e_des) const {
     return g_[e_des];
   }
 
-  std::vector<vertex_t> get_next_vertices(vertex_t current_vertex);
+  std::vector<vertex_t> get_next_vertices(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_out_edges(vertex_t current_vertex);
+  std::vector<edge_t> get_out_edges(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_edges();
+  std::vector<edge_t> get_edges() const;
 
-  edge_t get_edge_descr(vertex_t from, vertex_t to);
+  edge_t get_edge_descr(vertex_t from, vertex_t to) const;
 
-  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id);
+  std::pair<vertex_t,bool> get_vertex_by_lane_id(const LaneId& lane_id) const;
 
-  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id);
+  std::pair< LanePtr, LanePtr > ComputeLaneBoundaries(const LaneId& lane_id) const;
 
   // TODO Klemens: change to LanePtr to Line
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon);
+  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeRouteBoundaries(const std::vector<LaneId>& horizon) const;
 
-  std::pair<PolygonPtr, bool> ComputeLanePolygon(const LaneId& lane_id);
+  std::pair<PolygonPtr, bool> ComputeLanePolygon(const LaneId& lane_id) const;
 
   void GenerateVertices(OpenDriveMapPtr map);
 
@@ -152,6 +152,8 @@ class Roadgraph {
   void GenerateNeighbours(OpenDriveMapPtr map);
 
   void GenerateFromJunctions(OpenDriveMapPtr map);
+
+  void GeneratePolygonsForVertices();
 
   void Generate(OpenDriveMapPtr map);
 
@@ -171,7 +173,7 @@ class Roadgraph {
     }
   }
 
-  std::vector<std::pair<LaneId, bool> > get_neighbor_from_edgetype(const LaneId& lane_id, const LaneEdgeType edge_type) { //! we can have two outer neighbors
+  std::vector<std::pair<LaneId, bool> > get_neighbor_from_edgetype(const LaneId& lane_id, const LaneEdgeType edge_type) const { //! we can have two outer neighbors
     std::vector<std::pair<LaneId, bool> > retval;
     std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
     boost::graph_traits<LaneGraph>::out_edge_iterator i, end;

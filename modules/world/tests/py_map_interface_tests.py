@@ -47,6 +47,8 @@ class EnvironmentTests(unittest.TestCase):
         
         for l in route_outer:
             assert(l.lane_type == LaneType.driving)
+        
+        #v = map_interface.get_roadgraph().get_vertices()
 
 
 if __name__ == '__main__':
