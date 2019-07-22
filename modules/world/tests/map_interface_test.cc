@@ -34,7 +34,10 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width_1 = {0, 10, off};
   LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
+  lane->set_lane_type(LaneType::DRIVING);
   LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  lane2->set_lane_type(LaneType::DRIVING);
+
   ls->add_lane(lane);
   ls->add_lane(lane2);
   ls2->add_lane(lane);
@@ -60,7 +63,9 @@ void build_two_road_junction_map(const modules::world::opendrive::OpenDriveMapPt
   LaneWidth lane_width_2 = {0, 10, off2};
 
   LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(), lane_width_2, 0.05);
+  lane3->set_lane_type(LaneType::DRIVING);
   LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  lane4->set_lane_type(LaneType::DRIVING);
 
   ls3->add_lane(lane3);
   ls3->add_lane(lane4);

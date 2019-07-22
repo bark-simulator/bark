@@ -34,10 +34,12 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
   return true;
 }
 
+
 bool modules::world::map::MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
-  std::vector<LanePtr>& lanes) const {
+  std::vector<LanePtr>& lanes, 
+  bool type_driving_only) const {
   if (!open_drive_map_) {
     return false;
   }
@@ -46,8 +48,14 @@ bool modules::world::map::MapInterface::FindNearestLanes(
   }
 
   std::vector<rtree_lane_value> results_n;
-  rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes),
+
+  if (type_driving_only) {
+    rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes) && boost::geometry::index::satisfies(is_lane_type),
               std::back_inserter(results_n));
+  }
+  else {
+    rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes), std::back_inserter(results_n));
+  }
 
   if (results_n.empty()) {
     return false;

@@ -83,6 +83,17 @@ py_test(
 )
 
 py_test(
+  name = "py_map_interface_tests",
+  srcs = ["py_map_interface_tests.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime:runtime"],
+)
+
+py_test(
   name = "py_agent_tests",
   srcs = ["py_agent_tests.py"],
   data = ['//python:bark.so'],

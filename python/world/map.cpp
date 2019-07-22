@@ -30,6 +30,7 @@ void python_map(py::module m) {
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
+      .def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
       .def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
           Line inner_line, outer_line, center_line;
           bool result = m.CalculateDrivingCorridor(startid, goalid, inner_line, outer_line, center_line);
