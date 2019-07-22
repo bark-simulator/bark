@@ -90,6 +90,10 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
       }
     }
   }
+  else {
+    std::cerr << "Cannot compute Lane Boundaries, as route is empty" << std::endl;
+  }
+
   return std::make_pair(inner, outer);
 }
 
