@@ -100,5 +100,6 @@ void python_map(py::module m) {
     .def("find_path", &Roadgraph::find_path)
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
     .def("add_successor", &Roadgraph::add_successor)
+    .def("get_successor_lanes", &Roadgraph::get_successor_lanes)
     .def("Generate", &Roadgraph::Generate);
 }

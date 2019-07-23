@@ -116,3 +116,11 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters"],
 )
+
+py_test(
+    name = "py_4way_intersection_error_test",
+    srcs = ["py_4way_intersection_error_test.py"],
+    data = ["//python:bark.so", "//modules/runtime/tests:xodr_data"],
+    imports = ["../../../python/"],
+    deps = ["//modules/runtime/commons:xodr_parser"]
+)
