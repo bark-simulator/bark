@@ -31,6 +31,7 @@ using rtree_lane_id = LanePtr;
 using rtree_lane_value = std::pair<rtree_lane_model, rtree_lane_id>;
 using rtree_lane = boost::geometry::index::rtree<rtree_lane_value,
                    boost::geometry::index::linear<16, 4> >;
+using PathBoundaries = std::vector<std::pair<LanePtr, LanePtr>>;
 
 class MapInterface {
  public:
@@ -43,8 +44,17 @@ class MapInterface {
                          std::vector<opendrive::LanePtr>& lanes,
                          bool type_driving_only = true) const;
 
+  bool FindLanesAroundPosition(const modules::geometry::Point2d& position,
+                                const float distance,
+                                std::vector<opendrive::LanePtr>& lanes) const;
+
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
                                   const LaneId& startid, const LaneId& goalid) const;
+
+  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<LaneId>& lane_ids) const;
+
+  std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
+  std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
 
   bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
                             Line& inner_line, Line& outer_line, Line& center_line) const;

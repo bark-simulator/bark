@@ -47,7 +47,7 @@ enum LaneEdgeType {
 struct LaneEdge {
   LaneEdgeType edge_type;
   float weight; //! @todo tobias: for shortest path calculation: a very basic implementation!
-  LaneEdgeType get_edge_type() { return edge_type; }
+  LaneEdgeType get_edge_type() const { return edge_type; }
   LaneEdge() : edge_type(SUCCESSOR_EDGE), weight(1) {}
   LaneEdge(LaneEdgeType edge_type_in) : edge_type(edge_type_in), weight(edge_type_in==SUCCESSOR_EDGE?1:10) {}
 };
@@ -93,6 +93,8 @@ class Roadgraph {
   bool check_id_in_filtered_graph(const FilteredLaneGraph& fg, const LaneId& lane_id) const;
 
   std::vector<LaneId> find_path(const LaneId& startid, const LaneId& goalid);
+
+  std::vector<std::vector<LaneId>> find_all_paths_in_subgraph(const std::vector<LaneEdgeType> &edge_type_subset, const std::vector<LaneId> &lane_id_subset);
 
   LanePtr get_laneptr(const LaneId& id) const;
 
