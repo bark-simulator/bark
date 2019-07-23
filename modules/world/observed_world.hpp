@@ -35,6 +35,10 @@ class ObservedWorld : protected World {
       World(world),
       ego_agent_id_(ego_agent_id) {}
 
+    ObservedWorld(const ObservedWorld &observed_world) :
+      World(observed_world),
+      ego_agent_id_(observed_world.ego_agent_id_) {}
+
     ~ObservedWorld() {}
 
     virtual double get_world_time() const { return World::get_world_time(); }
@@ -65,6 +69,9 @@ class ObservedWorld : protected World {
     }
 
     std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
+    void Step(const float time_step);
+
+    ObservedWorld *Clone() const;
 
  private:
     AgentId ego_agent_id_;
