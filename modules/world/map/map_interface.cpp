@@ -69,6 +69,35 @@ bool modules::world::map::MapInterface::FindNearestLanes(
   return true;
 }
 
+bool modules::world::map::MapInterface::FindLanesAroundPosition(
+  const modules::geometry::Point2d& position,
+  const float distance,
+  std::vector<opendrive::LanePtr>& lanes) const {
+  if (!open_drive_map_) {
+    return false;
+  }
+  if (rtree_lane_.empty()) {
+    return false;
+  }
+
+  Point2d min_corner = modules::geometry::operator-(position, Point2d(distance, distance));
+  Point2d max_corner = modules::geometry::operator+(position, Point2d(distance, distance));
+  boost::geometry::model::box<Point2d> box(min_corner, max_corner);
+  std::vector<rtree_lane_value> results;
+  rtree_lane_.query(boost::geometry::index::intersects(box), std::back_inserter(results));
+
+  if (results.empty()) {
+    return false;
+  }
+
+  lanes.clear();
+  for (auto const &result : results) {
+    lanes.push_back(result.second);
+  }
+
+  return true;
+}
+
 bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2d& point, LaneId id) const {
   
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
@@ -101,6 +130,41 @@ std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::Map
       const LaneId& startid, const LaneId& goalid) const {
   std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
   return roadgraph_->ComputeRouteBoundaries(horizon);
+}
+
+std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBoundaries(
+  const std::vector<LaneId>& lane_ids) const {
+  std::vector<LaneEdgeType> successor_edges = {LaneEdgeType::SUCCESSOR_EDGE};
+  std::vector<std::vector<LaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(successor_edges, lane_ids);
+
+  std::vector<PathBoundaries> all_path_boundaries;
+  for (auto const &path : all_paths) {
+    std::vector<std::pair<LanePtr, LanePtr>> path_boundaries;
+    for (auto const &path_segment : path) {
+      std::pair<LanePtr, LanePtr> lane_boundaries = roadgraph_->ComputeLaneBoundaries(path_segment);
+      path_boundaries.push_back(lane_boundaries);
+    }
+    all_path_boundaries.push_back(path_boundaries);
+  }
+  return all_path_boundaries;
+}
+
+std::pair<LanePtr, bool> modules::world::map::MapInterface::get_inner_neighbor(const LaneId lane_id) const {
+  std::pair<LaneId, bool> inner_neighbor = roadgraph_->get_inner_neighbor(lane_id);
+  if (inner_neighbor.second) {
+    return std::make_pair(roadgraph_->get_laneptr(inner_neighbor.first), true);
+  } else {
+    return std::make_pair(nullptr, false);
+  }
+}
+
+std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(const LaneId lane_id) const {
+  std::pair<LaneId, bool> outer_neighbor = roadgraph_->get_outer_neighbor(lane_id);
+  if (outer_neighbor.second) {
+    return std::make_pair(roadgraph_->get_laneptr(outer_neighbor.first), true);
+  } else {
+    return std::make_pair(nullptr, false);
+  }
 }
 
 bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
