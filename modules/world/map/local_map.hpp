@@ -14,6 +14,7 @@
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/geometry/geometry.hpp"
+#include "modules/world/map/frenet.hpp"
 
 namespace modules {
 namespace world {
@@ -39,6 +40,9 @@ struct DrivingCorridor {
   void set_outer(const Line& o) { outer = o; }
   void set_inner(const Line& o) { inner = o; }
   void set_center(const Line& o) { center = o; }
+
+  // get Frenet coordinate to center line
+  Frenet FrenetFromCenterLine(const Point2d& point) { return Frenet(point, center);}
 
   Line outer, inner, center;
   // 1st entry is the index from where the 2nd value lane id is valid
