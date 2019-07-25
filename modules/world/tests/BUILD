@@ -74,6 +74,23 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "local_map_test",
+    srcs = [
+        "local_map_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world/map:frenet",
+        "//modules/world/map:roadgraph",
+        "//modules/world/map:local_map",
+        "//modules/world/map:map_interface",
+        "//modules/world/opendrive",
+        "@gtest//:main",
+    ],
+)
+
 py_test(
   name = "py_opendrive_tests",
   srcs = ["py_opendrive_tests.py"],
