@@ -35,6 +35,23 @@ cc_library(
 )
 
 cc_library(
+    name = "frenet",
+    srcs = [
+        "frenet.cpp",
+    ],
+    hdrs = [
+        "frenet.hpp",
+    ],
+    deps = [
+        "//modules/geometry",
+        "//modules/world/opendrive",
+        "@boost//:geometry",
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "local_map",
     srcs = [
         "local_map.cpp"
@@ -46,6 +63,7 @@ cc_library(
         "//modules/geometry",
         "//modules/world/opendrive",
         "//modules/world/goal_definition:goal_definition",
+        "//modules/world/map:frenet",
         "@boost//:geometry",
         "@boost//:graph",
         ":map_interface"
