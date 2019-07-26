@@ -83,5 +83,32 @@ std::vector<ObservedWorld> World::Observe(const std::vector<AgentId>& agent_ids)
   return observed_worlds;
 }
 
+
+void World::UpdateAgentRTree() {
+  rtree_agents_.clear();
+  for(auto &agent : agents_) {
+    auto obj = agent.second->GetPolygonFromState(agent.second->get_current_state()).obj_;
+    rtree_agent_model box;
+    boost::geometry::envelope(obj, box);
+    boost::geometry::correct(box);
+    rtree_agents_.insert(std::make_pair(box, agent.first));
+  }
+
+}
+
+AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) {
+  std::vector<rtree_agent_value> results_n;
+
+  rtree_agents_.query(boost::geometry::index::nearest(position, num_agents),
+            std::back_inserter(results_n));
+
+  AgentMap nearest_agents;
+  for (auto &result_pair : results_n) {
+    nearest_agents[result_pair.second] =  agents_[result_pair.second];
+  }
+  return nearest_agents;
+}
+
+
 }  // namespace world
 }  // namespace modules
