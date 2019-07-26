@@ -65,6 +65,8 @@ class ObservedWorld : protected World {
       return Point2d(ego_state(X_POSITION), ego_state(Y_POSITION));
     }
 
+    AgentMap get_agents_in_front(const unsigned int& max_num) const;
+
  private:
     AgentId ego_agent_id_;
 };
