@@ -1,10 +1,10 @@
 cc_library(
-    name = "constant_velocity",
+    name = "idm_classic",
     srcs = [
-        "constant_velocity.cpp",
+        "idm_classic.cpp",
     ],
     hdrs = [
-        "constant_velocity.hpp",
+        "idm_classic.hpp",
     ],
     deps = [
         "//modules/commons:commons",

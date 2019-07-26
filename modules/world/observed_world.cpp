@@ -9,11 +9,14 @@
 namespace modules {
 namespace world {
 
+using modules::geometry::Polygon;
+using modules::world::AgentMap;
+
 AgentMap ObservedWorld::get_agents_in_front(const unsigned int& max_num) const {
   State ego_state = get_ego_state();
-  AgentMap nearest_agents = World::GetNearestAgents(get_ego_point, max_num);
+  AgentMap nearest_agents = GetNearestAgents(get_ego_point(), max_num);
 
-  const Polygon& corridor_polygon = get_local_map()->get_horizon_driving_corridor()->CorridorPolygon(); 
+  const Polygon& corridor_polygon = get_local_map()->get_horizon_driving_corridor().CorridorPolygon(); 
   AgentMap front_agents;
   for (auto& agent : nearest_agents) {
     if(modules::geometry::Collide(corridor_polygon, agent.second->GetPolygonFromState(agent.second->get_current_state()))) {
