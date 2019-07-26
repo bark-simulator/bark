@@ -73,7 +73,7 @@ class World : public commons::BaseType {
   void MoveAgents(const float& delta_time);
 
   void UpdateAgentRTree();
-  AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents); 
+  AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 
 
   virtual World *Clone() const;
 

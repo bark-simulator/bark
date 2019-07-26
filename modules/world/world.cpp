@@ -21,7 +21,8 @@ World::World(const World& world)  :
          map_(world.get_map()),
          agents_(world.get_agents()),
          objects_(world.get_objects()),
-         world_time_(world.get_world_time()) {}
+         world_time_(world.get_world_time()),
+         rtree_agents_(world.rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
@@ -96,7 +97,7 @@ void World::UpdateAgentRTree() {
 
 }
 
-AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) {
+AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const {
   std::vector<rtree_agent_value> results_n;
 
   rtree_agents_.query(boost::geometry::index::nearest(position, num_agents),
@@ -104,7 +105,7 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, con
 
   AgentMap nearest_agents;
   for (auto &result_pair : results_n) {
-    nearest_agents[result_pair.second] =  agents_[result_pair.second];
+    nearest_agents[result_pair.second] =  get_agents()[result_pair.second];
   }
   return nearest_agents;
 }
