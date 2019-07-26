@@ -18,7 +18,7 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import utils
 
-class RuntimeRLTests(unittest.TestCase):
+class RuntimeTFARLTests(unittest.TestCase):
     @staticmethod
     def test_motion_primitives_concat_state():
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
