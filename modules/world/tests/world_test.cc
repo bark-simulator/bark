@@ -79,20 +79,20 @@ TEST(world, world_step)
   std::shared_ptr<LaneSection> section_2(new LaneSection(0.0f));
 
   LaneOffset off = {1.5, 0, 0, 0};
-  LaneWidths lane_widths_1 = {{0, 30, off}};
-  LaneWidths lane_widths_2 = {{0, 30, off}};
-  LaneWidths lane_widths_3 = {{30, 50, off}};
-  LaneWidths lane_widths_4 = {{30, 50, off}};
+  LaneWidth lane_width_1 = {0, 30, off};
+  LaneWidth lane_width_2 = {0, 30, off};
+  LaneWidth lane_width_3 = {30, 50, off};
+  LaneWidth lane_width_4 = {30, 50, off};
 
   std::shared_ptr<Lane> l_0(new Lane(1));
   std::shared_ptr<Lane> l_1(new Lane(-1));
   std::shared_ptr<Lane> l_2(new Lane(1));
   std::shared_ptr<Lane> l_3(new Lane(-1));
 
-  l_0 = p_1->create_lane(1, lane_widths_1);
-  l_1 = p_1->create_lane(-1, lane_widths_2);
-  l_2 = p_1->create_lane(1, lane_widths_3);
-  l_3 = p_1->create_lane(-1, lane_widths_4);
+  l_0 = create_lane_from_lane_width(1, p_1->get_reference_line(), lane_width_1);
+  l_1 = create_lane_from_lane_width(-1, p_1->get_reference_line(), lane_width_2);
+  l_2 = create_lane_from_lane_width(1, p_1->get_reference_line(), lane_width_3);
+  l_3 = create_lane_from_lane_width(-1, p_1->get_reference_line(), lane_width_4);
 
   section_1->add_lane(l_0);
   section_1->add_lane(l_1);

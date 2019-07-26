@@ -8,7 +8,6 @@ import pprint
 from bark.world.opendrive import *
 from bark.world.map import *
 from bark.geometry import *
-from modules.runtime.commons.roadgraph_generator import RoadgraphGenerator
 
 
 class XodrParser(object):
@@ -19,11 +18,7 @@ class XodrParser(object):
         self.map = OpenDriveMap()
         self.convert_to_map(self.python_map)
         self.roadgraph = Roadgraph()
-        self.generate_roadgraph()
-
-    def generate_roadgraph(self):
-        rg = RoadgraphGenerator(self.roadgraph)
-        rg.generate(self.map)
+        self.roadgraph.Generate(self.map)
 
     def load_file(self, file_name):
         return open(file_name, 'r')
@@ -56,11 +51,11 @@ class XodrParser(object):
 
     def parse_lane_road_mark(self, road_mark):
         new_road_mark = {}
-        new_road_mark["s_offset"] = road_mark.find("sOffset")
-        new_road_mark["type"] = road_mark.find("type")
-        new_road_mark["weight"] = road_mark.find("weight")
-        new_road_mark["color"] = road_mark.find("color")
-        new_road_mark["width"] = road_mark.find("width")
+        new_road_mark["s_offset"] = road_mark.get("sOffset")
+        new_road_mark["type"] = RoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
+        new_road_mark["weight"] = road_mark.get("weight")
+        new_road_mark["color"] = RoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
+        new_road_mark["width"] = road_mark.get("width")
         return new_road_mark
 
     def parse_lane_width(self, lane_width):
@@ -73,6 +68,7 @@ class XodrParser(object):
         return new_lane_width
 
     def zero_lane_width(self):
+        # TODO: do we really need this?
         new_lane_width = {}
         new_lane_width["s_offset"] = 0.0
         new_lane_width["a"] = 0.0
@@ -89,17 +85,16 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            if str(lane.get("type")) != "driving":
+            if str(lane.get("type")) not in ["driving", "border", "sidewalk"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
                 continue
             new_lane = {}
             new_lane["id"] = id
-            new_lane["type"] = lane.get("type")
+            new_lane["type"] = LaneType.__members__[str(lane.get("type"))] # assign enum type
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
             if lane.find("roadMark") is not None:
-                new_lane["road_mark"] = self.parse_lane_road_mark(
-                    lane.find("roadMark"))
+                new_lane["road_mark"] = self.parse_lane_road_mark(lane.find("roadMark"))
             if lane.find("width") is not None:
                     new_lane["width"] = self.parse_lane_width(lane.find("width"))
             else:
@@ -265,9 +260,9 @@ class XodrParser(object):
 
     def create_cpp_road_link(self, link):
         # TODO(hart): insert road_link
-        new_link = Link()
+        new_link = RoadLink()
         try:
-            new_pre_info = LinkInfo()
+            new_pre_info = RoadLinkInfo()
             new_pre_info.id = int(link["predecessor"]["element_id"])
             new_pre_info.type = link["predecessor"]["element_type"]
             new_link.predecessor = new_pre_info
@@ -275,7 +270,7 @@ class XodrParser(object):
             pass
 
         try:
-            new_suc_info = LinkInfo()
+            new_suc_info = RoadLinkInfo()
             new_suc_info.id = int(link["successor"]["element_id"])
             new_suc_info.type = link["successor"]["element_type"]
             new_link.successor = new_suc_info
@@ -294,45 +289,86 @@ class XodrParser(object):
         return new_road
 
     def create_lane_link(self, link):
-        new_link = Link()
+        new_link = LaneLink()
 
         try:
-            new_suc = LinkInfo()
-            new_suc.id = int(link["successor"])
-            new_link.successor = new_suc
+            new_link.from_position = int(link["predecessor"])
         except:
-            print("Roadlink has no successor.")
+            print("No LaneLink.predecessor")
         try:
-            new_pre = LinkInfo()
-            new_pre.id = int(link["predecessor"])
-            new_link.predecessor = new_pre
+            new_link.to_position = int(link["successor"])
         except:
-            print("Roadlink has no predeseccor.")
+            print("No LaneLink.successor")
+            
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_start,
-                        s_end):
+                        s_end, reference_line):
         try:
             lane_widths = []
-            offset = LaneOffset(
-                float(lane["width"]["a"]), float(lane["width"]["b"]),
-                float(lane["width"]["c"]), float(lane["width"]["d"]))
+            a = float(lane["width"]["a"])
+            b = float(lane["width"]["b"])
+            c = float(lane["width"]["c"])
+            d = float(lane["width"]["d"])
+            offset = LaneOffset(a, b, c, d)
             lane_width = LaneWidth(s_start, s_end, offset)
-            lane_widths.append(lane_width)
 
-            # TODO (@hart): make sampling flexible
-            new_lane = new_road.plan_view.create_lane(int(lane["id"]), lane_widths, 1.0)
+            # TODO (@hart): make sampling flexible           
+            new_lane = Lane.create_lane_from_lane_width(int(lane["id"]), reference_line, lane_width, 1.0)
+
+            new_lane.lane_type = lane["type"]
             new_lane.link = self.create_lane_link(lane["link"])
+
+            # not every lane contains a road-mark
+            if "road_mark" in lane:
+                rm = RoadMark()
+                rm.type = lane['road_mark']['type']
+                rm.color = lane['road_mark']['color']
+                rm.width = float(lane['road_mark']['width'])
+                new_lane.road_mark = rm
+            
             new_lane_section.add_lane(new_lane)
+
         except:
             raise ValueError("Something went wrong with creating the lane.")
         return new_lane_section
 
+    def sortedIndices(self, lst):
+        return sorted(range(len(lst)), key = lambda x:(abs(lst[x])))
+
     def create_cpp_lane_section(self, new_road, road):
         for lane_section in road["lane_sections"]:
             new_lane_section = LaneSection(float(lane_section["s"]))
-            for _, lane in enumerate(lane_section["lanes"]):
-                new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]))
+            # sort lanes
+            #for idx_iterator in range(len(lane_section["lanes"])):
+            #    if lane_section["lanes"][idx_iterator]['id'] in list_id_read_in_lanes:
+
+            unordered_id_list = [l['id'] for l in lane_section["lanes"]]
+            indices = self.sortedIndices(unordered_id_list)
+
+            #for idx, lane in enumerate(lane_section["lanes"]):
+            for idx_iterator in indices:
+                lane = lane_section["lanes"][idx_iterator]
+                if lane['id'] == 0:
+                    # plan view
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]), new_road.plan_view.get_reference_line())
+                elif lane['id'] == -1 or lane['id'] == 1:
+                    # use plan view for offset calculation
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, float(road["length"]), new_road.plan_view.get_reference_line())
+                else:
+                    # use previous line for offset calculation
+                    #temp_lanes = new_lane_section.get_lanes()
+
+                    if lane['id'] > 0:
+                        previous_line = new_lane_section.get_lane_by_position(lane['id']-1).line
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, previous_line.length(), previous_line)                                
+                    elif lane['id'] < 0:
+                        previous_line = new_lane_section.get_lane_by_position(lane['id']+1).line
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, 0.0, previous_line.length(), previous_line)
+                    else:
+                        print("Calculating previous lane does not work well.")
+
+
             new_road.add_lane_section(new_lane_section)
         return new_road
 
@@ -351,8 +387,8 @@ class XodrParser(object):
             # TODO(hart): contact point
             for lane_link in connection["lane_links"]:
                 new_lane_link = LaneLink()
-                new_lane_link.from_id = int(lane_link["from"])
-                new_lane_link.to_id = int(lane_link["to"])
+                new_lane_link.from_position = int(lane_link["from"])
+                new_lane_link.to_position = int(lane_link["to"])
                 new_connection.add_lane_link(new_lane_link)
             new_junction.add_connection(new_connection)
         return new_junction
