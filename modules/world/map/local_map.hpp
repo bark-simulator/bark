@@ -43,6 +43,11 @@ struct DrivingCorridor {
 
   // get Frenet coordinate to center line
   Frenet FrenetFromCenterLine(const Point2d& point) { return Frenet(point, center);}
+  Polygon CorridorPolygon() {
+    Line line = get_outer();
+    line.append_linestring(get_inner());
+    return Polygon(Pose(0, 0, 0), line);
+  }
 
   Line outer, inner, center;
   // 1st entry is the index from where the 2nd value lane id is valid
