@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include "modules/world/opendrive/opendrive.hpp"
+#include <boost/geometry/index/rtree.hpp>
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
@@ -25,6 +26,12 @@ using world::evaluation::EvaluatorPtr;
 
 typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
+
+using rtree_agent_model = boost::geometry::model::box<modules::geometry::Point2d>;
+using rtree_agent_id = AgentId;
+using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
+using rtree_agent = boost::geometry::index::rtree<rtree_agent_value,
+                   boost::geometry::index::linear<16, 4> >;
 
 class World : public commons::BaseType {
  public:
@@ -65,6 +72,9 @@ class World : public commons::BaseType {
   void UpdateHorizonDrivingCorridors();
   void MoveAgents(const float& delta_time);
 
+  void UpdateAgentRTree();
+  AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents); 
+
   virtual World *Clone() const;
 
  private:
@@ -73,6 +83,7 @@ class World : public commons::BaseType {
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
+  rtree_agent rtree_agents_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

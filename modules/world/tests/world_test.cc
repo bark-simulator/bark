@@ -203,3 +203,51 @@ TEST(world, world_check_driving_corridor)
   
 }
 
+TEST(world, nearest_agents)
+{
+  DefaultParams params;
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel());
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
+
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+  
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 1.0, 0.0, 0.0, 5.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+
+  WorldPtr world(new World(&params));
+  world->add_agent(agent1);
+  world->add_agent(agent2);
+
+  world->UpdateAgentRTree();
+
+  AgentMap nearest_agents = world->GetNearestAgents(Point2d(0.0f,0.0f),1);
+
+  EXPECT_EQ(nearest_agents.size(), 1);
+  EXPECT_EQ(nearest_agents.begin()->second->get_current_state(), init_state1 );
+  
+  AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f,0.0f),2);
+
+  EXPECT_EQ(nearest_agents2.size(), 2);
+  EXPECT_EQ(nearest_agents2.begin()->second->get_current_state(), init_state1 );
+  EXPECT_EQ(nearest_agents2[agent2->get_agent_id()]->get_current_state(), init_state2 );
+
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state3 << 0.0, 1.0, 5.0, 0.0, 5.0;
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));
+
+  world->add_agent(agent3);
+  world->UpdateAgentRTree();
+  
+  AgentMap nearest_agents3 = world->GetNearestAgents(Point2d(4.0f,5.0f),2);
+  EXPECT_EQ(nearest_agents3.size(), 2);
+  EXPECT_EQ(nearest_agents3[agent1->get_agent_id()]->get_current_state(), init_state1 );
+  EXPECT_EQ(nearest_agents3[agent3->get_agent_id()]->get_current_state(), init_state3 );
+}
+
