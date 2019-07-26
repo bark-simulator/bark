@@ -19,9 +19,8 @@ http_archive(
 
 http_archive(
     name = "pybind11",
-    #sha1 = "8edc147d67ca85a93ed1f53628004528dc36a04d",
-    strip_prefix = "pybind11-2.2.3",
-    urls = ["https://github.com/pybind/pybind11/archive/v2.2.3.zip"],
+    strip_prefix = "pybind11-2.3.0",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.3.0.zip"],
     build_file = "@//tools/pybind11:pybind.BUILD",
 )
 

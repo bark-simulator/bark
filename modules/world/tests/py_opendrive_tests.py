@@ -32,10 +32,11 @@ class EnvironmentTests(unittest.TestCase):
         offset = LaneOffset(1.5, 0, 0, 0)
         lane_width = LaneWidth(0.0, 59.9, offset)
 
-        lane = pv.create_lane(-1, [lane_width], 0.5)
+        lane = Lane.create_lane_from_lane_width(-1, pv.get_reference_line(), lane_width, 0.5)
+
         #plt.plot(lane.line.toArray()[:, 0], lane.line.toArray()[:, 1])
         print(lane)
-        lane = pv.create_lane(1, [lane_width], 0.5)
+        lane = Lane.create_lane_from_lane_width(1, pv.get_reference_line(), lane_width, 0.5)
         print(lane)
         #plt.plot(lane.line.toArray()[:, 0], lane.line.toArray()[:, 1])
         #plt.axis('equal')

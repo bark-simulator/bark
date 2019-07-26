@@ -9,8 +9,7 @@ py_test(
             "//modules/runtime/commons:parameters",
             "//modules/runtime/commons:commons",
             "//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//modules/runtime/commons:xodr_parser",
-            "//modules/runtime/commons:roadgraph_generator"],
+            "//modules/runtime/commons:xodr_parser"],
     visibility = ["//visibility:public"],
 )
 
@@ -25,8 +24,7 @@ py_test(
             "//modules/runtime/commons:parameters",
             "//modules/runtime/commons:commons",
             "//modules/runtime/scenario/scenario_generation:scenario_generation",
-            "//modules/runtime/commons:xodr_parser",
-            "//modules/runtime/commons:roadgraph_generator"],
+            "//modules/runtime/commons:xodr_parser"],
     visibility = ["//visibility:public"],
 )
 
