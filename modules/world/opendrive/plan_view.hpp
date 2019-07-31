@@ -24,9 +24,6 @@ class PlanView {
   PlanView() : length_(0.0) {}
   ~PlanView() {}
 
-  geometry::Line create_line(int id, LaneWidth lane_width, float s_inc = 0.5f);
-  LanePtr create_lane(LanePosition lane_position, LaneWidths lane_widths, float s_inc = 2.0f);
-
   //! setter functions
   bool add_line(geometry::Point2d start_point, float heading, float length);
 

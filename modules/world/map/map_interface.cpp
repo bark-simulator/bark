@@ -34,10 +34,12 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
   return true;
 }
 
+
 bool modules::world::map::MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
-  std::vector<LanePtr>& lanes) const {
+  std::vector<LanePtr>& lanes, 
+  bool type_driving_only) const {
   if (!open_drive_map_) {
     return false;
   }
@@ -46,8 +48,14 @@ bool modules::world::map::MapInterface::FindNearestLanes(
   }
 
   std::vector<rtree_lane_value> results_n;
-  rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes),
+
+  if (type_driving_only) {
+    rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes) && boost::geometry::index::satisfies(is_lane_type),
               std::back_inserter(results_n));
+  }
+  else {
+    rtree_lane_.query(boost::geometry::index::nearest(point, num_lanes), std::back_inserter(results_n));
+  }
 
   if (results_n.empty()) {
     return false;
@@ -61,36 +69,38 @@ bool modules::world::map::MapInterface::FindNearestLanes(
   return true;
 }
 
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundariesHorizon(
-      const LaneId& startid, const LaneId& goalid) const {
-  std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
-  return ComputeLaneBoundaries(horizon);
-}
-
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundaries(
-      const std::vector<LaneId>& horizon) const {
-  std::vector<LanePtr> inner, outer;
-  if (!horizon.empty()) {
-    for (auto &h : horizon) {
-      std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(h);
-      auto l = roadgraph_->get_lane_graph()[v.first].lane;
-      assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
-      outer.push_back(l);
-      
-      std::pair<LaneId, bool> innerid = roadgraph_->get_inner_neighbor(h);
-        if(innerid.second) {
-          std::pair<vertex_t, bool> v_inner = roadgraph_->get_vertex_by_lane_id(innerid.first);
-          if (v_inner.second) {
-            inner.push_back(roadgraph_->get_lane_graph()[v_inner.first].lane);
-          } else {
-            inner.push_back(NULL);
-          }
-      } else { //you are probably at the planview and do not have inner lanes? 
-
+bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2d& point, LaneId id) const {
+  
+  std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
+  if (v.second) {
+    auto polygon = roadgraph_->get_lane_graph()[v.first].polygon;
+    if (!polygon) {
+      // found vertex has no polygon
+      return false;
+    }
+    else {
+      // found vertex has a polygon
+      bool point_in_polygon = modules::geometry::Collide(*polygon, point);
+      if (point_in_polygon) {
+        return true;
+      }
+      else {
+        return false;
       }
     }
   }
-  return std::make_pair(inner, outer);
+  else {
+    // no vertex found
+    return false;
+  }
+
+}
+
+// TODO Klemens: change to LanePtr to Line
+std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundariesHorizon(
+      const LaneId& startid, const LaneId& goalid) const {
+  std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
+  return roadgraph_->ComputeRouteBoundaries(horizon);
 }
 
 bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,

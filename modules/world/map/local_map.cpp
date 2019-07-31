@@ -58,26 +58,27 @@ bool LocalMap::Generate(Point2d point, double horizon) {
     map_interface_->ComputeLaneBoundariesHorizon(current_lane->get_id(),
                                                  goal_lane_id_);
 
-  std::vector< std::pair<int, LaneId> > dummy;
-  ConcatenateLines(route.first,
-                   driving_corridor_.inner,
-                   driving_corridor_.lane_ids_);
-  ConcatenateLines(route.second,
-                   driving_corridor_.outer,
-                   dummy);
-  if (route.first[0] != NULL && route.second[0] != NULL) {
-    driving_corridor_.center =
-      ComputeCenterLine(driving_corridor_.inner,
-                        driving_corridor_.outer);
+
+  if (route.first.size() != 0 && route.second.size() != 0) {
+    std::vector< std::pair<int, LaneId> > dummy;
+    ConcatenateLines(route.first,
+                    driving_corridor_.inner,
+                    driving_corridor_.lane_ids_);
+    ConcatenateLines(route.second,
+                    driving_corridor_.outer,
+                    dummy);
+                    
+    driving_corridor_.center = ComputeCenterLine(driving_corridor_.inner,
+                                                 driving_corridor_.outer);
+    driving_corridor_.computed = true;
   }
-  driving_corridor_.computed = true;
 
   return true;
 }
 
 DrivingCorridor LocalMap::ComputeDrivingCorridor(std::vector<LaneId> lane_ids) {
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
-    map_interface_->ComputeLaneBoundaries(lane_ids);
+    map_interface_->get_roadgraph()->ComputeRouteBoundaries(lane_ids);
   DrivingCorridor dc;
   std::vector< std::pair<int, LaneId> > dummy;
   ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
