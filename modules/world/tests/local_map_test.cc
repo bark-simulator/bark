@@ -5,6 +5,7 @@
 
 #include "gtest/gtest.h"
 #include "modules/world/map/local_map.hpp"
+#include "modules/geometry/commons.hpp"
 
 
 TEST(driving_corridor_frenet, local_map) {
@@ -41,5 +42,35 @@ TEST(driving_corridor_frenet, local_map) {
 
   EXPECT_EQ(frenet4.lon, 2.5);
   EXPECT_EQ(frenet4.lat, -4);
+
+}
+
+TEST(corridor_polygon, local_map) {
+  using namespace modules::world::map;
+  using namespace modules::geometry;
+
+  // some line with three points from x=1 to x=10, y=0
+  Line center;
+  center.add_point(Point2d(1,1));
+  center.add_point(Point2d(2,1));
+  center.add_point(Point2d(10,1));
+
+  Line outer;
+  outer.add_point(Point2d(1,2));
+  outer.add_point(Point2d(2,2));
+  outer.add_point(Point2d(10,2));
+
+  Line inner;
+  inner.add_point(Point2d(1,0));
+  inner.add_point(Point2d(2,0));
+  inner.add_point(Point2d(10,0));
+
+  DrivingCorridor corridor(outer, inner, center);
+
+  auto corridor_polygon = corridor.CorridorPolygon();
+
+  auto bb = corridor_polygon.bounding_box();
+  EXPECT_TRUE(bb.first== Point2d(1,0));
+  EXPECT_TRUE(bb.second == Point2d(10,2));
 
 }
