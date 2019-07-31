@@ -81,10 +81,6 @@ class Agent : public Object {
     return local_map_;
   }
 
-  void set_local_map(const modules::world::map::LocalMapPtr& rg) {
-    local_map_ = rg;
-  }
-
   void set_behavior_model(const BehaviorModelPtr &behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;
   }
@@ -95,6 +91,8 @@ class Agent : public Object {
     // TODO(@hart): parameter
     UpdateDrivingCorridor(20.0);
   }
+
+  void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
 
   void Move(const float &dt, const ObservedWorld &observed_world);
 
