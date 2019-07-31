@@ -31,6 +31,11 @@ struct DrivingCorridor {
                       inner(Line()),
                       center(Line()),
                       computed(false) {}
+
+  DrivingCorridor(const Line& outer, const Line& inner, const Line& center) :
+                    outer(outer),
+                    inner(inner),
+                    center(center) {}
   //! getter
   Line get_outer() const { return outer; }
   Line get_inner() const { return inner; }
