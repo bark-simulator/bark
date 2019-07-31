@@ -14,10 +14,6 @@ namespace modules {
 namespace models {
 namespace behavior {
 
-using dynamic::Trajectory;
-using world::objects::AgentId;
-using world::ObservedWorld;
-
 class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
  public:
   explicit BehaviorIDMClassic(commons::Params *params) :
@@ -25,9 +21,9 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
 
   virtual ~BehaviorIDMClassic() {}
 
-  virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world);
+  virtual double CalculateLongitudinalAcceleration(const world::ObservedWorld& observed_world);
 
-  modules::world::objects::AgentPtr GetLeadingVehicle(const ObservedWorld& observed_world);
+  std::pair<world::objects::AgentPtr, modules::world::map::Frenet> GetLeadingVehicle(const world::ObservedWorld& observed_world);
 
   virtual BehaviorModel *Clone() const;
 };

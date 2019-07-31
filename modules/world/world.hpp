@@ -74,6 +74,7 @@ class World : public commons::BaseType {
 
   void UpdateAgentRTree();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 
+  AgentMap GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const;
 
   virtual World *Clone() const;
 

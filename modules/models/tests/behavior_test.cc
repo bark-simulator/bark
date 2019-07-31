@@ -29,7 +29,7 @@ class DummyObservedWorld :public ObservedWorld {
               ObservedWorld(World(nullptr), AgentId()),
               init_state_(init_state)  {}
 
-    virtual State get_ego_state() const {
+    virtual State get_current_ego_state() const {
       return init_state_;
     }
 

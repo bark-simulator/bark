@@ -8,7 +8,7 @@
 
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
 import time
 import os
 
@@ -19,7 +19,7 @@ param_server = ParameterServer(filename= os.path.join("examples/params/",scenari
 scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
 
 
-viewer = PygameViewer(params=param_server, use_world_bounds=True)
+viewer = MPViewer(params=param_server, x_range=[-30,30], y_range=[-20,40], use_world_bounds=True)
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.05]

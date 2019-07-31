@@ -56,16 +56,15 @@ class ObservedWorld : protected World {
 
     const MapInterfacePtr get_map() const { return World::get_map(); }
 
-    State get_ego_state() const {
+    State current_ego_state() const {
       return World::get_agents()[ego_agent_id_]->get_current_state();
     }
 
-    Point2d get_ego_point() const {
-      State ego_state = get_ego_state();
-      return Point2d(ego_state(X_POSITION), ego_state(Y_POSITION));
+    Point2d current_ego_position() const {
+      return World::get_agents()[ego_agent_id_]->get_current_position();
     }
 
-    AgentMap get_agents_in_front(const unsigned int& max_num) const;
+    std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
 
  private:
     AgentId ego_agent_id_;

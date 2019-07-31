@@ -41,9 +41,9 @@ struct DrivingCorridor {
   void set_inner(const Line& o) { inner = o; }
   void set_center(const Line& o) { center = o; }
 
-  // get Frenet coordinate to center line
-  Frenet FrenetFromCenterLine(const Point2d& point) { return Frenet(point, center);}
-  Polygon CorridorPolygon() {
+  // returns Frenet coordinate to center line
+  Frenet FrenetFromCenterLine(const Point2d& point) const { return Frenet(point, center);}
+  Polygon CorridorPolygon() const {
     Line line = get_outer();
     line.append_linestring(get_inner());
     return Polygon(Pose(0, 0, 0), line);

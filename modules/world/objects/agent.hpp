@@ -31,6 +31,7 @@ using models::dynamic::Trajectory;
 using modules::world::opendrive::LaneId;
 using modules::world::map::MapInterfacePtr;
 using modules::world::goal_definition::GoalDefinition;
+using models::dynamic::StateDefinition;
 
 class Agent : public Object {
  public:
@@ -70,6 +71,9 @@ class Agent : public Object {
   }
 
   State get_current_state() const { return history_.back().first; }
+
+  modules::geometry::Point2d get_current_position() const {   const State& state = get_current_state();
+      return modules::geometry::Point2d(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION));}
 
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
