@@ -21,7 +21,7 @@ dynamic::Trajectory behavior::BehaviorConstantVelocity::Plan(
   dynamic::Trajectory traj(num_traj_time_points, int(StateDefinition::MIN_STATE_SIZE));
   auto const sample_time = delta_time / num_traj_time_points;
 
-  dynamic::State ego_vehicle_state = observed_world.get_ego_state();
+  dynamic::State ego_vehicle_state = observed_world.current_ego_state();
   
   // select state and get p0
   geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),

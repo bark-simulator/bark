@@ -9,6 +9,7 @@
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
@@ -85,7 +86,7 @@ void python_agent(py::module m)
 
             /* Create a new C++ instance */
             Agent agent(t[9].cast<State>(),
-                    std::make_shared<BehaviorConstantVelocity>(t[6].cast<BehaviorConstantVelocity>()), // todo resolve polymorphism
+                    std::make_shared<BehaviorIDMClassic>(t[6].cast<BehaviorIDMClassic>()), // todo resolve polymorphism
                     std::make_shared<SingleTrackModel>(t[8].cast<SingleTrackModel>()), // todo resolve polymorphism
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),

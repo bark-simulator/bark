@@ -97,6 +97,7 @@ void World::UpdateAgentRTree() {
 
 }
 
+
 AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const {
   std::vector<rtree_agent_value> results_n;
 
@@ -109,6 +110,27 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, con
   }
   return nearest_agents;
 }
+
+AgentMap World::GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const {
+  std::vector<rtree_agent_value> results_n;
+  auto bounding_box = polygon.bounding_box();
+  boost::geometry::model::box<modules::geometry::Point2d>
+         query_box(bounding_box.first, bounding_box.second);
+
+  rtree_agents_.query(boost::geometry::index::intersects(query_box),
+            std::back_inserter(results_n));
+
+  AgentMap intersecting_agents;
+  for (auto &result_pair : results_n) {
+    auto agent = get_agents()[result_pair.second];
+    if(modules::geometry::Collide(agent->GetPolygonFromState(agent->get_current_state()), polygon)) {
+      intersecting_agents[result_pair.second] = agent;
+    }
+  }
+  return intersecting_agents;
+}
+
+
 
 
 }  // namespace world
