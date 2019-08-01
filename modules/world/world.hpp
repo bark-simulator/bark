@@ -77,6 +77,7 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const;
 
   virtual World *Clone() const;
+  std::shared_ptr<World> WorldExecutionAtTime(const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;

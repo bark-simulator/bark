@@ -60,32 +60,34 @@ Agent::Agent(const Agent& other_agent) :
   goal_definition_(other_agent.goal_definition_) {}
 
 
-void Agent::Move(const float &dt, const ObservedWorld &observed_world) {
+void Agent::BehaviorPlan(const float &dt, const ObservedWorld &observed_world) {
   //! plan behavior for given horizon T using step-size dt
   behavior_model_->Plan(dt, observed_world);
+}
 
-  // TODO(@hart): observed world has ego-agent, thus: history_ is known
-  execution_model_->Execute(observed_world.get_world_time(),
+void Agent::ExecutionPlan(const float &dt) {
+  execution_model_->Execute(dt,
                             behavior_model_->get_last_trajectory(),
                             dynamic_model_,
                             history_.back().first);
+}
 
+void Agent::Execute(const float& world_time) {
   //! find closest state in execution-trajectory
-  int index_new_world_time = 0;
-  float new_world_time = observed_world.get_world_time() + dt;
+  int index_world_time = 0;
   float min_time_diff = std::numeric_limits<float>::max();
   Trajectory last_trajectory = execution_model_->get_last_trajectory();
   for (int i = 0; i < last_trajectory.rows(); i++) {
-    float diff_time = fabs(last_trajectory(i, TIME_POSITION) - new_world_time);
+    float diff_time = fabs(last_trajectory(i, TIME_POSITION) - world_time);
     if (diff_time < min_time_diff) {
-      index_new_world_time = i;
+      index_world_time = i;
       min_time_diff = diff_time;
     }
   }
 
   // TODO(fortiss): Input should not be zero!
   models::dynamic::StateInputPair state_input_pair(
-      State(execution_model_->get_last_trajectory().row(index_new_world_time)),
+      State(execution_model_->get_last_trajectory().row(index_world_time)),
       models::dynamic::Input::Zero(1, 1));
   history_.push_back(state_input_pair);
 

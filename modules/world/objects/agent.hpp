@@ -94,7 +94,11 @@ class Agent : public Object {
 
   void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
 
-  void Move(const float &dt, const ObservedWorld &observed_world);
+  void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
+
+  void ExecutionPlan(const float &dt);
+
+  void Execute(const float& world_time);
 
   bool AtGoal() const;
 

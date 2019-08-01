@@ -38,13 +38,29 @@ void World::add_evaluator(const std::string& name, const EvaluatorPtr& evaluator
 
 void World::MoveAgents(const float& delta_time) {
   WorldPtr current_world_state(this->Clone());
+
+  // Behavioral and execution planning
   for (auto agent : agents_) {
       //! clone current world
       ObservedWorld observed_world(*current_world_state,
                                    agent.first);
-      agent.second->Move(delta_time, observed_world);
+      agent.second->BehaviorPlan(delta_time, observed_world);
+      agent.second->ExecutionPlan(delta_time);
   }
+
+  // Execute motion
   world_time_ += delta_time;
+  for (auto agent : agents_) {
+      agent.second->Execute(world_time_);
+  }
+}
+
+WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
+  WorldPtr current_world_state(this->Clone());
+  for (auto agent : current_world_state->get_agents()) {
+      agent.second->Execute(execution_time);
+  }
+  return current_world_state;
 }
 
 World::EvaluationMap World::Evaluate() const {
