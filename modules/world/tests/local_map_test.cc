@@ -73,4 +73,7 @@ TEST(corridor_polygon, local_map) {
   EXPECT_TRUE(bb.first== Point2d(1,0));
   EXPECT_TRUE(bb.second == Point2d(10,2));
 
+  Polygon ptest(Pose(0, 0, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+
+  EXPECT_TRUE(modules::geometry::Collide(ptest, corridor_polygon));
 }

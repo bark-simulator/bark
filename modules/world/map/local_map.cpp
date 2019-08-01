@@ -96,6 +96,8 @@ Line LocalMap::CalculateLineHorizon(const Line& line,
   // TODO(@hart): do not access via member obj_
   Line new_line;
   int nearest_idx = FindNearestIdx(line, p);
+  new_line.add_point(line.obj_.at(nearest_idx));
+
   int max_idx = line.obj_.size();
   double s = 0.0;
   for (int idx = nearest_idx; nearest_idx < max_idx - 1; idx++) {
@@ -105,7 +107,7 @@ Line LocalMap::CalculateLineHorizon(const Line& line,
     double d = distance(line.obj_.at(idx_), line.obj_.at(idx_next));
     new_line.add_point(line.obj_.at(idx_next));
     s += d;
-    if ( s > horizon )
+    if ( s >= horizon )
       return new_line;
   }
   return new_line;

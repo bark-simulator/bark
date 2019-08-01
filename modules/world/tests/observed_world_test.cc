@@ -47,7 +47,7 @@ TEST(observed_world, agent_in_front)
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state2 << 0.0, 1.0, 0.0, 0.0, 5.0;
+  init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
 
   WorldPtr world(new World(&params));
@@ -75,14 +75,37 @@ TEST(observed_world, agent_in_front)
   DrivingCorridor corridor(outer, inner, center);
   LocalMapPtr local_map(new LocalMap(0, GoalDefinition(), corridor));
   agent1->set_local_map(local_map);
+  agent1->UpdateDrivingCorridor(0.5);
 
   // Create observed world for this agent
   WorldPtr current_world_state(world->Clone());
   ObservedWorld observed_world(*current_world_state, agent1->get_agent_id());
 
   std::pair<AgentPtr, Frenet> leading_vehicle = observed_world.get_agent_in_front();
-  EXPECT_TRUE(leading_vehicle.first != nullptr);
+  EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
+  agent1->UpdateDrivingCorridor(8.0);
+  // Create observed world for this agent
+  WorldPtr current_world_state2(world->Clone());
+  ObservedWorld observed_world2(*current_world_state2, agent1->get_agent_id());
+
+  std::pair<AgentPtr, Frenet> leading_vehicle2 = observed_world2.get_agent_in_front();
+  EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
+  EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
+
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state3 << 0.0, 20.0, 0.0, 0.0, 5.0;
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));
+  world->add_agent(agent3);
+  world->UpdateAgentRTree();
+
+  // Create observed world for this agent
+  WorldPtr current_world_state3(world->Clone());
+  ObservedWorld observed_world3(*current_world_state2, agent1->get_agent_id());
+
+  std::pair<AgentPtr, Frenet> leading_vehicle3 = observed_world3.get_agent_in_front();
+  EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
+  EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
 
 }
 
