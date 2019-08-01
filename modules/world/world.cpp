@@ -112,16 +112,16 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position, con
 }
 
 AgentMap World::GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const {
-  std::vector<rtree_agent_value> results_n;
+  std::vector<rtree_agent_value> query_results;
   auto bounding_box = polygon.bounding_box();
   boost::geometry::model::box<modules::geometry::Point2d>
          query_box(bounding_box.first, bounding_box.second);
 
   rtree_agents_.query(boost::geometry::index::intersects(query_box),
-            std::back_inserter(results_n));
+            std::back_inserter(query_results));
 
   AgentMap intersecting_agents;
-  for (auto &result_pair : results_n) {
+  for (auto &result_pair : query_results) {
     auto agent = get_agents()[result_pair.second];
     if(modules::geometry::Collide(agent->GetPolygonFromState(agent->get_current_state()), polygon)) {
       intersecting_agents[result_pair.second] = agent;
