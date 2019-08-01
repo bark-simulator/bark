@@ -70,7 +70,9 @@ class World : public commons::BaseType {
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
   void Step(const float& delta_time);
   void UpdateHorizonDrivingCorridors();
-  void MoveAgents(const float& delta_time);
+
+  void DoPlanning(const float& delta_time);
+  void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 

@@ -36,9 +36,12 @@ void World::add_evaluator(const std::string& name, const EvaluatorPtr& evaluator
   evaluators_[name] = evaluator;
 }
 
-void World::MoveAgents(const float& delta_time) {
-  WorldPtr current_world_state(this->Clone());
 
+void World::DoPlanning(const float& delta_time) {
+  UpdateAgentRTree();
+  UpdateHorizonDrivingCorridors();
+
+  WorldPtr current_world_state(this->Clone());
   // Behavioral and execution planning
   for (auto agent : agents_) {
       //! clone current world
@@ -48,8 +51,11 @@ void World::MoveAgents(const float& delta_time) {
       agent.second->ExecutionPlan(delta_time);
   }
 
-  // Execute motion
+}
+
+void World::DoExecution(const float& delta_time) {
   world_time_ += delta_time;
+  // Execute motion
   for (auto agent : agents_) {
       agent.second->Execute(world_time_);
   }
@@ -80,10 +86,8 @@ void World::UpdateHorizonDrivingCorridors() {
 }
 
 void World::Step(const float& delta_time) {
-  UpdateAgentRTree();
-  UpdateHorizonDrivingCorridors();
-  MoveAgents(delta_time);
-  // TODO(@fortiss): add post world collision check
+  DoPlanning(delta_time);
+  DoExecution(delta_time);
 }
 
 std::vector<ObservedWorld> World::Observe(const std::vector<AgentId>& agent_ids) {
