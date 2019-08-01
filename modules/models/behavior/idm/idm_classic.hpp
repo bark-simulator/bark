@@ -25,6 +25,13 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
 
   std::pair<world::objects::AgentPtr, modules::world::map::Frenet> GetLeadingVehicle(const world::ObservedWorld& observed_world);
 
+  const double get_desired_velocity() {return 20;}
+  const float get_minimum_spacing() {return 1;}
+  const float get_desired_time_headway() {return 1;}
+  const float get_max_acceleration() {return 1;}
+  const float get_comfortable_braking_acceleration() {return 1.5;}
+  const int get_exponent() { return  4;}
+
   virtual BehaviorModel *Clone() const;
 };
 

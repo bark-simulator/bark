@@ -40,8 +40,6 @@ class DummyObservedWorld :public ObservedWorld {
     State init_state_;
 };
 
-
-
 TEST(behavior_motion_primitives_add, behavior_test) {
 
   DefaultParams params;

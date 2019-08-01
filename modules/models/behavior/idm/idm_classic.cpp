@@ -22,12 +22,12 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
 
 
   // Parameters
-  const float desired_velocity = 20;
-  const float minimum_spacing = 1;
-  const float desired_time_headway = 1;
-  const float max_acceleration = 1;
-  const float comfortable_braking_acceleration = 1.5;
-  const int exponent = 4;
+  const float desired_velocity = get_desired_velocity();
+  const float minimum_spacing = get_minimum_spacing();
+  const float desired_time_headway = get_desired_time_headway();
+  const float max_acceleration = get_max_acceleration();
+  const float comfortable_braking_acceleration = get_comfortable_braking_acceleration();
+  const int exponent = get_exponent();
 
 
   // relative velocity and longitudinal distance
