@@ -37,7 +37,7 @@ class ObservedWorld : protected World {
 
     ~ObservedWorld() {}
 
-    double get_world_time() const { return World::get_world_time(); }
+    virtual double get_world_time() const { return World::get_world_time(); }
 
 
     const LocalMapPtr get_local_map() const {
@@ -56,7 +56,7 @@ class ObservedWorld : protected World {
 
     const MapInterfacePtr get_map() const { return World::get_map(); }
 
-    State current_ego_state() const {
+    virtual State current_ego_state() const {
       return World::get_agents()[ego_agent_id_]->get_current_state();
     }
 
