@@ -39,7 +39,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     // v = s/t
     double run_time = start_time;
     for (int i = 0; i < traj.rows(); i++) {
-      float sline = sline + current_vel * sample_time;
+      sline = sline + current_vel * sample_time;
       geometry::Point2d traj_point = get_point_at_s(line, sline);
       float traj_angle = get_tangent_angle_at_s(line, sline);
       traj(i, StateDefinition::TIME_POSITION) = run_time;
