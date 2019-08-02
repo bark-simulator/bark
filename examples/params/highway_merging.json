@@ -24,11 +24,11 @@
                     10
                 ],
                 "VehicleVelocityRange": [
-                    20,
-                    30
+                    10,
+                    20
                 ],
                 "VehicleModel": {
-                    "behavior_model": "BehaviorConstantVelocity",
+                    "behavior_model": "BehaviorIDMClassic",
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 0,
