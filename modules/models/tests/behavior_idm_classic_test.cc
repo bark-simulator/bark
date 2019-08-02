@@ -23,7 +23,7 @@ using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
 
-ObservedWorld make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+WorldPtr make_test_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
   DefaultParams params;
   ExecutionModelPtr exec_model(nullptr);
   DynamicModelPtr dyn_model(nullptr);
@@ -74,10 +74,13 @@ ObservedWorld make_test_observed_world(int num_other_agents, double rel_distance
   agent1->set_local_map(local_map);
   agent1->UpdateDrivingCorridor(20);
 
-  // Create observed world for first agent
-  WorldPtr current_world_state(world->Clone());
-  ObservedWorld observed_world(*current_world_state, agent1->get_agent_id());
+  return WorldPtr(world->Clone());
+}
 
+ObservedWorld make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+  // Create observed world for first agent
+  WorldPtr current_world_state = make_test_world(num_other_agents, rel_distance, ego_velocity, velocity_difference);
+  ObservedWorld observed_world(*(current_world_state), current_world_state->get_agents().begin()->second->get_agent_id());
   return observed_world;
 }
 
