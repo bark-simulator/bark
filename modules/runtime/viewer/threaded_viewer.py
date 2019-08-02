@@ -11,6 +11,8 @@ from bark.models.dynamic import *
 from modules.runtime.viewer.viewer import BaseViewer
 import threading
 import time
+from timeit import default_timer as timer
+
 
 class ThreadedViewer(BaseViewer, threading.Thread):
     def __init__(self, renderer, params=None, **kwargs):
@@ -21,7 +23,7 @@ class ThreadedViewer(BaseViewer, threading.Thread):
         self.world_queue_list = [] # objects of the world with 
         self.world_queue_world_times = []
         self.render_time = 0.0
-        self.render_time_step = 0.01
+        self.render_time_step = 0.03
 
 
     def _closest_world_queue_index(self):
@@ -45,10 +47,12 @@ class ThreadedViewer(BaseViewer, threading.Thread):
                 continue
             current_world = self.world_queue_list[self._closest_world_queue_index()]
             executed_world = current_world.world_execution_at_time(self.render_time)
+            start = timer()
             self.renderer.drawWorld(executed_world)
+            end = timer()
             self.render_time += self.render_time_step
             self.renderer.show(block=False)
-            time.sleep(self.render_time_step) # todo:measure rendering time
+            #time.sleep(self.render_time_step - (end-start)) # todo:measure rendering time
 
 
 
