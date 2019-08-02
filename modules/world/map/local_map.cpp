@@ -94,6 +94,7 @@ Line LocalMap::CalculateLineHorizon(const Line& line,
                             const Point2d& p,
                             double horizon) {
   // TODO(@hart): do not access via member obj_
+  
   Line new_line;
   int num_points = line.obj_.size();
   if(num_points == 0) {
