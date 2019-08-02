@@ -51,6 +51,8 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
         "@com_github_eigen_eigen//:eigen",
     ],

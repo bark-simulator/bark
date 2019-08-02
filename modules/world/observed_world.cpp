@@ -37,7 +37,7 @@ std::pair<AgentPtr, modules::world::map::Frenet> ObservedWorld::get_agent_in_fro
       continue;
     }
 
-    Frenet frenet_other = get_local_map()->get_horizon_driving_corridor().FrenetFromCenterLine(aiter->second->get_current_position());
+    Frenet frenet_other = driving_corridor.FrenetFromCenterLine(aiter->second->get_current_position());
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 

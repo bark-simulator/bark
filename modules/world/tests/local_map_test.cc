@@ -45,6 +45,7 @@ TEST(driving_corridor_frenet, local_map) {
 
 }
 
+
 TEST(corridor_polygon, local_map) {
   using namespace modules::world::map;
   using namespace modules::geometry;
@@ -76,4 +77,31 @@ TEST(corridor_polygon, local_map) {
   Polygon ptest(Pose(0, 0, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
 
   EXPECT_TRUE(modules::geometry::Collide(ptest, corridor_polygon));
+}
+
+TEST(calculate_horizon, local_map) {
+  using namespace modules::world::map;
+  using namespace modules::geometry;
+
+  // some line with three points from x=1 to x=10, y=0
+  Line center;
+  center.add_point(Point2d(1,1));
+  center.add_point(Point2d(2,1));
+  center.add_point(Point2d(10,1));
+
+  Line outer;
+  outer.add_point(Point2d(1,2));
+  outer.add_point(Point2d(2,2));
+  outer.add_point(Point2d(10,2));
+
+  Line inner;
+  inner.add_point(Point2d(1,0));
+  inner.add_point(Point2d(2,0));
+  inner.add_point(Point2d(10,0));
+
+  DrivingCorridor corridor(outer, inner, center);
+
+  LocalMap local_map(0, GoalDefinition(), corridor);
+
+  local_map.ComputeHorizonCorridor(Point2d(10,1), 4);
 }
