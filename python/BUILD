@@ -22,6 +22,7 @@ cc_binary(
     "//modules/models/execution/interpolation:interpolation",
     "//modules/models/behavior/constant_velocity:constant_velocity",
     "//modules/models/behavior/motion_primitives:motion_primitives",
+    "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/execution/mpc:mpc",
     "//modules/runtime/viewer:viewer",
     "//modules/world:world",
