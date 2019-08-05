@@ -26,7 +26,7 @@ class BehaviorConstantVelocity : public BehaviorModel {
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(float delta_time,
-                 const ObservedWorld& observed_world);
+                  const ObservedWorld& observed_world);
 
   virtual BehaviorModel *Clone() const;
 };

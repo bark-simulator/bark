@@ -3,7 +3,7 @@
 import numpy as np
 
 from gym import spaces
-from bark.models.behavior import BehaviorMotionPrimitives
+from bark.models.behavior import BehaviorMotionPrimitives, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
 from modules.runtime.commons.parameters import ParameterServer
 
@@ -45,6 +45,36 @@ class MotionPrimitives(OpenAI):
     def action_to_behavior(self, world, action):
         if self.behavior_model:
             self.behavior_model.action_to_behavior(action)
+        return world
+
+    @property
+    def action_space(self):
+        return spaces.Discrete(len(self.control_inputs))
+
+
+class DynamicModel(OpenAI):
+    def __init__(self,
+                 params=ParameterServer(),
+                 dynamic_model=SingleTrackModel()):
+        self.params = params
+        self.control_inputs = self.params["Runtime"]["RL"]["ActionWrapper"]["MotionPrimitives","Motion primitives available as discrete actions", \
+                                                        [[0,0], [10,0],[-2,0],[-50,0]]] # (acceleration, steering angle)
+        self.dynamic_model = dynamic_model
+        self.behavior_model = DynamicBehaviorModel(dynamic_model,
+                                                   self.params)
+
+    def reset(self, world, agents_to_act):
+        super(DynamicModel, self).reset(world=world,
+                                        agents_to_act=agents_to_act)
+        self.behavior_model = DynamicBehaviorModel(self.dynamic_model,
+                                                   self.params)
+        ego_agent_id = agents_to_act[0]
+        world.agents[ego_agent_id].behavior_model = self.behavior_model
+        return world
+
+    def action_to_behavior(self, world, action):
+        if self.behavior_model:
+            self.behavior_model.set_action(action)
         return world
 
     @property
