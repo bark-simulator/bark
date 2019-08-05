@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/scenario_generation_load.runfiles/__main__/python:${workspaceFolder}/bazel-bin//examples/scenario_generation_load.runfiles/__main__"
+                "PYTHONPATH": "${workspaceFolder}/bazel-bin/modules/runtime/ml/tests/py_runtime_rl_tests.runfiles/__main__/python:${workspaceFolder}/bazel-bin/modules/runtime/ml/tests/py_runtime_rl_tests.runfiles/__main__"
 			   }
         },
         {

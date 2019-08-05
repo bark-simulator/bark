@@ -46,8 +46,8 @@ void World::MoveAgents(const float& delta_time) {
   world_time_ += delta_time;
 }
 
-World::EvaluationMap World::Evaluate() const {
-  World::EvaluationMap evaluation_results;
+EvaluationMap World::Evaluate() const {
+  EvaluationMap evaluation_results;
   for(auto const& evaluator : evaluators_) {
       evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this); 
     }

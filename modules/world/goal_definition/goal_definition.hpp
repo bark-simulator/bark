@@ -20,6 +20,7 @@ class GoalDefinition  {
     GoalDefinition(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
 
     bool AtGoal(const modules::geometry::Polygon& agent_shape) const {
+      //std::cout << agent_shape.toArray() << ", " << goal_shape_.toArray() << std::endl;
       return modules::geometry::Collide(agent_shape, goal_shape_);
     }
 

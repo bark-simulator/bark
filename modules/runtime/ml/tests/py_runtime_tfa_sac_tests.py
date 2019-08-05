@@ -54,7 +54,7 @@ def compute_avg_return(environment, policy, num_episodes=5):
     steps = 1.0
     while not time_step.is_last():
       action_step = policy.action(time_step)
-      #print(action_step.action, time_step)
+      print(action_step.action, time_step)
       time_step = environment.step(action_step.action)
       episode_return += time_step.reward
       steps += 1.0
@@ -66,7 +66,7 @@ class RuntimeSACTests(unittest.TestCase):
   @staticmethod
   def test_motion_primitives_concat_state():
     params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
-    scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
+    scenario_generation = UniformVehicleDistribution(num_scenarios=1, random_seed=0, params=params)
     state_observer = StateConcatenation(params=params)
     action_wrapper = MotionPrimitives(params=params)
     evaluator = GoalReached(params=params)
@@ -164,7 +164,7 @@ class RuntimeSACTests(unittest.TestCase):
             observers=[replay_buffer.add_batch],
             num_steps=initial_collect_steps)
     print("Collecting initial episodes..")
-    initial_collect_driver.run()
+    #initial_collect_driver.run()
 
     collect_driver = dynamic_step_driver.DynamicStepDriver(
       train_env,
@@ -185,7 +185,8 @@ class RuntimeSACTests(unittest.TestCase):
     train_env.reset()
     # Reset the train step
     # tf_agent.train_step_counter.assign(0)
-    # avg_return = compute_avg_return(eval_env, eval_policy, num_eval_episodes)
+    avg_return = compute_avg_return(eval_env, eval_policy, num_eval_episodes)
+    """
     print("\n ------------------------- STARTING SAC AGENT TRAINING -------------------------- \n")
     for i in range(num_iterations):
       # 
@@ -208,6 +209,6 @@ class RuntimeSACTests(unittest.TestCase):
 
         # save graph
         # checkpointer.save(global_step)
-
+    """
 if __name__ == '__main__':
     unittest.main()

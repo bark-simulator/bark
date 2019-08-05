@@ -1,4 +1,54 @@
 {
+    "Visualization": {
+        "Agents": {
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ],
+            "DrawRoute": false,
+            "DrawEvalGoals": false,
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            },
+            "AlphaVehicle": 0.8
+        },
+        "Map": {
+            "Lanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        }
+    },
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
@@ -17,29 +67,9 @@
                         5062
                     ]
                 ],
-                "OthersSink": [
-                    [
-                        5110.789,
-                        5293.1725
-                    ],
-                    [
-                        5116,
-                        5300
-                    ]
-                ],
-                "VehicleDistanceRange": [
-                    1,
-                    20
-                ],
-                "VehicleVelocityRange": [
-                    20,
-                    20
-                ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorConstantVelocity",
-                    "dynamic_model": "SingleTrackModel",
-                    "execution_model": "ExecutionModelInterpolate",
-                    "id": 0,
+                    "planned_trajectory": [],
                     "state": [
                         0.0,
                         0.0,
@@ -47,7 +77,16 @@
                         0.0,
                         0.0
                     ],
+                    "followed_trajectory": [],
+                    "execution_model": "ExecutionModelInterpolate",
+                    "id": 0,
+                    "dynamic_model": "SingleTrackModel",
                     "shape": {
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
                         "polygon_points": [
                             [
                                 3.8499999046325684,
@@ -117,20 +156,73 @@
                                 3.8499999046325684,
                                 0.0
                             ]
-                        ],
-                        "center_pose": [
-                            0.0,
-                            0.0,
-                            0.0
                         ]
-                    },
-                    "followed_trajectory": [],
-                    "planned_trajectory": []
-                }
+                    }
+                },
+                "VehicleDistanceRange": [
+                    1,
+                    20
+                ],
+                "VehicleVelocityRange": [
+                    20,
+                    20
+                ],
+                "OthersSink": [
+                    [
+                        5110.789,
+                        5293.1725
+                    ],
+                    [
+                        5116,
+                        5300
+                    ]
+                ]
             }
         }
     },
     "agent": {
         "MaxHistoryLength": 50
+    },
+    "integration_time_delta": 0.009999999776482582,
+    "Runtime": {
+        "RL": {
+            "StateEvaluator": {
+                "GoalReward": 0.01,
+                "CollisionReward": -1
+            },
+            "StateConcatenation": {
+                "VelocityRange": [
+                    0,
+                    100
+                ],
+                "ThetaRange": [
+                    0,
+                    6.283185307179586
+                ],
+                "Normalize": true,
+                "MaxOtherAgents": 4,
+                "MaxOtherDistance": 30
+            },
+            "ActionWrapper": {
+                "MotionPrimitives": [
+                    [
+                        0,
+                        0
+                    ],
+                    [
+                        10,
+                        0
+                    ],
+                    [
+                        -2,
+                        0
+                    ],
+                    [
+                        -50,
+                        0
+                    ]
+                ]
+            }
+        }
     }
 }
