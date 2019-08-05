@@ -79,6 +79,7 @@ class DynamicModel(OpenAI):
 
     @property
     def action_space(self):
+        # TODO(@hart): get input space size from dynamic model
         return Continuous(2)
 
         

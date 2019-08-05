@@ -52,7 +52,6 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     traj(i, THETA_POSITION) = next_state(THETA_POSITION);
     traj(i, VEL_POSITION) = next_state(VEL_POSITION);
   }
-  std::cout << traj << std::endl;
   this->set_last_trajectory(traj);
   return traj;
 }
