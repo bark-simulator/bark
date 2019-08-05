@@ -50,7 +50,7 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     }
     
     auto state = dynamic::euler_int(*dynamic_model_, old_state, motion_primitives_[active_motion_], integration_time);
-    traj(trajectory_idx, StateDefinition::TIME_POSITION) = (trajectory_idx+1)*dt;
+    traj(trajectory_idx, StateDefinition::TIME_POSITION) = start_time + (trajectory_idx+1)*dt;
     traj(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
     traj(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
     traj(trajectory_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);
