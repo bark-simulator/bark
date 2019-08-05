@@ -41,6 +41,9 @@ class DynamicModel {
   virtual State StateSpaceModel(const State &x, const Input &u) const = 0;
 
   virtual DynamicModel *Clone() const = 0;
+
+  // TODO(@hart): fill
+  int input_size_;
 };
 
 typedef std::shared_ptr<DynamicModel> DynamicModelPtr;

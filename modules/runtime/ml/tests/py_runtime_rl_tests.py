@@ -32,7 +32,7 @@ class RuntimeRLTests(unittest.TestCase):
         for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
             for _ in range(0, 10): # run each scenario for 10 steps
-                action = np.array([-10.0, -10.0]) #action_wrapper.action_space.sample()
+                action = action_wrapper.action_space.sample()
                 print("Action: {}".format(str(action)))
                 next_nn_state, reward, done, info = runtimerl.step(action)
                 runtimerl.render()
@@ -40,7 +40,6 @@ class RuntimeRLTests(unittest.TestCase):
                         =================================================".format( next_nn_state, reward, done, info))
                 if info["success"] or done:
                     break
-
     def test_motion_primitives_concat_state(self):
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)

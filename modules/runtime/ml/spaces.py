@@ -44,7 +44,7 @@ class Continuous(Space):
     def __init__(self, n):
         assert n >= 0
         self.n = n
-        super(Continuous, self).__init__((), np.float32)
+        Space.__init__(self, shape=(n,))
 
     def sample(self):
         return self.np_random.uniform(size=(self.n,))
