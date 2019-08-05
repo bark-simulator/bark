@@ -41,18 +41,18 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
-    
     auto next_state = dynamic::euler_int(*dynamic_model_,
                                          traj.row(i-1),
                                          current_action_,
                                          dt);
-    traj(i, TIME_POSITION) = (i+1)*dt;
+    
+    traj(i, TIME_POSITION) = start_time + i*dt;
     traj(i, X_POSITION) = next_state(X_POSITION);
     traj(i, Y_POSITION) = next_state(Y_POSITION);
     traj(i, THETA_POSITION) = next_state(THETA_POSITION);
     traj(i, VEL_POSITION) = next_state(VEL_POSITION);
   }
-
+  std::cout << traj << std::endl;
   this->set_last_trajectory(traj);
   return traj;
 }
