@@ -45,13 +45,15 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
                                          traj.row(i-1),
                                          current_action_,
                                          dt);
-    
+
     traj(i, TIME_POSITION) = start_time + i*dt;
     traj(i, X_POSITION) = next_state(X_POSITION);
     traj(i, Y_POSITION) = next_state(Y_POSITION);
     traj(i, THETA_POSITION) = next_state(THETA_POSITION);
     traj(i, VEL_POSITION) = next_state(VEL_POSITION);
   }
+  std::cout << "=====================" << std::endl;
+  std::cout << traj << std::endl;
   this->set_last_trajectory(traj);
   return traj;
 }

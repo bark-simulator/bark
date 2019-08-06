@@ -34,11 +34,11 @@ class Discrete(Space):
 
 
 class Continuous(Space):
-    """A discrete space in :math:`\{ 0, 1, \dots, n-1 \}`. 
+    """A continuous space
     
     Example::
     
-        >>> Discrete(2)
+        >>> Continuous(2)
         
     """
     def __init__(self, n):
