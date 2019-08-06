@@ -27,13 +27,14 @@ class RuntimeRLTests(unittest.TestCase):
         viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) #use_world_bounds=True) # 
 
         runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
-                              evaluator=evaluator, step_time=0.05, viewer=viewer,
+                              evaluator=evaluator, step_time=0.2, viewer=viewer,
                               scenario_generator=scenario_generation)
 
-        for _ in range(0, 1): # run 5 scenarios in a row, repeating after 3
+        for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
-            for _ in range(0, 10): # run each scenario for 10 steps
-                action = action_wrapper.action_space.sample()
+            runtimerl.render()
+            for _ in range(0, 40): # run each scenario for 10 steps
+                action = np.array([0,0]) #action_wrapper.action_space.sample()
                 print("Action: {}".format(str(action)))
                 next_nn_state, reward, done, info = runtimerl.step(action)
                 runtimerl.render()
@@ -41,7 +42,8 @@ class RuntimeRLTests(unittest.TestCase):
                         =================================================".format( next_nn_state, reward, done, info))
                 if info["success"] or done:
                     break
-    @staticmethod
+                    
+    @unittest.skip("...")
     def test_motion_primitives_concat_state():
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
