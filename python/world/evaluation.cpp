@@ -7,6 +7,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_collision_driving_corridor.hpp"
 
 namespace py = pybind11;
@@ -34,10 +35,17 @@ void python_evaluation(py::module m)
         return "bark.world.evaluation.EvaluatorGoalReached";
       });
 
-        py::class_<EvaluatorCollisionDrivingCorridor, BaseEvaluator, 
+    py::class_<EvaluatorCollisionDrivingCorridor, BaseEvaluator, 
       std::shared_ptr<EvaluatorCollisionDrivingCorridor> >(m, "EvaluatorCollisionDrivingCorridor")
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorCollisionDrivingCorridor";
+      });
+
+    py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator, 
+      std::shared_ptr<EvaluatorCollisionEgoAgent> >(m, "EvaluatorCollisionEgoAgent")
+      .def(py::init<const AgentId&>())
+      .def("__repr__", [](const EvaluatorGoalReached &g) {
+        return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
       });
 }
