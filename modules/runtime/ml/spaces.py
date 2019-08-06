@@ -2,15 +2,15 @@ from gym import Space
 import numpy as np
 
 class Discrete(Space):
-    """A discrete space in :math:`\{ 0, 1, \dots, n-1 \}`. 
-    
+    """A discrete space in :math:`\{ 0, 1, \dots, n-1 \}`.
+
     Example::
-    
+
         >>> Discrete(2)
-        
+
     """
     def __init__(self, n):
-        assert n >= 0
+        assert(n >= 0)
         self.n = n
         super(Discrete, self).__init__((), np.int64)
 
@@ -35,14 +35,14 @@ class Discrete(Space):
 
 class Continuous(Space):
     """A continuous space
-    
+
     Example::
-    
+
         >>> Continuous(2)
-        
+
     """
     def __init__(self, n):
-        assert n >= 0
+        assert(n >= 0)
         self.n = n
         Space.__init__(self, shape=(n,))
 
