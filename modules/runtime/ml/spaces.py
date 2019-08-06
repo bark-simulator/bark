@@ -45,7 +45,7 @@ class Continuous(Space):
         Space.__init__(self, shape=(n,))
 
     def sample(self):
-        return self.np_random.uniform(size=(self.n,))
+        return self.np_random.uniform(size=(self.n,)) - 0.5
 
     def __repr__(self):
         return "Continuous(%d)" % self.n

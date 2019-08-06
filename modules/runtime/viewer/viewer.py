@@ -19,7 +19,7 @@ class BaseViewer(Viewer):
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
-        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", False]
+        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
@@ -32,7 +32,7 @@ class BaseViewer(Viewer):
 
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
+        self.use_world_bounds = kwargs.pop("use_world_bounds", True)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
 
         self.dynamic_world_x_range = self.world_x_range.copy()

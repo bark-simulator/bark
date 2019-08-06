@@ -31,7 +31,7 @@ class GoalReached(StateEvaluator):
             raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}".format(len(agents_to_evaluate)))
         evaluator1 = EvaluatorGoalReached(agents_to_evaluate[0])
-        evaluator2 = EvaluatorCollisionAgents()
+        evaluator2 = EvaluatorCollisionEgoAgent(agents_to_evaluate[0]) #EvaluatorCollisionAgents()
         evaluator3 = EvaluatorCollisionDrivingCorridor()
 
         world.add_evaluator("success", evaluator1)
