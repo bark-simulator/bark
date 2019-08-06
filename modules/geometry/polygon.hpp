@@ -23,12 +23,14 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
   Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
+  Polygon_t(const Pose &center, const Line_t<T>& line);
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
   virtual Shape<bg::model::polygon<T>, T> *Clone() const;
 
   void UpdateDistancesToCenter();
+
 
   float rear_dist_;
   float front_dist_;
@@ -65,6 +67,19 @@ inline Polygon_t<T>::Polygon_t(const Pose &center,
 }
 
 template<typename T>
+inline Polygon_t<T>::Polygon_t(const Pose &center, const Line_t<T>& line) :
+           Shape<bg::model::polygon<T>, T>(center, std::vector<T>(), 0),
+           rear_dist_(0.0f),
+           front_dist_(0.0f),
+           left_dist_(0.0f),
+           right_dist_(0.0f) {
+      for (const T &next_pt : line.obj_) {
+        Shape<bg::model::polygon<T>, T>::add_point(next_pt);
+      }
+    UpdateDistancesToCenter();
+}
+
+template<typename T>
 void Polygon_t<T>::UpdateDistancesToCenter() {
     boost::geometry::model::box<T> box;
     boost::geometry::envelope(Shape<bg::model::polygon<T>, T>::obj_, box);
@@ -78,6 +93,7 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
     left_dist_ = std::abs(bg::get<bg::min_corner, 1>(box) - center_y);
     right_dist_ = std::abs(bg::get<bg::max_corner, 1>(box) - center_y);
 }
+
 
 template <typename T>
 inline Shape<bg::model::polygon<T>, T> *Polygon_t<T>::Clone() const {

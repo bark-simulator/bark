@@ -38,6 +38,9 @@ class BaseViewer(Viewer):
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
 
+    def reset():
+        pass
+
     def _update_world_view_range(self, world, eval_agent_ids=None):
         if self.follow_agent_id is not None:
             if isinstance(self.follow_agent_id, bool) and \

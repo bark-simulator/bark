@@ -1,15 +1,15 @@
 cc_library(
-    name = "constant_velocity",
+    name = "longitudinal_acceleration",
     srcs = [
-        "constant_velocity.cpp",
+        "longitudinal_acceleration.cpp",
     ],
     hdrs = [
-        "constant_velocity.hpp",
+        "longitudinal_acceleration.hpp",
     ],
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
+        "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic"
     ],
     visibility = ["//visibility:public"],

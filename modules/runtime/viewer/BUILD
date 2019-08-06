@@ -28,6 +28,17 @@ py_library(
 )
 
 py_library(
+    name = "threaded_viewer",
+    srcs = ["threaded_viewer.py"],
+    data = ['//python:bark.so'],
+    imports = ['../../../python/'],
+    deps = ["//modules/runtime/commons:parameters",
+            ":py_viewer",
+            "//modules/runtime/commons:commons"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "pygame_viewer",
     srcs = ["pygame_viewer.py"],
     data = ['//python:bark.so'],

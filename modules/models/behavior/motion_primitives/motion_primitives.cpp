@@ -26,7 +26,7 @@ BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynami
 dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     float delta_time,
     const world::ObservedWorld& observed_world) {
-  dynamic::State ego_vehicle_state = observed_world.get_ego_state();
+  dynamic::State ego_vehicle_state = observed_world.current_ego_state();
   double start_time = observed_world.get_world_time();
    const float dt = integration_time_delta_; 
   const int num_trajectory_points = static_cast<int>(std::ceil(delta_time / dt));

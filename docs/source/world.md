@@ -48,11 +48,11 @@ class ObservedWorld : protected World {
       return World::get_agent(ego_agent_id_);
     }
     MapInterfacePtr get_map() const { return World::get_map(); }
-    State get_ego_state() const {
+    State current_ego_state() const {
       return World::get_agents()[ego_agent_id_]->get_current_state();
     }
     Point2d get_ego_point() const {
-      State ego_state = get_ego_state();
+      State ego_state = current_ego_state();
       return Point2d(ego_state(X_POSITION), ego_state(Y_POSITION));
     }
 
