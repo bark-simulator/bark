@@ -27,7 +27,7 @@ from tf_agents.drivers import dynamic_step_driver
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils import common
-from tf_agents.utils.common import Checkpointer
+#from tf_agents.utils.common import Checkpointer
 
 # get the distribution to sample our actions from - for SAC only
 def normal_projection_net(action_spec, init_means_output_factor=0.1):
@@ -73,7 +73,7 @@ class RuntimeSACTests(unittest.TestCase):
 
 
     train_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    eval_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
+    #eval_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
 
     # hyper parameters
     actor_fc_layer_params = (512, 512, 256) # 4 layer net right now # changes 14 from (1024, 512, 512, 256)
@@ -89,7 +89,6 @@ class RuntimeSACTests(unittest.TestCase):
     gamma = 0.99 #@param
     gradient_clipping = None # @param
     replay_buffer_capacity = 1000 # @param
-    num_eval_episodes = 0
     collect_steps_per_iteration = 1
     batch_size = 256  # @param
     global_step = tf.compat.v1.train.get_or_create_global_step()
@@ -142,7 +141,7 @@ class RuntimeSACTests(unittest.TestCase):
     #checkpointer.initialize_or_restore()
 
     # policies
-    eval_policy = greedy_policy.GreedyPolicy(tf_agent.policy) # main policy
+    #eval_policy = greedy_policy.GreedyPolicy(tf_agent.policy) # main policy
     collect_policy = tf_agent.collect_policy # behavioral policy (= data collection)
     # training
     replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
@@ -167,8 +166,8 @@ class RuntimeSACTests(unittest.TestCase):
     collect_driver.run = common.function(collect_driver.run)
     tf_agent.train = common.function(tf_agent.train)
 
-    dataset = replay_buffer.as_dataset(
-        num_parallel_calls=3, sample_batch_size=batch_size, num_steps=2).prefetch(3)
+    #dataset = replay_buffer.as_dataset(
+    #    num_parallel_calls=3, sample_batch_size=batch_size, num_steps=2).prefetch(3)
 
     train_env.reset()
 
