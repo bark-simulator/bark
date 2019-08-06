@@ -7,7 +7,7 @@
 #ifndef MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
-#include "modules/models/behavior/behavior_model.hpp"
+#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules {
@@ -18,15 +18,17 @@ using dynamic::Trajectory;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
-class BehaviorConstantVelocity : public BehaviorModel {
+class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
  public:
   explicit BehaviorConstantVelocity(commons::Params *params) :
-    BehaviorModel(params) {}
+    BehaviorLongitudinalAcceleration(params) {}
 
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(float delta_time,
                  const ObservedWorld& observed_world);
+
+  virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) {return 0.0f;}
 
   virtual BehaviorModel *Clone() const;
 };

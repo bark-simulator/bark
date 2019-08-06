@@ -23,24 +23,22 @@ using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
 
-class DummyObservedWorld :public ObservedWorld {
+class DummyObservedWorld : public ObservedWorld {
   public:
     DummyObservedWorld(State& init_state) : 
               ObservedWorld(World(nullptr), AgentId()),
               init_state_(init_state)  {}
 
-    virtual State get_ego_state() const {
+    virtual State current_ego_state() const {
       return init_state_;
     }
 
-    double get_world_time() const {
+    virtual double get_world_time() const {
       return 0.0f;
     }
   private:
     State init_state_;
 };
-
-
 
 TEST(behavior_motion_primitives_add, behavior_test) {
 

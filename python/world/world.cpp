@@ -30,6 +30,8 @@ void python_world(py::module m) {
       return "bark.world.World";
     })
     .def("step", &World::Step)
+    .def("do_planning", &World::DoPlanning)
+    .def("do_execution", &World::DoExecution)
     .def("observe", &World::Observe)
     .def("add_agent", &World::add_agent)
     .def("add_object", &World::add_object)
@@ -43,7 +45,8 @@ void python_world(py::module m) {
     .def_property_readonly("bounding_box", &World::bounding_box)
     .def("get_agent", &World::get_agent)
     .def_property("map", &World::get_map, &World::set_map)
-    .def("copy",&World::Clone);
+    .def("copy",&World::Clone)
+    .def("world_execution_at_time", &World::WorldExecutionAtTime);
 
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
