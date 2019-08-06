@@ -17,7 +17,8 @@ import numpy as np
 
 
 class RuntimeRLTests(unittest.TestCase):
-    def test_dynamic_behavior_model(self):
+    @staticmethod
+    def test_dynamic_behavior_model():
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
         state_observer = StateConcatenation(params=params)
@@ -40,8 +41,8 @@ class RuntimeRLTests(unittest.TestCase):
                         =================================================".format( next_nn_state, reward, done, info))
                 if info["success"] or done:
                     break
-    @unittest.skip("...")
-    def test_motion_primitives_concat_state(self):
+    @staticmethod
+    def test_motion_primitives_concat_state():
         params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
         scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
         state_observer = StateConcatenation(params=params)

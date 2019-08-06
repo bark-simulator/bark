@@ -44,7 +44,7 @@ class TFAWrapper(py_environment.PyEnvironment):
   def _step(self, action):
     if self._episode_ended:
       return self.reset()
-    state, reward, self._episode_ended, info = self.env.step(action)
+    state, reward, self._episode_ended, _ = self.env.step(action)
     self._state = np.array(state, dtype=np.float32)
     #print(state, reward, self._episode_ended, info)
     #print("ended: ", self._episode_ended)

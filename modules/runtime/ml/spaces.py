@@ -10,7 +10,6 @@ class Discrete(Space):
 
     """
     def __init__(self, n):
-        assert(n >= 0)
         self.n = n
         super(Discrete, self).__init__((), np.int64)
 
@@ -42,7 +41,6 @@ class Continuous(Space):
 
     """
     def __init__(self, n):
-        assert(n >= 0)
         self.n = n
         Space.__init__(self, shape=(n,))
 
