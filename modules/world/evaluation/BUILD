@@ -64,7 +64,21 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
-
+cc_library(
+    name = "evaluator_step_count",
+    hdrs = [
+        "evaluator_step_count.hpp"
+    ],
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/world:world",
+        "//modules/geometry",
+        "//modules/commons:commons",
+        "//modules/models/dynamic:dynamic",
+        "@boost//:geometry"
+    ],
+    visibility = ["//visibility:public"],
+)
 cc_library(
     name = "evaluator_collision_driving_corridor",
     hdrs = [
@@ -93,7 +107,8 @@ cc_library(
         ":base_evaluator",
         ":evaluator_collision_agents",
         ":evaluator_collision_driving_corridor",
-        ":evaluator_collision_ego_agent"
+        ":evaluator_collision_ego_agent",
+        ":evaluator_step_count"
     ],
     visibility = ["//visibility:public"],
 )

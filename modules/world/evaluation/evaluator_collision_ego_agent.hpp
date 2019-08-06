@@ -21,7 +21,7 @@ class EvaluatorCollisionEgoAgent : public BaseEvaluator {
   explicit EvaluatorCollisionEgoAgent(const AgentId& agent_id) :
     agent_id_(agent_id) { }
   virtual ~EvaluatorCollisionEgoAgent() { }
-  virtual EvaluationReturn Evaluate(const world::World& world) const;
+  virtual EvaluationReturn Evaluate(const world::World& world);
 
  private:
   AgentId agent_id_;

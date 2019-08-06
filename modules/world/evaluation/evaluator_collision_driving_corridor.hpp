@@ -24,7 +24,7 @@ class EvaluatorCollisionDrivingCorridor : public BaseEvaluator
     EvaluatorCollisionDrivingCorridor() {}
     virtual ~EvaluatorCollisionDrivingCorridor() {}
 
-    virtual EvaluationReturn Evaluate(const world::World& world) const;
+    virtual EvaluationReturn Evaluate(const world::World& world);
 
 };
 
