@@ -94,18 +94,27 @@ Line LocalMap::CalculateLineHorizon(const Line& line,
                             const Point2d& p,
                             double horizon) {
   // TODO(@hart): do not access via member obj_
+  
   Line new_line;
+  int num_points = line.obj_.size();
+  if(num_points == 0) {
+    return new_line;
+  }
   int nearest_idx = FindNearestIdx(line, p);
-  int max_idx = line.obj_.size();
+  new_line.add_point(line.obj_.at(nearest_idx));
+  if(nearest_idx == num_points-1) {
+    return new_line;
+  }
+
   double s = 0.0;
-  for (int idx = nearest_idx; nearest_idx < max_idx - 1; idx++) {
+  for (int idx = nearest_idx; idx < num_points - 1; idx++) {
     // TODO(@hart): in case of non circular routes.. criteria to abort?
-    int idx_ = idx % max_idx;  // in case of circle
-    int idx_next = (idx+1) % max_idx;  // in case of circle
+    int idx_ = idx % num_points;  // in case of circle
+    int idx_next = (idx+1) % num_points;  // in case of circle
     double d = distance(line.obj_.at(idx_), line.obj_.at(idx_next));
     new_line.add_point(line.obj_.at(idx_next));
     s += d;
-    if ( s > horizon )
+    if ( s >= horizon )
       return new_line;
   }
   return new_line;

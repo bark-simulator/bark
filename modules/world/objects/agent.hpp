@@ -31,6 +31,7 @@ using models::dynamic::Trajectory;
 using modules::world::opendrive::LaneId;
 using modules::world::map::MapInterfacePtr;
 using modules::world::goal_definition::GoalDefinition;
+using models::dynamic::StateDefinition;
 
 class Agent : public Object {
  public:
@@ -71,14 +72,13 @@ class Agent : public Object {
 
   State get_current_state() const { return history_.back().first; }
 
+  modules::geometry::Point2d get_current_position() const {   const State& state = get_current_state();
+      return modules::geometry::Point2d(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION));}
+
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
   const modules::world::map::LocalMapPtr& get_local_map() const {
     return local_map_;
-  }
-
-  void set_local_map(const modules::world::map::LocalMapPtr& rg) {
-    local_map_ = rg;
   }
 
   void set_behavior_model(const BehaviorModelPtr &behavior_model_ptr) {
@@ -92,7 +92,13 @@ class Agent : public Object {
     UpdateDrivingCorridor(20.0);
   }
 
-  void Move(const float &dt, const ObservedWorld &observed_world);
+  void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
+
+  void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
+
+  void ExecutionPlan(const float &dt);
+
+  void Execute(const float& world_time);
 
   bool AtGoal() const;
 

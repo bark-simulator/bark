@@ -7,12 +7,14 @@
 #include "behavior.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/behavior/idm/idm_classic.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
+using modules::models::behavior::BehaviorIDMClassic;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -44,6 +46,25 @@ void python_behavior(py::module m) {
 
             /* Create a new C++ instance */
             return new BehaviorConstantVelocity(nullptr); // param pointer must be set afterwards
+        }));
+
+    py::class_<BehaviorIDMClassic,
+             BehaviorModel,
+             shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
+      .def(py::init<modules::commons::Params *>())
+      .def("__repr__", [](const BehaviorIDMClassic &m) {
+        return "bark.behavior.BehaviorIDMClassic";
+      })
+      .def(py::pickle(
+        [](const BehaviorIDMClassic &b) { 
+            return py::make_tuple(b.get_last_trajectory()); // 0
+        },
+        [](py::tuple t) { // __setstate__
+            if (t.size() != 1)
+                throw std::runtime_error("Invalid behavior model state!");
+
+            /* Create a new C++ instance */
+            return new BehaviorIDMClassic(nullptr); // param pointer must be set afterwards
         }));
 
   py::class_<BehaviorMotionPrimitives,

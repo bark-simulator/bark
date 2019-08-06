@@ -4,13 +4,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace models {
 
-dynamic::Trajectory behavior::BehaviorConstantVelocity::Plan(
+dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     float delta_time,
     const world::ObservedWorld& observed_world) {
 
@@ -33,18 +33,21 @@ dynamic::Trajectory behavior::BehaviorConstantVelocity::Plan(
   if (line.obj_.size()>0) {
     float s_start = get_nearest_s(line, pose);
     double start_time = observed_world.get_world_time();
-    float constant_vel = ego_vehicle_state(StateDefinition::VEL_POSITION);
+    float current_vel = ego_vehicle_state(StateDefinition::VEL_POSITION);
+    double acceleration = CalculateLongitudinalAcceleration(observed_world);
+    float sline = s_start;
     // v = s/t
     double run_time = start_time;
     for (int i = 0; i < traj.rows(); i++) {
-      float del_s = constant_vel * (run_time - start_time);
-      geometry::Point2d traj_point = get_point_at_s(line, s_start + del_s);
-      float traj_angle = get_tangent_angle_at_s(line, s_start + del_s);
+      sline = sline + current_vel * sample_time;
+      geometry::Point2d traj_point = get_point_at_s(line, sline);
+      float traj_angle = get_tangent_angle_at_s(line, sline);
       traj(i, StateDefinition::TIME_POSITION) = run_time;
       traj(i, StateDefinition::X_POSITION) = boost::geometry::get<0>(traj_point);
       traj(i, StateDefinition::Y_POSITION) = boost::geometry::get<1>(traj_point);
       traj(i, StateDefinition::THETA_POSITION) = traj_angle;
-      traj(i, StateDefinition::VEL_POSITION) = constant_vel;
+      traj(i, StateDefinition::VEL_POSITION) = current_vel;
+      current_vel = current_vel + acceleration * sample_time;
       run_time += sample_time;
     }
   }

@@ -39,7 +39,8 @@ inline float angle_diff(const float& angle1, const float& angle2) {
 }
 
 inline float signed_angle_diff(const float& angle1, const float& angle2) {
-  return norm_0_2PI(angle1) - norm_0_2PI(angle2);
+  auto adiff = angle1 - angle2;
+  return std::fmod(adiff + B_PI, B_2PI) - B_PI; 
 }
 
 

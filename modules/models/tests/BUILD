@@ -28,15 +28,31 @@ cc_test(
 )
 
 cc_test(
-    name = "behavior_test",
+    name = "behavior_motion_primitive_test",
     srcs = [
-        "behavior_test.cc",
+        "behavior_motion_primitive_test.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior/motion_primitives:motion_primitives",
+        "@gtest//:main",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+)
+
+cc_test(
+    name = "behavior_idm_classic_test",
+    srcs = [
+        "behavior_idm_classic_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
         "@com_github_eigen_eigen//:eigen",
     ],

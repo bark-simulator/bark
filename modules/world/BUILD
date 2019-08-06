@@ -1,6 +1,6 @@
 cc_library(
     name = "world",
-    srcs = glob(["objects/*.cpp", "world*.cpp"]),
+    srcs = glob(["objects/*.cpp", "world*.cpp", "observed_world.cpp"]),
     hdrs = glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
     deps = [
         "//modules/world/opendrive:opendrive",
