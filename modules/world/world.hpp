@@ -26,6 +26,8 @@ using world::evaluation::EvaluatorPtr;
 
 typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
+typedef std::map<std::string,
+                 modules::world::evaluation::EvaluationReturn> EvaluationMap;
 
 using rtree_agent_model = boost::geometry::model::box<modules::geometry::Point2d>;
 using rtree_agent_id = AgentId;
@@ -45,12 +47,16 @@ class World : public commons::BaseType {
   AgentMap get_agents() const { return agents_; }
   AgentPtr get_agent(AgentId id) const { return agents_.at(id); }
   ObjectMap get_objects() const { return objects_; }
-  std::map<std::string, EvaluatorPtr> get_evaluators() const { return evaluators_;}
+  std::map<std::string,
+           EvaluatorPtr> get_evaluators() const { return evaluators_; }
 
   void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
 
-  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const { return map_->BoundingBox();}
-  
+  std::pair<modules::geometry::Point2d,
+            modules::geometry::Point2d> bounding_box() const {
+    return map_->BoundingBox();
+  }
+
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);
 
@@ -63,7 +69,6 @@ class World : public commons::BaseType {
     clear_objects();
   }
 
-  typedef std::map<std::string, modules::world::evaluation::EvaluationReturn> EvaluationMap ;
   EvaluationMap Evaluate() const;
 
   bool Valid() const;

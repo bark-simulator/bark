@@ -69,8 +69,8 @@ WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
   return current_world_state;
 }
 
-World::EvaluationMap World::Evaluate() const {
-  World::EvaluationMap evaluation_results;
+EvaluationMap World::Evaluate() const {
+  EvaluationMap evaluation_results;
   for(auto const& evaluator : evaluators_) {
       evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this); 
     }

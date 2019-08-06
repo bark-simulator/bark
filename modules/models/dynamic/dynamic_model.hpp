@@ -34,13 +34,16 @@ typedef std::vector<StateInputPair> StateInputHistory;
 
 class DynamicModel {
  public:
-  DynamicModel() {}
+  DynamicModel() : input_size_(0) {}
 
   virtual ~DynamicModel() {}
 
   virtual State StateSpaceModel(const State &x, const Input &u) const = 0;
 
   virtual DynamicModel *Clone() const = 0;
+
+  // TODO(@hart): fill
+  int input_size_;
 };
 
 typedef std::shared_ptr<DynamicModel> DynamicModelPtr;

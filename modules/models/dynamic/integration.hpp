@@ -12,11 +12,14 @@ namespace modules {
 namespace models {
 namespace dynamic {
 
-State euler_int(const DynamicModel& model, const State &x, const Input &u, float dt) {
+inline State euler_int(const DynamicModel& model,
+                const State &x,
+                const Input &u,
+                float dt) {
   return x + dt * model.StateSpaceModel(x, u);
 }
 
-State rk4(const DynamicModel& model, const State &x, const Input &u, float dt) {
+inline State rk4(const DynamicModel& model, const State &x, const Input &u, float dt) {
   return x;
 }
 

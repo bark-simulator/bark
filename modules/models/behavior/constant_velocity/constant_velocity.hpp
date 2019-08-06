@@ -26,7 +26,7 @@ class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(float delta_time,
-                 const ObservedWorld& observed_world);
+                  const ObservedWorld& observed_world);
 
   virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) {return 0.0f;}
 
