@@ -27,4 +27,3 @@ py_test(
             "//modules/runtime/commons:xodr_parser"],
     visibility = ["//visibility:public"],
 )
-

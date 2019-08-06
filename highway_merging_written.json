@@ -1,0 +1,228 @@
+{
+    "Visualization": {
+        "Agents": {
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ],
+            "DrawRoute": false,
+            "DrawEvalGoals": false,
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            },
+            "AlphaVehicle": 0.8
+        },
+        "Map": {
+            "Lanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        }
+    },
+    "Scenario": {
+        "Generation": {
+            "UniformVehicleDistribution": {
+                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "EgoGoal": [
+                    5115,
+                    5017
+                ],
+                "OthersSource": [
+                    [
+                        5111.626,
+                        5006.8305
+                    ],
+                    [
+                        5116,
+                        5062
+                    ]
+                ],
+                "VehicleModel": {
+                    "behavior_model": "BehaviorConstantVelocity",
+                    "planned_trajectory": [],
+                    "state": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "followed_trajectory": [],
+                    "execution_model": "ExecutionModelInterpolate",
+                    "id": 0,
+                    "dynamic_model": "SingleTrackModel",
+                    "shape": {
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "polygon_points": [
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ],
+                            [
+                                3.7720000743865967,
+                                -0.4950000047683716
+                            ],
+                            [
+                                3.4260001182556152,
+                                -0.8870000243186951
+                            ],
+                            [
+                                2.9140000343322754,
+                                -0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                -0.9559999704360962
+                            ],
+                            [
+                                0.0,
+                                -0.9559999704360962
+                            ],
+                            [
+                                -0.5120000243186951,
+                                -0.8859999775886536
+                            ],
+                            [
+                                -1.0199999809265137,
+                                -0.5889999866485596
+                            ],
+                            [
+                                -1.11899995803833,
+                                0.0
+                            ],
+                            [
+                                -1.0199999809265137,
+                                0.5889999866485596
+                            ],
+                            [
+                                -0.5120000243186951,
+                                0.8859999775886536
+                            ],
+                            [
+                                0.0,
+                                0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                0.9559999704360962
+                            ],
+                            [
+                                2.9140000343322754,
+                                0.9559999704360962
+                            ],
+                            [
+                                3.4260001182556152,
+                                0.8870000243186951
+                            ],
+                            [
+                                3.7720000743865967,
+                                0.4950000047683716
+                            ],
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ]
+                        ]
+                    }
+                },
+                "VehicleDistanceRange": [
+                    1,
+                    20
+                ],
+                "VehicleVelocityRange": [
+                    20,
+                    20
+                ],
+                "OthersSink": [
+                    [
+                        5110.789,
+                        5293.1725
+                    ],
+                    [
+                        5116,
+                        5300
+                    ]
+                ]
+            }
+        }
+    },
+    "agent": {
+        "MaxHistoryLength": 50
+    },
+    "integration_time_delta": 0.009999999776482582,
+    "Runtime": {
+        "RL": {
+            "StateEvaluator": {
+                "GoalReward": 0.01,
+                "CollisionReward": -1
+            },
+            "StateConcatenation": {
+                "VelocityRange": [
+                    0,
+                    100
+                ],
+                "ThetaRange": [
+                    0,
+                    6.283185307179586
+                ],
+                "Normalize": true,
+                "MaxOtherAgents": 4,
+                "MaxOtherDistance": 30
+            },
+            "ActionWrapper": {
+                "MotionPrimitives": [
+                    [
+                        0,
+                        0
+                    ],
+                    [
+                        10,
+                        0
+                    ],
+                    [
+                        -2,
+                        0
+                    ],
+                    [
+                        -50,
+                        0
+                    ]
+                ]
+            }
+        }
+    }
+}

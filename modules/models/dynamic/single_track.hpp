@@ -25,7 +25,7 @@ class SingleTrackModel : public DynamicModel {
     tmp << 1,
     x(StateDefinition::VEL_POSITION) * cos(x(StateDefinition::THETA_POSITION)),
     x(StateDefinition::VEL_POSITION) * sin(x(StateDefinition::THETA_POSITION)),
-    tan(u(1)) / Lf,
+    x(StateDefinition::VEL_POSITION) * tan(u(1)) / Lf,
     u(0);
     return tmp;
   }

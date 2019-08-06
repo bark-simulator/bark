@@ -7,6 +7,7 @@
 #include "behavior.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 
 namespace py = pybind11;
@@ -14,6 +15,7 @@ using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
+using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
 
 using std::shared_ptr;
@@ -76,4 +78,15 @@ void python_behavior(py::module m) {
       })
       .def("add_motion_primitive", &BehaviorMotionPrimitives::AddMotionPrimitive)
       .def("action_to_behavior", &BehaviorMotionPrimitives::ActionToBehavior);
+
+  py::class_<DynamicBehaviorModel,
+             BehaviorModel,
+             shared_ptr<DynamicBehaviorModel>>(m, "DynamicBehaviorModel")
+      .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
+           modules::commons::Params *>())
+      .def("__repr__", [](const DynamicBehaviorModel &b) {
+        return "bark.behavior.DynamicBehaviorModel";
+      })
+      .def("set_action", &DynamicBehaviorModel::set_action)
+      .def("get_action", &DynamicBehaviorModel::get_action);
 }
