@@ -34,7 +34,7 @@ typedef std::vector<StateInputPair> StateInputHistory;
 
 class DynamicModel {
  public:
-  DynamicModel() {}
+  DynamicModel() : input_size_(0) {}
 
   virtual ~DynamicModel() {}
 

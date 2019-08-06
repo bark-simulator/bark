@@ -9,7 +9,7 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution i
 from modules.runtime.ml.runtime_rl import RuntimeRL
 from modules.runtime.ml.tfa_wrapper import TFAWrapper
 from modules.runtime.ml.nn_state_observer import StateConcatenation
-from modules.runtime.ml.action_wrapper import MotionPrimitives, DynamicModel
+from modules.runtime.ml.action_wrapper import DynamicModel
 from modules.runtime.ml.state_evaluator import GoalReached
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -18,20 +18,15 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from tf_agents.environments import tf_py_environment
-from tf_agents.environments import utils
 from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
 from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
-from tf_agents.metrics import tf_metrics
 from tf_agents.drivers import dynamic_step_driver
-from tf_agents.eval import metric_utils
 
-from tf_agents.environments import tf_py_environment
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.utils import common
-from tf_agents.trajectories import time_step as ts
 from tf_agents.utils.common import Checkpointer
 
 # get the distribution to sample our actions from - for SAC only
@@ -70,7 +65,7 @@ class RuntimeSACTests(unittest.TestCase):
     state_observer = StateConcatenation(params=params)
     action_wrapper = DynamicModel(params=params)
     evaluator = GoalReached(params=params)
-    viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) #use_world_bounds=True) # 
+    viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) #use_world_bounds=True) #
 
     runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
                             evaluator=evaluator, step_time=0.05, viewer=viewer,
@@ -79,7 +74,7 @@ class RuntimeSACTests(unittest.TestCase):
 
     train_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     eval_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    
+
     # hyper parameters
     actor_fc_layer_params = (512, 512, 256) # 4 layer net right now # changes 14 from (1024, 512, 512, 256)
     critic_joint_fc_layer_params = (256, 256, 128) # 2 layer critic net
@@ -94,13 +89,9 @@ class RuntimeSACTests(unittest.TestCase):
     gamma = 0.99 #@param
     gradient_clipping = None # @param
     replay_buffer_capacity = 1000 # @param
-    collect_episodes_per_iteration = 1
-    num_iterations = 1
     num_eval_episodes = 0
-    eval_interval = 10  # @param - at how many steps should we perform the evaluation metrics
     collect_steps_per_iteration = 1
     batch_size = 256  # @param
-    log_interval = 10  # @param - how often do we want to have our milestones printed
     global_step = tf.compat.v1.train.get_or_create_global_step()
     agent_name = "SAC_agent"
 
@@ -158,14 +149,14 @@ class RuntimeSACTests(unittest.TestCase):
         data_spec=tf_agent.collect_data_spec,
         batch_size=train_env.batch_size,
         max_length=replay_buffer_capacity)
-    
+
     initial_collect_driver = dynamic_step_driver.DynamicStepDriver(
             train_env,
             collect_policy,
             observers=[replay_buffer.add_batch],
             num_steps=initial_collect_steps)
     print("Collecting initial episodes..")
-    #initial_collect_driver.run()
+    initial_collect_driver.run()
 
     collect_driver = dynamic_step_driver.DynamicStepDriver(
       train_env,
@@ -173,43 +164,13 @@ class RuntimeSACTests(unittest.TestCase):
       observers=[replay_buffer.add_batch],
       num_steps=collect_steps_per_iteration)
 
-    # (Optional) Optimize by wrapping some of the code in a graph using TF function.
     collect_driver.run = common.function(collect_driver.run)
     tf_agent.train = common.function(tf_agent.train)
 
-    # Dataset generates trajectories with shape [Bx2x...]
     dataset = replay_buffer.as_dataset(
         num_parallel_calls=3, sample_batch_size=batch_size, num_steps=2).prefetch(3)
 
-    iterator = iter(dataset)
-
     train_env.reset()
-    # Reset the train step
-    # tf_agent.train_step_counter.assign(0)
-    avg_return = compute_avg_return(eval_env, eval_policy, num_eval_episodes)
-    """
-    print("\n ------------------------- STARTING SAC AGENT TRAINING -------------------------- \n")
-    for i in range(num_iterations):
-      # 
-      # Collect a few steps using collect_policy and save to the replay buffer.
-      for _ in range(collect_episodes_per_iteration):
-        collect_driver.run()
 
-      # Sample a batch of data from the buffer and update the agent's network.
-      experience, unused_info = next(iterator)
-      train_loss = tf_agent.train(experience)
-
-      step = tf_agent.train_step_counter.numpy()
-
-      if step % log_interval == 0:
-        print('step = {} from {} loss = {}'.format(step, num_iterations, train_loss.loss))
-
-      if step % eval_interval == 0:
-        avg_return = compute_avg_return(train_env, eval_policy)
-        print("Average return: {}".format(str(avg_return)))
-
-        # save graph
-        # checkpointer.save(global_step)
-    """
 if __name__ == '__main__':
     unittest.main()
