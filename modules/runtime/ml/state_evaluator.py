@@ -23,7 +23,8 @@ class GoalReached(StateEvaluator):
         reward = collision * self.collision_reward + success * self.goal_reward
         done = success or collision
         info = {"success": success, "collision_agents": eval_results["collision_agents"], \
-                 "collision_driving_corridor": eval_results["collision_driving_corridor"]}
+                 "collision_driving_corridor": eval_results["collision_driving_corridor"],
+                "step_count": eval_results["step_count"]}
         return reward, done, info
         
     def reset(self, world, agents_to_evaluate):
@@ -33,10 +34,12 @@ class GoalReached(StateEvaluator):
         evaluator1 = EvaluatorGoalReached(agents_to_evaluate[0])
         evaluator2 = EvaluatorCollisionEgoAgent(agents_to_evaluate[0]) #EvaluatorCollisionAgents()
         evaluator3 = EvaluatorCollisionDrivingCorridor()
+        evaluator4 = EvaluatorStepCount()
 
         world.add_evaluator("success", evaluator1)
         world.add_evaluator("collision_agents", evaluator2)
         world.add_evaluator("collision_driving_corridor", evaluator3)
+        world.add_evaluator("step_count", evaluator4)
 
         return world
         

@@ -16,7 +16,7 @@ using modules::models::dynamic::StateDefinition::Y_POSITION;
 using modules::geometry::Polygon;
 using modules::geometry::Point2d;
 EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
-  const world::World &world) const {
+  const world::World &world) {
   bool colliding = false;
   int num_agents = 4;
   AgentPtr ego_agent = world.get_agent(this->agent_id_);

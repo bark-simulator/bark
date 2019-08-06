@@ -23,7 +23,7 @@ class EvaluatorCollisionAgents : public BaseEvaluator
     EvaluatorCollisionAgents()  {}
     virtual ~EvaluatorCollisionAgents() {}
 
-    virtual EvaluationReturn Evaluate(const world::World& world) const;
+    virtual EvaluationReturn Evaluate(const world::World& world);
 
 };
 
