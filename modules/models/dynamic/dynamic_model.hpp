@@ -17,11 +17,11 @@ namespace models {
 namespace dynamic {
 
 typedef enum StateDefinition : int {
-  TIME_POSITION = 0,
-  X_POSITION = 1,
-  Y_POSITION = 2,
-  THETA_POSITION = 3,
-  VEL_POSITION = 4,
+  TIME_POSITION = 0, // unit is seconds
+  X_POSITION = 1, // unit is meter
+  Y_POSITION = 2, // unit is meter
+  THETA_POSITION = 3, // unit is rad
+  VEL_POSITION = 4, // unit is meter/second
   MIN_STATE_SIZE = 5,
   Z_POSITION = 6  // only placeholder, not used at the moment
 } StateDefinition;

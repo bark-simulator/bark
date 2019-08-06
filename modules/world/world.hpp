@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 #include "modules/world/opendrive/opendrive.hpp"
+#include <boost/geometry/index/rtree.hpp>
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
@@ -27,6 +28,12 @@ typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
 typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string,
                  modules::world::evaluation::EvaluationReturn> EvaluationMap;
+
+using rtree_agent_model = boost::geometry::model::box<modules::geometry::Point2d>;
+using rtree_agent_id = AgentId;
+using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
+using rtree_agent = boost::geometry::index::rtree<rtree_agent_value,
+                   boost::geometry::index::linear<16, 4> >;
 
 class World : public commons::BaseType {
  public:
@@ -68,9 +75,16 @@ class World : public commons::BaseType {
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
   void Step(const float& delta_time);
   void UpdateHorizonDrivingCorridors();
-  void MoveAgents(const float& delta_time);
+
+  void DoPlanning(const float& delta_time);
+  void DoExecution(const float& delta_time);
+
+  void UpdateAgentRTree();
+  AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 
+  AgentMap GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const;
 
   virtual World *Clone() const;
+  std::shared_ptr<World> WorldExecutionAtTime(const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;
@@ -78,6 +92,7 @@ class World : public commons::BaseType {
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
+  rtree_agent rtree_agents_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

@@ -48,6 +48,26 @@ cc_test(
 )
 
 cc_test(
+    name = "observed_world_test",
+    srcs = [
+        "observed_world_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world:world",
+        "//modules/world/map:map_interface",
+        "//modules/world/map:roadgraph",
+        "//modules/world/opendrive:opendrive",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
+        "//modules/models/execution/mpc:mpc",
+        "//modules/world/evaluation:evaluation",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
     name = "roadgraph_test",
     srcs = [
         "roadgraph_test.cc",
@@ -68,6 +88,23 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "//modules/world/map:roadgraph",
+        "//modules/world/map:map_interface",
+        "//modules/world/opendrive",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
+    name = "local_map_test",
+    srcs = [
+        "local_map_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world/map:frenet",
+        "//modules/world/map:roadgraph",
+        "//modules/world/map:local_map",
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
         "@gtest//:main",

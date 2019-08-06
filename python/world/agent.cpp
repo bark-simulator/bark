@@ -3,15 +3,21 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+#include <typeinfo>
+#include <stdexcept>
 
 #include "agent.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
+
+
+
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -21,6 +27,34 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::models::execution;
 using namespace modules::geometry;
+
+
+py::tuple behavior_model_to_python(BehaviorModelPtr behavior_model) {
+  std::string behavior_model_name;
+  if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
+    behavior_model_name = "BehaviorConstantVelocity";
+  } else if(typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
+    behavior_model_name = "BehaviorIDMClassic";
+  } else {
+    throw;
+  }
+  return py::make_tuple(behavior_model, behavior_model_name);
+} 
+
+BehaviorModelPtr python_to_behavior_model(py::tuple t) {
+  BehaviorModelPtr behavior_model;
+  std::string behavior_model_name = t[1].cast<std::string>();
+  if (behavior_model_name.compare("BehaviorConstantVelocity")==0) {
+      return std::make_shared<BehaviorConstantVelocity>(t[0].cast<BehaviorConstantVelocity>()); 
+  } else if(behavior_model_name.compare("BehaviorIDMClassic")==0) {
+    return std::make_shared<BehaviorIDMClassic>(t[0].cast<BehaviorIDMClassic>());
+  } else {
+    throw;
+  }
+}
+
+
+
 
 void python_agent(py::module m)
 {
@@ -67,7 +101,7 @@ void python_agent(py::module m)
                                   a.get_agent_id(), // 3
                                   a.get_execution_trajectory(), // 4
                                   a.get_behavior_trajectory(), // 5
-                                  a.get_behavior_model(), // 6
+                                  behavior_model_to_python(a.get_behavior_model()), // 6
                                   a.get_execution_model(), // 7
                                   a.get_dynamic_model(), // 8
                                   a.get_current_state(), // 9
@@ -85,7 +119,7 @@ void python_agent(py::module m)
 
             /* Create a new C++ instance */
             Agent agent(t[9].cast<State>(),
-                    std::make_shared<BehaviorConstantVelocity>(t[6].cast<BehaviorConstantVelocity>()), // todo resolve polymorphism
+                    python_to_behavior_model(t[6].cast<py::tuple>()), // todo resolve polymorphism
                     std::make_shared<SingleTrackModel>(t[8].cast<SingleTrackModel>()), // todo resolve polymorphism
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),

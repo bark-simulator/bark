@@ -36,6 +36,7 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:threaded_viewer",
           "//modules/runtime:runtime",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
