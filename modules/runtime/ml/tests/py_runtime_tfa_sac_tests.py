@@ -90,14 +90,14 @@ class RuntimeSACTests(unittest.TestCase):
     target_update_period = 1 #@param changes in changes 14 from 1
     reward_scale_factor = 1.0 #@param
 
-    initial_collect_steps = 1000  # @param
+    initial_collect_steps = 0  # @param
     gamma = 0.99 #@param
     gradient_clipping = None # @param
-    replay_buffer_capacity = 1000000 # @param
-    collect_episodes_per_iteration = 10
-    num_iterations = 40000
-    num_eval_episodes = 50
-    eval_interval = 500  # @param - at how many steps should we perform the evaluation metrics
+    replay_buffer_capacity = 1000 # @param
+    collect_episodes_per_iteration = 1
+    num_iterations = 1
+    num_eval_episodes = 0
+    eval_interval = 10  # @param - at how many steps should we perform the evaluation metrics
     collect_steps_per_iteration = 1
     batch_size = 256  # @param
     log_interval = 10  # @param - how often do we want to have our milestones printed
