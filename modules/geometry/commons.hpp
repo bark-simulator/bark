@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
-
+#include "modules/commons/util.hpp"
 
 namespace modules {
 namespace geometry {
@@ -87,7 +87,7 @@ struct Shape {
   // return object transform
   Shape<G, T> *transform(const Pose &pose) const;
 
-  bool Valid();
+  virtual bool Valid();
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const = 0;
 

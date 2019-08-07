@@ -8,6 +8,7 @@
 #define MODULES_COMMONS_BASE_TYPE_HPP_
 
 #include "modules/commons/params/params.hpp"
+#include "modules/commons/util.hpp"
 
 namespace modules {
 namespace commons {

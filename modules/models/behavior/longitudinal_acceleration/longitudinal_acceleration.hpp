@@ -28,6 +28,9 @@ class BehaviorLongitudinalAcceleration : public BehaviorModel {
   Trajectory Plan(float delta_time,
                  const ObservedWorld& observed_world);
 
+  virtual float get_min_velocity() { return 0.0f;}
+  virtual float get_max_velocity() { return 50.0f;}
+
   
   virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) = 0;
 
