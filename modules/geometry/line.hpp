@@ -39,7 +39,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
-  int size() const { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
+  unsigned int size() const { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
 
   void append_linestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
@@ -55,6 +55,11 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
               Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
               std::back_inserter(points));
     return points;
+  }
+
+  virtual bool Valid() {
+    return Shape<bg::model::linestring<T>, T>::Valid() &&
+    s_.size() == size();
   }
 
   void reverse() {
@@ -153,8 +158,13 @@ inline T length(const Line &line) {
 
 inline int get_segment_end_idx(Line l, float s) {
   std::vector<float>::iterator up = std::upper_bound(l.s_.begin(), l.s_.end(), s);
-  int retval = up - l.s_.begin();
-  return retval;
+  if(up != l.s_.end()) {
+    int retval = up - l.s_.begin();
+    return retval;
+  } else {
+    return  l.s_.size()-1; // last point if s is larger then line length
+  }
+  
 }
 
 inline bool check_s_for_segment_intersection(Line l, float s) {

@@ -4,19 +4,27 @@
             "UniformVehicleDistribution": {
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoal": [
-                    5110,
-                    5217
+                    5113,
+                    5283
                 ],
                 "OthersSource": [
                     [
                         5111.626,
                         5006.8305
+                    ],
+                    [
+                        5116,
+                        5062
                     ]
                 ],
                 "OthersSink": [
                     [
                         5110.789,
-                        5293.1725
+                        5193.1725
+                    ],
+                    [
+                        5116,
+                        5200
                     ]
                 ],
                 "VehicleDistanceRange": [
@@ -24,8 +32,8 @@
                     10
                 ],
                 "VehicleVelocityRange": [
-                    10,
-                    20
+                    25,
+                    35
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorIDMClassic",
