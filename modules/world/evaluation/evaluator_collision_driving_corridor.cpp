@@ -13,7 +13,7 @@ namespace world
 namespace evaluation
 {
 
-EvaluationReturn EvaluatorCollisionDrivingCorridor::Evaluate(const world::World &world) const
+EvaluationReturn EvaluatorCollisionDrivingCorridor::Evaluate(const world::World &world)
 {
   // checks collision with inner and outer line of driving corridor
   // assumption: agent is initially inside the local map and the world steps are fine

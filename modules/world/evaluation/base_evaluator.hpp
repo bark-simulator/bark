@@ -10,29 +10,24 @@
 #include <boost/variant.hpp>
 #include "modules/commons/base_type.hpp"
 
-namespace modules
-{
-namespace world
-{
+namespace modules {
+namespace world {
 
 class World;
-namespace evaluation
-{
+namespace evaluation {
 
-typedef boost::variant<float,bool> EvaluationReturn; 
+typedef boost::variant<float, bool, std::string, int> EvaluationReturn; 
 
-class BaseEvaluator 
-{
-  public:
-    BaseEvaluator()  {};
-    virtual ~BaseEvaluator() {};
-
-    virtual EvaluationReturn Evaluate(const world::World& world) const = 0;
+class BaseEvaluator {
+ public:
+  BaseEvaluator() { }
+  virtual ~BaseEvaluator() { }
+  virtual EvaluationReturn Evaluate(const world::World& world) { return false; }
 };
 typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 
-} // namespace collision
-} // namespace world
-} // namespace modules
+}  // namespace collision
+}  // namespace world
+}  // namespace modules
 
 #endif // MODULES_WORLD_EVALUATION_BASE_EVALUATOR_HPP_

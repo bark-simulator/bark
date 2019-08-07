@@ -9,6 +9,7 @@
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_collision_driving_corridor.hpp"
+#include "modules/world/evaluation/evaluator_step_count.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::evaluation;
@@ -45,7 +46,13 @@ void python_evaluation(py::module m)
     py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator, 
       std::shared_ptr<EvaluatorCollisionEgoAgent> >(m, "EvaluatorCollisionEgoAgent")
       .def(py::init<const AgentId&>())
-      .def("__repr__", [](const EvaluatorGoalReached &g) {
+      .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
         return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
+      });
+    py::class_<EvaluatorStepCount, BaseEvaluator, 
+      std::shared_ptr<EvaluatorStepCount> >(m, "EvaluatorStepCount")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorStepCount &g) {
+        return "bark.world.evaluation.EvaluatorStepCount";
       });
 }
