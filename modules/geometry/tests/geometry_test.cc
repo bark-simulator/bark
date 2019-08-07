@@ -631,7 +631,7 @@ TEST(line, segment_intersection_check_1) {
 
   EXPECT_NEAR(get_segment_end_idx(line, 0.0f), 1, 0.1f);
   EXPECT_NEAR(get_segment_end_idx(line, 3.0f), 4, 0.1f);
-  EXPECT_NEAR(get_segment_end_idx(line, 5.0), 6, 0.1f);
+  EXPECT_NEAR(get_segment_end_idx(line, 6.0), 6, 0.1f);
 }
 TEST(line, segment_intersection_tangent_1) {
   using namespace std;
