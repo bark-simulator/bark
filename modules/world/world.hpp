@@ -80,6 +80,7 @@ class World : public commons::BaseType {
   void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
+  void RemoveOutOfMapAgents();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 
   AgentMap GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const;
 
