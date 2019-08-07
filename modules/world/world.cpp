@@ -38,18 +38,20 @@ void World::add_evaluator(const std::string& name, const EvaluatorPtr& evaluator
 
 
 void World::DoPlanning(const float& delta_time) {
-  UpdateAgentRTree();
-  UpdateHorizonDrivingCorridors();
-
-  WorldPtr current_world_state(this->Clone());
-  // Behavioral and execution planning
-  for (auto agent : agents_) {
-      //! clone current world
+ 
+    UpdateAgentRTree();
+    UpdateHorizonDrivingCorridors();
+ 
+    WorldPtr current_world_state(this->Clone());
+    // Behavioral and execution planning
+    for (auto agent : agents_) {
+        //! clone current world
       ObservedWorld observed_world(*current_world_state,
-                                   agent.first);
+                                agent.first);
       agent.second->BehaviorPlan(delta_time, observed_world);
       agent.second->ExecutionPlan(delta_time);
-  }
+     
+    }
 
 }
 
@@ -59,6 +61,7 @@ void World::DoExecution(const float& delta_time) {
   for (auto agent : agents_) {
       agent.second->Execute(world_time_);
   }
+  RemoveOutOfMapAgents();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -116,6 +119,19 @@ void World::UpdateAgentRTree() {
     rtree_agents_.insert(std::make_pair(box, agent.first));
   }
 
+}
+
+void World::RemoveOutOfMapAgents() {
+  std::vector<rtree_agent_value> query_results;
+  auto bounding_box = this->bounding_box();
+  boost::geometry::model::box<modules::geometry::Point2d>
+         query_box(bounding_box.first, bounding_box.second);
+
+  rtree_agents_.query(!boost::geometry::index::within(query_box),
+            std::back_inserter(query_results));
+  for (auto &result_pair : query_results) {
+    agents_.erase(result_pair.second);
+  }
 }
 
 
