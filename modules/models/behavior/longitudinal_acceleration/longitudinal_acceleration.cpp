@@ -19,7 +19,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   //! TODO(@fortiss): parameters
   const float min_velocity = get_min_velocity();
   const float max_velocity = get_max_velocity();
-  const int num_traj_time_points = 100;
+  const int num_traj_time_points = 10;
   dynamic::Trajectory traj(num_traj_time_points, int(StateDefinition::MIN_STATE_SIZE));
   auto const sample_time = delta_time / num_traj_time_points;
 
