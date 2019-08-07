@@ -4,6 +4,7 @@ cc_library(
     name = "commons",
     hdrs = [
         "base_type.hpp",
+        "util.hpp",
     ],
     deps = [
         "//modules/commons/params:params",
@@ -11,6 +12,7 @@ cc_library(
         "@boost//:smart_ptr",
         "@boost//:move",
         "@boost//:type_traits",
+        "@boost//:stacktrace",
     ],
     visibility = ["//visibility:public"],
 )
