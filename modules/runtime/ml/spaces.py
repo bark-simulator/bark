@@ -51,7 +51,7 @@ class BoundedContinuous(Space):
 
   def sample(self):
     if len(self._low) > 1 and len(self._high) > 1:
-      assert(len(self._low) == len(self._high))
+      # assert(len(self._low) == len(self._high))
       sample_vec = []
       for mi, ma in zip(self._low, self._high):
         sample_vec.append(self.np_random.uniform(mi, ma))

@@ -5,8 +5,6 @@
 
 
 import unittest
-import os
-import numpy as np
 import tensorflow as tf
 tf.compat.v1.enable_v2_behavior()
 from tf_agents.environments import tf_py_environment
@@ -14,7 +12,7 @@ from tf_agents.environments import tf_py_environment
 from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
 from modules.runtime.ml.runtime_rl import RuntimeRL
 from modules.runtime.ml.nn_state_observer import StateConcatenation
-from modules.runtime.ml.action_wrapper import MotionPrimitives, DynamicModel
+from modules.runtime.ml.action_wrapper import DynamicModel
 from modules.runtime.ml.state_evaluator import GoalReached
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -36,7 +34,7 @@ class RunnerTests(unittest.TestCase):
                           evaluator=evaluator, step_time=0.05, viewer=viewer,
                           scenario_generator=scenario_generation)
 
-                          
+
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
     # this is a fully working sac agent (agent, replay buffer, dataset, ...)
     sac_agent = SACAgent(tfa_env)
