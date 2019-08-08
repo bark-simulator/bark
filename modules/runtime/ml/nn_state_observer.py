@@ -85,6 +85,7 @@ class StateConcatenation(OpenAI):
 
     @property
     def observation_space(self):
+        # TODO(@hart): use from spaces.py
         return spaces.Box(low=np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state), \
                           high = np.ones(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state) )
 
