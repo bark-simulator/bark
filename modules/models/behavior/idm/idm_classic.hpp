@@ -25,11 +25,11 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
 
   std::pair<world::objects::AgentPtr, modules::world::map::Frenet> GetLeadingVehicle(const world::ObservedWorld& observed_world);
 
-  const double get_desired_velocity() {return 30;} // // unit is meter/second
-  const float get_minimum_spacing() {return 2;} // unit is meter
-  const float get_desired_time_headway() {return 1.5;} // unit is seconds
-  const float get_max_acceleration() {return 0.73;} // unit is meter/second^2
-  const float get_comfortable_braking_acceleration() {return 1.67;} // unit is meter/second^2
+  const double get_desired_velocity() {return 15.0f;} // // unit is meter/second
+  const float get_minimum_spacing() {return 2.0f;} // unit is meter
+  const float get_desired_time_headway() {return 1.5f;} // unit is seconds
+  const float get_max_acceleration() {return 1.7f;} // unit is meter/second^2
+  const float get_comfortable_braking_acceleration() {return 1.67f;} // unit is meter/second^2
   const int get_exponent() { return  4;}
 
   virtual BehaviorModel *Clone() const;
