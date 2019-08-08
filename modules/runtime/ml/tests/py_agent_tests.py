@@ -36,6 +36,8 @@ class AgentTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
+
+    # this is a fully working sac agent (agent, replay buffer, dataset, ...)
     sac_agent = SACAgent(tfa_env)
 
 

@@ -28,8 +28,11 @@ class SACAgent(BaseAgent):
     self._replay_buffer = self.get_replay_buffer()
     self._checkpointer = self.get_checkpointer()
     self._dataset = self.get_dataset()
+    self._collect_policy = self.get_collect_policy()
+    self._eval_policy = self.get_eval_policy()
     self._env = environment
     self._global_step = 0
+    # TODO(@hart): put all hyper parameters here
 
   def get_agent(self, env):
     # hyper parameters
@@ -123,9 +126,23 @@ class SACAgent(BaseAgent):
       num_steps=2).prefetch(3)
     return dataset
 
+  def get_collect_policy(self):
+    return self._agent.collect_policy # behavioral policy (= data collection)
+
+  def get_eval_policy(self):
+    return greedy_policy.GreedyPolicy(self._agent.policy)
+
   def execute(self, state):
     # self._agent
     pass
 
   def reset(self):
     self._agent.reset()
+
+  @property
+  def collect_policy(self):
+    return self._collect_policy
+
+  @property
+  def eval_policy(self):
+    return self._eval_policy

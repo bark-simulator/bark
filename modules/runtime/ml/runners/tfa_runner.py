@@ -1,41 +1,54 @@
+import tensorflow as tf
+tf.compat.v1.enable_v2_behavior()
+from tf_agents.drivers import dynamic_step_driver
+from tf_agents.utils import common
 from modules.runtime.ml.runners.base_runner import BaseRunner
 
 class TFARunner(BaseRunner):
-    def __init__(self,
-                 runtime,
-                 agent,
-                 initial_collection_steps=0,
-                 collection_steps_per_cycle=1,
-                 initial_collection_driver=None,
-                 collection_driver=None):
-      self._initial_collection_driver = self.get_initial_collection_driver()
-      self._collection_driver = self.get_collection_driver()
-      BaseRunner.__init__(self,
-                          runtime=runtime,
-                          agent=agent,
-                          initial_collection_steps=initial_collection_steps,
-                          collection_steps_per_cycle=collection_steps_per_cycle)
-    
-    def get_initial_collection_driver(self):
-      pass
+  def __init__(self,
+                runtime,
+                agent,
+                number_of_collections=10,
+                initial_collection_steps=10,
+                collection_steps_per_cycle=10,
+                initial_collection_driver=None,
+                collection_driver=None):
+    BaseRunner.__init__(self,
+                        runtime=runtime,
+                        agent=agent,
+                        number_of_collections=number_of_collections,
+                        initial_collection_steps=initial_collection_steps,
+                        collection_steps_per_cycle=collection_steps_per_cycle)
+    self.get_initial_collection_driver()
+    self.get_collection_driver()
   
-    def get_collection_driver(self):
-      pass
-  
-    def _collect_initial_episodes(self):
-      # self._agent .. initial collection driver
-      pass
-                        
-    def train(self):
-      # for loop
-      # self._agent .. collection driver
-      # train
-      pass
-  
-    def evaluate(self, render=False):
-      # for loop
-      # cannot use collection driver due to the fact it would evaluate the whole dataset
-      # greedy policy
-      # eval metrics
-      pass
-  
+  def get_initial_collection_driver(self):
+    self._initial_collection_driver = dynamic_step_driver.DynamicStepDriver(
+      self._runtime,
+      self._agent._agent.collect_policy,
+      observers=[self._agent._replay_buffer.add_batch],
+      num_steps=self._initial_collection_steps)
+    self._initial_collection_driver.run = common.function(self._initial_collection_driver.run)
+
+  def get_collection_driver(self):
+    self._collection_driver = dynamic_step_driver.DynamicStepDriver(
+      self._runtime,
+      self._agent._agent.collect_policy,
+      observers=[self._agent._replay_buffer.add_batch],
+      num_steps=self._collection_steps_per_cycle)
+    self._collection_driver.run = common.function(self._collection_driver.run)
+   
+  def collect_initial_episodes(self):
+    self._initial_collection_driver.run()
+                      
+  def train(self):
+    for i in range(0, self._number_of_collections):
+      print("Collecting {}".format(str(i)))
+      self._collection_driver.run()
+
+  def evaluate(self, render=False):
+    # for loop
+    # cannot use collection driver due to the fact it would evaluate the whole dataset
+    # greedy policy
+    # eval metrics
+    pass
