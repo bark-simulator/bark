@@ -128,7 +128,7 @@ class SACAgent(BaseAgent):
     pass
 
   def reset(self):
-    self._agent.reset()
+    pass
 
   @property
   def collect_policy(self):
