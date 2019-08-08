@@ -79,7 +79,7 @@ class DynamicModel(OpenAI):
     def action_space(self):
         # TODO(@hart): get input space size from dynamic model
         return BoundedContinuous(2,
-                                 mins=[-1.0, -0.1],
-                                 maxs=[1.0, 0.1])
+                                 low=[-1.0, -0.1],
+                                 high=[1.0, 0.1])
         
 
