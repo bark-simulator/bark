@@ -10,7 +10,7 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-EvaluationReturn EvaluatorCollisionAgents::Evaluate(const world::World& world) const {
+EvaluationReturn EvaluatorCollisionAgents::Evaluate(const world::World& world) {
   modules::geometry::Polygon poly_agent1;
   modules::geometry::Polygon poly_agent2;
   bool colliding = false;
