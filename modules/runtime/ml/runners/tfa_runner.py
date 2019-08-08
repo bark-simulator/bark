@@ -42,9 +42,16 @@ class TFARunner(BaseRunner):
     self._initial_collection_driver.run()
                       
   def train(self):
+    iterator = iter(self._agent._dataset)
     for i in range(0, self._number_of_collections):
       print("Collecting {}".format(str(i)))
       self._collection_driver.run()
+
+      # train
+      experience, unused_info = next(iterator)
+      train_loss = self._agent._agent.train(experience)
+      print('train_loss = {}'.format(train_loss.loss))
+
 
   def evaluate(self, render=False):
     # for loop
