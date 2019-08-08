@@ -26,7 +26,7 @@ class EvaluatorGoalReached : public BaseEvaluator
     EvaluatorGoalReached(const AgentId& agent_id) : agent_id_(agent_id)  {};
     virtual ~EvaluatorGoalReached() {};
 
-    virtual EvaluationReturn Evaluate(const world::World& world) const { 
+    virtual EvaluationReturn Evaluate(const world::World& world) { 
         auto agent_it = world.get_agents().find(agent_id_);
         if (agent_it != world.get_agents().end() ) {
           return world.get_agents()[agent_id_]->AtGoal();

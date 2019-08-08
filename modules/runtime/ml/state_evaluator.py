@@ -44,10 +44,12 @@ class GoalReached(StateEvaluator):
         evaluator1 = EvaluatorGoalReached(self.eval_agent)
         evaluator2 = EvaluatorCollisionEgoAgent(self.eval_agent) #EvaluatorCollisionAgents()
         evaluator3 = EvaluatorCollisionDrivingCorridor()
+        evaluator4 = EvaluatorStepCount()
 
         world.add_evaluator("success", evaluator1)
         world.add_evaluator("collision_agents", evaluator2)
         world.add_evaluator("collision_driving_corridor", evaluator3)
+        world.add_evaluator("step_count", evaluator4)
 
         return world
         
