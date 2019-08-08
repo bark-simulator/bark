@@ -36,8 +36,8 @@ class RunnerTests(unittest.TestCase):
                           evaluator=evaluator, step_time=0.05, viewer=viewer,
                           scenario_generator=scenario_generation)
 
+                          
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-
     # this is a fully working sac agent (agent, replay buffer, dataset, ...)
     sac_agent = SACAgent(tfa_env)
     tfa_runner = TFARunner(tfa_env, sac_agent)

@@ -48,7 +48,7 @@ class TFARunner(BaseRunner):
       self._collection_driver.run()
 
       # train
-      experience, unused_info = next(iterator)
+      experience, _ = next(iterator)
       train_loss = self._agent._agent.train(experience)
       print('train_loss = {}'.format(train_loss.loss))
 

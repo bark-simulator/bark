@@ -26,7 +26,7 @@ class SACAgent(BaseAgent):
                        agent=self.get_agent(environment))
     self._env = environment
     self._replay_buffer = self.get_replay_buffer()
-    self._checkpointer = self.get_checkpointer()
+    self._checkpointer  =self.get_checkpointer()
     self._dataset = self.get_dataset()
     self._collect_policy = self.get_collect_policy()
     self._eval_policy = self.get_eval_policy()
@@ -127,7 +127,7 @@ class SACAgent(BaseAgent):
     return dataset
 
   def get_collect_policy(self):
-    return self._agent.collect_policy # behavioral policy (= data collection)
+    return self._agent.collect_policy
 
   def get_eval_policy(self):
     return greedy_policy.GreedyPolicy(self._agent.policy)
