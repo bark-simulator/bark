@@ -1,3 +1,4 @@
+from modules.runtime.ml.runners.base_runner import BaseRunner
 
 class TFARunner(BaseRunner):
     def __init__(self,
@@ -27,8 +28,8 @@ class TFARunner(BaseRunner):
                         
     def train(self):
       # for loop
-      # self._agent .. initial collection driver
-      # train metrics
+      # self._agent .. collection driver
+      # train
       pass
   
     def evaluate(self, render=False):
