@@ -18,14 +18,10 @@ class BaseRunner(ABC):
     self._train_metric = train_metrics
     self._eval_metrics = eval_metrics
     self._render_evaluation = render_evaluation
-    self.initial_episode_collection()
 
   @abstractmethod
-  def _collect_initial_episodes(self, num):
+  def collect_initial_episodes(self, num):
     pass
-
-  def initial_episode_collection(self):
-    self._collect_initial_episodes(self._initial_collection_steps)
 
   @abstractmethod
   def train(self, render=False):
