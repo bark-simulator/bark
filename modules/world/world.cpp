@@ -132,6 +132,7 @@ void World::RemoveOutOfMapAgents() {
   for (auto &result_pair : query_results) {
     agents_.erase(result_pair.second);
   }
+  UpdateAgentRTree();
 }
 
 

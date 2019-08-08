@@ -31,14 +31,14 @@ class RuntimeRLTests(unittest.TestCase):
 
         for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
-            for _ in range(0, 40): # run each scenario for 10 steps
+            for _ in range(0, 100): # run each scenario for 10 steps
                 action = np.array([0,0]) #action_wrapper.action_space.sample()
                 print("Action: {}".format(str(action)))
                 runtimerl.render()
                 next_nn_state, reward, done, info = runtimerl.step(action)
-                print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
-                        =================================================".format( next_nn_state, reward, done, info))
                 if info["success"] or done:
+                    print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+                        =================================================".format( next_nn_state, reward, done, info))
                     break
 
     def test_motion_primitives_concat_state(self):
@@ -56,12 +56,12 @@ class RuntimeRLTests(unittest.TestCase):
 
         for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
-            for _ in range(0, 10): # run each scenario for 10 steps
+            for _ in range(0, 40): # run each scenario for 10 steps
                 next_nn_state, reward, done, info = runtimerl.step(action_wrapper.action_space.sample())
                 runtimerl.render()
-                print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
-                        =================================================".format( next_nn_state, reward, done, info))
                 if info["success"] or done:
+                    print("State: {} \n Reward: {} \n Done {}, Info: {} \n \
+                        =================================================".format( next_nn_state, reward, done, info))
                     break
                 
         params.save(filename="highway_merging_written.json")

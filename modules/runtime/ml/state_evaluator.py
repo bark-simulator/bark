@@ -15,6 +15,8 @@ class GoalReached(StateEvaluator):
         self.goal_reward = params["Runtime"]["RL"]["StateEvaluator"]["GoalReward", "The reward given for goals", 0.01]
         self.collision_reward = params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward", "The (negative) \
                                                      reward given for collisions", -1]
+        self.max_steps = params["Runtime"]["RL"]["StateEvaluator"]["MaxSteps", "The maximum number of \
+                            steps allowed to take in the environment before episode is done", 50]
         self.eval_agent = None
 
     def get_evaluation(self, world):
@@ -23,17 +25,19 @@ class GoalReached(StateEvaluator):
             collision = eval_results["collision_agents"] or eval_results["collision_driving_corridor"]
             success = eval_results["success"]
             reward = collision * self.collision_reward + success * self.goal_reward
-            done = success or collision
+            max_steps_reached = eval_results["step_count"] > self.max_steps
+            done = success or collision or max_steps_reached
             info = {"success": success, "collision_agents": eval_results["collision_agents"], \
                     "collision_driving_corridor": eval_results["collision_driving_corridor"], \
-                    "outside_map": False}
+                    "outside_map": False, "num_steps": eval_results["step_count"]}
         else:
             collision = False
             success = False
             done = True
             reward = 0
             info = {"success": success, "collision_agents": False, \
-                    "collision_driving_corridor": False, "outside_map": True}
+                    "collision_driving_corridor": False, "outside_map": True,
+                     "num_steps": None}
         return reward, done, info
         
     def reset(self, world, agents_to_evaluate):
