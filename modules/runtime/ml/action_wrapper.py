@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from modules.runtime.ml.spaces import Discrete, Continuous
+from modules.runtime.ml.spaces import Discrete, BoundedContinuous
 from bark.models.behavior import BehaviorMotionPrimitives, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
 from modules.runtime.commons.parameters import ParameterServer
@@ -84,7 +84,8 @@ class DynamicModel(OpenAI):
     @property
     def action_space(self):
         # TODO(@hart): get input space size from dynamic model
-        return Continuous(2)
-
+        return BoundedContinuous(2,
+                                 low=[-1.0, -0.1],
+                                 high=[1.0, 0.1])
         
 

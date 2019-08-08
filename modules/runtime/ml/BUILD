@@ -8,6 +8,8 @@ py_library(
             "spaces.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
-    deps = ["//modules/runtime:runtime"],
+    deps = ["//modules/runtime:runtime",
+            "//modules/runtime/ml/runners:runners",
+            "//modules/runtime/ml/agents:agents"],
     visibility = ["//visibility:public"],
 )
