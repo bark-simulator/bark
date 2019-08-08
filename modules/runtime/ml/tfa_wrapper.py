@@ -19,10 +19,16 @@ class TFAWrapper(py_environment.PyEnvironment):
     self.env = env
     self._action_spec = array_spec.BoundedArraySpec(
         shape=self.env.action_space.shape,
-        dtype=np.float32, minimum=-1.0, maximum=1.0, name='action')
+        dtype=np.float32,
+        minimum=self.env.action_space.low,
+        maximum=self.env.action_space.high,
+        name='action')
     self._observation_spec = array_spec.BoundedArraySpec(
         shape=self.env.observation_space.shape,
-        dtype=np.float32, minimum=-1000.0, maximum=1000.0, name='observation')
+        dtype=np.float32,
+        minimum=self.env.observation_space.low,
+        maximum=self.env.observation_space.high,
+        name='observation')
     self._state = np.zeros(shape=self.env.observation_space.shape,
         dtype=np.float32)
     self._episode_ended = False
@@ -46,8 +52,6 @@ class TFAWrapper(py_environment.PyEnvironment):
       return self.reset()
     state, reward, self._episode_ended, _ = self.env.step(action)
     self._state = np.array(state, dtype=np.float32)
-    #print(state, reward, self._episode_ended, info)
-    #print("ended: ", self._episode_ended)
     if self._episode_ended:
       return ts.termination(self._state, reward=reward)
     else:
