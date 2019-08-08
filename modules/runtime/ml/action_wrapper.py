@@ -39,7 +39,10 @@ class MotionPrimitives(OpenAI):
         for control_input in self.control_inputs:
             self.behavior_model.add_motion_primitive(np.array(control_input))
         ego_agent_id = agents_to_act[0]
-        world.agents[ego_agent_id].behavior_model = self.behavior_model
+        if ego_agent_id in world.agents:
+            world.agents[ego_agent_id].behavior_model = self.behavior_model
+        else:
+            raise ValueError("Id of contronlled agent not in world agent map.")
         return world
 
     def action_to_behavior(self, world, action):
@@ -67,7 +70,10 @@ class DynamicModel(OpenAI):
         self._behavior_model = DynamicBehaviorModel(self._dynamic_model,
                                                     self._params)
         ego_agent_id = agents_to_act[0]
-        world.agents[ego_agent_id].behavior_model = self._behavior_model
+        if ego_agent_id in world.agents:
+            world.agents[ego_agent_id].behavior_model = self._behavior_model
+        else:
+            raise ValueError("Id of contronlled agent not in world agent map.")
         return world
 
     def action_to_behavior(self, world, action):

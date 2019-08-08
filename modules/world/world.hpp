@@ -45,7 +45,14 @@ class World : public commons::BaseType {
   double get_world_time() const { return world_time_; }
   world::map::MapInterfacePtr get_map() const { return map_; }
   AgentMap get_agents() const { return agents_; }
-  AgentPtr get_agent(AgentId id) const { return agents_.at(id); }
+  AgentPtr get_agent(AgentId id) const { 
+    auto agent_it = agents_.find(id);
+    if(agent_it != agents_.end()) {
+      return agents_.at(id); 
+    } else {
+      return AgentPtr(nullptr);
+    }
+  }
   ObjectMap get_objects() const { return objects_; }
   std::map<std::string,
            EvaluatorPtr> get_evaluators() const { return evaluators_; }

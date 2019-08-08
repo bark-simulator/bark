@@ -17,7 +17,7 @@
 // TODO(fortiss): fill our this test
 TEST(load_test, param_tests) {
   bool temp = false;
-  BARK_ASSERT(temp);
+  BARK_EXPECT_TRUE(temp);
 
 }
 

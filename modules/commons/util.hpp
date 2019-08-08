@@ -19,13 +19,12 @@ namespace commons {
   inline void assertion_failed_msg(char const* expr, char const* function, char const* file, long line) {
       std::cerr << "Expression '" << expr << "' is false in function '" << function << "'(" << file << ", l." << line <<  "): " << "\n"
           << "Backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
-      std::abort();
   }
 
 }  // namespace commons
 }  // namespace modules
 
-#define BARK_ASSERT(cond) \
+#define BARK_EXPECT_TRUE(cond) \
     do \
     { \
         if (!(cond)) \

@@ -20,6 +20,9 @@ EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
   bool colliding = false;
   int num_agents = 4;
   AgentPtr ego_agent = world.get_agent(this->agent_id_);
+  if(!ego_agent) {
+    return false;
+  }
   State ego_state = ego_agent->get_current_state();
   Point2d ego_position(ego_state(X_POSITION),
                        ego_state(Y_POSITION));
