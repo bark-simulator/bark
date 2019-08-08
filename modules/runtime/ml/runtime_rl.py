@@ -35,8 +35,7 @@ class RuntimeRL(Runtime):
 
     def get_nstate_reward_action_tuple(self, world, controlled_agents ):
         next_state = self.nn_observer.observe(world=self.world, agents_to_observe=controlled_agents)
-        #reward, done, info = self.evaluator.get_evaluation(world=world)
-        reward, done, info = (10, False, {"success": False})
+        reward, done, info = self.evaluator.get_evaluation(world=world)
         return next_state, reward, done, info
 
 
