@@ -5,12 +5,12 @@ from tf_agents.networks import actor_distribution_network
 from tf_agents.networks import normal_projection_network
 from tf_agents.agents.ddpg import critic_network
 from tf_agents.policies import greedy_policy
-from tf_agents.metrics import tf_metrics
-from tf_agents.eval import metric_utils
+# from tf_agents.metrics import tf_metrics
+# from tf_agents.eval import metric_utils
 
 from tf_agents.agents.sac import sac_agent
 from tf_agents.replay_buffers import tf_uniform_replay_buffer
-from tf_agents.utils import common
+# from tf_agents.utils import common
 from tf_agents.utils.common import Checkpointer
 
 from modules.runtime.ml.agents.base_agent import BaseAgent
@@ -44,17 +44,8 @@ class SACAgent(BaseAgent):
     target_update_tau = 0.05 # @param # changed in changes 14 from 0.005
     target_update_period = 3 #@param changes in changes 14 from 1
     reward_scale_factor = 1.0 #@param
-    initial_collect_steps = 10000  # @param
     gamma = 0.995 #@param
     gradient_clipping = None # @param
-    replay_buffer_capacity = 100000 # @param
-    collect_episodes_per_iteration = 50
-    num_iterations = 40000
-    num_eval_episodes = 100
-    eval_interval = 500  # @param - at how many steps should we perform the evaluation metrics
-    collect_steps_per_iteration = 1
-    batch_size = 512  # @param
-    log_interval = 500  # @param - how often do we want to have our milestones printed
     self._global_step = tf.compat.v1.train.get_or_create_global_step()
     agent_name = "SAC_agent"
 
@@ -72,13 +63,13 @@ class SACAgent(BaseAgent):
         env.action_spec(),
         fc_layer_params=actor_fc_layer_params,
         continuous_projection_net=_normal_projection_net)
-    
+
     critic_net = critic_network.CriticNetwork(
       (env.observation_spec(), env.action_spec()),
       observation_fc_layer_params=None,
       action_fc_layer_params=None,
       joint_fc_layer_params=critic_joint_fc_layer_params)
-    
+
     # SAC agent
     tf_agent = sac_agent.SacAgent(
       env.time_step_spec(),

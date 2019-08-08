@@ -20,7 +20,7 @@ class BaseRunner(ABC):
     self._render_evaluation = render_evaluation
 
   @abstractmethod
-  def collect_initial_episodes(self, num):
+  def collect_initial_episodes(self):
     pass
 
   @abstractmethod

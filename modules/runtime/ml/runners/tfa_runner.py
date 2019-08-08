@@ -21,7 +21,7 @@ class TFARunner(BaseRunner):
                         collection_steps_per_cycle=collection_steps_per_cycle)
     self.get_initial_collection_driver()
     self.get_collection_driver()
-  
+
   def get_initial_collection_driver(self):
     self._initial_collection_driver = dynamic_step_driver.DynamicStepDriver(
       self._runtime,
@@ -37,11 +37,11 @@ class TFARunner(BaseRunner):
       observers=[self._agent._replay_buffer.add_batch],
       num_steps=self._collection_steps_per_cycle)
     self._collection_driver.run = common.function(self._collection_driver.run)
-   
+
   def collect_initial_episodes(self):
     self._initial_collection_driver.run()
-                      
-  def train(self):
+
+  def train(self, render=False):
     iterator = iter(self._agent._dataset)
     for i in range(0, self._number_of_collections):
       print("Collecting {}".format(str(i)))
