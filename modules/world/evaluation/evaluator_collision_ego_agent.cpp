@@ -19,17 +19,20 @@ EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
   const world::World &world) {
   bool colliding = false;
   int num_agents = 4;
-  AgentPtr ego_agent = world.get_agent(this->agent_id_);
+  auto ego_agent = world.get_agent(this->agent_id_);
+  if(!ego_agent) {
+    return false;
+  }
   State ego_state = ego_agent->get_current_state();
   Point2d ego_position(ego_state(X_POSITION),
                        ego_state(Y_POSITION));
-  Polygon ego_polygon =
+  const Polygon& ego_polygon =
     ego_agent->GetPolygonFromState(ego_state);
   AgentMap nearby_agents = world.GetNearestAgents(ego_position, num_agents);
 
-  for (auto agent : nearby_agents) {
-    if (ego_agent->get_agent_id() != agent.second->get_agent_id()) {
-      Polygon agent_polygon =
+  for (const auto& agent : nearby_agents) {
+    if (this->agent_id_ != agent.second->get_agent_id()) {
+      const Polygon& agent_polygon =
         agent.second->GetPolygonFromState(agent.second->get_current_state());
       if ( Collide(ego_polygon, agent_polygon) ) {
         colliding = true;

@@ -15,6 +15,7 @@ cc_library(
     deps = [
 	    "@com_github_eigen_eigen//:eigen",
         "@boost//:geometry",
+        "//modules/commons:commons",
     ],
     visibility = ["//visibility:public"],
 )

@@ -73,7 +73,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         for idx, source in enumerate(self.others_source):
             connecting_center_line, s_start, s_end, _, lane_id_end = \
                      self.center_line_between_source_and_sink( world.map,  source, self.others_sink[idx])
-            goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+            goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1.5,0),Point2d(-1.5,8),Point2d(1.5,8), Point2d(1.5,0)]) # todo: orient goal polygon along road
             goal_polygon = goal_polygon.translate(Point2d(self.others_sink[idx][0], self.others_sink[idx][1]))
             goal_definition = GoalDefinition(goal_polygon)
             agent_list.extend( self.place_agents_along_linestring(world, connecting_center_line, s_start, s_end, \
@@ -86,7 +86,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         # set ego agent spec
         num_agents = len(scenario.agent_list)
         ego_agent = scenario.agent_list[math.floor(num_agents/4)] # take agent in the middle of list 
-        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1.5,0),Point2d(-1.5,8),Point2d(1.5,8), Point2d(1.5,0)])
         goal_polygon = goal_polygon.translate(Point2d(self.ego_goal[0], self.ego_goal[1]))
         ego_agent.goal_definition = GoalDefinition(goal_polygon)
         scenario.eval_agent_ids = [ego_agent.id] # only one agent is ego in the middle of all other agents

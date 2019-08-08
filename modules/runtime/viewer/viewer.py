@@ -41,14 +41,25 @@ class BaseViewer(Viewer):
     def reset():
         pass
 
-    def _update_world_view_range(self, world, eval_agent_ids=None):
+    def _get_draw_eval_agent_ids(self, world, eval_agent_ids=None, ):
         if self.follow_agent_id is not None:
             if isinstance(self.follow_agent_id, bool) and \
                      eval_agent_ids is not None and \
                      len(eval_agent_ids) == 1:
-                follow_agent =world.agents[eval_agent_ids[0]]
+                draw_eval_agent_id = eval_agent_ids[0]
             else:
-                follow_agent = world.agents[self.follow_agent_id]
+                draw_eval_agent_id = self.follow_agent_id
+
+            if draw_eval_agent_id in world.agents:
+                return draw_eval_agent_id
+
+        return None
+
+    def _update_world_view_range(self, world, eval_agent_ids=None):
+        draw_eval_agent_id = self._get_draw_eval_agent_ids(world, eval_agent_ids)
+
+        if draw_eval_agent_id:
+            follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
             pose = np.zeros(3)
             pose[0] = state[int(StateDefinition.X_POSITION)]

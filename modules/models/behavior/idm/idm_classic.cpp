@@ -33,8 +33,7 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
   // relative velocity and longitudinal distance
   const State ego_state = observed_world.current_ego_state();
   const float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
-
-  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = GetLeadingVehicle(observed_world);
+  auto leading_vehicle = GetLeadingVehicle(observed_world);
   double interaction_term = 0.0f;
   if(leading_vehicle.first) {
     // Leading vehicle exists in driving corridor, we calculate interaction term
@@ -44,13 +43,15 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
 
     const float vehicle_length = observed_world.get_ego_agent()->get_shape().front_dist_ +
                                   leading_vehicle.first->get_shape().rear_dist_;
-    const float net_distance = lead_veh_frenet.lon - vehicle_length - 0.0f ; // For now assume ego longitudinal state at start of driving corridor
-    const float net_velocity = ego_state(StateDefinition::VEL_POSITION) - lead_state(StateDefinition::VEL_POSITION);
+    const double net_distance = lead_veh_frenet.lon - vehicle_length - 0.0f ; // For now assume ego longitudinal state at start of driving corridor
+    const double net_velocity = ego_state(StateDefinition::VEL_POSITION) - lead_state(StateDefinition::VEL_POSITION);
 
-    const float helper_state = minimum_spacing + ego_velocity*desired_time_headway +
+    const double helper_state = minimum_spacing + ego_velocity*desired_time_headway +
                       (ego_velocity*net_velocity) / (2*sqrt(max_acceleration*comfortable_braking_acceleration));
-
-    interaction_term = pow(helper_state / net_distance, 2);
+    
+    BARK_EXPECT_TRUE(!isnan(helper_state));
+    interaction_term = (helper_state / net_distance)*(helper_state / net_distance);
+    BARK_EXPECT_TRUE(!isnan(interaction_term));
   }
   
   // Calculate acceleration based on https://en.wikipedia.org/wiki/Intelligent_driver_model (Maybe look into paper for other implementation aspects)  

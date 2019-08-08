@@ -49,7 +49,11 @@ class StateConcatenation(OpenAI):
 
     def observe(self, world, agents_to_observe):
         super(StateConcatenation, self).observe(world=world, agents_to_observe=agents_to_observe)
-        ego_observed_world = world.observe(agents_to_observe)[0]
+        observed_worlds =  world.observe(agents_to_observe)
+        if (len(observed_worlds) == 0):
+            concatenated_state = np.zeros(self._len_ego_state+self.max_num_other_agents*self._len_relative_agent_state)
+            return concatenated_state.fill(np.nan)
+        ego_observed_world = observed_worlds[0]
         
         num_other_agents = len(ego_observed_world.other_agents)
         ego_state = ego_observed_world.ego_agent.state
