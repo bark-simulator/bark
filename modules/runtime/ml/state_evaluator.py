@@ -15,23 +15,34 @@ class GoalReached(StateEvaluator):
         self.goal_reward = params["Runtime"]["RL"]["StateEvaluator"]["GoalReward", "The reward given for goals", 0.01]
         self.collision_reward = params["Runtime"]["RL"]["StateEvaluator"]["CollisionReward", "The (negative) \
                                                      reward given for collisions", -1]
+        self.eval_agent = None
 
     def get_evaluation(self, world):
-        eval_results = world.evaluate()
-        collision = eval_results["collision_agents"] or eval_results["collision_driving_corridor"]
-        success = eval_results["success"]
-        reward = collision * self.collision_reward + success * self.goal_reward
-        done = success or collision
-        info = {"success": success, "collision_agents": eval_results["collision_agents"], \
-                 "collision_driving_corridor": eval_results["collision_driving_corridor"]}
+        if self.eval_agent in world.agents:
+            eval_results = world.evaluate()
+            collision = eval_results["collision_agents"] or eval_results["collision_driving_corridor"]
+            success = eval_results["success"]
+            reward = collision * self.collision_reward + success * self.goal_reward
+            done = success or collision
+            info = {"success": success, "collision_agents": eval_results["collision_agents"], \
+                    "collision_driving_corridor": eval_results["collision_driving_corridor"], \
+                    "outside_map": False}
+        else:
+            collision = False
+            success = False
+            done = True
+            reward = 0
+            info = {"success": success, "collision_agents": False, \
+                    "collision_driving_corridor": False, "outside_map": True}
         return reward, done, info
         
     def reset(self, world, agents_to_evaluate):
         if len(agents_to_evaluate) != 1:
             raise ValueError("Invalid number of agents provided for GoalReached \
                         evaluation, number= {}".format(len(agents_to_evaluate)))
-        evaluator1 = EvaluatorGoalReached(agents_to_evaluate[0])
-        evaluator2 = EvaluatorCollisionEgoAgent(agents_to_evaluate[0]) #EvaluatorCollisionAgents()
+        self.eval_agent = agents_to_evaluate[0]
+        evaluator1 = EvaluatorGoalReached(self.eval_agent)
+        evaluator2 = EvaluatorCollisionEgoAgent(self.eval_agent) #EvaluatorCollisionAgents()
         evaluator3 = EvaluatorCollisionDrivingCorridor()
 
         world.add_evaluator("success", evaluator1)
