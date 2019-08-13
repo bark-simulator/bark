@@ -47,6 +47,7 @@ bool LocalMap::Generate(Point2d point, double horizon) {
   if(map_interface_ == nullptr) {
     return false;
   }
+  driving_corridor_ = DrivingCorridor();
 
   goal_lane_id_ = GoalLaneIdFromGoalDefinition(goal_definition_);
 
@@ -57,7 +58,6 @@ bool LocalMap::Generate(Point2d point, double horizon) {
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
     map_interface_->ComputeLaneBoundariesHorizon(current_lane->get_id(),
                                                  goal_lane_id_);
-
 
   if (route.first.size() != 0 && route.second.size() != 0) {
     std::vector< std::pair<int, LaneId> > dummy;
@@ -133,6 +133,11 @@ bool LocalMap::ComputeHorizonCorridor(const Point2d& p, double horizon) {
     return true;
   }
   return false;
+}
+
+LocalMap *LocalMap::Clone() const {
+  LocalMap *new_local_map = new LocalMap(*this);
+  return new_local_map;
 }
 
 }  // namespace map

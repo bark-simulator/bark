@@ -84,6 +84,7 @@ class LocalMap {
     goal_lane_id_(lm.goal_lane_id_) {}
 
   //! Setter
+  void set_goal_definition(GoalDefinition &goal_definition) { goal_definition_ = goal_definition; }
   void set_goal_lane_id(LaneId goal_lane_id) { goal_lane_id_ = goal_lane_id_; }
   void set_map_interface(MapInterfacePtr map) { map_interface_ = map; }
 
@@ -121,6 +122,8 @@ class LocalMap {
                     double horizon);
 
   bool ComputeHorizonCorridor(const Point2d& p, double horizon);
+
+  virtual LocalMap *Clone() const;
 
  private:
   DrivingCorridor driving_corridor_;
