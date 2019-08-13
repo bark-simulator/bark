@@ -4,7 +4,9 @@ cc_library(
         "prediction.cpp"
     ],
     hdrs = [
-        "prediction.hpp"
+        "commons.hpp",
+        "prediction.hpp",
+        "agent_prediction.hpp"
     ],
     deps = [
         "//modules/commons:commons",
