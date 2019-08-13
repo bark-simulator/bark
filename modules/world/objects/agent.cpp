@@ -142,6 +142,9 @@ Agent* Agent::Clone() const {
   if(dynamic_model_) {
     new_agent->dynamic_model_.reset(dynamic_model_->Clone());
   }
+  if(local_map_) {
+    new_agent->local_map_.reset(local_map_->Clone());
+  }
   return new_agent;
 }
 

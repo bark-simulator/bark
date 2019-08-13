@@ -87,6 +87,7 @@ class Agent : public Object {
 
   void set_goal_definition(const GoalDefinition &goal_definition) {
     goal_definition_ = goal_definition;
+    local_map_->set_goal_definition(goal_definition_);
     GenerateLocalMap();
     // TODO(@hart): parameter
     UpdateDrivingCorridor(20.0);
