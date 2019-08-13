@@ -10,7 +10,6 @@
 namespace modules {
 namespace world {
 
-<<<<<<< HEAD
 using modules::geometry::Polygon;
 using modules::world::AgentMap;
 using modules::world::map::Frenet;
@@ -49,7 +48,8 @@ std::pair<AgentPtr, modules::world::map::Frenet> ObservedWorld::get_agent_in_fro
     }
   }
   return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
-=======
+}
+
 void ObservedWorld::Step(const float time_step) {
   World::Step(time_step);
 }
@@ -64,7 +64,6 @@ ObservedWorld *ObservedWorld::Clone() const {
     new_observed_world->add_object(ObjectPtr(object.second->Clone()));
   }
   return new_observed_world;
->>>>>>> Add Prediction module
 }
 
 }  // namespace world

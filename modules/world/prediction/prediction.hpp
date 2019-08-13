@@ -4,20 +4,15 @@
 #include "modules/commons/base_type.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/world/observed_world.hpp"
+#include "modules/world/prediction/agent_prediction.hpp"
 
 
 namespace modules {
 namespace world {
 namespace prediction {
 
+using opendrive::LaneId;
 using models::behavior::BehaviorModelPtr;
-using models::dynamic::StateDefinition;
-
-typedef Eigen::Matrix<float, StateDefinition::MIN_STATE_SIZE, StateDefinition::MIN_STATE_SIZE> StateCovariance;
-struct StochasticState{
-  State mean;
-  StateCovariance covariance;
-};
 
 class Prediction : public commons::BaseType {
   public:
@@ -25,10 +20,12 @@ class Prediction : public commons::BaseType {
 
     void Step(const float time_step);
 
-    StochasticState PredictAgentState(const AgentId agent_id);
+    AgentPrediction get_agent_prediction(const AgentId agent_id);
 
   private:
+    std::vector<std::list<LaneId>> FindPossibleGoalLanes(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
     ObservedWorld observed_world_;
+    std::map<AgentId, std::vector<AgentId>> real_agents_to_predictions_;
 };
 
 } // namespace prediction
