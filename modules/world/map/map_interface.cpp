@@ -38,7 +38,7 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
 bool modules::world::map::MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
-  std::vector<LanePtr>& lanes, 
+  std::vector<LanePtr>& lanes,
   bool type_driving_only) const {
   if (!open_drive_map_) {
     return false;
@@ -99,7 +99,7 @@ bool modules::world::map::MapInterface::FindLanesAroundPosition(
 }
 
 bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2d& point, LaneId id) const {
-  
+
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
   if (v.second) {
     auto polygon = roadgraph_->get_lane_graph()[v.first].polygon;
@@ -165,6 +165,10 @@ std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(c
   } else {
     return std::make_pair(nullptr, false);
   }
+}
+
+std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const LaneId lane_id) const {
+  return roadgraph_->get_successor_lanes(lane_id);
 }
 
 bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,

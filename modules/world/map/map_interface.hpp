@@ -55,6 +55,7 @@ class MapInterface {
 
   std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
   std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
+  std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
 
   bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
                             Line& inner_line, Line& outer_line, Line& center_line) const;
