@@ -77,6 +77,11 @@ class ObservedWorld : protected World {
 
     const MapInterfacePtr get_map() const { return World::get_map(); }
 
+    commons::Params* get_params() const { return World::get_params(); }
+
+    void clear_agents() { World::clear_agents(); }
+    void add_agent(const AgentPtr &agent) { World::add_agent(agent); }
+
     virtual State current_ego_state() const {
       return World::get_agents()[ego_agent_id_]->get_current_state();
     }
