@@ -44,6 +44,8 @@ class ExecutionModel : public commons::BaseType {
                              const DynamicModelPtr dynamic_model,
                              const State current_state) = 0;
 
+  virtual ExecutionModel *Clone() const = 0;
+
  private:
   Trajectory last_trajectory_;
 };
