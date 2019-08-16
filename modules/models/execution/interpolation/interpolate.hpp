@@ -25,8 +25,13 @@ class ExecutionModelInterpolate : public ExecutionModel {
                                       const dynamic::Trajectory& trajectory,
                                       const dynamic::DynamicModelPtr dynamic_model,
                                       const dynamic::State current_state);
+
+  virtual ExecutionModel *Clone() const;
 };
 
+inline ExecutionModel *ExecutionModelInterpolate::Clone() const {
+  return new ExecutionModelInterpolate(*this);
+}
 
 }  // namespace execution
 }  // namespace models

@@ -139,6 +139,9 @@ Agent* Agent::Clone() const {
   if(behavior_model_) {
     new_agent->behavior_model_.reset(behavior_model_->Clone());
   }
+  if(execution_model_) {
+    new_agent->execution_model_.reset(execution_model_->Clone());
+  }
   if(dynamic_model_) {
     new_agent->dynamic_model_.reset(dynamic_model_->Clone());
   }
