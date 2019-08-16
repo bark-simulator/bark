@@ -15,14 +15,22 @@ using objects::AgentId;
 
 class AgentPrediction : protected Agent {
   public:
-    explicit AgentPrediction(const Agent &agent, const std::vector<MotionHypothesis> &motion_hypotheses) : Agent(agent), motion_hypotheses_(motion_hypotheses) {}
+    explicit AgentPrediction(const Agent &agent) : Agent(agent) {}
 
     AgentId get_agent_id() const { return Agent::get_agent_id(); }
     geometry::Polygon get_shape() const { return Agent::get_shape(); }
-    std::vector<MotionHypothesis> get_motion_hypotheses() const { return motion_hypotheses_; }
+    std::map<HypothesisId, MotionHypothesis> get_motion_hypotheses() const { return motion_hypotheses_; }
+
+    void add_hypothesis(const HypothesisId hypothesis_id, const MotionHypothesis &motion_hypothesis) {
+      motion_hypotheses_.insert(std::map<HypothesisId, MotionHypothesis>::value_type(hypothesis_id, motion_hypothesis));
+    }
+
+    void update_hypothesis(const HypothesisId hypothesis_id, const StochasticState &stochastic_state) {
+      motion_hypotheses_.at(hypothesis_id).states.push_back(stochastic_state);
+    }
 
   private:
-    std::vector<MotionHypothesis> motion_hypotheses_;
+    std::map<HypothesisId, MotionHypothesis> motion_hypotheses_;
 };
 
 } // prediction

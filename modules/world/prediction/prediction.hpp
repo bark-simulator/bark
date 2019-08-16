@@ -20,12 +20,13 @@ class Prediction : public commons::BaseType {
 
     void Step(const float time_step);
 
-    AgentPrediction get_agent_prediction(const AgentId agent_id);
+    std::map<AgentId, AgentPrediction> get_predictions_for_all_agents();
 
   private:
     std::vector<std::list<LaneId>> FindPossibleGoalLanes(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
     ObservedWorld observed_world_;
     std::map<AgentId, std::vector<AgentId>> real_agents_to_predictions_;
+    std::map<AgentId, AgentPrediction> predictions_for_all_agents_;
 };
 
 } // namespace prediction
