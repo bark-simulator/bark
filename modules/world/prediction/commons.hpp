@@ -25,7 +25,7 @@ struct MotionHypothesis {
   HypothesisId id;
   float likelihood;
   std::vector<opendrive::LaneId> following_lane;
-  StochasticState state;
+  std::vector<StochasticState> states;
 };
 
 } // namespace prediction

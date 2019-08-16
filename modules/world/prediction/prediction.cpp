@@ -14,6 +14,7 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
   uint32_t n_agents = 10;
   for (auto const &agent : agents) {
     real_agents_to_predictions_.insert(std::map<AgentId, std::vector<AgentId>>::value_type(agent.first, {}));
+    predictions_for_all_agents_.insert(std::map<AgentId, AgentPrediction>::value_type(agent.first, AgentPrediction(*agent.second)));
     State agent_state = agent.second->get_current_state();
     std::vector<std::list<LaneId>> possible_paths = FindPossibleGoalLanes(
       geometry::Point2d(agent_state(StateDefinition::X_POSITION), agent_state(StateDefinition::Y_POSITION)),
@@ -28,6 +29,12 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
       prediction_agent->set_goal_definition(predicted_goal);
 
       real_agents_to_predictions_.at(agent.first).push_back(n_agents);
+      std::vector<LaneId> followed_lane;
+      for (auto const lane_id : possible_path) {
+        followed_lane.push_back(lane_id);
+      }
+      MotionHypothesis motion_hypothesis = {n_agents, 1, followed_lane, {}};
+      predictions_for_all_agents_.at(agent.first).add_hypothesis(n_agents, motion_hypothesis);
       prediction_agent->set_agent_id(n_agents++);
 
       observed_world_.add_agent(prediction_agent);
@@ -36,26 +43,19 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
 }
 
 void Prediction::Step(const float time_step) {
+  for (auto const &real_agent_it : real_agents_to_predictions_) {
+    for (auto const &agent_it : observed_world_.get_other_agents()) {
+      if (find(real_agent_it.second.begin(), real_agent_it.second.end(), agent_it.first) != real_agent_it.second.end()) {
+        StochasticState predicted_state = {agent_it.second->get_current_state(), StateCovariance::Identity()};
+        predictions_for_all_agents_.at(real_agent_it.first).update_hypothesis(agent_it.first, predicted_state);
+      }
+    }
+  }
   observed_world_.Step(time_step);
 }
 
-AgentPrediction Prediction::get_agent_prediction(const AgentId agent_id) {
-  std::vector<AgentId> predicted_agent_ids = real_agents_to_predictions_.at(agent_id);
-  AgentPtr agent;
-  std::vector<MotionHypothesis> motion_hypotheses;
-  uint32_t n_hypotheses = 0;
-  for (auto const &agent_it : observed_world_.get_other_agents()) {
-    if (find(predicted_agent_ids.begin(), predicted_agent_ids.end(), agent_it.first) != predicted_agent_ids.end()) {
-      agent = agent_it.second;
-      StochasticState predicted_state = {agent_it.second->get_current_state(), StateCovariance::Identity()};
-      std::vector<LaneId> followed_lanes;
-      for (auto const lane_id_it : agent_it.second->get_local_map()->get_driving_corridor().lane_ids_) {
-        followed_lanes.push_back(lane_id_it.second);
-      }
-      motion_hypotheses.push_back({n_hypotheses++, 1, followed_lanes, predicted_state});
-    }
-  }
-  return AgentPrediction(*agent, motion_hypotheses);
+std::map<AgentId, AgentPrediction> Prediction::get_predictions_for_all_agents() {
+  return predictions_for_all_agents_;
 }
 
 std::vector<std::list<LaneId>> FindPossiblePath(const LaneId current_lane_id, const MapInterfacePtr map_interface) {
