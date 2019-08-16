@@ -32,7 +32,7 @@ class PyExecutionModel : public ExecutionModel {
             current_state);
       }
 
-    ExecutionModel *Clone() const override {
+  ExecutionModel *Clone() const override {
     PYBIND11_OVERLOAD_PURE(
         ExecutionModel*,
         ExecutionModel,
