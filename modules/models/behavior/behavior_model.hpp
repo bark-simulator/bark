@@ -57,7 +57,6 @@ class BehaviorModel : public modules::commons::BaseType {
   virtual BehaviorModel *Clone() const = 0;
 
   Action get_last_action() const {return last_action_; };
-
   void set_last_action(const Action action) {last_action_ = action;}
 
  private:
