@@ -1,3 +1,6 @@
+workspace(name = "bark_project")
+
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
@@ -89,3 +92,14 @@ local_repository(
   name = "web",
   path = "./web",
 )
+
+# ------ Planner UCT --------------
+git_repository(
+    name = "planner_uct",
+    branch="master",
+    remote = "https://github.com/bark-simulator/planner-mcts"
+)
+load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
+planner_uct_rules_dependencies()
+# ---------------------------------
+
