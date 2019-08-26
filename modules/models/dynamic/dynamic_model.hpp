@@ -8,6 +8,7 @@
 #define MODULES_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
 
 #include <Eigen/Core>
+#include <boost/variant.hpp>
 #include <queue>
 #include <memory>
 #include <utility>
@@ -29,8 +30,7 @@ using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
-typedef std::pair<State, Input> StateInputPair;
-typedef std::vector<StateInputPair> StateInputHistory;
+
 
 class DynamicModel {
  public:

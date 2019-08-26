@@ -25,10 +25,19 @@ namespace models {
 namespace behavior {
 using dynamic::Trajectory;
 
+typedef unsigned int DiscreteAction;
+typedef double Continuous1DAction;
+typedef boost::variant<DiscreteAction, Continuous1DAction> Action;
+
+typedef std::pair<models::dynamic::State, Action> StateActionPair;
+typedef std::vector<StateActionPair> StateActionHistory;
+
+
 class BehaviorModel : public modules::commons::BaseType {
  public:
   explicit BehaviorModel(commons::Params *params) : commons::BaseType(params),
-                                                    last_trajectory_() {}
+                                                    last_trajectory_(),
+                                                    last_action_() {}
 
   BehaviorModel(const BehaviorModel &behavior_model) : 
               commons::BaseType(behavior_model.get_params()),
@@ -47,8 +56,13 @@ class BehaviorModel : public modules::commons::BaseType {
 
   virtual BehaviorModel *Clone() const = 0;
 
+  Action get_last_action() const {return last_action_; };
+
+  void set_last_action(const Action action) {last_action_ = action;}
+
  private:
   dynamic::Trajectory last_trajectory_;
+  Action last_action_;
 };
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
