@@ -74,4 +74,5 @@ cc_library(
         "//modules/models/execution/interpolation:interpolation",
         "@com_github_eigen_eigen//:eigen",
     ],
+    visibility = ["//visibility:public"],
 )
