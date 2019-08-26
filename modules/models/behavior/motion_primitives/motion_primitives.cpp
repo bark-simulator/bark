@@ -57,6 +57,8 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     traj(trajectory_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
   }
 
+  set_last_action(Action(DiscreteAction(active_motion_)));
+
   this->set_last_trajectory(traj);
   return traj;
 }

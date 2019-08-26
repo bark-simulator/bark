@@ -42,8 +42,10 @@ goal_definition_(goal_definition) {
      50);
   }
 
-  models::dynamic::StateInputPair pair;
-  pair.first = initial_state;  //! TODO(fortiss): check for state dimensions
+  models::behavior::StateActionPair pair;
+  pair.first = initial_state; 
+  pair.second = modules::models::behavior::Action(
+          modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
   history_.push_back(pair);
   if(map_interface != nullptr) {
     set_goal_definition(goal_definition);
@@ -85,11 +87,10 @@ void Agent::Execute(const float& world_time) {
     }
   }
 
-  // TODO(fortiss): Input should not be zero!
-  models::dynamic::StateInputPair state_input_pair(
+  models::behavior::StateActionPair state_action_pair(
       State(execution_model_->get_last_trajectory().row(index_world_time)),
-      models::dynamic::Input::Zero(1, 1));
-  history_.push_back(state_input_pair);
+      behavior_model_->get_last_action());
+  history_.push_back(state_action_pair);
 
   //! remove states if queue becomes to large
   if (history_.size() > max_history_length_) {
