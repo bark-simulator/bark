@@ -59,6 +59,7 @@ Agent::Agent(const Agent& other_agent) :
   execution_model_(other_agent.execution_model_),
   local_map_(other_agent.local_map_),
   history_(other_agent.history_),
+  max_history_length_(other_agent.max_history_length_),
   goal_definition_(other_agent.goal_definition_) {}
 
 
@@ -105,7 +106,7 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
 
   Pose agent_pose(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION), state(StateDefinition::THETA_POSITION));
 
-  geometry::Polygon *polygon = dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose));
+  std::shared_ptr<geometry::Polygon> polygon(dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose)));
 
   return *polygon;
 }

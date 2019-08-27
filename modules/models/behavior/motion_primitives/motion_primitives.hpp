@@ -9,7 +9,6 @@
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/world.hpp"
 
 namespace modules {
 namespace models {
