@@ -55,13 +55,13 @@ void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
     settings.ApplySettings(*this);
 }
 
-std::shared_ptr<ObservedWorld> ObservedWorld::predict(float time_span) const {
+std::shared_ptr<ObservedWorld> ObservedWorld::Predict(float time_span) const {
   std::shared_ptr<ObservedWorld> next_world(ObservedWorld::Clone());
   next_world->Step(time_span);
   return next_world;
 }
 
-std::shared_ptr<ObservedWorld> ObservedWorld::predict(float time_span, const DiscreteAction& ego_action) const {
+std::shared_ptr<ObservedWorld> ObservedWorld::Predict(float time_span, const DiscreteAction& ego_action) const {
   std::shared_ptr<ObservedWorld> next_world(ObservedWorld::Clone());
   std::shared_ptr<modules::models::behavior::BehaviorMotionPrimitives> ego_behavior_model =
      std::dynamic_pointer_cast<modules::models::behavior::BehaviorMotionPrimitives>(next_world->get_ego_behavior_model());
@@ -71,6 +71,7 @@ std::shared_ptr<ObservedWorld> ObservedWorld::predict(float time_span, const Dis
     LOG(ERROR) << "Currently only BehaviorMotionPrimitive model supported for ego prediction, adjust prediction settings.";
   }
   next_world->Step(time_span);
+  return next_world;
 }
 
 }  // namespace world
