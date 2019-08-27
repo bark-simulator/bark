@@ -134,7 +134,6 @@ TEST(observed_world, clone) {
   world->add_agent(agent2);
   world->UpdateAgentRTree();
 
-  // Create observed world for this agent
   WorldPtr current_world_state(world->Clone());
   ObservedWorldPtr observed_world(new ObservedWorld(*current_world_state, agent1->get_agent_id()));
 
@@ -145,6 +144,7 @@ TEST(observed_world, clone) {
 
   observed_world.reset();
   auto behavior_ego = cloned->get_ego_behavior_model();
+  EXPECT_TRUE(bool(behavior_ego));
 }
 
 TEST(observed_world, predict) {
@@ -153,6 +153,20 @@ TEST(observed_world, predict) {
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference=0.0;
   auto observed_world = modules::models::tests::make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
 
+  // predict all agents with constant velocity
+  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(&params));
+  PredictionSettings prediction_settings(prediction_model, prediction_model);
+  observed_world.SetupPrediction(prediction_settings);
+  auto predicted_world = observed_world.Predict(1.0f);
+  double distance_ego = modules::geometry::distance(predicted_world->current_ego_position(), observed_world.current_ego_position());
+  double y_pos_obs = observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
+  double y_pos_pred = predicted_world->get_other_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
+  double distance_other = modules::geometry::distance(predicted_world->get_other_agents().begin()->second->get_current_position(),
+           observed_world.get_other_agents().begin()->second->get_current_position());
+  EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.05); // distance current and predicted state should be velocity x prediction time span
+  EXPECT_NEAR(distance_other, observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION]*1.0f, 0.05);
+
+  // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(new BehaviorMotionPrimitives(dyn_model, &params));
   Input u1(2);  u1 << 2, 0;
   Input u2(2);  u2 << 0, 1;
@@ -160,12 +174,12 @@ TEST(observed_world, predict) {
   BehaviorMotionPrimitives::MotionIdx idx2 = std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)->AddMotionPrimitive(u2);
 
   BehaviorModelPtr others_prediction_model(new BehaviorConstantVelocity(&params));
+  PredictionSettings prediction_settings2(ego_prediction_model, others_prediction_model);
+  observed_world.SetupPrediction(prediction_settings2);
+  auto predicted_world2 = observed_world.Predict(1.0f, DiscreteAction(idx1));
+  auto ego_pred_velocity = predicted_world2->current_ego_state()[StateDefinition::VEL_POSITION];
+  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.01); // distance current and predicted state should be velocity +  prediction time span
 
-  PredictionSettings prediction_settings(ego_prediction_model, others_prediction_model);
-  observed_world.SetupPrediction(prediction_settings);
-  auto predicted_world = observed_world.predict(1.0f);
-
-  
 }
 
 
