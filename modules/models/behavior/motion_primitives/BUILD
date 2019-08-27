@@ -8,7 +8,7 @@ cc_library(
     ],
     deps = [
         "//modules/commons:commons",
-        "//modules/world:world",
+        "//modules/world:world_hdr",
         "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic"
     ],
