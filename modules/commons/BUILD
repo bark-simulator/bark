@@ -13,6 +13,7 @@ cc_library(
         "@boost//:move",
         "@boost//:type_traits",
         "@boost//:stacktrace",
+        "@com_github_google_glog//:glog"
     ],
     visibility = ["//visibility:public"],
 )
