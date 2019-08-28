@@ -23,17 +23,18 @@ using world::objects::AgentId;
 using models::behavior::BehaviorModelPtr;
 
 
-class PredictionSettings {
-  public:
-    PredictionSettings() : ego_prediction_model_(), others_prediction_model_() {}
-    PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction);
-    virtual ~PredictionSettings() {}
+struct PredictionSettings {
+  PredictionSettings() : ego_prediction_model_(), others_prediction_model_() {}
+  PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction);
+  virtual ~PredictionSettings() {}
 
-    void ApplySettings(ObservedWorld& observed_world) const;
+  BehaviorModelPtr get_ego_prediction_model() const { return ego_prediction_model_;}
+  BehaviorModelPtr get_others_prediction_model() const { return others_prediction_model_;}
 
-  private:
-    BehaviorModelPtr ego_prediction_model_;
-    BehaviorModelPtr others_prediction_model_;
+  void ApplySettings(ObservedWorld& observed_world) const;
+
+  BehaviorModelPtr ego_prediction_model_;
+  BehaviorModelPtr others_prediction_model_;
 };
 
 
