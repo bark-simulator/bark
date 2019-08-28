@@ -30,6 +30,7 @@ class RuntimeRLWrapperTests(unittest.TestCase):
                               nn_observer=state_observer,
                               evaluator=evaluator, step_time=0.2, viewer=viewer,
                               scenario_generator=scenario_generation)
+        print(runtimerl.action_wrapper.action_space)
 
         # pass the runtime into cpp
         action = np.array([0,0])
