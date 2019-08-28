@@ -8,6 +8,7 @@
 #define PYTHON_PYTHON_BINDINGS_RUNTIME_HPP_
 #include "python/common.hpp"
 #include "modules/runtime/runtime.hpp"
+#include "modules/geometry/geometry.hpp"
 
 namespace py = pybind11;
 
@@ -34,9 +35,13 @@ void python_runtime(py::module m) {
       .def("step", py::overload_cast<>(&Runtime::Step))
       .def("step", py::overload_cast<int>(&Runtime::Step))
       .def("step", py::overload_cast<float>(&Runtime::Step))
-      .def("step", py::overload_cast<double>(&Runtime::Step));
-  
-  m.def("eval_runtime", &EvalRuntime, "Check wether binding is correct.");
+      .def("step", py::overload_cast<double>(&Runtime::Step))
+      .def("step",
+        py::overload_cast<Eigen::Matrix<float,
+                                        Eigen::Dynamic,
+                                        Eigen::Dynamic>>(&Runtime::Step));
+
+  m.def("eval_runtime", &EvalRuntime, "Check wether bindings are correct.");
 }
 
 #endif  // PYTHON_PYTHON_BINDINGS_RUNTIME_HPP_
