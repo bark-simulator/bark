@@ -29,7 +29,6 @@ class RuntimeRLTests(unittest.TestCase):
                               nn_observer=state_observer,
                               evaluator=evaluator, step_time=0.2, viewer=viewer,
                               scenario_generator=scenario_generation)
-
         for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
             for _ in range(0, 100): # run each scenario for 10 steps
