@@ -18,7 +18,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-bin/tests/world/roadgraph_test",
+            "program": "${workspaceFolder}/bazel-bin/modules/world/tests/observed_world_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -38,7 +38,7 @@
             "request": "attach",
             "program": "${workspaceFolder}/python/venv/bin/python3",
             "cwd" : "${workspaceFolder}",
-            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/modules/runtime/tests/py_scenario_generation_tests.runfiles/__main__/python",
+            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/modules/runtime/ml/tests/py_runtime_rl_tests.runfiles/__main__/python",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}
