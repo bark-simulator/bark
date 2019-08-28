@@ -13,7 +13,6 @@ from modules.runtime.ml.action_wrapper import MotionPrimitives, DynamicModel
 from modules.runtime.ml.state_evaluator import GoalReached
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime import PyRuntime, eval_runtime
 import numpy as np
 
 
