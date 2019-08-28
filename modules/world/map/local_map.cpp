@@ -32,6 +32,7 @@ bool LocalMap::Generate(Point2d point) {
   if(map_interface_ == nullptr) {
     return false;
   }
+  driving_corridor_ = DrivingCorridor();
 
   goal_lane_id_ = GoalLaneIdFromGoalDefinition(goal_definition_);
 
@@ -89,6 +90,11 @@ bool LocalMap::ComputeHorizonCorridor(const Point2d& p, double horizon) {
     return true;
   }
   return false;
+}
+
+LocalMap *LocalMap::Clone() const {
+  LocalMap *new_local_map = new LocalMap(*this);
+  return new_local_map;
 }
 
 }  // namespace map
