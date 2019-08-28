@@ -10,12 +10,13 @@
 #include <stdexcept>    // std::logic_error
 #include <iostream>     // std::cerr
 #include <boost/stacktrace.hpp>
+#include <glog/logging.h>
 
 
 namespace modules {
 namespace commons {
 
-
+// ASSERTION
   inline void assertion_failed_msg(char const* expr, char const* function, char const* file, long line) {
       std::cerr << "Expression '" << expr << "' is false in function '" << function << "'(" << file << ", l." << line <<  "): " << "\n"
           << "Backtrace:\n" << boost::stacktrace::stacktrace() << '\n';
@@ -32,6 +33,7 @@ namespace commons {
             modules::commons::assertion_failed_msg(#cond,__FUNCTION__, __FILE__, __LINE__); \
         } \
     } while(0)
+
 
 
 #endif  // MODULES_COMMONS_UTIL_HPP_

@@ -26,7 +26,7 @@ using models::dynamic::State;
 using models::behavior::BehaviorModelPtr;
 using models::dynamic::DynamicModelPtr;
 using models::execution::ExecutionModelPtr;
-using models::dynamic::StateInputHistory;
+using models::behavior::StateActionHistory;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::LaneId;
 using modules::world::map::MapInterfacePtr;
@@ -58,7 +58,7 @@ class Agent : public Object {
 
   DynamicModelPtr get_dynamic_model() const { return dynamic_model_; }
 
-  StateInputHistory get_state_input_history() const { return history_; }
+  StateActionHistory get_state_input_history() const { return history_; }
 
   const GoalDefinition& get_goal_definition() const {return goal_definition_;}
 
@@ -115,7 +115,7 @@ class Agent : public Object {
   // TODO(@fortiss): this should be the local map the planners work with
   modules::world::map::LocalMapPtr local_map_;
 
-  models::dynamic::StateInputHistory history_;
+  models::behavior::StateActionHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter
   uint32_t max_history_length_;
   modules::world::goal_definition::GoalDefinition goal_definition_;

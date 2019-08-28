@@ -18,28 +18,7 @@ dynamic::Trajectory ExecutionModelInterpolate::Execute(
     const dynamic::DynamicModelPtr dynamic_model,
     const dynamic::State current_state) {
 
-  /*int32_t gr_index = trajectory.rows()-1;
-    int32_t sm_index = 0;
-
-    for (int32_t i=0; i<trajectory.rows(); ++i) {
-        if(trajectory(i,StateDefinition::TIME_POSITION) >= new_world_time && trajectory(i,StateDefinition::TIME_POSITION) 
-                                                                            < trajectory(gr_index,StateDefinition::TIME_POSITION) ) {
-            gr_index = i;
-        }
-        if(trajectory(i,StateDefinition::TIME_POSITION) <= new_world_time ) {
-            sm_index = i;
-        }
-    }
-
-    if(gr_index == sm_index) {
-        return StateInputPair(State(trajectory.row(gr_index)),Input::Zero(1,1));
-    }
-    
-    State interp_state = trajectory.row(sm_index) + (trajectory.row(gr_index) - trajectory.row(sm_index))*(new_world_time - trajectory(sm_index,StateDefinition::TIME_POSITION));
-    StateInputPair state_input(State(interp_state),Input::Zero(1,1));
-    */
-
-  // TODO(fortiss) set trajectory
+  // TODO(fortiss) fix interpolation model
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> traj = trajectory;
   set_last_trajectory(traj);
   return traj;

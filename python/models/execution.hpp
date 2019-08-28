@@ -31,6 +31,13 @@ class PyExecutionModel : public ExecutionModel {
             dynamic_model,
             current_state);
       }
+
+    ExecutionModel *Clone() const override {
+    PYBIND11_OVERLOAD_PURE(
+        ExecutionModel*,
+        ExecutionModel,
+        clone);
+  }
 };
 
 void python_execution(py::module m);

@@ -85,8 +85,13 @@
     "unordered_set": "cpp",
     "valarray": "cpp",
     "variant": "cpp",
-    "string": "cpp"
-  },
+    "string": "cpp",
+    "algorithm": "cpp",
+    "iterator": "cpp",
+    "memory_resource": "cpp",
+    "set": "cpp",
+    "cfenv": "cpp"
+},
   "files.exclude": {
     ".vscode": false,
     "**/__pycache__": true,
