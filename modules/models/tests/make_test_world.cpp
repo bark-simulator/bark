@@ -14,7 +14,6 @@
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 
-
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
 using namespace modules::commons;
@@ -23,10 +22,13 @@ using namespace modules::world::map;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
+using namespace modules::world::goal_definition;
 
 
 
-WorldPtr modules::models::tests::make_test_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+WorldPtr modules::models::tests::make_test_world(int num_other_agents, double rel_distance,
+                                                 double ego_velocity, double velocity_difference,
+                                                 const GoalDefinition& ego_goal_definition) {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(nullptr);
@@ -37,7 +39,7 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 1.0, 0.0, 0.0, ego_velocity;
-  AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model, polygon, &params, ego_goal_definition));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float rel_dist_vlength = rel_distance + polygon.front_dist_ + polygon.rear_dist_;
@@ -88,7 +90,8 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   return WorldPtr(world->Clone());
 }
 
-ObservedWorld modules::models::tests::make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+ObservedWorld modules::models::tests::make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference,
+                                                              const modules::world::goal_definition::GoalDefinition& ego_goal_definition) {
   // Create observed world for first agent
   WorldPtr current_world_state = modules::models::tests::make_test_world(num_other_agents, rel_distance, ego_velocity, velocity_difference);
   ObservedWorld observed_world(*(current_world_state), current_world_state->get_agents().begin()->second->get_agent_id());
