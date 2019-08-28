@@ -25,6 +25,7 @@ using models::behavior::BehaviorModelPtr;
 
 class PredictionSettings {
   public:
+    PredictionSettings() : ego_prediction_model_(), others_prediction_model_() {}
     PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction);
     virtual ~PredictionSettings() {}
 
