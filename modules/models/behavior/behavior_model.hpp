@@ -27,12 +27,16 @@ using dynamic::Trajectory;
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
-  explicit BehaviorModel(commons::Params *params) : commons::BaseType(params),
-                                                    last_trajectory_() {}
+  explicit BehaviorModel(commons::Params *params,
+                         bool active = false) :
+    commons::BaseType(params),
+    last_trajectory_(),
+    active_model_(active) {}
 
-  BehaviorModel(const BehaviorModel &behavior_model) : 
-              commons::BaseType(behavior_model.get_params()),
-              last_trajectory_(behavior_model.get_last_trajectory()) {}
+  BehaviorModel(const BehaviorModel &behavior_model) :
+    commons::BaseType(behavior_model.get_params()),
+    last_trajectory_(behavior_model.get_last_trajectory()),
+    active_model_(behavior_model.get_active_model()) {}
 
   virtual ~BehaviorModel() {}
 
@@ -41,7 +45,7 @@ class BehaviorModel : public modules::commons::BaseType {
   void set_last_trajectory(const dynamic::Trajectory &trajectory) {
     last_trajectory_ = trajectory;
   }
-
+  bool get_active_model() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
@@ -49,6 +53,7 @@ class BehaviorModel : public modules::commons::BaseType {
 
  private:
   dynamic::Trajectory last_trajectory_;
+  bool active_model_;
 };
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
