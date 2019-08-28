@@ -30,12 +30,16 @@ void python_map(py::module m) {
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
-      .def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
-      .def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
+      .def("get_lane", &MapInterface::get_lane)
+      .def("compute_driving_corridor_from_start_to_goal", &MapInterface::ComputeDrivingCorridorFromStartToGoal)
+      
+      //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
+      /*.def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
           Line inner_line, outer_line, center_line;
           bool result = m.CalculateDrivingCorridor(startid, goalid, inner_line, outer_line, center_line);
           return std::make_tuple(inner_line, outer_line, center_line);
-      });
+      })*/
+      ;
 
   py::class_<DrivingCorridor,
              std::shared_ptr<DrivingCorridor>>(m, "DrivingCorridor")
@@ -46,6 +50,7 @@ void python_map(py::module m) {
         &DrivingCorridor::set_outer)
       .def_property("center", &DrivingCorridor::get_center,
         &DrivingCorridor::set_center)
+      .def("get_lane_ids", &DrivingCorridor::get_lane_ids)
       .def(py::pickle(
       [](const DrivingCorridor& d) -> py::tuple { // __getstate__
           /* Return a tuple that fully encodes the state of the object */

@@ -13,6 +13,7 @@
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/map/map_interface.hpp"
+#include "modules/world/map/driving_corridor.hpp"
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/map/frenet.hpp"
 
@@ -26,39 +27,6 @@ using modules::world::goal_definition::GoalDefinition;
 using numeric_double_limits = std::numeric_limits<double>;
 using namespace modules::geometry;
 
-struct DrivingCorridor {
-  DrivingCorridor() : outer(Line()),
-                      inner(Line()),
-                      center(Line()),
-                      computed(false) {}
-
-  DrivingCorridor(const Line& outer, const Line& inner, const Line& center) :
-                    outer(outer),
-                    inner(inner),
-                    center(center) {}
-  //! getter
-  Line get_outer() const { return outer; }
-  Line get_inner() const { return inner; }
-  Line get_center() const { return center; }
-
-  //! getter
-  void set_outer(const Line& o) { outer = o; }
-  void set_inner(const Line& o) { inner = o; }
-  void set_center(const Line& o) { center = o; }
-
-  // returns Frenet coordinate to center line
-  Frenet FrenetFromCenterLine(const Point2d& point) const { return Frenet(point, center);}
-  Polygon CorridorPolygon() const {
-    Line line = get_outer();
-    line.append_linestring(get_inner());
-    return Polygon(Pose(0, 0, 0), line);
-  }
-
-  Line outer, inner, center;
-  // 1st entry is the index from where the 2nd value lane id is valid
-  std::vector<std::pair<int, LaneId>> lane_ids_;
-  bool computed;
-};
 
 class LocalMap {
  public:
@@ -106,21 +74,15 @@ class LocalMap {
     return goal_definition_;
   }
 
-  //! Functions
-  void ConcatenateLines(const std::vector<LanePtr>& lanes,
-                        Line& line_of_corridor,
-                        std::vector< std::pair<int, LaneId> >& lane_ids);
-
   LaneId GoalLaneIdFromGoalDefinition(const modules::world::goal_definition::GoalDefinition& goal_definition);
 
-  bool Generate(Point2d point,            
-                double horizon = numeric_double_limits::max());
-  DrivingCorridor ComputeDrivingCorridor(std::vector<LaneId> lane_ids);
-  Line CalculateLineHorizon(const Line& line,
-                    const Point2d& p,
-                    double horizon);
+  bool Generate(Point2d point);
+  Line CalculateLineHorizon(const Line& line, const Point2d& p, double horizon);
 
   bool ComputeHorizonCorridor(const Point2d& p, double horizon);
+
+  std::vector<DrivingCorridorPtr> get_left_adjacent() const; // TODO: extend this by a good data structure for meging/ splitting
+  std::vector<DrivingCorridorPtr> get_right_adjacent() const; // TODO: extend this by a good data structure for meging/ splitting
 
  private:
   DrivingCorridor driving_corridor_;

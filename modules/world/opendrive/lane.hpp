@@ -39,7 +39,7 @@ class Lane {
                              { lane_position_ = lane_position; }
 
   //! getter functions
-  geometry::Line get_line() { return line_; }
+  geometry::Line get_line() const { return line_; }
 
   LaneLink get_link() const { return link_; }
   RoadMark get_road_mark() const { return road_mark_; }

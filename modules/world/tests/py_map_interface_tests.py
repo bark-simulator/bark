@@ -40,15 +40,11 @@ class EnvironmentTests(unittest.TestCase):
         lanes_near_goal = map_interface.find_nearest_lanes(goal_point, 1)
         assert(len(lanes_near_goal) == 1)
 
-        (route_inner, route_outer) = map_interface.compute_lane_boundaries_horizon(lanes_near_start[0].lane_id, lanes_near_goal[0].lane_id)
-
-        for l in route_inner:
+        driving_corridor = map_interface.compute_driving_corridor_from_start_to_goal(lanes_near_start[0].lane_id, lanes_near_goal[0].lane_id)
+        print(driving_corridor)
+        for id in driving_corridor.get_lane_ids():
+            l = map_interface.get_lane(id[1])
             assert(l.lane_type == LaneType.driving)
-        
-        for l in route_outer:
-            assert(l.lane_type == LaneType.driving)
-        
-        #v = map_interface.get_roadgraph().get_vertices()
 
 
 if __name__ == '__main__':

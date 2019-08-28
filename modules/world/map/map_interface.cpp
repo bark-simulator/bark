@@ -12,7 +12,7 @@ namespace world {
 namespace map {
 
 using LaneSegment = boost::geometry::model::segment<Point2d>;
-bool modules::world::map::MapInterface::interface_from_opendrive(
+bool MapInterface::interface_from_opendrive(
   const OpenDriveMapPtr& open_drive_map) {
   open_drive_map_ = open_drive_map;
   rtree_lane_.clear();
@@ -35,7 +35,23 @@ bool modules::world::map::MapInterface::interface_from_opendrive(
 }
 
 
-bool modules::world::map::MapInterface::FindNearestLanes(
+void MapInterface::ConcatenateLines(const std::vector<LanePtr>& lanes,
+                                Line& line_of_corridor,
+                                std::vector<std::pair<int, LaneId>>& lane_ids) {
+  if (lanes.size() > 0) {
+      line_of_corridor = lanes.at(0)->get_line();
+      lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
+      for (uint i = 1; i < lanes.size(); i++) {
+        if (lanes.at(i) != NULL) {
+          lane_ids.push_back(std::pair<int, LaneId>(line_of_corridor.size(),
+                                                    lanes.at(i)->get_id()));
+          line_of_corridor.ConcatenateLinestring(lanes.at(i)->get_line());
+        }
+      }
+  }
+}
+
+bool MapInterface::FindNearestLanes(
   const Point2d& point,
   const unsigned& num_lanes,
   std::vector<LanePtr>& lanes, 
@@ -69,7 +85,7 @@ bool modules::world::map::MapInterface::FindNearestLanes(
   return true;
 }
 
-bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2d& point, LaneId id) const {
+bool MapInterface::isInLane(const modules::geometry::Point2d& point, LaneId id) const {
   
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
   if (v.second) {
@@ -96,50 +112,25 @@ bool modules::world::map::MapInterface::isInLane(const modules::geometry::Point2
 
 }
 
-// TODO Klemens: change to LanePtr to Line
-std::pair< std::vector<LanePtr>, std::vector<LanePtr> > modules::world::map::MapInterface::ComputeLaneBoundariesHorizon(
-      const LaneId& startid, const LaneId& goalid) const {
-  std::vector<LaneId> horizon = roadgraph_->find_path(startid, goalid);
-  return roadgraph_->ComputeRouteBoundaries(horizon);
+DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid) {
+  std::vector<LaneId> ids = roadgraph_->find_path(startid, goalid);
+  return ComputeDrivingCorridorForRange(ids);
 }
 
-bool modules::world::map::MapInterface::CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
-                                                             Line& inner_line, Line& outer_line, Line& center_line)  const{
+
+DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids) {
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
-      ComputeLaneBoundariesHorizon(startid, goalid);
-
-    if(route.first.empty() || route.second.empty()) {
-      return false;
-    }
-
-    if (route.first[0]) {
-      inner_line = route.first[0]->get_line();
-      // inner lane
-      for (uint i = 1; i < route.first.size(); i++) {
-        if (route.first[i] != NULL) {
-          inner_line.ConcatenateLinestring(route.first[i]->get_line());
-        }
-      }
-    }
-    if (route.second[0]) {
-      outer_line = route.second[0]->get_line();
-      // inner lane
-      for (uint i = 1; i < route.second.size(); i++) {
-        if (route.second[i] != NULL) {
-          outer_line.ConcatenateLinestring(route.second[i]->get_line());
-        }
-      }
-    }
-
-    // TODO(@hart): implement working function
-    if (route.first[0] != NULL && route.second[0] != NULL) {
-      center_line = geometry::ComputeCenterLine(inner_line, outer_line);
-      return true;
-    } else {
-      return false;
-    }
+    roadgraph_->ComputeRouteBoundaries(lane_ids);
+  DrivingCorridor dc;
+  std::vector< std::pair<int, LaneId> > dummy;
+  ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
+  ConcatenateLines(route.second, dc.outer, dummy);
+  if (route.first[0] != NULL && route.second[0] != NULL) {
+    dc.center = ComputeCenterLine(dc.inner, dc.outer);
+  }
+  dc.computed = true;
+  return dc;
 }
-
 
 }  // namespace map
 }  // namespace world
