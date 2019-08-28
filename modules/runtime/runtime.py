@@ -6,9 +6,10 @@
 from bark.world.opendrive import *
 from bark.world import *
 from bark.geometry import *
+from bark.runtime import PyRuntime
 
 
-class Runtime(object):
+class Runtime(PyRuntime):
     def __init__(self, step_time, viewer, scenario_generator=None):
         self.step_time = step_time
         self.viewer = viewer
