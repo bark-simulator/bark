@@ -8,7 +8,8 @@
 #include "geometry/geometry.hpp"
 #include "models/models.hpp"
 #include "world/world.hpp"
-#include "viewer/viewer.hpp"
+#include "viewer/viewer.hpp" 
+#include "runtime.hpp" 
 
 namespace py = pybind11;
 
@@ -19,4 +20,5 @@ PYBIND11_MODULE(bark, m) {
   python_models(m.def_submodule("models", "submodule containing models such as the behavior, dynamic and execution"));
   python_world(m.def_submodule("world", "submodule containing all wrapped parameters objects"));
   python_viewer(m.def_submodule("viewer", "submodule containing the viewer"));
+  python_runtime(m.def_submodule("runtime", "submodule containing the runtime"));
 }

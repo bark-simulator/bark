@@ -12,3 +12,16 @@ py_library(
             "//modules/runtime/scenario:scenario"],
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "cc_runtime",
+    hdrs = [
+        "runtime.hpp",
+    ],
+    deps = [
+        "//modules/commons:commons",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+#cpplint()
