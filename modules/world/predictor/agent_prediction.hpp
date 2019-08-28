@@ -2,7 +2,7 @@
 #define MODULES_WORLD_PREDICTION_AGENT_PREDICTION_HPP_
 
 #include "modules/world/objects/agent.hpp"
-#include "modules/world/prediction/commons.hpp"
+#include "modules/world/predictor/commons.hpp"
 
 
 namespace modules {

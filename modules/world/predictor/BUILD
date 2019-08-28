@@ -1,5 +1,5 @@
 cc_library(
-    name = "prediction",
+    name = "predictor",
     srcs = [
         "prediction.cpp"
     ],

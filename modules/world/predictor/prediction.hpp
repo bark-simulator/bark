@@ -4,7 +4,7 @@
 #include "modules/commons/base_type.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/world/observed_world.hpp"
-#include "modules/world/prediction/agent_prediction.hpp"
+#include "modules/world/predictor/agent_prediction.hpp"
 
 
 namespace modules {
