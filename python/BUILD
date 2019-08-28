@@ -8,7 +8,8 @@ cc_binary(
     "geometry/*.cpp", "geometry/*.hpp",
     "world/*.cpp", "world/*.hpp",
     "models/*.cpp", "models/*.hpp",
-    "viewer/*.cpp", "viewer/*.hpp"]),
+    "viewer/*.cpp", "viewer/*.hpp",
+    "runtime.hpp"]),
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
@@ -27,6 +28,7 @@ cc_binary(
     "//modules/models/execution/mpc:mpc",
     "//modules/runtime/viewer:viewer",
     "//modules/world:world",
+    "//modules/runtime:cc_runtime",
   ],
   linkshared = 1,
   linkstatic = 1
