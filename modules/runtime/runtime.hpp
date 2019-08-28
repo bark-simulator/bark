@@ -42,6 +42,14 @@ inline void EvalRuntime(Runtime r,
   std::cout << "Runtime has been successfully stepped." << std::endl;
 }
 
+inline void EvalRuntime(Runtime r,
+                        int action) {
+  std::cout << "Received valid runtime." << std::endl;
+  std::cout << "Stepping runtime..." << std::endl;
+  r.Step(action);
+  std::cout << "Runtime has been successfully stepped." << std::endl;
+}
+
 typedef std::shared_ptr<Runtime> RuntimePtr;
 
 }  // namespace runtime

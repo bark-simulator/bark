@@ -31,8 +31,22 @@ class RuntimeRLWrapperTests(unittest.TestCase):
                               evaluator=evaluator, step_time=0.2, viewer=viewer,
                               scenario_generator=scenario_generation)
 
+        # pass the runtime into cpp
         action = np.array([0,0])
         eval_runtime(runtimerl, action)
 
+    def test_motion_primitives_concat_state(self):
+        params = ParameterServer(filename="modules/runtime/tests/data/highway_merging.json")
+        scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=params)
+        state_observer = StateConcatenation(params=params)
+        action_wrapper = MotionPrimitives(params=params)
+        evaluator = GoalReached(params=params)
+        viewer = MPViewer(params=params, x_range=[-30,30], y_range=[-20,40], follow_agent_id=True) #use_world_bounds=True) # 
+
+        runtimerl = RuntimeRL(action_wrapper=action_wrapper, nn_observer=state_observer,
+                              evaluator=evaluator, step_time=0.05, viewer=viewer,
+                              scenario_generator=scenario_generation)
+
+        eval_runtime(runtimerl, 0)
 if __name__ == '__main__':
     unittest.main()

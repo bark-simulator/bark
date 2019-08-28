@@ -41,7 +41,11 @@ void python_runtime(py::module m) {
                                         Eigen::Dynamic,
                                         Eigen::Dynamic>>(&Runtime::Step));
 
-  m.def("eval_runtime", &EvalRuntime, "Check wether bindings are correct.");
+  m.def("eval_runtime", py::overload_cast<Runtime, int>(&EvalRuntime));
+  m.def("eval_runtime", py::overload_cast<Runtime,
+                                          Eigen::Matrix<float,
+                                          Eigen::Dynamic,
+                                          Eigen::Dynamic>>(&EvalRuntime));
 }
 
 #endif  // PYTHON_PYTHON_BINDINGS_RUNTIME_HPP_
