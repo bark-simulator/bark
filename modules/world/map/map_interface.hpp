@@ -33,6 +33,7 @@ using rtree_lane_id = LanePtr;
 using rtree_lane_value = std::pair<rtree_lane_model, rtree_lane_id>;
 using rtree_lane = boost::geometry::index::rtree<rtree_lane_value,
                    boost::geometry::index::linear<16, 4> >;
+using PathBoundaries = std::vector<std::pair<LanePtr, LanePtr>>;
 
 class MapInterface {
  public:
@@ -53,8 +54,14 @@ class MapInterface {
 
   DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
 
-  bool CalculateAllCorridors();
+  bool ComputeAllDrivingCorridors();
+
+  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<LaneId>& lane_ids) const;
   
+  std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
+  std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
+  std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
+
   virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
