@@ -49,8 +49,8 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   std::vector<T> get_points_in_s_interval(float begin, float end) const {
     std::vector<T> points;
-    uint begin_idx = std::lower_bound(s_.begin(), s_.end(), begin) - s_.begin();
-    uint end_idx = std::upper_bound(s_.begin(), s_.end(), end) - s_.begin();
+    uint begin_idx = std::upper_bound(s_.begin(), s_.end(), begin) - s_.begin();
+    uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
     std::copy(Shape<bg::model::linestring<T>, T>::obj_.begin() + begin_idx,
               Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
               std::back_inserter(points));
@@ -67,21 +67,34 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   }
 
   void ConcatenateLinestring(const Line_t &other_line) {
-    using boost::geometry::append;
-    // Get first and last point
-    auto last_point_this = Shape<bg::model::linestring<T>, T>::obj_[Shape<bg::model::linestring<T>, T>::obj_.size() - 1];
-    auto first_point_other = other_line.obj_[0];
-    auto last_point_other = other_line.obj_[other_line.obj_.size() - 1];
-    float distance_last_last = distance(last_point_this, last_point_other);
-    float distance_last_first = distance(last_point_this, first_point_other);
+    // Get first and last points
+    auto first_point_this = *begin();
+    auto last_point_this = *(end() - 1);
+    auto first_point_other = *other_line.begin();
+    auto last_point_other = *(other_line.end() - 1);
 
-    //std::cout << distance_last_last << " - " << distance_last_first << std::endl;
-    if (distance_last_last> distance_last_first) {
+    float distance_first_first = distance(first_point_this, first_point_other);
+    float distance_first_last = distance(first_point_this, last_point_other);
+    float distance_last_first = distance(last_point_this, first_point_other);
+    float distance_last_last = distance(last_point_this, last_point_other);
+
+    if (distance_first_first <= std::min({distance_first_last, distance_last_first, distance_last_last})) {
+      // Reverse this
+      reverse();
+      append_linestring(other_line);
+    } else if (distance_first_last <= std::min({distance_first_first, distance_last_first, distance_last_last})) {
+      // Reverse both
+      reverse();
+      Line_t new_line = other_line;
+      new_line.reverse();
+      append_linestring(new_line);
+    } else if (distance_last_first <= std::min({distance_first_first, distance_first_last, distance_last_last})) {
+      // No reversing
       append_linestring(other_line);
     } else {
-      //std::cout << "REVERSING" << std::endl;
+      // Reverse other
       Line_t new_line = other_line;
-      boost::geometry::reverse(new_line.obj_);
+      new_line.reverse();
       append_linestring(new_line);
     }
   }
@@ -92,6 +105,13 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   const_point_iterator  begin() const { return Shape<bg::model::linestring<T>, T>::obj_.begin(); }
   point_iterator end() { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
   const_point_iterator end() const { return Shape<bg::model::linestring<T>, T>::obj_.end(); }
+
+  typedef typename std::vector<T>::reverse_iterator reverse_point_iterator;
+  typedef typename std::vector<T>::const_reverse_iterator const_reverse_point_iterator;
+  reverse_point_iterator rbegin() { return Shape<bg::model::linestring<T>, T>::obj_.rbegin(); }
+  const_reverse_point_iterator rbegin() const { return Shape<bg::model::linestring<T>, T>::obj_.rbegin(); }
+  reverse_point_iterator rend() { return Shape<bg::model::linestring<T>, T>::obj_.rend(); }
+  const_reverse_point_iterator rend() const { return Shape<bg::model::linestring<T>, T>::obj_.rend(); }
 
   std::vector<float> s_;  //! local coordinates 0..[total distance] along the lines
 
