@@ -19,14 +19,25 @@ class Runtime : public modules::commons::BaseType {
  public:
   explicit Runtime(commons::Params *params) : commons::BaseType(params) {}
 
-  Runtime(const Runtime &runtime) : 
+  Runtime(const Runtime& runtime) :
               commons::BaseType(runtime.get_params()) {}
 
   virtual ~Runtime() {}
 
   virtual void Step() {}
+  virtual void Step(int action) {}
+  virtual void Step(float action) {}
+  virtual void Step(double action) {}
 
 };
+
+inline void EvalRuntime(Runtime& r) {
+  std::cout << "Received valid runtime." << std::endl;
+  std::cout << "Stepping runtime..." << std::endl;
+  r.Step(0.01);
+  std::cout << "Runtime has been successfully stepped." << std::endl;
+
+}
 
 typedef std::shared_ptr<Runtime> RuntimePtr;
 

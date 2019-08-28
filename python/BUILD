@@ -9,7 +9,7 @@ cc_binary(
     "world/*.cpp", "world/*.hpp",
     "models/*.cpp", "models/*.hpp",
     "viewer/*.cpp", "viewer/*.hpp",
-    "runtime.cpp", "runtime.hpp"]),
+    "runtime.hpp"]),
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
