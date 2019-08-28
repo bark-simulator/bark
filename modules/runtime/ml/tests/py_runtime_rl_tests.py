@@ -32,12 +32,13 @@ class RuntimeRLTests(unittest.TestCase):
                               scenario_generator=scenario_generation)
 
         # test cpp bindings
-        cpp_runtime = PyRuntime(params)
-        cpp_runtime.step()
-        cpp_runtime.step(0.01)
-        cpp_runtime.step(1)
-        eval_runtime(cpp_runtime)
-        
+        #cpp_runtime = PyRuntime(params)
+        #cpp_runtime.step()
+        #cpp_runtime.step(0.01)
+        #cpp_runtime.step(1)
+        action = np.array([0,0])
+        eval_runtime(runtimerl, action)
+
         for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
             nn_state = runtimerl.reset()
             for _ in range(0, 100): # run each scenario for 10 steps

@@ -28,15 +28,18 @@ class Runtime : public modules::commons::BaseType {
   virtual void Step(int action) {}
   virtual void Step(float action) {}
   virtual void Step(double action) {}
+  virtual void Step(Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> m) {}
 
 };
 
-inline void EvalRuntime(Runtime& r) {
+inline void EvalRuntime(Runtime r,
+                        Eigen::Matrix<float,
+                                      Eigen::Dynamic,
+                                      Eigen::Dynamic> action) {
   std::cout << "Received valid runtime." << std::endl;
   std::cout << "Stepping runtime..." << std::endl;
-  r.Step(0.01);
+  r.Step(action);
   std::cout << "Runtime has been successfully stepped." << std::endl;
-
 }
 
 typedef std::shared_ptr<Runtime> RuntimePtr;
