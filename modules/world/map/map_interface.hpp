@@ -15,6 +15,8 @@
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
+#include "modules/world/map/driving_corridor.hpp"
+
 
 namespace modules {
 namespace world {
@@ -36,6 +38,10 @@ class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
   
+  void ConcatenateLines(const std::vector<LanePtr>& lanes,
+                        Line& line_of_corridor,
+                        std::vector< std::pair<int, LaneId> >& lane_ids);
+                        
   bool isInLane(const modules::geometry::Point2d& point, LaneId id) const;
 
   bool FindNearestLanes(const modules::geometry::Point2d& point,
@@ -43,12 +49,12 @@ class MapInterface {
                          std::vector<opendrive::LanePtr>& lanes,
                          bool type_driving_only = true) const;
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
-                                  const LaneId& startid, const LaneId& goalid) const;
+  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
-  bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
-                            Line& inner_line, Line& outer_line, Line& center_line) const;
+  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
 
+  bool CalculateAllCorridors();
+  
   virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
@@ -61,6 +67,12 @@ class MapInterface {
     roadgraph_ = roadgraph;
     return true;
   }
+
+  LanePtr get_lane(const LaneId& id) const {
+    return roadgraph_->get_laneptr(id);
+  }
+  
+  //! Functions
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
 
