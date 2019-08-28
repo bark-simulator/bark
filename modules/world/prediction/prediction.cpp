@@ -33,7 +33,7 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
       for (auto const lane_id : possible_path) {
         followed_lane.push_back(lane_id);
       }
-      MotionHypothesis motion_hypothesis = {n_agents, 1, followed_lane, {}};
+      MotionHypothesis motion_hypothesis = {n_agents, 1.0f / possible_paths.size(), followed_lane, {}};
       predictions_for_all_agents_.at(agent.first).add_hypothesis(n_agents, motion_hypothesis);
       prediction_agent->set_agent_id(n_agents++);
 
@@ -76,8 +76,22 @@ std::vector<std::list<LaneId>> FindPossiblePath(const LaneId current_lane_id, co
 
 std::vector<std::list<LaneId>> Prediction::FindPossibleGoalLanes(const geometry::Point2d &position, const MapInterfacePtr map_interface) const {
   std::vector<opendrive::LanePtr> lanes;
-  map_interface->FindNearestLanes(position, 1, lanes);
-  LaneId current_lane = lanes.front()->get_id();
+  map_interface->FindNearestLanes(position, 2, lanes);
+  opendrive::LanePtr inner_lane, outer_lane;
+  if (abs(lanes.front()->get_lane_position()) < abs(lanes.back()->get_lane_position())) {
+    inner_lane = lanes.front();
+    outer_lane = lanes.back();
+  } else {
+    inner_lane = lanes.back();
+    outer_lane = lanes.front();
+  }
+  LaneId current_lane;
+  if (geometry::distance(outer_lane->get_line(), position) > geometry::distance(inner_lane->get_line(), outer_lane->get_line())) {
+    // Position is between lane 0 and 1, but the two nearest lanes are 1 and 2, because 0 is never returned -> current_lane is the inner_lane
+    current_lane = inner_lane->get_id();
+  } else {
+    current_lane = outer_lane->get_id();
+  }
 
   std::vector<std::list<LaneId>> possible_paths = FindPossiblePath(current_lane, map_interface);
 
