@@ -38,7 +38,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     double start_time = observed_world.get_world_time();
     float current_vel = ego_vehicle_state(StateDefinition::VEL_POSITION);
     double acceleration =  CalculateLongitudinalAcceleration(observed_world); // checked
-    BARK_EXPECT_TRUE(!isnan(acceleration));
+    BARK_EXPECT_TRUE(!std::isnan(acceleration));
     float sline = s_start;
     // v = s/t
     double run_time = start_time;
@@ -47,8 +47,8 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       geometry::Point2d traj_point = get_point_at_s(line, sline); // checked
       float traj_angle = get_tangent_angle_at_s(line, sline); // checked
       traj(i, StateDefinition::TIME_POSITION) = run_time; // checked
-      BARK_EXPECT_TRUE(!isnan(boost::geometry::get<0>(traj_point)));
-      BARK_EXPECT_TRUE(!isnan(boost::geometry::get<1>(traj_point)));
+      BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
+      BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));
       traj(i, StateDefinition::X_POSITION) = boost::geometry::get<0>(traj_point); // checked
       traj(i, StateDefinition::Y_POSITION) = boost::geometry::get<1>(traj_point); // checked
       traj(i, StateDefinition::THETA_POSITION) = traj_angle; // checked
