@@ -10,19 +10,18 @@
 #include "modules/runtime/runtime.hpp"
 
 namespace py = pybind11;
-using modules::world::ObservedWorld;
-using modules::models::dynamic::Trajectory;
+
+using modules::runtime::Runtime;
+using modules::runtime::RuntimePtr;
 
 class PyRuntime : public Runtime {
  public:
-  Trajectory Plan(float delta_time,
-                  const ObservedWorld& observed_world) override {
+  using Runtime::Runtime;
+  void Step() override {
     PYBIND11_OVERLOAD_PURE(
-        modules::models::dynamic::Trajectory,
-        BehaviorModel,
-        plan,
-        delta_time,
-        observed_world);
+        void,
+        Runtime,
+        step);
   }
 };
 

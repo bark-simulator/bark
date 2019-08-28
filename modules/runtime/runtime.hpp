@@ -19,13 +19,16 @@ class Runtime : public modules::commons::BaseType {
  public:
   explicit Runtime(commons::Params *params) : commons::BaseType(params) {}
 
+  Runtime(const Runtime &runtime) : 
+              commons::BaseType(runtime.get_params()) {}
+
   virtual ~Runtime() {}
 
-  virtual void step() {}
+  virtual void Step() {}
 
 };
 
-typedef std::shared_ptr<BehaviorModel> RuntimePtr;
+typedef std::shared_ptr<Runtime> RuntimePtr;
 
 }  // namespace runtime
 }  // namespace modules
