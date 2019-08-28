@@ -33,6 +33,10 @@ class DefaultParams : public Params {
                       const std::string &description,
                       const int &default_value) { return default_value; }
 
+  virtual std::vector<std::vector<float>> get_listlist_float(const std::string &param_name,
+                      const std::string &description,
+                      const std::vector<std::vector<float>> &default_value)  { return default_value; }
+
   // not used atm
   virtual void set_bool(const std::string &param_name, const bool &value) {}
   virtual void set_real(const std::string &param_name, const float &value) {}
