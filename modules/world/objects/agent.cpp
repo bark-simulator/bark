@@ -87,7 +87,6 @@ void Agent::Execute(const float& world_time) {
       min_time_diff = diff_time;
     }
   }
-
   models::behavior::StateActionPair state_action_pair(
       State(execution_model_->get_last_trajectory().row(index_world_time)),
       behavior_model_->get_last_action());
@@ -143,6 +142,9 @@ Agent* Agent::Clone() const {
   }
   if(dynamic_model_) {
     new_agent->dynamic_model_.reset(dynamic_model_->Clone());
+  }
+  if(execution_model_) {
+    new_agent->execution_model_.reset(execution_model_->Clone());
   }
   return new_agent;
 }

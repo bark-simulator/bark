@@ -159,12 +159,10 @@ TEST(observed_world, predict) {
   observed_world.SetupPrediction(prediction_settings);
   auto predicted_world = observed_world.Predict(1.0f);
   double distance_ego = modules::geometry::distance(predicted_world->current_ego_position(), observed_world.current_ego_position());
-  double y_pos_obs = observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
-  double y_pos_pred = predicted_world->get_other_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
   double distance_other = modules::geometry::distance(predicted_world->get_other_agents().begin()->second->get_current_position(),
            observed_world.get_other_agents().begin()->second->get_current_position());
-  EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.05); // distance current and predicted state should be velocity x prediction time span
-  EXPECT_NEAR(distance_other, observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION]*1.0f, 0.05);
+  EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.06); // distance current and predicted state should be velocity x prediction time span
+  EXPECT_NEAR(distance_other, observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION]*1.0f, 0.06);
 
   // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(new BehaviorMotionPrimitives(dyn_model, &params));
