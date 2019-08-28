@@ -1,7 +1,25 @@
 cc_library(
     name = "world",
-    srcs = glob(["objects/*.cpp", "world*.cpp", "observed_world.cpp"]),
-    hdrs = glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
+    srcs = ["prediction/prediction_settings.cpp"] + glob(["objects/*.cpp", "world*.cpp", "observed_world.cpp"]),
+    hdrs = ["prediction/prediction_settings.hpp"] + glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
+    deps = [
+        "//modules/world/opendrive:opendrive",
+        "//modules/world/map:roadgraph",
+        "//modules/world/map:local_map",
+        "//modules/commons:commons",
+        "//modules/models/behavior:behavior",
+        "//modules/models/behavior/motion_primitives:motion_primitives",
+        "//modules/models/execution:execution",
+	    "//modules/models/dynamic:dynamic",
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/world/goal_definition:goal_definition"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "world_hdr",
+    hdrs = ["prediction/prediction_settings.hpp"] + glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
     deps = [
         "//modules/world/opendrive:opendrive",
         "//modules/world/map:roadgraph",
@@ -12,7 +30,6 @@ cc_library(
 	    "//modules/models/dynamic:dynamic",
         "//modules/world/evaluation:base_evaluator",
         "//modules/world/goal_definition:goal_definition"
-            
     ],
     visibility = ["//visibility:public"],
 )
