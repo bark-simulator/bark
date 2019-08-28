@@ -24,7 +24,7 @@ scenario_generation = ScenarioGeneration()
 scenario_generation.load_scenario_list(filename="examples/scenarios/highway_merging.bark_scenarios")
 
 
-for _ in range(0,5): # run 5 scenarios in a row, repeating after 3
+for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
     scenario, idx = scenario_generation.get_next_scenario()
     world_state = scenario.get_world_state()
     print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))

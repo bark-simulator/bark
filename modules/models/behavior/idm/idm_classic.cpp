@@ -49,9 +49,9 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
     const double helper_state = minimum_spacing + ego_velocity*desired_time_headway +
                       (ego_velocity*net_velocity) / (2*sqrt(max_acceleration*comfortable_braking_acceleration));
     
-    BARK_EXPECT_TRUE(!isnan(helper_state));
+    BARK_EXPECT_TRUE(!std::isnan(helper_state));
     interaction_term = (helper_state / net_distance)*(helper_state / net_distance);
-    BARK_EXPECT_TRUE(!isnan(interaction_term));
+    BARK_EXPECT_TRUE(!std::isnan(interaction_term));
   }
   
   // Calculate acceleration based on https://en.wikipedia.org/wiki/Intelligent_driver_model (Maybe look into paper for other implementation aspects)  
