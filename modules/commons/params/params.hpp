@@ -37,10 +37,12 @@ class Params {
                       const std::string &description,
                       const std::vector<std::vector<float>> &default_value) = 0;
 
-  // not used atm
   virtual void set_bool(const std::string &param_name, const bool &value) = 0;
   virtual void set_real(const std::string &param_name, const float &value) = 0;
   virtual void set_int(const std::string &param_name, const int &value) = 0;
+  virtual void set_listlist_float(const std::string &param_name,
+                      const std::vector<std::vector<float>> &value) = 0;
+
 
   virtual int operator[](const std::string &param_name) = 0;
 

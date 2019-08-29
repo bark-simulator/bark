@@ -41,6 +41,8 @@ class DefaultParams : public Params {
   virtual void set_bool(const std::string &param_name, const bool &value) {}
   virtual void set_real(const std::string &param_name, const float &value) {}
   virtual void set_int(const std::string &param_name, const int &value) {}
+  virtual void set_listlist_float(const std::string &param_name,
+                      const std::vector<std::vector<float>> &value) {}
 
   virtual int operator[](const std::string &param_name) { return 0; }
 
