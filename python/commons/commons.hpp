@@ -86,6 +86,14 @@ class PyParams : public Params {
         param_name, value);
   }
 
+  void set_listlist_float(const std::string &param_name, const std::vector<std::vector<float>> &value) override {
+    PYBIND11_OVERLOAD_PURE(
+        void,
+        Params,
+        set_listlist_float,
+        param_name, value);
+  }
+
   Params *AddChild(const std::string &name) override {
     PYBIND11_OVERLOAD_PURE(
         Params *,

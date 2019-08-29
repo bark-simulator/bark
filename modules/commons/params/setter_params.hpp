@@ -24,19 +24,19 @@ class SetterParams : public Params {
   // get and set parameters as in python
   virtual bool get_bool(const std::string &param_name,
                         const std::string &description,
-                        const bool &default_value) { return params_bool_[param_name]; }
+                        const bool &default_value) { return get_parameter(params_bool_, param_name, default_value);}
                         
   virtual float get_real(const std::string &param_name,
                          const std::string &description,
-                         const float &default_value) { return params_real_[param_name]; }
+                         const float &default_value)  { return get_parameter(params_real_, param_name, default_value);}
 
   virtual int get_int(const std::string &param_name,
                       const std::string &description,
-                      const int &default_value) { return params_int_[param_name]; }
+                      const int &default_value)  { return get_parameter(params_int_, param_name, default_value);}
 
   virtual std::vector<std::vector<float>> get_listlist_float(const std::string &param_name,
                       const std::string &description,
-                      const std::vector<std::vector<float>> &default_value)  { return params_listlist_float_[param_name]; }
+                      const std::vector<std::vector<float>> &default_value)  { return get_parameter(params_listlist_float_, param_name, default_value);}
 
   // not used atm
   virtual void set_bool(const std::string &param_name, const bool &value) {params_bool_[param_name]=value;}
@@ -50,6 +50,15 @@ class SetterParams : public Params {
   virtual Params *AddChild(const std::string &name) { throw; } //< not supported atm
 
   private: 
+    template<typename M, typename T>
+    T get_parameter(M map, std::string param_name, T default_value) {
+      const auto it = map.find(param_name);
+      if(it != map.end()) {
+        return it->second;
+      } else {
+        return default_value;
+      }
+    }
     std::unordered_map<std::string, bool> params_bool_;
     std::unordered_map<std::string, float> params_real_;
     std::unordered_map<std::string, int> params_int_;
