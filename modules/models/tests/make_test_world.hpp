@@ -16,7 +16,7 @@ namespace tests {
 
 class DummyMapInterface : public modules::world::map::MapInterface {
   virtual std::pair<modules::geometry::Point2d, modules::geometry::Point2d> BoundingBox() const {
-       return std::make_pair(modules::geometry::Point2d(-100,-100), modules::geometry::Point2d(100,3000));}
+       return std::make_pair(modules::geometry::Point2d(-100,-100), modules::geometry::Point2d(3000,3000));}
 };
 
 
