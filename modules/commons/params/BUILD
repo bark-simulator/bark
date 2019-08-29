@@ -6,6 +6,7 @@ cc_library(
         "params.hpp",
         "params_test.h",
         "default_params.hpp",
+        "setter_params.hpp"
     ],
     visibility = ["//visibility:public"],
 )
