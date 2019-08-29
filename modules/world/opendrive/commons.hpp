@@ -176,7 +176,7 @@ inline geometry::Line create_line_with_offset_from_line(geometry::Line previous_
 
   // TODO(fortiss): check if sampling does work with relative s, probably not
   if (off.b != 0.0f || off.c != 0.0f || off.d != 0.0f || (lane_width_current_lane.s_end - lane_width_current_lane.s_start) != 1.0) {
-    for (; s < lane_width_current_lane.s_end; s += s_inc) {
+    for (; s <= lane_width_current_lane.s_end; s += s_inc) {
       geometry::Point2d point = get_point_at_s(previous_line, s);
       normal = get_normal_at_s(previous_line, s);
       scale = -sign * polynom(s, off.a, off.b, off.c, off.d);
