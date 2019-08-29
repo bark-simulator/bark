@@ -97,6 +97,24 @@ TEST(lane, open_drive) {
   // spiral and arc tests are ommitted due to their complexits -> verify with plots!
 }
 
+TEST(lane, correct_lane_length_when_created_with_a_specified_lane_width) {
+  using namespace std;
+  using namespace modules::world::opendrive;
+  using namespace modules::geometry;
+
+  //! new plan view
+  PlanView p;
+  LaneOffset off = {1.5f, 0.0f, 0.0f, 0.0f};
+
+  //! horizontal
+  p.add_line(Point2d(0.0f, 0.0f), 0.0, 10.0f);
+  LaneWidth lane_width = {0, 9, off};
+
+  LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(), lane_width, 1.0f); // left side
+  Line line = lane->get_line();
+  EXPECT_NEAR(9, line.length(), 0.1);
+}
+
 TEST(road, open_drive) {
   using namespace std;
   using namespace modules::world::opendrive;
@@ -257,7 +275,7 @@ TEST(map, open_drive) {
   RoadPtr ret_road = map->get_road(100);
   LaneSectionPtr ret_ls = ret_road->get_lane_sections()[0];
   Lanes ret_lane = ret_ls->get_lanes();
-  auto result = ret_lane.find(7);
+  auto result = ret_lane.find(8);
   Line ret_line = result->second->get_line();
 
   EXPECT_NEAR(bg::get<0>(ret_line.obj_[0]), 0.0f, 0.1f);
