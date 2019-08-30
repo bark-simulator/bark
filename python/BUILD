@@ -33,3 +33,30 @@ cc_binary(
   linkshared = 1,
   linkstatic = 1
 )
+
+# needed for external python wrapping (planners)
+cc_library(
+    name = "common",
+    hdrs = ["common.hpp"],
+    deps = [
+    "@python_linux//:python-lib",
+    "@pybind11//:pybind11",
+    ]
+)
+
+# needed to test external python wrapping of planners in their own modules
+cc_library(
+    name = "behavior",
+    hdrs = ["models/behavior.hpp"],
+    srcs = ["models/behavior.cpp"],
+    deps = [
+    ":common",
+    "@python_linux//:python-lib",
+    "@pybind11//:pybind11",
+    "@com_github_eigen_eigen//:eigen", 
+    "//modules/models/behavior/constant_velocity:constant_velocity",
+    "//modules/models/behavior/motion_primitives:motion_primitives",
+    "//modules/models/behavior/dynamic_model:dynamic_model",
+    "//modules/models/behavior/idm:idm_classic",
+    ]
+)
