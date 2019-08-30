@@ -19,7 +19,6 @@ config_setting(
 )
 
 
-
 cc_library(
     name="planners",
     deps=

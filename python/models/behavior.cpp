@@ -9,6 +9,7 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "python/models/plan/plan.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
@@ -20,6 +21,8 @@ using modules::models::behavior::BehaviorIDMClassic;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
+  python_behavior_plan(m);
+
   py::class_<BehaviorModel,
              PyBehaviorModel,
              BehaviorModelPtr>(m, "BehaviorModel")
