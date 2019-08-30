@@ -21,10 +21,10 @@ cc_library(
     name = "include",
     hdrs = ["prediction/prediction_settings.hpp"] + glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
     deps = [
-        "//modules/geometry:geometry",
+        "//modules/geometry:include",
         "//modules/world/map:include",
          "//modules/world/opendrive:include",
-        "//modules/commons:commons",
+        "//modules/commons:include",
         "//modules/models:include",
         "//modules/world/evaluation:include",
         "//modules/world/goal_definition:include"
