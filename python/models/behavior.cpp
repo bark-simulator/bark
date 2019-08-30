@@ -21,7 +21,6 @@ using modules::models::behavior::BehaviorIDMClassic;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
-  python_behavior_plan(m);
 
   py::class_<BehaviorModel,
              PyBehaviorModel,
@@ -92,4 +91,8 @@ void python_behavior(py::module m) {
       })
       .def("set_action", &DynamicBehaviorModel::set_action)
       .def("get_action", &DynamicBehaviorModel::get_action);
+
+  
+  // must be at the end to have definitions of other models available
+  python_behavior_plan(m);
 }
