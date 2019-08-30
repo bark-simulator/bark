@@ -29,6 +29,7 @@ cc_binary(
     "//modules/runtime/viewer:viewer",
     "//modules/world:world",
     "//modules/runtime:cc_runtime",
+    "//python/models/plan:planners"
   ],
   linkshared = 1,
   linkstatic = 1
@@ -41,6 +42,7 @@ cc_library(
     deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
+    "@com_github_eigen_eigen//:eigen", 
     ]
 )
 
@@ -50,6 +52,7 @@ cc_library(
     hdrs = ["models/behavior.hpp"],
     srcs = ["models/behavior.cpp"],
     deps = [
+    "//python/models/plan:planners",
     ":common",
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
