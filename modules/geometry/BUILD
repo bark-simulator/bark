@@ -24,5 +24,9 @@ cc_library(
 cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
+    deps = [
+	    "@com_github_eigen_eigen//:eigen",
+        "@boost//:geometry",
+    ],
     visibility = ["//visibility:public"],
 )
