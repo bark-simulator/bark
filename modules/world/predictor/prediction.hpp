@@ -23,7 +23,11 @@ class Prediction : public commons::BaseType {
     std::map<AgentId, AgentPrediction> get_predictions_for_all_agents();
 
   private:
+    void AddAgentsForIntersectionDecisions(const AgentPtr agent, uint32_t &n_agents);
+    void AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t &n_agents);
     std::vector<std::list<LaneId>> FindPossibleGoalLanes(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
+    opendrive::LanePtr FindNearestLane(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
+
     ObservedWorld observed_world_;
     std::map<AgentId, std::vector<AgentId>> real_agents_to_predictions_;
     std::map<AgentId, AgentPrediction> predictions_for_all_agents_;

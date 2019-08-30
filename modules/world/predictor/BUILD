@@ -12,6 +12,8 @@ cc_library(
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/world:world",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/behavior/pure_pursuit:pure_pursuit"
     ],
     visibility = ["//visibility:public"],
 )
