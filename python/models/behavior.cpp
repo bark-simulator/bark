@@ -9,6 +9,7 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
@@ -17,6 +18,7 @@ using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
+using modules::models::behavior::BehaviorPurePursuit;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -89,4 +91,13 @@ void python_behavior(py::module m) {
       })
       .def("set_action", &DynamicBehaviorModel::set_action)
       .def("get_action", &DynamicBehaviorModel::get_action);
+
+  py::class_<BehaviorPurePursuit,
+             BehaviorModel,
+             shared_ptr<BehaviorPurePursuit>>(m, "BehaviorPurePursuit")
+      .def(py::init<modules::commons::Params *>())
+      .def("setFollowedLine", &BehaviorPurePursuit::set_followed_line)
+      .def("__repr__", [](const BehaviorPurePursuit &b) {
+        return "bark.behavior.BehaviorPurePursuit";
+      });
 }
