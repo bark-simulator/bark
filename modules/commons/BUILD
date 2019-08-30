@@ -17,3 +17,13 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
+
+
+cc_library(
+    name="include",
+    hdrs=glob(["*.hpp"]),
+    deps= [
+        "//modules/commons/params:include"
+    ],
+    visibility = ["//visibility:public"],
+)
