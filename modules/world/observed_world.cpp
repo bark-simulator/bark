@@ -55,18 +55,6 @@ void ObservedWorld::Step(const float time_step) {
   World::Step(time_step);
 }
 
-ObservedWorld *ObservedWorld::Clone() const {
-  ObservedWorld *new_observed_world = new ObservedWorld(*this);
-  new_observed_world->clear_all();
-  for (auto const &agent : get_agents()) {
-    new_observed_world->add_agent(AgentPtr(agent.second->Clone()));
-  }
-  for (auto const &object : get_objects()) {
-    new_observed_world->add_object(ObjectPtr(object.second->Clone()));
-  }
-  return new_observed_world;
-}
-
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
     settings.ApplySettings(*this);
 }

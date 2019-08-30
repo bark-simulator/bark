@@ -93,8 +93,6 @@ class ObservedWorld : protected World {
     std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
     void Step(const float time_step);
 
-    ObservedWorld *Clone() const;
-
     void SetupPrediction(const PredictionSettings& settings);
     std::shared_ptr<ObservedWorld> Predict(float time_span, const DiscreteAction& ego_action) const;
     std::shared_ptr<ObservedWorld> Predict(float time_span) const;
