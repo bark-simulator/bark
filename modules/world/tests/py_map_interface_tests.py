@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import unittest
+import time
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world.agent import *
@@ -47,14 +48,41 @@ class EnvironmentTests(unittest.TestCase):
             l = map_interface.get_lane(id[1])
             assert(l.lane_type == LaneType.driving)
 
+        time.sleep(2) # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
+
+    def test_driving_corridor(self):
+        #xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr") # corridors are not complete
+        xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
+        #xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        #xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr") # error when loading
+        #xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr") # center line is really shaky
+
+        params = ParameterServer()
+        world = World(params)
+
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        map_interface.set_roadgraph(xodr_parser.roadgraph)
+        xodr_parser.roadgraph.print_graph("/home/esterle/roadgraph_Crossing8Course.dot")
+        world.set_map(map_interface)
+
+        all_ids = xodr_parser.roadgraph.get_all_laneids()
+        print(all_ids)
+        print(map_interface.compute_all_path_boundaries(all_ids))
+
         map_interface.compute_all_driving_corridors()
 
         viewer = MPViewer(params=params)
-
-        for c in map_interface.get_all_corridors():
-            viewer.drawDrivingCorridor(c, (1,1,1))
         
-        viewer.show(block=False)
+        viewer.drawWorld(world)
+
+        for idx, c in enumerate(map_interface.get_all_corridors()):
+            print(c.get_lane_ids())
+            viewer.drawDrivingCorridor(c)
+        
+        #viewer.show(block=True)
+
+        #time.sleep(5)
 
 
 if __name__ == '__main__':

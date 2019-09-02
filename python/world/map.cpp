@@ -34,6 +34,7 @@ void python_map(py::module m) {
       .def("get_all_corridors", &MapInterface::get_all_corridors)
       .def("compute_driving_corridor_from_start_to_goal", &MapInterface::ComputeDrivingCorridorFromStartToGoal)
       .def("compute_all_driving_corridors", &MapInterface::ComputeAllDrivingCorridors)
+      .def("compute_all_path_boundaries", &MapInterface::ComputeAllPathBoundaries)
       
       //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
       /*.def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
@@ -102,8 +103,9 @@ void python_map(py::module m) {
     .def("get_next_vertices", &Roadgraph::get_next_vertices)
     .def("get_vertex_by_lane_id", &Roadgraph::get_vertex_by_lane_id)
     .def("add_inner_neighbor", &Roadgraph::add_inner_neighbor)
+    .def("get_all_laneids", &Roadgraph::get_all_laneids)
     .def("get_inner_neighbor", &Roadgraph::get_inner_neighbor)
-    .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)
+    .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)    
     .def("find_path", &Roadgraph::find_path)
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
     .def("add_successor", &Roadgraph::add_successor)
