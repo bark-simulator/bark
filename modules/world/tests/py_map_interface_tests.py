@@ -18,6 +18,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from bark.world.opendrive import *
 from bark.world.map import *
 from modules.runtime.commons.xodr_parser import XodrParser
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 
 class EnvironmentTests(unittest.TestCase):
@@ -47,6 +48,13 @@ class EnvironmentTests(unittest.TestCase):
             assert(l.lane_type == LaneType.driving)
 
         map_interface.compute_all_driving_corridors()
+
+        viewer = MPViewer(params=params)
+
+        for c in map_interface.get_all_corridors():
+            viewer.drawDrivingCorridor(c, (1,1,1))
+        
+        viewer.show(block=False)
 
 
 if __name__ == '__main__':
