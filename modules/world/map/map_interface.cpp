@@ -160,32 +160,31 @@ bool MapInterface::ComputeAllDrivingCorridors() {
 
   std::vector<LaneId> ids = roadgraph_->get_all_laneids();
   // get all unique ids that are driving corridors
-  std::vector<DrivingCorridor> all_corridors;
 
   auto all_path_boundaries = ComputeAllPathBoundaries(ids);
 
   for (auto const &path_boundaries : all_path_boundaries) {
     
+    std::vector<LanePtr> route_inner, route_outer;
+    // get from vector of pairs to pair of vectors
     for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++) {
-      std::pair<std::vector<LanePtr>, std::vector<LanePtr>> route;
-      route.push_back(std::make_pair(path_it->first, path_it->second));
+      route_inner.push_back(path_it->first);
+      route_outer.push_back(path_it->second);
     }
 
-    DrivingCorridor dc;
+    DrivingCorridorPtr dc = std::make_shared<DrivingCorridor>();
 
     std::vector<std::pair<int, LaneId>> dummy;
-    ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
-    ConcatenateLines(route.second, dc.outer, dummy);
-    if (route.first[0] != NULL && route.second[0] != NULL)
+    ConcatenateLines(route_inner, dc->inner, dc->lane_ids_);
+    ConcatenateLines(route_outer, dc->outer, dummy);
+    if (route_inner[0] != NULL && route_outer[0] != NULL)
     {
-      dc.center = ComputeCenterLine(dc.inner, dc.outer);
+      dc->center = ComputeCenterLine(dc->inner, dc->outer);
     }
-    dc.computed = true;
+    dc->computed = true;
 
-    all_corridors.push_pack(dc);
+    all_corridors_.push_back(dc);
   }
-
-  
 
   return true;
 }

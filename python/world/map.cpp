@@ -32,6 +32,7 @@ void python_map(py::module m) {
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
       .def("get_lane", &MapInterface::get_lane)
       .def("compute_driving_corridor_from_start_to_goal", &MapInterface::ComputeDrivingCorridorFromStartToGoal)
+      .def("compute_all_driving_corridors", &MapInterface::ComputeAllDrivingCorridors)
       
       //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
       /*.def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
