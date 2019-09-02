@@ -78,7 +78,9 @@ class MapInterface {
   LanePtr get_lane(const LaneId& id) const {
     return roadgraph_->get_laneptr(id);
   }
-  
+
+  std::vector<DrivingCorridorPtr> get_all_corridors() const { return all_corridors_; }
+
   //! Functions
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
