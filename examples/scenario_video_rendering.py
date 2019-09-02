@@ -21,21 +21,28 @@ scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0,
 
 
 viewer = MPViewer(params=param_server, x_range=[-50,50], y_range=[-20,80], use_world_bounds=True)
-video_renderer = VideoRenderer(renderer=viewer)
-
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                 "execution in real-time or faster", 1]
-
-
 scenario, idx = scenario_generation.get_next_scenario()
-world_state = scenario.get_world_state()
 
-print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
+
+# Rendering WITHOUT intermediate steps
+video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
+world_state = scenario.get_world_state()
 for _ in range(0, 10): # run scenario for 100 steps
     world_state.step(sim_step_time)
     video_renderer.drawWorld(world_state, scenario.eval_agent_ids)
+video_renderer.export_video(filename="examples/scenarios/test_video_step")
 
-video_renderer.export_video(filename="examples/scenarios/test_video", framerate=1/sim_step_time, remove_image_dir=False)
+# Rendering WITH intermediate steps
+video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
+world_state = scenario.get_world_state()
+for _ in range(0, 10): # run scenario for 100 steps
+    world_state.do_planning(sim_step_time)
+    video_renderer.drawWorld(world_state, scenario.eval_agent_ids)
+    world_state.do_execution(sim_step_time)
+
+video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
