@@ -35,6 +35,17 @@ class VideoRenderer(BaseViewer):
 
 
     def drawWorld(self, world, eval_agent_ids=None):
+        if self.render_intermediate_steps is None:
+            self._renderWorld(world, eval_agent_ids)
+        else:
+            world_time = world.time
+            executed_world = world
+            for int_step in range(0,self.render_intermediate_steps):
+                executed_world = executed_world.world_execution_at_time(world_time)
+                self._renderWorld(executed_world, eval_agent_ids)
+                world_time = world_time + self.world_step_time/self.render_intermediate_steps
+
+    def _renderWorld(self, world, eval_agent_ids=None):
         image_path = os.path.join(self.video_frame_dir, "{}.png".format(self.frame_count))
         self.renderer.drawWorld(world=world, eval_agent_ids=eval_agent_ids, filename=image_path)
         self.frame_count = self.frame_count + 1
@@ -42,8 +53,12 @@ class VideoRenderer(BaseViewer):
     def reset(self):
         shutil.rmtree(os.path.abspath(self.video_frame_dir))       
     
-    def export_video(self, filename, framerate, remove_image_dir=True):
-        framerate = 1/self.step_time
+    def export_video(self, filename, remove_image_dir=True):
+        if self.render_intermediate_steps is None:
+            framerate = 1/self.world_step_time
+        else:
+            framerate =  1/(self.world_step_time/self.render_intermediate_steps)
+
         if os.path.isfile(filename):
             os.remove(filename)
         if not os.path.exists(os.path.dirname(filename)):
