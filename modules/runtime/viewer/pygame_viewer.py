@@ -36,7 +36,7 @@ class PygameViewer(BaseViewer):
         pg.draw.circle(self.screen, self.getColor(color),
                        self.pointToPG(point2d), 1, 0)
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
         # TODO: enable dashed line
         if self.screen is None:
             return
