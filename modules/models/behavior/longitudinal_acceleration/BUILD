@@ -14,3 +14,9 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name="include",
+    hdrs=glob(["*.hpp"]),
+    visibility = ["//visibility:public"],
+)
