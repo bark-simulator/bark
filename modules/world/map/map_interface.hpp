@@ -86,6 +86,7 @@ class MapInterface {
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
+  std::vector<DrivingCorridorPtr> all_corridors_;
   rtree_lane rtree_lane_;
   std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box_;
 

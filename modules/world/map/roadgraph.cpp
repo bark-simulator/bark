@@ -229,13 +229,13 @@ LanePtr Roadgraph::get_laneptr(const LaneId &id) const
 std::vector<LaneId> Roadgraph::get_all_laneids()  const 
 {
   std::vector<LaneId> ids;
-
-  boost::graph_traits<LaneGraph>::vertex_iterator i, end;
-  for (boost::tie(i, end) = boost::vertices(g_); i != end; ++i)
+  std::vector<vertex_t> vertices = get_vertices();
+  for (auto const &v : vertices)
   {
-    ids.push_back(g_[*i].global_lane_id);
+    if (get_lane_graph()[v].lane->get_lane_position() != 0) {
+      ids.push_back(get_lane_graph()[v].global_lane_id);
+    }
   }
-
   return ids;
 }
 

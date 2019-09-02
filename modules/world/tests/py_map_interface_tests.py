@@ -46,6 +46,8 @@ class EnvironmentTests(unittest.TestCase):
             l = map_interface.get_lane(id[1])
             assert(l.lane_type == LaneType.driving)
 
+        map_interface.compute_all_driving_corridors()
+
 
 if __name__ == '__main__':
     unittest.main()
