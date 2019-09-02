@@ -20,7 +20,7 @@ param_server = ParameterServer(filename= os.path.join("examples/params/",scenari
 scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
 
 
-viewer = MPViewer(params=param_server, x_range=[-50,50], y_range=[-20,80], use_world_bounds=True)
+viewer = MPViewer(params=param_server, x_range=[-50,50], y_range=[-20,80], follow_agent_id=True)
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.2]

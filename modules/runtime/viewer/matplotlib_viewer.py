@@ -25,13 +25,14 @@ class MPViewer(BaseViewer):
             alpha=alpha,
             marker='x')
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, line_style = None):
         line2d_np = line2d.toArray()
         self.axes.plot(
             line2d_np[:, 0],
             line2d_np[:, 1],
             color=self.getColor(color),
-            alpha=alpha)
+            alpha=alpha,
+            linestyle= line_style)
 
     def drawPolygon2d(self, polygon, color, alpha):
         points = polygon.toArray()
