@@ -34,7 +34,7 @@ using modules::models::behavior::DiscreteAction;
 using modules::world::prediction::PredictionSettings;
 
 
-class ObservedWorld : protected World {
+class ObservedWorld : public World {
  public:
     ObservedWorld(const World& world, const AgentId& ego_agent_id) :
       World(world),
