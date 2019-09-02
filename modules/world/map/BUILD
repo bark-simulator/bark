@@ -76,4 +76,8 @@ cc_library(
     name="include",
     hdrs=glob(["**/*.hpp"]),
     visibility = ["//visibility:public"],
+    deps = [
+        "@boost//:geometry",
+        "@boost//:graph",
+    ]
 )
