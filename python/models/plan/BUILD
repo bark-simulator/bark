@@ -10,7 +10,8 @@ cc_library(
     name="planners",
     hdrs=["plan.hpp"],
     srcs=["plan.cpp"],
-    deps= ["//python:common"] +
+    deps= ["//python:common",
+           "@boost//:geometry"] + 
         select({"//modules/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []}) + 
         select({"//modules/models/behavior/plan:_planner_other1" : ["insert_dependency_other1_here"], "//conditions:default": []}) + 
         select({"//modules/models/behavior/plan:_planner_other2" : ["insert_dependency_other2_here"], "//conditions:default": []}),
