@@ -40,10 +40,14 @@ class VideoRenderer(BaseViewer):
         else:
             world_time = world.time
             executed_world = world
+            print("rendered")
             for int_step in range(0,self.render_intermediate_steps):
                 executed_world = executed_world.world_execution_at_time(world_time)
                 self._renderWorld(executed_world, eval_agent_ids)
                 world_time = world_time + self.world_step_time/self.render_intermediate_steps
+                
+                print(world_time)
+            print("---------")
 
     def _renderWorld(self, world, eval_agent_ids=None):
         image_path = os.path.join(self.video_frame_dir, "{}.png".format(self.frame_count))
