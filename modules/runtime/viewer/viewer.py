@@ -7,6 +7,7 @@ import numpy as np
 from bark.viewer import Viewer
 from bark.geometry import *
 from bark.models.dynamic import *
+from bark.world.opendrive import *
 from modules.runtime.commons.parameters import ParameterServer
 
 
@@ -35,7 +36,7 @@ class BaseViewer(Viewer):
 
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.use_world_bounds = kwargs.pop("use_world_bounds", True)
+        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
 
         self.dynamic_world_x_range = self.world_x_range.copy()
@@ -95,7 +96,7 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha):
+    def drawLine2d(self, line2d, color, alpha, line_style=None):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha):
@@ -141,7 +142,11 @@ class BaseViewer(Viewer):
         for _, road in map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
-                    self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
+                    line_style = '-'
+                    # todo: how to set absolute start coordinate
+                    #if lane.road_mark.type == RoadMarkType.broken:
+                    #    line_style = (0, (5, 5))
+                    self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries, line_style)
 
 
     def drawAgent(self, agent, color):
