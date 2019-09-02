@@ -1,0 +1,41 @@
+# Copyright (c) 2019 fortiss GmbH
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+# ffmpeg must be installed and available on command line
+
+
+from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.video_renderer import VideoRenderer
+import time
+import os
+
+scenario_param_file ="highway_merging.json" # must be within examples params folder
+
+param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
+
+scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
+
+
+viewer = MPViewer(params=param_server, x_range=[-50,50], y_range=[-20,80], use_world_bounds=True)
+video_renderer = VideoRenderer(renderer=viewer)
+
+sim_step_time = param_server["simulation"]["step_time",
+                                        "Step-time used in simulation",
+                                        0.2]
+sim_real_time_factor = param_server["simulation"]["real_time_factor",
+                                                "execution in real-time or faster", 1]
+
+
+scenario, idx = scenario_generation.get_next_scenario()
+world_state = scenario.get_world_state()
+
+print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
+for _ in range(0, 10): # run scenario for 100 steps
+    world_state.step(sim_step_time)
+    video_renderer.drawWorld(world_state, scenario.eval_agent_ids)
+
+video_renderer.export_video(filename="examples/scenarios/test_video", framerate=1/sim_step_time, remove_image_dir=False)

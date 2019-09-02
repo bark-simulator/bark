@@ -7,10 +7,13 @@ import numpy as np
 from bark.viewer import Viewer
 from bark.geometry import *
 from bark.models.dynamic import *
+from modules.runtime.commons.parameters import ParameterServer
 
 
 class BaseViewer(Viewer):
     def __init__(self, params=None, **kwargs):
+        if(params is None):
+            params = ParameterServer()
         Viewer.__init__(self)
         # color parameters
         # agents
@@ -117,7 +120,7 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
 
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         self.drawMap(world.map.get_open_drive_map())
