@@ -36,7 +36,7 @@ class PygameViewer(BaseViewer):
         pg.draw.circle(self.screen, self.getColor(color),
                        self.pointToPG(point2d), 1, 0)
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0):
+    def drawLine2d(self, line2d, color, alpha, line_style=None):
         if self.screen is None:
             return
         line2d_np = line2d.toArray()

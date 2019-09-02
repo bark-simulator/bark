@@ -279,7 +279,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(color))
 
 
-    def drawLine2d(self, line2d, color=Viewer.Color.Blue, alpha=1.0):
+    def drawLine2d(self, line2d, color, alpha, line_style=None):
         line2d_np = line2d.toArray()
         for point in line2d_np:
             self.generator.link_segment(
