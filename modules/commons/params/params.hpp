@@ -8,6 +8,7 @@
 #define MODULES_COMMONS_PARAMS_PARAMS_HPP_
 
 #include <string>
+#include <vector>
 
 namespace modules {
 namespace commons {
@@ -32,10 +33,16 @@ class Params {
                       const std::string &description,
                       const int &default_value) = 0;
 
-  // not used atm
+  virtual std::vector<std::vector<float>> get_listlist_float(const std::string &param_name,
+                      const std::string &description,
+                      const std::vector<std::vector<float>> &default_value) = 0;
+
   virtual void set_bool(const std::string &param_name, const bool &value) = 0;
   virtual void set_real(const std::string &param_name, const float &value) = 0;
   virtual void set_int(const std::string &param_name, const int &value) = 0;
+  virtual void set_listlist_float(const std::string &param_name,
+                      const std::vector<std::vector<float>> &value) = 0;
+
 
   virtual int operator[](const std::string &param_name) = 0;
 

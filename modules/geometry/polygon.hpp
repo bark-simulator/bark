@@ -52,6 +52,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center, const std::vector<T> points) 
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
@@ -63,6 +64,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center,
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
@@ -76,6 +78,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center, const Line_t<T>& line) :
       for (const T &next_pt : line.obj_) {
         Shape<bg::model::polygon<T>, T>::add_point(next_pt);
       }
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
