@@ -181,4 +181,7 @@ TEST(point_in_lane, map_interface) {
 
   bool success_corr = map_interface.ComputeAllDrivingCorridors();
 
+  auto corridors = map_interface.get_all_corridors();
+  auto right_corridor = map_interface.GetRightAdjacentDrivingCorridors(corridors.at(0),0.0);
+
 }
