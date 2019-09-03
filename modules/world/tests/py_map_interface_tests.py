@@ -52,9 +52,9 @@ class EnvironmentTests(unittest.TestCase):
 
     def test_driving_corridor(self):
         #xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr") # corridors are not complete
-        xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
+        #xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
         #xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
-        #xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr") # error when loading
+        xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
         #xodr_parser = XodrParser("modules/runtime/tests/data/CulDeSac.xodr") # center line is really shaky
 
         params = ParameterServer()
@@ -63,12 +63,12 @@ class EnvironmentTests(unittest.TestCase):
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
         map_interface.set_roadgraph(xodr_parser.roadgraph)
-        xodr_parser.roadgraph.print_graph("/home/esterle/roadgraph_Crossing8Course.dot")
+        xodr_parser.roadgraph.print_graph("/home/esterle/4way_intersection.dot")
         world.set_map(map_interface)
 
         all_ids = xodr_parser.roadgraph.get_all_laneids()
-        print(all_ids)
-        print(map_interface.compute_all_path_boundaries(all_ids))
+        #print(all_ids)
+        #print(map_interface.compute_all_path_boundaries(all_ids))
 
         map_interface.compute_all_driving_corridors()
 
@@ -76,13 +76,25 @@ class EnvironmentTests(unittest.TestCase):
         
         viewer.drawWorld(world)
 
-        for idx, c in enumerate(map_interface.get_all_corridors()):
-            print(c.get_lane_ids())
-            viewer.drawDrivingCorridor(c)
+        #for idx, c in enumerate(map_interface.get_all_corridors()):
+        #    print(c.get_lane_ids())
+        #    viewer.drawDrivingCorridor(c)
         
-        #viewer.show(block=True)
+        all_corridors = map_interface.get_all_corridors()
+        c = all_corridors[2]
+        #print(c)
+        right_adj_corridors = map_interface.get_right_adjacent_corridors(c, 0.0)
 
-        #time.sleep(5)
+        print(c.get_lane_ids())
+        viewer.drawDrivingCorridor(c)
+        if right_adj_corridors:
+            for rc in right_adj_corridors:
+                print(rc.get_lane_ids())
+                viewer.drawDrivingCorridor(rc)
+        
+        viewer.show(block=True)
+
+        time.sleep(5)
 
 
 if __name__ == '__main__':
