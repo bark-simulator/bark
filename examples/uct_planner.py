@@ -19,7 +19,7 @@ except:
 scenario_param_file ="uct_planner.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
 
-scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
+scenario_generation = UniformVehicleDistribution(num_scenarios=1, random_seed=0, params=param_server)
 
 
 viewer = MPViewer(params=param_server, x_range=[-16,16], y_range=[-2,30], follow_agent_id=True)
@@ -37,13 +37,9 @@ param_server.save("examples/params/mcts_params_written.json")
 world_state.agents[scenario.eval_agent_ids[0]].behavior_model
 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
-for _ in range(0, 10): # run scenario for 100 steps
+for _ in range(0, 40): # run scenario for 100 steps
     world_state.do_planning(sim_step_time)
-    print(world_state.time)
     video_renderer.drawWorld(world_state, scenario.eval_agent_ids)
-    print(world_state.time)
     world_state.do_execution(sim_step_time)
-    print(world_state.time)
-    print("----------------------")
 
-video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
+video_renderer.export_video(filename="examples/scenarios/test_video_intermediate", remove_image_dir=False)
