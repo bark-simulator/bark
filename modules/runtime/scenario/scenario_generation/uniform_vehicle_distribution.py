@@ -9,7 +9,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion import M
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition
+from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -60,6 +60,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         """
         scenario_list = []
         for scenario_idx in range(0, num_scenarios):
+            print("Creating scenario {}/{}".format(scenario_idx+1, num_scenarios))
             scenario = self.create_single_scenario()     
             scenario_list.append(scenario)
 
@@ -75,7 +76,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                      self.center_line_between_source_and_sink( world.map,  source, self.others_sink[idx])
             goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1.5,0),Point2d(-1.5,8),Point2d(1.5,8), Point2d(1.5,0)]) # todo: orient goal polygon along road
             goal_polygon = goal_polygon.translate(Point2d(self.others_sink[idx][0], self.others_sink[idx][1]))
-            goal_definition = GoalDefinition(goal_polygon)
+            goal_definition = GoalDefinitionPolygon(goal_polygon)
             agent_list.extend( self.place_agents_along_linestring(world, connecting_center_line, s_start, s_end, \
                                                                              self.agent_params, goal_definition) )
 
@@ -88,7 +89,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         ego_agent = scenario.agent_list[math.floor(num_agents/4)] # take agent in the middle of list 
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1.5,0),Point2d(-1.5,8),Point2d(1.5,8), Point2d(1.5,0)])
         goal_polygon = goal_polygon.translate(Point2d(self.ego_goal[0], self.ego_goal[1]))
-        ego_agent.goal_definition = GoalDefinition(goal_polygon)
+        ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
         scenario.eval_agent_ids = [ego_agent.id] # only one agent is ego in the middle of all other agents
 
         return scenario

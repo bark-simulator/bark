@@ -16,6 +16,7 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
@@ -76,7 +77,7 @@ TEST(observed_world, agent_in_front)
   inner.add_point(Point2d(10,0));
 
   DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinition(), corridor));
+  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
   agent1->set_local_map(local_map);
   agent1->UpdateDrivingCorridor(0.5);
 
@@ -148,7 +149,8 @@ TEST(observed_world, clone) {
 }
 
 TEST(observed_world, predict) {
-  DefaultParams params;
+  SetterParams params;
+  params.set_real("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel());
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference=0.0;
   auto observed_world = modules::models::tests::make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
@@ -176,7 +178,7 @@ TEST(observed_world, predict) {
   observed_world.SetupPrediction(prediction_settings2);
   auto predicted_world2 = observed_world.Predict(1.0f, DiscreteAction(idx1));
   auto ego_pred_velocity = predicted_world2->current_ego_state()[StateDefinition::VEL_POSITION];
-  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.01); // distance current and predicted state should be velocity +  prediction time span
+  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.05); // distance current and predicted state should be velocity +  prediction time span
 
 }
 

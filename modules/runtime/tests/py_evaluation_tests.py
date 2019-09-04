@@ -11,7 +11,7 @@ from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
 from bark.world.map import *
-from bark.world.goal_definition import GoalDefinition
+from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
@@ -42,7 +42,7 @@ class EvaluationTests(unittest.TestCase):
                     execution_model,
                     agent_2d_shape,
                     agent_params,
-                    GoalDefinition(goal_polygon),
+                    GoalDefinitionPolygon(goal_polygon),
                      None)
 
         world = World(param_server)

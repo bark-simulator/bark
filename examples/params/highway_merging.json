@@ -28,15 +28,15 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    7,
-                    10
+                    20,
+                    30
                 ],
                 "VehicleVelocityRange": [
-                    10,
+                    20,
                     20
                 ],
                 "VehicleModel": {
-                    "behavior_model": "BehaviorIDMClassic",
+                    "behavior_model": "BehaviorConstantVelocity",
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 0,
