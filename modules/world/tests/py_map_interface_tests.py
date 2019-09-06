@@ -81,20 +81,20 @@ class EnvironmentTests(unittest.TestCase):
         #    viewer.drawDrivingCorridor(c)
         
         all_corridors = map_interface.get_all_corridors()
-        c = all_corridors[2]
+        c = all_corridors[0]
         #print(c)
-        right_adj_corridors = map_interface.get_right_adjacent_corridors(c, 0.0)
+        right_adj_corridors = map_interface.get_right_adjacent_corridors(c, [168, 190, 0.0])
 
-        print(c.get_lane_ids())
+        print("ego corridor", c.get_lane_ids())
         viewer.drawDrivingCorridor(c)
         if right_adj_corridors:
             for rc in right_adj_corridors:
-                print(rc.get_lane_ids())
+                print("found corridor", rc.get_lane_ids())
                 viewer.drawDrivingCorridor(rc)
         
         viewer.show(block=True)
 
-        time.sleep(5)
+        time.sleep(0.1)
 
 
 if __name__ == '__main__':

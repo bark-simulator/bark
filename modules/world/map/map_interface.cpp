@@ -143,7 +143,7 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId>
 {
   std::pair<std::vector<LanePtr>, std::vector<LanePtr>> route =
       roadgraph_->ComputeRouteBoundaries(lane_ids);
-  
+
   DrivingCorridor dc;
   std::vector<std::pair<int, LaneId>> dummy;
   ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
@@ -156,18 +156,21 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId>
   return dc;
 }
 
-bool MapInterface::ComputeAllDrivingCorridors() {
+bool MapInterface::ComputeAllDrivingCorridors()
+{
 
   std::vector<LaneId> ids = roadgraph_->get_all_laneids();
   // get all unique ids that are driving corridors
 
   auto all_path_boundaries = ComputeAllPathBoundaries(ids);
 
-  for (auto const &path_boundaries : all_path_boundaries) {
-    
+  for (auto const &path_boundaries : all_path_boundaries)
+  {
+
     std::vector<LanePtr> route_inner, route_outer;
     // get from vector of pairs to pair of vectors
-    for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++) {
+    for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++)
+    {
       route_inner.push_back(path_it->first);
       route_outer.push_back(path_it->second);
     }
@@ -209,8 +212,6 @@ std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBou
   return all_path_boundaries;
 }
 
-
-
 std::pair<LanePtr, bool> modules::world::map::MapInterface::get_inner_neighbor(const LaneId lane_id) const
 {
   std::pair<LaneId, bool> inner_neighbor = roadgraph_->get_inner_neighbor(lane_id);
@@ -242,54 +243,64 @@ std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const
   return roadgraph_->get_successor_lanes(lane_id);
 }
 
-std::vector<DrivingCorridorPtr> MapInterface::GetRightAdjacentDrivingCorridors(const DrivingCorridorPtr corridor, float s) {
+std::vector<DrivingCorridorPtr> MapInterface::GetRightAdjacentDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose)
+{
+
+  // that is not necessary, as driving corridor is already flipped when being created
+  //Frenet point_frenet = DrivingCorridorPtr->FrenetFromCenterLine(Point2d(pose[0, pose[1]));
+  //float orientation_corridor = get_tangent_angle_at_s(corridor->center, point_frenet[0]);
+
+  uint idx = FindNearestIdx(corridor->get_center(), Point2d(pose[0], pose[1]));
+  std::cout << "idx = " << idx << std::endl;
 
   std::vector<DrivingCorridorPtr> right_adj_corridors;
 
-  for (auto &lane_id : corridor->get_lane_ids()) {
-    std::pair<LanePtr, bool> right_neighbor;
-    if (roadgraph_->get_laneptr(lane_id.second)->get_lane_position() < 0) {
-      right_neighbor = get_inner_neighbor(lane_id.second);
-      std::cout << "lane_id " << lane_id.second << " using inner neighbour, found lane_id " << right_neighbor.first->get_id() << std::endl;
-    }
-    else {
-      right_neighbor = get_outer_neighbor(lane_id.second);
-      std::cout << "lane_id " << lane_id.second << " using outer neighbour, found lane_id " << right_neighbor.first->get_id() << std::endl;
-    }
-    
-    /*if (left_neighbor.second && left_neighbor.first->get_lane_position() != 0) {
-      // loop over all corridors
-      for (auto &corridor_rhs : all_corridors_) {
-        for (auto &lane_id_rhs : corridor_rhs->get_lane_ids()) {
-          if (lane_id_rhs == left_neighbor.first->get_id()) {
-            //spot_lanelet->set_left_adjacent(spot_lanelet_rhs);
-            // TODO: find related corridor
-            left_adj_corridors.push_back(corridor_rhs);
-          }
+  for (auto &lane_id : corridor->get_lane_ids())
+  {
+    std::cout << "lane_id.first = " << lane_id.first << std::endl;
+    if (lane_id.first >= idx)
+      {
+        std::pair<LanePtr, bool> right_neighbor;
+        if (roadgraph_->get_laneptr(lane_id.second)->get_lane_position() < 0)
+        {
+          right_neighbor = get_inner_neighbor(lane_id.second);
+          std::cout << "lane_id " << lane_id.second << " using inner neighbour" << std::endl;
         }
-      }
-    }*/
-    std::cout << "Hello" << std::endl;
-    std::cout << "right_neighbor.second " << right_neighbor.second << std::endl;
-    std::cout << "right_neighbor.first->get_lane_position()" << right_neighbor.first->get_lane_position() << std::endl;
-    if (right_neighbor.second && right_neighbor.first->get_lane_position() != 0) {
-      std::cout << "there is a right_neighbor.second" << std::endl;
-      for (auto &corridor_rhs : all_corridors_) { // loop over all corridors
-        std::cout << "loop over all corridors" << std::endl;
-        for (auto &lane_id_rhs : corridor_rhs->get_lane_ids()) { // loop over all lanes in corridor
-          std::cout << "loop over all lanes in corridor" << std::endl;
-          if (lane_id_rhs.second == right_neighbor.first->get_id()) { // if lane is equal to right_neightbor
-            if(!(std::find(right_adj_corridors.begin(), right_adj_corridors.end(), corridor_rhs) != right_adj_corridors.end())) {
-                // right_adj_corridors does not contain corridor_rhs
-                right_adj_corridors.push_back(corridor_rhs);
+        else
+        {
+          right_neighbor = get_outer_neighbor(lane_id.second);
+          std::cout << "lane_id " << lane_id.second << " using outer neighbour" << std::endl;
+        }
+        
+        //std::cout << "right_neighbor.second " << right_neighbor.second << std::endl;
+        if (right_neighbor.second && right_neighbor.first->get_lane_position() != 0)
+        {
+          std::cout << "found lane_id " << right_neighbor.first->get_id() << std::endl;
+          std::cout << "right_neighbor.first->get_lane_position()" << right_neighbor.first->get_lane_position() << std::endl;
+          for (auto &corridor_rhs : all_corridors_)
+          { // finding corridors that have lane right_neighbor as member
+            for (auto &lane_id_rhs : corridor_rhs->get_lane_ids())
+            { // loop over all lanes in corridor
+              if (roadgraph_->get_laneptr(lane_id.second)->get_lane_position() * right_neighbor.first->get_lane_position() < 0) {
+                // sign of lane positions is different --> definition of different driving directions
+                break;
+              }
+              if (lane_id_rhs.second == right_neighbor.first->get_id())
+              { // if lane is equal to right_neightbor
+                if ((std::find(right_adj_corridors.begin(), right_adj_corridors.end(), corridor_rhs) == right_adj_corridors.end()))
+                {
+                  // right_adj_corridors does not contain corridor_rhs
+                  std::cout << "adding a corridor" << std::endl;
+                  right_adj_corridors.push_back(corridor_rhs);
+                }
+              }
             }
-            
           }
         }
       }
-    }
   }
   return right_adj_corridors;
+  
 }
 
 } // namespace map
