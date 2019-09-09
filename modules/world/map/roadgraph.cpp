@@ -152,6 +152,67 @@ std::vector<LaneId> Roadgraph::find_path(const LaneId &startid, const LaneId &go
   return path;
 }
 
+std::vector<std::vector<LaneId>> Roadgraph::find_all_paths_in_subgraph(
+    const std::vector<LaneEdgeType> &edge_type_subset,
+    const std::vector<LaneId> &lane_id_subset)
+{
+  struct Predicate {
+    bool operator()(LaneGraph::edge_descriptor edge_des) const {
+      LaneEdgeType lane_edge_type = (*g)[edge_des].get_edge_type();
+      return (find(edge_type_subset.begin(), edge_type_subset.end(), lane_edge_type) != edge_type_subset.end());
+    }
+    bool operator()(LaneGraph::vertex_descriptor vertex_des) const {
+      LaneId lane_id = (*g)[vertex_des].global_lane_id;
+      return (find(lane_id_subset.begin(), lane_id_subset.end(), lane_id) != lane_id_subset.end());
+    }
+
+    const LaneGraph* g;
+    std::vector<LaneEdgeType> edge_type_subset;
+    std::vector<LaneId> lane_id_subset;
+  } predicate {&g_, edge_type_subset, lane_id_subset};
+  boost::filtered_graph<LaneGraph, Predicate, Predicate> filtered_graph(g_, predicate, predicate);
+
+  std::vector<std::vector<LaneId>> paths;
+
+  for (vertex_t const &start_vertex : boost::make_iterator_range(vertices(filtered_graph))) {
+    if (in_degree(start_vertex, filtered_graph) > 0) {
+      continue;
+    }
+    // start_vertex has no predecessors
+    std::vector<vertex_t> p(boost::num_vertices(filtered_graph));
+    std::vector<int> d(boost::num_vertices(filtered_graph));
+    boost::property_map<LaneGraph, float LaneEdge::*>::type weightmap = boost::get(&LaneEdge::weight, filtered_graph);
+
+    boost::dijkstra_shortest_paths(filtered_graph, start_vertex,
+                                    predecessor_map(boost::make_iterator_property_map(p.begin(), get(boost::vertex_index, filtered_graph)))
+                                        .distance_map(boost::make_iterator_property_map(d.begin(), get(boost::vertex_index, filtered_graph)))
+                                        .weight_map(weightmap));
+    for (auto const &goal_vertex : boost::make_iterator_range(vertices(filtered_graph))) {
+      if (out_degree(goal_vertex, filtered_graph) > 0) {
+        continue;
+      }
+      // goal_vertex has no successors
+      std::vector<LaneId> path;
+      bool reachable = true;
+      boost::graph_traits<LaneGraph>::vertex_descriptor current = goal_vertex;
+      while(current != start_vertex) {
+        path.push_back(filtered_graph[current].global_lane_id);
+        if (p[current] == current) {
+          reachable = false;
+          break;
+        }
+        current = p[current];
+      }
+      if (reachable) {
+        path.push_back(filtered_graph[start_vertex].global_lane_id);
+        std::reverse(path.begin(), path.end());
+        paths.push_back(path);
+      }
+    }
+  }
+  return paths;
+}
+
 LanePtr Roadgraph::get_laneptr(const LaneId &id) const
 {
   std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(id);
@@ -164,6 +225,20 @@ LanePtr Roadgraph::get_laneptr(const LaneId &id) const
     return NULL;
   }
 }
+
+std::vector<LaneId> Roadgraph::get_all_laneids()  const 
+{
+  std::vector<LaneId> ids;
+  std::vector<vertex_t> vertices = get_vertices();
+  for (auto const &v : vertices)
+  {
+    if (get_lane_graph()[v].lane->get_lane_position() != 0) {
+      ids.push_back(get_lane_graph()[v].global_lane_id);
+    }
+  }
+  return ids;
+}
+
 
 std::pair<LaneId, bool> Roadgraph::get_inner_neighbor(const LaneId &lane_id) const
 {

@@ -14,6 +14,7 @@
 #include "modules/world/prediction/prediction_settings.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/map/local_map.hpp"
+#include "modules/world/map/driving_corridor.hpp"
 
 namespace modules {
 namespace world {

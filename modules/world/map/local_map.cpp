@@ -15,21 +15,6 @@ using modules::world::opendrive::LanePtr;
 using geometry::FindNearestIdx;
 using geometry::distance;
 
-void LocalMap::ConcatenateLines(const std::vector<LanePtr>& lanes,
-                                Line& line_of_corridor,
-                                std::vector<std::pair<int, LaneId>>& lane_ids) {
-  if (lanes.size() > 0) {
-      line_of_corridor = lanes.at(0)->get_line();
-      lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
-      for (uint i = 1; i < lanes.size(); i++) {
-        if (lanes.at(i) != NULL) {
-          lane_ids.push_back(std::pair<int, LaneId>(line_of_corridor.size(),
-                                                    lanes.at(i)->get_id()));
-          line_of_corridor.ConcatenateLinestring(lanes.at(i)->get_line());
-        }
-      }
-  }
-}
 
 LaneId LocalMap::GoalLaneIdFromGoalDefinition(const GoalDefinition& goal_definition) {
   modules::geometry::Point2d goal_center(goal_definition.get_shape().center_(0),
@@ -43,10 +28,11 @@ LaneId LocalMap::GoalLaneIdFromGoalDefinition(const GoalDefinition& goal_definit
   return LaneId(0);
 }
 
-bool LocalMap::Generate(Point2d point, double horizon) {
+bool LocalMap::Generate(Point2d point) {
   if(map_interface_ == nullptr) {
     return false;
   }
+  driving_corridor_ = DrivingCorridor();
 
   goal_lane_id_ = GoalLaneIdFromGoalDefinition(goal_definition_);
 
@@ -54,41 +40,12 @@ bool LocalMap::Generate(Point2d point, double horizon) {
   map_interface_->FindNearestLanes(point, 1, lanes);
   LanePtr current_lane = lanes.at(0);
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
-    map_interface_->ComputeLaneBoundariesHorizon(current_lane->get_id(),
-                                                 goal_lane_id_);
-
-
-  if (route.first.size() != 0 && route.second.size() != 0) {
-    std::vector< std::pair<int, LaneId> > dummy;
-    ConcatenateLines(route.first,
-                    driving_corridor_.inner,
-                    driving_corridor_.lane_ids_);
-    ConcatenateLines(route.second,
-                    driving_corridor_.outer,
-                    dummy);
-                    
-    driving_corridor_.center = ComputeCenterLine(driving_corridor_.inner,
-                                                 driving_corridor_.outer);
-    driving_corridor_.computed = true;
-  }
+  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
 
   return true;
 }
 
-DrivingCorridor LocalMap::ComputeDrivingCorridor(std::vector<LaneId> lane_ids) {
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > route =
-    map_interface_->get_roadgraph()->ComputeRouteBoundaries(lane_ids);
-  DrivingCorridor dc;
-  std::vector< std::pair<int, LaneId> > dummy;
-  ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
-  ConcatenateLines(route.second, dc.outer, dummy);
-  if (route.first[0] != NULL && route.second[0] != NULL) {
-    dc.center = ComputeCenterLine(dc.inner, dc.outer);
-  }
-  dc.computed = true;
-  return dc;
-}
+
 
 Line LocalMap::CalculateLineHorizon(const Line& line,
                             const Point2d& p,
@@ -133,6 +90,11 @@ bool LocalMap::ComputeHorizonCorridor(const Point2d& p, double horizon) {
     return true;
   }
   return false;
+}
+
+LocalMap *LocalMap::Clone() const {
+  LocalMap *new_local_map = new LocalMap(*this);
+  return new_local_map;
 }
 
 }  // namespace map

@@ -26,6 +26,8 @@ See https://docs.bazel.build/versions/master/install-os-x.html, we recommend ins
 2. `source dev_into.sh`: this will activate the virtual environment (keep this in mind for the future: each time you use Bazel, even beyond this installation, be sure to have run this command beforehand)
 3. `bazel build //...`: this will build the whole library and test cases (specific test cases or specify individual modules can be built with e.g `bazel build //modules/world/tests:world_test`, see the documentation of Bazel for more insights).
 4. `bazel test //...`: this will run all specified tests (individual tests can be executed using, e.g. for the C++ tests `//modules/world/tests:world_test` and for the python test cases `bazel test //python:name_of_module`, e.g `bazel test //python:importer_test`).
+5. If you experience problems with Pybind, you might not have installed the header files and static libraries for python. You can install them via `sudo apt-get install python3-dev`
+6. If the viewer stays empty, you probably have to install tkinter using `sudo apt-get install python3-tk`.
 
 
 ### IDE
