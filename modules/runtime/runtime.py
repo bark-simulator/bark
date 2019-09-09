@@ -10,12 +10,17 @@ from bark.runtime import PyRuntime
 
 
 class Runtime(PyRuntime):
-  def __init__(self, step_time, viewer, scenario_generator=None):
+  def __init__(self,
+               step_time,
+               viewer,
+               scenario_generator=None,
+               render=False):
     self._step_time = step_time
     self._viewer = viewer
     self._scenario_generator = scenario_generator
     self._scenario_idx = None
     self._scenario = None
+    self._render = render
 
   def reset(self, scenario=None):
     if scenario:
@@ -27,6 +32,8 @@ class Runtime(PyRuntime):
 
   def step(self):
     self._world.step(self._step_time)
+    if self._render:
+      self.render()
 
   def render(self):
     self._viewer.drawWorld(self._world, self._scenario.eval_agent_ids)
