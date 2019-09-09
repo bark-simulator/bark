@@ -243,9 +243,9 @@ std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const
   return roadgraph_->get_successor_lanes(lane_id);
 }
 
-std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose)
+std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose &pose)
 {
-  
+
   uint idx = FindNearestIdx(corridor->get_center(), Point2d(pose[0], pose[1]));
 
   std::vector<DrivingCorridorPtr> adj_corridors;
@@ -253,27 +253,42 @@ std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridors(const 
   for (auto &lane_id : corridor->get_lane_ids())
   {
     if (lane_id.first >= idx)
-      {
-        std::vector<std::pair<LanePtr, bool>> lane_neighbors;
-        lane_neighbors.push_back(get_inner_neighbor(lane_id.second));
-        lane_neighbors.push_back(get_outer_neighbor(lane_id.second));
+    {
+      std::vector<std::pair<LanePtr, bool>> lane_neighbors;
+      std::pair<LanePtr, bool> inner_lane, outer_lane;
 
-        for (auto &lane_neighbor : lane_neighbors) {
-          if (lane_neighbor.second && lane_neighbor.first->get_lane_position() != 0)
-          {
-            for (auto &corridor_rhs : all_corridors_)
-            { // finding corridors that have lane lane_neighbor as member
-              for (auto &lane_id_rhs : corridor_rhs->get_lane_ids())
-              { 
-                if (roadgraph_->get_laneptr(lane_id.second)->get_lane_position() * lane_neighbor.first->get_lane_position() < 0) {
-                  // sign of lane positions is different --> definition of different driving directions
-                  break;
-                }
-                if (lane_id_rhs.second == lane_neighbor.first->get_id())
-                { // if lane from driving_corridor is equal to lane_neighbor
-                  if ((std::find(adj_corridors.begin(), adj_corridors.end(), corridor_rhs) == adj_corridors.end()))
-                  { // right_adj_corridors does not contain corridor_rhs
-                    adj_corridors.push_back(corridor_rhs);
+      inner_lane = get_inner_neighbor(lane_id.second);
+      lane_neighbors.push_back(inner_lane);
+      if (inner_lane.second && inner_lane.first->get_lane_position() == 0)
+      { // if neigbouring lane is plan view, look again
+        lane_neighbors.push_back(get_inner_neighbor(inner_lane.first->get_id()));
+      }
+
+      outer_lane = get_outer_neighbor(lane_id.second);
+      lane_neighbors.push_back(outer_lane);
+      if (outer_lane.second && outer_lane.first->get_lane_position() == 0)
+      { // if neigbouring lane is plan view, look again
+        lane_neighbors.push_back(get_outer_neighbor(outer_lane.first->get_id()));
+      }
+
+      for (auto &lane_neighbor : lane_neighbors)
+      {
+        if (lane_neighbor.second && lane_neighbor.first->get_lane_position() != 0)
+        {
+          for (auto &corridor_rhs : all_corridors_)
+          { // finding corridors that have lane lane_neighbor as member
+            for (auto &lane_id_rhs : corridor_rhs->get_lane_ids())
+            {
+              if (roadgraph_->get_laneptr(lane_id.second)->get_lane_position() * lane_neighbor.first->get_lane_position() < 0)
+              {
+                // sign of lane positions is different --> definition of different driving directions
+                break;
+              }
+              if (lane_id_rhs.second == lane_neighbor.first->get_id())
+              { // if lane from driving_corridor is equal to lane_neighbor
+                if ((std::find(adj_corridors.begin(), adj_corridors.end(), corridor_rhs) == adj_corridors.end()))
+                { // right_adj_corridors does not contain corridor_rhs
+                  adj_corridors.push_back(corridor_rhs);
                 }
               }
             }
@@ -283,7 +298,6 @@ std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridors(const 
     }
   }
   return adj_corridors;
-  
 }
 
 } // namespace map
