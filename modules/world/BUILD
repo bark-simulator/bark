@@ -6,6 +6,7 @@ cc_library(
         "//modules/world/opendrive:opendrive",
         "//modules/world/map:roadgraph",
         "//modules/world/map:local_map",
+        "//modules/world/map:driving_corridor",
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/models/behavior/motion_primitives:motion_primitives",
