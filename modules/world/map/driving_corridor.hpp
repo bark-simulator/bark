@@ -48,6 +48,7 @@ struct DrivingCorridor
   Polygon CorridorPolygon() const
   {
     Line line = get_outer();
+    line.reverse(); 
     line.append_linestring(get_inner());
     return Polygon(Pose(0, 0, 0), line);
   }
