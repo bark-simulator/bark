@@ -8,9 +8,16 @@ cc_library(
     ],
     deps = [
         "//modules/commons:commons",
-        "//modules/world:world",
+        "//modules/world:include",
         "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic"
     ],
+    visibility = ["//visibility:public"],
+)
+
+
+cc_library(
+    name="include",
+    hdrs=glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )

@@ -9,7 +9,6 @@
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/world.hpp"
 
 namespace modules {
 namespace models {
@@ -33,6 +32,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   typedef unsigned int MotionIdx;
   MotionIdx AddMotionPrimitive(const Input& dynamic_input);
+  MotionIdx GetNumMotionPrimitives() const {return motion_primitives_.size();}
   void ActionToBehavior(const MotionIdx& motion_idx);
 
   virtual BehaviorModel *Clone() const;

@@ -56,11 +56,12 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       current_vel = current_vel + acceleration * sample_time;
       run_time += sample_time;
     }
+
+    set_last_action(Action(Continuous1DAction(acceleration)));
   }
 
   this->set_last_trajectory(traj);
   return traj;
-
 }
 
 }  // namespace models

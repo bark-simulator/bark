@@ -25,14 +25,24 @@ namespace models {
 namespace behavior {
 using dynamic::Trajectory;
 
+typedef unsigned int DiscreteAction;
+typedef double Continuous1DAction;
+typedef boost::variant<DiscreteAction, Continuous1DAction> Action;
+
+typedef std::pair<models::dynamic::State, Action> StateActionPair;
+typedef std::vector<StateActionPair> StateActionHistory;
+
+
 class BehaviorModel : public modules::commons::BaseType {
  public:
   explicit BehaviorModel(commons::Params *params) : commons::BaseType(params),
-                                                    last_trajectory_() {}
+                                                    last_trajectory_(),
+                                                    last_action_() {}
 
-  BehaviorModel(const BehaviorModel &behavior_model) : 
-              commons::BaseType(behavior_model.get_params()),
-              last_trajectory_(behavior_model.get_last_trajectory()) {}
+  BehaviorModel(const BehaviorModel &behavior_model) :
+    commons::BaseType(behavior_model.get_params()),
+    last_trajectory_(behavior_model.get_last_trajectory()),
+    active_model_(behavior_model.get_active_model()) {}
 
   virtual ~BehaviorModel() {}
 
@@ -41,14 +51,19 @@ class BehaviorModel : public modules::commons::BaseType {
   void set_last_trajectory(const dynamic::Trajectory &trajectory) {
     last_trajectory_ = trajectory;
   }
-
+  bool get_active_model() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
   virtual BehaviorModel *Clone() const = 0;
 
+  Action get_last_action() const {return last_action_; };
+  void set_last_action(const Action action) {last_action_ = action;}
+
  private:
   dynamic::Trajectory last_trajectory_;
+  Action last_action_;
+  bool active_model_;
 };
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
