@@ -42,7 +42,7 @@ class MotionPrimitives(OpenAI):
         if ego_agent_id in world.agents:
             world.agents[ego_agent_id].behavior_model = self.behavior_model
         else:
-            raise ValueError("Id of contronlled agent not in world agent map.")
+            raise ValueError("Id of controlled agent not in world agent map.")
         return world
 
     def action_to_behavior(self, world, action):
@@ -60,6 +60,7 @@ class DynamicModel(OpenAI):
                  params=ParameterServer(),
                  dynamic_model=SingleTrackModel()):
         self._params = params
+        self._control_inputs = self._params["Runtime"]["RL"]["ActionWrapper"]["ActionDimension","Dimension of action", 2] # (acceleration, steering angle)
         self._dynamic_model = dynamic_model
         self._behavior_model = DynamicBehaviorModel(dynamic_model,
                                                     self._params)
@@ -73,7 +74,7 @@ class DynamicModel(OpenAI):
         if ego_agent_id in world.agents:
             world.agents[ego_agent_id].behavior_model = self._behavior_model
         else:
-            raise ValueError("Id of contronlled agent not in world agent map.")
+            raise ValueError("Id of controlled agent not in world agent map.")
         return world
 
     def action_to_behavior(self, world, action):
@@ -83,8 +84,7 @@ class DynamicModel(OpenAI):
 
     @property
     def action_space(self):
-        # TODO(@hart): get input space size from dynamic model
-        return BoundedContinuous(2,
+        return BoundedContinuous(self._control_inputs,
                                  low=[-1.0, -0.1],
                                  high=[1.0, 0.1])
         

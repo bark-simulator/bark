@@ -232,9 +232,10 @@ TEST(world, nearest_agents)
   EXPECT_EQ(nearest_agents.size(), 1);
   EXPECT_EQ(nearest_agents.begin()->second->get_current_state(), init_state1 );
   
-  /*AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f,0.0f),2);
+  AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f,0.0f),2);
 
-  EXPECT_EQ(nearest_agents2.size(), 2);
+  // Comment as this crashes in CI -> TODO: Why?
+  /*EXPECT_EQ(nearest_agents2.size(), 2);
   EXPECT_EQ(nearest_agents2.begin()->second->get_current_state(), init_state1 );
   EXPECT_EQ(nearest_agents2[agent2->get_agent_id()]->get_current_state(), init_state2 );
 
@@ -248,7 +249,8 @@ TEST(world, nearest_agents)
   AgentMap nearest_agents3 = world->GetNearestAgents(Point2d(4.0f,5.0f),2);
   EXPECT_EQ(nearest_agents3.size(), 2);
   EXPECT_EQ(nearest_agents3[agent1->get_agent_id()]->get_current_state(), init_state1 );
-  EXPECT_EQ(nearest_agents3[agent3->get_agent_id()]->get_current_state(), init_state3 );*/
+  EXPECT_EQ(nearest_agents3[agent3->get_agent_id()]->get_current_state(), init_state3 );
+  */
 }
 
 TEST(world, agents_intersection_polygon)

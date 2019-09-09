@@ -8,6 +8,13 @@ cc_library(
     deps = [
         "//modules/commons:commons",
 	    "@com_github_eigen_eigen//:eigen",
+        "@boost//:geometry",
     ],
     visibility = ["//visibility:public"]
+)
+
+cc_library(
+    name="include",
+    hdrs=glob(["*.hpp"]),
+    visibility = ["//visibility:public"],
 )

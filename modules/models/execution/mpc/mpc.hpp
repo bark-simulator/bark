@@ -55,11 +55,17 @@ class ExecutionModelMpc : public ExecutionModel {
                       const Trajectory &discrete_behavior,
                       const Matrix<double, Dynamic, Dynamic> weights_desired_states);
 
+  virtual ExecutionModel* Clone() const;
+
  private:
   execution::OptimizationSettings optimization_settings_;
   Matrix<double, Dynamic, Dynamic> last_weights_;
   Trajectory last_desired_states_;
 };
+
+inline ExecutionModel* ExecutionModelMpc::Clone() const {
+  return new ExecutionModelMpc(*this);
+}
 
 }  // namespace execution
 }  // namespace models

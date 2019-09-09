@@ -4,13 +4,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_WORLD_EGO_HPP_
-#define MODULES_WORLD_WORLD_EGO_HPP_
+#ifndef MODULES_WORLD_OBSERVED_WORLD_HPP_
+#define MODULES_WORLD_OBSERVED_WORLD_HPP_
 
 #include <unordered_map>
 
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/world.hpp"
+#include "modules/world/prediction/prediction_settings.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/map/local_map.hpp"
 #include "modules/world/map/driving_corridor.hpp"
@@ -28,9 +29,13 @@ using modules::geometry::Point2d;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition::X_POSITION;
 using modules::models::dynamic::StateDefinition::Y_POSITION;
+using modules::models::behavior::BehaviorModel;
+using modules::models::behavior::BehaviorModelPtr;
+using modules::models::behavior::DiscreteAction;
+using modules::world::prediction::PredictionSettings;
 
 
-class ObservedWorld : protected World {
+class ObservedWorld : public World {
  public:
     ObservedWorld(const World& world, const AgentId& ego_agent_id) :
       World(world),
@@ -55,6 +60,18 @@ class ObservedWorld : protected World {
       return tmp_map;
     }
 
+    const std::shared_ptr<BehaviorModel> get_ego_behavior_model() const {
+      return World::get_agents()[ego_agent_id_]->get_behavior_model();
+    }
+
+    void set_ego_behavior_model(const BehaviorModelPtr& behavior_model) const {
+      return World::get_agents()[ego_agent_id_]->set_behavior_model(behavior_model);
+    }
+
+    void set_behavior_model(const AgentId& agent_id, const BehaviorModelPtr& behavior_model) const {
+      return World::get_agents()[agent_id]->set_behavior_model(behavior_model);
+    }
+
     const MapInterfacePtr get_map() const { return World::get_map(); }
 
     virtual State current_ego_state() const {
@@ -67,12 +84,22 @@ class ObservedWorld : protected World {
 
     std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
 
+    void SetupPrediction(const PredictionSettings& settings);
+    std::shared_ptr<ObservedWorld> Predict(float time_span, const DiscreteAction& ego_action) const;
+    std::shared_ptr<ObservedWorld> Predict(float time_span) const;
+
+    virtual ObservedWorld* Clone() const {
+      WorldPtr world_clone(World::Clone());
+      return new ObservedWorld(*world_clone, this->ego_agent_id_);
+    }
+
  private:
     AgentId ego_agent_id_;
 };
 
+typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_WORLD_HPP_
+#endif  // MODULES_WORLD_OBSERVED_WORLD_HPP_
