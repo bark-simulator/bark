@@ -1,4 +1,4 @@
-py_test(
+py_binary(
   name = "od8_const_vel_one_agent",
   srcs = ["od8_const_vel_one_agent.py"],
   data = ['//python:bark.so',
@@ -12,7 +12,7 @@ py_test(
           "//modules/runtime:runtime",],
 )
 
-py_test(
+py_binary(
   name = "od8_const_vel_two_agent",
   srcs = ["od8_const_vel_two_agent.py"],
   data = ['//python:bark.so',
@@ -26,7 +26,7 @@ py_test(
           "//modules/runtime:runtime",],
 )
 
-py_test(
+py_binary(
   name = "scenario_generation_dump",
   srcs = ["scenario_generation_dump.py"],
   data = ['//python:bark.so',
@@ -41,7 +41,7 @@ py_test(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-py_test(
+py_binary(
   name = "scenario_generation_load",
   srcs = ["scenario_generation_load.py"],
   data = ['//python:bark.so',
