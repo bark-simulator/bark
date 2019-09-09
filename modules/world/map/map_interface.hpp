@@ -63,6 +63,7 @@ class MapInterface {
   std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
 
   std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
+  std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
 
   virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
 

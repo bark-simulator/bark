@@ -300,6 +300,70 @@ std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridorsSameDir
   return adj_corridors;
 }
 
+std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose &pose)
+{
+
+  uint idx = FindNearestIdx(corridor->get_center(), Point2d(pose[0], pose[1]));
+
+  std::vector<DrivingCorridorPtr> splitting_corridors;
+  size_t idx_current_lane_id;
+  bool valid_pose = false;
+  for (size_t i = 0; i < corridor->get_lane_ids().size() - 1; ++i)
+  {
+    if (corridor->get_lane_ids().at(i).first >= idx)
+    {
+      idx_current_lane_id = i;
+      valid_pose = true;
+      //std::cout << "corridor->get_lane_ids().at(idx_current_lane_id).second " << corridor->get_lane_ids().at(idx_current_lane_id).second << std::endl;
+      break;
+    }
+  }
+  if (valid_pose)
+  {
+    for (auto &corridor_rhs : all_corridors_)
+    { // finding corridors that have lane lane_neighbor as member
+      //std::cout << "corridor_rhs " << std::endl;
+
+      //for (auto &l : corridor_rhs->get_lane_ids())
+      //{
+      //  std::cout << " " << l.second << std::endl;
+      //}
+      for (size_t i = 0; i < corridor_rhs->get_lane_ids().size(); ++i)
+      {
+        if (corridor_rhs->get_lane_ids().at(i).second == corridor->get_lane_ids().at(idx_current_lane_id).second)
+        { // if lane from driving_corridor is equal to lane_neighbor
+
+          std::vector<LaneId> corridor_ids;
+          //std::cout << "matching corridor " << std::endl;
+          for (auto &l : corridor->get_lane_ids())
+          {
+            //std::cout << " " << l.second << std::endl;
+            corridor_ids.push_back(l.second);
+          }
+          std::vector<LaneId> corridor_rhs_ids;
+          //std::cout << "matching corridor_rhs " << std::endl;
+          for (auto &l : corridor_rhs->get_lane_ids())
+          {
+            //std::cout << " " << l.second << std::endl;
+            corridor_rhs_ids.push_back(l.second);
+          }
+          bool result = std::equal(corridor_ids.begin() + idx_current_lane_id,
+                                   corridor_ids.end(),
+                                   corridor_rhs_ids.begin() + i);
+          if (!result)
+          { // if they were equal, there would be no splitting
+            if ((std::find(splitting_corridors.begin(), splitting_corridors.end(), corridor_rhs) == splitting_corridors.end()))
+            { // right_adj_corridors does not contain corridor_rhs
+              splitting_corridors.push_back(corridor_rhs);
+            }
+          }
+        }
+      }
+    }
+  }
+  return splitting_corridors;
+}
+
 } // namespace map
 } // namespace world
 } // namespace modules

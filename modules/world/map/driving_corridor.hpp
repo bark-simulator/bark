@@ -21,19 +21,21 @@ using namespace modules::geometry;
 struct DrivingCorridor
 {
   DrivingCorridor() : outer(Line()),
-               inner(Line()),
-               center(Line()),
-               computed(false) {}
+                      inner(Line()),
+                      center(Line()),
+                      computed(false) {}
 
   DrivingCorridor(const Line &outer, const Line &inner, const Line &center) : outer(outer),
-                                                                       inner(inner),
-                                                                       center(center) {}
+                                                                              inner(inner),
+                                                                              center(center) {}
   //! getter
   Line get_outer() const { return outer; }
   Line get_inner() const { return inner; }
   Line get_center() const { return center; }
 
-  std::vector<std::pair<int, LaneId>> get_lane_ids() const { return lane_ids_;
+  std::vector<std::pair<int, LaneId>> get_lane_ids() const
+  {
+    return lane_ids_;
   }
 
   //! getter
