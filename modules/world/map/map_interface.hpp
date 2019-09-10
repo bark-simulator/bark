@@ -15,6 +15,8 @@
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
+#include "modules/world/map/driving_corridor.hpp"
+
 
 namespace modules {
 namespace world {
@@ -31,11 +33,16 @@ using rtree_lane_id = LanePtr;
 using rtree_lane_value = std::pair<rtree_lane_model, rtree_lane_id>;
 using rtree_lane = boost::geometry::index::rtree<rtree_lane_value,
                    boost::geometry::index::linear<16, 4> >;
+using PathBoundaries = std::vector<std::pair<LanePtr, LanePtr>>;
 
 class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
   
+  void ConcatenateLines(const std::vector<LanePtr>& lanes,
+                        Line& line_of_corridor,
+                        std::vector< std::pair<int, LaneId> >& lane_ids);
+                        
   bool isInLane(const modules::geometry::Point2d& point, LaneId id) const;
 
   bool FindNearestLanes(const modules::geometry::Point2d& point,
@@ -43,11 +50,20 @@ class MapInterface {
                          std::vector<opendrive::LanePtr>& lanes,
                          bool type_driving_only = true) const;
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
-                                  const LaneId& startid, const LaneId& goalid) const;
+  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
-  bool CalculateDrivingCorridor(const LaneId& startid, const LaneId& goalid,
-                            Line& inner_line, Line& outer_line, Line& center_line) const;
+  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
+
+  bool ComputeAllDrivingCorridors();
+
+  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<LaneId>& lane_ids) const;
+
+  std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
+  std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
+  std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
+
+  std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
+  std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
 
   virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
 
@@ -61,12 +77,21 @@ class MapInterface {
     roadgraph_ = roadgraph;
     return true;
   }
+
+  LanePtr get_lane(const LaneId& id) const {
+    return roadgraph_->get_laneptr(id);
+  }
+
+  std::vector<DrivingCorridorPtr> get_all_corridors() const { return all_corridors_; }
+
+  //! Functions
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
 
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
+  std::vector<DrivingCorridorPtr> all_corridors_;
   rtree_lane rtree_lane_;
   std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box_;
 

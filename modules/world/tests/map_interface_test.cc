@@ -117,6 +117,7 @@ TEST(query_lanes, map_interface) {
   EXPECT_EQ(nearest_lanes.size(), (uint) 3);
 }
 
+
 TEST(point_in_lane, map_interface) {
   using namespace modules::world::opendrive;
   using namespace modules::world::map;
@@ -178,4 +179,9 @@ TEST(point_in_lane, map_interface) {
   success = map_interface.isInLane(point, (nearest_lanes.at(2))->get_id());
   EXPECT_FALSE(success);
 
+  bool success_corr = map_interface.ComputeAllDrivingCorridors();
+
+  auto corridors = map_interface.get_all_corridors();
+  auto right_corridor = map_interface.GetAdjacentDrivingCorridorsSameDirection(corridors.at(0), Pose(0.0, 0.0, 0.0));
+  EXPECT_TRUE(right_corridor.size() == 0);
 }
