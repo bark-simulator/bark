@@ -9,27 +9,21 @@
 #include "modules/world/evaluation/base_evaluator.hpp"
 
 
-namespace modules
-{
-namespace world
-{
+namespace modules {
+namespace world {
 class World;
+namespace evaluation {
 
-namespace evaluation
-{
-
-class EvaluatorCollisionDrivingCorridor : public BaseEvaluator
-{
-   public:
-    EvaluatorCollisionDrivingCorridor() {}
-    virtual ~EvaluatorCollisionDrivingCorridor() {}
-
-    virtual EvaluationReturn Evaluate(const world::World& world);
-
+class EvaluatorCollisionDrivingCorridor : public BaseEvaluator {
+ public:
+  EvaluatorCollisionDrivingCorridor() {}
+  virtual ~EvaluatorCollisionDrivingCorridor() {}
+  virtual EvaluationReturn Evaluate(const world::World& world);
 };
 
-} // namespace collision
-} // namespace world
-} // namespace modules
+}  // namespace evaluation
+}  // namespace world
+}  // namespace modules
 
-#endif // MODULES_WORLD_COLLISION_COLLISION_CHECK_DRIVING_CORRIDOR_HPP_
+#endif  // MODULES_WORLD_COLLISION_COLLISION_CHECK_DRIVING_CORRIDOR_HPP_
+
