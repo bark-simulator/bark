@@ -13,7 +13,6 @@
 
 namespace modules {
 namespace world {
-
 namespace evaluation {
 
 class EvaluatorCollisionEgoAgent : public BaseEvaluator {

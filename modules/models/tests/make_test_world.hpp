@@ -9,6 +9,7 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/world/goal_definition/goal_definition_polygon.hpp"
 
 namespace modules {
 namespace models {
@@ -21,12 +22,14 @@ class DummyMapInterface : public modules::world::map::MapInterface {
 
 
 modules::world::WorldPtr make_test_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference,
-                                         const modules::world::goal_definition::GoalDefinition& ego_goal_definition = modules::world::goal_definition::GoalDefinition());
+                                         const modules::world::goal_definition::GoalDefinitionPtr& ego_goal_definition =
+                                         std::make_shared<modules::world::goal_definition::GoalDefinitionPolygon>());
 
 modules::world::ObservedWorld make_test_observed_world(int num_other_agents,
                                    double rel_distance, double ego_velocity,
                                    double velocity_difference,
-                                   const modules::world::goal_definition::GoalDefinition& ego_goal_definition = modules::world::goal_definition::GoalDefinition());
+                                   const modules::world::goal_definition::GoalDefinitionPtr& ego_goal_definition =
+                                         std::make_shared<modules::world::goal_definition::GoalDefinitionPolygon>());
 
 } // namespace tests
 } // namespace models

@@ -20,7 +20,7 @@ EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
   bool colliding = false;
   int num_agents = 4;
   auto ego_agent = world.get_agent(this->agent_id_);
-  if(!ego_agent) {
+  if (!ego_agent) {
     return false;
   }
   State ego_state = ego_agent->get_current_state();
