@@ -1,11 +1,101 @@
 {
+    "Visualization": {
+        "Map": {
+            "Lanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Agents": {
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ],
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "AlphaVehicle": 0.8,
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    "BehaviorUCTSingleAgent": {
+        "DumpTree": false,
+        "MotionPrimitiveInputs": [
+            [
+                0.0,
+                0.0
+            ],
+            [
+                5.0,
+                0.0
+            ],
+            [
+                0.0,
+                0.349
+            ],
+            [
+                0.0,
+                -0.349
+            ],
+            [
+                -3.0,
+                0.0
+            ]
+        ],
+        "ReturnLowerBound": -1000.0,
+        "MaxSearchTime": 200,
+        "MaxSearchTimeRandomHeuristic": 5.0,
+        "ReturnUpperBound": 100.0,
+        "MaxNumIterationsRandomHeuristic": 1000.0,
+        "MaxNumIterations": 2000,
+        "DiscountFactor": 0.9,
+        "RandomSeed": 1000,
+        "UCTExplorationConstant": 0.7
+    },
+    "integration_time_delta": 0.009999999776482582,
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
-                "EgoGoal": [
-                    5113,
-                    5283
+                "OthersSink": [
+                    [
+                        5110.789,
+                        5193.1725
+                    ],
+                    [
+                        5116,
+                        5200
+                    ]
                 ],
                 "OthersSource": [
                     [
@@ -17,37 +107,27 @@
                         5062
                     ]
                 ],
-                "OthersSink": [
-                    [
-                        5110.789,
-                        5193.1725
-                    ],
-                    [
-                        5116,
-                        5200
-                    ]
-                ],
-                "VehicleDistanceRange": [
-                    20,
-                    30
-                ],
                 "VehicleVelocityRange": [
                     20,
                     20
                 ],
+                "EgoGoal": [
+                    5114.7,
+                    5153
+                ],
+                "VehicleDistanceRange": [
+                    7,
+                    10
+                ],
+                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "VehicleModel": {
-                    "behavior_model": "BehaviorConstantVelocity",
-                    "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
-                    "id": 0,
-                    "state": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
                     "shape": {
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
                         "polygon_points": [
                             [
                                 3.8499999046325684,
@@ -117,20 +197,29 @@
                                 3.8499999046325684,
                                 0.0
                             ]
-                        ],
-                        "center_pose": [
-                            0.0,
-                            0.0,
-                            0.0
                         ]
                     },
                     "followed_trajectory": [],
-                    "planned_trajectory": []
+                    "id": 0,
+                    "planned_trajectory": [],
+                    "dynamic_model": "SingleTrackModel",
+                    "state": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "behavior_model": "BehaviorConstantVelocity"
                 }
             }
         }
     },
     "agent": {
         "MaxHistoryLength": 50
+    },
+    "simulation": {
+        "step_time": 0.2,
+        "real_time_factor": 1
     }
 }
