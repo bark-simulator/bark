@@ -11,7 +11,7 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
 try:
     from bark.models.behavior import BehaviorUCTSingleAgent
-except:
+except RuntimeError:
     RuntimeError("BehaviorUCTSingleAgent not available, using ConstantVelocityModel")
 
 scenario_param_file ="uct_planner.json" # must be within examples params folder
