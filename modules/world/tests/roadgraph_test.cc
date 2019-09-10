@@ -519,4 +519,7 @@ TEST(roadgraph, generate_roadgraph_successors)
   std::cout << "suc: " << suc.size() << std::endl;
   ASSERT_TRUE(suc.size() == 1);
   ASSERT_TRUE(suc[0] == lane2->get_id());
+  
+  auto all_ids = rg.get_all_laneids();
+  ASSERT_TRUE(all_ids.size() == 2);
 }

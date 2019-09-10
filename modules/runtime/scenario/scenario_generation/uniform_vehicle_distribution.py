@@ -137,11 +137,11 @@ class UniformVehicleDistribution(ScenarioGeneration):
     def center_line_between_source_and_sink(self, map_interface, source, sink):
         lane_source = map_interface.find_nearest_lanes(Point2d(source[0],source[1]),1)[0]
         lane_sink = map_interface.find_nearest_lanes(Point2d(sink[0],sink[1]),1)[0]
-        left_line, right_line, center_line = map_interface.calculate_driving_corridor(lane_source.lane_id, lane_sink.lane_id)
+        driving_corridor = map_interface.compute_driving_corridor_from_start_to_goal(lane_source.lane_id, lane_sink.lane_id)
 
-        _, s_start, _ = get_nearest_point_and_s(center_line, Point2d(source[0],source[1]))
-        _, s_end, _ = get_nearest_point_and_s(center_line, Point2d(sink[0],sink[1]))
-        return center_line, s_start, s_end, lane_source.lane_id, lane_sink.lane_id
+        _, s_start, _ = get_nearest_point_and_s(driving_corridor.center, Point2d(source[0],source[1]))
+        _, s_end, _ = get_nearest_point_and_s(driving_corridor.center, Point2d(sink[0],sink[1]))
+        return driving_corridor.center, s_start, s_end, lane_source.lane_id, lane_sink.lane_id
 
 
     def default_agent_model(self):

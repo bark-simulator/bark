@@ -12,13 +12,13 @@ from modules.runtime.scenario.scenario_generation.scenario_generation import Sce
 
 class ScenarioGenerationTests(unittest.TestCase):
     def test_uniform_vehicle_distribution_default_params(self):
-        scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0)
+        scenario_generation = UniformVehicleDistribution(num_scenarios=2, random_seed=0)
         scenario_generation.dump_scenario_list("test.scenario")
 
         scenario_loader = ScenarioGeneration()
         scenario_loader.load_scenario_list("test.scenario")
 
-        self.assertEqual(len(scenario_loader.scenario_list),3)
+        self.assertEqual(len(scenario_loader.scenario_list), 2)
         self.assertEqual(len(scenario_loader.scenario_list[0].agent_list), len(scenario_generation.scenario_list[0].agent_list))
         
 if __name__ == '__main__':

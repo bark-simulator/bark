@@ -164,9 +164,12 @@ class BaseViewer(Viewer):
         if self.draw_route:
             self.drawRoute(agent)
 
-    def drawDrivingCorridor(self, corridor, color):
+    def drawDrivingCorridor(self, corridor, color=None):
+        if color is None:
+            # generate random colour
+            color = list(np.random.choice(range(256), size=3)/256)
         if corridor.center.valid() and corridor.inner.valid() and corridor.outer.valid():
-            self.drawLine2d(corridor.center, color, 1)
+            self.drawLine2d(corridor.center, color, 1, True)
             self.drawLine2d(corridor.inner, color, 1)
             self.drawLine2d(corridor.outer, color, 1)
         else:
