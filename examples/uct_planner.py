@@ -29,15 +29,15 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 scenario, idx = scenario_generation.get_next_scenario()
 
 world_state = scenario.get_world_state()
-world_state.agents[scenario.eval_agent_ids[0]].behavior_model = BehaviorUCTSingleAgent(param_server)
+world_state.agents[scenario._eval_agent_ids[0]].behavior_model = BehaviorUCTSingleAgent(param_server)
 param_server.save("examples/params/mcts_params_written.json")
 
-# world_state.agents[scenario.eval_agent_ids[0]].behavior_model
+# world_state.agents[scenario._eval_agent_ids[0]].behavior_model
 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
 for _ in range(0, 40): # run scenario for 100 steps
     world_state.do_planning(sim_step_time)
-    video_renderer.drawWorld(world_state, scenario.eval_agent_ids)
+    video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
     world_state.do_execution(sim_step_time)
 
 video_renderer.export_video(filename="examples/scenarios/test_video_intermediate", remove_image_dir=False)

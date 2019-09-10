@@ -109,12 +109,12 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
     description=self._params.convert_to_dict()
     description["ScenarioGenerator"] = "UniformVehicleDistribution"
-    scenario.agent_list = agent_list
+    scenario._agent_list = agent_list
 
     # EGO AGENT
-    num_agents = len(scenario.agent_list)
+    num_agents = len(scenario._agent_list)
     # take agent in the middle of list 
-    ego_agent = scenario.agent_list[math.floor(num_agents/4)]
+    ego_agent = scenario._agent_list[math.floor(num_agents/4)]
     
     # TODO(@bernhard): orient goal polygon along road
     goal_polygon = Polygon2d([0, 0, 0],
@@ -126,7 +126,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                   self._ego_goal[1]))
     ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
     # only one agent is ego in the middle of all other agents
-    scenario.eval_agent_ids = [ego_agent.id]
+    scenario._eval_agent_ids = [ego_agent.id]
     return scenario
 
   def place_agents_along_linestring(self,
