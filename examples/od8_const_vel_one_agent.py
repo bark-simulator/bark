@@ -11,7 +11,7 @@ from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
 from bark.world.map import *
-from bark.world.goal_definition import GoalDefinition
+from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.models.dynamic import *
 from bark.models.execution import *
 from bark.geometry import *
@@ -55,7 +55,7 @@ agent = Agent(init_state,
               execution_model,
               agent_2d_shape,
               agent_params,
-              GoalDefinition(goal_polygon), # goal_lane_id
+              GoalDefinitionPolygon(goal_polygon), # goal_lane_id
               map_interface)
 world.add_agent(agent)
 

@@ -16,7 +16,7 @@ using geometry::FindNearestIdx;
 using geometry::distance;
 
 
-LaneId LocalMap::GoalLaneIdFromGoalDefinition(const GoalDefinition& goal_definition) {
+LaneId LocalMap::GoalLaneIdFromGoalDefinitionPolygon(const GoalDefinitionPolygon& goal_definition) {
   modules::geometry::Point2d goal_center(goal_definition.get_shape().center_(0),
                                          goal_definition.get_shape().center_(1));
   std::vector<opendrive::LanePtr> nearest_lanes;
@@ -34,7 +34,12 @@ bool LocalMap::Generate(Point2d point) {
   }
   driving_corridor_ = DrivingCorridor();
 
-  goal_lane_id_ = GoalLaneIdFromGoalDefinition(goal_definition_);
+  auto goal_definition_polygon = std::dynamic_pointer_cast<GoalDefinitionPolygon>(goal_definition_);
+  if (!goal_definition_polygon) {
+    return false; //< todo: handle this better
+  }
+
+  goal_lane_id_ = GoalLaneIdFromGoalDefinitionPolygon(*goal_definition_polygon);
 
   std::vector<LanePtr> lanes;
   map_interface_->FindNearestLanes(point, 1, lanes);

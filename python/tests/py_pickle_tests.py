@@ -110,7 +110,7 @@ class PickleTests(unittest.TestCase):
         shape = CarLimousine()
         init_state = np.array([0, 0, 0, 0, 5])
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-        goal_definition = GoalDefinition(goal_polygon)
+        goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
         agent_after = pickle_unpickle(agent)

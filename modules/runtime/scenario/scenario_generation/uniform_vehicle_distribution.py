@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion \
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition
+from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
