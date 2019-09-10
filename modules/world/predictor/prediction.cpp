@@ -72,7 +72,7 @@ void Prediction::AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t 
   opendrive::LanePtr current_lane = FindNearestLane(position, observed_world_.get_map());
 
   std::pair<opendrive::LanePtr, bool> inner_neighbor = observed_world_.get_map()->get_inner_neighbor(current_lane->get_id());
-  if (inner_neighbor.second && inner_neighbor.first->get_lane_position() != 0) {
+  if (inner_neighbor.second && inner_neighbor.first->get_lane_position() != 0 && inner_neighbor.first->get_lane_type() == opendrive::LaneType::DRIVING) {
     // Can change lane to inside lane
     geometry::Line inner_line = observed_world_.get_map()->get_inner_neighbor(inner_neighbor.first->get_id()).first->get_line();
     geometry::Line outer_line = inner_neighbor.first->get_line();
@@ -91,7 +91,7 @@ void Prediction::AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t 
     observed_world_.add_agent(prediction_agent);
   }
   std::pair<opendrive::LanePtr, bool> outer_neighbor = observed_world_.get_map()->get_outer_neighbor(current_lane->get_id());
-  if (outer_neighbor.second) {
+  if (outer_neighbor.second && outer_neighbor.first->get_lane_type() == opendrive::LaneType::DRIVING) {
     // Can change lane to outside lane
     geometry::Line inner_line = current_lane->get_line();
     geometry::Line outer_line = outer_neighbor.first->get_line();

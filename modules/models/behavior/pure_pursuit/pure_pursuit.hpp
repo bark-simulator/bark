@@ -12,6 +12,7 @@ namespace behavior {
 
 using world::ObservedWorld;
 
+// From technical report "Implementation of the Pure Pursuit Path Tracking Algorithm"
 class BehaviorPurePursuit : public BehaviorModel {
   public:
     explicit BehaviorPurePursuit(commons::Params *params) :
