@@ -24,7 +24,7 @@ Agent::Agent(const State &initial_state,
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        const GoalDefinition& goal_definition,
+        const GoalDefinitionPtr& goal_definition,
         const MapInterfacePtr& map_interface,
         const geometry::Model3D &model_3d) :
 Object(shape, params, model_3d),
@@ -111,8 +111,8 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
 }
 
 bool Agent::AtGoal() const {
-  auto agent_state_polygon = GetPolygonFromState(get_current_state());
-  return get_goal_definition().AtGoal(agent_state_polygon);
+  BARK_EXPECT_TRUE((bool)goal_definition_);
+  return goal_definition_->AtGoal(*this);
 }
 
 void Agent::GenerateLocalMap() {

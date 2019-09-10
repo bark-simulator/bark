@@ -9,7 +9,7 @@ import os
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition
+from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -56,7 +56,7 @@ agent1 = Agent(init_state,
                execution_model,
                agent_2d_shape,
                agent_params,
-               GoalDefinition(goal_polygon),
+               GoalDefinitionPolygon(goal_polygon),
                map_interface)
 world.add_agent(agent1)
 
@@ -69,7 +69,7 @@ agent2 = Agent(init_state2,
                execution_model2,
                agent_2d_shape2,
                agent_params2,
-               GoalDefinition(goal_polygon),
+               GoalDefinitionPolygon(goal_polygon),
                map_interface)
 world.add_agent(agent2)
 

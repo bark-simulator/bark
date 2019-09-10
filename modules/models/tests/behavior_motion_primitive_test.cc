@@ -12,6 +12,7 @@
 #include "modules/geometry/commons.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/commons/params/default_params.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -51,7 +52,8 @@ TEST(behavior_motion_primitives_add, behavior_test) {
 }
 
 TEST(behavior_motion_primitives_plan, behavior_test) {
-  DefaultParams params;
+  SetterParams params;
+  params.set_real("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel());
 
   BehaviorMotionPrimitives behavior(dynamics, &params);
@@ -68,21 +70,21 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   DummyObservedWorld world(init_state);
   behavior.ActionToBehavior(idx1);
   Trajectory traj1 = behavior.Plan(0.5, world);
-  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::X_POSITION), 2/2*0.5*0.5, 0.01);
+  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::X_POSITION), 2/2*0.5*0.5, 0.05);
 
   // X Longitudinal with nonzero velocity
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
   DummyObservedWorld world1(init_state);
   behavior.ActionToBehavior(idx1);
   traj1 = behavior.Plan(0.5, world1);
-  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::X_POSITION), 5.0*0.5 + 2/2*0.5*0.5, 0.01);
+  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::X_POSITION), 5.0*0.5 + 2/2*0.5*0.5, 0.1);
 
   // Y Longitudinal
   init_state << 0.0, 0.0, 0.0, B_PI_2, 0.0;
   DummyObservedWorld world2(init_state);
   behavior.ActionToBehavior(idx1);
   traj1 = behavior.Plan(0.5, world2);
-  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::Y_POSITION), 2/2*0.5*0.5, 0.01);
+  EXPECT_NEAR(traj1(traj1.rows()-1,StateDefinition::Y_POSITION), 2/2*0.5*0.5, 0.05);
 
 
 
