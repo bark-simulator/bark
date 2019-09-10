@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion \
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -98,7 +98,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                 Point2d(1.5,0)])
       goal_polygon = goal_polygon.translate(Point2d(self._others_sink[idx][0],
                                                     self._others_sink[idx][1]))
-      goal_definition = GoalDefinition(goal_polygon)
+      goal_definition = GoalDefinitionPolygon(goal_polygon)
       agent_list.extend(
         self.place_agents_along_linestring(world,
                                            connecting_center_line,
@@ -124,7 +124,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                               Point2d(1.5,0)])
     goal_polygon = goal_polygon.translate(Point2d(self._ego_goal[0],
                                                   self._ego_goal[1]))
-    ego_agent.goal_definition = GoalDefinition(goal_polygon)
+    ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
     # only one agent is ego in the middle of all other agents
     scenario.eval_agent_ids = [ego_agent.id]
     return scenario
@@ -212,13 +212,3 @@ class UniformVehicleDistribution(ScenarioGeneration):
                           param_server)
 
     return agent_default
-
-
-
-    
-
-
-
-    
-
-
