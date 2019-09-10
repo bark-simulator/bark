@@ -10,7 +10,6 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution i
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
-import time
 import os
 
 scenario_param_file ="highway_merging.json" # must be within examples params folder

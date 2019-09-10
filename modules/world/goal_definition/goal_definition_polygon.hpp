@@ -13,29 +13,30 @@
 namespace modules {
 namespace world {
 namespace objects {
-  class Agent;
+class Agent;
 }
 namespace goal_definition {
 
 
 class GoalDefinitionPolygon : public GoalDefinition  {
-  public:
-    GoalDefinitionPolygon() : GoalDefinition(), goal_shape_() {}
-    GoalDefinitionPolygon(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
+ public:
+  GoalDefinitionPolygon() : GoalDefinition(), goal_shape_() {}
+  explicit GoalDefinitionPolygon(const modules::geometry::Polygon& goal_shape) :
+    goal_shape_(goal_shape) {}
 
-    virtual bool AtGoal(const modules::world::objects::Agent& agent) const;
+  virtual bool AtGoal(const modules::world::objects::Agent& agent) const;
 
-    const modules::geometry::Polygon& get_shape() const {return goal_shape_;}
+  const modules::geometry::Polygon& get_shape() const {return goal_shape_;}
 
-  private:
-    modules::geometry::Polygon goal_shape_;
-
+ private:
+  modules::geometry::Polygon goal_shape_;
 };
 
 
-}  // namespace objects
+}  // namespace goal_definition
 }  // namespace world
 }  // namespace modules
 
 #endif  // MODULES_WORLD_GOAL_DEFINITION_POLYGON_HPP_
+
 
