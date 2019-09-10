@@ -40,7 +40,6 @@ class Scenario:
 
         for agent in self.agent_list:
             world.add_agent(agent)
-
         return world
 
     def setup_map(self, world, map_file_name):
@@ -49,7 +48,6 @@ class Scenario:
         map_interface.set_open_drive_map(xodr_parser.map)
         map_interface.set_roadgraph(xodr_parser.roadgraph)
         world.set_map(map_interface)
-        
         return world
 
 

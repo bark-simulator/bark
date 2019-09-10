@@ -18,8 +18,8 @@ class ScenarioGenerationTests(unittest.TestCase):
         scenario_loader = ScenarioGeneration()
         scenario_loader.load_scenario_list("test.scenario")
 
-        self.assertEqual(len(scenario_loader.scenario_list), 2)
-        self.assertEqual(len(scenario_loader.scenario_list[0].agent_list), len(scenario_generation.scenario_list[0].agent_list))
+        self.assertEqual(len(scenario_loader._scenario_list), 2)
+        self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
         
 if __name__ == '__main__':
     unittest.main()
