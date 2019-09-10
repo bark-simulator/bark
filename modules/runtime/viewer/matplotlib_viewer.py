@@ -68,11 +68,13 @@ class MPViewer(BaseViewer):
         else:
             return color
 
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None):
         self.clear()
         super(MPViewer, self).drawWorld(world, eval_agent_ids)
         self._set_visualization_options()
         self.show()
+        if filename:
+            self.axes.get_figure().savefig(filename)
 
     def show(self, block=False):
         plt.draw()

@@ -28,7 +28,7 @@ using namespace modules::world::goal_definition;
 
 WorldPtr modules::models::tests::make_test_world(int num_other_agents, double rel_distance,
                                                  double ego_velocity, double velocity_difference,
-                                                 const GoalDefinition& ego_goal_definition) {
+                                                 const GoalDefinitionPtr& ego_goal_definition) {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(nullptr);
@@ -80,9 +80,9 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   inner.add_point(Point2d(2000,-3));
 
   DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinition(), corridor));
-  LocalMapPtr local_map2(new LocalMap(0, GoalDefinition(), corridor));
-  LocalMapPtr local_map3(new LocalMap(0, GoalDefinition(), corridor));
+  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
+  LocalMapPtr local_map2(new LocalMap(0, GoalDefinitionPtr(), corridor));
+  LocalMapPtr local_map3(new LocalMap(0, GoalDefinitionPtr(), corridor));
   agent1->set_local_map(local_map);
   agent2->set_local_map(local_map2);
   agent3->set_local_map(local_map3);
@@ -94,7 +94,7 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
 }
 
 ObservedWorld modules::models::tests::make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference,
-                                                              const modules::world::goal_definition::GoalDefinition& ego_goal_definition) {
+                                                              const modules::world::goal_definition::GoalDefinitionPtr& ego_goal_definition) {
   // Create observed world for first agent
   WorldPtr current_world_state = modules::models::tests::make_test_world(num_other_agents, rel_distance, ego_velocity, velocity_difference, ego_goal_definition);
   ObservedWorld observed_world(*(current_world_state), current_world_state->get_agents().begin()->second->get_agent_id());
