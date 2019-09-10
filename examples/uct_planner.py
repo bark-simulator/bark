@@ -8,13 +8,11 @@ from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution i
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
-import time
 import os
 try:
     from bark.models.behavior import BehaviorUCTSingleAgent
 except:
-    print("BehaviorUCTSingleAgent not available, using ConstantVelocityModel")
-    exit()
+    RuntimeError("BehaviorUCTSingleAgent not available, using ConstantVelocityModel")
 
 scenario_param_file ="uct_planner.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
@@ -34,7 +32,7 @@ world_state = scenario.get_world_state()
 world_state.agents[scenario.eval_agent_ids[0]].behavior_model = BehaviorUCTSingleAgent(param_server)
 param_server.save("examples/params/mcts_params_written.json")
 
-world_state.agents[scenario.eval_agent_ids[0]].behavior_model
+# world_state.agents[scenario.eval_agent_ids[0]].behavior_model
 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
 for _ in range(0, 40): # run scenario for 100 steps

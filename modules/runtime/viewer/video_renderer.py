@@ -7,8 +7,6 @@ import tempfile
 import os
 import shutil
 import uuid
-import subprocess
-import numpy as np
 
 from bark.geometry import *
 from bark.viewer import *
@@ -33,19 +31,18 @@ class VideoRenderer(BaseViewer):
 
         self.frame_count = 0
 
-
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None):
         if self.render_intermediate_steps is None:
             self._renderWorld(world, eval_agent_ids)
         else:
             world_time = world.time
             executed_world = world
             print("rendered")
-            for int_step in range(0,self.render_intermediate_steps):
+            for _ in range(0,self.render_intermediate_steps):
                 executed_world = executed_world.world_execution_at_time(world_time)
                 self._renderWorld(executed_world, eval_agent_ids)
                 world_time = world_time + self.world_step_time/self.render_intermediate_steps
-                
+
                 print(world_time)
             print("---------")
 
@@ -55,8 +52,8 @@ class VideoRenderer(BaseViewer):
         self.frame_count = self.frame_count + 1
 
     def reset(self):
-        shutil.rmtree(os.path.abspath(self.video_frame_dir))       
-    
+        shutil.rmtree(os.path.abspath(self.video_frame_dir))
+
     def export_video(self, filename, remove_image_dir=True):
         if self.render_intermediate_steps is None:
             framerate = 1/self.world_step_time
