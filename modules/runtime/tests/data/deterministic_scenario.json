@@ -15,7 +15,7 @@
                         0.0,
                         0.0,
                         0.0,
-                        0.0
+                        5.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -94,22 +94,51 @@
                             0.0
                         ]
                     },
+                    "goal": {
+                      "polygon_points": [
+                          [
+                              0.0,
+                              0.0
+                          ],
+                          [
+                              1.0,
+                              0.0
+                          ],
+                          [
+                              2.0,
+                              2.0
+                          ],
+                          [
+                              0.0,
+                              3.0
+                          ],
+                          [
+                              0.0,
+                              0.0
+                          ]
+                      ],
+                      "center_pose": [
+                          0.0,
+                          1.0,
+                          0.0
+                      ]
+                    },
                     "followed_trajectory": [],
                     "planned_trajectory": []
                     }
                   },
                   {
                     "VehicleModel": {
-                    "behavior_model": "BehaviorConstantVelocity",
+                    "behavior_model": "BehaviorIDMClassic",
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 1,
                     "state": [
                         0.0,
+                        10.0,
                         0.0,
                         0.0,
-                        0.0,
-                        0.0
+                        5.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -187,6 +216,35 @@
                             0.0,
                             0.0
                         ]
+                    },
+                    "goal": {
+                      "polygon_points": [
+                          [
+                              0.0,
+                              0.0
+                          ],
+                          [
+                              2.0,
+                              0.0
+                          ],
+                          [
+                              2.0,
+                              2.0
+                          ],
+                          [
+                              0.0,
+                              2.0
+                          ],
+                          [
+                              0.0,
+                              0.0
+                          ]
+                      ],
+                      "center_pose": [
+                          1.0,
+                          2.0,
+                          3.0
+                      ]
                     },
                     "followed_trajectory": [],
                     "planned_trajectory": []

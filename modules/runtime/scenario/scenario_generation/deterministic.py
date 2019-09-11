@@ -60,17 +60,12 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:
       agent_json = agent_json_["VehicleModel"]
-      print(agent_json)
       #agent_json["state"] = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
       # TODO(@hart): IMPLEMENT
-      agent_json["state"] = np.array([0, 0, 0, 0, 5])
       agent_json["map_interface"] = world.map
-      # TODO(@hart): IMPLEMENT
-      goal_polygon = Polygon2d([0, 0, 0],
-                              [Point2d(-1,-1),
-                               Point2d(-1,1),
-                               Point2d(1,1),
-                               Point2d(1,-1)])
+      goal_polygon = Polygon2d(list(agent_json["goal"]["center_pose"]),
+                               np.array(agent_json["goal"]["polygon_points"]))
+
       agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
@@ -79,27 +74,3 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                 "ID of the ego-agent",
                                 0]]
     return scenario
-
-  def default_agent_model(self):
-    param_server = ParameterServer()
-    behavior_model = BehaviorConstantVelocity(param_server)
-    execution_model = ExecutionModelInterpolate(param_server)
-    dynamic_model = SingleTrackModel()
-    map_interface = MapInterface()
-    agent_2d_shape = CarLimousine()
-    init_state = np.array([0, 0, 0, 0, 0])
-    goal_polygon = Polygon2d([0, 0, 0],
-                             [Point2d(-1,-1),
-                              Point2d(-1,1),
-                              Point2d(1,1),
-                              Point2d(1,-1)])
-    # NOTE(@all): cannot add goal definition here since we do not have a map
-    # goal_definition = GoalDefinitionPolygon(goal_polygon)
-    # will be added in loop after world has been added
-    agent_default = Agent(init_state,
-                          behavior_model,
-                          dynamic_model,
-                          execution_model,
-                          agent_2d_shape,
-                          param_server)
-    return agent_default
