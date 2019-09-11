@@ -12,10 +12,10 @@
                     "id": 0,
                     "state": [
                         0.0,
-                        5111.626,
-                        5106.8305,
                         0.0,
-                        10.0
+                        0.0,
+                        0.0,
+                        5.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -118,8 +118,8 @@
                           ]
                       ],
                       "center_pose": [
-                          5111.626,
-                          5156.8305,
+                          0.0,
+                          1.0,
                           0.0
                       ]
                     },
@@ -129,16 +129,16 @@
                   },
                   {
                     "VehicleModel": {
-                    "behavior_model": "BehaviorConstantVelocity",
+                    "behavior_model": "BehaviorIDMClassic",
                     "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
                     "id": 1,
                     "state": [
-                      0.0,
-                      5111.626,
-                      5116.8305,
-                      0.0,
-                      15.0
+                        0.0,
+                        10.0,
+                        0.0,
+                        0.0,
+                        5.0
                     ],
                     "shape": {
                         "polygon_points": [
@@ -212,9 +212,9 @@
                             ]
                         ],
                         "center_pose": [
-                            0.0,
-                            0.0,
-                            0.0
+                            1.789,
+                            2.0,
+                            3.0
                         ]
                     },
                     "goal": {
@@ -241,9 +241,9 @@
                           ]
                       ],
                       "center_pose": [
-                          5111.626,
-                          5156.8305,
-                          0.0
+                          1.0,
+                          2.0,
+                          3.0
                       ]
                     },
                     "followed_trajectory": [],
