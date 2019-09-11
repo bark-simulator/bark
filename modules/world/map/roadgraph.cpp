@@ -570,7 +570,7 @@ std::pair<LanePtr, LanePtr> Roadgraph::ComputeLaneBoundaries(const LaneId &lane_
   LanePtr inner, outer;
   std::pair<vertex_t, bool> v = get_vertex_by_lane_id(lane_id);
   auto l = get_lane_graph()[v.first].lane;
-  assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
+  //assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
   outer = l;
 
   std::pair<LaneId, bool> innerid = get_inner_neighbor(lane_id);
