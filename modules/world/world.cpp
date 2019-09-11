@@ -47,7 +47,7 @@ void World::DoPlanning(const float& delta_time) {
     for (auto agent : agents_) {
         //! clone current world
       ObservedWorld observed_world(*current_world_state,
-                                agent.first);
+                                   agent.first);
       agent.second->BehaviorPlan(delta_time, observed_world);
       agent.second->ExecutionPlan(delta_time);
      
@@ -61,7 +61,7 @@ void World::DoExecution(const float& delta_time) {
   for (auto agent : agents_) {
       agent.second->Execute(world_time_);
   }
-  RemoveOutOfMapAgents();
+  //RemoveOutOfMapAgents();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
