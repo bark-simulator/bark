@@ -137,6 +137,7 @@ void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
 
 Agent* Agent::Clone() const {
   Agent *new_agent = new Agent(*this);
+  new_agent->set_agent_id(this->get_agent_id());
   if(behavior_model_) {
     new_agent->behavior_model_.reset(behavior_model_->Clone());
   }

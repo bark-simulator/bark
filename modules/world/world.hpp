@@ -68,6 +68,7 @@ class World : public commons::BaseType {
   void add_object(const ObjectPtr& agent);
 
   void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator); 
+  void clear_evaluators() { evaluators_.clear(); } 
 
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
@@ -108,7 +109,9 @@ typedef std::shared_ptr<world::World> WorldPtr;
 inline World *World::Clone() const {
   World *new_world = new World(*this);
   new_world->clear_all();
+  std::cout << "Cloning world.." << std::endl;
   for (auto agent = agents_.begin(); agent != agents_.end(); ++agent) {
+    std::cout << "Adding agent with id " << agent->second->get_agent_id() << std::endl;
     new_world->add_agent(AgentPtr(agent->second->Clone()));
   }
   for (auto object = objects_.begin(); object != objects_.end(); ++object) {
