@@ -69,6 +69,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
+      agent.set_agent_id(agent_json["id"])
       scenario._agent_list.append(agent)
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",
                                 "ID of the ego-agent",
