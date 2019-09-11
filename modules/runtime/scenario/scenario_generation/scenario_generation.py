@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import pickle
+import os
 from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
@@ -65,6 +66,7 @@ class ScenarioGeneration:
 
   def dump_scenario_list(self, filename):
     with open(filename, "wb") as file:
+      # print("SAVE PATH:", os.path.abspath(filename))
       pickle.dump(self._scenario_list, file)
 
   def load_scenario_list(self, filename):

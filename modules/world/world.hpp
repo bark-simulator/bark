@@ -68,6 +68,7 @@ class World : public commons::BaseType {
   void add_object(const ObjectPtr& agent);
 
   void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator); 
+  void clear_evaluators() { evaluators_.clear(); } 
 
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
