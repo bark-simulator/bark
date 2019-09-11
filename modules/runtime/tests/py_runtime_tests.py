@@ -32,16 +32,6 @@ class ScenarioGenerationTests(unittest.TestCase):
     agent0 = scenario_generation._scenario_list[0]._agent_list[0]
     np.testing.assert_array_equal(agent0.state, np.array([0., 0., 0., 0., 5.0]))
     self.assertEqual(agent0.id, 0)
-    goal_polygon = GoalDefinitionPolygon(
-        Polygon2d([0., 1., 0.],
-        np.array([[0., 0.],
-                  [1., 0.],
-                  [2., 2.],
-                  [0., 3.],
-                  [0., 0.]])))
-    goal_array = np.array(goal_polygon.goal_shape.toArray())
-    goal_array_agent0 = np.array(agent0.goal_definition.goal_shape.toArray())
-    np.testing.assert_array_equal(goal_array, goal_array_agent0)
     self.assertEqual(str(agent0.behavior_model), "bark.behavior.BehaviorConstantVelocity")
     self.assertEqual(str(agent0.dynamic_model), "bark.dynamic.SingleTrackModel")
     self.assertEqual(str(agent0.execution_model), "bark.dynamic.ExecutionModelInterpolate")

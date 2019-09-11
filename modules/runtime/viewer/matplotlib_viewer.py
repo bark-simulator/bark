@@ -47,7 +47,7 @@ class MPViewer(BaseViewer):
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
         center = polygon.center
-        self.axes.plot(center[0], center[1], 'o', color=self.getColor(color))
+        self.axes.plot(center[0], center[1], color=self.getColor(color))
 
     def drawTrajectory(self, trajectory, color):
         if len(trajectory) > 0:
