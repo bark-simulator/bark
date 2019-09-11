@@ -98,7 +98,7 @@ std::vector<ObservedWorld> World::Observe(const std::vector<AgentId>& agent_ids)
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
       if(agents_.find(agent_id) == agents_.end()) {
-        std::cout << "Unvalid agent id " << agent_id << ". Skipping ...." << std::endl;
+        std::cout << "Invalid agent id " << agent_id << ". Skipping ...." << std::endl;
         continue;
       }
       ObservedWorld observed_world(*current_world_state,
