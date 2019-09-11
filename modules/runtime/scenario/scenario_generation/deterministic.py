@@ -41,9 +41,6 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
      "modules/runtime/tests/data/Crossing8Course.xodr"]
     self._json_converter = ModelJsonConversion()
 
-    self._agent_params = self._local_params["VehicleModel",
-      "How to model the agent",
-      self._json_converter.agent_to_json(self.default_agent_model())]
 
   def create_scenarios(self, params, num_scenarios, random_seed):
     """ 
@@ -60,11 +57,24 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                         json_params=self._params.convert_to_dict())
     world = scenario.get_world_state()
     agent_list = []
-    scenario.agent_list = []
-    for agent_json in self._local_params["Agents"]:
+    scenario._agent_list = []
+    for agent_json_ in self._local_params["Agents"]:
+      agent_json = agent_json_["VehicleModel"]
+      print(agent_json)
+      #agent_json["state"] = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
+      # TODO(@hart): IMPLEMENT
+      agent_json["state"] = np.array([0, 0, 0, 0, 5])
       agent_json["map_interface"] = world.map
-      agent = self._json_converter.agent_from_json(agent_json)
-      scenario.agent_list.append(agent)
+      # TODO(@hart): IMPLEMENT
+      goal_polygon = Polygon2d([0, 0, 0],
+                              [Point2d(-1,-1),
+                               Point2d(-1,1),
+                               Point2d(1,1),
+                               Point2d(1,-1)])
+      agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
+      agent = self._json_converter.agent_from_json(agent_json,
+                                                   param_server=self._local_params)
+      scenario._agent_list.append(agent)
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",
                                 "ID of the ego-agent",
                                 0]]
