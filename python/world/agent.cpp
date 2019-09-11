@@ -93,6 +93,7 @@ void python_agent(py::module m)
       .def_property_readonly("model3d", &Agent::get_model_3d)
       .def_property_readonly("state", &Agent::get_current_state)
       .def_property("goal_definition", &Agent::get_goal_definition, &Agent::set_goal_definition)
+      .def("set_agent_id", &Object::set_agent_id)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
@@ -144,5 +145,6 @@ void python_agent(py::module m)
         return "bark.agent.Object";
       })
       .def_property_readonly("shape", &Object::get_shape)
-      .def_property_readonly("id", &Object::get_agent_id);
+      .def_property_readonly("id", &Object::get_agent_id)
+      .def("set_agent_id", &Object::set_agent_id);
 }
