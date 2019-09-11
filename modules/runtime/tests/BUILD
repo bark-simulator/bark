@@ -28,8 +28,8 @@ py_test(
 )
 
 py_test(
-  name = "py_deterministic_scneario_tests",
-  srcs = ["py_deterministic_scneario_tests.py"],
+  name = "py_deterministic_scenario_tests",
+  srcs = ["py_deterministic_scenario_tests.py"],
   data = ['//python:bark.so',
             ':xodr_data'],
   imports = ['../../../python/'],
