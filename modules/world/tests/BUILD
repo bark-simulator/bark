@@ -9,6 +9,7 @@ cc_test(
         "//modules/world/opendrive",
         "//modules/world:world",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -24,6 +25,7 @@ cc_test(
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -44,6 +46,7 @@ cc_test(
         "//modules/models/execution/mpc:mpc",
         "//modules/world/evaluation:evaluation",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -65,6 +68,7 @@ cc_test(
         "//modules/models/tests:make_test_world",
         "//modules/world/evaluation:evaluation",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -78,6 +82,7 @@ cc_test(
         "//modules/world/map:roadgraph",
         "//modules/world/opendrive",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -92,6 +97,7 @@ cc_test(
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -110,6 +116,7 @@ cc_test(
         "//modules/world/opendrive",
         "//modules/world:world",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 

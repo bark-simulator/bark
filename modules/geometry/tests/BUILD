@@ -8,6 +8,7 @@ cc_test(
         "//modules/geometry:geometry",
         "//modules/world:world",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 

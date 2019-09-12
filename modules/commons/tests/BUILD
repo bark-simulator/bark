@@ -7,6 +7,7 @@ cc_test(
     deps = [
         "//modules/commons:commons",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -19,6 +20,7 @@ cc_test(
     deps = [
         "//modules/commons:commons",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 

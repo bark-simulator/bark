@@ -8,6 +8,7 @@ cc_test(
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
         "@boost//:geometry",
     ],
 )
@@ -24,6 +25,7 @@ cc_test(
         "//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -39,6 +41,7 @@ cc_test(
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/world:world",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
         "@com_github_eigen_eigen//:eigen",
     ],
 )
@@ -55,6 +58,7 @@ cc_test(
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
+        "@com_github_google_glog//:glog",
         "@com_github_eigen_eigen//:eigen",
         ":make_test_world",
     ],
