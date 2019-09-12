@@ -29,6 +29,7 @@ namespace bg = boost::geometry;
 template <typename T>
 using Point2d_t = bg::model::point<T, 2, bg::cs::cartesian>;
 using Point2d = Point2d_t<float>;
+using Vec2d = Point2d;
 
  //! Point operators
 inline bool operator==(const Point2d& lhs, const Point2d& rhs) { return(bg::get<0>(lhs) == bg::get<0>(rhs) && bg::get<1>(lhs) == bg::get<1>(rhs)); }
@@ -51,13 +52,12 @@ inline std::string print(const Point2d &p) {
 }
 
 inline float distance(const Point2d &p1, const Point2d &p2) {
-  float dx = bg::get<0>(p1) - bg::get<0>(p2);
-  float dy = bg::get<1>(p1) - bg::get<1>(p2);
-  return sqrt(dx * dx + dy * dy);
+  return bg::distance(p1, p2);
 }
 
 template <typename G, typename T>
-struct Shape {
+class Shape {
+ public:
   Shape(const Pose &center, std::vector<T> points, int32_t id) : obj_(), id_(id), center_(center) {
     for (auto it = points.begin(); it != points.end(); ++it)
       add_point(*it);
@@ -75,17 +75,17 @@ struct Shape {
   }
 
   virtual ~Shape() {}
-  virtual Shape *Clone() const = 0;
+  virtual std::shared_ptr<Shape<G, T>> Clone() const = 0;
   virtual std::string ShapeToString() const;
 
   // rotates object
-  Shape<G, T> *rotate(const float &a) const;
+  std::shared_ptr<Shape<G, T>> rotate(const float &theta) const;
 
   // translates object
-  Shape<G, T> *translate(const Point2d &point) const;
+  std::shared_ptr<Shape<G, T>> translate(const Vec2d &vec) const;
 
   // return object transform
-  Shape<G, T> *transform(const Pose &pose) const;
+  std::shared_ptr<Shape<G, T>> transform(const Pose &pose) const;
 
   virtual bool Valid() const;
 
@@ -123,7 +123,7 @@ inline bool Shape<G, T>::Valid() const {
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::rotate(const float &a) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::rotate(const float &theta) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);
@@ -131,7 +131,7 @@ inline Shape<G, T> *Shape<G, T>::rotate(const float &a) const {
   boost::geometry::transform(obj_, obj_rel_translated, translate_rel_to_center);
 
   // rotate (counterclockwise)
-  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(-a);
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(-theta);
   G obj_rotated;
   boost::geometry::transform(obj_rel_translated, obj_rotated, rotate);
 
@@ -140,28 +140,28 @@ inline Shape<G, T> *Shape<G, T>::rotate(const float &a) const {
   G obj_transformed;
   boost::geometry::transform(obj_rotated, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
-  shape_transformed->obj_ = obj_transformed;
-  shape_transformed->center_[2] += a;
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
+  shape_transformed->obj_ = boost::move(obj_transformed);
+  shape_transformed->center_[2] += theta;
   return shape_transformed;
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::translate(const Point2d &point) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::translate(const Vec2d &vec) const {
   namespace trans = boost::geometry::strategy::transform;
-  trans::translate_transformer<double, 2, 2> translate_backwards(bg::get<0>(point), bg::get<1>(point));
+  trans::translate_transformer<double, 2, 2> translate_backwards(bg::get<0>(vec), bg::get<1>(vec));
   G obj_transformed;
   boost::geometry::transform(obj_, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
-  shape_transformed->obj_ = obj_transformed;
-  shape_transformed->center_[0] += bg::get<0>(point);
-  shape_transformed->center_[1] += bg::get<1>(point);
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
+  shape_transformed->obj_ = boost::move(obj_transformed);
+  shape_transformed->center_[0] += bg::get<0>(vec);
+  shape_transformed->center_[1] += bg::get<1>(vec);
   return shape_transformed;
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::transform(const Pose &pose) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::transform(const Pose &pose) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);
@@ -178,8 +178,8 @@ inline Shape<G, T> *Shape<G, T>::transform(const Pose &pose) const {
   G obj_transformed;
   boost::geometry::transform(obj_rotated, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
-  shape_transformed->obj_ = obj_transformed;
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
+  shape_transformed->obj_ = boost::move(obj_transformed);
   shape_transformed->center_[0] += pose[0];
   shape_transformed->center_[1] += pose[1];
   shape_transformed->center_[2] += pose[2];

@@ -19,7 +19,8 @@ namespace geometry {
 
 //! templated polygon class with a boost polygon as a member function
 template <typename T>
-struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
+class Polygon_t : public Shape<bg::model::polygon<T>, T> {
+ public:
   Polygon_t();
   Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
@@ -27,7 +28,10 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
-  virtual Shape<bg::model::polygon<T>, T> *Clone() const;
+  virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
+  inline std::shared_ptr<Polygon_t<T>> rotate(const float &theta) const;
+  inline std::shared_ptr<Polygon_t<T>> translate(const Vec2d &vec) const;
+  inline std::shared_ptr<Polygon_t<T>> transform(const Pose &pose) const;
 
   void UpdateDistancesToCenter();
 
@@ -97,10 +101,24 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
     right_dist_ = std::abs(bg::get<bg::max_corner, 1>(box) - center_y);
 }
 
+template <typename T>
+inline std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Clone() const {
+  return std::shared_ptr<Shape<bg::model::polygon<T>, T>>(dynamic_cast<Shape<bg::model::polygon<T>, T>*>(new Polygon_t<T>(*this)));
+}
 
 template <typename T>
-inline Shape<bg::model::polygon<T>, T> *Polygon_t<T>::Clone() const {
-  return new Polygon_t<T>(*this);
+inline std::shared_ptr<Polygon_t<T>> Polygon_t<T>::rotate(const float &theta) const {
+  return std::shared_ptr<Polygon_t<T>>(dynamic_cast<Polygon_t<T>*>(Shape<bg::model::polygon<T>, T>::rotate(theta).get()));
+}
+
+template <typename T>
+inline std::shared_ptr<Polygon_t<T>> Polygon_t<T>::translate(const Vec2d &vec) const {
+  return std::shared_ptr<Polygon_t<T>>(dynamic_cast<Polygon_t<T>*>(Shape<bg::model::polygon<T>, T>::translate(vec).get()));
+}
+
+template <typename T>
+inline std::shared_ptr<Polygon_t<T>> Polygon_t<T>::transform(const Pose &pose) const {
+  return std::shared_ptr<Polygon_t<T>>(dynamic_cast<Polygon_t<T>*>(Shape<bg::model::polygon<T>, T>::transform(pose).get()));
 }
 
 //! for better usage simple float defines

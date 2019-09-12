@@ -22,7 +22,7 @@
 namespace modules {
 namespace geometry {
 
-//! templated line class with a boost polygon as a member function
+//! templated line class with a boost linestring as a member function
 template <typename T>
 class Line_t : public Shape<bg::model::linestring<T>, T> {
  public:
@@ -30,7 +30,10 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
-  virtual Shape<bg::model::linestring<T>, T> *Clone() const;
+  virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
+  inline std::shared_ptr<Line_t<T>> rotate(const float &theta) const;
+  inline std::shared_ptr<Line_t<T>> translate(const Vec2d &vec) const;
+  inline std::shared_ptr<Line_t<T>> transform(const Pose &pose) const;
 
   //! @todo improvement: do not recompute full s but only add one point (but we would need to store the line length for that!)
   bool add_point(const T &p) {
@@ -159,9 +162,25 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::toArray() cons
 }
 
 template <typename T>
-inline Shape<bg::model::linestring<T>, T> *Line_t<T>::Clone() const {
-  return new Line_t<T>(*this);
+inline std::shared_ptr<Shape<bg::model::linestring<T>, T>> Line_t<T>::Clone() const {
+  return std::shared_ptr<Shape<bg::model::linestring<T>, T>>(dynamic_cast<Shape<bg::model::linestring<T>, T>*>(new Line_t<T>(*this)));
 }
+
+template <typename T>
+inline std::shared_ptr<Line_t<T>> Line_t<T>::rotate(const float &theta) const {
+  return std::shared_ptr<Line_t<T>>(dynamic_cast<Line_t<T>*>(Shape<bg::model::linestring<T>, T>::rotate(theta).get()));
+}
+
+template <typename T>
+inline std::shared_ptr<Line_t<T>> Line_t<T>::translate(const Vec2d &vec) const {
+  return std::shared_ptr<Line_t<T>>(dynamic_cast<Line_t<T>*>(Shape<bg::model::linestring<T>, T>::translate(vec).get()));
+}
+
+template <typename T>
+inline std::shared_ptr<Line_t<T>> Line_t<T>::transform(const Pose &pose) const {
+  return std::shared_ptr<Line_t<T>>(dynamic_cast<Line_t<T>*>(Shape<bg::model::linestring<T>, T>::transform(pose).get()));
+}
+
 
 inline float distance(const Line &line, const Point2d &p) {
   return bg::distance(line.obj_, p);
@@ -179,12 +198,10 @@ inline T length(const Line &line) {
 inline int get_segment_end_idx(Line l, float s) {
   std::vector<float>::iterator up = std::upper_bound(l.s_.begin(), l.s_.end(), s);
   if(up != l.s_.end()) {
-    int retval = up - l.s_.begin();
-    return retval;
+    return up - l.s_.begin();
   } else {
-    return  l.s_.size()-1; // last point if s is larger then line length
+    return l.s_.size()-1; // last point if s is larger then line length
   }
-  
 }
 
 inline bool check_s_for_segment_intersection(Line l, float s) {
@@ -228,15 +245,15 @@ inline float get_tangent_angle_at_s(Line l, float s) {
     return atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
   } else {  // not start or end
     int end_segment_it = get_segment_end_idx(l, s);
-    if (check_s_for_segment_intersection(l, s)) {  // check if s is at intersection, if true then calculate the intermediate angle
-    Point2d p1 = l.obj_.at(end_segment_it-2);
-    Point2d p2 = l.obj_.at(end_segment_it-1);
-    Point2d p3 = l.obj_.at(end_segment_it);
-    float sin_mean = 0.5 * (sin(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
-                      + sin(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
-    float cos_mean = 0.5 * (cos(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
-                      + cos(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
-    return atan2(sin_mean, cos_mean);
+    if (check_s_for_segment_intersection(l, s)) {  // check if s is at intersection(end_segment_it), if true then calculate the intermediate angle
+      Point2d p1 = l.obj_.at(end_segment_it-2);
+      Point2d p2 = l.obj_.at(end_segment_it-1);
+      Point2d p3 = l.obj_.at(end_segment_it);
+      float sin_mean = 0.5 * (sin(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
+                        + sin(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
+      float cos_mean = 0.5 * (cos(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
+                        + cos(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
+      return atan2(sin_mean, cos_mean);
     } else {  // every s not start, end or intersection
       Point2d p1 = l.obj_.at(end_segment_it-1);
       Point2d p2 = l.obj_.at(end_segment_it);

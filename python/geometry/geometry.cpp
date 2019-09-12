@@ -49,16 +49,16 @@ void python_geometry(py::module m) {
         "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
 
   m.def("distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Line &>(&modules::geometry::distance),
-        "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
-        
+        "Returns euclidean distance between two modules::geometry::Line2d.");
+
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Polygon &>(&modules::geometry::distance),
-        "Returns euclidean distance between polygon and polygon.");
+        "Returns euclidean distance between Polygon and Polygon.");
 
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Line &>(&modules::geometry::distance),
-        "Returns euclidean distance between polygon and line2d.");
+        "Returns euclidean distance between Polygon and Line2d.");
 
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::distance),
-        "Returns euclidean distance between polygon and point2d.");
+        "Returns euclidean distance between Polygon and Point2d.");
 
   m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
 
@@ -67,14 +67,14 @@ void python_geometry(py::module m) {
 
   m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s,
                                    "get the angle at position s of the line");
-  
-  m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
+
+  m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s,
                         "get the point nearest to another point and its position on the line s ");
 
-  m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 
+  m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>,
                         "merge two bounding boxes consisting of pairs of min and max corners");
 
-  py::class_<modules::geometry::Line>(m, "Line2d")
+  py::class_<modules::geometry::Line, std::shared_ptr<modules::geometry::Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
       .def("addPoint", &modules::geometry::Line::add_point, "add a point")
       .def("addPoint", [](modules::geometry::Line &line, py::list list) {
@@ -116,7 +116,7 @@ void python_geometry(py::module m) {
             return l;
         }));
 
-  py::class_<modules::geometry::Polygon>(m, "Polygon2d")
+  py::class_<modules::geometry::Polygon, std::shared_ptr<modules::geometry::Polygon>>(m, "Polygon2d")
       .def(py::init<>(), "Create empty polygon")
       .def(py::init<modules::geometry::Pose, std::vector<modules::geometry::Point2d>>(), "Create polygon with center point and point list")
       .def(py::init<modules::geometry::Pose, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &>(), "Create polygon with center point and point list")

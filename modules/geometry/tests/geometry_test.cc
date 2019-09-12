@@ -141,7 +141,7 @@ TEST(geometry, polygon) {
 
   EXPECT_TRUE(p.Valid());
 
-  Polygon *p2 = dynamic_cast<Polygon *>(p.rotate(3.14 / 2));
+  auto p2 = p.rotate(3.14 / 2);
 }
 
 TEST(geometry, standard_shapes) {
@@ -437,8 +437,8 @@ TEST(collision, carshape1) {
   namespace bg = boost::geometry;
 
   Polygon outline = CarLimousine();
-  Polygon *car1 = dynamic_cast<Polygon *>(outline.transform(Pose(0, 0, 0)));
-  Polygon *car2 = dynamic_cast<Polygon *>(outline.transform(Pose(10, 10, 0)));
+  auto car1 = outline.transform(Pose(0, 0, 0));
+  auto car2 = outline.transform(Pose(10, 10, 0));
 
   EXPECT_FALSE(Collide(*car1, *car2));
 }
@@ -451,8 +451,8 @@ TEST(collision, carshape2) {
   namespace bg = boost::geometry;
 
   Polygon outline = CarLimousine();
-  Polygon *car1 = dynamic_cast<Polygon *>(outline.transform(Pose(0, 0, 0)));
-  Polygon *car2 = dynamic_cast<Polygon *>(outline.transform(Pose(1, 0, 3.14)));
+  auto car1 = outline.transform(Pose(0, 0, 0));
+  auto car2 = outline.transform(Pose(1, 0, 3.14));
 
   EXPECT_TRUE(Collide(*car1, *car2));
 }
