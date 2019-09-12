@@ -58,7 +58,7 @@ void World::DoExecution(const float& delta_time) {
   for (auto agent : agents_) {
       agent.second->Execute(world_time_);
   }
-  this->get_params()
+  // TODO(@hart): parameter
   // RemoveOutOfMapAgents();
 }
 
