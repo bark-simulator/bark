@@ -8,6 +8,9 @@
 #define MODULES_WORLD_WORLD_HPP_
 
 #include <unordered_map>
+#include <map>
+#include <vector>
+#include <utility>
 
 #include "modules/world/opendrive/opendrive.hpp"
 #include <boost/geometry/index/rtree.hpp>
@@ -29,11 +32,12 @@ typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string,
                  modules::world::evaluation::EvaluationReturn> EvaluationMap;
 
-using rtree_agent_model = boost::geometry::model::box<modules::geometry::Point2d>;
+using rtree_agent_model = \
+  boost::geometry::model::box<modules::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
 using rtree_agent = boost::geometry::index::rtree<rtree_agent_value,
-                   boost::geometry::index::linear<16, 4> >;
+                    boost::geometry::index::linear<16, 4> >;
 
 class World : public commons::BaseType {
  public:
@@ -45,10 +49,10 @@ class World : public commons::BaseType {
   double get_world_time() const { return world_time_; }
   world::map::MapInterfacePtr get_map() const { return map_; }
   AgentMap get_agents() const { return agents_; }
-  AgentPtr get_agent(AgentId id) const { 
+  AgentPtr get_agent(AgentId id) const {
     auto agent_it = agents_.find(id);
-    if(agent_it != agents_.end()) {
-      return agents_.at(id); 
+    if (agent_it != agents_.end()) {
+      return agents_.at(id);
     } else {
       return AgentPtr(nullptr);
     }
@@ -67,14 +71,15 @@ class World : public commons::BaseType {
   void add_agent(const AgentPtr& agent);
   void add_object(const ObjectPtr& agent);
 
-  void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator); 
-  void clear_evaluators() { evaluators_.clear(); } 
+  void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator);
+  void clear_evaluators() { evaluators_.clear(); }
 
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
   void clear_all()  {
     clear_agents();
     clear_objects();
+    evaluators_.clear();
   }
 
   EvaluationMap Evaluate() const;
@@ -89,11 +94,14 @@ class World : public commons::BaseType {
 
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
-  AgentMap GetNearestAgents(const modules::geometry::Point2d& position, const unsigned int& num_agents) const; 
-  AgentMap GetAgentsIntersectingPolygon(const modules::geometry::Polygon& polygon) const;
+  AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
+                            const unsigned int& num_agents) const;
+  AgentMap GetAgentsIntersectingPolygon(
+    const modules::geometry::Polygon& polygon) const;
 
   virtual World *Clone() const;
-  std::shared_ptr<World> WorldExecutionAtTime(const float& execution_time) const;
+  std::shared_ptr<World> WorldExecutionAtTime(
+    const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;

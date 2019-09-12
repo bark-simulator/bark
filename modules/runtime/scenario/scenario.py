@@ -48,7 +48,6 @@ class Scenario:
         world = self.setup_map(world, self._map_file_name)
     else:
         world.set_map(self._map_interface)
-    
     for agent in self._agent_list:
       world.add_agent(agent)
     return world
