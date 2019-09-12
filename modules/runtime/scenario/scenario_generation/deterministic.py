@@ -60,11 +60,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:
       agent_json = agent_json_["VehicleModel"]
-      #agent_json["state"] = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
-      # TODO(@hart): IMPLEMENT
       agent_json["map_interface"] = world.map
-      # TODO(@all): HACK there seems to be a bug in the Polygon function
-      # initializing with center will not work
       goal_polygon = Polygon2d([0, 0, 0],
                                np.array(agent_json["goal"]["polygon_points"]))
       goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
