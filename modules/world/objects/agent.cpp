@@ -99,14 +99,14 @@ void Agent::Execute(const float& world_time) {
 }
 
 geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
-
   using namespace modules::geometry;
   using namespace modules::geometry::standard_shapes;
-
-  Pose agent_pose(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION), state(StateDefinition::THETA_POSITION));
-
-  std::shared_ptr<geometry::Polygon> polygon(dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose)));
-
+  Pose agent_pose(state(StateDefinition::X_POSITION),
+                  state(StateDefinition::Y_POSITION),
+                  state(StateDefinition::THETA_POSITION));
+  std::shared_ptr<geometry::Polygon> polygon(
+    std::dynamic_pointer_cast<geometry::Polygon>(
+      this->get_shape().transform(agent_pose)));
   return *polygon;
 }
 
