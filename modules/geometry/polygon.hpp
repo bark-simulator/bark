@@ -24,10 +24,9 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
   Polygon_t(const Pose &center, const Line_t<T>& line);
-
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
-  virtual Shape<bg::model::polygon<T>, T> *Clone() const;
+  virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
   void UpdateDistancesToCenter();
 
@@ -99,8 +98,9 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
 
 
 template <typename T>
-inline Shape<bg::model::polygon<T>, T> *Polygon_t<T>::Clone() const {
-  return new Polygon_t<T>(*this);
+inline std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Clone() const {
+  std::shared_ptr<Polygon_t<T>> new_poly = std::make_shared<Polygon_t<T>>(*this);
+  return new_poly;
 }
 
 //! for better usage simple float defines
