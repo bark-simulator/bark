@@ -82,6 +82,7 @@ TEST(corridor_polygon, local_map) {
 TEST(calculate_horizon, local_map) {
   using namespace modules::world::map;
   using namespace modules::geometry;
+  using namespace modules::world::goal_definition;
 
   // some line with three points from x=1 to x=10, y=0
   Line center;
@@ -101,7 +102,7 @@ TEST(calculate_horizon, local_map) {
 
   DrivingCorridor corridor(outer, inner, center);
 
-  LocalMap local_map(0, GoalDefinition(), corridor);
+  LocalMap local_map(0, GoalDefinitionPtr(), corridor);
 
   local_map.ComputeHorizonCorridor(Point2d(10,1), 4);
 }

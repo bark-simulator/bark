@@ -8,27 +8,20 @@
 
 #include "modules/world/evaluation/base_evaluator.hpp"
 
-namespace modules
-{
-namespace world
-{
+namespace modules {
+namespace world {
 class World;
+namespace evaluation {
 
-namespace evaluation
-{
-
-class EvaluatorCollisionAgents : public BaseEvaluator
-{
-   public:
-    EvaluatorCollisionAgents()  {}
-    virtual ~EvaluatorCollisionAgents() {}
-
-    virtual EvaluationReturn Evaluate(const world::World& world);
-
+class EvaluatorCollisionAgents : public BaseEvaluator {
+ public:
+  EvaluatorCollisionAgents()  {}
+  virtual ~EvaluatorCollisionAgents() {}
+  virtual EvaluationReturn Evaluate(const world::World& world);
 };
 
-} // namespace evaluation
-} // namespace world
-} // namespace modules
+}  // namespace evaluation
+}  // namespace world
+}  // namespace modules
 
-#endif // MODULES_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
+#endif  // MODULES_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
