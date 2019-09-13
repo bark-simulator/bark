@@ -30,7 +30,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
-  virtual Shape<bg::model::linestring<T>, T> *Clone() const;
+  virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
 
   //! @todo improvement: do not recompute full s but only add one point (but we would need to store the line length for that!)
   bool add_point(const T &p) {
@@ -159,8 +159,9 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::toArray() cons
 }
 
 template <typename T>
-inline Shape<bg::model::linestring<T>, T> *Line_t<T>::Clone() const {
-  return new Line_t<T>(*this);
+inline std::shared_ptr<Shape<bg::model::linestring<T>, T>> Line_t<T>::Clone() const {
+  std::shared_ptr<Line_t<T>> new_line = std::make_shared<Line_t<T>>(*this);
+  return new_line;
 }
 
 inline float distance(const Line &line, const Point2d &p) {
