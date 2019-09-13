@@ -47,7 +47,7 @@ class MPViewer(BaseViewer):
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
         center = polygon.center
-        self.axes.plot(center[0], center[1], 'o', color=self.getColor(color))
+        self.axes.plot(center[0], center[1], color=self.getColor(color))
 
     def drawTrajectory(self, trajectory, color):
         if len(trajectory) > 0:
@@ -68,11 +68,13 @@ class MPViewer(BaseViewer):
         else:
             return color
 
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None):
         self.clear()
         super(MPViewer, self).drawWorld(world, eval_agent_ids)
         self._set_visualization_options()
         self.show()
+        if filename:
+            self.axes.get_figure().savefig(filename)
 
     def show(self, block=False):
         plt.draw()

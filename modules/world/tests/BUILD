@@ -108,6 +108,7 @@ cc_test(
         "//modules/world/map:local_map",
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
+        "//modules/world:world",
         "@gtest//:main",
     ],
 )

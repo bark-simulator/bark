@@ -15,6 +15,7 @@
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/world/goal_definition/goal_definition_polygon.hpp"
 
 
 
@@ -65,7 +66,7 @@ void python_agent(py::module m)
           const DynamicModelPtr &,
           const ExecutionModelPtr &,
           const Polygon &, Params *,
-          const GoalDefinition &,
+          const GoalDefinitionPtr &,
           const MapInterfacePtr &,
           const Model3D &>(),
           py::arg("initial_state"),
@@ -74,7 +75,7 @@ void python_agent(py::module m)
           py::arg("execution_model"),
           py::arg("shape"),
           py::arg("params"),
-          py::arg("goal_definition") = GoalDefinition(),
+          py::arg("goal_definition") = std::make_shared<GoalDefinitionPolygon>(),
           py::arg("map_interface") = nullptr,
           py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent &a) {
@@ -92,6 +93,7 @@ void python_agent(py::module m)
       .def_property_readonly("model3d", &Agent::get_model_3d)
       .def_property_readonly("state", &Agent::get_current_state)
       .def_property("goal_definition", &Agent::get_goal_definition, &Agent::set_goal_definition)
+      .def("set_agent_id", &Object::set_agent_id)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
@@ -119,12 +121,12 @@ void python_agent(py::module m)
 
             /* Create a new C++ instance */
             Agent agent(t[9].cast<State>(),
-                    python_to_behavior_model(t[6].cast<py::tuple>()), // todo resolve polymorphism
+                    python_to_behavior_model(t[6].cast<py::tuple>()),
                     std::make_shared<SingleTrackModel>(t[8].cast<SingleTrackModel>()), // todo resolve polymorphism
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
-                    t[10].cast<GoalDefinition>());
+                    std::make_shared<GoalDefinitionPolygon>(t[10].cast<GoalDefinitionPolygon>())); // todo resolve polymorphism
             agent.set_agent_id(t[3].cast<AgentId>());
             agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;
@@ -143,5 +145,6 @@ void python_agent(py::module m)
         return "bark.agent.Object";
       })
       .def_property_readonly("shape", &Object::get_shape)
-      .def_property_readonly("id", &Object::get_agent_id);
+      .def_property_readonly("id", &Object::get_agent_id)
+      .def("set_agent_id", &Object::set_agent_id);
 }

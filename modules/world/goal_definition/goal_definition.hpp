@@ -4,37 +4,32 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OBJECTS_GOAL_DEFINITION_HPP_
-#define MODULES_WORLD_OBJECTS_GOAL_DEFINITION_HPP_
+#ifndef MODULES_WORLD_GOAL_DEFINITION_HPP_
+#define MODULES_WORLD_GOAL_DEFINITION_HPP_
 
-#include "modules/geometry/polygon.hpp"
+#include <memory>
 
 namespace modules {
 namespace world {
+namespace objects {
+  class Agent;
+}
 namespace goal_definition {
 
 
 class GoalDefinition  {
   public:
-    GoalDefinition() : goal_shape_() {}
-    GoalDefinition(const modules::geometry::Polygon& goal_shape) : goal_shape_(goal_shape) {}
+    GoalDefinition() {}
+    virtual ~GoalDefinition() {}
 
-    bool AtGoal(const modules::geometry::Polygon& agent_shape) const {
-      //std::cout << agent_shape.toArray() << ", " << goal_shape_.toArray() << std::endl;
-      return modules::geometry::Collide(agent_shape, goal_shape_);
-    }
-
-    const modules::geometry::Polygon& get_shape() const {return goal_shape_;}
-
-  private:
-    modules::geometry::Polygon goal_shape_;
-
+    virtual bool AtGoal(const modules::world::objects::Agent& agent) const = 0;
 };
 
+typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;
 
 }  // namespace objects
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_OBJECTS_GOAL_DEFINITION_HPP_
+#endif  // MODULES_WORLD_GOAL_DEFINITION_HPP_
 
