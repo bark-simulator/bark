@@ -29,7 +29,7 @@ TEST(setter_params, param_tests) {
   params.set_bool("Test::5", true);
   EXPECT_EQ(params.get_bool("Test::5", "", false), true);
 
-  params.set_list_float("Test::2", {{0,1}, {0,2},{0.5,1.5}});
+  params.set_listlist_float("Test::2", {{0,1}, {0,2},{0.5,1.5}});
   EXPECT_EQ(params.get_listlist_float("Test::2", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,1}, {0,2},{0.5,1.5}}));
 }
 
