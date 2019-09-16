@@ -12,11 +12,15 @@
 #include "modules/geometry/commons.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/dynamic/integration.hpp"
+#include "modules/commons/params/setter_params.hpp"
+#include "modules/commons/params/default_params.hpp"
+
 
 TEST(single_track_model, dynamic_test) {
   using namespace std;
   using namespace modules::geometry;
   using namespace modules::models::dynamic;
+  using namespace modules::commons;
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   x << 0, 0, 0, 0, 5;
@@ -25,7 +29,8 @@ TEST(single_track_model, dynamic_test) {
   u << 0, 0;
 
   DynamicModel *m;
-  SingleTrackModel single_track_model(nullptr);
+  DefaultParams* params = new DefaultParams();
+  SingleTrackModel single_track_model(params);
   m = &single_track_model;
 
   float dt = 0.1;
