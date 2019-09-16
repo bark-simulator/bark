@@ -59,7 +59,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     agent_list = []
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:
-      agent_json = agent_json_["VehicleModel"]
+      agent_json = agent_json_["VehicleModel"].copy()
       agent_json["map_interface"] = world.map
       goal_polygon = Polygon2d([0, 0, 0],
                                np.array(agent_json["goal"]["polygon_points"]))
