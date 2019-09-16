@@ -15,12 +15,11 @@ from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
 
 def pickle_unpickle(object):
-    f = open('temp.pickle','wb')
-    pickle.dump(object, f)
-    f.close()
-    f = open( 'temp.pickle', "rb" )
-    object = pickle.load( f)
-    f.close()
+    with open('temp.pickle','wb') as f:
+        pickle.dump(object,f)
+    object = None
+    with open( 'temp.pickle', "rb" ) as f:
+        object = pickle.load(f)
     return object
 
 
