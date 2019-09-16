@@ -102,7 +102,7 @@ void python_agent(py::module m)
           py::arg("execution_model"),
           py::arg("shape"),
           py::arg("params"),
-          py::arg("goal_definition") = std::make_shared<GoalDefinitionPolygon>(),
+          py::arg("goal_definition") =nullptr,
           py::arg("map_interface") = nullptr,
           py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent &a) {
@@ -152,7 +152,7 @@ void python_agent(py::module m)
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
-                    python_to_goal_definition(t[10].cast<py::tuple>())); 
+                    nullptr); 
             agent.set_agent_id(t[3].cast<AgentId>());
             agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;
