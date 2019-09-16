@@ -6,6 +6,8 @@
 
 #include <string>
 #include "map.hpp"
+
+#include "python/polymorphic_conversion.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/local_map.hpp"
 #include "modules/world/map/roadgraph.hpp"
@@ -84,14 +86,16 @@ void python_map(py::module m) {
       .def(py::pickle(
         [](const LocalMap& l) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(l.get_goal_lane_id(), l.get_goal_definition(), l.get_driving_corridor());
+            return py::make_tuple(l.get_goal_lane_id(),
+                                  goal_definition_to_python(l.get_goal_definition()),
+                                  l.get_driving_corridor());
         },
         [](py::tuple &t)  { // __setstate__
             if (t.size() != 3)
                 throw std::runtime_error("Invalid local map state!");
 
             return new LocalMap(t[0].cast<LaneId>(),
-                 std::make_shared<GoalDefinitionPolygon>(t[1].cast<GoalDefinitionPolygon>()),
+                 python_to_goal_definition(t[1].cast<py::tuple>()),
                  t[2].cast<DrivingCorridor>());
         }));
 
