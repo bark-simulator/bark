@@ -93,7 +93,7 @@ TEST(agent, PolygonFromState) {
 
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
 
   Polygon shape(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});

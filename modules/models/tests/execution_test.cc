@@ -21,7 +21,7 @@ TEST(execution_model, execution_model_interpolate) {
   test_trajectory.col(StateDefinition::TIME_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10); // Time 0 to 10 seconds
   test_trajectory.col(StateDefinition::X_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10);
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
 
   State initial_state = test_trajectory.row(0);
   Trajectory followed_trajectory1 = exec_model->Execute(0.5, test_trajectory, dyn_model, initial_state);
@@ -55,7 +55,7 @@ TEST(execution_model, execution_model_mpc) {
   test_trajectory.col(StateDefinition::VEL_POSITION) = Eigen::ArrayXf::LinSpaced(3, 1, 1);
 
   ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
 
   Trajectory followed_trajectory1 = exec_model->Execute(0.5, test_trajectory, dyn_model, test_trajectory.row(0));
 }
