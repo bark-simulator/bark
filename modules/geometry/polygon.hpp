@@ -21,9 +21,10 @@ namespace geometry {
 template <typename T>
 struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
+  virtual ~Polygon_t() {};
   Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
-  Polygon_t(const Pose &center, const Line_t<T>& line);
+  Polygon_t(const Pose &center, const Line_t<T>& line); //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
@@ -141,6 +142,16 @@ inline bool Collide(const Polygon &poly, const PolygonPoint &p) {
 //! Point - Polygon collision checker using boost::within
 inline bool Collide(const PolygonPoint &p, const Polygon &poly) {
   return Collide(poly, p);
+}
+
+//! Polygon within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(Polygon const& g1, Polygon const & g2) {
+  return bg::within(g1.obj_, g2.obj_);
+}
+
+//! Point2d within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(Point2d const& g1, Polygon const & g2) {
+  return bg::within(g1, g2.obj_);
 }
 
 //! Polygon - Line collision checker using boost::intersection
