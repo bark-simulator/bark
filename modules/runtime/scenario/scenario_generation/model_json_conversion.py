@@ -33,7 +33,7 @@ class ModelJsonConversion:
     bark_agent = Agent(
       np.array(agent_json["state"]), 
       self.convert_model(agent_json["behavior_model"], param_server), 
-      self.convert_model(agent_json["dynamic_model"], None),
+      self.convert_model(agent_json["dynamic_model"], param_server),
       self.convert_model(agent_json["execution_model"], param_server), 
       Polygon2d(agent_json["shape"]["center_pose"],
       np.array(agent_json["shape"]["polygon_points"])),
