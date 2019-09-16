@@ -23,7 +23,8 @@ using world::ObservedWorld;
 
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
-  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params);
+  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
+                           commons::Params *params);
 
   virtual ~BehaviorMotionPrimitives() {}
 

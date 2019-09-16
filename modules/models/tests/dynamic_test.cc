@@ -25,7 +25,7 @@ TEST(single_track_model, dynamic_test) {
   u << 0, 0;
 
   DynamicModel *m;
-  SingleTrackModel single_track_model;
+  SingleTrackModel single_track_model(nullptr);
   m = &single_track_model;
 
   float dt = 0.1;

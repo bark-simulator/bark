@@ -71,7 +71,7 @@ class PickleTests(unittest.TestCase):
     def test_dynamic_model_pickle(self):
         
         params = ParameterServer()
-        d = SingleTrackModel()
+        d = SingleTrackModel(params)
 
         da = pickle_unpickle(d)
         self.assertTrue(isinstance(da,SingleTrackModel))
@@ -106,7 +106,7 @@ class PickleTests(unittest.TestCase):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelInterpolate(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = CarLimousine()
         init_state = np.array([0, 0, 0, 0, 5])
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])

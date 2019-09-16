@@ -15,7 +15,8 @@ namespace dynamic {
 
 class SingleTrackModel : public DynamicModel {
  public:
-  SingleTrackModel() {}
+  explicit SingleTrackModel(modules::commons::Params *params) :
+    DynamicModel(params) {}
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State &x, const Input &u) const {

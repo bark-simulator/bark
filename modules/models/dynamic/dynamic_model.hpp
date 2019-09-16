@@ -13,16 +13,18 @@
 #include <memory>
 #include <utility>
 
+#include "modules/commons/base_type.hpp"
+
 namespace modules {
 namespace models {
 namespace dynamic {
 
 typedef enum StateDefinition : int {
-  TIME_POSITION = 0, // unit is seconds
-  X_POSITION = 1, // unit is meter
-  Y_POSITION = 2, // unit is meter
-  THETA_POSITION = 3, // unit is rad
-  VEL_POSITION = 4, // unit is meter/second
+  TIME_POSITION = 0,  // unit is seconds
+  X_POSITION = 1,  // unit is meter
+  Y_POSITION = 2,  // unit is meter
+  THETA_POSITION = 3,  // unit is rad
+  VEL_POSITION = 4,  // unit is meter/second
   MIN_STATE_SIZE = 5,
   Z_POSITION = 6  // only placeholder, not used at the moment
 } StateDefinition;
@@ -32,9 +34,11 @@ using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 
 
-class DynamicModel {
+// TODO(@hart): inherit from base class so parameters can be set
+class DynamicModel : public commons::BaseType {
  public:
-  DynamicModel() : input_size_(0) {}
+  explicit DynamicModel(modules::commons::Params *params) :
+    BaseType(params), input_size_(0) {}
 
   virtual ~DynamicModel() {}
 
