@@ -34,7 +34,7 @@ world = World(param_server)
 # Model Definitions
 behavior_model = BehaviorConstantVelocity(param_server)
 execution_model = ExecutionModelInterpolate(param_server)
-dynamic_model = SingleTrackModel()
+dynamic_model = SingleTrackModel(param_server)
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")

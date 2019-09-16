@@ -40,7 +40,7 @@ TEST(observed_world, agent_in_front)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -116,7 +116,7 @@ TEST(observed_world, agent_in_front)
 TEST(observed_world, clone) {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -151,7 +151,7 @@ TEST(observed_world, clone) {
 TEST(observed_world, predict) {
   SetterParams params;
   params.set_real("integration_time_delta", 0.01);
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference=0.0;
   auto observed_world = modules::models::tests::make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
 

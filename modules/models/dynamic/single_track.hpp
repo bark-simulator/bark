@@ -15,17 +15,22 @@ namespace dynamic {
 
 class SingleTrackModel : public DynamicModel {
  public:
-  SingleTrackModel() {}
+  explicit SingleTrackModel(modules::commons::Params *params) :
+    DynamicModel(params),
+    wheel_base_(2.7) {
+      wheel_base_ = params->get_real("DynamicModel::wheel_base",
+      "Wheel base of vehicle.",
+      2.7);
+    }
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State &x, const Input &u) const {
     // TODO(@fortiss): get parameters from Params
-    float Lf = 2.6;
     State tmp(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
     tmp << 1,
     x(StateDefinition::VEL_POSITION) * cos(x(StateDefinition::THETA_POSITION)),
     x(StateDefinition::VEL_POSITION) * sin(x(StateDefinition::THETA_POSITION)),
-    x(StateDefinition::VEL_POSITION) * tan(u(1)) / Lf,
+    x(StateDefinition::VEL_POSITION) * tan(u(1)) / wheel_base_,
     u(0);
     return tmp;
   }
@@ -33,6 +38,9 @@ class SingleTrackModel : public DynamicModel {
   DynamicModel *Clone() const {
     return new SingleTrackModel(*this);
   }
+
+ private:
+  float wheel_base_;
 };
 
 }  // namespace dynamic

@@ -28,7 +28,7 @@ class WorldTests(unittest.TestCase):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelMpc(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = Polygon2d([1.25, 1, 0], [
             Point2d(0, 0),
             Point2d(0, 2),
