@@ -101,6 +101,15 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(np.array_equal(cor.outer.toArray(), cor_after.outer.toArray()))
         self.assertTrue(np.array_equal(cor.center.toArray(), cor_after.center.toArray()))
 
+    def test_goal_definition(self):
+        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+        goal_definition = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
+
+        goal_definition_after = pickle_unpickle(goal_definition)
+
+        self.assertTrue(np.array_equal(goal_definition.xy_limits.center, \
+                                        goal_definition_after.xy_limits.center))
+
     def test_agent_pickle(self):
 
         params = ParameterServer()
@@ -113,12 +122,22 @@ class PickleTests(unittest.TestCase):
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
-        agent_after = pickle_unpickle(agent)
+        #agent_after = pickle_unpickle(agent)
 
-        self.assertEqual(agent_after.id , agent.id)
-        self.assertTrue(np.array_equal(agent_after.state, agent.state) )
-        self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
-                                        agent.goal_definition.goal_shape.center))
+       # self.assertEqual(agent_after.id , agent.id)
+        #self.assertTrue(np.array_equal(agent_after.state, agent.state) )
+       # self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
+         #                               agent.goal_definition.goal_shape.center))
+
+        goal_definition_2 = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
+        agent2 = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition_2)
+
+        agent_after2 = pickle_unpickle(agent2)
+
+        self.assertEqual(agent_after2.id , agent.id)
+        self.assertTrue(np.array_equal(agent_after2.state, agent.state) )
+        self.assertTrue(np.array_equal(agent_after2.goal_definition.xy_limits.center, \
+                                       agent.goal_definition.xy_limits.center))
 
         agent_list = []
         agent_list.append(agent)
