@@ -37,11 +37,7 @@ using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 class DynamicModel : public commons::BaseType {
  public:
   explicit DynamicModel(modules::commons::Params *params) :
-    BaseType(params), input_size_(0), wheel_base_(2.7) {
-    wheel_base_ = params->get_float("DynamicModel::wheel_base",
-      "Wheel base of vehicle.",
-      2.7);
-    }
+    BaseType(params), input_size_(0) {}
 
   virtual ~DynamicModel() {}
 
@@ -50,7 +46,6 @@ class DynamicModel : public commons::BaseType {
   virtual DynamicModel *Clone() const = 0;
 
   int input_size_;
-  float wheel_base_;
 };
 
 typedef std::shared_ptr<DynamicModel> DynamicModelPtr;
