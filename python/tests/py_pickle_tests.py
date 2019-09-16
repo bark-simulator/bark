@@ -121,22 +121,22 @@ class PickleTests(unittest.TestCase):
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
-        #agent_after = pickle_unpickle(agent)
+        agent_after = pickle_unpickle(agent)
 
-       # self.assertEqual(agent_after.id , agent.id)
-        #self.assertTrue(np.array_equal(agent_after.state, agent.state) )
-       # self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
-         #                               agent.goal_definition.goal_shape.center))
+        self.assertEqual(agent_after.id , agent.id)
+        self.assertTrue(np.array_equal(agent_after.state, agent.state) )
+        self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
+                                       agent.goal_definition.goal_shape.center))
 
         goal_definition_2 = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
         agent2 = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition_2)
 
         agent_after2 = pickle_unpickle(agent2)
 
-        self.assertEqual(agent_after2.id , agent.id)
+        self.assertEqual(agent_after2.id , agent2.id)
         self.assertTrue(np.array_equal(agent_after2.state, agent.state) )
         self.assertTrue(np.array_equal(agent_after2.goal_definition.xy_limits.center, \
-                                       agent.goal_definition.xy_limits.center))
+                                       agent2.goal_definition.xy_limits.center))
 
         agent_list = []
         agent_list.append(agent)
