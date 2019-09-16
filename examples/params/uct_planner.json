@@ -78,7 +78,7 @@
         "MaxSearchTimeRandomHeuristic": 5.0,
         "ReturnUpperBound": 100.0,
         "MaxNumIterationsRandomHeuristic": 1000.0,
-        "MaxNumIterations": 2000,
+        "MaxNumIterations": 40000,
         "DiscountFactor": 0.9,
         "RandomSeed": 1000,
         "UCTExplorationConstant": 0.7
@@ -111,9 +111,18 @@
                     20,
                     20
                 ],
-                "EgoGoal": [
+                "EgoGoalStart": [
                     5114.7,
                     5153
+                ],
+                "EgoGoalEnd": [
+                    5114.7,
+                    5000
+                ],
+                "EgoGoalStateLimits": [
+                    0.1,
+                    0,
+                    0.08
                 ],
                 "VehicleDistanceRange": [
                     7,
@@ -210,7 +219,7 @@
                         0.0,
                         0.0
                     ],
-                    "behavior_model": "BehaviorConstantVelocity"
+                    "behavior_model": "BehaviorIDMClassic"
                 }
             }
         }

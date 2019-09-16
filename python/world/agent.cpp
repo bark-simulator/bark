@@ -16,6 +16,7 @@
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 
 
 
@@ -43,12 +44,38 @@ py::tuple behavior_model_to_python(BehaviorModelPtr behavior_model) {
 } 
 
 BehaviorModelPtr python_to_behavior_model(py::tuple t) {
-  BehaviorModelPtr behavior_model;
   std::string behavior_model_name = t[1].cast<std::string>();
   if (behavior_model_name.compare("BehaviorConstantVelocity")==0) {
       return std::make_shared<BehaviorConstantVelocity>(t[0].cast<BehaviorConstantVelocity>()); 
   } else if(behavior_model_name.compare("BehaviorIDMClassic")==0) {
     return std::make_shared<BehaviorIDMClassic>(t[0].cast<BehaviorIDMClassic>());
+  } else {
+    throw;
+  }
+}
+
+py::tuple goal_definition_to_python(GoalDefinitionPtr goal_definition) {
+  std::string goal_definition_name;
+  if (typeid(*goal_definition) == typeid(GoalDefinitionPolygon)) {
+    goal_definition_name = "GoalDefinitionPolygon";
+    std::cout << "detected GoalDefinitionPolygon " << std::endl;
+  } else if(typeid(*goal_definition) == typeid(GoalDefinitionStateLimits)) {
+    std::cout << "detected GoalDefinitionStateLimits " << std::endl;
+    goal_definition_name = "GoalDefinitionStateLimits";
+  } else {
+    throw;
+  }
+  return py::make_tuple(goal_definition, goal_definition_name);
+} 
+
+GoalDefinitionPtr python_to_goal_definition(py::tuple t) {
+  std::string goal_definition_name = t[1].cast<std::string>();
+  if (goal_definition_name.compare("GoalDefinitionPolygon")==0) {
+      std::cout << "casted GoalDefinitionPolygon " << std::endl;
+      return std::make_shared<GoalDefinitionPolygon>(t[0].cast<GoalDefinitionPolygon>()); 
+  } else if(goal_definition_name.compare("GoalDefinitionStateLimits")==0) {
+    std::cout << "casted GoalDefinitionStateLimits " << std::endl;
+    return std::make_shared<GoalDefinitionStateLimits>(t[0].cast<GoalDefinitionStateLimits>());
   } else {
     throw;
   }
@@ -107,7 +134,7 @@ void python_agent(py::module m)
                                   a.get_execution_model(), // 7
                                   a.get_dynamic_model(), // 8
                                   a.get_current_state(), // 9
-                                  a.get_goal_definition()); // 10
+                                  goal_definition_to_python(a.get_goal_definition())); // 10
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 11)
@@ -118,7 +145,6 @@ void python_agent(py::module m)
             using modules::models::execution::ExecutionModelInterpolate;
             using modules::world::map::LocalMap;
 
-
             /* Create a new C++ instance */
             Agent agent(t[9].cast<State>(),
                     python_to_behavior_model(t[6].cast<py::tuple>()),
@@ -126,7 +152,7 @@ void python_agent(py::module m)
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
-                    std::make_shared<GoalDefinitionPolygon>(t[10].cast<GoalDefinitionPolygon>())); // todo resolve polymorphism
+                    python_to_goal_definition(t[10].cast<py::tuple>())); 
             agent.set_agent_id(t[3].cast<AgentId>());
             agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;
