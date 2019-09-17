@@ -21,6 +21,7 @@ class Runtime(PyRuntime):
     self._scenario_idx = None
     self._scenario = None
     self._render = render
+    self._reset_has_been_called = False
 
   def reset(self, scenario=None):
     if scenario:
@@ -29,8 +30,10 @@ class Runtime(PyRuntime):
       self._scenario, self._scenario_idx = \
         self._scenario_generator.get_next_scenario()
     self._world = self._scenario.get_world_state()
+    self._reset_has_been_called = True
 
   def step(self):
+    assert(self._reset_has_been_called, True)
     self._world.step(self._step_time)
     if self._render:
       self.render()

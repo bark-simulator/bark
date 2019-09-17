@@ -109,6 +109,7 @@ class World : public commons::BaseType {
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
+  bool remove_agents_;
   rtree_agent rtree_agents_;
 };
 

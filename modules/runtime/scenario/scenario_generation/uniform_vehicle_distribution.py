@@ -224,7 +224,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
     param_server = ParameterServer()
     behavior_model = BehaviorConstantVelocity(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
-    dynamic_model = SingleTrackModel()
+    dynamic_model = SingleTrackModel(param_server)
     map_interface = MapInterface()
 
     agent_2d_shape = CarLimousine()

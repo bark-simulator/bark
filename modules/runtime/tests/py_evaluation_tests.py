@@ -26,7 +26,7 @@ class EvaluationTests(unittest.TestCase):
     # Model Definition
     behavior_model = BehaviorConstantVelocity(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
-    dynamic_model = SingleTrackModel()
+    dynamic_model = SingleTrackModel(param_server)
 
     # Agent Definition
     agent_2d_shape = CarLimousine()
