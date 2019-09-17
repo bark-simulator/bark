@@ -39,7 +39,7 @@ TEST(world, world_init)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
@@ -57,7 +57,7 @@ TEST(world, world_step)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
@@ -126,7 +126,7 @@ TEST(world, world_collision)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -155,7 +155,7 @@ TEST(world, world_no_collision)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -184,7 +184,7 @@ TEST(world, world_check_driving_corridor)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionDrivingCorridor());
 
@@ -207,7 +207,7 @@ TEST(world, nearest_agents)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -257,7 +257,7 @@ TEST(world, agents_intersection_polygon)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 

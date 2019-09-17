@@ -34,7 +34,7 @@ class ScenarioGeneration:
   def get_next_scenario(self):
     if self._current_scenario_idx >= self.num_scenarios:
       self._current_scenario_idx = 0
-      print("Resetting scenario index to zero")
+      #print("Resetting scenario index to zero")
     scenario = self.get_scenario(self._current_scenario_idx)
     scenario_idx = self._current_scenario_idx
     self._current_scenario_idx += 1

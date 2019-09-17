@@ -68,12 +68,11 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(isinstance(ea,ExecutionModelInterpolate))
 
     def test_dynamic_model_pickle(self):
-        
         params = ParameterServer()
-        d = SingleTrackModel()
+        d = SingleTrackModel(params)
 
         da = pickle_unpickle(d)
-        self.assertTrue(isinstance(da,SingleTrackModel))
+        self.assertTrue(isinstance(da, SingleTrackModel))
 
     def test_driving_corridor_pickle(self):
         cor = DrivingCorridor()
@@ -110,11 +109,10 @@ class PickleTests(unittest.TestCase):
                                         goal_definition_after.xy_limits.center))
 
     def test_agent_pickle(self):
-
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelInterpolate(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = CarLimousine()
         init_state = np.array([0, 0, 0, 0, 5])
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
