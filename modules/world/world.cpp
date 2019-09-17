@@ -59,7 +59,7 @@ void World::DoExecution(const float& delta_time) {
       agent.second->Execute(world_time_);
   }
   // TODO(@hart): parameter
-  // RemoveOutOfMapAgents();
+  RemoveOutOfMapAgents();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {

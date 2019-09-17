@@ -26,7 +26,7 @@
             "EvalGoalColor": [
                 0.0,
                 0.0,
-                0.7
+                0.2
             ],
             "ColorRoute": [
                 0.2,
@@ -53,32 +53,44 @@
         "DumpTree": false,
         "MotionPrimitiveInputs": [
             [
-                0.0,
+                1.0,
                 0.0
             ],
             [
-                5.0,
+                -1.0,
                 0.0
             ],
             [
                 0.0,
-                0.349
+                0.27
             ],
             [
                 0.0,
-                -0.349
+                -0.27
             ],
             [
-                -3.0,
-                0.0
+                0.0,
+                -0.13
+            ],
+            [
+                0.0,
+                0.13
+            ],
+            [
+                0.0,
+                -0.03
+            ],
+            [
+                0.0,
+                0.03
             ]
         ],
         "ReturnLowerBound": -1000.0,
-        "MaxSearchTime": 200,
-        "MaxSearchTimeRandomHeuristic": 5.0,
+        "MaxSearchTime": 10000,
+        "MaxSearchTimeRandomHeuristic": 200.0,
         "ReturnUpperBound": 100.0,
         "MaxNumIterationsRandomHeuristic": 1000.0,
-        "MaxNumIterations": 40000,
+        "MaxNumIterations": 50000,
         "DiscountFactor": 0.9,
         "RandomSeed": 1000,
         "UCTExplorationConstant": 0.7
@@ -113,20 +125,20 @@
                 ],
                 "EgoGoalStart": [
                     5114.7,
-                    5153
+                    5253
                 ],
                 "EgoGoalEnd": [
                     5114.7,
                     5000
                 ],
                 "EgoGoalStateLimits": [
-                    0.1,
+                    0.5,
                     0,
-                    0.08
+                    0.5
                 ],
                 "VehicleDistanceRange": [
-                    7,
-                    10
+                    20,
+                    30
                 ],
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "VehicleModel": {
@@ -219,7 +231,7 @@
                         0.0,
                         0.0
                     ],
-                    "behavior_model": "BehaviorIDMClassic"
+                    "behavior_model": "BehaviorConstantVelocity"
                 }
             }
         }

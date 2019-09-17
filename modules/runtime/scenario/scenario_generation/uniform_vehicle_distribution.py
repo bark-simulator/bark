@@ -149,7 +149,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         goal_limits_left.append_linestring(goal_limits_right)
         polygon = Polygon2d([0,0,0], goal_limits_left)
 
-        ego_agent.goal_definition = GoalDefinitionStateLimits(polygon, (lims[2], lims[2]))
+        ego_agent.goal_definition = GoalDefinitionStateLimits(polygon, (1.57-0.08, 1.57+0.08))
 
     # only one agent is ego in the middle of all other agents
     scenario._eval_agent_ids = [ego_agent.id]
