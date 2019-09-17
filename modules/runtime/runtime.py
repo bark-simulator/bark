@@ -33,7 +33,7 @@ class Runtime(PyRuntime):
     self._reset_has_been_called = True
 
   def step(self):
-    assert(self._reset_has_been_called, True)
+    assert(self._reset_has_been_called==True)
     self._world.step(self._step_time)
     if self._render:
       self.render()
