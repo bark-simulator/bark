@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion \
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -37,9 +37,17 @@ class UniformVehicleDistribution(ScenarioGeneration):
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
       "modules/runtime/tests/data/Crossing8Course.xodr"]
-    self._ego_goal = params_temp["EgoGoal",
+    self._ego_goal_end = params_temp["EgoGoalEnd",
       "The center of the ego agent's goal region polygon",
       [-191.789,-50.1725] ]
+    self._ego_goal_start = params_temp["EgoGoalStart",
+      "The coordinates of the start of the ego goal,\
+           if empty only ego goal end is used as center of polygon ",
+      [-191.789,-100.1725] ]
+    self._ego_goal_state_limits = params_temp["EgoGoalStateLimits",
+      "x,y and theta limits around center line of lane between start and end applied to both lateral sides \
+       (only valid if whole lane is true)",
+       [0.1, 0, 0.08]]
     self._others_source = params_temp["OthersSource",
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. Lanes must be near these points \
@@ -116,15 +124,33 @@ class UniformVehicleDistribution(ScenarioGeneration):
     # take agent in the middle of list 
     ego_agent = scenario._agent_list[math.floor(num_agents/4)]
     
-    # TODO(@bernhard): orient goal polygon along road
-    goal_polygon = Polygon2d([0, 0, 0],
-                             [Point2d(-1.5,0),
-                              Point2d(-1.5,8),
-                              Point2d(1.5,8),
-                              Point2d(1.5,0)])
-    goal_polygon = goal_polygon.translate(Point2d(self._ego_goal[0],
-                                                  self._ego_goal[1]))
-    ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
+    if  len(self._ego_goal_start) == 0:
+        goal_polygon = Polygon2d([0, 0, 0],
+                                [Point2d(-1.5,0),
+                                Point2d(-1.5,8),
+                                Point2d(1.5,8),
+                                Point2d(1.5,0)])
+        goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
+                                                    self._ego_goal_end[1]))
+        ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
+    else:
+        connecting_center_line, s_start, s_end, _, lane_id_end = \
+        self.center_line_between_source_and_sink(world.map,
+                                                 self._ego_goal_start,
+                                                 self._ego_goal_end)
+
+        goal_center_line = get_line_from_s_interval(connecting_center_line, s_start, s_end)
+
+        # build polygon representing state limits
+        lims = self._ego_goal_state_limits
+        goal_limits_left = goal_center_line.translate(Point2d(-lims[0], -lims[1]))
+        goal_limits_right = goal_center_line.translate(Point2d(lims[0], lims[1]))
+        goal_limits_right.reverse()
+        goal_limits_left.append_linestring(goal_limits_right)
+        polygon = Polygon2d([0,0,0], goal_limits_left)
+
+        ego_agent.goal_definition = GoalDefinitionStateLimits(polygon, (1.57-0.08, 1.57+0.08))
+
     # only one agent is ego in the middle of all other agents
     scenario._eval_agent_ids = [ego_agent.id]
     return scenario

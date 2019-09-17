@@ -8,6 +8,7 @@ from bark.viewer import Viewer
 from bark.geometry import *
 from bark.models.dynamic import *
 from bark.world.opendrive import *
+from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
 
 
@@ -134,8 +135,11 @@ class BaseViewer(Viewer):
                 color = self.color_other_agents
             self.drawAgent(agent, color)
 
-            if self.draw_eval_goals:
-                self.drawPolygon2d(agent.goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
+            if self.draw_eval_goals and agent.goal_definition:
+                if isinstance(agent.goal_definition, GoalDefinitionPolygon):
+                    self.drawPolygon2d(agent.goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
+                elif isinstance(agent.goal_definition, GoalDefinitionStateLimits):
+                    self.drawPolygon2d(agent.goal_definition.xy_limits, self.eval_goal_color, alpha=0.9)
 
     def drawMap(self, map):
         # draw the boundary of each lane

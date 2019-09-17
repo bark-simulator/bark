@@ -7,15 +7,14 @@
 #include <stdexcept>
 
 #include "agent.hpp"
+#include "python/polymorphic_conversion.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 
 
 
@@ -28,34 +27,6 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::models::execution;
 using namespace modules::geometry;
-
-
-py::tuple behavior_model_to_python(BehaviorModelPtr behavior_model) {
-  std::string behavior_model_name;
-  if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
-    behavior_model_name = "BehaviorConstantVelocity";
-  } else if(typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
-    behavior_model_name = "BehaviorIDMClassic";
-  } else {
-    throw;
-  }
-  return py::make_tuple(behavior_model, behavior_model_name);
-} 
-
-BehaviorModelPtr python_to_behavior_model(py::tuple t) {
-  BehaviorModelPtr behavior_model;
-  std::string behavior_model_name = t[1].cast<std::string>();
-  if (behavior_model_name.compare("BehaviorConstantVelocity")==0) {
-      return std::make_shared<BehaviorConstantVelocity>(t[0].cast<BehaviorConstantVelocity>()); 
-  } else if(behavior_model_name.compare("BehaviorIDMClassic")==0) {
-    return std::make_shared<BehaviorIDMClassic>(t[0].cast<BehaviorIDMClassic>());
-  } else {
-    throw;
-  }
-}
-
-
-
 
 void python_agent(py::module m)
 {
@@ -75,7 +46,7 @@ void python_agent(py::module m)
           py::arg("execution_model"),
           py::arg("shape"),
           py::arg("params"),
-          py::arg("goal_definition") = std::make_shared<GoalDefinitionPolygon>(),
+          py::arg("goal_definition") =nullptr,
           py::arg("map_interface") = nullptr,
           py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent &a) {
@@ -107,17 +78,15 @@ void python_agent(py::module m)
                                   a.get_execution_model(), // 7
                                   a.get_dynamic_model(), // 8
                                   a.get_current_state(), // 9
-                                  a.get_goal_definition()); // 10
+                                  goal_definition_to_python(a.get_goal_definition())); // 10
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 11)
                 throw std::runtime_error("Invalid agent state!");
 
-            using modules::models::behavior::BehaviorConstantVelocity;
             using modules::models::dynamic::SingleTrackModel;
             using modules::models::execution::ExecutionModelInterpolate;
             using modules::world::map::LocalMap;
-
 
             /* Create a new C++ instance */
             Agent agent(t[9].cast<State>(),
@@ -126,7 +95,7 @@ void python_agent(py::module m)
                     std::make_shared<ExecutionModelInterpolate>(t[7].cast<ExecutionModelInterpolate>()), // todo resolve polymorphism
                     t[2].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
-                    std::make_shared<GoalDefinitionPolygon>(t[10].cast<GoalDefinitionPolygon>())); // todo resolve polymorphism
+                    python_to_goal_definition(t[10].cast<py::tuple>())); 
             agent.set_agent_id(t[3].cast<AgentId>());
             agent.set_local_map(std::make_shared<LocalMap>(t[0].cast<LocalMap>()));
             return agent;

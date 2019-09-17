@@ -13,8 +13,8 @@ py_binary(
 )
 
 py_binary(
-  name = "uct_planner",
-  srcs = ["uct_planner.py"],
+  name = "planner_uct",
+  srcs = ["planner_uct.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
           ':params'],

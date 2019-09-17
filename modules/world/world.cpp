@@ -15,11 +15,10 @@ World::World(commons::Params* params) :
   map_(),
   agents_(),
   world_time_(0.0),
-  remove_agents_(false) {
-    remove_agents_ = params->get_bool("World::remove_agents_out_of_map",
+  remove_agents_(params->get_bool("World::remove_agents_out_of_map",
       "Whether agents should be removed outside the bounding box.",
-      false);
-  }
+      false))
+       {}
 
 World::World(const World& world)  :
   commons::BaseType(world.get_params()),
@@ -102,7 +101,7 @@ std::vector<ObservedWorld> World::Observe(
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
       if (agents_.find(agent_id) == agents_.end()) {
-        std::cout << "Invalid agent id " <<
+        LOG(ERROR) << "Invalid agent id " <<
                   agent_id << ". Skipping ...." << std::endl;
         continue;
       }
