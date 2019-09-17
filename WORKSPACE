@@ -103,11 +103,21 @@ local_repository(
 
 # ------ Planner UCT --------------
 git_repository(
-    name = "planner_uct",
-    branch="master",
-    remote = "https://github.com/bark-simulator/planner-mcts"
+  name = "planner_uct",
+  branch="master",
+  remote = "https://github.com/bark-simulator/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
 # ---------------------------------
 
+# ------ Planner BARK-ML --------------
+git_repository(
+  name = "bark_ml",
+  branch="master",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+
+load("@bark_ml//utils:dependencies.bzl", "load_bark")
+load_bark()
+# ---------------------------------
