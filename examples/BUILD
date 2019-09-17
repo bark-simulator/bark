@@ -99,7 +99,7 @@ filegroup(
 )
 
 
-py_test(
+py_binary(
   name = "barkml",
   srcs = ["barkml.py"],
   data = ['//python:bark.so',
