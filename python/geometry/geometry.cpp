@@ -71,6 +71,9 @@ void python_geometry(py::module m) {
   m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
                         "get the point nearest to another point and its position on the line s ");
 
+  m.def("get_line_from_s_interval", &modules::geometry::get_line_from_s_interval, 
+                        "get line between specified interval.");
+
   m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 
                         "merge two bounding boxes consisting of pairs of min and max corners");
 
@@ -98,6 +101,8 @@ void python_geometry(py::module m) {
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
       .def("length", &modules::geometry::Line::length, "calculates length of line.")
       .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
+      .def("append_linestring", &modules::geometry::Line::append_linestring, "append linestrings in place")
+      .def("concatenate_linestring", &modules::geometry::Line::ConcatenateLinestring, "concatenate linestrings in place")
       .def_property_readonly("bounding_box", &modules::geometry::Line::bounding_box)
       .def_readwrite("center", &modules::geometry::Line::center_, "center point.")
       .def(py::pickle(
@@ -120,8 +125,12 @@ void python_geometry(py::module m) {
   py::class_<modules::geometry::Polygon,
             std::shared_ptr<modules::geometry::Polygon>>(m, "Polygon2d")
       .def(py::init<>(), "Create empty polygon")
-      .def(py::init<modules::geometry::Pose, std::vector<modules::geometry::Point2d>>(), "Create polygon with center point and point list")
-      .def(py::init<modules::geometry::Pose, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &>(), "Create polygon with center point and point list")
+      .def(py::init<modules::geometry::Pose, std::vector<modules::geometry::Point2d>>(),
+                       "Create polygon with center point and point list")
+      .def(py::init<modules::geometry::Pose, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &>(),
+                       "Create polygon with center point and point list")
+      .def(py::init<modules::geometry::Pose, const modules::geometry::Line&>(),
+                       "Create polygon with center point and line enclosing polygon")
       .def("addPoint", &modules::geometry::Polygon::add_point, "add a point")
       .def("addPoint", [](modules::geometry::Polygon &polygon, py::list list) {
         if (list.size() != 2) {

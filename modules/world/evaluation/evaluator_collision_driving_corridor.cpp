@@ -30,7 +30,8 @@ EvaluationReturn EvaluatorCollisionDrivingCorridor::Evaluate(const world::World 
       break;
     }
   }
-  return colliding;
+  return false;
+  //return colliding;
 }
 
 }  // namespace evaluation

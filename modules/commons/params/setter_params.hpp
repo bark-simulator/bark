@@ -42,7 +42,7 @@ class SetterParams : public Params {
   virtual void set_bool(const std::string &param_name, const bool &value) {params_bool_[param_name]=value;}
   virtual void set_real(const std::string &param_name, const float &value) {params_real_[param_name]=value;}
   virtual void set_int(const std::string &param_name, const int &value) {params_int_[param_name]=value;}
-  virtual void set_list_float(const std::string &param_name,
+  virtual void set_listlist_float(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) {params_listlist_float_[param_name]=value;}
 
   virtual int operator[](const std::string &param_name) { throw; } //< not supported atm 

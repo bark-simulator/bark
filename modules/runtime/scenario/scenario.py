@@ -52,6 +52,17 @@ class Scenario:
       world.add_agent(agent)
     return world
 
+  def __getstate__(self):
+      odict = self.__dict__.copy()
+      print(odict['_map_interface'])
+      del odict['_map_interface']
+      print(odict)
+      return odict
+
+  def __setstate__(self, sdict):
+      sdict['_map_interface'] = None
+      self.__dict__.update(sdict)
+
   def setup_map(self, world, _map_file_name):
     xodr_parser = XodrParser(_map_file_name )
     map_interface = MapInterface()
