@@ -117,7 +117,7 @@ inline bool Shape<G, T>::Valid() const {
   std::string message;
   bool valid = boost::geometry::is_valid(obj_, message);
   if (!valid) {
-    std::cout << "why not valid? " << message << std::endl;
+    LOG(ERROR) << "Polygon not valid. Why not valid? " << message;
   }
   return valid;
 }

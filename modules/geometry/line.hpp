@@ -323,7 +323,6 @@ inline std::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const P
     // debug
     // dist = sqrt(pow(p1 - b1, 2) + pow(p2 - b2, 2));
   } else {  // real interpolation
-    // std::cout << "size s_: " << l.s_.size() << "object size: " << l.obj_.size() << std::endl;
     s = (1 - lambda) * l.s_.at(min_segment_idx) + lambda * l.s_.at(min_segment_idx + 1);
 
     const double s1 = (p1 * a1 * a1 - a1 * a2 * b2 + p2 * a1 * a2
