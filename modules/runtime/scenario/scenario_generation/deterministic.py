@@ -32,7 +32,6 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     self.initialize_params(params)
 
   def initialize_params(self, params):
-    # TODO(@hart): Change this. Pass the right branch of the parameter server
     self._local_params = \
       self._params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
     
@@ -67,6 +66,12 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                                     agent_json["goal"]["center_pose"][1]))
 
       agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
+
+      agent_state = np.array(agent_json["state"])
+      if len(np.shape(agent_state)) > 1:
+        agent_state = np.random.uniform(low=agent_state[:, 0],
+                                                high=agent_state[:, 1])
+      agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
       agent.set_agent_id(agent_json["id"])
