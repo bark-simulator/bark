@@ -26,3 +26,19 @@ cc_library(
         select({":_planner_other1" : ["insert_dependency_other1_here"], "//conditions:default": []}) + 
         select({":_planner_other2" : ["insert_dependency_other2_here"], "//conditions:default": []}),
 )
+
+# python planners
+config_setting(
+    name = "_bark_ml",
+    define_values = {"bark_ml": "true"},
+)
+
+py_library(
+  name="py_planners",
+  deps=select({":_bark_ml":
+      ["@bark_ml//configurations:bark_agent",
+       "@bark_ml//configurations/sac_highway:configuration"],
+      "//conditions:default": []
+    }),
+  visibility = ["//visibility:public"]
+)
