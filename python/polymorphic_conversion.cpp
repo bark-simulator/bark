@@ -47,9 +47,7 @@ py::tuple goal_definition_to_python(GoalDefinitionPtr goal_definition) {
   std::string goal_definition_name;
   if (typeid(*goal_definition) == typeid(GoalDefinitionPolygon)) {
     goal_definition_name = "GoalDefinitionPolygon";
-    std::cout << "detected GoalDefinitionPolygon " << std::endl;
   } else if(typeid(*goal_definition) == typeid(GoalDefinitionStateLimits)) {
-    std::cout << "detected GoalDefinitionStateLimits " << std::endl;
     goal_definition_name = "GoalDefinitionStateLimits";
   } else {
     throw;
@@ -60,10 +58,8 @@ py::tuple goal_definition_to_python(GoalDefinitionPtr goal_definition) {
 GoalDefinitionPtr python_to_goal_definition(py::tuple t) {
   std::string goal_definition_name = t[1].cast<std::string>();
   if (goal_definition_name.compare("GoalDefinitionPolygon")==0) {
-      std::cout << "casted GoalDefinitionPolygon " << std::endl;
       return std::make_shared<GoalDefinitionPolygon>(t[0].cast<GoalDefinitionPolygon>()); 
   } else if(goal_definition_name.compare("GoalDefinitionStateLimits")==0) {
-    std::cout << "casted GoalDefinitionStateLimits " << std::endl;
     return std::make_shared<GoalDefinitionStateLimits>(t[0].cast<GoalDefinitionStateLimits>());
   } else {
     throw;
