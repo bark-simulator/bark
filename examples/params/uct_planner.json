@@ -99,56 +99,54 @@
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "OthersSink": [
+                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "EgoGoalEnd": [
+                    5128,
+                    5200
+                ],
+                "EgoRoute": [
                     [
-                        5110.789,
-                        5193.1725
+                        5116,
+                        5072
                     ],
                     [
                         5116,
-                        5200
+                        5074
                     ]
                 ],
                 "OthersSource": [
                     [
-                        5111.626,
+                        5000.626,
                         5006.8305
-                    ],
-                    [
-                        5116,
-                        5062
                     ]
                 ],
-                "VehicleVelocityRange": [
-                    20,
-                    20
-                ],
-                "EgoGoalStart": [
-                    5114.7,
-                    5253
-                ],
-                "EgoGoalEnd": [
-                    5114.7,
-                    5000
-                ],
-                "EgoGoalStateLimits": [
-                    0.3,
-                    0,
-                    0.2
+                "OthersSink": [
+                    [
+                        5111.626,
+                        5193.1725
+                    ]
                 ],
                 "VehicleDistanceRange": [
-                    10,
+                    2,
                     20
                 ],
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "VehicleVelocityRange": [
+                    2,
+                    15
+                ],
                 "VehicleModel": {
+                    "behavior_model": "BehaviorIDMClassic",
+                    "dynamic_model": "SingleTrackModel",
                     "execution_model": "ExecutionModelInterpolate",
+                    "id": 0,
+                    "state": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
                     "shape": {
-                        "center_pose": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
                         "polygon_points": [
                             [
                                 3.8499999046325684,
@@ -218,20 +216,15 @@
                                 3.8499999046325684,
                                 0.0
                             ]
+                        ],
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
                         ]
                     },
                     "followed_trajectory": [],
-                    "id": 0,
-                    "planned_trajectory": [],
-                    "dynamic_model": "SingleTrackModel",
-                    "state": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "behavior_model": "BehaviorConstantVelocity"
+                    "planned_trajectory": []
                 }
             }
         }
