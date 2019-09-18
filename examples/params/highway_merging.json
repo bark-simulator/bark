@@ -80,12 +80,12 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    5,
-                    15
+                    2,
+                    20
                 ],
                 "VehicleVelocityRange": [
-                    10,
-                    20
+                    2,
+                    15
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorIDMClassic",
