@@ -35,8 +35,8 @@ for _ in range(0, 10): # run 5 scenarios in a row, repeating after 3
     scenario, idx = scenario_generation.get_next_scenario()
     world_state = scenario.get_world_state()
     for _ in range(0, 5):
-        video_renderer.drawWorld(world_state, scenario._eval_agent_ids) 
-        #world_state.step(sim_step_time)
+        video_renderer.drawWorld(world_state, scenario._eval_agent_ids, idx) 
+        world_state.step(sim_step_time)
     
 video_renderer.export_video(filename="examples/scenarios/test_video_step")
 

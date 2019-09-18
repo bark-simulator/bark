@@ -15,7 +15,7 @@ class MPViewer(BaseViewer):
     # we do not need an init function as pybind11 implements it
     def __init__(self, params=None, **kwargs):
         super(MPViewer, self).__init__(params=params, **kwargs)
-        self.axes = kwargs.pop("axes", plt.subplots()[1])
+        self.axes = kwargs.pop("axes", plt.subplots(figsize=(20,20))[1])
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -56,6 +56,10 @@ class MPViewer(BaseViewer):
                 trajectory[:, int(StateDefinition.Y_POSITION)],
                 color=self.getColor(color))
 
+    def drawText(self, position, text, **kwargs):
+        self.axes.text(position[0], position[1], text, horizontalalignment='center',
+             verticalalignment='top', transform=self.axes.transAxes, **kwargs)
+
     def getColor(self, color):
         if isinstance(color, Viewer.Color):
             return {
@@ -68,9 +72,9 @@ class MPViewer(BaseViewer):
         else:
             return color
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
         self.clear()
-        super(MPViewer, self).drawWorld(world, eval_agent_ids)
+        super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx)
         self._set_visualization_options()
         self.show()
         if filename:
