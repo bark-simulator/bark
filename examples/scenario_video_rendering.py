@@ -16,10 +16,10 @@ scenario_param_file ="highway_merging.json" # must be within examples params fol
 
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
 
-scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
+scenario_generation = UniformVehicleDistribution(num_scenarios=10, random_seed=0, params=param_server)
 
 
-viewer = MPViewer(params=param_server, x_range=[-50,50], y_range=[-20,80], follow_agent_id=True)
+viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])
 sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.2]
@@ -30,16 +30,20 @@ scenario, idx = scenario_generation.get_next_scenario()
 
 # Rendering WITHOUT intermediate steps
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
-world_state = scenario.get_world_state()
-for _ in range(0, 10): # run scenario for 100 steps
-    world_state.step(sim_step_time)
-    video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
+
+for _ in range(0, 10): # run 5 scenarios in a row, repeating after 3
+    scenario, idx = scenario_generation.get_next_scenario()
+    world_state = scenario.get_world_state()
+    for _ in range(0, 5):
+        video_renderer.drawWorld(world_state, scenario._eval_agent_ids) 
+        #world_state.step(sim_step_time)
+    
 video_renderer.export_video(filename="examples/scenarios/test_video_step")
 
 # Rendering WITH intermediate steps
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
 world_state = scenario.get_world_state()
-for _ in range(0, 10): # run scenario for 100 steps
+for _ in range(0, 50): # run scenario for 100 steps
     world_state.do_planning(sim_step_time)
     video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
     world_state.do_execution(sim_step_time)

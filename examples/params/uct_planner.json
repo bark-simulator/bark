@@ -22,7 +22,7 @@
             }
         },
         "Agents": {
-            "DrawEvalGoals": true,
+            "DrawEvalGoals": false,
             "EvalGoalColor": [
                 0.0,
                 0.0,
@@ -86,8 +86,8 @@
             ]
         ],
         "ReturnLowerBound": -1000.0,
-        "MaxSearchTime": 2000,
-        "MaxSearchTimeRandomHeuristic": 20.0,
+        "MaxSearchTime": 20000,
+        "MaxSearchTimeRandomHeuristic": 10.0,
         "ReturnUpperBound": 100.0,
         "MaxNumIterationsRandomHeuristic": 1000.0,
         "MaxNumIterations": 50000,
@@ -137,8 +137,8 @@
                     0.2
                 ],
                 "VehicleDistanceRange": [
-                    20,
-                    30
+                    10,
+                    20
                 ],
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "VehicleModel": {
