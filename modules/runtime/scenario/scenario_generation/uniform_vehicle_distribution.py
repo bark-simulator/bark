@@ -36,41 +36,45 @@ class UniformVehicleDistribution(ScenarioGeneration):
       self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
-      "modules/runtime/tests/data/Crossing8Course.xodr"]
+      "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._ego_goal_end = params_temp["EgoGoalEnd",
       "The center of the ego agent's goal region polygon",
-      [-191.789,-50.1725] ]
+      [5128, 5200] ]
     self._ego_goal_start = params_temp["EgoGoalStart",
       "The coordinates of the start of the ego goal,\
            if empty only ego goal end is used as center of polygon ",
-      [-191.789,-100.1725] ]
+      [] ]
     self._ego_goal_state_limits = params_temp["EgoGoalStateLimits",
       "x,y and theta limits around center line of lane between start and end applied to both lateral sides \
-       (only valid if whole lane is true)",
+       (only valid if start and end goal of ego are given)",
        [0.1, 0, 0.08]]
+    self._ego_route = params_temp["EgoRoute",
+      "A list of two points defining start and end point of initial ego driving corridor. \
+           If empty, then one of the other agents is selected as ego agents.",
+      []]
     self._others_source = params_temp["OthersSource",
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. Lanes must be near these points \
       (<0.5m) Provide a list of lists with x,y-coordinates",
-      [[-16.626,-14.8305]]]
+     [[5000.626, 5006.8305]]]
     self._others_sink = params_temp["OthersSink",
-      "A list of points around which other vehicles are deleted.\
+      "A list of points defining end of other vehicles routes.\
         Points should be on different lanes and match the order of the\
         source points. Lanes must be near these points (<0.5m) \
         Provide a list of lists with x,y-coordinates",
-        [[-191.789,-50.1725]]]   
+        [[ 5111.626, 5193.1725]] ]  
     assert len(self._others_sink) == len(self._others_source)         
     self._vehicle_distance_range = params_temp["VehicleDistanceRange",
       "Distance range between vehicles in meter given as tuple from which" + \
       "distances are sampled uniformly",
-      (40, 50)]
+      (10, 20)]
     self._velocity_range = params_temp["VehicleVelocityRange",
       "Lower and upper bound of velocity in km/h given as tuple from which" + \
       " velocities are sampled uniformly",
       (20,30)]
     json_converter = ModelJsonConversion()
     self._agent_params = params_temp["VehicleModel",
-      "How to model the agent",
+      "How to model the other agents",
       json_converter.agent_to_json(self.default_agent_model())]
     if not isinstance(self._agent_params, dict):
         self._agent_params = self._agent_params.convert_to_dict()
@@ -98,7 +102,6 @@ class UniformVehicleDistribution(ScenarioGeneration):
         self.center_line_between_source_and_sink(world.map,
                                                  source,
                                                  self._others_sink[idx])
-       # TODO(@bernhard): orient goal polygon along road
       goal_polygon = Polygon2d([0, 0, 0],
                                [Point2d(-1.5,0),
                                 Point2d(-1.5,8),
@@ -117,13 +120,49 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
     description=self._params.convert_to_dict()
     description["ScenarioGenerator"] = "UniformVehicleDistribution"
-    scenario._agent_list = agent_list
+    
 
     # EGO AGENT
-    num_agents = len(scenario._agent_list)
-    # take agent in the middle of list 
-    ego_agent = scenario._agent_list[math.floor(num_agents/4)]
+    ego_agent=None
+    if len(self._ego_route) == 0:
+        # take agent in the middle of list 
+        num_agents = len(agent_list)
+        ego_agent = agent_list[math.floor(num_agents/4)] 
+    else:
+        connecting_center_line, s_start, s_end, _, lane_id_end = \
+        self.center_line_between_source_and_sink(world.map,
+                                                 self._ego_route[0],
+                                                 self._ego_route[1])
+
+        sego = self.sample_srange_uniform([s_start, s_end])
+        xy_point =  get_point_at_s(connecting_center_line, sego)
+        angle = get_tangent_angle_at_s(connecting_center_line, sego)
+        velocity = self.sample_velocity_uniform(self._velocity_range)
+        agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
+
+        agent_params = self._agent_params.copy()
+        agent_params["state"] = agent_state
+        # goal for driving corridor generation
+        goal_polygon = Polygon2d([0, 0, 0],
+                               [Point2d(-1.5,0),
+                                Point2d(-1.5,8),
+                                Point2d(1.5,8),
+                                Point2d(1.5,0)])
+        goal_polygon = goal_polygon.translate(Point2d(self._ego_route[1][0],
+                                                    self._ego_route[1][1]))
+        goal_definition = GoalDefinitionPolygon(goal_polygon)
+        agent_params["goal_definition"] = goal_definition
+        agent_params["map_interface"] = world.map
+
+        converter = ModelJsonConversion()
+        ego_agent = converter.agent_from_json(agent_params, self._params)
+        # TODO(@bernhard): ensure that ego agent not collides with others
     
+    agent_list.append(ego_agent)
+
+
+    
+    # EGO Agent Goal Definition
     if  len(self._ego_goal_start) == 0:
         goal_polygon = Polygon2d([0, 0, 0],
                                 [Point2d(-1.5,0),
@@ -152,6 +191,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         ego_agent.goal_definition = GoalDefinitionStateLimits(polygon, (1.57-0.08, 1.57+0.08))
 
     # only one agent is ego in the middle of all other agents
+    scenario._agent_list = agent_list
     scenario._eval_agent_ids = [ego_agent.id]
     return scenario
 
@@ -196,6 +236,9 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
   def sample_distance_uniform(self, distance_range):
     return np.random.uniform(distance_range[0], distance_range[1])
+
+  def sample_srange_uniform(self, srange):
+    return np.random.uniform(srange[0], srange[1])
 
   def center_line_between_source_and_sink(self, map_interface, source, sink):
     lane_source = map_interface.find_nearest_lanes(Point2d(source[0],

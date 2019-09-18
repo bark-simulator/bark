@@ -63,7 +63,7 @@ void World::DoExecution(const float& delta_time) {
       agent.second->Execute(world_time_);
   }
   if (remove_agents_) {
-    // RemoveOutOfMapAgents();
+    RemoveOutOfMapAgents();
   }
 }
 
