@@ -68,7 +68,11 @@ class UniformVehicleDistribution(ScenarioGeneration):
       "Distance range between vehicles in meter given as tuple from which" + \
       "distances are sampled uniformly",
       (10, 20)]
-    self._velocity_range = params_temp["VehicleVelocityRange",
+    self._other_velocity_range = params_temp["OtherVehicleVelocityRange",
+      "Lower and upper bound of velocity in km/h given as tuple from which" + \
+      " velocities are sampled uniformly",
+      (20,30)]
+    self._ego_velocity_range = params_temp["EgoVehicleVelocityRange",
       "Lower and upper bound of velocity in km/h given as tuple from which" + \
       " velocities are sampled uniformly",
       (20,30)]
@@ -137,7 +141,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         sego = self.sample_srange_uniform([s_start, s_end])
         xy_point =  get_point_at_s(connecting_center_line, sego)
         angle = get_tangent_angle_at_s(connecting_center_line, sego)
-        velocity = self.sample_velocity_uniform(self._velocity_range)
+        velocity = self.sample_velocity_uniform(self._ego_velocity_range)
         agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
 
         agent_params = self._agent_params.copy()
@@ -172,6 +176,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
                                                     self._ego_goal_end[1]))
         ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
+        ego_agent.generate_local_map()
     else:
         connecting_center_line, s_start, s_end, _, lane_id_end = \
         self.center_line_between_source_and_sink(world.map,
@@ -213,7 +218,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       xy_point =  get_point_at_s(linestring, s)
       angle = get_tangent_angle_at_s(linestring, s)
       
-      velocity = self.sample_velocity_uniform(self._velocity_range)
+      velocity = self.sample_velocity_uniform(self._other_velocity_range)
       agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
 
       agent_params = self._agent_params.copy()

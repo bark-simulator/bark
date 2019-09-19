@@ -53,20 +53,12 @@
         "DumpTree": false,
         "MotionPrimitiveInputs": [
             [
-                1.0,
+                4.0,
                 0.0
             ],
             [
-                -1.0,
+                -4.0,
                 0.0
-            ],
-            [
-                0.0,
-                0.27
-            ],
-            [
-                0.0,
-                -0.27
             ],
             [
                 0.0,
@@ -77,17 +69,25 @@
                 0.13
             ],
             [
-                0.0,
-                -0.03
+                -1.0,
+                -0.13
             ],
             [
-                0.0,
-                0.03
+                -1.0,
+                0.13
+            ],
+            [
+                1.0,
+                -0.13
+            ],
+            [
+                1.0,
+                0.13
             ]
         ],
         "ReturnLowerBound": -1000.0,
         "MaxSearchTime": 20000,
-        "MaxSearchTimeRandomHeuristic": 10.0,
+        "MaxSearchTimeRandomHeuristic": 100.0,
         "ReturnUpperBound": 100.0,
         "MaxNumIterationsRandomHeuristic": 1000.0,
         "MaxNumIterations": 50000,
@@ -100,9 +100,18 @@
         "Generation": {
             "UniformVehicleDistribution": {
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "EgoGoalStart": [
+                    5111.626,
+                    5006.8305
+                ],
                 "EgoGoalEnd": [
-                    5128,
-                    5200
+                    5111.626,
+                    5193.1725
+                ],
+                "EgoGoalStateLimits": [
+                    0.5,
+                    0,
+                    0
                 ],
                 "EgoRoute": [
                     [
@@ -116,7 +125,7 @@
                 ],
                 "OthersSource": [
                     [
-                        5000.626,
+                        5111.626,
                         5006.8305
                     ]
                 ],
@@ -127,12 +136,16 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    2,
+                    10,
                     20
                 ],
-                "VehicleVelocityRange": [
+                "OtherVehicleVelocityRange": [
                     2,
-                    15
+                    8
+                ],
+                "EgoVehicleVelocityRange": [
+                    10,
+                    12
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorIDMClassic",
