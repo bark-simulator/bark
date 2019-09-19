@@ -22,7 +22,7 @@
             }
         },
         "Agents": {
-            "DrawEvalGoals": true,
+            "DrawEvalGoals": false,
             "EvalGoalColor": [
                 0.0,
                 0.0,
@@ -136,7 +136,7 @@
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    2,
+                    10,
                     20
                 ],
                 "OtherVehicleVelocityRange": [
