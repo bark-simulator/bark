@@ -47,8 +47,9 @@ goal_definition_(goal_definition) {
   pair.second = modules::models::behavior::Action(
           modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
   history_.push_back(pair);
+
   if(map_interface != nullptr) {
-    set_goal_definition(goal_definition);
+    GenerateLocalMap();
   }
 }
 
@@ -116,6 +117,7 @@ bool Agent::AtGoal() const {
 }
 
 void Agent::GenerateLocalMap() {
+  local_map_->set_goal_definition(goal_definition_);
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
@@ -123,6 +125,8 @@ void Agent::GenerateLocalMap() {
     LOG(ERROR) << "LocalMap generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
+  // TODO(@hart): parameter
+  UpdateDrivingCorridor(20.0);
 }
 
 void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
