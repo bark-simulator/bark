@@ -89,6 +89,7 @@ class Agent : public Object {
 
   void set_goal_definition(const GoalDefinitionPtr &goal_definition) {
     goal_definition_ = goal_definition;
+    GenerateLocalMap();
   }
 
   void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
