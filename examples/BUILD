@@ -88,6 +88,18 @@ py_binary(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
+py_binary(
+  name = "scenarios_from_database",
+  srcs = ["scenarios_from_database.py"],
+  data = ['//python:bark.so',
+          '@benchmark_database_release//:v1.0.0'],
+  imports = ['../python/'],
+  deps = [":scenario_generation_dump",
+          "//modules/runtime/commons:parameters",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "@benchmark_database//load:benchmark_database"],
+)
+
 filegroup(
     name="scenarios",
     srcs=glob(["scenarios/*.bark_scenarios"]),
