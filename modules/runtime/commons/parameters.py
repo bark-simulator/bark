@@ -11,13 +11,16 @@ from bark.commons import Params
 class ParameterServer(Params):
     def __init__(self, **kwargs):
         Params.__init__(self)
+        self.param_filename = None
         if "filename" in kwargs:
             self.load(kwargs["filename"])
+            self.param_filename = kwargs["filename"]
         elif "json" in kwargs:
             self.convert_to_param(kwargs["json"])
         else:
             self.store = dict()
         self.param_descriptions = dict()
+        
 
     def __getitem__(self, key):
         if isinstance(key, tuple):
