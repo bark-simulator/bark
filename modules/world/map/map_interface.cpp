@@ -24,14 +24,13 @@ bool MapInterface::interface_from_opendrive(
     {
       for (auto &lane : lane_section->get_lanes())
       {
-        // TODO(@fortiss): do not use left line and do not want pos 0
         if (lane.second->get_lane_position() != 0)
         {
           auto lane_left_linestring = lane.second->get_line().obj_;
-          LaneSegment left_lane_segment(
+          LaneSegment left_line_segment(
               *lane_left_linestring.begin(),
               *(lane_left_linestring.end() - 1));
-          rtree_lane_.insert(std::make_pair(left_lane_segment, lane.second));
+          rtree_lane_.insert(std::make_pair(left_line_segment, lane.second));
         }
       }
     }
