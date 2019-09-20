@@ -102,10 +102,11 @@ local_repository(
 )
 
 # ------ Planner UCT --------------
-git_repository(
+local_repository(
   name = "planner_uct",
-  branch="master",
-  remote = "https://github.com/bark-simulator/planner-mcts"
+  #branch="master",
+  #remote = "https://github.com/bark-simulator/planner-mcts"
+  path="/home/bernhard/development/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
@@ -121,3 +122,16 @@ git_repository(
 load("@bark_ml//utils:dependencies.bzl", "load_bark")
 load_bark()
 # ---------------------------------
+
+
+# -------- Benchmark Database -----------------------
+git_repository(
+  name = "benchmark_database",
+  branch="master",
+  remote = "https://github.com/bark-simulator/benchmark-database"
+)
+
+load("@benchmark_database//util:deps.bzl", "benchmark_database_dependencies")
+load("@benchmark_database//load:load.bzl", "benchmark_database_release")
+benchmark_database_release()
+# --------------------------------------------------
