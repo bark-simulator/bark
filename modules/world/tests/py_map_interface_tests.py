@@ -74,7 +74,7 @@ class EnvironmentTests(unittest.TestCase):
         right_adj_corridors = map_interface.get_adjacent_corridors_same_direction(c, [169, 169, 0.0])
         assert(len(right_adj_corridors) == 1)
 
-        viewer = MPViewer(params=params)
+        viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
         viewer.drawDrivingCorridor(c)
         if right_adj_corridors:
@@ -110,7 +110,7 @@ class EnvironmentTests(unittest.TestCase):
         splittingcorridors = map_interface.get_splitting_corridors(c, [152, 168, 0.0])
         assert(len(splittingcorridors) == 2)
 
-        viewer = MPViewer(params=params)
+        viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
         viewer.drawDrivingCorridor(c)
         if splittingcorridors:
