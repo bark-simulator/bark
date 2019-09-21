@@ -125,10 +125,11 @@ load_bark()
 
 
 # -------- Benchmark Database -----------------------
-git_repository(
+local_repository(
   name = "benchmark_database",
-  branch="master",
-  remote = "https://github.com/bark-simulator/benchmark-database"
+ # branch="master",
+ # remote = "https://github.com/bark-simulator/benchmark-database"
+    path="/home/bernhard/development/benchmark-database"
 )
 
 load("@benchmark_database//util:deps.bzl", "benchmark_database_dependencies")
