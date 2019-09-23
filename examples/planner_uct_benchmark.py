@@ -3,6 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import os
 
 from load.benchmark_database import BenchmarkDatabase
 from modules.benchmark.benchmark_runner import BenchmarkRunner
@@ -23,7 +24,7 @@ evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollision
                 "max_steps": EvaluatorStepCount}
 terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
 scenario_param_file ="uct_planner.json" # must be within examples params folder
-param_server = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
+params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
 behaviors_tested = {"search5s": behavior_used(params) }
                                 
 
@@ -32,6 +33,6 @@ benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                     terminal_when=terminal_when,
                                     behaviors=behaviors_tested)
 
-benchmark_runner.run(2) 
+benchmark_runner.run(1) 
 
-benchmark_runner.dataframe.to_pickle("examples/uct_planner_results.pickle")
+benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")
