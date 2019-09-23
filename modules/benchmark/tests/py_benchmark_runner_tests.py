@@ -28,9 +28,9 @@ class DatabaseRunnerTests(unittest.TestCase):
                                           terminal_when=terminal_when,
                                           behaviors=behaviors_tested)
 
-        benchmark_runner.run() 
+        benchmark_runner.run(2) 
 
-        
+        print(benchmark_runner.dataframe.to_string())
         
 
 if __name__ == '__main__':
