@@ -20,17 +20,18 @@ using dynamic::StateDefinition::VEL_POSITION;
 
 DynamicBehaviorModel::DynamicBehaviorModel(const DynamicModelPtr& dynamic_model,
                            commons::Params *params) :
-    BehaviorModel(params),
-    dynamic_model_(dynamic_model),
-    current_action_(2),
-    integration_time_delta_(
-      params->get_real("integration_time_delta",
-                       "delta t for integration", 0.01)) { }
+  BehaviorModel(params),
+  dynamic_model_(dynamic_model),
+  current_action_(2),
+  integration_time_delta_(
+    params->get_real("integration_time_delta",
+                      "delta t for integration", 0.01)) {
+    current_action_.setZero();
+  }
 
 DynamicBehaviorModel::DynamicBehaviorModel(DynamicBehaviorModel* other_behavior) :
   BehaviorModel(other_behavior->get_params()),
   dynamic_model_(other_behavior->dynamic_model_),
-  current_action_(other_behavior->current_action_),
   integration_time_delta_(other_behavior->integration_time_delta_) {}
 
 dynamic::Trajectory DynamicBehaviorModel::Plan(
@@ -49,7 +50,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     num_trajectory_points,
     static_cast<int>(dynamic::StateDefinition::MIN_STATE_SIZE));
 
-  std::cout << num_trajectory_points << ", " << ego_vehicle_state << ", " << current_action_ << std::endl;
+  // std::cout << num_trajectory_points << ", " << ego_vehicle_state << ", " << current_action_ << std::endl;
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(*dynamic_model_,
