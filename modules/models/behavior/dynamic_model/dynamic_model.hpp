@@ -35,9 +35,7 @@ class DynamicBehaviorModel : public BehaviorModel {
 
   BehaviorModel *Clone() const;
 
-  void set_action(const Input& inp) { 
-    std::cout << "Setting action" << std::endl;
-    current_action_ = inp; }
+  void set_action(const Input& inp) { current_action_ = inp; }
   Input get_action() const { return current_action_; }
 
  private:
