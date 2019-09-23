@@ -46,7 +46,7 @@ TEST(lane, open_drive) {
 
   //! vertical
   p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
-  LaneWidth lane_width = {0, 1, off};
+  LaneWidth lane_width = {0, 10.0, off};
 
   LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(), lane_width, 0.05f); // left side
 
@@ -188,7 +188,7 @@ TEST(map, open_drive) {
 
   //! Lane
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 1, off};
+  LaneWidth lane_width_1 = {0, 10.0, off};
 
   LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05f);
   LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05f);
@@ -220,7 +220,7 @@ TEST(map, open_drive) {
 
   //! Lane
   LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_2 = {0, 1, off2};
+  LaneWidth lane_width_2 = {0, 10.0, off2};
 
   LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(), lane_width_2, 0.05f);
   LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05f);
