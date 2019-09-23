@@ -16,7 +16,8 @@ py_binary(
   name = "planner_uct_benchmark",
   srcs = ["planner_uct_benchmark.py"],
   data = ['//python:bark.so',
-          '@benchmark_database_release//:v1.0.0'],
+          '@benchmark_database_release//:v1.0.0',
+          ':params'],
   imports = ['../python/'],
   deps = [
       "//modules/benchmark:benchmark_runner",
