@@ -31,6 +31,10 @@ class ScenarioGeneration:
     """
     pass
 
+  @property
+  def params(self):
+      return self._params
+
   def get_next_scenario(self):
     if self._current_scenario_idx >= self.num_scenarios:
       self._current_scenario_idx = 0
@@ -40,8 +44,24 @@ class ScenarioGeneration:
     self._current_scenario_idx += 1
     return scenario, scenario_idx
 
+  def get_num_scenarios(self):
+    return len(self._scenario_list)
+
   def get_scenario(self, idx):
     return self._scenario_list[idx].copy()
+
+  def __iter__(self):
+    self._current_iter_idx=0
+    return self
+
+  def __next__(self):
+    if self._current_iter_idx < self.get_num_scenarios():
+        scenario = self.get_scenario(self._current_iter_idx)
+        idx = self._current_iter_idx
+        self._current_iter_idx += 1
+        return scenario, idx
+    else:
+        raise StopIteration
 
   def create_scenarios(self, params, num_scenarios, random_seed):
     """ Creates a list of scenario class instances which should be
