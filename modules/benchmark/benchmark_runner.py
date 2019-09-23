@@ -21,7 +21,7 @@ class BenchmarkRunner:
 
         self.dataframe = pd.DataFrame()
 
-    def run(self):
+    def run(self, num_scenarios=None):
         # run over each behavior
         for behavior_name, behavior_bark in self.behaviors.items():
             # run over all scenario generators from benchmark database
@@ -29,6 +29,8 @@ class BenchmarkRunner:
                 step_time = scenario_generator.params["simulation"]["step_time"]
                 set_name = scenario_generator.params["simulation"]["step_time"]
                 for scenario, idx in scenario_generator:
+                    if idx > num_scenarios-1:
+                        break
                     self._run_scenario(scenario_set_name,
                                        scenario,
                                        idx,
@@ -94,4 +96,4 @@ class BenchmarkRunner:
                 "Terminal": terminal,
                 **kwargs}
 
-        self.dataframe.append(dict, ignore_index=True)
+        self.dataframe = self.dataframe.append(dict, ignore_index=True)
