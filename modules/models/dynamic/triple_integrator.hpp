@@ -13,6 +13,10 @@ namespace modules {
 namespace models {
 namespace dynamic {
 
+/**
+ * @brief Triple integrator model
+ * 
+ */
 class TripleIntegratorModel : public DynamicModel {
  public:
   explicit TripleIntegratorModel(modules::commons::Params *params) :
@@ -24,6 +28,13 @@ class TripleIntegratorModel : public DynamicModel {
     }
   virtual ~TripleIntegratorModel() {}
 
+  /**
+   * @brief State space model
+   * 
+   * @param x State: t, x, vx, vy, y, vy, ay, z, vz, az
+   * @param u Input: ax, ay, az
+   * @return State 
+   */
   State StateSpaceModel(const State &x, const Input &u) const {
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> A(10, 10);
     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> B(10, 3);
