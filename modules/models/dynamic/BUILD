@@ -4,6 +4,7 @@ cc_library(
         "integration.hpp",
         "single_track.hpp",
         "dynamic_model.hpp",
+        "triple_integrator.hpp",
     ],
     deps = [
         "//modules/commons:commons",
