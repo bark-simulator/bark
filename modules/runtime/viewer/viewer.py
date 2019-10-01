@@ -142,12 +142,34 @@ class BaseViewer(Viewer):
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
                 self.drawPolygon2d(transformed_polygon, color, alpha) # fade to 0.2 after 10 steps
-
+    
+    def drawGoalDefinition(self, goal_definition):
+        if isinstance(goal_definition, GoalDefinitionPolygon):
+            self.drawPolygon2d(goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
+        elif isinstance(goal_definition, GoalDefinitionStateLimits):
+            self.drawPolygon2d(goal_definition.xy_limits, self.eval_goal_color, alpha=0.9)
+        elif isinstance(goal_definition, GoalDefinitionSequential):
+            prev_center = np.array([])
+            for idx, goal_def in enumerate(goal_definition.sequential_goals):
+                self.drawGoalDefinition(goal_def)
+                goal_pos = None
+                if isinstance(goal_def, GoalDefinitionPolygon):
+                    goal_pos = goal_def.goal_shape.center
+                elif isinstance(goal_def, GoalDefinitionStateLimits):
+                    goal_pos = goal_def.xy_limits.center
+                self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
+                if prev_center.any():
+                    line = Line2d()
+                    line.addPoint(Point2d(prev_center[0], prev_center[1]))
+                    line.addPoint(Point2d(goal_pos[0], goal_pos[1]))
+                    self.drawLine2d(line,color=self.eval_goal_color, alpha=0.9)
+                prev_center = goal_pos
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
-        self.drawMap(world.map.get_open_drive_map())
+        if world.map:
+            self.drawMap(world.map.get_open_drive_map())
 
         # draw agents
         for _, agent in world.agents.items():
@@ -158,10 +180,7 @@ class BaseViewer(Viewer):
             self.drawAgent(agent, color)
 
             if self.draw_eval_goals and agent.goal_definition:
-                if isinstance(agent.goal_definition, GoalDefinitionPolygon):
-                    self.drawPolygon2d(agent.goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
-                elif isinstance(agent.goal_definition, GoalDefinitionStateLimits):
-                    self.drawPolygon2d(agent.goal_definition.xy_limits, self.eval_goal_color, alpha=0.9)
+                self.drawGoalDefinition(agent.goal_definition)
 
         self.drawText(position=(0.1,0.9), text="Scenario {}".format(scenario_idx), fontsize=18)
 
