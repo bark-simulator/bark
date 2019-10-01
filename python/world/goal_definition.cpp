@@ -6,6 +6,7 @@
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/geometry/polygon.hpp"
 
 namespace py = pybind11;
@@ -65,4 +66,29 @@ void python_goal_definition(py::module m)
           return new GoalDefinitionStateLimits(t[0].cast<Polygon>(), t[1].cast<
                   std::pair<float, float>>());
         }));
+
+      
+      py::class_<GoalDefinitionSequential, GoalDefinition,
+        std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")
+    .def(py::init<>())
+    .def(py::init<const std::vector<GoalDefinitionPtr>&>())
+    .def("__repr__", [](const GoalDefinitionSequential &g) {
+      return "bark.world.goal_definition.GoalDefinitionSequential";
+    })
+    .def_property_readonly("sequential_goals", &GoalDefinitionSequential::get_sequential_goals)
+    .def(py::pickle(
+        [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(g.get_sequential_goals());
+        },
+        [](py::tuple t) { // __setstate__
+          if (t.size() != 1)
+                throw std::runtime_error("Invalid GoalDefinitionSequential state!");
+
+          return new GoalDefinitionSequential(t[0].cast<std::vector<GoalDefinitionPtr>>());
+        }));
+
+
+
+
 }
