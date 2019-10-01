@@ -18,7 +18,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         db = BenchmarkDatabase(database_root="external/benchmark_database_release")
         evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollisionEgoAgent,
                       "max_steps": EvaluatorStepCount}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>20}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
                                         
