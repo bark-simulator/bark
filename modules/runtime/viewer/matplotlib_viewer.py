@@ -56,9 +56,13 @@ class MPViewer(BaseViewer):
                 trajectory[:, int(StateDefinition.Y_POSITION)],
                 color=self.getColor(color))
 
-    def drawText(self, position, text, **kwargs):
-        self.axes.text(position[0], position[1], text, horizontalalignment='center',
+    def drawText(self, position, text, coordinate="axes", **kwargs):
+        if coordinate=="axes":
+            self.axes.text(position[0], position[1], text, horizontalalignment='center',
              verticalalignment='top', transform=self.axes.transAxes, **kwargs)
+        else:
+            self.axes.text(position[0], position[1], text, horizontalalignment='center',
+             verticalalignment='top', **kwargs)
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):
