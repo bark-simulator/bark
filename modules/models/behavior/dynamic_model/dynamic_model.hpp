@@ -35,7 +35,10 @@ class DynamicBehaviorModel : public BehaviorModel {
 
   BehaviorModel *Clone() const;
 
-  void set_action(const Input& inp) { current_action_ = inp; }
+  void set_action(const Input& inp) { 
+    current_action_.resize(inp.rows(), 1);
+    current_action_ = inp;
+  }
   Input get_action() const { return current_action_; }
 
  private:
