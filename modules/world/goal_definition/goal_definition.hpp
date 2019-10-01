@@ -22,7 +22,7 @@ class GoalDefinition  {
     GoalDefinition() {}
     virtual ~GoalDefinition() {}
 
-    virtual bool AtGoal(const modules::world::objects::Agent& agent) const = 0;
+    virtual bool AtGoal(const modules::world::objects::Agent& agent) = 0;
 };
 
 typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;
