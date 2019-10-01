@@ -47,8 +47,8 @@ TEST(triple_integrator_model, dynamic_test) {
   using namespace modules::models::dynamic;
   using namespace modules::commons;
 
-  State x(10);
-  x << 0,  // time
+  State x(15);
+  x << 0, 0, 0, 0, 0, 0,  // time, x, y, theta, v, min_space
        0, 1, 0,  // x, vx, ax
        0, 1, 0,  // y, vy, ay
        0, 1, 0;  // z, vz, az
