@@ -24,12 +24,11 @@ class DatabaseRunnerTests(unittest.TestCase):
                                         
 
         benchmark_runner = BenchmarkRunner(benchmark_database=db,
-                                          evaluators=evaluators,
-                                          terminal_when=terminal_when,
-                                          behaviors=behaviors_tested)
+                                           evaluators=evaluators,
+                                           terminal_when=terminal_when,
+                                           behaviors=behaviors_tested)
 
-        benchmark_runner.run(2) 
-
+        #benchmark_runner.run(1)
         print(benchmark_runner.dataframe.to_string())
         
 
