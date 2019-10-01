@@ -108,6 +108,18 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(np.array_equal(goal_definition.xy_limits.center, \
                                         goal_definition_after.xy_limits.center))
 
+
+        goal_definition2 = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
+        goal_definition_sequential = GoalDefinitionSequential([goal_definition, goal_definition2])
+        goal_definition_sequential_after = pickle_unpickle(goal_definition_sequential)
+
+        sequential_goals_after = goal_definition_sequential_after.sequential_goals
+        self.assertTrue(np.array_equal(sequential_goals_after[0].xy_limits.toArray(), \
+                                        goal_definition.xy_limits.toArray()))
+
+        self.assertTrue(np.array_equal(sequential_goals_after[1].xy_limits.toArray(), \
+                                        goal_definition2.xy_limits.toArray()))
+
     def test_agent_pickle(self):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
