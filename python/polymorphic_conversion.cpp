@@ -12,11 +12,13 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_sequential.hpp"
 
 namespace py = pybind11;
 
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
+using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorConstantVelocity;
 
@@ -49,6 +51,8 @@ py::tuple goal_definition_to_python(GoalDefinitionPtr goal_definition) {
     goal_definition_name = "GoalDefinitionPolygon";
   } else if(typeid(*goal_definition) == typeid(GoalDefinitionStateLimits)) {
     goal_definition_name = "GoalDefinitionStateLimits";
+  } else if(typeid(*goal_definition) == typeid(GoalDefinitionSequential)) {
+    goal_definition_name = "GoalDefinitionSequential";
   } else {
     throw;
   }
@@ -61,6 +65,8 @@ GoalDefinitionPtr python_to_goal_definition(py::tuple t) {
       return std::make_shared<GoalDefinitionPolygon>(t[0].cast<GoalDefinitionPolygon>()); 
   } else if(goal_definition_name.compare("GoalDefinitionStateLimits")==0) {
     return std::make_shared<GoalDefinitionStateLimits>(t[0].cast<GoalDefinitionStateLimits>());
+  } else if(goal_definition_name.compare("GoalDefinitionSequential")==0) {
+    return std::make_shared<GoalDefinitionSequential>(t[0].cast<GoalDefinitionSequential>());
   } else {
     throw;
   }
