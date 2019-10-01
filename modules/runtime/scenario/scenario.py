@@ -64,6 +64,8 @@ class Scenario:
       self.__dict__.update(sdict)
 
   def setup_map(self, world, _map_file_name):
+    if not _map_file_name:
+        return world
     xodr_parser = XodrParser(_map_file_name )
     map_interface = MapInterface()
     map_interface.set_open_drive_map(xodr_parser.map)

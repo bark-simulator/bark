@@ -56,13 +56,16 @@ class ModelJsonConversion:
     agent_json["planned_trajectory"] = agent.planned_trajectory.tolist()
     return agent_json
 
-  def convert_model(self, model, params=None):
+  def convert_model(self, model, params=None, dynamic_model=None):
     if isinstance(model,str):
       try:
         if params is None:
           return eval("{}()".format(model))
         else:
-          return eval("{}(params)".format(model))                
+          try:
+            return eval("{}(params)".format(model))    
+          except:
+            return eval("{}(dynamic_model, params)".format(model))                 
       except NameError:
         raise NameError("Unkown model type: {}".format(input))
     else:
