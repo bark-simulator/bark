@@ -24,7 +24,7 @@ class GoalDefinitionPolygon : public GoalDefinition  {
   explicit GoalDefinitionPolygon(const modules::geometry::Polygon& goal_shape) :
     goal_shape_(goal_shape) {}
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent) const;
+  virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
   const modules::geometry::Polygon& get_shape() const {return goal_shape_;}
 

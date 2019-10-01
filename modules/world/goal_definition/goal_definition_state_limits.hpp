@@ -29,7 +29,7 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
                              xy_limits_(xy_limits),
                              angle_limits_(angle_limits) {}
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent) const;
+  virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
   const modules::geometry::Polygon& get_xy_limits() const {return xy_limits_;}
   const std::pair<float,float> get_angle_limits() const {return angle_limits_;}
