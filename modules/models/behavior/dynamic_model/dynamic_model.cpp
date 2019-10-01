@@ -6,6 +6,7 @@
 #include <cmath>
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/dynamic/integration.hpp"
+#include "modules/models/dynamic/triple_integrator.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -16,6 +17,7 @@ using dynamic::StateDefinition::X_POSITION;
 using dynamic::StateDefinition::Y_POSITION;
 using dynamic::StateDefinition::THETA_POSITION;
 using dynamic::StateDefinition::VEL_POSITION;
+using dynamic::TripleIntegratorModel;
 
 
 DynamicBehaviorModel::DynamicBehaviorModel(
@@ -60,14 +62,14 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
                                          dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;
-    if (traj.rows() > 5) {
+    if (std::dynamic_pointer_cast<TripleIntegratorModel>(dynamic_model_)) {
       traj(i, 1) = next_state(6);
       traj(i, 2) = next_state(9);
       traj(i, 3) = atan2(next_state(10), next_state(7));
-      traj(i, 4) = 0; //next_state(7);
+      traj(i, 4) = 0;  // next_state(7);
     }
   }
- 
+
   // std::cout << "=====================" << std::endl;
   // std::cout << traj << std::endl;
   this->set_last_trajectory(traj);
