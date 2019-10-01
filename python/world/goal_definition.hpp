@@ -18,7 +18,7 @@ class PyGoalDefinition : public GoalDefinition {
  public:
   using GoalDefinition::GoalDefinition;
 
-  bool AtGoal(const modules::world::objects::Agent& agent) const override {
+  bool AtGoal(const modules::world::objects::Agent& agent) override {
     PYBIND11_OVERLOAD_PURE(
         bool,
         GoalDefinition,

@@ -36,11 +36,11 @@ class GoalDefinitionSequential : public GoalDefinition  {
 
   std::vector<GoalDefinitionPtr> get_sequential_goals() const {return sequential_goals_;}
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent) const;
+  virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
  private:
- std::vector<GoalDefinitionPtr> sequential_goals_;
- int last_sequential_goal_reached_;
+  std::vector<GoalDefinitionPtr> sequential_goals_;
+  int last_sequential_goal_reached_;
 };
 
 

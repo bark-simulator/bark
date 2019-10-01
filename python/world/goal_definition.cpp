@@ -14,6 +14,7 @@ using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
+using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
 
 void python_goal_definition(py::module m)
