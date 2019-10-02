@@ -76,6 +76,7 @@ void python_goal_definition(py::module m)
     .def("__repr__", [](const GoalDefinitionSequential &g) {
       return "bark.world.goal_definition.GoalDefinitionSequential";
     })
+    .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
     .def_property_readonly("sequential_goals", &GoalDefinitionSequential::get_sequential_goals)
     .def(py::pickle(
         [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__

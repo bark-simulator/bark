@@ -21,7 +21,7 @@ sim_step_time = param_server["simulation"]["step_time",
                                         "Step-time used in simulation",
                                         0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
-                                                "execution in real-time or faster", 1]
+                                                  "execution in real-time or faster", 1]
 scenario, idx = scenario_generation.get_next_scenario()
 
 
