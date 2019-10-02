@@ -84,7 +84,6 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
                                                    param_server=self._local_params)
       agent.set_agent_id(agent_json["drone_model"]["id"])
       scenario._agent_list.append(agent)
-      agent_json["state"] = agent_json["state"]
 
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",
                                 "ID of the ego-agent",
