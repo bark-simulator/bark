@@ -53,7 +53,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     this->get_params()->get_int("DynamicModel::state_dimension",
                                 "state vector length", 5));
 
-  //std::cout << ego_vehicle_state << std::endl;
+  // std::cout << ego_vehicle_state << std::endl;
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(*dynamic_model_,
@@ -66,7 +66,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
       traj(i, 1) = next_state(6);
       traj(i, 2) = next_state(9);
       traj(i, 3) = atan2(next_state(10), next_state(7));
-      traj(i, 4) = 0;  // next_state(7);
+      traj(i, 4) = sqrt(pow(next_state(7), 2) + pow(next_state(10), 2));
     }
   }
 
