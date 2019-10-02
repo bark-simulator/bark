@@ -25,7 +25,7 @@ class GoalDefinitionSequential : public GoalDefinition  {
                                sequential_goals_(),
                                last_sequential_goal_reached_(NO_GOAL_REACHED) {}
   GoalDefinitionSequential(const std::vector<GoalDefinitionPtr>&
-                           sequential_goals) : 
+                           sequential_goals) :
                            GoalDefinition(),
                            sequential_goals_(sequential_goals),
                            last_sequential_goal_reached_(NO_GOAL_REACHED) {}
@@ -34,15 +34,7 @@ class GoalDefinitionSequential : public GoalDefinition  {
     sequential_goals_.push_back(sequential_goal);
   }
 
-  GoalDefinitionPtr GetNextGoal(const modules::world::objects::Agent& agent) {
-    BARK_EXPECT_TRUE (!sequential_goals_.empty());
-    if (last_sequential_goal_reached_ == NO_GOAL_REACHED)
-      return sequential_goals_[0];
-
-    if (last_sequential_goal_reached_ + 1 < sequential_goals_.size())
-      return sequential_goals_[last_sequential_goal_reached_+1];
-    return nullptr;
-  }
+  GoalDefinitionPtr GetNextGoal(const modules::world::objects::Agent& agent);
 
   std::vector<GoalDefinitionPtr> get_sequential_goals() const {
     return sequential_goals_;
