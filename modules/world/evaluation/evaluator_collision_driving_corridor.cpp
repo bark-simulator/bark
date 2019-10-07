@@ -23,15 +23,14 @@ EvaluationReturn EvaluatorCollisionDrivingCorridor::Evaluate(const world::World 
   for (auto agent : world.get_agents()) {
     poly_agent = agent.second->GetPolygonFromState(
       agent.second->get_current_state());
-    lane_inner = agent.second->get_local_map()->get_horizon_driving_corridor().get_inner();
-    lane_outer = agent.second->get_local_map()->get_horizon_driving_corridor().get_outer();
-    if (Collide(poly_agent, lane_outer) || Collide(poly_agent, lane_inner)) {
+    const auto corridor_poly = agent.second->get_local_map()->get_driving_corridor().CorridorPolygon();
+    
+    if (!Within(poly_agent, corridor_poly)) {
       colliding = true;
       break;
     }
   }
-  return false;
-  //return colliding;
+  return colliding;
 }
 
 }  // namespace evaluation
