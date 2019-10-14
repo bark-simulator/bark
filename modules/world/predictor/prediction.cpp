@@ -16,7 +16,7 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
   uint32_t n_agents = 10;
   for (auto const &agent : agents) {
     real_agents_to_predictions_.insert(std::map<AgentId, std::vector<AgentId>>::value_type(agent.first, {}));
-    predictions_for_all_agents_.insert(std::map<AgentId, AgentPrediction>::value_type(agent.first, AgentPrediction(*agent.second)));
+    predictions_for_all_agents_.insert(std::map<AgentId, AgentPrediction>::value_type(agent.first, AgentPrediction(agent.second->get_agent_id(), agent.second->get_shape())));
     AddAgentsForIntersectionDecisions(agent.second, n_agents);
     AddAgentsForLaneChangeDecisions(agent.second, n_agents);
   }
@@ -58,8 +58,9 @@ void Prediction::AddAgentsForIntersectionDecisions(const AgentPtr agent, uint32_
     for (auto const lane_id : possible_path) {
       followed_lane.push_back(lane_id);
     }
-    MotionHypothesis motion_hypothesis = {n_agents, 1.0f / possible_paths.size(), followed_lane, {}};
-    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(n_agents, motion_hypothesis);
+    float likelihood = possible_path.size() == 1 ? 0.9f : 1.0f / possible_paths.size();
+    MotionHypothesis motion_hypothesis = {n_agents, likelihood, followed_lane, {}};
+    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(motion_hypothesis);
     prediction_agent->set_agent_id(n_agents++);
 
     observed_world_.add_agent(prediction_agent);
@@ -85,7 +86,7 @@ void Prediction::AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t 
 
     real_agents_to_predictions_.at(agent->get_agent_id()).push_back(n_agents);
     MotionHypothesis motion_hypothesis = {n_agents, 0.1f, {}, {}};
-    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(n_agents, motion_hypothesis);
+    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(motion_hypothesis);
     prediction_agent->set_agent_id(n_agents++);
 
     observed_world_.add_agent(prediction_agent);
@@ -104,7 +105,7 @@ void Prediction::AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t 
 
     real_agents_to_predictions_.at(agent->get_agent_id()).push_back(n_agents);
     MotionHypothesis motion_hypothesis = {n_agents, 0.1f, {}, {}};
-    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(n_agents, motion_hypothesis);
+    predictions_for_all_agents_.at(agent->get_agent_id()).add_hypothesis(motion_hypothesis);
     prediction_agent->set_agent_id(n_agents++);
 
     observed_world_.add_agent(prediction_agent);

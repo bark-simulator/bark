@@ -13,16 +13,16 @@ using models::dynamic::StateDefinition;
 using objects::Agent;
 using objects::AgentId;
 
-class AgentPrediction : protected Agent {
+class AgentPrediction {
   public:
-    explicit AgentPrediction(const Agent &agent) : Agent(agent) {}
+    explicit AgentPrediction(const AgentId agent_id, const geometry::Polygon &agent_shape) : agent_id_(agent_id), agent_shape_(agent_shape) {}
 
-    AgentId get_agent_id() const { return Agent::get_agent_id(); }
-    geometry::Polygon get_shape() const { return Agent::get_shape(); }
+    AgentId get_agent_id() const { return agent_id_; }
+    geometry::Polygon get_shape() const { return agent_shape_; }
     std::map<HypothesisId, MotionHypothesis> get_motion_hypotheses() const { return motion_hypotheses_; }
 
-    void add_hypothesis(const HypothesisId hypothesis_id, const MotionHypothesis &motion_hypothesis) {
-      motion_hypotheses_.insert(std::map<HypothesisId, MotionHypothesis>::value_type(hypothesis_id, motion_hypothesis));
+    void add_hypothesis(const MotionHypothesis &motion_hypothesis) {
+      motion_hypotheses_.insert(std::map<HypothesisId, MotionHypothesis>::value_type(motion_hypothesis.id, motion_hypothesis));
     }
 
     void update_hypothesis(const HypothesisId hypothesis_id, const StochasticState &stochastic_state) {
@@ -30,6 +30,8 @@ class AgentPrediction : protected Agent {
     }
 
   private:
+    AgentId agent_id_;
+    geometry::Polygon agent_shape_;
     std::map<HypothesisId, MotionHypothesis> motion_hypotheses_;
 };
 
