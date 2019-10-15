@@ -17,6 +17,11 @@ bool MapInterface::interface_from_opendrive(
     const OpenDriveMapPtr &open_drive_map)
 {
   open_drive_map_ = open_drive_map;
+
+  RoadgraphPtr roadgraph(new Roadgraph());
+  roadgraph->Generate(open_drive_map);
+  roadgraph_ = roadgraph;
+
   rtree_lane_.clear();
   for (auto &road : open_drive_map_->get_roads())
   {
@@ -24,14 +29,14 @@ bool MapInterface::interface_from_opendrive(
     {
       for (auto &lane : lane_section->get_lanes())
       {
-        // TODO(@fortiss): do not use left line and do not want pos 0
         if (lane.second->get_lane_position() != 0)
         {
-          auto lane_left_linestring = lane.second->get_line().obj_;
-          LaneSegment left_lane_segment(
-              *lane_left_linestring.begin(),
-              *(lane_left_linestring.end() - 1));
-          rtree_lane_.insert(std::make_pair(left_lane_segment, lane.second));
+          std::pair<LanePtr, LanePtr> lb = roadgraph_->ComputeLaneBoundaries(lane.second->get_id());
+          if (lb.first && lb.second) {
+            auto center = ComputeCenterLine(lb.first->get_line(), lb.second->get_line());
+            LaneSegment center_lane_segment(*center.begin(),*(center.end() - 1));
+            rtree_lane_.insert(std::make_pair(center_lane_segment, lane.second));
+          }
         }
       }
     }
