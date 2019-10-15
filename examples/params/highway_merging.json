@@ -1,39 +1,91 @@
 {
+    "Visualization": {
+        "Map": {
+            "Lanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Agents": {
+            "DrawEvalGoals": false,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.2
+            ],
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "AlphaVehicle": 0.8,
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
-                "EgoGoal": [
-                    5113,
-                    5283
+                "EgoGoalEnd": [
+                    5128,
+                    5200
                 ],
-                "OthersSource": [
+                "EgoRoute": [
                     [
-                        5111.626,
-                        5006.8305
+                        5116,
+                        5072
                     ],
                     [
                         5116,
-                        5062
+                        5074
+                    ]
+                ],
+                "OthersSource": [
+                    [
+                        5000.626,
+                        5006.8305
                     ]
                 ],
                 "OthersSink": [
                     [
-                        5110.789,
+                        5111.626,
                         5193.1725
-                    ],
-                    [
-                        5116,
-                        5200
                     ]
                 ],
                 "VehicleDistanceRange": [
-                    7,
-                    10
+                    2,
+                    20
                 ],
                 "VehicleVelocityRange": [
-                    10,
-                    20
+                    2,
+                    15
                 ],
                 "VehicleModel": {
                     "behavior_model": "BehaviorIDMClassic",
@@ -132,5 +184,8 @@
     },
     "agent": {
         "MaxHistoryLength": 50
+    },
+    "World": {
+        "remove_agents_out_of_map": true
     }
 }

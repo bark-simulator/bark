@@ -14,6 +14,7 @@
 #include "modules/world/prediction/prediction_settings.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/map/local_map.hpp"
+#include "modules/world/map/driving_corridor.hpp"
 
 namespace modules {
 namespace world {
@@ -34,7 +35,7 @@ using modules::models::behavior::DiscreteAction;
 using modules::world::prediction::PredictionSettings;
 
 
-class ObservedWorld : protected World {
+class ObservedWorld : public World {
  public:
     ObservedWorld(const World& world, const AgentId& ego_agent_id) :
       World(world),

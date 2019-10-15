@@ -39,7 +39,7 @@ TEST(world, world_init)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
@@ -57,7 +57,7 @@ TEST(world, world_step)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
@@ -126,7 +126,7 @@ TEST(world, world_collision)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -155,7 +155,7 @@ TEST(world, world_no_collision)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -184,7 +184,7 @@ TEST(world, world_check_driving_corridor)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionDrivingCorridor());
 
@@ -207,7 +207,7 @@ TEST(world, nearest_agents)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
@@ -232,9 +232,10 @@ TEST(world, nearest_agents)
   EXPECT_EQ(nearest_agents.size(), 1);
   EXPECT_EQ(nearest_agents.begin()->second->get_current_state(), init_state1 );
   
-  /*AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f,0.0f),2);
+  AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f,0.0f),2);
 
-  EXPECT_EQ(nearest_agents2.size(), 2);
+  // Comment as this crashes in CI -> TODO: Why?
+  /*EXPECT_EQ(nearest_agents2.size(), 2);
   EXPECT_EQ(nearest_agents2.begin()->second->get_current_state(), init_state1 );
   EXPECT_EQ(nearest_agents2[agent2->get_agent_id()]->get_current_state(), init_state2 );
 
@@ -248,14 +249,15 @@ TEST(world, nearest_agents)
   AgentMap nearest_agents3 = world->GetNearestAgents(Point2d(4.0f,5.0f),2);
   EXPECT_EQ(nearest_agents3.size(), 2);
   EXPECT_EQ(nearest_agents3[agent1->get_agent_id()]->get_current_state(), init_state1 );
-  EXPECT_EQ(nearest_agents3[agent3->get_agent_id()]->get_current_state(), init_state3 );*/
+  EXPECT_EQ(nearest_agents3[agent3->get_agent_id()]->get_current_state(), init_state3 );
+  */
 }
 
 TEST(world, agents_intersection_polygon)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel());
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 

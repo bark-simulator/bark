@@ -75,17 +75,17 @@ struct Shape {
   }
 
   virtual ~Shape() {}
-  virtual Shape *Clone() const = 0;
+  virtual std::shared_ptr<Shape> Clone() const = 0;
   virtual std::string ShapeToString() const;
 
   // rotates object
-  Shape<G, T> *rotate(const float &a) const;
+  std::shared_ptr<Shape<G, T>> rotate(const float &a) const;
 
   // translates object
-  Shape<G, T> *translate(const Point2d &point) const;
+  std::shared_ptr<Shape<G, T>> translate(const Point2d &point) const;
 
   // return object transform
-  Shape<G, T> *transform(const Pose &pose) const;
+  std::shared_ptr<Shape<G, T>> transform(const Pose &pose) const;
 
   virtual bool Valid() const;
 
@@ -117,13 +117,13 @@ inline bool Shape<G, T>::Valid() const {
   std::string message;
   bool valid = boost::geometry::is_valid(obj_, message);
   if (!valid) {
-    std::cout << "why not valid? " << message << std::endl;
+    LOG(ERROR) << "Polygon not valid. Why not valid? " << message;
   }
   return valid;
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::rotate(const float &a) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::rotate(const float &a) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);
@@ -140,20 +140,20 @@ inline Shape<G, T> *Shape<G, T>::rotate(const float &a) const {
   G obj_transformed;
   boost::geometry::transform(obj_rotated, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
   shape_transformed->obj_ = obj_transformed;
   shape_transformed->center_[2] += a;
   return shape_transformed;
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::translate(const Point2d &point) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::translate(const Point2d &point) const {
   namespace trans = boost::geometry::strategy::transform;
   trans::translate_transformer<double, 2, 2> translate_backwards(bg::get<0>(point), bg::get<1>(point));
   G obj_transformed;
   boost::geometry::transform(obj_, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
   shape_transformed->obj_ = obj_transformed;
   shape_transformed->center_[0] += bg::get<0>(point);
   shape_transformed->center_[1] += bg::get<1>(point);
@@ -161,7 +161,7 @@ inline Shape<G, T> *Shape<G, T>::translate(const Point2d &point) const {
 }
 
 template <typename G, typename T>
-inline Shape<G, T> *Shape<G, T>::transform(const Pose &pose) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::transform(const Pose &pose) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);
@@ -178,7 +178,7 @@ inline Shape<G, T> *Shape<G, T>::transform(const Pose &pose) const {
   G obj_transformed;
   boost::geometry::transform(obj_rotated, obj_transformed, translate_backwards);
 
-  Shape<G, T> *shape_transformed = this->Clone();
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
   shape_transformed->obj_ = obj_transformed;
   shape_transformed->center_[0] += pose[0];
   shape_transformed->center_[1] += pose[1];

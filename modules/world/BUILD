@@ -6,6 +6,7 @@ cc_library(
         "//modules/world/opendrive:opendrive",
         "//modules/world/map:roadgraph",
         "//modules/world/map:local_map",
+        "//modules/world/map:driving_corridor",
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/models/behavior/motion_primitives:motion_primitives",
@@ -18,18 +19,17 @@ cc_library(
 )
 
 cc_library(
-    name = "world_hdr",
+    name = "include",
     hdrs = ["prediction/prediction_settings.hpp"] + glob(["objects/*.hpp", "world*.hpp", "observed_world.hpp"]),
     deps = [
-        "//modules/world/opendrive:opendrive",
-        "//modules/world/map:roadgraph",
-        "//modules/world/map:local_map",
-        "//modules/commons:commons",
-        "//modules/models/behavior:behavior",
-        "//modules/models/execution:execution",
-	    "//modules/models/dynamic:dynamic",
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world/goal_definition:goal_definition"
+        "//modules/geometry:include",
+        "//modules/world/map:include",
+         "//modules/world/opendrive:include",
+        "//modules/commons:include",
+        "//modules/models:include",
+        "//modules/world/evaluation:include",
+        "//modules/world/goal_definition:include"
     ],
     visibility = ["//visibility:public"],
 )
+

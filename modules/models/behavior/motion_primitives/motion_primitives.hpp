@@ -23,7 +23,8 @@ using world::ObservedWorld;
 
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
-  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params);
+  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
+                           commons::Params *params);
 
   virtual ~BehaviorMotionPrimitives() {}
 
@@ -32,6 +33,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   typedef unsigned int MotionIdx;
   MotionIdx AddMotionPrimitive(const Input& dynamic_input);
+  MotionIdx GetNumMotionPrimitives() const {return motion_primitives_.size();}
   void ActionToBehavior(const MotionIdx& motion_idx);
 
   virtual BehaviorModel *Clone() const;

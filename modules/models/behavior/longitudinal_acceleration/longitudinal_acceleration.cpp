@@ -52,8 +52,9 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       traj(i, StateDefinition::X_POSITION) = boost::geometry::get<0>(traj_point); // checked
       traj(i, StateDefinition::Y_POSITION) = boost::geometry::get<1>(traj_point); // checked
       traj(i, StateDefinition::THETA_POSITION) = traj_angle; // checked
-      traj(i, StateDefinition::VEL_POSITION) = std::max(std::min(current_vel, max_velocity), min_velocity); // checked
-      current_vel = current_vel + acceleration * sample_time;
+      traj(i, StateDefinition::VEL_POSITION) = current_vel; // checked
+      const float temp_velocity = current_vel + acceleration * sample_time;
+      current_vel = std::max(std::min(temp_velocity, max_velocity), min_velocity);
       run_time += sample_time;
     }
 

@@ -7,10 +7,15 @@ import numpy as np
 from bark.viewer import Viewer
 from bark.geometry import *
 from bark.models.dynamic import *
+from bark.world.opendrive import *
+from bark.world.goal_definition import *
+from modules.runtime.commons.parameters import ParameterServer
 
 
 class BaseViewer(Viewer):
     def __init__(self, params=None, **kwargs):
+        if(params is None):
+            params = ParameterServer()
         Viewer.__init__(self)
         # color parameters
         # agents
@@ -21,6 +26,7 @@ class BaseViewer(Viewer):
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
+        self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", True]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
@@ -32,7 +38,7 @@ class BaseViewer(Viewer):
 
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.use_world_bounds = kwargs.pop("use_world_bounds", True)
+        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
 
         self.dynamic_world_x_range = self.world_x_range.copy()
@@ -92,7 +98,7 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha):
+    def drawLine2d(self, line2d, color, alpha, line_style=None):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha):
@@ -102,6 +108,9 @@ class BaseViewer(Viewer):
         pass
 
     def drawObstacle(self, obstacle):
+        pass
+
+    def drawText(self, position, text, **kwargs):
         pass
 
     def getColor(self, color):
@@ -117,10 +126,50 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
 
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawHistory(self, agent, color):
+        shape = agent.shape
+        if isinstance(shape, Polygon2d):
+            history = agent.history
+            lh = len(history)
+            for idx, state_action in enumerate(history):
+                state = state_action[0]
+                pose = np.zeros(3)
+                # pybind creates column based vectors, initialization maybe row-based -> we consider both
+                pose[0] = state[int(StateDefinition.X_POSITION)]
+                pose[1] = state[int(StateDefinition.Y_POSITION)]
+                pose[2] = state[int(StateDefinition.THETA_POSITION)]
+                transformed_polygon = shape.transform(pose)
+                alpha=1-0.8*(lh-idx)/4
+                alpha = 0 if alpha<0 else alpha
+                self.drawPolygon2d(transformed_polygon, color, alpha) # fade to 0.2 after 10 steps
+    
+    def drawGoalDefinition(self, goal_definition):
+        if isinstance(goal_definition, GoalDefinitionPolygon):
+            self.drawPolygon2d(goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
+        elif isinstance(goal_definition, GoalDefinitionStateLimits):
+            self.drawPolygon2d(goal_definition.xy_limits, self.eval_goal_color, alpha=0.9)
+        elif isinstance(goal_definition, GoalDefinitionSequential):
+            prev_center = np.array([])
+            for idx, goal_def in enumerate(goal_definition.sequential_goals):
+                self.drawGoalDefinition(goal_def)
+                goal_pos = None
+                if isinstance(goal_def, GoalDefinitionPolygon):
+                    goal_pos = goal_def.goal_shape.center
+                elif isinstance(goal_def, GoalDefinitionStateLimits):
+                    goal_pos = goal_def.xy_limits.center
+                self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
+                if prev_center.any():
+                    line = Line2d()
+                    line.addPoint(Point2d(prev_center[0], prev_center[1]))
+                    line.addPoint(Point2d(goal_pos[0], goal_pos[1]))
+                    self.drawLine2d(line,color=self.eval_goal_color, alpha=0.9)
+                prev_center = goal_pos
+
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
-        self.drawMap(world.map.get_open_drive_map())
+        if world.map:
+            self.drawMap(world.map.get_open_drive_map())
 
         # draw agents
         for _, agent in world.agents.items():
@@ -130,15 +179,21 @@ class BaseViewer(Viewer):
                 color = self.color_other_agents
             self.drawAgent(agent, color)
 
-            if self.draw_eval_goals:
-                self.drawPolygon2d(agent.goal_definition.goal_shape, self.eval_goal_color, alpha=0.9)
+            if self.draw_eval_goals and agent.goal_definition:
+                self.drawGoalDefinition(agent.goal_definition)
+
+        self.drawText(position=(0.1,0.9), text="Scenario {}".format(scenario_idx), fontsize=18)
 
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.get_roads().items():
             for lane_section in road.lane_sections:
                 for _, lane in lane_section.get_lanes().items():
-                    self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries)
+                    dashed = False
+                    # center line is type none and is drawn as broken
+                    if lane.road_mark.type == RoadMarkType.broken or lane.road_mark.type == RoadMarkType.none: 
+                        dashed = True
+                    self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries, dashed)
 
 
     def drawAgent(self, agent, color):
@@ -156,9 +211,14 @@ class BaseViewer(Viewer):
         if self.draw_route:
             self.drawRoute(agent)
 
-    def drawDrivingCorridor(self, corridor, color):
+        self.drawHistory(agent, color)
+
+    def drawDrivingCorridor(self, corridor, color=None):
+        if color is None:
+            # generate random colour
+            color = list(np.random.choice(range(256), size=3)/256)
         if corridor.center.valid() and corridor.inner.valid() and corridor.outer.valid():
-            self.drawLine2d(corridor.center, color, 1)
+            self.drawLine2d(corridor.center, color, 1, True)
             self.drawLine2d(corridor.inner, color, 1)
             self.drawLine2d(corridor.outer, color, 1)
         else:

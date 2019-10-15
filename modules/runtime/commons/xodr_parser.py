@@ -51,11 +51,12 @@ class XodrParser(object):
 
     def parse_lane_road_mark(self, road_mark):
         new_road_mark = {}
-        new_road_mark["s_offset"] = road_mark.get("sOffset")
-        new_road_mark["type"] = RoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
-        new_road_mark["weight"] = road_mark.get("weight")
-        new_road_mark["color"] = RoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
-        new_road_mark["width"] = road_mark.get("width")
+        if str(road_mark.get("type")) in ["solid", "broken"]:
+            new_road_mark["s_offset"] = road_mark.get("sOffset")
+            new_road_mark["type"] = RoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
+            new_road_mark["weight"] = road_mark.get("weight")
+            new_road_mark["color"] = RoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
+            new_road_mark["width"] = road_mark.get("width")
         return new_road_mark
 
     def parse_lane_width(self, lane_width):
@@ -94,7 +95,9 @@ class XodrParser(object):
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
             if lane.find("roadMark") is not None:
-                new_lane["road_mark"] = self.parse_lane_road_mark(lane.find("roadMark"))
+                road_mark = self.parse_lane_road_mark(lane.find("roadMark"))
+                if road_mark: # if dict is not empty
+                    new_lane["road_mark"] = road_mark
             if lane.find("width") is not None:
                     new_lane["width"] = self.parse_lane_width(lane.find("width"))
             else:

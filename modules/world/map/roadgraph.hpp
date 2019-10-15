@@ -98,6 +98,8 @@ class Roadgraph {
 
   LanePtr get_laneptr(const LaneId& id) const;
 
+  std::vector<LaneId> get_all_laneids() const;
+
   //! LaneId of the neighboring lane and a flag if it exists or not
   std::pair<LaneId, bool> get_inner_neighbor(const LaneId& lane_id) const;
 

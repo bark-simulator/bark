@@ -11,12 +11,17 @@
 #include "modules/geometry/line.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/models/dynamic/single_track.hpp"
+#include "modules/models/dynamic/triple_integrator.hpp"
 #include "modules/models/dynamic/integration.hpp"
+#include "modules/commons/params/setter_params.hpp"
+#include "modules/commons/params/default_params.hpp"
+
 
 TEST(single_track_model, dynamic_test) {
   using namespace std;
   using namespace modules::geometry;
   using namespace modules::models::dynamic;
+  using namespace modules::commons;
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   x << 0, 0, 0, 0, 5;
@@ -25,7 +30,8 @@ TEST(single_track_model, dynamic_test) {
   u << 0, 0;
 
   DynamicModel *m;
-  SingleTrackModel single_track_model;
+  DefaultParams* params = new DefaultParams();
+  SingleTrackModel single_track_model(params);
   m = &single_track_model;
 
   float dt = 0.1;
@@ -34,6 +40,42 @@ TEST(single_track_model, dynamic_test) {
     cout << x << endl;
   }
 }
+
+TEST(triple_integrator_model, dynamic_test) {
+  using namespace std;
+  using namespace modules::geometry;
+  using namespace modules::models::dynamic;
+  using namespace modules::commons;
+
+  State x(15);
+  x << 0, 0, 0, 0, 0, 0,  // time, x, y, theta, v, min_space
+       0, 1, 0,  // x, vx, ax
+       0, 1, 0,  // y, vy, ay
+       0, 1, 0;  // z, vz, az
+
+  Input u0(3);
+  u0 << 0, 0, 0.;
+
+  DynamicModel *m;
+  DefaultParams* params = new DefaultParams();
+  TripleIntegratorModel triple_int_model(params);
+  m = &triple_int_model;
+
+  float dt = 0.1;
+  for (int i = 0; i < 10; i++) {
+    x = euler_int(*m, x, u0, dt);
+    cout << x << endl << endl;
+  }
+  // TODO(@hart): assert state
+  u0 << 1., 1., 1.;
+  for (int i = 0; i < 10; i++) {
+    x = euler_int(*m, x, u0, dt);
+    cout << x << endl << endl;
+  }
+  // TODO(@hart): assert state
+
+}
+
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

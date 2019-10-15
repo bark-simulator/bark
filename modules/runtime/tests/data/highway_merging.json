@@ -5,7 +5,7 @@
                 "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoal": [
                     5110.789,
-                    5283
+                    5283.0
                 ],
                 "OthersSource": [
                     [

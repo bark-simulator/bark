@@ -11,13 +11,16 @@ from bark.commons import Params
 class ParameterServer(Params):
     def __init__(self, **kwargs):
         Params.__init__(self)
+        self.param_filename = None
         if "filename" in kwargs:
             self.load(kwargs["filename"])
+            self.param_filename = kwargs["filename"]
         elif "json" in kwargs:
             self.convert_to_param(kwargs["json"])
         else:
             self.store = dict()
         self.param_descriptions = dict()
+        
 
     def __getitem__(self, key):
         if isinstance(key, tuple):
@@ -157,7 +160,9 @@ class ParameterServer(Params):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    # not used so far
+    def get_listlist_float(self, param_name, description, default_value):
+        return self.get_val_from_string(param_name, description, default_value)
+
     def access(self, param_name):
         return self[param_name]
 

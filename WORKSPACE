@@ -68,10 +68,18 @@ http_archive(
     ],
 )
 
-git_repository(
-    name = "com_google_ceres_solver",
-    commit = "e51e9b46f6ca88ab8b2266d0e362771db6d98067",
-    remote = "https://github.com/ceres-solver/ceres-solver",
+#git_repository(
+#    name = "com_google_ceres_solver",
+#    commit = "d7f428e5c7907c1dfb2ff34bc543d17a838920a7",
+#    remote = "https://github.com/ceres-solver/ceres-solver",
+#)
+
+http_archive(
+    name = "com_google_ceres_solver", 
+    strip_prefix = "ceres-solver-1.14.0", 
+    sha256 = "1296330fcf1e09e6c2f926301916f64d4a4c5c0ff12d460a9bc5d4c48411518f",
+    build_file = "@//tools/ceres:ceres.BUILD",
+    urls = ["https://github.com/ceres-solver/ceres-solver/archive/1.14.0.tar.gz"],
 )
 
 new_local_repository(
@@ -95,11 +103,35 @@ local_repository(
 
 # ------ Planner UCT --------------
 git_repository(
-    name = "planner_uct",
-    branch="master",
-    remote = "https://github.com/bark-simulator/planner-mcts"
+  name = "planner_uct",
+  branch="master",
+  remote = "https://github.com/bark-simulator/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
 # ---------------------------------
 
+# ------ Planner BARK-ML --------------
+git_repository(
+  name = "bark_ml",
+  branch="master",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+
+load("@bark_ml//utils:dependencies.bzl", "load_bark")
+load_bark()
+# ---------------------------------
+
+
+# -------- Benchmark Database -----------------------
+git_repository(
+  name = "benchmark_database",
+  branch="master",
+  remote = "https://github.com/bark-simulator/benchmark-database"
+)
+
+load("@benchmark_database//util:deps.bzl", "benchmark_database_dependencies")
+load("@benchmark_database//load:load.bzl", "benchmark_database_release")
+benchmark_database_dependencies()
+benchmark_database_release()
+# --------------------------------------------------

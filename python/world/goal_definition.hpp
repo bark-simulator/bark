@@ -8,8 +8,26 @@
 #define PYTHON_PYTHON_BINDINGS_WORLD_GOAL_DEFINITION_HPP_
 
 #include "python/common.hpp"
+#include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/world/objects/agent.hpp"
 
 namespace py = pybind11;
+using modules::world::goal_definition::GoalDefinition;
+
+class PyGoalDefinition : public GoalDefinition {
+ public:
+  using GoalDefinition::GoalDefinition;
+
+  bool AtGoal(const modules::world::objects::Agent& agent) override {
+    PYBIND11_OVERLOAD_PURE(
+        bool,
+        GoalDefinition,
+        AtGoal,
+        agent);
+  }
+
+};
+
 
 void python_goal_definition(py::module m);
 

@@ -27,7 +27,7 @@ class AgentTests(unittest.TestCase):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelInterpolate(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = Polygon2d([1.25, 1, 0], [
             Point2d(0, 0),
             Point2d(0, 2),
@@ -45,7 +45,7 @@ class AgentTests(unittest.TestCase):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelInterpolate(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = Polygon2d([1.25, 1, 0], [
             Point2d(0, 0),
             Point2d(0, 2),

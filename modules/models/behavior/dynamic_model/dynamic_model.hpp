@@ -27,6 +27,7 @@ class DynamicBehaviorModel : public BehaviorModel {
   DynamicBehaviorModel(const DynamicModelPtr& dynamic_model,
                        commons::Params *params);
 
+  DynamicBehaviorModel(DynamicBehaviorModel* other_behavior);
   virtual ~DynamicBehaviorModel() {}
 
   Trajectory Plan(float delta_time,
@@ -34,7 +35,10 @@ class DynamicBehaviorModel : public BehaviorModel {
 
   BehaviorModel *Clone() const;
 
-  void set_action(const Input& inp) { current_action_ = inp; }
+  void set_action(const Input& inp) { 
+    current_action_.resize(inp.rows(), 1);
+    current_action_ = inp;
+  }
   Input get_action() const { return current_action_; }
 
  private:

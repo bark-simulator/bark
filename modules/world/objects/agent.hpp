@@ -10,6 +10,7 @@
 #include "modules/commons/base_type.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/world/map/local_map.hpp"
+#include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -31,6 +32,7 @@ using models::dynamic::Trajectory;
 using modules::world::opendrive::LaneId;
 using modules::world::map::MapInterfacePtr;
 using modules::world::goal_definition::GoalDefinition;
+using modules::world::goal_definition::GoalDefinitionPtr;
 using models::dynamic::StateDefinition;
 
 class Agent : public Object {
@@ -44,7 +46,7 @@ class Agent : public Object {
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        const GoalDefinition& goal_definition = GoalDefinition(),
+        const GoalDefinitionPtr& goal_definition = GoalDefinitionPtr(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
         const geometry::Model3D &model_3d = geometry::Model3D());
 
@@ -60,7 +62,7 @@ class Agent : public Object {
 
   StateActionHistory get_state_input_history() const { return history_; }
 
-  const GoalDefinition& get_goal_definition() const {return goal_definition_;}
+  GoalDefinitionPtr get_goal_definition() const {return goal_definition_;}
 
   Trajectory get_execution_trajectory() const {
     return execution_model_->get_last_trajectory();
@@ -85,12 +87,8 @@ class Agent : public Object {
     behavior_model_ = behavior_model_ptr;
   }
 
-  void set_goal_definition(const GoalDefinition &goal_definition) {
+  void set_goal_definition(const GoalDefinitionPtr &goal_definition) {
     goal_definition_ = goal_definition;
-    local_map_->set_goal_definition(goal_definition_);
-    GenerateLocalMap();
-    // TODO(@hart): parameter
-    UpdateDrivingCorridor(20.0);
   }
 
   void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
@@ -119,7 +117,7 @@ class Agent : public Object {
   models::behavior::StateActionHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter
   uint32_t max_history_length_;
-  modules::world::goal_definition::GoalDefinition goal_definition_;
+  modules::world::goal_definition::GoalDefinitionPtr goal_definition_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;

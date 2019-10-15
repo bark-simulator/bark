@@ -10,7 +10,9 @@ cc_library(
         "//modules/geometry",
         "//modules/world/opendrive",
         "@boost//:geometry",
-        ":roadgraph"
+        ":roadgraph",
+        ":driving_corridor",
+
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
@@ -29,6 +31,22 @@ cc_library(
         "//modules/world/opendrive",
         "@boost//:geometry",
         "@boost//:graph"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "driving_corridor",
+    srcs = [
+        "driving_corridor.cpp"
+    ],
+    hdrs = [
+        "driving_corridor.hpp"
+    ],
+    deps = [
+        "@boost//:geometry",
+        ":frenet",
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
@@ -64,10 +82,21 @@ cc_library(
         "//modules/world/opendrive",
         "//modules/world/goal_definition:goal_definition",
         "//modules/world/map:frenet",
+        "//modules/world/map:driving_corridor",
         "@boost//:geometry",
         "@boost//:graph",
-        ":map_interface"
+        ":map_interface",
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name="include",
+    hdrs=glob(["**/*.hpp"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "@boost//:geometry",
+        "@boost//:graph",
+    ]
 )

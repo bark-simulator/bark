@@ -15,12 +15,11 @@ from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
 
 def pickle_unpickle(object):
-    f = open('temp.pickle','wb')
-    pickle.dump(object, f)
-    f.close()
-    f = open( 'temp.pickle', "rb" )
-    object = pickle.load( f)
-    f.close()
+    with open('temp.pickle','wb') as f:
+        pickle.dump(object,f)
+    object = None
+    with open( 'temp.pickle', "rb" ) as f:
+        object = pickle.load(f)
     return object
 
 
@@ -69,12 +68,11 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(isinstance(ea,ExecutionModelInterpolate))
 
     def test_dynamic_model_pickle(self):
-        
         params = ParameterServer()
-        d = SingleTrackModel()
+        d = SingleTrackModel(params)
 
         da = pickle_unpickle(d)
-        self.assertTrue(isinstance(da,SingleTrackModel))
+        self.assertTrue(isinstance(da, SingleTrackModel))
 
     def test_driving_corridor_pickle(self):
         cor = DrivingCorridor()
@@ -101,16 +99,36 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(np.array_equal(cor.outer.toArray(), cor_after.outer.toArray()))
         self.assertTrue(np.array_equal(cor.center.toArray(), cor_after.center.toArray()))
 
-    def test_agent_pickle(self):
+    def test_goal_definition(self):
+        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+        goal_definition = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
 
+        goal_definition_after = pickle_unpickle(goal_definition)
+
+        self.assertTrue(np.array_equal(goal_definition.xy_limits.center, \
+                                        goal_definition_after.xy_limits.center))
+
+
+        goal_definition2 = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
+        goal_definition_sequential = GoalDefinitionSequential([goal_definition, goal_definition2])
+        goal_definition_sequential_after = pickle_unpickle(goal_definition_sequential)
+
+        sequential_goals_after = goal_definition_sequential_after.sequential_goals
+        self.assertTrue(np.array_equal(sequential_goals_after[0].xy_limits.toArray(), \
+                                        goal_definition.xy_limits.toArray()))
+
+        self.assertTrue(np.array_equal(sequential_goals_after[1].xy_limits.toArray(), \
+                                        goal_definition2.xy_limits.toArray()))
+
+    def test_agent_pickle(self):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
         execution = ExecutionModelInterpolate(params)
-        dynamic = SingleTrackModel()
+        dynamic = SingleTrackModel(params)
         shape = CarLimousine()
         init_state = np.array([0, 0, 0, 0, 5])
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-        goal_definition = GoalDefinition(goal_polygon)
+        goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
         agent_after = pickle_unpickle(agent)
@@ -118,7 +136,17 @@ class PickleTests(unittest.TestCase):
         self.assertEqual(agent_after.id , agent.id)
         self.assertTrue(np.array_equal(agent_after.state, agent.state) )
         self.assertTrue(np.array_equal(agent_after.goal_definition.goal_shape.center, \
-                                        agent.goal_definition.goal_shape.center))
+                                       agent.goal_definition.goal_shape.center))
+
+        goal_definition_2 = GoalDefinitionStateLimits(goal_polygon, (0.2 , 0.5))
+        agent2 = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition_2)
+
+        agent_after2 = pickle_unpickle(agent2)
+
+        self.assertEqual(agent_after2.id , agent2.id)
+        self.assertTrue(np.array_equal(agent_after2.state, agent.state) )
+        self.assertTrue(np.array_equal(agent_after2.goal_definition.xy_limits.center, \
+                                       agent2.goal_definition.xy_limits.center))
 
         agent_list = []
         agent_list.append(agent)

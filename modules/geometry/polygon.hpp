@@ -21,13 +21,13 @@ namespace geometry {
 template <typename T>
 struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
+  virtual ~Polygon_t() {};
   Polygon_t(const Pose &center, const std::vector<T> points);
   Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
-  Polygon_t(const Pose &center, const Line_t<T>& line);
-
+  Polygon_t(const Pose &center, const Line_t<T>& line); //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
-  virtual Shape<bg::model::polygon<T>, T> *Clone() const;
+  virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
   void UpdateDistancesToCenter();
 
@@ -52,6 +52,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center, const std::vector<T> points) 
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
@@ -63,6 +64,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center,
            front_dist_(0.0f),
            left_dist_(0.0f),
            right_dist_(0.0f) {
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
@@ -76,6 +78,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center, const Line_t<T>& line) :
       for (const T &next_pt : line.obj_) {
         Shape<bg::model::polygon<T>, T>::add_point(next_pt);
       }
+    boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
     UpdateDistancesToCenter();
 }
 
@@ -96,8 +99,9 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
 
 
 template <typename T>
-inline Shape<bg::model::polygon<T>, T> *Polygon_t<T>::Clone() const {
-  return new Polygon_t<T>(*this);
+inline std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Clone() const {
+  std::shared_ptr<Polygon_t<T>> new_poly = std::make_shared<Polygon_t<T>>(*this);
+  return new_poly;
 }
 
 //! for better usage simple float defines
@@ -138,6 +142,16 @@ inline bool Collide(const Polygon &poly, const PolygonPoint &p) {
 //! Point - Polygon collision checker using boost::within
 inline bool Collide(const PolygonPoint &p, const Polygon &poly) {
   return Collide(poly, p);
+}
+
+//! Polygon within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(Polygon const& g1, Polygon const & g2) {
+  return bg::within(g1.obj_, g2.obj_);
+}
+
+//! Point2d within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(Point2d const& g1, Polygon const & g2) {
+  return bg::within(g1, g2.obj_);
 }
 
 //! Polygon - Line collision checker using boost::intersection

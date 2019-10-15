@@ -226,6 +226,20 @@ LanePtr Roadgraph::get_laneptr(const LaneId &id) const
   }
 }
 
+std::vector<LaneId> Roadgraph::get_all_laneids()  const 
+{
+  std::vector<LaneId> ids;
+  std::vector<vertex_t> vertices = get_vertices();
+  for (auto const &v : vertices)
+  {
+    if (get_lane_graph()[v].lane->get_lane_position() != 0) {
+      ids.push_back(get_lane_graph()[v].global_lane_id);
+    }
+  }
+  return ids;
+}
+
+
 std::pair<LaneId, bool> Roadgraph::get_inner_neighbor(const LaneId &lane_id) const
 {
   std::vector<std::pair<LaneId, bool>> neighbors =
@@ -556,7 +570,7 @@ std::pair<LanePtr, LanePtr> Roadgraph::ComputeLaneBoundaries(const LaneId &lane_
   LanePtr inner, outer;
   std::pair<vertex_t, bool> v = get_vertex_by_lane_id(lane_id);
   auto l = get_lane_graph()[v.first].lane;
-  assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
+  //assert(l->get_lane_position() != 0); // make sure we are not at the planview, as a driving corridor cannot be computed from here.
   outer = l;
 
   std::pair<LaneId, bool> innerid = get_inner_neighbor(lane_id);

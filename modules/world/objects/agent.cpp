@@ -24,7 +24,7 @@ Agent::Agent(const State &initial_state,
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
         commons::Params *params,
-        const GoalDefinition& goal_definition,
+        const GoalDefinitionPtr& goal_definition,
         const MapInterfacePtr& map_interface,
         const geometry::Model3D &model_3d) :
 Object(shape, params, model_3d),
@@ -47,8 +47,9 @@ goal_definition_(goal_definition) {
   pair.second = modules::models::behavior::Action(
           modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
   history_.push_back(pair);
+
   if(map_interface != nullptr) {
-    set_goal_definition(goal_definition);
+    GenerateLocalMap();
   }
 }
 
@@ -99,30 +100,33 @@ void Agent::Execute(const float& world_time) {
 }
 
 geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
-
   using namespace modules::geometry;
   using namespace modules::geometry::standard_shapes;
-
-  Pose agent_pose(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION), state(StateDefinition::THETA_POSITION));
-
-  std::shared_ptr<geometry::Polygon> polygon(dynamic_cast<Polygon *>(this->get_shape().transform(agent_pose)));
-
+  Pose agent_pose(state(StateDefinition::X_POSITION),
+                  state(StateDefinition::Y_POSITION),
+                  state(StateDefinition::THETA_POSITION));
+  std::shared_ptr<geometry::Polygon> polygon(
+    std::dynamic_pointer_cast<geometry::Polygon>(
+      this->get_shape().transform(agent_pose)));
   return *polygon;
 }
 
 bool Agent::AtGoal() const {
-  auto agent_state_polygon = GetPolygonFromState(get_current_state());
-  return get_goal_definition().AtGoal(agent_state_polygon);
+  BARK_EXPECT_TRUE((bool)goal_definition_);
+  return goal_definition_->AtGoal(*this);
 }
 
 void Agent::GenerateLocalMap() {
+  local_map_->set_goal_definition(goal_definition_);
   State agent_state = get_current_state();
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->Generate(agent_xy)) {
-    std::cout << "LocalMap generation for agent "
+    LOG(ERROR) << "LocalMap generation for agent "
               << get_agent_id() << " failed." << std::endl;
   }
+  // TODO(@hart): parameter
+  UpdateDrivingCorridor(20.0);
 }
 
 void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
@@ -130,13 +134,14 @@ void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->ComputeHorizonCorridor(agent_xy, horizon)) {
-    std::cout << "Horizon DrivingCorridor generation for agent "
-              << get_agent_id() << " failed." << std::endl;
+    LOG_EVERY_N(ERROR, 100) << "Horizon DrivingCorridor generation for agent "
+              << get_agent_id() << " failed.";
   }
 }
 
 Agent* Agent::Clone() const {
   Agent *new_agent = new Agent(*this);
+  new_agent->set_agent_id(this->get_agent_id());
   if(behavior_model_) {
     new_agent->behavior_model_.reset(behavior_model_->Clone());
   }

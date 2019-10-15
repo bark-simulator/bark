@@ -14,7 +14,6 @@
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 
-
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
 using namespace modules::commons;
@@ -23,10 +22,13 @@ using namespace modules::world::map;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
+using namespace modules::world::goal_definition;
 
 
 
-WorldPtr modules::models::tests::make_test_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+WorldPtr modules::models::tests::make_test_world(int num_other_agents, double rel_distance,
+                                                 double ego_velocity, double velocity_difference,
+                                                 const GoalDefinitionPtr& ego_goal_definition) {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(nullptr);
@@ -37,7 +39,7 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 1.0, 0.0, 0.0, ego_velocity;
-  AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model, polygon, &params, ego_goal_definition));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float rel_dist_vlength = rel_distance + polygon.front_dist_ + polygon.rear_dist_;
@@ -58,26 +60,29 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   world->UpdateAgentRTree();
   world->set_map(MapInterfacePtr(new DummyMapInterface()));
 
-  // Define some driving corridor from x=1 to x=20 and add to local map of first agent
+  // Define some driving corridor from x=1 to x=20, define it in such a way that no agent collides with the corridor initially
     Line center;
-  center.add_point(Point2d(1,1));
-  center.add_point(Point2d(2,1));
-  center.add_point(Point2d(2000,1));
+  center.add_point(Point2d(-10,0));
+  center.add_point(Point2d(1,0));
+  center.add_point(Point2d(2,0));
+  center.add_point(Point2d(2000,0));
 
   Line outer;
-  outer.add_point(Point2d(1,2));
-  outer.add_point(Point2d(2,2));
-  outer.add_point(Point2d(2000,2));
+  outer.add_point(Point2d(-10,3));
+  outer.add_point(Point2d(1,3));
+  outer.add_point(Point2d(2,3));
+  outer.add_point(Point2d(2000,3));
 
   Line inner;
-  inner.add_point(Point2d(1,0));
-  inner.add_point(Point2d(2,0));
-  inner.add_point(Point2d(2000,0));
+  inner.add_point(Point2d(-10,-3));
+  inner.add_point(Point2d(1,-3));
+  inner.add_point(Point2d(2,-3));
+  inner.add_point(Point2d(2000,-3));
 
   DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinition(), corridor));
-  LocalMapPtr local_map2(new LocalMap(0, GoalDefinition(), corridor));
-  LocalMapPtr local_map3(new LocalMap(0, GoalDefinition(), corridor));
+  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
+  LocalMapPtr local_map2(new LocalMap(0, GoalDefinitionPtr(), corridor));
+  LocalMapPtr local_map3(new LocalMap(0, GoalDefinitionPtr(), corridor));
   agent1->set_local_map(local_map);
   agent2->set_local_map(local_map2);
   agent3->set_local_map(local_map3);
@@ -88,9 +93,10 @@ WorldPtr modules::models::tests::make_test_world(int num_other_agents, double re
   return WorldPtr(world->Clone());
 }
 
-ObservedWorld modules::models::tests::make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference) {
+ObservedWorld modules::models::tests::make_test_observed_world(int num_other_agents, double rel_distance, double ego_velocity, double velocity_difference,
+                                                              const modules::world::goal_definition::GoalDefinitionPtr& ego_goal_definition) {
   // Create observed world for first agent
-  WorldPtr current_world_state = modules::models::tests::make_test_world(num_other_agents, rel_distance, ego_velocity, velocity_difference);
+  WorldPtr current_world_state = modules::models::tests::make_test_world(num_other_agents, rel_distance, ego_velocity, velocity_difference, ego_goal_definition);
   ObservedWorld observed_world(*(current_world_state), current_world_state->get_agents().begin()->second->get_agent_id());
   return observed_world;
 }

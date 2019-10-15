@@ -7,6 +7,7 @@ namespace world {
 namespace prediction {
 
 using goal_definition::GoalDefinition;
+using goal_definition::GoalDefinitionPtr;
 
 Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_world, const std::map<AgentId, BehaviorModelPtr> &assumed_agent_behaviors)
     : commons::BaseType(params), observed_world_(observed_world) {
@@ -50,7 +51,8 @@ void Prediction::AddAgentsForIntersectionDecisions(const AgentPtr agent, uint32_
     geometry::Line goal_line = observed_world_.get_map()->get_roadgraph()->get_laneptr(possible_path.back())->get_line();
     geometry::Point2d goal_point = geometry::get_point_at_s(goal_line, goal_line.length());
     geometry::Pose predicted_goal_state(boost::geometry::get<0>(goal_point), boost::geometry::get<1>(goal_point), 0);
-    GoalDefinition predicted_goal(geometry::Polygon(predicted_goal_state, {Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1), Point2d(-1, -1)}));
+    GoalDefinitionPtr predicted_goal = std::make_shared<goal_definition::GoalDefinitionPolygon>(
+      geometry::Polygon(predicted_goal_state, {Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1), Point2d(-1, -1)}));
     prediction_agent->set_goal_definition(predicted_goal);
 
     real_agents_to_predictions_.at(agent->get_agent_id()).push_back(n_agents);

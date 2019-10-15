@@ -10,6 +10,7 @@
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
+#include "python/models/plan/plan.hpp"
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
@@ -22,6 +23,7 @@ using modules::models::behavior::BehaviorPurePursuit;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
+
   py::class_<BehaviorModel,
              PyBehaviorModel,
              BehaviorModelPtr>(m, "BehaviorModel")
@@ -100,4 +102,7 @@ void python_behavior(py::module m) {
       .def("__repr__", [](const BehaviorPurePursuit &b) {
         return "bark.behavior.BehaviorPurePursuit";
       });
+  
+  // must be at the end to have definitions of other models available
+  python_behavior_plan(m);
 }

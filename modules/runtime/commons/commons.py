@@ -7,10 +7,10 @@
 import time
 
 def return_execution_time(func):
-    def wrapper(*args, **kwargs):
-        time_before_step = time.time()
-        func(*args, **kwargs)
-        step_duration = time.time() - time_before_step
-        return step_duration
+  def wrapper(*args, **kwargs):
+    time_before_step = time.time()
+    func(*args, **kwargs)
+    step_duration = time.time() - time_before_step
+    return step_duration
 
-    return wrapper
+  return wrapper

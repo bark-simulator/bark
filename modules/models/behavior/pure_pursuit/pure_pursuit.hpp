@@ -16,7 +16,7 @@ using world::ObservedWorld;
 class BehaviorPurePursuit : public BehaviorModel {
   public:
     explicit BehaviorPurePursuit(commons::Params *params) :
-      BehaviorModel(params) {}
+      BehaviorModel(params), single_track_model_(params) {}
     
     virtual ~BehaviorPurePursuit() {}
 

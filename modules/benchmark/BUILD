@@ -1,8 +1,9 @@
 py_library(
-    name = "agents",
-    srcs = ["base_agent.py",
-            "sac_agent.py"],
+    name = "benchmark_runner",
+    srcs = ["benchmark_runner.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
+    deps = ["//modules/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
+

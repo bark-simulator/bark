@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import unittest
+import time
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world.agent import *
@@ -18,6 +19,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from bark.world.opendrive import *
 from bark.world.map import *
 from modules.runtime.commons.xodr_parser import XodrParser
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
 
 
 class EnvironmentTests(unittest.TestCase):
@@ -40,15 +42,83 @@ class EnvironmentTests(unittest.TestCase):
         lanes_near_goal = map_interface.find_nearest_lanes(goal_point, 1)
         assert(len(lanes_near_goal) == 1)
 
-        (route_inner, route_outer) = map_interface.compute_lane_boundaries_horizon(lanes_near_start[0].lane_id, lanes_near_goal[0].lane_id)
+        driving_corridor = map_interface.compute_driving_corridor_from_start_to_goal(lanes_near_start[0].lane_id, lanes_near_goal[0].lane_id)
+        print(driving_corridor)
+        for id in driving_corridor.get_lane_ids():
+            l = map_interface.get_lane(id[1])
+            assert(l.lane_type == LaneType.driving)
 
-        for l in route_inner:
-            assert(l.lane_type == LaneType.driving)
+        time.sleep(2) # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
+
+    def test_driving_corridor_adjacency_4way_intersection(self):
+        #xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
+        #xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
+
+        params = ParameterServer()
+        world = World(params)
+
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        map_interface.set_roadgraph(xodr_parser.roadgraph)
+        #xodr_parser.roadgraph.print_graph("/home/esterle/4way_intersection.dot")
+        world.set_map(map_interface)
+
+        map_interface.compute_all_driving_corridors()
+
+        all_corridors = map_interface.get_all_corridors()
+        c = all_corridors[10]
+        right_adj_corridors = map_interface.get_adjacent_corridors_same_direction(c, [151, 168, 0.0])
+        assert(len(right_adj_corridors) == 2)
+
+        right_adj_corridors = map_interface.get_adjacent_corridors_same_direction(c, [169, 169, 0.0])
+        assert(len(right_adj_corridors) == 1)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.drawDrivingCorridor(c)
+        if right_adj_corridors:
+            for rc in right_adj_corridors:
+                viewer.drawDrivingCorridor(rc)
         
-        for l in route_outer:
-            assert(l.lane_type == LaneType.driving)
+        viewer.show(block=True)
+        time.sleep(0.1)
+
+    def test_driving_corridor_splitting_4way_intersection(self):
+        #xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
+        #xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
+
+        params = ParameterServer()
+        world = World(params)
+
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        map_interface.set_roadgraph(xodr_parser.roadgraph)
+        #xodr_parser.roadgraph.print_graph("/home/esterle/4way_intersection.dot")
+        world.set_map(map_interface)
+
+        map_interface.compute_all_driving_corridors()
+
+        all_corridors = map_interface.get_all_corridors()
+
+        c = all_corridors[11]
+
+        splittingcorridors = map_interface.get_splitting_corridors(c, [168, 161, 0.0])
+        assert(len(splittingcorridors) == 0)
+
+        splittingcorridors = map_interface.get_splitting_corridors(c, [152, 168, 0.0])
+        assert(len(splittingcorridors) == 2)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.drawDrivingCorridor(c)
+        if splittingcorridors:
+            for sc in splittingcorridors:
+                viewer.drawDrivingCorridor(sc)
         
-        #v = map_interface.get_roadgraph().get_vertices()
+        viewer.show(block=True)
+        time.sleep(0.1)
 
 
 if __name__ == '__main__':
