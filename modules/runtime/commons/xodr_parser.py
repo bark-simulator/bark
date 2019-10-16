@@ -17,8 +17,6 @@ class XodrParser(object):
         self.parse_xml(self.xodr)
         self.map = OpenDriveMap()
         self.convert_to_map(self.python_map)
-        self.roadgraph = Roadgraph()
-        self.roadgraph.Generate(self.map)
 
     def load_file(self, file_name):
         return open(file_name, 'r')

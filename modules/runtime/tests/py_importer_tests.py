@@ -67,12 +67,11 @@ class ImporterTests(unittest.TestCase):
 
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
-        map_interface.set_roadgraph(xodr_parser.roadgraph)
         world.set_map(map_interface)
         
         #helper_plot(xodr_parser)
 
-        roadgraph = xodr_parser.roadgraph
+        roadgraph = map_interface.get_roadgraph()
         
         roadgraph.print_graph(dot_file_path)
         self.assertTrue(filecmp.cmp("modules/runtime/tests/data/CulDeSac_ideal.dot", dot_file_path, shallow=False))
