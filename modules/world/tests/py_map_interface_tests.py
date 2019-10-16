@@ -31,7 +31,6 @@ class EnvironmentTests(unittest.TestCase):
 
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
-        map_interface.set_roadgraph(xodr_parser.roadgraph)
         world.set_map(map_interface)
 
         start_point = Point2d(0, -11)
@@ -60,7 +59,6 @@ class EnvironmentTests(unittest.TestCase):
 
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
-        map_interface.set_roadgraph(xodr_parser.roadgraph)
         #xodr_parser.roadgraph.print_graph("/home/esterle/4way_intersection.dot")
         world.set_map(map_interface)
 
@@ -94,7 +92,6 @@ class EnvironmentTests(unittest.TestCase):
 
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
-        map_interface.set_roadgraph(xodr_parser.roadgraph)
         #xodr_parser.roadgraph.print_graph("/home/esterle/4way_intersection.dot")
         world.set_map(map_interface)
 
