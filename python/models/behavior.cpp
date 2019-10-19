@@ -58,6 +58,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
       .def(py::init<modules::commons::Params *>())
+      .def(py::init<double, modules::commons::Params *>())
       .def("__repr__", [](const BehaviorIDMClassic &m) {
         return "bark.behavior.BehaviorIDMClassic";
       })

@@ -17,7 +17,10 @@ namespace behavior {
 class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
  public:
   explicit BehaviorIDMClassic(commons::Params *params) :
-    BehaviorLongitudinalAcceleration(params) {}
+    BehaviorLongitudinalAcceleration(params), desired_velocity_(15.0f) {}
+
+  BehaviorIDMClassic(double desired_velocity, commons::Params *params) :
+    BehaviorLongitudinalAcceleration(params), desired_velocity_(desired_velocity) {}
 
   virtual ~BehaviorIDMClassic() {}
 
@@ -25,7 +28,7 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
 
   std::pair<world::objects::AgentPtr, modules::world::map::Frenet> GetLeadingVehicle(const world::ObservedWorld& observed_world);
 
-  const double get_desired_velocity() {return 15.0f;} // // unit is meter/second
+  const double get_desired_velocity() {return desired_velocity_;} // // unit is meter/second
   const float get_minimum_spacing() {return 2.0f;} // unit is meter
   const float get_desired_time_headway() {return 1.5f;} // unit is seconds
   const float get_max_acceleration() {return 1.7f;} // unit is meter/second^2
@@ -33,10 +36,15 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
   const int get_exponent() { return  4;}
 
   virtual BehaviorModel *Clone() const;
+
+ private:
+  double desired_velocity_;
 };
 
 inline BehaviorModel *BehaviorIDMClassic::Clone() const {
-  return new BehaviorIDMClassic(*this);
+  BehaviorIDMClassic *new_behavior_idm =  new BehaviorIDMClassic(*this);
+  new_behavior_idm->desired_velocity_ = desired_velocity_;
+  return new_behavior_idm;
 }
 
 }  // namespace behavior
