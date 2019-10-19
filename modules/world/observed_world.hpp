@@ -98,6 +98,10 @@ class ObservedWorld : public World {
     std::shared_ptr<ObservedWorld> Predict(float time_span, const DiscreteAction& ego_action) const;
     std::shared_ptr<ObservedWorld> Predict(float time_span) const;
 
+    // Functions for MOBIL
+    std::pair<AgentPtr, double> get_agent_in_front(const map::DrivingCorridorPtr driving_corridor) const;
+    std::pair<AgentPtr, double> get_agent_behind(const map::DrivingCorridorPtr driving_corridor) const;
+
     virtual ObservedWorld* Clone() const {
       WorldPtr world_clone(World::Clone());
       return new ObservedWorld(*world_clone, this->ego_agent_id_);

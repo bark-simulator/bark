@@ -220,6 +220,15 @@ std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(c
   }
 }
 
+std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor_but_not(const LaneId lane_id, const LaneId but_not) const {
+  std::pair<LaneId, bool> outer_neighbor = roadgraph_->get_outer_neighbor_but_not(lane_id, but_not);
+  if (outer_neighbor.second) {
+    return std::make_pair(roadgraph_->get_laneptr(outer_neighbor.first), true);
+  } else {
+    return std::make_pair(nullptr, false);
+  }
+}
+
 std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const LaneId lane_id) const {
   return roadgraph_->get_successor_lanes(lane_id);
 }

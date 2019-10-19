@@ -61,6 +61,7 @@ class MapInterface {
 
   std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
   std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
+  std::pair<LanePtr, bool> get_outer_neighbor_but_not(const LaneId lane_id, const LaneId but_not) const;
   std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
 
   DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);

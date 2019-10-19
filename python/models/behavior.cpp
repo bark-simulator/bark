@@ -9,7 +9,7 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
+#include "modules/models/behavior/mobil/mobil.hpp"
 #include "python/models/plan/plan.hpp"
 
 namespace py = pybind11;
@@ -19,7 +19,7 @@ using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
-using modules::models::behavior::BehaviorPurePursuit;
+using modules::models::behavior::BehaviorMobil;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -94,13 +94,12 @@ void python_behavior(py::module m) {
       .def("set_action", &DynamicBehaviorModel::set_action)
       .def("get_action", &DynamicBehaviorModel::get_action);
 
-  py::class_<BehaviorPurePursuit,
+  py::class_<BehaviorMobil,
              BehaviorModel,
-             shared_ptr<BehaviorPurePursuit>>(m, "BehaviorPurePursuit")
-      .def(py::init<modules::commons::Params *>())
-      .def("setFollowedLine", &BehaviorPurePursuit::set_followed_line)
-      .def("__repr__", [](const BehaviorPurePursuit &b) {
-        return "bark.behavior.BehaviorPurePursuit";
+             shared_ptr<BehaviorMobil>>(m, "BehaviorMobil")
+      .def(py::init<const modules::models::dynamic::DynamicModelPtr&, const BehaviorModelPtr&, const float, const float, modules::commons::Params *>())
+      .def("__repr__", [](const BehaviorMobil &b) {
+        return "bark.behavior.BehaviorMobil";
       });
   
   // must be at the end to have definitions of other models available

@@ -97,6 +97,136 @@ bool LocalMap::ComputeHorizonCorridor(const Point2d& p, double horizon) {
   return false;
 }
 
+std::pair<DrivingCorridorPtr, bool> LocalMap::get_left_adjacent_corridor(const DrivingCorridorPtr driving_corridor) const {
+  std::vector<LaneId> outer_lane_ids_new_corridor;
+
+  for (auto const &lane_id : driving_corridor->get_lane_ids()) {
+    LanePtr current_lane = map_interface_->get_lane(lane_id.second);
+    std::pair<LaneId, bool> left_neighbor_id;
+
+    if (current_lane->get_lane_position() > 0) {
+      // Left neighbor is outer neighbor => the outer lane of the left adjacent corridor is the outer neighbor of the outer neighbor of the current lane
+      std::pair<LanePtr, bool> left_neighbor = map_interface_->get_outer_neighbor(current_lane->get_id());
+      left_neighbor = map_interface_->get_outer_neighbor(left_neighbor.first->get_id());
+
+      if (left_neighbor.second) {
+        left_neighbor_id.first = left_neighbor.first->get_id();
+      }
+      left_neighbor_id.second = left_neighbor.second;
+    } else if (current_lane->get_lane_position() < 0) {
+      // Left neighbor is inner neighbor => the outer lane of the left adjacent corridor is the current lane
+      left_neighbor_id = std::make_pair(current_lane->get_id(), true);
+    } else {
+      // Current lane is the plan view => outer lane of the left adjacent corridor is the outer neighbor of the outer neighbor, but to which side?
+      std::pair<LanePtr, bool> outer_neighbor = map_interface_->get_outer_neighbor(current_lane->get_id());
+
+      // Need to find out if the current corridor is left or right of the plan view
+      float signed_distance = geometry::signed_distance(current_lane->get_line(), geometry::get_point_at_s(driving_corridor->get_center(), 0.0f), 0);
+      if (signed_distance * outer_neighbor.first->get_lane_position() < 0) {
+        // This is the correct outer neighbor
+        outer_neighbor = map_interface_->get_outer_neighbor(outer_neighbor.first->get_id());
+      } else {
+        // Need to obtain the other outer neighbor, if it exists
+        outer_neighbor = map_interface_->get_outer_neighbor_but_not(current_lane->get_id(), outer_neighbor.first->get_id());
+        if (outer_neighbor.second) {
+          outer_neighbor = map_interface_->get_outer_neighbor(outer_neighbor.first->get_id());
+        }
+      }
+      if (outer_neighbor.second) {
+        left_neighbor_id.first = outer_neighbor.first->get_id();
+      }
+      left_neighbor_id.second = outer_neighbor.second;
+    }
+
+    if (!left_neighbor_id.second) {
+      // Current lane has no left neighbor
+      break;
+    }
+
+    if (!outer_lane_ids_new_corridor.empty()) {
+      // Check if the new lane is a successor of the preceeding lane in the new driving corridor
+      LaneSequence successor_lanes_of_previous = map_interface_->get_successor_lanes(outer_lane_ids_new_corridor.back());
+      if (std::find(successor_lanes_of_previous.begin(), successor_lanes_of_previous.end(), left_neighbor_id.first) == successor_lanes_of_previous.end()) {
+        break;
+      }
+    }
+
+    outer_lane_ids_new_corridor.push_back(left_neighbor_id.first);
+  }
+
+  if (outer_lane_ids_new_corridor.empty()) {
+    return std::make_pair(nullptr, false);
+  } else {
+    DrivingCorridor driving_corridor = map_interface_->ComputeDrivingCorridorForRange(outer_lane_ids_new_corridor);
+    return std::make_pair(DrivingCorridorPtr(new DrivingCorridor(driving_corridor)), true);
+  }
+}
+
+std::pair<DrivingCorridorPtr, bool> LocalMap::get_right_adjacent_corridor(const DrivingCorridorPtr driving_corridor) const {
+  std::vector<LaneId> outer_lane_ids_new_corridor;
+
+  for (auto const &lane_id : driving_corridor->get_lane_ids()) {
+    LanePtr current_lane = map_interface_->get_lane(lane_id.second);
+    std::pair<LaneId, bool> right_neighbor_id;
+
+    if (current_lane->get_lane_position() < 0) {
+      // Right neighbor is outer neighbor => the outer lane of the right adjacent corridor is the outer neighbor of the outer neighbor of the current lane
+      std::pair<LanePtr, bool> right_neighbor = map_interface_->get_outer_neighbor(current_lane->get_id());
+      right_neighbor = map_interface_->get_outer_neighbor(right_neighbor.first->get_id());
+
+      if (right_neighbor.second) {
+        right_neighbor_id.first = right_neighbor.first->get_id();
+      }
+      right_neighbor_id.second = right_neighbor.second;
+    } else if (current_lane->get_lane_position() > 0) {
+      // Right neighbor is inner neighbor
+      right_neighbor_id = std::make_pair(current_lane->get_id(), true);
+    } else {
+      // Current lane is the plan view => outer lane of the right adjacent corridor is the outer neighbor of the outer neighbor, but to which side?
+      std::pair<LanePtr, bool> outer_neighbor = map_interface_->get_outer_neighbor(current_lane->get_id());
+
+      // Need to find out if the current corridor is left or right of the plan view
+      float signed_distance = geometry::signed_distance(current_lane->get_line(), geometry::get_point_at_s(driving_corridor->get_center(), 0.0f), 0);
+      if (signed_distance * outer_neighbor.first->get_lane_position() > 0) {
+        // This is the correct outer neighbor
+        outer_neighbor = map_interface_->get_outer_neighbor(outer_neighbor.first->get_id());
+      } else {
+        // Need to obtain the other outer neighbor, if it exists
+        outer_neighbor = map_interface_->get_outer_neighbor_but_not(current_lane->get_id(), outer_neighbor.first->get_id());
+        if (outer_neighbor.second) {
+          outer_neighbor = map_interface_->get_outer_neighbor(outer_neighbor.first->get_id());
+        }
+      }
+      if (outer_neighbor.second) {
+        right_neighbor_id.first = outer_neighbor.first->get_id();
+      }
+      right_neighbor_id.second = outer_neighbor.second;
+    }
+
+    if (!right_neighbor_id.second) {
+      // Current lane has no right neighbor
+      break;
+    }
+
+    if (!outer_lane_ids_new_corridor.empty()) {
+      // Check if the new lane is a successor of the preceeding lane in the new driving corridor
+      LaneSequence successor_lanes_of_previous = map_interface_->get_successor_lanes(outer_lane_ids_new_corridor.back());
+      if (std::find(successor_lanes_of_previous.begin(), successor_lanes_of_previous.end(), right_neighbor_id.first) == successor_lanes_of_previous.end()) {
+        break;
+      }
+    }
+
+    outer_lane_ids_new_corridor.push_back(right_neighbor_id.first);
+  }
+
+  if (outer_lane_ids_new_corridor.empty()) {
+    return std::make_pair(nullptr, false);
+  } else {
+    DrivingCorridor driving_corridor = map_interface_->ComputeDrivingCorridorForRange(outer_lane_ids_new_corridor);
+    return std::make_pair(DrivingCorridorPtr(new DrivingCorridor(driving_corridor)), true);
+  }
+}
+
 LocalMap *LocalMap::Clone() const {
   LocalMap *new_local_map = new LocalMap(*this);
   return new_local_map;
