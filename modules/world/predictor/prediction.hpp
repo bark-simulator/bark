@@ -4,7 +4,7 @@
 #include "modules/commons/base_type.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/world/observed_world.hpp"
-#include "modules/world/predictor/agent_prediction.hpp"
+#include "modules/world/predictor/commons.hpp"
 
 
 namespace modules {
@@ -16,21 +16,17 @@ using models::behavior::BehaviorModelPtr;
 
 class Prediction : public commons::BaseType {
   public:
-    Prediction(commons::Params *params, const ObservedWorld &observed_world, const std::map<AgentId, BehaviorModelPtr> &assumed_agent_behaviors);
+    Prediction(commons::Params *params, const ObservedWorld &observed_world, const float time_step);
 
-    void Step(const float time_step);
+    void Predict(const uint n_steps, const std::map<AgentId, std::pair<BehaviorModelPtr, float>> &assumed_agent_behaviors);
 
-    std::map<AgentId, AgentPrediction> get_predictions_for_all_agents();
+    AgentPredictions get_predictions_for_all_agents() { return agent_predictions_; }
 
   private:
-    void AddAgentsForIntersectionDecisions(const AgentPtr agent, uint32_t &n_agents);
-    void AddAgentsForLaneChangeDecisions(const AgentPtr agent, uint32_t &n_agents);
-    std::vector<std::list<LaneId>> FindPossibleGoalLanes(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
-    opendrive::LanePtr FindNearestLane(const geometry::Point2d &position, const MapInterfacePtr map_interface) const;
-
     ObservedWorld observed_world_;
-    std::map<AgentId, std::vector<AgentId>> real_agents_to_predictions_;
-    std::map<AgentId, AgentPrediction> predictions_for_all_agents_;
+    AgentPredictions agent_predictions_;
+
+    float time_step_;
 };
 
 } // namespace prediction

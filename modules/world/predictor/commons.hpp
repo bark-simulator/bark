@@ -1,21 +1,20 @@
 #ifndef MODULES_WORLD_PREDICTION_COMMONS_HPP_
 #define MODULES_WORLD_PREDICTION_COMMONS_HPP_
 
+#include "modules/geometry/polygon.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/opendrive/lane.hpp"
+#include "modules/world/objects/agent.hpp"
 
 
 namespace modules {
 namespace world {
 namespace prediction {
 
-using models::dynamic::State;
-using models::dynamic::StateDefinition;
-
-typedef Eigen::Matrix<float, StateDefinition::MIN_STATE_SIZE, StateDefinition::MIN_STATE_SIZE> StateCovariance;
+typedef Eigen::Matrix<float, models::dynamic::StateDefinition::MIN_STATE_SIZE, models::dynamic::StateDefinition::MIN_STATE_SIZE> StateCovariance;
 
 struct StochasticState{
-  State mean;
+  models::dynamic::State mean;
   StateCovariance covariance;
 };
 
@@ -24,9 +23,15 @@ typedef uint32_t HypothesisId;
 struct MotionHypothesis {
   HypothesisId id;
   float likelihood;
-  std::vector<opendrive::LaneId> following_lane;
   std::vector<StochasticState> states;
 };
+
+struct AgentPrediction {
+  objects::AgentId agent_id_;
+  geometry::Polygon agent_shape_;
+  std::map<HypothesisId, MotionHypothesis> motion_hypotheses_;
+};
+typedef std::map<objects::AgentId, AgentPrediction> AgentPredictions;
 
 } // namespace prediction
 } // namespace world
