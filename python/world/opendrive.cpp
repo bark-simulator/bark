@@ -42,7 +42,6 @@ void python_opendrive(py::module m) {
       });
 
   py::enum_<LaneType>(m, "LaneType", py::arithmetic())
-      .value("none", LaneType::NONE)
       .value("driving", LaneType::DRIVING)
       .value("biking", LaneType::BIKING)
       .value("sidewalk", LaneType::SIDEWALK)
