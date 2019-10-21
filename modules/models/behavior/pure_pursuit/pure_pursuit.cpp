@@ -1,6 +1,4 @@
 #include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/models/dynamic/integration.hpp"
 
 
 namespace modules {
@@ -17,7 +15,7 @@ namespace behavior {
 
 //   dynamic::State ego_vehicle_state = observed_world.current_ego_state();
 //   traj.row(0) = ego_vehicle_state;
-  
+
 //   double start_time = observed_world.get_world_time();
 //   geometry::Line line;
 //   if (!followed_line_.obj_.empty()) {
@@ -76,7 +74,7 @@ double BehaviorPurePursuit::FindSteeringAngle(const dynamic::State &agent_state)
   Point2d lookahead_point = get_point_at_s(followed_line_, nearest_s + lookahead_distance);
 
   double lookahead_angle = atan2(bg::get<1>(lookahead_point - agent_position), bg::get<0>(lookahead_point - agent_position)) - agent_state(StateDefinition::THETA_POSITION);
-  
+
   return atan(2*wheel_base_*sin(lookahead_angle) / distance(agent_position, lookahead_point));
 }
 

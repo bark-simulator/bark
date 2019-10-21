@@ -8,7 +8,7 @@ cc_library(
     ],
     deps = [
         "//modules/geometry:geometry",
-        "//modules/models/behavior:behavior",
+        "//modules/models/dynamic:dynamic",
         "//modules/world:world"
     ],
     visibility = ["//visibility:public"],

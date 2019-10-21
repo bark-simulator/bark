@@ -16,7 +16,7 @@ class BehaviorMobil : public BehaviorModel {
     explicit BehaviorMobil(
       const DynamicModelPtr &dynamic_model,
       const BehaviorModelPtr &longitudinal_behavior,
-      const float &politeness,
+      const float politeness,
       const float acceleration_threshold,
       commons::Params *params) :
         BehaviorModel(params),
