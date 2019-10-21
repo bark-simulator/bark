@@ -62,6 +62,8 @@ void python_geometry(py::module m) {
 
   m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
 
+  m.def("get_nearest_s", &modules::geometry::get_nearest_s, "get the nearest s value from point to a line.");
+  
   m.def("get_point_at_s", &modules::geometry::get_point_at_s,
                                  "get the Point2d at position s of the line");
 
