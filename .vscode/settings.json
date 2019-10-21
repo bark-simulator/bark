@@ -116,7 +116,7 @@
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "python.linting.enabled": true,
-  "python.formatting.provider": "yapf",
+  "python.formatting.provider": "autopep8",
   "[cpp]": {
       "editor.tabSize": 2
   },
