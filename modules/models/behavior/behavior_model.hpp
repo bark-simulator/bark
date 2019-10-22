@@ -48,16 +48,16 @@ class BehaviorModel : public modules::commons::BaseType {
 
   dynamic::Trajectory get_last_trajectory() const { return last_trajectory_; }
 
-  void set_last_trajectory(const dynamic::Trajectory &trajectory) {
+  void set_last_trajectory(const dynamic::Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
   bool get_active_model() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
-                          const world::ObservedWorld& observed_world) = 0;
+                          const world::ObservedWorld& observed_world) {}
 
-  virtual BehaviorModel *Clone() const = 0;
+  virtual BehaviorModel* Clone() const;
 
-  Action get_last_action() const {return last_action_; };
+  Action get_last_action() const {return last_action_; }
   void set_last_action(const Action action) {last_action_ = action;}
 
  private:
@@ -65,6 +65,10 @@ class BehaviorModel : public modules::commons::BaseType {
   Action last_action_;
   bool active_model_;
 };
+
+inline BehaviorModel *BehaviorModel::Clone() const {
+  return new BehaviorModel(*this);
+}
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
 

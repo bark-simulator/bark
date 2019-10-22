@@ -30,12 +30,13 @@ class PyBehaviorModel : public BehaviorModel {
         observed_world);
   }
 
-  BehaviorModel *Clone() const override {
+  BehaviorModel* Clone() const override {
     PYBIND11_OVERLOAD_PURE(
         BehaviorModel*,
         BehaviorModel,
         clone);
   }
+
 };
 
 void python_behavior(py::module m);
