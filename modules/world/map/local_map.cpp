@@ -28,6 +28,20 @@ LaneId LocalMap::GoalLaneIdFromGoalDefinitionPolygon(const GoalDefinitionPolygon
   return LaneId(0);
 }
 
+LanePtr LocalMap::FindLane(const Point2d& point) const {
+  LanePtr lane = map_interface_->FindLane(point);
+  return lane;
+}
+
+bool LocalMap::hasCorrectDrivingDirection(const State& state) const {
+  geometry::Point2d position(state(models::dynamic::StateDefinition::X_POSITION), state(models::dynamic::StateDefinition::Y_POSITION));
+  float orientation = state(models::dynamic::StateDefinition::THETA_POSITION);
+  std::cout << "orientation" << orientation << std::endl;
+
+  bool has_driving_direction = map_interface_->hasCorrectDrivingDirection(position, orientation);
+  return has_driving_direction;
+}
+
 bool LocalMap::Generate(Point2d point) {
   if(map_interface_ == nullptr) {
     return false;
