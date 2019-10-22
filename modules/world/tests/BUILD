@@ -91,6 +91,7 @@ cc_test(
         "//modules/world/map:roadgraph",
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
+        "//modules/models/tests:make_test_world",
         "@gtest//:main",
     ],
 )

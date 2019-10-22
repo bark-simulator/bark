@@ -154,6 +154,11 @@ inline bool Within(Point2d const& g1, Polygon const & g2) {
   return bg::within(g1, g2.obj_);
 }
 
+//! Line2d within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(const Line &l, const Polygon &poly) {
+  return bg::within(l.obj_, poly.obj_);
+}
+
 //! Polygon - Line collision checker using boost::intersection
 //! @note we only check the shape intersection(s) and no line RHS/LHS line crossing!
 inline bool Collide(const Polygon &poly, const Line &l) {
