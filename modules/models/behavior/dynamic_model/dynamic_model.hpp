@@ -31,7 +31,7 @@ class DynamicBehaviorModel : public BehaviorModel {
   virtual ~DynamicBehaviorModel() {}
 
   Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world);
+                  const ObservedWorld& observed_world);
 
   BehaviorModel *Clone() const;
 
