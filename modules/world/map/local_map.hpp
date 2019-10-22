@@ -29,6 +29,7 @@ using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using numeric_double_limits = std::numeric_limits<double>;
+using models::dynamic::State;
 using namespace modules::geometry;
 
 
@@ -87,6 +88,10 @@ class LocalMap {
                         std::vector< std::pair<int, LaneId> >& lane_ids);
 
   LaneId GoalLaneIdFromGoalDefinitionPolygon(const GoalDefinitionPolygon& goal_definition);
+
+  LanePtr FindLane(const Point2d& point) const;
+
+  bool hasCorrectDrivingDirection(const State& state) const;
 
   bool Generate(Point2d point);
   Line CalculateLineHorizon(const Line& line, const Point2d& p, double horizon);
