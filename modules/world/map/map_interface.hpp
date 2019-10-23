@@ -57,9 +57,9 @@ class MapInterface {
 
   bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
 
-  bool isLineSegmentInsideDrivingCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
+  bool LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
 
-  bool isInLane(const Point2d& point, LaneId id) const;
+  bool IsInLane(const Point2d& point, LaneId id) const;
   
   //std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
   //                                const LaneId& startid, const LaneId& goalid) const;

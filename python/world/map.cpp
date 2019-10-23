@@ -40,7 +40,7 @@ void python_map(py::module m) {
       .def("compute_all_path_boundaries", &MapInterface::ComputeAllPathBoundaries)
       .def("get_adjacent_corridors_same_direction", &MapInterface::GetAdjacentDrivingCorridorsSameDirection)
       .def("get_splitting_corridors", &MapInterface::GetSplittingDrivingCorridors)
-      .def("is_line_segment_inside_driving_corridor", &MapInterface::isLineSegmentInsideDrivingCorridor)
+      .def("line_segment_inside_corridor", &MapInterface::LineSegmentInsideCorridor)
       .def("find_lane", &MapInterface::FindLane)
       .def("has_correct_driving_direction", &MapInterface::hasCorrectDrivingDirection)
       //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)

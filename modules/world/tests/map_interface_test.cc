@@ -96,13 +96,13 @@ TEST(point_in_lane, map_interface)
   Point2d point = Point2d(0.5, 0.5);
   bool success = map_interface.FindNearestLanes(point, 3, nearest_lanes);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(0))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(0))->get_id());
   EXPECT_FALSE(success);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(1))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(1))->get_id());
   EXPECT_TRUE(success);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(2))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(2))->get_id());
   EXPECT_FALSE(success);
 
   bool success_corr = map_interface.ComputeAllDrivingCorridors();
