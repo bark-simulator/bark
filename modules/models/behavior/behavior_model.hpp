@@ -44,6 +44,7 @@ class BehaviorModel : public modules::commons::BaseType {
   BehaviorModel(const BehaviorModel &behavior_model) :
     commons::BaseType(behavior_model.get_params()),
     last_trajectory_(behavior_model.get_last_trajectory()),
+    last_action_(behavior_model.get_last_action()),
     active_model_(behavior_model.get_active_model()) {}
 
   virtual ~BehaviorModel() {}
