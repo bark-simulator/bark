@@ -14,8 +14,7 @@ namespace map
 
 using LaneSegment = boost::geometry::model::segment<Point2d>;
 bool MapInterface::interface_from_opendrive(
-    const OpenDriveMapPtr &open_drive_map)
-{
+    const OpenDriveMapPtr &open_drive_map) {
   open_drive_map_ = open_drive_map;
 
   RoadgraphPtr roadgraph(new Roadgraph());
@@ -23,15 +22,12 @@ bool MapInterface::interface_from_opendrive(
   roadgraph_ = roadgraph;
 
   rtree_lane_.clear();
-  for (auto &road : open_drive_map_->get_roads())
-  {
-    for (auto &lane_section : road.second->get_lane_sections())
-    {
-      for (auto &lane : lane_section->get_lanes())
-      {
-        if (lane.second->get_lane_position() != 0)
-        {
-          std::pair<LanePtr, LanePtr> lb = roadgraph_->ComputeLaneBoundaries(lane.second->get_id());
+  for (auto &road : open_drive_map_->get_roads()) {
+    for (auto &lane_section : road.second->get_lane_sections()) {
+      for (auto &lane : lane_section->get_lanes()) {
+        if (lane.second->get_lane_position() != 0) {
+          std::pair<LanePtr, LanePtr> lb =
+            roadgraph_->ComputeLaneBoundaries(lane.second->get_id());
           if (lb.first && lb.second) {
             auto center = ComputeCenterLine(lb.first->get_line(), lb.second->get_line());
             LaneSegment center_lane_segment(*center.begin(),*(center.end() - 1));
@@ -47,10 +43,8 @@ bool MapInterface::interface_from_opendrive(
 
 void MapInterface::ConcatenateLines(const std::vector<LanePtr> &lanes,
                                     Line &line_of_corridor,
-                                    std::vector<std::pair<int, LaneId>> &lane_ids)
-{
-  if (lanes.size() > 0)
-  {
+                                    std::vector<std::pair<int, LaneId>> &lane_ids) {
+  if (lanes.size() > 0) {
     line_of_corridor = lanes.at(0)->get_line();
     lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
     for (uint i = 1; i < lanes.size(); i++)
