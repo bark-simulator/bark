@@ -13,6 +13,7 @@ from modules.runtime.scenario.scenario_generation.scenario_generation \
   import ScenarioGeneration
 from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.geometry import *
+from bark.world import World
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -27,13 +28,15 @@ class DummyBehaviorModel(BehaviorModel):
     self._params = params
 
   def plan(self, delta_time, world):
-    # return trajectory
     # time, x, y, theta, vel
-    traj = np.array([[0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0],
-                     [0, 0, 0, 0, 0]])
-
-    # TODO(@hart): set last trajectory
+    traj = np.array([[0.0, 5111.626, 5106.8305 + 0.0, 1.5, 10],
+                     [0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10],
+                     [0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10],
+                     [0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10],
+                     [0.8, 5111.626, 5106.8305 + 0.8, 1.5, 10],
+                     [1.0, 5111.626, 5106.8305 + 1.0, 1.5, 10],
+                     [1.2, 5111.626, 5106.8305 + 1.2, 1.5, 10]])
+    # this is required for the history
     super(DummyBehaviorModel, self).set_last_action(0)
     super(DummyBehaviorModel, self).set_last_trajectory(traj)
     return traj
@@ -62,15 +65,30 @@ class PyBehaviorModelTests(unittest.TestCase):
     env.reset()
     env._world.get_agent(0).behavior_model = behavior_model
     env._world.get_agent(0).behavior_model.clone()
-    print(env._world.get_agent(0).behavior_model.plan(0.1, env._world))
+
+    np.testing.assert_array_equal(
+      env._world.get_agent(0).behavior_model.plan(0.2, env._world)[1],
+      np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10]))
 
     env.reset()
     env._world.get_agent(0).behavior_model = behavior_model
     env._world.step(0.2)
+    np.testing.assert_array_equal(
+      env._world.get_agent(0).state,
+      np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10], dtype=np.float32))
+    env._world.step(0.2)
+    np.testing.assert_array_equal(
+      env._world.get_agent(0).state,
+      np.array([0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10], dtype=np.float32))
+    env._world.step(0.2)
+    np.testing.assert_array_equal(
+      env._world.get_agent(0).state,
+      np.array([0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10], dtype=np.float32))
 
-    # for i in range(0, 5):
-    #   print(i)
-    #   env.step()
+    # environment loop
+    env.reset()
+    for i in range(0, 7):
+      env.step()
 
 
 if __name__ == '__main__':
