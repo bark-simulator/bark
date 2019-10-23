@@ -8,6 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 
 #include <memory>
+#include <Eigen/Dense>
 
 #include "modules/commons/base_type.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -27,7 +28,8 @@ using dynamic::Trajectory;
 
 typedef unsigned int DiscreteAction;
 typedef double Continuous1DAction;
-typedef boost::variant<DiscreteAction, Continuous1DAction> Action;
+using dynamic::Input;
+typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
 
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
