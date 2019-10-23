@@ -36,8 +36,7 @@ using namespace modules::world::evaluation;
 using namespace modules::world::prediction;
 using StateDefinition::VEL_POSITION;
 
-TEST(observed_world, agent_in_front)
-{
+TEST(observed_world, agent_in_front) {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
@@ -91,7 +90,7 @@ TEST(observed_world, agent_in_front)
 
   // Create observed world for this agent
   WorldPtr current_world_state(world->Clone());
-  ObservedWorld observed_world(*current_world_state, agent1->get_agent_id());
+  ObservedWorld observed_world(current_world_state, agent1->get_agent_id());
 
   std::pair<AgentPtr, Frenet> leading_vehicle =
     observed_world.get_agent_in_front();
@@ -100,7 +99,7 @@ TEST(observed_world, agent_in_front)
   agent1->UpdateDrivingCorridor(8.0);
   // Create observed world for this agent
   WorldPtr current_world_state2(world->Clone());
-  ObservedWorld observed_world2(*current_world_state2, agent1->get_agent_id());
+  ObservedWorld observed_world2(current_world_state2, agent1->get_agent_id());
 
   std::pair<AgentPtr, Frenet> leading_vehicle2 =
     observed_world2.get_agent_in_front();
@@ -115,7 +114,7 @@ TEST(observed_world, agent_in_front)
 
   // Create observed world for this agent
   WorldPtr current_world_state3(world->Clone());
-  ObservedWorld observed_world3(*current_world_state2, agent1->get_agent_id());
+  ObservedWorld observed_world3(current_world_state2, agent1->get_agent_id());
 
   std::pair<AgentPtr, Frenet> leading_vehicle3 =
     observed_world3.get_agent_in_front();
@@ -147,7 +146,7 @@ TEST(observed_world, clone) {
   init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
-  WorldPtr std::make_shared<World>(&params);
+  WorldPtr world = std::make_shared<World>(&params);
   world->add_agent(agent1);
   world->add_agent(agent2);
   world->UpdateAgentRTree();
@@ -222,9 +221,9 @@ TEST(observed_world, predict) {
     observed_world.Predict(1.0f, DiscreteAction(idx1));
   auto ego_pred_velocity =
     std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)->current_ego_state()[StateDefinition::VEL_POSITION];  // NOLINT
-  // distance current and predicted state should be velocity + prediction time span
+  // distance current and predicted state should be velocity
+  // + prediction time span
   EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.05);
-
 }
 
 
