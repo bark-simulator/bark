@@ -52,7 +52,7 @@ void python_world(py::module m) {
 
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
-      .def(py::init<const World&, const AgentId&>())
+      .def(py::init<const WorldPtr&, const AgentId&>())
       .def_property_readonly("ego_agent", &ObservedWorld::get_ego_agent)
       .def_property_readonly("other_agents", &ObservedWorld::get_other_agents)
       .def("__repr__", [](const ObservedWorld &a) {
