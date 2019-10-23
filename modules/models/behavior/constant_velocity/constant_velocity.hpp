@@ -30,11 +30,13 @@ class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
 
   virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) {return 0.0f;}
 
-  virtual BehaviorModel *Clone() const;
+  virtual std::shared_ptr<BehaviorModel> Clone() const;
 };
 
-inline BehaviorModel *BehaviorConstantVelocity::Clone() const {
-  return new BehaviorConstantVelocity(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorConstantVelocity::Clone() const {
+  std::shared_ptr<BehaviorConstantVelocity> model_ptr =
+    std::make_shared<BehaviorConstantVelocity>(*this);
+  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
 
 }  // namespace behavior

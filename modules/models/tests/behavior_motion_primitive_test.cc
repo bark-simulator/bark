@@ -28,7 +28,7 @@ class DummyObservedWorld : public ObservedWorld {
  public:
   DummyObservedWorld(const State& init_state,
                      Params* params) :
-    ObservedWorld(World(params), AgentId()),
+    ObservedWorld(std::make_shared<World>(params), AgentId()),
     init_state_(init_state) { }
 
   virtual State current_ego_state() const {

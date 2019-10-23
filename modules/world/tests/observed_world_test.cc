@@ -34,7 +34,7 @@ using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
 using namespace modules::world::prediction;
-
+using StateDefinition::VEL_POSITION;
 
 TEST(observed_world, agent_in_front)
 {
@@ -44,15 +44,23 @@ TEST(observed_world, agent_in_front)
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
-  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
-  
-  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  Polygon polygon(
+    Pose(1.25, 1, 0),
+    std::vector<Point2d>{Point2d(0, 0),
+                         Point2d(0, 2),
+                         Point2d(4, 2),
+                         Point2d(4, 0),
+                         Point2d(0, 0)});
 
-  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(
+    static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
+
+  State init_state2(
+    static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
   WorldPtr world(new World(&params));
   world->add_agent(agent1);
@@ -62,19 +70,19 @@ TEST(observed_world, agent_in_front)
 
   // Define some driving corridor and add to local map of agent
     Line center;
-  center.add_point(Point2d(1,1));
-  center.add_point(Point2d(2,1));
-  center.add_point(Point2d(10,1));
+  center.add_point(Point2d(1, 1));
+  center.add_point(Point2d(2, 1));
+  center.add_point(Point2d(10, 1));
 
   Line outer;
-  outer.add_point(Point2d(1,2));
-  outer.add_point(Point2d(2,2));
-  outer.add_point(Point2d(10,2));
+  outer.add_point(Point2d(1, 2));
+  outer.add_point(Point2d(2, 2));
+  outer.add_point(Point2d(10, 2));
 
   Line inner;
-  inner.add_point(Point2d(1,0));
-  inner.add_point(Point2d(2,0));
-  inner.add_point(Point2d(10,0));
+  inner.add_point(Point2d(1, 0));
+  inner.add_point(Point2d(2, 0));
+  inner.add_point(Point2d(10, 0));
 
   DrivingCorridor corridor(outer, inner, center);
   LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
@@ -85,7 +93,8 @@ TEST(observed_world, agent_in_front)
   WorldPtr current_world_state(world->Clone());
   ObservedWorld observed_world(*current_world_state, agent1->get_agent_id());
 
-  std::pair<AgentPtr, Frenet> leading_vehicle = observed_world.get_agent_in_front();
+  std::pair<AgentPtr, Frenet> leading_vehicle =
+    observed_world.get_agent_in_front();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
   agent1->UpdateDrivingCorridor(8.0);
@@ -93,13 +102,14 @@ TEST(observed_world, agent_in_front)
   WorldPtr current_world_state2(world->Clone());
   ObservedWorld observed_world2(*current_world_state2, agent1->get_agent_id());
 
-  std::pair<AgentPtr, Frenet> leading_vehicle2 = observed_world2.get_agent_in_front();
+  std::pair<AgentPtr, Frenet> leading_vehicle2 =
+    observed_world2.get_agent_in_front();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
   EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, 0.0, 0.0, 5.0;
-  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
   world->add_agent(agent3);
   world->UpdateAgentRTree();
 
@@ -107,7 +117,8 @@ TEST(observed_world, agent_in_front)
   WorldPtr current_world_state3(world->Clone());
   ObservedWorld observed_world3(*current_world_state2, agent1->get_agent_id());
 
-  std::pair<AgentPtr, Frenet> leading_vehicle3 = observed_world3.get_agent_in_front();
+  std::pair<AgentPtr, Frenet> leading_vehicle3 =
+    observed_world3.get_agent_in_front();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
   EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
 
@@ -120,65 +131,99 @@ TEST(observed_world, clone) {
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
-  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
-  
+  Polygon polygon(
+    Pose(1.25, 1, 0),
+    std::vector<Point2d>{Point2d(0, 0),
+                         Point2d(0, 2),
+                         Point2d(4, 2),
+                         Point2d(4, 0),
+                         Point2d(0, 0)});
+
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
-  WorldPtr world(new World(&params));
+  WorldPtr std::make_shared<World>(&params);
   world->add_agent(agent1);
   world->add_agent(agent2);
   world->UpdateAgentRTree();
 
   WorldPtr current_world_state(world->Clone());
-  ObservedWorldPtr observed_world(new ObservedWorld(*current_world_state, agent1->get_agent_id()));
+  ObservedWorldPtr observed_world(
+    new ObservedWorld(current_world_state, agent1->get_agent_id()));
 
-  ObservedWorldPtr cloned = ObservedWorldPtr(observed_world->Clone());
-
-  EXPECT_EQ(observed_world->get_ego_agent()->get_agent_id(), cloned->get_ego_agent()->get_agent_id());
-  EXPECT_EQ(typeid(observed_world->get_ego_behavior_model()), typeid(cloned->get_ego_behavior_model()));
+  WorldPtr cloned(observed_world->Clone());
+  ObservedWorldPtr cloned_observed_world =
+    std::dynamic_pointer_cast<ObservedWorld>(cloned);
+  EXPECT_EQ(observed_world->get_ego_agent()->get_agent_id(),
+            cloned_observed_world->get_ego_agent()->get_agent_id());
+  EXPECT_EQ(typeid(observed_world->get_ego_behavior_model()),
+            typeid(cloned_observed_world->get_ego_behavior_model()));
 
   observed_world.reset();
-  auto behavior_ego = cloned->get_ego_behavior_model();
-  EXPECT_TRUE(bool(behavior_ego));
+  auto behavior_ego = cloned_observed_world->get_ego_behavior_model();
+  EXPECT_TRUE(static_cast<bool>(behavior_ego));
 }
 
 TEST(observed_world, predict) {
   SetterParams params;
   params.set_real("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference=0.0;
-  auto observed_world = modules::models::tests::make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
+  float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
+  auto observed_world =
+    modules::models::tests::make_test_observed_world(
+      1, rel_distance, ego_velocity, velocity_difference);
 
   // predict all agents with constant velocity
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(&params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   observed_world.SetupPrediction(prediction_settings);
-  auto predicted_world = observed_world.Predict(1.0f);
-  double distance_ego = modules::geometry::distance(predicted_world->current_ego_position(), observed_world.current_ego_position());
-  double distance_other = modules::geometry::distance(predicted_world->get_other_agents().begin()->second->get_current_position(),
-           observed_world.get_other_agents().begin()->second->get_current_position());
-  EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.06); // distance current and predicted state should be velocity x prediction time span
-  EXPECT_NEAR(distance_other, observed_world.get_other_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION]*1.0f, 0.06);
+  WorldPtr predicted_world = observed_world.Predict(1.0f);
+  ObservedWorldPtr observed_predicted_world =
+    std::dynamic_pointer_cast<ObservedWorld>(predicted_world);
+  double distance_ego =
+    modules::geometry::distance(
+      observed_predicted_world->current_ego_position(),
+      observed_world.current_ego_position());
+  double distance_other = modules::geometry::distance(
+    observed_predicted_world->get_other_agents().begin()->second->get_current_position(),  // NOLINT
+    observed_world.get_other_agents().begin()->second->get_current_position());
+
+  // distance current and predicted state should be
+  // velocity x prediction time span
+  EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.06);
+  EXPECT_NEAR(distance_other,
+    observed_world.get_other_agents().begin()->second->get_current_state()[VEL_POSITION]*1.0f,  // NOLINT
+    0.06);
 
   // predict ego agent with motion primitive model
-  BehaviorModelPtr ego_prediction_model(new BehaviorMotionPrimitives(dyn_model, &params));
-  Input u1(2);  u1 << 2, 0;
-  Input u2(2);  u2 << 0, 1;
-  BehaviorMotionPrimitives::MotionIdx idx1 = std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)->AddMotionPrimitive(u1);
-  BehaviorMotionPrimitives::MotionIdx idx2 = std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)->AddMotionPrimitive(u2);
+  BehaviorModelPtr ego_prediction_model(
+    new BehaviorMotionPrimitives(dyn_model, &params));
+  Input u1(2);
+  u1 << 2, 0;
+  Input u2(2);
+  u2 << 0, 1;
+  BehaviorMotionPrimitives::MotionIdx idx1 =
+    std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)->AddMotionPrimitive(u1);  // NOLINT
+  BehaviorMotionPrimitives::MotionIdx idx2 =
+    std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)->AddMotionPrimitive(u2);  // NOLINT
 
-  BehaviorModelPtr others_prediction_model(new BehaviorConstantVelocity(&params));
-  PredictionSettings prediction_settings2(ego_prediction_model, others_prediction_model);
+  BehaviorModelPtr others_prediction_model(
+    new BehaviorConstantVelocity(&params));
+  PredictionSettings prediction_settings2(
+    ego_prediction_model,
+    others_prediction_model);
   observed_world.SetupPrediction(prediction_settings2);
-  auto predicted_world2 = observed_world.Predict(1.0f, DiscreteAction(idx1));
-  auto ego_pred_velocity = predicted_world2->current_ego_state()[StateDefinition::VEL_POSITION];
-  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.05); // distance current and predicted state should be velocity +  prediction time span
+  WorldPtr predicted_world2 =
+    observed_world.Predict(1.0f, DiscreteAction(idx1));
+  auto ego_pred_velocity =
+    std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)->current_ego_state()[StateDefinition::VEL_POSITION];  // NOLINT
+  // distance current and predicted state should be velocity + prediction time span
+  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.05);
 
 }
 

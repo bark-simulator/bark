@@ -22,6 +22,7 @@
 namespace modules {
 namespace world {
 
+using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
@@ -42,7 +43,7 @@ using rtree_agent = boost::geometry::index::rtree<rtree_agent_value,
 class World : public commons::BaseType {
  public:
   explicit World(commons::Params *params);
-  explicit World(const World& world);
+  explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
 
   //! Getter
@@ -69,7 +70,8 @@ class World : public commons::BaseType {
   }
 
   void add_agent(const AgentPtr& agent);
-  void add_object(const ObjectPtr& agent);
+
+  void add_object(const ObjectPtr& object);
 
   void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator);
   void clear_evaluators() { evaluators_.clear(); }
@@ -99,7 +101,7 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(
     const modules::geometry::Polygon& polygon) const;
 
-  virtual World *Clone() const;
+  virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(
     const float& execution_time) const;
 
@@ -115,14 +117,15 @@ class World : public commons::BaseType {
 
 typedef std::shared_ptr<world::World> WorldPtr;
 
-inline World *World::Clone() const {
-  World *new_world = new World(*this);
+inline WorldPtr World::Clone() const {
+  WorldPtr new_world = std::make_shared<World>(*this);
   new_world->clear_all();
   for (auto agent = agents_.begin(); agent != agents_.end(); ++agent) {
-    new_world->add_agent(AgentPtr(agent->second->Clone()));
+    new_world->add_agent(
+      std::dynamic_pointer_cast<Agent>(agent->second->Clone()));
   }
   for (auto object = objects_.begin(); object != objects_.end(); ++object) {
-    new_world->add_object(ObjectPtr(object->second->Clone()));
+    new_world->add_object(object->second->Clone());
   }
   return new_world;
 }

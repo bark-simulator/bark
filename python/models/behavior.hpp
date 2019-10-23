@@ -30,9 +30,9 @@ class PyBehaviorModel : public BehaviorModel {
         observed_world);
   }
 
-  BehaviorModel* Clone() const override {
+  std::shared_ptr<BehaviorModel> Clone() const override {
     PYBIND11_OVERLOAD_PURE(
-        BehaviorModel*,
+        std::shared_ptr<BehaviorModel>,
         BehaviorModel,
         clone);
   }

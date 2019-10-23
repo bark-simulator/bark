@@ -3,7 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
+#include <string>
 #include "modules/world/world.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -20,13 +20,13 @@ World::World(commons::Params* params) :
       false))
        {}
 
-World::World(const World& world)  :
-  commons::BaseType(world.get_params()),
-  map_(world.get_map()),
-  agents_(world.get_agents()),
-  objects_(world.get_objects()),
-  world_time_(world.get_world_time()),
-  rtree_agents_(world.rtree_agents_) {}
+World::World(const std::shared_ptr<World>& world)  :
+  commons::BaseType(world->get_params()),
+  map_(world->get_map()),
+  agents_(world->get_agents()),
+  objects_(world->get_objects()),
+  world_time_(world->get_world_time()),
+  rtree_agents_(world->rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
@@ -45,11 +45,12 @@ void World::add_evaluator(const std::string& name,
 void World::DoPlanning(const float& delta_time) {
     UpdateAgentRTree();
     UpdateHorizonDrivingCorridors();
-    WorldPtr current_world_state(this->Clone());
+    WorldPtr current_world(this->Clone());
+
     // Behavioral and execution planning
     for (auto agent : agents_) {
-        //! clone current world
-      ObservedWorld observed_world(*current_world_state,
+      //! clone current world
+      ObservedWorld observed_world(current_world,
                                    agent.first);
       agent.second->BehaviorPlan(delta_time, observed_world);
       agent.second->ExecutionPlan(delta_time);
@@ -100,14 +101,14 @@ std::vector<ObservedWorld> World::Observe(
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
-      if (agents_.find(agent_id) == agents_.end()) {
-        LOG(ERROR) << "Invalid agent id " <<
-                  agent_id << ". Skipping ...." << std::endl;
-        continue;
-      }
-      ObservedWorld observed_world(*current_world_state,
-                                   agent_id);
-      observed_worlds.push_back(observed_world);
+    if (agents_.find(agent_id) == agents_.end()) {
+      LOG(ERROR) << "Invalid agent id " <<
+                agent_id << ". Skipping ...." << std::endl;
+      continue;
+    }
+    ObservedWorld observed_world(current_world_state,
+                                  agent_id);
+    observed_worlds.push_back(observed_world);
   }
   return observed_worlds;
 }

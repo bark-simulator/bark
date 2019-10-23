@@ -35,8 +35,10 @@ class SingleTrackModel : public DynamicModel {
     return tmp;
   }
 
-  DynamicModel *Clone() const {
-    return new SingleTrackModel(*this);
+  std::shared_ptr<DynamicModel> Clone() const {
+    std::shared_ptr<SingleTrackModel> model_ptr =
+      std::make_shared<SingleTrackModel>(*this);
+    return std::dynamic_pointer_cast<DynamicModel>(model_ptr);
   }
 
  private:
