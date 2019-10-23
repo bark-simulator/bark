@@ -102,7 +102,7 @@ LanePtr MapInterface::FindLane(const Point2d& point) const {
   LanePtr lane;
   std::vector<LanePtr> nearest_lanes;
   
-  // TODO: parameter (20) auslagern
+  // TODO(@esterle): parameter (20) auslagern
   if(!FindNearestLanes(point, 20, nearest_lanes, false)) {
     return nullptr;
   }
@@ -117,7 +117,7 @@ LanePtr MapInterface::FindLane(const Point2d& point) const {
   return nullptr;
 }
 
-bool MapInterface::hasCorrectDrivingDirection(const Point2d& point, const float orientation) const {
+bool MapInterface::HasCorrectDrivingDirection(const Point2d& point, const float orientation) const {
 
   LanePtr lane = FindLane(point);
   if (!lane) {

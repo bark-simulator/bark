@@ -34,16 +34,16 @@ TEST(driving_direction, map_interface)
   MapInterface map_interface = modules::models::tests::make_two_lane_map_interface();
 
   bool success;
-  success = map_interface.hasCorrectDrivingDirection(Point2d(5, -0.5), 0.0);
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, -0.5), 0.0);
   EXPECT_TRUE(success);
 
-  success = map_interface.hasCorrectDrivingDirection(Point2d(5, -0.5), M_PI);
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, -0.5), M_PI);
   EXPECT_FALSE(success);
 
-  success = map_interface.hasCorrectDrivingDirection(Point2d(5, 0.5), 0.0);
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, 0.5), 0.0);
   EXPECT_FALSE(success);
 
-  success = map_interface.hasCorrectDrivingDirection(Point2d(5, 0.5), M_PI);
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, 0.5), M_PI);
   EXPECT_TRUE(success);
 }
 
