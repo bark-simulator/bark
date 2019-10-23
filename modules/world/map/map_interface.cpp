@@ -108,7 +108,7 @@ LanePtr MapInterface::FindLane(const Point2d& point) const {
   }
   
   for (auto &close_lane : nearest_lanes) {
-    if(isInLane(point, close_lane->get_id())) {
+    if(IsInLane(point, close_lane->get_id())) {
       lane = close_lane;
       return lane;
     }
@@ -124,15 +124,15 @@ bool MapInterface::HasCorrectDrivingDirection(const Point2d& point, const float 
     return false;
   }
 
-  float orientation_normalized = remainder(orientation, 2*M_PI); // normalize to [0, 2pi]
+  float orientation_normalized = remainder(orientation, 2*M_PI);  // normalize to [0, 2pi]
 
   float s = get_nearest_s(lane->get_line(), point);
   float orientation_at_s = get_tangent_angle_at_s(lane->get_line(), s);
-  orientation_at_s = remainder(orientation_at_s, 2*M_PI); // normalize to [0, 2pi]
+  orientation_at_s = remainder(orientation_at_s, 2*M_PI);  // normalize to [0, 2pi]
 
   bool same_orientation_as_road = (std::fabs(orientation_at_s - orientation_normalized) <= M_PI_2);
 
-  bool point_is_in_right_lane = lane->get_lane_position() < 0; // open drive definition
+  bool point_is_in_right_lane = lane->get_lane_position() < 0;  // open drive definition
 
   if (point_is_in_right_lane) {
     if (same_orientation_as_road) {
@@ -152,7 +152,7 @@ bool MapInterface::HasCorrectDrivingDirection(const Point2d& point, const float 
   }
 }
 
-bool MapInterface::isLineSegmentInsideDrivingCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const {
+bool MapInterface::LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const {
   
   Polygon polygon = corridor->CorridorPolygon();
   
@@ -171,7 +171,7 @@ bool MapInterface::isLineSegmentInsideDrivingCorridor(const DrivingCorridorPtr c
   }
 }
   
-bool MapInterface::isInLane(const Point2d &point, LaneId id) const
+bool MapInterface::IsInLane(const Point2d &point, LaneId id) const
 {
 
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);

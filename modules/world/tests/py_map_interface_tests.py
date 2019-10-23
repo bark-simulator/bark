@@ -158,10 +158,10 @@ class EnvironmentTests(unittest.TestCase):
         point_outside = Point2d(140, 37)  # this point lies far outside (in lane of type NONE)
         point_no_lane = Point2d(120, 140)  # this point lies far outside, not in any lane
 
-        assert not map_interface.is_line_segment_inside_driving_corridor(all_corridors[0], point_sw, point_rl)
-        assert not map_interface.is_line_segment_inside_driving_corridor(all_corridors[0], point_sw, point_no_lane)
-        assert not map_interface.is_line_segment_inside_driving_corridor(all_corridors[0], point_outside, point_no_lane)
-        assert not map_interface.is_line_segment_inside_driving_corridor(all_corridors[0], point_sw, point_outside)
+        assert not map_interface.line_segment_inside_corridor(all_corridors[0], point_sw, point_rl)
+        assert not map_interface.line_segment_inside_corridor(all_corridors[0], point_sw, point_no_lane)
+        assert not map_interface.line_segment_inside_corridor(all_corridors[0], point_outside, point_no_lane)
+        assert not map_interface.line_segment_inside_corridor(all_corridors[0], point_sw, point_outside)
 
     def test_driving_direction(self):
 
