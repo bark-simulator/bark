@@ -91,7 +91,8 @@
     "memory_resource": "cpp",
     "set": "cpp",
     "cfenv": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "dense": "cpp"
   },
   "files.exclude": {
     ".vscode": false,
@@ -121,7 +122,7 @@
       "editor.tabSize": 2
   },
   "[python]": {
-      "editor.tabSize": 4
+      "editor.tabSize": 2
   },
   "licenser.license": "MIT",
   "licenser.author": "fortiss GmbH",
