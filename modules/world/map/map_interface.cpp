@@ -3,16 +3,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+
+#include <math.h>
+#include <random>
 #include "modules/world/map/map_interface.hpp"
 
-namespace modules
-{
-namespace world
-{
-namespace map
-{
+namespace modules {
+namespace world {
+namespace map {
 
-using LaneSegment = boost::geometry::model::segment<Point2d>;
+using LineSegment = boost::geometry::model::segment<Point2d>;
 bool MapInterface::interface_from_opendrive(
     const OpenDriveMapPtr &open_drive_map) {
   open_drive_map_ = open_drive_map;
@@ -30,13 +30,14 @@ bool MapInterface::interface_from_opendrive(
             roadgraph_->ComputeLaneBoundaries(lane.second->get_id());
           if (lb.first && lb.second) {
             auto center = ComputeCenterLine(lb.first->get_line(), lb.second->get_line());
-            LaneSegment center_lane_segment(*center.begin(),*(center.end() - 1));
+            LineSegment center_lane_segment(*center.begin(),*(center.end() - 1));
             rtree_lane_.insert(std::make_pair(center_lane_segment, lane.second));
           }
         }
       }
     }
   }
+
   bounding_box_ = open_drive_map_->bounding_box();
   return true;
 }
@@ -64,15 +65,6 @@ bool MapInterface::FindNearestLanes(const Point2d &point,
                                     std::vector<LanePtr> &lanes,
                                     bool type_driving_only) const
 {
-  if (!open_drive_map_)
-  {
-    return false;
-  }
-  if (rtree_lane_.empty())
-  {
-    return false;
-  }
-
   std::vector<rtree_lane_value> results_n;
 
   if (type_driving_only)
@@ -99,7 +91,81 @@ bool MapInterface::FindNearestLanes(const Point2d &point,
   return true;
 }
 
-bool MapInterface::isInLane(const modules::geometry::Point2d &point, LaneId id) const
+LanePtr MapInterface::FindLane(const Point2d& point) const {
+  
+  LanePtr lane;
+  std::vector<LanePtr> nearest_lanes;
+  
+  // TODO(@esterle): parameter (20) auslagern
+  if(!FindNearestLanes(point, 20, nearest_lanes, false)) {
+    return nullptr;
+  }
+  
+  for (auto &close_lane : nearest_lanes) {
+    if(IsInLane(point, close_lane->get_id())) {
+      lane = close_lane;
+      return lane;
+    }
+  }
+  
+  return nullptr;
+}
+
+bool MapInterface::HasCorrectDrivingDirection(const Point2d& point, const float orientation) const {
+
+  LanePtr lane = FindLane(point);
+  if (!lane) {
+    return false;
+  }
+
+  float orientation_normalized = remainder(orientation, 2*M_PI);  // normalize to [0, 2pi]
+
+  float s = get_nearest_s(lane->get_line(), point);
+  float orientation_at_s = get_tangent_angle_at_s(lane->get_line(), s);
+  orientation_at_s = remainder(orientation_at_s, 2*M_PI);  // normalize to [0, 2pi]
+
+  bool same_orientation_as_road = (std::fabs(orientation_at_s - orientation_normalized) <= M_PI_2);
+
+  bool point_is_in_right_lane = lane->get_lane_position() < 0;  // open drive definition
+
+  if (point_is_in_right_lane) {
+    if (same_orientation_as_road) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    if (same_orientation_as_road) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+}
+
+bool MapInterface::LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const {
+  
+  Polygon polygon = corridor->CorridorPolygon();
+  
+  Line line;
+  line.add_point(p1);
+  line.add_point(p2);
+
+  bool line_in_polygon = modules::geometry::Within(line, polygon);
+  if (line_in_polygon)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+  
+bool MapInterface::IsInLane(const Point2d &point, LaneId id) const
 {
 
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);

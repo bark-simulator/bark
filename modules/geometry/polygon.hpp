@@ -23,7 +23,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
   virtual ~Polygon_t() {};
   Polygon_t(const Pose &center, const std::vector<T> points);
-  Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points);
+  Polygon_t(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose &center, const Line_t<T>& line); //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
@@ -46,7 +46,7 @@ inline Polygon_t<T>::Polygon_t() : Shape<bg::model::polygon<T>, T>(Pose(0, 0, 0)
                 right_dist_(0.0f) {}
 
 template<typename T>
-inline Polygon_t<T>::Polygon_t(const Pose &center, const std::vector<T> points) :
+inline Polygon_t<T>::Polygon_t(const Pose& center, const std::vector<T> points) :
            Shape<bg::model::polygon<T>, T>(center, points, 0),
            rear_dist_(0.0f),
            front_dist_(0.0f),
@@ -69,7 +69,7 @@ inline Polygon_t<T>::Polygon_t(const Pose &center,
 }
 
 template<typename T>
-inline Polygon_t<T>::Polygon_t(const Pose &center, const Line_t<T>& line) :
+inline Polygon_t<T>::Polygon_t(const Pose& center, const Line_t<T>& line) :
            Shape<bg::model::polygon<T>, T>(center, std::vector<T>(), 0),
            rear_dist_(0.0f),
            front_dist_(0.0f),
@@ -118,40 +118,45 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::toArray() c
   return mat;
 }
 
-inline bool equals(const Polygon &poly1, const Polygon &poly2) {
+inline bool equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
 
-inline float distance(const Polygon &poly, const Point2d &p) {
+inline float distance(const Polygon& poly, const Point2d& p) {
   return bg::distance(poly.obj_, p);
 }
 
-inline float distance(const Polygon &poly, const Line &l) {
+inline float distance(const Polygon& poly, const Line& l) {
   return bg::distance(poly.obj_, l.obj_);
 }
 
-inline float distance(const Polygon &poly1, const Polygon &poly2) {
+inline float distance(const Polygon& poly1, const Polygon& poly2) {
   return bg::distance(poly1.obj_, poly2.obj_);
 }
 
 //! Polygon - Point collision checker using boost::within
-inline bool Collide(const Polygon &poly, const PolygonPoint &p) {
+inline bool Collide(const Polygon& poly, const PolygonPoint &p) {
   return bg::within(p, poly.obj_);
 }
 
 //! Point - Polygon collision checker using boost::within
-inline bool Collide(const PolygonPoint &p, const Polygon &poly) {
+inline bool Collide(const PolygonPoint& p, const Polygon& poly) {
   return Collide(poly, p);
 }
 
 //! Polygon within polygon check, true if g1 is completely contained within g2, else false
-inline bool Within(Polygon const& g1, Polygon const & g2) {
+inline bool Within(const Polygon& g1, const Polygon& g2) {
   return bg::within(g1.obj_, g2.obj_);
 }
 
 //! Point2d within polygon check, true if g1 is completely contained within g2, else false
-inline bool Within(Point2d const& g1, Polygon const & g2) {
+inline bool Within(const Point2d& g1, const Polygon& g2) {
   return bg::within(g1, g2.obj_);
+}
+
+//! Line2d within polygon check, true if g1 is completely contained within g2, else false
+inline bool Within(const Line& l, const Polygon& poly) {
+  return bg::within(l.obj_, poly.obj_);
 }
 
 //! Polygon - Line collision checker using boost::intersection
@@ -175,13 +180,13 @@ inline bool Collide(const Polygon &poly, const Line &l) {
 }
 
 //! Line - Polygon collision checker using boost::intersection
-inline bool Collide(const Line &line, const Polygon &poly) {
+inline bool Collide(const Line& line, const Polygon& poly) {
   return Collide(poly, line);
 }
 
 //! Polygon - Polygon collision checker using boost::intersection
 //! @todo might not be very efficient without Strategy...
-inline bool Collide(const Polygon &poly1, const Polygon &poly2) {
+inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
   std::vector<bg::model::polygon<PolygonPoint>> shape_intersect;
   bg::intersection(poly1.obj_, poly2.obj_, shape_intersect);
   const bool inner_intersection = !shape_intersect.empty();

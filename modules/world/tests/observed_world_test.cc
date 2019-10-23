@@ -7,7 +7,6 @@
 #include "gtest/gtest.h"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/execution/mpc/mpc.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"

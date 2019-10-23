@@ -6,7 +6,7 @@
 
 #include "execution.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/execution/mpc/mpc.hpp"
+//#include "modules/models/execution/mpc/mpc.hpp"
 
 namespace py = pybind11;
 using namespace modules::models::dynamic;
@@ -44,15 +44,15 @@ void python_execution(py::module m) {
         }));
      
 
-  py::class_<ExecutionModelMpc,
-             ExecutionModel,
-             shared_ptr<ExecutionModelMpc>>(m, "ExecutionModelMpc")
-      .def(py::init<Params *>())
-      .def("__repr__", [](const ExecutionModelMpc &m) {
-        return "bark.dynamic.ExecutionModelMpc";
-      })
-      .def_property_readonly("last_weights",
-                             &ExecutionModelMpc::get_last_weights)
-      .def_property_readonly("last_desired_states_",
-                             &ExecutionModelMpc::get_last_desired_states);
+  // py::class_<ExecutionModelMpc,
+  //            ExecutionModel,
+  //            shared_ptr<ExecutionModelMpc>>(m, "ExecutionModelMpc")
+  //     .def(py::init<Params *>())
+  //     .def("__repr__", [](const ExecutionModelMpc &m) {
+  //       return "bark.dynamic.ExecutionModelMpc";
+  //     })
+  //     .def_property_readonly("last_weights",
+  //                            &ExecutionModelMpc::get_last_weights)
+  //     .def_property_readonly("last_desired_states_",
+  //                            &ExecutionModelMpc::get_last_desired_states);
 }

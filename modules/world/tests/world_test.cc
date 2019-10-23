@@ -7,7 +7,6 @@
 #include "gtest/gtest.h"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/execution/mpc/mpc.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
@@ -56,7 +55,7 @@ TEST(world, world_init)
 TEST(world, world_step)
 {
   DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
