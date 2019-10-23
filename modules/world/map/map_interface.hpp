@@ -55,7 +55,7 @@ class MapInterface {
 
   LanePtr FindLane(const Point2d& point) const;
 
-  bool hasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
+  bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
 
   bool isLineSegmentInsideDrivingCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
 

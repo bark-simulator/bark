@@ -14,7 +14,7 @@ namespace map {
 using modules::world::opendrive::LanePtr;
 using geometry::FindNearestIdx;
 using geometry::distance;
-
+using models::dynamic::StateDefinition;
 
 LaneId LocalMap::GoalLaneIdFromGoalDefinitionPolygon(const GoalDefinitionPolygon& goal_definition) {
   modules::geometry::Point2d goal_center(goal_definition.get_shape().center_(0),
@@ -33,13 +33,12 @@ LanePtr LocalMap::FindLane(const Point2d& point) const {
   return lane;
 }
 
-bool LocalMap::hasCorrectDrivingDirection(const State& state) const {
-  geometry::Point2d position(state(models::dynamic::StateDefinition::X_POSITION), state(models::dynamic::StateDefinition::Y_POSITION));
-  float orientation = state(models::dynamic::StateDefinition::THETA_POSITION);
-  std::cout << "orientation" << orientation << std::endl;
+bool LocalMap::HasCorrectDrivingDirection(const State& state) const {
+  geometry::Point2d position(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION));
+  float orientation = state(StateDefinition::THETA_POSITION);
 
-  bool has_driving_direction = map_interface_->hasCorrectDrivingDirection(position, orientation);
-  return has_driving_direction;
+  bool correct_direction = map_interface_->HasCorrectDrivingDirection(position, orientation);
+  return correct_direction;
 }
 
 bool LocalMap::Generate(Point2d point) {
