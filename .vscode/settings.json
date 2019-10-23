@@ -116,15 +116,15 @@
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
   "python.linting.enabled": true,
-  "python.formatting.provider": "yapf",
+  "python.formatting.provider": "autopep8",
   "[cpp]": {
       "editor.tabSize": 2
   },
   "[python]": {
-      "editor.tabSize": 4
+      "editor.tabSize": 2
   },
   "licenser.license": "MIT",
   "licenser.author": "fortiss GmbH",
 "licenser.projectName": "BARK",
-"C_Cpp.dimInactiveRegions": false
+"C_Cpp.dimInactiveRegions": false,
 }
