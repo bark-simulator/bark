@@ -24,7 +24,7 @@ using namespace modules::world;
 using namespace modules::geometry;
 using namespace modules::world::goal_definition;
 using modules::world::goal_definition::GoalDefinitionPtr;
-
+using modules::world::map::MapInterface;
 
 WorldPtr modules::models::tests::make_test_world(
   int num_other_agents, double rel_distance,
@@ -66,11 +66,11 @@ WorldPtr modules::models::tests::make_test_world(
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 10.0+rel_dist_vlength, 0.0, 0.0, ego_velocity - velocity_difference;   // NOLINT
-  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, &params));  // NOLINT
 
   WorldPtr world(new World(&params));
   world->add_agent(agent1);
-  if(num_other_agents == 1) {
+  if (num_other_agents == 1) {
     world->add_agent(agent2);
   } else if (num_other_agents == 2) {
     world->add_agent(agent3);
@@ -129,4 +129,58 @@ ObservedWorld modules::models::tests::make_test_observed_world(
     current_world_state,
     current_world_state->get_agents().begin()->second->get_agent_id());
   return observed_world;
+}
+
+MapInterface modules::models::tests::make_two_lane_map_interface() {
+  using namespace std;
+  using namespace modules::world::opendrive;
+  using namespace modules::geometry;
+
+  OpenDriveMapPtr map(new OpenDriveMap());
+
+  //! ROAD 1
+  PlanViewPtr p(new PlanView());
+  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls(new LaneSection(0.0));
+
+  //! PlanView
+  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_0 = {0, 10, off0};
+  LanePtr lane0 = create_lane_from_lane_width(0,
+                                              p->get_reference_line(),
+                                              lane_width_0,
+                                              0.05);
+  lane0->set_lane_type(LaneType::DRIVING);
+
+  //! Lane
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+  LanePtr lane1 = create_lane_from_lane_width(-1,
+                                              p->get_reference_line(),
+                                              lane_width_1,
+                                              0.05);
+  lane1->set_lane_type(LaneType::DRIVING);
+  LanePtr lane2 = create_lane_from_lane_width(1,
+                                              p->get_reference_line(),
+                                              lane_width_1,
+                                              0.05);
+  lane2->set_lane_type(LaneType::DRIVING);
+
+  ls->add_lane(lane0);
+  ls->add_lane(lane1);
+  ls->add_lane(lane2);
+
+  RoadPtr r(new Road("highway", 100));
+  r->set_plan_view(p);
+  r->add_lane_section(ls);
+
+  map->add_road(r);
+
+
+  modules::world::map::MapInterface map_interface;
+  map_interface.interface_from_opendrive(map);
+
+  return map_interface;
 }

@@ -21,7 +21,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
-        "//modules/models/execution/mpc:mpc",
+        #"//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
     ],
