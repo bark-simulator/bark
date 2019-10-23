@@ -10,6 +10,7 @@
 #include "modules/geometry/commons.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/map/map_interface.hpp"
 
 namespace modules {
 namespace models {
@@ -30,6 +31,8 @@ modules::world::ObservedWorld make_test_observed_world(int num_other_agents,
                                    double velocity_difference,
                                    const modules::world::goal_definition::GoalDefinitionPtr& ego_goal_definition =
                                          std::make_shared<modules::world::goal_definition::GoalDefinitionPolygon>());
+
+modules::world::map::MapInterface make_two_lane_map_interface();
 
 } // namespace tests
 } // namespace models

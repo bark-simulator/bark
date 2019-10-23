@@ -5,54 +5,15 @@
 
 #include "gtest/gtest.h"
 #include "modules/world/map/map_interface.hpp"
+#include "modules/models/tests/make_test_world.hpp"
 
-void build_two_lane_map(const modules::world::opendrive::OpenDriveMapPtr &map) {
-  using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
-
-  //! ROAD 1
-  PlanViewPtr p(new PlanView());
-  p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-  
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
-
-  //! PlanView
-  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_0 = {0, 10, off0};
-  LanePtr lane0 = create_lane_from_lane_width(0, p->get_reference_line(), lane_width_0, 0.05);
-  lane0->set_lane_type(LaneType::DRIVING);
-
-  //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10, off};
-  LanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
-  lane1->set_lane_type(LaneType::DRIVING);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
-  lane2->set_lane_type(LaneType::DRIVING);
-
-  ls->add_lane(lane0);
-  ls->add_lane(lane1);
-  ls->add_lane(lane2);
-
-  RoadPtr r(new Road("highway", 100));
-  r->set_plan_view(p);
-  r->add_lane_section(ls);
-
-  map->add_road(r);
-}
-
-TEST(query_lanes, map_interface) {
+TEST(query_lanes, map_interface)
+{
   using namespace modules::world::opendrive;
   using namespace modules::world::map;
   using namespace modules::geometry;
 
-  OpenDriveMapPtr map(new OpenDriveMap());
-  build_two_lane_map(map);
-
-  MapInterface map_interface;
-  map_interface.interface_from_opendrive(map);
+  MapInterface map_interface = modules::models::tests::make_two_lane_map_interface();
 
   std::vector<LanePtr> nearest_lanes;
   bool success = map_interface.FindNearestLanes(Point2d(0, 0), 2, nearest_lanes);
@@ -64,13 +25,36 @@ TEST(query_lanes, map_interface) {
   EXPECT_EQ(nearest_lanes.size(), 2); // there exist only two lanes
 }
 
-TEST(point_in_lane, map_interface) {
+TEST(driving_direction, map_interface)
+{
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+  using namespace modules::geometry;
+
+  MapInterface map_interface = modules::models::tests::make_two_lane_map_interface();
+
+  bool success;
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, -0.5), 0.0);
+  EXPECT_TRUE(success);
+
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, -0.5), M_PI);
+  EXPECT_FALSE(success);
+
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, 0.5), 0.0);
+  EXPECT_FALSE(success);
+
+  success = map_interface.HasCorrectDrivingDirection(Point2d(5, 0.5), M_PI);
+  EXPECT_TRUE(success);
+}
+
+TEST(point_in_lane, map_interface)
+{
   using namespace modules::world::opendrive;
   using namespace modules::world::map;
   using namespace modules::geometry;
 
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
-    //! ROAD 1
+  //! ROAD 1
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
@@ -112,13 +96,13 @@ TEST(point_in_lane, map_interface) {
   Point2d point = Point2d(0.5, 0.5);
   bool success = map_interface.FindNearestLanes(point, 3, nearest_lanes);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(0))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(0))->get_id());
   EXPECT_FALSE(success);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(1))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(1))->get_id());
   EXPECT_TRUE(success);
 
-  success = map_interface.isInLane(point, (nearest_lanes.at(2))->get_id());
+  success = map_interface.IsInLane(point, (nearest_lanes.at(2))->get_id());
   EXPECT_FALSE(success);
 
   bool success_corr = map_interface.ComputeAllDrivingCorridors();
@@ -126,5 +110,4 @@ TEST(point_in_lane, map_interface) {
   auto corridors = map_interface.get_all_corridors();
   auto right_corridor = map_interface.GetAdjacentDrivingCorridorsSameDirection(corridors.at(0), Pose(0.0, 0.0, 0.0));
   EXPECT_TRUE(right_corridor.size() == 0);
-
 }

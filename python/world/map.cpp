@@ -12,11 +12,12 @@
 #include "modules/world/map/local_map.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/geometry/geometry.hpp"
 
 using namespace modules::world::map;
 using modules::world::opendrive::LaneId;
 using modules::geometry::Point2d;
-
+using modules::geometry::Line;
 
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
@@ -28,7 +29,7 @@ void python_map(py::module m) {
           std::vector<LanePtr> lanes;
           m.FindNearestLanes(point, num_lanes, lanes);
           return lanes;
-      }) 
+      })
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
@@ -39,7 +40,9 @@ void python_map(py::module m) {
       .def("compute_all_path_boundaries", &MapInterface::ComputeAllPathBoundaries)
       .def("get_adjacent_corridors_same_direction", &MapInterface::GetAdjacentDrivingCorridorsSameDirection)
       .def("get_splitting_corridors", &MapInterface::GetSplittingDrivingCorridors)
-      
+      .def("line_segment_inside_corridor", &MapInterface::LineSegmentInsideCorridor)
+      .def("find_lane", &MapInterface::FindLane)
+      .def("has_correct_driving_direction", &MapInterface::HasCorrectDrivingDirection)
       //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
       /*.def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
           Line inner_line, outer_line, center_line;
