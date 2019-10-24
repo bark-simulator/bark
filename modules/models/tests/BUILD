@@ -77,3 +77,15 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+  name = "py_behavior_model_test",
+  srcs = ["py_behavior_model_test.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime:runtime",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
+)

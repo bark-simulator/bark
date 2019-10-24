@@ -13,29 +13,30 @@
 #include <boost/geometry.hpp>
 #include "modules/geometry/line.hpp"
 
-namespace modules
-{
-namespace world
-{
-namespace opendrive
-{
+namespace modules {
+namespace world {
+namespace opendrive {
 
 using LaneId = uint32_t;
 using LanePosition = int32_t;
 using RoadId = uint32_t;
 
-struct RoadLinkInfo
-{
+struct RoadLinkInfo {
   RoadLinkInfo() : id_(1000000), type_("") {}
-  RoadLinkInfo(const RoadId &id, const std::string &type) : id_(id), type_(type) {}
+  RoadLinkInfo(const RoadId &id,
+               const std::string &type) :
+    id_(id),
+    type_(type) {}
   RoadId id_;
   std::string type_;
 };
 
-struct RoadLink
-{
+struct RoadLink {
   RoadLink() : predecessor_(), successor_() {}
-  RoadLink(const RoadLinkInfo &predecessor, const RoadLinkInfo &successor) : predecessor_(predecessor), successor_(successor) {}
+  RoadLink(const RoadLinkInfo &predecessor,
+           const RoadLinkInfo &successor) :
+    predecessor_(predecessor),
+    successor_(successor) {}
   RoadLinkInfo predecessor_;
   RoadLinkInfo successor_;
   //! getter
@@ -45,33 +46,30 @@ struct RoadLink
   void set_successor(const RoadLinkInfo &info) { successor_ = info; }
 };
 
-inline std::string print(const RoadLink &l)
-{
+inline std::string print(const RoadLink &l) {
   std::stringstream ss;
-  ss << "RoadLink.predecessor: " << l.predecessor_.id_ << "of type" << l.predecessor_.type_ << "; ";
-  ss << "RoadLink.successor: " << l.successor_.id_ << "of type" << l.successor_.type_ << std::endl;
+  ss << "RoadLink.predecessor: " << l.predecessor_.id_ << \
+        "of type" << l.predecessor_.type_ << "; ";
+  ss << "RoadLink.successor: " << l.successor_.id_ << \
+        "of type" << l.successor_.type_ << std::endl;
   return ss.str();
 }
 
-struct LaneOffset
-{
+struct LaneOffset {
   float a, b, c, d;
 };
 
-inline float polynom(float x, float a, float b, float c, float d)
-{
+inline float polynom(float x, float a, float b, float c, float d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
 
-// TODO: use type LaneId here
-struct LaneLink
-{
+// TODO(@all): use type LaneId here
+struct LaneLink {
   LanePosition from_position;
   LanePosition to_position;
 };
 
-inline std::string print(const LaneLink &l)
-{
+inline std::string print(const LaneLink &l) {
   std::stringstream ss;
   ss << "LaneLink.from_position: " << l.from_position << "; ";
   ss << "LaneLink.to_position: " << l.to_position << std::endl;
@@ -80,18 +78,16 @@ inline std::string print(const LaneLink &l)
 
 using LaneLinks = std::vector<LaneLink>;
 
-struct Connection
-{
+struct Connection {
   void add_lane_link(LaneLink link) { lane_links_.push_back(link); }
   LaneLinks get_lane_links() const { return lane_links_; }
   uint32_t id_;
-  uint32_t incoming_road_; // TODO: use type RoadId here
+  uint32_t incoming_road_;  // TODO(@all): use type RoadId here
   uint32_t connecting_road_;
   LaneLinks lane_links_;
 };
 
-enum LaneType
-{
+enum LaneType {
   NONE = 0,
   DRIVING = 1,
   //STOP = 2,
@@ -120,11 +116,9 @@ enum LaneType
   */
 };
 
-namespace roadmark
-{
+namespace roadmark {
 
-enum RoadMarkType
-{
+enum RoadMarkType {
   NONE = 0,
   SOLID = 1,
   BROKEN = 2,
@@ -140,8 +134,7 @@ enum RoadMarkType
   */
 };
 
-enum RoadMarkColor
-{
+enum RoadMarkColor {
   STANDARD = 0, // (equivalent to "white")
   /*BLUE = 1,
   GREEN = 2,
@@ -154,29 +147,30 @@ enum RoadMarkColor
 
 } // namespace roadmark
 
-struct RoadMark
-{
+struct RoadMark {
   roadmark::RoadMarkType type_;
   roadmark::RoadMarkColor color_;
   float width_;
 };
 
-inline std::string print(const RoadMark &r)
-{
+inline std::string print(const RoadMark &r) {
   std::stringstream ss;
-  ss << "RoadMark: type: " << r.type_ << ", color: " << r.color_ << ", width: " << r.width_ << std::endl;
+  ss << "RoadMark: type: " << r.type_ << ", color: " << \
+        r.color_ << ", width: " << r.width_ << std::endl;
   return ss.str();
 }
 
-struct LaneWidth
-{
+struct LaneWidth {
   float s_start;
   float s_end;
   LaneOffset off;
 };
 
-inline geometry::Line create_line_with_offset_from_line(geometry::Line previous_line, int id, LaneWidth lane_width_current_lane, float s_inc = 0.5f)
-{
+inline geometry::Line create_line_with_offset_from_line(
+  geometry::Line previous_line,
+  int id,
+  LaneWidth lane_width_current_lane,
+  float s_inc = 0.5f) {
 
   namespace bg = boost::geometry;
 
@@ -189,24 +183,25 @@ inline geometry::Line create_line_with_offset_from_line(geometry::Line previous_
   int sign = id > 0 ? -1 : 1;
 
   // TODO(fortiss): check if sampling does work with relative s, probably not
-  for (; s < lane_width_current_lane.s_end; s += s_inc)
-  {
+  for (; s < lane_width_current_lane.s_end; s += s_inc) {
     geometry::Point2d point = get_point_at_s(previous_line, s);
     normal = get_normal_at_s(previous_line, s);
     scale = -sign * polynom(s, off.a, off.b, off.c, off.d);
-    tmp_line.add_point(geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
-                                         bg::get<1>(point) + scale * bg::get<1>(normal)));
+    tmp_line.add_point(
+      geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                        bg::get<1>(point) + scale * bg::get<1>(normal)));
   }
 
   // fill last point if increment does not match
   double delta_s = fabs(lane_width_current_lane.s_end - s);
-  if (delta_s > 0.0)
-  {
-    geometry::Point2d point = get_point_at_s(previous_line, lane_width_current_lane.s_end);
+  if (delta_s > 0.0) {
+    geometry::Point2d point =
+      get_point_at_s(previous_line, lane_width_current_lane.s_end);
     normal = get_normal_at_s(previous_line, lane_width_current_lane.s_end);
     scale = -sign * polynom(lane_width_current_lane.s_end, off.a, off.b, off.c, off.d);
-    tmp_line.add_point(geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
-                                         bg::get<1>(point) + scale * bg::get<1>(normal)));
+    tmp_line.add_point(
+      geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                        bg::get<1>(point) + scale * bg::get<1>(normal)));
   }
 
   return tmp_line;
@@ -214,8 +209,8 @@ inline geometry::Line create_line_with_offset_from_line(geometry::Line previous_
 
 //using LaneWidths = std::vector<LaneWidth>;
 
-} // namespace opendrive
-} // namespace world
+}  // namespace opendrive
+}  // namespace world
 } // namespace modules
 
 #endif // MODULES_WORLD_OPENDRIVE_COMMONS_HPP_

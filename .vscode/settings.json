@@ -91,7 +91,8 @@
     "memory_resource": "cpp",
     "set": "cpp",
     "cfenv": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "dense": "cpp"
   },
   "files.exclude": {
     ".vscode": false,

@@ -20,11 +20,11 @@ Object::Object(const geometry::Polygon& shape,
   model_3d_(model_3d),
   agent_id_(agent_count++) {}
 
-Object* Object::Clone() const {
-  Object* new_Object = new Object(*this);
+std::shared_ptr<Object> Object::Clone() const {
+  std::shared_ptr<Object> new_Object = std::make_shared<Object>(*this);
   return new_Object;
 }
 
-} // objects
-} // world
-} // modules
+}  // objects
+}  // world
+}  // modules

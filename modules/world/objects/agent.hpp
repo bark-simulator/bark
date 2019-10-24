@@ -104,7 +104,7 @@ class Agent : public Object {
   void GenerateLocalMap();
   void UpdateDrivingCorridor(double horizon);
 
-  virtual Agent *Clone() const;
+  virtual std::shared_ptr<Object> Clone() const;
 
  private:
   models::behavior::BehaviorModelPtr behavior_model_;

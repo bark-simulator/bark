@@ -28,6 +28,9 @@ void python_behavior(py::module m) {
       .def(py::init<modules::commons::Params *>())
       .def("plan", &BehaviorModel::Plan)
       .def("clone", &BehaviorModel::Clone)
+      .def("set_last_trajectory", &BehaviorModel::set_last_trajectory)
+      .def("set_last_action", &BehaviorModel::set_last_action)
+      .def("get_last_action", &BehaviorModel::get_last_action)
       .def_property("last_trajectory",
                     &BehaviorModel::get_last_trajectory,
                     &BehaviorModel::set_last_trajectory);

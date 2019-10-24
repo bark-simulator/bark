@@ -8,6 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 
 #include <memory>
+#include <Eigen/Dense>
 
 #include "modules/commons/base_type.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -27,7 +28,8 @@ using dynamic::Trajectory;
 
 typedef unsigned int DiscreteAction;
 typedef double Continuous1DAction;
-typedef boost::variant<DiscreteAction, Continuous1DAction> Action;
+using dynamic::Input;
+typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
 
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
@@ -42,22 +44,23 @@ class BehaviorModel : public modules::commons::BaseType {
   BehaviorModel(const BehaviorModel &behavior_model) :
     commons::BaseType(behavior_model.get_params()),
     last_trajectory_(behavior_model.get_last_trajectory()),
+    last_action_(behavior_model.get_last_action()),
     active_model_(behavior_model.get_active_model()) {}
 
   virtual ~BehaviorModel() {}
 
   dynamic::Trajectory get_last_trajectory() const { return last_trajectory_; }
 
-  void set_last_trajectory(const dynamic::Trajectory &trajectory) {
+  void set_last_trajectory(const dynamic::Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
   bool get_active_model() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
-                          const world::ObservedWorld& observed_world) = 0;
+                          const world::ObservedWorld& observed_world) {}
 
-  virtual BehaviorModel *Clone() const = 0;
+  virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  Action get_last_action() const {return last_action_; };
+  Action get_last_action() const {return last_action_; }
   void set_last_action(const Action action) {last_action_ = action;}
 
  private:
@@ -65,6 +68,10 @@ class BehaviorModel : public modules::commons::BaseType {
   Action last_action_;
   bool active_model_;
 };
+
+inline std::shared_ptr<BehaviorModel> BehaviorModel::Clone() const {
+  return std::make_shared<BehaviorModel>(*this);
+}
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
 

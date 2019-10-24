@@ -38,14 +38,14 @@ class Object : public commons::BaseType {
 
   void set_agent_id(const AgentId& agent_id) { agent_id_ = agent_id;}
 
-  virtual Object *Clone() const;
+  virtual std::shared_ptr<Object> Clone() const;
 
  private:
   geometry::Polygon shape_;
   geometry::Model3D model_3d_;
   AgentId agent_id_;
 
-  static AgentId agent_count; 
+  static AgentId agent_count;
 };
 
 typedef std::shared_ptr<Object> ObjectPtr;
