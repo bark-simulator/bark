@@ -19,6 +19,7 @@ Bark is a semantic-simulation for multiple agents that are interaction aware.
    installation
    example
    debugging
+   guidelines
 ```
 
 ```eval_rst

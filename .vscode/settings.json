@@ -121,10 +121,10 @@
       "editor.tabSize": 2
   },
   "[python]": {
-      "editor.tabSize": 4
+      "editor.tabSize": 2
   },
   "licenser.license": "MIT",
   "licenser.author": "fortiss GmbH",
 "licenser.projectName": "BARK",
-"C_Cpp.dimInactiveRegions": false
+"C_Cpp.dimInactiveRegions": false,
 }
