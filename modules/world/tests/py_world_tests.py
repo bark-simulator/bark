@@ -27,7 +27,7 @@ class WorldTests(unittest.TestCase):
         # create agent
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
-        execution = ExecutionModelMpc(params)
+        execution = ExecutionModelInterpolate(params)
         dynamic = SingleTrackModel(params)
         shape = Polygon2d([1.25, 1, 0], [
             Point2d(0, 0),

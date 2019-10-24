@@ -17,5 +17,4 @@ tf-nightly-2.0-preview
 panda3d
 pandas
 autopep8
-pylint
 cpplint
