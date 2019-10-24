@@ -164,7 +164,7 @@ TEST(observed_world, clone) {
 
   observed_world.reset();
   auto behavior_ego = cloned_observed_world->get_ego_behavior_model();
-  EXPECT_TRUE(static_cast<bool>(behavior_ego));
+  EXPECT_TRUE(behavior_ego != nullptr);
 }
 
 TEST(observed_world, predict) {
