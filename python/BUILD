@@ -25,7 +25,7 @@ cc_binary(
     "//modules/models/behavior/motion_primitives:motion_primitives",
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
-    "//modules/models/execution/mpc:mpc",
+    #"//modules/models/execution/mpc:mpc",
     "//modules/runtime/viewer:viewer",
     "//modules/world:world",
     "//modules/runtime:cc_runtime",

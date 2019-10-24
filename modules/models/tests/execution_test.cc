@@ -7,7 +7,7 @@
 #include "gtest/gtest.h"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/execution/mpc/mpc.hpp"
+//#include "modules/models/execution/mpc/mpc.hpp"
 #include "modules/commons/params/default_params.hpp"
 
 using namespace modules::models::dynamic;
@@ -43,6 +43,7 @@ TEST(execution_model, execution_model_interpolate) {
   //   EXPECT_NEAR(next_state3(StateDefinition::Y_POSITION),0.9,0.001);
 }
 
+/*
 TEST(execution_model, execution_model_mpc) {
 
   DefaultParams params;
@@ -59,3 +60,4 @@ TEST(execution_model, execution_model_mpc) {
 
   Trajectory followed_trajectory1 = exec_model->Execute(0.5, test_trajectory, dyn_model, test_trajectory.row(0));
 }
+*/
