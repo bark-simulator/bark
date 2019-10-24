@@ -26,9 +26,9 @@ class PyDynamicModel : public DynamicModel {
         x, u);
   }
 
-  DynamicModel *Clone() const override {
+  std::shared_ptr<DynamicModel> Clone() const override {
     PYBIND11_OVERLOAD_PURE(
-        DynamicModel *,
+        std::shared_ptr<DynamicModel>,
         DynamicModel,
         clone);
   }

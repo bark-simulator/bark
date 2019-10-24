@@ -71,8 +71,10 @@ class TripleIntegratorModel : public DynamicModel {
     return A*x + B*u;
   }
 
-  DynamicModel *Clone() const {
-    return new TripleIntegratorModel(*this);
+  std::shared_ptr<DynamicModel> Clone() const {
+  std::shared_ptr<TripleIntegratorModel> model_ptr =
+    std::make_shared<TripleIntegratorModel>(*this);
+  return std::dynamic_pointer_cast<DynamicModel>(model_ptr);
   }
 
  private:

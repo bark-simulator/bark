@@ -43,7 +43,7 @@ class DynamicModel : public commons::BaseType {
 
   virtual State StateSpaceModel(const State &x, const Input &u) const = 0;
 
-  virtual DynamicModel *Clone() const = 0;
+  virtual std::shared_ptr<DynamicModel> Clone() const = 0;
 
   int input_size_;
 };

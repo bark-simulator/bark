@@ -18,6 +18,7 @@ using dynamic::StateDefinition::Y_POSITION;
 using dynamic::StateDefinition::THETA_POSITION;
 using dynamic::StateDefinition::VEL_POSITION;
 using dynamic::TripleIntegratorModel;
+using dynamic::Input;
 
 
 DynamicBehaviorModel::DynamicBehaviorModel(
@@ -25,7 +26,7 @@ DynamicBehaviorModel::DynamicBehaviorModel(
   commons::Params *params) :
   BehaviorModel(params),
   dynamic_model_(dynamic_model),
-  current_action_(3),
+  current_action_(2),
   integration_time_delta_(
     params->get_real("integration_time_delta",
                       "delta t for integration", 0.01)) {
@@ -53,13 +54,17 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     this->get_params()->get_int("DynamicModel::state_dimension",
                                 "state vector length", 5));
 
-  // std::cout << ego_vehicle_state << std::endl;
+  // std::cout << "State:" << ego_vehicle_state << std::endl;
+  std::cout << "Action:" << \
+    boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()) << std::endl;
+
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
-    auto next_state = dynamic::euler_int(*dynamic_model_,
-                                         traj.row(i-1),
-                                         current_action_,
-                                         dt);
+    auto next_state = dynamic::euler_int(
+      *dynamic_model_,
+      traj.row(i-1),
+      boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()),
+      dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;
     if (std::dynamic_pointer_cast<TripleIntegratorModel>(dynamic_model_)) {

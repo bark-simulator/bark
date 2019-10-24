@@ -34,7 +34,7 @@ class BehaviorLongitudinalAcceleration : public BehaviorModel {
   
   virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) = 0;
 
-  virtual BehaviorModel *Clone() const = 0;
+  virtual std::shared_ptr<BehaviorModel> Clone() const = 0;
 };
 
 

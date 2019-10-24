@@ -40,7 +40,6 @@ dynamic_model = SingleTrackModel(param_server)
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
 map_interface.set_open_drive_map(xodr_parser.map)
-map_interface.set_roadgraph(xodr_parser.roadgraph)
 world.set_map(map_interface)
 # Agent Definition
 agent_2d_shape = CarLimousine()
