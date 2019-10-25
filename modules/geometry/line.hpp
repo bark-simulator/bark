@@ -47,14 +47,11 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     recompute_s();
   }
 
-  std::vector<T> get_points_in_s_interval(float begin, float end) const {
+  std::pair<uint, uint> get_segment_begin_and_end_idx(float begin, float end) const {
     std::vector<T> points;
     uint begin_idx = std::upper_bound(s_.begin(), s_.end(), begin) - s_.begin();
     uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
-    std::copy(Shape<bg::model::linestring<T>, T>::obj_.begin() + begin_idx,
-              Shape<bg::model::linestring<T>, T>::obj_.begin() + end_idx,
-              std::back_inserter(points));
-    return points;
+    return std::make_pair(begin_idx, end_idx);
   }
 
   virtual bool Valid() {
@@ -256,9 +253,9 @@ inline Point2d get_normal_at_s(Line l, float s) {
 inline Line get_line_from_s_interval(Line line, float begin, float end) {
   Line new_line;
   new_line.add_point(get_point_at_s(line, begin));
-  std::vector<Point2d> points = line.get_points_in_s_interval(begin, end);
-  for (auto const &point : points) {
-    new_line.add_point(point);
+  std::pair<uint, uint> indices = line.get_segment_begin_and_end_idx(begin, end);
+  for (uint idx = indices.first; idx < indices.second; ++idx) {
+    bg::append(new_line.obj_, line.obj_.at(idx));
   }
   new_line.add_point(get_point_at_s(line, end));
   return new_line;
