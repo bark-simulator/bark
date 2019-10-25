@@ -34,6 +34,7 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
   }
 
   double steering = behavior_pure_pursuit_.FindSteeringAngle(observed_world.current_ego_state());
+  // std::cout << acceleration << ", " << steering << std::endl;
 
   Input input(2);
   input << acceleration, steering;
@@ -46,7 +47,7 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
 }
 
 void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed_world) {
-  std::cout << " Current: " << observed_world.get_map()->get_lane(current_corridor_->get_lane_ids().front().second)->get_lane_position() << std::endl;
+  // std::cout << " Current: " << observed_world.get_map()->get_lane(current_corridor_->get_lane_ids().front().second)->get_lane_position() << std::endl;
 
   ConstAgentPtr ego_agent = observed_world.get_ego_agent();
   const float ego_length = ego_agent->get_shape().rear_dist_ + ego_agent->get_shape().front_dist_;
@@ -101,13 +102,20 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
         threshold -= acceleration_bias_;
       }
       if (benefit > threshold) {                                                                                            // Advantage criterion
+        if (asymmetric_passing_rules_) {
+          std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
+          std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
+        } else {
+          std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
+          std::cout << ", others improve by " << acc_o_after - acc_o_before << std::endl;
+        }
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(right_corridor.first->get_center());
         is_changing_lane_ = true;
         target_corridor_ = right_corridor.first;
       }
     } else {
-      std::cout << " To right would be unsafe: " << acc_n_after << " >= " << -safe_decel_ << std::endl;
+      // std::cout << " To right would be unsafe: " << acc_n_after << " >= " << -safe_decel_ << std::endl;
     }
   }
 
@@ -120,7 +128,7 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
     std::pair<AgentPtr, double> left_leading = observed_world.get_agent_in_front(left_corridor.first);
 
     if (left_following.first == nullptr) {
-      std::cout << " Could go left, nobody there" << std::endl;
+      // std::cout << " Could go left, nobody there" << std::endl;
     }
 
     const double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, left_leading.first, left_leading.second);
@@ -155,13 +163,20 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
         threshold += acceleration_bias_;
       }
       if (benefit > threshold) {                                                                                            // Advantage criterion
+        if (asymmetric_passing_rules_) {
+          std::cout << "Go left. Ego improves by " << acc_c_after - acc_c_before;
+          std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
+        } else {
+          std::cout << "Go left. Ego improves by " << acc_c_after - acc_c_before;
+          std::cout << ", others improve by " << acc_n_after - acc_n_before << std::endl;
+        }
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(left_corridor.first->get_center());
         is_changing_lane_ = true;
         target_corridor_ = left_corridor.first;
       }
     } else {
-      std::cout << " To left would be unsafe: " << acc_n_after << std::endl;
+      // std::cout << " To left would be unsafe: " << acc_n_after << std::endl;
     }
   }
 }
@@ -179,7 +194,8 @@ void BehaviorMobil::ConcludeLaneChange(const world::ObservedWorld &observed_worl
   if (abs(frenet_target_corridor.lat) < abs(frenet_source_corridor.lat)) {
     is_changing_lane_ = false;
     current_corridor_ = target_corridor_;
-    
+    // https://github.com/bark-simulator/bark/issues/118
+
     // Polygon goal_polygon = std::dynamic_pointer_cast<GoalDefinitionPolygon>(observed_world.get_ego_agent()->get_goal_definition())->get_shape();
     // Pose old_goal_pose = goal_polygon.center_;
     // Point2d new_goal_position = get_nearest_point(target_corridor_->get_center(), Point2d(old_goal_pose(0), old_goal_pose(1)));
@@ -195,6 +211,8 @@ double BehaviorMobil::CalculateLongitudinalAcceleration(const ConstAgentPtr &ego
   }
 
   // Obtain IDM parameters of the ego agent
+  // TODO(@AKreutz): Does this make sense for predicting the behavior of others? Maybe it makes more sense to use current velocity for desired velocity,
+  // and default values for everything else
   float desired_velocity;
   float minimum_spacing;
   float desired_time_headway;
@@ -221,9 +239,10 @@ double BehaviorMobil::CalculateLongitudinalAcceleration(const ConstAgentPtr &ego
     comfortable_braking_acceleration = behavior_idm->get_comfortable_braking_acceleration();
     exponent = behavior_idm->get_exponent();
   } else {
-    std::cout << "Using default" << std::endl;
+    // std::cout << "Using default" << std::endl;
     // default parameters
-    desired_velocity = 15.0f;
+    // desired_velocity = 15.0f;
+    desired_velocity = ego_agent->get_current_state()(StateDefinition::VEL_POSITION);
     minimum_spacing = 2.0f;
     desired_time_headway = 1.5f;
     max_acceleration = 1.7f;
@@ -246,13 +265,13 @@ double BehaviorMobil::CalculateLongitudinalAcceleration(const ConstAgentPtr &ego
 
     const double helper_state = minimum_spacing + ego_velocity*desired_time_headway +
                       (ego_velocity*net_velocity) / (2*sqrt(max_acceleration*comfortable_braking_acceleration));
-    
+
     BARK_EXPECT_TRUE(!std::isnan(helper_state));
     interaction_term = (helper_state / net_distance)*(helper_state / net_distance);
     BARK_EXPECT_TRUE(!std::isnan(interaction_term));
   }
-  
-  // Calculate acceleration based on https://en.wikipedia.org/wiki/Intelligent_driver_model (Maybe look into paper for other implementation aspects)  
+
+  // Calculate acceleration based on https://en.wikipedia.org/wiki/Intelligent_driver_model (Maybe look into paper for other implementation aspects)
   return max_acceleration * ( 1 - pow(ego_velocity / desired_velocity, exponent) - interaction_term);
 }
 
