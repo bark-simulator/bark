@@ -25,7 +25,9 @@ World::World(const std::shared_ptr<World>& world)  :
   map_(world->get_map()),
   agents_(world->get_agents()),
   objects_(world->get_objects()),
+  evaluators_(world->get_evaluators()),
   world_time_(world->get_world_time()),
+  remove_agents_(world->get_remove_agents()),
   rtree_agents_(world->rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {

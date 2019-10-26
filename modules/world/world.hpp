@@ -62,6 +62,8 @@ class World : public commons::BaseType {
   std::map<std::string,
            EvaluatorPtr> get_evaluators() const { return evaluators_; }
 
+  bool get_remove_agents() const { return remove_agents_; }
+
   void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
 
   std::pair<modules::geometry::Point2d,
