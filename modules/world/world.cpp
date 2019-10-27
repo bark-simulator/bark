@@ -26,8 +26,8 @@ World::World(const World& world)  :
   agents_(world.get_agents()),
   objects_(world.get_objects()),
   world_time_(world.get_world_time()),
-  rtree_agents_(world.rtree_agents_),
-  remove_agents_(world.remove_agents_) {}
+  remove_agents_(world.remove_agents_),
+  rtree_agents_(world.rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
