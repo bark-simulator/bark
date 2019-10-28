@@ -292,14 +292,17 @@ class XodrParser(object):
     def create_lane_link(self, link):
         new_link = LaneLink()
 
-        try:
-            new_link.from_position = int(link["predecessor"])
-        except:
-            print("No LaneLink.predecessor")
-        try:
-            new_link.to_position = int(link["successor"])
-        except:
-            print("No LaneLink.successor")
+        if link is not None:
+            try:
+                new_link.from_position = int(link["predecessor"])
+            except:
+                print("No LaneLink.predecessor")
+            try:
+                new_link.to_position = int(link["successor"])
+            except:
+                print("No LaneLink.successor")
+        else:
+            print("No LaneLink")
             
         return new_link
 
@@ -318,7 +321,11 @@ class XodrParser(object):
             new_lane = Lane.create_lane_from_lane_width(int(lane["id"]), reference_line, lane_width, 1.0)
 
             new_lane.lane_type = lane["type"]
-            new_lane.link = self.create_lane_link(lane["link"])
+            
+            if "link" in lane:
+                new_lane.link = self.create_lane_link(lane["link"])
+            else:
+                new_lane.link = self.create_lane_link(None)
 
             # not every lane contains a road-mark
             if ("road_mark" in lane):
