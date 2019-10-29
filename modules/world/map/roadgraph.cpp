@@ -399,9 +399,9 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map)
 
     try
     {// if not found, the successor could be a junction
-      auto iter(map->get_roads().lower_bound(successor_id));
-      if (iter == map->get_roads().end() || successor_id < iter->first)
-      { // not found
+      // auto iter(map->get_roads().lower_bound(successor_id));
+      if (road_element.second->get_link().get_successor().type_=="road") // successor_id == iter->first
+      { // found?
         RoadPtr successor_road = map->get_roads().at(successor_id);
         successor_lane_section = successor_road->get_lane_sections().front();
       }
@@ -417,9 +417,9 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map)
 
     try
     {// if not found, the predecessor could be a junction
-      auto iter(map->get_roads().lower_bound(predecessor_id));
-      if (iter == map->get_roads().end() || predecessor_id < iter->first)
-      { // not found
+      // auto iter(map->get_roads().lower_bound(predecessor_id));
+      if (road_element.second->get_link().get_predecessor().type_=="road") // predecessor_id == iter->first
+      { // found?
         RoadPtr predecessor_road = map->get_roads().at(predecessor_id);
         predecessor_lane_section = predecessor_road->get_lane_sections().back();
       }
