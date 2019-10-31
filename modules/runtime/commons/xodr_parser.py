@@ -84,10 +84,9 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            # if str(lane.get("type")) not in ["driving", "border", "sidewalk"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
-            #     continue
             new_lane = {}
             new_lane["id"] = id
+            # every type we cannot read is read in as sidewalk
             new_lane["type"] = LaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else LaneType.__members__["sidewalk"]# assign enum type
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:
