@@ -39,7 +39,7 @@ def helper_plot(xodr_parser):
 
                 # print(lane.road_mark)
                 plt.text(line_np[-1, 0], line_np[-1, 1],
-                         'center_{i}_{j}'.format(i=lane.lane_id, j=lane.lane_position))
+                         'outer_{i}_{j}'.format(i=lane.lane_id, j=lane.lane_position))
 
                 plt.plot(
                     line_np[:, 0],
@@ -75,7 +75,7 @@ class ImporterTests(unittest.TestCase):
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
         # helper_plot(xodr_parser)
-    
+
     def test_map_4way_intersection(self):
         xodr_parser = XodrParser(
             "modules/runtime/tests/data/4way_intersection.xodr")
@@ -100,13 +100,22 @@ class ImporterTests(unittest.TestCase):
         map_interface.set_open_drive_map(xodr_parser.map)
         # helper_plot(xodr_parser)
 
-    #def test_map_town01(self):
-    #    xodr_parser = XodrParser(
-    #        "modules/runtime/tests/data/Town01.xodr")
-    #
-    #    map_interface = MapInterface()
-    #    map_interface.set_open_drive_map(xodr_parser.map)
-    #    # helper_plot(xodr_parser)
+    # def test_map_town01(self):
+    #     xodr_parser = XodrParser(
+    #         "modules/runtime/tests/data/Town01.xodr")
+
+    #     map_interface = MapInterface()
+    #     map_interface.set_open_drive_map(xodr_parser.map)
+    #     helper_plot(xodr_parser)
+
+    # def test_map_town02(self):
+    #     xodr_parser = XodrParser(
+    #         "modules/runtime/tests/data/Town02.xodr")
+
+    #     map_interface = MapInterface()
+    #     map_interface.set_open_drive_map(xodr_parser.map)
+    #     helper_plot(xodr_parser)
+
 
 if __name__ == '__main__':
     unittest.main()
