@@ -1,7 +1,7 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 
-#include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
+#include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
 
@@ -14,13 +14,13 @@ namespace behavior {
 class BehaviorMobil : public BehaviorModel {
   public:
     explicit BehaviorMobil(
-      const DynamicModelPtr &dynamic_model,
+      const dynamic::DynamicModelPtr &dynamic_model,
       const BehaviorModelPtr &longitudinal_behavior,
       const float politeness,
       const float acceleration_threshold,
       commons::Params *params) :
         BehaviorModel(params),
-        dynamic_behavior_model_(dynamic_model, params),
+        dynamic_model_(dynamic_model),
         longitudinal_behavior_(std::dynamic_pointer_cast<BehaviorLongitudinalAcceleration>(longitudinal_behavior)),
         behavior_pure_pursuit_(params),
         is_changing_lane_(false),
@@ -54,7 +54,7 @@ class BehaviorMobil : public BehaviorModel {
       const std::shared_ptr<const world::objects::Agent> &leading_vehicle,
       const double distance) const;
 
-    DynamicBehaviorModel dynamic_behavior_model_;
+    dynamic::DynamicModelPtr dynamic_model_;
 
     std::shared_ptr<BehaviorLongitudinalAcceleration> longitudinal_behavior_;
     BehaviorPurePursuit behavior_pure_pursuit_;

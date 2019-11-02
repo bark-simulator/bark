@@ -1,6 +1,7 @@
 #include "modules/models/behavior/mobil/mobil.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/dynamic/integration.hpp"
 
 
 namespace modules {
@@ -33,17 +34,23 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
     acceleration = CalculateLongitudinalAcceleration(observed_world.get_ego_agent(), agent_in_front.first, agent_in_front.second);
   }
 
-  double steering = behavior_pure_pursuit_.FindSteeringAngle(observed_world.current_ego_state());
-  // std::cout << acceleration << ", " << steering << std::endl;
+  float integration_time_delta = get_params()->get_real("integration_time_delta", "delta t for integration", 0.01);
+  int n_trajectory_points = static_cast<int>(std::ceil(delta_time / integration_time_delta)) + 1;
 
-  Input input(2);
-  input << acceleration, steering;
-  dynamic_behavior_model_.set_action(input);
+  Trajectory traj(n_trajectory_points, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj.row(0) = observed_world.current_ego_state();
 
-  Trajectory trajectory = dynamic_behavior_model_.Plan(delta_time, observed_world);
-  set_last_trajectory(trajectory);
+  for (int t = 1; t < n_trajectory_points; ++t) {
+    double steering = behavior_pure_pursuit_.FindSteeringAngle(traj.row(t - 1));
 
-  return trajectory;
+    dynamic::Input input(2);
+    input << acceleration, steering;
+
+    traj.row(t) = dynamic::euler_int(*dynamic_model_, traj.row(t - 1), input, integration_time_delta);
+  }
+
+  set_last_trajectory(traj);
+  return traj;
 }
 
 void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed_world) {
