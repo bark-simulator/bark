@@ -1,5 +1,5 @@
 #include "modules/world/predictor/prediction.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/nop/nop.hpp"
 
 namespace modules {
 namespace world {
@@ -7,7 +7,7 @@ namespace prediction {
 
 using goal_definition::GoalDefinition;
 using goal_definition::GoalDefinitionPtr;
-using models::behavior::BehaviorIDMClassic;
+using models::behavior::BehaviorNOP;
 using models::dynamic::StateDefinition;
 
 Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_world, const float time_step)
@@ -21,7 +21,7 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
 
 void Prediction::Predict(const uint n_steps, const std::map<AgentId, std::pair<BehaviorModelPtr, float>> &assumed_agent_behaviors) {
   ObservedWorldPtr prediction_world(observed_world_.Clone());
-  BehaviorModelPtr ego_behavior = std::make_shared<BehaviorIDMClassic>(prediction_world->current_ego_state()(StateDefinition::VEL_POSITION), get_params());
+  BehaviorModelPtr ego_behavior = std::make_shared<BehaviorNOP>(get_params());
   prediction_world->set_ego_behavior_model(ego_behavior);
 
   HypothesisId hypothesis_id = 0;

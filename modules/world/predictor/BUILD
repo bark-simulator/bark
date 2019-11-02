@@ -10,7 +10,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
-        "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/nop:nop",
         "//modules/world:world",
     ],
     visibility = ["//visibility:public"],
