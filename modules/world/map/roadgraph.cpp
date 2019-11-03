@@ -384,35 +384,43 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map)
   // add successors, predecessors
   for (auto const &road_element : map->get_roads())
   {                                                                                     // std::map
-    RoadId successor_road_id = road_element.second->get_link().get_successor().id_;     // this is the position!!!!!! (-4, 4)
-    RoadId predecessor_road_id = road_element.second->get_link().get_predecessor().id_; // this is the position!!!!!! (-4, 4)
-    if (successor_road_id > 1000)
+    RoadId successor_id = road_element.second->get_link().get_successor().id_;     // this is the position!!!!!! (-4, 4)
+    RoadId predecessor_id = road_element.second->get_link().get_predecessor().id_; // this is the position!!!!!! (-4, 4)
+    if (successor_id > 1000)
     {
       continue;
     }
 
-    RoadPtr successor_road = map->get_roads().at(successor_road_id);
-    LaneSectionPtr successor_lane_section = successor_road->get_lane_sections().front();
-
     // make sure that there is a predecessor!!
+    LaneSectionPtr successor_lane_section = nullptr;
     LaneSectionPtr predecessor_lane_section = nullptr;
 
-    // TODO: That's pretty ugly, move check for road_id to map
-    try
+    // TODO(@hart): That's pretty ugly, move check for road_id to map
+
+    if (road_element.second->get_link().get_successor().type_=="road") // successor_id == iter->first
     {
-      auto iter(map->get_roads().lower_bound(predecessor_road_id));
-      if (iter == map->get_roads().end() || predecessor_road_id < iter->first)
-      { // not found
-        RoadPtr predecessor_road = map->get_roads().at(predecessor_road_id);
-        predecessor_lane_section = predecessor_road->get_lane_sections().back();
-      }
-      else
-      {
-        std::cerr << "Road has no predeseccor road. \n";
+      auto it = map->get_roads().find(successor_id);
+      if (it != map->get_roads().end()) {
+        RoadPtr successor_road = map->get_roads().at(successor_id);
+        successor_lane_section = successor_road->get_lane_sections().front();
       }
     }
-    catch (...)
+    else
     {
+      std::cout << "Road has no successor road. \n";
+    }
+
+    if (road_element.second->get_link().get_predecessor().type_=="road") // predecessor_id == iter->first
+    {
+      auto it = map->get_roads().find(predecessor_id);
+      if (it != map->get_roads().end()) {
+        RoadPtr predecessor_road = map->get_roads().at(predecessor_id);
+        predecessor_lane_section = predecessor_road->get_lane_sections().back();
+      }
+    }
+    else
+    {
+      std::cout << "Road has no predeseccor road. \n";
     }
 
     // TODO (@hart): there could be mult. lane_sections
@@ -422,20 +430,23 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map)
       { // std::map
 
         // add successor edge
-        LanePosition successor_lane_position = lane_element.second->get_link().to_position;
-        if (successor_lane_position == 0)
+        if (successor_lane_section)
         {
-          continue;
+          LanePosition successor_lane_position = lane_element.second->get_link().to_position;
+          if (successor_lane_position == 0)
+          {
+            continue;
+          }
+
+          LanePtr successor_lane = successor_lane_section->get_lane_by_position(successor_lane_position);
+          // LanePtr successor_lane = lane_section_element->get_lanes().at(successor_lane_position);
+
+          if (successor_lane)
+          {
+            bool success = add_successor(lane_element.first, successor_lane->get_id());
+          }
         }
-
-        LanePtr successor_lane = successor_lane_section->get_lane_by_position(successor_lane_position);
-        // LanePtr successor_lane = lane_section_element->get_lanes().at(successor_lane_position);
-
-        if (successor_lane)
-        {
-          bool success = add_successor(lane_element.first, successor_lane->get_id());
-        }
-
+        
         // does not always have predecessor
         try
         {
