@@ -10,9 +10,10 @@ jobs:
       image: docker://barksim/bark:latest
     
     steps:
-    - name: Run a one-line script
-      run: virtualenv -p python3 ./python/venv  --system-site-packages
-    - name: Run a multi-line script
+    - name: Setting up virtual environment
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        virtualenv -p python3 ./python/venv  --system-site-packages
+        source ./python/venv/bin/activate
+        pip install -r tools/installers/requirements.txt -q
+    - name: Runing bazel test
+      run: bazel //...
