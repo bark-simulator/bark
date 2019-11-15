@@ -11,9 +11,7 @@ jobs:
     
     steps:
     - name: Setting up virtual environment
-      run: virtualenv -p python3 ./python/venv  --system-site-packages
-    - name: Getting into venv
-      run: source ./python/venv/bin/activate
+      run: virtualenv -p python3 ./python/venv  --system-site-packages && source ./python/venv/bin/activate
     - name: Installing python dependencies
       run: pip install -r tools/installers/requirements.txt -q
     - name: Runing bazel test
