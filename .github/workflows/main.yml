@@ -15,6 +15,6 @@ jobs:
     - name: Getting into venv
       run: . ./python/venv/bin/activate
     - name: Installing python dependencies
-      run: pip install -r tools/installers/requirements.txt -q
+      run: pip3 install -r tools/installers/requirements.txt -q
     - name: Runing bazel test
       run: bazel //...
