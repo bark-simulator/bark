@@ -1,14 +1,13 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
-
 #include "gtest/gtest.h"
-#include "modules/geometry/polygon.hpp"
-#include "modules/geometry/line.hpp"
 #include "modules/geometry/commons.hpp"
+#include "modules/geometry/line.hpp"
+#include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
 
 TEST(polygon, base_functionality) {
@@ -142,7 +141,7 @@ TEST(geometry, polygon) {
   EXPECT_TRUE(p.Valid());
 
   std::shared_ptr<Polygon> p2 =
-    std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
+      std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
 }
 
 TEST(geometry, standard_shapes) {
@@ -439,11 +438,9 @@ TEST(collision, carshape1) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-    std::dynamic_pointer_cast<Polygon>(
-      outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-    std::dynamic_pointer_cast<Polygon>(
-      outline.transform(Pose(10, 10, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(10, 10, 0)));
 
   EXPECT_FALSE(Collide(*car1, *car2));
 }
@@ -457,11 +454,9 @@ TEST(collision, carshape2) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-  std::dynamic_pointer_cast<Polygon>(
-    outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-  std::dynamic_pointer_cast<Polygon>(
-    outline.transform(Pose(1, 0, 3.14)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(1, 0, 3.14)));
 
   // TODO(@hart): HACK
   // EXPECT_TRUE(Collide(car1.get(), car2.get()));
@@ -663,7 +658,8 @@ TEST(line, segment_intersection_tangent_1) {
   line.add_point(point_5);
 
   EXPECT_NEAR(get_tangent_angle_at_s(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(get_tangent_angle_at_s(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1f);
+  EXPECT_NEAR(get_tangent_angle_at_s(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141,
+              0.1f);
 
   // template
   Point2d point_6(0.0, 0.0);
@@ -723,6 +719,37 @@ TEST(line, segment_get_normal_1) {
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
 
+TEST(optimizer, shrink_polygon) {
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
+
+  Polygon polygon;
+  polygon.add_point(Point2d(0, 0));
+  polygon.add_point(Point2d(4, 0));
+  polygon.add_point(Point2d(4, 2));
+  polygon.add_point(Point2d(6, 2));
+  polygon.add_point(Point2d(6, 0));
+  polygon.add_point(Point2d(10, 0));
+  polygon.add_point(Point2d(10, 4));
+  polygon.add_point(Point2d(0, 4));
+  polygon.add_point(Point2d(0, 0));
+
+  Polygon shrunk_polygon;
+  ShrinkPolygon(polygon, -1, shrunk_polygon);
+
+  Polygon expected_shrunk_polygon;
+  polygon.add_point(Point2d(1, 1));
+  polygon.add_point(Point2d(3, 1));
+  polygon.add_point(Point2d(3, 3));
+  polygon.add_point(Point2d(7, 3));
+  polygon.add_point(Point2d(7, 1));
+  polygon.add_point(Point2d(7, 1));
+  polygon.add_point(Point2d(9, 3));
+  polygon.add_point(Point2d(9, 3));
+  polygon.add_point(Point2d(1, 1));
+
+  ASSERT_TRUE(equals(expected_shrunk_polygon, shrunk_polygon));
+}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
