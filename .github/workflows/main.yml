@@ -1,0 +1,17 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: docker://barksim/bark:latest
+    - name: Run a one-line script
+      run: virtualenv -p python3 ./python/venv  --system-site-packages
+    - name: Run a multi-line script
+      run: |
+        echo Add other actions to build,
+        echo test, and deploy your project.
