@@ -6,9 +6,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    container:
+      image: docker://barksim/bark:latest
+    
     steps:
-    - uses: docker://barksim/bark:latest
     - name: Run a one-line script
       run: virtualenv -p python3 ./python/venv  --system-site-packages
     - name: Run a multi-line script
