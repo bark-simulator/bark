@@ -71,7 +71,8 @@ viewer = Panda3dViewer(params=param_server,
                       y_range=[-150, 150],
                       follow_agent_id=agent.id)
 """
-viewer = MPViewer(params=param_server)
+viewer = MPViewer(params=param_server,
+                  follow_agent_id=agent.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

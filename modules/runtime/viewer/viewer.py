@@ -182,7 +182,8 @@ class BaseViewer(Viewer):
             if self.draw_eval_goals and agent.goal_definition:
                 self.drawGoalDefinition(agent.goal_definition)
 
-        self.drawText(position=(0.1,0.9), text="Scenario {}".format(scenario_idx), fontsize=18)
+        self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
+        self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
 
     def drawMap(self, map):
         # draw the boundary of each lane
