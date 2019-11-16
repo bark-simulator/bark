@@ -64,7 +64,7 @@ class BaseViewer(Viewer):
     def _update_world_view_range(self, world, eval_agent_ids=None):
         draw_eval_agent_id = self._get_draw_eval_agent_ids(world, eval_agent_ids)
 
-        if draw_eval_agent_id:
+        if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
             pose = np.zeros(3)
@@ -211,7 +211,7 @@ class BaseViewer(Viewer):
         if self.draw_route:
             self.drawRoute(agent)
 
-        self.drawHistory(agent, color)
+        # self.drawHistory(agent, color)
 
     def drawDrivingCorridor(self, corridor, color=None):
         if color is None:
