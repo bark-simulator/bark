@@ -35,15 +35,8 @@ class DynamicBehaviorModel : public BehaviorModel {
 
   std::shared_ptr<BehaviorModel> Clone() const;
 
-  void set_action(const Input& inp) {
-    current_action_.resize(inp.rows(), 1);
-    current_action_ = inp;
-  }
-  Input get_action() const { return current_action_; }
-
  private:
   DynamicModelPtr dynamic_model_;
-  Input current_action_;
 
   // Parameters
   float integration_time_delta_;
