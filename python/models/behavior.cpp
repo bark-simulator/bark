@@ -91,9 +91,7 @@ void python_behavior(py::module m) {
            modules::commons::Params *>())
       .def("__repr__", [](const DynamicBehaviorModel &b) {
         return "bark.behavior.DynamicBehaviorModel";
-      })
-      .def("set_action", &DynamicBehaviorModel::set_action)
-      .def("get_action", &DynamicBehaviorModel::get_action);
+      });
 
   
   // must be at the end to have definitions of other models available
