@@ -9,13 +9,12 @@ jobs:
     container:
       image: docker://barksim/bark:latest
     steps:
-    - name: Setting up virtual environment
-      run: virtualenv -p python3 ./python/venv  --system-site-packages
-    - name: checking docker
-      run: ls
-    - name: Getting into venv
-      run: . ./python/venv/bin/activate
-    - name: Installing python dependencies
-      run: pip3 install -r tools/installers/requirements.txt -q
-    - name: Runing bazel test
-      run: bazel //...
+      - uses: actions/checkout@master
+      - name: Setting up virtual environment
+        run: virtualenv -p python3 ./python/venv  --system-site-packages
+      - name: Getting into venv
+        run: . ./python/venv/bin/activate
+      - name: Installing python dependencies
+        run: pip3 install -r tools/installers/requirements.txt -q
+      - name: Runing bazel test
+        run: bazel //...
