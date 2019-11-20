@@ -64,7 +64,7 @@ class BaseViewer(Viewer):
     def _update_world_view_range(self, world, eval_agent_ids=None):
         draw_eval_agent_id = self._get_draw_eval_agent_ids(world, eval_agent_ids)
 
-        if draw_eval_agent_id:
+        if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
             pose = np.zeros(3)
@@ -182,7 +182,8 @@ class BaseViewer(Viewer):
             if self.draw_eval_goals and agent.goal_definition:
                 self.drawGoalDefinition(agent.goal_definition)
 
-        self.drawText(position=(0.1,0.9), text="Scenario {}".format(scenario_idx), fontsize=18)
+        self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
+        self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
 
     def drawMap(self, map):
         # draw the boundary of each lane
@@ -211,7 +212,7 @@ class BaseViewer(Viewer):
         if self.draw_route:
             self.drawRoute(agent)
 
-        self.drawHistory(agent, color)
+        # self.drawHistory(agent, color)
 
     def drawDrivingCorridor(self, corridor, color=None):
         if color is None:
