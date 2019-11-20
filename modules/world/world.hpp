@@ -31,11 +31,13 @@ using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
 using modules::commons::transformation::FrenetPosition;
+using models::behavior::StateActionPair;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
     EvaluationMap;
+typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
 
 using rtree_agent_model =
     boost::geometry::model::box<modules::geometry::Point2d>;
@@ -120,6 +122,9 @@ class World : public commons::BaseType {
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
   void Step(const float& delta_time);
+
+  // TODO: use state action pair
+  void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
 
   void DoPlanning(const float& delta_time);
   void DoExecution(const float& delta_time);

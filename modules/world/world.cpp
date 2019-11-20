@@ -249,6 +249,26 @@ FrontRearAgents World::GetAgentFrontRearForId(
   fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
 
   return fr_agents;
+  }
+
+void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_map){
+  // TODO: use StateActionPair as parameter
+  world_time_ += delta_time;
+  
+  for (auto& agent_state: state_map){
+    AgentPtr agent=NULL;
+    agent=get_agent(agent_state.first);
+
+    if (agent){
+      StateActionPair pair;
+      pair.first=agent_state.second;
+      pair.second=modules::models::behavior::Action(
+        modules::models::behavior::DiscreteAction(0));
+      agent->add_trajectory_step(pair); 
+    } else {
+      std::cout << "Agent" << agent_state.first << " doesn't exist." << std::endl;
+    }
+  }
 }
 
 }  // namespace world
