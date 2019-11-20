@@ -80,6 +80,16 @@ void Agent::ExecutionPlan(const float &dt) {
                             history_.back().first);
 }
 
+void Agent::add_trajectory_step(const StateActionPair& state_action_pair){
+  // !add one step to the last trajectory
+  history_.push_back(state_action_pair);
+
+  //! remove states if queue becomes to large
+  if (history_.size() > max_history_length_) {
+    history_.erase(history_.begin());
+  }
+}
+
 void Agent::Execute(const float& world_time) {
   //! find closest state in execution-trajectory
   int index_world_time = 0;
