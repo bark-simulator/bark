@@ -56,6 +56,7 @@ void python_world(py::module m) {
     .def_property("map", &World::GetMap, &World::SetMap)
     .def("Copy", &World::Clone)
     .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
+    .def("fillWorldFromCarla",&World::FillWorldFromCarla)
     .def("__repr__", [](const World& a) {
       return "bark.world.World";
     });
