@@ -231,6 +231,7 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
     agent=get_agent(agent_state.first);
 
     if (agent){
+      // TODO: read control from Carla
       StateActionPair pair;
       pair.first=agent_state.second;
       pair.second=modules::models::behavior::Action(
@@ -240,6 +241,9 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
       std::cout << "Agent" << agent_state.first << " doesn't exist." << std::endl;
     }
   }
+
+  UpdateHorizonDrivingCorridors();
+  UpdateAgentRTree();
 }
 
 }  // namespace world
