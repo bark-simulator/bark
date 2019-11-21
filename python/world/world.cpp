@@ -57,6 +57,7 @@ void python_world(py::module m) {
     .def("Copy", &World::Clone)
     .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
     .def("fillWorldFromCarla",&World::FillWorldFromCarla)
+    .def("plan_agents",&World::PlanSpecificAgents)
     .def("__repr__", [](const World& a) {
       return "bark.world.World";
     });

@@ -38,6 +38,7 @@ typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
     EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
+typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
 
 using rtree_agent_model =
     boost::geometry::model::box<modules::geometry::Point2d>;
@@ -124,6 +125,7 @@ class World : public commons::BaseType {
 
   // TODO: use state action pair
   void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
+  AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
 
   void DoPlanning(const float& delta_time);
   void DoExecution(const float& delta_time);
