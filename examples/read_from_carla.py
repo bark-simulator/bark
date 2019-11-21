@@ -90,25 +90,23 @@ def main():
 
   # viewer
   viewer = PygameViewer(params=param_server,
-                        x_range=[-70, 70],
-                        y_range=[-70, 70],
+                        x_range=[-150, 150],
+                        y_range=[-150, 150],
                         screen_dims=[500, 500],
                         follow_agent_id=agent.id)
 
-  """
-  viewer = Panda3dViewer(params=param_server,
-                        x_range=[-150, 150],
-                        y_range=[-150, 150],
-                        follow_agent_id=agent.id)
-  """
   # viewer = MPViewer(params=param_server)
-  world.step(sim_step_time)
 
   for _ in range(0, 100):
     viewer.clear()
     # world.step(sim_step_time)
     agent_state_map = client.get_all_vehicles_state(carla_to_bark_id)
-    world.fill_world_from_carla(sim_step_time, agent_state_map)
+
+    world.fill_world_from_carla(sim_step_time if _ != 0 else 0, agent_state_map)
+    agent_trajectory_map = world.plan_agents(sim_step_time, [agent.id])
+
+    # TODO: apply the trajectory to carla as raw control inputs
+
     viewer.drawWorld(world)
     viewer.show(block=False)
     # time.sleep(sim_step_time/sim_real_time_factor)
