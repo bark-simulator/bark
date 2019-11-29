@@ -24,12 +24,12 @@ BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynami
     {}
 
 dynamic::Trajectory BehaviorMotionPrimitives::Plan(
-    float delta_time,
-    const world::ObservedWorld& observed_world) {
+    float delta_time, const world::ObservedWorld& observed_world) {
   dynamic::State ego_vehicle_state = observed_world.current_ego_state();
   double start_time = observed_world.get_world_time();
-   const float dt = integration_time_delta_; 
-  const int num_trajectory_points = static_cast<int>(std::ceil(delta_time / dt))+1;
+  const float dt = integration_time_delta_;
+  const int num_trajectory_points =
+      static_cast<int>(std::ceil(delta_time / dt)) + 1;
 
   dynamic::Trajectory traj(num_trajectory_points, int(dynamic::StateDefinition::MIN_STATE_SIZE));
 
@@ -51,12 +51,12 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     old_state(StateDefinition::VEL_POSITION) = traj(trajectory_idx-1, StateDefinition::VEL_POSITION);
 
     float integration_time = dt;
-    if(trajectory_idx == num_trajectory_points-1) {
-      integration_time = delta_time - trajectory_idx*dt;
+    if (trajectory_idx == num_trajectory_points - 1) {
+      integration_time = delta_time - (trajectory_idx - 1) * dt;
     }
-    
+
     auto state = dynamic::euler_int(*dynamic_model_, old_state, motion_primitives_[active_motion_], integration_time);
-    traj(trajectory_idx, StateDefinition::TIME_POSITION) = start_time + trajectory_idx*dt;
+    traj(trajectory_idx, StateDefinition::TIME_POSITION) = start_time + (trajectory_idx - 1) * dt + integration_time;
     traj(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
     traj(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
     traj(trajectory_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);

@@ -19,9 +19,9 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   //! TODO(@fortiss): parameters
   const float min_velocity = get_min_velocity();
   const float max_velocity = get_max_velocity();
-  const int num_traj_time_points = 10;
+  const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points, int(StateDefinition::MIN_STATE_SIZE));
-  auto const sample_time = delta_time / num_traj_time_points;
+  auto const sample_time = delta_time / (num_traj_time_points - 1);
 
   dynamic::State ego_vehicle_state = observed_world.current_ego_state();
   
@@ -40,10 +40,14 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     double acceleration =  CalculateLongitudinalAcceleration(observed_world); // checked
     BARK_EXPECT_TRUE(!std::isnan(acceleration));
     float sline = s_start;
-    // v = s/t
+    traj.block<1,StateDefinition::MIN_STATE_SIZE>(0, 0) = ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(0, 0);
+    // s = 1/2 * a * t^2 + v_0*t
     double run_time = start_time;
-    for (int i = 0; i < traj.rows(); i++) {
-      sline = sline + current_vel * sample_time;
+    for (int i = 1; i < traj.rows(); i++) {
+      sline = sline + 0.5f * acceleration * sample_time * sample_time + current_vel * sample_time;
+      const float temp_velocity = current_vel + acceleration * sample_time;
+      current_vel = std::max(std::min(temp_velocity, max_velocity), min_velocity);
+      run_time += sample_time;
       geometry::Point2d traj_point = get_point_at_s(line, sline); // checked
       float traj_angle = get_tangent_angle_at_s(line, sline); // checked
       traj(i, StateDefinition::TIME_POSITION) = run_time; // checked
@@ -53,9 +57,6 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       traj(i, StateDefinition::Y_POSITION) = boost::geometry::get<1>(traj_point); // checked
       traj(i, StateDefinition::THETA_POSITION) = traj_angle; // checked
       traj(i, StateDefinition::VEL_POSITION) = current_vel; // checked
-      const float temp_velocity = current_vel + acceleration * sample_time;
-      current_vel = std::max(std::min(temp_velocity, max_velocity), min_velocity);
-      run_time += sample_time;
     }
 
     set_last_action(Action(Continuous1DAction(acceleration)));
