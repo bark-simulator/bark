@@ -34,40 +34,50 @@ class DummyConstantAcceleration : public BehaviorLongitudinalAcceleration {
   virtual double CalculateLongitudinalAcceleration(
       const ObservedWorld& observed_world) {
     return a;
-  };
+  }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {
     std::shared_ptr<DummyConstantAcceleration> model_ptr =
         std::make_shared<DummyConstantAcceleration>(*this);
     return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
-  };
+  }
 };
 
-TEST(behavior_constant_acceleration_plan, behavior_test) {
+TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
   SetterParams* params = new SetterParams();
   DummyConstantAcceleration behavior(params);
 
-  const double dt = 1.0;
+  float dt = 1.0;
+  float vel0 = 0;
+  // test only in x-direction
+  ObservedWorld obs_world = make_test_observed_world(0, 0, vel0, 0);
 
-  // X Longitudinal with zero velocity
-  ObservedWorld obs_world = make_test_observed_world(0, 0, 0, 0);
+  Trajectory traj1 = behavior.Plan(dt, obs_world);
+  auto last_idx = traj1.rows() - 1;
+  EXPECT_EQ(dt, traj1(last_idx, StateDefinition::TIME_POSITION));
 
-  Trajectory traj1 = behavior.Plan(1, obs_world);
-  // s = 1/2 * a * t^2 + v_0*t
-  double delta_s = 0.5 * a * dt * dt;
+  auto x = obs_world.get_ego_agent()
+               ->get_current_state()[StateDefinition::X_POSITION];
+  double dx = vel0 * dt + 0.5 * a * dt * dt;
+  EXPECT_FLOAT_EQ(dx + x, traj1(last_idx, StateDefinition::X_POSITION));
+}
+
+TEST(behavior_constant_acceleration_plan, behavior_test_non_zero_velocity) {
+  SetterParams* params = new SetterParams();
+  DummyConstantAcceleration behavior(params);
+
+  float dt = 1.0;
+  float vel0 = 5.0;
+
+  // test only in x-direction
+  ObservedWorld obs_world = make_test_observed_world(0, 0, vel0, 0);
+
+  Trajectory traj1 = behavior.Plan(dt, obs_world);
+  auto last_idx = traj1.rows() - 1;
   EXPECT_EQ(1, traj1(traj1.rows() - 1, StateDefinition::TIME_POSITION));
-  EXPECT_NEAR(
-      delta_s + obs_world.get_ego_agent()->get_current_position().get<0>(),
-      traj1(traj1.rows() - 1, StateDefinition::X_POSITION), .1e-4);
 
-  // X Longitudinal with 5 m/s initial velocity
-  const double v_0 = 5.0;
-  auto obs_world1 = make_test_observed_world(0, 0, v_0, 0);
-  Trajectory traj2 = behavior.Plan(1, obs_world1);
-  // s = 1/2 * a * t^2 + v_0*t
-  delta_s = 0.5 * a * dt * dt + v_0 * dt;
-  EXPECT_EQ(1, traj1(traj2.rows() - 1, StateDefinition::TIME_POSITION));
-  EXPECT_NEAR(
-      delta_s + obs_world1.get_ego_agent()->get_current_position().get<0>(),
-      traj2(traj2.rows() - 1, StateDefinition::X_POSITION), .1e-4);
+  auto x = obs_world.get_ego_agent()
+               ->get_current_state()[StateDefinition::X_POSITION];
+  double dx = vel0 * dt + 0.5 * a * dt * dt;
+  EXPECT_FLOAT_EQ(dx + x, traj1(traj1.rows() - 1, StateDefinition::X_POSITION));
 }
