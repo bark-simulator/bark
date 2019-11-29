@@ -646,6 +646,10 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeLanePolygon(const LaneId &lane_id)
 
   return std::make_pair(polygon, success);
 }
+PolygonPtr Roadgraph::get_lane_polygon_by_id(const LaneId &lane_id) {
+  auto v = get_vertex_by_lane_id(lane_id);
+  return get_lane_graph().operator[](v.first).polygon;
+}
 
 } // namespace map
 } // namespace world

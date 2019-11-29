@@ -78,6 +78,9 @@ class Roadgraph {
  public:
   Roadgraph() {}
 
+  // TODO: Move to LaneGraph, but LaneGraph is not wrapped to python
+  PolygonPtr get_lane_polygon_by_id(const LaneId &lane_id);
+
   LaneId add_lane(const RoadId& road_id, const LanePtr& laneptr);
 
   bool add_inner_neighbor(const LaneId& inner_id, const LaneId& outer_id);
