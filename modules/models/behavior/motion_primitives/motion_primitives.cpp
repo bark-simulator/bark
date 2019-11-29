@@ -34,33 +34,38 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
   dynamic::Trajectory traj(num_trajectory_points, int(dynamic::StateDefinition::MIN_STATE_SIZE));
 
   
-  int trajectory_idx=0;
+  int traj_idx=0;
   // set first state as start of trajectory
-  traj(trajectory_idx, StateDefinition::TIME_POSITION) = start_time;
-  traj(trajectory_idx, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION);
-  traj(trajectory_idx, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION);
-  traj(trajectory_idx, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION);
-  traj(trajectory_idx, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION); 
+  traj(traj_idx, StateDefinition::TIME_POSITION) = start_time;
+  traj(traj_idx, StateDefinition::X_POSITION) = ego_vehicle_state(StateDefinition::X_POSITION);
+  traj(traj_idx, StateDefinition::Y_POSITION) = ego_vehicle_state(StateDefinition::Y_POSITION);
+  traj(traj_idx, StateDefinition::THETA_POSITION) = ego_vehicle_state(StateDefinition::THETA_POSITION);
+  traj(traj_idx, StateDefinition::VEL_POSITION) = ego_vehicle_state(StateDefinition::VEL_POSITION); 
   
   auto old_state = ego_vehicle_state; // only for getting type, todo: improve
-  for (++trajectory_idx; trajectory_idx<num_trajectory_points; ++trajectory_idx) {
-    old_state(StateDefinition::TIME_POSITION) = traj(trajectory_idx-1, StateDefinition::TIME_POSITION);
-    old_state(StateDefinition::X_POSITION) = traj(trajectory_idx-1, StateDefinition::X_POSITION);
-    old_state(StateDefinition::Y_POSITION) = traj(trajectory_idx-1, StateDefinition::Y_POSITION);
-    old_state(StateDefinition::THETA_POSITION) = traj(trajectory_idx-1, StateDefinition::THETA_POSITION);
-    old_state(StateDefinition::VEL_POSITION) = traj(trajectory_idx-1, StateDefinition::VEL_POSITION);
 
-    float integration_time = dt;
-    if (trajectory_idx == num_trajectory_points - 1) {
-      integration_time = delta_time - (trajectory_idx - 1) * dt;
+  float integration_time;
+  for (++traj_idx; traj_idx<num_trajectory_points; ++traj_idx) {
+    old_state(StateDefinition::TIME_POSITION) = traj(traj_idx-1, StateDefinition::TIME_POSITION);
+    old_state(StateDefinition::X_POSITION) = traj(traj_idx-1, StateDefinition::X_POSITION);
+    old_state(StateDefinition::Y_POSITION) = traj(traj_idx-1, StateDefinition::Y_POSITION);
+    old_state(StateDefinition::THETA_POSITION) = traj(traj_idx-1, StateDefinition::THETA_POSITION);
+    old_state(StateDefinition::VEL_POSITION) = traj(traj_idx-1, StateDefinition::VEL_POSITION);
+
+    if (traj_idx == num_trajectory_points - 1) {
+      // calculate the last time pt, which might not fit to dt
+      integration_time = delta_time - (traj_idx - 1) * dt;
+    }
+    else {
+      integration_time = dt;
     }
 
     auto state = dynamic::euler_int(*dynamic_model_, old_state, motion_primitives_[active_motion_], integration_time);
-    traj(trajectory_idx, StateDefinition::TIME_POSITION) = start_time + (trajectory_idx - 1) * dt + integration_time;
-    traj(trajectory_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
-    traj(trajectory_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
-    traj(trajectory_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);
-    traj(trajectory_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
+    traj(traj_idx, StateDefinition::TIME_POSITION) = start_time + (traj_idx - 1) * dt + integration_time;
+    traj(traj_idx, StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION);
+    traj(traj_idx, StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION);
+    traj(traj_idx, StateDefinition::THETA_POSITION) = state(StateDefinition::THETA_POSITION);
+    traj(traj_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
   }
 
   set_last_action(Action(DiscreteAction(active_motion_)));
