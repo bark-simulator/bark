@@ -18,15 +18,15 @@ using modules::geometry::Point2d;
 using modules::world::map::MapInterfacePtr;
 using StateDefinition::TIME_POSITION;
 
-Agent::Agent(const State &initial_state,
-        const BehaviorModelPtr &behavior_model_ptr,
-        const DynamicModelPtr &dynamic_model_ptr,
-        const ExecutionModelPtr &execution_model,
-        const geometry::Polygon &shape,
-        commons::Params *params,
+Agent::Agent(const State& initial_state,
+        const BehaviorModelPtr& behavior_model_ptr,
+        const DynamicModelPtr& dynamic_model_ptr,
+        const ExecutionModelPtr& execution_model,
+        const geometry::Polygon& shape,
+        commons::Params* params,
         const GoalDefinitionPtr& goal_definition,
         const MapInterfacePtr& map_interface,
-        const geometry::Model3D &model_3d) :
+        const geometry::Model3D& model_3d) :
 Object(shape, params, model_3d),
 behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
@@ -35,7 +35,7 @@ local_map_(new LocalMap(goal_definition, map_interface)),
 history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
-  if(params) {
+  if (params) {
     max_history_length_ = params->get_int(
     "MaxHistoryLength",
     "Maximum number of state-input pairs in state-input history",
@@ -45,10 +45,10 @@ goal_definition_(goal_definition) {
   models::behavior::StateActionPair pair;
   pair.first = initial_state; 
   pair.second = modules::models::behavior::Action(
-          modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
+    modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
   history_.push_back(pair);
 
-  if(map_interface != nullptr) {
+  if (map_interface != nullptr) {
     GenerateLocalMap();
   }
 }
@@ -139,22 +139,19 @@ void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
   }
 }
 
-Agent* Agent::Clone() const {
-  Agent *new_agent = new Agent(*this);
+std::shared_ptr<Object> Agent::Clone() const {
+  std::shared_ptr<Agent> new_agent = std::make_shared<Agent>(*this);
   new_agent->set_agent_id(this->get_agent_id());
-  if(behavior_model_) {
-    new_agent->behavior_model_.reset(behavior_model_->Clone());
+  if (behavior_model_) {
+    new_agent->behavior_model_ = behavior_model_->Clone();
   }
-  if(dynamic_model_) {
-    new_agent->dynamic_model_.reset(dynamic_model_->Clone());
+  if (dynamic_model_) {
+    new_agent->dynamic_model_ = dynamic_model_->Clone();
   }
-  if(execution_model_) {
-    new_agent->execution_model_.reset(execution_model_->Clone());
+  if (execution_model_) {
+    new_agent->execution_model_ = execution_model_->Clone();
   }
-  if(local_map_) {
-    new_agent->local_map_.reset(local_map_->Clone());
-  }
-  return new_agent;
+  return std::dynamic_pointer_cast<Object>(new_agent);
 }
 
 }  // namespace objects

@@ -17,8 +17,6 @@ class XodrParser(object):
         self.parse_xml(self.xodr)
         self.map = OpenDriveMap()
         self.convert_to_map(self.python_map)
-        self.roadgraph = Roadgraph()
-        self.roadgraph.Generate(self.map)
 
     def load_file(self, file_name):
         return open(file_name, 'r')
@@ -86,11 +84,10 @@ class XodrParser(object):
             lane_dict[int(lane.get("id"))] = lane
 
         for id, lane in lane_dict.items():
-            if str(lane.get("type")) not in ["driving", "border", "sidewalk"]: #LaneType.__members__.keys(): # skip if lane type currently not supported
-                continue
             new_lane = {}
             new_lane["id"] = id
-            new_lane["type"] = LaneType.__members__[str(lane.get("type"))] # assign enum type
+            # every type we cannot read is read in as sidewalk
+            new_lane["type"] = LaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else LaneType.__members__["sidewalk"]# assign enum type
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
@@ -294,14 +291,17 @@ class XodrParser(object):
     def create_lane_link(self, link):
         new_link = LaneLink()
 
-        try:
-            new_link.from_position = int(link["predecessor"])
-        except:
-            print("No LaneLink.predecessor")
-        try:
-            new_link.to_position = int(link["successor"])
-        except:
-            print("No LaneLink.successor")
+        if link is not None:
+            try:
+                new_link.from_position = int(link["predecessor"])
+            except:
+                print("No LaneLink.predecessor")
+            try:
+                new_link.to_position = int(link["successor"])
+            except:
+                print("No LaneLink.successor")
+        else:
+            print("No LaneLink")
             
         return new_link
 
@@ -320,7 +320,11 @@ class XodrParser(object):
             new_lane = Lane.create_lane_from_lane_width(int(lane["id"]), reference_line, lane_width, 1.0)
 
             new_lane.lane_type = lane["type"]
-            new_lane.link = self.create_lane_link(lane["link"])
+            
+            if "link" in lane:
+                new_lane.link = self.create_lane_link(lane["link"])
+            else:
+                new_lane.link = self.create_lane_link(None)
 
             # not every lane contains a road-mark
             if "road_mark" in lane and lane['road_mark']['type'] != RoadMarkType.none:

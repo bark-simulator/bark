@@ -5,7 +5,8 @@ cc_library(
     ],
     deps = [
         "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic"
+        "//modules/models/dynamic:dynamic",
+        "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
 )
@@ -19,6 +20,7 @@ cc_library(
         "//modules/models/behavior/idm:include",
         "//modules/models/behavior/longitudinal_acceleration:include",
         "//modules/models/behavior/motion_primitives:include",
+        "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
 )

@@ -52,10 +52,10 @@ class ExecutionModelMpc : public ExecutionModel {
                              const State current_state);
 
   Trajectory Optimize(std::vector<double*> parameter_block,
-                      const Trajectory &discrete_behavior,
+                      const Trajectory& discrete_behavior,
                       const Matrix<double, Dynamic, Dynamic> weights_desired_states);
 
-  virtual ExecutionModel* Clone() const;
+  virtual std::shared_ptr<ExecutionModel> Clone() const;
 
  private:
   execution::OptimizationSettings optimization_settings_;
@@ -63,8 +63,10 @@ class ExecutionModelMpc : public ExecutionModel {
   Trajectory last_desired_states_;
 };
 
-inline ExecutionModel* ExecutionModelMpc::Clone() const {
-  return new ExecutionModelMpc(*this);
+inline std::shared_ptr<ExecutionModel> ExecutionModelMpc::Clone() const {
+  std::shared_ptr<ExecutionModelMpc> model_ptr =
+    std::make_shared<ExecutionModelMpc>(*this);
+  return std::dynamic_pointer_cast<ExecutionModel>(model_ptr);
 }
 
 }  // namespace execution

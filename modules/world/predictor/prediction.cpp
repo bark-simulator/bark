@@ -20,7 +20,8 @@ Prediction::Prediction(commons::Params *params, const ObservedWorld &observed_wo
 }
 
 void Prediction::Predict(const uint n_steps, const std::map<AgentId, std::pair<BehaviorModelPtr, float>> &assumed_agent_behaviors) {
-  ObservedWorldPtr prediction_world(observed_world_.Clone());
+  ObservedWorldPtr prediction_world = std::dynamic_pointer_cast<ObservedWorld>(
+      observed_world_.Clone());
   BehaviorModelPtr ego_behavior = std::make_shared<BehaviorNOP>(get_params());
   prediction_world->set_ego_behavior_model(ego_behavior);
 
@@ -42,7 +43,7 @@ void Prediction::Predict(const uint n_steps, const std::map<AgentId, std::pair<B
 
   // Predict for n_steps steps, add the agents' states at each time step to agent_predictions
   for (uint i = 1; i < n_steps; ++i) {
-    prediction_world = prediction_world->Predict(time_step_);
+    prediction_world = std::dynamic_pointer_cast<ObservedWorld>(prediction_world->Predict(time_step_));
     if (prediction_world->get_other_agents().empty()) {
       std::cout << "Error" << std::endl;
     }

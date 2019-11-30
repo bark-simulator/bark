@@ -26,11 +26,13 @@ class ExecutionModelInterpolate : public ExecutionModel {
                                       const dynamic::DynamicModelPtr dynamic_model,
                                       const dynamic::State current_state);
 
-  virtual ExecutionModel* Clone() const;
+  virtual std::shared_ptr<ExecutionModel> Clone() const;
 };
 
-inline ExecutionModel* ExecutionModelInterpolate::Clone() const {
-  return new ExecutionModelInterpolate(*this);
+inline std::shared_ptr<ExecutionModel> ExecutionModelInterpolate::Clone() const {
+  std::shared_ptr<ExecutionModelInterpolate> model_ptr =
+    std::make_shared<ExecutionModelInterpolate>(*this);
+  return std::dynamic_pointer_cast<ExecutionModel>(model_ptr);
 }
 
 

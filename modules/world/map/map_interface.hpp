@@ -42,10 +42,13 @@ class MapInterface {
   void ConcatenateLines(const std::vector<LanePtr>& lanes,
                         Line& line_of_corridor,
                         std::vector< std::pair<int, LaneId> >& lane_ids);
-                        
-  bool isInLane(const modules::geometry::Point2d& point, LaneId id) const;
 
-  bool FindNearestLanes(const modules::geometry::Point2d& point,
+  /*
+  * Finds the ID's of the nearest lanes to point
+  * Note that the point doesn't necessarily lie within the lane of the closest point
+  * or inside the lane of any of them.
+  */
+  bool FindNearestLanes(const Point2d& point,
                          const unsigned& num_lanes,
                          std::vector<opendrive::LanePtr>& lanes,
                          bool type_driving_only = true) const;
@@ -53,6 +56,19 @@ class MapInterface {
   bool FindLanesAroundPosition(const modules::geometry::Point2d& position,
                                 const float distance,
                                 std::vector<opendrive::LanePtr>& lanes) const;
+
+  LanePtr FindLane(const Point2d& point) const;
+
+  bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
+
+  bool LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
+
+  bool IsInLane(const Point2d& point, LaneId id) const;
+  
+  //std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
+  //                                const LaneId& startid, const LaneId& goalid) const;
+  
+  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
   std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
                                   const LaneId& startid, const LaneId& goalid) const;
@@ -63,8 +79,6 @@ class MapInterface {
   std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
   std::pair<LanePtr, bool> get_outer_neighbor_but_not(const LaneId lane_id, const LaneId but_not) const;
   std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
-
-  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
   DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
 
@@ -101,9 +115,10 @@ class MapInterface {
   RoadgraphPtr roadgraph_;
   std::vector<DrivingCorridorPtr> all_corridors_;
   rtree_lane rtree_lane_;
-  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box_;
-
+  std::pair<Point2d, Point2d> bounding_box_;
+  
   static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == LaneType::DRIVING); }
+
 };
 
 using MapInterfacePtr = std::shared_ptr<MapInterface>;

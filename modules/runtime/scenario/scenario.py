@@ -69,7 +69,6 @@ class Scenario:
     xodr_parser = XodrParser(_map_file_name )
     map_interface = MapInterface()
     map_interface.set_open_drive_map(xodr_parser.map)
-    map_interface.set_roadgraph(xodr_parser.roadgraph)
     self._map_interface = map_interface
     world.set_map(map_interface)
     return world

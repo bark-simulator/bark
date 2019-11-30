@@ -40,7 +40,6 @@ dynamic_model = SingleTrackModel(param_server)
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
 map_interface.set_open_drive_map(xodr_parser.map)
-map_interface.set_roadgraph(xodr_parser.roadgraph)
 world.set_map(map_interface)
 # Agent Definition
 agent_2d_shape = CarLimousine()
@@ -72,7 +71,8 @@ viewer = Panda3dViewer(params=param_server,
                       y_range=[-150, 150],
                       follow_agent_id=agent.id)
 """
-viewer = MPViewer(params=param_server)
+viewer = MPViewer(params=param_server,
+                  follow_agent_id=agent.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

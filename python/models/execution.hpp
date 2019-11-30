@@ -32,9 +32,9 @@ class PyExecutionModel : public ExecutionModel {
             current_state);
       }
 
-  ExecutionModel *Clone() const override {
+    std::shared_ptr<ExecutionModel> Clone() const override {
     PYBIND11_OVERLOAD_PURE(
-        ExecutionModel*,
+        std::shared_ptr<ExecutionModel>,
         ExecutionModel,
         clone);
   }

@@ -21,7 +21,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
-        "//modules/models/execution/mpc:mpc",
+        #"//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
     ],
@@ -40,6 +40,23 @@ cc_test(
         "//modules/world:world",
         "@gtest//:main",
         "@com_github_eigen_eigen//:eigen",
+    ],
+)
+
+cc_test(
+    name = "behavior_longitudinal_acceleration_test",
+    srcs = [
+        "behavior_longitudinal_acceleration_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        ":make_test_world",
+        "//modules/geometry",
+        "//modules/models/behavior/longitudinal_acceleration",
+        "//modules/models/dynamic",
+        "//modules/world",
+        "@com_github_eigen_eigen//:eigen",
+        "@gtest//:main",
     ],
 )
 
@@ -76,4 +93,16 @@ cc_library(
         "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
+)
+
+py_test(
+  name = "py_behavior_model_test",
+  srcs = ["py_behavior_model_test.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime:runtime",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )

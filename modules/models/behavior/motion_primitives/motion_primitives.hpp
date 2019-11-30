@@ -36,7 +36,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   MotionIdx GetNumMotionPrimitives() const {return motion_primitives_.size();}
   void ActionToBehavior(const MotionIdx& motion_idx);
 
-  virtual BehaviorModel *Clone() const;
+  virtual std::shared_ptr<BehaviorModel> Clone() const;
 private:
   DynamicModelPtr dynamic_model_;
   std::vector<Input> motion_primitives_; 
@@ -46,8 +46,10 @@ private:
   float integration_time_delta_;
 };
 
-inline BehaviorModel *BehaviorMotionPrimitives::Clone() const {
-  return new BehaviorMotionPrimitives(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
+  std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
+    std::make_shared<BehaviorMotionPrimitives>(*this);
+  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
 
 }  // namespace behavior

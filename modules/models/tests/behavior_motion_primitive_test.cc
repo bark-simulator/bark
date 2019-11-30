@@ -28,7 +28,7 @@ class DummyObservedWorld : public ObservedWorld {
  public:
   DummyObservedWorld(const State& init_state,
                      Params* params) :
-    ObservedWorld(World(params), AgentId()),
+    ObservedWorld(std::make_shared<World>(params), AgentId()),
     init_state_(init_state) { }
 
   virtual State current_ego_state() const {
@@ -63,6 +63,9 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   Input u2(2);
   u2 << 0, 1;
   BehaviorMotionPrimitives::MotionIdx idx2 = behavior.AddMotionPrimitive(u2);
+  Input u3(2);
+  u3 << 0, 0;
+  BehaviorMotionPrimitives::MotionIdx idx3 = behavior.AddMotionPrimitive(u3);
 
   // X Longitudinal with zero velocity
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -92,6 +95,15 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   EXPECT_NEAR(traj1(traj1.rows() - 1,
                     StateDefinition::Y_POSITION),
               2/2*0.5*0.5, 0.05);
+
+  // X Constant motion
+  init_state << 0.0, 0.0, 0.0, 0.0, 2.0;
+  DummyObservedWorld world3(init_state, params);
+  behavior.ActionToBehavior(idx3);
+  Trajectory traj3 = behavior.Plan(0.5, world3);
+  EXPECT_NEAR(traj3(traj3.rows() - 1,
+                    StateDefinition::X_POSITION),
+              0.5 * 2, 0.005);
 }
 
 int main(int argc, char **argv) {

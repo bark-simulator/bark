@@ -19,6 +19,8 @@ class PygameViewer(BaseViewer):
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
 
+        pg.font.init()
+
         try:
             self.screen = pg.display.set_mode((self.screen_width,
                                                self.screen_height))
@@ -75,6 +77,14 @@ class PygameViewer(BaseViewer):
                     StateDefinition.Y_POSITION)])
             ])
         pg.draw.lines(self.screen, self.getColor(color), False, point_list, 5)
+
+    def drawText(self, position, text, **kwargs):
+        font = pg.font.get_default_font()
+        fontsize = kwargs.pop("fontsize", 18)
+        color = kwargs.pop("color", (0, 0, 0))
+        background_color = kwargs.pop("background_color", (255,255,255))
+        text_surface = pg.font.SysFont(font, fontsize).render(text, True, color,background_color)
+        self.screen.blit(text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):

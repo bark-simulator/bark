@@ -8,7 +8,7 @@
 #define MODULES_WORLD_OBSERVED_WORLD_HPP_
 
 #include <unordered_map>
-
+#include <utility>
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/prediction/prediction_settings.hpp"
@@ -37,7 +37,8 @@ using modules::world::prediction::PredictionSettings;
 
 class ObservedWorld : public World {
  public:
-    ObservedWorld(const World& world, const AgentId& ego_agent_id) :
+    ObservedWorld(const WorldPtr& world,
+                  const AgentId& ego_agent_id) :
       World(world),
       ego_agent_id_(ego_agent_id) {}
 
@@ -69,10 +70,12 @@ class ObservedWorld : public World {
     }
 
     void set_ego_behavior_model(const BehaviorModelPtr& behavior_model) const {
-      return World::get_agents()[ego_agent_id_]->set_behavior_model(behavior_model);
+      return World::get_agents()[ego_agent_id_]->set_behavior_model(
+        behavior_model);
     }
 
-    void set_behavior_model(const AgentId& agent_id, const BehaviorModelPtr& behavior_model) const {
+    void set_behavior_model(const AgentId& agent_id,
+                            const BehaviorModelPtr& behavior_model) const {
       return World::get_agents()[agent_id]->set_behavior_model(behavior_model);
     }
 
@@ -95,16 +98,19 @@ class ObservedWorld : public World {
     void Step(const float time_step);
 
     void SetupPrediction(const PredictionSettings& settings);
-    std::shared_ptr<ObservedWorld> Predict(float time_span, const DiscreteAction& ego_action) const;
-    std::shared_ptr<ObservedWorld> Predict(float time_span) const;
+    WorldPtr Predict(float time_span,
+                     const DiscreteAction& ego_action) const;
+    WorldPtr Predict(float time_span) const;
 
     // Functions for MOBIL
     std::pair<AgentPtr, double> get_agent_in_front(const map::DrivingCorridorPtr driving_corridor) const;
     std::pair<AgentPtr, double> get_agent_behind(const map::DrivingCorridorPtr driving_corridor) const;
 
-    virtual ObservedWorld* Clone() const {
+    virtual WorldPtr Clone() const {
       WorldPtr world_clone(World::Clone());
-      return new ObservedWorld(*world_clone, this->ego_agent_id_);
+      std::shared_ptr<ObservedWorld> observed_world =
+        std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
+      return std::dynamic_pointer_cast<World>(observed_world);
     }
 
  private:

@@ -55,7 +55,7 @@ class BehaviorMobil : public BehaviorModel {
       behavior_pure_pursuit_.set_followed_line(driving_corridor->get_center());
     }
 
-    BehaviorModel *Clone() const;
+    std::shared_ptr<BehaviorModel> Clone() const;
   
   private:
     double CalculateLongitudinalAcceleration(
@@ -91,8 +91,8 @@ class BehaviorMobil : public BehaviorModel {
     float acceleration_bias_;
 };
 
-inline BehaviorModel *BehaviorMobil::Clone() const {
-  return new BehaviorMobil(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
+  return std::make_shared<BehaviorMobil>(*this);
 }
 
 } // namespace behavior

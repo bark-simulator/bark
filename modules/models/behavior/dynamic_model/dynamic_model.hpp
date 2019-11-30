@@ -31,26 +31,21 @@ class DynamicBehaviorModel : public BehaviorModel {
   virtual ~DynamicBehaviorModel() {}
 
   Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world);
+                  const ObservedWorld& observed_world);
 
-  BehaviorModel *Clone() const;
-
-  void set_action(const Input& inp) { 
-    current_action_.resize(inp.rows(), 1);
-    current_action_ = inp;
-  }
-  Input get_action() const { return current_action_; }
+  std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
   DynamicModelPtr dynamic_model_;
-  Input current_action_;
 
   // Parameters
   float integration_time_delta_;
 };
 
-inline BehaviorModel *DynamicBehaviorModel::Clone() const {
-  return new DynamicBehaviorModel(*this);
+inline std::shared_ptr<BehaviorModel> DynamicBehaviorModel::Clone() const {
+  std::shared_ptr<DynamicBehaviorModel> model_ptr =
+    std::make_shared<DynamicBehaviorModel>(*this);
+  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
 
 }  // namespace behavior

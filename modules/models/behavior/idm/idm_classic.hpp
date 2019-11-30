@@ -35,16 +35,16 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
   const float get_comfortable_braking_acceleration() {return 1.67f;} // unit is meter/second^2
   const int get_exponent() { return  4;}
 
-  virtual BehaviorModel *Clone() const;
+  virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
   double desired_velocity_;
 };
 
-inline BehaviorModel *BehaviorIDMClassic::Clone() const {
-  BehaviorIDMClassic *new_behavior_idm =  new BehaviorIDMClassic(*this);
-  new_behavior_idm->desired_velocity_ = desired_velocity_;
-  return new_behavior_idm;
+inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
+  std::shared_ptr<BehaviorIDMClassic> model_ptr =
+    std::make_shared<BehaviorIDMClassic>(*this);
+  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
 
 }  // namespace behavior

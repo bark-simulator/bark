@@ -24,8 +24,8 @@ class BehaviorNOP : public BehaviorModel {
       return traj;
     }
 
-    BehaviorModel *Clone() const {
-      return new BehaviorNOP(get_params());
+    std::shared_ptr<BehaviorModel> Clone() const {
+      return std::make_shared<BehaviorNOP>(*this);
     }
 };
 

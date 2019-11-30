@@ -5,6 +5,7 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8bae43c5b8904e4fa0519c27bf578da7)](https://app.codacy.com/app/bark-simulator/bark?utm_source=github.com&utm_medium=referral&utm_content=bark-simulator/bark&utm_campaign=Badge_Grade_Dashboard)
 [![CircleCI](https://circleci.com/gh/bark-simulator/bark.svg?style=svg)](https://circleci.com/gh/bark-simulator/bark)
+[![Coverage Status](https://coveralls.io/repos/github/bark-simulator/bark/badge.svg?branch=master)](https://coveralls.io/github/bark-simulator/bark?branch=master)
 
 # BARK - a tool for **B**ehavior benchm**Ark**ing
 BARK provides a semantic simulation tool/framework for autonomous agents with a special focus on autonomous driving.
@@ -26,8 +27,7 @@ BARKs modular architecture is as follows:
 A quick guide on how to get started with BARK. Make sure to have all prerequesites installed before following the other steps.
 
 ### Prerequesites
-* Bazel (requires Java) (we have experienced problems with newer bazel versions (v0.20) and will investigate the problem, v0.15 works for sure: https://github.com/bazelbuild/bazel/releases/tag/0.15.0
-)
+* Bazel (requires Java) (please use the newest stable version)
 * Python3
 * virtualenv (Virtual environment)
 
