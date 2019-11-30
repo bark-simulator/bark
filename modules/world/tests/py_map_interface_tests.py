@@ -21,6 +21,7 @@ from bark.world.opendrive import *
 from bark.world.map import *
 from modules.runtime.commons.xodr_parser import XodrParser
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+import numpy as np
 
 
 class EnvironmentTests(unittest.TestCase):
@@ -119,6 +120,43 @@ class EnvironmentTests(unittest.TestCase):
         viewer.show(block=True)
         time.sleep(0.1)
 
+    def test_between_lanes(self):
+        xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        np.set_printoptions(precision=8)
+        params = ParameterServer()
+
+        world = World(params)
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        world.set_map(map_interface)
+
+        # Simple test
+        point_close = Point2d(5112.68262, 5086.44971)
+        lane_sw = map_interface.find_lane(point_close)
+        self.assertIsNotNone(lane_sw, "This point is still in the left lane! Lane boundary is 5112.683")
+
+        switched_lane = False
+        lng_coord = 5086.44971
+        i = 5112.0
+        lane_sw = map_interface.find_lane(Point2d(i, lng_coord))
+        assert lane_sw != None
+        prev = lane_sw.lane_id
+        prev_i = i
+        while (i < 5113.0):
+            lane_sw = map_interface.find_lane(Point2d(i, lng_coord))
+            self.assertIsNotNone(lane_sw, "Should always be on at least one lane! Currently at ({}, {})".format(i, lng_coord))
+            if prev != lane_sw.lane_id:
+                # print(prev)
+                # print(prev_i)
+                # print(lane_sw.lane_id)
+                # print(i)
+                self.assertFalse(switched_lane, "Lane switch should only happens once!")
+                switched_lane = True
+            prev_i = i
+            prev = lane_sw.lane_id
+            i = i + 0.0001
+        self.assertTrue(switched_lane, "Eventually should have switched lanes!")
+
     def test_find_lane(self):
 
         xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
@@ -138,6 +176,27 @@ class EnvironmentTests(unittest.TestCase):
 
         lane_no_lane = map_interface.find_lane(Point2d(120, 140))
         assert lane_no_lane == None
+
+        xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
+        np.set_printoptions(precision=8)
+        params = ParameterServer()
+        world = World(params)
+
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_parser.map)
+        world.set_map(map_interface)
+        point = Point2d(5111, 5072)
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        polygon = world.map.get_roadgraph().get_lane_polygon_by_id(241)
+        polygon2 = world.map.get_roadgraph().get_lane_polygon_by_id(242)
+        viewer.drawPolygon2d(polygon, 'blue', 1.0)
+        viewer.drawPolygon2d(polygon2, 'green', 1.0)
+        viewer.drawPoint2d(point, 'red', 1.0)
+        viewer.show(block=True)
+        time.sleep(0.1)
+        lane_sw = map_interface.find_lane(point)
+        self.assertIsNotNone(lane_sw, "This point is clearly on a lane!")
 
     def test_line_segment_within_driving_corridor(self):
 
