@@ -140,9 +140,10 @@ inline float distance(const Polygon& poly1, const Polygon& poly2) {
   return bg::distance(poly1.obj_, poly2.obj_);
 }
 
-//! Polygon - Point collision checker using boost::within
+//! Polygon - Point collision checker using boost::covered_by
+//! As opposed to boost::whithin, also considers points on the boundary lines
 inline bool Collide(const Polygon& poly, const PolygonPoint& p) {
-  return bg::within(p, poly.obj_);
+  return bg::covered_by(p, poly.obj_);
 }
 
 //! Point - Polygon collision checker using boost::within

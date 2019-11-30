@@ -643,8 +643,15 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeLanePolygon(const LaneId &lane_id)
       polygon->add_point(p);
     }
   }
-
+  // Polygons need to be closed!
+  polygon->add_point(*(lb.first->get_line().begin()));
+  // Does not work with Point2d
+  // geometry::bg::correct(*polygon);
   return std::make_pair(polygon, success);
+}
+PolygonPtr Roadgraph::get_lane_polygon_by_id(const LaneId &lane_id) {
+  auto v = get_vertex_by_lane_id(lane_id);
+  return get_lane_graph().operator[](v.first).polygon;
 }
 
 } // namespace map
