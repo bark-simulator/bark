@@ -47,13 +47,13 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     double acc = CalculateLongitudinalAcceleration(observed_world);  // checked
     BARK_EXPECT_TRUE(!std::isnan(acc));
     float s_i = s_start;
-    double t_i = start_time;
+    double t_i;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
       s_i += +0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;
       vel_i = std::max(std::min(temp_velocity, max_velocity), min_velocity);
-      t_i = static_cast<float>(i) * dt;
+      t_i = static_cast<float>(i) * dt + start_time;
 
       geometry::Point2d traj_point = get_point_at_s(line, s_i);  // checked
       float traj_angle = get_tangent_angle_at_s(line, s_i);      // checked
