@@ -4,6 +4,7 @@
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/models/behavior/pure_pursuit/pure_pursuit.hpp"
+#include "modules/world/observed_world.hpp"
 
 
 namespace modules {
@@ -45,6 +46,14 @@ class BehaviorMobil : public BehaviorModel {
     Trajectory Plan(float delta_time, const world::ObservedWorld &observed_world);
     void InitiateLaneChangeIfBeneficial(const world::ObservedWorld &observed_world);
     void ConcludeLaneChange(const world::ObservedWorld &observed_world);
+
+    // TODO(@AKreutz): This update should happen in Plan based on the driving
+    // corridor in observed_world, but the driving corridor of an agent is
+    // never changed there
+    void UpdateModelState(const world::map::DrivingCorridorPtr driving_corridor) {
+      current_corridor_ = driving_corridor;
+      behavior_pure_pursuit_.set_followed_line(driving_corridor->get_center());
+    }
 
     BehaviorModel *Clone() const;
   
