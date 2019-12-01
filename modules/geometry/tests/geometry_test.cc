@@ -265,6 +265,56 @@ TEST(collision, poly2poly3) {
   EXPECT_TRUE(Collide(p2, p1));
 }
 
+// poly poly collide edge overlap true
+TEST(collision, poly2poly4) {
+using namespace std;
+using namespace modules::geometry;
+namespace bg = boost::geometry;
+
+Polygon p1;
+p1.add_point(Point2d(0, 0));
+p1.add_point(Point2d(0, 1));
+p1.add_point(Point2d(1, 1));
+p1.add_point(Point2d(1, 0));
+p1.add_point(Point2d(0, 0));
+
+Polygon p2;
+p2.add_point(Point2d(1, 1));
+p2.add_point(Point2d(2, 1));
+p2.add_point(Point2d(2, 0));
+p2.add_point(Point2d(1, 0));
+p2.add_point(Point2d(1, 1));
+
+EXPECT_TRUE(Collide(p1, p2));
+
+EXPECT_TRUE(Collide(p2, p1));
+}
+
+// poly poly collide ccw true
+TEST(collision, poly2poly5) {
+using namespace std;
+using namespace modules::geometry;
+namespace bg = boost::geometry;
+
+Polygon p1;
+p1.add_point(Point2d(0, 0));
+p1.add_point(Point2d(0, 1));
+p1.add_point(Point2d(1, 1));
+p1.add_point(Point2d(1, 0));
+p1.add_point(Point2d(0, 0));
+
+Polygon p2;
+p2.add_point(Point2d(1.5, 1.5));
+p2.add_point(Point2d(0.5, 1.5));
+p2.add_point(Point2d(0.5, 0.5));
+p2.add_point(Point2d(1.5, 0.5));
+p2.add_point(Point2d(1.5, 1.5));
+
+EXPECT_TRUE(Collide(p1, p2));
+
+EXPECT_TRUE(Collide(p2, p1));
+}
+
 // poly line collision no collision
 TEST(collision, poly2line1) {
   using namespace std;
