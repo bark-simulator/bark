@@ -7,6 +7,7 @@
 #ifndef MODULES_GEOMETRY_POLYGON_HPP_
 #define MODULES_GEOMETRY_POLYGON_HPP_
 
+#include <memory>
 #include <vector>
 
 #include <boost/geometry.hpp>
@@ -21,7 +22,7 @@ namespace geometry {
 template <typename T>
 struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
-  virtual ~Polygon_t(){};
+  virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
   Polygon_t(const Pose& center,
             const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
@@ -187,7 +188,7 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
 }
 
 inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
-                          Polygon& shrunk_polygon) {
+                          Polygon* shrunk_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;
 
@@ -209,9 +210,9 @@ inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
 
   for (auto const& point :
        boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon.add_point(point);
+    shrunk_polygon->add_point(point);
   }
-  assert(shrunk_polygon.Valid());
+  assert(shrunk_polygon->Valid());
   return true;
 }
 
