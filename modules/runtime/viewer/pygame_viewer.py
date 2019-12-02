@@ -65,28 +65,28 @@ class PygameViewer(BaseViewer):
             self.map_surface.fill((255, 255, 255))
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
-                pg.draw.aalines(self.map_surface, self.getColor(self.color_lane_boundaries), False, self.mapToCamera(lane_np), 3)
+                pg.draw.aalines(self.map_surface, self.getColor(self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
 
-        camera_coordinate = self.mapToCamera(np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
+        camera_coordinate = self.mapToSurfaceCoordinates(np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
         camera_view_range = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])*self.screen_map_ratio
         self.screen.blit(self.map_surface, (0, 0), tuple(np.around(np.concatenate((camera_coordinate, camera_view_range)))))
 
     def drawPoint2d(self, point2d, color, alpha):
         if self.screen is None:
             return
-        pg.draw.circle(self.screen, self.getColor(color), self.pointsToCamera(point2d), 1, 0)
+        pg.draw.circle(self.screen, self.getColor(color), self.pointsToCameraCoordinate(point2d), 1, 0)
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
         # TODO: enable dashed line
         if self.screen is None:
             return
-        line2d = self.pointsToCamera(line2d)
+        line2d = self.pointsToCameraCoordinate(line2d)
         pg.draw.lines(self.screen, self.getColor(color), False, line2d, 3)
 
     def drawPolygon2d(self, polygon, color, alpha):
         if self.screen is None:
             return
-        points = self.pointsToCamera(polygon)
+        points = self.pointsToCameraCoordinate(polygon)
         pg.draw.polygon(self.screen, self.getColor(color), points)
 
     def drawTrajectory(self, trajectory, color):
@@ -98,7 +98,7 @@ class PygameViewer(BaseViewer):
         for state in trajectory:
             point_list.append([state[int(StateDefinition.X_POSITION)], state[int(StateDefinition.Y_POSITION)]])
 
-        pg.draw.lines(self.screen, self.getColor(color), False, self.pointsToCamera(point_list), 5)
+        pg.draw.lines(self.screen, self.getColor(color), False, self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
@@ -149,10 +149,10 @@ class PygameViewer(BaseViewer):
         3. Translate x-axis by the max x-coordinate in the map
         4. Scaling by screen_map_ratio
     """    
-    def mapToCamera(self, points):
+    def mapToSurfaceCoordinates(self, points):
         return (points * np.array([1, -1]) + np.array([-self.map_min_boundary[0], self.map_max_boundary[1]])) * self.screen_map_ratio
 
-    def pointsToCamera(self, points):
+    def pointsToCameraCoordinate(self, points):
         if isinstance(points, list):
             points = np.array(points)
         elif not isinstance(points, np.ndarray):
