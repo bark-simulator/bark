@@ -10,6 +10,8 @@ namespace behavior {
 
 using world::ObservedWorld;
 using world::objects::AgentPtr;
+using world::map::DrivingCorridor;
+using world::map::DrivingCorridorPtr;
 using dynamic::StateDefinition;
 
 using ConstAgentPtr = std::shared_ptr<const world::objects::Agent>;
@@ -17,21 +19,21 @@ using ConstAgentPtr = std::shared_ptr<const world::objects::Agent>;
 Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_world) {
   if (!behavior_pure_pursuit_.is_following_line()) {
     // Initially set the followed line to the center line of the driving corridor
-    behavior_pure_pursuit_.set_followed_line(observed_world.get_ego_agent()->get_local_map()->get_driving_corridor().get_center());
-  }
-  if (current_corridor_ == nullptr) {
-    current_corridor_ = std::make_shared<world::map::DrivingCorridor>(observed_world.get_ego_agent()->get_local_map()->get_driving_corridor());
+    behavior_pure_pursuit_.set_followed_line(observed_world.get_local_map()->get_driving_corridor().get_center());
   }
 
   // Determine whether to perform a lane change
   double acceleration;
   if (is_changing_lane_) {
-    ConcludeLaneChange(observed_world);
     acceleration = 0;
+    if (behavior_pure_pursuit_.has_reached_line()) {
+      is_changing_lane_ = false;
+    }
   } else {
     InitiateLaneChangeIfBeneficial(observed_world);
-    auto agent_in_front = observed_world.get_agent_in_front(current_corridor_);
-    acceleration = CalculateLongitudinalAcceleration(observed_world.get_ego_agent(), agent_in_front.first, agent_in_front.second);
+    auto driving_corridor = std::make_shared<DrivingCorridor>(observed_world.get_local_map()->get_driving_corridor());
+    auto agent_in_front = observed_world.get_agent_in_front(driving_corridor, true);
+    acceleration = CalculateLongitudinalAcceleration(observed_world.get_ego_agent(), agent_in_front.first, agent_in_front.second.lon);
   }
 
   float integration_time_delta = get_params()->get_real("integration_time_delta", "delta t for integration", 0.01);
@@ -54,30 +56,32 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
 }
 
 void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed_world) {
-  // std::cout << " Current: " << observed_world.get_map()->get_lane(current_corridor_->get_lane_ids().front().second)->get_lane_position() << std::endl;
+  using world::map::Frenet;
+  DrivingCorridorPtr current_corridor = std::make_shared<DrivingCorridor>(observed_world.get_local_map()->get_driving_corridor());
+  // std::cout << " Current: " << observed_world.get_map()->get_lane(current_corridor->get_lane_ids().front().second)->get_lane_position() << std::endl;
 
   ConstAgentPtr ego_agent = observed_world.get_ego_agent();
   const float ego_length = ego_agent->get_shape().rear_dist_ + ego_agent->get_shape().front_dist_;
 
-  std::pair<AgentPtr, double> current_following = observed_world.get_agent_behind(current_corridor_);
-  std::pair<AgentPtr, double> current_leading = observed_world.get_agent_in_front(current_corridor_);
+  std::pair<AgentPtr, Frenet> current_following = observed_world.get_agent_behind(current_corridor);
+  std::pair<AgentPtr, Frenet> current_leading = observed_world.get_agent_in_front(current_corridor, true);
 
-  double acc_c_before = CalculateLongitudinalAcceleration(ego_agent, current_leading.first, current_leading.second);
+  double acc_c_before = CalculateLongitudinalAcceleration(ego_agent, current_leading.first, current_leading.second.lon);
 
-  const double acc_o_before = CalculateLongitudinalAcceleration(current_following.first, ego_agent, current_following.second);
-  const double acc_o_after = CalculateLongitudinalAcceleration(current_following.first, current_leading.first, current_following.second + ego_length + current_leading.second);
+  const double acc_o_before = CalculateLongitudinalAcceleration(current_following.first, ego_agent, current_following.second.lon);
+  const double acc_o_after = CalculateLongitudinalAcceleration(current_following.first, current_leading.first, current_following.second.lon + ego_length + current_leading.second.lon);
 
   double acc_threshold = acceleration_threshold_;
 
   // Try change to right lane
-  std::pair<world::map::DrivingCorridorPtr, bool> right_corridor = ego_agent->get_local_map()->get_right_adjacent_corridor(current_corridor_);
+  std::pair<DrivingCorridorPtr, bool> right_corridor = ego_agent->get_local_map()->get_right_adjacent_corridor(current_corridor);
   if (right_corridor.second) {
     // std::cout << " Right: " << observed_world.get_map()->get_lane(right_corridor.first->get_lane_ids().front().second)->get_lane_position() << std::endl;
 
-    std::pair<AgentPtr, double> right_following = observed_world.get_agent_behind(right_corridor.first);
-    std::pair<AgentPtr, double> right_leading = observed_world.get_agent_in_front(right_corridor.first);
+    std::pair<AgentPtr, Frenet> right_following = observed_world.get_agent_behind(right_corridor.first);
+    std::pair<AgentPtr, Frenet> right_leading = observed_world.get_agent_in_front(right_corridor.first, true);
 
-    double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, right_leading.first, right_leading.second);
+    double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, right_leading.first, right_leading.second.lon);
 
     if (asymmetric_passing_rules_ && current_leading.first != nullptr) {
       // Passing on the right is disallowed, therefore if the ego vehicle is faster than the leading vehicle on the left lane, its acceleration on the right
@@ -91,8 +95,8 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
       }
     }
 
-    const double acc_n_before = CalculateLongitudinalAcceleration(right_following.first, right_leading.first, right_following.second + ego_length + right_leading.second);
-    const double acc_n_after = CalculateLongitudinalAcceleration(right_following.first, ego_agent, right_following.second);
+    const double acc_n_before = CalculateLongitudinalAcceleration(right_following.first, right_leading.first, right_following.second.lon + ego_length + right_leading.second.lon);
+    const double acc_n_after = CalculateLongitudinalAcceleration(right_following.first, ego_agent, right_following.second.lon);
 
     if (acc_n_after >= -safe_decel_) {                                                                                      // Safety criterion
       double benefit;
@@ -119,7 +123,6 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(right_corridor.first->get_center());
         is_changing_lane_ = true;
-        target_corridor_ = right_corridor.first;
       }
     } else {
       // std::cout << " To right would be unsafe: " << acc_n_after << " >= " << -safe_decel_ << std::endl;
@@ -127,18 +130,18 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
   }
 
   // Try change to left lane
-  std::pair<world::map::DrivingCorridorPtr, bool> left_corridor = ego_agent->get_local_map()->get_left_adjacent_corridor(current_corridor_);
+  std::pair<DrivingCorridorPtr, bool> left_corridor = ego_agent->get_local_map()->get_left_adjacent_corridor(current_corridor);
   if (left_corridor.second) {
     // std::cout << " Left: " << observed_world.get_map()->get_lane(left_corridor.first->get_lane_ids().front().second)->get_lane_position() << std::endl;
 
-    std::pair<AgentPtr, double> left_following = observed_world.get_agent_behind(left_corridor.first);
-    std::pair<AgentPtr, double> left_leading = observed_world.get_agent_in_front(left_corridor.first);
+    std::pair<AgentPtr, Frenet> left_following = observed_world.get_agent_behind(left_corridor.first);
+    std::pair<AgentPtr, Frenet> left_leading = observed_world.get_agent_in_front(left_corridor.first, true);
 
     if (left_following.first == nullptr) {
       // std::cout << " Could go left, nobody there" << std::endl;
     }
 
-    const double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, left_leading.first, left_leading.second);
+    const double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, left_leading.first, left_leading.second.lon);
 
     if (asymmetric_passing_rules_ && left_leading.first != nullptr) {
       // Passing on the right is disallowed, therefore if the ego vehicle is faster than the leading vehicle on the left lane, its acceleration on the right
@@ -152,8 +155,8 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
       }
     }
 
-    const double acc_n_before = CalculateLongitudinalAcceleration(left_following.first, left_leading.first, left_following.second + ego_length + left_leading.second);
-    const double acc_n_after = CalculateLongitudinalAcceleration(left_following.first, ego_agent, left_following.second);
+    const double acc_n_before = CalculateLongitudinalAcceleration(left_following.first, left_leading.first, left_following.second.lon + ego_length + left_leading.second.lon);
+    const double acc_n_after = CalculateLongitudinalAcceleration(left_following.first, ego_agent, left_following.second.lon);
 
     if (acc_n_after >= -safe_decel_) {                                                                                          // Safety criterion
       double benefit;
@@ -180,35 +183,10 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(left_corridor.first->get_center());
         is_changing_lane_ = true;
-        target_corridor_ = left_corridor.first;
       }
     } else {
       // std::cout << " To left would be unsafe: " << acc_n_after << std::endl;
     }
-  }
-}
-
-void BehaviorMobil::ConcludeLaneChange(const world::ObservedWorld &observed_world) {
-  using namespace geometry;
-  using boost::geometry::get;
-  using world::goal_definition::GoalDefinitionPolygon;
-
-  Point2d ego_position = observed_world.current_ego_position();
-
-  world::map::Frenet frenet_source_corridor = current_corridor_->FrenetFromCenterLine(ego_position);
-  world::map::Frenet frenet_target_corridor = target_corridor_->FrenetFromCenterLine(ego_position);
-
-  if (abs(frenet_target_corridor.lat) < abs(frenet_source_corridor.lat)) {
-    is_changing_lane_ = false;
-    current_corridor_ = target_corridor_;
-    // https://github.com/bark-simulator/bark/issues/118
-
-    // Polygon goal_polygon = std::dynamic_pointer_cast<GoalDefinitionPolygon>(observed_world.get_ego_agent()->get_goal_definition())->get_shape();
-    // Pose old_goal_pose = goal_polygon.center_;
-    // Point2d new_goal_position = get_nearest_point(target_corridor_->get_center(), Point2d(old_goal_pose(0), old_goal_pose(1)));
-    // Polygon new_goal_polygon = *std::dynamic_pointer_cast<Polygon>(goal_polygon.transform(
-    //   Pose(get<0>(new_goal_position), get<1>(new_goal_polygon), old_goal_pose(2))));
-    // world::goal_definition::GoalDefinitionPtr new_goal = std::make_shared<GoalDefinitionPolygon>(new_goal_polygon);
   }
 }
 

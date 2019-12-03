@@ -23,7 +23,6 @@ class BehaviorMobil : public BehaviorModel {
         dynamic_model_(dynamic_model),
         behavior_pure_pursuit_(params),
         is_changing_lane_(false),
-        target_corridor_(nullptr),
         politeness_(politeness),
         acceleration_threshold_(acceleration_threshold) {
     longitudinal_behavior_ =
@@ -67,16 +66,6 @@ class BehaviorMobil : public BehaviorModel {
   void InitiateLaneChangeIfBeneficial(
     const world::ObservedWorld &observed_world);
 
-  void ConcludeLaneChange(const world::ObservedWorld &observed_world);
-
-  // TODO(@AKreutz): This update should happen in Plan based on the driving
-  // corridor in observed_world, but the driving corridor of an agent is never
-  // changed there
-  void UpdateModelState(const world::map::DrivingCorridorPtr driving_corridor) {
-    current_corridor_ = driving_corridor;
-    behavior_pure_pursuit_.set_followed_line(driving_corridor->get_center());
-  }
-
   std::shared_ptr<BehaviorModel> Clone() const;
   
  private:
@@ -91,8 +80,6 @@ class BehaviorMobil : public BehaviorModel {
   BehaviorPurePursuit behavior_pure_pursuit_;
 
   bool is_changing_lane_;
-  world::map::DrivingCorridorPtr current_corridor_;
-  world::map::DrivingCorridorPtr target_corridor_;
 
   // Measure of altruism, defines how the model weighs an acceleration
   // improvement for the ego agent against an improvement for other agents

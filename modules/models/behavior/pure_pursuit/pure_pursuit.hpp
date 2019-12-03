@@ -16,13 +16,19 @@ class BehaviorPurePursuit {
       wheel_base_ = params->get_real("DynamicModel::wheel_base", "Wheel base of vehicle.", 2.7);
     }
 
-    double FindSteeringAngle(const dynamic::State &agent_state) const;
+    double FindSteeringAngle(const dynamic::State &agent_state);
 
-    void set_followed_line(const geometry::Line followed_line) { followed_line_ = followed_line; }
+    void set_followed_line(const geometry::Line followed_line) {
+      followed_line_ = followed_line;
+      has_reached_line_ = false;
+    }
     bool is_following_line() const { return followed_line_.size() != 0; }
+    bool has_reached_line() const { return has_reached_line_; }
 
   private:
     geometry::Line followed_line_;
+
+    bool has_reached_line_;
 
     float wheel_base_;
 };
