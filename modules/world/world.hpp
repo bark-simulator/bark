@@ -98,6 +98,7 @@ class World : public commons::BaseType {
 
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
+  void RegenerateDrivingCorridors();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
   AgentMap GetAgentsIntersectingPolygon(
