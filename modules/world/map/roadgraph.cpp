@@ -272,7 +272,9 @@ std::pair<LaneId, bool> Roadgraph::get_outer_neighbor_but_not(
 
 std::vector<LaneId> Roadgraph::get_all_neighbors(const LaneId &lane_id) const {
   LanePtr lane = get_laneptr(lane_id);
-  assert(lane->get_lane_position() != 0);  // Does not work for the plan view
+  if (lane->get_lane_position() == 0) {
+    throw std::runtime_error("get_all_neighbors was called with the plan view");
+  }
 
   std::vector<LaneId> neighbors;
 
