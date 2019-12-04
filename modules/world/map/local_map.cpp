@@ -59,6 +59,9 @@ bool LocalMap::Generate(Point2d point) {
   LanePtr current_lane = lanes.at(0);
 
   driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
+  if (!driving_corridor_.computed) {
+    return false;
+  }
 
   return true;
 }
