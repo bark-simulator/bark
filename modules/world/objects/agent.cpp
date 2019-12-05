@@ -130,9 +130,6 @@ void Agent::GenerateLocalMap() {
 }
 
 void Agent::RecalculateDrivingCorridor() {
-  if (local_map_ == nullptr) {
-    std::cout << "Local map is null" << std::endl;
-  }
   if (!local_map_->RecalculateDrivingCorridor(get_current_position())) {
     LOG(ERROR) << "DrivingCorridor generation for agent "
                << get_agent_id() << " failed." << std::endl;

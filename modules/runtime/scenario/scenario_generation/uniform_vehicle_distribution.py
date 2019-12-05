@@ -168,14 +168,19 @@ class UniformVehicleDistribution(ScenarioGeneration):
     
     # EGO Agent Goal Definition
     if  len(self._ego_goal_start) == 0:
-        goal_polygon = Polygon2d([0, 0, 0],
-                                [Point2d(-1.5,0),
-                                Point2d(-1.5,8),
-                                Point2d(1.5,8),
-                                Point2d(1.5,0)])
-        goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
-                                                    self._ego_goal_end[1]))
-        ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
+        if len(self._ego_route) == 0:
+          # ego agent is one of the random agents, so the goal definition is
+          # already set
+          pass
+        else:
+          goal_polygon = Polygon2d([0, 0, 0],
+                                   [Point2d(-1.5,0),
+                                    Point2d(-1.5,8),
+                                    Point2d(1.5,8),
+                                    Point2d(1.5,0)])
+          goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
+                                                      self._ego_goal_end[1]))
+          ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
         ego_agent.generate_local_map()
     else:
         connecting_center_line, s_start, s_end, _, lane_id_end = \
