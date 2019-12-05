@@ -66,6 +66,10 @@ class MapInterface {
   
   DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
+  //! Compute a DrivingCorridor that ends in a lane neighboring the goal lane in
+  //! the same driving direction
+  DrivingCorridor ComputeDrivingCorridorParallelToGoal(const LaneId& startid, const LaneId& goalid);
+
   DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
 
   bool ComputeAllDrivingCorridors();
