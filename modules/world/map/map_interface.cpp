@@ -202,7 +202,11 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
   const LaneId &startid, const LaneId &goalid)
 {
   std::vector<LaneId> ids = roadgraph_->find_path(startid, goalid);
-  return ComputeDrivingCorridorForRange(ids);
+  if (!ids.empty()) {
+    return ComputeDrivingCorridorForRange(ids);
+  } else {
+    return DrivingCorridor();
+  }
 }
 
 DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
