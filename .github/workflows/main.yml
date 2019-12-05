@@ -9,7 +9,7 @@ jobs:
     container:
       image: docker://barksim/bark:latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v1
       - name: Setting up virtual environment
         run: virtualenv -p python3 ./python/venv  --system-site-packages
       - name: Getting into venv
