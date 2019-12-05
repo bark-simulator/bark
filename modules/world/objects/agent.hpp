@@ -102,6 +102,7 @@ class Agent : public Object {
   bool AtGoal() const;
 
   void GenerateLocalMap();
+  void RecalculateDrivingCorridor();
   void UpdateDrivingCorridor(double horizon);
 
   virtual std::shared_ptr<Object> Clone() const;

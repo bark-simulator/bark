@@ -150,7 +150,7 @@ void World::RecalculateDrivingCorridors() {
     Point2d position = agent.second->get_current_position();
 
     if (!geometry::Collide(corridor_polygon, position)) {
-      agent.second->GenerateLocalMap();
+      agent.second->RecalculateDrivingCorridor();
     }
   }
 }
