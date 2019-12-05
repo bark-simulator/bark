@@ -68,7 +68,7 @@ void World::DoExecution(const float& delta_time) {
   if (remove_agents_) {
     RemoveOutOfMapAgents();
   }
-  RegenerateDrivingCorridors();
+  RecalculateDrivingCorridors();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -142,7 +142,7 @@ void World::RemoveOutOfMapAgents() {
   UpdateAgentRTree();
 }
 
-void World::RegenerateDrivingCorridors() {
+void World::RecalculateDrivingCorridors() {
   for (auto &agent : agents_) {
     map::DrivingCorridor driving_corridor = 
         agent.second->get_local_map()->get_driving_corridor();
