@@ -7,6 +7,7 @@
 #ifndef MODULES_GEOMETRY_POLYGON_HPP_
 #define MODULES_GEOMETRY_POLYGON_HPP_
 
+#include <memory>
 #include <vector>
 
 #include <boost/geometry.hpp>
@@ -21,7 +22,7 @@ namespace geometry {
 template <typename T>
 struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
-  virtual ~Polygon_t(){};
+  virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
   Polygon_t(const Pose& center,
             const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
@@ -173,23 +174,7 @@ inline bool Within(const Line& l, const Polygon& poly) {
 //! @note we only check the shape intersection(s) and no line RHS/LHS line
 //! crossing!
 inline bool Collide(const Polygon& poly, const Line& l) {
-  std::vector<bg::model::linestring<LinePoint>> shape_intersect;
-  bg::intersection(poly.obj_, l.obj_, shape_intersect);
-  const bool inner_intersection = !shape_intersect.empty();
-  if (inner_intersection) {
-    return inner_intersection;
-  } else {
-    // boost interection does not treat edge intersections as intersection1,
-    // but this shall be a collision! -> cast poly edge to line and re-check
-    // collision.
-    Line outer_polyline;
-    //! @todo geht das eleganter?
-    for (auto it = boost::begin(boost::geometry::exterior_ring(poly.obj_));
-         it != boost::end(boost::geometry::exterior_ring(poly.obj_)); ++it) {
-      outer_polyline.add_point(*it);
-    }
-    return Collide(outer_polyline, l);
-  }
+  return bg::intersects(poly.obj_, l.obj_);
 }
 
 //! Line - Polygon collision checker using boost::intersection
@@ -197,35 +182,13 @@ inline bool Collide(const Line& line, const Polygon& poly) {
   return Collide(poly, line);
 }
 
-//! Polygon - Polygon collision checker using boost::intersection
-//! @todo might not be very efficient without Strategy...
+//! Polygon - Polygon collision checker using boost::intersects
 inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
-  std::vector<bg::model::polygon<PolygonPoint>> shape_intersect;
-  bg::intersection(poly1.obj_, poly2.obj_, shape_intersect);
-  const bool inner_intersection = !shape_intersect.empty();
-  if (inner_intersection) {
-    return inner_intersection;
-  } else {
-    // boost interection does not treat edge intersections as intersection,
-    // but this shall be a collision! -> cast poly edge to line and re-check
-    // collision.
-    Line outer_polyline1;
-    Line outer_polyline2;
-    //! @todo geht das eleganter?
-    for (auto it = boost::begin(boost::geometry::exterior_ring(poly1.obj_));
-         it != boost::end(boost::geometry::exterior_ring(poly1.obj_)); ++it) {
-      outer_polyline1.add_point(*it);
-    }
-    for (auto it = boost::begin(boost::geometry::exterior_ring(poly2.obj_));
-         it != boost::end(boost::geometry::exterior_ring(poly2.obj_)); ++it) {
-      outer_polyline2.add_point(*it);
-    }
-    return Collide(outer_polyline1, outer_polyline2);
-  }
+  return bg::intersects(poly1.obj_, poly2.obj_);
 }
 
 inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
-                          Polygon& shrunk_polygon) {
+                          Polygon* shrunk_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;
 
@@ -247,9 +210,9 @@ inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
 
   for (auto const& point :
        boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon.add_point(point);
+    shrunk_polygon->add_point(point);
   }
-  assert(shrunk_polygon.Valid());
+  assert(shrunk_polygon->Valid());
   return true;
 }
 
