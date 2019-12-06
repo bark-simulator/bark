@@ -1,4 +1,4 @@
-py_binary(
+py_test(
   name = "od8_const_vel_one_agent",
   srcs = ["od8_const_vel_one_agent.py"],
   data = ['//python:bark.so',
@@ -12,7 +12,7 @@ py_binary(
           "//modules/runtime:runtime",],
 )
 
-py_binary(
+py_test(
   name = "planner_uct_benchmark",
   srcs = ["planner_uct_benchmark.py"],
   data = ['//python:bark.so',
@@ -26,7 +26,7 @@ py_binary(
       ],
 )
 
-py_binary(
+py_test(
   name = "planner_uct",
   srcs = ["planner_uct.py"],
   data = ['//python:bark.so',
@@ -41,7 +41,7 @@ py_binary(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-py_binary(
+py_test(
   name = "od8_const_vel_two_agent",
   srcs = ["od8_const_vel_two_agent.py"],
   data = ['//python:bark.so',
@@ -55,22 +55,7 @@ py_binary(
           "//modules/runtime:runtime"],
 )
 
-py_binary(
-  name = "scenario_generation_dump",
-  srcs = ["scenario_generation_dump.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params',
-          ':scenarios'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:threaded_viewer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
-)
-
-py_binary(
+py_test(
   name = "scenario_video_rendering",
   srcs = ["scenario_video_rendering.py"],
   data = ['//python:bark.so',
@@ -86,7 +71,7 @@ py_binary(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-py_binary(
+py_test(
   name = "drone_challenge",
   srcs = ["drone_challenge.py"],
   data = ['//python:bark.so',
@@ -103,15 +88,15 @@ py_binary(
 )
 
 
-py_binary(
-  name = "scenario_generation_load",
-  srcs = ["scenario_generation_load.py"],
+py_test(
+  name = "scenario_dump_load",
+  srcs = ["scenario_dump_load.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
+          ':params',
           ':scenarios'],
   imports = ['../python/'],
-  deps = [":scenario_generation_dump",
-          "//modules/runtime/commons:parameters",
+  deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
@@ -119,21 +104,20 @@ py_binary(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-py_binary(
+py_test(
   name = "scenarios_from_database",
   srcs = ["scenarios_from_database.py"],
   data = ['//python:bark.so',
           '@benchmark_database_release//:v1.0.0'],
   imports = ['../python/'],
-  deps = [":scenario_generation_dump",
-          "//modules/runtime/commons:parameters",
+  deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/viewer:matplotlib_viewer",
           "@benchmark_database//load:benchmark_database"],
 )
 
 filegroup(
     name="scenarios",
-    srcs=glob(["scenarios/*.bark_scenarios"]),
+    srcs=glob(["scenarios/**"]),
 )
 
 filegroup(
@@ -153,5 +137,7 @@ py_binary(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime:runtime",
           "//modules/runtime/scenario/scenario_generation:scenario_generation",
-          "//modules/models/behavior/plan:py_planners"],
+          "//modules/models/behavior/plan:py_planners",
+          "@bark_ml//configurations/sac_highway_uniform:configuration",
+          "@bark_ml//configurations:bark_agent"],
 )
