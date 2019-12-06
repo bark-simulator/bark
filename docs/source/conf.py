@@ -190,7 +190,8 @@ def setup(app):
             }, True)
     app.add_transform(AutoStructify)
 
-mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js'
+#mathjax_path = 'http://cdn.mathjax.org/mathjax/latest/MathJax.js'
+mathjax_path = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/MathJax.js'
 mathjax_config = {
     'extensions': ['tex2jax.js'],
     'jax': ['input/TeX', 'output/HTML-CSS'],
