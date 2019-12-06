@@ -27,8 +27,7 @@ BARKs modular architecture is as follows:
 A quick guide on how to get started with BARK. Make sure to have all prerequesites installed before following the other steps.
 
 ### Prerequesites
-* Bazel (requires Java) (we have experienced problems with newer bazel versions (v0.20) and will investigate the problem, v0.15 works for sure: https://github.com/bazelbuild/bazel/releases/tag/0.15.0
-)
+* Bazel (requires Java) (please use the newest stable version)
 * Python3
 * virtualenv (Virtual environment)
 

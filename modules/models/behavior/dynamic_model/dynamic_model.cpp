@@ -26,11 +26,9 @@ DynamicBehaviorModel::DynamicBehaviorModel(
   commons::Params *params) :
   BehaviorModel(params),
   dynamic_model_(dynamic_model),
-  current_action_(2),
   integration_time_delta_(
     params->get_real("integration_time_delta",
                       "delta t for integration", 0.01)) {
-    current_action_.setZero();
   }
 
 DynamicBehaviorModel::DynamicBehaviorModel(DynamicBehaviorModel* other_behavior) :

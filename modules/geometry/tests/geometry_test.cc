@@ -1,19 +1,20 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
-
 #include "gtest/gtest.h"
-#include "modules/geometry/polygon.hpp"
-#include "modules/geometry/line.hpp"
 #include "modules/geometry/commons.hpp"
+#include "modules/geometry/line.hpp"
+#include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
 
 TEST(polygon, base_functionality) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Point2d;
+  using modules::geometry::Point2d_t;
+  using modules::geometry::Polygon;
+  using modules::geometry::Polygon_t;
 
   // template version; point <--> polygon
   Point2d_t<float> point_1(0.0, 0.0);
@@ -47,8 +48,9 @@ TEST(polygon, base_functionality) {
 }
 
 TEST(line, base_functionality) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  using modules::geometry::Point2d_t;
 
   // template
   Point2d point_1(0.0, 1.0);
@@ -67,8 +69,9 @@ TEST(line, base_functionality) {
 }
 
 TEST(geometry, line) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
   namespace bg = boost::geometry;
 
   Line l;  // vertical
@@ -128,9 +131,8 @@ TEST(geometry, line) {
 }
 
 TEST(geometry, polygon) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p;
   p.add_point(Point2d(0, 0));
@@ -142,14 +144,12 @@ TEST(geometry, polygon) {
   EXPECT_TRUE(p.Valid());
 
   std::shared_ptr<Polygon> p2 =
-    std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
+      std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
 }
 
 TEST(geometry, standard_shapes) {
-  using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::geometry::standard_shapes;
-  namespace bg = boost::geometry;
+  using modules::geometry::Polygon;
+  using modules::geometry::standard_shapes::CarLimousine;
 
   Polygon p = CarLimousine();
   ASSERT_TRUE(p.Valid());
@@ -157,9 +157,9 @@ TEST(geometry, standard_shapes) {
 
 // poly point collide false
 TEST(collision, poly2point1) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p;
   p.add_point(Point2d(0, 0));
@@ -175,9 +175,9 @@ TEST(collision, poly2point1) {
 
 // poly point collide true
 TEST(collision, poly2point2) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p;
   p.add_point(Point2d(0, 0));
@@ -193,9 +193,9 @@ TEST(collision, poly2point2) {
 
 // poly poly collide false
 TEST(collision, poly2poly1) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -218,9 +218,9 @@ TEST(collision, poly2poly1) {
 
 // poly poly collide overlap true
 TEST(collision, poly2poly2) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -243,9 +243,9 @@ TEST(collision, poly2poly2) {
 
 // poly poly collide point overlap true
 TEST(collision, poly2poly3) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -266,11 +266,62 @@ TEST(collision, poly2poly3) {
   EXPECT_TRUE(Collide(p2, p1));
 }
 
+// poly poly collide edge overlap true
+TEST(collision, poly2poly4) {
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
+
+  Polygon p1;
+  p1.add_point(Point2d(0, 0));
+  p1.add_point(Point2d(0, 1));
+  p1.add_point(Point2d(1, 1));
+  p1.add_point(Point2d(1, 0));
+  p1.add_point(Point2d(0, 0));
+
+  Polygon p2;
+  p2.add_point(Point2d(1, 1));
+  p2.add_point(Point2d(2, 1));
+  p2.add_point(Point2d(2, 0));
+  p2.add_point(Point2d(1, 0));
+  p2.add_point(Point2d(1, 1));
+
+  EXPECT_TRUE(Collide(p1, p2));
+
+  EXPECT_TRUE(Collide(p2, p1));
+}
+
+// poly poly collide ccw true
+TEST(collision, poly2poly5) {
+  using modules::geometry::Collide;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
+
+  Polygon p1;
+  p1.add_point(Point2d(0, 0));
+  p1.add_point(Point2d(0, 1));
+  p1.add_point(Point2d(1, 1));
+  p1.add_point(Point2d(1, 0));
+  p1.add_point(Point2d(0, 0));
+
+  Polygon p2;
+  p2.add_point(Point2d(1.5, 1.5));
+  p2.add_point(Point2d(0.5, 1.5));
+  p2.add_point(Point2d(0.5, 0.5));
+  p2.add_point(Point2d(1.5, 0.5));
+  p2.add_point(Point2d(1.5, 1.5));
+
+  EXPECT_TRUE(Collide(p1, p2));
+
+  EXPECT_TRUE(Collide(p2, p1));
+}
+
 // poly line collision no collision
 TEST(collision, poly2line1) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -288,9 +339,10 @@ TEST(collision, poly2line1) {
 
 // poly line collision line intersect
 TEST(collision, poly2line2) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -314,9 +366,10 @@ TEST(collision, poly2line2) {
 
 // poly line collision point intersect
 TEST(collision, poly2line3) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
 
   Polygon p1;
   p1.add_point(Point2d(0, 0));
@@ -334,9 +387,9 @@ TEST(collision, poly2line3) {
 
 // line point collision no intersect
 TEST(collision, line2point1) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
 
   Line l1;
   l1.add_point(Point2d(1, 1));
@@ -349,9 +402,9 @@ TEST(collision, line2point1) {
 
 // line point collision point intersect
 TEST(collision, line2point2) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
 
   Line l1;
   l1.add_point(Point2d(0, 0));
@@ -364,9 +417,9 @@ TEST(collision, line2point2) {
 
 // line point collision end point intersect
 TEST(collision, line2point3) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
 
   Line l1;
   l1.add_point(Point2d(1, 1));
@@ -379,9 +432,9 @@ TEST(collision, line2point3) {
 
 // line line collision no intersect
 TEST(collision, line2line1) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
 
   Line l1;
   l1.add_point(Point2d(1, 1));
@@ -396,10 +449,9 @@ TEST(collision, line2line1) {
 
 // line line collision point intersect
 TEST(collision, line2line2) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
-
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
   Line l1;
   l1.add_point(Point2d(1, 1));
   l1.add_point(Point2d(2, 2));
@@ -414,9 +466,9 @@ TEST(collision, line2line2) {
 
 // line line collision point intersect point
 TEST(collision, line2line3) {
-  using namespace std;
-  using namespace modules::geometry;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
 
   Line l1;
   l1.add_point(Point2d(1, 1));
@@ -432,44 +484,40 @@ TEST(collision, line2line3) {
 
 // car shape collision false
 TEST(collision, carshape1) {
-  using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::geometry::standard_shapes;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Polygon;
+  using modules::geometry::Pose;
+  using modules::geometry::standard_shapes::CarLimousine;
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-    std::dynamic_pointer_cast<Polygon>(
-      outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-    std::dynamic_pointer_cast<Polygon>(
-      outline.transform(Pose(10, 10, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(10, 10, 0)));
 
   EXPECT_FALSE(Collide(*car1, *car2));
 }
 
 // car shape collision true
 TEST(collision, carshape2) {
-  using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::geometry::standard_shapes;
-  namespace bg = boost::geometry;
+  using modules::geometry::Collide;
+  using modules::geometry::Polygon;
+  using modules::geometry::Pose;
+  using modules::geometry::standard_shapes::CarLimousine;
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-  std::dynamic_pointer_cast<Polygon>(
-    outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-  std::dynamic_pointer_cast<Polygon>(
-    outline.transform(Pose(1, 0, 3.14)));
+      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(1, 0, 3.14)));
 
   // TODO(@hart): HACK
   // EXPECT_TRUE(Collide(car1.get(), car2.get()));
 }
 
 TEST(line, s1) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
 
   // template
   Point2d point_1(0.0, 1.0);
@@ -488,8 +536,8 @@ TEST(line, s1) {
 }
 
 TEST(line, s2) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
 
   // template
   Point2d point_1(-1.0, 0.0);
@@ -504,7 +552,7 @@ TEST(line, s2) {
   line.add_point(point_3);
   line.add_point(point_4);
 
-  EXPECT_TRUE(line.s_.size() == 4);
+  EXPECT_EQ(line.s_.size(), 4u);
   EXPECT_DOUBLE_EQ(line.s_[0], 0.0);
   EXPECT_DOUBLE_EQ(line.s_[1], 1.0);
   EXPECT_DOUBLE_EQ(line.s_[2], 2.0);
@@ -512,8 +560,9 @@ TEST(line, s2) {
 }
 
 TEST(line, get_s_at_pt_1) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  using modules::geometry::operator==;
 
   // template
   Point2d point_1(0.0, 1.0);
@@ -542,8 +591,9 @@ TEST(line, get_s_at_pt_1) {
 }
 
 TEST(line, get_line_from_s_interval) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  using modules::geometry::operator==;
 
   Point2d point_1(0.0, 1.0);
   Point2d point_2(0.0, 2.0);
@@ -566,7 +616,9 @@ TEST(line, get_line_from_s_interval) {
   EXPECT_TRUE(Point2d(0.0, 2.5) == p3);
 }
 TEST(line, get_line_from_s_interval_entire_line) {
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  using modules::geometry::operator==;
 
   Point2d point_1(0.0, 0.0);
   Point2d point_2(0.0, 2.0);
@@ -583,8 +635,9 @@ TEST(line, get_line_from_s_interval_entire_line) {
 }
 
 TEST(line, get_nearest_point_1) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  using modules::geometry::operator==;
 
   // template
   Point2d point_1(0.0, 1.0);
@@ -619,9 +672,8 @@ TEST(line, get_nearest_point_1) {
 }
 
 TEST(line, segment_intersection_check_1) {
-  using namespace std;
-  using namespace modules::geometry;
-
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
   // template
   Point2d point_1(0.0, 0.0);
   Point2d point_2(0.0, 1.0);
@@ -644,8 +696,8 @@ TEST(line, segment_intersection_check_1) {
   EXPECT_NEAR(get_segment_end_idx(line, 6.0), 5, 0.1f);
 }
 TEST(line, segment_intersection_tangent_1) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
 
   // template
   Point2d point_1(0.0, 0.0);
@@ -663,7 +715,8 @@ TEST(line, segment_intersection_tangent_1) {
   line.add_point(point_5);
 
   EXPECT_NEAR(get_tangent_angle_at_s(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(get_tangent_angle_at_s(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1f);
+  EXPECT_NEAR(get_tangent_angle_at_s(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141,
+              0.1f);
 
   // template
   Point2d point_6(0.0, 0.0);
@@ -685,8 +738,9 @@ TEST(line, segment_intersection_tangent_1) {
 }
 
 TEST(line, segment_get_normal_1) {
-  using namespace std;
-  using namespace modules::geometry;
+  using modules::geometry::Line_t;
+  using modules::geometry::Point2d;
+  namespace bg = boost::geometry;
 
   // template
   Point2d point_1(0.0, 0.0);
@@ -723,6 +777,37 @@ TEST(line, segment_get_normal_1) {
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
 
+TEST(optimizer, shrink_polygon) {
+  using modules::geometry::Point2d;
+  using modules::geometry::Polygon;
+
+  Polygon polygon;
+  polygon.add_point(Point2d(0, 0));
+  polygon.add_point(Point2d(4, 0));
+  polygon.add_point(Point2d(4, 2));
+  polygon.add_point(Point2d(6, 2));
+  polygon.add_point(Point2d(6, 0));
+  polygon.add_point(Point2d(10, 0));
+  polygon.add_point(Point2d(10, 4));
+  polygon.add_point(Point2d(0, 4));
+  polygon.add_point(Point2d(0, 0));
+
+  Polygon shrunk_polygon;
+  ShrinkPolygon(polygon, -1, &shrunk_polygon);
+
+  Polygon expected_shrunk_polygon;
+  polygon.add_point(Point2d(1, 1));
+  polygon.add_point(Point2d(3, 1));
+  polygon.add_point(Point2d(3, 3));
+  polygon.add_point(Point2d(7, 3));
+  polygon.add_point(Point2d(7, 1));
+  polygon.add_point(Point2d(7, 1));
+  polygon.add_point(Point2d(9, 3));
+  polygon.add_point(Point2d(9, 3));
+  polygon.add_point(Point2d(1, 1));
+
+  ASSERT_TRUE(equals(expected_shrunk_polygon, shrunk_polygon));
+}
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);

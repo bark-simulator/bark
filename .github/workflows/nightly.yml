@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  schedule:
+  - cron: "0 2 * * 1-5"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container:
+      image: docker://barksim/bark:latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setting up virtual environment
+        run: virtualenv -p python3 ./python/venv  --system-site-packages
+      - name: Getting into venv
+        run: . ./python/venv/bin/activate
+      - name: Installing python dependencies
+        run: pip3 install -r tools/installers/requirements.txt -q
+      - name: Runing bazel test
+        run: bazel test //... --define planner_uct=true

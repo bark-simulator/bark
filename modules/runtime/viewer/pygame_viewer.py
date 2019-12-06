@@ -7,6 +7,7 @@ import pygame as pg
 import numpy as np
 from bark.geometry import *
 from bark.viewer import *
+from bark.world.opendrive import *
 from bark.models.dynamic import *
 from modules.runtime.viewer.viewer import BaseViewer
 
@@ -15,13 +16,21 @@ class PygameViewer(BaseViewer):
     def __init__(self, params=None, **kwargs):
         super(PygameViewer, self).__init__(params=params, **kwargs)
 
-        self.screen_dims = kwargs.pop("screen_dims", [1024, 1024])
+        self.screen_dims = kwargs.pop("screen_dims", np.array([1024, 1024]))
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
 
+        self.screen_map_ratio = max(self.screen_width/(np.diff(self.world_x_range)[0]),
+                                    self.screen_height/(np.diff(self.world_y_range)[0]))
+        self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])
+
+        self.map_surface = None
+        self.map_size = None
+
+        pg.font.init()
+
         try:
-            self.screen = pg.display.set_mode((self.screen_width,
-                                               self.screen_height))
+            self.screen = pg.display.set_mode((self.screen_width, self.screen_height), pg.DOUBLEBUF)
             pg.display.set_caption("Bark")
 
             self.clear()
@@ -30,36 +39,55 @@ class PygameViewer(BaseViewer):
             self.screen = None
             print("No available video device")
 
+    def drawMap(self, map):
+        if self.map_surface == None:
+            # find boundary to create fixed size pygame surface
+            self.map_min_boundary = np.full(2, np.inf)
+            self.map_max_boundary = np.full(2, -np.inf)
+            lanes_np = []
+            lanes_dashed = []
+
+            for _, road in map.get_roads().items():
+                for lane_section in road.lane_sections:
+                    for _, lane in lane_section.get_lanes().items():
+                        lane_np = lane.line.toArray()
+                        lanes_np.append(lane_np)
+                        lanes_dashed.append(lane.road_mark.type == RoadMarkType.broken
+                                            or lane.road_mark.type == RoadMarkType.none)
+
+                        self.map_min_boundary = np.minimum(self.map_min_boundary, np.amin(lane_np, axis=0))
+                        self.map_max_boundary = np.maximum(self.map_max_boundary, np.amax(lane_np, axis=0))
+
+            self.map_size = self.map_max_boundary-self.map_min_boundary
+            # the size needed to be scaling larger for better visualization
+            # as a pygame surface is stored as pixels
+            self.map_surface = pg.Surface(tuple(self.map_size*self.screen_map_ratio))
+            self.map_surface.fill((255, 255, 255))
+
+            for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
+                pg.draw.aalines(self.map_surface, self.getColor(self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
+
+        camera_coordinate = self.mapToSurfaceCoordinates(np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
+        camera_view_range = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])*self.screen_map_ratio
+        self.screen.blit(self.map_surface, (0, 0), tuple(np.around(np.concatenate((camera_coordinate, camera_view_range)))))
+
     def drawPoint2d(self, point2d, color, alpha):
         if self.screen is None:
             return
-        pg.draw.circle(self.screen, self.getColor(color),
-                       self.pointToPG(point2d), 1, 0)
+        pg.draw.circle(self.screen, self.getColor(color), self.pointsToCameraCoordinate(point2d), 1, 0)
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
         # TODO: enable dashed line
         if self.screen is None:
             return
-        line2d_np = line2d.toArray()
-        line_transformed_np = np.apply_along_axis(self.pointToPG, axis=1, arr=line2d_np)
-        for line_slice in np.ma.clump_unmasked(np.ma.masked_invalid(line_transformed_np)):
-            line_np = line_transformed_np[line_slice]
-            if len(line_np.tolist()) < 2:
-                continue
-            pg.draw.lines(
-                self.screen, self.getColor(color), False,
-                line_np.tolist(), 3)
+        line2d = self.pointsToCameraCoordinate(line2d)
+        pg.draw.lines(self.screen, self.getColor(color), False, line2d, 3)
 
     def drawPolygon2d(self, polygon, color, alpha):
         if self.screen is None:
             return
-        points = polygon.toArray()
-        points_transformed_np = np.apply_along_axis(self.pointToPG, axis=1, arr=points)
-        points_transformed_np = points_transformed_np[~np.isnan(points_transformed_np).any(axis=1)]
-        if len(points_transformed_np.tolist()) < 2:
-            return
-
-        pg.draw.polygon(self.screen, self.getColor(color), points_transformed_np.tolist())
+        points = self.pointsToCameraCoordinate(polygon)
+        pg.draw.polygon(self.screen, self.getColor(color), points)
 
     def drawTrajectory(self, trajectory, color):
         if self.screen is None:
@@ -68,13 +96,17 @@ class PygameViewer(BaseViewer):
             return
         point_list = []
         for state in trajectory:
-            point_list.append([
-                self.x_worldToPyGameCoordinate(state[int(
-                    StateDefinition.X_POSITION)]),
-                self.y_worldToPyGameCoordinate(state[int(
-                    StateDefinition.Y_POSITION)])
-            ])
-        pg.draw.lines(self.screen, self.getColor(color), False, point_list, 5)
+            point_list.append([state[int(StateDefinition.X_POSITION)], state[int(StateDefinition.Y_POSITION)]])
+
+        pg.draw.lines(self.screen, self.getColor(color), False, self.pointsToCameraCoordinate(point_list), 5)
+
+    def drawText(self, position, text, **kwargs):
+        font = pg.font.get_default_font()
+        fontsize = kwargs.pop("fontsize", 18)
+        color = kwargs.pop("color", (0, 0, 0))
+        background_color = kwargs.pop("background_color", (255, 255, 255))
+        text_surface = pg.font.SysFont(font, fontsize).render(text, True, color, background_color)
+        self.screen.blit(text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):
@@ -98,38 +130,33 @@ class PygameViewer(BaseViewer):
         if self.screen is None:
             return
         pg.display.update()
-        pg.event.get() # call necessary for visbility of pygame viewer on macos
+        pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
         if self.screen is None:
             return
         self.screen.fill((255, 255, 255))
 
-    def _map_world_coordinate_to_screen_coordinate(self, world_coordinate, world_coordinate_range, screen_range):
-        delta_world = world_coordinate_range[1] - world_coordinate_range[0]
-        delta_screen = screen_range[1] - screen_range[0]
+    """
+        points: numpy array
+        return: numpy array
 
-        return round(
-            ( world_coordinate - world_coordinate_range[0] ) / delta_world * delta_screen + screen_range[0]
-        )
+        The origin of pygame surface is located at top left, increment downward
+        therefore all the coordinates need to be transformed
 
+        1. Mirror by y-axis
+        2. Translate y-axis by the max y-coordinate in the map
+        3. Translate x-axis by the max x-coordinate in the map
+        4. Scaling by screen_map_ratio
+    """    
+    def mapToSurfaceCoordinates(self, points):
+        return (points * np.array([1, -1]) + np.array([-self.map_min_boundary[0], self.map_max_boundary[1]])) * self.screen_map_ratio
 
-    def x_worldToPyGameCoordinate(self, x_world):
-        return self._map_world_coordinate_to_screen_coordinate(x_world, self.dynamic_world_x_range,(0,self.screen_width))
+    def pointsToCameraCoordinate(self, points):
+        if isinstance(points, list):
+            points = np.array(points)
+        elif not isinstance(points, np.ndarray):
+            points = points.toArray()
 
-    def y_worldToPyGameCoordinate(self, y_world):
-        return self.screen_height - self._map_world_coordinate_to_screen_coordinate(y_world, self.dynamic_world_y_range,(0,self.screen_height))
-
-    def pointToPG(self, point):
-        if isinstance(point, Point2d):
-            x = self.x_worldToPyGameCoordinate(point.x())
-            y = self.y_worldToPyGameCoordinate(point.y())
-
-        elif isinstance(point, np.ndarray):
-            x = self.x_worldToPyGameCoordinate(point[0])
-            y = self.y_worldToPyGameCoordinate(point[1])
-
-        if x is not np.nan and y is not np.nan:
-            return (x,y)
-        else:
-            return (np.nan, np.nan)
+        return np.array([0, self.screen_height])+(points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]]))*np.array([1, -1]) \
+                         / self.camera_view_size*self.screen_dims
