@@ -13,11 +13,11 @@ from modules.runtime.commons.parameters import ParameterServer
 
 behavior_used = None
 try:
-    from bark.models.behavior import BehaviorUCTSingleAgent
-    behavior_used = BehaviorUCTSingleAgent
+  from bark.models.behavior import BehaviorUCTSingleAgent
+  behavior_used = BehaviorUCTSingleAgent
 except:
-    print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:uct_planner --define planner_uct=true ")
-    exit()
+  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:uct_planner --define planner_uct=true ")
+  exit()
 
 db = BenchmarkDatabase(database_root="external/benchmark_database_release")
 evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollisionEgoAgent,
