@@ -59,8 +59,36 @@ bool LocalMap::Generate(Point2d point) {
   LanePtr current_lane = lanes.at(0);
 
   driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
+  if (!driving_corridor_.computed) {
+    return false;
+  }
 
   return true;
+}
+
+bool LocalMap::RecalculateDrivingCorridor(const Point2d &point) {
+  if (map_interface_ == nullptr) {
+    return false;
+  }
+
+  std::vector<LanePtr> lanes;
+  map_interface_->FindNearestLanes(point, 1, lanes);
+  LanePtr current_lane = lanes.at(0);
+
+  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
+  if (!driving_corridor_.computed) {
+    // No direct corridor to the goal lane exists, try finding a corridor parallel to the goal lane
+    driving_corridor_ = map_interface_->ComputeDrivingCorridorParallelToGoal(current_lane->get_id(), goal_lane_id_);
+  }
+  if (!driving_corridor_.computed) {
+    // TODO(@AKreutz): Maybe it is still possible to generate a driving corridor in this case?
+    LOG(ERROR) << "Driving corridor generation failed, goal lane " << goal_lane_id_
+               << " is not reachable from lane " << current_lane->get_id()
+               << ", neither are any of its neighboring lanes" << std::endl;
+    return false;
+  } else {
+    return true;
+  }
 }
 
 

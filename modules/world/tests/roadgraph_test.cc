@@ -233,6 +233,49 @@ TEST(roadgraph, get_inner_neighbor_test_planview)
   ASSERT_TRUE(in2.second);
 }
 
+TEST(roadgraph, get_all_neighbors_test)
+{
+  using namespace modules::world::map;
+  Roadgraph r;
+
+  RoadId rid0 = 0;
+  LanePtr lane_0(new Lane(0));
+  LanePtr lane_1(new Lane(1));
+  LanePtr lane_2(new Lane(2));
+  LanePtr lane_3(new Lane(3));
+  LaneId l0 = r.add_lane(rid0, lane_0);
+  LaneId l1 = r.add_lane(rid0, lane_1);
+  LaneId l2 = r.add_lane(rid0, lane_2);
+  LaneId l3 = r.add_lane(rid0, lane_3);
+
+  r.add_inner_neighbor(l0, l1);
+  r.add_inner_neighbor(l1, l2);
+  r.add_inner_neighbor(l2, l3);
+  r.add_outer_neighbor(l0, l1);
+  r.add_outer_neighbor(l1, l2);
+  r.add_outer_neighbor(l2, l3);
+
+  std::vector<LaneId> neighbors_1 = r.get_all_neighbors(l1);
+  std::vector<LaneId> neighbors_2 = r.get_all_neighbors(l2);
+  std::vector<LaneId> neighbors_3 = r.get_all_neighbors(l3);
+  
+  // Vector elements are the neighbors, and not the lane itself or the plan view
+  ASSERT_EQ(2, neighbors_1.size());
+  ASSERT_NE(neighbors_1.end(), find(neighbors_1.begin(), neighbors_1.end(), l2));
+  ASSERT_NE(neighbors_1.end(), find(neighbors_1.begin(), neighbors_1.end(), l3));
+
+  ASSERT_EQ(2, neighbors_2.size());
+  ASSERT_NE(neighbors_2.end(), find(neighbors_2.begin(), neighbors_2.end(), l1));
+  ASSERT_NE(neighbors_2.end(), find(neighbors_2.begin(), neighbors_2.end(), l3));
+
+  ASSERT_EQ(2, neighbors_3.size());
+  ASSERT_NE(neighbors_3.end(), find(neighbors_3.begin(), neighbors_3.end(), l1));
+  ASSERT_NE(neighbors_3.end(), find(neighbors_3.begin(), neighbors_3.end(), l2));
+
+  // Neighbors of planview -> expect failure
+  ASSERT_THROW(r.get_all_neighbors(l0), std::runtime_error);
+}
+
 TEST(roadgraph, find_path_test)
 {
   using namespace modules::world::map;
@@ -377,6 +420,28 @@ TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
   r.add_successor(l2, l3);
 
   std::vector<LaneId> path = r.find_path(l0,l3);
+  ASSERT_EQ(0, path.size());
+}
+
+TEST(roadgraph, find_path_along_neighbor_edges_test)
+{
+  using namespace modules::world::map;
+  Roadgraph r;
+
+  LanePtr lane_0(new Lane()); lane_0->set_id(10); lane_0->set_lane_type(LaneType::DRIVING);
+  LanePtr lane_1(new Lane()); lane_1->set_id(20); lane_1->set_lane_type(LaneType::DRIVING);
+  LanePtr lane_2(new Lane()); lane_2->set_id(30); lane_2->set_lane_type(LaneType::DRIVING);
+  LaneId l0 = r.add_lane(0, lane_0);
+  LaneId l1 = r.add_lane(1, lane_1);
+  LaneId l2 = r.add_lane(2, lane_2);
+
+  r.add_successor(l0, l1);
+  r.add_inner_neighbor(l1, l2);
+  r.add_outer_neighbor(l1, l2);
+
+  // Lane l2 is not reachable using only successor edges, thus no valid path available
+  std::vector<LaneId> path = r.find_path(l0, l2);
+
   ASSERT_EQ(0, path.size());
 }
 
