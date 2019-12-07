@@ -68,6 +68,7 @@ void World::DoExecution(const float& delta_time) {
   if (remove_agents_) {
     RemoveOutOfMapAgents();
   }
+  RecalculateDrivingCorridors();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -139,6 +140,19 @@ void World::RemoveOutOfMapAgents() {
     agents_.erase(result_pair.second);
   }
   UpdateAgentRTree();
+}
+
+void World::RecalculateDrivingCorridors() {
+  for (auto &agent : agents_) {
+    map::DrivingCorridor driving_corridor = 
+        agent.second->get_local_map()->get_driving_corridor();
+    geometry::Polygon corridor_polygon = driving_corridor.CorridorPolygon();
+    Point2d position = agent.second->get_current_position();
+
+    if (!geometry::Collide(corridor_polygon, position)) {
+      agent.second->RecalculateDrivingCorridor();
+    }
+  }
 }
 
 AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,

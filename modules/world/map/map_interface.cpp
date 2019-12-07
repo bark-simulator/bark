@@ -198,10 +198,31 @@ bool MapInterface::IsInLane(const Point2d &point, LaneId id) const
   }
 }
 
-DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(const LaneId &startid, const LaneId &goalid)
+DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
+  const LaneId &startid, const LaneId &goalid)
 {
   std::vector<LaneId> ids = roadgraph_->find_path(startid, goalid);
-  return ComputeDrivingCorridorForRange(ids);
+  if (!ids.empty()) {
+    return ComputeDrivingCorridorForRange(ids);
+  } else {
+    return DrivingCorridor();
+  }
+}
+
+DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
+  const LaneId& startid, const LaneId& goalid)
+{
+  std::vector<LaneId> goal_neighbors = roadgraph_->get_all_neighbors(goalid);
+  for (auto const &goal_neighbor : goal_neighbors) {
+    std::vector<LaneId> ids = roadgraph_->find_path(startid, goal_neighbor);
+    if (ids.size() > 0) {
+      // Found a target lane that is parallel to the goal lane
+      return ComputeDrivingCorridorForRange(ids);
+    }
+  }
+
+  // No lane parallel to the goal was found
+  return DrivingCorridor();
 }
 
 DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids)
