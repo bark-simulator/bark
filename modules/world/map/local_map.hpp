@@ -95,6 +95,7 @@ class LocalMap {
   bool HasCorrectDrivingDirection(const State& state) const;
 
   bool Generate(Point2d point);
+  bool RecalculateDrivingCorridor(const Point2d &point);
   Line CalculateLineHorizon(const Line& line, const Point2d& p, double horizon);
 
   bool ComputeHorizonCorridor(const Point2d& p, double horizon);

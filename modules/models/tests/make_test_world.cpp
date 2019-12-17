@@ -184,3 +184,101 @@ MapInterface modules::models::tests::make_two_lane_map_interface() {
 
   return map_interface;
 }
+
+MapInterface modules::models::tests::make_map_interface_two_connected_roads() {
+  using namespace modules::world::opendrive;
+  using namespace modules::geometry;
+
+  OpenDriveMapPtr map(new OpenDriveMap());
+
+  //! ROAD 1
+  PlanViewPtr p0(new PlanView());
+  p0->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 1
+  LaneSectionPtr ls0(new LaneSection(0.0));
+
+  //! PlanView
+  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_0 = {0, 10, off0};
+  LanePtr lane00 = create_lane_from_lane_width(0,
+                                               p0->get_reference_line(),
+                                               lane_width_0,
+                                               0.05);
+  lane00->set_lane_type(LaneType::DRIVING);
+
+  //! Lane
+  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  LaneWidth lane_width_1 = {0, 10, off};
+  LanePtr lane01 = create_lane_from_lane_width(1,
+                                               p0->get_reference_line(),
+                                               lane_width_1,
+                                               0.05);
+  lane01->set_lane_type(LaneType::DRIVING);
+
+  LanePtr lane02 = create_lane_from_lane_width(2,
+                                               p0->get_reference_line(),
+                                               lane_width_1,
+                                               0.05);
+  lane02->set_lane_type(LaneType::DRIVING);
+
+  ls0->add_lane(lane00);
+  ls0->add_lane(lane01);
+  ls0->add_lane(lane02);
+
+  RoadPtr r0(new Road("highway", 100));
+  r0->set_plan_view(p0);
+  r0->add_lane_section(ls0);
+
+  map->add_road(r0);
+
+  //! ROAD 2
+  PlanViewPtr p1(new PlanView());
+  p1->add_line(Point2d(10.0f, 0.0f), 0.0f, 10.0f);
+
+  //! Lane-Section 2
+  LaneSectionPtr ls1(new LaneSection(0.0f));
+
+  //! PlanView
+  LanePtr lane10 = create_lane_from_lane_width(0,
+                                               p1->get_reference_line(),
+                                               lane_width_0,
+                                               0.05);
+  lane10->set_lane_type(LaneType::DRIVING);
+  lane10->set_link({0, 0});
+  
+
+  //! Lane
+  LanePtr lane11 = create_lane_from_lane_width(1,
+                                               p1->get_reference_line(),
+                                               lane_width_1,
+                                               0.05);
+  lane11->set_lane_type(LaneType::DRIVING);
+  lane11->set_link({1, 1});
+
+  LanePtr lane12 = create_lane_from_lane_width(2,
+                                               p1->get_reference_line(),
+                                               lane_width_1,
+                                               0.05);
+  lane12->set_lane_type(LaneType::DRIVING);
+  lane12->set_link({2, 2});
+
+  ls1->add_lane(lane10);
+  ls1->add_lane(lane11);
+  ls1->add_lane(lane12);
+
+  RoadPtr r1(new Road("highway", 101));
+  r1->set_plan_view(p1);
+  r1->add_lane_section(ls1);
+
+  map->add_road(r1);
+
+  RoadLinkInfo predecessor(100, "road");
+  RoadLinkInfo successor(101, "road");
+  r1->set_link(RoadLink(predecessor, successor));
+
+  modules::world::map::MapInterface map_interface;
+  map_interface.interface_from_opendrive(map);
+
+  return map_interface;
+}

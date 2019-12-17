@@ -13,7 +13,8 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
 
 param_server = ParameterServer()
-scenario_generation = DroneChallengeScenarioGeneration(num_scenarios=1, random_seed=0, params=param_server)
+scenario_generation = DroneChallengeScenarioGeneration(
+  num_scenarios=3, random_seed=0, params=param_server)
 
 
 viewer = MPViewer(params=param_server, x_range=[-30, 30], y_range=[-30, 30])
@@ -25,14 +26,11 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 scenario, idx = scenario_generation.get_next_scenario()
 
 
-# Rendering WITHOUT intermediate steps
-video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
-
-for _ in range(0, 10): # run 5 scenarios in a row, repeating after 3
+for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
   scenario, idx = scenario_generation.get_next_scenario()
-  world_state = scenario.get_world_state()
-  for _ in range(0, 5):
-      video_renderer.drawWorld(world_state, scenario._eval_agent_ids, idx) 
-      world_state.step(sim_step_time)
-    
-video_renderer.export_video(filename="examples/scenarios/test_video_step")
+  world = scenario.get_world_state()
+  # 20 steps
+  for _ in range(0, 20):
+    world.step(sim_step_time)
+    viewer.drawWorld(world)
+  

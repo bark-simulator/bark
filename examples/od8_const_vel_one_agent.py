@@ -59,20 +59,7 @@ agent = Agent(init_state,
 world.add_agent(agent)
 
 # viewer
-viewer = PygameViewer(params=param_server,
-                      x_range=[-50, 50],
-                      y_range=[-50, 50],
-                      follow_agent_id=agent.id,
-                      screen_dims=[500, 500])
-
-"""
-viewer = Panda3dViewer(params=param_server,
-                      x_range=[-150, 150],
-                      y_range=[-150, 150],
-                      follow_agent_id=agent.id)
-"""
-viewer = MPViewer(params=param_server,
-                  follow_agent_id=agent.id)
+viewer = MPViewer(params=param_server)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
@@ -83,10 +70,10 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   100]
 
 for _ in range(0, 100):
-    viewer.clear()
-    world.step(sim_step_time)
-    viewer.drawWorld(world)
-    viewer.show(block=False)
-    time.sleep(sim_step_time/sim_real_time_factor)
+  viewer.clear()
+  world.step(sim_step_time)
+  viewer.drawWorld(world)
+  viewer.show(block=False)
+  time.sleep(sim_step_time/sim_real_time_factor)
 
 param_server.save("examples/params/od8_const_vel_one_agent_written.json")

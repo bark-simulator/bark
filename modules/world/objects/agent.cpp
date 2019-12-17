@@ -123,9 +123,17 @@ void Agent::GenerateLocalMap() {
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->Generate(agent_xy)) {
     LOG(ERROR) << "LocalMap generation for agent "
-              << get_agent_id() << " failed." << std::endl;
+               << get_agent_id() << " failed." << std::endl;
   }
   // TODO(@hart): parameter
+  UpdateDrivingCorridor(20.0);
+}
+
+void Agent::RecalculateDrivingCorridor() {
+  if (!local_map_->RecalculateDrivingCorridor(get_current_position())) {
+    LOG(ERROR) << "DrivingCorridor generation for agent "
+               << get_agent_id() << " failed." << std::endl;
+  }
   UpdateDrivingCorridor(20.0);
 }
 

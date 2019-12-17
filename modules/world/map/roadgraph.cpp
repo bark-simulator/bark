@@ -81,7 +81,7 @@ std::vector<LaneId> Roadgraph::find_path(const LaneId &startid,
   std::pair<vertex_t, bool> goal_vertex = get_vertex_by_lane_id(goalid);
 
   // filter graph
-  DrivingLaneTypePredicate predicate{&g_};
+  LaneTypeDrivingAndEdgeTypeSuccessorPredicate predicate{&g_};
   FilteredLaneGraph fg(g_, predicate, predicate);
   bool start_goal_valid_in_fg = check_id_in_filtered_graph(fg, startid) &&
                                 check_id_in_filtered_graph(fg, goalid);
@@ -122,7 +122,6 @@ std::vector<LaneId> Roadgraph::find_path(const LaneId &startid,
       // std::cout << "current vertex " << current << " id " <<
       // fg[current].global_lane_id << std::endl;
       if (current == p[current]) {
-        std::cerr << "loop on itself -- probably not a valid path";
         return std::vector<LaneId>();
       }
       current = p[current];
@@ -269,6 +268,39 @@ std::pair<LaneId, bool> Roadgraph::get_outer_neighbor_but_not(
     }
   }
   return std::make_pair<LaneId, bool>(0, false);  // error case
+}
+
+std::vector<LaneId> Roadgraph::get_all_neighbors(const LaneId &lane_id) const {
+  LanePtr lane = get_laneptr(lane_id);
+  if (lane->get_lane_position() == 0) {
+    throw std::runtime_error("get_all_neighbors was called with the plan view");
+  }
+
+  std::vector<LaneId> neighbors;
+
+  std::pair<LaneId, bool> current_neighbor = get_inner_neighbor(lane_id);
+  std::pair<LaneId, bool> next_neighbor = std::make_pair(0, false);
+
+  // Inner neighbors
+  if (current_neighbor.second) {
+    // We do not want to add the planview to the vector of neighbors, therefore
+    // check if the current neighbor has an inner neighbor
+    next_neighbor = get_inner_neighbor(current_neighbor.first);
+  }
+  while (next_neighbor.second) {
+    neighbors.push_back(current_neighbor.first);
+    current_neighbor = next_neighbor;
+    next_neighbor = get_inner_neighbor(current_neighbor.first);
+  }
+
+  // Outer neighbors
+  current_neighbor = get_outer_neighbor(lane_id);
+  while (current_neighbor.second) {
+    neighbors.push_back(current_neighbor.first);
+    current_neighbor = get_outer_neighbor(current_neighbor.first);
+  }
+
+  return neighbors;
 }
 
 bool Roadgraph::has_lane(const LaneId &lane_id) const {
