@@ -97,6 +97,40 @@ TEST(lane, open_drive) {
   // spiral and arc tests are ommitted due to their complexits -> verify with plots!
 }
 
+TEST(multiple_lane_widths, open_drive) {
+  using namespace modules::world::opendrive;
+  using namespace modules::geometry;
+
+  //! new plan view
+  PlanView p;
+  LaneOffset off1 = {1.5f, 0.0f, 0.0f, 0.0f};
+  LaneOffset off2 = {0.0f, 0.003f, 0.0f, 0.0f};
+
+  LaneWidth lane_width1 = {0, 4.0, off1};
+  LaneWidth lane_width2 = {4.0, 10.0, off2};
+  //! vertical
+  p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+
+  LanePtr lane = std::make_shared<Lane>(1);
+  bool succ = lane->append(p.get_reference_line(), lane_width1, 0.05f);
+
+  Line linel1 = lane->get_line();
+  float length1 = bg::get<1>(linel1.obj_[linel1.obj_.size() - 1]);
+
+  succ = lane->append(p.get_reference_line(), lane_width2, 0.05f);
+
+  Line linel2 = lane->get_line();
+  float length2 = bg::get<1>(linel2.obj_[linel2.obj_.size() - 1]);
+
+  EXPECT_NEAR(lane_width1.s_end, length1, 0.1);
+  EXPECT_NEAR(lane_width2.s_start, length1, 0.1);
+  
+  EXPECT_NEAR(lane_width2.s_end, length2, 0.1);
+
+  EXPECT_TRUE(length1 < length2);
+}
+
+
 TEST(road, open_drive) {
   using namespace std;
   using namespace modules::world::opendrive;
