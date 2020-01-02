@@ -48,6 +48,14 @@ class LaneSection {
   Lanes lanes_;
 };
 
+inline std::string print(const LaneSection &ls) {
+  std::stringstream ss;
+  ss << "s: " << ls.get_s() << std::endl;
+  for (auto const& l : ls.get_lanes())
+    ss << "Lane: " << print(*(l.second)) << std::endl;
+  return ss.str();
+}
+
 using LaneSectionPtr = std::shared_ptr<LaneSection>;
 
 }  // namespace opendrive
