@@ -186,7 +186,8 @@ inline geometry::Line create_line_with_offset_from_line(
   for (; s < lane_width_current_lane.s_end; s += s_inc) {
     geometry::Point2d point = get_point_at_s(previous_line, s);
     normal = get_normal_at_s(previous_line, s);
-    scale = -sign * polynom(s, off.a, off.b, off.c, off.d);
+    // we substract s by s_start, as polynom is defined from [0...<length of lane element>]
+    scale = -sign * polynom(s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
     tmp_line.add_point(
       geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
                         bg::get<1>(point) + scale * bg::get<1>(normal)));
@@ -198,7 +199,7 @@ inline geometry::Line create_line_with_offset_from_line(
     geometry::Point2d point =
       get_point_at_s(previous_line, lane_width_current_lane.s_end);
     normal = get_normal_at_s(previous_line, lane_width_current_lane.s_end);
-    scale = -sign * polynom(lane_width_current_lane.s_end, off.a, off.b, off.c, off.d);
+    scale = -sign * polynom(lane_width_current_lane.s_end-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
     tmp_line.add_point(
       geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
                         bg::get<1>(point) + scale * bg::get<1>(normal)));
