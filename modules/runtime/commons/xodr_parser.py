@@ -76,6 +76,20 @@ class XodrParser(object):
         new_lane_width["d"] = 0.0
         return new_lane_width
 
+    def parse_lane_widths_from_lane(self, lane, id):
+        lane_width_list = []
+        lane_widths = lane.findall("width")
+            
+        if len(lane_widths) > 0:
+          for lane_width in lane_widths:
+            lane_width = lane_width
+            lane_width_list.append(self.parse_lane_width(lane_width))
+        else:
+          if int(id) == 0:
+            lane_width_list.append(self.zero_lane_width())
+        
+        return lane_width_list
+
     def parse_lanes_from_lane_sections(self, lanes, lane_section):
         # previous or next polynoamial
         lane_dict = {}
@@ -95,16 +109,7 @@ class XodrParser(object):
                 if road_mark: # if dict is not empty
                     new_lane["road_mark"] = road_mark
             
-            new_lane["width"] = []
-            lane_widths = lane.findall("width")
-            
-            if len(lane_widths) > 0:
-              for lane_width in lane_widths:
-                lane_width = lane_width
-                new_lane["width"].append(self.parse_lane_width(lane_width))
-            else:
-              if int(id) == 0:
-                new_lane["width"].append(self.zero_lane_width())
+            new_lane["width"] = self.parse_lane_widths_from_lane(lane, id)
 
             lane_section["lanes"].append(new_lane)
         return lane_section
