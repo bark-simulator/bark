@@ -38,6 +38,8 @@ class Lane {
   void set_lane_position(const LanePosition& lane_position)
                              { lane_position_ = lane_position; }
 
+  bool append(geometry::Line previous_line, LaneWidth lane_width_current, float s_inc);
+
   //! getter functions
   geometry::Line get_line() const { return line_; }
 
@@ -69,7 +71,8 @@ class Lane {
 
 inline std::string print(const Lane &l) {
   std::stringstream ss;
-  ss << "id: " << l.get_id();
+  ss << "id: " << l.get_id() << ", ";
+  ss << "position " << l.get_lane_position() << ", ";
   ss << print(l.get_link());
   ss << print(l.get_road_mark());
   ss << "speed: " << l.get_speed() << std::endl;
@@ -86,11 +89,11 @@ inline LanePtr create_lane_from_lane_width(LanePosition lane_position, geometry:
   
   std::shared_ptr<Lane> ret_lane(new Lane(lane_position));
 
-  geometry::Line tmp_line = create_line_with_offset_from_line(previous_line, lane_position, lane_width_current, s_inc);
-  ret_lane->set_line(tmp_line);
+  bool succ = ret_lane->append(previous_line, lane_width_current, s_inc);
 
   return ret_lane;
 }
+
 
 }  // namespace opendrive
 }  // namespace world
