@@ -188,14 +188,26 @@ class BaseViewer(Viewer):
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.get_roads().items():
-            for lane_section in road.lane_sections:
-                for _, lane in lane_section.get_lanes().items():
-                    dashed = False
-                    # center line is type none and is drawn as broken
-                    if lane.road_mark.type == RoadMarkType.broken or lane.road_mark.type == RoadMarkType.none: 
-                        dashed = True
-                    self.drawLine2d(lane.line, self.color_lane_boundaries, self.alpha_lane_boundaries, dashed)
+            self.drawRoad(road, self.color_lane_boundaries)
 
+    def drawRoad(self, road, color=None):
+        for lane_section in road.lane_sections:
+          self.drawLaneSection(lane_section, color)
+    
+    def drawLaneSection(self, lane_section, color=None):
+      for _, lane in lane_section.get_lanes().items():
+        self.drawLane(lane, color)
+        
+
+    def drawLane(self, lane, color=None):
+      if color is None:
+        self.color_lane_boundaries
+
+      dashed = False
+      # center line is type none and is drawn as broken
+      if lane.road_mark.type == RoadMarkType.broken or lane.road_mark.type == RoadMarkType.none: 
+        dashed = True
+      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
 
     def drawAgent(self, agent, color):
         shape = agent.shape
