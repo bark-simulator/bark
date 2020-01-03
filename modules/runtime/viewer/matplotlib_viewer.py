@@ -84,6 +84,9 @@ class MPViewer(BaseViewer):
         if filename:
             self.axes.get_figure().savefig(filename)
 
+    def saveFig(self, filename):
+      self.axes.get_figure().savefig(filename)
+
     def show(self, block=False):
         plt.draw()
         if block:

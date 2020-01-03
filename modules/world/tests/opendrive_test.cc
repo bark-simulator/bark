@@ -1,19 +1,19 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-
 
 #include "gtest/gtest.h"
 
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
+#include "modules/world/opendrive/commons.hpp"
+#include "modules/world/opendrive/junction.hpp"
+#include "modules/world/opendrive/lane_section.hpp"
+#include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/opendrive/plan_view.hpp"
 #include "modules/world/opendrive/road.hpp"
-#include "modules/world/opendrive/lane_section.hpp"
-#include "modules/world/opendrive/junction.hpp"
-#include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/opendrive/commons.hpp"
 
 TEST(create_plan_view, open_drive) {
   using namespace std;
@@ -32,7 +32,7 @@ TEST(create_plan_view, open_drive) {
   //! add spiral
   p.add_spiral(Point2d(0.0f, 0.0f), 0.0f, 1.0f, 0.0f, 0.7f);
 
-  //p.print_points();
+  // p.print_points();
 }
 
 TEST(lane, open_drive) {
@@ -48,7 +48,8 @@ TEST(lane, open_drive) {
   p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
   LaneWidth lane_width = {0, 10.0, off};
 
-  LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(), lane_width, 0.05f); // left side
+  LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(),
+                                             lane_width, 0.05f);  // left side
 
   lane->set_lane_type(LaneType::DRIVING);
   EXPECT_EQ(lane->get_lane_type(), LaneType::DRIVING);
@@ -60,10 +61,11 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), -1.5, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
 
-  lane = create_lane_from_lane_width(-1, p.get_reference_line(), lane_width, 0.05f); // right side
+  lane = create_lane_from_lane_width(-1, p.get_reference_line(), lane_width,
+                                     0.05f);  // right side
 
   line = lane->get_line();
-  
+
   std::cout << bg::get<1>(line.obj_[line.obj_.size() - 1]) << std::endl;
 
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 1.5, 0.1);
@@ -77,7 +79,8 @@ TEST(lane, open_drive) {
   //! horizontal
   p2.add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  lane = create_lane_from_lane_width(1, p2.get_reference_line(), lane_width, 0.05f); // left side
+  lane = create_lane_from_lane_width(1, p2.get_reference_line(), lane_width,
+                                     0.05f);  // left side
 
   line = lane->get_line();
 
@@ -86,7 +89,8 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 1.5, 0.1);
 
-  lane = create_lane_from_lane_width(-1, p2.get_reference_line(), lane_width, 0.05f); // right side
+  lane = create_lane_from_lane_width(-1, p2.get_reference_line(), lane_width,
+                                     0.05f);  // right side
 
   line = lane->get_line();
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
@@ -94,7 +98,41 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), -1.5, 0.1);
 
-  // spiral and arc tests are ommitted due to their complexits -> verify with plots!
+  // spiral and arc tests are ommitted due to their complexits -> verify with
+  // plots!
+}
+
+TEST(multiple_lane_widths, open_drive) {
+  using namespace modules::world::opendrive;
+  using namespace modules::geometry;
+
+  //! new plan view
+  PlanView p;
+  LaneOffset off1 = {1.5f, 0.0f, 0.0f, 0.0f};
+  LaneOffset off2 = {0.0f, 0.003f, 0.0f, 0.0f};
+
+  LaneWidth lane_width1 = {0, 4.0, off1};
+  LaneWidth lane_width2 = {4.0, 10.0, off2};
+  //! vertical
+  p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+
+  LanePtr lane = std::make_shared<Lane>(1);
+  bool succ = lane->append(p.get_reference_line(), lane_width1, 0.05f);
+
+  Line linel1 = lane->get_line();
+  float length1 = bg::get<1>(linel1.obj_[linel1.obj_.size() - 1]);
+
+  succ = lane->append(p.get_reference_line(), lane_width2, 0.05f);
+
+  Line linel2 = lane->get_line();
+  float length2 = bg::get<1>(linel2.obj_[linel2.obj_.size() - 1]);
+
+  EXPECT_NEAR(lane_width1.s_end, length1, 0.1);
+  EXPECT_NEAR(lane_width2.s_start, length1, 0.1);
+
+  EXPECT_NEAR(lane_width2.s_end, length2, 0.1);
+
+  EXPECT_TRUE(length1 < length2);
 }
 
 TEST(road, open_drive) {
@@ -128,8 +166,10 @@ TEST(road, open_drive) {
   //! Lane
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width = {0, 1, off};
-  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width, 0.05f);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width, 0.05f);
+  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+                                             lane_width, 0.05f);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+                                              lane_width, 0.05f);
 
   ls->add_lane(lane);
   ls2->add_lane(lane2);
@@ -190,10 +230,13 @@ TEST(map, open_drive) {
   LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width_1 = {0, 10.0, off};
 
-  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05f);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05f);
+  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+                                             lane_width_1, 0.05f);
+  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+                                              lane_width_1, 0.05f);
 
-  RoadMark rm {roadmark::RoadMarkType::SOLID, roadmark::RoadMarkColor::STANDARD, 0.1};
+  RoadMark rm{roadmark::RoadMarkType::SOLID, roadmark::RoadMarkColor::STANDARD,
+              0.1};
 
   std::cout << print(rm) << std::endl;
   lane2->set_road_mark(rm);
@@ -222,8 +265,10 @@ TEST(map, open_drive) {
   LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   LaneWidth lane_width_2 = {0, 10.0, off2};
 
-  LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(), lane_width_2, 0.05f);
-  LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05f);
+  LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(),
+                                              lane_width_2, 0.05f);
+  LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(),
+                                              lane_width_2, 0.05f);
 
   ls3->add_lane(lane3);
   ls3->add_lane(lane4);
@@ -256,8 +301,19 @@ TEST(map, open_drive) {
   // call
   RoadPtr ret_road = map->get_road(100);
   LaneSectionPtr ret_ls = ret_road->get_lane_sections()[0];
-  Lanes ret_lane = ret_ls->get_lanes();
-  auto result = ret_lane.find(7);
+  Lanes ret_lanes = ret_ls->get_lanes();
+  
+  EXPECT_GT(ret_lanes.size(), 0);
+
+  for (auto const& rl : ret_lanes)
+    std::cout << "lane ids are " << rl.first << " , ";
+
+  auto result = ret_lanes.find(8);
+
+  EXPECT_TRUE(result != ret_lanes.end());
+
+  std::cout << "Found lane  " << result->first << " "
+            << print(*(result->second)) << '\n';
   Line ret_line = result->second->get_line();
 
   EXPECT_NEAR(bg::get<0>(ret_line.obj_[0]), 0.0f, 0.1f);
@@ -266,7 +322,7 @@ TEST(map, open_drive) {
   EXPECT_NEAR(bg::get<1>(ret_line.obj_[ret_line.obj_.size() - 1]), -1.0f, 0.1f);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();

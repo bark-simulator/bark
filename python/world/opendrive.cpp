@@ -84,6 +84,7 @@ void python_opendrive(py::module m) {
       .def_property("line", &Lane::get_line, &Lane::set_line)
       .def_property("road_mark", &Lane::get_road_mark, &Lane::set_road_mark)
       .def_property("speed", &Lane::get_speed, &Lane::set_speed)
+      .def("append", &Lane::append, "Append lane")
       .def("create_lane_from_lane_width", &create_lane_from_lane_width, "Create lane")
       .def(
           "__repr__",
@@ -106,7 +107,15 @@ void python_opendrive(py::module m) {
       .def("get_lanes", &LaneSection::get_lanes, "Get all lane elements")
       .def("get_left_lane", &LaneSection::get_left_lane, "Get left lane")
       .def("get_right_lane", &LaneSection::get_right_lane, "Get right lane")
-      .def("get_lane_by_position", &LaneSection::get_lane_by_position, "Get lane by lane position");
+      .def("get_lane_by_position", &LaneSection::get_lane_by_position, "Get lane by lane position")
+      .def(
+          "__repr__",
+          [](const LaneSection &ls) {
+          std::stringstream ss;
+          ss << "<bark.LaneSection> LaneSection: ";
+          ss << modules::world::opendrive::print(ls);
+          return ss.str();
+      });
 
   py::class_<Road, std::shared_ptr<Road>>(m, "Road")
       .def(py::init<>())
