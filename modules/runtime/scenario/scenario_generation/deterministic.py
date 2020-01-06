@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion\
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits, GoalDefinitionSequential
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -65,7 +65,11 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
-      agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
+      sequential_goals = []
+      state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
+      for _ in range(self._local_params["goal"]["num_reached", "num", 2]):
+        sequential_goals.append(state_limit_goal)
+      agent_json["goal_definition"] = GoalDefinitionSequential(sequential_goals)
 
       agent_state = np.array(agent_json["state"])
       if len(np.shape(agent_state)) > 1:
@@ -76,7 +80,9 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                                    param_server=self._local_params)
       agent.set_agent_id(agent_json["id"])
       scenario._agent_list.append(agent)
-    scenario._eval_agent_ids = [self._local_params["EgoAgentId",
-                                "ID of the ego-agent",
-                                0]]
+    
+    # TODO(@hart): this could be mult. agents
+    scenario._eval_agent_ids = self._local_params["controlled_ids",
+                                "IDs of agents to be controlled. ",
+                                [0]]
     return scenario
