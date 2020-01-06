@@ -11,10 +11,11 @@ namespace world {
 namespace goal_definition {
 
 
-bool GoalDefinitionPolygon::AtGoal(const modules::world::objects::Agent& agent) {
-    return modules::geometry::Collide(
-        agent.GetPolygonFromState(agent.get_current_state()),
-        goal_shape_);
+bool GoalDefinitionPolygon::AtGoal(
+  const modules::world::objects::Agent& agent) {
+  return modules::geometry::Collide(
+      agent.GetPolygonFromState(agent.get_current_state()),
+      goal_shape_);
 }
 
 
