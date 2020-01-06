@@ -65,6 +65,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
+      # TODO(@hart): use sequential goals and state limits
       agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
 
       agent_state = np.array(agent_json["state"])
@@ -76,7 +77,9 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                                    param_server=self._local_params)
       agent.set_agent_id(agent_json["id"])
       scenario._agent_list.append(agent)
-    scenario._eval_agent_ids = [self._local_params["EgoAgentId",
-                                "ID of the ego-agent",
-                                0]]
+    
+    # TODO(@hart): this could be mult. agents
+    scenario._eval_agent_ids = self._local_params["controlled_ids",
+                                "IDs of agents to be controlled. ",
+                                [0]]
     return scenario
