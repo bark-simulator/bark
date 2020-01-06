@@ -173,14 +173,17 @@ class BaseViewer(Viewer):
 
         # draw agents
         for _, agent in world.agents.items():
+            # TODO(@hart): draw agents and goals in the same color
+            #              support mult. eval. agents and goals
+            if self.draw_eval_goals and agent.goal_definition:
+                self.drawGoalDefinition(agent.goal_definition)
+        
+        for _, agent in world.agents.items():
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color = self.color_eval_agents
             else:
                 color = self.color_other_agents
             self.drawAgent(agent, color)
-
-            if self.draw_eval_goals and agent.goal_definition:
-                self.drawGoalDefinition(agent.goal_definition)
 
         self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
         self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
@@ -198,7 +201,6 @@ class BaseViewer(Viewer):
       for _, lane in lane_section.get_lanes().items():
         self.drawLane(lane, color)
         
-
     def drawLane(self, lane, color=None):
       if color is None:
         self.color_lane_boundaries
