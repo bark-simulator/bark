@@ -67,14 +67,14 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
 
       sequential_goals = []
       state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
-      for _ in range(self._local_params["goal"]["num_reached", "num", 2]):
+      for _ in range(self._local_params["goal"]["num_reached", "num", 5]):
         sequential_goals.append(state_limit_goal)
       agent_json["goal_definition"] = GoalDefinitionSequential(sequential_goals)
 
       agent_state = np.array(agent_json["state"])
       if len(np.shape(agent_state)) > 1:
         agent_state = np.random.uniform(low=agent_state[:, 0],
-                                                high=agent_state[:, 1])
+                                        high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
