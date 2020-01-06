@@ -37,9 +37,17 @@ bool GoalDefinitionSequential::AtGoal(
   }
 }
 
+GoalDefinitionPtr GoalDefinitionSequential::GetCurrentGoal(
+  const modules::world::objects::Agent& agent) {
+  BARK_EXPECT_TRUE(!sequential_goals_.empty());
+  if (last_sequential_goal_reached_ == NO_GOAL_REACHED)
+    return sequential_goals_[0];
+  return sequential_goals_[last_sequential_goal_reached_];
+}
+
 GoalDefinitionPtr GoalDefinitionSequential::GetNextGoal(
   const modules::world::objects::Agent& agent) {
-  BARK_EXPECT_TRUE (!sequential_goals_.empty());
+  BARK_EXPECT_TRUE(!sequential_goals_.empty());
   if (last_sequential_goal_reached_ == NO_GOAL_REACHED)
     return sequential_goals_[0];
 

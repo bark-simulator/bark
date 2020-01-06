@@ -7,6 +7,7 @@
 #ifndef MODULES_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
 #define MODULES_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
 
+#include <vector>
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/geometry/polygon.hpp"
 
@@ -35,6 +36,7 @@ class GoalDefinitionSequential : public GoalDefinition  {
   }
 
   GoalDefinitionPtr GetNextGoal(const modules::world::objects::Agent& agent);
+  GoalDefinitionPtr GetCurrentGoal(const modules::world::objects::Agent& agent);
 
   std::vector<GoalDefinitionPtr> get_sequential_goals() const {
     return sequential_goals_;
