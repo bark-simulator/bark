@@ -7,6 +7,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_collision_driving_corridor.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
@@ -42,6 +43,13 @@ void python_evaluation(py::module m)
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorCollisionDrivingCorridor";
+      });
+    
+    py::class_<EvaluatorDrivableArea, BaseEvaluator, 
+      std::shared_ptr<EvaluatorDrivableArea> >(m, "EvaluatorDrivableArea")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorDrivableArea &g) {
+        return "bark.world.evaluation.EvaluatorDrivableArea";
       });
 
     py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator, 
