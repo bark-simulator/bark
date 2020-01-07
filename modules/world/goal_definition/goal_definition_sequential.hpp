@@ -25,24 +25,31 @@ class GoalDefinitionSequential : public GoalDefinition  {
   GoalDefinitionSequential() : GoalDefinition(),
                                sequential_goals_(),
                                last_sequential_goal_reached_(NO_GOAL_REACHED) {}
-  GoalDefinitionSequential(const std::vector<GoalDefinitionPtr>&
-                           sequential_goals) :
-                           GoalDefinition(),
-                           sequential_goals_(sequential_goals),
-                           last_sequential_goal_reached_(NO_GOAL_REACHED) {}
+
+  GoalDefinitionSequential(
+      const std::vector<GoalDefinitionPtr>& sequential_goals) :
+    GoalDefinition(),
+    sequential_goals_(sequential_goals),
+    last_sequential_goal_reached_(NO_GOAL_REACHED) {}
 
   void AddSequentialGoal(const GoalDefinitionPtr& sequential_goal) {
     sequential_goals_.push_back(sequential_goal);
   }
 
-  GoalDefinitionPtr GetNextGoal(const modules::world::objects::Agent& agent);
-  GoalDefinitionPtr GetCurrentGoal(const modules::world::objects::Agent& agent);
+  GoalDefinitionPtr GetNextGoal() const;
+  GoalDefinitionPtr GetCurrentGoal() const;
 
   std::vector<GoalDefinitionPtr> get_sequential_goals() const {
     return sequential_goals_;
   }
 
+  virtual const modules::geometry::Polygon& get_shape() const {
+    return GetCurrentGoal()->get_shape();
+  }
+
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
+
+  int LastSequentialGoal() const { return last_sequential_goal_reached_; }
 
  private:
   std::vector<GoalDefinitionPtr> sequential_goals_;
