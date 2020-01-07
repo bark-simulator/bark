@@ -13,7 +13,7 @@ namespace goal_definition {
 
 bool GoalDefinitionSequential::AtGoal(
   const modules::world::objects::Agent& agent) {
-  BARK_EXPECT_TRUE (!sequential_goals_.empty());
+  BARK_EXPECT_TRUE(!sequential_goals_.empty());
   // First goal reached?
   if (last_sequential_goal_reached_ == NO_GOAL_REACHED) {
     if (sequential_goals_[0]->AtGoal(agent)) {
@@ -37,22 +37,20 @@ bool GoalDefinitionSequential::AtGoal(
   }
 }
 
-GoalDefinitionPtr GoalDefinitionSequential::GetCurrentGoal(
-  const modules::world::objects::Agent& agent) {
+GoalDefinitionPtr GoalDefinitionSequential::GetCurrentGoal() const {
   BARK_EXPECT_TRUE(!sequential_goals_.empty());
   if (last_sequential_goal_reached_ == NO_GOAL_REACHED)
-    return sequential_goals_[0];
-  return sequential_goals_[last_sequential_goal_reached_];
+    return sequential_goals_.at(0);
+  return sequential_goals_.at(last_sequential_goal_reached_);
 }
 
-GoalDefinitionPtr GoalDefinitionSequential::GetNextGoal(
-  const modules::world::objects::Agent& agent) {
+GoalDefinitionPtr GoalDefinitionSequential::GetNextGoal() const {
   BARK_EXPECT_TRUE(!sequential_goals_.empty());
   if (last_sequential_goal_reached_ == NO_GOAL_REACHED)
-    return sequential_goals_[0];
+    return sequential_goals_.at(0);
 
   if (last_sequential_goal_reached_ + 1 < sequential_goals_.size())
-    return sequential_goals_[last_sequential_goal_reached_+1];
+    return sequential_goals_.at(last_sequential_goal_reached_+1);
   return nullptr;
 }
 
