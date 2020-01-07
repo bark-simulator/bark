@@ -10,6 +10,7 @@
 #include "python/common.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/objects/agent.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace py = pybind11;
 using modules::world::goal_definition::GoalDefinition;
@@ -24,6 +25,12 @@ class PyGoalDefinition : public GoalDefinition {
         GoalDefinition,
         AtGoal,
         agent);
+  }
+  const modules::geometry::Polygon& get_shape() const override {
+    PYBIND11_OVERLOAD(
+        modules::geometry::Polygon&,
+        GoalDefinition,
+        get_shape);
   }
 
 };
