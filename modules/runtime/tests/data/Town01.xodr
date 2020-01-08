@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenDRIVE>
+    <header revMajor="1" revMinor="4" name="" version="1" date="2019-04-06T10:38:28" north="2.8349990809409476e+1" south="-3.5690998535156251e+2" east="4.2268105762411665e+2" west="-2.8359911988457576e+1" vendor="VectorZero">
+        <geoReference><![CDATA[+lat_0=4.9000000000000000e+1 +lon_0=8.0000000000000000e+0]]></geoReference>
+        <userData>
+            <vectorScene program="RoadRunner" version="2019.0.0 (build 739aef7bb)"/>
+        </userData>
+    </header>
+    <road name="Road 67" length="2.2007314136695641e+1" id="67" >
+        <link>
+        </link>
+        <planView>
+            <geometry s="0.0000000000000000e+0" x="3.4773108928616233e+2" y="-3.2860998535156250e+2" hdg="3.1415926535897931e+0" length="2.4118579456001044e-2">
+                <line/>
+            </geometry>
+            <geometry s="2.4118579456001044e-2" x="3.4770697070670633e+2" y="-3.2860998535156250e+2" hdg="3.1415926535897931e+0" length="1.0991597778619791e+1">
+                <line/>
+            </geometry>
+            <geometry s="1.1015716358075792e+1" x="3.3671537292808654e+2" y="-3.2860998535156250e+2" hdg="3.1415926535897931e+0" length="1.0984290177908349e+1">
+                <line/>
+            </geometry>
+            <geometry s="2.2000006535984141e+1" x="3.2573108275017819e+2" y="-3.2860998535156250e+2" hdg="3.1415926535897931e+0" length="7.3076007114991626e-3">
+                <line/>
+            </geometry>
+        </planView>
+
+        <lanes>
+            <laneOffset s="0.0000000000000000e+0" a="0.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+            <laneSection s="0.0000000000000000e+0">
+                <left>
+                    <lane id="1" type="driving" level="false">
+                        <link>
+                            <predecessor id="-1"/>
+                            <successor id="1"/>
+                        </link>
+                        <width sOffset="0.0000000000000000e+0" a="4.0000000000000000e+0" b="0.0000000000000000e+0" c="0.0000000000000000e+0" d="0.0000000000000000e+0"/>
+                        <roadMark sOffset="0.0000000000000000e+0" type="none" material="standard" color="white" laneChange="none"/>
+                        <userData>
+                            <vectorLane travelDir="backward"/>
+                        </userData>
+                    </lane>
+                </left>
+                <center>
+                    <lane id="0" type="none" level="false">
+                        <roadMark sOffset="0.0000000000000000e+0" type="broken" material="standard" color="yellow" width="1.2500000000000000e-1" laneChange="none"/>
+                    </lane>
+                </center>
+            </laneSection>
+        </lanes>
+    </road>
+</OpenDRIVE>

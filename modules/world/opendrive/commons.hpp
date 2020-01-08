@@ -177,6 +177,10 @@ inline geometry::Line create_line_with_offset_from_line(
   float s = lane_width_current_lane.s_start;
   float s_end = lane_width_current_lane.s_end;
   float scale = 0.0f;
+
+  boost::geometry::unique(previous_line.obj_);
+  previous_line.recompute_s();
+
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
