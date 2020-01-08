@@ -223,7 +223,6 @@ inline float get_tangent_angle_at_s(Line l, float s) {
     Point2d p1 = l.obj_.at(l.obj_.size()-2);
     Point2d p2 = l.obj_.at(l.obj_.size()-1);
     float angle = atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
-    std::cout << "angle: "  << angle << std::endl;
     return angle;
   } else if (s <= 0.0) {
     Point2d p1 = l.obj_.at(0);
