@@ -107,7 +107,7 @@ class EnvironmentTests(unittest.TestCase):
         splittingcorridors = map_interface.get_splitting_corridors(c, [168, 161, 0.0])
         assert(len(splittingcorridors) == 0)
 
-        splittingcorridors = map_interface.get_splitting_corridors(c, [152, 168, 0.0])
+        splittingcorridors = map_interface.get_splitting_corridors(c, [150, 168, 0.0])
         assert(len(splittingcorridors) == 2)
 
         viewer = MPViewer(params=params, use_world_bounds=True)
