@@ -19,8 +19,8 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "4way_intersection"
-output_dir = "/home/hart/Dokumente/2020/new_" + map_name
+map_name = "Crossing8Course"
+output_dir = "/home/hart/Dokumente/2020/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -50,6 +50,7 @@ for idx_r, road in open_drive_map.get_roads().items():
   viewer.drawWorld(world)
   viewer.drawRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
+  viewer.show()
   viewer.clear()
 
 for idx_r, road in open_drive_map.get_roads().items():
@@ -58,6 +59,7 @@ for idx_r, road in open_drive_map.get_roads().items():
     viewer.drawRoad(road, color_triplet_gray)
     viewer.drawLaneSection(lane_section)
     viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + ".png")
+    viewer.show()
     viewer.clear()
 
 for idx_r, road in open_drive_map.get_roads().items():
@@ -68,6 +70,7 @@ for idx_r, road in open_drive_map.get_roads().items():
       viewer.drawLaneSection(lane_section, color_triplet_gray)
       viewer.drawLane(lane)
       viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + "_lane" + str(idx_l) + ".png")
+      viewer.show()
       viewer.clear()
 
 # Lanes of Roadgraph
