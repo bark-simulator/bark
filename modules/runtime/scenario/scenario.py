@@ -54,9 +54,7 @@ class Scenario:
 
   def __getstate__(self):
       odict = self.__dict__.copy()
-      print(odict['_map_interface'])
       del odict['_map_interface']
-      print(odict)
       return odict
 
   def __setstate__(self, sdict):
