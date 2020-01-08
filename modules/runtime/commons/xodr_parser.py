@@ -5,10 +5,11 @@
 
 from lxml import etree
 import pprint
+import logging
 from bark.world.opendrive import *
 from bark.world.map import *
 from bark.geometry import *
-
+logger = logging.getLogger()
 
 class XodrParser(object):
     def __init__(self, file_name):
@@ -305,13 +306,13 @@ class XodrParser(object):
             try:
                 new_link.from_position = int(link["predecessor"])
             except:
-                print("No LaneLink.predecessor")
+                logger.info("No LaneLink.predecessor")
             try:
                 new_link.to_position = int(link["successor"])
             except:
-                print("No LaneLink.successor")
+                logger.info("No LaneLink.successor")
         else:
-            print("No LaneLink")
+            logger.info("No LaneLink")
             
         return new_link
 
@@ -393,7 +394,7 @@ class XodrParser(object):
                         previous_line = new_lane_section.get_lane_by_position(lane['id']+1).line
                         new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.length(), previous_line)
                     else:
-                        print("Calculating previous lane does not work well.")
+                        logger.info("Calculating previous lane did not work.")
 
 
             new_road.add_lane_section(new_lane_section)
