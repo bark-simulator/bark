@@ -98,7 +98,24 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "evaluator_drivable_area",
+    hdrs = [
+        "evaluator_drivable_area.hpp"
+    ],
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/geometry",
+        "//modules/commons:commons",
+        "//modules/world/map:map_interface",
+        "//modules/world/map:roadgraph",
+        "//modules/world/opendrive:opendrive",
+        "@boost//:geometry",
+        "//modules/world:world",
 
+    ],
+    visibility = ["//visibility:public"],
+)
 
 cc_library(
     name = "evaluation",
@@ -107,6 +124,7 @@ cc_library(
         ":base_evaluator",
         ":evaluator_collision_agents",
         ":evaluator_collision_driving_corridor",
+        ":evaluator_drivable_area",
         ":evaluator_collision_ego_agent",
         ":evaluator_step_count"
     ],

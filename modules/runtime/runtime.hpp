@@ -36,18 +36,18 @@ inline void EvalRuntime(Runtime r,
                         Eigen::Matrix<float,
                                       Eigen::Dynamic,
                                       Eigen::Dynamic> action) {
-  std::cout << "Received valid runtime." << std::endl;
-  std::cout << "Stepping runtime..." << std::endl;
+  LOG(INFO)<< "Received valid runtime." << std::endl;
+  LOG(INFO) << "Stepping runtime..." << std::endl;
   r.Step(action);
-  std::cout << "Runtime has been successfully stepped." << std::endl;
+  LOG(INFO) << "Runtime has been successfully stepped." << std::endl;
 }
 
 inline void EvalRuntime(Runtime r,
                         int action) {
-  std::cout << "Received valid runtime." << std::endl;
-  std::cout << "Stepping runtime..." << std::endl;
+  LOG(INFO) << "Received valid runtime." << std::endl;
+  LOG(INFO) << "Stepping runtime..." << std::endl;
   r.Step(action);
-  std::cout << "Runtime has been successfully stepped." << std::endl;
+  LOG(INFO) << "Runtime has been successfully stepped." << std::endl;
 }
 
 typedef std::shared_ptr<Runtime> RuntimePtr;

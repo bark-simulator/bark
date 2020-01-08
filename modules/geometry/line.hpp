@@ -222,7 +222,8 @@ inline float get_tangent_angle_at_s(Line l, float s) {
   if (s >= l.s_.back()) {
     Point2d p1 = l.obj_.at(l.obj_.size()-2);
     Point2d p2 = l.obj_.at(l.obj_.size()-1);
-    return atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
+    float angle = atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
+    return angle;
   } else if (s <= 0.0) {
     Point2d p1 = l.obj_.at(0);
     Point2d p2 = l.obj_.at(1);
@@ -230,14 +231,14 @@ inline float get_tangent_angle_at_s(Line l, float s) {
   } else {  // not start or end
     int end_segment_it = get_segment_end_idx(l, s);
     if (check_s_for_segment_intersection(l, s)) {  // check if s is at intersection, if true then calculate the intermediate angle
-    Point2d p1 = l.obj_.at(end_segment_it-2);
-    Point2d p2 = l.obj_.at(end_segment_it-1);
-    Point2d p3 = l.obj_.at(end_segment_it);
-    float sin_mean = 0.5 * (sin(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
-                      + sin(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
-    float cos_mean = 0.5 * (cos(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
-                      + cos(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
-    return atan2(sin_mean, cos_mean);
+      Point2d p1 = l.obj_.at(end_segment_it-2);
+      Point2d p2 = l.obj_.at(end_segment_it-1);
+      Point2d p3 = l.obj_.at(end_segment_it);
+      float sin_mean = 0.5 * (sin(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
+                        + sin(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
+      float cos_mean = 0.5 * (cos(atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1)))
+                        + cos(atan2(bg::get<1>(p3) - bg::get<1>(p2), bg::get<0>(p3) - bg::get<0>(p2))));
+      return atan2(sin_mean, cos_mean);
     } else {  // every s not start, end or intersection
       Point2d p1 = l.obj_.at(end_segment_it-1);
       Point2d p2 = l.obj_.at(end_segment_it);
@@ -247,8 +248,13 @@ inline float get_tangent_angle_at_s(Line l, float s) {
 }
 
 inline Point2d get_normal_at_s(Line l, float s) {
+  // std::cout << "get_normal_at_s() ";
+  // for (auto& ll : l) {
+  //   std::cout << boost::geometry::get<0>(ll) << ", " << boost::geometry::get<1>(ll) << " " << s << std::endl;
+  // }
   float tangent = get_tangent_angle_at_s(l, s);
   Point2d t(cos(tangent+asin(1)), sin(tangent+asin(1)));  // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
+  // std::cout << "tangent" << tangent << std::endl;
   return t;
 }
 
@@ -385,7 +391,7 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
 }
 
 inline Line ComputeCenterLine(const Line& outer_line_,
-                                  const Line& inner_line_) {
+                              const Line& inner_line_) {
   Line center_line_;
   Line line_more_points = outer_line_;
   Line line_less_points = inner_line_;
