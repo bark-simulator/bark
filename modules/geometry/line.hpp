@@ -385,7 +385,7 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
 }
 
 inline Line ComputeCenterLine(const Line& outer_line_,
-                                  const Line& inner_line_) {
+                              const Line& inner_line_) {
   Line center_line_;
   Line line_more_points = outer_line_;
   Line line_less_points = inner_line_;
