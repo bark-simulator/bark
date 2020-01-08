@@ -88,7 +88,7 @@ class LocalMap {
                         Line& line_of_corridor,
                         std::vector< std::pair<int, LaneId> >& lane_ids);
 
-  LaneId GoalLaneIdFromGoalDefinitionPolygon(const GoalDefinitionPolygon& goal_definition);
+  LaneId GoalLaneIdFromGoalPolygon(const GoalDefinitionPolygon& goal_definition);
 
   LanePtr FindLane(const Point2d& point) const;
 
