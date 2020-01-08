@@ -6,6 +6,7 @@
 #include <utility>
 #include "modules/world/map/local_map.hpp"
 #include "modules/world/map/map_interface.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace modules {
 namespace world {
@@ -21,7 +22,7 @@ LaneId LocalMap::GoalLaneIdFromGoalPolygon(const GoalDefinitionPolygon& goal_def
                                          goal_definition.get_shape().center_(1));
   std::vector<opendrive::LanePtr> nearest_lanes;
 
-  if(map_interface_->FindNearestLanes(goal_center, 1, nearest_lanes)) {
+  if (map_interface_->FindNearestLanes(goal_center, 1, nearest_lanes)) {
       return nearest_lanes[0]->get_id();
   }
   printf("No matching lane for goal definition found. Defaulting to LaneId 0.");
@@ -34,15 +35,18 @@ LanePtr LocalMap::FindLane(const Point2d& point) const {
 }
 
 bool LocalMap::HasCorrectDrivingDirection(const State& state) const {
-  geometry::Point2d position(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION));
+  geometry::Point2d position(
+    state(StateDefinition::X_POSITION),
+    state(StateDefinition::Y_POSITION));
   float orientation = state(StateDefinition::THETA_POSITION);
-
-  bool correct_direction = map_interface_->HasCorrectDrivingDirection(position, orientation);
+  bool correct_direction = map_interface_->HasCorrectDrivingDirection(
+    position,
+    orientation);
   return correct_direction;
 }
 
 bool LocalMap::Generate(Point2d point) {
-  if(map_interface_ == nullptr) {
+  if (map_interface_ == nullptr) {
     return false;
   }
   driving_corridor_ = DrivingCorridor();
@@ -58,11 +62,13 @@ bool LocalMap::Generate(Point2d point) {
   map_interface_->FindNearestLanes(point, 1, lanes);
   LanePtr current_lane = lanes.at(0);
 
-  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
+  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(
+    current_lane->get_id(),
+    goal_lane_id_);
+
   if (!driving_corridor_.computed) {
     return false;
   }
-
   return true;
 }
 
@@ -75,14 +81,18 @@ bool LocalMap::RecalculateDrivingCorridor(const Point2d &point) {
   map_interface_->FindNearestLanes(point, 1, lanes);
   LanePtr current_lane = lanes.at(0);
 
-  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(current_lane->get_id(), goal_lane_id_);
+  driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(
+    current_lane->get_id(), goal_lane_id_);
   if (!driving_corridor_.computed) {
-    // No direct corridor to the goal lane exists, try finding a corridor parallel to the goal lane
-    driving_corridor_ = map_interface_->ComputeDrivingCorridorParallelToGoal(current_lane->get_id(), goal_lane_id_);
+    // No direct corridor to the goal lane exists
+    // try finding a corridor parallel to the goal lane
+    driving_corridor_ = map_interface_->ComputeDrivingCorridorParallelToGoal(
+      current_lane->get_id(), goal_lane_id_);
   }
   if (!driving_corridor_.computed) {
-    // TODO(@AKreutz): Maybe it is still possible to generate a driving corridor in this case?
-    LOG(ERROR) << "Driving corridor generation failed, goal lane " << goal_lane_id_
+    // TODO(@AKreutz): Maybe it is still possible to generate
+    // a driving corridor in this case?
+    LOG(ERROR) << "Driving corridor generation failed, goal lane " << goal_lane_id_  // NOLINT
                << " is not reachable from lane " << current_lane->get_id()
                << ", neither are any of its neighboring lanes" << std::endl;
     return false;
@@ -92,20 +102,18 @@ bool LocalMap::RecalculateDrivingCorridor(const Point2d &point) {
 }
 
 
-
 Line LocalMap::CalculateLineHorizon(const Line& line,
                             const Point2d& p,
                             double horizon) {
   // TODO(@hart): do not access via member obj_
-  
   Line new_line;
   int num_points = line.obj_.size();
-  if(num_points == 0) {
+  if (num_points == 0) {
     return new_line;
   }
   int nearest_idx = FindNearestIdx(line, p);
   new_line.add_point(line.obj_.at(nearest_idx));
-  if(nearest_idx == num_points-1) {
+  if (nearest_idx == num_points-1) {
     return new_line;
   }
 
