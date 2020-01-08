@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include "modules/geometry/polygon.hpp"
+
 namespace modules {
 namespace world {
 namespace objects {
@@ -23,6 +25,7 @@ class GoalDefinition  {
     virtual ~GoalDefinition() {}
 
     virtual bool AtGoal(const modules::world::objects::Agent& agent) = 0;
+    virtual const modules::geometry::Polygon& get_shape() const {}
 };
 
 typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;

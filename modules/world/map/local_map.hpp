@@ -17,6 +17,7 @@
 #include "modules/world/map/driving_corridor.hpp"
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/map/frenet.hpp"
+#include "modules/geometry/polygon.hpp"
 
 namespace modules {
 namespace world {
