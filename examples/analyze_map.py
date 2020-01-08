@@ -10,6 +10,7 @@ import math
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world import World
+from bark.geometry import *
 from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
@@ -19,7 +20,7 @@ import numpy as np
 # Name and Output Directory
 # CHANGE THIS #
 map_name = "4way_intersection"
-output_dir = "/home/esterle/map_analysis" + map_name
+output_dir = "/home/hart/Dokumente/2020/map_analysis" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -75,9 +76,12 @@ lane_ids = roadgraph.get_all_laneids ()
 
 for lane_id in lane_ids:
   lane_polygon = roadgraph.get_lane_polygon_by_id(lane_id)
+  outer, inner = roadgraph.compute_lane_boundaries(lane_id)
+  center_line = compute_center_line(outer.line, inner.line)
   viewer.drawWorld(world)
   color = list(np.random.choice(range(256), size=3)/256)
   viewer.drawPolygon2d(lane_polygon, color, 1.0)
+  viewer.drawLine2d(center_line)
   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
   viewer.clear()
 
