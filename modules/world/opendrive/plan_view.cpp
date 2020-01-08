@@ -48,7 +48,7 @@ bool PlanView::add_spiral(
   for (; s <= length;) {
     odrSpiral(s, x_old, y_old, cDot, curvature_start, heading, &x, &y, &t);
     reference_line_.add_point(geometry::Point2d(x, y));
-    if (length - s < s_inc && length - s > 0.)
+    if ((length - s < s_inc) && (length - s > 0.))
       s_inc = length - s;
     s += s_inc;
   }
