@@ -152,3 +152,6 @@ web/node_modules
 .gitkeep
 
 *.scenario
+
+Town01_copy.xodr
+Town01.xodr
