@@ -647,9 +647,15 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeLanePolygon(
   }
   return std::make_pair(polygon, success);
 }
+
 PolygonPtr Roadgraph::get_lane_polygon_by_id(const LaneId &lane_id) {
   auto v = get_vertex_by_lane_id(lane_id);
   return get_lane_graph().operator[](v.first).polygon;
+}
+
+RoadId Roadgraph::get_road_by_lane_id(const LaneId &lane_id) {
+  auto v = get_vertex_by_lane_id(lane_id);
+  return get_lane_graph().operator[](v.first).road_id;
 }
 
 }  // namespace map

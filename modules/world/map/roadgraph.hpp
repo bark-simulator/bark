@@ -169,6 +169,7 @@ class Roadgraph {
 
   void Generate(OpenDriveMapPtr map);
 
+  RoadId get_road_by_lane_id(const LaneId &lane_id);
 
  private:
   LaneGraph g_;
