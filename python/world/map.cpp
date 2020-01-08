@@ -122,6 +122,7 @@ void python_map(py::module m) {
     .def("add_successor", &Roadgraph::add_successor)
     .def("Generate", &Roadgraph::Generate)
     .def("get_lane_polygon_by_id", &Roadgraph::get_lane_polygon_by_id)
-    .def("compute_lane_boundaries", &Roadgraph::ComputeLaneBoundaries);
+    .def("get_road_by_lane_id", &Roadgraph::get_road_by_lane_id)
+    .def("compute_lane_boundaries", &Roadgraph::ComputeLaneBoundaries);  // get_road_by_lane_id
 
 }

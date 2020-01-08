@@ -10,7 +10,7 @@ import math
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world import World
-from bark.geometry import *
+from bark.geometry import compute_center_line
 from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
@@ -20,7 +20,7 @@ import numpy as np
 # Name and Output Directory
 # CHANGE THIS #
 map_name = "4way_intersection"
-output_dir = "/home/hart/Dokumente/2020/map_analysis" + map_name
+output_dir = "/home/hart/Dokumente/2020/new_" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -38,7 +38,8 @@ world.set_map(map_interface)
 
 open_drive_map = world.map.get_open_drive_map()
 
-viewer = MPViewer(params=params, use_world_bounds=True)
+viewer = MPViewer(params=params,
+                  use_world_bounds=True)
 viewer.drawWorld(world)
 viewer.saveFig(output_dir + "/" + "world_plain.png")
 
@@ -76,14 +77,22 @@ lane_ids = roadgraph.get_all_laneids ()
 
 for lane_id in lane_ids:
   lane_polygon = roadgraph.get_lane_polygon_by_id(lane_id)
+
+  # plot plan_view
+  road_id = roadgraph.get_road_by_lane_id(lane_id)
+  road = map_interface.get_open_drive_map().get_road(road_id)
+  plan_view_reference = road.plan_view.get_reference_line()
+
+  # plot polygon with center line
   outer, inner = roadgraph.compute_lane_boundaries(lane_id)
   center_line = compute_center_line(outer.line, inner.line)
   viewer.drawWorld(world)
   color = list(np.random.choice(range(256), size=3)/256)
   viewer.drawPolygon2d(lane_polygon, color, 1.0)
   viewer.drawLine2d(center_line)
+  viewer.drawLine2d(plan_view_reference, color="red")
   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-  viewer.clear()
+  viewer.show(block=False)
 
 
 #for rc in all_corridors:
