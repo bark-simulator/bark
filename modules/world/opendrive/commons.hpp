@@ -173,36 +173,32 @@ inline geometry::Line create_line_with_offset_from_line(
   float s_inc = 0.5f) {
 
   namespace bg = boost::geometry;
-
   LaneOffset off = lane_width_current_lane.off;
-
   float s = lane_width_current_lane.s_start;
+  float s_end = lane_width_current_lane.s_end;
   float scale = 0.0f;
+
+  boost::geometry::unique(previous_line.obj_);
+  previous_line.recompute_s();
+
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
+  if (s_end > previous_line.length())
+    s_end = previous_line.length();
 
-  // TODO(fortiss): check if sampling does work with relative s, probably not
-  for (; s < lane_width_current_lane.s_end; s += s_inc) {
+  for (; s <= s_end;) {
     geometry::Point2d point = get_point_at_s(previous_line, s);
     normal = get_normal_at_s(previous_line, s);
-    // we substract s by s_start, as polynom is defined from [0...<length of lane element>]
-    scale = -sign * polynom(s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
+    scale = -sign * polynom(
+      s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
     tmp_line.add_point(
       geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
                         bg::get<1>(point) + scale * bg::get<1>(normal)));
-  }
-
-  // fill last point if increment does not match
-  double delta_s = fabs(lane_width_current_lane.s_end - s);
-  if (delta_s > 0.0) {
-    geometry::Point2d point =
-      get_point_at_s(previous_line, lane_width_current_lane.s_end);
-    normal = get_normal_at_s(previous_line, lane_width_current_lane.s_end);
-    scale = -sign * polynom(lane_width_current_lane.s_end-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
-    tmp_line.add_point(
-      geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
-                        bg::get<1>(point) + scale * bg::get<1>(normal)));
+    if ((s_end - s < s_inc) &&
+        (s_end - s > 0.))
+      s_inc = s_end - s;
+    s += s_inc;
   }
 
   return tmp_line;

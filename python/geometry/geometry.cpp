@@ -79,6 +79,9 @@ void python_geometry(py::module m) {
   m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 
                         "merge two bounding boxes consisting of pairs of min and max corners");
 
+  m.def("compute_center_line", &modules::geometry::ComputeCenterLine, 
+                        "computes the center line.");
+
   py::class_<modules::geometry::Line,
              std::shared_ptr<modules::geometry::Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")

@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 
 import numpy as np
+import logging
 from bark.viewer import Viewer
 from bark.geometry import *
 from bark.models.dynamic import *
@@ -11,6 +12,7 @@ from bark.world.opendrive import *
 from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
 
+logger = logging.getLogger()
 
 class BaseViewer(Viewer):
     def __init__(self, params=None, **kwargs):
@@ -249,7 +251,7 @@ class BaseViewer(Viewer):
             self.drawLine2d(corridor.inner, color, 1)
             self.drawLine2d(corridor.outer, color, 1)
         else:
-            print("Cannot draw Driving Corridor, as it is empty")        
+            logger.info("Cannot draw Driving Corridor, as it is empty")        
 
     def drawRoute(self, agent):
         # TODO(@hart): visualize the global as well as the local driving corridor

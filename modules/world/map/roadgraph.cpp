@@ -432,7 +432,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
         successor_lane_section = successor_road->get_lane_sections().front();
       }
     } else {
-      std::cout << "Road has no successor road. \n";
+      LOG(INFO) << "Road has no successor road. \n";
     }
 
     if (road_element.second->get_link().get_predecessor().type_ ==
@@ -443,7 +443,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
         predecessor_lane_section = predecessor_road->get_lane_sections().back();
       }
     } else {
-      std::cout << "Road has no predeseccor road. \n";
+      LOG(INFO) << "Road has no predeseccor road. \n";
     }
 
     // TODO(@hart): there could be mult. lane_sections
@@ -489,7 +489,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
             }
           }
         } catch (const std::exception &ex) {
-          std::cerr << "Road has no predeseccor road. \n";
+          LOG(INFO) << "Road has no predeseccor road. \n";
         }
       }
     }
@@ -553,7 +553,7 @@ void Roadgraph::GenerateFromJunctions(OpenDriveMapPtr map) {
                   add_successor(pre_lane->get_id(), successor_lane->get_id());
             }
           } catch (...) {
-            std::cerr << "Junction has no connections. \n";
+            LOG(INFO) << "Junction has no connections. \n";
           }
         }
       }
@@ -647,9 +647,15 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeLanePolygon(
   }
   return std::make_pair(polygon, success);
 }
+
 PolygonPtr Roadgraph::get_lane_polygon_by_id(const LaneId &lane_id) {
   auto v = get_vertex_by_lane_id(lane_id);
   return get_lane_graph().operator[](v.first).polygon;
+}
+
+RoadId Roadgraph::get_road_by_lane_id(const LaneId &lane_id) {
+  auto v = get_vertex_by_lane_id(lane_id);
+  return get_lane_graph().operator[](v.first).road_id;
 }
 
 }  // namespace map
