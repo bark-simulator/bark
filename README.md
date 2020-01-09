@@ -2,7 +2,7 @@
 <img src="docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
-![CI Build](https://github.com/patrickhart/gnn/workflows/CI/badge.svg)
+![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**Ark**ing
 BARK provides a semantic simulation tool/framework for autonomous agents with a special focus on autonomous driving.
