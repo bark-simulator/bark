@@ -85,23 +85,6 @@ py_test(
 )
 
 py_test(
-  name = "drone_challenge",
-  srcs = ["drone_challenge.py"],
-  data = ['//python:bark.so',
-          ':params',
-          '//modules/runtime/tests:xodr_data',
-          ':scenarios'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime/viewer:video_renderer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
-)
-
-
-py_test(
   name = "scenario_dump_load",
   srcs = ["scenario_dump_load.py"],
   data = ['//python:bark.so',
