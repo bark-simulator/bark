@@ -87,9 +87,9 @@ class LocalMap {
   //! Functions
   void ConcatenateLines(const std::vector<LanePtr>& lanes,
                         Line& line_of_corridor,
-                        std::vector< std::pair<int, LaneId> >& lane_ids);
+                        std::vector<std::pair<int, LaneId>>& lane_ids);
 
-  LaneId GoalLaneIdFromGoalPolygon(const GoalDefinitionPolygon& goal_definition);
+  LaneId GoalLaneIdFromPolygon(const modules::geometry::Polygon& goal_polygon);
 
   LanePtr FindLane(const Point2d& point) const;
 
@@ -123,4 +123,3 @@ using LocalMapPtr = std::shared_ptr<LocalMap>;
 }  // namespace modules
 
 #endif  // MODULES_WORLD_MAP_LOCAL_MAP_HPP_
-
