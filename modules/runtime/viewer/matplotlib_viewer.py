@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 
 from bark.viewer import *
 from bark.geometry import *
+from bark.models.dynamic import StateDefinition
+
 from modules.runtime.viewer.viewer import BaseViewer
 
 
