@@ -41,7 +41,7 @@ In order to get started with BARK, we provide several examples that show the bas
 To run the [OpenDrive example map "standard crossing"](http://www.opendrive.org/download.html) example use the command `bazel run //examples:od8_const_vel_one_agent` (make sure to be in the virtual environment!) which outputs:
 
 <p align="center">
-![](docs/source/example_map.gif)
+<img src="docs/source/gifs/example_map.gif" alt="BARK" />
 </p>
 
 ## Documentation
