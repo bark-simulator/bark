@@ -8,3 +8,4 @@ sphinx_rtd_theme==0.4.3
 pandas==0.24.2
 autopep8==1.4.4
 cpplint==1.4.4
+pygame==1.9.6
