@@ -15,10 +15,22 @@ World::World(commons::Params* params) :
   map_(),
   agents_(),
   world_time_(0.0),
-  remove_agents_(params->get_bool("World::remove_agents_out_of_map",
+  remove_agents_(
+    params->get_bool("World::remove_agents_out_of_map",
       "Whether agents should be removed outside the bounding box.",
-      false))
-       {}
+      false)),
+  calculate_driving_corridor_(
+    params->get_bool("World::update_horizon_corridor",
+      "Whether the horizon corridor should be updated.",
+      true)),
+  driving_corridor_length_(
+    params->get_real("World::driving_corridor_length",
+      "Length of driving corridor.",
+      40.)),
+  recalculate_driving_corridor_(
+    params->get_bool("World::recalculate_driving_corridor",
+      "Whether the driving corridor should be recalculated.",
+      true)) {}
 
 World::World(const std::shared_ptr<World>& world)  :
   commons::BaseType(world->get_params()),
@@ -28,6 +40,9 @@ World::World(const std::shared_ptr<World>& world)  :
   evaluators_(world->get_evaluators()),
   world_time_(world->get_world_time()),
   remove_agents_(world->get_remove_agents()),
+  calculate_driving_corridor_(world->calculate_driving_corridor_),
+  driving_corridor_length_(world->driving_corridor_length_),
+  recalculate_driving_corridor_(world->recalculate_driving_corridor_),
   rtree_agents_(world->rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
@@ -45,18 +60,19 @@ void World::add_evaluator(const std::string& name,
 
 
 void World::DoPlanning(const float& delta_time) {
-    UpdateAgentRTree();
+  UpdateAgentRTree();
+  if (calculate_driving_corridor_)
     UpdateHorizonDrivingCorridors();
-    WorldPtr current_world(this->Clone());
+  WorldPtr current_world(this->Clone());
 
-    // Behavioral and execution planning
-    for (auto agent : agents_) {
-      //! clone current world
-      ObservedWorld observed_world(current_world,
-                                   agent.first);
-      agent.second->BehaviorPlan(delta_time, observed_world);
-      agent.second->ExecutionPlan(delta_time);
-    }
+  // Behavioral and execution planning
+  for (auto agent : agents_) {
+    //! clone current world
+    ObservedWorld observed_world(current_world,
+                                  agent.first);
+    agent.second->BehaviorPlan(delta_time, observed_world);
+    agent.second->ExecutionPlan(delta_time);
+  }
 }
 
 void World::DoExecution(const float& delta_time) {
@@ -68,7 +84,8 @@ void World::DoExecution(const float& delta_time) {
   if (remove_agents_) {
     RemoveOutOfMapAgents();
   }
-  RecalculateDrivingCorridors();
+  if (recalculate_driving_corridor_)
+    RecalculateDrivingCorridors();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -89,8 +106,7 @@ EvaluationMap World::Evaluate() const {
 
 void World::UpdateHorizonDrivingCorridors() {
   for (auto agent : agents_) {
-    // TODO(@hart): parameter
-    agent.second->UpdateDrivingCorridor(40.0);
+    agent.second->UpdateDrivingCorridor(driving_corridor_length_);
   }
 }
 
@@ -144,7 +160,7 @@ void World::RemoveOutOfMapAgents() {
 
 void World::RecalculateDrivingCorridors() {
   for (auto &agent : agents_) {
-    map::DrivingCorridor driving_corridor = 
+    map::DrivingCorridor driving_corridor =
         agent.second->get_local_map()->get_driving_corridor();
     geometry::Polygon corridor_polygon = driving_corridor.CorridorPolygon();
     Point2d position = agent.second->get_current_position();
