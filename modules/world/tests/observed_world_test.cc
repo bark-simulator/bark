@@ -67,7 +67,7 @@ TEST(observed_world, agent_in_front) {
 
 
   // Define some driving corridor and add to local map of agent
-    Line center;
+  Line center;
   center.add_point(Point2d(1, 1));
   center.add_point(Point2d(2, 1));
   center.add_point(Point2d(10, 1));
