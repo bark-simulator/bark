@@ -53,6 +53,22 @@ cc_library(
 )
 
 cc_library(
+    name = "road_corridor",
+    srcs = [
+        "road_corridor.cpp"
+    ],
+    hdrs = [
+        "road_corridor.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive",
+        ":frenet",
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "frenet",
     srcs = [
         "frenet.cpp",
