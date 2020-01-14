@@ -16,7 +16,7 @@ using modules::opendrive::Lanes;
 using modules::opendrive::Lane;
 
 struct BarkLane : public Lane {
-  explicit BarkLane(const LanePtr& lane) : Lane(road) {}
+  explicit BarkLane(const LanePtr& lane) : Lane(lane) {}
   // polygon_
   // center_
   // left and right boundary_
