@@ -11,9 +11,12 @@
 #include "modules/world/opendrive/opendrive.hpp"
 
 using modules::opendrive::RoadPtr;
+using modules::opendrive::Road;
 using modules::opendrive::Lanes;
+using modules::opendrive::Lane;
 
-struct BarkLane {
+struct BarkLane : public Lane {
+  explicit BarkLane(const LanePtr& lane) : Lane(road) {}
   // polygon_
   // center_
   // left and right boundary_
@@ -23,7 +26,9 @@ struct BarkLane {
 using BarkLanePtr = std::shared_ptr<BarkLane>;
 using BarkLanes = std::map<unsigned int, BarkRoadPtr>;
 
-struct BarkRoad {
+struct BarkRoad : public Road {
+  explicit BarkRoad(const RoadPtr& road) : Road(road) {}
+
   BarkLanes GetLanes() const {
     return bark_lanes_;
   }
