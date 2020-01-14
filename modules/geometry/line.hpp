@@ -177,6 +177,24 @@ inline T length(const Line &line) {
   return bg::length<T>(line.obj_);
 }
 
+inline Line rotate(const Line &line, float hdg) {
+  namespace trans = boost::geometry::strategy::transform;
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(hdg);
+  Line line_rotated;
+  boost::geometry::transform(line.obj_, line_rotated.obj_, rotate);
+  line_rotated.recompute_s();
+  return line_rotated;
+}
+
+inline Line translate(const Line &line, float x, float y) {
+  namespace trans = boost::geometry::strategy::transform;
+  trans::translate_transformer<double, 2, 2> translate(x, y);
+  Line line_translated;
+  boost::geometry::transform(line.obj_, line_translated.obj_, translate);
+  line_translated.recompute_s();
+  return line_translated;
+}
+
 inline int get_segment_end_idx(Line l, float s) {
   std::vector<float>::iterator up = std::upper_bound(l.s_.begin(), l.s_.end(), s);
   if(up != l.s_.end()) {
