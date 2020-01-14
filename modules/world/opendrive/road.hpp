@@ -25,6 +25,14 @@ using LaneSections = std::vector<LaneSectionPtr>;
 class Road {
  public:
   Road(const std::string& name, RoadId id) : id_(id), name_(name) {}
+
+  explicit Road(const std::shared_ptr<Road>& road) :
+    id_(road->id_),
+    name_(road->name_),
+    link_(road->link_),
+    reference_(road->reference_),
+    lane_sections_(road->lane_sections_) {}
+  
   Road() {}
   virtual ~Road() {}
 

@@ -37,6 +37,15 @@ class Lane {
         road_mark_(),
         speed_() {}
 
+  explicit Lane(const std::shared_ptr<Lane>& lane) :
+    lane_id_(lane->lane_id_),
+    lane_position_(lane->lane_position_),
+    link_(lane->link_),
+    line_(lane->line_),
+    lane_type_(lane->lane_type_),
+    road_mark_(lane->road_mark_),
+    speed_(lane->speed_) {}
+
   ~Lane() {}
 
   //! setter functions

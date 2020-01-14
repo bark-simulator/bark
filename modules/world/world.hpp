@@ -28,8 +28,8 @@ using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::evaluation::EvaluatorPtr;
 
-typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
-typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
+typedef std::map<AgentId, AgentPtr> AgentMap;
+typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string,
                  modules::world::evaluation::EvaluationReturn> EvaluationMap;
 
