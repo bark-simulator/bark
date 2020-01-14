@@ -115,12 +115,23 @@ class XodrParser(object):
             lane_section["lanes"].append(new_lane)
         return lane_section
 
+    def parse_offset(self, header):
+      # in compiliance with 5.2.2 of specification
+      offset = {}
+      offset["x"] = float(header.find("offset").get("x"))
+      offset["y"] = float(header.find("offset").get("y"))
+      offset["z"] = float(header.find("offset").get("z"))
+      offset["hdg"] = float(header.find("offset").get("hdg"))
+      return offset
+
     def parse_header(self, header):
         new_header = {}
         new_header["north"] = header.get("north")
         new_header["south"] = header.get("south")
         new_header["east"] = header.get("east")
         new_header["west"] = header.get("west")
+        if header.find("offset") is not None:
+          new_header["offset"] = self.parse_offset(header)
         self.python_map["header"] = new_header
 
     def parse_lane_sections_from_road(self, lane_sections, road):
@@ -247,7 +258,8 @@ class XodrParser(object):
         pp = pprint.PrettyPrinter(indent=2)
         pp.pprint(self.python_map)
 
-    def create_cpp_plan_view(self, plan_view):
+    def create_cpp_plan_view(self, plan_view, header):
+
         new_plan_view = PlanView()
         # create plan view..
         for geometry in plan_view["geometries"]:
@@ -267,6 +279,15 @@ class XodrParser(object):
                     float(geometry["length"]),
                     float(geometry["geometry"]["curv_start"]),
                     float(geometry["geometry"]["curv_end"]), 2) # TODO: s_inc
+        
+        # now use header/ offset to modify plan view
+        if "offset" in header:
+          off_x = header["offset"]["x"]
+          off_y = header["offset"]["y"]
+          off_hdg = header["offset"]["hdg"]
+          print("Transforming PlanView with given offset", header["offset"])
+          new_plan_view.apply_offset_transform(off_x, off_y, off_hdg)
+
         return new_plan_view
 
     def create_cpp_road_link(self, link):
@@ -289,11 +310,11 @@ class XodrParser(object):
             pass
         return new_link
 
-    def create_cpp_road(self, road):
+    def create_cpp_road(self, road, header):
         new_road = Road()
         new_road.id = int(road["id"])
         new_road.name = road["name"]
-        new_road.plan_view = self.create_cpp_plan_view(road["plan_view"])
+        new_road.plan_view = self.create_cpp_plan_view(road["plan_view"], header)
         new_road = self.create_cpp_lane_section(new_road, road)
         new_road.link = self.create_cpp_road_link(road["link"])
 
@@ -431,7 +452,7 @@ class XodrParser(object):
       CPP Map -- Map for usage with CPP
     """
         for road in self.python_map["roads"]:
-            new_road = self.create_cpp_road(road)
+            new_road = self.create_cpp_road(road, self.python_map["header"])
             self.map.add_road(new_road)
 
         for junction in self.python_map["junctions"]:
