@@ -25,7 +25,9 @@ using modules::world::opendrive::XodrLane;
 
 
 struct Road : public XodrRoad {
-  explicit Road(const XodrRoadPtr& road) : XodrRoad(road) {}
+  explicit Road(const XodrRoadPtr& road) :
+    XodrRoad(road),
+    next_road_(nullptr) {}
 
   Lanes GetLanes() const {
     return lanes_;
@@ -41,6 +43,10 @@ struct Road : public XodrRoad {
 
   std::shared_ptr<Road> GetNextRoad() const {
     return next_road_;
+  }
+
+  void SetNextRoad(const std::shared_ptr<Road>& road) {
+    next_road_ = road;
   }
 
   std::shared_ptr<Road> next_road_;

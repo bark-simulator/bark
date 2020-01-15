@@ -48,6 +48,20 @@ struct Lane : public XodrLane {
     return next_lane_;
   }
 
+  void GetNextLane(const std::shared_ptr<Lane>& lane ) {
+    next_lane_ = lane;
+  }
+  
+  Boundary GetLeftBoundary() const {
+    return left_boundary_;
+  }
+
+  Boundary GetRightBoundary() const {
+    return right_boundary_;
+  }
+
+
+
   std::map<int, std::shared_ptr<Lane>> left_lanes_;  // from_id, to_id
   std::map<int, std::shared_ptr<Lane>> right_lanes_;  // from_id, to_id
   std::shared_ptr<Lane> next_lane_;
