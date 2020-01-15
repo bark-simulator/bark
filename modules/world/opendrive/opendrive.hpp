@@ -20,7 +20,7 @@ namespace opendrive {
 
 using Junctions = std::map<uint32_t, std::shared_ptr<Junction>>;
 
-class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too general
+class OpenDriveMap {
  public:
   OpenDriveMap() : roads_(), lanes_(), junctions_() {}
   ~OpenDriveMap() {}
@@ -66,7 +66,7 @@ class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too 
   Junctions junctions_;
 };
 
-typedef std::shared_ptr<OpenDriveMap> OpenDriveMapPtr;
+using OpenDriveMapPtr = std::shared_ptr<OpenDriveMap>;
 
 }  // namespace opendrive
 }  // namespace world

@@ -19,10 +19,12 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-        "//modules/geometry",
-        "//modules/world/opendrive",
+        "//modules/geometry:geometry",
+        "//modules/world/opendrive:opendrive",
         "//modules/world:world",
         "//modules/world/map:road_corridor",
+        "//modules/world/map:map_interface",
+        "//modules/models/tests:make_test_world",
         "@gtest//:main",
     ],
 )

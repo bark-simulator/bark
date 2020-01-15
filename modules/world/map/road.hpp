@@ -28,11 +28,15 @@ struct Road : public XodrRoad {
   explicit Road(const XodrRoadPtr& road) : XodrRoad(road) {}
 
   Lanes GetLanes() const {
-    return bark_lanes_;
+    return lanes_;
+  }
+
+  void SetLanes(const Lanes& lanes) {
+    lanes_ = lanes;
   }
 
   LanePtr GetLane(LaneId lane_id) const {
-    return bark_lanes_.at(lane_id);
+    return lanes_.at(lane_id);
   }
 
   std::shared_ptr<Road> GetNextRoad() const {
@@ -40,7 +44,7 @@ struct Road : public XodrRoad {
   }
 
   std::shared_ptr<Road> next_road_;
-  Lanes bark_lanes_;
+  Lanes lanes_;
 };
 
 using RoadPtr = std::shared_ptr<Road>;
