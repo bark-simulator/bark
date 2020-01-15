@@ -15,12 +15,12 @@ TEST(query_lanes, map_interface)
 
   MapInterface map_interface = modules::models::tests::make_two_lane_map_interface();
 
-  std::vector<LanePtr> nearest_lanes;
-  bool success = map_interface.FindNearestLanes(Point2d(0, 0), 2, nearest_lanes);
+  std::vector<XodrLanePtr> nearest_lanes;
+  bool success = map_interface.FindNearestXodrLanes(Point2d(0, 0), 2, nearest_lanes);
   EXPECT_TRUE(success);
   EXPECT_EQ(nearest_lanes.size(), 2);
 
-  success = map_interface.FindNearestLanes(Point2d(0, 0), 3, nearest_lanes);
+  success = map_interface.FindNearestXodrLanes(Point2d(0, 0), 3, nearest_lanes);
   EXPECT_TRUE(success);
   EXPECT_EQ(nearest_lanes.size(), 2); // there exist only two lanes
 }
@@ -58,32 +58,32 @@ TEST(point_in_lane, map_interface)
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
   //! PlanView
-  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_0 = {0, 10, off0};
-  LanePtr lane0 = create_lane_from_lane_width(0, p->get_reference_line(), lane_width_0, 0.05);
-  lane0->set_lane_type(LaneType::DRIVING);
+  XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_0 = {0, 10, off0};
+  XodrLanePtr lane0 = create_lane_from_lane_width(0, p->get_reference_line(), lane_width_0, 0.05);
+  lane0->set_lane_type(XodrLaneType::DRIVING);
 
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10, off};
+  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_1 = {0, 10, off};
 
-  //! Lanes
-  LanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
-  lane1->set_lane_type(LaneType::DRIVING);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
-  lane2->set_lane_type(LaneType::DRIVING);
-  LanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
-  lane3->set_lane_type(LaneType::DRIVING);
+  //! XodrLanes
+  XodrLanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
+  lane1->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  lane2->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
+  lane3->set_lane_type(XodrLaneType::DRIVING);
 
   ls->add_lane(lane0);
   ls->add_lane(lane1);
   ls->add_lane(lane2);
   ls->add_lane(lane3);
 
-  RoadPtr r(new Road("highway", 100));
+  XodrRoadPtr r(new XodrRoad("highway", 100));
   r->set_plan_view(p);
   r->add_lane_section(ls);
 
@@ -92,17 +92,17 @@ TEST(point_in_lane, map_interface)
   MapInterface map_interface;
   map_interface.set_open_drive_map(open_drive_map);
 
-  std::vector<LanePtr> nearest_lanes;
+  std::vector<XodrLanePtr> nearest_lanes;
   Point2d point = Point2d(0.5, 0.5);
-  bool success = map_interface.FindNearestLanes(point, 3, nearest_lanes);
+  bool success = map_interface.FindNearestXodrLanes(point, 3, nearest_lanes);
 
-  success = map_interface.IsInLane(point, (nearest_lanes.at(0))->get_id());
+  success = map_interface.IsInXodrLane(point, (nearest_lanes.at(0))->get_id());
   EXPECT_FALSE(success);
 
-  success = map_interface.IsInLane(point, (nearest_lanes.at(1))->get_id());
+  success = map_interface.IsInXodrLane(point, (nearest_lanes.at(1))->get_id());
   EXPECT_TRUE(success);
 
-  success = map_interface.IsInLane(point, (nearest_lanes.at(2))->get_id());
+  success = map_interface.IsInXodrLane(point, (nearest_lanes.at(2))->get_id());
   EXPECT_FALSE(success);
 
   bool success_corr = map_interface.ComputeAllDrivingCorridors();
@@ -120,8 +120,8 @@ TEST(compute_driving_corridor, from_start_to_goal) {
   MapInterface map_interface = make_map_interface_two_connected_roads();
 
   // Start and goal in same lane
-  LaneId startid = 13;
-  LaneId goalid = 16;
+  XodrLaneId startid = 13;
+  XodrLaneId goalid = 16;
   DrivingCorridor driving_corridor =
     map_interface.ComputeDrivingCorridorFromStartToGoal(startid, goalid);
 
@@ -148,8 +148,8 @@ TEST(compute_driving_corridor, parallel_to_goal) {
   MapInterface map_interface = make_map_interface_two_connected_roads();
 
   // Parallel corridor exists
-  LaneId startid = 19;
-  LaneId goalid = 21;
+  XodrLaneId startid = 19;
+  XodrLaneId goalid = 21;
   DrivingCorridor driving_corridor =
     map_interface.ComputeDrivingCorridorParallelToGoal(startid, goalid);
   

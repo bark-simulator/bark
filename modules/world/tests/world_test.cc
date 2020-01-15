@@ -29,7 +29,7 @@ using modules::world::map::MapInterface;
 using modules::world::map::MapInterfacePtr;
 using modules::world::map::RoadgraphPtr;
 using modules::world::map::Roadgraph;
-using modules::world::opendrive::LaneId;
+using modules::world::opendrive::XodrLaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
@@ -74,19 +74,19 @@ TEST(world, world_step)
   p_1->add_line(Point2d(25.0f, 0.0f), 0.0, 25.0f);
 
   //! lane sections
-  std::shared_ptr<LaneSection> section_1(new LaneSection(0.0f));
-  std::shared_ptr<LaneSection> section_2(new LaneSection(0.0f));
+  std::shared_ptr<XodrLaneSection> section_1(new XodrLaneSection(0.0f));
+  std::shared_ptr<XodrLaneSection> section_2(new XodrLaneSection(0.0f));
 
-  LaneOffset off = {1.5, 0, 0, 0};
-  LaneWidth lane_width_1 = {0, 30, off};
-  LaneWidth lane_width_2 = {0, 30, off};
-  LaneWidth lane_width_3 = {30, 50, off};
-  LaneWidth lane_width_4 = {30, 50, off};
+  XodrLaneOffset off = {1.5, 0, 0, 0};
+  XodrLaneWidth lane_width_1 = {0, 30, off};
+  XodrLaneWidth lane_width_2 = {0, 30, off};
+  XodrLaneWidth lane_width_3 = {30, 50, off};
+  XodrLaneWidth lane_width_4 = {30, 50, off};
 
-  std::shared_ptr<Lane> l_0(new Lane(1));
-  std::shared_ptr<Lane> l_1(new Lane(-1));
-  std::shared_ptr<Lane> l_2(new Lane(1));
-  std::shared_ptr<Lane> l_3(new Lane(-1));
+  std::shared_ptr<XodrLane> l_0(new XodrLane(1));
+  std::shared_ptr<XodrLane> l_1(new XodrLane(-1));
+  std::shared_ptr<XodrLane> l_2(new XodrLane(1));
+  std::shared_ptr<XodrLane> l_3(new XodrLane(-1));
 
   l_0 = create_lane_from_lane_width(1, p_1->get_reference_line(), lane_width_1);
   l_1 = create_lane_from_lane_width(-1, p_1->get_reference_line(), lane_width_2);
@@ -99,7 +99,7 @@ TEST(world, world_step)
   section_2->add_lane(l_2);
   section_2->add_lane(l_3);
 
-  std::shared_ptr<Road> r(new Road("highway", 100));
+  std::shared_ptr<XodrRoad> r(new XodrRoad("highway", 100));
 
   r->set_plan_view(p_1);
   r->add_lane_section(section_1);

@@ -71,19 +71,19 @@ void python_world(py::module m) {
   py::class_<edge_t>(m, "edge_t")
     .def(py::init<>());
 
-  py::class_<LaneVertex, std::shared_ptr<LaneVertex>>(m, "LaneVertex")
-    .def(py::init<int, int, LanePtr>())
-    .def_property_readonly("lane_id", &LaneVertex::get_global_line_id)
-    .def_property_readonly("lane", &LaneVertex::get_lane);
+  py::class_<XodrLaneVertex, std::shared_ptr<XodrLaneVertex>>(m, "XodrLaneVertex")
+    .def(py::init<int, int, XodrLanePtr>())
+    .def_property_readonly("lane_id", &XodrLaneVertex::get_global_line_id)
+    .def_property_readonly("lane", &XodrLaneVertex::get_lane);
 
-  py::enum_<LaneEdgeType>(m, "LaneEdgeType")
-    .value("SUCCESSOR_EDGE", LaneEdgeType::SUCCESSOR_EDGE)
-    .value("INNER_NEIGHBOR_EDGE", LaneEdgeType::INNER_NEIGHBOR_EDGE)
-    .value("OUTER_NEIGHBOR_EDGE", LaneEdgeType::OUTER_NEIGHBOR_EDGE)
+  py::enum_<XodrLaneEdgeType>(m, "XodrLaneEdgeType")
+    .value("SUCCESSOR_EDGE", XodrLaneEdgeType::SUCCESSOR_EDGE)
+    .value("INNER_NEIGHBOR_EDGE", XodrLaneEdgeType::INNER_NEIGHBOR_EDGE)
+    .value("OUTER_NEIGHBOR_EDGE", XodrLaneEdgeType::OUTER_NEIGHBOR_EDGE)
     .export_values();
 
-  py::class_<LaneEdge, std::shared_ptr<LaneEdge>>(m, "LaneEdge")
-    .def(py::init<LaneEdgeType>())
-    .def_property_readonly("edge_type", &LaneEdge::get_edge_type);
+  py::class_<XodrLaneEdge, std::shared_ptr<XodrLaneEdge>>(m, "XodrLaneEdge")
+    .def(py::init<XodrLaneEdgeType>())
+    .def_property_readonly("edge_type", &XodrLaneEdge::get_edge_type);
 
 }

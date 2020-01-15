@@ -1,7 +1,7 @@
 {
     "Visualization": {
         "Map": {
-            "Lanes": {
+            "XodrLanes": {
                 "Boundaries": {
                     "Color": [
                         0.7,

@@ -28,7 +28,7 @@
             "AlphaVehicle": 0.8
         },
         "Map": {
-            "Lanes": {
+            "XodrLanes": {
                 "Boundaries": {
                     "Color": [
                         0.7,

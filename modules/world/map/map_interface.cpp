@@ -26,8 +26,8 @@ bool MapInterface::interface_from_opendrive(
     for (auto &lane_section : road.second->get_lane_sections()) {
       for (auto &lane : lane_section->get_lanes()) {
         if (lane.second->get_lane_position() != 0) {
-          std::pair<LanePtr, LanePtr> lb =
-            roadgraph_->ComputeLaneBoundaries(lane.second->get_id());
+          std::pair<XodrLanePtr, XodrLanePtr> lb =
+            roadgraph_->ComputeXodrLaneBoundaries(lane.second->get_id());
           if (lb.first && lb.second) {
             auto center = ComputeCenterLine(lb.first->get_line(), lb.second->get_line());
             LineSegment center_lane_segment(*center.begin(),*(center.end() - 1));
@@ -42,17 +42,17 @@ bool MapInterface::interface_from_opendrive(
   return true;
 }
 
-void MapInterface::ConcatenateLines(const std::vector<LanePtr> &lanes,
+void MapInterface::ConcatenateLines(const std::vector<XodrLanePtr> &lanes,
                                     Line &line_of_corridor,
-                                    std::vector<std::pair<int, LaneId>> &lane_ids) {
+                                    std::vector<std::pair<int, XodrLaneId>> &lane_ids) {
   if (lanes.size() > 0) {
     line_of_corridor = lanes.at(0)->get_line();
-    lane_ids.push_back(std::pair<int, LaneId>(0, lanes.at(0)->get_id()));
+    lane_ids.push_back(std::pair<int, XodrLaneId>(0, lanes.at(0)->get_id()));
     for (uint i = 1; i < lanes.size(); i++)
     {
       if (lanes.at(i) != NULL)
       {
-        lane_ids.push_back(std::pair<int, LaneId>(line_of_corridor.size(),
+        lane_ids.push_back(std::pair<int, XodrLaneId>(line_of_corridor.size(),
                                                   lanes.at(i)->get_id()));
         line_of_corridor.ConcatenateLinestring(lanes.at(i)->get_line());
       }
@@ -60,9 +60,9 @@ void MapInterface::ConcatenateLines(const std::vector<LanePtr> &lanes,
   }
 }
 
-bool MapInterface::FindNearestLanes(const Point2d &point,
+bool MapInterface::FindNearestXodrLanes(const Point2d &point,
                                     const unsigned &num_lanes,
-                                    std::vector<LanePtr> &lanes,
+                                    std::vector<XodrLanePtr> &lanes,
                                     bool type_driving_only) const
 {
   std::vector<rtree_lane_value> results_n;
@@ -91,18 +91,18 @@ bool MapInterface::FindNearestLanes(const Point2d &point,
   return true;
 }
 
-LanePtr MapInterface::FindLane(const Point2d& point) const {
+XodrLanePtr MapInterface::FindXodrLane(const Point2d& point) const {
   
-  LanePtr lane;
-  std::vector<LanePtr> nearest_lanes;
+  XodrLanePtr lane;
+  std::vector<XodrLanePtr> nearest_lanes;
   
   // TODO(@esterle): parameter (20) auslagern
-  if(!FindNearestLanes(point, 20, nearest_lanes, false)) {
+  if(!FindNearestXodrLanes(point, 20, nearest_lanes, false)) {
     return nullptr;
   }
   
   for (auto &close_lane : nearest_lanes) {
-    if(IsInLane(point, close_lane->get_id())) {
+    if(IsInXodrLane(point, close_lane->get_id())) {
       lane = close_lane;
       return lane;
     }
@@ -113,7 +113,7 @@ LanePtr MapInterface::FindLane(const Point2d& point) const {
 
 bool MapInterface::HasCorrectDrivingDirection(const Point2d& point, const float orientation) const {
 
-  LanePtr lane = FindLane(point);
+  XodrLanePtr lane = FindXodrLane(point);
   if (!lane) {
     return false;
   }
@@ -165,7 +165,7 @@ bool MapInterface::LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, 
   }
 }
   
-bool MapInterface::IsInLane(const Point2d &point, LaneId id) const
+bool MapInterface::IsInXodrLane(const Point2d &point, XodrLaneId id) const
 {
 
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
@@ -199,9 +199,9 @@ bool MapInterface::IsInLane(const Point2d &point, LaneId id) const
 }
 
 DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
-  const LaneId &startid, const LaneId &goalid)
+  const XodrLaneId &startid, const XodrLaneId &goalid)
 {
-  std::vector<LaneId> ids = roadgraph_->find_path(startid, goalid);
+  std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goalid);
   if (!ids.empty()) {
     return ComputeDrivingCorridorForRange(ids);
   } else {
@@ -210,11 +210,11 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
 }
 
 DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
-  const LaneId& startid, const LaneId& goalid)
+  const XodrLaneId& startid, const XodrLaneId& goalid)
 {
-  std::vector<LaneId> goal_neighbors = roadgraph_->get_all_neighbors(goalid);
+  std::vector<XodrLaneId> goal_neighbors = roadgraph_->get_all_neighbors(goalid);
   for (auto const &goal_neighbor : goal_neighbors) {
-    std::vector<LaneId> ids = roadgraph_->find_path(startid, goal_neighbor);
+    std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goal_neighbor);
     if (ids.size() > 0) {
       // Found a target lane that is parallel to the goal lane
       return ComputeDrivingCorridorForRange(ids);
@@ -225,13 +225,13 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
   return DrivingCorridor();
 }
 
-DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids)
+DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<XodrLaneId> lane_ids)
 {
-  std::pair<std::vector<LanePtr>, std::vector<LanePtr>> route =
+  std::pair<std::vector<XodrLanePtr>, std::vector<XodrLanePtr>> route =
       roadgraph_->ComputeRouteBoundaries(lane_ids);
 
   DrivingCorridor dc;
-  std::vector<std::pair<int, LaneId>> dummy;
+  std::vector<std::pair<int, XodrLaneId>> dummy;
   ConcatenateLines(route.first, dc.inner, dc.lane_ids_);
   ConcatenateLines(route.second, dc.outer, dummy);
   if (route.first[0] != NULL && route.second[0] != NULL)
@@ -245,7 +245,7 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId>
 bool MapInterface::ComputeAllDrivingCorridors()
 {
 
-  std::vector<LaneId> ids = roadgraph_->get_all_laneids();
+  std::vector<XodrLaneId> ids = roadgraph_->get_all_laneids();
   // get all unique ids that are driving corridors
 
   auto all_path_boundaries = ComputeAllPathBoundaries(ids);
@@ -253,7 +253,7 @@ bool MapInterface::ComputeAllDrivingCorridors()
   for (auto const &path_boundaries : all_path_boundaries)
   {
 
-    std::vector<LanePtr> route_inner, route_outer;
+    std::vector<XodrLanePtr> route_inner, route_outer;
     // get from vector of pairs to pair of vectors
     for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++)
     {
@@ -263,7 +263,7 @@ bool MapInterface::ComputeAllDrivingCorridors()
 
     DrivingCorridorPtr dc = std::make_shared<DrivingCorridor>();
 
-    std::vector<std::pair<int, LaneId>> dummy;
+    std::vector<std::pair<int, XodrLaneId>> dummy;
     ConcatenateLines(route_inner, dc->inner, dummy);
     ConcatenateLines(route_outer, dc->outer, dc->lane_ids_);
     if (route_inner[0] != NULL && route_outer[0] != NULL)
@@ -279,18 +279,18 @@ bool MapInterface::ComputeAllDrivingCorridors()
 }
 
 std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBoundaries(
-    const std::vector<LaneId> &lane_ids) const
+    const std::vector<XodrLaneId> &lane_ids) const
 {
-  std::vector<LaneEdgeType> successor_edges = {LaneEdgeType::SUCCESSOR_EDGE};
-  std::vector<std::vector<LaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(successor_edges, lane_ids);
+  std::vector<XodrLaneEdgeType> successor_edges = {XodrLaneEdgeType::SUCCESSOR_EDGE};
+  std::vector<std::vector<XodrLaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(successor_edges, lane_ids);
 
   std::vector<PathBoundaries> all_path_boundaries;
   for (auto const &path : all_paths)
   {
-    std::vector<std::pair<LanePtr, LanePtr>> path_boundaries;
+    std::vector<std::pair<XodrLanePtr, XodrLanePtr>> path_boundaries;
     for (auto const &path_segment : path)
     {
-      std::pair<LanePtr, LanePtr> lane_boundaries = roadgraph_->ComputeLaneBoundaries(path_segment);
+      std::pair<XodrLanePtr, XodrLanePtr> lane_boundaries = roadgraph_->ComputeXodrLaneBoundaries(path_segment);
       path_boundaries.push_back(lane_boundaries);
     }
     all_path_boundaries.push_back(path_boundaries);
@@ -298,9 +298,9 @@ std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBou
   return all_path_boundaries;
 }
 
-std::pair<LanePtr, bool> modules::world::map::MapInterface::get_inner_neighbor(const LaneId lane_id) const
+std::pair<XodrLanePtr, bool> modules::world::map::MapInterface::get_inner_neighbor(const XodrLaneId lane_id) const
 {
-  std::pair<LaneId, bool> inner_neighbor = roadgraph_->get_inner_neighbor(lane_id);
+  std::pair<XodrLaneId, bool> inner_neighbor = roadgraph_->get_inner_neighbor(lane_id);
   if (inner_neighbor.second)
   {
     return std::make_pair(roadgraph_->get_laneptr(inner_neighbor.first), true);
@@ -311,9 +311,9 @@ std::pair<LanePtr, bool> modules::world::map::MapInterface::get_inner_neighbor(c
   }
 }
 
-std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(const LaneId lane_id) const
+std::pair<XodrLanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(const XodrLaneId lane_id) const
 {
-  std::pair<LaneId, bool> outer_neighbor = roadgraph_->get_outer_neighbor(lane_id);
+  std::pair<XodrLaneId, bool> outer_neighbor = roadgraph_->get_outer_neighbor(lane_id);
   if (outer_neighbor.second)
   {
     return std::make_pair(roadgraph_->get_laneptr(outer_neighbor.first), true);
@@ -324,7 +324,7 @@ std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor(c
   }
 }
 
-std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const LaneId lane_id) const
+std::vector<XodrLaneId> modules::world::map::MapInterface::get_successor_lanes(const XodrLaneId lane_id) const
 {
   return roadgraph_->get_successor_lanes(lane_id);
 }
@@ -340,8 +340,8 @@ std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridorsSameDir
   {
     if (lane_id.first >= idx)
     {
-      std::vector<std::pair<LanePtr, bool>> lane_neighbors;
-      std::pair<LanePtr, bool> inner_lane, outer_lane;
+      std::vector<std::pair<XodrLanePtr, bool>> lane_neighbors;
+      std::pair<XodrLanePtr, bool> inner_lane, outer_lane;
 
       inner_lane = get_inner_neighbor(lane_id.second);
       lane_neighbors.push_back(inner_lane);
@@ -419,14 +419,14 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
         if (corridor_rhs->get_lane_ids().at(i).second == corridor->get_lane_ids().at(idx_current_lane_id).second)
         { // if lane from driving_corridor is equal to lane_neighbor
 
-          std::vector<LaneId> corridor_ids;
+          std::vector<XodrLaneId> corridor_ids;
           //std::cout << "matching corridor " << std::endl;
           for (auto &l : corridor->get_lane_ids())
           {
             //std::cout << " " << l.second << std::endl;
             corridor_ids.push_back(l.second);
           }
-          std::vector<LaneId> corridor_rhs_ids;
+          std::vector<XodrLaneId> corridor_rhs_ids;
           //std::cout << "matching corridor_rhs " << std::endl;
           for (auto &l : corridor_rhs->get_lane_ids())
           {

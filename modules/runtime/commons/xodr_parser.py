@@ -52,9 +52,9 @@ class XodrParser(object):
         new_road_mark = {}
         if str(road_mark.get("type")) in ["solid", "broken"]:
             new_road_mark["s_offset"] = road_mark.get("sOffset")
-            new_road_mark["type"] = RoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
+            new_road_mark["type"] = XodrRoadMarkType.__members__[str(road_mark.get("type"))] # assign enum type # road_mark.get("type")
             new_road_mark["weight"] = road_mark.get("weight")
-            new_road_mark["color"] = RoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
+            new_road_mark["color"] = XodrRoadMarkColor.__members__[str(road_mark.get("color"))] # assign enum type # road_mark.get("type")
             new_road_mark["width"] = road_mark.get("width")
         return new_road_mark
 
@@ -101,7 +101,7 @@ class XodrParser(object):
             new_lane = {}
             new_lane["id"] = id
             # every type we cannot read is read in as sidewalk
-            new_lane["type"] = LaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else LaneType.__members__["sidewalk"]# assign enum type
+            new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk"]# assign enum type
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:
                 new_lane["link"] = self.parse_lane_link(lane.find("link"))
@@ -271,9 +271,9 @@ class XodrParser(object):
 
     def create_cpp_road_link(self, link):
         # TODO(hart): insert road_link
-        new_link = RoadLink()
+        new_link = XodrRoadLink()
         try:
-            new_pre_info = RoadLinkInfo()
+            new_pre_info = XodrRoadLinkInfo()
             new_pre_info.id = int(link["predecessor"]["element_id"])
             new_pre_info.type = link["predecessor"]["element_type"]
             new_link.predecessor = new_pre_info
@@ -281,7 +281,7 @@ class XodrParser(object):
             pass
 
         try:
-            new_suc_info = RoadLinkInfo()
+            new_suc_info = XodrRoadLinkInfo()
             new_suc_info.id = int(link["successor"]["element_id"])
             new_suc_info.type = link["successor"]["element_type"]
             new_link.successor = new_suc_info
@@ -290,7 +290,7 @@ class XodrParser(object):
         return new_link
 
     def create_cpp_road(self, road):
-        new_road = Road()
+        new_road = XodrRoad()
         new_road.id = int(road["id"])
         new_road.name = road["name"]
         new_road.plan_view = self.create_cpp_plan_view(road["plan_view"])
@@ -300,32 +300,32 @@ class XodrParser(object):
         return new_road
 
     def create_lane_link(self, link):
-        new_link = LaneLink()
+        new_link = XodrLaneLink()
 
         if link is not None:
             try:
                 new_link.from_position = int(link["predecessor"])
             except:
-                logger.info("No LaneLink.predecessor")
+                logger.info("No XodrLaneLink.predecessor")
             try:
                 new_link.to_position = int(link["successor"])
             except:
-                logger.info("No LaneLink.successor")
+                logger.info("No XodrLaneLink.successor")
         else:
-            logger.info("No LaneLink")
+            logger.info("No XodrLaneLink")
             
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line):
         try:
-            new_lane = Lane(int(lane["id"]))
+            new_lane = XodrLane(int(lane["id"]))
             for idx_w, lw in enumerate(lane["width"]):
 
               a = float(lane["width"][idx_w]["a"])
               b = float(lane["width"][idx_w]["b"])
               c = float(lane["width"][idx_w]["c"])
               d = float(lane["width"][idx_w]["d"])
-              offset = LaneOffset(a, b, c, d)
+              offset = XodrLaneOffset(a, b, c, d)
 
               s_start_temp = float(lane["width"][idx_w]["s_offset"])
 
@@ -335,7 +335,7 @@ class XodrParser(object):
                 # last or only lane width element
                 s_end_temp = s_end
               
-              lane_width = LaneWidth(s_start_temp, s_end_temp, offset)        
+              lane_width = XodrLaneWidth(s_start_temp, s_end_temp, offset)        
 
               # TODO (@hart): make sampling flexible           
               succ = new_lane.append(reference_line, lane_width, 1.0)
@@ -349,7 +349,7 @@ class XodrParser(object):
 
             # not every lane contains a road-mark
             if ("road_mark" in lane):
-                rm = RoadMark()
+                rm = XodrRoadMark()
                 rm.type = lane['road_mark']['type']
                 rm.color = lane['road_mark']['color']
                 rm.width = float(lane['road_mark']['width'])
@@ -366,7 +366,7 @@ class XodrParser(object):
 
     def create_cpp_lane_section(self, new_road, road):
         for lane_section in road["lane_sections"]:
-            new_lane_section = LaneSection(float(lane_section["s"]))
+            new_lane_section = XodrLaneSection(float(lane_section["s"]))
             # sort lanes
             #for idx_iterator in range(len(lane_section["lanes"])):
             #    if lane_section["lanes"][idx_iterator]['id'] in list_id_read_in_lanes:
@@ -414,7 +414,7 @@ class XodrParser(object):
             new_connection.id = int(connection["id"])
             # TODO(hart): contact point
             for lane_link in connection["lane_links"]:
-                new_lane_link = LaneLink()
+                new_lane_link = XodrLaneLink()
                 new_lane_link.from_position = int(lane_link["from"])
                 new_lane_link.to_position = int(lane_link["to"])
                 new_connection.add_lane_link(new_lane_link)

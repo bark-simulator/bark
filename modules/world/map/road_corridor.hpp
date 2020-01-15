@@ -11,10 +11,10 @@
 #include <vector>
 #include "modules/world/opendrive/opendrive.hpp"
 
-using modules::opendrive::RoadPtr;
-using modules::opendrive::Road;
-using modules::opendrive::Lanes;
-using modules::opendrive::Lane;
+using modules::opendrive::XodrRoadPtr;
+using modules::opendrive::XodrRoad;
+using modules::opendrive::XodrLanes;
+using modules::opendrive::XodrLane;
 
 struct Boundary {
   Line line_;
@@ -23,24 +23,24 @@ struct Boundary {
 };
 
 // ONLY STORE STUFF
-struct BarkLane : public Lane {
-  explicit BarkLane(const LanePtr& lane) : Lane(lane) {}
+struct BarkXodrLane : public XodrLane {
+  explicit BarkXodrLane(const XodrLanePtr& lane) : XodrLane(lane) {}
 
-  BarkLanePtr GetLeftLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetLeftXodrLane(unisgned int lane_id) const {
     return left_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetRightLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetRightXodrLane(unisgned int lane_id) const {
     return right_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetNextLane() const {
+  BarkXodrLanePtr GetNextXodrLane() const {
     return next_lane_id_;
   }
 
-  std::map<int, BarkLanePtr> left_lanes_;  // from_id, to_id
-  std::map<int, BarkLanePtr> right_lanes_;  // from_id, to_id
-  BarkLanePtr next_lane_;
+  std::map<int, BarkXodrLanePtr> left_lanes_;  // from_id, to_id
+  std::map<int, BarkXodrLanePtr> right_lanes_;  // from_id, to_id
+  BarkXodrLanePtr next_lane_;
 
   Line center_line_;
   Boundary left_boundary_;
@@ -48,35 +48,35 @@ struct BarkLane : public Lane {
   Polygon polygon_;
 };
 
-using BarkLanePtr = std::shared_ptr<BarkLane>;
-using BarkLanes = std::map<unsigned int, BarkLanePtr>;
+using BarkXodrLanePtr = std::shared_ptr<BarkXodrLane>;
+using BarkXodrLanes = std::map<unsigned int, BarkXodrLanePtr>;
 
 // ONLY STORE STUFF
-struct BarkRoad : public Road {
-  explicit BarkRoad(const RoadPtr& road) : Road(road) {}
+struct BarkXodrRoad : public XodrRoad {
+  explicit BarkXodrRoad(const XodrRoadPtr& road) : XodrRoad(road) {}
 
-  BarkLanes GetLanes() const {
+  BarkXodrLanes GetXodrLanes() const {
     return bark_lanes_;
   }
 
-  BarkLanePtr GetLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetXodrLane(unisgned int lane_id) const {
     return bark_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetNextRoad() const {
+  BarkXodrLanePtr GetNextXodrRoad() const {
     return next_road_;
   }
 
-  BarkRoadPtr next_road_;
-  BarkLanes bark_lanes_;
+  BarkXodrRoadPtr next_road_;
+  BarkXodrLanes bark_lanes_;
 };
 
-using BarkRoadPtr = std::shared_ptr<BarkRoad>;
-using BarkRoads = std::map<unsigned int, BarkRoadPtr>;
+using BarkXodrRoadPtr = std::shared_ptr<BarkXodrRoad>;
+using BarkXodrRoads = std::map<unsigned int, BarkXodrRoadPtr>;
 
 
-struct LaneCorridor {
-  std::map<float, LanePtr> lanes_;  // s, LanePtr
+struct XodrLaneCorridor {
+  std::map<float, XodrLanePtr> lanes_;  // s, XodrLanePtr
   Line center_line_;
   Polygon merged_polygon_;
   Boundary left_boundary_;
@@ -84,18 +84,18 @@ struct LaneCorridor {
 };
 
 // ONLY STORE STUFF
-struct RoadCorridor {
-  BarkRoadPtr GetRoad(unsigned int road_id) const {
+struct XodrRoadCorridor {
+  BarkXodrRoadPtr GetXodrRoad(unsigned int road_id) const {
     return roads_.at(road_id);
   }
 
-  BarkRoads GetRoads() const {
+  BarkXodrRoads GetXodrRoads() const {
     return roads_;
   }
 
-  BarkLanes GetLanes(unsigned int road_id) const {
+  BarkXodrLanes GetXodrLanes(unsigned int road_id) const {
     // here we should use a novel lane class
-    return this->GetRoad(road_id)->GetLanes();
+    return this->GetXodrRoad(road_id)->GetXodrLanes();
   }
   
 
@@ -103,11 +103,11 @@ struct RoadCorridor {
     // calculate out of road ids, so creation can be checked
   }
 
-  // Similarily why do we not use a BarkRoad.. merged poly etc
-  BarkRoads roads_;
-  std::vector<LaneCorridor> lane_corridors_;
+  // Similarily why do we not use a BarkXodrRoad.. merged poly etc
+  BarkXodrRoads roads_;
+  std::vector<XodrLaneCorridor> lane_corridors_;
 };
 
-using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
+using XodrRoadCorridorPtr = std::shared_ptr<XodrRoadCorridor>;
 
 #endif

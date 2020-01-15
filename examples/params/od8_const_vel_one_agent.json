@@ -20,7 +20,7 @@
             "DrawRoute": true
         },
         "Map": {
-            "Lanes": {
+            "XodrLanes": {
                 "Boundaries": {
                     "Color": [
                         0.7,

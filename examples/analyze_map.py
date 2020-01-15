@@ -45,10 +45,10 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 
 color_triplet_gray = (0.7,0.7,0.7)
 
-# Open Drive Elements (Roads, Lane Sections, Lanes)
+# Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
 for idx_r, road in open_drive_map.get_roads().items():
   viewer.drawWorld(world)
-  viewer.drawRoad(road)
+  viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
   viewer.show()
   viewer.clear()
@@ -56,8 +56,8 @@ for idx_r, road in open_drive_map.get_roads().items():
 for idx_r, road in open_drive_map.get_roads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     viewer.drawWorld(world)
-    viewer.drawRoad(road, color_triplet_gray)
-    viewer.drawLaneSection(lane_section)
+    viewer.drawXodrRoad(road, color_triplet_gray)
+    viewer.drawXodrLaneSection(lane_section)
     viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + ".png")
     viewer.show()
     viewer.clear()
@@ -66,14 +66,14 @@ for idx_r, road in open_drive_map.get_roads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     for idx_l, lane in lane_section.get_lanes().items():
       viewer.drawWorld(world)
-      viewer.drawRoad(road, color_triplet_gray)
-      viewer.drawLaneSection(lane_section, color_triplet_gray)
-      viewer.drawLane(lane)
+      viewer.drawXodrRoad(road, color_triplet_gray)
+      viewer.drawXodrLaneSection(lane_section, color_triplet_gray)
+      viewer.drawXodrLane(lane)
       viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + "_lane" + str(idx_l) + ".png")
       viewer.show()
       viewer.clear()
 
-# Lanes of Roadgraph
+# XodrLanes of Roadgraph
 roadgraph = map_interface.get_roadgraph()
 roadgraph.print_graph(output_dir + "/" + map_name)
 lane_ids = roadgraph.get_all_laneids ()

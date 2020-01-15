@@ -15,7 +15,7 @@
 #include "modules/geometry/geometry.hpp"
 
 using namespace modules::world::map;
-using modules::world::opendrive::LaneId;
+using modules::world::opendrive::XodrLaneId;
 using modules::geometry::Point2d;
 using modules::geometry::Line;
 
@@ -26,8 +26,8 @@ void python_map(py::module m) {
       .def("find_nearest_lanes", [](const MapInterface& m,
                                     const Point2d& point,
                                     const unsigned& num_lanes) {
-          std::vector<LanePtr> lanes;
-          m.FindNearestLanes(point, num_lanes, lanes);
+          std::vector<XodrLanePtr> lanes;
+          m.FindNearestXodrLanes(point, num_lanes, lanes);
           return lanes;
       })
       .def("set_roadgraph", &MapInterface::set_roadgraph)
@@ -41,10 +41,10 @@ void python_map(py::module m) {
       .def("get_adjacent_corridors_same_direction", &MapInterface::GetAdjacentDrivingCorridorsSameDirection)
       .def("get_splitting_corridors", &MapInterface::GetSplittingDrivingCorridors)
       .def("line_segment_inside_corridor", &MapInterface::LineSegmentInsideCorridor)
-      .def("find_lane", &MapInterface::FindLane)
+      .def("find_lane", &MapInterface::FindXodrLane)
       .def("has_correct_driving_direction", &MapInterface::HasCorrectDrivingDirection)
-      //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeLaneBoundariesHorizon)
-      /*.def("calculate_driving_corridor",[](const MapInterface& m, const LaneId& startid, const LaneId goalid) {
+      //.def("compute_lane_boundaries_horizon", &MapInterface::ComputeXodrLaneBoundariesHorizon)
+      /*.def("calculate_driving_corridor",[](const MapInterface& m, const XodrLaneId& startid, const XodrLaneId goalid) {
           Line inner_line, outer_line, center_line;
           bool result = m.CalculateDrivingCorridor(startid, goalid, inner_line, outer_line, center_line);
           return std::make_tuple(inner_line, outer_line, center_line);
@@ -97,7 +97,7 @@ void python_map(py::module m) {
             if (t.size() != 3)
                 throw std::runtime_error("Invalid local map state!");
 
-            return new LocalMap(t[0].cast<LaneId>(),
+            return new LocalMap(t[0].cast<XodrLaneId>(),
                  python_to_goal_definition(t[1].cast<py::tuple>()),
                  t[2].cast<DrivingCorridor>());
         }));
@@ -123,6 +123,6 @@ void python_map(py::module m) {
     .def("Generate", &Roadgraph::Generate)
     .def("get_lane_polygon_by_id", &Roadgraph::get_lane_polygon_by_id)
     .def("get_road_by_lane_id", &Roadgraph::get_road_by_lane_id)
-    .def("compute_lane_boundaries", &Roadgraph::ComputeLaneBoundaries);  // get_road_by_lane_id
+    .def("compute_lane_boundaries", &Roadgraph::ComputeXodrLaneBoundaries);  // get_road_by_lane_id
 
 }

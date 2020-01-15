@@ -18,7 +18,7 @@ class World;
 namespace evaluation {
 
 using modules::world::map::RoadgraphPtr;
-using modules::world::opendrive::LaneId;
+using modules::world::opendrive::XodrLaneId;
 using modules::world::map::PolygonPtr;
 using modules::geometry::Polygon;
 using modules::geometry::Point2d;
@@ -32,7 +32,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   virtual EvaluationReturn Evaluate(const world::World& world) {
     if (merged_polygons_.size() == 0) {
       RoadgraphPtr roadgraph = world.get_map()->get_roadgraph();
-      std::vector<LaneId> lane_ids = roadgraph->get_all_laneids();
+      std::vector<XodrLaneId> lane_ids = roadgraph->get_all_laneids();
       std::vector<PolygonPtr> polygons;
 
       for (auto& lane_id : lane_ids) {
