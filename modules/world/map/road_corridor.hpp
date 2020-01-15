@@ -10,25 +10,37 @@
 #include <map>
 #include <vector>
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/world/map/road.hpp"
+#include "modules/world/map/lane.hpp"
+#include "modules/geometry/geometry.hpp"
 
-using modules::opendrive::XodrRoadPtr;
-using modules::opendrive::XodrRoad;
-using modules::opendrive::XodrLanes;
-using modules::opendrive::XodrLane;
+
+
+namespace modules {
+namespace world {
+namespace map {
+
+using modules::map::Road;
+using modules::map::RoadId;
+using modules::map::Lane;
+using modules::map::LaneId;
+using modules::map::Boundary;
+using modules::geometry::Line;
+using modules::geometry::Polygon;
 
 
 struct LaneCorridor {
-  std::map<float, LanePtr> lanes_;  // s, XodrLanePtr
+  std::map<float, LanePtr> lanes_;
   Line center_line_;
   Polygon merged_polygon_;
   Boundary left_boundary_;
   Boundary right_boundary_;
 };
+using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
 
 
-// ONLY STORE STUFF
 struct RoadCorridor {
-  RoadPtr GetRoad(unsigned int road_id) const {
+  RoadPtr GetRoad(RoadId road_id) const {
     return roads_.at(road_id);
   }
 
@@ -36,20 +48,22 @@ struct RoadCorridor {
     return roads_;
   }
 
-  Lanes GetLanes(unsigned int road_id) const {
-    // here we should use a novel lane class
+  Lanes GetLanes(RoadId road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
 
   unsigned int GetHash() const {
-    // calculate out of road ids, so creation can be checked
+
   }
 
-  // Similarily why do we not use a Road.. merged poly etc
   Roads roads_;
-  std::vector<LaneCorridor> lane_corridors_;
+  std::vector<LaneCorridorPtr> lane_corridors_;
 };
-
 using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
+
+
+}  // namespace map
+}  // namespace world
+}  // namespace modules
 
 #endif

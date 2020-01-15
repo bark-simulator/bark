@@ -12,21 +12,23 @@
 
 #include "modules/world/opendrive/road.hpp"
 
+namespace modules {
 namespace world {
 namespace map {
 
+using RoadId = unsigned int;
 using modules::opendrive::XodrRoadPtr;
 using modules::opendrive::XodrRoad;
 using modules::opendrive::XodrLanes;
 using modules::opendrive::XodrLane;
 
+
 struct Boundary {
   Line line_;
   Type type_;
-  // additional parameters: color, ...
 };
 
-// ONLY STORE STUFF
+
 struct Lane : public XodrLane {
   explicit Lane(const XodrLanePtr& lane) : XodrLane(lane) {}
 
@@ -53,9 +55,10 @@ struct Lane : public XodrLane {
 };
 
 using LanePtr = std::shared_ptr<Lane>;
-using Lanes = std::map<unsigned int, LanePtr>;
+using Lanes = std::map<LaneId, LanePtr>;
 
 }  // namespace map
 }  // namespace world
+}  // namespace modules
 
 #endif  // MODULES_WORLD_MAP_LANE_HPP_
