@@ -43,6 +43,10 @@ class MapInterface {
                         Line& line_of_corridor,
                         std::vector< std::pair<int, LaneId> >& lane_ids);
 
+
+  // GenerateBarkLanes()
+  // GenerateBarkRoads(const GenerateBarkLanes& lanes)
+  // GenerateBarkLaneCorridors(const GenerateBarkRoadsPtr& roads)
   /*
   * Finds the ID's of the nearest lanes to point
   * Note that the point doesn't necessarily lie within the lane of the closest point
