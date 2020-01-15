@@ -13,15 +13,20 @@
 #include "modules/world/opendrive/road.hpp"
 #include "modules/world/map/lane.hpp"
 
+namespace modules {
 namespace world {
 namespace map {
 
+using RoadId = unsigned int;
 using modules::opendrive::XodrRoadPtr;
 using modules::opendrive::XodrRoad;
 using modules::opendrive::XodrLanes;
 using modules::opendrive::XodrLane;
+using modules::world::map::LanePtr;
+using modules::world::map::Lanes;
+using modules::world::map::LaneId;
 
-// ONLY STORE STUFF
+
 struct Road : public XodrRoad {
   explicit Road(const XodrRoadPtr& road) : XodrRoad(road) {}
 
@@ -29,7 +34,7 @@ struct Road : public XodrRoad {
     return bark_lanes_;
   }
 
-  LanePtr GetLane(unisgned int lane_id) const {
+  LanePtr GetLane(LaneId lane_id) const {
     return bark_lanes_.at(lane_id);
   }
 
@@ -37,15 +42,16 @@ struct Road : public XodrRoad {
     return next_road_;
   }
 
-  RoadPtr next_road_;
+  std::shared_ptr<Road> next_road_;
   Lanes bark_lanes_;
 };
 
 using RoadPtr = std::shared_ptr<Road>;
-using Roads = std::map<unsigned int, RoadPtr>;
+using Roads = std::map<RoadId, RoadPtr>;
 
 
 }  // namespace map
 }  // namespace world
+}  // namespace modules
 
 #endif  // MODULES_WORLD_MAP_ROAD_HPP_
