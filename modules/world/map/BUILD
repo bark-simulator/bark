@@ -53,6 +53,37 @@ cc_library(
 )
 
 cc_library(
+    name = "lane",
+    srcs = [
+        "lane.cpp"
+    ],
+    hdrs = [
+        "lane.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "road",
+    srcs = [
+        "road.cpp"
+    ],
+    hdrs = [
+        "road.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive",
+        ":lane"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "road_corridor",
     srcs = [
         "road_corridor.cpp"
@@ -62,7 +93,8 @@ cc_library(
     ],
     deps = [
         "//modules/world/opendrive",
-        ":frenet",
+        ":road",
+        ":lane"
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
