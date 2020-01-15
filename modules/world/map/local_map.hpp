@@ -23,8 +23,8 @@ namespace modules {
 namespace world {
 namespace map {
 
-using modules::world::opendrive::LaneId;
-using modules::world::opendrive::LanePtr;
+using modules::world::opendrive::XodrLaneId;
+using modules::world::opendrive::XodrLanePtr;
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinition;
@@ -43,9 +43,9 @@ class LocalMap {
     horizon_driving_corridor_(DrivingCorridor()),
     map_interface_(map_interface),
     goal_definition_(goal_definition),
-    goal_lane_id_(LaneId()) {}
+    goal_lane_id_(XodrLaneId()) {}
 
-  LocalMap(LaneId goal_lane_id, const GoalDefinitionPtr& goal_definition,
+  LocalMap(XodrLaneId goal_lane_id, const GoalDefinitionPtr& goal_definition,
                     const DrivingCorridor& driving_corridor) :
     driving_corridor_(driving_corridor),
     goal_definition_(goal_definition),
@@ -62,7 +62,7 @@ class LocalMap {
   void set_goal_definition(GoalDefinitionPtr goal_definition) {
     goal_definition_ = goal_definition;
   }
-  void set_goal_lane_id(LaneId goal_lane_id) { goal_lane_id_ = goal_lane_id_; }
+  void set_goal_lane_id(XodrLaneId goal_lane_id) { goal_lane_id_ = goal_lane_id_; }
   void set_map_interface(MapInterfacePtr map) { map_interface_ = map; }
 
   //! Getter
@@ -76,7 +76,7 @@ class LocalMap {
     return driving_corridor_.computed;
   }
 
-  LaneId get_goal_lane_id() const {
+  XodrLaneId get_goal_lane_id() const {
     return goal_lane_id_;
   }
 
@@ -85,13 +85,13 @@ class LocalMap {
   }
 
   //! Functions
-  void ConcatenateLines(const std::vector<LanePtr>& lanes,
+  void ConcatenateLines(const std::vector<XodrLanePtr>& lanes,
                         Line& line_of_corridor,
-                        std::vector<std::pair<int, LaneId>>& lane_ids);
+                        std::vector<std::pair<int, XodrLaneId>>& lane_ids);
 
-  LaneId GoalLaneIdFromPolygon(const modules::geometry::Polygon& goal_polygon);
+  XodrLaneId GoalXodrLaneIdFromPolygon(const modules::geometry::Polygon& goal_polygon);
 
-  LanePtr FindLane(const Point2d& point) const;
+  XodrLanePtr FindXodrLane(const Point2d& point) const;
 
   bool HasCorrectDrivingDirection(const State& state) const;
 
@@ -112,7 +112,7 @@ class LocalMap {
   DrivingCorridor horizon_driving_corridor_;
   MapInterfacePtr map_interface_;
   GoalDefinitionPtr goal_definition_;
-  LaneId goal_lane_id_;
+  XodrLaneId goal_lane_id_;
 };
 
 using LocalMapPtr = std::shared_ptr<LocalMap>;

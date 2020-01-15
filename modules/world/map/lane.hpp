@@ -15,10 +15,10 @@
 namespace world {
 namespace map {
 
-using modules::opendrive::RoadPtr;
-using modules::opendrive::Road;
-using modules::opendrive::Lanes;
-using modules::opendrive::Lane;
+using modules::opendrive::XodrRoadPtr;
+using modules::opendrive::XodrRoad;
+using modules::opendrive::XodrLanes;
+using modules::opendrive::XodrLane;
 
 struct Boundary {
   Line line_;
@@ -27,24 +27,24 @@ struct Boundary {
 };
 
 // ONLY STORE STUFF
-struct BarkLane : public Lane {
-  explicit BarkLane(const LanePtr& lane) : Lane(lane) {}
+struct BarkXodrLane : public XodrLane {
+  explicit BarkXodrLane(const XodrLanePtr& lane) : XodrLane(lane) {}
 
-  BarkLanePtr GetLeftLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetLeftXodrLane(unisgned int lane_id) const {
     return left_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetRightLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetRightXodrLane(unisgned int lane_id) const {
     return right_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetNextLane() const {
+  BarkXodrLanePtr GetNextXodrLane() const {
     return next_lane_id_;
   }
 
-  std::map<int, BarkLanePtr> left_lanes_;  // from_id, to_id
-  std::map<int, BarkLanePtr> right_lanes_;  // from_id, to_id
-  BarkLanePtr next_lane_;
+  std::map<int, BarkXodrLanePtr> left_lanes_;  // from_id, to_id
+  std::map<int, BarkXodrLanePtr> right_lanes_;  // from_id, to_id
+  BarkXodrLanePtr next_lane_;
 
   Line center_line_;
   Boundary left_boundary_;
@@ -52,8 +52,8 @@ struct BarkLane : public Lane {
   Polygon polygon_;
 };
 
-using BarkLanePtr = std::shared_ptr<BarkLane>;
-using BarkLanes = std::map<unsigned int, BarkLanePtr>;
+using BarkXodrLanePtr = std::shared_ptr<BarkXodrLane>;
+using BarkXodrLanes = std::map<unsigned int, BarkXodrLanePtr>;
 
 }  // namespace map
 }  // namespace world

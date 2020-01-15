@@ -19,46 +19,46 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-class LaneSection {
+class XodrLaneSection {
  public:
-  explicit LaneSection(float s) : s_(s) {}
-  ~LaneSection() {}
+  explicit XodrLaneSection(float s) : s_(s) {}
+  ~XodrLaneSection() {}
 
-  Lanes get_lanes() const { return lanes_; }
+  XodrLanes get_lanes() const { return lanes_; }
 
-  LanePtr get_lane_by_position(LanePosition pos);
+  XodrLanePtr get_lane_by_position(XodrLanePosition pos);
 
-  LanePtr get_nearest_lane_on_n(double x, double y, double vx, double vy);
-  LanePtr get_lane_with_offset(const models::dynamic::State& state,
+  XodrLanePtr get_nearest_lane_on_n(double x, double y, double vx, double vy);
+  XodrLanePtr get_lane_with_offset(const models::dynamic::State& state,
                                double angle_offset);
 
-  LanePtr get_left_lane(const models::dynamic::State& state) {
+  XodrLanePtr get_left_lane(const models::dynamic::State& state) {
     return get_lane_with_offset(state, 3.14 / 2);
   }
-  LanePtr get_right_lane(const models::dynamic::State& state) {
+  XodrLanePtr get_right_lane(const models::dynamic::State& state) {
     return get_lane_with_offset(state, -3.14 / 2);
   }
 
   //! setter functions
-  void add_lane(const LanePtr& l);
+  void add_lane(const XodrLanePtr& l);
 
   //! getter functions
   float get_s() const { return s_; }
 
  private:
   float s_;
-  Lanes lanes_;
+  XodrLanes lanes_;
 };
 
-inline std::string print(const LaneSection& ls) {
+inline std::string print(const XodrLaneSection& ls) {
   std::stringstream ss;
   ss << "s: " << ls.get_s() << std::endl;
   for (auto const& l : ls.get_lanes())
-    ss << "Lane: " << print(*(l.second)) << std::endl;
+    ss << "XodrLane: " << print(*(l.second)) << std::endl;
   return ss.str();
 }
 
-using LaneSectionPtr = std::shared_ptr<LaneSection>;
+using XodrLaneSectionPtr = std::shared_ptr<XodrLaneSection>;
 
 }  // namespace opendrive
 }  // namespace world

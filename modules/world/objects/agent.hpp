@@ -29,7 +29,7 @@ using models::dynamic::DynamicModelPtr;
 using models::execution::ExecutionModelPtr;
 using models::behavior::StateActionHistory;
 using models::dynamic::Trajectory;
-using modules::world::opendrive::LaneId;
+using modules::world::opendrive::XodrLaneId;
 using modules::world::map::MapInterfacePtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;

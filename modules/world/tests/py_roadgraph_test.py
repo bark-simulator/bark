@@ -18,8 +18,8 @@ from bark.world.opendrive import *
 class RoadgraphTests(unittest.TestCase):
     def test_world(self):
         road_graph = Roadgraph()
-        lane1 = Lane()
-        lane2 = Lane()
+        lane1 = XodrLane()
+        lane2 = XodrLane()
         road_id = 0
 
         # add vertices and connect edges

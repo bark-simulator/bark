@@ -22,69 +22,69 @@ namespace modules {
 namespace world {
 namespace map {
 
-using modules::world::opendrive::LanePtr;
-using modules::world::opendrive::LaneId;
+using modules::world::opendrive::XodrLanePtr;
+using modules::world::opendrive::XodrLaneId;
 using modules::world::opendrive::OpenDriveMapPtr;
 using modules::geometry::Point2d;
 using modules::geometry::Line;
 
 using rtree_lane_model = boost::geometry::model::segment<Point2d>;
-using rtree_lane_id = LanePtr;
+using rtree_lane_id = XodrLanePtr;
 using rtree_lane_value = std::pair<rtree_lane_model, rtree_lane_id>;
 using rtree_lane = boost::geometry::index::rtree<rtree_lane_value,
                    boost::geometry::index::linear<16, 4> >;
-using PathBoundaries = std::vector<std::pair<LanePtr, LanePtr>>;
+using PathBoundaries = std::vector<std::pair<XodrLanePtr, XodrLanePtr>>;
 
 class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
   
-  void ConcatenateLines(const std::vector<LanePtr>& lanes,
+  void ConcatenateLines(const std::vector<XodrLanePtr>& lanes,
                         Line& line_of_corridor,
-                        std::vector< std::pair<int, LaneId> >& lane_ids);
+                        std::vector< std::pair<int, XodrLaneId> >& lane_ids);
 
 
-  // GenerateBarkLanes()
-  // GenerateBarkRoads(const GenerateBarkLanes& lanes)
-  // GenerateBarkLaneCorridors(const GenerateBarkRoadsPtr& roads)
+  // GenerateBarkXodrLanes()
+  // GenerateBarkXodrRoads(const GenerateBarkXodrLanes& lanes)
+  // GenerateBarkXodrLaneCorridors(const GenerateBarkXodrRoadsPtr& roads)
   /*
   * Finds the ID's of the nearest lanes to point
   * Note that the point doesn't necessarily lie within the lane of the closest point
   * or inside the lane of any of them.
   */
-  bool FindNearestLanes(const Point2d& point,
+  bool FindNearestXodrLanes(const Point2d& point,
                          const unsigned& num_lanes,
-                         std::vector<opendrive::LanePtr>& lanes,
+                         std::vector<opendrive::XodrLanePtr>& lanes,
                          bool type_driving_only = true) const;
 
-  LanePtr FindLane(const Point2d& point) const;
+  XodrLanePtr FindXodrLane(const Point2d& point) const;
 
   bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
 
   bool LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
 
-  bool IsInLane(const Point2d& point, LaneId id) const;
+  bool IsInXodrLane(const Point2d& point, XodrLaneId id) const;
   
-  //std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
-  //                                const LaneId& startid, const LaneId& goalid) const;
+  //std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > ComputeXodrLaneBoundariesHorizon(
+  //                                const XodrLaneId& startid, const XodrLaneId& goalid) const;
   
   //! Compute a DrivingCorridor from the start lane to the goal lane. The goal
   //! must be reachable without a lane change.
-  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
+  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
 
   //! Compute a DrivingCorridor that ends in a lane neighboring the goal lane in
   //! the same driving direction.
-  DrivingCorridor ComputeDrivingCorridorParallelToGoal(const LaneId& startid, const LaneId& goalid);
+  DrivingCorridor ComputeDrivingCorridorParallelToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
 
-  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
+  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<XodrLaneId> lane_ids);
 
   bool ComputeAllDrivingCorridors();
 
-  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<LaneId>& lane_ids) const;
+  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<XodrLaneId>& lane_ids) const;
 
-  std::pair<LanePtr, bool> get_inner_neighbor(const LaneId lane_id) const;
-  std::pair<LanePtr, bool> get_outer_neighbor(const LaneId lane_id) const;
-  std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
+  std::pair<XodrLanePtr, bool> get_inner_neighbor(const XodrLaneId lane_id) const;
+  std::pair<XodrLanePtr, bool> get_outer_neighbor(const XodrLaneId lane_id) const;
+  std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId lane_id) const;
 
   std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
   std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
@@ -102,7 +102,7 @@ class MapInterface {
     return true;
   }
 
-  LanePtr get_lane(const LaneId& id) const {
+  XodrLanePtr get_lane(const XodrLaneId& id) const {
     return roadgraph_->get_laneptr(id);
   }
 
@@ -119,7 +119,7 @@ class MapInterface {
   rtree_lane rtree_lane_;
   std::pair<Point2d, Point2d> bounding_box_;
   
-  static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == LaneType::DRIVING); }
+  static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == XodrLaneType::DRIVING); }
 
 };
 

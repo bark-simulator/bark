@@ -12,26 +12,26 @@ namespace modules {
 namespace world {
 namespace map {
 
-using modules::world::opendrive::LanePtr;
+using modules::world::opendrive::XodrLanePtr;
 using geometry::FindNearestIdx;
 using geometry::distance;
 using models::dynamic::StateDefinition;
 
-LaneId LocalMap::GoalLaneIdFromPolygon(
+XodrLaneId LocalMap::GoalXodrLaneIdFromPolygon(
   const modules::geometry::Polygon& goal_polygon) {
   modules::geometry::Point2d goal_center(goal_polygon.center_(0),
                                          goal_polygon.center_(1));
-  std::vector<opendrive::LanePtr> nearest_lanes;
+  std::vector<opendrive::XodrLanePtr> nearest_lanes;
 
-  if (map_interface_->FindNearestLanes(goal_center, 1, nearest_lanes)) {
+  if (map_interface_->FindNearestXodrLanes(goal_center, 1, nearest_lanes)) {
       return nearest_lanes[0]->get_id();
   }
-  printf("No matching lane for goal definition found. Defaulting to LaneId 0.");
-  return LaneId(0);
+  printf("No matching lane for goal definition found. Defaulting to XodrLaneId 0.");
+  return XodrLaneId(0);
 }
 
-LanePtr LocalMap::FindLane(const Point2d& point) const {
-  LanePtr lane = map_interface_->FindLane(point);
+XodrLanePtr LocalMap::FindXodrLane(const Point2d& point) const {
+  XodrLanePtr lane = map_interface_->FindXodrLane(point);
   return lane;
 }
 
@@ -52,11 +52,11 @@ bool LocalMap::Generate(Point2d point) {
   }
   driving_corridor_ = DrivingCorridor();
 
-  goal_lane_id_ = GoalLaneIdFromPolygon(
+  goal_lane_id_ = GoalXodrLaneIdFromPolygon(
     goal_definition_->get_shape());
-  std::vector<LanePtr> lanes;
-  map_interface_->FindNearestLanes(point, 1, lanes);
-  LanePtr current_lane = lanes.at(0);
+  std::vector<XodrLanePtr> lanes;
+  map_interface_->FindNearestXodrLanes(point, 1, lanes);
+  XodrLanePtr current_lane = lanes.at(0);
 
   driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(
     current_lane->get_id(),
@@ -73,9 +73,9 @@ bool LocalMap::RecalculateDrivingCorridor(const Point2d &point) {
     return false;
   }
 
-  std::vector<LanePtr> lanes;
-  map_interface_->FindNearestLanes(point, 1, lanes);
-  LanePtr current_lane = lanes.at(0);
+  std::vector<XodrLanePtr> lanes;
+  map_interface_->FindNearestXodrLanes(point, 1, lanes);
+  XodrLanePtr current_lane = lanes.at(0);
 
   driving_corridor_ = map_interface_->ComputeDrivingCorridorFromStartToGoal(
     current_lane->get_id(), goal_lane_id_);

@@ -42,17 +42,17 @@ TEST(lane, open_drive) {
 
   //! new plan view
   PlanView p;
-  LaneOffset off = {1.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {1.5f, 0.0f, 0.0f, 0.0f};
 
   //! vertical
   p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
-  LaneWidth lane_width = {0, 10.0, off};
+  XodrLaneWidth lane_width = {0, 10.0, off};
 
-  LanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(),
+  XodrLanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(),
                                              lane_width, 0.05f);  // left side
 
-  lane->set_lane_type(LaneType::DRIVING);
-  EXPECT_EQ(lane->get_lane_type(), LaneType::DRIVING);
+  lane->set_lane_type(XodrLaneType::DRIVING);
+  EXPECT_EQ(lane->get_lane_type(), XodrLaneType::DRIVING);
 
   Line line = lane->get_line();
 
@@ -108,15 +108,15 @@ TEST(multiple_lane_widths, open_drive) {
 
   //! new plan view
   PlanView p;
-  LaneOffset off1 = {1.5f, 0.0f, 0.0f, 0.0f};
-  LaneOffset off2 = {0.0f, 0.003f, 0.0f, 0.0f};
+  XodrLaneOffset off1 = {1.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off2 = {0.0f, 0.003f, 0.0f, 0.0f};
 
-  LaneWidth lane_width1 = {0, 4.0, off1};
-  LaneWidth lane_width2 = {4.0, 10.0, off2};
+  XodrLaneWidth lane_width1 = {0, 4.0, off1};
+  XodrLaneWidth lane_width2 = {4.0, 10.0, off2};
   //! vertical
   p.add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
 
-  LanePtr lane = std::make_shared<Lane>(1);
+  XodrLanePtr lane = std::make_shared<XodrLane>(1);
   bool succ = lane->append(p.get_reference_line(), lane_width1, 0.05f);
 
   Line linel1 = lane->get_line();
@@ -144,38 +144,38 @@ TEST(road, open_drive) {
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
 
-  RoadLinkInfo pre;
+  XodrRoadLinkInfo pre;
   pre.id_ = 2;
   pre.type_ = "road";
 
-  RoadLinkInfo suc;
+  XodrRoadLinkInfo suc;
   suc.id_ = 1;
   suc.type_ = "road";
 
-  //! Road-Link
-  RoadLink l;  // can either link to another road or to a junction
+  //! XodrRoad-Link
+  XodrRoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
   l.set_successor(suc);
 
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
-  //! Lane-Section 2
-  LaneSectionPtr ls2(new LaneSection(10.0));
+  //! XodrLane-Section 2
+  XodrLaneSectionPtr ls2(new XodrLaneSection(10.0));
 
-  //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width = {0, 1, off};
-  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+  //! XodrLane
+  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width = {0, 1, off};
+  XodrLanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
                                              lane_width, 0.05f);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
                                               lane_width, 0.05f);
 
   ls->add_lane(lane);
   ls2->add_lane(lane2);
 
   //! new road
-  Road r("highway", 1);
+  XodrRoad r("highway", 1);
   r.set_plan_view(p);
   r.set_link(l);
   r.add_lane_section(ls);
@@ -193,8 +193,8 @@ TEST(junction, open_drive) {
   con.connecting_road_ = 200;
   con.id_ = 1;
 
-  LaneLink l1 = {1, -1};
-  LaneLink l2 = {2, 2};
+  XodrLaneLink l1 = {1, -1};
+  XodrLaneLink l2 = {2, 2};
 
   con.add_lane_link(l1);
   con.add_lane_link(l2);
@@ -211,31 +211,31 @@ TEST(map, open_drive) {
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Road-Link
+  //! XodrRoad-Link
 
-  RoadLinkInfo pre;
+  XodrRoadLinkInfo pre;
   pre.id_ = 1;
   pre.type_ = "road";
 
-  RoadLink l;  // can either link to another road or to a junction
+  XodrRoadLink l;  // can either link to another road or to a junction
   l.set_predecessor(pre);
   l.set_successor(pre);
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
-  //! Lane-Section 2
-  LaneSectionPtr ls2(new LaneSection(10.0));
+  //! XodrLane-Section 2
+  XodrLaneSectionPtr ls2(new XodrLaneSection(10.0));
 
-  //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10.0, off};
+  //! XodrLane
+  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_1 = {0, 10.0, off};
 
-  LanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+  XodrLanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
                                              lane_width_1, 0.05f);
-  LanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
                                               lane_width_1, 0.05f);
 
-  RoadMark rm{roadmark::RoadMarkType::SOLID, roadmark::RoadMarkColor::STANDARD,
+  XodrRoadMark rm{roadmark::XodrRoadMarkType::SOLID, roadmark::XodrRoadMarkColor::STANDARD,
               0.1};
 
   std::cout << print(rm) << std::endl;
@@ -246,7 +246,7 @@ TEST(map, open_drive) {
   ls2->add_lane(lane);
   ls2->add_lane(lane2);
 
-  RoadPtr r(new Road("highway", 100));
+  XodrRoadPtr r(new XodrRoad("highway", 100));
   r->set_plan_view(p);
   r->set_link(l);
   r->add_lane_section(ls);
@@ -255,26 +255,26 @@ TEST(map, open_drive) {
   PlanViewPtr p2(new PlanView());
   p2->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Road-Link
-  RoadLink l2 = {};  // can either link to another road or to a junction
+  //! XodrRoad-Link
+  XodrRoadLink l2 = {};  // can either link to another road or to a junction
 
-  //! Lane-Section 1
-  LaneSectionPtr ls3(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls3(new XodrLaneSection(0.0));
 
-  //! Lane
-  LaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_2 = {0, 10.0, off2};
+  //! XodrLane
+  XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_2 = {0, 10.0, off2};
 
-  LanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(),
+  XodrLanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(),
                                               lane_width_2, 0.05f);
-  LanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(),
+  XodrLanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(),
                                               lane_width_2, 0.05f);
 
   ls3->add_lane(lane3);
   ls3->add_lane(lane4);
 
   //! new road
-  RoadPtr r2(new Road("highway", 200));
+  XodrRoadPtr r2(new XodrRoad("highway", 200));
   r2->set_plan_view(p2);
   r2->set_link(l2);
   r2->add_lane_section(ls3);
@@ -286,8 +286,8 @@ TEST(map, open_drive) {
   con.connecting_road_ = 200;
   con.id_ = 1;
 
-  LaneLink link_1 = {-1, -1};
-  LaneLink link_2 = {1, 1};
+  XodrLaneLink link_1 = {-1, -1};
+  XodrLaneLink link_2 = {1, 1};
 
   con.add_lane_link(link_1);
   con.add_lane_link(link_2);
@@ -299,9 +299,9 @@ TEST(map, open_drive) {
   map->add_junction(j);
 
   // call
-  RoadPtr ret_road = map->get_road(100);
-  LaneSectionPtr ret_ls = ret_road->get_lane_sections()[0];
-  Lanes ret_lanes = ret_ls->get_lanes();
+  XodrRoadPtr ret_road = map->get_road(100);
+  XodrLaneSectionPtr ret_ls = ret_road->get_lane_sections()[0];
+  XodrLanes ret_lanes = ret_ls->get_lanes();
   
   EXPECT_GT(ret_lanes.size(), 0);
 

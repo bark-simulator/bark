@@ -40,22 +40,22 @@ class WorldTests(unittest.TestCase):
         agent = Agent(init_state, behavior, dynamic, execution, shape,
                       params.AddChild("agent"))
         road_map = OpenDriveMap()
-        newRoad = Road()
-        newRoad.id = 1
-        newRoad.name = "Autobahn A9"
+        newXodrRoad = XodrRoad()
+        newXodrRoad.id = 1
+        newXodrRoad.name = "Autobahn A9"
         newPlanView = PlanView()
         newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
-        newRoad.plan_view = newPlanView
-        line = newRoad.plan_view.get_reference_line().toArray()
+        newXodrRoad.plan_view = newPlanView
+        line = newXodrRoad.plan_view.get_reference_line().toArray()
         p = Point2d(line[-1][0], line[-1][1])
-        newRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newRoad.plan_view.get_reference_line()
-        lane_section = LaneSection(0)
-        lane = Lane()
+        newXodrRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+        line = newXodrRoad.plan_view.get_reference_line()
+        lane_section = XodrLaneSection(0)
+        lane = XodrLane()
         lane.line = line
         lane_section.add_lane(lane)
-        newRoad.add_lane_section(lane_section)
-        road_map.add_road(newRoad)
+        newXodrRoad.add_lane_section(lane_section)
+        road_map.add_road(newXodrRoad)
 
         r = Roadgraph()
         map_interface = MapInterface()

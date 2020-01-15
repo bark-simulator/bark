@@ -33,7 +33,7 @@ struct DrivingCorridor
   Line get_inner() const { return inner; }
   Line get_center() const { return center; }
 
-  std::vector<std::pair<int, LaneId>> get_lane_ids() const
+  std::vector<std::pair<int, XodrLaneId>> get_lane_ids() const
   {
     return lane_ids_;
   }
@@ -57,7 +57,7 @@ struct DrivingCorridor
 
   Line outer, inner, center;
   // 1st entry is the index from where the 2nd value lane id is valid
-  std::vector<std::pair<int, LaneId>> lane_ids_;
+  std::vector<std::pair<int, XodrLaneId>> lane_ids_;
   bool computed;
 };
 

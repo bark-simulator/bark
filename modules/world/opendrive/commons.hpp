@@ -17,45 +17,45 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-using LaneId = uint32_t;
-using LanePosition = int32_t;
-using RoadId = uint32_t;
+using XodrLaneId = uint32_t;
+using XodrLanePosition = int32_t;
+using XodrRoadId = uint32_t;
 
-struct RoadLinkInfo {
-  RoadLinkInfo() : id_(1000000), type_("") {}
-  RoadLinkInfo(const RoadId &id,
+struct XodrRoadLinkInfo {
+  XodrRoadLinkInfo() : id_(1000000), type_("") {}
+  XodrRoadLinkInfo(const XodrRoadId &id,
                const std::string &type) :
     id_(id),
     type_(type) {}
-  RoadId id_;
+  XodrRoadId id_;
   std::string type_;
 };
 
-struct RoadLink {
-  RoadLink() : predecessor_(), successor_() {}
-  RoadLink(const RoadLinkInfo &predecessor,
-           const RoadLinkInfo &successor) :
+struct XodrRoadLink {
+  XodrRoadLink() : predecessor_(), successor_() {}
+  XodrRoadLink(const XodrRoadLinkInfo &predecessor,
+           const XodrRoadLinkInfo &successor) :
     predecessor_(predecessor),
     successor_(successor) {}
-  RoadLinkInfo predecessor_;
-  RoadLinkInfo successor_;
+  XodrRoadLinkInfo predecessor_;
+  XodrRoadLinkInfo successor_;
   //! getter
-  RoadLinkInfo get_predecessor() const { return predecessor_; }
-  RoadLinkInfo get_successor() const { return successor_; }
-  void set_predecessor(const RoadLinkInfo &info) { predecessor_ = info; }
-  void set_successor(const RoadLinkInfo &info) { successor_ = info; }
+  XodrRoadLinkInfo get_predecessor() const { return predecessor_; }
+  XodrRoadLinkInfo get_successor() const { return successor_; }
+  void set_predecessor(const XodrRoadLinkInfo &info) { predecessor_ = info; }
+  void set_successor(const XodrRoadLinkInfo &info) { successor_ = info; }
 };
 
-inline std::string print(const RoadLink &l) {
+inline std::string print(const XodrRoadLink &l) {
   std::stringstream ss;
-  ss << "RoadLink.predecessor: " << l.predecessor_.id_ << \
+  ss << "XodrRoadLink.predecessor: " << l.predecessor_.id_ << \
         "of type" << l.predecessor_.type_ << "; ";
-  ss << "RoadLink.successor: " << l.successor_.id_ << \
+  ss << "XodrRoadLink.successor: " << l.successor_.id_ << \
         "of type" << l.successor_.type_ << std::endl;
   return ss.str();
 }
 
-struct LaneOffset {
+struct XodrLaneOffset {
   float a, b, c, d;
 };
 
@@ -63,31 +63,31 @@ inline float polynom(float x, float a, float b, float c, float d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
 
-// TODO(@all): use type LaneId here
-struct LaneLink {
-  LanePosition from_position;
-  LanePosition to_position;
+// TODO(@all): use type XodrLaneId here
+struct XodrLaneLink {
+  XodrLanePosition from_position;
+  XodrLanePosition to_position;
 };
 
-inline std::string print(const LaneLink &l) {
+inline std::string print(const XodrLaneLink &l) {
   std::stringstream ss;
-  ss << "LaneLink.from_position: " << l.from_position << "; ";
-  ss << "LaneLink.to_position: " << l.to_position << std::endl;
+  ss << "XodrLaneLink.from_position: " << l.from_position << "; ";
+  ss << "XodrLaneLink.to_position: " << l.to_position << std::endl;
   return ss.str();
 }
 
-using LaneLinks = std::vector<LaneLink>;
+using XodrLaneLinks = std::vector<XodrLaneLink>;
 
 struct Connection {
-  void add_lane_link(LaneLink link) { lane_links_.push_back(link); }
-  LaneLinks get_lane_links() const { return lane_links_; }
+  void add_lane_link(XodrLaneLink link) { lane_links_.push_back(link); }
+  XodrLaneLinks get_lane_links() const { return lane_links_; }
   uint32_t id_;
-  uint32_t incoming_road_;  // TODO(@all): use type RoadId here
+  uint32_t incoming_road_;  // TODO(@all): use type XodrRoadId here
   uint32_t connecting_road_;
-  LaneLinks lane_links_;
+  XodrLaneLinks lane_links_;
 };
 
-enum LaneType {
+enum XodrLaneType {
   NONE = 0,
   DRIVING = 1,
   //STOP = 2,
@@ -118,7 +118,7 @@ enum LaneType {
 
 namespace roadmark {
 
-enum RoadMarkType {
+enum XodrRoadMarkType {
   NONE = 0,
   SOLID = 1,
   BROKEN = 2,
@@ -134,7 +134,7 @@ enum RoadMarkType {
   */
 };
 
-enum RoadMarkColor {
+enum XodrRoadMarkColor {
   STANDARD = 0, // (equivalent to "white")
   /*BLUE = 1,
   GREEN = 2,
@@ -147,33 +147,33 @@ enum RoadMarkColor {
 
 } // namespace roadmark
 
-struct RoadMark {
-  roadmark::RoadMarkType type_;
-  roadmark::RoadMarkColor color_;
+struct XodrRoadMark {
+  roadmark::XodrRoadMarkType type_;
+  roadmark::XodrRoadMarkColor color_;
   float width_;
 };
 
-inline std::string print(const RoadMark &r) {
+inline std::string print(const XodrRoadMark &r) {
   std::stringstream ss;
-  ss << "RoadMark: type: " << r.type_ << ", color: " << \
+  ss << "XodrRoadMark: type: " << r.type_ << ", color: " << \
         r.color_ << ", width: " << r.width_ << std::endl;
   return ss.str();
 }
 
-struct LaneWidth {
+struct XodrLaneWidth {
   float s_start;
   float s_end;
-  LaneOffset off;
+  XodrLaneOffset off;
 };
 
 inline geometry::Line create_line_with_offset_from_line(
   geometry::Line previous_line,
   int id,
-  LaneWidth lane_width_current_lane,
+  XodrLaneWidth lane_width_current_lane,
   float s_inc = 0.5f) {
 
   namespace bg = boost::geometry;
-  LaneOffset off = lane_width_current_lane.off;
+  XodrLaneOffset off = lane_width_current_lane.off;
   float s = lane_width_current_lane.s_start;
   float s_end = lane_width_current_lane.s_end;
   float scale = 0.0f;
@@ -204,7 +204,7 @@ inline geometry::Line create_line_with_offset_from_line(
   return tmp_line;
 }
 
-//using LaneWidths = std::vector<LaneWidth>;
+//using XodrLaneWidths = std::vector<XodrLaneWidth>;
 
 }  // namespace opendrive
 }  // namespace world

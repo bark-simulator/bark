@@ -48,7 +48,7 @@ class EnvironmentTests(unittest.TestCase):
         print(driving_corridor)
         for id in driving_corridor.get_lane_ids():
             l = map_interface.get_lane(id[1])
-            assert(l.lane_type == LaneType.driving)
+            assert(l.lane_type == XodrLaneType.driving)
 
         time.sleep(2)  # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
 
@@ -133,7 +133,7 @@ class EnvironmentTests(unittest.TestCase):
         # Simple test
         point_close = Point2d(5112.68262, 5086.44971)
         lane_sw = map_interface.find_lane(point_close)
-        self.assertIsNotNone(lane_sw, "This point is still in the left lane! Lane boundary is 5112.683")
+        self.assertIsNotNone(lane_sw, "This point is still in the left lane! XodrLane boundary is 5112.683")
 
         switched_lane = False
         lng_coord = 5086.44971
@@ -150,7 +150,7 @@ class EnvironmentTests(unittest.TestCase):
                 # print(prev_i)
                 # print(lane_sw.lane_id)
                 # print(i)
-                self.assertFalse(switched_lane, "Lane switch should only happens once!")
+                self.assertFalse(switched_lane, "XodrLane switch should only happens once!")
                 switched_lane = True
             prev_i = i
             prev = lane_sw.lane_id
@@ -169,10 +169,10 @@ class EnvironmentTests(unittest.TestCase):
         world.set_map(map_interface)
 
         lane_sw = map_interface.find_lane(Point2d(46, 180))
-        assert lane_sw.lane_type == LaneType.sidewalk
+        assert lane_sw.lane_type == XodrLaneType.sidewalk
 
         lane_rl = map_interface.find_lane(Point2d(52, 130))
-        assert lane_rl.lane_type == LaneType.driving
+        assert lane_rl.lane_type == XodrLaneType.driving
 
         lane_no_lane = map_interface.find_lane(Point2d(120, 140))
         assert lane_no_lane == None

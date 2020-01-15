@@ -26,9 +26,9 @@ class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too 
   ~OpenDriveMap() {}
 
   //! setter functions
-  bool add_road(std::shared_ptr<Road> r) {
+  bool add_road(std::shared_ptr<XodrRoad> r) {
     roads_[r->get_id()] = r;
-    Lanes road_lanes = r->get_lanes();
+    XodrLanes road_lanes = r->get_lanes();
     lanes_.insert(road_lanes.begin(), road_lanes.end());
     return true;
   }
@@ -37,15 +37,15 @@ class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too 
     return true;
   }
   //! getter functions
-  RoadPtr get_road(RoadId id) const { return roads_.at(id); }
+  XodrRoadPtr get_road(XodrRoadId id) const { return roads_.at(id); }
   std::shared_ptr<Junction> get_junction(uint32_t id) const {
     return junctions_.at(id);
   }
-  LanePtr get_lane(LaneId id) const { return lanes_.at(id); }
+  XodrLanePtr get_lane(XodrLaneId id) const { return lanes_.at(id); }
 
-  Roads get_roads() const { return roads_; }
+  XodrRoads get_roads() const { return roads_; }
   Junctions get_junctions() const { return junctions_; }
-  Lanes get_lanes() const { return lanes_;}
+  XodrLanes get_lanes() const { return lanes_;}
 
   std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const {
     modules::geometry::Line all_lanes_linestrings;
@@ -61,8 +61,8 @@ class OpenDriveMap {  // TODO(@hart): rename to OpenDrive.. OpenDriveMap is too 
   }
 
  private:
-  Roads roads_;
-  Lanes lanes_;
+  XodrRoads roads_;
+  XodrLanes lanes_;
   Junctions junctions_;
 };
 

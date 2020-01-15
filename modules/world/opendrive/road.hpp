@@ -20,36 +20,36 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-using LaneSections = std::vector<LaneSectionPtr>;
+using XodrLaneSections = std::vector<XodrLaneSectionPtr>;
 
-class Road {
+class XodrRoad {
  public:
-  Road(const std::string& name, RoadId id) : id_(id), name_(name) {}
+  XodrRoad(const std::string& name, XodrRoadId id) : id_(id), name_(name) {}
 
-  explicit Road(const std::shared_ptr<Road>& road) :
+  explicit XodrRoad(const std::shared_ptr<XodrRoad>& road) :
     id_(road->id_),
     name_(road->name_),
     link_(road->link_),
     reference_(road->reference_),
     lane_sections_(road->lane_sections_) {}
   
-  Road() {}
-  virtual ~Road() {}
+  XodrRoad() {}
+  virtual ~XodrRoad() {}
 
   //! getter
   std::shared_ptr<PlanView> get_plan_view() const { return reference_; }
   std::string get_name() const { return name_; }
-  RoadId get_id() const { return id_; }
-  RoadLink get_link() const { return link_; }
-  LaneSections get_lane_sections() const { return lane_sections_; }
+  XodrRoadId get_id() const { return id_; }
+  XodrRoadLink get_link() const { return link_; }
+  XodrLaneSections get_lane_sections() const { return lane_sections_; }
 
   // TODO (@hart): implement function get_next_roads()
   // either one road from successor or multiple roads from junction
 
-  Lanes get_lanes() const {
-    Lanes lanes;
+  XodrLanes get_lanes() const {
+    XodrLanes lanes;
     for (auto& lane_section : lane_sections_) {
-      Lanes section_lanes = lane_section->get_lanes();
+      XodrLanes section_lanes = lane_section->get_lanes();
       lanes.insert(section_lanes.begin(), section_lanes.end());
     }
     return lanes;
@@ -57,28 +57,28 @@ class Road {
 
 
   //! setter
-  void set_id(RoadId id) { id_ = id; }
+  void set_id(XodrRoadId id) { id_ = id; }
   void set_name(const std::string& name) { name_ = name; }
   void set_plan_view(PlanViewPtr p) { reference_ = p; }
-  void set_link(RoadLink l) { link_ = l; }
+  void set_link(XodrRoadLink l) { link_ = l; }
 
-  void add_lane_section(LaneSectionPtr l) {
-    // additionally we need lane 0 in LaneSection
-    // Lane lane_0 = create_lane();
+  void add_lane_section(XodrLaneSectionPtr l) {
+    // additionally we need lane 0 in XodrLaneSection
+    // XodrLane lane_0 = create_lane();
     lane_sections_.push_back(l);
   }
 
  private:
-  RoadId id_;
+  XodrRoadId id_;
   std::string name_;
-  RoadLink link_;
+  XodrRoadLink link_;
   PlanViewPtr reference_;
-  LaneSections lane_sections_;
+  XodrLaneSections lane_sections_;
 };
 
-using RoadPtr = std::shared_ptr<Road>;
-using Roads = std::map<RoadId, RoadPtr>;
-using RoadSequence = std::vector<RoadId>;
+using XodrRoadPtr = std::shared_ptr<XodrRoad>;
+using XodrRoads = std::map<XodrRoadId, XodrRoadPtr>;
+using XodrRoadSequence = std::vector<XodrRoadId>;
 
 }  // namespace opendrive
 }  // namespace world

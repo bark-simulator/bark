@@ -16,33 +16,33 @@
 namespace world {
 namespace map {
 
-using modules::opendrive::RoadPtr;
-using modules::opendrive::Road;
-using modules::opendrive::Lanes;
-using modules::opendrive::Lane;
+using modules::opendrive::XodrRoadPtr;
+using modules::opendrive::XodrRoad;
+using modules::opendrive::XodrLanes;
+using modules::opendrive::XodrLane;
 
 // ONLY STORE STUFF
-struct BarkRoad : public Road {
-  explicit BarkRoad(const RoadPtr& road) : Road(road) {}
+struct BarkXodrRoad : public XodrRoad {
+  explicit BarkXodrRoad(const XodrRoadPtr& road) : XodrRoad(road) {}
 
-  BarkLanes GetLanes() const {
+  BarkXodrLanes GetXodrLanes() const {
     return bark_lanes_;
   }
 
-  BarkLanePtr GetLane(unisgned int lane_id) const {
+  BarkXodrLanePtr GetXodrLane(unisgned int lane_id) const {
     return bark_lanes_.at(lane_id);
   }
 
-  BarkLanePtr GetNextRoad() const {
+  BarkXodrLanePtr GetNextXodrRoad() const {
     return next_road_;
   }
 
-  BarkRoadPtr next_road_;
-  BarkLanes bark_lanes_;
+  BarkXodrRoadPtr next_road_;
+  BarkXodrLanes bark_lanes_;
 };
 
-using BarkRoadPtr = std::shared_ptr<BarkRoad>;
-using BarkRoads = std::map<unsigned int, BarkRoadPtr>;
+using BarkXodrRoadPtr = std::shared_ptr<BarkXodrRoad>;
+using BarkXodrRoads = std::map<unsigned int, BarkXodrRoadPtr>;
 
 
 }  // namespace map

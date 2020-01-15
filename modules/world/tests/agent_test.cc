@@ -47,19 +47,19 @@ TEST(agent, standard_agent) {
     p_1.add_line(Point2d(25.0f,0.0f), 0.0, 25.0f);
 
     //! lane sections
-    LaneSection section_1(0.0f);
-    LaneSection section_2(30.0f);
+    XodrLaneSection section_1(0.0f);
+    XodrLaneSection section_2(30.0f);
 
-    LaneOffset off = {1.5, 0, 0, 0};
-    LaneWidths lane_widths_1 = {{0, 30, off}};
-    LaneWidths lane_widths_2 = {{0, 30, off}};
-    LaneWidths lane_widths_3 = {{30, 50, off}};
-    LaneWidths lane_widths_4 = {{30, 50, off}};
+    XodrLaneOffset off = {1.5, 0, 0, 0};
+    XodrLaneWidths lane_widths_1 = {{0, 30, off}};
+    XodrLaneWidths lane_widths_2 = {{0, 30, off}};
+    XodrLaneWidths lane_widths_3 = {{30, 50, off}};
+    XodrLaneWidths lane_widths_4 = {{30, 50, off}};
 
-    Lane l_0 = p_1.create_lane(1, lane_widths_1);
-    Lane l_1 = p_1.create_lane(-1, lane_widths_2);
-    Lane l_2 = p_1.create_lane(1, lane_widths_3);
-    Lane l_3 = p_1.create_lane(-1, lane_widths_4);
+    XodrLane l_0 = p_1.create_lane(1, lane_widths_1);
+    XodrLane l_1 = p_1.create_lane(-1, lane_widths_2);
+    XodrLane l_2 = p_1.create_lane(1, lane_widths_3);
+    XodrLane l_3 = p_1.create_lane(-1, lane_widths_4);
 
     section_1.add_lane(l_0);
     section_1.add_lane(l_1);
@@ -67,7 +67,7 @@ TEST(agent, standard_agent) {
     section_2.add_lane(l_2);
     section_2.add_lane(l_3);
 
-    Road r("highway", 100);
+    XodrRoad r("highway", 100);
     r.set_plan_view(p_1);
     r.add_lane_section(section_1);
     r.add_lane_section(section_2);
