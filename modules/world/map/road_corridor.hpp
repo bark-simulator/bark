@@ -25,6 +25,40 @@ using modules::geometry::Polygon;
 
 
 struct LaneCorridor {
+  //! Getter
+  Boundary GetLeftBoundary() const {
+    return left_boundary_;
+  }
+  Boundary GetRightBoundary() const {
+    return right_boundary_;
+  }
+  Line GetCenterLine() const {
+    return center_line_;
+  }
+  Polygon GetMergedPolygon() const {
+    return merged_polygon_;
+  }
+  std::map<float, LanePtr> GetLanes() const {
+    return lanes_;
+  }
+
+  //! Setter
+  void SetLeftBoundary(const Boundary& boundary) {
+    left_boundary_ = boundary;
+  }
+  void SetRightBoundary(const Boundary& boundary) {
+    right_boundary_ = boundary;
+  }
+  void SetCenterLine(const Line& line) {
+    center_line_ = line;
+  }
+  void SetMergedPolygon(const Polygon& poly) {
+    merged_polygon_ = poly;
+  }
+  void SetLanes(float s_start, const LanePtr& lane) {
+    lanes_[s_start] = lane;
+  }
+
   std::map<float, LanePtr> lanes_;
   Line center_line_;
   Polygon merged_polygon_;
