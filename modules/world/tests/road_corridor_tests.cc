@@ -26,6 +26,7 @@ TEST(road_corridor_tests, basic_road_corridor) {
   using modules::world::map::Roads;
   using modules::world::map::RoadPtr;
   using modules::world::map::RoadCorridor;
+  using modules::world::map::RoadCorridorPtr;
 
   using modules::geometry::Point2d;
   using modules::geometry::Line;
