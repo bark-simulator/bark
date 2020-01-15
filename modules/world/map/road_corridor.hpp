@@ -20,11 +20,7 @@ namespace modules {
 namespace world {
 namespace map {
 
-using modules::map::Road;
-using modules::map::RoadId;
-using modules::map::Lane;
-using modules::map::LaneId;
-using modules::map::Boundary;
+
 using modules::geometry::Line;
 using modules::geometry::Polygon;
 
