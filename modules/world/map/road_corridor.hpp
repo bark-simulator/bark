@@ -20,7 +20,6 @@ namespace modules {
 namespace world {
 namespace map {
 
-
 using modules::geometry::Line;
 using modules::geometry::Polygon;
 
@@ -36,20 +35,23 @@ using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
 
 
 struct RoadCorridor {
+  //! Getter
   RoadPtr GetRoad(RoadId road_id) const {
     return roads_.at(road_id);
   }
-
   Roads GetRoads() const {
     return roads_;
   }
-
   Lanes GetLanes(RoadId road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
-
   unsigned int GetHash() const {
+    return 0;
+  }
 
+  //! Setter
+  void SetRoads(const Roads& roads) {
+    roads_ = roads;
   }
 
   Roads roads_;
@@ -62,4 +64,4 @@ using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
 }  // namespace world
 }  // namespace modules
 
-#endif
+#endif  // MODULES_WORLD_MAP_ROAD_CORRIDOR_HPP_
