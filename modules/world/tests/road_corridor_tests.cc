@@ -18,13 +18,16 @@ TEST(lane_road_tests, lane) {
   using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::map::MapInterface;
   using modules::world::map::Lane;
+  using modules::world::map::LaneId;
   using modules::world::map::LanePtr;
   using modules::world::map::Lanes;
   using modules::world::map::Road;
+  using modules::world::map::RoadId;
   using modules::world::map::Roads;
   using modules::world::map::RoadPtr;
 
   using modules::geometry::Point2d;
+  using modules::geometry::Line;
   using modules::models::tests::make_map_interface_two_connected_roads;
 
   MapInterface map_interface = make_map_interface_two_connected_roads();
@@ -33,20 +36,42 @@ TEST(lane_road_tests, lane) {
   // convert xodr to lane and road
   Roads roads;
   for (auto xodr_road : open_drive_map->get_roads()) {
-    std::cout << "RoadId: "<< xodr_road.second->get_id() << std::endl;
+    // std::cout << "RoadId: "<< xodr_road.second->get_id() << std::endl;
     RoadPtr road = std::make_shared<Road>(xodr_road.second);
     Lanes lanes;
     for (auto xodr_lane : xodr_road.second->get_lanes()) {
-      std::cout << "LaneId: "<< xodr_lane.second->get_id() << std::endl;
+      // std::cout << "LaneId: "<< xodr_lane.second->get_id() << std::endl;
       LanePtr lane = std::make_shared<Lane>(xodr_lane.second);
       lanes[xodr_lane.second->get_id()] = lane;
     }
     road->SetLanes(lanes);
-    roads[xodr_road.second->get_id()] = road;
+    roads[xodr_road.first] = road;
   }
 
-}
+  for (auto xodr_road : open_drive_map->get_roads()) {
+    RoadId next_road_id = xodr_road.second->get_link().get_successor().id_;
+    std::cout << next_road_id << std::endl;
 
+    for (auto xodr_lane : xodr_road.second->get_lanes()) {
+      // LaneId next_lane_id = xodr_lane.second->get_link().get_successor().id_;
+      // lanes[xodr_lane.second->get_id()]->SetNextlane(lanes[next_lane_id]);
+      // NOTE(@all): this has to be retrived from the roadgraph
+    }
+  }
+
+  // basic asserts
+  EXPECT_EQ(roads.size(), 2);
+  EXPECT_EQ(roads[100]->GetLanes().size(), 3);
+  EXPECT_EQ(roads[100]->GetLane(1)->get_id(), 1);
+  EXPECT_EQ(roads[100]->GetLane(2)->get_id(), 2);
+  EXPECT_EQ(roads[100]->GetLane(3)->get_id(), 3);
+  EXPECT_EQ(roads[101]->GetLanes().size(), 3);
+  EXPECT_EQ(roads[101]->GetLane(4)->get_id(), 4);
+  EXPECT_EQ(roads[101]->GetLane(5)->get_id(), 5);
+  EXPECT_EQ(roads[101]->GetLane(6)->get_id(), 6);
+
+
+}
 
 
 TEST(lane_corridor_tests, lane_corridors) {
