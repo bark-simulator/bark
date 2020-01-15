@@ -13,7 +13,7 @@
 #include "modules/models/tests/make_test_world.hpp"
 
 
-TEST(lane_road_tests, lane) {
+TEST(road_corridor_tests, basic_road_corridor) {
   using modules::world::opendrive::XodrLanePtr;
   using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::map::MapInterface;
@@ -25,6 +25,7 @@ TEST(lane_road_tests, lane) {
   using modules::world::map::RoadId;
   using modules::world::map::Roads;
   using modules::world::map::RoadPtr;
+  using modules::world::map::RoadCorridor;
 
   using modules::geometry::Point2d;
   using modules::geometry::Line;
@@ -50,8 +51,6 @@ TEST(lane_road_tests, lane) {
 
   for (auto xodr_road : open_drive_map->get_roads()) {
     RoadId next_road_id = xodr_road.second->get_link().get_successor().id_;
-    std::cout << next_road_id << std::endl;
-
     for (auto xodr_lane : xodr_road.second->get_lanes()) {
       // LaneId next_lane_id = xodr_lane.second->get_link().get_successor().id_;
       // lanes[xodr_lane.second->get_id()]->SetNextlane(lanes[next_lane_id]);
@@ -70,33 +69,8 @@ TEST(lane_road_tests, lane) {
   EXPECT_EQ(roads[101]->GetLane(5)->get_id(), 5);
   EXPECT_EQ(roads[101]->GetLane(6)->get_id(), 6);
 
+  RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
+  road_corridor->SetRoads(roads);
 
 }
 
-
-TEST(lane_corridor_tests, lane_corridors) {
-  using modules::world::opendrive::XodrLanePtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::map::MapInterface;
-  using modules::geometry::Point2d;
-  using modules::models::tests::make_two_lane_map_interface;
-
-  MapInterface map_interface = make_two_lane_map_interface();
-  OpenDriveMapPtr open_drive_map = map_interface.get_open_drive_map();
-
-  // TODO(@hart): create LaneCorridor
-}
-
-
-TEST(road_corridors_tests, road_corridors) {
-  using modules::world::opendrive::XodrLanePtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::map::MapInterface;
-  using modules::geometry::Point2d;
-  using modules::models::tests::make_two_lane_map_interface;
-
-  MapInterface map_interface = make_two_lane_map_interface();
-  OpenDriveMapPtr open_drive_map = map_interface.get_open_drive_map();
-
-  // TODO(@hart): create RoadCorridor
-}
