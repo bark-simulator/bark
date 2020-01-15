@@ -27,24 +27,24 @@ struct Boundary {
 };
 
 // ONLY STORE STUFF
-struct BarkXodrLane : public XodrLane {
-  explicit BarkXodrLane(const XodrLanePtr& lane) : XodrLane(lane) {}
+struct Lane : public XodrLane {
+  explicit Lane(const XodrLanePtr& lane) : XodrLane(lane) {}
 
-  BarkXodrLanePtr GetLeftXodrLane(unisgned int lane_id) const {
+  LanePtr GetLeftLane(unisgned int lane_id) const {
     return left_lanes_.at(lane_id);
   }
 
-  BarkXodrLanePtr GetRightXodrLane(unisgned int lane_id) const {
+  LanePtr GetRightLane(unisgned int lane_id) const {
     return right_lanes_.at(lane_id);
   }
 
-  BarkXodrLanePtr GetNextXodrLane() const {
+  LanePtr GetNextLane() const {
     return next_lane_id_;
   }
 
-  std::map<int, BarkXodrLanePtr> left_lanes_;  // from_id, to_id
-  std::map<int, BarkXodrLanePtr> right_lanes_;  // from_id, to_id
-  BarkXodrLanePtr next_lane_;
+  std::map<int, LanePtr> left_lanes_;  // from_id, to_id
+  std::map<int, LanePtr> right_lanes_;  // from_id, to_id
+  LanePtr next_lane_;
 
   Line center_line_;
   Boundary left_boundary_;
@@ -52,8 +52,8 @@ struct BarkXodrLane : public XodrLane {
   Polygon polygon_;
 };
 
-using BarkXodrLanePtr = std::shared_ptr<BarkXodrLane>;
-using BarkXodrLanes = std::map<unsigned int, BarkXodrLanePtr>;
+using LanePtr = std::shared_ptr<Lane>;
+using Lanes = std::map<unsigned int, LanePtr>;
 
 }  // namespace map
 }  // namespace world

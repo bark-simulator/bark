@@ -22,27 +22,27 @@ using modules::opendrive::XodrLanes;
 using modules::opendrive::XodrLane;
 
 // ONLY STORE STUFF
-struct BarkXodrRoad : public XodrRoad {
-  explicit BarkXodrRoad(const XodrRoadPtr& road) : XodrRoad(road) {}
+struct Road : public XodrRoad {
+  explicit Road(const XodrRoadPtr& road) : XodrRoad(road) {}
 
-  BarkXodrLanes GetXodrLanes() const {
+  Lanes GetLanes() const {
     return bark_lanes_;
   }
 
-  BarkXodrLanePtr GetXodrLane(unisgned int lane_id) const {
+  LanePtr GetLane(unisgned int lane_id) const {
     return bark_lanes_.at(lane_id);
   }
 
-  BarkXodrLanePtr GetNextXodrRoad() const {
+  LanePtr GetNextRoad() const {
     return next_road_;
   }
 
-  BarkXodrRoadPtr next_road_;
-  BarkXodrLanes bark_lanes_;
+  RoadPtr next_road_;
+  Lanes bark_lanes_;
 };
 
-using BarkXodrRoadPtr = std::shared_ptr<BarkXodrRoad>;
-using BarkXodrRoads = std::map<unsigned int, BarkXodrRoadPtr>;
+using RoadPtr = std::shared_ptr<Road>;
+using Roads = std::map<unsigned int, RoadPtr>;
 
 
 }  // namespace map
