@@ -130,6 +130,36 @@ TEST(geometry, line) {
   EXPECT_NEAR(get_nearest_s(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1f);
 }
 
+TEST(geometry, line_transform) {
+  using modules::geometry::Line;
+  using modules::geometry::Point2d;
+  namespace bg = boost::geometry;
+
+  Line line_in;  // vertical
+  line_in.add_point(Point2d(0.0f, 0.0f));
+  line_in.add_point(Point2d(0.0f, 10.0f));
+
+  float hdg = 3.14159265359;
+  float offset_x = 1;
+  float offset_y = 2;
+
+  Line obj_rotated = rotate(line_in, hdg);
+  EXPECT_NEAR(line_in.length(), obj_rotated.length(), 0.01);
+
+  EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(0)), 0, 0);
+  EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(0)), 0, 0);
+  EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(1)), 0, 0.1);
+  EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(1)), -10, 0.1);
+
+  Line obj_transformed = translate(obj_rotated, offset_x, offset_y);
+  EXPECT_NEAR(line_in.length(), obj_transformed.length(), 0.01);
+
+  EXPECT_NEAR(bg::get<0>(obj_transformed.obj_.at(0)), 1, 0);
+  EXPECT_NEAR(bg::get<1>(obj_transformed.obj_.at(0)), 2, 0);
+  EXPECT_NEAR(bg::get<0>(obj_transformed.obj_.at(1)), 1, 0.1);
+  EXPECT_NEAR(bg::get<1>(obj_transformed.obj_.at(1)), -8, 0.1);
+}
+
 TEST(geometry, polygon) {
   using modules::geometry::Point2d;
   using modules::geometry::Polygon;

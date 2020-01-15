@@ -37,6 +37,8 @@ class PlanView {
 
   geometry::Point2d test(geometry::Point2d p) { return p; }
 
+  bool apply_offset_transform(float x, float y, float hdg);
+
   float get_length() const { return length_; }
   float get_distance( const geometry::Point2d &p) const { return boost::geometry::distance(reference_line_.obj_, p); }
 
