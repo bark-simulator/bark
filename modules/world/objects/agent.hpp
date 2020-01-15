@@ -114,6 +114,7 @@ class Agent : public Object {
 
   // TODO(@fortiss): this should be the local map the planners work with
   modules::world::map::LocalMapPtr local_map_;
+  // modules::world::map::RoadCorridor road_corridor_;
 
   models::behavior::StateActionHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter
