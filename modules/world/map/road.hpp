@@ -29,22 +29,21 @@ struct Road : public XodrRoad {
     XodrRoad(road),
     next_road_(nullptr) {}
 
+  //! Getter
   Lanes GetLanes() const {
     return lanes_;
   }
-
-  void SetLanes(const Lanes& lanes) {
-    lanes_ = lanes;
-  }
-
   LanePtr GetLane(LaneId lane_id) const {
     return lanes_.at(lane_id);
   }
-
   std::shared_ptr<Road> GetNextRoad() const {
     return next_road_;
   }
 
+  //! Setter
+  void SetLanes(const Lanes& lanes) {
+    lanes_ = lanes;
+  }
   void SetNextRoad(const std::shared_ptr<Road>& road) {
     next_road_ = road;
   }
