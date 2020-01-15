@@ -18,13 +18,10 @@ namespace world {
 namespace map {
 
 using RoadId = unsigned int;
-using modules::opendrive::XodrRoadPtr;
-using modules::opendrive::XodrRoad;
-using modules::opendrive::XodrLanes;
-using modules::opendrive::XodrLane;
-using modules::world::map::LanePtr;
-using modules::world::map::Lanes;
-using modules::world::map::LaneId;
+using modules::world::opendrive::XodrRoadPtr;
+using modules::world::opendrive::XodrRoad;
+using modules::world::opendrive::XodrLanes;
+using modules::world::opendrive::XodrLane;
 
 
 struct Road : public XodrRoad {
@@ -38,7 +35,7 @@ struct Road : public XodrRoad {
     return bark_lanes_.at(lane_id);
   }
 
-  LanePtr GetNextRoad() const {
+  std::shared_ptr<Road> GetNextRoad() const {
     return next_road_;
   }
 

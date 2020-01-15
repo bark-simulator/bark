@@ -13,6 +13,21 @@ cc_test(
 )
 
 cc_test(
+    name = "road_corridor_tests",
+    srcs = [
+        "road_corridor_tests.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world/opendrive",
+        "//modules/world:world",
+        "//modules/world/map:road_corridor",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
     name = "agent_test",
     srcs = [
         "agent_test.cc",

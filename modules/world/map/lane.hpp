@@ -11,42 +11,46 @@
 #include <map>
 
 #include "modules/world/opendrive/road.hpp"
+#include "modules/geometry/geometry.hpp"
 
 namespace modules {
 namespace world {
 namespace map {
 
-using RoadId = unsigned int;
-using modules::opendrive::XodrRoadPtr;
-using modules::opendrive::XodrRoad;
-using modules::opendrive::XodrLanes;
-using modules::opendrive::XodrLane;
+using LaneId = unsigned int;
+using modules::world::opendrive::XodrRoadPtr;
+using modules::world::opendrive::XodrRoad;
+using modules::world::opendrive::XodrLanes;
+using modules::world::opendrive::XodrLane;
+using modules::world::opendrive::XodrLanePtr;
+using modules::geometry::Polygon;
+using modules::geometry::Line;
 
 
 struct Boundary {
   Line line_;
-  Type type_;
+  int type_;
 };
 
 
 struct Lane : public XodrLane {
   explicit Lane(const XodrLanePtr& lane) : XodrLane(lane) {}
 
-  LanePtr GetLeftLane(unisgned int lane_id) const {
+  std::shared_ptr<Lane> GetLeftLane(LaneId lane_id) const {
     return left_lanes_.at(lane_id);
   }
 
-  LanePtr GetRightLane(unisgned int lane_id) const {
+  std::shared_ptr<Lane> GetRightLane(LaneId lane_id) const {
     return right_lanes_.at(lane_id);
   }
 
-  LanePtr GetNextLane() const {
-    return next_lane_id_;
+  std::shared_ptr<Lane> GetNextLane() const {
+    return next_lane_;
   }
 
-  std::map<int, LanePtr> left_lanes_;  // from_id, to_id
-  std::map<int, LanePtr> right_lanes_;  // from_id, to_id
-  LanePtr next_lane_;
+  std::map<int, std::shared_ptr<Lane>> left_lanes_;  // from_id, to_id
+  std::map<int, std::shared_ptr<Lane>> right_lanes_;  // from_id, to_id
+  std::shared_ptr<Lane> next_lane_;
 
   Line center_line_;
   Boundary left_boundary_;
