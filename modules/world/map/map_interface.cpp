@@ -461,17 +461,15 @@ void MapInterface::CalculateLaneCorridors(
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   LanePtr lane = std::make_shared<Lane>(xodr_lane);
-  // TODO(@hart): left boundary
-  // TODO(@hart): right boundary
-  // Roadgraph::ComputeXodrLaneBoundaries(const XodrLaneId &lane_id)
+  // center lines
+  modules::geometry::Line center_line =
+    roadgraph_->GetCenterLine(xodr_lane->get_id());
+  lane->SetCenterLine(center_line);
 
-  // TODO(@hart): center line
-  // Line ComputeCenterLine(const Line& outer_line_,
-  //                        const Line& inner_line_)
-
-  // TODO(@hart): polygon
-  // Polygon polygon = ComputeXodrLanePolygon(xodr_lane->get_id());
-  // lane->SetPolygon();
+  // polygons
+  std::pair<PolygonPtr, bool> polygon_success =
+    roadgraph_->ComputeXodrLanePolygon(xodr_lane->get_id());
+  lane->SetPolygon(*polygon_success.first);
   return lane;
 }
 
@@ -508,18 +506,36 @@ void MapInterface::GenerateRoadCorridor(
       // lane successor
       XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first);
       lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
-      // left and right
+
+      // left and right lanes
       XodrLaneId left_lane_id = roadgraph_->GetLeftLane(lane.first);
       XodrLaneId right_lane_id = roadgraph_->GetRightLane(lane.first);
       LanePtr left_lane = lane.second->GetLeftLane(left_lane_id);
       LanePtr right_lane = lane.second->GetRightLane(right_lane_id);
       lane.second->SetLeftLane(lane.first, left_lane);
       lane.second->SetRightLane(lane.first, right_lane);
+
+      // set boundaries for lane
+      XodrLaneId left_boundary_lane_id =
+        roadgraph_->GetLeftBoundary(lane.first);
+      XodrLaneId right_boundary_lane_id =
+        roadgraph_->GetRightBoundary(lane.first);
+      LanePtr left_lane_boundary = road.second->GetLane(left_boundary_lane_id);
+      LanePtr right_lane_boundary = road.second->GetLane(left_boundary_lane_id);
+      Boundary left_bound, right_bound;
+      left_bound.SetLine(left_lane_boundary->get_line());
+      left_bound.SetType(left_lane_boundary->get_road_mark());
+      right_bound.SetLine(right_lane_boundary->get_line());
+      right_bound.SetType(right_lane_boundary->get_road_mark());
+      lane.second->SetLeftBoundary(left_bound);
+      lane.second->SetRightBoundary(right_bound);
     }
   }
 
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
+
+  // TODO(@hart): calculate LaneCorridors
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
