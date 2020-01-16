@@ -18,7 +18,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-bin/modules/world/tests/observed_world_test",
+            "program": "${workspaceFolder}/bazel-bin/modules/world/tests/road_corridor_tests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

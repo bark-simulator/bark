@@ -478,8 +478,6 @@ LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
 RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
   XodrRoadPtr xodr_road = open_drive_map_->get_road(road_id);
   RoadPtr road = std::make_shared<Road>(xodr_road);
-  // NOTE: information from the RG
-
   Lanes lanes;
   for (auto& lane_section : xodr_road->get_lane_sections()) {
     for (auto& lane : lane_section->get_lanes()) {
@@ -506,7 +504,8 @@ void MapInterface::GenerateRoadCorridor(
   // road->SetNextRoad(next_road);
 
   // TODO(@hart): set lane links
-  // std::vector<XodrLaneId> successor_lane_ids = get_successor_lanes(xodr_lane->get_id())
+  // std::vector<XodrLaneId> successor_lane_ids = \
+  //   set_successor_lanes(xodr_lane->get_id())
   // TODO(@hart): left lane
   // TODO(@hart): right lane
   // get_outer_neighbor(const XodrLaneId& lane_id)
