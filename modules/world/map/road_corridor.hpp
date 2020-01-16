@@ -28,6 +28,13 @@ using modules::world::opendrive::XodrRoadId;
 
 
 struct LaneCorridor {
+  LanePtr GetLeftLane(const LaneId& lane_id) {
+    // TODO(@hart): to be implemented
+  }
+  LanePtr GetRightLane(const LaneId& lane_id) {
+    // TODO(@hart): to be implemented
+  }
+
   //! Getter
   Boundary GetLeftBoundary() const {
     return left_boundary_;
@@ -62,7 +69,7 @@ struct LaneCorridor {
     lanes_[s_start] = lane;
   }
 
-  std::map<float, LanePtr> lanes_;
+  std::map<float, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
   Polygon merged_polygon_;
   Boundary left_boundary_;

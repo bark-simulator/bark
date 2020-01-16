@@ -21,6 +21,7 @@ using LaneId = unsigned int;
 using modules::world::opendrive::XodrRoadPtr;
 using modules::world::opendrive::XodrRoad;
 using modules::world::opendrive::XodrLanes;
+using modules::world::opendrive::XodrRoadMark;
 using modules::world::opendrive::XodrLane;
 using modules::world::opendrive::XodrLanePtr;
 using modules::geometry::Polygon;
@@ -31,11 +32,11 @@ struct Boundary {
   void SetLine(const Line& line) {
     line_ = line;
   }
-  void SetType(const int& type) {
+  void SetType(const XodrRoadMark& type) {
     type_ = type;
   }
   Line line_;
-  int type_;
+  XodrRoadMark type_;
 };
 
 
