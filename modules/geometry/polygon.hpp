@@ -35,16 +35,15 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 
   void UpdateDistancesToCenter();
 
-  void ConcatenatePolygons(const Polygon_t& poly) {
-    // TODO(@hart): implement
-    // Polygon_t merged_polygon;
-    // boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
-    // // boost::geometry::correct(poly.obj_);
-    // boost::geometry::union_(
-    //   Shape<bg::model::polygon<T>, T>::obj_,
-    //   poly.obj_,
-    //   merged_polygon.obj_);
-    // Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon;
+  void ConcatenatePolygons(const Polygon_t<T>& poly) {
+    Polygon_t<T> merged_polygon;
+    boost::geometry::correct(this->obj_);
+    // boost::geometry::correct(poly.obj_);
+    boost::geometry::union_(
+      poly.obj_,
+      poly.obj_,
+      merged_polygon.obj_);
+    // this->obj_ = merged_polygon;
     // UpdateDistancesToCenter();
   }
 
