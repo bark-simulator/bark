@@ -77,7 +77,7 @@ void python_world(py::module m) {
     .def_property_readonly("lane", &XodrLaneVertex::get_lane);
 
   py::enum_<XodrLaneEdgeType>(m, "XodrLaneEdgeType")
-    .value("SUCCESSOR_EDGE", XodrLaneEdgeType::SUCCESSOR_EDGE)
+    .value("LANE_SUCCESSOR_EDGE", XodrLaneEdgeType::LANE_SUCCESSOR_EDGE)
     .value("INNER_NEIGHBOR_EDGE", XodrLaneEdgeType::INNER_NEIGHBOR_EDGE)
     .value("OUTER_NEIGHBOR_EDGE", XodrLaneEdgeType::OUTER_NEIGHBOR_EDGE)
     .export_values();

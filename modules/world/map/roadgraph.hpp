@@ -39,17 +39,18 @@ struct XodrLaneVertex {
 };
 
 enum XodrLaneEdgeType {
-  SUCCESSOR_EDGE = 0,
+  LANE_SUCCESSOR_EDGE = 0,
   INNER_NEIGHBOR_EDGE = 1,
-  OUTER_NEIGHBOR_EDGE = 2
+  OUTER_NEIGHBOR_EDGE = 2,
+  ROAD_SUCCESSOR_EDGE = 3
 };
 
 struct XodrLaneEdge {
   XodrLaneEdgeType edge_type;
   float weight; //! @todo tobias: for shortest path calculation: a very basic implementation!
   XodrLaneEdgeType get_edge_type() const { return edge_type; }
-  XodrLaneEdge() : edge_type(SUCCESSOR_EDGE), weight(1) {}
-  XodrLaneEdge(XodrLaneEdgeType edge_type_in) : edge_type(edge_type_in), weight(edge_type_in==SUCCESSOR_EDGE?1:10) {}
+  XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
+  XodrLaneEdge(XodrLaneEdgeType edge_type_in) : edge_type(edge_type_in), weight(edge_type_in==LANE_SUCCESSOR_EDGE?1:10) {}
 };
 
 typedef boost::adjacency_list<vecS, vecS, bidirectionalS, XodrLaneVertex, XodrLaneEdge> XodrLaneGraph;
@@ -60,7 +61,7 @@ struct XodrLaneTypeDrivingAndEdgeTypeSuccessorPredicate { // both edge and verte
   bool operator()(XodrLaneGraph::edge_descriptor ed) const      { 
     bool filtered_s = (*g)[boost::source(ed, *g)].lane->get_lane_type()==XodrLaneType::DRIVING;
     bool filtered_t = (*g)[boost::target(ed, *g)].lane->get_lane_type()==XodrLaneType::DRIVING;
-    bool filtered_e = (*g)[ed].edge_type==XodrLaneEdgeType::SUCCESSOR_EDGE;
+    bool filtered_e = (*g)[ed].edge_type==XodrLaneEdgeType::LANE_SUCCESSOR_EDGE;
         
     bool filtered = filtered_s && filtered_t && filtered_e;
     return filtered; 
@@ -88,11 +89,15 @@ class Roadgraph {
 
   bool add_outer_neighbor(const XodrLaneId& inner_id, const XodrLaneId& outer_id);
 
-  bool add_successor(const XodrLaneId& prev, const XodrLaneId& succ);
+  bool add_lane_successor(const XodrLaneId& prev, const XodrLaneId& succ);
+
+  bool add_road_successor(const XodrLaneId& prev, const XodrLaneId& succ);
 
   std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId& lane_id) const;
 
   std::vector<XodrLaneId> get_predecessor_lanes(const XodrLaneId& lane_id) const;
+
+  XodrRoadId GetNextRoad(const XodrRoadId& road_id) const;
 
   bool check_id_in_filtered_graph(const FilteredXodrLaneGraph& fg, const XodrLaneId& lane_id) const;
 

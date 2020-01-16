@@ -28,8 +28,12 @@ bool Roadgraph::add_outer_neighbor(const XodrLaneId &inner_id,
   return add_edge_of_type(inner_id, outer_id, OUTER_NEIGHBOR_EDGE);
 }
 
-bool Roadgraph::add_successor(const XodrLaneId &prev, const XodrLaneId &succ) {
-  return add_edge_of_type(prev, succ, SUCCESSOR_EDGE);
+bool Roadgraph::add_lane_successor(const XodrLaneId &prev, const XodrLaneId &succ) {
+  return add_edge_of_type(prev, succ, LANE_SUCCESSOR_EDGE);
+}
+
+bool Roadgraph::add_road_successor(const XodrLaneId &prev, const XodrLaneId &succ) {
+  return add_edge_of_type(prev, succ, ROAD_SUCCESSOR_EDGE);
 }
 
 std::vector<XodrLaneId> Roadgraph::get_successor_lanes(
@@ -39,7 +43,7 @@ std::vector<XodrLaneId> Roadgraph::get_successor_lanes(
   std::vector<XodrLaneId> successor_lanes;
   for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_);
        i != end; ++i) {
-    if (g_[*i].edge_type == SUCCESSOR_EDGE) {
+    if (g_[*i].edge_type == LANE_SUCCESSOR_EDGE) {
       vertex_t target = boost::target(*i, g_);
       successor_lanes.push_back(g_[target].global_lane_id);
     }
@@ -54,12 +58,19 @@ std::vector<XodrLaneId> Roadgraph::get_predecessor_lanes(
   std::vector<XodrLaneId> predecessor_lanes;
   for (boost::tie(i, end) = boost::in_edges(lane_vertex_pair.first, g_);
        i != end; ++i) {
-    if (g_[*i].edge_type == SUCCESSOR_EDGE) {
+    if (g_[*i].edge_type == LANE_SUCCESSOR_EDGE) {
       vertex_t source = boost::source(*i, g_);
       predecessor_lanes.push_back(g_[source].global_lane_id);
     }
   }
   return predecessor_lanes;
+}
+
+XodrRoadId Roadgraph::GetNextRoad(const XodrRoadId& road_id) const {
+  // TODO(@Klemens)
+
+  XodrRoadId id = 0;
+  return id;
 }
 
 bool Roadgraph::check_id_in_filtered_graph(const FilteredXodrLaneGraph &fg,
@@ -466,7 +477,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
 
           if (successor_lane) {
             bool success =
-                add_successor(lane_element.first, successor_lane->get_id());
+                add_lane_successor(lane_element.first, successor_lane->get_id());
           }
         }
 
@@ -485,7 +496,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
             // if found add; convert predecessor to successor
             if (predecessor_lane) {
               bool success =
-                  add_successor(predecessor_lane->get_id(), lane_element.first);
+                  add_lane_successor(predecessor_lane->get_id(), lane_element.first);
             }
           }
         } catch (const std::exception &ex) {
@@ -550,7 +561,7 @@ void Roadgraph::GenerateFromJunctions(OpenDriveMapPtr map) {
                     lane_link_element.to_position);
             if (pre_lane && successor_lane) {
               bool success =
-                  add_successor(pre_lane->get_id(), successor_lane->get_id());
+                  add_lane_successor(pre_lane->get_id(), successor_lane->get_id());
             }
           } catch (...) {
             LOG(INFO) << "Junction has no connections. \n";
