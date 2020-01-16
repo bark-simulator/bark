@@ -101,6 +101,9 @@ struct RoadCorridor {
   void SetRoads(const Roads& roads) {
     roads_ = roads;
   }
+  void SetLaneCorridors(const std::vector<LaneCorridorPtr>& corrs) {
+    lane_corridors_ = corrs;
+  }
 
   Roads roads_;
   std::vector<LaneCorridorPtr> lane_corridors_;

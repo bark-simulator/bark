@@ -455,6 +455,7 @@ void MapInterface::CalculateLaneCorridors(
   RoadCorridorPtr& road_corridor) {
   RoadPtr first_road = road_corridor->GetRoads()[0];
   Lanes lanes = first_road->GetLanes();
+  std::vector<LaneCorridorPtr> lane_corridors;
   for (auto& lane : lanes) {
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
@@ -488,7 +489,9 @@ void MapInterface::CalculateLaneCorridors(
         total_s,
         next_lane);
     }
+    lane_corridors.push_back(lane_corridor);
   }
+  road_corridor->SetLaneCorridors(lane_corridors);
 }
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
