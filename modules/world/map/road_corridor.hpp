@@ -87,8 +87,7 @@ struct RoadCorridor {
     // calculate hash using road_ids
     return boost::hash_range(
       road_ids.begin(),
-      road_ids.end()
-    );
+      road_ids.end());
   }
 
   //! Setter
