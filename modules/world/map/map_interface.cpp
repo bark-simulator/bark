@@ -450,23 +450,55 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
   return splitting_corridors;
 }
 
-// new functionality
-void MapInterface::CalculateLaneCorridors(const RoadCorridorPtr& road_corridor) {
-
+// new functionalities
+void MapInterface::CalculateLaneCorridors(
+  const RoadCorridorPtr& road_corridor) {
+  // TODO(@hart): merge linestrings, polys and calculate s
 }
 
-Lane MapInterface::GenerateRoadCorridorLane(const XodrLaneId& lane_id) {
-
+LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
+  LanePtr lane = std::make_shared<Lane>(xodr_lane);
+  // NOTE: information from the RG
+  // TODO(@hart): left boundary
+  // TODO(@hart): right boundary
+  // TODO(@hart): center line
+  // TODO(@hart): polygon
+  // TODO(@hart): next lane
+  // TODO(@hart): left lane
+  // TODO(@hart): right lane
+  return lane;
 }
 
-Road MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
-
+RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
+  XodrRoadPtr xodr_road = open_drive_map_->get_road(road_id);
+  RoadPtr road = std::make_shared<Road>(xodr_road);
+  // NOTE: information from the RG
+  // TODO(@hart): next road
+  Lanes lanes;
+  for (auto& lane_section : xodr_road->get_lane_sections()) {
+    for (auto& lane : lane_section->get_lanes()) {
+      lanes[lane.first] = GenerateRoadCorridorLane(lane.second);
+    }
+  }
+  road->SetLanes(lanes);
+  return road;
 }
 
-void MapInterface::GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids) {
-
+void MapInterface::GenerateRoadCorridor(
+  const std::vector<XodrRoadId>& road_ids) {
+  std::size_t road_corridor_hash = RoadCorridor::GetHash(road_ids);
+  // only compute if it has not been computed
+  if (road_corridors_.count(road_corridor_hash) > 0)
+    return;
+  Roads roads;
+  for (auto& road_id : road_ids) {
+    roads[road_id] = GenerateRoadCorridorRoad(road_id);
+  }
+  RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
+  road_corridor->SetRoads(roads);
+  road_corridors_[road_corridor_hash] = road_corridor;
 }
 
-} // namespace map
-} // namespace world
-} // namespace modules
+}  // namespace map
+}  // namespace world
+}  // namespace modules

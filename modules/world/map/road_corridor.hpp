@@ -9,6 +9,8 @@
 
 #include <map>
 #include <vector>
+#include <string>
+#include <boost/functional/hash.hpp>
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/map/road.hpp"
 #include "modules/world/map/lane.hpp"
@@ -22,6 +24,7 @@ namespace map {
 
 using modules::geometry::Line;
 using modules::geometry::Polygon;
+using modules::world::opendrive::XodrRoadId;
 
 
 struct LaneCorridor {
@@ -79,8 +82,13 @@ struct RoadCorridor {
   Lanes GetLanes(RoadId road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
-  unsigned int GetHash() const {
-    return 0;
+  static std::size_t GetHash(
+    const std::vector<XodrRoadId>& road_ids) {
+    // calculate hash using road_ids
+    return boost::hash_range(
+      road_ids.begin(),
+      road_ids.end()
+    );
   }
 
   //! Setter

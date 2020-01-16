@@ -75,13 +75,13 @@ TEST(road_corridor_tests, basic_road_corridor) {
   EXPECT_EQ(roads[101]->GetNextRoad(), nullptr);
   EXPECT_EQ(
     roads[100]->GetLane(1)->GetNextLane(),
-    roads[101]->GetLane(4))
+    roads[101]->GetLane(4));
   EXPECT_EQ(
     roads[100]->GetLane(2)->GetNextLane(),
-    roads[101]->GetLane(5))
+    roads[101]->GetLane(5));
   EXPECT_EQ(
     roads[100]->GetLane(3)->GetNextLane(),
-    roads[101]->GetLane(6))
+    roads[101]->GetLane(6));
 
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
