@@ -77,8 +77,8 @@ TEST(roadgraph, road_adjacency)
   r.add_inner_neighbor(l01, l11);
   r.add_outer_neighbor(l01, l11);
 
-  r.add_successor(l10, l11);
-  r.add_successor(lm11, lm10);
+  r.add_lane_successor(l10, l11);
+  r.add_lane_successor(lm11, lm10);
 
   int num_vertices = static_cast<int>(boost::num_vertices(r.get_lane_graph()));
   int num_edges = static_cast<int>(boost::num_edges(r.get_lane_graph()));
@@ -103,7 +103,7 @@ TEST(roadgraph, road_adjacency_simple)
   XodrLanePtr lane_01(new XodrLane());
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
-  r.add_successor(l00, l01);
+  r.add_lane_successor(l00, l01);
 
 
   int num_vertices = static_cast<int>(boost::num_vertices(r.get_lane_graph()));
@@ -132,7 +132,7 @@ TEST(roadgraph, get_successor_lane_test)
   XodrLanePtr lane_01(new XodrLane());
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
-  r.add_successor(l00, l01);
+  r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
 
   std::vector<XodrLaneId> suc = r.get_successor_lanes(l00);
@@ -155,7 +155,7 @@ TEST(roadgraph, get_predecessor_lane_test)
   XodrLanePtr lane_01(new XodrLane());
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
-  r.add_successor(l00, l01);
+  r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
 
   std::vector<XodrLaneId> pre = r.get_predecessor_lanes(l01);
@@ -179,7 +179,7 @@ TEST(roadgraph, get_inner_neighbor_test)
   XodrLanePtr lane_01(new XodrLane(1));
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
-  r.add_successor(l00, l01);
+  r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
 
   std::pair<XodrLaneId, bool> in = r.get_inner_neighbor(l10);
@@ -294,12 +294,12 @@ TEST(roadgraph, find_path_test)
   XodrLaneId l4 = r.add_lane(4, lane_4);
   XodrLaneId l5 = r.add_lane(5, lane_5);
 
-  r.add_successor(l0, l1);
-  r.add_successor(l1, l2);
-  r.add_successor(l2, l3);
-  r.add_successor(l3, l4);
-  r.add_successor(l0, l5);
-  r.add_successor(l5, l3);
+  r.add_lane_successor(l0, l1);
+  r.add_lane_successor(l1, l2);
+  r.add_lane_successor(l2, l3);
+  r.add_lane_successor(l3, l4);
+  r.add_lane_successor(l0, l5);
+  r.add_lane_successor(l5, l3);
 
 
   std::vector<XodrLaneId> path = r.find_path(l0,l4);
@@ -334,10 +334,10 @@ TEST(roadgraph, find_path_in_unconnected_graph_test)
   XodrLaneId l3 = r.add_lane(3, lane_3);
   XodrLaneId l4 = r.add_lane(4, lane_4);
 
-  r.add_successor(l0, l1);
-  r.add_successor(l1, l2);
-  // r.add_successor(l2, l3); REMOVING CONNECTION, thus not a valid path available
-  r.add_successor(l3, l4);
+  r.add_lane_successor(l0, l1);
+  r.add_lane_successor(l1, l2);
+  // r.add_lane_successor(l2, l3); REMOVING CONNECTION, thus not a valid path available
+  r.add_lane_successor(l3, l4);
 
   std::vector<XodrLaneId> path = r.find_path(l0,l4);
   ASSERT_EQ(0, path.size());
@@ -363,12 +363,12 @@ TEST(roadgraph, find_drivable_path_test)
   XodrLaneId l4 = r.add_lane(4, lane_4);
   XodrLaneId l5 = r.add_lane(5, lane_5);
 
-  r.add_successor(l0, l1);
-  r.add_successor(l1, l2);
-  r.add_successor(l2, l3);
-  r.add_successor(l3, l4);
-  r.add_successor(l0, l5);
-  r.add_successor(l5, l3);
+  r.add_lane_successor(l0, l1);
+  r.add_lane_successor(l1, l2);
+  r.add_lane_successor(l2, l3);
+  r.add_lane_successor(l3, l4);
+  r.add_lane_successor(l0, l5);
+  r.add_lane_successor(l5, l3);
 
   std::vector<XodrLaneId> path = r.find_path(l0,l4);
   ASSERT_EQ(5, path.size());
@@ -393,9 +393,9 @@ TEST(roadgraph, find_drivable_path_in_unconnected_graph_test)
   XodrLaneId l2 = r.add_lane(2, lane_2);
   XodrLaneId l3 = r.add_lane(3, lane_3);
 
-  r.add_successor(l0, l1);
-  r.add_successor(l1, l2);
-  r.add_successor(l2, l3);
+  r.add_lane_successor(l0, l1);
+  r.add_lane_successor(l1, l2);
+  r.add_lane_successor(l2, l3);
 
   std::vector<XodrLaneId> path = r.find_path(l0,l3);
   ASSERT_EQ(0, path.size());
@@ -415,9 +415,9 @@ TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
   XodrLaneId l2 = r.add_lane(2, lane_2);
   XodrLaneId l3 = r.add_lane(3, lane_3);
 
-  r.add_successor(l0, l1);
-  r.add_successor(l1, l2);
-  r.add_successor(l2, l3);
+  r.add_lane_successor(l0, l1);
+  r.add_lane_successor(l1, l2);
+  r.add_lane_successor(l2, l3);
 
   std::vector<XodrLaneId> path = r.find_path(l0,l3);
   ASSERT_EQ(0, path.size());
@@ -435,7 +435,7 @@ TEST(roadgraph, find_path_along_neighbor_edges_test)
   XodrLaneId l1 = r.add_lane(1, lane_1);
   XodrLaneId l2 = r.add_lane(2, lane_2);
 
-  r.add_successor(l0, l1);
+  r.add_lane_successor(l0, l1);
   r.add_inner_neighbor(l1, l2);
   r.add_outer_neighbor(l1, l2);
 
@@ -462,7 +462,7 @@ TEST(roadgraph, get_driving_corridor_test)
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
   XodrLaneId l11 = r.add_lane(rid1, lane_11);
 
-  r.add_successor(l10, l11);
+  r.add_lane_successor(l10, l11);
   r.add_inner_neighbor(l00, l10);
   r.add_inner_neighbor(l01, l11);
 

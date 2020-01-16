@@ -119,7 +119,7 @@ void python_map(py::module m) {
     .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)    
     .def("find_path", &Roadgraph::find_path)
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
-    .def("add_successor", &Roadgraph::add_successor)
+    .def("add_lane_successor", &Roadgraph::add_lane_successor)
     .def("Generate", &Roadgraph::Generate)
     .def("get_lane_polygon_by_id", &Roadgraph::get_lane_polygon_by_id)
     .def("get_road_by_lane_id", &Roadgraph::get_road_by_lane_id)

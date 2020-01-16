@@ -281,8 +281,8 @@ bool MapInterface::ComputeAllDrivingCorridors()
 std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBoundaries(
     const std::vector<XodrLaneId> &lane_ids) const
 {
-  std::vector<XodrLaneEdgeType> successor_edges = {XodrLaneEdgeType::SUCCESSOR_EDGE};
-  std::vector<std::vector<XodrLaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(successor_edges, lane_ids);
+  std::vector<XodrLaneEdgeType> LANE_SUCCESSOR_EDGEs = {XodrLaneEdgeType::LANE_SUCCESSOR_EDGE};
+  std::vector<std::vector<XodrLaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(LANE_SUCCESSOR_EDGEs, lane_ids);
 
   std::vector<PathBoundaries> all_path_boundaries;
   for (auto const &path : all_paths)
