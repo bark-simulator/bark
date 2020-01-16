@@ -491,7 +491,7 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
 void MapInterface::GenerateRoadCorridor(
   const std::vector<XodrRoadId>& road_ids) {
   std::size_t road_corridor_hash = RoadCorridor::GetHash(road_ids);
-  // only compute if it has not been computed
+  // only compute if it has not been computed yet
   if (road_corridors_.count(road_corridor_hash) > 0)
     return;
   Roads roads;
@@ -499,17 +499,24 @@ void MapInterface::GenerateRoadCorridor(
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
   }
 
-  // TODO(@hart): set road links
-  // XodrRoadId next_road = GetNextRoad(xodr_road->get_id());
-  // road->SetNextRoad(next_road);
-
-  // TODO(@hart): set lane links
-  // std::vector<XodrLaneId> successor_lane_ids = \
-  //   set_successor_lanes(xodr_lane->get_id())
-  // TODO(@hart): left lane
-  // TODO(@hart): right lane
-  // get_outer_neighbor(const XodrLaneId& lane_id)
-  // get_inner_neighbor
+  // links can only be set once all roads have been calculated
+  for (auto& road : roads) {
+    // road successor
+    XodrRoadId next_road_id = roadgraph_->GetNextRoad(road.first);
+    road.second->SetNextRoad(roads[next_road_id]);
+    for (auto& lane : road.second->GetLanes()) {
+      // lane successor
+      XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first);
+      lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
+      // left and right
+      XodrLaneId left_lane_id = roadgraph_->GetLeftLane(lane.first);
+      XodrLaneId right_lane_id = roadgraph_->GetRightLane(lane.first);
+      LanePtr left_lane = lane.second->GetLeftLane(left_lane_id);
+      LanePtr right_lane = lane.second->GetRightLane(right_lane_id);
+      lane.second->SetLeftLane(lane.first, left_lane);
+      lane.second->SetRightLane(lane.first, right_lane);
+    }
+  }
 
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
