@@ -29,33 +29,33 @@ using modules::world::opendrive::XodrRoadId;
 
 struct LaneCorridor {
   //! Getter
-  LanePtr GetLeftLane(const LaneId& lane_id) {
+  LanePtr& GetLeftLane(const LaneId& lane_id) {
     // TODO(@hart): to be implemented
   }
-  LanePtr GetRightLane(const LaneId& lane_id) {
+  LanePtr& GetRightLane(const LaneId& lane_id) {
     // TODO(@hart): to be implemented
   }
-  Boundary GetLeftBoundary() const {
+  Line& GetLeftBoundary() {
     return left_boundary_;
   }
-  Boundary GetRightBoundary() const {
+  Line& GetRightBoundary() {
     return right_boundary_;
   }
-  Line GetCenterLine() const {
+  Line& GetCenterLine() {
     return center_line_;
   }
-  Polygon GetMergedPolygon() const {
+  Polygon& GetMergedPolygon() {
     return merged_polygon_;
   }
-  std::map<float, LanePtr> GetLanes() const {
+  std::map<float, LanePtr>& GetLanes() {
     return lanes_;
   }
 
   //! Setter
-  void SetLeftBoundary(const Boundary& boundary) {
+  void SetLeftBoundary(const Line& boundary) {
     left_boundary_ = boundary;
   }
-  void SetRightBoundary(const Boundary& boundary) {
+  void SetRightBoundary(const Line& boundary) {
     right_boundary_ = boundary;
   }
   void SetCenterLine(const Line& line) {
@@ -64,15 +64,15 @@ struct LaneCorridor {
   void SetMergedPolygon(const Polygon& poly) {
     merged_polygon_ = poly;
   }
-  void SetLanes(float s_start, const LanePtr& lane) {
+  void SetLane(float s_start, const LanePtr& lane) {
     lanes_[s_start] = lane;
   }
 
   std::map<float, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
   Polygon merged_polygon_;
-  Boundary left_boundary_;
-  Boundary right_boundary_;
+  Line left_boundary_;
+  Line right_boundary_;
 };
 using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
 

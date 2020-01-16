@@ -99,6 +99,7 @@ TEST(road_corridor_tests, road_corridor_generation) {
   using modules::world::map::LanePtr;
   using modules::world::map::Lanes;
   using modules::world::map::Road;
+  using modules::world::map::Roadgraph;
   using modules::world::map::RoadId;
   using modules::world::map::Roads;
   using modules::world::map::RoadPtr;
@@ -110,6 +111,12 @@ TEST(road_corridor_tests, road_corridor_generation) {
   using modules::models::tests::make_map_interface_two_connected_roads;
 
   MapInterface map_interface = make_map_interface_two_connected_roads();
+
+  Roadgraph roadgraph;
+  // TODO(@hart): add all connections
+  // roadgraph.add_lane(road_id, lane_ptr);
+  // roadgraph.add_succesor(Lane_id, lane_id_next);
+
   OpenDriveMapPtr open_drive_map = map_interface.get_open_drive_map();
   std::vector<XodrRoadId> road_ids{100, 101};
   // map_interface.GenerateRoadCorridor(road_ids);

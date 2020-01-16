@@ -453,13 +453,42 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
 // new functionalities
 void MapInterface::CalculateLaneCorridors(
   RoadCorridorPtr& road_corridor) {
-  // 1. start at the first and select all lanes
-  // 2. pass forward each lane until no GetNextLane()
+  RoadPtr first_road = road_corridor->GetRoads()[0];
+  Lanes lanes = first_road->GetLanes();
+  for (auto& lane : lanes) {
+    LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
+    LanePtr current_lane = lane.second;
+    float total_s = current_lane->GetCenterLine().length();
+    lane_corridor->SetCenterLine(current_lane->GetCenterLine());
+    lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
+    lane_corridor->SetLeftBoundary(
+      current_lane->GetLeftBoundary().line_);
+    lane_corridor->SetRightBoundary(
+      current_lane->GetRightBoundary().line_);
+    lane_corridor->SetLane(
+      total_s,
+      current_lane);
 
-  // TODO(@hart): - merge linestrings: center, left_bound, right_bound
-  //              - polygons
-  // line.ConcatenateLinestring(line)
-  // poly.ConcatenatePolygon(poly)
+    LanePtr next_lane = current_lane;
+    for (;;) {
+      next_lane = next_lane->GetNextLane();
+      if (next_lane == nullptr)
+        break;
+      lane_corridor->GetCenterLine().ConcatenateLinestring(
+        next_lane->GetCenterLine());
+      lane_corridor->GetLeftBoundary().ConcatenateLinestring(
+        next_lane->GetLeftBoundary().line_);
+      lane_corridor->GetRightBoundary().ConcatenateLinestring(
+        next_lane->GetRightBoundary().line_);
+      lane_corridor->GetMergedPolygon().ConcatenatePolygons(
+        next_lane->GetPolygon());
+
+      total_s = lane_corridor->GetCenterLine().length();
+      lane_corridor->SetLane(
+        total_s,
+        next_lane);
+    }
+  }
 }
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
