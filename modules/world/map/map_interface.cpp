@@ -452,9 +452,12 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
 
 // new functionalities
 void MapInterface::CalculateLaneCorridors(
-  const RoadCorridorPtr& road_corridor) {
-  // TODO(@hart): merge linestrings (center, left_bound, right_bound)
-  //              and polygons
+  RoadCorridorPtr& road_corridor) {
+  // 1. start at the first and select all lanes
+  // 2. pass forward each lane until no GetNextLane()
+
+  // TODO(@hart): - merge linestrings: center, left_bound, right_bound
+  //              - polygons
   // line.ConcatenateLinestring(line)
   // poly.ConcatenatePolygon(poly)
 }
@@ -534,8 +537,7 @@ void MapInterface::GenerateRoadCorridor(
 
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
-
-  // TODO(@hart): calculate LaneCorridors
+  CalculateLaneCorridors(road_corridor);
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 

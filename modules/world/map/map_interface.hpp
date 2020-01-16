@@ -114,7 +114,7 @@ class MapInterface {
 
 
   //! RoadCorridor
-  void CalculateLaneCorridors(const RoadCorridorPtr& road_corridor);
+  void CalculateLaneCorridors(RoadCorridorPtr& road_corridor);
   LanePtr GenerateRoadCorridorLane(const XodrLanePtr& lane);
   RoadPtr GenerateRoadCorridorRoad(const XodrRoadId& road_id);
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids);
