@@ -453,7 +453,10 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
 // new functionalities
 void MapInterface::CalculateLaneCorridors(
   const RoadCorridorPtr& road_corridor) {
-  // TODO(@hart): merge linestrings, polys and calculate s
+  // TODO(@hart): merge linestrings (center, left_bound, right_bound)
+  //              and polygons 
+  // line.ConcatenateLinestring(line)
+  // poly.ConcatenatePolygon(poly)
 }
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
@@ -461,11 +464,23 @@ LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   // NOTE: information from the RG
   // TODO(@hart): left boundary
   // TODO(@hart): right boundary
+  // Roadgraph::ComputeXodrLaneBoundaries(const XodrLaneId &lane_id)
+  // how do we differ left and right?
+
   // TODO(@hart): center line
+  // Line ComputeCenterLine(const Line& outer_line_,
+  //                        const Line& inner_line_)
+
   // TODO(@hart): polygon
+  // ComputeXodrLanePolygon(const XodrLaneId& lane_id)
+
   // TODO(@hart): next lane
+  // std::vector<XodrLaneId> successor_lane_ids = get_successor_lanes(xodr_lane->get_id())
+
   // TODO(@hart): left lane
   // TODO(@hart): right lane
+  // get_outer_neighbor(const XodrLaneId& lane_id)
+  // get_inner_neighbor
   return lane;
 }
 
@@ -473,7 +488,7 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
   XodrRoadPtr xodr_road = open_drive_map_->get_road(road_id);
   RoadPtr road = std::make_shared<Road>(xodr_road);
   // NOTE: information from the RG
-  // TODO(@hart): next road
+  // TODO(@hart): GetNextRoad()... needs to be implemented
   Lanes lanes;
   for (auto& lane_section : xodr_road->get_lane_sections()) {
     for (auto& lane : lane_section->get_lanes()) {
