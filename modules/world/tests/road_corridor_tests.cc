@@ -89,3 +89,43 @@ TEST(road_corridor_tests, basic_road_corridor) {
   // compute stuff
 }
 
+TEST(road_corridor_tests, road_corridor_generation) {
+  using modules::world::opendrive::XodrLanePtr;
+  using modules::world::opendrive::XodrRoadId;
+  using modules::world::opendrive::OpenDriveMapPtr;
+  using modules::world::map::MapInterface;
+  using modules::world::map::Lane;
+  using modules::world::map::LaneId;
+  using modules::world::map::LanePtr;
+  using modules::world::map::Lanes;
+  using modules::world::map::Road;
+  using modules::world::map::RoadId;
+  using modules::world::map::Roads;
+  using modules::world::map::RoadPtr;
+  using modules::world::map::RoadCorridor;
+  using modules::world::map::RoadCorridorPtr;
+
+  using modules::geometry::Point2d;
+  using modules::geometry::Line;
+  using modules::models::tests::make_map_interface_two_connected_roads;
+
+  MapInterface map_interface = make_map_interface_two_connected_roads();
+  OpenDriveMapPtr open_drive_map = map_interface.get_open_drive_map();
+  std::vector<XodrRoadId> road_ids{100, 101};
+  map_interface.GenerateRoadCorridor(road_ids);
+  std::size_t hash_id = RoadCorridor::GetHash(road_ids);
+  RoadCorridorPtr road_corridor = map_interface.GetRoadCorridor(hash_id);
+
+  // basic asserts
+  Roads roads = road_corridor->GetRoads();
+  EXPECT_EQ(roads.size(), 2);
+  EXPECT_EQ(roads[100]->GetLanes().size(), 3);
+  EXPECT_EQ(roads[100]->GetLane(1)->get_id(), 1);
+  EXPECT_EQ(roads[100]->GetLane(2)->get_id(), 2);
+  EXPECT_EQ(roads[100]->GetLane(3)->get_id(), 3);
+  EXPECT_EQ(roads[101]->GetLanes().size(), 3);
+  EXPECT_EQ(roads[101]->GetLane(4)->get_id(), 4);
+  EXPECT_EQ(roads[101]->GetLane(5)->get_id(), 5);
+  EXPECT_EQ(roads[101]->GetLane(6)->get_id(), 6);
+
+}

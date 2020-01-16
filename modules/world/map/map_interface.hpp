@@ -118,7 +118,9 @@ class MapInterface {
   LanePtr GenerateRoadCorridorLane(const XodrLanePtr& lane);
   RoadPtr GenerateRoadCorridorRoad(const XodrRoadId& road_id);
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids);
-
+  RoadCorridorPtr GetRoadCorridor(std::size_t hash) {
+    return road_corridors_.at(hash);
+  }
 
  private:
   OpenDriveMapPtr open_drive_map_;
