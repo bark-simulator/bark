@@ -16,6 +16,7 @@
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/map/driving_corridor.hpp"
+#include "modules/world/map/road_corridor.hpp"
 
 
 namespace modules {
@@ -44,10 +45,10 @@ class MapInterface {
                         std::vector< std::pair<int, XodrLaneId> >& lane_ids);
 
 
-  // void CalculateLaneCorridors(const RoadCorridorPtr& road_corridor);
-  // Lane GenerateRoadCorridorLane(const XodrLaneId& lane_id);
-  // Road GenerateRoadCorridorRoad(const XodrRoadId& road_id);
-  // RoadCorridor GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids);
+  void CalculateLaneCorridors(const RoadCorridorPtr& road_corridor);
+  Lane GenerateRoadCorridorLane(const XodrLaneId& lane_id);
+  Road GenerateRoadCorridorRoad(const XodrRoadId& road_id);
+  void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids);
   
   /*
   * Finds the ID's of the nearest lanes to point

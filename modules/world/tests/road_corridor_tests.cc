@@ -50,14 +50,14 @@ TEST(road_corridor_tests, basic_road_corridor) {
     roads[xodr_road.first] = road;
   }
 
-  for (auto xodr_road : open_drive_map->get_roads()) {
-    RoadId next_road_id = xodr_road.second->get_link().get_successor().id_;
-    for (auto xodr_lane : xodr_road.second->get_lanes()) {
-      // LaneId next_lane_id = xodr_lane.second->get_link().get_successor().id_;
-      // lanes[xodr_lane.second->get_id()]->SetNextlane(lanes[next_lane_id]);
-      // NOTE(@all): this has to be retrived from the roadgraph
-    }
-  }
+  // road connections
+  roads[100]->SetNextRoad(roads[101]);
+  roads[101]->SetNextRoad(nullptr);
+
+  // set lane links
+  roads[100]->GetLane(1)->SetNextLane(roads[101]->GetLane(4));
+  roads[100]->GetLane(2)->SetNextLane(roads[101]->GetLane(5));
+  roads[100]->GetLane(3)->SetNextLane(roads[101]->GetLane(6));
 
   // basic asserts
   EXPECT_EQ(roads.size(), 2);
@@ -70,8 +70,22 @@ TEST(road_corridor_tests, basic_road_corridor) {
   EXPECT_EQ(roads[101]->GetLane(5)->get_id(), 5);
   EXPECT_EQ(roads[101]->GetLane(6)->get_id(), 6);
 
+  // link asserts
+  EXPECT_EQ(roads[100]->GetNextRoad(), roads[101]);
+  EXPECT_EQ(roads[101]->GetNextRoad(), nullptr);
+  EXPECT_EQ(
+    roads[100]->GetLane(1)->GetNextLane(),
+    roads[101]->GetLane(4))
+  EXPECT_EQ(
+    roads[100]->GetLane(2)->GetNextLane(),
+    roads[101]->GetLane(5))
+  EXPECT_EQ(
+    roads[100]->GetLane(3)->GetNextLane(),
+    roads[101]->GetLane(6))
+
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
 
+  // compute stuff
 }
 
