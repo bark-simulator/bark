@@ -28,14 +28,13 @@ using modules::world::opendrive::XodrRoadId;
 
 
 struct LaneCorridor {
+  //! Getter
   LanePtr GetLeftLane(const LaneId& lane_id) {
     // TODO(@hart): to be implemented
   }
   LanePtr GetRightLane(const LaneId& lane_id) {
     // TODO(@hart): to be implemented
   }
-
-  //! Getter
   Boundary GetLeftBoundary() const {
     return left_boundary_;
   }
@@ -83,11 +82,12 @@ struct RoadCorridor {
   RoadPtr GetRoad(RoadId road_id) const {
     return roads_.at(road_id);
   }
-  Roads GetRoads() const {
-    return roads_;
-  }
+  Roads GetRoads() const {return roads_;}
   Lanes GetLanes(RoadId road_id) const {
     return this->GetRoad(road_id)->GetLanes();
+  }
+  LaneCorridorPtr GetLaneCorridor(const LaneId& lane_id) {
+    // TODO(@hart): return LaneCorridor
   }
   static std::size_t GetHash(
     const std::vector<XodrRoadId>& road_ids) {
