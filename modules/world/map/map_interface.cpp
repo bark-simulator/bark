@@ -450,6 +450,23 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
   return splitting_corridors;
 }
 
+// new functionality
+void MapInterface::CalculateLaneCorridors(const RoadCorridorPtr& road_corridor) {
+
+}
+
+Lane MapInterface::GenerateRoadCorridorLane(const XodrLaneId& lane_id) {
+
+}
+
+Road MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
+
+}
+
+void MapInterface::GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids) {
+
+}
+
 } // namespace map
 } // namespace world
 } // namespace modules

@@ -12,6 +12,7 @@ cc_library(
         "@boost//:geometry",
         ":roadgraph",
         ":driving_corridor",
+        ":road_corridor",
 
     ],
     linkstatic = 1,
