@@ -179,7 +179,7 @@ class Roadgraph {
   XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
   XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id) {}
   XodrLaneId GetRightBoundary(const XodrLaneId& lane_id) {}
-  Line GetCenterLine(const XodrLaneId& lane_id) {}
+  modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
   std::vector<XodrRoadId> GetRoadIdsForPath(
     const XodrRoadId& road_start_id,
     const XodrRoadId& road_end_id) {}
