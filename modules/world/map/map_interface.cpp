@@ -454,33 +454,24 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
 void MapInterface::CalculateLaneCorridors(
   const RoadCorridorPtr& road_corridor) {
   // TODO(@hart): merge linestrings (center, left_bound, right_bound)
-  //              and polygons 
+  //              and polygons
   // line.ConcatenateLinestring(line)
   // poly.ConcatenatePolygon(poly)
 }
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   LanePtr lane = std::make_shared<Lane>(xodr_lane);
-  // NOTE: information from the RG
   // TODO(@hart): left boundary
   // TODO(@hart): right boundary
   // Roadgraph::ComputeXodrLaneBoundaries(const XodrLaneId &lane_id)
-  // how do we differ left and right?
 
   // TODO(@hart): center line
   // Line ComputeCenterLine(const Line& outer_line_,
   //                        const Line& inner_line_)
 
   // TODO(@hart): polygon
-  // ComputeXodrLanePolygon(const XodrLaneId& lane_id)
-
-  // TODO(@hart): next lane
-  // std::vector<XodrLaneId> successor_lane_ids = get_successor_lanes(xodr_lane->get_id())
-
-  // TODO(@hart): left lane
-  // TODO(@hart): right lane
-  // get_outer_neighbor(const XodrLaneId& lane_id)
-  // get_inner_neighbor
+  // Polygon polygon = ComputeXodrLanePolygon(xodr_lane->get_id());
+  // lane->SetPolygon();
   return lane;
 }
 
@@ -488,7 +479,7 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
   XodrRoadPtr xodr_road = open_drive_map_->get_road(road_id);
   RoadPtr road = std::make_shared<Road>(xodr_road);
   // NOTE: information from the RG
-  // TODO(@hart): GetNextRoad()... needs to be implemented
+
   Lanes lanes;
   for (auto& lane_section : xodr_road->get_lane_sections()) {
     for (auto& lane : lane_section->get_lanes()) {
@@ -509,6 +500,18 @@ void MapInterface::GenerateRoadCorridor(
   for (auto& road_id : road_ids) {
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
   }
+
+  // TODO(@hart): set road links
+  // XodrRoadId next_road = GetNextRoad(xodr_road->get_id());
+  // road->SetNextRoad(next_road);
+
+  // TODO(@hart): set lane links
+  // std::vector<XodrLaneId> successor_lane_ids = get_successor_lanes(xodr_lane->get_id())
+  // TODO(@hart): left lane
+  // TODO(@hart): right lane
+  // get_outer_neighbor(const XodrLaneId& lane_id)
+  // get_inner_neighbor
+
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
   road_corridors_[road_corridor_hash] = road_corridor;
