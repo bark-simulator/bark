@@ -8,6 +8,7 @@
 #define MODULES_WORLD_MAP_LANE_CORRIDOR_HPP_
 
 #include <map>
+#include <utility>
 #include <vector>
 #include <string>
 #include <boost/functional/hash.hpp>
@@ -22,10 +23,13 @@ namespace map {
 
 using modules::geometry::Line;
 using modules::geometry::Polygon;
+using modules::geometry::Point2d;
+using modules::geometry::Within;
 using modules::world::opendrive::XodrRoadId;
 
 
 struct LaneCorridor {
+  using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
   //! Getter
   Line& GetLeftBoundary() {
     return left_boundary_;
@@ -41,6 +45,13 @@ struct LaneCorridor {
   }
   std::map<float, LanePtr>& GetLanes() {
     return lanes_;
+  }
+  LanePtr GetCurrentLane(const Point2d& pt) {
+    for (auto& lane : lanes_) {
+      if (Within(pt, lane.second->GetPolygon()))
+        return lane.second;
+    }
+    return nullptr;
   }
 
   //! Setter
