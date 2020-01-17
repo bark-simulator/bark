@@ -487,14 +487,9 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
           XodrLanePtr successor_lane = successor_lane_section->get_lane_by_position(
                 successor_lane_position);
           if (successor_lane_position == 0) {
-            // TODO(@Klemens): Add Road Successor to planview
             auto lane_plan_view = getLanePlanView(lane_element.first);
             add_road_successor(lane_plan_view.second, successor_lane->get_id());
-
           } else {
-            // XodrLanePtr successor_lane =
-            // lane_section_element->get_lanes().at(successor_lane_position);
-
             if (successor_lane) {
               bool success =
                   add_lane_successor(lane_element.first, successor_lane->get_id());
@@ -508,16 +503,17 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
           if (predecessor_lane_section) {
             XodrLanePosition predecessor_lane_position =
                 lane_element.second->get_link().from_position;
+            XodrLanePtr predecessor_lane = predecessor_lane_section->get_lane_by_position(predecessor_lane_position);
             if (predecessor_lane_position == 0) {
-              continue;
+              auto lane_plan_view = getLanePlanView(lane_element.first);
+              add_road_successor(lane_plan_view.second, predecessor_lane->get_id());
             }
-            XodrLanePtr predecessor_lane =
-                predecessor_lane_section->get_lane_by_position(
-                    predecessor_lane_position);
-            // if found add; convert predecessor to successor
-            if (predecessor_lane) {
-              bool success =
-                  add_lane_successor(predecessor_lane->get_id(), lane_element.first);
+            else {
+              // if found add; convert predecessor to successor
+              if (predecessor_lane) {
+                bool success =
+                    add_lane_successor(predecessor_lane->get_id(), lane_element.first);
+              }
             }
           }
         } catch (const std::exception &ex) {
@@ -583,6 +579,10 @@ void Roadgraph::GenerateFromJunctions(OpenDriveMapPtr map) {
             if (pre_lane && successor_lane) {
               bool success =
                   add_lane_successor(pre_lane->get_id(), successor_lane->get_id());
+              // also connect road elements (through plan view)
+              auto pre_plan_view = getLanePlanView(pre_lane->get_id());
+              auto succ_plan_view = getLanePlanView(pre_lane->get_id());
+              success = add_road_successor(pre_plan_view.first, succ_plan_view.first);
             }
           } catch (...) {
             LOG(INFO) << "Junction has no connections. \n";
