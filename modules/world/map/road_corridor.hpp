@@ -87,7 +87,7 @@ struct RoadCorridor {
     return this->GetRoad(road_id)->GetLanes();
   }
   LaneCorridorPtr GetLaneCorridor(const LaneId& lane_id) {
-    // TODO(@hart): return LaneCorridor
+    return lane_corridors_.at(lane_id);
   }
   static std::size_t GetHash(
     const std::vector<XodrRoadId>& road_ids) {
@@ -101,12 +101,13 @@ struct RoadCorridor {
   void SetRoads(const Roads& roads) {
     roads_ = roads;
   }
-  void SetLaneCorridors(const std::vector<LaneCorridorPtr>& corrs) {
-    lane_corridors_ = corrs;
+  void SetLaneCorridor(const LaneId& lane_id,
+    const LaneCorridorPtr& corr) {
+    lane_corridors_[lane_id] = corr;
   }
 
   Roads roads_;
-  std::vector<LaneCorridorPtr> lane_corridors_;
+  std::map<LaneId, LaneCorridorPtr> lane_corridors_;
 };
 using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
 
