@@ -24,6 +24,8 @@ namespace map {
 
 using modules::geometry::Line;
 using modules::geometry::Polygon;
+using modules::geometry::Point2d;
+using modules::geometry::Within;
 using modules::world::opendrive::XodrRoadId;
 
 
@@ -36,8 +38,18 @@ struct RoadCorridor {
   Lanes GetLanes(RoadId road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
-  LaneCorridorPtr GetLaneCorridor(const LaneId& lane_id) {
+  LaneCorridorPtr GetLaneCorridor(const LaneId& lane_id) const {
     return lane_corridors_.at(lane_id);
+  }
+  std::vector<LaneCorridorPtr> GetAllLaneCorridor() const {
+    return unique_lane_corridors_;
+  }
+  LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
+    for (auto& lane_corr : unique_lane_corridors_) {
+      if (Within(pt, lane_corr->GetMergedPolygon()))
+        return lane_corr;
+    }
+    return nullptr;
   }
   static std::size_t GetHash(
     const std::vector<XodrRoadId>& road_ids) {
@@ -54,9 +66,11 @@ struct RoadCorridor {
   void SetLaneCorridor(const LaneId& lane_id,
     const LaneCorridorPtr& corr) {
     lane_corridors_[lane_id] = corr;
+    unique_lane_corridors_.push_back(corr);
   }
 
   Roads roads_;
+  std::vector<LaneCorridorPtr> unique_lane_corridors_;
   std::map<LaneId, LaneCorridorPtr> lane_corridors_;
 };
 using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
