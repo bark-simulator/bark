@@ -47,6 +47,7 @@ struct LaneCorridor {
     return lanes_;
   }
   LanePtr GetCurrentLane(const Point2d& pt) const {
+    // NOTE(@all): the matching could also be done using the s-value
     for (auto& lane : lanes_) {
       if (Within(pt, lane.second->GetPolygon()))
         return lane.second;

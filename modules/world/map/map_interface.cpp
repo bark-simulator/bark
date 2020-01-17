@@ -455,13 +455,13 @@ void MapInterface::CalculateLaneCorridors(
   RoadCorridorPtr& road_corridor) {
   RoadPtr first_road = road_corridor->GetRoads()[0];
   Lanes lanes = first_road->GetLanes();
-  // std::vector<LaneCorridorPtr> lane_corridors;
   for (auto& lane : lanes) {
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
     float total_s = current_lane->GetCenterLine().length();
     lane_corridor->SetCenterLine(current_lane->GetCenterLine());
     lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
+    // TODO(@hart): is this correct?
     lane_corridor->SetLeftBoundary(
       current_lane->GetLeftBoundary().line_);
     lane_corridor->SetRightBoundary(
