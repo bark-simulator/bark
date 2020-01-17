@@ -46,7 +46,7 @@ struct RoadCorridor {
       return nullptr;
     return lane_corridors_.at(lane_id);
   }
-  std::vector<LaneCorridorPtr> GetAllLaneCorridor() const {
+  std::vector<LaneCorridorPtr> GetAllLaneCorridors() const {
     return unique_lane_corridors_;
   }
   LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
