@@ -74,7 +74,7 @@ struct TypeDrivingAndEdgeTypeLaneSuccessor { // both edge and vertex
   XodrLaneGraph* g;
 };
 
-struct XodrEdgeTypeRoadSuccessorPredicate { // both edge and vertex
+struct XodrEdgeTypeRoadSuccessor { // both edge and vertex
   bool operator()(XodrLaneGraph::edge_descriptor ed) const      { 
     bool filtered_e = (*g)[ed].edge_type==XodrLaneEdgeType::ROAD_SUCCESSOR_EDGE;
         
@@ -129,6 +129,21 @@ class Roadgraph {
     return false;
   }
 
+  std::vector<XodrRoadId> find_road_path(const XodrRoadId& startid, const XodrRoadId& goalid) {
+
+    XodrLaneId start_lane_id = 0;  // TODO(@Klemens)
+    XodrLaneId goal_lane_id = 0; // TODO(@Klemens)
+
+    std::vector<XodrLaneId> lane_ids = find_path<XodrEdgeTypeRoadSuccessor>(start_lane_id, goal_lane_id);
+
+    std::vector<XodrRoadId> road_ids;
+    for (auto const& id: lane_ids) {
+      road_ids.push_back(get_road_by_lane_id(id));
+    }
+
+    return road_ids;
+  }
+  
   template<class Predicate>
   std::vector<XodrLaneId> find_path(const XodrLaneId& startid, const XodrLaneId& goalid) {
       std::vector<XodrLaneId> path;
