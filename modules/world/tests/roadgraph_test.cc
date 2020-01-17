@@ -50,9 +50,9 @@ TEST(roadgraph, road_adjacency)
 
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane());
-  XodrLanePtr lane_plus10(new XodrLane());
-  XodrLanePtr lane_minus10(new XodrLane());
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_plus10(new XodrLane(1));
+  XodrLanePtr lane_minus10(new XodrLane(-1));
 
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
   XodrLaneId l10 = r.add_lane(rid0, lane_plus10);
@@ -64,9 +64,9 @@ TEST(roadgraph, road_adjacency)
   r.add_outer_neighbor(l00, l10);
 
   XodrRoadId rid1 = 1;
-  XodrLanePtr lane_01(new XodrLane());
-  XodrLanePtr lane_plus11(new XodrLane());
-  XodrLanePtr lane_minus11(new XodrLane());
+  XodrLanePtr lane_01(new XodrLane(0));
+  XodrLanePtr lane_plus11(new XodrLane(1));
+  XodrLanePtr lane_minus11(new XodrLane(-1));
 
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
   XodrLaneId l11 = r.add_lane(rid1, lane_plus11);
@@ -79,14 +79,15 @@ TEST(roadgraph, road_adjacency)
 
   r.add_lane_successor(l10, l11);
   r.add_lane_successor(lm11, lm10);
+  r.add_road_successor(l00, l01);
 
   int num_vertices = static_cast<int>(boost::num_vertices(r.get_lane_graph()));
   int num_edges = static_cast<int>(boost::num_edges(r.get_lane_graph()));
 
-  r.print_graph("road_successors.dot");
+  r.print_graph("/home/esterle/road_successors.dot");
 
   ASSERT_EQ(6, num_vertices);
-  ASSERT_EQ(10, num_edges);
+  ASSERT_EQ(11, num_edges);
 
 }
 
@@ -96,15 +97,15 @@ TEST(roadgraph, road_adjacency_simple)
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane());
+  XodrLanePtr lane_00(new XodrLane(0));
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
 
   XodrRoadId rid1 = 1;
-  XodrLanePtr lane_01(new XodrLane());
+  XodrLanePtr lane_01(new XodrLane(0));
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
   r.add_lane_successor(l00, l01);
-
+  r.add_road_successor(l00, l01);
 
   int num_vertices = static_cast<int>(boost::num_vertices(r.get_lane_graph()));
   int num_edges = static_cast<int>(boost::num_edges(r.get_lane_graph()));
@@ -112,7 +113,7 @@ TEST(roadgraph, road_adjacency_simple)
   r.print_graph("road_successors_simple.dot");
 
   ASSERT_EQ(2, num_vertices);
-  ASSERT_EQ(1, num_edges);
+  ASSERT_EQ(2, num_edges);
 
 }
 
@@ -123,17 +124,18 @@ TEST(roadgraph, get_successor_lane_test)
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane());
-  XodrLanePtr lane_10(new XodrLane());
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_10(new XodrLane(1));
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
   XodrLaneId l10 = r.add_lane(rid0, lane_10);
 
   XodrRoadId rid1 = 1;
-  XodrLanePtr lane_01(new XodrLane());
+  XodrLanePtr lane_01(new XodrLane(0));
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
   r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
+  r.add_road_successor(l00, l01);
 
   std::vector<XodrLaneId> suc = r.get_successor_lanes(l00);
   ASSERT_TRUE(suc.size() == 1);
@@ -146,17 +148,18 @@ TEST(roadgraph, get_predecessor_lane_test)
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane());
-  XodrLanePtr lane_10(new XodrLane());
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_10(new XodrLane(1));
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
   XodrLaneId l10 = r.add_lane(rid0, lane_10);
 
   XodrRoadId rid1 = 1;
-  XodrLanePtr lane_01(new XodrLane());
+  XodrLanePtr lane_01(new XodrLane(0));
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
   r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
+  r.add_road_successor(l00, l01);
 
   std::vector<XodrLaneId> pre = r.get_predecessor_lanes(l01);
   ASSERT_TRUE(pre.size() == 1);
@@ -170,17 +173,18 @@ TEST(roadgraph, get_inner_neighbor_test)
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane(1));
-  XodrLanePtr lane_10(new XodrLane(-1));
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_10(new XodrLane(1));
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
   XodrLaneId l10 = r.add_lane(rid0, lane_10);
 
   XodrRoadId rid1 = 1;
-  XodrLanePtr lane_01(new XodrLane(1));
+  XodrLanePtr lane_01(new XodrLane(0));
   XodrLaneId l01 = r.add_lane(rid1, lane_01);
 
   r.add_lane_successor(l00, l01);
   r.add_inner_neighbor(l00, l10);
+  r.add_road_successor(l00, l01);
 
   std::pair<XodrLaneId, bool> in = r.get_inner_neighbor(l10);
   ASSERT_TRUE(in.first == l00);
@@ -193,17 +197,20 @@ TEST(roadgraph, get_outer_neighbor_test)
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
-  XodrLanePtr lane_00(new XodrLane(1));
-  XodrLanePtr lane_10(new XodrLane(-1));
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_10(new XodrLane(1));
   XodrLaneId l00 = r.add_lane(rid0, lane_00);
   XodrLaneId l10 = r.add_lane(rid0, lane_10);
 
   r.add_inner_neighbor(l00, l10);
   r.add_outer_neighbor(l00, l10);
 
+  r.print_graph("/home/esterle/get_outer_neighbor_test.dot");
+
   std::pair<XodrLaneId, bool> in = r.get_outer_neighbor(l00);
   ASSERT_TRUE(in.first == l10);
   ASSERT_TRUE(in.second);
+
 }
 
 TEST(roadgraph, get_inner_neighbor_test_planview)
@@ -214,7 +221,7 @@ TEST(roadgraph, get_inner_neighbor_test_planview)
   XodrRoadId rid0 = 0;
   XodrLanePtr lane_m1(new XodrLane(-1));
   XodrLanePtr lane_0(new XodrLane(0));
-  XodrLanePtr lane_1(new XodrLane(-1));
+  XodrLanePtr lane_1(new XodrLane(1));
   XodrLaneId l0 = r.add_lane(rid0, lane_0);
   XodrLaneId l1 = r.add_lane(rid0, lane_1);
   XodrLaneId lm1 = r.add_lane(rid0, lane_m1);
@@ -224,11 +231,48 @@ TEST(roadgraph, get_inner_neighbor_test_planview)
   r.add_outer_neighbor(l0, l1);
   r.add_outer_neighbor(l0, lm1);
 
+  r.print_graph("/home/esterle/get_inner_neighbor_test_planview.dot");
+
   std::pair<XodrLaneId, bool> in = r.get_inner_neighbor(l1);
   ASSERT_TRUE(in.first == l0);
   ASSERT_TRUE(in.second);
 
   std::pair<XodrLaneId, bool> in2 = r.get_inner_neighbor(lm1);
+  ASSERT_TRUE(in2.first == l0);
+  ASSERT_TRUE(in2.second);
+
+}
+
+TEST(roadgraph, get_lane_planview_test)
+{
+  using namespace modules::world::map;
+  Roadgraph r;
+
+  XodrRoadId rid0 = 0;
+  XodrLanePtr lane_0(new XodrLane(0));
+  XodrLanePtr lane_1(new XodrLane(1));
+  XodrLanePtr lane_2(new XodrLane(2));
+
+  XodrLaneId l0 = r.add_lane(rid0, lane_0);
+  XodrLaneId l1 = r.add_lane(rid0, lane_1);
+  XodrLaneId l2 = r.add_lane(rid0, lane_2);
+
+  r.add_inner_neighbor(l0, l1);
+  r.add_inner_neighbor(l1, l2);
+  r.add_outer_neighbor(l0, l1);
+  r.add_outer_neighbor(l1, l2);
+
+  r.print_graph("/home/esterle/get_lane_planview_test.dot");
+
+  std::pair<XodrLaneId, bool> in = r.getLanePlanView(l0);
+  ASSERT_TRUE(in.first == l0);
+  ASSERT_TRUE(in.second);
+
+  std::pair<XodrLaneId, bool> in1 = r.getLanePlanView(l1);
+  ASSERT_TRUE(in1.first == l0);
+  ASSERT_TRUE(in1.second);
+
+  std::pair<XodrLaneId, bool> in2 = r.getLanePlanView(l2);
   ASSERT_TRUE(in2.first == l0);
   ASSERT_TRUE(in2.second);
 }
