@@ -103,6 +103,8 @@ class Roadgraph {
 
   std::vector<XodrLaneId> find_path(const XodrLaneId& startid, const XodrLaneId& goalid);
 
+  std::vector<XodrRoadId> FindRoadPath(const XodrRoadId& road_start_id, const XodrRoadId& road_end_id) {}
+
   std::vector<std::vector<XodrLaneId>> find_all_paths_in_subgraph(const std::vector<XodrLaneEdgeType> &edge_type_subset, const std::vector<XodrLaneId> &lane_id_subset);
 
   XodrLanePtr get_laneptr(const XodrLaneId& id) const;
@@ -179,17 +181,15 @@ class Roadgraph {
   XodrRoadId get_road_by_lane_id(const XodrLaneId &lane_id);
 
 
-  //! Roadgraph extension
+  //! Roadgraph extension (only mock ups!!)
   XodrLaneId GetLeftLane(const XodrLaneId& lane_id) {}
   XodrLaneId GetRightLane(const XodrLaneId& lane_id) {}
   XodrLaneId GetNextLane(const XodrLaneId& lane_id) {}
-  XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
+  // XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
   XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id) {}
   XodrLaneId GetRightBoundary(const XodrLaneId& lane_id) {}
   modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
-  std::vector<XodrRoadId> GetRoadIdsForPath(
-    const XodrRoadId& road_start_id,
-    const XodrRoadId& road_end_id) {}
+  // std::vector<XodrRoadId> GetRoadIdsForPath(const XodrRoadId& road_start_id, const XodrRoadId& road_end_id) {}
 
  private:
   XodrLaneGraph g_;
