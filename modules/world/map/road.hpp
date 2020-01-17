@@ -33,7 +33,9 @@ struct Road : public XodrRoad {
   Lanes GetLanes() const {
     return lanes_;
   }
-  LanePtr GetLane(LaneId lane_id) const {
+  LanePtr GetLane(const LaneId& lane_id) const {
+    if (lanes_.count(lane_id) == 0)
+      return nullptr;
     return lanes_.at(lane_id);
   }
   std::shared_ptr<Road> GetNextRoad() const {
