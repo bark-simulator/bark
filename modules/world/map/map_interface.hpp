@@ -122,6 +122,10 @@ class MapInterface {
     return road_corridors_.at(hash);
   }
 
+  RoadPtr FindCurrentRoad(const Point2d& pt) {}
+  RoadPtr FindCurrentLane(const Point2d& pt) {}
+  RoadPtr FindCurrentLaneCorridor(const Point2d& pt) {}
+
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;

@@ -28,23 +28,24 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
             const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
-                line);  //! create a polygon from a line enclosing the polygon
+            line);  //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
   void UpdateDistancesToCenter();
 
-  void ConcatenatePolygons(const Polygon_t<T>& poly) {
-    Polygon_t<T> merged_polygon;
+  void ConcatenatePolygons(Polygon_t<T> poly) {
+    std::vector<boost::geometry::model::polygon<Point2d>> merged_polygon;
     boost::geometry::correct(this->obj_);
-    // boost::geometry::correct(poly.obj_);
+    boost::geometry::correct(poly.obj_);
     boost::geometry::union_(
+      this->obj_,
       poly.obj_,
-      poly.obj_,
-      merged_polygon.obj_);
-    // this->obj_ = merged_polygon;
-    // UpdateDistancesToCenter();
+      merged_polygon);
+    if (merged_polygon.size() > 0) {
+     Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
+    }
   }
 
   float rear_dist_;
