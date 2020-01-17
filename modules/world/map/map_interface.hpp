@@ -121,10 +121,15 @@ class MapInterface {
   RoadCorridorPtr GetRoadCorridor(std::size_t hash) {
     return road_corridors_.at(hash);
   }
+  LaneId FindCurrentLane(const Point2d& pt) {
+    return FindXodrLane(pt)->get_id();
+  }
+  RoadId FindCurrentRoad(const Point2d& pt) {
+    XodrRoadId road_id = roadgraph_->get_road_by_lane_id(
+      FindCurrentLane(pt));
+    return road_id;
+  }
 
-  RoadPtr FindCurrentRoad(const Point2d& pt) {}
-  RoadPtr FindCurrentLane(const Point2d& pt) {}
-  RoadPtr FindCurrentLaneCorridor(const Point2d& pt) {}
 
  private:
   OpenDriveMapPtr open_drive_map_;
