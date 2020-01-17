@@ -53,11 +53,11 @@ struct Lane : public XodrLane {
   Boundary GetRightBoundary() const {
     return right_boundary_;
   }
-  std::shared_ptr<Lane> GetLeftLane(const LaneId& lane_id) const {
-    return left_lanes_.at(lane_id);
+  std::shared_ptr<Lane> GetLeftLane() const {
+    return left_lane_;
   }
-  std::shared_ptr<Lane> GetRightLane(const LaneId& lane_id) const {
-    return right_lanes_.at(lane_id);
+  std::shared_ptr<Lane> GetRightLane() const {
+    return right_lane_;
   }
   Line GetCenterLine() const {
     return center_line_;
@@ -84,18 +84,16 @@ struct Lane : public XodrLane {
     right_boundary_ = boundary;
   }
   void SetLeftLane(
-    const LaneId& lane_id,
     const std::shared_ptr<Lane>& left_lane) {
-    left_lanes_[lane_id] = left_lane;
+    left_lane_ = left_lane;
   }
   void SetRightLane(
-    const LaneId& lane_id,
     const std::shared_ptr<Lane>& right_lane) {
-    right_lanes_[lane_id] = right_lane;
+    right_lane_ = right_lane;
   }
 
-  std::map<int, std::shared_ptr<Lane>> left_lanes_;  // from_id, to_id
-  std::map<int, std::shared_ptr<Lane>> right_lanes_;  // from_id, to_id
+  std::shared_ptr<Lane> left_lane_;  // from_id, to_id
+  std::shared_ptr<Lane> right_lane_;  // from_id, to_id
   std::shared_ptr<Lane> next_lane_;
 
   Line center_line_;
