@@ -253,6 +253,23 @@ std::vector<XodrLaneId> Roadgraph::get_all_laneids() const {
   return ids;
 }
 
+std::pair<XodrLaneId, bool> Roadgraph::getLanePlanView(const XodrLaneId lane_id) const {
+  XodrLanePtr lane = get_laneptr(lane_id);
+  if (lane->get_lane_position() == 0) {
+      return std::make_pair(lane_id, true);
+  }
+  else {
+    auto inner_lane = get_inner_neighbor(lane->get_id());
+    if (inner_lane.second) {
+      return getLanePlanView(inner_lane.first);
+    }
+    else {
+      // their appears to be some error
+      return std::make_pair(0, false);
+    }
+  }
+}
+
 std::pair<XodrLaneId, bool> Roadgraph::get_inner_neighbor(
     const XodrLaneId &lane_id) const {
   std::vector<std::pair<XodrLaneId, bool>> neighbors =
@@ -466,18 +483,22 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
         if (successor_lane_section) {
           XodrLanePosition successor_lane_position =
               lane_element.second->get_link().to_position;
-          if (successor_lane_position == 0) {
-            continue;
-          }
 
           XodrLanePtr successor_lane = successor_lane_section->get_lane_by_position(
-              successor_lane_position);
-          // XodrLanePtr successor_lane =
-          // lane_section_element->get_lanes().at(successor_lane_position);
+                successor_lane_position);
+          if (successor_lane_position == 0) {
+            // TODO(@Klemens): Add Road Successor to planview
+            auto lane_plan_view = getLanePlanView(lane_element.first);
+            add_road_successor(lane_plan_view.second, successor_lane->get_id());
 
-          if (successor_lane) {
-            bool success =
-                add_lane_successor(lane_element.first, successor_lane->get_id());
+          } else {
+            // XodrLanePtr successor_lane =
+            // lane_section_element->get_lanes().at(successor_lane_position);
+
+            if (successor_lane) {
+              bool success =
+                  add_lane_successor(lane_element.first, successor_lane->get_id());
+            }
           }
         }
 

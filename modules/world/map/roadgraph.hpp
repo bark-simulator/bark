@@ -109,6 +109,8 @@ class Roadgraph {
 
   std::vector<XodrLaneId> get_all_laneids() const;
 
+  std::pair<XodrLaneId, bool> getLanePlanView(const XodrLaneId lane_id) const;
+
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
   std::pair<XodrLaneId, bool> get_inner_neighbor(const XodrLaneId& lane_id) const;
 
@@ -235,7 +237,16 @@ class Roadgraph {
     my_edge_writer_text(TypeMap t) : tm(t) {}
     template <class XodrLaneEdge>
     void operator()(std::ostream &out, const XodrLaneEdge& e) const {
-      const char* color = tm[e]==0?"red":"blue";
+      const char* color;
+      if (tm[e]==0) {
+        color = "red";
+      } else if (tm[e]==3) {
+        color = "green";
+      }
+      else {
+        color = "blue";
+      }
+      //const char* color = tm[e]==0?"red":"blue";
       out << "[label=\"" << tm[e] << "\"" <<  "color=\"" << color << "\"" << "]";
     }
   private:
