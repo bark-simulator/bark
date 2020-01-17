@@ -547,10 +547,10 @@ void MapInterface::GenerateRoadCorridor(
       // left and right lanes
       XodrLaneId left_lane_id = roadgraph_->GetLeftLane(lane.first);
       XodrLaneId right_lane_id = roadgraph_->GetRightLane(lane.first);
-      LanePtr left_lane = lane.second->GetLeftLane(left_lane_id);
-      LanePtr right_lane = lane.second->GetRightLane(right_lane_id);
-      lane.second->SetLeftLane(lane.first, left_lane);
-      lane.second->SetRightLane(lane.first, right_lane);
+      LanePtr left_lane = lane.second->GetLeftLane();
+      LanePtr right_lane = lane.second->GetRightLane();
+      lane.second->SetLeftLane(left_lane);
+      lane.second->SetRightLane(right_lane);
 
       // set boundaries for lane
       XodrLaneId left_boundary_lane_id =
