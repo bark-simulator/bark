@@ -53,6 +53,15 @@ struct LaneCorridor {
     }
     return nullptr;
   }
+  float GetLength() const {
+    return center_line_.length();
+  }
+  float GetS(const Point2d& pt) const {
+    return std::get<1>(get_nearest_point_and_s(center_line_, pt));
+  }
+  float LengthUntilEnd(const Point2d& pt) const {
+    return GetLength() - GetS(pt);
+  }
 
   //! Setter
   void SetLeftBoundary(const Line& boundary) {
