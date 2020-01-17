@@ -28,6 +28,7 @@ using modules::geometry::Polygon;
 using modules::geometry::Point2d;
 using modules::geometry::Within;
 using modules::world::opendrive::XodrRoadId;
+using modules::world::opendrive::XodrDrivingDirection;
 
 
 struct RoadCorridor {
@@ -72,11 +73,14 @@ struct RoadCorridor {
       GetLaneCorridor(right_lane_id));
   }
   static std::size_t GetHash(
+    const XodrDrivingDirection& driving_direction,
     const std::vector<XodrRoadId>& road_ids) {
-    // calculate hash using road_ids
-    return boost::hash_range(
+    // calculate hash using driving_direction and road_ids
+    std::size_t road_id_hash = boost::hash_range(
       road_ids.begin(),
       road_ids.end());
+    boost::hash_combine(road_id_hash, driving_direction);
+    return road_id_hash;
   }
 
   //! Setter

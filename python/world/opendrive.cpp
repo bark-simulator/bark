@@ -47,7 +47,13 @@ void python_opendrive(py::module m) {
       .value("sidewalk", XodrLaneType::SIDEWALK)
       .value("border", XodrLaneType::BORDER)
       .export_values();
-  
+
+  py::enum_<XodrDrivingDirection>(m, "XodrDrivingDirection", py::arithmetic())
+      .value("forward", XodrDrivingDirection::FORWARD)
+      .value("backward", XodrDrivingDirection::BACKWARD)
+      .value("both", XodrDrivingDirection::BOTH)
+      .export_values();
+      
   py::enum_<roadmark::XodrRoadMarkType>(m, "XodrRoadMarkType", py::arithmetic())
       .value("none", roadmark::XodrRoadMarkType::NONE)
       .value("solid", roadmark::XodrRoadMarkType::SOLID)
@@ -80,6 +86,9 @@ void python_opendrive(py::module m) {
       .def_property("lane_id", &XodrLane::get_id, &XodrLane::set_id)
       .def_property("lane_position", &XodrLane::get_lane_position, &XodrLane::set_lane_position)
       .def_property("lane_type", &XodrLane::get_lane_type, &XodrLane::set_lane_type)
+      .def_property("driving_direction",
+        &XodrLane::get_dricing_direction,
+        &XodrLane::set_dricing_direction)
       .def_property("link", &XodrLane::get_link, &XodrLane::set_link)
       .def_property("line", &XodrLane::get_line, &XodrLane::set_line)
       .def_property("road_mark", &XodrLane::get_road_mark, &XodrLane::set_road_mark)
