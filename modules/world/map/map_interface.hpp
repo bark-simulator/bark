@@ -8,6 +8,7 @@
 #define MODULES_WORLD_MAP_MAP_INTERFACE_HPP_
 
 #include <vector>
+#include <map>
 #include <string>
 #include <utility> 
 #include <boost/geometry/index/rtree.hpp>
@@ -16,6 +17,7 @@
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/map/driving_corridor.hpp"
+#include "modules/world/map/road_corridor.hpp"
 
 
 namespace modules {
@@ -44,9 +46,7 @@ class MapInterface {
                         std::vector< std::pair<int, XodrLaneId> >& lane_ids);
 
 
-  // GenerateBarkXodrLanes()
-  // GenerateBarkXodrRoads(const GenerateBarkXodrLanes& lanes)
-  // GenerateBarkXodrLaneCorridors(const GenerateBarkXodrRoadsPtr& roads)
+ 
   /*
   * Finds the ID's of the nearest lanes to point
   * Note that the point doesn't necessarily lie within the lane of the closest point
@@ -112,13 +112,33 @@ class MapInterface {
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
 
+
+  //! RoadCorridor
+  void CalculateLaneCorridors(RoadCorridorPtr& road_corridor);
+  LanePtr GenerateRoadCorridorLane(const XodrLanePtr& lane);
+  RoadPtr GenerateRoadCorridorRoad(const XodrRoadId& road_id);
+  void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids);
+  RoadCorridorPtr GetRoadCorridor(std::size_t hash) {
+    return road_corridors_.at(hash);
+  }
+  LaneId FindCurrentLane(const Point2d& pt) {
+    return FindXodrLane(pt)->get_id();
+  }
+  RoadId FindCurrentRoad(const Point2d& pt) {
+    XodrRoadId road_id = roadgraph_->get_road_by_lane_id(
+      FindCurrentLane(pt));
+    return road_id;
+  }
+
+
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
   std::vector<DrivingCorridorPtr> all_corridors_;
   rtree_lane rtree_lane_;
   std::pair<Point2d, Point2d> bounding_box_;
-  
+  std::map<std::size_t, RoadCorridorPtr> road_corridors_;
+
   static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == XodrLaneType::DRIVING); }
 
 };
