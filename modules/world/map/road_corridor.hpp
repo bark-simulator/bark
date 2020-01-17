@@ -32,13 +32,13 @@ using modules::world::opendrive::XodrRoadId;
 
 struct RoadCorridor {
   //! Getter
-  RoadPtr GetRoad(RoadId road_id) const {
+  RoadPtr GetRoad(const RoadId& road_id) const {
     if (roads_.count(road_id) == 0)
       return nullptr;
     return roads_.at(road_id);
   }
   Roads GetRoads() const {return roads_;}
-  Lanes GetLanes(RoadId road_id) const {
+  Lanes GetLanes(const RoadId& road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
   LaneCorridorPtr GetLaneCorridor(const LaneId& lane_id) const {
