@@ -346,7 +346,7 @@ TEST(roadgraph, find_path_test)
   r.add_lane_successor(l5, l3);
 
 
-  std::vector<XodrLaneId> path = r.find_path(l0,l4);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l4);
   ASSERT_EQ(4, path.size());
   ASSERT_EQ(l0, path[0]);
   ASSERT_EQ(path[1], l5);
@@ -354,7 +354,7 @@ TEST(roadgraph, find_path_test)
   ASSERT_EQ(path[3], l4);
 
   path.clear();
-  path = r.find_path(l0,l2);
+  path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l2);
   ASSERT_EQ(3, path.size());
   ASSERT_EQ(path[0], l0);
   ASSERT_EQ(path[1], l1);
@@ -383,7 +383,7 @@ TEST(roadgraph, find_path_in_unconnected_graph_test)
   // r.add_lane_successor(l2, l3); REMOVING CONNECTION, thus not a valid path available
   r.add_lane_successor(l3, l4);
 
-  std::vector<XodrLaneId> path = r.find_path(l0,l4);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l4);
   ASSERT_EQ(0, path.size());
  
 }
@@ -414,7 +414,7 @@ TEST(roadgraph, find_drivable_path_test)
   r.add_lane_successor(l0, l5);
   r.add_lane_successor(l5, l3);
 
-  std::vector<XodrLaneId> path = r.find_path(l0,l4);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l4);
   ASSERT_EQ(5, path.size());
   ASSERT_EQ(path[0], l0);
   ASSERT_EQ(path[1], l1);
@@ -441,7 +441,7 @@ TEST(roadgraph, find_drivable_path_in_unconnected_graph_test)
   r.add_lane_successor(l1, l2);
   r.add_lane_successor(l2, l3);
 
-  std::vector<XodrLaneId> path = r.find_path(l0,l3);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l3);
   ASSERT_EQ(0, path.size());
 }
 
@@ -463,7 +463,7 @@ TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
   r.add_lane_successor(l1, l2);
   r.add_lane_successor(l2, l3);
 
-  std::vector<XodrLaneId> path = r.find_path(l0,l3);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0,l3);
   ASSERT_EQ(0, path.size());
 }
 
@@ -484,7 +484,7 @@ TEST(roadgraph, find_path_along_neighbor_edges_test)
   r.add_outer_neighbor(l1, l2);
 
   // XodrLane l2 is not reachable using only successor edges, thus no valid path available
-  std::vector<XodrLaneId> path = r.find_path(l0, l2);
+  std::vector<XodrLaneId> path = r.find_path<TypeDrivingAndEdgeTypeLaneSuccessor>(l0, l2);
 
   ASSERT_EQ(0, path.size());
 }
