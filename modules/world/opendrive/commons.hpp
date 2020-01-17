@@ -87,6 +87,12 @@ struct Connection {
   XodrLaneLinks lane_links_;
 };
 
+enum XodrDrivingDirection {
+  FORWARD = 0,
+  BACKWARD = 1,
+  BOTH = 2
+};
+
 enum XodrLaneType {
   NONE = 0,
   DRIVING = 1,

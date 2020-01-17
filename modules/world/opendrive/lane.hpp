@@ -26,6 +26,7 @@ class XodrLane {
         link_(),
         line_(),
         lane_type_(XodrLaneType::NONE),
+        driving_direction_(XodrDrivingDirection::FORWARD),
         road_mark_(),
         speed_() {}
   explicit XodrLane(const XodrLanePosition& lane_position)
@@ -34,6 +35,7 @@ class XodrLane {
         link_(),
         line_(),
         lane_type_(XodrLaneType::NONE),
+        driving_direction_(XodrDrivingDirection::FORWARD),
         road_mark_(),
         speed_() {}
 
@@ -43,6 +45,7 @@ class XodrLane {
     link_(lane->link_),
     line_(lane->line_),
     lane_type_(lane->lane_type_),
+    driving_direction_(lane->driving_direction_),
     road_mark_(lane->road_mark_),
     speed_(lane->speed_) {}
 
@@ -54,6 +57,8 @@ class XodrLane {
   void set_link(const XodrLaneLink link) { link_ = link; }
   void set_speed(float speed) { speed_ = speed; }
   void set_lane_type(const XodrLaneType lt) { lane_type_ = lt; }
+  void set_driving_direction(const XodrDrivingDirection& d) {
+    driving_direction_ = d;}
   void set_road_mark(const XodrRoadMark rm) { road_mark_ = rm; }
   void set_lane_position(const XodrLanePosition& lane_position) {
     lane_position_ = lane_position;
@@ -69,6 +74,8 @@ class XodrLane {
   XodrRoadMark get_road_mark() const { return road_mark_; }
   float get_speed() const { return speed_; }
   XodrLaneType get_lane_type() const { return lane_type_; }
+  XodrDrivingDirection get_driving_direction() const {
+    return driving_direction_; }
   XodrLaneId get_id() const { return lane_id_; }
   XodrLanePosition get_lane_position() const { return lane_position_; }
 
@@ -84,6 +91,7 @@ class XodrLane {
   geometry::Line line_;
 
   XodrLaneType lane_type_;
+  XodrDrivingDirection driving_direction_;
   XodrRoadMark road_mark_;
   float speed_;
 

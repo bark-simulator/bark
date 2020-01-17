@@ -524,8 +524,10 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
 }
 
 void MapInterface::GenerateRoadCorridor(
+  const XodrDrivingDirection& driving_direction,
   const std::vector<XodrRoadId>& road_ids) {
-  std::size_t road_corridor_hash = RoadCorridor::GetHash(road_ids);
+  std::size_t road_corridor_hash = RoadCorridor::GetHash(
+    driving_direction, road_ids);
   // only compute if it has not been computed yet
   if (road_corridors_.count(road_corridor_hash) > 0)
     return;
