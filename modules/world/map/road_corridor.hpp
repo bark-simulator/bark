@@ -61,9 +61,15 @@ struct RoadCorridor {
     LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
     LanePtr left_lane = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
     LanePtr right_lane = current_lane_corr->GetCurrentLane(pt)->GetRightLane();
+    LaneId left_lane_id = 10000000;
+    LaneId right_lane_id = 10000000;
+    if (left_lane)
+      left_lane_id = left_lane->get_id();
+    if (right_lane)
+      right_lane_id = right_lane->get_id();
     return std::make_pair(
-      GetLaneCorridor(left_lane->get_id()),
-      GetLaneCorridor(right_lane->get_id()));
+      GetLaneCorridor(left_lane_id),
+      GetLaneCorridor(right_lane_id));
   }
   static std::size_t GetHash(
     const std::vector<XodrRoadId>& road_ids) {
