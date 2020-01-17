@@ -46,7 +46,7 @@ struct LaneCorridor {
   std::map<float, LanePtr>& GetLanes() {
     return lanes_;
   }
-  LanePtr GetCurrentLane(const Point2d& pt) {
+  LanePtr GetCurrentLane(const Point2d& pt) const {
     for (auto& lane : lanes_) {
       if (Within(pt, lane.second->GetPolygon()))
         return lane.second;
