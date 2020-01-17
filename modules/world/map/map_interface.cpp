@@ -528,14 +528,15 @@ void MapInterface::GenerateRoadCorridor(
   const std::vector<XodrRoadId>& road_ids) {
   std::size_t road_corridor_hash = RoadCorridor::GetHash(
     driving_direction, road_ids);
+  
   // only compute if it has not been computed yet
   if (road_corridors_.count(road_corridor_hash) > 0)
     return;
+  
   Roads roads;
   for (auto& road_id : road_ids) {
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
   }
-
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
@@ -547,8 +548,6 @@ void MapInterface::GenerateRoadCorridor(
       lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
 
       // left and right lanes
-      XodrLaneId left_lane_id = roadgraph_->GetLeftLane(lane.first);
-      XodrLaneId right_lane_id = roadgraph_->GetRightLane(lane.first);
       LanePtr left_lane = lane.second->GetLeftLane();
       LanePtr right_lane = lane.second->GetRightLane();
       lane.second->SetLeftLane(left_lane);
@@ -559,8 +558,10 @@ void MapInterface::GenerateRoadCorridor(
         roadgraph_->GetLeftBoundary(lane.first);
       XodrLaneId right_boundary_lane_id =
         roadgraph_->GetRightBoundary(lane.first);
-      LanePtr left_lane_boundary = road.second->GetLane(left_boundary_lane_id);
-      LanePtr right_lane_boundary = road.second->GetLane(left_boundary_lane_id);
+      LanePtr left_lane_boundary = road.second->GetLane(
+        left_boundary_lane_id);
+      LanePtr right_lane_boundary = road.second->GetLane(
+        right_boundary_lane_id);
       Boundary left_bound, right_bound;
       left_bound.SetLine(left_lane_boundary->get_line());
       left_bound.SetType(left_lane_boundary->get_road_mark());
