@@ -827,7 +827,7 @@
             </laneSection>
         </lanes>
     </road>
-    <road name="Road 254" length="1.4356189586286321e+1" id="254" junction="-1">
+    <road name="Road 254" length="1.4356189586286321e+1" id="254" junction="230">
         <link>
             <predecessor elementType="road" elementId="4" contactPoint="start"/>
             <successor elementType="road" elementId="0" contactPoint="end"/>
