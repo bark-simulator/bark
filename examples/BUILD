@@ -164,6 +164,8 @@ py_binary(
         "//modules/runtime/viewer:video_renderer",
         "//modules/runtime:runtime",
     ],
+)
+
 py_binary(
   name = "read_from_carla",
   srcs = ["read_from_carla.py"],
