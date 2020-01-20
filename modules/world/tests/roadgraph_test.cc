@@ -264,15 +264,15 @@ TEST(roadgraph, get_lane_planview_test)
 
   r.print_graph("/home/esterle/get_lane_planview_test.dot");
 
-  std::pair<XodrLaneId, bool> in = r.getLanePlanView(l0);
+  std::pair<XodrLaneId, bool> in = r.GetPlanViewForLaneId(l0);
   ASSERT_TRUE(in.first == l0);
   ASSERT_TRUE(in.second);
 
-  std::pair<XodrLaneId, bool> in1 = r.getLanePlanView(l1);
+  std::pair<XodrLaneId, bool> in1 = r.GetPlanViewForLaneId(l1);
   ASSERT_TRUE(in1.first == l0);
   ASSERT_TRUE(in1.second);
 
-  std::pair<XodrLaneId, bool> in2 = r.getLanePlanView(l2);
+  std::pair<XodrLaneId, bool> in2 = r.GetPlanViewForLaneId(l2);
   ASSERT_TRUE(in2.first == l0);
   ASSERT_TRUE(in2.second);
 }
