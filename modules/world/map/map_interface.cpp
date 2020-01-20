@@ -201,7 +201,7 @@ bool MapInterface::IsInXodrLane(const Point2d &point, XodrLaneId id) const
 DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
   const XodrLaneId &startid, const XodrLaneId &goalid)
 {
-  std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goalid);
+  std::vector<XodrLaneId> ids = roadgraph_->FindDrivableLanePath(startid, goalid);
   if (!ids.empty()) {
     return ComputeDrivingCorridorForRange(ids);
   } else {
@@ -214,7 +214,7 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
 {
   std::vector<XodrLaneId> goal_neighbors = roadgraph_->get_all_neighbors(goalid);
   for (auto const &goal_neighbor : goal_neighbors) {
-    std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goal_neighbor);
+    std::vector<XodrLaneId> ids = roadgraph_->FindDrivableLanePath(startid, goal_neighbor);
     if (ids.size() > 0) {
       // Found a target lane that is parallel to the goal lane
       return ComputeDrivingCorridorForRange(ids);
@@ -281,8 +281,8 @@ bool MapInterface::ComputeAllDrivingCorridors()
 std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBoundaries(
     const std::vector<XodrLaneId> &lane_ids) const
 {
-  std::vector<XodrLaneEdgeType> successor_edges = {XodrLaneEdgeType::SUCCESSOR_EDGE};
-  std::vector<std::vector<XodrLaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(successor_edges, lane_ids);
+  std::vector<XodrLaneEdgeType> LANE_SUCCESSOR_EDGEs = {XodrLaneEdgeType::LANE_SUCCESSOR_EDGE};
+  std::vector<std::vector<XodrLaneId>> all_paths = roadgraph_->find_all_paths_in_subgraph(LANE_SUCCESSOR_EDGEs, lane_ids);
 
   std::vector<PathBoundaries> all_path_boundaries;
   for (auto const &path : all_paths)
@@ -544,8 +544,10 @@ void MapInterface::GenerateRoadCorridor(
     road.second->SetNextRoad(next_road);
     for (auto& lane : road.second->GetLanes()) {
       // lane successor
-      XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first, road_ids);
-      lane.second->SetNextLane(next_road->GetLane(next_lane_id));
+      std::pair<XodrLaneId, bool> next_lane =
+        roadgraph_->GetNextLane(road_ids, lane.first);
+      if (next_lane.second)
+        lane.second->SetNextLane(next_road->GetLane(next_lane.first));
 
       // left and right lanes
       LanePtr left_lane = road.second->GetLane(

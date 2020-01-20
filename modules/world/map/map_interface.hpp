@@ -131,7 +131,7 @@ class MapInterface {
     return FindXodrLane(pt)->get_id();
   }
   RoadId FindCurrentRoad(const Point2d& pt) {
-    XodrRoadId road_id = roadgraph_->get_road_by_lane_id(
+    XodrRoadId road_id = roadgraph_->GetRoadForLaneId(
       FindCurrentLane(pt));
     return road_id;
   }
