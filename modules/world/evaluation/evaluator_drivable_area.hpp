@@ -54,8 +54,9 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       Polygon poly_agent = agent.second->GetPolygonFromState(
         agent.second->get_current_state());
       // TODO(@hart): check if agent is in any of the merged polygons
-      if (!boost::geometry::within(poly_agent.obj_, merged_polygons_.at(0)))
-        return true;
+      for (auto& mp : merged_polygons_)
+        if (!boost::geometry::within(poly_agent.obj_, mp))
+          return true;
     }
     return false;
   }

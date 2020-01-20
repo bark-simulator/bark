@@ -66,11 +66,15 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                                     agent_json["goal"]["center_pose"][1]))
 
       sequential_goals = []
-      # TODO(@ahrt): support other goals
-      state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
-      # state_limit_goal = GoalDefinitionPolygon(goal_polygon)
+      goal = GoalDefinitionPolygon(goal_polygon)
+      if "goal_type" in agent_json["goal"]:
+        goal_type = agent_json["goal"]["goal_type"]
+        if goal_type == "GoalDefinitionStateLimits":
+          goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
+
+      # state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
       for _ in range(self._local_params["goal"]["num_reached", "num", 5]):
-        sequential_goals.append(state_limit_goal)
+        sequential_goals.append(goal)
       sequential_goal = GoalDefinitionSequential(sequential_goals)
       agent_json["goal_definition"] = sequential_goal
 
