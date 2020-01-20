@@ -117,7 +117,7 @@ void python_map(py::module m) {
     .def("get_all_laneids", &Roadgraph::get_all_laneids)
     .def("get_inner_neighbor", &Roadgraph::get_inner_neighbor)
     .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)    
-    .def("find_path", &Roadgraph::find_path)
+    .def("find_drivable_lane_path", &Roadgraph::find_drivable_lane_path)
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
     .def("add_lane_successor", &Roadgraph::add_lane_successor)
     .def("Generate", &Roadgraph::Generate)
