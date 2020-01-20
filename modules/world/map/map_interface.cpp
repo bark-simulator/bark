@@ -540,12 +540,10 @@ void MapInterface::GenerateRoadCorridor(
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
-    // TODO(@hart): GetNextRoad(r_id) will not be available
-    XodrRoadId next_road_id = roadgraph_->GetNextRoad(road.first);
+    RoadPtr next_road_id = GetNextRoad(road.first, road_ids);
     road.second->SetNextRoad(roads[next_road_id]);
     for (auto& lane : road.second->GetLanes()) {
       // lane successor
-      // TODO(@hart): this function needs to be changed
       XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first, road_ids);
       lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
 
@@ -582,6 +580,18 @@ void MapInterface::GenerateRoadCorridor(
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor);
   road_corridors_[road_corridor_hash] = road_corridor;
+}
+
+RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
+  const std::vector<XodrRoadId>& road_ids) {
+  std::vector<XodrRoadId>::iterator it = std::find(
+    road_ids.begin(),
+    road_ids.end(),
+    current_road_id);
+  if (road_ids.back() == current_road_id)
+    return nullptr;
+  int index = std::distance(road_ids.begin(), it);
+  return road_ids[index++];
 }
 
 }  // namespace map
