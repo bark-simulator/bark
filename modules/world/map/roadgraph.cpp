@@ -688,7 +688,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetNextLane(
       }
     }
   }
-  return std::make_pair(0, true);
+  return std::make_pair(0, false);
 }
 
 }  // namespace map
