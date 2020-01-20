@@ -524,8 +524,8 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
 }
 
 void MapInterface::GenerateRoadCorridor(
-  const XodrDrivingDirection& driving_direction,
-  const std::vector<XodrRoadId>& road_ids) {
+  const std::vector<XodrRoadId>& road_ids,
+  const XodrDrivingDirection& driving_direction) {
   std::size_t road_corridor_hash = RoadCorridor::GetHash(
     driving_direction, road_ids);
 
@@ -534,17 +534,19 @@ void MapInterface::GenerateRoadCorridor(
     return;
 
   Roads roads;
-  for (auto& road_id : road_ids) {
+  for (auto& road_id : road_ids)
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
-  }
+
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
+    // TODO(@hart): GetNextRoad(r_id) will not be available
     XodrRoadId next_road_id = roadgraph_->GetNextRoad(road.first);
     road.second->SetNextRoad(roads[next_road_id]);
     for (auto& lane : road.second->GetLanes()) {
       // lane successor
-      XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first);
+      // TODO(@hart): this function needs to be changed
+      XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first, road_ids);
       lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
 
       // left and right lanes
