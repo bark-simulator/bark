@@ -582,10 +582,10 @@ void MapInterface::GenerateRoadCorridor(
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
-RoadPtr MapInterface::GetNextRoad(XodrRoadId& current_road_id,
-  Roads& roads,
-  std::vector<XodrRoadId>& road_ids) {
-  std::vector<XodrRoadId>::iterator it = std::find(
+RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
+  const Roads& roads,
+  const std::vector<XodrRoadId>& road_ids) const {
+  auto it = std::find(
     road_ids.begin(),
     road_ids.end(),
     current_road_id);
