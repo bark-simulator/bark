@@ -173,12 +173,16 @@ class Roadgraph {
 
 
   //! Roadgraph extension
-  XodrLaneId GetLeftLane(const XodrLaneId& lane_id) {}
-  XodrLaneId GetRightLane(const XodrLaneId& lane_id) {}
+  XodrLaneId GetLeftLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {}
+  XodrLaneId GetRightLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {}
   XodrLaneId GetNextLane(const XodrLaneId& lane_id) {}
   XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
-  XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id) {}
-  XodrLaneId GetRightBoundary(const XodrLaneId& lane_id) {}
+  XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {}
+  XodrLaneId GetRightBoundary(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {}
   modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
   std::vector<XodrRoadId> GetRoadIdsForPath(
     const XodrRoadId& road_start_id,
