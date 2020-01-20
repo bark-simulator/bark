@@ -159,6 +159,15 @@ py::class_<RoadCorridor,
         return rc;
     }));
 
+//! LaneCorridor
+// TODO(@hart): make pickable -> requires XODR to be as well
+py::class_<LaneCorridor,
+           std::shared_ptr<LaneCorridor>>(m, "LaneCorridor")
+    .def(py::init<>())
+    .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
+    .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
+    .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
+    .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary);
 
 // TODO(@hart): make pickable -> requires XODR to be as well
 py::class_<Lane,
