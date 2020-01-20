@@ -26,6 +26,7 @@ cc_library(
     ],
     hdrs = [
         "roadgraph.hpp",
+        "roadgraph_impl.hpp"
     ],
     deps = [
         "//modules/geometry",

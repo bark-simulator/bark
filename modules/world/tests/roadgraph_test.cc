@@ -362,6 +362,78 @@ TEST(roadgraph, find_path_test)
   
 }
 
+TEST(roadgraph, find_road_path_test)
+{
+  using namespace modules::world::map;
+  Roadgraph r;
+
+  XodrRoadId rid0 = 0;
+  XodrLanePtr lane_00(new XodrLane(0));
+  XodrLanePtr lane_plus10(new XodrLane(1));
+
+  XodrLaneId l00 = r.add_lane(rid0, lane_00);
+  XodrLaneId l10 = r.add_lane(rid0, lane_plus10);
+
+  r.add_inner_neighbor(l00, l10);
+  r.add_outer_neighbor(l00, l10);
+
+  XodrRoadId rid1 = 1;
+  XodrLanePtr lane_01(new XodrLane(0));
+  XodrLanePtr lane_plus11(new XodrLane(1));
+
+  XodrLaneId l01 = r.add_lane(rid1, lane_01);
+  XodrLaneId l11 = r.add_lane(rid1, lane_plus11);
+
+  r.add_inner_neighbor(l01, l11);
+  r.add_outer_neighbor(l01, l11);
+
+  XodrRoadId rid2 = 2;
+  XodrLanePtr lane_02(new XodrLane(0));
+  XodrLanePtr lane_plus12(new XodrLane(1));
+
+  XodrLaneId l02 = r.add_lane(rid2, lane_02);
+  XodrLaneId l12 = r.add_lane(rid2, lane_plus12);
+
+  r.add_inner_neighbor(l02, l12);
+  r.add_outer_neighbor(l02, l12);
+
+  r.add_lane_successor(l10, l11);
+  r.add_lane_successor(l11, l12);
+  r.add_road_successor(l00, l01);
+  r.add_road_successor(l01, l02);
+ 
+  r.print_graph("/home/esterle/find_road_path_test.dot");
+
+  std::vector<XodrLaneId> path = r.find_path<EdgeTypeRoadSuccessor>(l10,l12);
+  ASSERT_EQ(0, path.size());
+
+  path.clear();
+  path = r.find_path<EdgeTypeRoadSuccessor>(l00,l01);
+  ASSERT_EQ(2, path.size());
+  ASSERT_EQ(path[0], l00);
+  ASSERT_EQ(path[1], l01);
+
+  path.clear();
+  path = r.find_path<EdgeTypeRoadSuccessor>(l00,l02);
+  ASSERT_EQ(3, path.size());
+  ASSERT_EQ(path[0], l00);
+  ASSERT_EQ(path[1], l01);
+  ASSERT_EQ(path[2], l02);
+
+  std::vector<XodrRoadId> path_r = r.find_road_path(rid0, rid1);
+  ASSERT_EQ(2, path_r.size());
+  ASSERT_EQ(path_r[0], rid0);
+  ASSERT_EQ(path_r[1], rid1);
+  
+  path_r.clear();
+  path_r = r.find_road_path(rid0, rid2);
+  ASSERT_EQ(3, path_r.size());
+  ASSERT_EQ(path_r[0], rid0);
+  ASSERT_EQ(path_r[1], rid1);
+  ASSERT_EQ(path_r[2], rid2);
+  
+}
+
 TEST(roadgraph, find_path_in_unconnected_graph_test)
 {
   using namespace modules::world::map;
