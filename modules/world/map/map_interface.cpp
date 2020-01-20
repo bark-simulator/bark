@@ -528,11 +528,11 @@ void MapInterface::GenerateRoadCorridor(
   const std::vector<XodrRoadId>& road_ids) {
   std::size_t road_corridor_hash = RoadCorridor::GetHash(
     driving_direction, road_ids);
-  
+
   // only compute if it has not been computed yet
   if (road_corridors_.count(road_corridor_hash) > 0)
     return;
-  
+
   Roads roads;
   for (auto& road_id : road_ids) {
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
@@ -548,16 +548,20 @@ void MapInterface::GenerateRoadCorridor(
       lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
 
       // left and right lanes
-      LanePtr left_lane = lane.second->GetLeftLane();
-      LanePtr right_lane = lane.second->GetRightLane();
+      LanePtr left_lane = road.second->GetLane(
+        roadgraph_->GetLeftLane(lane.first,
+        driving_direction));
+      LanePtr right_lane = road.second->GetLane(
+        roadgraph_->GetRightLane(lane.first,
+        driving_direction));
       lane.second->SetLeftLane(left_lane);
       lane.second->SetRightLane(right_lane);
 
       // set boundaries for lane
       XodrLaneId left_boundary_lane_id =
-        roadgraph_->GetLeftBoundary(lane.first);
+        roadgraph_->GetLeftBoundary(lane.first, driving_direction);
       XodrLaneId right_boundary_lane_id =
-        roadgraph_->GetRightBoundary(lane.first);
+        roadgraph_->GetRightBoundary(lane.first, driving_direction);
       LanePtr left_lane_boundary = road.second->GetLane(
         left_boundary_lane_id);
       LanePtr right_lane_boundary = road.second->GetLane(
