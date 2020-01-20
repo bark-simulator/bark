@@ -230,10 +230,54 @@ class Roadgraph {
 
 
   //! Roadgraph extension (only mock ups!!)
-  XodrLaneId GetLeftLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
-  XodrLaneId GetRightLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
+  std::pair<XodrLaneId, bool> GetLeftLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {
+    XodrLanePtr lane = get_laneptr(lane_id);
+    // if (forwards and positive)  -> inner
+    //   if (inner_id == 0) -> get_outer()
+    // if (forwards and negative)  -> outer
+
+    // if (backwards and negative) -> inner
+    //   if (inner_id == 0) -> get_outer()
+    // if (backwards and positive) -> outer
+    if ((driving_direction == XodrDrivingDirection::FORWARD &&
+        lane->get_lane_position() > 0) ||
+        (driving_direction == XodrDrivingDirection::BACKWARD &&
+        lane->get_lane_position() < 0)) {
+      std::pair<XodrLaneId, bool> inner_neighbor = get_inner_neighbor(lane_id);
+      if (inner_neighbor.second && inner_neighbor.first != 0)
+        return std::make_pair(inner_neighbor.first, true);
+      // if it was 0
+      std::pair<XodrLaneId, bool> outer_neighbor =
+        get_outer_neighbor(inner_neighbor.first);
+      if (outer_neighbor.second)
+        return std::make_pair(outer_neighbor.first, true);
+    }
+    if ((driving_direction == XodrDrivingDirection::FORWARD &&
+        lane->get_lane_position() < 0) ||
+        (driving_direction == XodrDrivingDirection::BACKWARD &&
+        lane->get_lane_position() > 0)) {
+      std::pair<XodrLaneId, bool> outer_neighbor =
+        get_outer_neighbor(lane_id);
+      if (outer_neighbor.second)
+        return std::make_pair(outer_neighbor.first, true);
+    }
+    return std::make_pair(0, false);
+  }
+
+  std::pair<XodrLaneId, bool> GetRightLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction) {
+    // if (forwards and positive)  -> get_outer()
+    // if (forwards and negative)  -> get_inner()
+    //   if (inner_id == 0) -> get_outer()
+
+
+    // if (backwards and negative) -> outer
+    // if (backwards and positive) -> inner
+    //   if (inner_id == 0) -> get_outer()
+    return std::make_pair(0, false);
+  }
+
   std::pair<XodrLaneId, bool> GetNextLane(
     const std::vector<XodrRoadId>& road_ids,
     const XodrLaneId& lane_id);

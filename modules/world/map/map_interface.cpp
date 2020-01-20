@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <random>
+#include <memory>
 #include "modules/world/map/map_interface.hpp"
 
 namespace modules {
@@ -563,12 +564,16 @@ void MapInterface::GenerateRoadCorridor(
         lane.second->SetNextLane(next_road->GetLane(next_lane.first));
 
       // left and right lanes
-      LanePtr left_lane = road.second->GetLane(
-        roadgraph_->GetLeftLane(lane.first,
-        driving_direction));
-      LanePtr right_lane = road.second->GetLane(
-        roadgraph_->GetRightLane(lane.first,
-        driving_direction));
+      LanePtr left_lane, right_lane;
+      std::pair<XodrLaneId, bool> left_lane_id =
+        roadgraph_->GetLeftLane(lane.first, driving_direction);
+      if (left_lane_id.second)
+        left_lane = road.second->GetLane(left_lane_id.first);
+
+      std::pair<XodrLaneId, bool> right_lane_id =
+        roadgraph_->GetRightLane(lane.first, driving_direction);
+      if (right_lane_id.second)
+        right_lane = road.second->GetLane(right_lane_id.first);
       lane.second->SetLeftLane(left_lane);
       lane.second->SetRightLane(right_lane);
 
