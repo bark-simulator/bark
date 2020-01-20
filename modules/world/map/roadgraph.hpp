@@ -96,9 +96,6 @@ class Roadgraph {
  public:
   Roadgraph() {}
 
-  // TODO: Move to XodrLaneGraph, but XodrLaneGraph is not wrapped to python
-  PolygonPtr get_lane_polygon_by_id(const XodrLaneId &lane_id);
-
   XodrLaneId add_lane(const XodrRoadId& road_id, const XodrLanePtr& laneptr);
 
   bool add_inner_neighbor(const XodrLaneId& inner_id, const XodrLaneId& outer_id);
@@ -118,12 +115,14 @@ class Roadgraph {
   template<class Predicate>
   bool check_id_in_filtered_graph(const FilteredXodrLaneGraph_t<Predicate>& fg, const XodrLaneId& lane_id) const;
 
-  std::vector<XodrRoadId> find_road_path(const XodrRoadId& start_id, const XodrRoadId& goal_id);
-  
   template<class Predicate>
   std::vector<XodrLaneId> find_path(const XodrLaneId& startid, const XodrLaneId& goalid);
 
-  std::vector<XodrRoadId> FindRoadPath(const XodrRoadId& road_start_id, const XodrRoadId& road_end_id) {}
+  std::vector<XodrRoadId> find_road_path(const XodrRoadId& startid, const XodrRoadId& goalid);
+  
+  std::vector<XodrLaneId> find_drivable_lane_path(const XodrLaneId& startid, const XodrLaneId& goalid);
+
+  std::vector<XodrRoadId> FindRoadPath(const XodrRoadId& road_startid, const XodrRoadId& road_endid) {}
 
   std::vector<std::vector<XodrLaneId>> find_all_paths_in_subgraph(const std::vector<XodrLaneEdgeType> &edge_type_subset, const std::vector<XodrLaneId> &lane_id_subset);
 
@@ -133,7 +132,8 @@ class Roadgraph {
 
   std::pair<XodrLaneId, bool> getPlanViewForRoadId(const XodrRoadId& id) const;
 
-  std::pair<XodrLaneId, bool> getLanePlanView(const XodrLaneId& lane_id) const;
+  //! outer_lane_id can be some outer_lane_id (position 1,2,3)
+  std::pair<XodrLaneId, bool> GetPlanViewForLaneId(const XodrLaneId& outer_lane_id) const;
 
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
   std::pair<XodrLaneId, bool> get_inner_neighbor(const XodrLaneId& lane_id) const;
@@ -181,13 +181,6 @@ class Roadgraph {
 
   std::pair<vertex_t,bool> get_vertex_by_lane_id(const XodrLaneId& lane_id) const;
 
-  std::pair< XodrLanePtr, XodrLanePtr > ComputeXodrLaneBoundaries(const XodrLaneId& lane_id) const;
-
-  // TODO Klemens: change to XodrLanePtr to Line
-  std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > ComputeRouteBoundaries(const std::vector<XodrLaneId>& horizon) const;
-
-  std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(const XodrLaneId& lane_id) const;
-
   void GenerateVertices(OpenDriveMapPtr map);
 
   void GeneratePreAndSuccessors(OpenDriveMapPtr map);
@@ -200,8 +193,16 @@ class Roadgraph {
 
   void Generate(OpenDriveMapPtr map);
 
-  XodrRoadId get_road_by_lane_id(const XodrLaneId &lane_id);
+  std::pair< XodrLanePtr, XodrLanePtr > ComputeXodrLaneBoundaries(const XodrLaneId& lane_id) const;
 
+  std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > ComputeRouteBoundaries(const std::vector<XodrLaneId>& horizon) const;
+
+  std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(const XodrLaneId& lane_id) const;
+
+  // TODO: Move to XodrLaneGraph, but XodrLaneGraph is not wrapped to python
+  PolygonPtr get_lane_polygon_by_id(const XodrLaneId &lane_id);
+
+  XodrRoadId get_road_by_lane_id(const XodrLaneId &lane_id);
 
   //! Roadgraph extension (only mock ups!!)
   XodrLaneId GetLeftLane(const XodrLaneId& lane_id) {}
@@ -211,38 +212,14 @@ class Roadgraph {
   XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id) {}
   XodrLaneId GetRightBoundary(const XodrLaneId& lane_id) {}
   modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
-  // std::vector<XodrRoadId> GetRoadIdsForPath(const XodrRoadId& road_start_id, const XodrRoadId& road_end_id) {}
+  // std::vector<XodrRoadId> GetRoadIdsForPath(const XodrRoadId& road_startid, const XodrRoadId& road_endid) {}
 
  private:
   XodrLaneGraph g_;
 
-  bool add_edge_of_type(const XodrLaneId& source_id, const XodrLaneId& target_id, const XodrLaneEdgeType& edgetype) {
-    XodrLaneEdge edge = XodrLaneEdge(edgetype);
-    std::pair<vertex_t,bool> source_lane = get_vertex_by_lane_id(source_id);
-    std::pair<vertex_t,bool> target_lane = get_vertex_by_lane_id(target_id);
-    if(source_lane.second && target_lane.second) {
-      boost::add_edge(source_lane.first, target_lane.first, edge, g_);
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool add_edge_of_type(const XodrLaneId& source_id, const XodrLaneId& target_id, const XodrLaneEdgeType& edgetype);
 
-  std::vector<std::pair<XodrLaneId, bool> > get_neighbor_from_edgetype(const XodrLaneId& lane_id, const XodrLaneEdgeType edge_type) const { //! we can have two outer neighbors
-    std::vector<std::pair<XodrLaneId, bool> > retval;
-    std::pair<vertex_t, bool> lane_vertex_pair = get_vertex_by_lane_id(lane_id);
-    boost::graph_traits<XodrLaneGraph>::out_edge_iterator i, end;
-    for (boost::tie(i, end) = boost::out_edges(lane_vertex_pair.first, g_); i != end; ++i) {
-      if(g_[*i].edge_type == edge_type) {
-        vertex_t target = boost::target(*i,g_);
-        retval.push_back(std::make_pair(g_[target].global_lane_id, true));
-      }
-    }
-    if (retval.empty()) {
-      retval.push_back(std::make_pair(0, false));
-    }
-    return retval;
-  }
+  std::vector<std::pair<XodrLaneId, bool> > get_neighbor_from_edgetype(const XodrLaneId& lane_id, const XodrLaneEdgeType edge_type) const;
 
   template <class XodrRoadIdMap, class XodrLaneIdMap, class XodrLaneMap>
   class my_vertex_writer_graph {

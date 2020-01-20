@@ -201,7 +201,7 @@ bool MapInterface::IsInXodrLane(const Point2d &point, XodrLaneId id) const
 DrivingCorridor MapInterface::ComputeDrivingCorridorFromStartToGoal(
   const XodrLaneId &startid, const XodrLaneId &goalid)
 {
-  std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goalid);
+  std::vector<XodrLaneId> ids = roadgraph_->find_drivable_lane_path(startid, goalid);
   if (!ids.empty()) {
     return ComputeDrivingCorridorForRange(ids);
   } else {
@@ -214,7 +214,7 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorParallelToGoal(
 {
   std::vector<XodrLaneId> goal_neighbors = roadgraph_->get_all_neighbors(goalid);
   for (auto const &goal_neighbor : goal_neighbors) {
-    std::vector<XodrLaneId> ids = roadgraph_->find_path(startid, goal_neighbor);
+    std::vector<XodrLaneId> ids = roadgraph_->find_drivable_lane_path(startid, goal_neighbor);
     if (ids.size() > 0) {
       // Found a target lane that is parallel to the goal lane
       return ComputeDrivingCorridorForRange(ids);
