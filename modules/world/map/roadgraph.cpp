@@ -73,6 +73,26 @@ XodrRoadId Roadgraph::GetNextRoad(const XodrRoadId& road_id) const {
   return id;
 }
 
+
+std::vector<XodrRoadId> Roadgraph::find_road_path(const XodrRoadId& start_id, const XodrRoadId& goal_id) {
+
+  auto start_pv = getPlanViewForRoadId(start_id);
+  auto goal_pv = getPlanViewForRoadId(goal_id);
+
+  std::vector<XodrRoadId> road_ids;
+
+  if (start_pv.second && goal_pv.second) {
+    std::vector<XodrLaneId> lane_ids = find_path<EdgeTypeRoadSuccessor>(start_pv.first, goal_pv.first);
+
+    for (auto const& id: lane_ids) {
+      road_ids.push_back(get_road_by_lane_id(id));
+    }
+  }
+  return road_ids;
+
+}
+
+
 std::vector<std::vector<XodrLaneId>> Roadgraph::find_all_paths_in_subgraph(
     const std::vector<XodrLaneEdgeType> &edge_type_subset,
     const std::vector<XodrLaneId> &lane_id_subset) {
@@ -163,7 +183,20 @@ std::vector<XodrLaneId> Roadgraph::get_all_laneids() const {
   return ids;
 }
 
-std::pair<XodrLaneId, bool> Roadgraph::getLanePlanView(const XodrLaneId lane_id) const {
+std::pair<XodrLaneId, bool> Roadgraph::getPlanViewForRoadId(const XodrRoadId& id) const {
+  std::vector<XodrLaneId> ids;
+  std::vector<vertex_t> vertices = get_vertices();
+  for (auto const &v : vertices) {
+    if (get_lane_graph()[v].road_id == id) {
+      if (get_lane_graph()[v].lane->get_lane_position() == 0) {
+        return std::make_pair(get_lane_graph()[v].global_lane_id, true);
+      }
+    }
+  }
+  return std::make_pair(0, false);
+}
+
+std::pair<XodrLaneId, bool> Roadgraph::getLanePlanView(const XodrLaneId& lane_id) const {
   XodrLanePtr lane = get_laneptr(lane_id);
   if (lane->get_lane_position() == 0) {
       return std::make_pair(lane_id, true);
