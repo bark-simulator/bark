@@ -118,9 +118,9 @@ class MapInterface {
   void CalculateLaneCorridors(RoadCorridorPtr& road_corridor);
   LanePtr GenerateRoadCorridorLane(const XodrLanePtr& lane);
   RoadPtr GenerateRoadCorridorRoad(const XodrRoadId& road_id);
-  RoadPtr GetNextRoad(XodrRoadId& current_road_id,
-    Roads& roads,
-    std::vector<XodrRoadId>& road_ids);
+  RoadPtr GetNextRoad(const XodrRoadId& current_road_id,
+    const Roads& roads,
+    const std::vector<XodrRoadId>& road_ids) const;
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction);
   
