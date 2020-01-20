@@ -302,12 +302,24 @@ class Roadgraph {
   std::pair<XodrLaneId, bool> GetNextLane(
     const std::vector<XodrRoadId>& road_ids,
     const XodrLaneId& lane_id);
-  // XodrLaneId GetNextLane(const XodrLaneId& lane_id) {}
-  XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
+
   XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
+    const XodrDrivingDirection& driving_direction) {
+    // if (forwards and negative)  -> inner
+    // if (forwards and positive)  -> outer
+
+    // if (backwards and positive) -> inner
+    // if (backwards and negative) -> outer
+  }
+
   XodrLaneId GetRightBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
+    const XodrDrivingDirection& driving_direction) {
+    // if (forwards and negative)  -> outer
+    // if (forwards and positive)  -> inner
+
+    // if (backwards and positive) -> outer
+    // if (backwards and negative) -> inner
+  }
   modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
 
 
