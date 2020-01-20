@@ -54,6 +54,7 @@ void python_goal_definition(py::module m)
         return "bark.world.goal_definition.GoalDefinitionStateLimits";
       })
       .def_property_readonly("xy_limits", &GoalDefinitionStateLimits::get_xy_limits)
+      .def_property_readonly("goal_shape", &GoalDefinitionStateLimits::get_xy_limits)
       .def_property_readonly("angle_limits", &GoalDefinitionStateLimits::get_angle_limits)
       .def(py::pickle(
         [](const GoalDefinitionStateLimits& g) -> py::tuple { // __getstate__
