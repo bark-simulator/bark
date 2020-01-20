@@ -36,7 +36,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       std::vector<PolygonPtr> polygons;
 
       for (auto& lane_id : lane_ids) {
-        PolygonPtr polygon = roadgraph->get_lane_polygon_by_id(lane_id);
+        PolygonPtr polygon = roadgraph->GetLanePolygonForLaneId(lane_id);
         polygons.push_back(polygon);
       }
 

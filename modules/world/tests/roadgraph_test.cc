@@ -362,7 +362,7 @@ TEST(roadgraph, find_path_test)
   
 }
 
-TEST(roadgraph, find_road_path_test)
+TEST(roadgraph, FindRoadPath_test)
 {
   using namespace modules::world::map;
   Roadgraph r;
@@ -402,7 +402,7 @@ TEST(roadgraph, find_road_path_test)
   r.add_road_successor(l00, l01);
   r.add_road_successor(l01, l02);
  
-  r.print_graph("/home/esterle/find_road_path_test.dot");
+  r.print_graph("/home/esterle/FindRoadPath_test.dot");
 
   std::vector<XodrLaneId> path = r.find_path<EdgeTypeRoadSuccessor>(l10,l12);
   ASSERT_EQ(0, path.size());
@@ -420,17 +420,28 @@ TEST(roadgraph, find_road_path_test)
   ASSERT_EQ(path[1], l01);
   ASSERT_EQ(path[2], l02);
 
-  std::vector<XodrRoadId> path_r = r.find_road_path(rid0, rid1);
+  std::vector<XodrRoadId> path_r = r.FindRoadPath(rid0, rid1);
   ASSERT_EQ(2, path_r.size());
   ASSERT_EQ(path_r[0], rid0);
   ASSERT_EQ(path_r[1], rid1);
   
   path_r.clear();
-  path_r = r.find_road_path(rid0, rid2);
+  path_r = r.FindRoadPath(rid0, rid2);
   ASSERT_EQ(3, path_r.size());
   ASSERT_EQ(path_r[0], rid0);
   ASSERT_EQ(path_r[1], rid1);
   ASSERT_EQ(path_r[2], rid2);
+
+  auto nextlane = r.GetNextLane(path_r, l10);
+  ASSERT_TRUE(nextlane.second);
+  ASSERT_EQ(nextlane.first, l11);
+
+  nextlane = r.GetNextLane(path_r, l11);
+  ASSERT_TRUE(nextlane.second);
+  ASSERT_EQ(nextlane.first, l12);
+
+  nextlane = r.GetNextLane(path_r, l12);
+  ASSERT_FALSE(nextlane.second);
   
 }
 
