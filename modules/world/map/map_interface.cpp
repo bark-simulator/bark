@@ -540,12 +540,12 @@ void MapInterface::GenerateRoadCorridor(
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
-    RoadPtr next_road_id = GetNextRoad(road.first, road_ids);
-    road.second->SetNextRoad(roads[next_road_id]);
+    RoadPtr next_road = GetNextRoad(road.first, roads, road_ids);
+    road.second->SetNextRoad(next_road);
     for (auto& lane : road.second->GetLanes()) {
       // lane successor
       XodrLaneId next_lane_id = roadgraph_->GetNextLane(lane.first, road_ids);
-      lane.second->SetNextLane(roads[next_road_id]->GetLane(next_lane_id));
+      lane.second->SetNextLane(next_road->GetLane(next_lane_id));
 
       // left and right lanes
       LanePtr left_lane = road.second->GetLane(
@@ -582,16 +582,16 @@ void MapInterface::GenerateRoadCorridor(
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
-RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
-  const std::vector<XodrRoadId>& road_ids) {
+RoadPtr MapInterface::GetNextRoad(XodrRoadId& current_road_id,
+  Roads& roads,
+  std::vector<XodrRoadId>& road_ids) {
   std::vector<XodrRoadId>::iterator it = std::find(
     road_ids.begin(),
     road_ids.end(),
     current_road_id);
   if (road_ids.back() == current_road_id)
     return nullptr;
-  int index = std::distance(road_ids.begin(), it);
-  return road_ids[index++];
+  return roads.at(*(it++));
 }
 
 }  // namespace map
