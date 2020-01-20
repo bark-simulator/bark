@@ -5,6 +5,8 @@
 
 
 #include <string>
+#include <vector>
+#include <map>
 #include "map.hpp"
 
 #include "python/polymorphic_conversion.hpp"
@@ -125,4 +127,56 @@ void python_map(py::module m) {
     .def("get_road_by_lane_id", &Roadgraph::get_road_by_lane_id)
     .def("compute_lane_boundaries", &Roadgraph::ComputeXodrLaneBoundaries);  // get_road_by_lane_id
 
+
+
+//! RoadCorridor
+py::class_<RoadCorridor,
+           std::shared_ptr<RoadCorridor>>(m, "RoadCorridor")
+    .def(py::init<>())
+    .def_property("roads", &RoadCorridor::GetRoads,
+      &RoadCorridor::SetRoads)
+    .def("lanes", &RoadCorridor::GetLanes)
+    .def("get_road", &RoadCorridor::GetRoad)
+    .def("get_lane_corridor", &RoadCorridor::GetLaneCorridor)
+    .def_property_readonly("lane_corridors",
+      &RoadCorridor::GetUniqueLaneCorridors)
+    .def(py::pickle(
+    [](const RoadCorridor& rc) -> py::tuple {  // __getstate__
+        /* Return a tuple that fully encodes the state of the object */
+        return py::make_tuple(rc.GetRoads(),
+                              rc.GetUniqueLaneCorridors(),
+                              rc.GetLaneCorridorMap());
+    },
+    [](const py::tuple &t) {  // __setstate__
+        if (t.size() != 3)
+          throw std::runtime_error("Invalid RoadCorridor state!");
+        RoadCorridor rc;
+        rc.SetRoads(t[0].cast<Roads>());
+        rc.SetUniqueLaneCorridors(
+          t[1].cast<std::vector<LaneCorridorPtr>>());
+        rc.SetLaneCorridorMap(
+          t[2].cast<std::map<LaneId, LaneCorridorPtr>>());
+        return rc;
+    }));
+
+
+// TODO(@hart): make pickable -> requires XODR to be as well
+py::class_<Lane,
+           std::shared_ptr<Lane>>(m, "Lane")
+  .def(py::init<XodrLanePtr>())
+  .def_property_readonly("center_line", &Lane::GetCenterLine)
+  .def_property_readonly("right_lane", &Lane::GetRightLane)
+  .def_property_readonly("left_lane", &Lane::GetLeftLane)
+  .def_property_readonly("left_boundary", &Lane::GetLeftBoundary)
+  .def_property_readonly("right_boundary", &Lane::GetRightBoundary)
+  .def_property_readonly("polygon", &Lane::GetPolygon);
+
+
+// TODO(@hart): make pickable -> requires XODR to be as well
+py::class_<Road,
+           std::shared_ptr<Road>>(m, "Road")
+  .def(py::init<XodrRoadPtr>())
+  .def_property_readonly("next_road", &Road::GetNextRoad)
+  .def_property_readonly("lanes", &Road::GetLanes)
+  .def("get_lane", &Road::GetLane);
 }
