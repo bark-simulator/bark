@@ -47,8 +47,11 @@ struct RoadCorridor {
       return nullptr;
     return lane_corridors_.at(lane_id);
   }
-  std::vector<LaneCorridorPtr> GetAllLaneCorridors() const {
+  std::vector<LaneCorridorPtr> GetUniqueLaneCorridors() const {
     return unique_lane_corridors_;
+  }
+  std::map<LaneId, LaneCorridorPtr> GetLaneCorridorMap() const {
+    return lane_corridors_;
   }
   LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
     for (auto& lane_corr : unique_lane_corridors_) {
@@ -91,6 +94,14 @@ struct RoadCorridor {
     const LaneCorridorPtr& corr) {
     lane_corridors_[lane_id] = corr;
     unique_lane_corridors_.push_back(corr);
+  }
+  void SetUniqueLaneCorridors(
+    const std::vector<LaneCorridorPtr>& unique_lane_corridors) {
+    unique_lane_corridors_ = unique_lane_corridors;
+  }
+  void SetLaneCorridorMap(
+    const std::map<LaneId, LaneCorridorPtr>& lane_corridors) {
+    lane_corridors_ = lane_corridors;
   }
 
   Roads roads_;
