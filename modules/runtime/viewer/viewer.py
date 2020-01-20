@@ -257,3 +257,11 @@ class BaseViewer(Viewer):
         # TODO(@hart): visualize the global as well as the local driving corridor
         self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
         self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
+
+    def drawLaneCorridor(self, lane_corridor):
+      self.drawPolygon2d(lane_corridor.polygon)
+
+    def drawRoadCorridor(self, road_corridor):
+      # TODO(@hart): use agent specific coloring
+      for lane_corridor in road_corridor.lane_corridors:
+        self.drawLaneCorridor(lane_corridor)
