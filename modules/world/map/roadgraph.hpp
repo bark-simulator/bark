@@ -274,6 +274,7 @@ class Roadgraph {
     // if (backwards and positive) -> outer
     // if (backwards and negative) -> inner
     //   if (inner_id == 0) -> get_outer()
+    XodrLanePtr lane = get_laneptr(lane_id);
     if ((driving_direction == XodrDrivingDirection::FORWARD &&
         lane->get_lane_position() > 0) ||
         (driving_direction == XodrDrivingDirection::BACKWARD &&
