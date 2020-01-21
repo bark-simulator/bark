@@ -460,44 +460,44 @@ void MapInterface::CalculateLaneCorridors(
     std::map<LaneId, LaneCorridorPtr> corridor_map =
       road_corridor->GetLaneCorridorMap();
     // only add lane if it has not been added already
-    if (corridor_map.find(lane.first) == corridor_map.end()) {
-      LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
-      LanePtr current_lane = lane.second;
-      float total_s = current_lane->GetCenterLine().length();
-      lane_corridor->SetCenterLine(current_lane->GetCenterLine());
-      lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
-      // TODO(@hart): is this correct?
-      lane_corridor->SetLeftBoundary(
-        current_lane->GetLeftBoundary().line_);
-      lane_corridor->SetRightBoundary(
-        current_lane->GetRightBoundary().line_);
+    if (corridor_map.find(lane.first) == corridor_map.end())
+      continue;
+    LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
+    LanePtr current_lane = lane.second;
+    float total_s = current_lane->GetCenterLine().length();
+    lane_corridor->SetCenterLine(current_lane->GetCenterLine());
+    lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
+    // TODO(@hart): is this correct?
+    lane_corridor->SetLeftBoundary(
+      current_lane->GetLeftBoundary().line_);
+    lane_corridor->SetRightBoundary(
+      current_lane->GetRightBoundary().line_);
+    lane_corridor->SetLane(
+      total_s,
+      current_lane);
+    // add initial lane
+    road_corridor->SetLaneCorridor(current_lane->get_id(), lane_corridor);
+
+    LanePtr next_lane = current_lane;
+    for (;;) {
+      next_lane = next_lane->GetNextLane();
+      if (next_lane == nullptr)
+        break;
+      lane_corridor->GetCenterLine().ConcatenateLinestring(
+        next_lane->GetCenterLine());
+      lane_corridor->GetLeftBoundary().ConcatenateLinestring(
+        next_lane->GetLeftBoundary().line_);
+      lane_corridor->GetRightBoundary().ConcatenateLinestring(
+        next_lane->GetRightBoundary().line_);
+      lane_corridor->GetMergedPolygon().ConcatenatePolygons(
+        next_lane->GetPolygon());
+
+      total_s = lane_corridor->GetCenterLine().length();
       lane_corridor->SetLane(
         total_s,
-        current_lane);
-      // add initial lane
-      road_corridor->SetLaneCorridor(current_lane->get_id(), lane_corridor);
-
-      LanePtr next_lane = current_lane;
-      for (;;) {
-        next_lane = next_lane->GetNextLane();
-        if (next_lane == nullptr)
-          break;
-        lane_corridor->GetCenterLine().ConcatenateLinestring(
-          next_lane->GetCenterLine());
-        lane_corridor->GetLeftBoundary().ConcatenateLinestring(
-          next_lane->GetLeftBoundary().line_);
-        lane_corridor->GetRightBoundary().ConcatenateLinestring(
-          next_lane->GetRightBoundary().line_);
-        lane_corridor->GetMergedPolygon().ConcatenatePolygons(
-          next_lane->GetPolygon());
-
-        total_s = lane_corridor->GetCenterLine().length();
-        lane_corridor->SetLane(
-          total_s,
-          next_lane);
-        // all following lanes should point to the same LaneCorridor
-        road_corridor->SetLaneCorridor(next_lane->get_id(), lane_corridor);
-      }
+        next_lane);
+      // all following lanes should point to the same LaneCorridor
+      road_corridor->SetLaneCorridor(next_lane->get_id(), lane_corridor);
     }
   }
 }
@@ -578,21 +578,26 @@ void MapInterface::GenerateRoadCorridor(
       lane.second->SetRightLane(right_lane);
 
       // set boundaries for lane
-      XodrLaneId left_boundary_lane_id =
+      std::pair<XodrLaneId, bool> left_boundary_lane_id =
         roadgraph_->GetLeftBoundary(lane.first, driving_direction);
-      XodrLaneId right_boundary_lane_id =
+      std::pair<XodrLaneId, bool> right_boundary_lane_id =
         roadgraph_->GetRightBoundary(lane.first, driving_direction);
-      LanePtr left_lane_boundary = road.second->GetLane(
-        left_boundary_lane_id);
-      LanePtr right_lane_boundary = road.second->GetLane(
-        right_boundary_lane_id);
-      Boundary left_bound, right_bound;
-      left_bound.SetLine(left_lane_boundary->get_line());
-      left_bound.SetType(left_lane_boundary->get_road_mark());
-      right_bound.SetLine(right_lane_boundary->get_line());
-      right_bound.SetType(right_lane_boundary->get_road_mark());
-      lane.second->SetLeftBoundary(left_bound);
-      lane.second->SetRightBoundary(right_bound);
+      if (left_boundary_lane_id.second) {
+        LanePtr left_lane_boundary = road.second->GetLane(
+          left_boundary_lane_id.first);
+        Boundary left_bound;
+        left_bound.SetLine(left_lane_boundary->get_line());
+        left_bound.SetType(left_lane_boundary->get_road_mark());
+        lane.second->SetLeftBoundary(left_bound);
+      }
+      if (right_boundary_lane_id.second) {
+        LanePtr right_lane_boundary = road.second->GetLane(
+          right_boundary_lane_id.first);
+        Boundary right_bound;
+        right_bound.SetLine(right_lane_boundary->get_line());
+        right_bound.SetType(right_lane_boundary->get_road_mark());
+        lane.second->SetLeftBoundary(right_bound);
+      }
     }
   }
 
