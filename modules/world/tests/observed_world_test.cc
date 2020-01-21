@@ -82,24 +82,22 @@ TEST(observed_world, agent_in_front) {
   inner.add_point(Point2d(2, 0));
   inner.add_point(Point2d(10, 0));
 
-  DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  agent1->set_local_map(local_map);
-  agent1->UpdateDrivingCorridor(0.5);
+  RoadCorridorPtr road_corridor(new modules::models::tests::DummyRoadCorridor(center, outer, inner));
+  agent1->set_road_corridor(road_corridor);
+  agent2->set_road_corridor(road_corridor);
 
-  // Create observed world for this agent
   WorldPtr current_world_state(world->Clone());
-  ObservedWorld observed_world(current_world_state, agent1->get_agent_id());
+  ObservedWorld observed_world(current_world_state, agent2->get_agent_id());
 
+  // Leading agent should not have an agent in front
   std::pair<AgentPtr, Frenet> leading_vehicle =
     observed_world.get_agent_in_front();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
-  agent1->UpdateDrivingCorridor(8.0);
-  // Create observed world for this agent
   WorldPtr current_world_state2(world->Clone());
   ObservedWorld observed_world2(current_world_state2, agent1->get_agent_id());
 
+  // Agent behind should have leading agent in front
   std::pair<AgentPtr, Frenet> leading_vehicle2 =
     observed_world2.get_agent_in_front();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
@@ -111,10 +109,10 @@ TEST(observed_world, agent_in_front) {
   world->add_agent(agent3);
   world->UpdateAgentRTree();
 
-  // Create observed world for this agent
   WorldPtr current_world_state3(world->Clone());
-  ObservedWorld observed_world3(current_world_state2, agent1->get_agent_id());
+  ObservedWorld observed_world3(current_world_state3, agent1->get_agent_id());
 
+  // Adding a third agent in front of leading agent, still leading agent should be in front
   std::pair<AgentPtr, Frenet> leading_vehicle3 =
     observed_world3.get_agent_in_front();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
