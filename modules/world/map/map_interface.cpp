@@ -457,17 +457,16 @@ void MapInterface::CalculateLaneCorridors(
   Lanes lanes = road->GetLanes();
 
   for (auto& lane : lanes) {
-    std::map<LaneId, LaneCorridorPtr> corridor_map =
-      road_corridor->GetLaneCorridorMap();
     // only add lane if it has not been added already
-    if (corridor_map.find(lane.first) == corridor_map.end())
+    if (road_corridor->GetLaneCorridor(lane.first) ||
+        lane.second->get_lane_position() == 0)
       continue;
+
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
     float total_s = current_lane->GetCenterLine().length();
     lane_corridor->SetCenterLine(current_lane->GetCenterLine());
     lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
-    // TODO(@hart): is this correct?
     lane_corridor->SetLeftBoundary(
       current_lane->GetLeftBoundary().line_);
     lane_corridor->SetRightBoundary(
@@ -594,7 +593,7 @@ void MapInterface::GenerateRoadCorridor(
         right_bound.SetType(right_lane_boundary->get_road_mark());
         lane.second->SetRightBoundary(right_bound);
       }
-      
+
       // compute center line
       lane.second->SetCenterLine(
         ComputeCenterLine(lane.second->GetLeftBoundary().line_,
@@ -608,7 +607,8 @@ void MapInterface::GenerateRoadCorridor(
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
-RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
+RoadPtr MapInterface::GetNextRoad(
+  const XodrRoadId& current_road_id,
   const Roads& roads,
   const std::vector<XodrRoadId>& road_ids) const {
   auto it = std::find(
@@ -617,7 +617,7 @@ RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
     current_road_id);
   if (road_ids.back() == current_road_id)
     return nullptr;
-  return roads.at(*(it)++);
+  return roads.at(*std::next(it, 1));
 }
 
 }  // namespace map
