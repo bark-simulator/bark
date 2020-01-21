@@ -86,28 +86,24 @@ WorldPtr modules::models::tests::make_test_world(
   center.add_point(Point2d(2, 0));
   center.add_point(Point2d(2000, 0));
 
-  Line outer;
-  outer.add_point(Point2d(-10, 3));
-  outer.add_point(Point2d(1, 3));
-  outer.add_point(Point2d(2, 3));
-  outer.add_point(Point2d(2000, 3));
+  Line left;
+  left.add_point(Point2d(-10, 3));
+  left.add_point(Point2d(1, 3));
+  left.add_point(Point2d(2, 3));
+  left.add_point(Point2d(2000, 3));
 
-  Line inner;
-  inner.add_point(Point2d(-10, -3));
-  inner.add_point(Point2d(1, -3));
-  inner.add_point(Point2d(2, -3));
-  inner.add_point(Point2d(2000, -3));
+  Line right;
+  right.add_point(Point2d(-10, -3));
+  right.add_point(Point2d(1, -3));
+  right.add_point(Point2d(2, -3));
+  right.add_point(Point2d(2000, -3));
 
-  DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  LocalMapPtr local_map2(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  LocalMapPtr local_map3(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  agent1->set_local_map(local_map);
-  agent2->set_local_map(local_map2);
-  agent3->set_local_map(local_map3);
-  agent1->UpdateDrivingCorridor(20);
-  agent2->UpdateDrivingCorridor(20);
-  agent3->UpdateDrivingCorridor(20);
+  RoadCorridorPtr road_corridor(new DummyRoadCorridor(center, left, right));
+  RoadCorridorPtr road_corridor2(new DummyRoadCorridor(center, left, right));
+  RoadCorridorPtr road_corridor3(new DummyRoadCorridor(center, left, right));
+  agent1->set_road_corridor(road_corridor);
+  agent2->set_road_corridor(road_corridor2);
+  agent3->set_road_corridor(road_corridor3);
 
   return WorldPtr(world->Clone());
 }
