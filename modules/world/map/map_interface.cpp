@@ -512,11 +512,6 @@ void MapInterface::CalculateLaneCorridors(
 
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   LanePtr lane = std::make_shared<Lane>(xodr_lane);
-  // center lines
-  modules::geometry::Line center_line =
-    roadgraph_->GetCenterLine(xodr_lane->get_id());
-  lane->SetCenterLine(center_line);
-
   // polygons
   std::pair<PolygonPtr, bool> polygon_success =
     roadgraph_->ComputeXodrLanePolygon(xodr_lane->get_id());
@@ -598,6 +593,10 @@ void MapInterface::GenerateRoadCorridor(
         right_bound.SetType(right_lane_boundary->get_road_mark());
         lane.second->SetLeftBoundary(right_bound);
       }
+      // compute center line
+      lane.second->SetCenterLine(
+        ComputeCenterLine(lane.second->GetLeftBoundary().line_,
+        lane.second->GetRightBoundary().line_));
     }
   }
 
