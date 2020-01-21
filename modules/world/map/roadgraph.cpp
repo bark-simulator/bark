@@ -782,9 +782,9 @@ std::pair<XodrLaneId, bool> Roadgraph::GetLeftBoundary(
       lane->get_lane_position() > 0) ||
       (driving_direction == XodrDrivingDirection::BACKWARD &&
       lane->get_lane_position() < 0)) {
-    std::pair<XodrLaneId, bool> outer_neighbor = get_outer_neighbor(lane_id);
-    if (outer_neighbor.second)
-      return std::make_pair(outer_neighbor.first, true);
+    // std::pair<XodrLaneId, bool> outer_neighbor = get_outer_neighbor(lane_id);
+    // if (outer_neighbor.second)
+      return std::make_pair(lane_id, true);
   }
   return std::make_pair(0, false);
 }
@@ -799,9 +799,9 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightBoundary(
       lane->get_lane_position() < 0) ||
       (driving_direction == XodrDrivingDirection::BACKWARD &&
       lane->get_lane_position() > 0)) {
-    std::pair<XodrLaneId, bool> outer_neighbor = get_outer_neighbor(lane_id);
-    if (outer_neighbor.second)
-      return std::make_pair(outer_neighbor.first, true);
+    // std::pair<XodrLaneId, bool> outer_neighbor = get_outer_neighbor(lane_id);
+    // if (outer_neighbor.second)
+      return std::make_pair(lane_id, true);
   }
   // if (backwards and positive) -> outer
   // if (backwards and negative) -> inner
