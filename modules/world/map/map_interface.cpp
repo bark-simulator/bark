@@ -467,7 +467,6 @@ void MapInterface::CalculateLaneCorridors(
     float total_s = current_lane->GetCenterLine().length();
     lane_corridor->SetCenterLine(current_lane->GetCenterLine());
     lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
-    // TODO(@hart): is this correct?
     lane_corridor->SetLeftBoundary(
       current_lane->GetLeftBoundary().line_);
     lane_corridor->SetRightBoundary(
@@ -594,7 +593,7 @@ void MapInterface::GenerateRoadCorridor(
         right_bound.SetType(right_lane_boundary->get_road_mark());
         lane.second->SetRightBoundary(right_bound);
       }
-      
+
       // compute center line
       lane.second->SetCenterLine(
         ComputeCenterLine(lane.second->GetLeftBoundary().line_,
