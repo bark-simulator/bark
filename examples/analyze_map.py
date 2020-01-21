@@ -19,7 +19,7 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "4way_intersection"
+map_name = "road_corridor_test"
 output_dir = "/home/hart/Dokumente/2020/" + map_name
 
 # Map Definition
@@ -79,9 +79,9 @@ roadgraph.print_graph(output_dir + "/" + map_name)
 lane_ids = roadgraph.get_all_laneids ()
 
 for lane_id in lane_ids:
-  lane_polygon = roadgraph.get_lane_polygon_by_id(lane_id)
+  lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
   # plot plan_view
-  road_id = roadgraph.get_road_by_lane_id(lane_id)
+  road_id = roadgraph.GetRoadForLaneId(lane_id)
   road = map_interface.get_open_drive_map().get_road(road_id)
   plan_view_reference = road.plan_view.get_reference_line()
   # plot polygon with center line

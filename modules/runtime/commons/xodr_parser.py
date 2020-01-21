@@ -105,7 +105,10 @@ class XodrParser(object):
             if lane.find("driving_direction") is not None:
               new_lane["driving_direction"] = XodrDrivingDirection.__members__[str(lane.get("driving_direction"))]
             else:
-              new_lane["driving_direction"] = XodrDrivingDirection.forward
+              if int(lane.get("id")) < 0:
+                new_lane["driving_direction"] = XodrDrivingDirection.forward
+              else:
+                new_lane["driving_direction"] = XodrDrivingDirection.backward
 
             new_lane["level"] = lane.get("level")
             if lane.find("link") is not None:

@@ -6,6 +6,7 @@
 
 #include <math.h>
 #include <random>
+#include <memory>
 #include "modules/world/map/map_interface.hpp"
 
 namespace modules {
@@ -450,12 +451,17 @@ std::vector<DrivingCorridorPtr> MapInterface::GetSplittingDrivingCorridors(const
   return splitting_corridors;
 }
 
-// new functionalities
 void MapInterface::CalculateLaneCorridors(
-  RoadCorridorPtr& road_corridor) {
-  RoadPtr first_road = road_corridor->GetRoads()[0];
-  Lanes lanes = first_road->GetLanes();
+  RoadCorridorPtr& road_corridor,
+  const RoadPtr& road) {
+  Lanes lanes = road->GetLanes();
+
   for (auto& lane : lanes) {
+    std::map<LaneId, LaneCorridorPtr> corridor_map =
+      road_corridor->GetLaneCorridorMap();
+    // only add lane if it has not been added already
+    if (corridor_map.find(lane.first) == corridor_map.end())
+      continue;
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
     float total_s = current_lane->GetCenterLine().length();
@@ -496,13 +502,16 @@ void MapInterface::CalculateLaneCorridors(
   }
 }
 
+void MapInterface::CalculateLaneCorridors(
+  RoadCorridorPtr& road_corridor) {
+  RoadPtr first_road = road_corridor->GetRoads()[0];
+  for (auto& road : road_corridor->GetRoads()) {
+    CalculateLaneCorridors(road_corridor, road.second);
+  }
+}
+
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   LanePtr lane = std::make_shared<Lane>(xodr_lane);
-  // center lines
-  modules::geometry::Line center_line =
-    roadgraph_->GetCenterLine(xodr_lane->get_id());
-  lane->SetCenterLine(center_line);
-
   // polygons
   std::pair<PolygonPtr, bool> polygon_success =
     roadgraph_->ComputeXodrLanePolygon(xodr_lane->get_id());
@@ -540,6 +549,7 @@ void MapInterface::GenerateRoadCorridor(
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
+    // TODO(@hart): seems not to point to next road...
     RoadPtr next_road = GetNextRoad(road.first, roads, road_ids);
     road.second->SetNextRoad(next_road);
     for (auto& lane : road.second->GetLanes()) {
@@ -550,31 +560,45 @@ void MapInterface::GenerateRoadCorridor(
         lane.second->SetNextLane(next_road->GetLane(next_lane.first));
 
       // left and right lanes
-      LanePtr left_lane = road.second->GetLane(
-        roadgraph_->GetLeftLane(lane.first,
-        driving_direction));
-      LanePtr right_lane = road.second->GetLane(
-        roadgraph_->GetRightLane(lane.first,
-        driving_direction));
+      LanePtr left_lane, right_lane;
+      std::pair<XodrLaneId, bool> left_lane_id =
+        roadgraph_->GetLeftLane(lane.first, driving_direction);
+      if (left_lane_id.second)
+        left_lane = road.second->GetLane(left_lane_id.first);
+
+      std::pair<XodrLaneId, bool> right_lane_id =
+        roadgraph_->GetRightLane(lane.first, driving_direction);
+      if (right_lane_id.second)
+        right_lane = road.second->GetLane(right_lane_id.first);
       lane.second->SetLeftLane(left_lane);
       lane.second->SetRightLane(right_lane);
 
       // set boundaries for lane
-      XodrLaneId left_boundary_lane_id =
+      std::pair<XodrLaneId, bool> left_boundary_lane_id =
         roadgraph_->GetLeftBoundary(lane.first, driving_direction);
-      XodrLaneId right_boundary_lane_id =
+      if (left_boundary_lane_id.second) {
+        LanePtr left_lane_boundary = road.second->GetLane(
+          left_boundary_lane_id.first);
+        Boundary left_bound;
+        left_bound.SetLine(left_lane_boundary->get_line());
+        left_bound.SetType(left_lane_boundary->get_road_mark());
+        lane.second->SetLeftBoundary(left_bound);
+      }
+      std::pair<XodrLaneId, bool> right_boundary_lane_id =
         roadgraph_->GetRightBoundary(lane.first, driving_direction);
-      LanePtr left_lane_boundary = road.second->GetLane(
-        left_boundary_lane_id);
-      LanePtr right_lane_boundary = road.second->GetLane(
-        right_boundary_lane_id);
-      Boundary left_bound, right_bound;
-      left_bound.SetLine(left_lane_boundary->get_line());
-      left_bound.SetType(left_lane_boundary->get_road_mark());
-      right_bound.SetLine(right_lane_boundary->get_line());
-      right_bound.SetType(right_lane_boundary->get_road_mark());
-      lane.second->SetLeftBoundary(left_bound);
-      lane.second->SetRightBoundary(right_bound);
+      if (right_boundary_lane_id.second) {
+        LanePtr right_lane_boundary = road.second->GetLane(
+          right_boundary_lane_id.first);
+        Boundary right_bound;
+        right_bound.SetLine(right_lane_boundary->get_line());
+        right_bound.SetType(right_lane_boundary->get_road_mark());
+        lane.second->SetRightBoundary(right_bound);
+      }
+      
+      // compute center line
+      lane.second->SetCenterLine(
+        ComputeCenterLine(lane.second->GetLeftBoundary().line_,
+        lane.second->GetRightBoundary().line_));
     }
   }
 
@@ -593,7 +617,7 @@ RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
     current_road_id);
   if (road_ids.back() == current_road_id)
     return nullptr;
-  return roads.at(*(it++));
+  return roads.at(*(it)++);
 }
 
 }  // namespace map
