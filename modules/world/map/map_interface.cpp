@@ -555,22 +555,24 @@ void MapInterface::GenerateRoadCorridor(
       // lane successor
       std::pair<XodrLaneId, bool> next_lane =
         roadgraph_->GetNextLane(road_ids, lane.first);
-      if (next_lane.second)
+      if (next_lane.second && next_road)
         lane.second->SetNextLane(next_road->GetLane(next_lane.first));
 
       // left and right lanes
       LanePtr left_lane, right_lane;
       std::pair<XodrLaneId, bool> left_lane_id =
         roadgraph_->GetLeftLane(lane.first, driving_direction);
-      if (left_lane_id.second)
+      if (left_lane_id.second) {
         left_lane = road.second->GetLane(left_lane_id.first);
+        lane.second->SetLeftLane(left_lane);
+      }
 
       std::pair<XodrLaneId, bool> right_lane_id =
         roadgraph_->GetRightLane(lane.first, driving_direction);
-      if (right_lane_id.second)
+      if (right_lane_id.second) {
         right_lane = road.second->GetLane(right_lane_id.first);
-      lane.second->SetLeftLane(left_lane);
-      lane.second->SetRightLane(right_lane);
+        lane.second->SetRightLane(right_lane);
+      }
 
       // set boundaries for lane
       std::pair<XodrLaneId, bool> left_boundary_lane_id =
@@ -595,9 +597,10 @@ void MapInterface::GenerateRoadCorridor(
       }
 
       // compute center line
-      lane.second->SetCenterLine(
-        ComputeCenterLine(lane.second->GetLeftBoundary().line_,
-        lane.second->GetRightBoundary().line_));
+      if (left_boundary_lane_id.second && right_boundary_lane_id.second)
+        lane.second->SetCenterLine(
+          ComputeCenterLine(lane.second->GetLeftBoundary().line_,
+          lane.second->GetRightBoundary().line_));
     }
   }
 
@@ -606,6 +609,43 @@ void MapInterface::GenerateRoadCorridor(
   CalculateLaneCorridors(road_corridor);
   road_corridors_[road_corridor_hash] = road_corridor;
 }
+
+
+RoadCorridorPtr MapInterface::GenerateRoadCorridor(const modules::geometry::Point2d& start_point, 
+                                    const modules::geometry::Polygon& goal_region) {
+
+  std::vector<XodrLanePtr> lanes;
+  XodrLaneId goal_lane_id;
+  bool nearest_start_lane_found = FindNearestXodrLanes(start_point, 1, lanes);
+  bool nearest_goal_lane_found = XodrLaneIdAtPolygon(goal_region, goal_lane_id);
+
+  if (!nearest_start_lane_found || !nearest_goal_lane_found) {
+    LOG(ERROR) << "Could not generate road corridor based on geometric start and goal definitions.";
+    return nullptr;
+  }
+
+  const auto start_lane_id = lanes.at(0)->get_id();
+  const XodrDrivingDirection driving_direction =  lanes.at(0)->get_driving_direction();
+  std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_lane_id,
+                                                goal_lane_id);
+
+  GenerateRoadCorridor(road_ids, driving_direction);
+  return GetRoadCorridor(road_ids, driving_direction);
+}
+
+bool MapInterface::XodrLaneIdAtPolygon(const modules::geometry::Polygon&  polygon, 
+                          XodrLaneId& found_lane_id) const {
+  modules::geometry::Point2d goal_center(polygon.center_(0),
+                                         polygon.center_(1));
+  std::vector<opendrive::XodrLanePtr> nearest_lanes;
+  if (FindNearestXodrLanes(goal_center, 1, nearest_lanes)) {
+      found_lane_id = nearest_lanes[0]->get_id();
+      return true;
+  }
+  printf("No matching lane for goal definition found");
+  return false;
+}
+
 
 RoadPtr MapInterface::GetNextRoad(
   const XodrRoadId& current_road_id,

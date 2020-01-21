@@ -10,6 +10,7 @@
 #include "modules/commons/base_type.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/world/map/local_map.hpp"
+#include "modules/world/map/road_corridor.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
@@ -31,6 +32,7 @@ using models::behavior::StateActionHistory;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::XodrLaneId;
 using modules::world::map::MapInterfacePtr;
+using modules::world::map::RoadCorridorPtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using models::dynamic::StateDefinition;
@@ -83,6 +85,10 @@ class Agent : public Object {
     return local_map_;
   }
 
+  const modules::world::map::RoadCorridorPtr get_road_corridor() const {
+    return road_corridor_;
+  }
+
   void set_behavior_model(const BehaviorModelPtr &behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;
   }
@@ -92,6 +98,8 @@ class Agent : public Object {
   }
 
   void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
+
+  void set_road_corridor(const RoadCorridorPtr road_corridor) { road_corridor_ = road_corridor; }
 
   void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
 
@@ -114,7 +122,7 @@ class Agent : public Object {
 
   // TODO(@fortiss): this should be the local map the planners work with
   modules::world::map::LocalMapPtr local_map_;
-  // modules::world::map::RoadCorridor road_corridor_;
+  modules::world::map::RoadCorridorPtr road_corridor_;
 
   models::behavior::StateActionHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter

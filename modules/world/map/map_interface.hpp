@@ -126,11 +126,16 @@ class MapInterface {
     const std::vector<XodrRoadId>& road_ids) const;
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction);
+  RoadCorridorPtr GenerateRoadCorridor(const modules::geometry::Point2d& start_point, 
+                                    const modules::geometry::Polygon& goal_region);
+  bool XodrLaneIdAtPolygon(const modules::geometry::Polygon&  polygon, 
+                          XodrLaneId& found_lane_id) const;
   RoadCorridorPtr GetRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction) {
     return road_corridors_.at(
       RoadCorridor::GetHash(driving_direction, road_ids));
   }
+
   LaneId FindCurrentLane(const Point2d& pt) {
     return FindXodrLane(pt)->get_id();
   }
