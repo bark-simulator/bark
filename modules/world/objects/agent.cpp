@@ -50,6 +50,8 @@ goal_definition_(goal_definition) {
 
   if (map_interface != nullptr) {
     GenerateLocalMap();
+    road_corridor_ = map_interface->GenerateRoadCorridor(get_current_position(),
+                  goal_definition_->get_shape());
   }
 }
 
@@ -59,6 +61,7 @@ Agent::Agent(const Agent& other_agent) :
   dynamic_model_(other_agent.dynamic_model_),
   execution_model_(other_agent.execution_model_),
   local_map_(other_agent.local_map_),
+  road_corridor_(other_agent.road_corridor_),
   history_(other_agent.history_),
   max_history_length_(other_agent.max_history_length_),
   goal_definition_(other_agent.goal_definition_) {}
