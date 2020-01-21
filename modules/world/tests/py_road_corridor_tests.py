@@ -25,7 +25,7 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
-  
+  @unittest.skip
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -88,7 +88,7 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
-  @unittest.skip
+  
   def test_road_corridor_merging(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/DR_DEU_Merging_MT.xodr")
 
@@ -125,7 +125,7 @@ class RoadCorridorTests(unittest.TestCase):
       count += 1
     viewer.show(block=True)
 
-
+  @unittest.skip
   def test_road_corridor_intersection(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
 
