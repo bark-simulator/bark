@@ -242,11 +242,6 @@ class Roadgraph {
     const XodrDrivingDirection& driving_direction);
   std::pair<XodrLaneId, bool> GetRightBoundary(const XodrLaneId& lane_id,
     const XodrDrivingDirection& driving_direction);
-  // TODO(@hart): needs to be implemented
-  modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {
-
-  }
-
 
  private:
   XodrLaneGraph g_;

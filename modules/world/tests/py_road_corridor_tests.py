@@ -65,6 +65,14 @@ class RoadCorridorTests(unittest.TestCase):
     self.assertEqual(road_corridor.get_road(2).get_lane(7).right_lane.lane_id, 8)
     self.assertEqual(road_corridor.get_road(2).get_lane(8).left_lane.lane_id, 7)
     
+    # Assert: next road
+    self.assertEqual(road_corridor.get_road(0).next_road.road_id, 1)
+    self.assertEqual(road_corridor.get_road(1).next_road.road_id, 2)
+
+    # Assert: lane links
+    self.assertEqual(road_corridor.get_road(0).get_lane(3).next_lane.lane_id, 5)
+    self.assertEqual(road_corridor.get_road(1).get_lane(5).next_lane.lane_id, 8)
+
     # Assert: all lanes should have center and boundary lines as well as polygons
     colors = ["blue", "red", "green"]
     count = 0
@@ -83,6 +91,8 @@ class RoadCorridorTests(unittest.TestCase):
         #   print("road_id", road_id, ", right_lane", lane.lane_id,  lane.lane_position, lane.right_lane.lane_id, lane.right_lane.lane_position)
         # except:
         #   pass
+        if lane.next_lane:
+          print("road_id: ", road_id, ", lane_id:", lane_id, ", next_lane_id:", lane.next_lane.lane_id)
         
         viewer.drawLine2d(lane.center_line, color="black")
         # viewer.drawText(position, text)
