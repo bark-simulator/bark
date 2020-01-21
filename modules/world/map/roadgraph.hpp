@@ -227,7 +227,8 @@ class Roadgraph {
 
   std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(
       const XodrLaneId& lane_id) const;
-
+  std::vector<std::pair<XodrLaneId, bool>> get_outer_neighbors_planview(
+    const XodrLaneId &lane_id) const;
 
   //! Roadgraph extension
   std::pair<XodrLaneId, bool> GetLeftLane(const XodrLaneId& lane_id,
@@ -241,11 +242,6 @@ class Roadgraph {
     const XodrDrivingDirection& driving_direction);
   std::pair<XodrLaneId, bool> GetRightBoundary(const XodrLaneId& lane_id,
     const XodrDrivingDirection& driving_direction);
-  // TODO(@hart): needs to be implemented
-  modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {
-
-  }
-
 
  private:
   XodrLaneGraph g_;
