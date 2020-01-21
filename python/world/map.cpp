@@ -35,7 +35,10 @@ void python_map(py::module m) {
       .def("set_roadgraph", &MapInterface::set_roadgraph)
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
-      .def("GenerateRoadCorridor", &MapInterface::GenerateRoadCorridor)
+      .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
+                                  const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
+      .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
+                                  const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
       .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
       .def("get_lane", &MapInterface::get_lane)
       .def("get_all_corridors", &MapInterface::get_all_corridors)
