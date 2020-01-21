@@ -63,19 +63,21 @@ class RoadCorridorTests(unittest.TestCase):
     # Assert: all lanes should have center and boundary lines as well as polygons
     colors = ["blue", "red", "green"]
     count = 0
-    for lane_id, lane in road_corridor.get_road(1).lanes.items():
-      viewer.drawLine2d(lane.center_line, color="black")
-      viewer.drawLine2d(lane.left_boundary.line, color="red")
-      viewer.drawLine2d(lane.right_boundary.line, color="blue")
-      # viewer.drawPolygon2d(lane.polygon, color=colors[count], alpha=1.)
-      count += 1
-      # viewer.drawLine2d(lane.right_boundary)
+    for road_id, road in road_corridor.roads.items():
+      for lane_id, lane in road.lanes.items():
+        viewer.drawLine2d(lane.center_line, color="black")
+        viewer.drawLine2d(lane.left_boundary.line, color="red")
+        viewer.drawLine2d(lane.right_boundary.line, color="blue")
+        # viewer.drawPolygon2d(lane.polygon, color=colors[count], alpha=1.)
+        count += 1
+        # viewer.drawLine2d(lane.right_boundary)
+        viewer.show(block=False)
+        plt.pause(1.0)
+
     
-    viewer.show(block=True)
-
     # Assert: LaneCorridor
-
     viewer.drawRoadCorridor(road_corridor)
+    viewer.show(block=True)
 
 if __name__ == '__main__':
   unittest.main()
