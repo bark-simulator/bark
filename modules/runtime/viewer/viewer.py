@@ -259,7 +259,7 @@ class BaseViewer(Viewer):
         self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
 
     def drawLaneCorridor(self, lane_corridor):
-      self.drawPolygon2d(lane_corridor.polygon)
+      self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=1.)
 
     def drawRoadCorridor(self, road_corridor):
       # TODO(@hart): use agent specific coloring
