@@ -105,7 +105,7 @@ class RoadCorridorTests(unittest.TestCase):
         # plt.pause(1.0)
 
     # Assert: LaneCorridor
-    # self.assertEqual(len(road_corridor.lane_corridors), 3)
+    self.assertEqual(len(road_corridor.lane_corridors), 3)
     viewer.drawRoadCorridor(road_corridor)
     viewer.show(block=True)
 

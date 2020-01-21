@@ -457,11 +457,11 @@ void MapInterface::CalculateLaneCorridors(
   Lanes lanes = road->GetLanes();
 
   for (auto& lane : lanes) {
-    std::map<LaneId, LaneCorridorPtr> corridor_map =
-      road_corridor->GetLaneCorridorMap();
     // only add lane if it has not been added already
-    if (corridor_map.find(lane.first) == corridor_map.end())
+    if (road_corridor->GetLaneCorridor(lane.first) ||
+        lane.second->get_lane_position() == 0)
       continue;
+
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
     float total_s = current_lane->GetCenterLine().length();
