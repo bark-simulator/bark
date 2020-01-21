@@ -48,9 +48,34 @@ class RoadCorridorTests(unittest.TestCase):
     driving_direction = XodrDrivingDirection.forward
     map_interface.GenerateRoadCorridor(roads, driving_direction)
 
-    road_corridor = map_interface.GetRoadCorridor(driving_direction, roads)
-    viewer.drawRoadCorridor()
+    road_corridor = map_interface.GetRoadCorridor(roads, driving_direction)
+
+    # Assert road corridor
+    
+    # Assert: 3 roads
+    self.assertEqual(len(road_corridor.roads), 3)
+    
+    # Assert: road1: 2 lanes, road2: 1 lane, road3: 1 lane
+    self.assertEqual(len(road_corridor.get_road(0).lanes), 3)
+    self.assertEqual(len(road_corridor.get_road(1).lanes), 2)
+    self.assertEqual(len(road_corridor.get_road(2).lanes), 3)
+
+    # Assert: all lanes should have center and boundary lines as well as polygons
+    colors = ["blue", "red", "green"]
+    count = 0
+    for lane_id, lane in road_corridor.get_road(2).lanes.items():
+      viewer.drawLine2d(lane.center_line, color="black")
+      viewer.drawLine2d(lane.left_boundary.line, color="red")
+      viewer.drawLine2d(lane.right_boundary.line, color="blue")
+      # viewer.drawPolygon2d(lane.polygon, color=colors[count], alpha=1.)
+      count += 1
+      # viewer.drawLine2d(lane.right_boundary)
+    
     viewer.show(block=True)
+
+    # Assert: LaneCorridor
+
+    viewer.drawRoadCorridor(road_corridor)
 
 if __name__ == '__main__':
   unittest.main()

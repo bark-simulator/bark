@@ -549,6 +549,7 @@ void MapInterface::GenerateRoadCorridor(
   // links can only be set once all roads have been calculated
   for (auto& road : roads) {
     // road successor
+    // TODO(@hart): seems not to point to next road...
     RoadPtr next_road = GetNextRoad(road.first, roads, road_ids);
     road.second->SetNextRoad(next_road);
     for (auto& lane : road.second->GetLanes()) {
@@ -575,8 +576,6 @@ void MapInterface::GenerateRoadCorridor(
       // set boundaries for lane
       std::pair<XodrLaneId, bool> left_boundary_lane_id =
         roadgraph_->GetLeftBoundary(lane.first, driving_direction);
-      std::pair<XodrLaneId, bool> right_boundary_lane_id =
-        roadgraph_->GetRightBoundary(lane.first, driving_direction);
       if (left_boundary_lane_id.second) {
         LanePtr left_lane_boundary = road.second->GetLane(
           left_boundary_lane_id.first);
@@ -585,14 +584,17 @@ void MapInterface::GenerateRoadCorridor(
         left_bound.SetType(left_lane_boundary->get_road_mark());
         lane.second->SetLeftBoundary(left_bound);
       }
+      std::pair<XodrLaneId, bool> right_boundary_lane_id =
+        roadgraph_->GetRightBoundary(lane.first, driving_direction);
       if (right_boundary_lane_id.second) {
         LanePtr right_lane_boundary = road.second->GetLane(
           right_boundary_lane_id.first);
         Boundary right_bound;
         right_bound.SetLine(right_lane_boundary->get_line());
         right_bound.SetType(right_lane_boundary->get_road_mark());
-        lane.second->SetLeftBoundary(right_bound);
+        lane.second->SetRightBoundary(right_bound);
       }
+      
       // compute center line
       lane.second->SetCenterLine(
         ComputeCenterLine(lane.second->GetLeftBoundary().line_,
@@ -615,7 +617,7 @@ RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
     current_road_id);
   if (road_ids.back() == current_road_id)
     return nullptr;
-  return roads.at(*(it++));
+  return roads.at(*(it)++);
 }
 
 }  // namespace map
