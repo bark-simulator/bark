@@ -125,6 +125,7 @@ void python_map(py::module m) {
     .def("get_inner_neighbor", &Roadgraph::get_inner_neighbor)
     .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)    
     .def("FindDrivableLanePath", &Roadgraph::FindDrivableLanePath)
+    .def("FindRoadPath", &Roadgraph::FindRoadPath)    
     .def("print_graph", (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
     .def("add_lane_successor", &Roadgraph::add_lane_successor)
     .def("Generate", &Roadgraph::Generate)

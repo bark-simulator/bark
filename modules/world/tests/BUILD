@@ -167,9 +167,11 @@ py_test(
 py_test(
   name = "py_roadgraph_test",
   srcs = ["py_roadgraph_test.py"],
-  data = ['//python:bark.so'],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data'],
   imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters"],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",],
 )
 
 py_test(

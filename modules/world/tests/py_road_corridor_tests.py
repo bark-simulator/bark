@@ -25,6 +25,7 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
+  @unittest.skip
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -87,6 +88,81 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
+  @unittest.skip
+  def test_road_corridor_merging(self):
+    xodr_parser = XodrParser("modules/runtime/tests/data/DR_DEU_Merging_MT.xodr")
 
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    map_interface = MapInterface()
+    map_interface.set_open_drive_map(xodr_parser.map)
+    world.set_map(map_interface)
+    open_drive_map = world.map.get_open_drive_map()
+    viewer = MPViewer(params=params,
+                      use_world_bounds=True)
+
+    # Draw map
+    viewer.drawWorld(world)
+    viewer.show(block=False)
+
+    # Generate RoadCorridor
+    roads = [0, 1] 
+    driving_direction = XodrDrivingDirection.forward
+    map_interface.GenerateRoadCorridor(roads, driving_direction)
+    road_corridor = map_interface.GetRoadCorridor(roads, driving_direction)
+
+    colors = ["blue", "red", "green", "yellow"]
+    count = 0
+    for lane_corridor in road_corridor.lane_corridors:
+      viewer.drawPolygon2d(lane_corridor.polygon, color=colors[count], alpha=0.5)
+      viewer.drawLine2d(lane_corridor.left_boundary, color="red")
+      viewer.drawLine2d(lane_corridor.right_boundary, color="blue")
+      viewer.drawLine2d(lane_corridor.center_line, color="black")
+      viewer.show(block=False)
+      plt.pause(2.)
+      count += 1
+    viewer.show(block=True)
+
+
+  def test_road_corridor_merging(self):
+    xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
+
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    map_interface = MapInterface()
+    map_interface.set_open_drive_map(xodr_parser.map)
+    world.set_map(map_interface)
+    open_drive_map = world.map.get_open_drive_map()
+    viewer = MPViewer(params=params,
+                      use_world_bounds=True)
+
+    # Draw map
+    viewer.drawWorld(world)
+    viewer.show(block=False)
+
+    # Generate RoadCorridor
+    roads = [2, 5, 8] 
+    driving_direction = XodrDrivingDirection.forward
+    map_interface.GenerateRoadCorridor(roads, driving_direction)
+
+    road_corridor = map_interface.GetRoadCorridor(roads, driving_direction)
+
+    colors = ["blue", "red", "green", "yellow"]
+    count = 0
+
+    for lane_corridor in road_corridor.lane_corridors:
+      viewer.drawPolygon2d(lane_corridor.polygon, color=colors[count], alpha=0.5)
+      viewer.drawLine2d(lane_corridor.left_boundary, color="red")
+      viewer.drawLine2d(lane_corridor.right_boundary, color="blue")
+      viewer.drawLine2d(lane_corridor.center_line, color="black")
+      viewer.show(block=False)
+      plt.pause(20.)
+      count += 1
+    viewer.show(block=True)
+  
 if __name__ == '__main__':
   unittest.main()
