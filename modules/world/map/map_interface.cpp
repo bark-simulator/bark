@@ -623,8 +623,11 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(const modules::geometry::Poin
 
   const auto start_lane_id = lanes.at(0)->get_id();
   const XodrDrivingDirection driving_direction =  lanes.at(0)->get_driving_direction();
-  std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_lane_id,
-                                                goal_lane_id);
+
+  const XodrRoadId& start_road_id = roadgraph_->GetRoadForLaneId(start_lane_id);
+  const XodrRoadId& goal_road_id = roadgraph_->GetRoadForLaneId(goal_lane_id);
+  std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_road_id,
+                                                goal_road_id);
 
   GenerateRoadCorridor(road_ids, driving_direction);
   return GetRoadCorridor(road_ids, driving_direction);
