@@ -555,22 +555,24 @@ void MapInterface::GenerateRoadCorridor(
       // lane successor
       std::pair<XodrLaneId, bool> next_lane =
         roadgraph_->GetNextLane(road_ids, lane.first);
-      if (next_lane.second)
+      if (next_lane.second && next_road)
         lane.second->SetNextLane(next_road->GetLane(next_lane.first));
 
       // left and right lanes
       LanePtr left_lane, right_lane;
       std::pair<XodrLaneId, bool> left_lane_id =
         roadgraph_->GetLeftLane(lane.first, driving_direction);
-      if (left_lane_id.second)
+      if (left_lane_id.second) {
         left_lane = road.second->GetLane(left_lane_id.first);
+        lane.second->SetLeftLane(left_lane);
+      }
 
       std::pair<XodrLaneId, bool> right_lane_id =
         roadgraph_->GetRightLane(lane.first, driving_direction);
-      if (right_lane_id.second)
+      if (right_lane_id.second) {
         right_lane = road.second->GetLane(right_lane_id.first);
-      lane.second->SetLeftLane(left_lane);
-      lane.second->SetRightLane(right_lane);
+        lane.second->SetRightLane(right_lane);
+      }
 
       // set boundaries for lane
       std::pair<XodrLaneId, bool> left_boundary_lane_id =
@@ -595,9 +597,10 @@ void MapInterface::GenerateRoadCorridor(
       }
 
       // compute center line
-      lane.second->SetCenterLine(
-        ComputeCenterLine(lane.second->GetLeftBoundary().line_,
-        lane.second->GetRightBoundary().line_));
+      if (left_boundary_lane_id.second && right_boundary_lane_id.second)
+        lane.second->SetCenterLine(
+          ComputeCenterLine(lane.second->GetLeftBoundary().line_,
+          lane.second->GetRightBoundary().line_));
     }
   }
 
