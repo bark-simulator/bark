@@ -36,6 +36,7 @@ void python_map(py::module m) {
       .def("get_roadgraph", &MapInterface::get_roadgraph)
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
       .def("GenerateRoadCorridor", &MapInterface::GenerateRoadCorridor)
+      .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
       .def("get_lane", &MapInterface::get_lane)
       .def("get_all_corridors", &MapInterface::get_all_corridors)
       .def("compute_driving_corridor_from_start_to_goal", &MapInterface::ComputeDrivingCorridorFromStartToGoal)
@@ -169,6 +170,12 @@ py::class_<LaneCorridor,
     .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
     .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
     .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary);
+
+py::class_<Boundary,
+           std::shared_ptr<Boundary>>(m, "Boundary")
+  .def(py::init<>())
+  .def_property_readonly("line", &Boundary::GetLine)
+  .def_property_readonly("type", &Boundary::GetType);
 
 // TODO(@hart): make pickable -> requires XODR to be as well
 py::class_<Lane,
