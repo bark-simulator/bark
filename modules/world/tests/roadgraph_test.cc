@@ -84,7 +84,7 @@ TEST(roadgraph, road_adjacency)
   int num_vertices = static_cast<int>(boost::num_vertices(r.get_lane_graph()));
   int num_edges = static_cast<int>(boost::num_edges(r.get_lane_graph()));
 
-  r.print_graph("/home/esterle/road_successors.dot");
+  r.print_graph("road_successors.dot");
 
   ASSERT_EQ(6, num_vertices);
   ASSERT_EQ(11, num_edges);
@@ -205,7 +205,7 @@ TEST(roadgraph, get_outer_neighbor_test)
   r.add_inner_neighbor(l00, l10);
   r.add_outer_neighbor(l00, l10);
 
-  r.print_graph("/home/esterle/get_outer_neighbor_test.dot");
+  r.print_graph("get_outer_neighbor_test.dot");
 
   std::pair<XodrLaneId, bool> in = r.get_outer_neighbor(l00);
   ASSERT_TRUE(in.first == l10);
@@ -231,7 +231,7 @@ TEST(roadgraph, get_inner_neighbor_test_planview)
   r.add_outer_neighbor(l0, l1);
   r.add_outer_neighbor(l0, lm1);
 
-  r.print_graph("/home/esterle/get_inner_neighbor_test_planview.dot");
+  r.print_graph("get_inner_neighbor_test_planview.dot");
 
   std::pair<XodrLaneId, bool> in = r.get_inner_neighbor(l1);
   ASSERT_TRUE(in.first == l0);
@@ -262,7 +262,7 @@ TEST(roadgraph, get_lane_planview_test)
   r.add_outer_neighbor(l0, l1);
   r.add_outer_neighbor(l1, l2);
 
-  r.print_graph("/home/esterle/get_lane_planview_test.dot");
+  r.print_graph("get_lane_planview_test.dot");
 
   std::pair<XodrLaneId, bool> in = r.GetPlanViewForLaneId(l0);
   ASSERT_TRUE(in.first == l0);
@@ -402,7 +402,7 @@ TEST(roadgraph, FindRoadPath_test)
   r.add_road_successor(l00, l01);
   r.add_road_successor(l01, l02);
  
-  r.print_graph("/home/esterle/FindRoadPath_test.dot");
+  r.print_graph("FindRoadPath_test.dot");
 
   std::vector<XodrLaneId> path = r.find_path<EdgeTypeRoadSuccessor>(l10,l12);
   ASSERT_EQ(0, path.size());
@@ -602,7 +602,7 @@ TEST(roadgraph, get_driving_corridor_test)
   */
 }
 
-TEST(roadgraph, generate_roadgraph_neighbours)
+TEST(roadgraph, generate_roadgraph_neighbours_test)
 {
   using namespace modules::geometry;
   using namespace modules::world::opendrive;
@@ -617,8 +617,12 @@ TEST(roadgraph, generate_roadgraph_neighbours)
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
   //! XodrLane
+  XodrLanePtr lane0(new XodrLane(0));
+  lane0->set_line(p->get_reference_line());
+
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10, off};
+  
   XodrLanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
   XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
   XodrLanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
@@ -647,7 +651,7 @@ TEST(roadgraph, generate_roadgraph_neighbours)
 }
 
 
-TEST(roadgraph, generate_roadgraph_successors)
+TEST(roadgraph, generate_roadgraph_successors_test)
 {
   using namespace modules::geometry;
   using namespace modules::world::opendrive;
@@ -662,14 +666,19 @@ TEST(roadgraph, generate_roadgraph_successors)
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
   
   //! XodrLane
+  XodrLanePtr lane00(new XodrLane(0));
+  lane00->set_line(p->get_reference_line());
+
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10, off};
-  XodrLanePtr lane1 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  XodrLanePtr lane10 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
   XodrLaneLink ll1;
   ll1.from_position = 1;
   ll1.to_position = 1;
-  lane1->set_link(ll1);
-  ls->add_lane(lane1);
+  lane10->set_link(ll1);
+
+  ls->add_lane(lane00);
+  ls->add_lane(lane10);
 
   XodrRoadPtr r(new XodrRoad("highway", 100));
   r->set_plan_view(p);
@@ -683,14 +692,18 @@ TEST(roadgraph, generate_roadgraph_successors)
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));
   
   //! XodrLane
+  XodrLanePtr lane01(new XodrLane(0));
+  lane01->set_line(p2->get_reference_line());
+
   XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 10, off};
-  XodrLanePtr lane2 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  XodrLanePtr lane11 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
   XodrLaneLink ll2;
   ll2.from_position = 1;
   ll2.to_position = 1;
-  lane2->set_link(ll2);
-  ls2->add_lane(lane2);
+  lane11->set_link(ll2);
+  ls2->add_lane(lane01);
+  ls2->add_lane(lane11);
 
   XodrRoadPtr r2(new XodrRoad("highway", 101));
   r2->set_plan_view(p2);
@@ -706,11 +719,13 @@ TEST(roadgraph, generate_roadgraph_successors)
 
   Roadgraph rg;
   rg.Generate(open_drive_map);
+ 
+  rg.print_graph("generate_roadgraph_successors_test.dot");
 
-  std::vector<XodrLaneId> suc = rg.get_successor_lanes(lane1->get_id());
+  std::vector<XodrLaneId> suc = rg.get_successor_lanes(lane10->get_id());
   std::cout << "suc: " << suc.size() << std::endl;
   ASSERT_TRUE(suc.size() == 1);
-  ASSERT_TRUE(suc[0] == lane2->get_id());
+  ASSERT_TRUE(suc[0] == lane11->get_id());
   
   auto all_ids = rg.get_all_laneids();
   ASSERT_TRUE(all_ids.size() == 2);
