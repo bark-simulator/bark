@@ -189,6 +189,9 @@ py::class_<Lane,
   .def_property_readonly("left_lane", &Lane::GetLeftLane)
   .def_property_readonly("left_boundary", &Lane::GetLeftBoundary)
   .def_property_readonly("right_boundary", &Lane::GetRightBoundary)
+  .def_property_readonly("next_lane", &Lane::GetNextLane)
+  .def_property_readonly("lane_id", &Lane::get_id)
+  .def_property_readonly("lane_position", &Lane::get_lane_position)
   .def_property_readonly("polygon", &Lane::GetPolygon);
 
 
@@ -197,6 +200,7 @@ py::class_<Road,
            std::shared_ptr<Road>>(m, "Road")
   .def(py::init<XodrRoadPtr>())
   .def_property_readonly("next_road", &Road::GetNextRoad)
+  .def_property_readonly("road_id", &Road::get_id)
   .def_property_readonly("lanes", &Road::GetLanes)
   .def("get_lane", &Road::GetLane);
 }

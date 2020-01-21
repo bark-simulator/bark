@@ -93,7 +93,12 @@ struct RoadCorridor {
   void SetLaneCorridor(const LaneId& lane_id,
     const LaneCorridorPtr& corr) {
     lane_corridors_[lane_id] = corr;
-    unique_lane_corridors_.push_back(corr);
+    // we only want to push it if it is not included
+    if (std::find(unique_lane_corridors_.begin(),
+                  unique_lane_corridors_.end(),
+                  corr) == unique_lane_corridors_.end()) {
+      unique_lane_corridors_.push_back(corr);
+    }
   }
   void SetUniqueLaneCorridors(
     const std::vector<LaneCorridorPtr>& unique_lane_corridors) {
