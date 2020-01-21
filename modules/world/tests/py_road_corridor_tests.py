@@ -25,7 +25,6 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
-  @unittest.skip
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -103,7 +102,7 @@ class RoadCorridorTests(unittest.TestCase):
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
-    # Draw map
+    # # Draw map
     viewer.drawWorld(world)
     viewer.show(block=False)
 
@@ -125,7 +124,6 @@ class RoadCorridorTests(unittest.TestCase):
       count += 1
     viewer.show(block=True)
 
-  @unittest.skip
   def test_road_corridor_intersection(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
 
