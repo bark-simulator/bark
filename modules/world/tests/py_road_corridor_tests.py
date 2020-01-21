@@ -25,7 +25,7 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
-  @unittest.skip
+  
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -126,7 +126,7 @@ class RoadCorridorTests(unittest.TestCase):
     viewer.show(block=True)
 
 
-  def test_road_corridor_merging(self):
+  def test_road_corridor_intersection(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
 
     # World Definition
@@ -154,13 +154,16 @@ class RoadCorridorTests(unittest.TestCase):
     colors = ["blue", "red", "green", "yellow"]
     count = 0
 
+    for road_id, road in road_corridor.roads.items():
+      for lane_id, lane in road.lanes.items():
+        print(road_id, lane_id, lane.driving_direction)
     for lane_corridor in road_corridor.lane_corridors:
       viewer.drawPolygon2d(lane_corridor.polygon, color=colors[count], alpha=0.5)
       viewer.drawLine2d(lane_corridor.left_boundary, color="red")
       viewer.drawLine2d(lane_corridor.right_boundary, color="blue")
       viewer.drawLine2d(lane_corridor.center_line, color="black")
       viewer.show(block=False)
-      plt.pause(20.)
+      plt.pause(0.5)
       count += 1
     viewer.show(block=True)
   

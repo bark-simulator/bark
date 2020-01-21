@@ -524,7 +524,9 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
   Lanes lanes;
   for (auto& lane_section : xodr_road->get_lane_sections()) {
     for (auto& lane : lane_section->get_lanes()) {
-      lanes[lane.first] = GenerateRoadCorridorLane(lane.second);
+      // TODO(@hart): only add driving lanes
+      if (lane.second->get_lane_type() == XodrLaneType::DRIVING)
+        lanes[lane.first] = GenerateRoadCorridorLane(lane.second);
     }
   }
   road->SetLanes(lanes);
