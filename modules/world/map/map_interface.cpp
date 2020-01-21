@@ -607,7 +607,8 @@ void MapInterface::GenerateRoadCorridor(
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
-RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
+RoadPtr MapInterface::GetNextRoad(
+  const XodrRoadId& current_road_id,
   const Roads& roads,
   const std::vector<XodrRoadId>& road_ids) const {
   auto it = std::find(
@@ -616,7 +617,7 @@ RoadPtr MapInterface::GetNextRoad(const XodrRoadId& current_road_id,
     current_road_id);
   if (road_ids.back() == current_road_id)
     return nullptr;
-  return roads.at(*(it)++);
+  return roads.at(*std::next(it, 1));
 }
 
 }  // namespace map
