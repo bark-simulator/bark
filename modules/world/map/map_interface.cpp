@@ -621,8 +621,7 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
   bool nearest_goal_lane_found = XodrLaneIdAtPolygon(goal_region,
                                                      goal_lane_id);
   if (!nearest_start_lane_found || !nearest_goal_lane_found) {
-    LOG(INFO) << "Could not generate road corridor based"+ \
-                  "on geometric start and goal definitions.";
+    LOG(INFO) << "Could not generate road corridor based on geometric start and goal definitions.";  // NOLINT
     return nullptr;
   }
   const auto start_lane_id = lanes.at(0)->get_id();
