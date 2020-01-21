@@ -19,8 +19,8 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "road_corridor_test"
-output_dir = "/home/hart/Dokumente/2020/" + map_name
+map_name = "4way_intersection"
+output_dir = "/Users/hart/2020/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
