@@ -29,6 +29,12 @@ using modules::geometry::Line;
 
 
 struct Boundary {
+  Line GetLine() const {
+    return line_;
+  }
+  XodrRoadMark GetType() const {
+    return type_;
+  }
   void SetLine(const Line& line) {
     line_ = line;
   }

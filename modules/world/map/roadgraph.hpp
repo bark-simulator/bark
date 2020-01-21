@@ -229,21 +229,22 @@ class Roadgraph {
       const XodrLaneId& lane_id) const;
 
 
-  //! Roadgraph extension (only mock ups!!)
-  XodrLaneId GetLeftLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
-  XodrLaneId GetRightLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
+  //! Roadgraph extension
+  std::pair<XodrLaneId, bool> GetLeftLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction);
+  std::pair<XodrLaneId, bool> GetRightLane(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction);
   std::pair<XodrLaneId, bool> GetNextLane(
     const std::vector<XodrRoadId>& road_ids,
     const XodrLaneId& lane_id);
-  // XodrLaneId GetNextLane(const XodrLaneId& lane_id) {}
-  XodrRoadId GetNextRoad(const XodrRoadId& road_id) {}
-  XodrLaneId GetLeftBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
-  XodrLaneId GetRightBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction) {}
-  modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {}
+  std::pair<XodrLaneId, bool> GetLeftBoundary(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction);
+  std::pair<XodrLaneId, bool> GetRightBoundary(const XodrLaneId& lane_id,
+    const XodrDrivingDirection& driving_direction);
+  // TODO(@hart): needs to be implemented
+  modules::geometry::Line GetCenterLine(const XodrLaneId& lane_id) {
+
+  }
 
 
  private:
