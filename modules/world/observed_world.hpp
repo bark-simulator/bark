@@ -25,6 +25,7 @@ using world::objects::Agent;
 using world::map::LocalMap;
 using world::map::LocalMapPtr;
 using world::map::MapInterfacePtr;
+using world::map::RoadCorridorPtr;
 using modules::geometry::Point2d;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition::X_POSITION;
@@ -49,6 +50,10 @@ class ObservedWorld : public World {
 
     const LocalMapPtr get_local_map() const {
       return ObservedWorld::get_ego_agent()->get_local_map();
+    }
+
+    const RoadCorridorPtr get_road_corridor() const {
+      return ObservedWorld::get_ego_agent()->get_road_corridor();
     }
 
     std::shared_ptr<const Agent> get_ego_agent() const {
