@@ -111,8 +111,6 @@ class EnvironmentTests(unittest.TestCase):
         point = Point2d(5111, 5072)
         viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
-        polygon2 = world.map.get_roadgraph().GetLanePolygonForLaneId(242)
-        viewer.drawPolygon2d(polygon2, 'green', 1.0)
         viewer.drawPoint2d(point, 'red', 1.0)
         viewer.show(block=True)
         time.sleep(0.1)
