@@ -113,7 +113,6 @@ class MapInterface {
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
   RoadgraphPtr get_roadgraph() { return roadgraph_; }
 
-
   //! RoadCorridor
   void CalculateLaneCorridors(
     RoadCorridorPtr& road_corridor,
@@ -126,14 +125,18 @@ class MapInterface {
     const std::vector<XodrRoadId>& road_ids) const;
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction);
-  RoadCorridorPtr GenerateRoadCorridor(const modules::geometry::Point2d& start_point, 
-                                    const modules::geometry::Polygon& goal_region);
-  bool XodrLaneIdAtPolygon(const modules::geometry::Polygon&  polygon, 
-                          XodrLaneId& found_lane_id) const;
+  RoadCorridorPtr GenerateRoadCorridor(
+    const modules::geometry::Point2d& start_point,
+    const modules::geometry::Polygon& goal_region);
+  bool XodrLaneIdAtPolygon(
+    const modules::geometry::Polygon&  polygon,
+    XodrLaneId& found_lane_id) const;
   RoadCorridorPtr GetRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction) {
-    return road_corridors_.at(
-      RoadCorridor::GetHash(driving_direction, road_ids));
+      std::size_t rc_hash = RoadCorridor::GetHash(driving_direction, road_ids);
+    if (road_corridors_.count(rc_hash) == 0)
+      return nullptr;
+    return road_corridors_.at(rc_hash);
   }
 
   LaneId FindCurrentLane(const Point2d& pt) {
