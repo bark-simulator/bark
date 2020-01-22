@@ -92,6 +92,7 @@ class Agent : public Object {
     goal_definition_ = goal_definition;
   }
 
+  bool GenerateRoadCorridor(const MapInterfacePtr& map_interface); 
 
   void set_road_corridor(const RoadCorridorPtr road_corridor) { road_corridor_ = road_corridor; }
 
