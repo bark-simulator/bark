@@ -24,6 +24,7 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   State ego_state = current_ego_state();
   Point2d ego_position = current_ego_position();
 
+  // TODO(@all): make access safe
   const auto& lane_corridor = get_road_corridor()
                             ->GetCurrentLaneCorridor(ego_position);
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
