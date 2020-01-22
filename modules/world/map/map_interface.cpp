@@ -606,6 +606,8 @@ void MapInterface::GenerateRoadCorridor(
     }
   }
 
+  if (roads.size() == 0)
+    return;
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor);

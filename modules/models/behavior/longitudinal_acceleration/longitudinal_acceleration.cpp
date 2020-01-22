@@ -32,7 +32,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
 
   geometry::Line line;
   auto road_corr = observed_world.get_road_corridor();
-  if (road_corr && road_corr->GetRoads().size() > 0) {
+  if (road_corr) {
     line = road_corr->GetCurrentLaneCorridor(pose)->GetCenterLine();
   }
 
