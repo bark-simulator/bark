@@ -33,13 +33,13 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 # scenario_generation.dump_scenario_list(filename="examples/scenarios/highway_merging_dump.bark_scenarios")
 
 # load scenario list
-scenario_generation.load_scenario_list(filename="examples/scenarios/highway_merging_dump.bark_scenarios")
+#scenario_generation.load_scenario_list(filename="examples/scenarios/highway_merging_dump.bark_scenarios")
 
 for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
   scenario, idx = scenario_generation.get_next_scenario()
   world_state = scenario.get_world_state()
   print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
-  for _ in range(0, 10): # run each scenario for 3 steps
+  for _ in range(0, 10): # run each scenario for 10 steps
     world_state.step(sim_step_time)
     viewer.drawWorld(world_state)
     viewer.show(block=False)
