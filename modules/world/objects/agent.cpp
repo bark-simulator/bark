@@ -50,8 +50,9 @@ goal_definition_(goal_definition) {
 
   if (map_interface != nullptr) {
     GenerateLocalMap();
-    road_corridor_ = map_interface->GenerateRoadCorridor(get_current_position(),
-                  goal_definition_->get_shape());
+    road_corridor_ = map_interface->GenerateRoadCorridor(
+      get_current_position(),
+      goal_definition_->get_shape());
   }
 }
 
