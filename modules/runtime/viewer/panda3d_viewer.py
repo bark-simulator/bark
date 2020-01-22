@@ -334,8 +334,6 @@ class Panda3dViewer(BaseViewer, ShowBase):
             self.agent_poses[agent.id][0] + translation[0],
             self.agent_poses[agent.id][1] + translation[1], 2)
 
-        if self.draw_route:
-            self.drawRoute(agent)
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):

@@ -74,30 +74,6 @@ class PickleTests(unittest.TestCase):
         da = pickle_unpickle(d)
         self.assertTrue(isinstance(da, SingleTrackModel))
 
-    def test_driving_corridor_pickle(self):
-        cor = DrivingCorridor()
-
-        l1 = Line2d()
-        l1.addPoint(Point2d(10,4))
-
-        l2 = Line2d()
-        l2.addPoint(Point2d(10,4))
-        l2.addPoint(Point2d(1.555555, 1.244222))
-
-        l3 = Line2d()
-        l3.addPoint(Point2d(10,4))
-        l3.addPoint(Point2d(1.555555, 1.244222))
-        l3.addPoint(Point2d(20, 45))
-
-        cor.inner = l1
-        cor.outer = l2
-        cor.center = l3
-
-        cor_after = pickle_unpickle(cor)
-
-        self.assertTrue(np.array_equal(cor.inner.toArray(), cor_after.inner.toArray()))
-        self.assertTrue(np.array_equal(cor.outer.toArray(), cor_after.outer.toArray()))
-        self.assertTrue(np.array_equal(cor.center.toArray(), cor_after.center.toArray()))
 
     def test_goal_definition(self):
         goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])

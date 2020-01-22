@@ -11,10 +11,9 @@
 #include <utility>
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/world.hpp"
+#include "modules/world/map/frenet.hpp"
 #include "modules/world/prediction/prediction_settings.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/map/local_map.hpp"
-#include "modules/world/map/driving_corridor.hpp"
 
 namespace modules {
 namespace world {
@@ -22,8 +21,6 @@ namespace world {
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::Agent;
-using world::map::LocalMap;
-using world::map::LocalMapPtr;
 using world::map::MapInterfacePtr;
 using world::map::RoadCorridorPtr;
 using modules::geometry::Point2d;
@@ -45,12 +42,8 @@ class ObservedWorld : public World {
 
     ~ObservedWorld() {}
 
+    std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
     virtual double get_world_time() const { return World::get_world_time(); }
-
-    // TODO(@all): to be deprecated
-    const LocalMapPtr get_local_map() const {
-      return ObservedWorld::get_ego_agent()->get_local_map();
-    }
 
     const RoadCorridorPtr get_road_corridor() const {
       return ObservedWorld::get_ego_agent()->get_road_corridor();
@@ -90,9 +83,8 @@ class ObservedWorld : public World {
       return World::get_agents()[ego_agent_id_]->get_current_position();
     }
 
-    std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
-
     void SetupPrediction(const PredictionSettings& settings);
+
     WorldPtr Predict(float time_span,
                      const DiscreteAction& ego_action) const;
     WorldPtr Predict(float time_span) const;

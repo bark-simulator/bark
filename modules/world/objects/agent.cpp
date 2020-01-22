@@ -31,7 +31,6 @@ Object(shape, params, model_3d),
 behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
-local_map_(new LocalMap(goal_definition, map_interface)),
 history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
@@ -49,7 +48,6 @@ goal_definition_(goal_definition) {
   history_.push_back(pair);
 
   if (map_interface != nullptr) {
-    GenerateLocalMap();
     road_corridor_ = map_interface->GenerateRoadCorridor(
       get_current_position(),
       goal_definition_->get_shape());
@@ -61,7 +59,6 @@ Agent::Agent(const Agent& other_agent) :
   behavior_model_(other_agent.behavior_model_),
   dynamic_model_(other_agent.dynamic_model_),
   execution_model_(other_agent.execution_model_),
-  local_map_(other_agent.local_map_),
   road_corridor_(other_agent.road_corridor_),
   history_(other_agent.history_),
   max_history_length_(other_agent.max_history_length_),
@@ -120,36 +117,6 @@ bool Agent::AtGoal() const {
   return goal_definition_->AtGoal(*this);
 }
 
-void Agent::GenerateLocalMap() {
-  local_map_->set_goal_definition(goal_definition_);
-  State agent_state = get_current_state();
-  Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
-                   agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->Generate(agent_xy)) {
-    LOG(INFO) << "LocalMap generation for agent "
-               << get_agent_id() << " failed." << std::endl;
-  }
-  // TODO(@hart): parameter
-  UpdateDrivingCorridor(20.0);
-}
-
-void Agent::RecalculateDrivingCorridor() {
-  if (!local_map_->RecalculateDrivingCorridor(get_current_position())) {
-    LOG(INFO) << "DrivingCorridor generation for agent "
-               << get_agent_id() << " failed." << std::endl;
-  }
-  UpdateDrivingCorridor(20.0);
-}
-
-void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
-  State agent_state = get_current_state();
-  Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
-                   agent_state(StateDefinition::Y_POSITION));
-  if (!local_map_->ComputeHorizonCorridor(agent_xy, horizon)) {
-    LOG_EVERY_N(INFO, 100) << "Horizon DrivingCorridor generation for agent "
-              << get_agent_id() << " failed.";
-  }
-}
 
 std::shared_ptr<Object> Agent::Clone() const {
   std::shared_ptr<Agent> new_agent = std::make_shared<Agent>(*this);

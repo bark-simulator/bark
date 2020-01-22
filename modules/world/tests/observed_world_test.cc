@@ -10,7 +10,6 @@
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/map/local_map.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/geometry/polygon.hpp"
@@ -19,7 +18,6 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
-#include "modules/world/evaluation/evaluator_collision_driving_corridor.hpp"
 #include "modules/models/tests/make_test_world.hpp"
 
 using namespace modules::models::dynamic;
