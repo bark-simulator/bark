@@ -101,10 +101,15 @@ class XodrParser(object):
             new_lane = {}
             new_lane["id"] = id
             # every type we cannot read is read in as sidewalk
-            new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk"]# assign enum type
-            if lane.find("driving_direction") is not None:
-              new_lane["driving_direction"] = XodrDrivingDirection.__members__[str(lane.get("driving_direction"))]
-            else:
+            new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk" ]# assign enum type
+
+            if lane.find("userData"):
+              if lane.find("userData").find("vectorLane") is not None:
+                vector_lane = lane.find("userData").find("vectorLane")
+                if str(vector_lane.get("travelDir")) in ["forward", "backward"]:
+                  new_lane["driving_direction"] = XodrDrivingDirection.__members__[str(vector_lane.get("travelDir"))] 
+            
+            if "driving_direction" not in new_lane:
               if int(lane.get("id")) < 0:
                 new_lane["driving_direction"] = XodrDrivingDirection.forward
               else:

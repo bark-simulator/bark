@@ -19,7 +19,7 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "road_corridor_test"
+map_name = "Crossing8Course"
 output_dir = "/home/hart/Dokumente/2020/" + map_name
 
 # Map Definition
