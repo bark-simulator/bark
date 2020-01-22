@@ -12,11 +12,9 @@
 #include <string>
 #include <utility> 
 #include <boost/geometry/index/rtree.hpp>
-
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
-#include "modules/world/map/driving_corridor.hpp"
 #include "modules/world/map/road_corridor.hpp"
 
 
@@ -42,65 +40,30 @@ class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
 
-  // TODO(@all): to be deprecated; geometry function
-  void ConcatenateLines(const std::vector<XodrLanePtr>& lanes,
-                        Line& line_of_corridor,
-                        std::vector< std::pair<int, XodrLaneId> >& lane_ids);
-
-
- 
-  /*
-  * Finds the ID's of the nearest lanes to point
-  * Note that the point doesn't necessarily lie within the lane of the closest point
-  * or inside the lane of any of them.
-  */
   bool FindNearestXodrLanes(const Point2d& point,
-                         const unsigned& num_lanes,
-                         std::vector<opendrive::XodrLanePtr>& lanes,
-                         bool type_driving_only = true) const;
+                            const unsigned& num_lanes,
+                            std::vector<opendrive::XodrLanePtr>& lanes,
+                            bool type_driving_only = true) const;
 
   XodrLanePtr FindXodrLane(const Point2d& point) const;
 
 
-  bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
-
-  // TODO(@all): to be deprecated
-  bool LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
+  bool HasCorrectDrivingDirection(
+    const Point2d& point, const float orientation) const;
 
   bool IsInXodrLane(const Point2d& point, XodrLaneId id) const;
   
-  //std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > ComputeXodrLaneBoundariesHorizon(
-  //                                const XodrLaneId& startid, const XodrLaneId& goalid) const;
-  
-  //! Compute a DrivingCorridor from the start lane to the goal lane. The goal
-  //! must be reachable without a lane change.
-  // TODO(@all): to be deprecated
-  DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
-
-  //! Compute a DrivingCorridor that ends in a lane neighboring the goal lane in
-  //! the same driving direction.
-  // TODO(@all): to be deprecated
-  DrivingCorridor ComputeDrivingCorridorParallelToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
-
-  // TODO(@all): to be deprecated
-  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<XodrLaneId> lane_ids);
-
-  // TODO(@all): to be deprecated
-  bool ComputeAllDrivingCorridors();
-
-  // TODO(@all): to be deprecated
-  std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<XodrLaneId>& lane_ids) const;
-
-  std::pair<XodrLanePtr, bool> get_inner_neighbor(const XodrLaneId lane_id) const;
-  std::pair<XodrLanePtr, bool> get_outer_neighbor(const XodrLaneId lane_id) const;
+  std::vector<PathBoundaries>
+  ComputeAllPathBoundaries(const std::vector<XodrLaneId>& lane_ids) const;
+  std::pair<XodrLanePtr, bool>
+  get_inner_neighbor(const XodrLaneId lane_id) const;
+  std::pair<XodrLanePtr, bool>
+  get_outer_neighbor(const XodrLaneId lane_id) const;
   std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId lane_id) const;
 
-  // TODO(@all): to be deprecated
-  std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
-  // TODO(@all): to be deprecated
-  std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
-
-  virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
+  virtual std::pair<Point2d, Point2d> BoundingBox() const {
+    return bounding_box_;
+  }
 
   bool set_open_drive_map(OpenDriveMapPtr map) {
     open_drive_map_ = map;
@@ -116,9 +79,6 @@ class MapInterface {
   XodrLanePtr get_lane(const XodrLaneId& id) const {
     return roadgraph_->get_laneptr(id);
   }
-
-  // TODO(@all): to be deprecated
-  std::vector<DrivingCorridorPtr> get_all_corridors() const { return all_corridors_; }
 
   //! Functions
   OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
@@ -163,13 +123,13 @@ class MapInterface {
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
-  std::vector<DrivingCorridorPtr> all_corridors_;
   rtree_lane rtree_lane_;
   std::pair<Point2d, Point2d> bounding_box_;
   std::map<std::size_t, RoadCorridorPtr> road_corridors_;
 
-  static bool is_lane_type(rtree_lane_value const &m) {return (m.second->get_lane_type() == XodrLaneType::DRIVING); }
-
+  static bool is_lane_type(rtree_lane_value const &m) {
+    return (m.second->get_lane_type() == XodrLaneType::DRIVING);
+  }
 };
 
 using MapInterfacePtr = std::shared_ptr<MapInterface>;

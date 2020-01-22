@@ -237,27 +237,6 @@ class BaseViewer(Viewer):
             transformed_polygon = shape.transform(pose)
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
-        if self.draw_route:
-            self.drawRoute(agent)
-
-        # self.drawHistory(agent, color)
-
-    def drawDrivingCorridor(self, corridor, color=None):
-        if color is None:
-            # generate random colour
-            color = list(np.random.choice(range(256), size=3)/256)
-        if corridor.center.valid() and corridor.inner.valid() and corridor.outer.valid():
-            self.drawLine2d(corridor.center, color, 1, True)
-            self.drawLine2d(corridor.inner, color, 1)
-            self.drawLine2d(corridor.outer, color, 1)
-        else:
-            logger.info("Cannot draw Driving Corridor, as it is empty")        
-
-    def drawRoute(self, agent):
-        # TODO(@hart): visualize the global as well as the local driving corridor
-        self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
-        self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
-
     def drawLaneCorridor(self, lane_corridor):
       self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=1.)
 

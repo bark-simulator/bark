@@ -6,6 +6,7 @@
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/observed_world.hpp"
+#include "modules/world/map/frenet.hpp"
 
 #include <math.h>
 

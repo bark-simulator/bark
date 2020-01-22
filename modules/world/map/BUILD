@@ -11,7 +11,6 @@ cc_library(
         "//modules/world/opendrive",
         "@boost//:geometry",
         ":roadgraph",
-        ":driving_corridor",
         ":road_corridor",
 
     ],
@@ -38,21 +37,6 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-cc_library(
-    name = "driving_corridor",
-    srcs = [
-        "driving_corridor.cpp"
-    ],
-    hdrs = [
-        "driving_corridor.hpp"
-    ],
-    deps = [
-        "@boost//:geometry",
-        ":frenet",
-    ],
-    linkstatic = 1,
-    visibility = ["//visibility:public"],
-)
 
 cc_library(
     name = "lane",
@@ -137,27 +121,6 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-cc_library(
-    name = "local_map",
-    srcs = [
-        "local_map.cpp"
-    ],
-    hdrs = [
-        "local_map.hpp",
-    ],
-    deps = [
-        "//modules/geometry",
-        "//modules/world/opendrive",
-        "//modules/world/goal_definition:goal_definition",
-        "//modules/world/map:frenet",
-        "//modules/world/map:driving_corridor",
-        "@boost//:geometry",
-        "@boost//:graph",
-        ":map_interface",
-    ],
-    linkstatic = 1,
-    visibility = ["//visibility:public"],
-)
 
 cc_library(
     name="include",
