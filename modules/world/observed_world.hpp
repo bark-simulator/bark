@@ -47,7 +47,7 @@ class ObservedWorld : public World {
 
     virtual double get_world_time() const { return World::get_world_time(); }
 
-
+    // TODO(@all): to be deprecated
     const LocalMapPtr get_local_map() const {
       return ObservedWorld::get_ego_agent()->get_local_map();
     }

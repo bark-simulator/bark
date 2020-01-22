@@ -91,6 +91,8 @@ class World : public commons::BaseType {
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
   void Step(const float& delta_time);
+
+  // TODO(@all): to be deprecated
   void UpdateHorizonDrivingCorridors();
 
   void DoPlanning(const float& delta_time);
@@ -98,9 +100,12 @@ class World : public commons::BaseType {
 
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
+
+  // TODO(@all): to be deprecated
   void RecalculateDrivingCorridors();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
+
   AgentMap GetAgentsIntersectingPolygon(
     const modules::geometry::Polygon& polygon) const;
 
@@ -116,8 +121,11 @@ class World : public commons::BaseType {
   double world_time_;
   rtree_agent rtree_agents_;
   bool remove_agents_;
+  // TODO(@all): to be deprecated
   bool calculate_driving_corridor_;
+  // TODO(@all): to be deprecated
   bool recalculate_driving_corridor_;
+  // TODO(@all): to be deprecated
   float driving_corridor_length_;
 };
 
