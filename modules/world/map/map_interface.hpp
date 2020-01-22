@@ -41,7 +41,8 @@ using PathBoundaries = std::vector<std::pair<XodrLanePtr, XodrLanePtr>>;
 class MapInterface {
  public:
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
-  
+
+  // TODO(@all): to be deprecated; geometry function
   void ConcatenateLines(const std::vector<XodrLanePtr>& lanes,
                         Line& line_of_corridor,
                         std::vector< std::pair<int, XodrLaneId> >& lane_ids);
@@ -60,8 +61,10 @@ class MapInterface {
 
   XodrLanePtr FindXodrLane(const Point2d& point) const;
 
+
   bool HasCorrectDrivingDirection(const Point2d& point, const float orientation) const;
 
+  // TODO(@all): to be deprecated
   bool LineSegmentInsideCorridor(const DrivingCorridorPtr corridor, const Point2d& p1, const Point2d& p2) const;
 
   bool IsInXodrLane(const Point2d& point, XodrLaneId id) const;
@@ -71,23 +74,30 @@ class MapInterface {
   
   //! Compute a DrivingCorridor from the start lane to the goal lane. The goal
   //! must be reachable without a lane change.
+  // TODO(@all): to be deprecated
   DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
 
   //! Compute a DrivingCorridor that ends in a lane neighboring the goal lane in
   //! the same driving direction.
+  // TODO(@all): to be deprecated
   DrivingCorridor ComputeDrivingCorridorParallelToGoal(const XodrLaneId& startid, const XodrLaneId& goalid);
 
+  // TODO(@all): to be deprecated
   DrivingCorridor ComputeDrivingCorridorForRange(std::vector<XodrLaneId> lane_ids);
 
+  // TODO(@all): to be deprecated
   bool ComputeAllDrivingCorridors();
 
+  // TODO(@all): to be deprecated
   std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<XodrLaneId>& lane_ids) const;
 
   std::pair<XodrLanePtr, bool> get_inner_neighbor(const XodrLaneId lane_id) const;
   std::pair<XodrLanePtr, bool> get_outer_neighbor(const XodrLaneId lane_id) const;
   std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId lane_id) const;
 
+  // TODO(@all): to be deprecated
   std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
+  // TODO(@all): to be deprecated
   std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
 
   virtual std::pair<Point2d, Point2d> BoundingBox() const { return bounding_box_;}
@@ -107,6 +117,7 @@ class MapInterface {
     return roadgraph_->get_laneptr(id);
   }
 
+  // TODO(@all): to be deprecated
   std::vector<DrivingCorridorPtr> get_all_corridors() const { return all_corridors_; }
 
   //! Functions

@@ -34,7 +34,7 @@ using models::dynamic::State;
 using models::dynamic::StateDefinition;
 using namespace modules::geometry;
 
-
+// TODO(@all): to be deprecated; geometry function
 class LocalMap {
  public:
   LocalMap(const GoalDefinitionPtr& goal_definition,
