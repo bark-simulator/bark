@@ -45,7 +45,7 @@ world.set_map(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 50/3.6])
+init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 50/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.translate(Point2d(-63,-61))
 agent_params = param_server.addChild("agent1")
@@ -60,7 +60,7 @@ agent1 = Agent(init_state,
 world.add_agent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, -11, -8, 3.14*3.0/4.0, 5.2])
+init_state2 = np.array([0, -15, -13, 3.14*3.0/4.0, 5.2])
 agent_params2 = param_server.addChild("agent2")
 agent2 = Agent(init_state2,
                behavior_model2,
@@ -73,7 +73,7 @@ agent2 = Agent(init_state2,
 world.add_agent(agent2)
 
 # viewer
-viewer = MPViewer(params=param_server)
+viewer = MPViewer(params=param_server, use_world_bounds=True)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
