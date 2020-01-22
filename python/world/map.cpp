@@ -37,8 +37,8 @@ void python_map(py::module m) {
       .def("get_open_drive_map", &MapInterface::get_open_drive_map)
       .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
                                   const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
-      .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
-                                  const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
+      .def("GenerateRoadCorridor", py::overload_cast<const modules::geometry::Point2d&,
+                                  const modules::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
       .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
       .def("get_lane", &MapInterface::get_lane)
       .def("get_all_corridors", &MapInterface::get_all_corridors)
@@ -144,6 +144,7 @@ py::class_<RoadCorridor,
     .def("lanes", &RoadCorridor::GetLanes)
     .def("get_road", &RoadCorridor::GetRoad)
     .def("get_lane_corridor", &RoadCorridor::GetLaneCorridor)
+    .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
     .def_property_readonly("lane_corridors",
       &RoadCorridor::GetUniqueLaneCorridors)
     .def(py::pickle(
@@ -173,7 +174,9 @@ py::class_<LaneCorridor,
     .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
     .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
     .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
-    .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary);
+    .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
+    .def("__eq__", &LaneCorridor::operator== )
+    .def("__neq__", &LaneCorridor::operator!=);
 
 py::class_<Boundary,
            std::shared_ptr<Boundary>>(m, "Boundary")

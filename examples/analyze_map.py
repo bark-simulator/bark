@@ -19,8 +19,8 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "Crossing8Course"
-output_dir = "/home/hart/Dokumente/2020/" + map_name
+map_name = "city_highway_straight"
+output_dir = "/home/bernhard/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -50,7 +50,7 @@ for idx_r, road in open_drive_map.get_roads().items():
   viewer.drawWorld(world)
   viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-  viewer.show()
+  viewer.show(block=True)
   viewer.clear()
 
 for idx_r, road in open_drive_map.get_roads().items():

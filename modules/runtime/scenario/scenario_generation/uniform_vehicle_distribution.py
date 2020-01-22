@@ -102,7 +102,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
     agent_list = []
     # OTHER AGENTS
     for idx, source in enumerate(self._others_source):
-      connecting_center_line, s_start, s_end, _, lane_id_end = \
+      connecting_center_line, s_start, s_end = \
         self.center_line_between_source_and_sink(world.map,
                                                  source,
                                                  self._others_sink[idx])
@@ -133,7 +133,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         num_agents = len(agent_list)
         ego_agent = agent_list[math.floor(num_agents/4)] 
     else:
-        connecting_center_line, s_start, s_end, _, lane_id_end = \
+        connecting_center_line, s_start, s_end  = \
         self.center_line_between_source_and_sink(world.map,
                                                  self._ego_route[0],
                                                  self._ego_route[1])
@@ -183,7 +183,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
           ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
         ego_agent.generate_local_map()
     else:
-        connecting_center_line, s_start, s_end, _, lane_id_end = \
+        connecting_center_line, s_start, s_end = \
         self.center_line_between_source_and_sink(world.map,
                                                  self._ego_goal_start,
                                                  self._ego_goal_end)
@@ -251,26 +251,37 @@ class UniformVehicleDistribution(ScenarioGeneration):
     return np.random.uniform(srange[0], srange[1])
 
   def center_line_between_source_and_sink(self, map_interface, source, sink):
-    lane_source = map_interface.find_nearest_lanes(Point2d(source[0],
-                                                           source[1]),
-                                                   1)[0]
-    lane_sink = map_interface.find_nearest_lanes(Point2d(sink[0],
-                                                         sink[1]),
-                                                 1)[0]
-    driving_corridor = \
-      map_interface.compute_driving_corridor_from_start_to_goal(
-        lane_source.lane_id,
-        lane_sink.lane_id)
+    # generate road corridor between source and sink
+    goal_polygon = Polygon2d([0, 0, 0],
+                                  [Point2d(-1,0),
+                                  Point2d(-1,1),
+                                  Point2d(1,1),
+                                  Point2d(1,0)])
+    goal_polygon = goal_polygon.translate(Point2d(sink[0],
+                                                      sink[1]))
+    road_corridor = map_interface.GenerateRoadCorridor(
+        Point2d(source[0], source[1]),
+        goal_polygon)
 
-    _, s_start, _ = get_nearest_point_and_s(driving_corridor.center,
+    # find lane corridor between source and sink
+    lane_corridor_sink = road_corridor.GetCurrentLaneCorridor(Point2d(sink[0],
+                                                      sink[1]))
+    lane_corridor_source = road_corridor.GetCurrentLaneCorridor(Point2d(source[0],
+                                                      source[1]))
+
+    if (not lane_corridor_sink or not lane_corridor_source) or  lane_corridor_sink != lane_corridor_source:
+      print("source and sink lane corridors not equal!.")
+      return
+
+    center_line = lane_corridor_sink.center_line
+
+    _, s_start, _ = get_nearest_point_and_s(center_line,
                                             Point2d(source[0],source[1]))
-    _, s_end, _ = get_nearest_point_and_s(driving_corridor.center,
+    _, s_end, _ = get_nearest_point_and_s(center_line,
                                           Point2d(sink[0],sink[1]))
-    return driving_corridor.center, \
+    return center_line, \
            s_start, \
-           s_end, \
-           lane_source.lane_id, \
-           lane_sink.lane_id
+           s_end
 
 
   def default_agent_model(self):

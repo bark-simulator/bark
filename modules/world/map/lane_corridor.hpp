@@ -81,6 +81,16 @@ struct LaneCorridor {
     lanes_[s_start] = lane;
   }
 
+  bool operator==(const LaneCorridor other) {
+    return lanes_.size() == other.lanes_.size()
+        && std::equal(lanes_.begin(), lanes_.end(),
+                      other.lanes_.begin());
+  }
+
+  bool operator!=(const LaneCorridor other) {
+    return !(*this == other);
+  }
+
   std::map<float, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
   Polygon merged_polygon_;
