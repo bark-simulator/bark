@@ -47,12 +47,14 @@ goal_definition_(goal_definition) {
     modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
   history_.push_back(pair);
 
-  if (map_interface != nullptr) {
-    road_corridor_ = map_interface->GenerateRoadCorridor(
-      get_current_position(),
-      goal_definition_->get_shape());
+  if(map_interface) {
+     if(!GenerateRoadCorridor(map_interface)) {
+       LOG(ERROR) << "Failed to generate road corridor for agent " << get_agent_id();
+     }
   }
+
 }
+
 
 Agent::Agent(const Agent& other_agent) :
   Object(other_agent),
@@ -98,6 +100,20 @@ void Agent::Execute(const float& world_time) {
   if (history_.size() > max_history_length_) {
     history_.erase(history_.begin());
   }
+}
+
+
+bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
+  if (!goal_definition_) {
+    return false;
+  }
+  road_corridor_ = map_interface->GenerateRoadCorridor(
+  get_current_position(),
+  goal_definition_->get_shape());
+  if(!road_corridor_) {
+    return false;
+  }
+  return true;
 }
 
 geometry::Polygon Agent::GetPolygonFromState(const State& state) const {

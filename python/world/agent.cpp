@@ -65,6 +65,7 @@ void python_agent(py::module m)
       .def_property_readonly("road_corridor", &Agent::get_road_corridor)
       .def_property("goal_definition", &Agent::get_goal_definition, &Agent::set_goal_definition)
       .def("set_agent_id", &Object::set_agent_id)
+      .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
