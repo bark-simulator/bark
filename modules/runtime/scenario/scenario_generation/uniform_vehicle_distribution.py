@@ -181,7 +181,6 @@ class UniformVehicleDistribution(ScenarioGeneration):
           goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
                                                       self._ego_goal_end[1]))
           ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
-        ego_agent.generate_local_map()
     else:
         connecting_center_line, s_start, s_end, _, lane_id_end = \
         self.center_line_between_source_and_sink(world.map,

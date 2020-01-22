@@ -5,13 +5,13 @@ cc_library(
     deps = [
         "//modules/world/opendrive:opendrive",
         "//modules/world/map:roadgraph",
-        "//modules/world/map:local_map",
-        "//modules/world/map:driving_corridor",
+        "//modules/world/map:map_interface",
+        "//modules/world/map:frenet",
         "//modules/commons:commons",
         "//modules/models/behavior:behavior",
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/models/execution:execution",
-	    "//modules/models/dynamic:dynamic",
+	      "//modules/models/dynamic:dynamic",
         "//modules/world/evaluation:base_evaluator",
         "//modules/world/goal_definition:goal_definition"
     ],
@@ -24,7 +24,8 @@ cc_library(
     deps = [
         "//modules/geometry:include",
         "//modules/world/map:include",
-         "//modules/world/opendrive:include",
+        "//modules/world/opendrive:include",
+        "//modules/world/map:map_interface",
         "//modules/commons:include",
         "//modules/models:include",
         "//modules/world/evaluation:include",

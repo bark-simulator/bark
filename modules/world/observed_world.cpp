@@ -61,6 +61,7 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
 }
 
+
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
     settings.ApplySettings(*this);
 }
