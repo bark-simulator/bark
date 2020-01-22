@@ -9,8 +9,8 @@
 
 #include "modules/commons/base_type.hpp"
 #include "modules/geometry/polygon.hpp"
-#include "modules/world/map/local_map.hpp"
 #include "modules/world/map/road_corridor.hpp"
+#include "modules/world/map/map_interface.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
@@ -41,7 +41,6 @@ class Agent : public Object {
  public:
   friend class World;
 
-  // TODO(@fortiss): specify goal in a more detailed way
   Agent(const State &initial_state,
         const BehaviorModelPtr &behavior_model_ptr,
         const DynamicModelPtr &dynamic_model_ptr,
@@ -81,10 +80,6 @@ class Agent : public Object {
 
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
-  const modules::world::map::LocalMapPtr& get_local_map() const {
-    return local_map_;
-  }
-
   const modules::world::map::RoadCorridorPtr get_road_corridor() const {
     return road_corridor_;
   }
@@ -97,7 +92,6 @@ class Agent : public Object {
     goal_definition_ = goal_definition;
   }
 
-  void set_local_map(const modules::world::map::LocalMapPtr& local_map) {local_map_ = local_map; }
 
   void set_road_corridor(const RoadCorridorPtr road_corridor) { road_corridor_ = road_corridor; }
 
@@ -109,21 +103,13 @@ class Agent : public Object {
 
   bool AtGoal() const;
 
-  void GenerateLocalMap();
-  void RecalculateDrivingCorridor();
-  void UpdateDrivingCorridor(double horizon);
-
   virtual std::shared_ptr<Object> Clone() const;
 
  private:
   models::behavior::BehaviorModelPtr behavior_model_;
   models::dynamic::DynamicModelPtr dynamic_model_;
   models::execution::ExecutionModelPtr execution_model_;
-
-  // TODO(@fortiss): this should be the local map the planners work with
-  modules::world::map::LocalMapPtr local_map_;
   modules::world::map::RoadCorridorPtr road_corridor_;
-
   models::behavior::StateActionHistory history_;
   // TODO(fortiss): move max_history_length_ to parameter
   uint32_t max_history_length_;

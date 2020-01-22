@@ -18,19 +18,7 @@ World::World(commons::Params* params) :
   remove_agents_(
     params->get_bool("World::remove_agents_out_of_map",
       "Whether agents should be removed outside the bounding box.",
-      false)),
-  calculate_driving_corridor_(
-    params->get_bool("World::update_horizon_corridor",
-      "Whether the horizon corridor should be updated.",
-      true)),
-  driving_corridor_length_(
-    params->get_real("World::driving_corridor_length",
-      "Length of driving corridor.",
-      40.)),
-  recalculate_driving_corridor_(
-    params->get_bool("World::recalculate_driving_corridor",
-      "Whether the driving corridor should be recalculated.",
-      true)) {}
+      false)) {}
 
 World::World(const std::shared_ptr<World>& world)  :
   commons::BaseType(world->get_params()),
@@ -40,9 +28,6 @@ World::World(const std::shared_ptr<World>& world)  :
   evaluators_(world->get_evaluators()),
   world_time_(world->get_world_time()),
   remove_agents_(world->get_remove_agents()),
-  calculate_driving_corridor_(world->calculate_driving_corridor_),
-  driving_corridor_length_(world->driving_corridor_length_),
-  recalculate_driving_corridor_(world->recalculate_driving_corridor_),
   rtree_agents_(world->rtree_agents_) {}
 
 void World::add_agent(const objects::AgentPtr& agent) {
@@ -58,11 +43,8 @@ void World::add_evaluator(const std::string& name,
   evaluators_[name] = evaluator;
 }
 
-
 void World::DoPlanning(const float& delta_time) {
   UpdateAgentRTree();
-  if (calculate_driving_corridor_)
-    UpdateHorizonDrivingCorridors();
   WorldPtr current_world(this->Clone());
 
   // Behavioral and execution planning
@@ -84,8 +66,6 @@ void World::DoExecution(const float& delta_time) {
   if (remove_agents_) {
     RemoveOutOfMapAgents();
   }
-  if (recalculate_driving_corridor_)
-    RecalculateDrivingCorridors();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -104,11 +84,6 @@ EvaluationMap World::Evaluate() const {
   return evaluation_results;
 }
 
-void World::UpdateHorizonDrivingCorridors() {
-  for (auto agent : agents_) {
-    agent.second->UpdateDrivingCorridor(driving_corridor_length_);
-  }
-}
 
 void World::Step(const float& delta_time) {
   DoPlanning(delta_time);
@@ -156,19 +131,6 @@ void World::RemoveOutOfMapAgents() {
     agents_.erase(result_pair.second);
   }
   UpdateAgentRTree();
-}
-
-void World::RecalculateDrivingCorridors() {
-  for (auto &agent : agents_) {
-    map::DrivingCorridor driving_corridor =
-        agent.second->get_local_map()->get_driving_corridor();
-    geometry::Polygon corridor_polygon = driving_corridor.CorridorPolygon();
-    Point2d position = agent.second->get_current_position();
-
-    if (!geometry::Collide(corridor_polygon, position)) {
-      agent.second->RecalculateDrivingCorridor();
-    }
-  }
 }
 
 AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,

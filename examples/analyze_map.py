@@ -100,7 +100,6 @@ for lane_id in lane_ids:
 #    viewer.drawDrivingCorridor(rc)
 #    viewer.saveFig(output_dir + "/" + "test.png")
 
-#map_interface.compute_all_driving_corridors()#
 #
 #all_corridors = map_interface.get_all_corridors()
 # c = all_corridors[10]
