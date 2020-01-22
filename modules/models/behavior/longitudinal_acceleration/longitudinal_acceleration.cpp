@@ -30,8 +30,11 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),
                          ego_vehicle_state(StateDefinition::Y_POSITION));
 
-  geometry::Line line = observed_world.get_road_corridor()
-                            ->GetCurrentLaneCorridor(pose)->GetCenterLine();
+  geometry::Line line;
+  auto road_corr = observed_world.get_road_corridor();
+  if (road_corr) {
+    line = road_corr->GetCurrentLaneCorridor(pose)->GetCenterLine();
+  }
 
   // check whether linestring is empty
   if (line.obj_.size() > 0) {
