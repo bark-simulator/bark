@@ -43,12 +43,6 @@ class EnvironmentTests(unittest.TestCase):
         lanes_near_goal = map_interface.find_nearest_lanes(goal_point, 1)
         assert(len(lanes_near_goal) == 1)
 
-        driving_corridor = map_interface.compute_driving_corridor_from_start_to_goal(
-            lanes_near_start[0].lane_id, lanes_near_goal[0].lane_id)
-        print(driving_corridor)
-        for id in driving_corridor.get_lane_ids():
-            l = map_interface.get_lane(id[1])
-            assert(l.lane_type == XodrLaneType.driving)
 
         time.sleep(2)  # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
 
@@ -117,9 +111,7 @@ class EnvironmentTests(unittest.TestCase):
         point = Point2d(5111, 5072)
         viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
-        polygon = world.map.get_roadgraph().GetLanePolygonForLaneId(241)
         polygon2 = world.map.get_roadgraph().GetLanePolygonForLaneId(242)
-        viewer.drawPolygon2d(polygon, 'blue', 1.0)
         viewer.drawPolygon2d(polygon2, 'green', 1.0)
         viewer.drawPoint2d(point, 'red', 1.0)
         viewer.show(block=True)
