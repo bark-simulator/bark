@@ -26,18 +26,12 @@ bool MapInterface::interface_from_opendrive(
   for (auto &road : open_drive_map_->get_roads()) {
     for (auto &lane_section : road.second->get_lane_sections()) {
       for (auto &lane : lane_section->get_lanes()) {
-        if (lane.second->get_lane_position() != 0)
-          return false;
-        std::pair<XodrLanePtr, XodrLanePtr> lb =
-          roadgraph_->ComputeXodrLaneBoundaries(lane.second->get_id());
-        if (lb.first && lb.second) {
-          auto center = ComputeCenterLine(lb.first->get_line(),
-                                          lb.second->get_line());
-          LineSegment center_lane_segment(*center.begin(),
-                                          *(center.end() - 1));
-          rtree_lane_.insert(
-            std::make_pair(center_lane_segment, lane.second));
-        }
+        if (lane.second->get_lane_position() == 0)
+          continue;
+        LineSegment lane_segment(*lane.second->get_line().begin(),
+                                 *(lane.second->get_line().end() - 1));
+        rtree_lane_.insert(
+          std::make_pair(lane_segment, lane.second));
       }
     }
   }
@@ -51,20 +45,22 @@ bool MapInterface::FindNearestXodrLanes(const Point2d &point,
                                     std::vector<XodrLanePtr> &lanes,
                                     bool type_driving_only) const {
   std::vector<rtree_lane_value> results_n;
-  if (type_driving_only)
+  if (type_driving_only) {
     rtree_lane_.query(
       boost::geometry::index::nearest(point, num_lanes) && boost::geometry::index::satisfies(is_lane_type),  // NOLINT
       std::back_inserter(results_n));
-  else
+  } else {
     rtree_lane_.query(
       boost::geometry::index::nearest(point, num_lanes),
-                                      std::back_inserter(results_n));
-
-  if (results_n.empty())
+        std::back_inserter(results_n));
+  }
+  if (results_n.empty()) {
     return false;
+  }
   lanes.clear();
-  for (auto &result : results_n)
+  for (auto &result : results_n) {
     lanes.push_back(result.second);
+  }
   return true;
 }
 
@@ -84,33 +80,6 @@ XodrLanePtr MapInterface::FindXodrLane(const Point2d& point) const {
   return nullptr;
 }
 
-bool MapInterface::HasCorrectDrivingDirection(
-  const Point2d& point, const float orientation) const {
-  XodrLanePtr lane = FindXodrLane(point);
-  if (!lane) {
-    return false;
-  }
-  float orientation_normalized =
-    remainder(orientation, 2*M_PI);  // normalize to [0, 2pi]
-
-  float s = get_nearest_s(lane->get_line(), point);
-  float orientation_at_s = get_tangent_angle_at_s(lane->get_line(), s);
-  orientation_at_s =
-    remainder(orientation_at_s, 2*M_PI);  // normalize to [0, 2pi]
-  bool same_orientation_as_road =
-    (std::fabs(orientation_at_s - orientation_normalized) <= M_PI_2);
-  // open drive definition
-  bool point_is_in_right_lane = lane->get_lane_position() < 0;
-  if (point_is_in_right_lane) {
-    if (same_orientation_as_road)
-      return true;
-  } else {
-    if (same_orientation_as_road)
-      return false;
-  }
-  return false;
-}
-
 bool MapInterface::IsInXodrLane(const Point2d &point, XodrLaneId id) const {
   std::pair<vertex_t, bool> v = roadgraph_->get_vertex_by_lane_id(id);
   if (v.second) {
@@ -121,11 +90,16 @@ bool MapInterface::IsInXodrLane(const Point2d &point, XodrLaneId id) const {
     } else {
       // found vertex has a polygon
       bool point_in_polygon = modules::geometry::Collide(*polygon, point);
-      if (point_in_polygon)
+      if (point_in_polygon) {
         return true;
+      } else {
+        return false;
+      }
     }
+  } else {
+    // no vertex found
+    return false;
   }
-  return false;
 }
 
 
