@@ -56,7 +56,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. XodrLanes must be near these points \
       (<0.5m) Provide a list of lists with x,y-coordinates",
-     [[5000.626, 5006.8305]]]
+     [[5111.626, 5061.8305]]]
     self._others_sink = params_temp["OthersSink",
       "A list of points defining end of other vehicles routes.\
         Points should be on different lanes and match the order of the\
