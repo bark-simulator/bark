@@ -88,6 +88,7 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
+  @unittest.skip
   def test_road_corridor_highway(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
 
@@ -151,7 +152,6 @@ class RoadCorridorTests(unittest.TestCase):
       count += 1
     viewer.show(block=True)
 
-  @unittest.skip
   def test_road_corridor_merging(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/DR_DEU_Merging_MT.xodr")
 
