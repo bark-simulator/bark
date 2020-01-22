@@ -44,9 +44,7 @@ void python_map(py::module m) {
     .def("get_lane", &MapInterface::get_lane)
     .def("compute_all_path_boundaries",
       &MapInterface::ComputeAllPathBoundaries)
-    .def("find_lane", &MapInterface::FindXodrLane)
-    .def("has_correct_driving_direction",
-      &MapInterface::HasCorrectDrivingDirection);
+    .def("find_lane", &MapInterface::FindXodrLane);
  
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())

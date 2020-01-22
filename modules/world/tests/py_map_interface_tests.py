@@ -90,12 +90,9 @@ class EnvironmentTests(unittest.TestCase):
         self.assertTrue(switched_lane, "Eventually should have switched lanes!")
 
     def test_find_lane(self):
-
         xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
-
         params = ParameterServer()
         world = World(params)
-
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_parser.map)
         world.set_map(map_interface)
@@ -129,34 +126,6 @@ class EnvironmentTests(unittest.TestCase):
         time.sleep(0.1)
         lane_sw = map_interface.find_lane(point)
         self.assertIsNotNone(lane_sw, "This point is clearly on a lane!")
-
-    def test_driving_direction(self):
-
-        xodr_parser = XodrParser("modules/runtime/tests/data/urban_road.xodr")
-
-        params = ParameterServer()
-        world = World(params)
-
-        map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_parser.map)
-        world.set_map(map_interface)
-
-        point_rl = Point2d(52, 130)  # this point lies in the right lane
-        point_ll = Point2d(68, 72)  # this point lies in the left lane
-        point_no_lane = Point2d(120, 140)  # this point lies far outside, not in any lane
-
-        assert map_interface.has_correct_driving_direction(point_rl, math.pi/2)
-        assert map_interface.has_correct_driving_direction(point_rl, math.pi/2+0.2)
-        assert map_interface.has_correct_driving_direction(point_rl, math.pi/2-0.2)
-        assert not map_interface.has_correct_driving_direction(point_rl, -math.pi/2)
-
-        assert map_interface.has_correct_driving_direction(point_ll, -math.pi/4)
-        assert not map_interface.has_correct_driving_direction(point_ll, -math.pi/4 + math.pi)
-
-        assert not map_interface.has_correct_driving_direction(point_no_lane, 0)
-        assert not map_interface.has_correct_driving_direction(point_no_lane, math.pi/2)
-        assert not map_interface.has_correct_driving_direction(point_no_lane, math.pi)
-
 
 if __name__ == '__main__':
     unittest.main()

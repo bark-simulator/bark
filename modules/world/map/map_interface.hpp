@@ -47,10 +47,6 @@ class MapInterface {
 
   XodrLanePtr FindXodrLane(const Point2d& point) const;
 
-
-  bool HasCorrectDrivingDirection(
-    const Point2d& point, const float orientation) const;
-
   bool IsInXodrLane(const Point2d& point, XodrLaneId id) const;
   
   std::vector<PathBoundaries>
