@@ -133,8 +133,10 @@ class MapInterface {
     XodrLaneId& found_lane_id) const;
   RoadCorridorPtr GetRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction) {
-    return road_corridors_.at(
-      RoadCorridor::GetHash(driving_direction, road_ids));
+      std::size_t rc_hash = RoadCorridor::GetHash(driving_direction, road_ids);
+    if (road_corridors_.count(rc_hash) == 0)
+      return nullptr;
+    return road_corridors_.at(rc_hash);
   }
 
   LaneId FindCurrentLane(const Point2d& pt) {
