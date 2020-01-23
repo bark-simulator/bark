@@ -29,7 +29,7 @@ py_test(
   name = "planner_uct_benchmark",
   srcs = ["planner_uct_benchmark.py"],
   data = ['//python:bark.so',
-          '@benchmark_database_release//:v1.0.0',
+          '@benchmark_database_release//:v2.0',
           ':params'],
   imports = ['../python/'],
   deps = [
@@ -104,7 +104,7 @@ py_test(
   name = "scenarios_from_database",
   srcs = ["scenarios_from_database.py"],
   data = ['//python:bark.so',
-          '@benchmark_database_release//:v1.0.0'],
+          '@benchmark_database_release//:v2.0'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/viewer:matplotlib_viewer",
