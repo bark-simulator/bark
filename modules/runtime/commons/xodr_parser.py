@@ -323,7 +323,7 @@ class XodrParser(object):
             pass
         return new_link
 
-    def create_cpp_road(self, road):
+    def create_cpp_road(self, road, header):
         new_road = XodrRoad()
         new_road.id = int(road["id"])
         new_road.name = road["name"]
