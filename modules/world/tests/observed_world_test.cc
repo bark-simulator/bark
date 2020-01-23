@@ -32,6 +32,7 @@ using namespace modules::world;
 using namespace modules::world::evaluation;
 using namespace modules::world::prediction;
 using StateDefinition::VEL_POSITION;
+using modules::models::tests::make_test_world;
 
 TEST(observed_world, agent_in_front) {
   DefaultParams params;

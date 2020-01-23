@@ -14,7 +14,7 @@ try:
   from bark.models.behavior import BehaviorUCTSingleAgent
   behavior_used = BehaviorUCTSingleAgent
 except:
-  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:uct_planner --define planner_uct=true ")
+  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:planner_uct --define planner_uct=true ")
   exit()
 
 scenario_param_file ="uct_planner.json" # must be within examples params folder
