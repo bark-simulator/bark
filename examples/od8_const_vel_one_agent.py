@@ -74,7 +74,7 @@ for _ in range(0, 100):
   viewer.clear()
   world.step(sim_step_time)
   viewer.drawWorld(world)
-  # viewer.drawRoadCorridor(agent.road_corridor)
+  viewer.drawRoadCorridor(agent.road_corridor)
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 

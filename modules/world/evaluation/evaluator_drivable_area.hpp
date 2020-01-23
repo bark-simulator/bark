@@ -30,39 +30,15 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
-    if (merged_polygons_.size() == 0) {
-      RoadgraphPtr roadgraph = world.get_map()->get_roadgraph();
-      std::vector<XodrLaneId> lane_ids = roadgraph->get_all_laneids();
-      std::vector<PolygonPtr> polygons;
-
-      for (auto& lane_id : lane_ids) {
-        PolygonPtr polygon = roadgraph->GetLanePolygonForLaneId(lane_id);
-        polygons.push_back(polygon);
-      }
-
-      for (unsigned i = 1; i < polygons.size(); i++) {
-        boost::geometry::correct(polygons.at(i-1)->obj_);
-        boost::geometry::correct(polygons.at(i)->obj_);
-        boost::geometry::union_(
-          polygons.at(i-1)->obj_,
-          polygons.at(i)->obj_,
-          merged_polygons_);
-      }
-    }
-
-    for (auto agent : world.get_agents()) {
+    for (const auto& agent : world.get_agents()) {
       Polygon poly_agent = agent.second->GetPolygonFromState(
         agent.second->get_current_state());
-      // TODO(@hart): check if agent is in any of the merged polygons
-      for (auto& mp : merged_polygons_)
-        if (!boost::geometry::within(poly_agent.obj_, mp))
-          return true;
+      if (!boost::geometry::within(poly_agent.obj_,
+          agent.second->get_road_corridor()->GetPolygon().obj_))
+        return true;
     }
     return false;
   }
-
- private:
-  std::vector<boost::geometry::model::polygon<Point2d>> merged_polygons_;
 };
 
 }  // namespace evaluation

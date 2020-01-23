@@ -78,8 +78,9 @@ py::class_<RoadCorridor,
     .def(py::init<>())
     .def_property("roads", &RoadCorridor::GetRoads,
       &RoadCorridor::SetRoads)
-    .def("lanes", &RoadCorridor::GetLanes)
+    .def_property_readonly("lanes", &RoadCorridor::GetLanes)
     .def("get_road", &RoadCorridor::GetRoad)
+    .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
     .def("get_lane_corridor", &RoadCorridor::GetLaneCorridor)
     .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
     .def_property_readonly("lane_corridors",
@@ -89,10 +90,11 @@ py::class_<RoadCorridor,
         /* Return a tuple that fully encodes the state of the object */
         return py::make_tuple(rc.GetRoads(),
                               rc.GetUniqueLaneCorridors(),
-                              rc.GetLaneCorridorMap());
+                              rc.GetLaneCorridorMap(),
+                              rc.GetPolygon());
     },
     [](const py::tuple &t) {  // __setstate__
-        if (t.size() != 3)
+        if (t.size() != 4)
           throw std::runtime_error("Invalid RoadCorridor state!");
         RoadCorridor rc;
         rc.SetRoads(t[0].cast<Roads>());
@@ -100,6 +102,7 @@ py::class_<RoadCorridor,
           t[1].cast<std::vector<LaneCorridorPtr>>());
         rc.SetLaneCorridorMap(
           t[2].cast<std::map<LaneId, LaneCorridorPtr>>());
+        rc.SetPolygon(t[3].cast<Polygon>());
         return rc;
     }));
 

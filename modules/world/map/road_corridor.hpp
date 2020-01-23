@@ -38,7 +38,8 @@ struct RoadCorridor {
       return nullptr;
     return roads_.at(road_id);
   }
-  Roads GetRoads() const {return roads_;}
+  Roads GetRoads() const { return roads_; }
+  Polygon GetPolygon() const { return road_polygon_; }
   Lanes GetLanes(const RoadId& road_id) const {
     return this->GetRoad(road_id)->GetLanes();
   }
@@ -61,20 +62,8 @@ struct RoadCorridor {
     return nullptr;
   }
   std::pair<LaneCorridorPtr, LaneCorridorPtr>
-  GetLeftRightLaneCorridor(const Point2d& pt) const {
-    LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
-    LanePtr left_lane = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
-    LanePtr right_lane = current_lane_corr->GetCurrentLane(pt)->GetRightLane();
-    LaneId left_lane_id = 10000000;
-    LaneId right_lane_id = 10000000;
-    if (left_lane)
-      left_lane_id = left_lane->get_id();
-    if (right_lane)
-      right_lane_id = right_lane->get_id();
-    return std::make_pair(
-      GetLaneCorridor(left_lane_id),
-      GetLaneCorridor(right_lane_id));
-  }
+  GetLeftRightLaneCorridor(const Point2d& pt) const;
+
   static std::size_t GetHash(
     const XodrDrivingDirection& driving_direction,
     const std::vector<XodrRoadId>& road_ids) {
@@ -108,8 +97,19 @@ struct RoadCorridor {
     const std::map<LaneId, LaneCorridorPtr>& lane_corridors) {
     lane_corridors_ = lane_corridors;
   }
+  bool ComputeRoadPolygon() {
+    Polygon merged_polygon;
+    for (const auto& lane_corr : unique_lane_corridors_) {
+      merged_polygon.ConcatenatePolygons(
+        lane_corr->GetMergedPolygon());
+    }
+    road_polygon_ = merged_polygon;
+    return true;
+  }
+  void SetPolygon(const Polygon& poly) { road_polygon_ = poly; }
 
   Roads roads_;
+  Polygon road_polygon_;
   std::vector<LaneCorridorPtr> unique_lane_corridors_;
   std::map<LaneId, LaneCorridorPtr> lane_corridors_;
 };

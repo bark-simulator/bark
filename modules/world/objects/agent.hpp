@@ -75,12 +75,16 @@ class Agent : public Object {
 
   State get_current_state() const { return history_.back().first; }
 
-  modules::geometry::Point2d get_current_position() const {   const State& state = get_current_state();
-      return modules::geometry::Point2d(state(StateDefinition::X_POSITION), state(StateDefinition::Y_POSITION));}
+  modules::geometry::Point2d get_current_position() const {
+    const State& state = get_current_state();
+    return modules::geometry::Point2d(
+      state(StateDefinition::X_POSITION),
+      state(StateDefinition::Y_POSITION));
+  }
 
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
-  const modules::world::map::RoadCorridorPtr get_road_corridor() const {
+  const RoadCorridorPtr get_road_corridor() const {
     return road_corridor_;
   }
 
@@ -92,9 +96,11 @@ class Agent : public Object {
     goal_definition_ = goal_definition;
   }
 
-  bool GenerateRoadCorridor(const MapInterfacePtr& map_interface); 
+  bool GenerateRoadCorridor(const MapInterfacePtr& map_interface);
 
-  void set_road_corridor(const RoadCorridorPtr road_corridor) { road_corridor_ = road_corridor; }
+  void set_road_corridor(const RoadCorridorPtr road_corridor) {
+    road_corridor_ = road_corridor;
+  }
 
   void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
 
