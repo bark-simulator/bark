@@ -87,10 +87,6 @@ class MapInterface {
   std::pair<LanePtr, bool> get_outer_neighbor_but_not(const LaneId lane_id, const LaneId but_not) const;
   std::vector<LaneId> get_successor_lanes(const LaneId lane_id) const;
 
-  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
-
-  bool ComputeAllDrivingCorridors();
-
   std::vector<DrivingCorridorPtr> GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose& pose);
   std::vector<DrivingCorridorPtr> GetSplittingDrivingCorridors(const DrivingCorridorPtr corridor, const Pose& pose);
 

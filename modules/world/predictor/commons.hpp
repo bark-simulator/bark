@@ -24,6 +24,7 @@ struct MotionHypothesis {
   HypothesisId id;
   float likelihood;
   std::vector<StochasticState> states;
+  models::behavior::BehaviorModelPtr behavior_model;
 };
 
 struct AgentPrediction {
