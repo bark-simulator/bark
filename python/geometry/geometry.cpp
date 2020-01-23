@@ -16,6 +16,7 @@ namespace py = pybind11;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &modules::geometry::standard_shapes::CarLimousine);
+  m.def("Truck", &modules::geometry::standard_shapes::Truck);
 }
 
 void python_geometry(py::module m) {

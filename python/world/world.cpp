@@ -7,6 +7,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/map/roadgraph.hpp"
+#include "modules/world/predictor/commons.hpp"
 #include "python/world/world.hpp"
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
@@ -22,6 +23,7 @@ using namespace modules::commons;
 using namespace modules::models::behavior;
 using namespace modules::geometry;
 using namespace modules::world;
+using namespace modules::world::prediction;
 
 void python_world(py::module m) {
   py::class_<World, std::shared_ptr<World>>(m, "World")
@@ -85,5 +87,19 @@ void python_world(py::module m) {
   py::class_<LaneEdge, std::shared_ptr<LaneEdge>>(m, "LaneEdge")
     .def(py::init<LaneEdgeType>())
     .def_property_readonly("edge_type", &LaneEdge::get_edge_type);
+  
+  py::class_<AgentPrediction>(m, "AgentPrediction")
+    .def_readonly("agent_id", &AgentPrediction::agent_id_)
+    .def_readonly("agent_shape", &AgentPrediction::agent_shape_)
+    .def_readonly("motion_hypotheses", &AgentPrediction::motion_hypotheses_);
+  
+  py::class_<MotionHypothesis>(m, "MotionHypothesis")
+    .def_readonly("id", &MotionHypothesis::id)
+    .def_readonly("likelihood", &MotionHypothesis::likelihood)
+    .def_readonly("states", &MotionHypothesis::states);
+  
+  py::class_<StochasticState>(m, "StochasticState")
+    .def_readonly("mean", &StochasticState::mean)
+    .def_readonly("covariance", &StochasticState::covariance);
 
 }

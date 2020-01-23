@@ -31,5 +31,15 @@ Polygon modules::geometry::standard_shapes::CarLimousine() {
     Point2d(3.85, 0)});
 }
 
+Polygon modules::geometry::standard_shapes::Truck() {
+  return Polygon(Pose(0, 0, 0), std::vector<Point2d>{
+    Point2d(6.0, 1.275),
+    Point2d(6.0, -1.275),
+    Point2d(-6.0, -1.275),
+    Point2d(-6.0, 1.275),
+    Point2d(6.0, 1.275)
+  });
+}
+
 }  // namespace geometry
 }  // namespace modules

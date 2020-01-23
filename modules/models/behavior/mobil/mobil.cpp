@@ -25,12 +25,15 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
   // Determine whether to perform a lane change
   double acceleration;
   if (is_changing_lane_) {
+    has_changed_lane_ = true;
     acceleration = 0;
     if (behavior_pure_pursuit_.has_reached_line()) {
       is_changing_lane_ = false;
     }
   } else {
-    InitiateLaneChangeIfBeneficial(observed_world);
+    if (!has_changed_lane_) {
+      InitiateLaneChangeIfBeneficial(observed_world);
+    }
     auto driving_corridor = std::make_shared<DrivingCorridor>(observed_world.get_local_map()->get_driving_corridor());
     auto agent_in_front = observed_world.get_agent_in_front(driving_corridor, true);
     acceleration = CalculateLongitudinalAcceleration(observed_world.get_ego_agent(), agent_in_front.first, agent_in_front.second.lon);

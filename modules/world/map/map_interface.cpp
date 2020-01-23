@@ -271,6 +271,42 @@ DrivingCorridor MapInterface::ComputeDrivingCorridorForRange(std::vector<LaneId>
   return dc;
 }
 
+bool MapInterface::ComputeAllDrivingCorridors()
+{
+
+  std::vector<LaneId> ids = roadgraph_->get_all_laneids();
+  // get all unique ids that are driving corridors
+
+  auto all_path_boundaries = ComputeAllPathBoundaries(ids);
+
+  for (auto const &path_boundaries : all_path_boundaries)
+  {
+
+    std::vector<LanePtr> route_inner, route_outer;
+    // get from vector of pairs to pair of vectors
+    for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++)
+    {
+      route_inner.push_back(path_it->first);
+      route_outer.push_back(path_it->second);
+    }
+
+    DrivingCorridorPtr dc = std::make_shared<DrivingCorridor>();
+
+    std::vector<std::pair<int, LaneId>> dummy;
+    ConcatenateLines(route_inner, dc->inner, dummy);
+    ConcatenateLines(route_outer, dc->outer, dc->lane_ids_);
+    if (route_inner[0] != NULL && route_outer[0] != NULL)
+    {
+      dc->center = ComputeCenterLine(dc->inner, dc->outer);
+    }
+    dc->computed = true;
+
+    all_corridors_.push_back(dc);
+  }
+
+  return true;
+}
+
 std::vector<PathBoundaries> modules::world::map::MapInterface::ComputeAllPathBoundaries(
   const std::vector<LaneId>& lane_ids) const {
   std::vector<LaneEdgeType> successor_edges = {LaneEdgeType::SUCCESSOR_EDGE};
@@ -317,42 +353,6 @@ std::pair<LanePtr, bool> modules::world::map::MapInterface::get_outer_neighbor_b
 
 std::vector<LaneId> modules::world::map::MapInterface::get_successor_lanes(const LaneId lane_id) const {
   return roadgraph_->get_successor_lanes(lane_id);
-}
-
-bool MapInterface::ComputeAllDrivingCorridors()
-{
-
-  std::vector<LaneId> ids = roadgraph_->get_all_laneids();
-  // get all unique ids that are driving corridors
-
-  auto all_path_boundaries = ComputeAllPathBoundaries(ids);
-
-  for (auto const &path_boundaries : all_path_boundaries)
-  {
-
-    std::vector<LanePtr> route_inner, route_outer;
-    // get from vector of pairs to pair of vectors
-    for (auto path_it = path_boundaries.begin(); path_it != path_boundaries.end(); path_it++)
-    {
-      route_inner.push_back(path_it->first);
-      route_outer.push_back(path_it->second);
-    }
-
-    DrivingCorridorPtr dc = std::make_shared<DrivingCorridor>();
-
-    std::vector<std::pair<int, LaneId>> dummy;
-    ConcatenateLines(route_inner, dc->inner, dummy);
-    ConcatenateLines(route_outer, dc->outer, dc->lane_ids_);
-    if (route_inner[0] != NULL && route_outer[0] != NULL)
-    {
-      dc->center = ComputeCenterLine(dc->inner, dc->outer);
-    }
-    dc->computed = true;
-
-    all_corridors_.push_back(dc);
-  }
-
-  return true;
 }
 
 std::vector<DrivingCorridorPtr> MapInterface::GetAdjacentDrivingCorridorsSameDirection(const DrivingCorridorPtr corridor, const Pose &pose)

@@ -369,7 +369,7 @@ class XodrParser(object):
                 new_lane.link = self.create_lane_link(None)
 
             # not every lane contains a road-mark
-            if "road_mark" in lane and lane['road_mark']['type'] != RoadMarkType.none:
+            if "road_mark" in lane:
                 rm = RoadMark()
                 rm.type = lane['road_mark']['type']
                 rm.color = lane['road_mark']['color']

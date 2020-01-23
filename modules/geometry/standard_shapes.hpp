@@ -15,6 +15,10 @@ namespace standard_shapes {
 
 Polygon CarLimousine();
 
+// TODO(@AKreutz): Will probably not behave correctly when steering, because
+//                 the shape is not centered at its rear axle
+Polygon Truck();
+
 // TODO(fortiss): add more variants and objects here
 
 }  // namespace standard_shapes

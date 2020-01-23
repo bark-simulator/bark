@@ -159,6 +159,9 @@ std::shared_ptr<Object> Agent::Clone() const {
   if (execution_model_) {
     new_agent->execution_model_ = execution_model_->Clone();
   }
+  if (local_map_) {
+    new_agent->local_map_ = local_map_->Clone();
+  }
   return std::dynamic_pointer_cast<Object>(new_agent);
 }
 
