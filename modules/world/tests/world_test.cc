@@ -16,6 +16,9 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "modules/models/tests/make_test_world.hpp"
+
 
 using namespace modules::models::dynamic;
 using namespace modules::geometry;
@@ -31,6 +34,7 @@ using modules::world::opendrive::XodrLaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
+using modules::models::tests::make_test_world;
 
 TEST(world, world_init)
 {
@@ -148,7 +152,7 @@ TEST(world, world_collision)
 }
 
 
-TEST(world, world_no_collision)
+TEST(world, world_no_collision_agent)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
@@ -174,6 +178,24 @@ TEST(world, world_no_collision)
 
   ASSERT_TRUE(world->Evaluate()["collision_agents"].which());
   
+}
+
+TEST(world, world_outside_drivable_area) {
+  DefaultParams params;
+  EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
+
+  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference=2.0;
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity, velocity_difference);
+
+  world->add_evaluator("drivable_area", evaluator_drivable_area);
+
+  ASSERT_FALSE(world->Evaluate()["drivable_area"].which());
+
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  
+  ASSERT_FALSE(world->Evaluate()["drivable_area"].which());
 }
 
 

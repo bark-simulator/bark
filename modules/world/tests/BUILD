@@ -58,6 +58,7 @@ cc_test(
         "//modules/world/opendrive:opendrive",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
+        "//modules/models/tests:make_test_world",
         "//modules/world/evaluation:evaluation",
         "@gtest//:main",
     ],
