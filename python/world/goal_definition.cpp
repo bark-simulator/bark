@@ -22,45 +22,48 @@ void python_goal_definition(py::module m)
   py::class_<GoalDefinition,
              PyGoalDefinition,
              GoalDefinitionPtr>(m, "GoalDefinition")
-      .def(py::init<>())
-      .def("AtGoal", &GoalDefinition::AtGoal);
+    .def(py::init<>())
+    .def("AtGoal", &GoalDefinition::AtGoal);
 
   py::class_<GoalDefinitionPolygon, GoalDefinition,
           std::shared_ptr<GoalDefinitionPolygon>>(m, "GoalDefinitionPolygon")
-      .def(py::init<>())
-      .def(py::init<const Polygon&>())
-      .def("__repr__", [](const GoalDefinitionPolygon &g) {
-        return "bark.world.goal_definition.GoalDefinitionPolygon";
-      })
-      .def_property_readonly("goal_shape", &GoalDefinitionPolygon::get_shape)
-      .def(py::pickle(
-        [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
-            /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.get_shape());
-        },
-        [](py::tuple t) { // __setstate__
-          if (t.size() != 1)
-                throw std::runtime_error("Invalid GoalDefinitionPolygon state!");
+    .def(py::init<>())
+    .def(py::init<const Polygon&>())
+    .def("__repr__", [](const GoalDefinitionPolygon &g) {
+      return "bark.world.goal_definition.GoalDefinitionPolygon";
+    })
+    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::get_shape)
+    .def(py::pickle(
+      [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
+          /* Return a tuple that fully encodes the state of the object */
+          return py::make_tuple(g.get_shape());
+      },
+      [](py::tuple t) { // __setstate__
+        if (t.size() != 1)
+              throw std::runtime_error("Invalid GoalDefinitionPolygon state!");
 
-          return new GoalDefinitionPolygon(t[0].cast<Polygon>());
-                
-        }));
+        return new GoalDefinitionPolygon(t[0].cast<Polygon>());
+      }));
 
     py::class_<GoalDefinitionStateLimits, GoalDefinition,
-          std::shared_ptr<GoalDefinitionStateLimits>>(m, "GoalDefinitionStateLimits")
+      std::shared_ptr<GoalDefinitionStateLimits>>(m, "GoalDefinitionStateLimits")
       .def(py::init<>())
       .def(py::init<const Polygon&, const std::pair<float, float>&>())
       .def("__repr__", [](const GoalDefinitionStateLimits &g) {
         return "bark.world.goal_definition.GoalDefinitionStateLimits";
       })
-      .def_property_readonly("xy_limits", &GoalDefinitionStateLimits::get_xy_limits)
-      .def_property_readonly("angle_limits", &GoalDefinitionStateLimits::get_angle_limits)
+      .def_property_readonly("xy_limits",
+        &GoalDefinitionStateLimits::get_xy_limits)
+      .def_property_readonly("goal_shape",
+        &GoalDefinitionStateLimits::get_xy_limits)
+      .def_property_readonly("angle_limits",
+        &GoalDefinitionStateLimits::get_angle_limits)
       .def(py::pickle(
-        [](const GoalDefinitionStateLimits& g) -> py::tuple { // __getstate__
+        [](const GoalDefinitionStateLimits& g) -> py::tuple {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */
             return py::make_tuple(g.get_xy_limits(), g.get_angle_limits());
         },
-        [](py::tuple t) { // __setstate__
+        [](py::tuple t) {  // __setstate__
           if (t.size() != 2)
                 throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
 

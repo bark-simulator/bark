@@ -24,108 +24,117 @@ void python_opendrive(py::module m) {
       .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array")
       .def("apply_offset_transform", &PlanView::apply_offset_transform, "Apply offset to planview");
 
-  py::class_<RoadLinkInfo>(m, "RoadLinkInfo")
+  py::class_<XodrRoadLinkInfo>(m, "XodrRoadLinkInfo")
       .def(py::init<>())
-      .def_readwrite("id", &RoadLinkInfo::id_)
-      .def_readwrite("type", &RoadLinkInfo::type_);
+      .def_readwrite("id", &XodrRoadLinkInfo::id_)
+      .def_readwrite("type", &XodrRoadLinkInfo::type_);
 
-  py::class_<RoadLink>(m, "RoadLink")
+  py::class_<XodrRoadLink>(m, "XodrRoadLink")
       .def(py::init<>())
-      .def_property("predecessor", &RoadLink::get_predecessor, &RoadLink::set_predecessor)
-      .def_property("successor", &RoadLink::get_successor, &RoadLink::set_successor)
+      .def_property("predecessor", &XodrRoadLink::get_predecessor, &XodrRoadLink::set_predecessor)
+      .def_property("successor", &XodrRoadLink::get_successor, &XodrRoadLink::set_successor)
       .def(
           "__repr__",
-          [](const RoadLink &l) {
+          [](const XodrRoadLink &l) {
           std::stringstream ss;
-          ss << "<bark.RoadLink> RoadLink: ";
+          ss << "<bark.XodrRoadLink> XodrRoadLink: ";
           ss << modules::world::opendrive::print(l);
           return ss.str();
       });
 
-  py::enum_<LaneType>(m, "LaneType", py::arithmetic())
-      .value("driving", LaneType::DRIVING)
-      .value("biking", LaneType::BIKING)
-      .value("sidewalk", LaneType::SIDEWALK)
-      .value("border", LaneType::BORDER)
-      .export_values();
-  
-  py::enum_<roadmark::RoadMarkType>(m, "RoadMarkType", py::arithmetic())
-      .value("none", roadmark::RoadMarkType::NONE)
-      .value("solid", roadmark::RoadMarkType::SOLID)
-      .value("broken", roadmark::RoadMarkType::BROKEN)
-      .export_values();
-  
-  py::enum_<roadmark::RoadMarkColor>(m, "RoadMarkColor", py::arithmetic())
-      .value("standard", roadmark::RoadMarkColor::STANDARD)
-      .value("white", roadmark::RoadMarkColor::WHITE)
-      .value("yellow", roadmark::RoadMarkColor::YELLOW)
+  py::enum_<XodrLaneType>(m, "XodrLaneType", py::arithmetic())
+      .value("driving", XodrLaneType::DRIVING)
+      .value("biking", XodrLaneType::BIKING)
+      .value("sidewalk", XodrLaneType::SIDEWALK)
+      .value("border", XodrLaneType::BORDER)
       .export_values();
 
-  py::class_<RoadMark>(m, "RoadMark")
+  py::enum_<XodrDrivingDirection>(m, "XodrDrivingDirection", py::arithmetic())
+      .value("forward", XodrDrivingDirection::FORWARD)
+      .value("backward", XodrDrivingDirection::BACKWARD)
+      .value("both", XodrDrivingDirection::BOTH)
+      .export_values();
+      
+  py::enum_<roadmark::XodrRoadMarkType>(m, "XodrRoadMarkType", py::arithmetic())
+      .value("none", roadmark::XodrRoadMarkType::NONE)
+      .value("solid", roadmark::XodrRoadMarkType::SOLID)
+      .value("broken", roadmark::XodrRoadMarkType::BROKEN)
+      .export_values();
+  
+  py::enum_<roadmark::XodrRoadMarkColor>(m, "XodrRoadMarkColor", py::arithmetic())
+      .value("standard", roadmark::XodrRoadMarkColor::STANDARD)
+      .value("white", roadmark::XodrRoadMarkColor::WHITE)
+      .value("yellow", roadmark::XodrRoadMarkColor::YELLOW)
+      .export_values();
+
+  py::class_<XodrRoadMark>(m, "XodrRoadMark")
       .def(py::init<>())
-      .def_readwrite("type", &RoadMark::type_)
-      .def_readwrite("color", &RoadMark::color_)
-      .def_readwrite("width", &RoadMark::width_)
+      .def_readwrite("type", &XodrRoadMark::type_)
+      .def_readwrite("color", &XodrRoadMark::color_)
+      .def_readwrite("width", &XodrRoadMark::width_)
       .def(
           "__repr__",
-          [](const RoadMark &rm) {
+          [](const XodrRoadMark &rm) {
           std::stringstream ss;
-          ss << "<bark.RoadMark> RoadMark: ";
+          ss << "<bark.XodrRoadMark> XodrRoadMark: ";
           ss << modules::world::opendrive::print(rm);
           return ss.str();
       });
 
-  py::class_<Lane, std::shared_ptr<Lane>>(m, "Lane")
+  py::class_<XodrLane, std::shared_ptr<XodrLane>>(m, "XodrLane")
       .def(py::init<>())
-      .def(py::init<LanePosition&>())
-      .def_property("lane_id", &Lane::get_id, &Lane::set_id)
-      .def_property("lane_position", &Lane::get_lane_position, &Lane::set_lane_position)
-      .def_property("lane_type", &Lane::get_lane_type, &Lane::set_lane_type)
-      .def_property("link", &Lane::get_link, &Lane::set_link)
-      .def_property("line", &Lane::get_line, &Lane::set_line)
-      .def_property("road_mark", &Lane::get_road_mark, &Lane::set_road_mark)
-      .def_property("speed", &Lane::get_speed, &Lane::set_speed)
-      .def("append", &Lane::append, "Append lane")
+      .def(py::init<XodrLanePosition&>())
+      .def_property("lane_id", &XodrLane::get_id, &XodrLane::set_id)
+      .def_property("lane_position", &XodrLane::get_lane_position, &XodrLane::set_lane_position)
+      .def_property("lane_type", &XodrLane::get_lane_type, &XodrLane::set_lane_type)
+      .def_property("driving_direction",
+        &XodrLane::get_driving_direction,
+        &XodrLane::set_driving_direction)
+      .def_property("link", &XodrLane::get_link, &XodrLane::set_link)
+      .def_property("line", &XodrLane::get_line, &XodrLane::set_line)
+      .def_property("road_mark", &XodrLane::get_road_mark, &XodrLane::set_road_mark)
+      .def_property("speed", &XodrLane::get_speed, &XodrLane::set_speed)
+      .def("append", &XodrLane::append, "Append lane")
       .def("create_lane_from_lane_width", &create_lane_from_lane_width, "Create lane")
       .def(
           "__repr__",
-          [](const Lane &l) {
+          [](const XodrLane &l) {
           std::stringstream ss;
-          ss << "<bark.Lane> Lane: ";
+          ss << "<bark.XodrLane> XodrLane: ";
           ss << modules::world::opendrive::print(l);
           return ss.str();
       });
 
-  py::class_<LaneOffset>(m, "LaneOffset")
+  py::class_<XodrLaneOffset>(m, "XodrLaneOffset")
       .def(py::init<float, float, float, float>());
 
-  py::class_<LaneWidth>(m, "LaneWidth")
-      .def(py::init<float, float, LaneOffset>());
+  py::class_<XodrLaneWidth>(m, "XodrLaneWidth")
+      .def(py::init<float, float, XodrLaneOffset>());
 
-  py::class_<LaneSection, std::shared_ptr<LaneSection>>(m, "LaneSection")
+  py::class_<XodrLaneSection, std::shared_ptr<XodrLaneSection>>(m, "XodrLaneSection")
       .def(py::init<float>())
-      .def("add_lane", &LaneSection::add_lane, "Add lane element")
-      .def("get_lanes", &LaneSection::get_lanes, "Get all lane elements")
-      .def("get_left_lane", &LaneSection::get_left_lane, "Get left lane")
-      .def("get_right_lane", &LaneSection::get_right_lane, "Get right lane")
-      .def("get_lane_by_position", &LaneSection::get_lane_by_position, "Get lane by lane position")
+      .def("add_lane", &XodrLaneSection::add_lane, "Add lane element")
+      .def("get_lanes", &XodrLaneSection::get_lanes, "Get all lane elements")
+      .def("get_left_lane", &XodrLaneSection::get_left_lane, "Get left lane")
+      .def("get_right_lane", &XodrLaneSection::get_right_lane, "Get right lane")
+      .def("get_lane_by_position", &XodrLaneSection::get_lane_by_position, "Get lane by lane position")
       .def(
           "__repr__",
-          [](const LaneSection &ls) {
+          [](const XodrLaneSection &ls) {
           std::stringstream ss;
-          ss << "<bark.LaneSection> LaneSection: ";
+          ss << "<bark.XodrLaneSection> XodrLaneSection: ";
           ss << modules::world::opendrive::print(ls);
           return ss.str();
       });
 
-  py::class_<Road, std::shared_ptr<Road>>(m, "Road")
+  py::class_<XodrRoad, std::shared_ptr<XodrRoad>>(m, "XodrRoad")
       .def(py::init<>())
-      .def_property("name", &Road::get_name, &Road::set_name)
-      .def_property("id", &Road::get_id, &Road::set_id)
-      .def_property("plan_view", &Road::get_plan_view, &Road::set_plan_view)
-      .def_property("link", &Road::get_link, &Road::set_link)
-      .def_property_readonly("lane_sections", &Road::get_lane_sections)
-      .def("add_lane_section", &Road::add_lane_section, "Add a lane section to road");
+      .def_property("name", &XodrRoad::get_name, &XodrRoad::set_name)
+      .def_property("id", &XodrRoad::get_id, &XodrRoad::set_id)
+      .def_property("plan_view", &XodrRoad::get_plan_view, &XodrRoad::set_plan_view)
+      .def_property("link", &XodrRoad::get_link, &XodrRoad::set_link)
+      .def_property_readonly("lane_sections", &XodrRoad::get_lane_sections)
+      .def("add_lane_section", &XodrRoad::add_lane_section, "Add a lane section to road");
 
   py::class_<OpenDriveMap, std::shared_ptr<OpenDriveMap>>(m, "OpenDriveMap")
       .def(py::init<>())
@@ -135,10 +144,10 @@ void python_opendrive(py::module m) {
       .def("get_roads", &OpenDriveMap::get_roads, "Get all roads")
       .def("get_junctions", &OpenDriveMap::get_junctions, "Get all junctions");
 
-  py::class_<LaneLink>(m, "LaneLink")
+  py::class_<XodrLaneLink>(m, "XodrLaneLink")
       .def(py::init<>())
-      .def_readwrite("from_position", &LaneLink::from_position)
-      .def_readwrite("to_position", &LaneLink::to_position);
+      .def_readwrite("from_position", &XodrLaneLink::from_position)
+      .def_readwrite("to_position", &XodrLaneLink::to_position);
 
   py::class_<Connection>(m, "Connection")
       .def(py::init<>())
@@ -146,7 +155,7 @@ void python_opendrive(py::module m) {
       .def_readwrite("incoming_road", &Connection::incoming_road_)
       .def_readwrite("connecting_road", &Connection::connecting_road_)
       .def_property_readonly("lane_links", &Connection::get_lane_links)
-      .def("add_lane_link", &Connection::add_lane_link, "Add add LaneLink");
+      .def("add_lane_link", &Connection::add_lane_link, "Add add XodrLaneLink");
 
   py::class_<Junction, std::shared_ptr<Junction>>(m, "Junction")
       .def_property("id", &Junction::get_id, &Junction::set_id)

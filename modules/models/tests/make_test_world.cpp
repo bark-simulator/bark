@@ -86,28 +86,24 @@ WorldPtr modules::models::tests::make_test_world(
   center.add_point(Point2d(2, 0));
   center.add_point(Point2d(2000, 0));
 
-  Line outer;
-  outer.add_point(Point2d(-10, 3));
-  outer.add_point(Point2d(1, 3));
-  outer.add_point(Point2d(2, 3));
-  outer.add_point(Point2d(2000, 3));
+  Line left;
+  left.add_point(Point2d(-10, 3));
+  left.add_point(Point2d(1, 3));
+  left.add_point(Point2d(2, 3));
+  left.add_point(Point2d(2000, 3));
 
-  Line inner;
-  inner.add_point(Point2d(-10, -3));
-  inner.add_point(Point2d(1, -3));
-  inner.add_point(Point2d(2, -3));
-  inner.add_point(Point2d(2000, -3));
+  Line right;
+  right.add_point(Point2d(-10, -3));
+  right.add_point(Point2d(1, -3));
+  right.add_point(Point2d(2, -3));
+  right.add_point(Point2d(2000, -3));
 
-  DrivingCorridor corridor(outer, inner, center);
-  LocalMapPtr local_map(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  LocalMapPtr local_map2(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  LocalMapPtr local_map3(new LocalMap(0, GoalDefinitionPtr(), corridor));
-  agent1->set_local_map(local_map);
-  agent2->set_local_map(local_map2);
-  agent3->set_local_map(local_map3);
-  agent1->UpdateDrivingCorridor(20);
-  agent2->UpdateDrivingCorridor(20);
-  agent3->UpdateDrivingCorridor(20);
+  RoadCorridorPtr road_corridor(new DummyRoadCorridor(center, left, right));
+  RoadCorridorPtr road_corridor2(new DummyRoadCorridor(center, left, right));
+  RoadCorridorPtr road_corridor3(new DummyRoadCorridor(center, left, right));
+  agent1->set_road_corridor(road_corridor);
+  agent2->set_road_corridor(road_corridor2);
+  agent3->set_road_corridor(road_corridor3);
 
   return WorldPtr(world->Clone());
 }
@@ -142,37 +138,37 @@ MapInterface modules::models::tests::make_two_lane_map_interface() {
   PlanViewPtr p(new PlanView());
   p->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Lane-Section 1
-  LaneSectionPtr ls(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
   //! PlanView
-  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_0 = {0, 10, off0};
-  LanePtr lane0 = create_lane_from_lane_width(0,
+  XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_0 = {0, 10, off0};
+  XodrLanePtr lane0 = create_lane_from_lane_width(0,
                                               p->get_reference_line(),
                                               lane_width_0,
                                               0.05);
-  lane0->set_lane_type(LaneType::DRIVING);
+  lane0->set_lane_type(XodrLaneType::DRIVING);
 
-  //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10, off};
-  LanePtr lane1 = create_lane_from_lane_width(-1,
+  //! XodrLane
+  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_1 = {0, 10, off};
+  XodrLanePtr lane1 = create_lane_from_lane_width(-1,
                                               p->get_reference_line(),
                                               lane_width_1,
                                               0.05);
-  lane1->set_lane_type(LaneType::DRIVING);
-  LanePtr lane2 = create_lane_from_lane_width(1,
+  lane1->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane2 = create_lane_from_lane_width(1,
                                               p->get_reference_line(),
                                               lane_width_1,
                                               0.05);
-  lane2->set_lane_type(LaneType::DRIVING);
+  lane2->set_lane_type(XodrLaneType::DRIVING);
 
   ls->add_lane(lane0);
   ls->add_lane(lane1);
   ls->add_lane(lane2);
 
-  RoadPtr r(new Road("highway", 100));
+  XodrRoadPtr r(new XodrRoad("highway", 100));
   r->set_plan_view(p);
   r->add_lane_section(ls);
 
@@ -195,38 +191,38 @@ MapInterface modules::models::tests::make_map_interface_two_connected_roads() {
   PlanViewPtr p0(new PlanView());
   p0->add_line(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Lane-Section 1
-  LaneSectionPtr ls0(new LaneSection(0.0));
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls0(new XodrLaneSection(0.0));
 
   //! PlanView
-  LaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_0 = {0, 10, off0};
-  LanePtr lane00 = create_lane_from_lane_width(0,
+  XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_0 = {0, 10, off0};
+  XodrLanePtr lane00 = create_lane_from_lane_width(0,
                                                p0->get_reference_line(),
                                                lane_width_0,
                                                0.05);
-  lane00->set_lane_type(LaneType::DRIVING);
+  lane00->set_lane_type(XodrLaneType::DRIVING);
 
-  //! Lane
-  LaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  LaneWidth lane_width_1 = {0, 10, off};
-  LanePtr lane01 = create_lane_from_lane_width(1,
+  //! XodrLane
+  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width_1 = {0, 10, off};
+  XodrLanePtr lane01 = create_lane_from_lane_width(1,
                                                p0->get_reference_line(),
                                                lane_width_1,
                                                0.05);
-  lane01->set_lane_type(LaneType::DRIVING);
+  lane01->set_lane_type(XodrLaneType::DRIVING);
 
-  LanePtr lane02 = create_lane_from_lane_width(2,
+  XodrLanePtr lane02 = create_lane_from_lane_width(2,
                                                p0->get_reference_line(),
                                                lane_width_1,
                                                0.05);
-  lane02->set_lane_type(LaneType::DRIVING);
+  lane02->set_lane_type(XodrLaneType::DRIVING);
 
   ls0->add_lane(lane00);
   ls0->add_lane(lane01);
   ls0->add_lane(lane02);
 
-  RoadPtr r0(new Road("highway", 100));
+  XodrRoadPtr r0(new XodrRoad("highway", 100));
   r0->set_plan_view(p0);
   r0->add_lane_section(ls0);
 
@@ -236,46 +232,46 @@ MapInterface modules::models::tests::make_map_interface_two_connected_roads() {
   PlanViewPtr p1(new PlanView());
   p1->add_line(Point2d(10.0f, 0.0f), 0.0f, 10.0f);
 
-  //! Lane-Section 2
-  LaneSectionPtr ls1(new LaneSection(0.0f));
+  //! XodrLane-Section 2
+  XodrLaneSectionPtr ls1(new XodrLaneSection(0.0f));
 
   //! PlanView
-  LanePtr lane10 = create_lane_from_lane_width(0,
+  XodrLanePtr lane10 = create_lane_from_lane_width(0,
                                                p1->get_reference_line(),
                                                lane_width_0,
                                                0.05);
-  lane10->set_lane_type(LaneType::DRIVING);
+  lane10->set_lane_type(XodrLaneType::DRIVING);
   lane10->set_link({0, 0});
   
 
-  //! Lane
-  LanePtr lane11 = create_lane_from_lane_width(1,
+  //! XodrLane
+  XodrLanePtr lane11 = create_lane_from_lane_width(1,
                                                p1->get_reference_line(),
                                                lane_width_1,
                                                0.05);
-  lane11->set_lane_type(LaneType::DRIVING);
+  lane11->set_lane_type(XodrLaneType::DRIVING);
   lane11->set_link({1, 1});
 
-  LanePtr lane12 = create_lane_from_lane_width(2,
+  XodrLanePtr lane12 = create_lane_from_lane_width(2,
                                                p1->get_reference_line(),
                                                lane_width_1,
                                                0.05);
-  lane12->set_lane_type(LaneType::DRIVING);
+  lane12->set_lane_type(XodrLaneType::DRIVING);
   lane12->set_link({2, 2});
 
   ls1->add_lane(lane10);
   ls1->add_lane(lane11);
   ls1->add_lane(lane12);
 
-  RoadPtr r1(new Road("highway", 101));
+  XodrRoadPtr r1(new XodrRoad("highway", 101));
   r1->set_plan_view(p1);
   r1->add_lane_section(ls1);
 
   map->add_road(r1);
 
-  RoadLinkInfo predecessor(100, "road");
-  RoadLinkInfo successor(101, "road");
-  r1->set_link(RoadLink(predecessor, successor));
+  XodrRoadLinkInfo predecessor(100, "road");
+  XodrRoadLinkInfo successor(101, "road");
+  r1->set_link(XodrRoadLink(predecessor, successor));
 
   modules::world::map::MapInterface map_interface;
   map_interface.interface_from_opendrive(map);

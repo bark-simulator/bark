@@ -11,7 +11,7 @@ cc_library(
         "//modules/world/opendrive",
         "@boost//:geometry",
         ":roadgraph",
-        ":driving_corridor",
+        ":road_corridor",
 
     ],
     linkstatic = 1,
@@ -25,6 +25,7 @@ cc_library(
     ],
     hdrs = [
         "roadgraph.hpp",
+        "roadgraph_impl.hpp"
     ],
     deps = [
         "//modules/geometry",
@@ -36,17 +37,68 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+
 cc_library(
-    name = "driving_corridor",
+    name = "lane",
     srcs = [
-        "driving_corridor.cpp"
+        "lane.cpp"
     ],
     hdrs = [
-        "driving_corridor.hpp"
+        "lane.hpp"
     ],
     deps = [
-        "@boost//:geometry",
-        ":frenet",
+        "//modules/world/opendrive"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "road",
+    srcs = [
+        "road.cpp"
+    ],
+    hdrs = [
+        "road.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive",
+        ":lane"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "lane_corridor",
+    srcs = [
+        "lane_corridor.cpp"
+    ],
+    hdrs = [
+        "lane_corridor.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive",
+        ":road",
+        ":lane"
+    ],
+    linkstatic = 1,
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "road_corridor",
+    srcs = [
+        "road_corridor.cpp"
+    ],
+    hdrs = [
+        "road_corridor.hpp"
+    ],
+    deps = [
+        "//modules/world/opendrive",
+        ":road",
+        ":lane",
+        ":lane_corridor"
     ],
     linkstatic = 1,
     visibility = ["//visibility:public"],
@@ -69,27 +121,6 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-cc_library(
-    name = "local_map",
-    srcs = [
-        "local_map.cpp"
-    ],
-    hdrs = [
-        "local_map.hpp",
-    ],
-    deps = [
-        "//modules/geometry",
-        "//modules/world/opendrive",
-        "//modules/world/goal_definition:goal_definition",
-        "//modules/world/map:frenet",
-        "//modules/world/map:driving_corridor",
-        "@boost//:geometry",
-        "@boost//:graph",
-        ":map_interface",
-    ],
-    linkstatic = 1,
-    visibility = ["//visibility:public"],
-)
 
 cc_library(
     name="include",
