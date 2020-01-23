@@ -157,6 +157,9 @@ void MapInterface::CalculateLaneCorridors(
     if (road_corridor->GetLaneCorridor(lane.first) ||
         lane.second->get_lane_position() == 0)
       continue;
+    // only add if type is drivable
+    if (lane.second->get_lane_type() != XodrLaneType::DRIVING)
+      continue;
 
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
