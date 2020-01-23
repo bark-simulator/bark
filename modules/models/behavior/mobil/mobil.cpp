@@ -114,11 +114,11 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
       }
       if (benefit > threshold) {                                                                                            // Advantage criterion
         if (asymmetric_passing_rules_) {
-          std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
-          std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
+          // std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
+          // std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
         } else {
-          std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
-          std::cout << ", others improve by " << acc_o_after - acc_o_before << std::endl;
+          // std::cout << "Go right. Ego improves by " << acc_c_after - acc_c_before;
+          // std::cout << ", others improve by " << acc_o_after - acc_o_before << std::endl;
         }
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(right_corridor.first->get_center());
@@ -138,7 +138,7 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
     std::pair<AgentPtr, Frenet> left_leading = observed_world.get_agent_in_front(left_corridor.first, true);
 
     if (left_following.first == nullptr) {
-      // std::cout << " Could go left, nobody there" << std::endl;
+      // std::cout << " Agent " << observed_world.get_ego_agent()->get_agent_id() << ": Could go left, nobody there" << std::endl;
     }
 
     const double acc_c_after = CalculateLongitudinalAcceleration(ego_agent, left_leading.first, left_leading.second.lon);
@@ -174,15 +174,18 @@ void BehaviorMobil::InitiateLaneChangeIfBeneficial(const ObservedWorld &observed
       }
       if (benefit > threshold) {                                                                                            // Advantage criterion
         if (asymmetric_passing_rules_) {
-          std::cout << "Go left. Ego improves by " << acc_c_after - acc_c_before;
-          std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
+          // std::cout << "Go left. Ego improves by " << acc_c_after - acc_c_before;
+          // std::cout << ", others improve by " << acc_n_after - acc_n_before + acc_o_after - acc_o_before << std::endl;
         } else {
-          std::cout << "Go left. Ego improves by " << acc_c_after - acc_c_before;
-          std::cout << ", others improve by " << acc_n_after - acc_n_before << std::endl;
+          // std::cout << "Go left. Ego improves from " << acc_c_before << " to " << acc_c_after;
+          // std::cout << ", others improve by " << acc_n_after - acc_n_before << std::endl;
         }
         acc_threshold = benefit;
         behavior_pure_pursuit_.set_followed_line(left_corridor.first->get_center());
         is_changing_lane_ = true;
+      } else {
+        // std::cout << " Benefit " << acc_c_after << " - " << acc_c_before << " + " << politeness_ << " * (" << acc_n_after << " - " << acc_n_before << ") = " << benefit
+        //           << " would be less than the threshold " << threshold << "." << std::endl;
       }
     } else {
       // std::cout << " To left would be unsafe: " << acc_n_after << std::endl;
@@ -246,6 +249,11 @@ double BehaviorMobil::CalculateLongitudinalAcceleration(const ConstAgentPtr &ego
     const float vehicle_length = ego_agent->get_shape().front_dist_ +
                                   leading_vehicle->get_shape().rear_dist_;
     const double net_distance = distance - vehicle_length;
+    if (net_distance < 0) {
+      // Ego agent and leading vehicle are colliding
+      return -std::numeric_limits<double>::max();
+    }
+    
     const double net_velocity = ego_velocity - lead_velocity;
 
     const double helper_state = minimum_spacing + ego_velocity*desired_time_headway +

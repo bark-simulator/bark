@@ -59,7 +59,9 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
 }
 
 std::pair<AgentPtr, modules::world::map::Frenet> BehaviorIDMClassic::GetLeadingVehicle(const ObservedWorld& observed_world) {
-  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = observed_world.get_agent_in_front();
+  world::map::DrivingCorridorPtr current_corridor =
+    std::make_shared<world::map::DrivingCorridor>(observed_world.get_local_map()->get_horizon_driving_corridor());
+  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = observed_world.get_agent_in_front(current_corridor, false);
   return leading_vehicle;
 }
 

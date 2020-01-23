@@ -23,6 +23,7 @@ class BehaviorMobil : public BehaviorModel {
         dynamic_model_(dynamic_model),
         behavior_pure_pursuit_(params),
         is_changing_lane_(false),
+        has_changed_lane_(false),
         politeness_(politeness),
         acceleration_threshold_(acceleration_threshold) {
     longitudinal_behavior_ =
@@ -65,7 +66,7 @@ class BehaviorMobil : public BehaviorModel {
 
   void InitiateLaneChangeIfBeneficial(
     const world::ObservedWorld &observed_world);
-
+  
   std::shared_ptr<BehaviorModel> Clone() const;
   
  private:
@@ -80,6 +81,7 @@ class BehaviorMobil : public BehaviorModel {
   BehaviorPurePursuit behavior_pure_pursuit_;
 
   bool is_changing_lane_;
+  bool has_changed_lane_;
 
   // Measure of altruism, defines how the model weighs an acceleration
   // improvement for the ego agent against an improvement for other agents

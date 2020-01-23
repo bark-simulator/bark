@@ -27,7 +27,14 @@ double BehaviorPurePursuit::FindSteeringAngle(const dynamic::State &agent_state)
 
   double lookahead_angle = atan2(bg::get<1>(lookahead_point - agent_position), bg::get<0>(lookahead_point - agent_position)) - agent_state(StateDefinition::THETA_POSITION);
 
-  return atan(2*wheel_base_*sin(lookahead_angle) / distance(agent_position, lookahead_point));
+  double delta = atan(2*wheel_base_*sin(lookahead_angle) / distance(agent_position, lookahead_point));
+
+  // TODO(@AKreutz): parameter
+  double delta_max = 0.2;
+  if (abs(delta) > delta_max) {
+    delta = delta > 0 ? delta_max : -delta_max;
+  }
+  return delta;
 }
 
 } // namespace behavior

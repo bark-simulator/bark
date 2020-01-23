@@ -104,11 +104,12 @@ class LocalMap {
   // TODO: extend this by a good data structure for meging/ splitting
   std::vector<DrivingCorridorPtr> get_right_adjacent() const;
 
-  // Functions for MOBIL
-  std::pair<DrivingCorridorPtr, bool> get_left_adjacent_corridor(const DrivingCorridorPtr driving_corridor) const;
-  std::pair<DrivingCorridorPtr, bool> get_right_adjacent_corridor(const DrivingCorridorPtr driving_corridor) const;
+  std::pair<DrivingCorridorPtr, bool> get_left_adjacent_corridor(
+    const DrivingCorridorPtr driving_corridor) const;
+  std::pair<DrivingCorridorPtr, bool> get_right_adjacent_corridor(
+    const DrivingCorridorPtr driving_corridor) const;
 
-  virtual LocalMap *Clone() const;
+  virtual std::shared_ptr<LocalMap> Clone() const;
 
  private:
   DrivingCorridor driving_corridor_;

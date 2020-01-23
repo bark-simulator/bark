@@ -37,84 +37,85 @@ using modules::world::prediction::PredictionSettings;
 
 class ObservedWorld : public World {
  public:
-    ObservedWorld(const WorldPtr& world,
-                  const AgentId& ego_agent_id) :
-      World(world),
-      ego_agent_id_(ego_agent_id) {}
+  ObservedWorld(const WorldPtr& world,
+                const AgentId& ego_agent_id) :
+    World(world),
+    ego_agent_id_(ego_agent_id) {}
 
-    ObservedWorld(const ObservedWorld &observed_world) :
-      World(observed_world),
-      ego_agent_id_(observed_world.ego_agent_id_) {}
+  ~ObservedWorld() {}
 
-    ~ObservedWorld() {}
-
-    virtual double get_world_time() const { return World::get_world_time(); }
+  virtual double get_world_time() const { return World::get_world_time(); }
 
 
-    const LocalMapPtr get_local_map() const {
-      return ObservedWorld::get_ego_agent()->get_local_map();
-    }
+  const LocalMapPtr get_local_map() const {
+    return ObservedWorld::get_ego_agent()->get_local_map();
+  }
 
-    std::shared_ptr<const Agent> get_ego_agent() const {
-      return World::get_agent(ego_agent_id_);
-    }
+  std::shared_ptr<const Agent> get_ego_agent() const {
+    return World::get_agent(ego_agent_id_);
+  }
 
-    AgentMap get_other_agents() const {
-      auto tmp_map = World::get_agents();
-      tmp_map.erase(ego_agent_id_);
-      return tmp_map;
-    }
+  AgentMap get_other_agents() const {
+    auto tmp_map = World::get_agents();
+    tmp_map.erase(ego_agent_id_);
+    return tmp_map;
+  }
 
-    const std::shared_ptr<BehaviorModel> get_ego_behavior_model() const {
-      return World::get_agents()[ego_agent_id_]->get_behavior_model();
-    }
+  const std::shared_ptr<BehaviorModel> get_ego_behavior_model() const {
+    return World::get_agents()[ego_agent_id_]->get_behavior_model();
+  }
 
-    void set_ego_behavior_model(const BehaviorModelPtr& behavior_model) const {
-      return World::get_agents()[ego_agent_id_]->set_behavior_model(
-        behavior_model);
-    }
+  void set_ego_behavior_model(const BehaviorModelPtr& behavior_model) const {
+    return World::get_agents()[ego_agent_id_]->set_behavior_model(
+      behavior_model);
+  }
 
-    void set_behavior_model(const AgentId& agent_id,
-                            const BehaviorModelPtr& behavior_model) const {
-      return World::get_agents()[agent_id]->set_behavior_model(behavior_model);
-    }
+  void set_behavior_model(const AgentId& agent_id,
+                          const BehaviorModelPtr& behavior_model) const {
+    return World::get_agents()[agent_id]->set_behavior_model(behavior_model);
+  }
 
-    const MapInterfacePtr get_map() const { return World::get_map(); }
+  const MapInterfacePtr get_map() const { return World::get_map(); }
 
-    commons::Params* get_params() const { return World::get_params(); }
+  virtual State current_ego_state() const {
+    return World::get_agents()[ego_agent_id_]->get_current_state();
+  }
 
-    void clear_agents() { World::clear_agents(); }
-    void add_agent(const AgentPtr &agent) { World::add_agent(agent); }
+  Point2d current_ego_position() const {
+    return World::get_agents()[ego_agent_id_]->get_current_position();
+  }
 
-    virtual State current_ego_state() const {
-      return World::get_agents()[ego_agent_id_]->get_current_state();
-    }
+  void SetupPrediction(const PredictionSettings& settings);
+  WorldPtr Predict(float time_span,
+                   const DiscreteAction& ego_action) const;
+  WorldPtr Predict(float time_span) const;
 
-    Point2d current_ego_position() const {
-      return World::get_agents()[ego_agent_id_]->get_current_position();
-    }
+  //! The closest agent in front of the ego agent in the given driving
+  //! corridor and the distance to that agent
+  //! @param driving_corridor driving corridor in which to search
+  //! @param use_center_pose how to decide whether an agent is inside of the
+  //!                        given driving corridor:
+  //!                        true    any part of the agent shape must be
+  //!                                inside
+  //!                        false   the center pose of the agent must be
+  //!                                inside
+  std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front(
+    const map::DrivingCorridorPtr driving_corridor, bool use_center_pose) const;
 
-    std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
-    void Step(const float time_step);
+  //! The closes agent behind the ego agent in the given driving corridor and
+  //! the distance to that agent
+  std::pair<AgentPtr, modules::world::map::Frenet> get_agent_behind(
+    const map::DrivingCorridorPtr driving_corridor) const;
 
-    void SetupPrediction(const PredictionSettings& settings);
-    WorldPtr Predict(float time_span,
-                     const DiscreteAction& ego_action) const;
-    WorldPtr Predict(float time_span) const;
-
-    // Functions for MOBIL
-    std::pair<AgentPtr, double> get_agent_in_front(const map::DrivingCorridorPtr driving_corridor) const;
-    std::pair<AgentPtr, double> get_agent_behind(const map::DrivingCorridorPtr driving_corridor) const;
-
-    virtual WorldPtr Clone() const {
-      WorldPtr world_clone(World::Clone());
-      std::shared_ptr<ObservedWorld> observed_world =
-        std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
-      return std::dynamic_pointer_cast<World>(observed_world);
-    }
+  virtual WorldPtr Clone() const {
+    WorldPtr world_clone(World::Clone());
+    std::shared_ptr<ObservedWorld> observed_world =
+      std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
+    return std::dynamic_pointer_cast<World>(observed_world);
+  }
 
  private:
-    AgentId ego_agent_id_;
+  AgentId ego_agent_id_;
 };
 
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
