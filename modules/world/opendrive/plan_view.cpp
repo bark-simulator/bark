@@ -92,6 +92,14 @@ bool PlanView::add_arc(
   return true;
 }
 
+bool PlanView::apply_offset_transform(float x, float y, float hdg) {
+  geometry::Line rotated_line = rotate(reference_line_, hdg);
+  geometry::Line transformed_line = translate(rotated_line, x, y);
+  reference_line_ = transformed_line;
+
+  return true;
+}
+
 }  // namespace opendrive
 }  // namespace world
 }  // namespace modules

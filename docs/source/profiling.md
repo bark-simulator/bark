@@ -24,7 +24,23 @@ include easy_profiler using `\#include <easy/profiler.h>`
 
 in every function you want to profile, write `EASY_FUNCTION();` at the beginning
 
+define the functions `void profiler_startup()` and void `profiler_finish()`, for example in some utitly function
 
+```
+void profiler_startup() {
+  EASY_PROFILER_ENABLE;
+//  profiler::startListen();
+}
+
+void profiler_finish() {
+  auto blocks_written = profiler::dumpBlocksToFile("/tmp/<some example>.prof");
+  LOG(INFO) << "Easy profiler blocks written: " << blocks_written;
+}
+```
+
+and wrap them to python
+
+in the python runtime, you then have to call them before and after the code you want to profile.
 
 ### Step 3: Run BARK
 

@@ -21,7 +21,8 @@ void python_opendrive(py::module m) {
       .def("add_line", &PlanView::add_line, "Add line to planview")
       .def("add_spiral", &PlanView::add_spiral, "Add spiral to planview")
       .def("add_arc", &PlanView::add_arc, "Add arc to planview")
-      .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array");
+      .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array")
+      .def("apply_offset_transform", &PlanView::apply_offset_transform, "Apply offset to planview");
 
   py::class_<XodrRoadLinkInfo>(m, "XodrRoadLinkInfo")
       .def(py::init<>())
