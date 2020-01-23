@@ -24,13 +24,13 @@ def helper_plot(xodr_parser):
         for lane_section in road.lane_sections:
             for _, lane in lane_section.get_lanes().items():
 
-                if lane.lane_type == LaneType.driving:
+                if lane.lane_type == XodrLaneType.driving:
                     color = "grey"
-                elif lane.lane_type == LaneType.sidewalk:
+                elif lane.lane_type == XodrLaneType.sidewalk:
                     color = "green"
-                elif lane.lane_type == LaneType.border:
+                elif lane.lane_type == XodrLaneType.border:
                     color = "red"
-                elif lane.lane_type == LaneType.none:
+                elif lane.lane_type == XodrLaneType.none:
                     color = "blue"
                 else:
                     continue

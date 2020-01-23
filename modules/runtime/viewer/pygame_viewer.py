@@ -54,8 +54,8 @@ class PygameViewer(BaseViewer):
                     for _, lane in lane_section.get_lanes().items():
                         lane_np = lane.line.toArray()
                         lanes_np.append(lane_np)
-                        lanes_dashed.append(lane.road_mark.type == RoadMarkType.broken
-                                            or lane.road_mark.type == RoadMarkType.none)
+                        lanes_dashed.append(lane.road_mark.type == XodrRoadMarkType.broken
+                                            or lane.road_mark.type == XodrRoadMarkType.none)
 
                         self.map_min_boundary = np.minimum(self.map_min_boundary, np.amin(lane_np, axis=0))
                         self.map_max_boundary = np.maximum(self.map_max_boundary, np.amax(lane_np, axis=0))

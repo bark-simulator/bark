@@ -19,8 +19,8 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "DR_DEU_Merging_MT_with_offset"
-output_dir = "/home/esterle/" + map_name
+map_name = "city_highway_straight"
+output_dir = "/home/bernhard/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -45,19 +45,19 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 
 color_triplet_gray = (0.7,0.7,0.7)
 
-# Open Drive Elements (Roads, Lane Sections, Lanes)
+# Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
 for idx_r, road in open_drive_map.get_roads().items():
   viewer.drawWorld(world)
-  viewer.drawRoad(road)
+  viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-  viewer.show()
+  viewer.show(block=True)
   viewer.clear()
 
 for idx_r, road in open_drive_map.get_roads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     viewer.drawWorld(world)
-    viewer.drawRoad(road, color_triplet_gray)
-    viewer.drawLaneSection(lane_section)
+    viewer.drawXodrRoad(road, color_triplet_gray)
+    viewer.drawXodrLaneSection(lane_section)
     viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + ".png")
     viewer.show()
     viewer.clear()
@@ -66,22 +66,22 @@ for idx_r, road in open_drive_map.get_roads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     for idx_l, lane in lane_section.get_lanes().items():
       viewer.drawWorld(world)
-      viewer.drawRoad(road, color_triplet_gray)
-      viewer.drawLaneSection(lane_section, color_triplet_gray)
-      viewer.drawLane(lane)
+      viewer.drawXodrRoad(road, color_triplet_gray)
+      viewer.drawXodrLaneSection(lane_section, color_triplet_gray)
+      viewer.drawXodrLane(lane)
       viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + "_lane_section" + str(idx_ls) + "_lane" + str(idx_l) + ".png")
       viewer.show()
       viewer.clear()
 
-# Lanes of Roadgraph
+# XodrLanes of Roadgraph
 roadgraph = map_interface.get_roadgraph()
 roadgraph.print_graph(output_dir + "/" + map_name)
 lane_ids = roadgraph.get_all_laneids ()
 
 for lane_id in lane_ids:
-  lane_polygon = roadgraph.get_lane_polygon_by_id(lane_id)
+  lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
   # plot plan_view
-  road_id = roadgraph.get_road_by_lane_id(lane_id)
+  road_id = roadgraph.GetRoadForLaneId(lane_id)
   road = map_interface.get_open_drive_map().get_road(road_id)
   plan_view_reference = road.plan_view.get_reference_line()
   # plot polygon with center line
@@ -100,7 +100,6 @@ for lane_id in lane_ids:
 #    viewer.drawDrivingCorridor(rc)
 #    viewer.saveFig(output_dir + "/" + "test.png")
 
-#map_interface.compute_all_driving_corridors()#
 #
 #all_corridors = map_interface.get_all_corridors()
 # c = all_corridors[10]

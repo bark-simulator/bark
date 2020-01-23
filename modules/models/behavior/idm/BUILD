@@ -10,7 +10,8 @@ cc_library(
         "//modules/commons:commons",
         "//modules/world:world",
         "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
-        "//modules/models/dynamic:dynamic"
+        "//modules/models/dynamic:dynamic",
+        "//modules/world/map:frenet",
     ],
     visibility = ["//visibility:public"],
 )

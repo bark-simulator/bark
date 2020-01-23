@@ -24,7 +24,7 @@ bool GoalDefinitionSequential::AtGoal(
     // But first check if there are more goals
     if (sequential_goals_.size()-1 >= last_sequential_goal_reached_+1) {
       if (sequential_goals_[last_sequential_goal_reached_+1]->AtGoal(agent)) {
-        last_sequential_goal_reached_ = last_sequential_goal_reached_+1;
+        last_sequential_goal_reached_ += 1;
       }
     }
   }

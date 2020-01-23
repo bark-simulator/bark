@@ -126,7 +126,7 @@ load_bark()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  branch="master",
+  commit="436e665360daac6ac19285b2aab64bb27a2bc02d",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 

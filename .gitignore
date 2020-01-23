@@ -155,3 +155,5 @@ web/node_modules
 
 Town01_copy.xodr
 Town01.xodr
+modules/runtime/tests/data/DR_DEU_Merging_MT.xodr
+modules/runtime/tests/data/Osterwaldstrasse_v1.xodr

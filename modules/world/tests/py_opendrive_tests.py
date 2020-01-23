@@ -8,7 +8,7 @@ import numpy as np
 
 from scipy.special import fresnel
 from bark.world import *
-from bark.world.opendrive import PlanView, LaneOffset, LaneWidth, Lane, Road, fresnel_cos, fresnel_sin
+from bark.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth, XodrLane, XodrRoad, fresnel_cos, fresnel_sin
 from bark.geometry import Point2d
 
 
@@ -25,33 +25,33 @@ class EnvironmentTests(unittest.TestCase):
         pv.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
         line = pv.get_reference_line().toArray()
 
-        offset = LaneOffset(1.5, 0, 0, 0)
-        lane_width = LaneWidth(0.0, 59.9, offset)
+        offset = XodrLaneOffset(1.5, 0, 0, 0)
+        lane_width = XodrLaneWidth(0.0, 59.9, offset)
 
-        lane = Lane.create_lane_from_lane_width(-1,
+        lane = XodrLane.create_lane_from_lane_width(-1,
                                                 pv.get_reference_line(), lane_width, 0.5)
 
         print(lane)
-        lane = Lane.create_lane_from_lane_width(
+        lane = XodrLane.create_lane_from_lane_width(
             1, pv.get_reference_line(), lane_width, 0.5)
         print(lane)
 
     def test_road(self):
-        newRoad = Road()
-        newRoad.id = 1
-        newRoad.name = "Autobahn A9"
+        newXodrRoad = XodrRoad()
+        newXodrRoad.id = 1
+        newXodrRoad.name = "Autobahn A9"
 
         newPlanView = PlanView()
         newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
 
-        newRoad.plan_view = newPlanView
+        newXodrRoad.plan_view = newPlanView
 
-        line = newRoad.plan_view.get_reference_line().toArray()
+        line = newXodrRoad.plan_view.get_reference_line().toArray()
 
         # Spiral
         p = Point2d(line[-1][0], line[-1][1])
-        newRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newRoad.plan_view.get_reference_line().toArray()
+        newXodrRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+        line = newXodrRoad.plan_view.get_reference_line().toArray()
 
     def test_spiral(self):
         '''

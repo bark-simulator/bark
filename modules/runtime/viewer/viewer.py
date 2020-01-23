@@ -30,8 +30,8 @@ class BaseViewer(Viewer):
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", True]
         # map
-        self.color_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
-        self.alpha_lane_boundaries = params["Visualization"]["Map"]["Lanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
+        self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
+        self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
         self.plane_color = params["Visualization"]["Map"]["Plane"]["Color", "Color of the background plane", (1, 1, 1, 1)]
         self.plane_alpha = params["Visualization"]["Map"]["Plane"]["Alpha", "Alpha of the background plane", 1.0]
 
@@ -205,23 +205,23 @@ class BaseViewer(Viewer):
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.get_roads().items():
-            self.drawRoad(road, self.color_lane_boundaries)
+            self.drawXodrRoad(road, self.color_lane_boundaries)
 
-    def drawRoad(self, road, color=None):
+    def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
-          self.drawLaneSection(lane_section, color)
+          self.drawXodrLaneSection(lane_section, color)
     
-    def drawLaneSection(self, lane_section, color=None):
+    def drawXodrLaneSection(self, lane_section, color=None):
       for _, lane in lane_section.get_lanes().items():
-        self.drawLane(lane, color)
+        self.drawXodrLane(lane, color)
         
-    def drawLane(self, lane, color=None):
+    def drawXodrLane(self, lane, color=None):
       if color is None:
         self.color_lane_boundaries
 
       dashed = False
       # center line is type none and is drawn as broken
-      if lane.road_mark.type == RoadMarkType.broken or lane.road_mark.type == RoadMarkType.none: 
+      if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none: 
         dashed = True
       self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
 
@@ -237,23 +237,11 @@ class BaseViewer(Viewer):
             transformed_polygon = shape.transform(pose)
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
-        if self.draw_route:
-            self.drawRoute(agent)
+    def drawLaneCorridor(self, lane_corridor):
+      self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=.5)
 
-        # self.drawHistory(agent, color)
-
-    def drawDrivingCorridor(self, corridor, color=None):
-        if color is None:
-            # generate random colour
-            color = list(np.random.choice(range(256), size=3)/256)
-        if corridor.center.valid() and corridor.inner.valid() and corridor.outer.valid():
-            self.drawLine2d(corridor.center, color, 1, True)
-            self.drawLine2d(corridor.inner, color, 1)
-            self.drawLine2d(corridor.outer, color, 1)
-        else:
-            logger.info("Cannot draw Driving Corridor, as it is empty")        
-
-    def drawRoute(self, agent):
-        # TODO(@hart): visualize the global as well as the local driving corridor
-        self.drawDrivingCorridor(agent.local_map.get_driving_corridor(), self.route_color)
-        self.drawDrivingCorridor(agent.local_map.get_horizon_driving_corridor(), (0.8, 0.72, 0.2))
+    def drawRoadCorridor(self, road_corridor):
+      # TODO(@hart): use agent specific coloring
+      self.drawPolygon2d(road_corridor.polygon, color="blue", alpha=.2)
+      for lane_corridor in road_corridor.lane_corridors:
+        self.drawLaneCorridor(lane_corridor)

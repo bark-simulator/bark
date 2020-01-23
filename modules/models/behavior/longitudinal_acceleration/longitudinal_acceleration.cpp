@@ -30,9 +30,21 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),
                          ego_vehicle_state(StateDefinition::Y_POSITION));
 
-  geometry::Line line = observed_world.get_local_map()
-                            ->get_driving_corridor()
-                            .get_center();  // checked
+  geometry::Line line;
+  auto road_corr = observed_world.get_road_corridor();
+  if (!road_corr) {
+    LOG(ERROR) << "No road corridor for longitudinal acceleration behavior found.";
+    this->set_last_trajectory(traj);
+    return traj;
+  }
+
+  const auto lane_corr = road_corr->GetCurrentLaneCorridor(pose);
+  if(!lane_corr) {
+      LOG(ERROR) << "No lane corridor for longitudinal acceleration behavior found.";
+      this->set_last_trajectory(traj);
+      return traj;
+  }
+  line = lane_corr->GetCenterLine();
 
   // check whether linestring is empty
   if (line.obj_.size() > 0) {

@@ -99,11 +99,11 @@ Therefore, it utilizes an `R-Tree` in order to find the nearest map objects, suc
 class MapInterface {
 	public:
 		bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
-		bool FindNearestLanes(const modules::geometry::Point2d& point,
+		bool FindNearestXodrLanes(const modules::geometry::Point2d& point,
                                        const unsigned& num_lanes,
-                                       std::vector<opendrive::LanePtr>& lanes);
-		std::pair< std::vector<LanePtr>, std::vector<LanePtr> >  
-			ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid);
+                                       std::vector<opendrive::XodrLanePtr>& lanes);
+		std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> >  
+			ComputeXodrLaneBoundariesHorizon(const XodrLaneId& startid, const XodrLaneId& goalid);
 		
 	private:
 	       OpenDriveMapPtr open_drive_map_;
@@ -113,14 +113,14 @@ class MapInterface {
 ```
 
 ```eval_rst
-  .. cpp:function:: std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(const LaneId& startid, const LaneId& goalid)
+  .. cpp:function:: std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > ComputeXodrLaneBoundariesHorizon(const XodrLaneId& startid, const XodrLaneId& goalid)
   
-  Generates a route using boost-graph (the LaneGraph) and returns the left-, right-boundary as well as the centerline.
+  Generates a route using boost-graph (the XodrLaneGraph) and returns the left-, right-boundary as well as the centerline.
 ```
 
 
 ```eval_rst
-  .. cpp:function:: bool FindNearestLanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::LanePtr>& lanes)
+  .. cpp:function:: bool FindNearestXodrLanes(const modules::geometry::Point2d& point, const unsigned& num_lanes, std::vector<opendrive::XodrLanePtr>& lanes)
   
   A function that returns the nearest lanes for a given point.
 ```
@@ -132,7 +132,7 @@ Based on the Roadgraph-interface, the LocalMap searches a valid route for an age
 class LocalMap {
 	public:
 		bool generate(Point2d point,
-			      LaneId goal_lane_id,
+			      XodrLaneId goal_lane_id,
 			      double horizon = numeric_double_limits::max());
 
 		Line get_inner_line() const { return inner_line_; }

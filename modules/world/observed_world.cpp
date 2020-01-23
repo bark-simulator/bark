@@ -7,6 +7,7 @@
 
 #include "modules/world/observed_world.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/world/map/frenet.hpp"
 
 namespace modules {
 namespace world {
@@ -15,13 +16,20 @@ using modules::geometry::Polygon;
 using modules::world::AgentMap;
 using modules::world::map::Frenet;
 using modules::models::behavior::BehaviorMotionPrimitives;
+using modules::geometry::Point2d;
+using modules::geometry::Line;
+using modules::models::dynamic::State;
 
 std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   State ego_state = current_ego_state();
+  Point2d ego_position = current_ego_position();
 
-  const auto& driving_corridor = get_local_map()->get_horizon_driving_corridor();
-  const Polygon& corridor_polygon = driving_corridor.CorridorPolygon(); 
-  AgentMap intersecting_agents =  GetAgentsIntersectingPolygon(corridor_polygon);
+  // TODO(@all): make access safe
+  const auto& lane_corridor = get_road_corridor()
+                            ->GetCurrentLaneCorridor(ego_position);
+  const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
+  const Line& center_line = lane_corridor->GetCenterLine();
+  AgentMap intersecting_agents = GetAgentsIntersectingPolygon(corridor_polygon);
   if(intersecting_agents.size() == 0) {
     return std::make_pair(AgentPtr(nullptr),
                           Frenet(std::numeric_limits<double>::max(),
@@ -29,7 +37,7 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   }
 
 
-  Frenet frenet_ego = driving_corridor.FrenetFromCenterLine(current_ego_position());
+  Frenet frenet_ego(ego_position, center_line);
   double nearest_lon = std::numeric_limits<double>::max();
   double nearest_lat = std::numeric_limits<double>::max();
 
@@ -40,8 +48,7 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
       continue;
     }
 
-    Frenet frenet_other = driving_corridor.FrenetFromCenterLine(
-      aiter->second->get_current_position());
+    Frenet frenet_other(aiter->second->get_current_position(), center_line);
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
@@ -53,6 +60,7 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   }
   return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
 }
+
 
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
     settings.ApplySettings(*this);

@@ -43,7 +43,7 @@ map_interface.set_open_drive_map(xodr_parser.map)
 world.set_map(map_interface)
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 10/3.6])
+init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 10/3.6])
 agent_params = param_server.addChild("agent1")
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
@@ -59,7 +59,8 @@ agent = Agent(init_state,
 world.add_agent(agent)
 
 # viewer
-viewer = MPViewer(params=param_server)
+viewer = MPViewer(params=param_server,
+                  use_world_bounds=True)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
@@ -73,6 +74,7 @@ for _ in range(0, 100):
   viewer.clear()
   world.step(sim_step_time)
   viewer.drawWorld(world)
+  viewer.drawRoadCorridor(agent.road_corridor)
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 

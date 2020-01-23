@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <utility>
+#include <string>
 
 #include "modules/world/opendrive/opendrive.hpp"
 #include <boost/geometry/index/rtree.hpp>
@@ -28,8 +29,8 @@ using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::evaluation::EvaluatorPtr;
 
-typedef std::unordered_map<AgentId, AgentPtr> AgentMap;
-typedef std::unordered_map<AgentId, ObjectPtr> ObjectMap;
+typedef std::map<AgentId, AgentPtr> AgentMap;
+typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string,
                  modules::world::evaluation::EvaluationReturn> EvaluationMap;
 
@@ -64,6 +65,13 @@ class World : public commons::BaseType {
 
   bool get_remove_agents() const { return remove_agents_; }
 
+  AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
+                            const unsigned int& num_agents) const;
+
+  AgentMap GetAgentsIntersectingPolygon(
+    const modules::geometry::Polygon& polygon) const;
+
+  //! Setter
   void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
 
   std::pair<modules::geometry::Point2d,
@@ -76,8 +84,9 @@ class World : public commons::BaseType {
   void add_object(const ObjectPtr& object);
 
   void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator);
-  void clear_evaluators() { evaluators_.clear(); }
 
+  //! Functions
+  void clear_evaluators() { evaluators_.clear(); }
   void clear_agents() { agents_.clear(); }
   void clear_objects() { objects_.clear(); }
   void clear_all()  {
@@ -91,18 +100,13 @@ class World : public commons::BaseType {
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
   void Step(const float& delta_time);
-  void UpdateHorizonDrivingCorridors();
 
   void DoPlanning(const float& delta_time);
   void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
-  void RecalculateDrivingCorridors();
-  AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
-                            const unsigned int& num_agents) const;
-  AgentMap GetAgentsIntersectingPolygon(
-    const modules::geometry::Polygon& polygon) const;
+
 
   virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(
@@ -116,9 +120,6 @@ class World : public commons::BaseType {
   double world_time_;
   rtree_agent rtree_agents_;
   bool remove_agents_;
-  bool calculate_driving_corridor_;
-  bool recalculate_driving_corridor_;
-  float driving_corridor_length_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

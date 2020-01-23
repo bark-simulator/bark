@@ -49,6 +49,7 @@ class Scenario:
     else:
         world.set_map(self._map_interface)
     for agent in self._agent_list:
+      agent.GenerateRoadCorridor(self._map_interface)
       world.add_agent(agent)
     return world
 
