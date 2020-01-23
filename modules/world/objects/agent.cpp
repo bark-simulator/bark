@@ -122,10 +122,18 @@ void Agent::GenerateLocalMap() {
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->Generate(agent_xy)) {
-    LOG(ERROR) << "LocalMap generation for agent "
-              << get_agent_id() << " failed." << std::endl;
+    LOG(INFO) << "LocalMap generation for agent "
+               << get_agent_id() << " failed." << std::endl;
   }
   // TODO(@hart): parameter
+  UpdateDrivingCorridor(20.0);
+}
+
+void Agent::RecalculateDrivingCorridor() {
+  if (!local_map_->RecalculateDrivingCorridor(get_current_position())) {
+    LOG(INFO) << "DrivingCorridor generation for agent "
+               << get_agent_id() << " failed." << std::endl;
+  }
   UpdateDrivingCorridor(20.0);
 }
 
@@ -134,7 +142,7 @@ void Agent::UpdateDrivingCorridor(double horizon = 20.0) {
   Point2d agent_xy(agent_state(StateDefinition::X_POSITION),
                    agent_state(StateDefinition::Y_POSITION));
   if (!local_map_->ComputeHorizonCorridor(agent_xy, horizon)) {
-    LOG_EVERY_N(ERROR, 100) << "Horizon DrivingCorridor generation for agent "
+    LOG_EVERY_N(INFO, 100) << "Horizon DrivingCorridor generation for agent "
               << get_agent_id() << " failed.";
   }
 }

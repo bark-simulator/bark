@@ -1,6 +1,8 @@
-name: CI
+name: NIGHTLY
 
-on: [push]
+on:
+  schedule:
+  - cron: "0 2 * * 1-5"
 
 jobs:
   build:
@@ -17,4 +19,4 @@ jobs:
       - name: Installing python dependencies
         run: pip3 install -r tools/installers/requirements.txt -q
       - name: Runing bazel test
-        run: bazel test //...
+        run: bazel test //... --define planner_uct=true

@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion\
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits, GoalDefinitionSequential
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -65,18 +65,27 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
-      agent_json["goal_definition"] = GoalDefinitionPolygon(goal_polygon)
+      sequential_goals = []
+      # TODO(@ahrt): support other goals
+      state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
+      # state_limit_goal = GoalDefinitionPolygon(goal_polygon)
+      for _ in range(self._local_params["goal"]["num_reached", "num", 5]):
+        sequential_goals.append(state_limit_goal)
+      sequential_goal = GoalDefinitionSequential(sequential_goals)
+      agent_json["goal_definition"] = sequential_goal
 
       agent_state = np.array(agent_json["state"])
       if len(np.shape(agent_state)) > 1:
         agent_state = np.random.uniform(low=agent_state[:, 0],
-                                                high=agent_state[:, 1])
+                                        high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
       agent.set_agent_id(agent_json["id"])
       scenario._agent_list.append(agent)
-    scenario._eval_agent_ids = [self._local_params["EgoAgentId",
-                                "ID of the ego-agent",
-                                0]]
+    
+    # TODO(@hart): this could be mult. agents
+    scenario._eval_agent_ids = self._local_params["controlled_ids",
+                                "IDs of agents to be controlled. ",
+                                [0]]
     return scenario

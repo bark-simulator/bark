@@ -1,40 +1,42 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef MODULES_WORLD_OPENDRIVE_LANE_SECTION_HPP_
 #define MODULES_WORLD_OPENDRIVE_LANE_SECTION_HPP_
 
-#include <vector>
 #include <map>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "modules/world/opendrive/lane.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
+#include "modules/world/opendrive/lane.hpp"
 
 namespace modules {
 namespace world {
 namespace opendrive {
-
 
 class LaneSection {
  public:
   explicit LaneSection(float s) : s_(s) {}
   ~LaneSection() {}
 
-  Lanes get_lanes() const {return lanes_;}
+  Lanes get_lanes() const { return lanes_; }
 
   LanePtr get_lane_by_position(LanePosition pos);
 
   LanePtr get_nearest_lane_on_n(double x, double y, double vx, double vy);
-  LanePtr get_lane_with_offset(const models::dynamic::State& state, double angle_offset);
-  
+  LanePtr get_lane_with_offset(const models::dynamic::State& state,
+                               double angle_offset);
+
   LanePtr get_left_lane(const models::dynamic::State& state) {
-    return get_lane_with_offset(state, 3.14/2);
+    return get_lane_with_offset(state, 3.14 / 2);
   }
   LanePtr get_right_lane(const models::dynamic::State& state) {
-    return get_lane_with_offset(state, -3.14/2);
+    return get_lane_with_offset(state, -3.14 / 2);
   }
 
   //! setter functions
@@ -47,6 +49,14 @@ class LaneSection {
   float s_;
   Lanes lanes_;
 };
+
+inline std::string print(const LaneSection& ls) {
+  std::stringstream ss;
+  ss << "s: " << ls.get_s() << std::endl;
+  for (auto const& l : ls.get_lanes())
+    ss << "Lane: " << print(*(l.second)) << std::endl;
+  return ss.str();
+}
 
 using LaneSectionPtr = std::shared_ptr<LaneSection>;
 

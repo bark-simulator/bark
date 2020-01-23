@@ -111,3 +111,59 @@ TEST(point_in_lane, map_interface)
   auto right_corridor = map_interface.GetAdjacentDrivingCorridorsSameDirection(corridors.at(0), Pose(0.0, 0.0, 0.0));
   EXPECT_TRUE(right_corridor.size() == 0);
 }
+
+TEST(compute_driving_corridor, from_start_to_goal) {
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+  using modules::models::tests::make_map_interface_two_connected_roads;
+
+  MapInterface map_interface = make_map_interface_two_connected_roads();
+
+  // Start and goal in same lane
+  LaneId startid = 13;
+  LaneId goalid = 16;
+  DrivingCorridor driving_corridor =
+    map_interface.ComputeDrivingCorridorFromStartToGoal(startid, goalid);
+
+  EXPECT_TRUE(driving_corridor.computed);
+
+  auto lane_ids = driving_corridor.get_lane_ids();
+  EXPECT_EQ(2, lane_ids.size());
+  EXPECT_EQ(12, lane_ids.at(0).second);
+  EXPECT_EQ(15, lane_ids.at(1).second);
+
+  // Start and goal lane in different lanes
+  goalid = 15;
+  driving_corridor =
+    map_interface.ComputeDrivingCorridorFromStartToGoal(startid, goalid);
+
+  EXPECT_FALSE(driving_corridor.computed);
+}
+
+TEST(compute_driving_corridor, parallel_to_goal) {
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+  using modules::models::tests::make_map_interface_two_connected_roads;
+
+  MapInterface map_interface = make_map_interface_two_connected_roads();
+
+  // Parallel corridor exists
+  LaneId startid = 19;
+  LaneId goalid = 21;
+  DrivingCorridor driving_corridor =
+    map_interface.ComputeDrivingCorridorParallelToGoal(startid, goalid);
+  
+  EXPECT_TRUE(driving_corridor.computed);
+
+  auto lane_ids = driving_corridor.get_lane_ids();
+  EXPECT_EQ(2, lane_ids.size());
+  EXPECT_EQ(18, lane_ids.at(0).second);
+  EXPECT_EQ(21, lane_ids.at(1).second);
+
+  // Parallel corridor does not exist
+  goalid = 22;
+  driving_corridor = 
+    map_interface.ComputeDrivingCorridorParallelToGoal(startid, goalid);
+
+  EXPECT_FALSE(driving_corridor.computed);
+}

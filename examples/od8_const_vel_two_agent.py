@@ -18,7 +18,7 @@ from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
-# from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 
 
@@ -73,12 +73,7 @@ agent2 = Agent(init_state2,
 world.add_agent(agent2)
 
 # viewer
-"""
-viewer = Panda3dViewer(params=param_server,
-                      x_range=[-200, 200],
-                      y_range=[-200, 200],)
-"""
-viewer = PygameViewer(params=param_server, x_range=[-200, 200], y_range=[-200, 200])
+viewer = MPViewer(params=param_server)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
@@ -89,10 +84,10 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   1]
 
 for _ in range(0, 30):
-    world.step(sim_step_time)
-    viewer.drawWorld(world)
-    viewer.show(block=False)
-    time.sleep(sim_step_time/sim_real_time_factor)
+  world.step(sim_step_time)
+  viewer.drawWorld(world)
+  viewer.show(block=False)
+  time.sleep(sim_step_time/sim_real_time_factor)
 
 param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                   "params",

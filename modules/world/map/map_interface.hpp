@@ -68,10 +68,17 @@ class MapInterface {
   //std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
   //                                const LaneId& startid, const LaneId& goalid) const;
   
+  //! Compute a DrivingCorridor from the start lane to the goal lane. The goal
+  //! must be reachable without a lane change.
   DrivingCorridor ComputeDrivingCorridorFromStartToGoal(const LaneId& startid, const LaneId& goalid);
 
-  std::pair< std::vector<LanePtr>, std::vector<LanePtr> > ComputeLaneBoundariesHorizon(
-                                  const LaneId& startid, const LaneId& goalid) const;
+  //! Compute a DrivingCorridor that ends in a lane neighboring the goal lane in
+  //! the same driving direction.
+  DrivingCorridor ComputeDrivingCorridorParallelToGoal(const LaneId& startid, const LaneId& goalid);
+
+  DrivingCorridor ComputeDrivingCorridorForRange(std::vector<LaneId> lane_ids);
+
+  bool ComputeAllDrivingCorridors();
 
   std::vector<PathBoundaries> ComputeAllPathBoundaries(const std::vector<LaneId>& lane_ids) const;
 

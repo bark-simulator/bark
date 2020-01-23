@@ -98,7 +98,7 @@ class World : public commons::BaseType {
 
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
-  void RegenerateDrivingCorridors();
+  void RecalculateDrivingCorridors();
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
   AgentMap GetAgentsIntersectingPolygon(
@@ -114,8 +114,11 @@ class World : public commons::BaseType {
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
-  bool remove_agents_;
   rtree_agent rtree_agents_;
+  bool remove_agents_;
+  bool calculate_driving_corridor_;
+  bool recalculate_driving_corridor_;
+  float driving_corridor_length_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

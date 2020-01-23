@@ -2,10 +2,7 @@
 <img src="docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8bae43c5b8904e4fa0519c27bf578da7)](https://app.codacy.com/app/bark-simulator/bark?utm_source=github.com&utm_medium=referral&utm_content=bark-simulator/bark&utm_campaign=Badge_Grade_Dashboard)
-[![CircleCI](https://circleci.com/gh/bark-simulator/bark.svg?style=svg)](https://circleci.com/gh/bark-simulator/bark)
-[![Coverage Status](https://coveralls.io/repos/github/bark-simulator/bark/badge.svg?branch=master)](https://coveralls.io/github/bark-simulator/bark?branch=master)
+![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**Ark**ing
 BARK provides a semantic simulation tool/framework for autonomous agents with a special focus on autonomous driving.
@@ -44,7 +41,7 @@ In order to get started with BARK, we provide several examples that show the bas
 To run the [OpenDrive example map "standard crossing"](http://www.opendrive.org/download.html) example use the command `bazel run //examples:od8_const_vel_one_agent` (make sure to be in the virtual environment!) which outputs:
 
 <p align="center">
-<img src="docs/source/gifs/open_drive8_near.gif" alt="BARK" />
+<img src="docs/source/example_map.gif" alt="BARK" />
 </p>
 
 ## Documentation

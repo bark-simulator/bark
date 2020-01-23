@@ -34,6 +34,8 @@ modules::world::ObservedWorld make_test_observed_world(int num_other_agents,
 
 modules::world::map::MapInterface make_two_lane_map_interface();
 
+modules::world::map::MapInterface make_map_interface_two_connected_roads();
+
 } // namespace tests
 } // namespace models
 } // namespace modules

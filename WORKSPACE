@@ -29,8 +29,8 @@ http_archive(
 
 git_repository(
     name = "com_github_nelhage_rules_boost",
-    commit = "8a084196b14a396b6d4ff7c928ffbb6621f0d32c",
-    remote = "https://github.com/patrickhart/rules_boost",
+    branch = "master",
+    remote = "https://github.com/nelhage/rules_boost",
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
