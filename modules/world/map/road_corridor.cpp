@@ -2,3 +2,31 @@
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
+
+#include <utility>
+#include <memory>
+#include "modules/world/map/road_corridor.hpp"
+
+namespace modules {
+namespace world {
+namespace map {
+
+std::pair<LaneCorridorPtr, LaneCorridorPtr>
+RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
+  LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
+  LanePtr left_lane = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
+  LanePtr right_lane = current_lane_corr->GetCurrentLane(pt)->GetRightLane();
+  LaneId left_lane_id = 10000000;
+  LaneId right_lane_id = 10000000;
+  if (left_lane)
+    left_lane_id = left_lane->get_id();
+  if (right_lane)
+    right_lane_id = right_lane->get_id();
+  return std::make_pair(
+    GetLaneCorridor(left_lane_id),
+    GetLaneCorridor(right_lane_id));
+}
+
+}  // namespace map
+}  // namespace world
+}  // namespace modules

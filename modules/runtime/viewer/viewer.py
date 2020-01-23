@@ -238,9 +238,10 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
     def drawLaneCorridor(self, lane_corridor):
-      self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=1.)
+      self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=.5)
 
     def drawRoadCorridor(self, road_corridor):
       # TODO(@hart): use agent specific coloring
+      self.drawPolygon2d(road_corridor.polygon, color="blue", alpha=.2)
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
