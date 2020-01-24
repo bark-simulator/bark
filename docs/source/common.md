@@ -17,7 +17,7 @@ class BaseType {
   explicit BaseType(Params* params) : params_(params) {}
   ~BaseType() {}
 
-  Params* get_params() const { return params_;}
+  Params* GetParams() const { return params_;}
 
  private:
   Params* params_;  // do not own

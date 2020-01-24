@@ -17,8 +17,8 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   using namespace dynamic;
 
   //! TODO(@fortiss): parameters
-  const float min_velocity = get_min_velocity();
-  const float max_velocity = get_max_velocity();
+  const float min_velocity = GetMinVelocity();
+  const float max_velocity = GetMaxVelocity();
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
                            int(StateDefinition::MIN_STATE_SIZE));
@@ -34,14 +34,14 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   auto road_corr = observed_world.GetRoadCorridor();
   if (!road_corr) {
     LOG(ERROR) << "No road corridor for longitudinal acceleration behavior found.";
-    this->set_last_trajectory(traj);
+    this->SetLastTrajectory(traj);
     return traj;
   }
 
   const auto lane_corr = road_corr->GetCurrentLaneCorridor(pose);
   if(!lane_corr) {
       LOG(ERROR) << "No lane corridor for longitudinal acceleration behavior found.";
-      this->set_last_trajectory(traj);
+      this->SetLastTrajectory(traj);
       return traj;
   }
   line = lane_corr->GetCenterLine();
@@ -83,10 +83,10 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       traj(i, StateDefinition::VEL_POSITION) = vel_i;         // checked
     }
 
-    set_last_action(Action(Continuous1DAction(acc)));
+    SetLastAction(Action(Continuous1DAction(acc)));
   }
 
-  this->set_last_trajectory(traj);
+  this->SetLastTrajectory(traj);
   return traj;
 }
 

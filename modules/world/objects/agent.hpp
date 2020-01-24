@@ -66,11 +66,11 @@ class Agent : public Object {
   GoalDefinitionPtr GetGoalDefinition() const {return goal_definition_;}
 
   Trajectory GetExecutionTrajectory() const {
-    return execution_model_->get_last_trajectory();
+    return execution_model_->GetLastTrajectory();
   }
 
   Trajectory GetBehaviorTrajectory() const {
-    return behavior_model_->get_last_trajectory();
+    return behavior_model_->GetLastTrajectory();
   }
 
   State GetCurrentState() const { return history_.back().first; }

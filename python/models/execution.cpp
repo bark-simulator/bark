@@ -21,7 +21,7 @@ void python_execution(py::module m) {
       .def(py::init<Params *>())
       .def("execute", &ExecutionModel::Execute)
       .def_property_readonly("last_trajectory",
-                             &ExecutionModel::get_last_trajectory);
+                             &ExecutionModel::GetLastTrajectory);
 
   py::class_<ExecutionModelInterpolate,
              ExecutionModel,

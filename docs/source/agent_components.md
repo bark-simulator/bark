@@ -52,9 +52,9 @@ class ExecutionModel : public commons::BaseType {
 
   virtual ~ExecutionModel() {}
 
-  Trajectory get_last_trajectory() { return last_trajectory_; }
+  Trajectory GetLastTrajectory() { return last_trajectory_; }
 
-  void set_last_trajectory(const Trajectory& trajectory) {
+  void SetLastTrajectory(const Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
 

@@ -43,26 +43,26 @@ class BehaviorModel : public modules::commons::BaseType {
     last_action_() {}
 
   BehaviorModel(const BehaviorModel &behavior_model) :
-    commons::BaseType(behavior_model.get_params()),
-    last_trajectory_(behavior_model.get_last_trajectory()),
-    last_action_(behavior_model.get_last_action()),
-    active_model_(behavior_model.get_active_model()) {}
+    commons::BaseType(behavior_model.GetParams()),
+    last_trajectory_(behavior_model.GetLastTrajectory()),
+    last_action_(behavior_model.GetLastAction()),
+    active_model_(behavior_model.GetActiveModel()) {}
 
   virtual ~BehaviorModel() {}
 
-  dynamic::Trajectory get_last_trajectory() const { return last_trajectory_; }
+  dynamic::Trajectory GetLastTrajectory() const { return last_trajectory_; }
 
-  void set_last_trajectory(const dynamic::Trajectory& trajectory) {
+  void SetLastTrajectory(const dynamic::Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
-  bool get_active_model() const { return active_model_; }
+  bool GetActiveModel() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) {}
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  Action get_last_action() const {return last_action_; }
-  void set_last_action(const Action action) {last_action_ = action;}
+  Action GetLastAction() const {return last_action_; }
+  void SetLastAction(const Action action) {last_action_ = action;}
 
  private:
   dynamic::Trajectory last_trajectory_;

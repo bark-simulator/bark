@@ -20,7 +20,7 @@ class Runtime : public modules::commons::BaseType {
   explicit Runtime(commons::Params *params) : commons::BaseType(params) {}
 
   Runtime(const Runtime& runtime) :
-              commons::BaseType(runtime.get_params()) {}
+              commons::BaseType(runtime.GetParams()) {}
 
   virtual ~Runtime() {}
 
