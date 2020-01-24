@@ -19,7 +19,7 @@ BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynami
     dynamic_model_(dynamic_model),
     motion_primitives_(),
     active_motion_(),
-    integration_time_delta_(params->get_real("integration_time_delta",
+    integration_time_delta_(params->GetReal("integration_time_delta",
                                              "the size of the time steps used within the euler integration loop", 0.02))
     {}
 

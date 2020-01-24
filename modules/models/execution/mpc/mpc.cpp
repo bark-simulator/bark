@@ -16,10 +16,10 @@ namespace models {
 
 // TODO(fortiss) !
 execution::ExecutionModelMpc::ExecutionModelMpc(modules::commons::Params *params) : ExecutionModel(params) {
-  optimization_settings_.num_optimization_steps = params->get_int("NumOptimizationSteps",
+  optimization_settings_.num_optimization_steps = params->GetInt("NumOptimizationSteps",
                                                                   "Number of optimization steps for Execution Optimimizer",
                                                                   20);
-  optimization_settings_.dt = params->get_real("OptimizationStepSize", "Step Size for Execution Optimimizer", 0.1);
+  optimization_settings_.dt = params->GetReal("OptimizationStepSize", "Step Size for Execution Optimimizer", 0.1);
 }
 
 dynamic::Trajectory execution::ExecutionModelMpc::Execute(const float &new_world_time, const dynamic::Trajectory &trajectory,

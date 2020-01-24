@@ -53,7 +53,7 @@ TEST(behavior_motion_primitives_add, behavior_test) {
 
 TEST(behavior_motion_primitives_plan, behavior_test) {
   SetterParams* params = new SetterParams();
-  params->set_real("integration_time_delta", 0.01);
+  params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 
   BehaviorMotionPrimitives behavior(dynamics, params);
