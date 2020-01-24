@@ -47,7 +47,8 @@ void python_geometry(py::module m) {
 
   m.def("Distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Point2d &>(&modules::geometry::Distance),
         "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
-
+  m.def("SignedDistance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Point2d &, const float&>(&modules::geometry::SignedDistance),
+        "Returns signed euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
   m.def("Distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Line &>(&modules::geometry::Distance),
         "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
         
