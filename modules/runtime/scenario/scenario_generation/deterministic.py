@@ -62,7 +62,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       agent_json["map_interface"] = world.map
       goal_polygon = Polygon2d([0, 0, 0],
                                np.array(agent_json["goal"]["polygon_points"]))
-      goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
+      goal_polygon = goal_polygon.Translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
       sequential_goals = []

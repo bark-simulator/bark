@@ -124,7 +124,7 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
                   state(StateDefinition::THETA_POSITION));
   std::shared_ptr<geometry::Polygon> polygon(
     std::dynamic_pointer_cast<geometry::Polygon>(
-      this->GetShape().transform(agent_pose)));
+      this->GetShape().Transform(agent_pose)));
   return *polygon;
 }
 

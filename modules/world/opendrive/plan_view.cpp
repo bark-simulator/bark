@@ -94,7 +94,7 @@ bool PlanView::AddArc(
 
 bool PlanView::ApplyOffsetTransform(float x, float y, float hdg) {
   geometry::Line rotated_line = Rotate(reference_line_, hdg);
-  geometry::Line transformed_line = translate(rotated_line, x, y);
+  geometry::Line transformed_line = Translate(rotated_line, x, y);
   reference_line_ = transformed_line;
 
   return true;

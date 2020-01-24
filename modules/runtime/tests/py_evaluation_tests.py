@@ -37,7 +37,7 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(-1,1),
                               Point2d(1,1),
                               Point2d(1,-1)])
-    goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
     agent = Agent(init_state,
                 behavior_model,
@@ -73,7 +73,7 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(-1,1),
                               Point2d(1,1),
                               Point2d(1,-1)])
-    goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
     agent = Agent(init_state,
                 behavior_model,
@@ -113,9 +113,9 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(1,1),
                               Point2d(1,-1)])
 
-    goal_polygon1 = goal_frame.translate(Point2d(10, 0))
-    goal_polygon2 = goal_frame.translate(Point2d(20, 0))
-    goal_polygon3 = goal_frame.translate(Point2d(30, 0))
+    goal_polygon1 = goal_frame.Translate(Point2d(10, 0))
+    goal_polygon2 = goal_frame.Translate(Point2d(20, 0))
+    goal_polygon3 = goal_frame.Translate(Point2d(30, 0))
 
     goal_def1 = GoalDefinitionStateLimits(goal_polygon1, [-0.08, 0.08])
     goal_def2 = GoalDefinitionStateLimits(goal_polygon2, [-0.08, 0.08])

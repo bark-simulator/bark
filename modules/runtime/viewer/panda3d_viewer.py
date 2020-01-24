@@ -310,7 +310,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.agent_poses[agent.id][1] = state[int(StateDefinition.Y_POSITION)]
         self.agent_poses[agent.id][2] = state[int(
             StateDefinition.THETA_POSITION)]
-        transformed_polygon = agent.shape.transform(self.agent_poses[agent.id])
+        transformed_polygon = agent.shape.Transform(self.agent_poses[agent.id])
         self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
 
         # Fitting of 3d-Model frame to agent positon

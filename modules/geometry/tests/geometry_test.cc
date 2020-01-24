@@ -151,7 +151,7 @@ TEST(geometry, line_transform) {
   EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(1)), 0, 0.1);
   EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(1)), -10, 0.1);
 
-  Line obj_transformed = translate(obj_rotated, offset_x, offset_y);
+  Line obj_transformed = Translate(obj_rotated, offset_x, offset_y);
   EXPECT_NEAR(line_in.Length(), obj_transformed.Length(), 0.01);
 
   EXPECT_NEAR(bg::get<0>(obj_transformed.obj_.at(0)), 1, 0);
@@ -521,9 +521,9 @@ TEST(collision, carshape1) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(10, 10, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(10, 10, 0)));
 
   EXPECT_FALSE(Collide(*car1, *car2));
 }
@@ -537,9 +537,9 @@ TEST(collision, carshape2) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(1, 0, 3.14)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(1, 0, 3.14)));
 
   // TODO(@hart): HACK
   // EXPECT_TRUE(Collide(car1.get(), car2.get()));

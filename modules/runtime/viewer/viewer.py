@@ -140,7 +140,7 @@ class BaseViewer(Viewer):
                 pose[0] = state[int(StateDefinition.X_POSITION)]
                 pose[1] = state[int(StateDefinition.Y_POSITION)]
                 pose[2] = state[int(StateDefinition.THETA_POSITION)]
-                transformed_polygon = shape.transform(pose)
+                transformed_polygon = shape.Transform(pose)
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
                 self.drawPolygon2d(transformed_polygon, color, alpha) # fade to 0.2 after 10 steps
@@ -234,7 +234,7 @@ class BaseViewer(Viewer):
             pose[0] = state[int(StateDefinition.X_POSITION)]
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
-            transformed_polygon = shape.transform(pose)
+            transformed_polygon = shape.Transform(pose)
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
     def drawLaneCorridor(self, lane_corridor):

@@ -186,7 +186,7 @@ inline Line Rotate(const Line& line, float hdg) {
   return line_rotated;
 }
 
-inline Line translate(const Line& line, float x, float y) {
+inline Line Translate(const Line& line, float x, float y) {
   using boost::geometry::strategy::transform::translate_transformer;
   translate_transformer<double, 2, 2> translate(x, y);
   Line line_translated;

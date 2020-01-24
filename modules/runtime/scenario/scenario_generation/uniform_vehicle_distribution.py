@@ -111,7 +111,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                 Point2d(-1.5,8),
                                 Point2d(1.5,8),
                                 Point2d(1.5,0)])
-      goal_polygon = goal_polygon.translate(Point2d(self._others_sink[idx][0],
+      goal_polygon = goal_polygon.Translate(Point2d(self._others_sink[idx][0],
                                                     self._others_sink[idx][1]))
       goal_definition = GoalDefinitionPolygon(goal_polygon)
       agent_list.extend(
@@ -152,7 +152,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                 Point2d(-1.5,8),
                                 Point2d(1.5,8),
                                 Point2d(1.5,0)])
-        goal_polygon = goal_polygon.translate(Point2d(self._ego_route[1][0],
+        goal_polygon = goal_polygon.Translate(Point2d(self._ego_route[1][0],
                                                     self._ego_route[1][1]))
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent_params["goal_definition"] = goal_definition
@@ -178,7 +178,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                     Point2d(-1.5,8),
                                     Point2d(1.5,8),
                                     Point2d(1.5,0)])
-          goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
+          goal_polygon = goal_polygon.Translate(Point2d(self._ego_goal_end[0],
                                                       self._ego_goal_end[1]))
           ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
     else:
@@ -191,8 +191,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
         # build polygon representing state limits
         lims = self._ego_goal_state_limits
-        goal_limits_left = goal_center_line.translate(Point2d(-lims[0], -lims[1]))
-        goal_limits_right = goal_center_line.translate(Point2d(lims[0], lims[1]))
+        goal_limits_left = goal_center_line.Translate(Point2d(-lims[0], -lims[1]))
+        goal_limits_right = goal_center_line.Translate(Point2d(lims[0], lims[1]))
         goal_limits_right.Reverse()
         goal_limits_left.AppendLinestring(goal_limits_right)
         polygon = Polygon2d([0,0,0], goal_limits_left)
@@ -256,7 +256,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                   Point2d(-1,1),
                                   Point2d(1,1),
                                   Point2d(1,0)])
-    goal_polygon = goal_polygon.translate(Point2d(sink[0],
+    goal_polygon = goal_polygon.Translate(Point2d(sink[0],
                                                       sink[1]))
     road_corridor = map_interface.GenerateRoadCorridor(
         Point2d(source[0], source[1]),
