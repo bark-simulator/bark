@@ -17,10 +17,12 @@ Frenet::Frenet(const Point2d& position, const Line& path) {
   namespace bg = boost::geometry;
 
   // First extract nearest point, extract longitudinal coordinate
-  std::tuple<Point2d, double, uint> nearest = modules::geometry::get_nearest_point_and_s(path, position); 
+  std::tuple<Point2d, double, uint> nearest =
+    modules::geometry::get_nearest_point_and_s(path, position); 
   lon = std::get<1>(nearest);
 
-  // calculate lateral coordinate value manually to avoid researching the nearest point
+  // calculate lateral coordinate value manually
+  // to avoid getting the nearest point
   auto nearest_point = std::get<0>(nearest);
   auto x_diff = bg::get<0>(nearest_point) - bg::get<0>(position);
   auto y_diff = bg::get<1>(nearest_point) - bg::get<1>(position);
@@ -29,7 +31,9 @@ Frenet::Frenet(const Point2d& position, const Line& path) {
   // calculate sign of lateral coordinate
   auto tangent_angle = modules::geometry::get_tangent_angle_at_s(path, lon);
   auto direction_vector = position - nearest_point;
-  double diff = modules::geometry::signed_angle_diff(tangent_angle , atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
+  double diff = modules::geometry::signed_angle_diff(
+    tangent_angle,
+    atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
 
   lat = lat_val*sign;

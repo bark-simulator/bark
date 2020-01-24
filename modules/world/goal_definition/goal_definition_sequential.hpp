@@ -43,8 +43,8 @@ class GoalDefinitionSequential : public GoalDefinition  {
     return sequential_goals_;
   }
 
-  virtual const modules::geometry::Polygon& get_shape() const {
-    return GetCurrentGoal()->get_shape();
+  virtual const modules::geometry::Polygon& GetShape() const {
+    return GetCurrentGoal()->GetShape();
   }
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);

@@ -10,7 +10,7 @@ import time
 
                                                 
 db = BenchmarkDatabase(database_root="external/benchmark_database_release")
-scenario_generation = db.get_scenario_generator(scenario_set_id=0)
+scenario_generation = db.get_scenario_generator(scenario_SetId=0)
 param_server = ParameterServer()
 viewer = MPViewer(
   params=param_server,

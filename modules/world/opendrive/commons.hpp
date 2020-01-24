@@ -79,8 +79,8 @@ inline std::string print(const XodrLaneLink &l) {
 using XodrLaneLinks = std::vector<XodrLaneLink>;
 
 struct Connection {
-  void add_lane_link(XodrLaneLink link) { lane_links_.push_back(link); }
-  XodrLaneLinks get_lane_links() const { return lane_links_; }
+  void AddLane_link(XodrLaneLink link) { lane_links_.push_back(link); }
+  XodrLaneLinks GetLane_links() const { return lane_links_; }
   uint32_t id_;
   uint32_t incoming_road_;  // TODO(@all): use type XodrRoadId here
   uint32_t connecting_road_;

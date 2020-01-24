@@ -171,7 +171,7 @@ class BaseViewer(Viewer):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.get_open_drive_map())
+            self.drawMap(world.map.GetOpenDriveMao())
 
         # draw agents
         for agent_id, agent in world.agents.items():
@@ -212,7 +212,7 @@ class BaseViewer(Viewer):
           self.drawXodrLaneSection(lane_section, color)
     
     def drawXodrLaneSection(self, lane_section, color=None):
-      for _, lane in lane_section.get_lanes().items():
+      for _, lane in lane_section.GetLanes().items():
         self.drawXodrLane(lane, color)
         
     def drawXodrLane(self, lane, color=None):

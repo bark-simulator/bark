@@ -41,9 +41,9 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     const world::ObservedWorld& observed_world) {
 
   dynamic::State ego_vehicle_state =
-    observed_world.get_ego_agent()->get_current_state();
+    observed_world.GetEgoAgent()->GetCurrentState();
 
-  double start_time = observed_world.get_world_time();
+  double start_time = observed_world.GetWorldTime();
   float dt = integration_time_delta_;
   int num_trajectory_points = static_cast<int>(std::ceil(delta_time / dt));
 
@@ -54,14 +54,14 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;
   // std::cout << "Action:" << \
-  //   boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()) << std::endl;
+  //   boost::get<Input>(observed_world.GetEgoBehaviorModel()->get_last_action()) << std::endl;
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(
       *dynamic_model_,
       traj.row(i-1),
-      boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()),
+      boost::get<Input>(observed_world.GetEgoBehaviorModel()->get_last_action()),
       dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;

@@ -82,7 +82,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
       json_converter = ModelJsonConversion()
       agent = json_converter.agent_from_json(agent_json["drone_model"],
                                                    param_server=self._local_params)
-      agent.set_agent_id(agent_json["drone_model"]["id"])
+      agent.SetAgentId(agent_json["drone_model"]["id"])
       scenario._agent_list.append(agent)
 
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",

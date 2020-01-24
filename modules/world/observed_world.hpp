@@ -42,45 +42,45 @@ class ObservedWorld : public World {
 
     ~ObservedWorld() {}
 
-    std::pair<AgentPtr, modules::world::map::Frenet> get_agent_in_front() const;
-    virtual double get_world_time() const { return World::get_world_time(); }
+    std::pair<AgentPtr, modules::world::map::Frenet> GetAgentInFront() const;
+    virtual double GetWorldTime() const { return World::GetWorldTime(); }
 
-    const RoadCorridorPtr get_road_corridor() const {
-      return ObservedWorld::get_ego_agent()->get_road_corridor();
+    const RoadCorridorPtr GetRoadCorridor() const {
+      return ObservedWorld::GetEgoAgent()->GetRoadCorridor();
     }
 
-    std::shared_ptr<const Agent> get_ego_agent() const {
-      return World::get_agent(ego_agent_id_);
+    std::shared_ptr<const Agent> GetEgoAgent() const {
+      return World::GetAgent(ego_agent_id_);
     }
 
-    AgentMap get_other_agents() const {
-      auto tmp_map = World::get_agents();
+    AgentMap GetOtherAgents() const {
+      auto tmp_map = World::GetAgents();
       tmp_map.erase(ego_agent_id_);
       return tmp_map;
     }
 
-    const std::shared_ptr<BehaviorModel> get_ego_behavior_model() const {
-      return World::get_agents()[ego_agent_id_]->get_behavior_model();
+    const std::shared_ptr<BehaviorModel> GetEgoBehaviorModel() const {
+      return World::GetAgents()[ego_agent_id_]->GetBehaviorModel();
     }
 
-    void set_ego_behavior_model(const BehaviorModelPtr& behavior_model) const {
-      return World::get_agents()[ego_agent_id_]->set_behavior_model(
+    void SetEgoBehaviorModel(const BehaviorModelPtr& behavior_model) const {
+      return World::GetAgents()[ego_agent_id_]->SetBehaviorModel(
         behavior_model);
     }
 
-    void set_behavior_model(const AgentId& agent_id,
+    void SetBehaviorModel(const AgentId& agent_id,
                             const BehaviorModelPtr& behavior_model) const {
-      return World::get_agents()[agent_id]->set_behavior_model(behavior_model);
+      return World::GetAgents()[agent_id]->SetBehaviorModel(behavior_model);
     }
 
-    const MapInterfacePtr get_map() const { return World::get_map(); }
+    const MapInterfacePtr GetMap() const { return World::GetMap(); }
 
-    virtual State current_ego_state() const {
-      return World::get_agents()[ego_agent_id_]->get_current_state();
+    virtual State CurrentEgoState() const {
+      return World::GetAgents()[ego_agent_id_]->GetCurrentState();
     }
 
-    Point2d current_ego_position() const {
-      return World::get_agents()[ego_agent_id_]->get_current_position();
+    Point2d CurrentEgoPosition() const {
+      return World::GetAgents()[ego_agent_id_]->GetCurrentPosition();
     }
 
     void SetupPrediction(const PredictionSettings& settings);

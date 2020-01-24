@@ -22,23 +22,23 @@ World::World(commons::Params* params) :
 
 World::World(const std::shared_ptr<World>& world)  :
   commons::BaseType(world->get_params()),
-  map_(world->get_map()),
-  agents_(world->get_agents()),
-  objects_(world->get_objects()),
-  evaluators_(world->get_evaluators()),
-  world_time_(world->get_world_time()),
-  remove_agents_(world->get_remove_agents()),
+  map_(world->GetMap()),
+  agents_(world->GetAgents()),
+  objects_(world->GetObjects()),
+  evaluators_(world->GetEvaluators()),
+  world_time_(world->GetWorldTime()),
+  remove_agents_(world->GetRemoveAgents()),
   rtree_agents_(world->rtree_agents_) {}
 
-void World::add_agent(const objects::AgentPtr& agent) {
+void World::AddAgent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
 }
 
-void World::add_object(const objects::ObjectPtr& object) {
+void World::AddObject(const objects::ObjectPtr& object) {
   objects_[object->agent_id_] = object;
 }
 
-void World::add_evaluator(const std::string& name,
+void World::AddEvaluator(const std::string& name,
                           const EvaluatorPtr& evaluator) {
   evaluators_[name] = evaluator;
 }
@@ -70,7 +70,7 @@ void World::DoExecution(const float& delta_time) {
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
   WorldPtr current_world_state(this->Clone());
-  for (auto agent : current_world_state->get_agents()) {
+  for (auto agent : current_world_state->GetAgents()) {
       agent.second->Execute(execution_time);
   }
   return current_world_state;
@@ -111,7 +111,7 @@ void World::UpdateAgentRTree() {
   rtree_agents_.clear();
   for (auto &agent : agents_) {
     auto obj = agent.second->GetPolygonFromState(
-      agent.second->get_current_state()).obj_;
+      agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
     boost::geometry::envelope(obj, box);
     boost::geometry::correct(box);
@@ -142,7 +142,7 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
 
   AgentMap nearest_agents;
   for (auto &result_pair : results_n) {
-    nearest_agents[result_pair.second] =  get_agents()[result_pair.second];
+    nearest_agents[result_pair.second] =  GetAgents()[result_pair.second];
   }
   return nearest_agents;
 }
@@ -159,9 +159,9 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
   AgentMap intersecting_agents;
   for (auto &result_pair : query_results) {
-    auto agent = get_agents()[result_pair.second];
+    auto agent = GetAgents()[result_pair.second];
     if (modules::geometry::Collide(agent->GetPolygonFromState(
-      agent->get_current_state()), polygon)) {
+      agent->GetCurrentState()), polygon)) {
       intersecting_agents[result_pair.second] = agent;
     }
   }

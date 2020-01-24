@@ -32,11 +32,11 @@ void python_goal_definition(py::module m)
     .def("__repr__", [](const GoalDefinitionPolygon &g) {
       return "bark.world.goal_definition.GoalDefinitionPolygon";
     })
-    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::get_shape)
+    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::GetShape)
     .def(py::pickle(
       [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
           /* Return a tuple that fully encodes the state of the object */
-          return py::make_tuple(g.get_shape());
+          return py::make_tuple(g.GetShape());
       },
       [](py::tuple t) { // __setstate__
         if (t.size() != 1)
@@ -81,7 +81,7 @@ void python_goal_definition(py::module m)
     })
     .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
     .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
-    .def_property_readonly("goal_shape", &GoalDefinitionSequential::get_shape)
+    .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
     .def_property_readonly("sequential_goals", &GoalDefinitionSequential::get_sequential_goals)
     .def(py::pickle(
         [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__

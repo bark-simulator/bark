@@ -101,11 +101,11 @@ TEST(drive_free, behavior_idm_classic) {
   int num_steps = 10;
   WorldPtr world = make_test_world(0,rel_distance, ego_velocity, velocity_difference);
 
-  float x_start = world->get_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
+  float x_start = world->GetAgents().begin()->second->GetCurrentState()[StateDefinition::X_POSITION];
   for (int i=0; i<num_steps; ++i ) {
     world->Step(time_step);
   }
-  float x_end = world->get_agents().begin()->second->get_current_state()[StateDefinition::X_POSITION];
+  float x_end = world->GetAgents().begin()->second->GetCurrentState()[StateDefinition::X_POSITION];
   float x_diff_desired = x_start + ego_velocity*num_steps*time_step - x_end;
   EXPECT_NEAR(x_diff_desired,0, 0.01);
 
@@ -124,11 +124,11 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   int num_steps = 10;
   WorldPtr world = make_test_world(1,rel_distance, ego_velocity, velocity_difference);
 
- /* float v_start = world->get_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION];
+ /* float v_start = world->GetAgents().begin()->second->GetCurrentState()[StateDefinition::VEL_POSITION];
   for (int i=0; i<num_steps; ++i ) {
     world->Step(time_step);
   }
-  float v_end = world->get_agents().begin()->second->get_current_state()[StateDefinition::VEL_POSITION];
+  float v_end = world->GetAgents().begin()->second->GetCurrentState()[StateDefinition::VEL_POSITION];
 
   EXPECT_NEAR(v_end,ego_velocity-velocity_difference, 0.01);
 */

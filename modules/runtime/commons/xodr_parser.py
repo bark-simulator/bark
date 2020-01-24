@@ -279,7 +279,7 @@ class XodrParser(object):
             starting_point = Point2d(
                 float(geometry["x"]), float(geometry["y"]))
             if geometry["geometry"]["type"] == "line":
-                new_plan_view.add_line(starting_point, float(geometry["hdg"]),
+                new_plan_view.AddLine(starting_point, float(geometry["hdg"]),
                                        float(geometry["length"]))
             if geometry["geometry"]["type"] == "arc":
                 new_plan_view.add_arc(starting_point, float(geometry["hdg"]),
@@ -390,7 +390,7 @@ class XodrParser(object):
                 rm.width = float(lane['road_mark']['width'])
                 new_lane.road_mark = rm
             
-            new_lane_section.add_lane(new_lane)
+            new_lane_section.AddLane(new_lane)
 
         except:
             raise ValueError("Something went wrong with creating the lane.")
@@ -420,22 +420,22 @@ class XodrParser(object):
                     new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(road["length"]), new_road.plan_view.get_reference_line())
                 else:
                     # use previous line for offset calculation
-                    #temp_lanes = new_lane_section.get_lanes()
+                    #temp_lanes = new_lane_section.GetLanes()
 
                     if lane['id'] > 0:
-                        previous_line = new_lane_section.get_lane_by_position(lane['id']-1).line
+                        previous_line = new_lane_section.GetLane_by_position(lane['id']-1).line
                         new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.length(), previous_line)                                
                     elif lane['id'] < 0:
-                        previous_line = new_lane_section.get_lane_by_position(lane['id']+1).line
+                        previous_line = new_lane_section.GetLane_by_position(lane['id']+1).line
                         new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.length(), previous_line)
                     else:
                         logger.info("Calculating previous lane did not work.")
 
 
-            new_road.add_lane_section(new_lane_section)
+            new_road.AddLaneSection(new_lane_section)
         return new_road
 
-    def get_map_element(self, key, id):
+    def GetMap_element(self, key, id):
         for x in self.python_map[key]:
             if x["id"] == id:
                 return x
@@ -452,7 +452,7 @@ class XodrParser(object):
                 new_lane_link = XodrLaneLink()
                 new_lane_link.from_position = int(lane_link["from"])
                 new_lane_link.to_position = int(lane_link["to"])
-                new_connection.add_lane_link(new_lane_link)
+                new_connection.AddLane_link(new_lane_link)
             new_junction.add_connection(new_connection)
         return new_junction
 

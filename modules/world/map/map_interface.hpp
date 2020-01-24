@@ -52,33 +52,33 @@ class MapInterface {
   std::vector<PathBoundaries>
   ComputeAllPathBoundaries(const std::vector<XodrLaneId>& lane_ids) const;
   std::pair<XodrLanePtr, bool>
-  get_inner_neighbor(const XodrLaneId lane_id) const;
+  GetInnerNeighbor(const XodrLaneId lane_id) const;
   std::pair<XodrLanePtr, bool>
-  get_outer_neighbor(const XodrLaneId lane_id) const;
-  std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId lane_id) const;
+  GetOuterNeighbor(const XodrLaneId lane_id) const;
+  std::vector<XodrLaneId> GetSuccessorLanes(const XodrLaneId lane_id) const;
 
   virtual std::pair<Point2d, Point2d> BoundingBox() const {
     return bounding_box_;
   }
 
-  bool set_open_drive_map(OpenDriveMapPtr map) {
+  bool SetOpenDriveMap(OpenDriveMapPtr map) {
     open_drive_map_ = map;
     interface_from_opendrive(open_drive_map_);
     return true;
   }
 
-  bool set_roadgraph(RoadgraphPtr roadgraph) {
+  bool SetRoadgraph(RoadgraphPtr roadgraph) {
     roadgraph_ = roadgraph;
     return true;
   }
 
-  XodrLanePtr get_lane(const XodrLaneId& id) const {
-    return roadgraph_->get_laneptr(id);
+  XodrLanePtr GetLane(const XodrLaneId& id) const {
+    return roadgraph_->GetLanePtr(id);
   }
 
   //! Functions
-  OpenDriveMapPtr get_open_drive_map() { return open_drive_map_; }
-  RoadgraphPtr get_roadgraph() { return roadgraph_; }
+  OpenDriveMapPtr GetOpenDriveMao() { return open_drive_map_; }
+  RoadgraphPtr GetRoadgraph() { return roadgraph_; }
 
   //! RoadCorridor
   void CalculateLaneCorridors(
@@ -107,7 +107,7 @@ class MapInterface {
   }
 
   LaneId FindCurrentLane(const Point2d& pt) {
-    return FindXodrLane(pt)->get_id();
+    return FindXodrLane(pt)->GetId();
   }
   RoadId FindCurrentRoad(const Point2d& pt) {
     XodrRoadId road_id = roadgraph_->GetRoadForLaneId(
@@ -123,8 +123,8 @@ class MapInterface {
   std::pair<Point2d, Point2d> bounding_box_;
   std::map<std::size_t, RoadCorridorPtr> road_corridors_;
 
-  static bool is_lane_type(rtree_lane_value const &m) {
-    return (m.second->get_lane_type() == XodrLaneType::DRIVING);
+  static bool IsLaneType(rtree_lane_value const &m) {
+    return (m.second->GetLane_type() == XodrLaneType::DRIVING);
   }
 };
 

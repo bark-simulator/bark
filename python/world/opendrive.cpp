@@ -18,7 +18,7 @@ using namespace modules::world::opendrive;
 void python_opendrive(py::module m) {
   py::class_<PlanView, std::shared_ptr<PlanView>>(m, "PlanView")
       .def(py::init<>())
-      .def("add_line", &PlanView::add_line, "Add line to planview")
+      .def("AddLine", &PlanView::AddLine, "Add line to planview")
       .def("add_spiral", &PlanView::add_spiral, "Add spiral to planview")
       .def("add_arc", &PlanView::add_arc, "Add arc to planview")
       .def("get_reference_line", &PlanView::get_reference_line, "Return as numpy array")
@@ -84,13 +84,13 @@ void python_opendrive(py::module m) {
   py::class_<XodrLane, std::shared_ptr<XodrLane>>(m, "XodrLane")
       .def(py::init<>())
       .def(py::init<XodrLanePosition&>())
-      .def_property("lane_id", &XodrLane::get_id, &XodrLane::set_id)
-      .def_property("lane_position", &XodrLane::get_lane_position, &XodrLane::set_lane_position)
-      .def_property("lane_type", &XodrLane::get_lane_type, &XodrLane::set_lane_type)
+      .def_property("lane_id", &XodrLane::GetId, &XodrLane::SetId)
+      .def_property("lane_position", &XodrLane::GetLane_position, &XodrLane::set_lane_position)
+      .def_property("lane_type", &XodrLane::GetLane_type, &XodrLane::set_lane_type)
       .def_property("driving_direction",
         &XodrLane::get_driving_direction,
         &XodrLane::set_driving_direction)
-      .def_property("link", &XodrLane::get_link, &XodrLane::set_link)
+      .def_property("link", &XodrLane::GetLink, &XodrLane::SetLink)
       .def_property("line", &XodrLane::get_line, &XodrLane::set_line)
       .def_property("road_mark", &XodrLane::get_road_mark, &XodrLane::set_road_mark)
       .def_property("speed", &XodrLane::get_speed, &XodrLane::set_speed)
@@ -113,11 +113,11 @@ void python_opendrive(py::module m) {
 
   py::class_<XodrLaneSection, std::shared_ptr<XodrLaneSection>>(m, "XodrLaneSection")
       .def(py::init<float>())
-      .def("add_lane", &XodrLaneSection::add_lane, "Add lane element")
-      .def("get_lanes", &XodrLaneSection::get_lanes, "Get all lane elements")
+      .def("AddLane", &XodrLaneSection::AddLane, "Add lane element")
+      .def("GetLanes", &XodrLaneSection::GetLanes, "Get all lane elements")
       .def("get_left_lane", &XodrLaneSection::get_left_lane, "Get left lane")
       .def("get_right_lane", &XodrLaneSection::get_right_lane, "Get right lane")
-      .def("get_lane_by_position", &XodrLaneSection::get_lane_by_position, "Get lane by lane position")
+      .def("GetLane_by_position", &XodrLaneSection::GetLane_by_position, "Get lane by lane position")
       .def(
           "__repr__",
           [](const XodrLaneSection &ls) {
@@ -129,12 +129,12 @@ void python_opendrive(py::module m) {
 
   py::class_<XodrRoad, std::shared_ptr<XodrRoad>>(m, "XodrRoad")
       .def(py::init<>())
-      .def_property("name", &XodrRoad::get_name, &XodrRoad::set_name)
-      .def_property("id", &XodrRoad::get_id, &XodrRoad::set_id)
-      .def_property("plan_view", &XodrRoad::get_plan_view, &XodrRoad::set_plan_view)
-      .def_property("link", &XodrRoad::get_link, &XodrRoad::set_link)
-      .def_property_readonly("lane_sections", &XodrRoad::get_lane_sections)
-      .def("add_lane_section", &XodrRoad::add_lane_section, "Add a lane section to road");
+      .def_property("name", &XodrRoad::GetName, &XodrRoad::SetName)
+      .def_property("id", &XodrRoad::GetId, &XodrRoad::SetId)
+      .def_property("plan_view", &XodrRoad::GetPlanView, &XodrRoad::SetPlanView)
+      .def_property("link", &XodrRoad::GetLink, &XodrRoad::SetLink)
+      .def_property_readonly("lane_sections", &XodrRoad::GetLaneSections)
+      .def("AddLaneSection", &XodrRoad::AddLaneSection, "Add a lane section to road");
 
   py::class_<OpenDriveMap, std::shared_ptr<OpenDriveMap>>(m, "OpenDriveMap")
       .def(py::init<>())
@@ -154,11 +154,11 @@ void python_opendrive(py::module m) {
       .def_readwrite("id", &Connection::id_)
       .def_readwrite("incoming_road", &Connection::incoming_road_)
       .def_readwrite("connecting_road", &Connection::connecting_road_)
-      .def_property_readonly("lane_links", &Connection::get_lane_links)
-      .def("add_lane_link", &Connection::add_lane_link, "Add add XodrLaneLink");
+      .def_property_readonly("lane_links", &Connection::GetLane_links)
+      .def("AddLane_link", &Connection::AddLane_link, "Add add XodrLaneLink");
 
   py::class_<Junction, std::shared_ptr<Junction>>(m, "Junction")
-      .def_property("id", &Junction::get_id, &Junction::set_id)
+      .def_property("id", &Junction::GetId, &Junction::SetId)
       .def("get_connections", &Junction::get_connections)
       .def("add_connection", &Junction::add_connection)
       .def(py::init<std::string, int>());

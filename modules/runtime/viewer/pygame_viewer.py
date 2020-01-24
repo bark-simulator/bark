@@ -51,7 +51,7 @@ class PygameViewer(BaseViewer):
 
             for _, road in map.get_roads().items():
                 for lane_section in road.lane_sections:
-                    for _, lane in lane_section.get_lanes().items():
+                    for _, lane in lane_section.GetLanes().items():
                         lane_np = lane.line.toArray()
                         lanes_np.append(lane_np)
                         lanes_dashed.append(lane.road_mark.type == XodrRoadMarkType.broken

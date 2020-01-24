@@ -44,7 +44,7 @@ class WorldTests(unittest.TestCase):
         newXodrRoad.id = 1
         newXodrRoad.name = "Autobahn A9"
         newPlanView = PlanView()
-        newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
+        newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10)
         newXodrRoad.plan_view = newPlanView
         line = newXodrRoad.plan_view.get_reference_line().toArray()
         p = Point2d(line[-1][0], line[-1][1])
@@ -53,16 +53,16 @@ class WorldTests(unittest.TestCase):
         lane_section = XodrLaneSection(0)
         lane = XodrLane()
         lane.line = line
-        lane_section.add_lane(lane)
-        newXodrRoad.add_lane_section(lane_section)
+        lane_section.AddLane(lane)
+        newXodrRoad.AddLaneSection(lane_section)
         road_map.add_road(newXodrRoad)
 
         r = Roadgraph()
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(road_map)
-        map_interface.set_roadgraph(r)
+        map_interface.SetOpenDriveMap(road_map)
+        map_interface.SetRoadgraph(r)
         world = World(params)
-        world.add_agent(agent)
+        world.AddAgent(agent)
 
 
 if __name__ == '__main__':
