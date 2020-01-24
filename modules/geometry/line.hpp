@@ -33,21 +33,21 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
 
   //! @todo improvement: do not recompute full s but only add one point (but we would need to store the line length for that!)
-  bool add_point(const T &p) {
-    return Shape<bg::model::linestring<T>, T>::add_point(p) && RecomputeS();
+  bool AddPoint(const T &p) {
+    return Shape<bg::model::linestring<T>, T>::AddPoint(p) && RecomputeS();
   }
 
   auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
   unsigned int size() const { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
 
-  void append_linestring(const Line_t &ls) {
+  void AppendLinestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
     RecomputeS();
   }
 
-  std::vector<T> get_points_in_s_interval(float begin, float end) const {
+  std::vector<T> GetPointsInSInterval(float begin, float end) const {
     std::vector<T> points;
     uint begin_idx = std::upper_bound(s_.begin(), s_.end(), begin) - s_.begin();
     uint end_idx = std::lower_bound(s_.begin(), s_.end(), end) - s_.begin();
@@ -81,21 +81,21 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     if (distance_first_first <= std::min({distance_first_last, distance_last_first, distance_last_last})) {
       // Reverse this
       reverse();
-      append_linestring(other_line);
+      AppendLinestring(other_line);
     } else if (distance_first_last <= std::min({distance_first_first, distance_last_first, distance_last_last})) {
       // Reverse both
       reverse();
       Line_t new_line = other_line;
       new_line.reverse();
-      append_linestring(new_line);
+      AppendLinestring(new_line);
     } else if (distance_last_first <= std::min({distance_first_first, distance_first_last, distance_last_last})) {
       // No reversing
-      append_linestring(other_line);
+      AppendLinestring(other_line);
     } else {
       // Reverse other
       Line_t new_line = other_line;
       new_line.reverse();
-      append_linestring(new_line);
+      AppendLinestring(new_line);
     }
   }
 
@@ -194,7 +194,7 @@ inline Line translate(const Line& line, float x, float y) {
   return line_translated;
 }
 
-inline int GetSegment_end_idx(Line l, float s) {
+inline int GetSegmentEndIdx(Line l, float s) {
   std::vector<float>::iterator up = std::upper_bound(l.s_.begin(), l.s_.end(), s);
   if(up != l.s_.end()) {
     int retval = up - l.s_.begin();
@@ -205,8 +205,8 @@ inline int GetSegment_end_idx(Line l, float s) {
   
 }
 
-inline bool check_s_for_segment_intersection(Line l, float s) {
-  int start_it = GetSegment_end_idx(l, s);
+inline bool CheckSForSegmentIntersection(Line l, float s) {
+  int start_it = GetSegmentEndIdx(l, s);
   std::vector<float>::iterator low = std::lower_bound(l.s_.begin(), l.s_.end(), s);
   int start_it_low = low - l.s_.begin();
   return start_it != start_it_low;
@@ -221,7 +221,7 @@ inline Point2d GetPointAtS(Line l, float s) {
   } else if (s >= l.s_.back()) {  // edge case end
     return l.obj_.at(length - 1);
   } else {  // nominal case
-    int segment_end_idx = GetSegment_end_idx(l, s);
+    int segment_end_idx = GetSegmentEndIdx(l, s);
     int segment_begin_idx = segment_end_idx - 1;
 
     float s_on_segment = (s - l.s_.at(segment_begin_idx)) / (l.s_.at(segment_end_idx) - l.s_.at(segment_begin_idx));
@@ -235,7 +235,7 @@ inline Point2d GetPointAtS(Line l, float s) {
   }
 }
 
-inline float get_tangent_angle_at_s(Line l, float s) {
+inline float GetTangentAngleAtS(Line l, float s) {
   if (s >= l.s_.back()) {
     Point2d p1 = l.obj_.at(l.obj_.size()-2);
     Point2d p2 = l.obj_.at(l.obj_.size()-1);
@@ -246,8 +246,8 @@ inline float get_tangent_angle_at_s(Line l, float s) {
     Point2d p2 = l.obj_.at(1);
     return atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
   } else {  // not start or end
-    int end_segment_it = GetSegment_end_idx(l, s);
-    if (check_s_for_segment_intersection(l, s)) {  // check if s is at intersection, if true then calculate the intermediate angle
+    int end_segment_it = GetSegmentEndIdx(l, s);
+    if (CheckSForSegmentIntersection(l, s)) {  // check if s is at intersection, if true then calculate the intermediate angle
       Point2d p1 = l.obj_.at(end_segment_it-2);
       Point2d p2 = l.obj_.at(end_segment_it-1);
       Point2d p3 = l.obj_.at(end_segment_it);
@@ -269,26 +269,26 @@ inline Point2d GetNormalAtS(Line l, float s) {
   // for (auto& ll : l) {
   //   std::cout << boost::geometry::get<0>(ll) << ", " << boost::geometry::get<1>(ll) << " " << s << std::endl;
   // }
-  float tangent = get_tangent_angle_at_s(l, s);
+  float tangent = GetTangentAngleAtS(l, s);
   Point2d t(cos(tangent+asin(1)), sin(tangent+asin(1)));  // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
   // std::cout << "tangent" << tangent << std::endl;
   return t;
 }
 
 
-inline Line GetLine_from_s_interval(Line line, float begin, float end) {
+inline Line GetLineFromSInterval(Line line, float begin, float end) {
   Line new_line;
-  new_line.add_point(GetPointAtS(line, begin));
-  std::vector<Point2d> points = line.get_points_in_s_interval(begin, end);
+  new_line.AddPoint(GetPointAtS(line, begin));
+  std::vector<Point2d> points = line.GetPointsInSInterval(begin, end);
   for (auto const &point : points) {
-    new_line.add_point(point);
+    new_line.AddPoint(point);
   }
-  new_line.add_point(GetPointAtS(line, end));
+  new_line.AddPoint(GetPointAtS(line, end));
   return new_line;
 }
 
 
-inline std::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
+inline std::tuple<Point2d, double, uint> GetNearestPointAndS(Line l, const Point2d &p) {  // GetNearestPoint
   // edge cases: empty or one-point line
   if (l.obj_.empty()) {
     return std::make_tuple(Point2d(0, 0), 0.0, 0);
@@ -368,14 +368,14 @@ inline std::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const P
   // return
   return std::make_tuple(retval, s, min_segment_idx);
 }
-inline Point2d get_nearest_point(Line l, const Point2d &p) {
-  return std::get<0>(get_nearest_point_and_s(l, p));
+inline Point2d GetNearestPoint(Line l, const Point2d &p) {
+  return std::get<0>(GetNearestPointAndS(l, p));
 }
-inline float get_nearest_s(Line l, const Point2d &p) {
-  return std::get<1>(get_nearest_point_and_s(l, p));
+inline float GetNearestS(Line l, const Point2d &p) {
+  return std::get<1>(GetNearestPointAndS(l, p));
 }
 inline uint FindNearestIdx(Line l, const Point2d &p) {
-  return std::get<2>(get_nearest_point_and_s(l, p));
+  return std::get<2>(GetNearestPointAndS(l, p));
 }
 //! Point - Line collision checker using boost::intersection
 inline bool Collide(const Line &l, const LinePoint &p) {
@@ -397,11 +397,11 @@ inline bool Collide(const Line &l1, const Line &l2) {
 }
 
 // An oriented point can have a linestring (the nearest point on it) on the left or right side, left side < 0, right side > 0
-inline double signed_distance(const Line &line, const Point2d &p, const float& orientation) {
-  auto closest_point = get_nearest_point(line, p);
+inline double SignedDistance(const Line &line, const Point2d &p, const float& orientation) {
+  auto closest_point = GetNearestPoint(line, p);
   auto direction_vector = closest_point - p;
 
-  double diff = signed_AngleDiff(orientation , atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
+  double diff = SignedAngleDiff(orientation , atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? 1 : ((diff < 0) ? -1 : 0);
 
   return bg::distance(line.obj_, p)*sign;
@@ -417,22 +417,22 @@ inline Line ComputeCenterLine(const Line& outer_line_,
     line_less_points = outer_line_;
   }
   for ( Point2d& point_loop : line_more_points.obj_ ) {
-    Point2d nearest_point_other = geometry::get_nearest_point(line_less_points,
+    Point2d nearest_point_other = geometry::GetNearestPoint(line_less_points,
                                                               point_loop);
     geometry::Point2d middle_point = (point_loop + nearest_point_other) / 2;
-    center_line_.add_point(middle_point);
+    center_line_.AddPoint(middle_point);
   }
   return center_line_;
 }
 
 
 template <typename T>
-std::pair<T, T> merge_bounding_boxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
+std::pair<T, T> MergeBoundingBoxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
   Line_t<T> line; // just use a line and add all points
-  line.add_point(bb1.first);
-  line.add_point(bb1.second);
-  line.add_point(bb2.first);
-  line.add_point(bb2.second);
+  line.AddPoint(bb1.first);
+  line.AddPoint(bb1.second);
+  line.AddPoint(bb2.first);
+  line.AddPoint(bb2.second);
   return line.BoundingBox();
 }
 

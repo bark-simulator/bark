@@ -74,7 +74,7 @@ void python_world(py::module m) {
 
   py::class_<XodrLaneVertex, std::shared_ptr<XodrLaneVertex>>(m, "XodrLaneVertex")
     .def(py::init<int, int, XodrLanePtr>())
-    .def_property_readonly("lane_id", &XodrLaneVertex::get_global_line_id)
+    .def_property_readonly("lane_id", &XodrLaneVertex::GetGlobalLineId)
     .def_property_readonly("lane", &XodrLaneVertex::GetLane);
 
   py::enum_<XodrLaneEdgeType>(m, "XodrLaneEdgeType")
@@ -85,6 +85,6 @@ void python_world(py::module m) {
 
   py::class_<XodrLaneEdge, std::shared_ptr<XodrLaneEdge>>(m, "XodrLaneEdge")
     .def(py::init<XodrLaneEdgeType>())
-    .def_property_readonly("edge_type", &XodrLaneEdge::GetEdge_type);
+    .def_property_readonly("edge_type", &XodrLaneEdge::GetEdgeType);
 
 }

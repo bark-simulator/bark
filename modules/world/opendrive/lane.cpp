@@ -25,14 +25,14 @@ float XodrLane::CurvatureDotAt(const float s) const { return 0.0; }
 float XodrLane::LaneWidthAt(const float s) const { return 0.0; }
 
 float XodrLane::SFromPoint(const geometry::Point2d &point) const {
-  return 0.0;  // modules::geometry::get_nearest_s(this->center_line_, point);
+  return 0.0;  // modules::geometry::GetNearestS(this->center_line_, point);
 }
 
 bool XodrLane::append(geometry::Line previous_line, XodrLaneWidth lane_width_current,
                   float s_inc) {
   geometry::Line tmp_line = CreateLineWithOffsetFromLine(
       previous_line, lane_position_, lane_width_current, s_inc);
-  line_.append_linestring(tmp_line);
+  line_.AppendLinestring(tmp_line);
   return true;
 }
 

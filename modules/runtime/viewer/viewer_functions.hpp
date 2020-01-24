@@ -29,7 +29,7 @@ inline void drawRandomThings(Viewer * viewer) {
     Line l;
     for (auto y = 0; y < 10; ++y) {
       Point2d p(rand() % 10 +1, rand() % 10 +1);
-      l.add_point(p);
+      l.AddPoint(p);
     }
     viewer->drawLine2d(l, Viewer::Color::Color_Cyan, 1.0f);
   }

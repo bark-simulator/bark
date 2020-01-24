@@ -66,19 +66,19 @@ TEST(observed_world, agent_in_front) {
 
   // Define some driving corridor and add to local map of agent
   Line center;
-  center.add_point(Point2d(1, 1));
-  center.add_point(Point2d(2, 1));
-  center.add_point(Point2d(10, 1));
+  center.AddPoint(Point2d(1, 1));
+  center.AddPoint(Point2d(2, 1));
+  center.AddPoint(Point2d(10, 1));
 
   Line outer;
-  outer.add_point(Point2d(1, 2));
-  outer.add_point(Point2d(2, 2));
-  outer.add_point(Point2d(10, 2));
+  outer.AddPoint(Point2d(1, 2));
+  outer.AddPoint(Point2d(2, 2));
+  outer.AddPoint(Point2d(10, 2));
 
   Line inner;
-  inner.add_point(Point2d(1, 0));
-  inner.add_point(Point2d(2, 0));
-  inner.add_point(Point2d(10, 0));
+  inner.AddPoint(Point2d(1, 0));
+  inner.AddPoint(Point2d(2, 0));
+  inner.AddPoint(Point2d(10, 0));
 
   RoadCorridorPtr road_corridor(new modules::models::tests::DummyRoadCorridor(center, outer, inner));
   agent1->SetRoadCorridor(road_corridor);

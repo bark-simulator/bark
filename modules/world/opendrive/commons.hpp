@@ -198,7 +198,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     normal = GetNormalAtS(previous_line, s);
     scale = -sign * Polynom(
       s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
-    tmp_line.add_point(
+    tmp_line.AddPoint(
       geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
                         bg::get<1>(point) + scale * bg::get<1>(normal)));
     if ((s_end - s < s_inc) &&

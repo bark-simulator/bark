@@ -219,7 +219,7 @@ void fresnel(double xxa, double *ssa, double *cca) {
   *ssa = ss;
 }
 
-double fresnelCos(double xxa) {
+double FresnelCos(double xxa) {
   double ssa;
   double cca;
 
@@ -228,7 +228,7 @@ double fresnelCos(double xxa) {
   return cca;
 }
 
-double fresnelSin(double xxa) {
+double FresnelSin(double xxa) {
   double ssa;
   double cca;
 

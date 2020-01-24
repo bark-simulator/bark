@@ -22,11 +22,11 @@ bool PlanView::AddLine(geometry::Point2d start_point,
                         float heading,
                         float length) {
   //! straight line
-  reference_line_.add_point(start_point);
+  reference_line_.AddPoint(start_point);
   geometry::Point2d end_point(
     bg::get<0>(start_point) + length * cos(heading),
     bg::get<1>(start_point) + length * sin(heading));
-  reference_line_.add_point(end_point);
+  reference_line_.AddPoint(end_point);
   //! calculate overall length
   length_ = bg::length(reference_line_.obj_);
   return true;
@@ -47,7 +47,7 @@ bool PlanView::AddSpiral(
   double s = 0.0;
   for (; s <= length;) {
     odrSpiral(s, x_old, y_old, cDot, curvature_start, heading, &x, &y, &t);
-    reference_line_.add_point(geometry::Point2d(x, y));
+    reference_line_.AddPoint(geometry::Point2d(x, y));
     if ((length - s < s_inc) && (length - s > 0.))
       s_inc = length - s;
     s += s_inc;
@@ -84,7 +84,7 @@ bool PlanView::AddArc(
   double s = 0.0;
   for (; s <= length;) {
     CalcArcPosition(s, heading, curvature, dx, dy);
-    reference_line_.add_point(geometry::Point2d(x_old + dx, y_old + dy));
+    reference_line_.AddPoint(geometry::Point2d(x_old + dx, y_old + dy));
     if (length - s < s_inc && length - s > 0.)
       s_inc = length - s;
     s += s_inc;
