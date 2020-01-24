@@ -59,62 +59,62 @@ TEST(observed_world, agent_in_front) {
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
   WorldPtr world(new World(&params));
-  world->add_agent(agent1);
-  world->add_agent(agent2);
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
   world->UpdateAgentRTree();
 
 
   // Define some driving corridor and add to local map of agent
   Line center;
-  center.add_point(Point2d(1, 1));
-  center.add_point(Point2d(2, 1));
-  center.add_point(Point2d(10, 1));
+  center.AddPoint(Point2d(1, 1));
+  center.AddPoint(Point2d(2, 1));
+  center.AddPoint(Point2d(10, 1));
 
   Line outer;
-  outer.add_point(Point2d(1, 2));
-  outer.add_point(Point2d(2, 2));
-  outer.add_point(Point2d(10, 2));
+  outer.AddPoint(Point2d(1, 2));
+  outer.AddPoint(Point2d(2, 2));
+  outer.AddPoint(Point2d(10, 2));
 
   Line inner;
-  inner.add_point(Point2d(1, 0));
-  inner.add_point(Point2d(2, 0));
-  inner.add_point(Point2d(10, 0));
+  inner.AddPoint(Point2d(1, 0));
+  inner.AddPoint(Point2d(2, 0));
+  inner.AddPoint(Point2d(10, 0));
 
   RoadCorridorPtr road_corridor(new modules::models::tests::DummyRoadCorridor(center, outer, inner));
-  agent1->set_road_corridor(road_corridor);
-  agent2->set_road_corridor(road_corridor);
+  agent1->SetRoadCorridor(road_corridor);
+  agent2->SetRoadCorridor(road_corridor);
 
   WorldPtr current_world_state(world->Clone());
-  ObservedWorld observed_world(current_world_state, agent2->get_agent_id());
+  ObservedWorld observed_world(current_world_state, agent2->GetAgentId());
 
   // Leading agent should not have an agent in front
   std::pair<AgentPtr, Frenet> leading_vehicle =
-    observed_world.get_agent_in_front();
+    observed_world.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
   WorldPtr current_world_state2(world->Clone());
-  ObservedWorld observed_world2(current_world_state2, agent1->get_agent_id());
+  ObservedWorld observed_world2(current_world_state2, agent1->GetAgentId());
 
   // Agent behind should have leading agent in front
   std::pair<AgentPtr, Frenet> leading_vehicle2 =
-    observed_world2.get_agent_in_front();
+    observed_world2.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
-  EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
+  EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, 0.0, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
-  world->add_agent(agent3);
+  world->AddAgent(agent3);
   world->UpdateAgentRTree();
 
   WorldPtr current_world_state3(world->Clone());
-  ObservedWorld observed_world3(current_world_state3, agent1->get_agent_id());
+  ObservedWorld observed_world3(current_world_state3, agent1->GetAgentId());
 
   // Adding a third agent in front of leading agent, still leading agent should be in front
   std::pair<AgentPtr, Frenet> leading_vehicle3 =
-    observed_world3.get_agent_in_front();
+    observed_world3.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
-  EXPECT_EQ(leading_vehicle2.first->get_agent_id(), agent2->get_agent_id());
+  EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
 }
 
@@ -142,30 +142,30 @@ TEST(observed_world, clone) {
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));  // NOLINT
 
   WorldPtr world = std::make_shared<World>(&params);
-  world->add_agent(agent1);
-  world->add_agent(agent2);
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
   world->UpdateAgentRTree();
 
   WorldPtr current_world_state(world->Clone());
   ObservedWorldPtr observed_world(
-    new ObservedWorld(current_world_state, agent1->get_agent_id()));
+    new ObservedWorld(current_world_state, agent1->GetAgentId()));
 
   WorldPtr cloned(observed_world->Clone());
   ObservedWorldPtr cloned_observed_world =
     std::dynamic_pointer_cast<ObservedWorld>(cloned);
-  EXPECT_EQ(observed_world->get_ego_agent()->get_agent_id(),
-            cloned_observed_world->get_ego_agent()->get_agent_id());
-  EXPECT_EQ(typeid(observed_world->get_ego_behavior_model()),
-            typeid(cloned_observed_world->get_ego_behavior_model()));
+  EXPECT_EQ(observed_world->GetEgoAgent()->GetAgentId(),
+            cloned_observed_world->GetEgoAgent()->GetAgentId());
+  EXPECT_EQ(typeid(observed_world->GetEgoBehaviorModel()),
+            typeid(cloned_observed_world->GetEgoBehaviorModel()));
 
   observed_world.reset();
-  auto behavior_ego = cloned_observed_world->get_ego_behavior_model();
+  auto behavior_ego = cloned_observed_world->GetEgoBehaviorModel();
   EXPECT_TRUE(behavior_ego != nullptr);
 }
 
 TEST(observed_world, predict) {
   SetterParams params;
-  params.set_real("integration_time_delta", 0.01);
+  params.SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world =
@@ -180,18 +180,18 @@ TEST(observed_world, predict) {
   ObservedWorldPtr observed_predicted_world =
     std::dynamic_pointer_cast<ObservedWorld>(predicted_world);
   double distance_ego =
-    modules::geometry::distance(
-      observed_predicted_world->current_ego_position(),
-      observed_world.current_ego_position());
-  double distance_other = modules::geometry::distance(
-    observed_predicted_world->get_other_agents().begin()->second->get_current_position(),  // NOLINT
-    observed_world.get_other_agents().begin()->second->get_current_position());
+    modules::geometry::Distance(
+      observed_predicted_world->CurrentEgoPosition(),
+      observed_world.CurrentEgoPosition());
+  double distance_other = modules::geometry::Distance(
+    observed_predicted_world->GetOtherAgents().begin()->second->GetCurrentPosition(),  // NOLINT
+    observed_world.GetOtherAgents().begin()->second->GetCurrentPosition());
 
   // distance current and predicted state should be
   // velocity x prediction time span
   EXPECT_NEAR(distance_ego, ego_velocity*1.0f, 0.06);
   EXPECT_NEAR(distance_other,
-    observed_world.get_other_agents().begin()->second->get_current_state()[VEL_POSITION]*1.0f,  // NOLINT
+    observed_world.GetOtherAgents().begin()->second->GetCurrentState()[VEL_POSITION]*1.0f,  // NOLINT
     0.06);
 
   // predict ego agent with motion primitive model
@@ -215,7 +215,7 @@ TEST(observed_world, predict) {
   WorldPtr predicted_world2 =
     observed_world.Predict(1.0f, DiscreteAction(idx1));
   auto ego_pred_velocity =
-    std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)->current_ego_state()[StateDefinition::VEL_POSITION];  // NOLINT
+    std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)->CurrentEgoState()[StateDefinition::VEL_POSITION];  // NOLINT
   // distance current and predicted state should be velocity
   // + prediction time span
   EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2*1.0f, 0.05);

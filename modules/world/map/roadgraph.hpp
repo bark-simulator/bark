@@ -31,8 +31,8 @@ typedef std::shared_ptr<modules::geometry::Polygon> PolygonPtr;
 struct XodrLaneVertex {
   XodrRoadId road_id;
   XodrLaneId global_lane_id;
-  XodrLaneId get_global_line_id() { return global_lane_id; }
-  XodrLanePtr get_lane() { return lane; }
+  XodrLaneId GetGlobalLineId() { return global_lane_id; }
+  XodrLanePtr GetLane() { return lane; }
   XodrLanePtr lane;
   PolygonPtr polygon;
   XodrLaneVertex() : road_id(0), global_lane_id(0), lane(NULL), polygon(NULL) {}
@@ -54,7 +54,7 @@ struct XodrLaneEdge {
   XodrLaneEdgeType edge_type;
   float weight;  //! @todo tobias: for shortest path calculation: a very basic
                  //! implementation!
-  XodrLaneEdgeType get_edge_type() const { return edge_type; }
+  XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
   XodrLaneEdge(XodrLaneEdgeType edge_type_in)
       : edge_type(edge_type_in),
@@ -69,9 +69,9 @@ typedef boost::graph_traits<XodrLaneGraph>::edge_descriptor edge_t;
 
 struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
   bool operator()(XodrLaneGraph::edge_descriptor ed) const {
-    bool filtered_s = (*g)[boost::source(ed, *g)].lane->get_lane_type() ==
+    bool filtered_s = (*g)[boost::source(ed, *g)].lane->GetLaneType() ==
                       XodrLaneType::DRIVING;
-    bool filtered_t = (*g)[boost::target(ed, *g)].lane->get_lane_type() ==
+    bool filtered_t = (*g)[boost::target(ed, *g)].lane->GetLaneType() ==
                       XodrLaneType::DRIVING;
     bool filtered_e =
         (*g)[ed].edge_type == XodrLaneEdgeType::LANE_SUCCESSOR_EDGE;
@@ -81,7 +81,7 @@ struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
   }
 
   bool operator()(XodrLaneGraph::vertex_descriptor vd) const {
-    bool filtered = (*g)[vd].lane->get_lane_type() == XodrLaneType::DRIVING;
+    bool filtered = (*g)[vd].lane->GetLaneType() == XodrLaneType::DRIVING;
     return filtered;
   }
   XodrLaneGraph* g;
@@ -111,29 +111,29 @@ class Roadgraph {
  public:
   Roadgraph() {}
 
-  XodrLaneId add_lane(const XodrRoadId& road_id, const XodrLanePtr& laneptr);
+  XodrLaneId AddLane(const XodrRoadId& road_id, const XodrLanePtr& laneptr);
 
-  bool add_inner_neighbor(const XodrLaneId& inner_id,
+  bool AddInnerNeighbor(const XodrLaneId& inner_id,
                           const XodrLaneId& outer_id);
 
-  bool add_outer_neighbor(const XodrLaneId& inner_id,
+  bool AddOuterNeighbor(const XodrLaneId& inner_id,
                           const XodrLaneId& outer_id);
 
-  bool add_lane_successor(const XodrLaneId& prev, const XodrLaneId& succ);
+  bool AddLaneSuccessor(const XodrLaneId& prev, const XodrLaneId& succ);
 
-  bool add_road_successor(const XodrLaneId& prev, const XodrLaneId& succ);
+  bool AddRoadSuccessor(const XodrLaneId& prev, const XodrLaneId& succ);
 
-  std::vector<XodrLaneId> get_successor_lanes(const XodrLaneId& lane_id) const;
+  std::vector<XodrLaneId> GetSuccessorLanes(const XodrLaneId& lane_id) const;
 
-  std::vector<XodrLaneId> get_predecessor_lanes(
+  std::vector<XodrLaneId> GetPredecessorLanes(
       const XodrLaneId& lane_id) const;
 
   template <class Predicate>
-  bool check_id_in_filtered_graph(const FilteredXodrLaneGraph_t<Predicate>& fg,
+  bool CheckIdInFilteredGraph(const FilteredXodrLaneGraph_t<Predicate>& fg,
                                   const XodrLaneId& lane_id) const;
 
   template <class Predicate>
-  std::vector<XodrLaneId> find_path(const XodrLaneId& startid,
+  std::vector<XodrLaneId> FindPath(const XodrLaneId& startid,
                                     const XodrLaneId& goalid);
 
   std::vector<XodrRoadId> FindRoadPath(const XodrRoadId& startid,
@@ -142,13 +142,13 @@ class Roadgraph {
   std::vector<XodrLaneId> FindDrivableLanePath(const XodrLaneId& startid,
                                                   const XodrLaneId& goalid);
 
-  std::vector<std::vector<XodrLaneId>> find_all_paths_in_subgraph(
+  std::vector<std::vector<XodrLaneId>> FindAllPathsInSubgraph(
       const std::vector<XodrLaneEdgeType>& edge_type_subset,
       const std::vector<XodrLaneId>& lane_id_subset);
 
-  XodrLanePtr get_laneptr(const XodrLaneId& id) const;
+  XodrLanePtr GetLanePtr(const XodrLaneId& id) const;
 
-  std::vector<XodrLaneId> get_all_laneids() const;
+  std::vector<XodrLaneId> GetAllLaneids() const;
 
   std::pair<XodrLaneId, bool> GetPlanViewForRoadId(const XodrRoadId& id) const;
 
@@ -162,49 +162,42 @@ class Roadgraph {
   XodrRoadId GetRoadForLaneId(const XodrLaneId& lane_id);
 
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
-  std::pair<XodrLaneId, bool> get_inner_neighbor(
+  std::pair<XodrLaneId, bool> GetInnerNeighbor(
       const XodrLaneId& lane_id) const;
 
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
   //! @note make sure to not call this function on the planview lane!
-  std::pair<XodrLaneId, bool> get_outer_neighbor(
+  std::pair<XodrLaneId, bool> GetOuterNeighbor(
       const XodrLaneId& lane_id) const;
-
-  //! XodrLaneId of the neighboring lane and a flag if it exists or not,
-  //! usecase: lane_id is the planview
-  //! @param lane_id queried lane id
-  //! @param from the query answer return the lane id that is not but_not
-  std::pair<XodrLaneId, bool> get_outer_neighbor_but_not(
-      const XodrLaneId& lane_id, const XodrLaneId& but_not);
 
   //! XodrLaneIds of all neighboring lanes in the same driving direction.
   //! Includes neighbors of neighbors
   //! @note cannot be called with the planview lane!
-  std::vector<XodrLaneId> get_all_neighbors(const XodrLaneId& lane_id) const;
+  std::vector<XodrLaneId> GetAllNeighbors(const XodrLaneId& lane_id) const;
 
-  bool has_lane(const XodrLaneId& lane_id) const;
+  bool HasLane(const XodrLaneId& lane_id) const;
 
-  void print_graph(const char* filename);
+  void PrintGraph(const char* filename);
 
-  void print_graph(std::ofstream& dotfile);
+  void PrintGraph(std::ofstream& dotfile);
 
-  XodrLaneGraph get_lane_graph() const { return g_; }
+  XodrLaneGraph GetLaneGraph() const { return g_; }
 
-  XodrLaneVertex get_vertex(vertex_t v_des) const { return g_[v_des]; }
+  XodrLaneVertex GetVertex(vertex_t v_des) const { return g_[v_des]; }
 
-  std::vector<vertex_t> get_vertices() const;
+  std::vector<vertex_t> GetVertices() const;
 
-  XodrLaneEdge get_edge(edge_t e_des) const { return g_[e_des]; }
+  XodrLaneEdge GetEdge(edge_t e_des) const { return g_[e_des]; }
 
-  std::vector<vertex_t> get_next_vertices(vertex_t current_vertex) const;
+  std::vector<vertex_t> GetNextVertices(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_out_edges(vertex_t current_vertex) const;
+  std::vector<edge_t> GetOutEdges(vertex_t current_vertex) const;
 
-  std::vector<edge_t> get_edges() const;
+  std::vector<edge_t> GetEdges() const;
 
-  edge_t get_edge_descr(vertex_t from, vertex_t to) const;
+  edge_t GetEdgeDescr(vertex_t from, vertex_t to) const;
 
-  std::pair<vertex_t, bool> get_vertex_by_lane_id(
+  std::pair<vertex_t, bool> GetVertexByLaneId(
       const XodrLaneId& lane_id) const;
 
   void GenerateVertices(OpenDriveMapPtr map);
@@ -227,7 +220,7 @@ class Roadgraph {
 
   std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(
       const XodrLaneId& lane_id) const;
-  std::vector<std::pair<XodrLaneId, bool>> get_outer_neighbors_planview(
+  std::vector<std::pair<XodrLaneId, bool>> GetOuterNeighborsPlanview(
     const XodrLaneId &lane_id) const;
 
   //! Roadgraph extension
@@ -246,11 +239,11 @@ class Roadgraph {
  private:
   XodrLaneGraph g_;
 
-  bool add_edge_of_type(const XodrLaneId& source_id,
-                        const XodrLaneId& target_id,
+  bool AddEdgeOfType(const XodrLaneId& source_id,
+                        const XodrLaneId& tarGetId,
                         const XodrLaneEdgeType& edgetype);
 
-  std::vector<std::pair<XodrLaneId, bool>> get_neighbor_from_edgetype(
+  std::vector<std::pair<XodrLaneId, bool>> GetNeighborFromEdgetype(
       const XodrLaneId& lane_id, const XodrLaneEdgeType edge_type) const;
 
   template <class XodrRoadIdMap, class XodrLaneIdMap, class XodrLaneMap>
@@ -264,7 +257,7 @@ class Roadgraph {
       out << "["
           << "label=\""
           << "road_id=" << rm[s] << " lane_id=" << lm[s]
-          << " lane_pos=" << lanemap_[s]->get_lane_position() << "\"]";
+          << " lane_pos=" << lanemap_[s]->GetLanePosition() << "\"]";
     }
 
    private:

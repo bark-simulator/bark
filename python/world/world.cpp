@@ -33,29 +33,29 @@ void python_world(py::module m) {
     .def("do_planning", &World::DoPlanning)
     .def("do_execution", &World::DoExecution)
     .def("observe", &World::Observe)
-    .def("add_agent", &World::add_agent)
-    .def("add_object", &World::add_object)
-    .def("get_params", &World::get_params)
-    .def("clear_evaluators", &World::clear_evaluators)
-    .def("set_map", &World::set_map)
-    .def("add_evaluator", &World::add_evaluator)
+    .def("AddAgent", &World::AddAgent)
+    .def("AddObject", &World::AddObject)
+    .def("GetParams", &World::GetParams)
+    .def("ClearEvaluators", &World::ClearEvaluators)
+    .def("SetMap", &World::SetMap)
+    .def("AddEvaluator", &World::AddEvaluator)
     .def("GetNearestAgents", &World::GetNearestAgents)
-    .def_property_readonly("evaluators", &World::get_evaluators)
+    .def_property_readonly("evaluators", &World::GetEvaluators)
     .def("evaluate", &World::Evaluate)
-    .def_property_readonly("agents", &World::get_agents)
-    .def_property_readonly("objects", &World::get_objects)
-    .def_property_readonly("time", &World::get_world_time)
-    .def_property_readonly("bounding_box", &World::bounding_box)
-    .def("get_agent", &World::get_agent)
-    .def_property("map", &World::get_map, &World::set_map)
+    .def_property_readonly("agents", &World::GetAgents)
+    .def_property_readonly("objects", &World::GetObjects)
+    .def_property_readonly("time", &World::GetWorldTime)
+    .def_property_readonly("bounding_box", &World::BoundingBox)
+    .def("GetAgent", &World::GetAgent)
+    .def_property("map", &World::GetMap, &World::SetMap)
     .def("copy",&World::Clone)
     .def("world_execution_at_time", &World::WorldExecutionAtTime);
 
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
       .def(py::init<const WorldPtr&, const AgentId&>())
-      .def_property_readonly("ego_agent", &ObservedWorld::get_ego_agent)
-      .def_property_readonly("other_agents", &ObservedWorld::get_other_agents)
+      .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
+      .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
       .def("__repr__", [](const ObservedWorld &a) {
         return "bark.world.ObservedWorld";
       });
@@ -74,8 +74,8 @@ void python_world(py::module m) {
 
   py::class_<XodrLaneVertex, std::shared_ptr<XodrLaneVertex>>(m, "XodrLaneVertex")
     .def(py::init<int, int, XodrLanePtr>())
-    .def_property_readonly("lane_id", &XodrLaneVertex::get_global_line_id)
-    .def_property_readonly("lane", &XodrLaneVertex::get_lane);
+    .def_property_readonly("lane_id", &XodrLaneVertex::GetGlobalLineId)
+    .def_property_readonly("lane", &XodrLaneVertex::GetLane);
 
   py::enum_<XodrLaneEdgeType>(m, "XodrLaneEdgeType")
     .value("LANE_SUCCESSOR_EDGE", XodrLaneEdgeType::LANE_SUCCESSOR_EDGE)
@@ -85,6 +85,6 @@ void python_world(py::module m) {
 
   py::class_<XodrLaneEdge, std::shared_ptr<XodrLaneEdge>>(m, "XodrLaneEdge")
     .def(py::init<XodrLaneEdgeType>())
-    .def_property_readonly("edge_type", &XodrLaneEdge::get_edge_type);
+    .def_property_readonly("edge_type", &XodrLaneEdge::GetEdgeType);
 
 }

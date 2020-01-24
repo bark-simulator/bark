@@ -29,7 +29,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t(const Pose& center,
             const Line_t<T>&
             line);  //! create a polygon from a line enclosing the polygon
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
+  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -94,7 +94,7 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const Line_t<T>& line)
       left_dist_(0.0f),
       right_dist_(0.0f) {
   for (const T& next_pt : line.obj_) {
-    Shape<bg::model::polygon<T>, T>::add_point(next_pt);
+    Shape<bg::model::polygon<T>, T>::AddPoint(next_pt);
   }
   boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
   UpdateDistancesToCenter();
@@ -128,7 +128,7 @@ using PolygonPoint = Point2d;  // for internal stores of collision checkers
 using Polygon = Polygon_t<PolygonPoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::toArray()
+inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     const {
   std::vector<Point2d> points = obj_.outer();
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
@@ -138,19 +138,19 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::toArray()
   return mat;
 }
 
-inline bool equals(const Polygon& poly1, const Polygon& poly2) {
+inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
 
-inline float distance(const Polygon& poly, const Point2d& p) {
+inline float Distance(const Polygon& poly, const Point2d& p) {
   return bg::distance(poly.obj_, p);
 }
 
-inline float distance(const Polygon& poly, const Line& l) {
+inline float Distance(const Polygon& poly, const Line& l) {
   return bg::distance(poly.obj_, l.obj_);
 }
 
-inline float distance(const Polygon& poly1, const Polygon& poly2) {
+inline float Distance(const Polygon& poly1, const Polygon& poly2) {
   return bg::distance(poly1.obj_, poly2.obj_);
 }
 
@@ -223,7 +223,7 @@ inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
 
   for (auto const& point :
        boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon->add_point(point);
+    shrunk_polygon->AddPoint(point);
   }
   assert(shrunk_polygon->Valid());
   return true;

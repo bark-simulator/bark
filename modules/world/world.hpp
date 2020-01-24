@@ -48,10 +48,10 @@ class World : public commons::BaseType {
   virtual ~World() {}
 
   //! Getter
-  double get_world_time() const { return world_time_; }
-  world::map::MapInterfacePtr get_map() const { return map_; }
-  AgentMap get_agents() const { return agents_; }
-  AgentPtr get_agent(AgentId id) const {
+  double GetWorldTime() const { return world_time_; }
+  world::map::MapInterfacePtr GetMap() const { return map_; }
+  AgentMap GetAgents() const { return agents_; }
+  AgentPtr GetAgent(AgentId id) const {
     auto agent_it = agents_.find(id);
     if (agent_it != agents_.end()) {
       return agents_.at(id);
@@ -59,11 +59,11 @@ class World : public commons::BaseType {
       return AgentPtr(nullptr);
     }
   }
-  ObjectMap get_objects() const { return objects_; }
+  ObjectMap GetObjects() const { return objects_; }
   std::map<std::string,
-           EvaluatorPtr> get_evaluators() const { return evaluators_; }
+           EvaluatorPtr> GetEvaluators() const { return evaluators_; }
 
-  bool get_remove_agents() const { return remove_agents_; }
+  bool GetRemoveAgents() const { return remove_agents_; }
 
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
@@ -72,26 +72,26 @@ class World : public commons::BaseType {
     const modules::geometry::Polygon& polygon) const;
 
   //! Setter
-  void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
+  void SetMap(const world::map::MapInterfacePtr& map) { map_ = map;}
 
   std::pair<modules::geometry::Point2d,
-            modules::geometry::Point2d> bounding_box() const {
+            modules::geometry::Point2d> BoundingBox() const {
     return map_->BoundingBox();
   }
 
-  void add_agent(const AgentPtr& agent);
+  void AddAgent(const AgentPtr& agent);
 
-  void add_object(const ObjectPtr& object);
+  void AddObject(const ObjectPtr& object);
 
-  void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator);
+  void AddEvaluator(const std::string& name, const EvaluatorPtr& evaluator);
 
   //! Functions
-  void clear_evaluators() { evaluators_.clear(); }
-  void clear_agents() { agents_.clear(); }
-  void clear_objects() { objects_.clear(); }
-  void clear_all()  {
-    clear_agents();
-    clear_objects();
+  void ClearEvaluators() { evaluators_.clear(); }
+  void ClearAgents() { agents_.clear(); }
+  void ClearObjects() { objects_.clear(); }
+  void ClearAll()  {
+    ClearAgents();
+    ClearObjects();
     evaluators_.clear();
   }
 
@@ -126,13 +126,13 @@ typedef std::shared_ptr<world::World> WorldPtr;
 
 inline WorldPtr World::Clone() const {
   WorldPtr new_world = std::make_shared<World>(*this);
-  new_world->clear_all();
+  new_world->ClearAll();
   for (auto agent = agents_.begin(); agent != agents_.end(); ++agent) {
-    new_world->add_agent(
+    new_world->AddAgent(
       std::dynamic_pointer_cast<Agent>(agent->second->Clone()));
   }
   for (auto object = objects_.begin(); object != objects_.end(); ++object) {
-    new_world->add_object(object->second->Clone());
+    new_world->AddObject(object->second->Clone());
   }
   return new_world;
 }

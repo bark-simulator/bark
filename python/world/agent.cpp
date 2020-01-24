@@ -52,33 +52,33 @@ void python_agent(py::module m)
       .def("__repr__", [](const Agent &a) {
         return "bark.agent.Agent";
       })
-      .def_property_readonly("history", &Agent::get_state_input_history)
-      .def_property_readonly("shape", &Agent::get_shape)
-      .def_property_readonly("id", &Agent::get_agent_id)
-      .def_property_readonly("followed_trajectory", &Agent::get_execution_trajectory)
-      .def_property_readonly("planned_trajectory", &Agent::get_behavior_trajectory)
-      .def_property("behavior_model", &Agent::get_behavior_model, &Agent::set_behavior_model)
-      .def_property_readonly("execution_model", &Agent::get_execution_model)
-      .def_property_readonly("dynamic_model", &Agent::get_dynamic_model)
-      .def_property_readonly("model3d", &Agent::get_model_3d)
-      .def_property_readonly("state", &Agent::get_current_state)
-      .def_property_readonly("road_corridor", &Agent::get_road_corridor)
-      .def_property("goal_definition", &Agent::get_goal_definition, &Agent::set_goal_definition)
-      .def("set_agent_id", &Object::set_agent_id)
+      .def_property_readonly("history", &Agent::GetStateInputHistory)
+      .def_property_readonly("shape", &Agent::GetShape)
+      .def_property_readonly("id", &Agent::GetAgentId)
+      .def_property_readonly("followed_trajectory", &Agent::GetExecutionTrajectory)
+      .def_property_readonly("planned_trajectory", &Agent::GetBehaviorTrajectory)
+      .def_property("behavior_model", &Agent::GetBehaviorModel, &Agent::SetBehaviorModel)
+      .def_property_readonly("execution_model", &Agent::GetExecutionModel)
+      .def_property_readonly("dynamic_model", &Agent::GetDynamicModel)
+      .def_property_readonly("model3d", &Agent::GetModel3d)
+      .def_property_readonly("state", &Agent::GetCurrentState)
+      .def_property_readonly("road_corridor", &Agent::GetRoadCorridor)
+      .def_property("goal_definition", &Agent::GetGoalDefinition, &Agent::SetGoalDefinition)
+      .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
       .def(py::pickle(
         [](const Agent& a) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(a.get_state_input_history(), // 1
-                                  a.get_shape(), // 2
-                                  a.get_agent_id(), // 3
-                                  a.get_execution_trajectory(), // 4
-                                  a.get_behavior_trajectory(), // 5
-                                  behavior_model_to_python(a.get_behavior_model()), // 6
-                                  a.get_execution_model(), // 7
-                                  a.get_dynamic_model(), // 8
-                                  a.get_current_state(), // 9
-                                  goal_definition_to_python(a.get_goal_definition())); // 10
+            return py::make_tuple(a.GetStateInputHistory(), // 1
+                                  a.GetShape(), // 2
+                                  a.GetAgentId(), // 3
+                                  a.GetExecutionTrajectory(), // 4
+                                  a.GetBehaviorTrajectory(), // 5
+                                  behavior_model_to_python(a.GetBehaviorModel()), // 6
+                                  a.GetExecutionModel(), // 7
+                                  a.GetDynamicModel(), // 8
+                                  a.GetCurrentState(), // 9
+                                  goal_definition_to_python(a.GetGoalDefinition())); // 10
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 10)
@@ -95,7 +95,7 @@ void python_agent(py::module m)
                     t[1].cast<modules::geometry::Polygon>(),
                     nullptr, // we have to set the params object afterwards as it relies on a python object
                     python_to_goal_definition(t[9].cast<py::tuple>())); 
-            agent.set_agent_id(t[2].cast<AgentId>());
+            agent.SetAgentId(t[2].cast<AgentId>());
             return agent;
             // todo: deserialize planned, followed trajectory and map interface
         }));
@@ -111,7 +111,7 @@ void python_agent(py::module m)
       .def("__repr__", [](const Object &a) {
         return "bark.agent.Object";
       })
-      .def_property_readonly("shape", &Object::get_shape)
-      .def_property_readonly("id", &Object::get_agent_id)
-      .def("set_agent_id", &Object::set_agent_id);
+      .def_property_readonly("shape", &Object::GetShape)
+      .def_property_readonly("id", &Object::GetAgentId)
+      .def("SetAgentId", &Object::SetAgentId);
 }

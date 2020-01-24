@@ -140,7 +140,7 @@ class BaseViewer(Viewer):
                 pose[0] = state[int(StateDefinition.X_POSITION)]
                 pose[1] = state[int(StateDefinition.Y_POSITION)]
                 pose[2] = state[int(StateDefinition.THETA_POSITION)]
-                transformed_polygon = shape.transform(pose)
+                transformed_polygon = shape.Transform(pose)
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
                 self.drawPolygon2d(transformed_polygon, color, alpha) # fade to 0.2 after 10 steps
@@ -171,7 +171,7 @@ class BaseViewer(Viewer):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.get_open_drive_map())
+            self.drawMap(world.map.GetOpenDriveMao())
 
         # draw agents
         for agent_id, agent in world.agents.items():
@@ -204,7 +204,7 @@ class BaseViewer(Viewer):
 
     def drawMap(self, map):
         # draw the boundary of each lane
-        for _, road in map.get_roads().items():
+        for _, road in map.GetRoads().items():
             self.drawXodrRoad(road, self.color_lane_boundaries)
 
     def drawXodrRoad(self, road, color=None):
@@ -212,7 +212,7 @@ class BaseViewer(Viewer):
           self.drawXodrLaneSection(lane_section, color)
     
     def drawXodrLaneSection(self, lane_section, color=None):
-      for _, lane in lane_section.get_lanes().items():
+      for _, lane in lane_section.GetLanes().items():
         self.drawXodrLane(lane, color)
         
     def drawXodrLane(self, lane, color=None):
@@ -234,7 +234,7 @@ class BaseViewer(Viewer):
             pose[0] = state[int(StateDefinition.X_POSITION)]
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
-            transformed_polygon = shape.transform(pose)
+            transformed_polygon = shape.Transform(pose)
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
     def drawLaneCorridor(self, lane_corridor):

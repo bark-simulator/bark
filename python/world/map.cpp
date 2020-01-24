@@ -23,7 +23,7 @@ using modules::geometry::Line;
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
     .def(py::init<>())
-    .def("set_open_drive_map", &MapInterface::set_open_drive_map)
+    .def("SetOpenDriveMap", &MapInterface::SetOpenDriveMap)
     .def("find_nearest_lanes", [](const MapInterface& m,
                                   const Point2d& point,
                                   const unsigned& num_lanes) {
@@ -31,39 +31,39 @@ void python_map(py::module m) {
         m.FindNearestXodrLanes(point, num_lanes, lanes);
         return lanes;
     })
-    .def("set_roadgraph", &MapInterface::set_roadgraph)
-    .def("get_roadgraph", &MapInterface::get_roadgraph)
-    .def("get_open_drive_map", &MapInterface::get_open_drive_map)
+    .def("SetRoadgraph", &MapInterface::SetRoadgraph)
+    .def("GetRoadgraph", &MapInterface::GetRoadgraph)
+    .def("GetOpenDriveMao", &MapInterface::GetOpenDriveMao)
       .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
                                   const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
       .def("GenerateRoadCorridor", py::overload_cast<const modules::geometry::Point2d&,
                                   const modules::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
     .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
-    .def("get_lane", &MapInterface::get_lane)
+    .def("GetLane", &MapInterface::GetLane)
     .def("compute_all_path_boundaries",
       &MapInterface::ComputeAllPathBoundaries)
     .def("find_lane", &MapInterface::FindXodrLane);
  
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())
-    .def("add_lane", &Roadgraph::add_lane)
-    .def("get_vertices", &Roadgraph::get_vertices)
-    .def("get_edges", &Roadgraph::get_edges)
-    .def("get_edge", &Roadgraph::get_edge)
-    .def("get_edge_descr", &Roadgraph::get_edge_descr)
-    .def("get_out_edges", &Roadgraph::get_out_edges)
-    .def("get_vertex", &Roadgraph::get_vertex)
-    .def("get_next_vertices", &Roadgraph::get_next_vertices)
-    .def("get_vertex_by_lane_id", &Roadgraph::get_vertex_by_lane_id)
-    .def("add_inner_neighbor", &Roadgraph::add_inner_neighbor)
-    .def("get_all_laneids", &Roadgraph::get_all_laneids)
-    .def("get_inner_neighbor", &Roadgraph::get_inner_neighbor)
-    .def("add_outer_neighbor", &Roadgraph::add_outer_neighbor)
+    .def("AddLane", &Roadgraph::AddLane)
+    .def("GetVertices", &Roadgraph::GetVertices)
+    .def("GetEdges", &Roadgraph::GetEdges)
+    .def("GetEdge", &Roadgraph::GetEdge)
+    .def("GetEdgeDescr", &Roadgraph::GetEdgeDescr)
+    .def("GetOutEdges", &Roadgraph::GetOutEdges)
+    .def("GetVertex", &Roadgraph::GetVertex)
+    .def("GetNextVertices", &Roadgraph::GetNextVertices)
+    .def("GetVertexByLaneId", &Roadgraph::GetVertexByLaneId)
+    .def("AddInnerNeighbor", &Roadgraph::AddInnerNeighbor)
+    .def("GetAllLaneids", &Roadgraph::GetAllLaneids)
+    .def("GetInnerNeighbor", &Roadgraph::GetInnerNeighbor)
+    .def("AddOuterNeighbor", &Roadgraph::AddOuterNeighbor)
     .def("FindDrivableLanePath", &Roadgraph::FindDrivableLanePath)
     .def("FindRoadPath", &Roadgraph::FindRoadPath)
-    .def("print_graph",
-      (void (Roadgraph::*)(const char*)) &Roadgraph::print_graph)
-    .def("add_lane_successor", &Roadgraph::add_lane_successor)
+    .def("PrintGraph",
+      (void (Roadgraph::*)(const char*)) &Roadgraph::PrintGraph)
+    .def("AddLaneSuccessor", &Roadgraph::AddLaneSuccessor)
     .def("Generate", &Roadgraph::Generate)
     .def("GetLanePolygonForLaneId", &Roadgraph::GetLanePolygonForLaneId)
     .def("GetRoadForLaneId", &Roadgraph::GetRoadForLaneId)
@@ -79,9 +79,9 @@ py::class_<RoadCorridor,
     .def_property("roads", &RoadCorridor::GetRoads,
       &RoadCorridor::SetRoads)
     .def_property_readonly("lanes", &RoadCorridor::GetLanes)
-    .def("get_road", &RoadCorridor::GetRoad)
+    .def("GetRoad", &RoadCorridor::GetRoad)
     .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
-    .def("get_lane_corridor", &RoadCorridor::GetLaneCorridor)
+    .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
     .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
     .def_property_readonly("lane_corridors",
       &RoadCorridor::GetUniqueLaneCorridors)
@@ -134,10 +134,10 @@ py::class_<Lane,
   .def_property_readonly("left_boundary", &Lane::GetLeftBoundary)
   .def_property_readonly("right_boundary", &Lane::GetRightBoundary)
   .def_property_readonly("next_lane", &Lane::GetNextLane)
-  .def_property_readonly("lane_id", &Lane::get_id)
-  .def_property_readonly("type", &Lane::get_lane_type)
-  .def_property_readonly("driving_direction", &Lane::get_driving_direction)
-  .def_property_readonly("lane_position", &Lane::get_lane_position)
+  .def_property_readonly("lane_id", &Lane::GetId)
+  .def_property_readonly("type", &Lane::GetLaneType)
+  .def_property_readonly("driving_direction", &Lane::GetDrivingDirection)
+  .def_property_readonly("lane_position", &Lane::GetLanePosition)
   .def_property_readonly("polygon", &Lane::GetPolygon);
 
 
@@ -146,7 +146,7 @@ py::class_<Road,
            std::shared_ptr<Road>>(m, "Road")
   .def(py::init<XodrRoadPtr>())
   .def_property_readonly("next_road", &Road::GetNextRoad)
-  .def_property_readonly("road_id", &Road::get_id)
+  .def_property_readonly("road_id", &Road::GetId)
   .def_property_readonly("lanes", &Road::GetLanes)
-  .def("get_lane", &Road::GetLane);
+  .def("GetLane", &Road::GetLane);
 }

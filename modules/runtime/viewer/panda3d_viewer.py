@@ -270,7 +270,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def drawPolygon2d(self, polygon, color, alpha):
         # Draws a polygon with drawLine2d
-        points = polygon.toArray()
+        points = polygon.ToArray()
         self.line_thickness = self.calcLineThickness()
         for point in points:
             self.generator.link_segment(
@@ -281,7 +281,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
 
     def drawLine2d(self, line2d, color=Viewer.Color.Blue, alpha=1.0, dashed=False):
         # TODO: enable dashed line
-        line2d_np = line2d.toArray()
+        line2d_np = line2d.ToArray()
         for point in line2d_np:
             self.generator.link_segment(
                 Vec3(point[0], point[1], 2), Vec4(0, 0, 1, 1),
@@ -310,7 +310,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.agent_poses[agent.id][1] = state[int(StateDefinition.Y_POSITION)]
         self.agent_poses[agent.id][2] = state[int(
             StateDefinition.THETA_POSITION)]
-        transformed_polygon = agent.shape.transform(self.agent_poses[agent.id])
+        transformed_polygon = agent.shape.Transform(self.agent_poses[agent.id])
         self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
 
         # Fitting of 3d-Model frame to agent positon

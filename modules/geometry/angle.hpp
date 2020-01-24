@@ -25,7 +25,7 @@ const float B_RAD2DEG = 180.0 / B_PI; // convert from rad to degree
 const float B_DEG2RAD = B_PI / 180.0; // convert from degree to rad
 
 
-inline float norm_0_2PI(const float& angle) {
+inline float Norm0To2PI(const float& angle) {
   float normalized = std::fmod(angle, B_2PI);
   if (normalized < 0 )
 	{
@@ -34,11 +34,11 @@ inline float norm_0_2PI(const float& angle) {
 	return normalized;
 }
 
-inline float angle_diff(const float& angle1, const float& angle2) {
-  return abs(norm_0_2PI(angle1) - norm_0_2PI(angle2));
+inline float AngleDiff(const float& angle1, const float& angle2) {
+  return abs(Norm0To2PI(angle1) - Norm0To2PI(angle2));
 }
 
-inline float signed_angle_diff(const float& angle1, const float& angle2) {
+inline float SignedAngleDiff(const float& angle1, const float& angle2) {
   auto adiff = angle1 - angle2;
   return std::fmod(adiff + B_PI, B_2PI) - B_PI; 
 }

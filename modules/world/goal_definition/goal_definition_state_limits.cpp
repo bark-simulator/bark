@@ -13,10 +13,10 @@ namespace goal_definition {
 
 bool GoalDefinitionStateLimits::AtGoal(
   const modules::world::objects::Agent& agent) {
-  const auto agent_state = agent.get_current_state();
-  auto agent_angle = modules::geometry::norm_0_2PI(
+  const auto agent_state = agent.GetCurrentState();
+  auto agent_angle = modules::geometry::Norm0To2PI(
     agent_state[modules::models::dynamic::StateDefinition::THETA_POSITION]);
-  const modules::geometry::Point2d agent_pos = agent.get_current_position();
+  const modules::geometry::Point2d agent_pos = agent.GetCurrentPosition();
   return (modules::geometry::Within(agent_pos, xy_limits_) &&
           agent_angle >= angle_limits_.first &&
           agent_angle <= angle_limits_.second);

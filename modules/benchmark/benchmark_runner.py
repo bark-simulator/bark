@@ -25,13 +25,13 @@ class BenchmarkRunner:
         # run over each behavior
         for behavior_name, behavior_bark in self.behaviors.items():
             # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_set_name in self.benchmark_database:
+            for scenario_generator, scenario_SetName in self.benchmark_database:
                 step_time = scenario_generator.params["simulation"]["step_time"]
-                set_name = scenario_generator.params["simulation"]["step_time"]
+                SetName = scenario_generator.params["simulation"]["step_time"]
                 for scenario, idx in scenario_generator:
                     if idx > num_scenarios-1:
                         break
-                    self._run_scenario(scenario_set_name,
+                    self._run_scenario(scenario_SetName,
                                        scenario,
                                        idx,
                                        behavior_name,
@@ -39,9 +39,9 @@ class BenchmarkRunner:
                                        step_time)
 
                     
-    def _run_scenario(self, scenario_set_name, scenario, idx, behavior_name, behavior_bark, step_time):
+    def _run_scenario(self, scenario_SetName, scenario, idx, behavior_name, behavior_bark, step_time):
         logging.info("Running Set {}, Idx {} for behavior {}".format(
-            scenario_set_name, idx, behavior_name
+            scenario_SetName, idx, behavior_name
         ))
         world = scenario.get_world_state()
         world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior_bark
@@ -52,7 +52,7 @@ class BenchmarkRunner:
             evaluation_dict = self._get_evalution_dict(world)
             terminal = self._is_terminal(evaluation_dict)
             self._add_step_result(
-                scenario_set_name=scenario_set_name,
+                scenario_SetName=scenario_SetName,
                 scenario_idx=idx,
                 step=step,
                 behavior_name=behavior_name,
@@ -68,7 +68,7 @@ class BenchmarkRunner:
                 evaluator_bark = evaluator_type(eval_agent_ids[0])
             except:
                 evaluator_bark = evaluator_type()
-            world.add_evaluator(evaluator_name, evaluator_bark)
+            world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _get_evalution_dict(self, world):
         return world.evaluate()
@@ -80,7 +80,7 @@ class BenchmarkRunner:
         return terminal
 
     def _add_step_result(self,
-                     scenario_set_name,
+                     scenario_SetName,
                      scenario_idx,
                      step,
                      behavior_name,
@@ -88,7 +88,7 @@ class BenchmarkRunner:
                      terminal,
                      **kwargs):
 
-        dict = {"Set": scenario_set_name,
+        dict = {"Set": scenario_SetName,
                 "Idx" : scenario_idx,
                 "Step": step,
                 "Behavior" : behavior_name,
