@@ -42,22 +42,22 @@ void python_geometry(py::module m) {
             return modules::geometry::Point2d(t[0].cast<float>(), t[1].cast<float>());
         }));
 
-  m.def("distance", py::overload_cast<const modules::geometry::Point2d &, const modules::geometry::Point2d &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Point2d &, const modules::geometry::Point2d &>(&modules::geometry::Distance),
         "Returns euclidean distance between two modules::geometry::Point2d.");
 
-  m.def("distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Point2d &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Point2d &>(&modules::geometry::Distance),
         "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
 
-  m.def("distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Line &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Line &, const modules::geometry::Line &>(&modules::geometry::Distance),
         "Returns euclidean distance between modules::geometry::Line2d and modules::geometry::Point2d.");
         
-  m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Polygon &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Polygon &>(&modules::geometry::Distance),
         "Returns euclidean distance between polygon and polygon.");
 
-  m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Line &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Line &>(&modules::geometry::Distance),
         "Returns euclidean distance between polygon and line2d.");
 
-  m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::distance),
+  m.def("Distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::Distance),
         "Returns euclidean distance between polygon and point2d.");
 
   m.def("GetNearestPoint", &modules::geometry::GetNearestPoint, "get the nearest point from point to a line.");
@@ -101,11 +101,11 @@ void python_geometry(py::module m) {
       })
       .def("ToArray", &modules::geometry::Line::ToArray, "returns numpy array.")
       .def("valid", &modules::geometry::Line::Valid, "checks if line is valid.")
-      .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
+      .def("Rotate", &modules::geometry::Line::Rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Line::translate, "translates object.")
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
-      .def("length", &modules::geometry::Line::length, "calculates length of line.")
-      .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
+      .def("Length", &modules::geometry::Line::Length, "calculates length of line.")
+      .def("reverse", &modules::geometry::Line::Reverse, "reverse linestring in place")
       .def("AppendLinestring", &modules::geometry::Line::AppendLinestring, "append linestrings in place")
       .def("concatenate_linestring", &modules::geometry::Line::ConcatenateLinestring, "concatenate linestrings in place")
       .def_property_readonly("bounding_box", &modules::geometry::Line::BoundingBox)
@@ -152,7 +152,7 @@ void python_geometry(py::module m) {
       })
       .def("ToArray", &modules::geometry::Polygon::ToArray, "returns numpy array")
       .def("valid", &modules::geometry::Polygon::Valid, "checks if polygong is valid.")
-      .def("rotate", &modules::geometry::Polygon::rotate, "rotates object around center point.")
+      .def("Rotate", &modules::geometry::Polygon::Rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Polygon::translate, "translates center point.")
       .def("transform", &modules::geometry::Polygon::transform, "translates and rotates object.")
       .def_readonly("center", &modules::geometry::Polygon::center_, "center point.")

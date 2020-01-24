@@ -12,8 +12,9 @@ namespace world {
 namespace map {
 
 template <class Predicate>
-bool Roadgraph::CheckIdInFilteredGraph(const FilteredXodrLaneGraph_t<Predicate>& fg,
-                                const XodrLaneId& lane_id) const {
+bool Roadgraph::CheckIdInFilteredGraph(
+  const FilteredXodrLaneGraph_t<Predicate>& fg,
+  const XodrLaneId& lane_id) const {
   typename boost::graph_traits<
       FilteredXodrLaneGraph_t<Predicate>>::vertex_iterator i,
       end;
@@ -73,35 +74,14 @@ std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
         goal_vertex.first;
     while (current != start_vertex.first && idx < stop_the_loop) {
       path.push_back(fg[current].global_lane_id);
-      // std::cout << "current vertex " << current << " id " <<
-      // fg[current].global_lane_id << std::endl;
       if (current == p[current]) {
         return std::vector<XodrLaneId>();
       }
       current = p[current];
       ++idx;
     }
-    // std::cout << "current vertex " << current << " id " <<
-    // fg[current].global_lane_id << std::endl;
-
     path.push_back(fg[start_vertex.first].global_lane_id);
     std::reverse(path.begin(), path.end());
-
-    // std::cout << "p: " << std::endl;
-    // for (auto &pi : p) {
-    //     std::cout << pi << " ";
-    // }
-    // std::cout << std::endl;
-
-    // std::cout << "d: " << std::endl;
-    // for (auto &di : d) {
-    //     std::cout << di << " ";
-    // }
-
-    // std::cout << "pathi: " << std::endl;
-    // for (auto &pathi : path) {
-    //     std::cout << pathi << " ";
-    // }
   }
   return path;
 }

@@ -104,7 +104,7 @@ TEST(agent, PolygonFromState) {
 
   Polygon poly_out = agent1->GetPolygonFromState(agent1->GetCurrentState());
   
-  EXPECT_TRUE(equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
+  EXPECT_TRUE(Equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 5.0, 2.0, 3.14, 0.0, 0.0;
@@ -112,6 +112,6 @@ TEST(agent, PolygonFromState) {
 
   Polygon poly_out2 = agent2->GetPolygonFromState(agent2->GetCurrentState());
   
-  EXPECT_FALSE(equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
+  EXPECT_FALSE(Equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
 
 }

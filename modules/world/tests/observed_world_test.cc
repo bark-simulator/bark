@@ -180,10 +180,10 @@ TEST(observed_world, predict) {
   ObservedWorldPtr observed_predicted_world =
     std::dynamic_pointer_cast<ObservedWorld>(predicted_world);
   double distance_ego =
-    modules::geometry::distance(
+    modules::geometry::Distance(
       observed_predicted_world->CurrentEgoPosition(),
       observed_world.CurrentEgoPosition());
-  double distance_other = modules::geometry::distance(
+  double distance_other = modules::geometry::Distance(
     observed_predicted_world->GetOtherAgents().begin()->second->GetCurrentPosition(),  // NOLINT
     observed_world.GetOtherAgents().begin()->second->GetCurrentPosition());
 

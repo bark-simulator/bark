@@ -37,7 +37,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     return Shape<bg::model::linestring<T>, T>::AddPoint(p) && RecomputeS();
   }
 
-  auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
+  auto Length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
 
   unsigned int size() const { return Shape<bg::model::linestring<T>, T>::obj_.size(); }
 
@@ -62,7 +62,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     s_.size() == size();
   }
 
-  void reverse() {
+  void Reverse() {
     boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
   }
 
@@ -73,20 +73,20 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     auto first_point_other = *other_line.begin();
     auto last_point_other = *(other_line.end() - 1);
 
-    float distance_first_first = distance(first_point_this, first_point_other);
-    float distance_first_last = distance(first_point_this, last_point_other);
-    float distance_last_first = distance(last_point_this, first_point_other);
-    float distance_last_last = distance(last_point_this, last_point_other);
+    float distance_first_first = Distance(first_point_this, first_point_other);
+    float distance_first_last = Distance(first_point_this, last_point_other);
+    float distance_last_first = Distance(last_point_this, first_point_other);
+    float distance_last_last = Distance(last_point_this, last_point_other);
 
     if (distance_first_first <= std::min({distance_first_last, distance_last_first, distance_last_last})) {
       // Reverse this
-      reverse();
+      Reverse();
       AppendLinestring(other_line);
     } else if (distance_first_last <= std::min({distance_first_first, distance_last_first, distance_last_last})) {
       // Reverse both
-      reverse();
+      Reverse();
       Line_t new_line = other_line;
-      new_line.reverse();
+      new_line.Reverse();
       AppendLinestring(new_line);
     } else if (distance_last_first <= std::min({distance_first_first, distance_first_last, distance_last_last})) {
       // No reversing
@@ -94,7 +94,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     } else {
       // Reverse other
       Line_t new_line = other_line;
-      new_line.reverse();
+      new_line.Reverse();
       AppendLinestring(new_line);
     }
   }
@@ -164,20 +164,20 @@ inline std::shared_ptr<Shape<bg::model::linestring<T>, T>> Line_t<T>::Clone() co
   return new_line;
 }
 
-inline float distance(const Line &line, const Point2d &p) {
+inline float Distance(const Line &line, const Point2d &p) {
   return bg::distance(line.obj_, p);
 }
 
-inline float distance(const Line &line, const Line &line2) {
+inline float Distance(const Line &line, const Line &line2) {
   return bg::distance(line.obj_, line2.obj_);
 }
 
 template <typename T>
-inline T length(const Line &line) {
+inline T Length(const Line &line) {
   return bg::length<T>(line.obj_);
 }
 
-inline Line rotate(const Line& line, float hdg) {
+inline Line Rotate(const Line& line, float hdg) {
   using boost::geometry::strategy::transform::rotate_transformer;
   rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(hdg);
   Line line_rotated;
@@ -265,13 +265,9 @@ inline float GetTangentAngleAtS(Line l, float s) {
 }
 
 inline Point2d GetNormalAtS(Line l, float s) {
-  // std::cout << "GetNormalAtS() ";
-  // for (auto& ll : l) {
-  //   std::cout << boost::geometry::get<0>(ll) << ", " << boost::geometry::get<1>(ll) << " " << s << std::endl;
-  // }
   float tangent = GetTangentAngleAtS(l, s);
-  Point2d t(cos(tangent+asin(1)), sin(tangent+asin(1)));  // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
-  // std::cout << "tangent" << tangent << std::endl;
+  // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
+  Point2d t(cos(tangent+asin(1)), sin(tangent+asin(1)));
   return t;
 }
 
@@ -311,15 +307,6 @@ inline std::tuple<Point2d, double, uint> GetNearestPointAndS(Line l, const Point
     }
   }
 
-  // compute closest point on segment and interpolation factor lambda
-  // point: p, line a--b, closest point on line: s, tangent factor: lambda, normal factor: delta
-  // equation by matlab:
-  // syms a1 a2 b1 b2 s1 s2 p1 p2 lambda delta
-  // gl3x = (a1 + lambda*(b1 - a1) == s1);
-  // gl3y = (a2 + lambda*(b2 - a2) == s2);
-  // gl4x = (s1 + delta*(-b2 + a2) == p1);
-  // gl4y = (s2 + delta*(b1 - a1) == p2);
-  // sol = solve([gl3x, gl3y, gl4x, gl4y], [s1, s2, lambda, delta], 'ReturnConditions', true);
   const double a1 = bg::get<0>(l.obj_.at(min_segment_idx));
   const double a2 = bg::get<1>(l.obj_.at(min_segment_idx));
   const double b1 = bg::get<0>(l.obj_.at(min_segment_idx + 1));

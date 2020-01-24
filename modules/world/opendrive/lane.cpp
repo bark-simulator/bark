@@ -16,7 +16,7 @@ float XodrLane::CurvatureAt(const float s, const float s_delta) const {
   /*
  geometry::Point2d p0 = GetPointAtS(line_, s - s_delta);
  geometry::Point2d p1 = GetPointAtS(line_, s + s_delta);
-  float ds = distance(p0, p1);
+  float ds = Distance(p0, p1);
   */
   return 0.0;
 }

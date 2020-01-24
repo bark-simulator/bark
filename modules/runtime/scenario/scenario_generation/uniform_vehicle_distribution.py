@@ -193,7 +193,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         lims = self._ego_goal_state_limits
         goal_limits_left = goal_center_line.translate(Point2d(-lims[0], -lims[1]))
         goal_limits_right = goal_center_line.translate(Point2d(lims[0], lims[1]))
-        goal_limits_right.reverse()
+        goal_limits_right.Reverse()
         goal_limits_left.AppendLinestring(goal_limits_right)
         polygon = Polygon2d([0,0,0], goal_limits_left)
 
@@ -213,7 +213,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                     goal_definition):
     s = s_start
     if s_end < s_start:
-      linestring.reverse()
+      linestring.Reverse()
       s = s_end
       s_end = s_start
     agent_list = []

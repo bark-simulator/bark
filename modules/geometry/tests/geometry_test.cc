@@ -30,7 +30,7 @@ TEST(polygon, base_functionality) {
 
   Point2d_t<float> check_point(5.0, 2.0);
 
-  EXPECT_NEAR(distance(polygon, check_point), 1.0, 0.01);
+  EXPECT_NEAR(Distance(polygon, check_point), 1.0, 0.01);
 
   // polygon <--> polygon
   Point2d pointf_1(5.0, 2.0);
@@ -44,7 +44,7 @@ TEST(polygon, base_functionality) {
   polygon_2.AddPoint(pointf_3);
   polygon_2.AddPoint(pointf_4);
 
-  EXPECT_NEAR(distance(polygon, polygon_2), 1.0, 0.01);
+  EXPECT_NEAR(Distance(polygon, polygon_2), 1.0, 0.01);
 }
 
 TEST(line, base_functionality) {
@@ -65,7 +65,7 @@ TEST(line, base_functionality) {
 
   Point2d_t<float> check_point(2.5, 2.0);
 
-  EXPECT_NEAR(distance(line, check_point), 2.5, 0.01);
+  EXPECT_NEAR(Distance(line, check_point), 2.5, 0.01);
 }
 
 TEST(geometry, line) {
@@ -143,8 +143,8 @@ TEST(geometry, line_transform) {
   float offset_x = 1;
   float offset_y = 2;
 
-  Line obj_rotated = rotate(line_in, hdg);
-  EXPECT_NEAR(line_in.length(), obj_rotated.length(), 0.01);
+  Line obj_rotated = Rotate(line_in, hdg);
+  EXPECT_NEAR(line_in.Length(), obj_rotated.Length(), 0.01);
 
   EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(0)), 0, 0);
   EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(0)), 0, 0);
@@ -152,7 +152,7 @@ TEST(geometry, line_transform) {
   EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(1)), -10, 0.1);
 
   Line obj_transformed = translate(obj_rotated, offset_x, offset_y);
-  EXPECT_NEAR(line_in.length(), obj_transformed.length(), 0.01);
+  EXPECT_NEAR(line_in.Length(), obj_transformed.Length(), 0.01);
 
   EXPECT_NEAR(bg::get<0>(obj_transformed.obj_.at(0)), 1, 0);
   EXPECT_NEAR(bg::get<1>(obj_transformed.obj_.at(0)), 2, 0);
@@ -174,7 +174,7 @@ TEST(geometry, polygon) {
   EXPECT_TRUE(p.Valid());
 
   std::shared_ptr<Polygon> p2 =
-      std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
+      std::dynamic_pointer_cast<Polygon>(p.Rotate(3.14 / 2));
 }
 
 TEST(geometry, standard_shapes) {
@@ -836,7 +836,7 @@ TEST(optimizer, shrink_polygon) {
   polygon.AddPoint(Point2d(9, 3));
   polygon.AddPoint(Point2d(1, 1));
 
-  ASSERT_TRUE(equals(expected_shrunk_polygon, shrunk_polygon));
+  ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
 int main(int argc, char **argv) {
