@@ -401,7 +401,7 @@ inline double signed_distance(const Line &line, const Point2d &p, const float& o
   auto closest_point = get_nearest_point(line, p);
   auto direction_vector = closest_point - p;
 
-  double diff = signed_angle_diff(orientation , atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
+  double diff = signed_AngleDiff(orientation , atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? 1 : ((diff < 0) ? -1 : 0);
 
   return bg::distance(line.obj_, p)*sign;
