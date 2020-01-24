@@ -14,7 +14,7 @@ namespace goal_definition {
 bool GoalDefinitionPolygon::AtGoal(
   const modules::world::objects::Agent& agent) {
   return modules::geometry::Collide(
-      agent.GetPolygonFromState(agent.get_current_state()),
+      agent.GetPolygonFromState(agent.GetCurrentState()),
       goal_shape_);
 }
 

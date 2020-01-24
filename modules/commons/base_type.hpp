@@ -20,7 +20,7 @@ class BaseType {
   BaseType(const BaseType& base) : params_(base.params_) {}
   ~BaseType() {}
 
-  Params* get_params() const { return params_;}
+  Params* GetParams() const { return params_;}
 
  private:
   Params* params_;  // do not own

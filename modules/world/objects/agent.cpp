@@ -35,7 +35,7 @@ history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
   if (params) {
-    max_history_length_ = params->get_int(
+    max_history_length_ = params->GetInt(
     "MaxHistoryLength",
     "Maximum number of state-input pairs in state-input history",
      50);
@@ -49,7 +49,7 @@ goal_definition_(goal_definition) {
 
   if(map_interface) {
      if(!GenerateRoadCorridor(map_interface)) {
-       LOG(ERROR) << "Failed to generate road corridor for agent " << get_agent_id();
+       LOG(ERROR) << "Failed to generate road corridor for agent " << GetAgentId();
      }
   }
 
@@ -74,7 +74,7 @@ void Agent::BehaviorPlan(const float &dt, const ObservedWorld &observed_world) {
 
 void Agent::ExecutionPlan(const float &dt) {
   execution_model_->Execute(dt,
-                            behavior_model_->get_last_trajectory(),
+                            behavior_model_->GetLastTrajectory(),
                             dynamic_model_,
                             history_.back().first);
 }
@@ -83,7 +83,7 @@ void Agent::Execute(const float& world_time) {
   //! find closest state in execution-trajectory
   int index_world_time = 0;
   float min_time_diff = std::numeric_limits<float>::max();
-  Trajectory last_trajectory = execution_model_->get_last_trajectory();
+  Trajectory last_trajectory = execution_model_->GetLastTrajectory();
   for (int i = 0; i < last_trajectory.rows(); i++) {
     float diff_time = fabs(last_trajectory(i, TIME_POSITION) - world_time);
     if (diff_time < min_time_diff) {
@@ -92,8 +92,8 @@ void Agent::Execute(const float& world_time) {
     }
   }
   models::behavior::StateActionPair state_action_pair(
-      State(execution_model_->get_last_trajectory().row(index_world_time)),
-      behavior_model_->get_last_action());
+      State(execution_model_->GetLastTrajectory().row(index_world_time)),
+      behavior_model_->GetLastAction());
   history_.push_back(state_action_pair);
 
   //! remove states if queue becomes to large
@@ -108,8 +108,8 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
     return false;
   }
   road_corridor_ = map_interface->GenerateRoadCorridor(
-  get_current_position(),
-  goal_definition_->get_shape());
+  GetCurrentPosition(),
+  goal_definition_->GetShape());
   if(!road_corridor_) {
     return false;
   }
@@ -124,7 +124,7 @@ geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
                   state(StateDefinition::THETA_POSITION));
   std::shared_ptr<geometry::Polygon> polygon(
     std::dynamic_pointer_cast<geometry::Polygon>(
-      this->get_shape().transform(agent_pose)));
+      this->GetShape().Transform(agent_pose)));
   return *polygon;
 }
 
@@ -136,7 +136,7 @@ bool Agent::AtGoal() const {
 
 std::shared_ptr<Object> Agent::Clone() const {
   std::shared_ptr<Agent> new_agent = std::make_shared<Agent>(*this);
-  new_agent->set_agent_id(this->get_agent_id());
+  new_agent->SetAgentId(this->GetAgentId());
   if (behavior_model_) {
     new_agent->behavior_model_ = behavior_model_->Clone();
   }

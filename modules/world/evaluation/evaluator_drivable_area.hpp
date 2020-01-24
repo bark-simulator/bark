@@ -30,11 +30,11 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
-    for (const auto& agent : world.get_agents()) {
+    for (const auto& agent : world.GetAgents()) {
       Polygon poly_agent = agent.second->GetPolygonFromState(
-        agent.second->get_current_state());
+        agent.second->GetCurrentState());
       if (!boost::geometry::within(poly_agent.obj_,
-          agent.second->get_road_corridor()->GetPolygon().obj_))
+          agent.second->GetRoadCorridor()->GetPolygon().obj_))
         return true;
     }
     return false;

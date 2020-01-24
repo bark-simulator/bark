@@ -18,21 +18,21 @@ namespace opendrive {
 
 namespace bg = boost::geometry;
 
-bool PlanView::add_line(geometry::Point2d start_point,
+bool PlanView::AddLine(geometry::Point2d start_point,
                         float heading,
                         float length) {
   //! straight line
-  reference_line_.add_point(start_point);
+  reference_line_.AddPoint(start_point);
   geometry::Point2d end_point(
     bg::get<0>(start_point) + length * cos(heading),
     bg::get<1>(start_point) + length * sin(heading));
-  reference_line_.add_point(end_point);
+  reference_line_.AddPoint(end_point);
   //! calculate overall length
   length_ = bg::length(reference_line_.obj_);
   return true;
 }
 
-bool PlanView::add_spiral(
+bool PlanView::AddSpiral(
   geometry::Point2d start_point,
   float heading,
   float length,
@@ -47,7 +47,7 @@ bool PlanView::add_spiral(
   double s = 0.0;
   for (; s <= length;) {
     odrSpiral(s, x_old, y_old, cDot, curvature_start, heading, &x, &y, &t);
-    reference_line_.add_point(geometry::Point2d(x, y));
+    reference_line_.AddPoint(geometry::Point2d(x, y));
     if ((length - s < s_inc) && (length - s > 0.))
       s_inc = length - s;
     s += s_inc;
@@ -56,7 +56,7 @@ bool PlanView::add_spiral(
   return true;
 }
 
-void PlanView::calc_arc_position(
+void PlanView::CalcArcPosition(
   const float s,
   float initial_heading,
   float curvature,
@@ -71,20 +71,20 @@ void PlanView::calc_arc_position(
   // tangent = initial_heading + s * initial_curvature;
 }
 
-bool PlanView::add_arc(
+bool PlanView::AddArc(
   geometry::Point2d start_point,
   float heading,
   float length,
   float curvature,
   float s_inc) {
-  // add_spiral(start_point, heading, length, curvature, curvature, s_inc);
+  // AddSpiral(start_point, heading, length, curvature, curvature, s_inc);
 
   float dx, dy;
   double x_old = bg::get<0>(start_point), y_old = bg::get<1>(start_point);
   double s = 0.0;
   for (; s <= length;) {
-    calc_arc_position(s, heading, curvature, dx, dy);
-    reference_line_.add_point(geometry::Point2d(x_old + dx, y_old + dy));
+    CalcArcPosition(s, heading, curvature, dx, dy);
+    reference_line_.AddPoint(geometry::Point2d(x_old + dx, y_old + dy));
     if (length - s < s_inc && length - s > 0.)
       s_inc = length - s;
     s += s_inc;
@@ -92,9 +92,9 @@ bool PlanView::add_arc(
   return true;
 }
 
-bool PlanView::apply_offset_transform(float x, float y, float hdg) {
-  geometry::Line rotated_line = rotate(reference_line_, hdg);
-  geometry::Line transformed_line = translate(rotated_line, x, y);
+bool PlanView::ApplyOffsetTransform(float x, float y, float hdg) {
+  geometry::Line rotated_line = Rotate(reference_line_, hdg);
+  geometry::Line transformed_line = Translate(rotated_line, x, y);
   reference_line_ = transformed_line;
 
   return true;

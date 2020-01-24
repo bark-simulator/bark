@@ -28,12 +28,12 @@ void python_behavior(py::module m) {
       .def(py::init<modules::commons::Params *>())
       .def("plan", &BehaviorModel::Plan)
       .def("clone", &BehaviorModel::Clone)
-      .def("set_last_trajectory", &BehaviorModel::set_last_trajectory)
-      .def("set_last_action", &BehaviorModel::set_last_action)
-      .def("get_last_action", &BehaviorModel::get_last_action)
+      .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
+      .def("SetLastAction", &BehaviorModel::SetLastAction)
+      .def("GetLastAction", &BehaviorModel::GetLastAction)
       .def_property("last_trajectory",
-                    &BehaviorModel::get_last_trajectory,
-                    &BehaviorModel::set_last_trajectory);
+                    &BehaviorModel::GetLastTrajectory,
+                    &BehaviorModel::SetLastTrajectory);
 
   py::class_<BehaviorConstantVelocity,
              BehaviorModel,
@@ -45,7 +45,7 @@ void python_behavior(py::module m) {
       })
       .def(py::pickle(
         [](const BehaviorConstantVelocity &b) { 
-            return py::make_tuple(b.get_last_trajectory()); // 0
+            return py::make_tuple(b.GetLastTrajectory()); // 0
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 1)
@@ -64,7 +64,7 @@ void python_behavior(py::module m) {
       })
       .def(py::pickle(
         [](const BehaviorIDMClassic &b) { 
-            return py::make_tuple(b.get_last_trajectory()); // 0
+            return py::make_tuple(b.GetLastTrajectory()); // 0
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 1)

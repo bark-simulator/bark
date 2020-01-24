@@ -39,7 +39,7 @@ class ScenarioGeneration:
     if self._current_scenario_idx >= self.num_scenarios:
       self._current_scenario_idx = 0
       #print("Resetting scenario index to zero")
-    scenario = self.get_scenario(self._current_scenario_idx)
+    scenario = self.GetScenario(self._current_scenario_idx)
     scenario_idx = self._current_scenario_idx
     self._current_scenario_idx += 1
     return scenario, scenario_idx
@@ -47,7 +47,7 @@ class ScenarioGeneration:
   def get_num_scenarios(self):
     return len(self._scenario_list)
 
-  def get_scenario(self, idx):
+  def GetScenario(self, idx):
     return self._scenario_list[idx].copy()
 
   def __iter__(self):
@@ -56,7 +56,7 @@ class ScenarioGeneration:
 
   def __next__(self):
     if self._current_iter_idx < self.get_num_scenarios():
-        scenario = self.get_scenario(self._current_iter_idx)
+        scenario = self.GetScenario(self._current_iter_idx)
         idx = self._current_iter_idx
         self._current_iter_idx += 1
         return scenario, idx
