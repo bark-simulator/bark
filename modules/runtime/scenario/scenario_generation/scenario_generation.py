@@ -8,7 +8,7 @@ import os
 from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
-  def __init__(self, params=None, num_scenarios=None, random_seed=None):
+  def __init__(self, params=None, num_scenarios=None):
     self._params = params
     self._random_seed = random_seed
     self._current_scenario_idx = 0
@@ -19,17 +19,7 @@ class ScenarioGeneration:
         self._params = params
     self.initialize_params(params=self._params)
 
-    self._scenario_list = self.create_scenarios(params, num_scenarios, random_seed)
-
-  def initialize_params(self, params):
-    """Initialize params or default params necessary for scenario creation
-    
-    Arguments:
-        params {[modules.runtime.commons.parameters.ParameterServer]} --
-              [a parameter server instance to init params from]
-
-    """
-    pass
+    self._scenario_list = self.create_scenarios(params, num_scenarios)
 
   @property
   def params(self):

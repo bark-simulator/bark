@@ -18,16 +18,7 @@ import sys
 import numpy as np
 
 
-class ModelJsonConversion:
-  def __init__(self):
-    self.model_list_behavior = self.extract_models(
-      "bark.models.behavior", "Behavior\w+")
-    self.model_list_dynamic = self.extract_models(
-      "bark.models.dynamic", "SingleTrack")
-    self.model_list_execution = self.extract_models(
-      "bark.models.execution", "ExecutionModel\w+")
-    self.model_list_shape = self.extract_models(
-      "bark.geometry.standard_shapes", "\w+")
+class ModelConversion:
 
   def agent_from_json(self, agent_json, param_server):
     bark_agent = Agent(

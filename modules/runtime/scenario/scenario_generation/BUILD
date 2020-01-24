@@ -8,6 +8,9 @@ py_library(
             "drone_challenge.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
-    deps = ["//modules/runtime/scenario:scenario",],
+    deps = [
+        "//modules/runtime/scenario:scenario",
+        "//modules/runtime/scenario/scenario_generation/property_readers:property_readers"
+    ],
     visibility = ["//visibility:public"],
 )
