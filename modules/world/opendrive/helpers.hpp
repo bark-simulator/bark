@@ -19,7 +19,7 @@ XodrLaneSequence intersect_based_on_ids(const XodrLaneSequence& lane_sequence, c
   XodrLaneSequence intersect;
   for (auto& lane_id_1: lane_sequence ) {
     for (auto& lane2: lanes) {
-      if (lane_id_1 == lane2.second->get_id())
+      if (lane_id_1 == lane2.second->GetId())
       {
         intersect.push_back(lane_id_1);
       }

@@ -31,11 +31,11 @@ class DummyObservedWorld : public ObservedWorld {
     ObservedWorld(std::make_shared<World>(params), AgentId()),
     init_state_(init_state) { }
 
-  virtual State current_ego_state() const {
+  virtual State CurrentEgoState() const {
     return init_state_;
   }
 
-  virtual double get_world_time() const {
+  virtual double GetWorldTime() const {
     return 0.0f;
   }
  private:

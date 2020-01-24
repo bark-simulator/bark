@@ -18,9 +18,9 @@ PredictionSettings::PredictionSettings(const BehaviorModelPtr& ego_prediction, c
   others_prediction_model_(others_prediction) {}
 
 void PredictionSettings::ApplySettings(modules::world::ObservedWorld& observed_world) const {
-  observed_world.set_ego_behavior_model(BehaviorModelPtr(ego_prediction_model_->Clone()));
-  for (const auto &agent : observed_world.get_other_agents()) {
-      observed_world.set_behavior_model(agent.first, BehaviorModelPtr(others_prediction_model_->Clone()));
+  observed_world.SetEgoBehaviorModel(BehaviorModelPtr(ego_prediction_model_->Clone()));
+  for (const auto &agent : observed_world.GetOtherAgents()) {
+      observed_world.SetBehaviorModel(agent.first, BehaviorModelPtr(others_prediction_model_->Clone()));
   }
 }
 

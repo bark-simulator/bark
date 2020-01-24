@@ -15,16 +15,16 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-void XodrLaneSection::add_lane(const XodrLanePtr& lane)  {
-    lanes_[lane->get_id()] = lane;
+void XodrLaneSection::AddLane(const XodrLanePtr& lane)  {
+    lanes_[lane->GetId()] = lane;
 }
 
-XodrLanePtr XodrLaneSection::get_lane_by_position(XodrLanePosition pos) {
+XodrLanePtr XodrLaneSection::GetLane_by_position(XodrLanePosition pos) {
 
   XodrLanePtr ret_lane_ptr = nullptr;
 
   for ( auto const& lane : lanes_ ) {
-    if (pos == lane.second->get_lane_position()) {
+    if (pos == lane.second->GetLane_position()) {
       ret_lane_ptr = lane.second;
     }
   } 
@@ -51,7 +51,7 @@ XodrLanePtr XodrLaneSection::get_nearest_lane_on_n(double x, double y, double vx
   return ret_lane_ptr;
 }
 
-XodrLanePtr XodrLaneSection::get_lane_with_offset(const models::dynamic::State& state, double angle_offset) {
+XodrLanePtr XodrLaneSection::GetLane_with_offset(const models::dynamic::State& state, double angle_offset) {
   double x = state[models::dynamic::StateDefinition::X_POSITION];
   double y = state[models::dynamic::StateDefinition::Y_POSITION];
   double theta = state[models::dynamic::StateDefinition::THETA_POSITION];

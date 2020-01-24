@@ -64,29 +64,29 @@ class PyBehaviorModelTests(unittest.TestCase):
     behavior_model = DummyBehaviorModel(param_server)
 
     env.reset()
-    env._world.get_agent(0).behavior_model = behavior_model
-    env._world.get_agent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model = behavior_model
+    env._world.GetAgent(0).behavior_model.clone()
 
     np.testing.assert_array_equal(
-      env._world.get_agent(0).behavior_model.plan(0.2, env._world)[1],
+      env._world.GetAgent(0).behavior_model.plan(0.2, env._world)[1],
       np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10]))
 
     env.reset()
-    env._world.get_agent(0).behavior_model = behavior_model
+    env._world.GetAgent(0).behavior_model = behavior_model
     env._world.step(0.2)
     np.testing.assert_array_equal(
-      env._world.get_agent(0).state,
+      env._world.GetAgent(0).state,
       np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10], dtype=np.float32))
     env._world.step(0.2)
     np.testing.assert_array_equal(
-      env._world.get_agent(0).state,
+      env._world.GetAgent(0).state,
       np.array([0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10], dtype=np.float32))
     env._world.step(0.2)
     np.testing.assert_array_equal(
-      env._world.get_agent(0).state,
+      env._world.GetAgent(0).state,
       np.array([0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10], dtype=np.float32))
 
-    print("History:", env._world.get_agent(0).history)
+    print("History:", env._world.GetAgent(0).history)
     # environment loop
     env.reset()
     for i in range(0, 7):
@@ -110,16 +110,16 @@ class PyBehaviorModelTests(unittest.TestCase):
     behavior_model = DynamicBehaviorModel(single_track_model, param_server)
 
     env.reset()
-    env._world.get_agent(0).behavior_model = behavior_model
-    env._world.get_agent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model = behavior_model
+    env._world.GetAgent(0).behavior_model.clone()
 
 
     env.reset()
-    env._world.get_agent(0).behavior_model = behavior_model
-    env._world.get_agent(0).behavior_model.set_last_action(np.array([1., 2.]))
-    print(env._world.get_agent(0).behavior_model.get_last_action())
+    env._world.GetAgent(0).behavior_model = behavior_model
+    env._world.GetAgent(0).behavior_model.set_last_action(np.array([1., 2.]))
+    print(env._world.GetAgent(0).behavior_model.get_last_action())
     env._world.step(0.2)
-    print(env._world.get_agent(0).behavior_model.get_last_action())
+    print(env._world.GetAgent(0).behavior_model.get_last_action())
 
 
 if __name__ == '__main__':

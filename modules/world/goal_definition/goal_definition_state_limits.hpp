@@ -32,7 +32,7 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
   const modules::geometry::Polygon& get_xy_limits() const {return xy_limits_;}
-  const modules::geometry::Polygon& get_shape() const {return xy_limits_;}
+  const modules::geometry::Polygon& GetShape() const {return xy_limits_;}
   const std::pair<float,float> get_angle_limits() const {return angle_limits_;}
 
  private:

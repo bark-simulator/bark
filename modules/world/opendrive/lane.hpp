@@ -52,9 +52,9 @@ class XodrLane {
   ~XodrLane() {}
 
   //! setter functions
-  void set_id(const XodrLaneId lane_id) { lane_id_ = lane_id; }
+  void SetId(const XodrLaneId lane_id) { lane_id_ = lane_id; }
   void set_line(const geometry::Line line) { line_ = line; }
-  void set_link(const XodrLaneLink link) { link_ = link; }
+  void SetLink(const XodrLaneLink link) { link_ = link; }
   void set_speed(float speed) { speed_ = speed; }
   void set_lane_type(const XodrLaneType lt) { lane_type_ = lt; }
   void set_driving_direction(const XodrDrivingDirection& d) {
@@ -70,14 +70,14 @@ class XodrLane {
   //! getter functions
   geometry::Line get_line() const { return line_; }
 
-  XodrLaneLink get_link() const { return link_; }
+  XodrLaneLink GetLink() const { return link_; }
   XodrRoadMark get_road_mark() const { return road_mark_; }
   float get_speed() const { return speed_; }
-  XodrLaneType get_lane_type() const { return lane_type_; }
+  XodrLaneType GetLane_type() const { return lane_type_; }
   XodrDrivingDirection get_driving_direction() const {
     return driving_direction_; }
-  XodrLaneId get_id() const { return lane_id_; }
-  XodrLanePosition get_lane_position() const { return lane_position_; }
+  XodrLaneId GetId() const { return lane_id_; }
+  XodrLanePosition GetLane_position() const { return lane_position_; }
 
   float curvature_at(const float s, const float s_delta = 0.01) const;
   float curvature_dot_at(const float s) const;
@@ -100,9 +100,9 @@ class XodrLane {
 
 inline std::string print(const XodrLane& l) {
   std::stringstream ss;
-  ss << "id: " << l.get_id() << ", ";
-  ss << "position " << l.get_lane_position() << ", ";
-  ss << print(l.get_link());
+  ss << "id: " << l.GetId() << ", ";
+  ss << "position " << l.GetLane_position() << ", ";
+  ss << print(l.GetLink());
   ss << print(l.get_road_mark());
   ss << "speed: " << l.get_speed() << std::endl;
   return ss.str();

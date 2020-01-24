@@ -49,9 +49,9 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
 
     info = world.evaluate()
@@ -85,9 +85,9 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
 
     info = world.evaluate()
@@ -136,9 +136,9 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
     # just drive with the single motion primitive should be successful 
     for _ in range(0,1000):

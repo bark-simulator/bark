@@ -24,14 +24,14 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
                            int(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
 
-  dynamic::State ego_vehicle_state = observed_world.current_ego_state();
+  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
 
   // select state and get p0
   geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),
                          ego_vehicle_state(StateDefinition::Y_POSITION));
 
   geometry::Line line;
-  auto road_corr = observed_world.get_road_corridor();
+  auto road_corr = observed_world.GetRoadCorridor();
   if (!road_corr) {
     LOG(ERROR) << "No road corridor for longitudinal acceleration behavior found.";
     this->set_last_trajectory(traj);
@@ -54,7 +54,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
             0, 0);
 
     float s_start = get_nearest_s(line, pose);  // checked
-    double start_time = observed_world.get_world_time();
+    double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     double acc = CalculateLongitudinalAcceleration(observed_world);  // checked
     BARK_EXPECT_TRUE(!std::isnan(acc));

@@ -32,18 +32,18 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
 
 
   // relative velocity and longitudinal distance
-  const State ego_state = observed_world.current_ego_state();
+  const State ego_state = observed_world.CurrentEgoState();
   const float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
   auto leading_vehicle = GetLeadingVehicle(observed_world);
   double interaction_term = 0.0f;
   if(leading_vehicle.first) {
     // Leading vehicle exists in driving corridor, we calculate interaction term
 
-    const State lead_state = leading_vehicle.first->get_current_state();
+    const State lead_state = leading_vehicle.first->GetCurrentState();
     modules::world::map::Frenet lead_veh_frenet = leading_vehicle.second;
 
-    const float vehicle_length = observed_world.get_ego_agent()->get_shape().front_dist_ +
-                                  leading_vehicle.first->get_shape().rear_dist_;
+    const float vehicle_length = observed_world.GetEgoAgent()->GetShape().front_dist_ +
+                                  leading_vehicle.first->GetShape().rear_dist_;
     const double net_distance = lead_veh_frenet.lon - vehicle_length - 0.0f ; // For now assume ego longitudinal state at start of driving corridor
     const double net_velocity = ego_state(StateDefinition::VEL_POSITION) - lead_state(StateDefinition::VEL_POSITION);
 
@@ -60,7 +60,7 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
 }
 
 std::pair<AgentPtr, modules::world::map::Frenet> BehaviorIDMClassic::GetLeadingVehicle(const ObservedWorld& observed_world) {
-  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = observed_world.get_agent_in_front();
+  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = observed_world.GetAgentInFront();
   return leading_vehicle;
 }
 
