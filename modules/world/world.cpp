@@ -16,7 +16,7 @@ World::World(commons::Params* params) :
   agents_(),
   world_time_(0.0),
   remove_agents_(
-    params->get_bool("World::remove_agents_out_of_map",
+    params->GetBool("World::remove_agents_out_of_map",
       "Whether agents should be removed outside the bounding box.",
       false)) {}
 

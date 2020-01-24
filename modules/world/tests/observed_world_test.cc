@@ -165,7 +165,7 @@ TEST(observed_world, clone) {
 
 TEST(observed_world, predict) {
   SetterParams params;
-  params.set_real("integration_time_delta", 0.01);
+  params.SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world =

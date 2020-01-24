@@ -27,7 +27,7 @@ DynamicBehaviorModel::DynamicBehaviorModel(
   BehaviorModel(params),
   dynamic_model_(dynamic_model),
   integration_time_delta_(
-    params->get_real("integration_time_delta",
+    params->GetReal("integration_time_delta",
                       "delta t for integration", 0.01)) {
   }
 
@@ -49,7 +49,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   dynamic::Trajectory traj(
     num_trajectory_points,
-    this->GetParams()->get_int("DynamicModel::state_dimension",
+    this->GetParams()->GetInt("DynamicModel::state_dimension",
                                 "state vector length", 5));
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;

@@ -35,7 +35,7 @@ history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
   if (params) {
-    max_history_length_ = params->get_int(
+    max_history_length_ = params->GetInt(
     "MaxHistoryLength",
     "Maximum number of state-input pairs in state-input history",
      50);

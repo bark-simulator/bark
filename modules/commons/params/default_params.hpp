@@ -21,27 +21,27 @@ class DefaultParams : public Params {
   virtual ~DefaultParams() {}
 
   // get and set parameters as in python
-  virtual bool get_bool(const std::string &param_name,
+  virtual bool GetBool(const std::string &param_name,
                         const std::string &description,
                         const bool &default_value) { return default_value; }
                         
-  virtual float get_real(const std::string &param_name,
+  virtual float GetReal(const std::string &param_name,
                          const std::string &description,
                          const float &default_value) { return default_value; }
 
-  virtual int get_int(const std::string &param_name,
+  virtual int GetInt(const std::string &param_name,
                       const std::string &description,
                       const int &default_value) { return default_value; }
 
-  virtual std::vector<std::vector<float>> get_listlist_float(const std::string &param_name,
+  virtual std::vector<std::vector<float>> GetListListFloat(const std::string &param_name,
                       const std::string &description,
                       const std::vector<std::vector<float>> &default_value)  { return default_value; }
 
   // not used atm
-  virtual void set_bool(const std::string &param_name, const bool &value) {}
-  virtual void set_real(const std::string &param_name, const float &value) {}
-  virtual void set_int(const std::string &param_name, const int &value) {}
-  virtual void set_listlist_float(const std::string &param_name,
+  virtual void SetBool(const std::string &param_name, const bool &value) {}
+  virtual void SetReal(const std::string &param_name, const float &value) {}
+  virtual void SetInt(const std::string &param_name, const int &value) {}
+  virtual void SetListListFloat(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) {}
 
   virtual int operator[](const std::string &param_name) { return 0; }
