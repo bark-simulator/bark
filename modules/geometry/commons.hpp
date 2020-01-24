@@ -78,10 +78,10 @@ struct Shape {
   std::shared_ptr<Shape<G, T>> Rotate(const float &a) const;
 
   // translates object
-  std::shared_ptr<Shape<G, T>> translate(const Point2d &point) const;
+  std::shared_ptr<Shape<G, T>> Translate(const Point2d &point) const;
 
   // return object transform
-  std::shared_ptr<Shape<G, T>> transform(const Pose &pose) const;
+  std::shared_ptr<Shape<G, T>> Transform(const Pose &pose) const;
 
   virtual bool Valid() const;
 
@@ -143,7 +143,7 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const float &a) const {
 }
 
 template <typename G, typename T>
-inline std::shared_ptr<Shape<G, T>> Shape<G, T>::translate(const Point2d &point) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Translate(const Point2d &point) const {
   namespace trans = boost::geometry::strategy::transform;
   trans::translate_transformer<double, 2, 2> translate_backwards(bg::get<0>(point), bg::get<1>(point));
   G obj_transformed;
@@ -157,7 +157,7 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::translate(const Point2d &point)
 }
 
 template <typename G, typename T>
-inline std::shared_ptr<Shape<G, T>> Shape<G, T>::transform(const Pose &pose) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Transform(const Pose &pose) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);

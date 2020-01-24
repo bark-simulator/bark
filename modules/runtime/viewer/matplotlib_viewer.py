@@ -46,7 +46,7 @@ class MPViewer(BaseViewer):
             edgecolor=self.getColor(color),
             alpha=alpha)
         t_start = self.axes.transData
-        polygon_draw.set_transform(t_start)
+        polygon_draw.set_Transform(t_start)
         self.axes.add_patch(polygon_draw)
         center = polygon.center
         self.axes.plot(center[0], center[1], color=self.getColor(color))

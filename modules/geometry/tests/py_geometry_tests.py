@@ -153,8 +153,8 @@ class GeometryTests(unittest.TestCase):
             #viewer.drawPolygon2d(p2.Rotate(x), 'b', 0.2)
 
         # translate into the nirvana based on previous rotations and translations
-        #viewer.drawPolygon2d(p2.translate(Point2d(10,0)), 'g', 0.2)
-        #viewer.drawPolygon2d(p2.transform([5,5,0.4]), 'k', 0.2)
+        #viewer.drawPolygon2d(p2.Translate(Point2d(10,0)), 'g', 0.2)
+        #viewer.drawPolygon2d(p2.Transform([5,5,0.4]), 'k', 0.2)
         #viewer.show()
 
     def test_const_poly_from_array(self):

@@ -47,7 +47,7 @@ world.SetMap(map_interface)
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 50/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.translate(Point2d(-63,-61))
+goal_polygon = goal_polygon.Translate(Point2d(-63,-61))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
