@@ -37,7 +37,7 @@ public:
     Line polygon_line = driving_corridor_left_boundary;
     Line temp = driving_corridor_right_boundary;
     temp.reverse();
-    polygon_line.append_linestring(temp);
+    polygon_line.AppendLinestring(temp);
     const auto corridor_polygon = Polygon(Pose(), polygon_line);
 
     LaneCorridor lane_corridor;

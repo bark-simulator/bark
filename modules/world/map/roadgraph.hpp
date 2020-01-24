@@ -31,7 +31,7 @@ typedef std::shared_ptr<modules::geometry::Polygon> PolygonPtr;
 struct XodrLaneVertex {
   XodrRoadId road_id;
   XodrLaneId global_lane_id;
-  XodrLaneId get_global_line_id() { return global_lane_id; }
+  XodrLaneId GetGlobalLineId() { return global_lane_id; }
   XodrLanePtr GetLane() { return lane; }
   XodrLanePtr lane;
   PolygonPtr polygon;
@@ -54,7 +54,7 @@ struct XodrLaneEdge {
   XodrLaneEdgeType edge_type;
   float weight;  //! @todo tobias: for shortest path calculation: a very basic
                  //! implementation!
-  XodrLaneEdgeType GetEdge_type() const { return edge_type; }
+  XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
   XodrLaneEdge(XodrLaneEdgeType edge_type_in)
       : edge_type(edge_type_in),

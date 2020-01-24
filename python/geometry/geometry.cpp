@@ -60,23 +60,23 @@ void python_geometry(py::module m) {
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::distance),
         "Returns euclidean distance between polygon and point2d.");
 
-  m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
+  m.def("GetNearestPoint", &modules::geometry::GetNearestPoint, "get the nearest point from point to a line.");
 
-  m.def("get_nearest_s", &modules::geometry::get_nearest_s, "get the nearest s value from point to a line.");
+  m.def("GetNearestS", &modules::geometry::GetNearestS, "get the nearest s value from point to a line.");
   
   m.def("GetPointAtS", &modules::geometry::GetPointAtS,
                                  "get the Point2d at position s of the line");
 
-  m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s,
+  m.def("GetTangentAngleAtS", &modules::geometry::GetTangentAngleAtS,
                                    "get the angle at position s of the line");
   
-  m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
+  m.def("GetNearestPointAndS", &modules::geometry::GetNearestPointAndS, 
                         "get the point nearest to another point and its position on the line s ");
 
-  m.def("GetLine_from_s_interval", &modules::geometry::GetLine_from_s_interval, 
+  m.def("GetLineFromSInterval", &modules::geometry::GetLineFromSInterval, 
                         "get line between specified interval.");
 
-  m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 
+  m.def("MergeBoundingBoxes", &modules::geometry::MergeBoundingBoxes<modules::geometry::Point2d>, 
                         "merge two bounding boxes consisting of pairs of min and max corners");
 
   m.def("compute_center_line", &modules::geometry::ComputeCenterLine, 
@@ -85,13 +85,13 @@ void python_geometry(py::module m) {
   py::class_<modules::geometry::Line,
              std::shared_ptr<modules::geometry::Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
-      .def("addPoint", &modules::geometry::Line::add_point, "add a point")
+      .def("addPoint", &modules::geometry::Line::AddPoint, "add a point")
       .def("addPoint", [](modules::geometry::Line &line, py::list list) {
         if (list.size() != 2) {
           printf("Error: List size of two required.");
           return;
         }
-        line.add_point(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
+        line.AddPoint(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
       })
       .def("__repr__", [](const modules::geometry::Line &l) {
         std::stringstream ss;
@@ -106,7 +106,7 @@ void python_geometry(py::module m) {
       .def("transform", &modules::geometry::Line::transform, "translates and rotates object.")
       .def("length", &modules::geometry::Line::length, "calculates length of line.")
       .def("reverse", &modules::geometry::Line::reverse, "reverse linestring in place")
-      .def("append_linestring", &modules::geometry::Line::append_linestring, "append linestrings in place")
+      .def("AppendLinestring", &modules::geometry::Line::AppendLinestring, "append linestrings in place")
       .def("concatenate_linestring", &modules::geometry::Line::ConcatenateLinestring, "concatenate linestrings in place")
       .def_property_readonly("bounding_box", &modules::geometry::Line::BoundingBox)
       .def_readwrite("center", &modules::geometry::Line::center_, "center point.")
@@ -122,7 +122,7 @@ void python_geometry(py::module m) {
             modules::geometry::Line l;
             auto points = t[0].cast<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>();
             for(int i = 0; i < points.rows(); ++i) {
-              l.add_point(modules::geometry::Point2d(points(i,0), points(i,1)));
+              l.AddPoint(modules::geometry::Point2d(points(i,0), points(i,1)));
             }
             return l;
         }));
@@ -136,13 +136,13 @@ void python_geometry(py::module m) {
                        "Create polygon with center point and point list")
       .def(py::init<modules::geometry::Pose, const modules::geometry::Line&>(),
                        "Create polygon with center point and line enclosing polygon")
-      .def("addPoint", &modules::geometry::Polygon::add_point, "add a point")
+      .def("addPoint", &modules::geometry::Polygon::AddPoint, "add a point")
       .def("addPoint", [](modules::geometry::Polygon &polygon, py::list list) {
         if (list.size() != 2) {
           printf("Error: List size of two required.");
           return;
         }
-        polygon.add_point(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
+        polygon.AddPoint(modules::geometry::Point2d(list[0].cast<float>(), list[1].cast<float>()));
       })
       .def("__repr__", [](const modules::geometry::Polygon &p) {
         std::stringstream ss;
@@ -173,7 +173,7 @@ void python_geometry(py::module m) {
             modules::geometry::Polygon p;
             auto points = t[0].cast<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>();
             for(int i = 0; i < points.rows(); ++i) {
-              p.add_point(modules::geometry::Point2d(points(i,0), points(i,1)));
+              p.AddPoint(modules::geometry::Point2d(points(i,0), points(i,1)));
             }
             p.center_ = t[1].cast<modules::geometry::Pose>();
             return p;

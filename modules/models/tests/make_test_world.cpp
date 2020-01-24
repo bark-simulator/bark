@@ -81,22 +81,22 @@ WorldPtr modules::models::tests::make_test_world(
   // Define some driving corridor from x=1 to x=20, define it in such a way
   // that no agent collides with the corridor initially
   Line center;
-  center.add_point(Point2d(-10, 0));
-  center.add_point(Point2d(1, 0));
-  center.add_point(Point2d(2, 0));
-  center.add_point(Point2d(2000, 0));
+  center.AddPoint(Point2d(-10, 0));
+  center.AddPoint(Point2d(1, 0));
+  center.AddPoint(Point2d(2, 0));
+  center.AddPoint(Point2d(2000, 0));
 
   Line left;
-  left.add_point(Point2d(-10, 3));
-  left.add_point(Point2d(1, 3));
-  left.add_point(Point2d(2, 3));
-  left.add_point(Point2d(2000, 3));
+  left.AddPoint(Point2d(-10, 3));
+  left.AddPoint(Point2d(1, 3));
+  left.AddPoint(Point2d(2, 3));
+  left.AddPoint(Point2d(2000, 3));
 
   Line right;
-  right.add_point(Point2d(-10, -3));
-  right.add_point(Point2d(1, -3));
-  right.add_point(Point2d(2, -3));
-  right.add_point(Point2d(2000, -3));
+  right.AddPoint(Point2d(-10, -3));
+  right.AddPoint(Point2d(1, -3));
+  right.AddPoint(Point2d(2, -3));
+  right.AddPoint(Point2d(2000, -3));
 
   RoadCorridorPtr road_corridor(new DummyRoadCorridor(center, left, right));
   RoadCorridorPtr road_corridor2(new DummyRoadCorridor(center, left, right));

@@ -163,7 +163,7 @@ void python_opendrive(py::module m) {
       .def("AddConnection", &Junction::AddConnection)
       .def(py::init<std::string, int>());
 
-  m.def("fresnel_cos", &fresnelCos);
-  m.def("fresnel_sin", &fresnelSin);
+  m.def("fresnel_cos", &FresnelCos);
+  m.def("fresnel_sin", &FresnelSin);
 
 }

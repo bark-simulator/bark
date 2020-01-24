@@ -54,7 +54,7 @@ class OpenDriveMap {
       for (auto &lane_section : road.second->GetLaneSections()) {
         for (auto &lane : lane_section->GetLanes()) {
           auto linestring = lane.second->GetLine();
-          all_lanes_linestrings.append_linestring(linestring);
+          all_lanes_linestrings.AppendLinestring(linestring);
         }
       }
     }

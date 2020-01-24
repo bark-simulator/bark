@@ -58,7 +58,7 @@ struct LaneCorridor {
     return center_line_.length();
   }
   float GetS(const Point2d& pt) const {
-    return std::get<1>(get_nearest_point_and_s(center_line_, pt));
+    return std::get<1>(GetNearestPointAndS(center_line_, pt));
   }
   float LengthUntilEnd(const Point2d& pt) const {
     return GetLength() - GetS(pt);

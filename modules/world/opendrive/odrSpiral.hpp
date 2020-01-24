@@ -36,8 +36,8 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-double fresnelCos(double xxa);
-double fresnelSin(double xxa);
+double FresnelCos(double xxa);
+double FresnelSin(double xxa);
 
 void odrSpiral(double s, double cDot, double *x, double *y, double *t);
 void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start, double theta_start, double *x, double *y, double *t);

@@ -82,7 +82,7 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(np.array_equal(np.array([2,3]),np.array([bb2[0].x(), bb2[0].y()])))
         self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb2[1].x(), bb2[1].y()])))
 
-        bb_merged = merge_bounding_boxes(bb, bb2)
+        bb_merged = MergeBoundingBoxes(bb, bb2)
 
         self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb_merged[0].x(), bb_merged[0].y()])))
         self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb_merged[1].x(), bb_merged[1].y()])))

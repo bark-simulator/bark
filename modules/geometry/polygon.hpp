@@ -94,7 +94,7 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const Line_t<T>& line)
       left_dist_(0.0f),
       right_dist_(0.0f) {
   for (const T& next_pt : line.obj_) {
-    Shape<bg::model::polygon<T>, T>::add_point(next_pt);
+    Shape<bg::model::polygon<T>, T>::AddPoint(next_pt);
   }
   boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
   UpdateDistancesToCenter();
@@ -223,7 +223,7 @@ inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
 
   for (auto const& point :
        boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon->add_point(point);
+    shrunk_polygon->AddPoint(point);
   }
   assert(shrunk_polygon->Valid());
   return true;

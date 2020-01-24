@@ -97,7 +97,7 @@ std::vector<std::vector<XodrLaneId>> Roadgraph::FindAllPathsInSubgraph(
     const std::vector<XodrLaneId> &lane_id_subset) {
   struct Predicate {
     bool operator()(XodrLaneGraph::edge_descriptor edge_des) const {
-      XodrLaneEdgeType lane_edge_type = (*g)[edge_des].GetEdge_type();
+      XodrLaneEdgeType lane_edge_type = (*g)[edge_des].GetEdgeType();
       return (find(edge_type_subset.begin(), edge_type_subset.end(),
                    lane_edge_type) != edge_type_subset.end());
     }
@@ -639,17 +639,17 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeXodrLanePolygon(
     success = true;
 
     for (auto const &p : lb.first->GetLine()) {
-      polygon->add_point(p);
+      polygon->AddPoint(p);
     }
     // outer
     auto reversed_outer = lb.second->GetLine();
     reversed_outer.reverse();
 
     for (auto const &p : reversed_outer) {
-      polygon->add_point(p);
+      polygon->AddPoint(p);
     }
     // Polygons need to be closed!
-    polygon->add_point(*(lb.first->GetLine().begin()));
+    polygon->AddPoint(*(lb.first->GetLine().begin()));
   }
   return std::make_pair(polygon, success);
 }

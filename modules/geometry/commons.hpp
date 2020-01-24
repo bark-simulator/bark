@@ -60,7 +60,7 @@ template <typename G, typename T>
 struct Shape {
   Shape(const Pose &center, std::vector<T> points, int32_t id) : obj_(), id_(id), center_(center) {
     for (auto it = points.begin(); it != points.end(); ++it)
-      add_point(*it);
+      AddPoint(*it);
   }
 
   Shape(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points, int32_t id) : obj_(), id_(id), center_(center) {
@@ -69,7 +69,7 @@ struct Shape {
       // std::vector<T> vec = points.rows(rowIter);
       // for(auto col = 0;col<=1;++col){
       // Point2d_t<T> p = (points(rowIter,0),points(rowIter,1))
-      add_point(T(points.coeff(rowIter, 0), points.coeff(rowIter, 1)));
+      AddPoint(T(points.coeff(rowIter, 0), points.coeff(rowIter, 1)));
       //}
     }
   }
@@ -91,7 +91,7 @@ struct Shape {
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const = 0;
 
-  bool add_point(const T &p) {
+  bool AddPoint(const T &p) {
     bg::append(obj_, p);
     return true;
   }

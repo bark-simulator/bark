@@ -53,7 +53,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
             0, 0);
 
-    float s_start = get_nearest_s(line, pose);  // checked
+    float s_start = GetNearestS(line, pose);  // checked
     double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     double acc = CalculateLongitudinalAcceleration(observed_world);  // checked
@@ -68,7 +68,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       t_i = static_cast<float>(i) * dt + start_time;
 
       geometry::Point2d traj_point = GetPointAtS(line, s_i);  // checked
-      float traj_angle = get_tangent_angle_at_s(line, s_i);      // checked
+      float traj_angle = GetTangentAngleAtS(line, s_i);      // checked
 
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));
