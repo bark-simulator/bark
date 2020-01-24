@@ -39,6 +39,7 @@ void python_world(py::module m) {
     .def("clear_evaluators", &World::clear_evaluators)
     .def("set_map", &World::set_map)
     .def("add_evaluator", &World::add_evaluator)
+    .def("GetNearestAgents", &World::GetNearestAgents)
     .def_property_readonly("evaluators", &World::get_evaluators)
     .def("evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::get_agents)
