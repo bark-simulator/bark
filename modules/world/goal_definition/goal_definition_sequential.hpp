@@ -39,7 +39,7 @@ class GoalDefinitionSequential : public GoalDefinition  {
   GoalDefinitionPtr GetNextGoal() const;
   GoalDefinitionPtr GetCurrentGoal() const;
 
-  std::vector<GoalDefinitionPtr> GetSequential_goals() const {
+  std::vector<GoalDefinitionPtr> GetSequentialGoals() const {
     return sequential_goals_;
   }
 
