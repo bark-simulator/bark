@@ -31,7 +31,7 @@ Frenet::Frenet(const Point2d& position, const Line& path) {
   // calculate sign of lateral coordinate
   auto tangent_angle = modules::geometry::get_tangent_angle_at_s(path, lon);
   auto direction_vector = position - nearest_point;
-  double diff = modules::geometry::signed_angle_diff(
+  double diff = modules::geometry::signed_AngleDiff(
     tangent_angle,
     atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
