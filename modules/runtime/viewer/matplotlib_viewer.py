@@ -2,7 +2,7 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-
+import matplotlib
 from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 
@@ -39,14 +39,14 @@ class MPViewer(BaseViewer):
 
     def drawPolygon2d(self, polygon, color, alpha):
         points = polygon.ToArray()
-        polygon_draw = Polygon(
+        polygon_draw = matplotlib.patches.Polygon(
             points,
             True,
             facecolor=self.getColor(color),
             edgecolor=self.getColor(color),
             alpha=alpha)
         t_start = self.axes.transData
-        polygon_draw.set_Transform(t_start)
+        polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
         center = polygon.center
         self.axes.plot(center[0], center[1], color=self.getColor(color))
