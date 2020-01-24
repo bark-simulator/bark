@@ -49,7 +49,7 @@ class PygameViewer(BaseViewer):
             lanes_np = []
             lanes_dashed = []
 
-            for _, road in map.get_roads().items():
+            for _, road in map.GetRoads().items():
                 for lane_section in road.lane_sections:
                     for _, lane in lane_section.GetLanes().items():
                         lane_np = lane.line.toArray()

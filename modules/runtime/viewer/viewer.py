@@ -204,7 +204,7 @@ class BaseViewer(Viewer):
 
     def drawMap(self, map):
         # draw the boundary of each lane
-        for _, road in map.get_roads().items():
+        for _, road in map.GetRoads().items():
             self.drawXodrRoad(road, self.color_lane_boundaries)
 
     def drawXodrRoad(self, road, color=None):

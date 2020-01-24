@@ -69,9 +69,9 @@ typedef boost::graph_traits<XodrLaneGraph>::edge_descriptor edge_t;
 
 struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
   bool operator()(XodrLaneGraph::edge_descriptor ed) const {
-    bool filtered_s = (*g)[boost::source(ed, *g)].lane->GetLane_type() ==
+    bool filtered_s = (*g)[boost::source(ed, *g)].lane->GetLaneType() ==
                       XodrLaneType::DRIVING;
-    bool filtered_t = (*g)[boost::target(ed, *g)].lane->GetLane_type() ==
+    bool filtered_t = (*g)[boost::target(ed, *g)].lane->GetLaneType() ==
                       XodrLaneType::DRIVING;
     bool filtered_e =
         (*g)[ed].edge_type == XodrLaneEdgeType::LANE_SUCCESSOR_EDGE;
@@ -81,7 +81,7 @@ struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
   }
 
   bool operator()(XodrLaneGraph::vertex_descriptor vd) const {
-    bool filtered = (*g)[vd].lane->GetLane_type() == XodrLaneType::DRIVING;
+    bool filtered = (*g)[vd].lane->GetLaneType() == XodrLaneType::DRIVING;
     return filtered;
   }
   XodrLaneGraph* g;
@@ -257,7 +257,7 @@ class Roadgraph {
       out << "["
           << "label=\""
           << "road_id=" << rm[s] << " lane_id=" << lm[s]
-          << " lane_pos=" << lanemap_[s]->GetLane_position() << "\"]";
+          << " lane_pos=" << lanemap_[s]->GetLanePosition() << "\"]";
     }
 
    private:

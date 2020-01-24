@@ -44,22 +44,22 @@ TEST(point_in_lane, map_interface) {
   XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_0 = {0, 10, off0};
   XodrLanePtr lane0 =
-    create_lane_from_lane_width(0, p->get_reference_line(), lane_width_0, 0.05);
-  lane0->set_lane_type(XodrLaneType::DRIVING);
+    CreateLaneFromLaneWidth(0, p->GetReferenceLine(), lane_width_0, 0.05);
+  lane0->SetLaneType(XodrLaneType::DRIVING);
 
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10, off};
 
   //! XodrLanes
-  XodrLanePtr lane1 = create_lane_from_lane_width(
-    -1, p->get_reference_line(), lane_width_1, 0.05);
-  lane1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane2 = create_lane_from_lane_width(
-    1, p->get_reference_line(), lane_width_1, 0.05);
-  lane2->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane3 = create_lane_from_lane_width(
-    2, lane2->get_line(), lane_width_1, 0.05);
-  lane3->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane1 = CreateLaneFromLaneWidth(
+    -1, p->GetReferenceLine(), lane_width_1, 0.05);
+  lane1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane2 = CreateLaneFromLaneWidth(
+    1, p->GetReferenceLine(), lane_width_1, 0.05);
+  lane2->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane3 = CreateLaneFromLaneWidth(
+    2, lane2->GetLine(), lane_width_1, 0.05);
+  lane3->SetLaneType(XodrLaneType::DRIVING);
 
   ls->AddLane(lane0);
   ls->AddLane(lane1);
@@ -70,7 +70,7 @@ TEST(point_in_lane, map_interface) {
   r->SetPlanView(p);
   r->AddLaneSection(ls);
 
-  open_drive_map->add_road(r);
+  open_drive_map->AddRoad(r);
 
   MapInterface map_interface;
   map_interface.SetOpenDriveMap(open_drive_map);

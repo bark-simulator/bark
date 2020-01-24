@@ -79,7 +79,7 @@ py::class_<RoadCorridor,
     .def_property("roads", &RoadCorridor::GetRoads,
       &RoadCorridor::SetRoads)
     .def_property_readonly("lanes", &RoadCorridor::GetLanes)
-    .def("get_road", &RoadCorridor::GetRoad)
+    .def("GetRoad", &RoadCorridor::GetRoad)
     .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
     .def("GetLane_corridor", &RoadCorridor::GetLaneCorridor)
     .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
@@ -135,9 +135,9 @@ py::class_<Lane,
   .def_property_readonly("right_boundary", &Lane::GetRightBoundary)
   .def_property_readonly("next_lane", &Lane::GetNextLane)
   .def_property_readonly("lane_id", &Lane::GetId)
-  .def_property_readonly("type", &Lane::GetLane_type)
-  .def_property_readonly("driving_direction", &Lane::get_driving_direction)
-  .def_property_readonly("lane_position", &Lane::GetLane_position)
+  .def_property_readonly("type", &Lane::GetLaneType)
+  .def_property_readonly("driving_direction", &Lane::GetDrivingDirection)
+  .def_property_readonly("lane_position", &Lane::GetLanePosition)
   .def_property_readonly("polygon", &Lane::GetPolygon);
 
 

@@ -86,10 +86,10 @@ TEST(world, world_step)
   std::shared_ptr<XodrLane> l_2(new XodrLane(1));
   std::shared_ptr<XodrLane> l_3(new XodrLane(-1));
 
-  l_0 = create_lane_from_lane_width(1, p_1->get_reference_line(), lane_width_1);
-  l_1 = create_lane_from_lane_width(-1, p_1->get_reference_line(), lane_width_2);
-  l_2 = create_lane_from_lane_width(1, p_1->get_reference_line(), lane_width_3);
-  l_3 = create_lane_from_lane_width(-1, p_1->get_reference_line(), lane_width_4);
+  l_0 = CreateLaneFromLaneWidth(1, p_1->GetReferenceLine(), lane_width_1);
+  l_1 = CreateLaneFromLaneWidth(-1, p_1->GetReferenceLine(), lane_width_2);
+  l_2 = CreateLaneFromLaneWidth(1, p_1->GetReferenceLine(), lane_width_3);
+  l_3 = CreateLaneFromLaneWidth(-1, p_1->GetReferenceLine(), lane_width_4);
 
   section_1->AddLane(l_0);
   section_1->AddLane(l_1);
@@ -104,7 +104,7 @@ TEST(world, world_step)
   r->AddLaneSection(section_2);
 
   modules::world::opendrive::OpenDriveMapPtr open_drive_map(new modules::world::opendrive::OpenDriveMap());
-  open_drive_map->add_road(r);
+  open_drive_map->AddRoad(r);
 
   RoadgraphPtr roadgraph(new Roadgraph());
   MapInterfacePtr map_interface(new MapInterface());

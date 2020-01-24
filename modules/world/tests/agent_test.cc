@@ -73,7 +73,7 @@ TEST(agent, standard_agent) {
     r.AddLaneSection(section_2);
 
     modules::world::opendrive::MapPtr map(new modules::world::opendrive::Map());
-    map->add_road(r);
+    map->AddRoad(r);
     world->SetMap(map);
 
 

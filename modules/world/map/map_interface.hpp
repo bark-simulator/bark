@@ -124,7 +124,7 @@ class MapInterface {
   std::map<std::size_t, RoadCorridorPtr> road_corridors_;
 
   static bool IsLaneType(rtree_lane_value const &m) {
-    return (m.second->GetLane_type() == XodrLaneType::DRIVING);
+    return (m.second->GetLaneType() == XodrLaneType::DRIVING);
   }
 };
 

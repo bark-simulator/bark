@@ -20,7 +20,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 
 
 def helper_plot(xodr_parser):
-    for _, road in xodr_parser.map.get_roads().items():
+    for _, road in xodr_parser.map.GetRoads().items():
         for lane_section in road.lane_sections:
             for _, lane in lane_section.GetLanes().items():
 

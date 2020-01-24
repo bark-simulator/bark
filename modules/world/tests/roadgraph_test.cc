@@ -118,7 +118,7 @@ TEST(roadgraph, road_adjacency_simple)
 }
 
 
-TEST(roadgraph, get_successor_lane_test)
+TEST(roadgraph, GetSuccessor_lane_test)
 {
   using namespace modules::world::map;
   Roadgraph r;
@@ -142,7 +142,7 @@ TEST(roadgraph, get_successor_lane_test)
   ASSERT_TRUE(suc[0] == l01);
 }
 
-TEST(roadgraph, get_predecessor_lane_test)
+TEST(roadgraph, GetPredecessor_lane_test)
 {
   using namespace modules::world::map;
   Roadgraph r;
@@ -325,12 +325,12 @@ TEST(roadgraph, FindPath_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_5(new XodrLane()); lane_5->SetId(60); lane_5->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_5(new XodrLane()); lane_5->SetId(60); lane_5->SetLaneType(XodrLaneType::DRIVING);
   XodrLaneId l0 = r.AddLane(0, lane_0);
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -450,11 +450,11 @@ TEST(roadgraph, FindPath_in_unconnected_graph_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->SetLaneType(XodrLaneType::DRIVING);
   XodrLaneId l0 = r.AddLane(0, lane_0);
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -477,12 +477,12 @@ TEST(roadgraph, find_drivable_path_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_5(new XodrLane()); lane_5->SetId(60); lane_5->set_lane_type(XodrLaneType::SIDEWALK);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_4(new XodrLane()); lane_4->SetId(50); lane_4->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_5(new XodrLane()); lane_5->SetId(60); lane_5->SetLaneType(XodrLaneType::SIDEWALK);
   XodrLaneId l0 = r.AddLane(0, lane_0); 
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -511,10 +511,10 @@ TEST(roadgraph, find_drivable_path_in_unconnected_graph_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::SIDEWALK);
-  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::SIDEWALK);
+  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->SetLaneType(XodrLaneType::DRIVING);
   XodrLaneId l0 = r.AddLane(0, lane_0); 
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -533,10 +533,10 @@ TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->set_lane_type(XodrLaneType::SIDEWALK);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_3(new XodrLane()); lane_3->SetId(40); lane_3->SetLaneType(XodrLaneType::SIDEWALK);
   XodrLaneId l0 = r.AddLane(0, lane_0); 
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -555,9 +555,9 @@ TEST(roadgraph, FindPath_along_neighbor_edges_test)
   using namespace modules::world::map;
   Roadgraph r;
 
-  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->set_lane_type(XodrLaneType::DRIVING);
-  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->set_lane_type(XodrLaneType::DRIVING);
+  XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_1(new XodrLane()); lane_1->SetId(20); lane_1->SetLaneType(XodrLaneType::DRIVING);
+  XodrLanePtr lane_2(new XodrLane()); lane_2->SetId(30); lane_2->SetLaneType(XodrLaneType::DRIVING);
   XodrLaneId l0 = r.AddLane(0, lane_0);
   XodrLaneId l1 = r.AddLane(1, lane_1);
   XodrLaneId l2 = r.AddLane(2, lane_2);
@@ -618,14 +618,14 @@ TEST(roadgraph, generate_roadgraph_neighbours_test)
 
   //! XodrLane
   XodrLanePtr lane0(new XodrLane(0));
-  lane0->set_line(p->get_reference_line());
+  lane0->SetLine(p->GetReferenceLine());
 
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10, off};
   
-  XodrLanePtr lane1 = create_lane_from_lane_width(-1, p->get_reference_line(), lane_width_1, 0.05);
-  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
-  XodrLanePtr lane3 = create_lane_from_lane_width(2, lane2->get_line(), lane_width_1, 0.05);
+  XodrLanePtr lane1 = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width_1, 0.05);
+  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(), lane_width_1, 0.05);
+  XodrLanePtr lane3 = CreateLaneFromLaneWidth(2, lane2->GetLine(), lane_width_1, 0.05);
 
   ls->AddLane(lane1);
   ls->AddLane(lane2);
@@ -635,7 +635,7 @@ TEST(roadgraph, generate_roadgraph_neighbours_test)
   r->SetPlanView(p);
   r->AddLaneSection(ls);
 
-  open_drive_map->add_road(r);
+  open_drive_map->AddRoad(r);
 
   Roadgraph rg;
   rg.Generate(open_drive_map);
@@ -667,11 +667,11 @@ TEST(roadgraph, generate_roadgraph_successors_test)
   
   //! XodrLane
   XodrLanePtr lane00(new XodrLane(0));
-  lane00->set_line(p->get_reference_line());
+  lane00->SetLine(p->GetReferenceLine());
 
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10, off};
-  XodrLanePtr lane10 = create_lane_from_lane_width(1, p->get_reference_line(), lane_width_1, 0.05);
+  XodrLanePtr lane10 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(), lane_width_1, 0.05);
   XodrLaneLink ll1;
   ll1.from_position = 1;
   ll1.to_position = 1;
@@ -693,11 +693,11 @@ TEST(roadgraph, generate_roadgraph_successors_test)
   
   //! XodrLane
   XodrLanePtr lane01(new XodrLane(0));
-  lane01->set_line(p2->get_reference_line());
+  lane01->SetLine(p2->GetReferenceLine());
 
   XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 10, off};
-  XodrLanePtr lane11 = create_lane_from_lane_width(1, p2->get_reference_line(), lane_width_2, 0.05);
+  XodrLanePtr lane11 = CreateLaneFromLaneWidth(1, p2->GetReferenceLine(), lane_width_2, 0.05);
   XodrLaneLink ll2;
   ll2.from_position = 1;
   ll2.to_position = 1;
@@ -711,11 +711,11 @@ TEST(roadgraph, generate_roadgraph_successors_test)
   
   XodrRoadLinkInfo rli_succ(r2->GetId(), "road");
   XodrRoadLink rl;
-  rl.set_successor(rli_succ);
+  rl.SetSuccessor(rli_succ);
   r->SetLink(rl);
 
-  open_drive_map->add_road(r);
-  open_drive_map->add_road(r2);
+  open_drive_map->AddRoad(r);
+  open_drive_map->AddRoad(r2);
 
   Roadgraph rg;
   rg.Generate(open_drive_map);

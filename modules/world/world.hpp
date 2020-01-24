@@ -75,7 +75,7 @@ class World : public commons::BaseType {
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map;}
 
   std::pair<modules::geometry::Point2d,
-            modules::geometry::Point2d> bounding_box() const {
+            modules::geometry::Point2d> BoundingBox() const {
     return map_->BoundingBox();
   }
 

@@ -121,7 +121,7 @@ void World::UpdateAgentRTree() {
 
 void World::RemoveOutOfMapAgents() {
   std::vector<rtree_agent_value> query_results;
-  auto bounding_box = this->bounding_box();
+  auto bounding_box = this->BoundingBox();
   boost::geometry::model::box<modules::geometry::Point2d>
          query_box(bounding_box.first, bounding_box.second);
 
@@ -150,7 +150,7 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
 AgentMap World::GetAgentsIntersectingPolygon(
   const modules::geometry::Polygon& polygon) const {
   std::vector<rtree_agent_value> query_results;
-  auto bounding_box = polygon.bounding_box();
+  auto bounding_box = polygon.BoundingBox();
   boost::geometry::model::box<modules::geometry::Point2d>
          query_box(bounding_box.first, bounding_box.second);
 

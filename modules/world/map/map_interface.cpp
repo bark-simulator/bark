@@ -23,20 +23,20 @@ bool MapInterface::interface_from_opendrive(
   roadgraph_ = roadgraph;
 
   rtree_lane_.clear();
-  for (auto &road : open_drive_map_->get_roads()) {
+  for (auto &road : open_drive_map_->GetRoads()) {
     for (auto &lane_section : road.second->GetLaneSections()) {
       for (auto &lane : lane_section->GetLanes()) {
-        if (lane.second->GetLane_position() == 0)
+        if (lane.second->GetLanePosition() == 0)
           continue;
-        LineSegment lane_segment(*lane.second->get_line().begin(),
-                                 *(lane.second->get_line().end() - 1));
+        LineSegment lane_segment(*lane.second->GetLine().begin(),
+                                 *(lane.second->GetLine().end() - 1));
         rtree_lane_.insert(
           std::make_pair(lane_segment, lane.second));
       }
     }
   }
 
-  bounding_box_ = open_drive_map_->bounding_box();
+  bounding_box_ = open_drive_map_->BoundingBox();
   return true;
 }
 
@@ -155,10 +155,10 @@ void MapInterface::CalculateLaneCorridors(
   for (auto& lane : lanes) {
     // only add lane if it has not been added already
     if (road_corridor->GetLaneCorridor(lane.first) ||
-        lane.second->GetLane_position() == 0)
+        lane.second->GetLanePosition() == 0)
       continue;
     // only add if type is drivable
-    if (lane.second->GetLane_type() != XodrLaneType::DRIVING)
+    if (lane.second->GetLaneType() != XodrLaneType::DRIVING)
       continue;
 
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
@@ -218,13 +218,13 @@ LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
 }
 
 RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
-  XodrRoadPtr xodr_road = open_drive_map_->get_road(road_id);
+  XodrRoadPtr xodr_road = open_drive_map_->GetRoad(road_id);
   RoadPtr road = std::make_shared<Road>(xodr_road);
   Lanes lanes;
   for (auto& lane_section : xodr_road->GetLaneSections()) {
     for (auto& lane : lane_section->GetLanes()) {
       // TODO(@hart): only add driving lanes
-      // if (lane.second->GetLane_type() == XodrLaneType::DRIVING)
+      // if (lane.second->GetLaneType() == XodrLaneType::DRIVING)
       lanes[lane.first] = GenerateRoadCorridorLane(lane.second);
     }
   }
@@ -281,8 +281,8 @@ void MapInterface::GenerateRoadCorridor(
         LanePtr left_lane_boundary = road.second->GetLane(
           left_boundary_lane_id.first);
         Boundary left_bound;
-        left_bound.SetLine(left_lane_boundary->get_line());
-        left_bound.SetType(left_lane_boundary->get_road_mark());
+        left_bound.SetLine(left_lane_boundary->GetLine());
+        left_bound.SetType(left_lane_boundary->GetRoad_mark());
         lane.second->SetLeftBoundary(left_bound);
       }
       std::pair<XodrLaneId, bool> right_boundary_lane_id =
@@ -291,8 +291,8 @@ void MapInterface::GenerateRoadCorridor(
         LanePtr right_lane_boundary = road.second->GetLane(
           right_boundary_lane_id.first);
         Boundary right_bound;
-        right_bound.SetLine(right_lane_boundary->get_line());
-        right_bound.SetType(right_lane_boundary->get_road_mark());
+        right_bound.SetLine(right_lane_boundary->GetLine());
+        right_bound.SetType(right_lane_boundary->GetRoad_mark());
         lane.second->SetRightBoundary(right_bound);
       }
 
@@ -326,7 +326,7 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
     return nullptr;
   }
   const auto start_lane_id = lanes.at(0)->GetId();
-  const XodrDrivingDirection driving_direction =  lanes.at(0)->get_driving_direction();
+  const XodrDrivingDirection driving_direction =  lanes.at(0)->GetDrivingDirection();
 
   const XodrRoadId& start_road_id = roadgraph_->GetRoadForLaneId(start_lane_id);
   const XodrRoadId& goal_road_id = roadgraph_->GetRoadForLaneId(goal_lane_id);

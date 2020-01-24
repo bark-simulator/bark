@@ -78,11 +78,11 @@ TEST(geometry, line) {
   l.add_point(Point2d(0.0f, 0.0f));
   l.add_point(Point2d(0.0f, 10.0f));
 
-  Point2d p = get_point_at_s(l, 5.0f);
+  Point2d p = GetPointAtS(l, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
-  p = get_normal_at_s(l, 5.0f);
+  p = GetNormalAtS(l, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
@@ -94,11 +94,11 @@ TEST(geometry, line) {
   l2.add_point(Point2d(0.0f, 0.0f));
   l2.add_point(Point2d(10.0f, 0.0f));
 
-  p = get_point_at_s(l2, 5.0f);
+  p = GetPointAtS(l2, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(l2, 5.0f);
+  p = GetNormalAtS(l2, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
@@ -110,11 +110,11 @@ TEST(geometry, line) {
   l3.add_point(Point2d(0.0f, 0.0f));
   l3.add_point(Point2d(10.0f, 10.0f));
 
-  p = get_point_at_s(l3, 0.5 * sqrt(200));
+  p = GetPointAtS(l3, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), 5.0f, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0f, 0.1);
 
-  p = get_normal_at_s(l3, 0.5 * sqrt(200));
+  p = GetNormalAtS(l3, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.7, 0.1);
 
@@ -122,7 +122,7 @@ TEST(geometry, line) {
   l4.add_point(Point2d(0.0f, 0.0f));
   l4.add_point(Point2d(-10.0f, 10.0f));
 
-  p = get_normal_at_s(l4, 0.5 * sqrt(200));
+  p = GetNormalAtS(l4, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -0.7, 0.1);
 
@@ -589,7 +589,7 @@ TEST(line, s2) {
   EXPECT_DOUBLE_EQ(line.s_[3], 4.0);
 }
 
-TEST(line, get_s_at_pt_1) {
+TEST(line, GetS_at_pt_1) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -605,12 +605,12 @@ TEST(line, get_s_at_pt_1) {
   line.add_point(point_2);
   line.add_point(point_3);
 
-  Point2d p1 = get_point_at_s(line, 0.0);
-  Point2d p2 = get_point_at_s(line, 1.0);
-  Point2d p3 = get_point_at_s(line, 2.0);
+  Point2d p1 = GetPointAtS(line, 0.0);
+  Point2d p2 = GetPointAtS(line, 1.0);
+  Point2d p3 = GetPointAtS(line, 2.0);
 
-  Point2d p4 = get_point_at_s(line, 0.5);
-  Point2d p5 = get_point_at_s(line, 1.5);
+  Point2d p4 = GetPointAtS(line, 0.5);
+  Point2d p5 = GetPointAtS(line, 1.5);
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -620,7 +620,7 @@ TEST(line, get_s_at_pt_1) {
   EXPECT_TRUE(Point2d(0.0, 2.5) == p5);
 }
 
-TEST(line, get_line_from_s_interval) {
+TEST(line, GetLine_from_s_interval) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -635,17 +635,17 @@ TEST(line, get_line_from_s_interval) {
   line.add_point(point_2);
   line.add_point(point_3);
 
-  Line_t<Point2d> line_segment = get_line_from_s_interval(line, 0.5, 1.5);
+  Line_t<Point2d> line_segment = GetLine_from_s_interval(line, 0.5, 1.5);
 
-  Point2d p1 = get_point_at_s(line_segment, 0.0);
-  Point2d p2 = get_point_at_s(line_segment, 0.5);
-  Point2d p3 = get_point_at_s(line_segment, 1.0);
+  Point2d p1 = GetPointAtS(line_segment, 0.0);
+  Point2d p2 = GetPointAtS(line_segment, 0.5);
+  Point2d p3 = GetPointAtS(line_segment, 1.0);
 
   EXPECT_TRUE(Point2d(0.0, 1.5) == p1);
   EXPECT_TRUE(point_2 == p2);
   EXPECT_TRUE(Point2d(0.0, 2.5) == p3);
 }
-TEST(line, get_line_from_s_interval_entire_line) {
+TEST(line, GetLine_from_s_interval_entire_line) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -658,7 +658,7 @@ TEST(line, get_line_from_s_interval_entire_line) {
   line.add_point(point_1);
   line.add_point(point_2);
 
-  Line_t<Point2d> line_segment = get_line_from_s_interval(line, 0.0, 2.0);
+  Line_t<Point2d> line_segment = GetLine_from_s_interval(line, 0.0, 2.0);
 
   EXPECT_TRUE(Point2d(0.0, 0.0) == point_1);
   EXPECT_TRUE(Point2d(0.0, 2.0) == point_2);
@@ -721,9 +721,9 @@ TEST(line, segment_intersection_check_1) {
   line.add_point(point_5);
   line.add_point(point_6);
 
-  EXPECT_NEAR(get_segment_end_idx(line, 0.0f), 1, 0.1f);
-  EXPECT_NEAR(get_segment_end_idx(line, 3.0f), 4, 0.1f);
-  EXPECT_NEAR(get_segment_end_idx(line, 6.0), 5, 0.1f);
+  EXPECT_NEAR(GetSegment_end_idx(line, 0.0f), 1, 0.1f);
+  EXPECT_NEAR(GetSegment_end_idx(line, 3.0f), 4, 0.1f);
+  EXPECT_NEAR(GetSegment_end_idx(line, 6.0), 5, 0.1f);
 }
 TEST(line, segment_intersection_tangent_1) {
   using modules::geometry::Line_t;
@@ -786,23 +786,23 @@ TEST(line, segment_get_normal_1) {
   line.add_point(point_4);
   line.add_point(point_1);
 
-  Point2d p = get_normal_at_s(line, 0.5f);
+  Point2d p = GetNormalAtS(line, 0.5f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = get_normal_at_s(line, 1.5f);
+  p = GetNormalAtS(line, 1.5f);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(line, 2.5f);
+  p = GetNormalAtS(line, 2.5f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -1.0, 0.1);
 
-  p = get_normal_at_s(line, 3.5f);
+  p = GetNormalAtS(line, 3.5f);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(line, 4.0f);
+  p = GetNormalAtS(line, 4.0f);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
