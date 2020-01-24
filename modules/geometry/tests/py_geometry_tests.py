@@ -35,7 +35,7 @@ class GeometryTests(unittest.TestCase):
         l.addPoint([3, 4])
         l.addPoint([1, 4])
         self.assertTrue(l.valid())
-        arr = l.toArray()
+        arr = l.ToArray()
         print(arr)
 
 

@@ -99,7 +99,7 @@ void python_geometry(py::module m) {
         ss << l.ShapeToString();
         return ss.str();
       })
-      .def("toArray", &modules::geometry::Line::toArray, "returns numpy array.")
+      .def("ToArray", &modules::geometry::Line::ToArray, "returns numpy array.")
       .def("valid", &modules::geometry::Line::Valid, "checks if line is valid.")
       .def("rotate", &modules::geometry::Line::rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Line::translate, "translates object.")
@@ -113,7 +113,7 @@ void python_geometry(py::module m) {
       .def(py::pickle(
         [](const modules::geometry::Line& l) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(l.toArray());
+            return py::make_tuple(l.ToArray());
         },
         [](const py::tuple& t)  { // __setstate__
             if (t.size() != 1)
@@ -150,7 +150,7 @@ void python_geometry(py::module m) {
         ss << p.ShapeToString();
         return ss.str();
       })
-      .def("toArray", &modules::geometry::Polygon::toArray, "returns numpy array")
+      .def("ToArray", &modules::geometry::Polygon::ToArray, "returns numpy array")
       .def("valid", &modules::geometry::Polygon::Valid, "checks if polygong is valid.")
       .def("rotate", &modules::geometry::Polygon::rotate, "rotates object around center point.")
       .def("translate", &modules::geometry::Polygon::translate, "translates center point.")
@@ -164,7 +164,7 @@ void python_geometry(py::module m) {
       .def(py::pickle(
         [](const modules::geometry::Polygon& p) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(p.toArray(), p.center_);
+            return py::make_tuple(p.ToArray(), p.center_);
         },
         [](py::tuple  &t)  { // __setstate__
             if (t.size() != 2)
@@ -184,7 +184,7 @@ void python_geometry(py::module m) {
   py::class_<modules::geometry::Model3D>(m, "Model3d")
       .def(py::init<>(), "Create none 3d model")
       .def(py::init<modules::geometry::Model3D::Type>(), "Create 3D model with specific type ")
-      .def_property_readonly("type",&modules::geometry::Model3D::get_type);
+      .def_property_readonly("type",&modules::geometry::Model3D::GetType);
 
   py::enum_<modules::geometry::Model3D::Type>(m, "modules::geometry::Model3DType", py::arithmetic())
       .value("NONE", modules::geometry::Model3D::Type::NONE)

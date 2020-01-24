@@ -28,7 +28,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
  public:
   Line_t() : Shape<bg::model::linestring<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0) {}
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
+  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
 
@@ -150,7 +150,7 @@ using LinePoint = Point2d;
 using Line = Line_t<LinePoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::toArray() const {
+inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray() const {
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(obj_.size(), 2);
   for (uint32_t i = 0; i < obj_.size(); i++) {
     mat.row(i) << bg::get<0>(obj_[i]), bg::get<1>(obj_[i]);

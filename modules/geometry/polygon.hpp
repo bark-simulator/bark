@@ -29,7 +29,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t(const Pose& center,
             const Line_t<T>&
             line);  //! create a polygon from a line enclosing the polygon
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const;
+  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -128,7 +128,7 @@ using PolygonPoint = Point2d;  // for internal stores of collision checkers
 using Polygon = Polygon_t<PolygonPoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::toArray()
+inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     const {
   std::vector<Point2d> points = obj_.outer();
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);

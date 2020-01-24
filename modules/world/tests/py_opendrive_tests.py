@@ -18,12 +18,12 @@ class EnvironmentTests(unittest.TestCase):
 
         # Line
         pv.AddLine(Point2d(0, 0), 1.57079632679, 10)
-        line = pv.GetReferenceLine().toArray()
+        line = pv.GetReferenceLine().ToArray()
 
         # Spiral
         p = Point2d(line[-1][0], line[-1][1])
         pv.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = pv.GetReferenceLine().toArray()
+        line = pv.GetReferenceLine().ToArray()
 
         offset = XodrLaneOffset(1.5, 0, 0, 0)
         lane_width = XodrLaneWidth(0.0, 59.9, offset)
@@ -46,12 +46,12 @@ class EnvironmentTests(unittest.TestCase):
 
         newXodrRoad.plan_view = newPlanView
 
-        line = newXodrRoad.plan_view.GetReferenceLine().toArray()
+        line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
         # Spiral
         p = Point2d(line[-1][0], line[-1][1])
         newXodrRoad.plan_view.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newXodrRoad.plan_view.GetReferenceLine().toArray()
+        line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
     def test_spiral(self):
         '''

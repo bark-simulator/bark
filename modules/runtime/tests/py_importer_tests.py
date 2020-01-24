@@ -35,7 +35,7 @@ def helper_plot(xodr_parser):
                 else:
                     continue
 
-                line_np = lane.line.toArray()
+                line_np = lane.line.ToArray()
 
                 # print(lane.road_mark)
                 plt.text(line_np[-1, 0], line_np[-1, 1],
