@@ -89,7 +89,7 @@ struct Shape {
 
   virtual bool Valid() const;
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> toArray() const = 0;
+  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const = 0;
 
   bool add_point(const T &p) {
     bg::append(obj_, p);
@@ -190,7 +190,7 @@ template <typename G, typename T>
 inline std::string Shape<G, T>::ShapeToString() const {
   std::stringstream ss;
   Eigen::IOFormat OctaveFmt(Eigen::StreamPrecision, 0, ", ", ";\n", "", "", "[", "]");
-  ss << toArray().format(OctaveFmt);
+  ss << ToArray().format(OctaveFmt);
   return ss.str();
 }
 
