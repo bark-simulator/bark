@@ -83,6 +83,7 @@ py::class_<RoadCorridor,
     .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
     .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
     .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
+    .def("GetLeftRightLaneCorridor", &RoadCorridor::GetLeftRightLaneCorridor)
     .def_property_readonly("lane_corridors",
       &RoadCorridor::GetUniqueLaneCorridors)
     .def(py::pickle(
