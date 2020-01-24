@@ -32,7 +32,7 @@ DynamicBehaviorModel::DynamicBehaviorModel(
   }
 
 DynamicBehaviorModel::DynamicBehaviorModel(DynamicBehaviorModel* other_behavior) :
-  BehaviorModel(other_behavior->get_params()),
+  BehaviorModel(other_behavior->GetParams()),
   dynamic_model_(other_behavior->dynamic_model_),
   integration_time_delta_(other_behavior->integration_time_delta_) {}
 
@@ -49,19 +49,19 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   dynamic::Trajectory traj(
     num_trajectory_points,
-    this->get_params()->get_int("DynamicModel::state_dimension",
+    this->GetParams()->get_int("DynamicModel::state_dimension",
                                 "state vector length", 5));
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;
   // std::cout << "Action:" << \
-  //   boost::get<Input>(observed_world.GetEgoBehaviorModel()->get_last_action()) << std::endl;
+  //   boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()) << std::endl;
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(
       *dynamic_model_,
       traj.row(i-1),
-      boost::get<Input>(observed_world.GetEgoBehaviorModel()->get_last_action()),
+      boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()),
       dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;
@@ -75,7 +75,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   // std::cout << "=====================" << std::endl;
   // std::cout << traj << std::endl;
-  this->set_last_trajectory(traj);
+  this->SetLastTrajectory(traj);
   return traj;
 }
 

@@ -38,8 +38,8 @@ class DummyBehaviorModel(BehaviorModel):
                      [1.0, 5111.626, 5106.8305 + 1.0, 1.5, 10],
                      [1.2, 5111.626, 5106.8305 + 1.2, 1.5, 10]])
     # this is required for the history
-    super(DummyBehaviorModel, self).set_last_action(1.23)
-    super(DummyBehaviorModel, self).set_last_trajectory(traj)
+    super(DummyBehaviorModel, self).SetLastAction(1.23)
+    super(DummyBehaviorModel, self).SetLastTrajectory(traj)
     return traj
 
   def clone(self):
@@ -116,10 +116,10 @@ class PyBehaviorModelTests(unittest.TestCase):
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.set_last_action(np.array([1., 2.]))
-    print(env._world.GetAgent(0).behavior_model.get_last_action())
+    env._world.GetAgent(0).behavior_model.SetLastAction(np.array([1., 2.]))
+    print(env._world.GetAgent(0).behavior_model.GetLastAction())
     env._world.step(0.2)
-    print(env._world.GetAgent(0).behavior_model.get_last_action())
+    print(env._world.GetAgent(0).behavior_model.GetLastAction())
 
 
 if __name__ == '__main__':

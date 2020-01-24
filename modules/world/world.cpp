@@ -21,7 +21,7 @@ World::World(commons::Params* params) :
       false)) {}
 
 World::World(const std::shared_ptr<World>& world)  :
-  commons::BaseType(world->get_params()),
+  commons::BaseType(world->GetParams()),
   map_(world->GetMap()),
   agents_(world->GetAgents()),
   objects_(world->GetObjects()),

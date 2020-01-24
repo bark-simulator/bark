@@ -81,7 +81,7 @@ dynamic::Trajectory execution::ExecutionModelMpc::Execute(const float &new_world
   dynamic::Trajectory optimized_trajectory = Optimize(parameter_block, desired_states, weights_desired_states);
 
   // safe optimized_trajectory and weights for debugging
-  set_last_trajectory(optimized_trajectory);
+  SetLastTrajectory(optimized_trajectory);
   set_last_desired_states(desired_states);
   set_last_weights(weights_desired_states);
 
