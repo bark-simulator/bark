@@ -190,8 +190,8 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
-  if (s_end > previous_line.length())
-    s_end = previous_line.length();
+  if (s_end > previous_line.Length())
+    s_end = previous_line.Length();
 
   for (; s <= s_end;) {
     geometry::Point2d point = GetPointAtS(previous_line, s);

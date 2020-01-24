@@ -50,7 +50,7 @@ inline std::string print(const Point2d &p) {
   return ss.str();
 }
 
-inline float distance(const Point2d &p1, const Point2d &p2) {
+inline float Distance(const Point2d &p1, const Point2d &p2) {
   float dx = bg::get<0>(p1) - bg::get<0>(p2);
   float dy = bg::get<1>(p1) - bg::get<1>(p2);
   return sqrt(dx * dx + dy * dy);
@@ -66,11 +66,7 @@ struct Shape {
   Shape(const Pose &center, const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> &points, int32_t id) : obj_(), id_(id), center_(center) {
     auto row_num = points.rows();
     for (auto rowIter = 0; rowIter < row_num; ++rowIter) {
-      // std::vector<T> vec = points.rows(rowIter);
-      // for(auto col = 0;col<=1;++col){
-      // Point2d_t<T> p = (points(rowIter,0),points(rowIter,1))
       AddPoint(T(points.coeff(rowIter, 0), points.coeff(rowIter, 1)));
-      //}
     }
   }
 
@@ -79,7 +75,7 @@ struct Shape {
   virtual std::string ShapeToString() const;
 
   // rotates object
-  std::shared_ptr<Shape<G, T>> rotate(const float &a) const;
+  std::shared_ptr<Shape<G, T>> Rotate(const float &a) const;
 
   // translates object
   std::shared_ptr<Shape<G, T>> translate(const Point2d &point) const;
@@ -123,7 +119,7 @@ inline bool Shape<G, T>::Valid() const {
 }
 
 template <typename G, typename T>
-inline std::shared_ptr<Shape<G, T>> Shape<G, T>::rotate(const float &a) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const float &a) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(-center_[0], -center_[1]);

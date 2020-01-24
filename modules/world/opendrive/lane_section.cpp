@@ -41,7 +41,7 @@ XodrLanePtr XodrLaneSection::GetNearestLaneOnN(double x, double y, double vx, do
   XodrLanePtr ret_lane_ptr = lanes_.begin()->second;
   
   for ( auto const& lane : lanes_ ) {
-    float distance = modules::geometry::distance(lane.second->GetLine(), new_point);
+    float distance = modules::geometry::Distance(lane.second->GetLine(), new_point);
     if (distance < min_dist) {
       min_dist = distance;
       ret_lane_ptr = lane.second;

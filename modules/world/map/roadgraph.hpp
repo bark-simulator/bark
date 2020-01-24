@@ -220,7 +220,7 @@ class Roadgraph {
 
   std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(
       const XodrLaneId& lane_id) const;
-  std::vector<std::pair<XodrLaneId, bool>> GetOuterNeighbors_planview(
+  std::vector<std::pair<XodrLaneId, bool>> GetOuterNeighborsPlanview(
     const XodrLaneId &lane_id) const;
 
   //! Roadgraph extension
@@ -243,7 +243,7 @@ class Roadgraph {
                         const XodrLaneId& tarGetId,
                         const XodrLaneEdgeType& edgetype);
 
-  std::vector<std::pair<XodrLaneId, bool>> get_neighbor_from_edgetype(
+  std::vector<std::pair<XodrLaneId, bool>> GetNeighborFromEdgetype(
       const XodrLaneId& lane_id, const XodrLaneEdgeType edge_type) const;
 
   template <class XodrRoadIdMap, class XodrLaneIdMap, class XodrLaneMap>

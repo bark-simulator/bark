@@ -233,7 +233,7 @@ XodrRoadId Roadgraph::GetRoadForLaneId(const XodrLaneId &lane_id) {
 std::pair<XodrLaneId, bool> Roadgraph::GetInnerNeighbor(
     const XodrLaneId &lane_id) const {
   std::vector<std::pair<XodrLaneId, bool>> neighbors =
-      get_neighbor_from_edgetype(lane_id, INNER_NEIGHBOR_EDGE);
+      GetNeighborFromEdgetype(lane_id, INNER_NEIGHBOR_EDGE);
   std::pair<XodrLaneId, bool> neighbor =
       neighbors.front();  // inner neighbor is unique
   return neighbor;
@@ -242,15 +242,15 @@ std::pair<XodrLaneId, bool> Roadgraph::GetInnerNeighbor(
 std::pair<XodrLaneId, bool> Roadgraph::GetOuterNeighbor(
     const XodrLaneId &lane_id) const {
   std::vector<std::pair<XodrLaneId, bool>> tmp =
-      get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
+      GetNeighborFromEdgetype(lane_id, OUTER_NEIGHBOR_EDGE);
   return tmp.front();  // for a non planview edge the outer neighbor is unique
 }
 
 std::vector<std::pair<XodrLaneId, bool>>
-Roadgraph::GetOuterNeighbors_planview(
+Roadgraph::GetOuterNeighborsPlanview(
     const XodrLaneId &lane_id) const {
   std::vector<std::pair<XodrLaneId, bool>> tmp =
-      get_neighbor_from_edgetype(lane_id, OUTER_NEIGHBOR_EDGE);
+      GetNeighborFromEdgetype(lane_id, OUTER_NEIGHBOR_EDGE);
   return tmp;
 }
 
@@ -643,7 +643,7 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeXodrLanePolygon(
     }
     // outer
     auto reversed_outer = lb.second->GetLine();
-    reversed_outer.reverse();
+    reversed_outer.Reverse();
 
     for (auto const &p : reversed_outer) {
       polygon->AddPoint(p);
@@ -668,7 +668,7 @@ bool Roadgraph::AddEdgeOfType(const XodrLaneId &source_id,
   }
 }
 
-std::vector<std::pair<XodrLaneId, bool>> Roadgraph::get_neighbor_from_edgetype(
+std::vector<std::pair<XodrLaneId, bool>> Roadgraph::GetNeighborFromEdgetype(
     const XodrLaneId &lane_id, const XodrLaneEdgeType edge_type)
     const {  //! we can have two outer neighbors
   std::vector<std::pair<XodrLaneId, bool>> retval;
@@ -714,7 +714,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetLeftLane(const XodrLaneId& lane_id,
       if (inner_lane->GetLanePosition() != 0)
         return std::make_pair(inner_neighbor.first, true);
       std::vector<std::pair<XodrLaneId, bool>> outer_neighbors =
-        GetOuterNeighbors_planview(inner_neighbor.first);
+        GetOuterNeighborsPlanview(inner_neighbor.first);
       for (auto& outer_neighbor : outer_neighbors)
         if (outer_neighbor.second && outer_neighbor.first != lane_id)
           return std::make_pair(outer_neighbor.first, true);
@@ -750,7 +750,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightLane(const XodrLaneId& lane_id,
       if (inner_lane->GetLanePosition() != 0)
         return std::make_pair(inner_neighbor.first, true);
       std::vector<std::pair<XodrLaneId, bool>> outer_neighbors =
-        GetOuterNeighbors_planview(inner_neighbor.first);
+        GetOuterNeighborsPlanview(inner_neighbor.first);
       for (auto& outer_neighbor : outer_neighbors)
         if (outer_neighbor.second && outer_neighbor.first != lane_id)
           return std::make_pair(outer_neighbor.first, true);

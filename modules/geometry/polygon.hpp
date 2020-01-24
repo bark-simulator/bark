@@ -138,19 +138,19 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
   return mat;
 }
 
-inline bool equals(const Polygon& poly1, const Polygon& poly2) {
+inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
 
-inline float distance(const Polygon& poly, const Point2d& p) {
+inline float Distance(const Polygon& poly, const Point2d& p) {
   return bg::distance(poly.obj_, p);
 }
 
-inline float distance(const Polygon& poly, const Line& l) {
+inline float Distance(const Polygon& poly, const Line& l) {
   return bg::distance(poly.obj_, l.obj_);
 }
 
-inline float distance(const Polygon& poly1, const Polygon& poly2) {
+inline float Distance(const Polygon& poly1, const Polygon& poly2) {
   return bg::distance(poly1.obj_, poly2.obj_);
 }
 

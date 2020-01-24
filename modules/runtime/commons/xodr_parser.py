@@ -424,10 +424,10 @@ class XodrParser(object):
 
                     if lane['id'] > 0:
                         previous_line = new_lane_section.GetLaneByPosition(lane['id']-1).line
-                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.length(), previous_line)                                
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.Length(), previous_line)                                
                     elif lane['id'] < 0:
                         previous_line = new_lane_section.GetLaneByPosition(lane['id']+1).line
-                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.length(), previous_line)
+                        new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, previous_line.Length(), previous_line)
                     else:
                         logger.info("Calculating previous lane did not work.")
 
