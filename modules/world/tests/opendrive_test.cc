@@ -27,10 +27,10 @@ TEST(create_plan_view, open_drive) {
   p.AddLine(Point2d(0.0f, 0.0f), 1.5, 10.0f);
 
   //! add arc
-  p.add_arc(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 0.1f);
+  p.AddArc(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 0.1f);
 
   //! add spiral
-  p.add_spiral(Point2d(0.0f, 0.0f), 0.0f, 1.0f, 0.0f, 0.7f);
+  p.AddSpiral(Point2d(0.0f, 0.0f), 0.0f, 1.0f, 0.0f, 0.7f);
 
   // p.print_points();
 }
@@ -48,23 +48,23 @@ TEST(lane, open_drive) {
   p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
   XodrLaneWidth lane_width = {0, 10.0, off};
 
-  XodrLanePtr lane = create_lane_from_lane_width(1, p.get_reference_line(),
+  XodrLanePtr lane = CreateLaneFromLaneWidth(1, p.GetReferenceLine(),
                                              lane_width, 0.05f);  // left side
 
-  lane->set_lane_type(XodrLaneType::DRIVING);
-  EXPECT_EQ(lane->GetLane_type(), XodrLaneType::DRIVING);
+  lane->SetLaneType(XodrLaneType::DRIVING);
+  EXPECT_EQ(lane->GetLaneType(), XodrLaneType::DRIVING);
 
-  Line line = lane->get_line();
+  Line line = lane->GetLine();
 
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), -1.5, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[0]), 0.0, 0.1);
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), -1.5, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
 
-  lane = create_lane_from_lane_width(-1, p.get_reference_line(), lane_width,
+  lane = CreateLaneFromLaneWidth(-1, p.GetReferenceLine(), lane_width,
                                      0.05f);  // right side
 
-  line = lane->get_line();
+  line = lane->GetLine();
 
   std::cout << bg::get<1>(line.obj_[line.obj_.size() - 1]) << std::endl;
 
@@ -79,20 +79,20 @@ TEST(lane, open_drive) {
   //! horizontal
   p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
-  lane = create_lane_from_lane_width(1, p2.get_reference_line(), lane_width,
+  lane = CreateLaneFromLaneWidth(1, p2.GetReferenceLine(), lane_width,
                                      0.05f);  // left side
 
-  line = lane->get_line();
+  line = lane->GetLine();
 
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[0]), 1.5, 0.1);
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 1.5, 0.1);
 
-  lane = create_lane_from_lane_width(-1, p2.get_reference_line(), lane_width,
+  lane = CreateLaneFromLaneWidth(-1, p2.GetReferenceLine(), lane_width,
                                      0.05f);  // right side
 
-  line = lane->get_line();
+  line = lane->GetLine();
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(line.obj_[0]), -1.5, 0.1);
   EXPECT_NEAR(bg::get<0>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
@@ -117,14 +117,14 @@ TEST(multiple_lane_widths, open_drive) {
   p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
 
   XodrLanePtr lane = std::make_shared<XodrLane>(1);
-  bool succ = lane->append(p.get_reference_line(), lane_width1, 0.05f);
+  bool succ = lane->append(p.GetReferenceLine(), lane_width1, 0.05f);
 
-  Line linel1 = lane->get_line();
+  Line linel1 = lane->GetLine();
   float length1 = bg::get<1>(linel1.obj_[linel1.obj_.size() - 1]);
 
-  succ = lane->append(p.get_reference_line(), lane_width2, 0.05f);
+  succ = lane->append(p.GetReferenceLine(), lane_width2, 0.05f);
 
-  Line linel2 = lane->get_line();
+  Line linel2 = lane->GetLine();
   float length2 = bg::get<1>(linel2.obj_[linel2.obj_.size() - 1]);
 
   EXPECT_NEAR(lane_width1.s_end, length1, 0.1);
@@ -154,8 +154,8 @@ TEST(road, open_drive) {
 
   //! XodrRoad-Link
   XodrRoadLink l;  // can either link to another road or to a junction
-  l.set_predecessor(pre);
-  l.set_successor(suc);
+  l.SetPredecessor(pre);
+  l.SetSuccessor(suc);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -166,9 +166,9 @@ TEST(road, open_drive) {
   //! XodrLane
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width = {0, 1, off};
-  XodrLanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+  XodrLanePtr lane = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
                                              lane_width, 0.05f);
-  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(),
                                               lane_width, 0.05f);
 
   ls->AddLane(lane);
@@ -196,10 +196,10 @@ TEST(junction, open_drive) {
   XodrLaneLink l1 = {1, -1};
   XodrLaneLink l2 = {2, 2};
 
-  con.AddLane_link(l1);
-  con.AddLane_link(l2);
+  con.AddLaneLink(l1);
+  con.AddLaneLink(l2);
 
-  j.add_connection(con);
+  j.AddConnection(con);
 }
 
 TEST(map, open_drive) {
@@ -218,8 +218,8 @@ TEST(map, open_drive) {
   pre.type_ = "road";
 
   XodrRoadLink l;  // can either link to another road or to a junction
-  l.set_predecessor(pre);
-  l.set_successor(pre);
+  l.SetPredecessor(pre);
+  l.SetSuccessor(pre);
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
@@ -230,16 +230,16 @@ TEST(map, open_drive) {
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10.0, off};
 
-  XodrLanePtr lane = create_lane_from_lane_width(-1, p->get_reference_line(),
+  XodrLanePtr lane = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
                                              lane_width_1, 0.05f);
-  XodrLanePtr lane2 = create_lane_from_lane_width(1, p->get_reference_line(),
+  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(),
                                               lane_width_1, 0.05f);
 
   XodrRoadMark rm{roadmark::XodrRoadMarkType::SOLID, roadmark::XodrRoadMarkColor::STANDARD,
               0.1};
 
   std::cout << print(rm) << std::endl;
-  lane2->set_road_mark(rm);
+  lane2->SetRoadMark(rm);
 
   ls->AddLane(lane);
   ls->AddLane(lane2);
@@ -265,9 +265,9 @@ TEST(map, open_drive) {
   XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 10.0, off2};
 
-  XodrLanePtr lane3 = create_lane_from_lane_width(-1, p2->get_reference_line(),
+  XodrLanePtr lane3 = CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(),
                                               lane_width_2, 0.05f);
-  XodrLanePtr lane4 = create_lane_from_lane_width(1, p2->get_reference_line(),
+  XodrLanePtr lane4 = CreateLaneFromLaneWidth(1, p2->GetReferenceLine(),
                                               lane_width_2, 0.05f);
 
   ls3->AddLane(lane3);
@@ -289,17 +289,17 @@ TEST(map, open_drive) {
   XodrLaneLink link_1 = {-1, -1};
   XodrLaneLink link_2 = {1, 1};
 
-  con.AddLane_link(link_1);
-  con.AddLane_link(link_2);
-  j->add_connection(con);
+  con.AddLaneLink(link_1);
+  con.AddLaneLink(link_2);
+  j->AddConnection(con);
 
   OpenDriveMapPtr map(new OpenDriveMap());
-  map->add_road(r);
-  map->add_road(r2);
-  map->add_junction(j);
+  map->AddRoad(r);
+  map->AddRoad(r2);
+  map->AddJunction(j);
 
   // call
-  XodrRoadPtr ret_road = map->get_road(100);
+  XodrRoadPtr ret_road = map->GetRoad(100);
   XodrLaneSectionPtr ret_ls = ret_road->GetLaneSections()[0];
   XodrLanes ret_lanes = ret_ls->GetLanes();
   
@@ -314,7 +314,7 @@ TEST(map, open_drive) {
 
   std::cout << "Found lane  " << result->first << " "
             << print(*(result->second)) << '\n';
-  Line ret_line = result->second->get_line();
+  Line ret_line = result->second->GetLine();
 
   EXPECT_NEAR(bg::get<0>(ret_line.obj_[0]), 0.0f, 0.1f);
   EXPECT_NEAR(bg::get<1>(ret_line.obj_[0]), -1.0f, 0.1f);

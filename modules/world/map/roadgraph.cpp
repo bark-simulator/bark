@@ -176,7 +176,7 @@ std::vector<XodrLaneId> Roadgraph::GetAllLaneids() const {
   std::vector<XodrLaneId> ids;
   std::vector<vertex_t> vertices = GetVertices();
   for (auto const &v : vertices) {
-    if (GetLaneGraph()[v].lane->GetLane_position() != 0) {
+    if (GetLaneGraph()[v].lane->GetLanePosition() != 0) {
       ids.push_back(GetLaneGraph()[v].global_lane_id);
     }
   }
@@ -189,7 +189,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetPlanViewForRoadId(
   std::vector<vertex_t> vertices = GetVertices();
   for (auto const &v : vertices) {
     if (GetLaneGraph()[v].road_id == id) {
-      if (GetLaneGraph()[v].lane->GetLane_position() == 0) {
+      if (GetLaneGraph()[v].lane->GetLanePosition() == 0) {
         return std::make_pair(GetLaneGraph()[v].global_lane_id, true);
       }
     }
@@ -202,7 +202,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetPlanViewForLaneId(
   XodrLanePtr lane = GetLanePtr(outer_lane_id);
   // std::cout << "calling GetPlanViewForLaneId() with " << outer_lane_id <<
   // std::endl;
-  if (lane->GetLane_position() == 0) {
+  if (lane->GetLanePosition() == 0) {
     return std::make_pair(outer_lane_id, true);
   } else {
     // std::cout << outer_lane_id << " is not the planview " << lane->GetId()
@@ -257,7 +257,7 @@ Roadgraph::GetOuterNeighbors_planview(
 std::vector<XodrLaneId> Roadgraph::GetAllNeighbors(
     const XodrLaneId &lane_id) const {
   XodrLanePtr lane = GetLanePtr(lane_id);
-  if (lane->GetLane_position() == 0) {
+  if (lane->GetLanePosition() == 0) {
     throw std::runtime_error("GetAllNeighbors was called with the plan view");
   }
 
@@ -380,7 +380,7 @@ std::pair<vertex_t, bool> Roadgraph::GetVertexByLaneId(
 }
 
 void Roadgraph::GenerateVertices(OpenDriveMapPtr map) {
-  for (auto const &road_element : map->get_roads()) {  // std::map
+  for (auto const &road_element : map->GetRoads()) {  // std::map
     for (auto const &lane_section_element :
          road_element.second->GetLaneSections()) {  // std::vector
       for (auto const &lane_element :
@@ -393,12 +393,12 @@ void Roadgraph::GenerateVertices(OpenDriveMapPtr map) {
 
 void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
   // add successors, predecessors
-  for (auto const &road_element : map->get_roads()) {  // std::map
+  for (auto const &road_element : map->GetRoads()) {  // std::map
     XodrRoadId successor_id = road_element.second->GetLink()
-                                  .get_successor()
+                                  .GetSuccessor()
                                   .id_;  // this is the position!!!!!! (-4, 4)
     XodrRoadId predecessor_id = road_element.second->GetLink()
-                                    .get_predecessor()
+                                    .GetPredecessor()
                                     .id_;  // this is the position!!!!!! (-4, 4)
     if (successor_id > 1000) {
       continue;
@@ -410,22 +410,22 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
 
     // TODO(@hart): That's pretty ugly, move check for road_id to map
 
-    if (road_element.second->GetLink().get_successor().type_ ==
+    if (road_element.second->GetLink().GetSuccessor().type_ ==
         "road") {  // successor_id == iter->first
-      auto it = map->get_roads().find(successor_id);
-      if (it != map->get_roads().end()) {
-        XodrRoadPtr successor_road = map->get_roads().at(successor_id);
+      auto it = map->GetRoads().find(successor_id);
+      if (it != map->GetRoads().end()) {
+        XodrRoadPtr successor_road = map->GetRoads().at(successor_id);
         successor_lane_section = successor_road->GetLaneSections().front();
       }
     } else {
       LOG(INFO) << "XodrRoad has no successor road. \n";
     }
 
-    if (road_element.second->GetLink().get_predecessor().type_ ==
+    if (road_element.second->GetLink().GetPredecessor().type_ ==
         "road") {  // predecessor_id == iter->first
-      auto it = map->get_roads().find(predecessor_id);
-      if (it != map->get_roads().end()) {
-        XodrRoadPtr predecessor_road = map->get_roads().at(predecessor_id);
+      auto it = map->GetRoads().find(predecessor_id);
+      if (it != map->GetRoads().end()) {
+        XodrRoadPtr predecessor_road = map->GetRoads().at(predecessor_id);
         predecessor_lane_section = predecessor_road->GetLaneSections().back();
       }
     } else {
@@ -447,7 +447,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
           }
 
           XodrLanePtr successor_lane =
-              successor_lane_section->GetLane_by_position(
+              successor_lane_section->GetLaneByPosition(
                   successor_lane_position);
 
           if (successor_lane) {
@@ -473,7 +473,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
             }
 
             XodrLanePtr predecessor_lane =
-                predecessor_lane_section->GetLane_by_position(
+                predecessor_lane_section->GetLaneByPosition(
                     predecessor_lane_position);
 
             if (predecessor_lane) {
@@ -497,21 +497,21 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
 
 void Roadgraph::GenerateNeighbours(OpenDriveMapPtr map) {
   // add neighbor edges
-  for (auto const &road_element : map->get_roads()) {  // std::map
+  for (auto const &road_element : map->GetRoads()) {  // std::map
     for (auto const &lane_section_element :
          road_element.second->GetLaneSections()) {  // std::vector
       for (auto const &lane_element :
            lane_section_element->GetLanes()) {  // std::map
-        if (lane_element.second->GetLane_position() != 0) {
+        if (lane_element.second->GetLanePosition() != 0) {
           XodrLanePosition inner_lane_pos;
-          if (lane_element.second->GetLane_position() > 0) {
-            inner_lane_pos = lane_element.second->GetLane_position() - 1;
+          if (lane_element.second->GetLanePosition() > 0) {
+            inner_lane_pos = lane_element.second->GetLanePosition() - 1;
           } else {
-            inner_lane_pos = lane_element.second->GetLane_position() + 1;
+            inner_lane_pos = lane_element.second->GetLanePosition() + 1;
           }
 
           XodrLanePtr inner_lane =
-              lane_section_element->GetLane_by_position(inner_lane_pos);
+              lane_section_element->GetLaneByPosition(inner_lane_pos);
           if (inner_lane) {
             bool success_inner = AddInnerNeighbor(
                 inner_lane->GetId(), lane_element.second->GetId());
@@ -526,26 +526,26 @@ void Roadgraph::GenerateNeighbours(OpenDriveMapPtr map) {
 
 void Roadgraph::GenerateFromJunctions(OpenDriveMapPtr map) {
   // map junctions
-  for (auto const &road_element : map->get_junctions()) {  // std::map
+  for (auto const &road_element : map->GetJunctions()) {  // std::map
     for (auto const &connection_element :
-         road_element.second->get_connections()) {  // std::map
+         road_element.second->GetConnections()) {  // std::map
       XodrRoadPtr incoming_road =
-          map->get_road(connection_element.second.incoming_road_);
+          map->GetRoad(connection_element.second.incoming_road_);
       XodrRoadPtr connecting_road =
-          map->get_road(connection_element.second.connecting_road_);
+          map->GetRoad(connection_element.second.connecting_road_);
       XodrLaneSectionPtr pre_lane_section =
           incoming_road->GetLaneSections().front();
       XodrLaneSectionPtr successor_lane_section =
           connecting_road->GetLaneSections().front();
       for (auto const &lane_link_element :
-           connection_element.second.GetLane_links()) {
+           connection_element.second.GetLaneLinks()) {
         // add successor edge
         if (pre_lane_section && successor_lane_section) {
           try {
-            XodrLanePtr pre_lane = pre_lane_section->GetLane_by_position(
+            XodrLanePtr pre_lane = pre_lane_section->GetLaneByPosition(
                 lane_link_element.from_position);
             XodrLanePtr successor_lane =
-                successor_lane_section->GetLane_by_position(
+                successor_lane_section->GetLaneByPosition(
                     lane_link_element.to_position);
             if (pre_lane && successor_lane) {
               bool success = AddLaneSuccessor(pre_lane->GetId(),
@@ -570,7 +570,7 @@ void Roadgraph::GeneratePolygonsForVertices() {
   for (auto const &v : vertices) {
     // g_[v].polygon =
     // ComputeXodrLanePolygon(GetLaneGraph()[v].lane->GetId());
-    if (GetLaneGraph()[v].lane->GetLane_position() != 0) {
+    if (GetLaneGraph()[v].lane->GetLanePosition() != 0) {
       auto p = ComputeXodrLanePolygon(GetLaneGraph()[v].lane->GetId());
       if (p.second) {
         g_[v].polygon = p.first;
@@ -597,7 +597,7 @@ std::pair<XodrLanePtr, XodrLanePtr> Roadgraph::ComputeXodrLaneBoundaries(
   XodrLanePtr inner, outer;
   std::pair<vertex_t, bool> v = GetVertexByLaneId(lane_id);
   auto l = GetLaneGraph()[v.first].lane;
-  // assert(l->GetLane_position() != 0); // make sure we are not at the
+  // assert(l->GetLanePosition() != 0); // make sure we are not at the
   // planview, as a driving corridor cannot be computed from here.
   outer = l;
 
@@ -638,18 +638,18 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeXodrLanePolygon(
   if (lb.first && lb.second) {
     success = true;
 
-    for (auto const &p : lb.first->get_line()) {
+    for (auto const &p : lb.first->GetLine()) {
       polygon->add_point(p);
     }
     // outer
-    auto reversed_outer = lb.second->get_line();
+    auto reversed_outer = lb.second->GetLine();
     reversed_outer.reverse();
 
     for (auto const &p : reversed_outer) {
       polygon->add_point(p);
     }
     // Polygons need to be closed!
-    polygon->add_point(*(lb.first->get_line().begin()));
+    polygon->add_point(*(lb.first->GetLine().begin()));
   }
   return std::make_pair(polygon, success);
 }
@@ -707,11 +707,11 @@ std::pair<XodrLaneId, bool> Roadgraph::GetNextLane(
 std::pair<XodrLaneId, bool> Roadgraph::GetLeftLane(const XodrLaneId& lane_id,
   const XodrDrivingDirection& driving_direction) {
   XodrLanePtr lane = GetLanePtr(lane_id);
-  if (driving_direction == lane->get_driving_direction()) {
+  if (driving_direction == lane->GetDrivingDirection()) {
     std::pair<XodrLaneId, bool> inner_neighbor = GetInnerNeighbor(lane_id);
     if (inner_neighbor.second) {
       XodrLanePtr inner_lane = GetLanePtr(inner_neighbor.first);
-      if (inner_lane->GetLane_position() != 0)
+      if (inner_lane->GetLanePosition() != 0)
         return std::make_pair(inner_neighbor.first, true);
       std::vector<std::pair<XodrLaneId, bool>> outer_neighbors =
         GetOuterNeighbors_planview(inner_neighbor.first);
@@ -738,7 +738,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightLane(const XodrLaneId& lane_id,
   // if (backwards and negative) -> inner
   //   if (inner_id == 0) -> get_outer()
   XodrLanePtr lane = GetLanePtr(lane_id);
-  if (driving_direction == lane->get_driving_direction()) {
+  if (driving_direction == lane->GetDrivingDirection()) {
     std::pair<XodrLaneId, bool> outer_neighbor =
       GetOuterNeighbor(lane_id);
     if (outer_neighbor.second)
@@ -747,7 +747,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightLane(const XodrLaneId& lane_id,
     std::pair<XodrLaneId, bool> inner_neighbor = GetInnerNeighbor(lane_id);
     if (inner_neighbor.second) {
       XodrLanePtr inner_lane = GetLanePtr(inner_neighbor.first);
-      if (inner_lane->GetLane_position() != 0)
+      if (inner_lane->GetLanePosition() != 0)
         return std::make_pair(inner_neighbor.first, true);
       std::vector<std::pair<XodrLaneId, bool>> outer_neighbors =
         GetOuterNeighbors_planview(inner_neighbor.first);
@@ -763,7 +763,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetLeftBoundary(
   const XodrLaneId& lane_id,
   const XodrDrivingDirection& driving_direction) {
   XodrLanePtr lane = GetLanePtr(lane_id);
-  if (driving_direction == lane->get_driving_direction()) {
+  if (driving_direction == lane->GetDrivingDirection()) {
     std::pair<XodrLaneId, bool> inner_neighbor = GetInnerNeighbor(lane_id);
     if (inner_neighbor.second)
       return std::make_pair(inner_neighbor.first, true);
@@ -777,7 +777,7 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightBoundary(
   const XodrLaneId& lane_id,
   const XodrDrivingDirection& driving_direction) {
   XodrLanePtr lane = GetLanePtr(lane_id);
-  if (driving_direction == lane->get_driving_direction()) {
+  if (driving_direction == lane->GetDrivingDirection()) {
     return std::make_pair(lane_id, true);
   } else {
     std::pair<XodrLaneId, bool> inner_neighbor = GetInnerNeighbor(lane_id);

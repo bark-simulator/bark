@@ -25,22 +25,35 @@ class PlanView {
   ~PlanView() {}
 
   //! setter functions
-  bool add_line(geometry::Point2d start_point, float heading, float length);
+  bool AddLine(geometry::Point2d start_point, float heading, float length);
 
-  bool add_spiral(geometry::Point2d start_point, float heading, float length, float curvStart, float curvEnd, float s_inc = 2.0f);
-  bool add_arc(geometry::Point2d start_point, float heading, float length, float curvature, float s_inc = 2.0f);
+  bool AddSpiral(
+    geometry::Point2d start_point,
+    float heading,
+    float length,
+    float curvStart,
+    float curvEnd,
+    float s_inc = 2.0f);
 
-  void calc_arc_position(const float s, float initial_heading, float curvature, float &dx, float &dy);
+  bool AddArc(
+    geometry::Point2d start_point,
+    float heading,
+    float length,
+    float curvature,
+    float s_inc = 2.0f);
+
+  void CalcArcPosition(
+    const float s, float initial_heading, float curvature, float &dx, float &dy);
 
   //! getter functions
-  geometry::Line get_reference_line() const { return reference_line_; }
+  geometry::Line GetReferenceLine() const { return reference_line_; }
 
-  geometry::Point2d test(geometry::Point2d p) { return p; }
+  bool ApplyOffsetTransform(float x, float y, float hdg);
 
-  bool apply_offset_transform(float x, float y, float hdg);
-
-  float get_length() const { return length_; }
-  float get_distance( const geometry::Point2d &p) const { return boost::geometry::distance(reference_line_.obj_, p); }
+  float GetLength() const { return length_; }
+  float GetDistance( const geometry::Point2d &p) const {
+    return boost::geometry::distance(reference_line_.obj_, p);
+  }
 
  private:
   geometry::Line reference_line_;  // sequential build up

@@ -64,7 +64,7 @@ void python_geometry(py::module m) {
 
   m.def("get_nearest_s", &modules::geometry::get_nearest_s, "get the nearest s value from point to a line.");
   
-  m.def("get_point_at_s", &modules::geometry::get_point_at_s,
+  m.def("GetPointAtS", &modules::geometry::GetPointAtS,
                                  "get the Point2d at position s of the line");
 
   m.def("get_tangent_angle_at_s", &modules::geometry::get_tangent_angle_at_s,
@@ -73,7 +73,7 @@ void python_geometry(py::module m) {
   m.def("get_nearest_point_and_s", &modules::geometry::get_nearest_point_and_s, 
                         "get the point nearest to another point and its position on the line s ");
 
-  m.def("get_line_from_s_interval", &modules::geometry::get_line_from_s_interval, 
+  m.def("GetLine_from_s_interval", &modules::geometry::GetLine_from_s_interval, 
                         "get line between specified interval.");
 
   m.def("merge_bounding_boxes", &modules::geometry::merge_bounding_boxes<modules::geometry::Point2d>, 

@@ -34,7 +34,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   //! @todo improvement: do not recompute full s but only add one point (but we would need to store the line length for that!)
   bool add_point(const T &p) {
-    return Shape<bg::model::linestring<T>, T>::add_point(p) && recompute_s();
+    return Shape<bg::model::linestring<T>, T>::add_point(p) && RecomputeS();
   }
 
   auto length() const { return bg::length(Shape<bg::model::linestring<T>, T>::obj_);}
@@ -44,7 +44,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   void append_linestring(const Line_t &ls) {
     // TODO(@fortiss): wrong
     bg::append(Shape<bg::model::linestring<T>, T>::obj_, ls.obj_);
-    recompute_s();
+    RecomputeS();
   }
 
   std::vector<T> get_points_in_s_interval(float begin, float end) const {
@@ -116,7 +116,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   std::vector<float> s_;  //! local coordinates 0..[total distance] along the lines
 
   //! @todo free function, s_ private?
-  bool recompute_s() {
+  bool RecomputeS() {
     s_.clear();
     // edge case no points
     if (Shape<bg::model::linestring<T>, T>::obj_.empty()) {
@@ -182,7 +182,7 @@ inline Line rotate(const Line& line, float hdg) {
   rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(hdg);
   Line line_rotated;
   boost::geometry::transform(line.obj_, line_rotated.obj_, rotate);
-  line_rotated.recompute_s();
+  line_rotated.RecomputeS();
   return line_rotated;
 }
 
@@ -194,7 +194,7 @@ inline Line translate(const Line& line, float x, float y) {
   return line_translated;
 }
 
-inline int get_segment_end_idx(Line l, float s) {
+inline int GetSegment_end_idx(Line l, float s) {
   std::vector<float>::iterator up = std::upper_bound(l.s_.begin(), l.s_.end(), s);
   if(up != l.s_.end()) {
     int retval = up - l.s_.begin();
@@ -206,13 +206,13 @@ inline int get_segment_end_idx(Line l, float s) {
 }
 
 inline bool check_s_for_segment_intersection(Line l, float s) {
-  int start_it = get_segment_end_idx(l, s);
+  int start_it = GetSegment_end_idx(l, s);
   std::vector<float>::iterator low = std::lower_bound(l.s_.begin(), l.s_.end(), s);
   int start_it_low = low - l.s_.begin();
   return start_it != start_it_low;
 }
 
-inline Point2d get_point_at_s(Line l, float s) {
+inline Point2d GetPointAtS(Line l, float s) {
   const size_t &length = l.obj_.size();
   if (length <= 1) {  // this is an error Line consist of 0 or 1 element
     return Point2d(0, 0);
@@ -221,7 +221,7 @@ inline Point2d get_point_at_s(Line l, float s) {
   } else if (s >= l.s_.back()) {  // edge case end
     return l.obj_.at(length - 1);
   } else {  // nominal case
-    int segment_end_idx = get_segment_end_idx(l, s);
+    int segment_end_idx = GetSegment_end_idx(l, s);
     int segment_begin_idx = segment_end_idx - 1;
 
     float s_on_segment = (s - l.s_.at(segment_begin_idx)) / (l.s_.at(segment_end_idx) - l.s_.at(segment_begin_idx));
@@ -246,7 +246,7 @@ inline float get_tangent_angle_at_s(Line l, float s) {
     Point2d p2 = l.obj_.at(1);
     return atan2(bg::get<1>(p2) - bg::get<1>(p1), bg::get<0>(p2) - bg::get<0>(p1));
   } else {  // not start or end
-    int end_segment_it = get_segment_end_idx(l, s);
+    int end_segment_it = GetSegment_end_idx(l, s);
     if (check_s_for_segment_intersection(l, s)) {  // check if s is at intersection, if true then calculate the intermediate angle
       Point2d p1 = l.obj_.at(end_segment_it-2);
       Point2d p2 = l.obj_.at(end_segment_it-1);
@@ -264,8 +264,8 @@ inline float get_tangent_angle_at_s(Line l, float s) {
   }
 }
 
-inline Point2d get_normal_at_s(Line l, float s) {
-  // std::cout << "get_normal_at_s() ";
+inline Point2d GetNormalAtS(Line l, float s) {
+  // std::cout << "GetNormalAtS() ";
   // for (auto& ll : l) {
   //   std::cout << boost::geometry::get<0>(ll) << ", " << boost::geometry::get<1>(ll) << " " << s << std::endl;
   // }
@@ -276,14 +276,14 @@ inline Point2d get_normal_at_s(Line l, float s) {
 }
 
 
-inline Line get_line_from_s_interval(Line line, float begin, float end) {
+inline Line GetLine_from_s_interval(Line line, float begin, float end) {
   Line new_line;
-  new_line.add_point(get_point_at_s(line, begin));
+  new_line.add_point(GetPointAtS(line, begin));
   std::vector<Point2d> points = line.get_points_in_s_interval(begin, end);
   for (auto const &point : points) {
     new_line.add_point(point);
   }
-  new_line.add_point(get_point_at_s(line, end));
+  new_line.add_point(GetPointAtS(line, end));
   return new_line;
 }
 
@@ -433,7 +433,7 @@ std::pair<T, T> merge_bounding_boxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
   line.add_point(bb1.second);
   line.add_point(bb2.first);
   line.add_point(bb2.second);
-  return line.bounding_box();
+  return line.BoundingBox();
 }
 
 }  // namespace geometry

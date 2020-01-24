@@ -45,9 +45,9 @@ std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
     // g_[start_vertex.first].lane->GetId()<< std::endl; std::cout <<
     // "goal_vertex: " << goal_vertex.first << " id " <<
     // g_[goal_vertex.first].lane->GetId() <<std::endl; std::cout <<
-    // "goal_vertex type: " << g_[goal_vertex.first].lane->GetLane_type() <<
+    // "goal_vertex type: " << g_[goal_vertex.first].lane->GetLaneType() <<
     // std::endl; std::cout << "goal_vertex type: " <<
-    // fg[goal_vertex.first].lane->GetLane_type() << std::endl;
+    // fg[goal_vertex.first].lane->GetLaneType() << std::endl;
 
     size_t num_vertices = boost::num_vertices(fg);
 

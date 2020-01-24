@@ -37,7 +37,7 @@ TEST(road_corridor_tests, basic_road_corridor) {
 
   // convert xodr to lane and road
   Roads roads;
-  for (auto xodr_road : open_drive_map->get_roads()) {
+  for (auto xodr_road : open_drive_map->GetRoads()) {
     // std::cout << "RoadId: "<< xodr_road.second->GetId() << std::endl;
     RoadPtr road = std::make_shared<Road>(xodr_road.second);
     Lanes lanes;
@@ -114,7 +114,7 @@ TEST(road_corridor_tests, basic_road_corridor) {
 
 //   // convert xodr to lane and road
 //   Roads roads;
-//   for (auto xodr_road : open_drive_map->get_roads()) {
+//   for (auto xodr_road : open_drive_map->GetRoads()) {
 //     // std::cout << "RoadId: "<< xodr_road.second->GetId() << std::endl;
 //     RoadPtr road = std::make_shared<Road>(xodr_road.second);
 //     Lanes lanes;

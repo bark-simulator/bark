@@ -139,7 +139,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                  self._ego_route[1])
 
         sego = self.sample_srange_uniform([s_start, s_end])
-        xy_point =  get_point_at_s(connecting_center_line, sego)
+        xy_point =  GetPointAtS(connecting_center_line, sego)
         angle = get_tangent_angle_at_s(connecting_center_line, sego)
         velocity = self.sample_velocity_uniform(self._ego_velocity_range)
         agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
@@ -187,7 +187,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                  self._ego_goal_start,
                                                  self._ego_goal_end)
 
-        goal_center_line = get_line_from_s_interval(connecting_center_line, s_start, s_end)
+        goal_center_line = GetLine_from_s_interval(connecting_center_line, s_start, s_end)
 
         # build polygon representing state limits
         lims = self._ego_goal_state_limits
@@ -219,7 +219,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
     agent_list = []
     while s < s_end:
       # set agent state on linestring with random velocity
-      xy_point =  get_point_at_s(linestring, s)
+      xy_point =  GetPointAtS(linestring, s)
       angle = get_tangent_angle_at_s(linestring, s)
       
       velocity = self.sample_velocity_uniform(self._other_velocity_range)

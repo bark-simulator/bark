@@ -96,7 +96,7 @@ struct Shape {
     return true;
   }
 
-  std::pair<T, T> bounding_box() const {
+  std::pair<T, T> BoundingBox() const {
     boost::geometry::model::box<T> box;
     boost::geometry::envelope(obj_, box);
     boost::geometry::correct(box);

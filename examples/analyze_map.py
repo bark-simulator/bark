@@ -46,14 +46,14 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 color_triplet_gray = (0.7,0.7,0.7)
 
 # Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   viewer.drawWorld(world)
   viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
   viewer.show(block=True)
   viewer.clear()
 
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     viewer.drawWorld(world)
     viewer.drawXodrRoad(road, color_triplet_gray)
@@ -62,7 +62,7 @@ for idx_r, road in open_drive_map.get_roads().items():
     viewer.show()
     viewer.clear()
 
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     for idx_l, lane in lane_section.GetLanes().items():
       viewer.drawWorld(world)
@@ -82,8 +82,8 @@ for lane_id in lane_ids:
   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
   # plot plan_view
   road_id = roadgraph.GetRoadForLaneId(lane_id)
-  road = map_interface.GetOpenDriveMao().get_road(road_id)
-  plan_view_reference = road.plan_view.get_reference_line()
+  road = map_interface.GetOpenDriveMao().GetRoad(road_id)
+  plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
   outer, inner = roadgraph.compute_lane_boundaries(lane_id)
   center_line = compute_center_line(outer.line, inner.line)
