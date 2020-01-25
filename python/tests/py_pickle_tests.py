@@ -35,9 +35,9 @@ class PickleTests(unittest.TestCase):
 
         # linestring
         l = Line2d()
-        l.addPoint(p)
-        l.addPoint(Point2d(10,4))
-        l.addPoint(Point2d(1.555555, 1.244222))
+        l.AddPoint(p)
+        l.AddPoint(Point2d(10,4))
+        l.AddPoint(Point2d(1.555555, 1.244222))
 
         la = pickle_unpickle(l)
         self.assertTrue(np.array_equal(l.ToArray(), la.ToArray()))
