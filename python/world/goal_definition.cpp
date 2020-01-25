@@ -3,6 +3,9 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+
+#include <utility>
+#include <vector>
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
@@ -17,8 +20,7 @@ using modules::world::goal_definition::GoalDefinitionStateLimits;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
 
-void python_goal_definition(py::module m)
-{
+void python_goal_definition(py::module m) {
   py::class_<GoalDefinition,
              PyGoalDefinition,
              GoalDefinitionPtr>(m, "GoalDefinition")
@@ -34,11 +36,10 @@ void python_goal_definition(py::module m)
     })
     .def_property_readonly("goal_shape", &GoalDefinitionPolygon::GetShape)
     .def(py::pickle(
-      [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
-          /* Return a tuple that fully encodes the state of the object */
+      [](const GoalDefinitionPolygon& g) -> py::tuple {
           return py::make_tuple(g.GetShape());
       },
-      [](py::tuple t) { // __setstate__
+      [](py::tuple t) {
         if (t.size() != 1)
               throw std::runtime_error("Invalid GoalDefinitionPolygon state!");
 
@@ -46,7 +47,8 @@ void python_goal_definition(py::module m)
       }));
 
     py::class_<GoalDefinitionStateLimits, GoalDefinition,
-      std::shared_ptr<GoalDefinitionStateLimits>>(m, "GoalDefinitionStateLimits")
+      std::shared_ptr<GoalDefinitionStateLimits>>(m,
+        "GoalDefinitionStateLimits")
       .def(py::init<>())
       .def(py::init<const Polygon&, const std::pair<float, float>&>())
       .def("__repr__", [](const GoalDefinitionStateLimits &g) {
@@ -59,40 +61,37 @@ void python_goal_definition(py::module m)
       .def_property_readonly("angle_limits",
         &GoalDefinitionStateLimits::GetAngleLimits)
       .def(py::pickle(
-        [](const GoalDefinitionStateLimits& g) -> py::tuple {  // __getstate__
-            /* Return a tuple that fully encodes the state of the object */
+        [](const GoalDefinitionStateLimits& g) -> py::tuple {
             return py::make_tuple(g.GetShape(), g.GetAngleLimits());
         },
-        [](py::tuple t) {  // __setstate__
+        [](py::tuple t) {
           if (t.size() != 2)
-                throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
-
+            throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");  // NOLINT
           return new GoalDefinitionStateLimits(t[0].cast<Polygon>(), t[1].cast<
                   std::pair<float, float>>());
         }));
 
-      
-      py::class_<GoalDefinitionSequential, GoalDefinition,
-        std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")
-    .def(py::init<>())
-    .def(py::init<const std::vector<GoalDefinitionPtr>&>())
-    .def("__repr__", [](const GoalDefinitionSequential &g) {
-      return "bark.world.goal_definition.GoalDefinitionSequential";
-    })
-    .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
-    .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
-    .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
-    .def_property_readonly("sequential_goals", &GoalDefinitionSequential::GetSequentialGoals)
-    .def(py::pickle(
-        [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__
-            /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.GetSequentialGoals());
+    py::class_<GoalDefinitionSequential, GoalDefinition,
+        std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")  // NOLINT
+      .def(py::init<>())
+      .def(py::init<const std::vector<GoalDefinitionPtr>&>())
+      .def("__repr__", [](const GoalDefinitionSequential &g) {
+        return "bark.world.goal_definition.GoalDefinitionSequential";
+      })
+      .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
+      .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
+      .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
+      .def_property_readonly("sequential_goals",
+        &GoalDefinitionSequential::GetSequentialGoals)
+      .def(py::pickle(
+        [](const GoalDefinitionSequential& g) -> py::tuple {
+          return py::make_tuple(g.GetSequentialGoals());
         },
-        [](py::tuple t) { // __setstate__
+        [](py::tuple t) {
           if (t.size() != 1)
-                throw std::runtime_error("Invalid GoalDefinitionSequential state!");
-
-          return new GoalDefinitionSequential(t[0].cast<std::vector<GoalDefinitionPtr>>());
+            throw std::runtime_error("Invalid GoalDefinitionSequential state!");
+          return new GoalDefinitionSequential(
+            t[0].cast<std::vector<GoalDefinitionPtr>>());
         }));
 
 
