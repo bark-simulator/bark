@@ -102,8 +102,10 @@ inline std::string print(const XodrLane& l) {
   std::stringstream ss;
   ss << "id: " << l.get_id() << ", ";
   ss << "position " << l.get_lane_position() << ", ";
+  ss << "type " << l.get_lane_type() << ", ";
   ss << print(l.get_link());
   ss << print(l.get_road_mark());
+  ss << "driving_direction" << l.get_driving_direction() << ", ";
   ss << "speed: " << l.get_speed() << std::endl;
   return ss.str();
 }
