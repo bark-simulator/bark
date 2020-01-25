@@ -55,8 +55,8 @@ class EnvironmentTests(unittest.TestCase):
         xodr_map = MakeXodrMapOneRoadTwoLanes()
 
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_map)
-        world.set_map(map_interface)
+        map_interface.SetOpenDriveMap(xodr_map)
+        world.SetMap(map_interface)
 
         start_point = Point2d(0, -11)
         lanes_near_start = map_interface.find_nearest_lanes(start_point, 1)

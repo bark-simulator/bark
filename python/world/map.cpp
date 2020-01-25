@@ -33,7 +33,7 @@ void python_map(py::module m) {
     })
     .def("SetRoadgraph", &MapInterface::SetRoadgraph)
     .def("GetRoadgraph", &MapInterface::GetRoadgraph)
-    .def("GetOpenDriveMao", &MapInterface::GetOpenDriveMao)
+    .def("GetOpenDriveMap", &MapInterface::GetOpenDriveMap)
       .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
                                   const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
       .def("GenerateRoadCorridor", py::overload_cast<const modules::geometry::Point2d&,
