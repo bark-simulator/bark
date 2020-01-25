@@ -90,6 +90,7 @@ cc_library(
         "//modules/models/behavior/idm:idm_classic",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
+        "//modules/world/tests:make_test_xodr_map",
         "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
