@@ -102,14 +102,14 @@ void python_geometry(py::module m) {
     &modules::geometry::MergeBoundingBoxes<Point2d>,
     "merge two bounding boxes consisting of pairs of min and max corners");
 
-  m.def("compute_center_line",
+  m.def("ComputeCenterLine",
     &modules::geometry::ComputeCenterLine, "computes the center line.");
 
   py::class_<Line,
              std::shared_ptr<Line>>(m, "Line2d")
     .def(py::init<>(), "Create empty line")
-    .def("addPoint", &Line::AddPoint, "add a point")
-    .def("addPoint", [](Line &line, py::list list) {
+    .def("AddPoint", &Line::AddPoint, "add a point")
+    .def("AddPoint", [](Line &line, py::list list) {
       if (list.size() != 2) {
         printf("Error: List size of two required.");
         return;
@@ -123,12 +123,12 @@ void python_geometry(py::module m) {
       return ss.str();
     })
     .def("ToArray", &Line::ToArray, "returns numpy array.")
-    .def("valid", &Line::Valid, "checks if line is valid.")
+    .def("Valid", &Line::Valid, "checks if line is valid.")
     .def("Rotate", &Line::Rotate, "rotates object around center point.")
     .def("Translate", &Line::Translate, "translates object.")
     .def("Transform", &Line::Transform, "translates and rotates object.")
     .def("Length", &Line::Length, "calculates length of line.")
-    .def("reverse", &Line::Reverse, "reverse linestring in place")
+    .def("Reverse", &Line::Reverse, "reverse linestring in place")
     .def("AppendLinestring",
       &Line::AppendLinestring, "append linestrings in place")
     .def("concatenate_linestring",
@@ -159,8 +159,8 @@ void python_geometry(py::module m) {
       "Create polygon with center point and point list")
     .def(py::init<Pose, const Line&>(),
       "Create polygon with center point and line enclosing polygon")
-    .def("addPoint", &Polygon::AddPoint, "add a point")
-    .def("addPoint", [](Polygon &polygon, py::list list) {
+    .def("AddPoint", &Polygon::AddPoint, "add a point")
+    .def("AddPoint", [](Polygon &polygon, py::list list) {
       if (list.size() != 2) {
         printf("Error: List size of two required.");
         return;
@@ -174,7 +174,7 @@ void python_geometry(py::module m) {
       return ss.str();
     })
     .def("ToArray", &Polygon::ToArray, "returns numpy array")
-    .def("valid", &Polygon::Valid, "checks if polygong is valid.")
+    .def("Valid", &Polygon::Valid, "checks if polygong is valid.")
     .def("Rotate", &Polygon::Rotate, "rotates object around center point.")
     .def("Translate", &Polygon::Translate, "translates center point.")
     .def("Transform", &Polygon::Transform, "translates and rotates object.")
@@ -207,7 +207,7 @@ void python_geometry(py::module m) {
   py::class_<modules::geometry::Model3D>(m, "Model3d")
     .def(py::init<>(), "Create none 3d model")
     .def(py::init<modules::geometry::Model3D::Type>(),
-      "Create 3D model with specific type ")
+      "Create 3D model with specific type")
     .def_property_readonly("type", &modules::geometry::Model3D::GetType);
 
   py::enum_<modules::geometry::Model3D::Type>(m,

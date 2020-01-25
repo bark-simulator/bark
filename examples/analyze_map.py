@@ -10,7 +10,7 @@ import math
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world import World
-from bark.geometry import compute_center_line
+from bark.geometry import ComputeCenterLine
 from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
@@ -86,7 +86,7 @@ for lane_id in lane_ids:
   plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
   outer, inner = roadgraph.ComputeLaneBoundaries(lane_id)
-  center_line = compute_center_line(outer.line, inner.line)
+  center_line = ComputeCenterLine(outer.line, inner.line)
   viewer.drawWorld(world)
   color = list(np.random.choice(range(256), size=3)/256)
   viewer.drawPolygon2d(lane_polygon, color, 1.0)
