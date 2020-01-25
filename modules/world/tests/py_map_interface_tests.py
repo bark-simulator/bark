@@ -46,6 +46,31 @@ class EnvironmentTests(unittest.TestCase):
 
         time.sleep(2)  # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
 
+
+    def test_two_roads_one_lane(self):
+
+        params = ParameterServer()
+        world = World(params)
+
+        xodr_map = make_xodr_map_one_road_two_lanes()
+
+        map_interface = MapInterface()
+        map_interface.set_open_drive_map(xodr_map)
+        world.set_map(map_interface)
+
+        start_point = Point2d(0, -11)
+        lanes_near_start = map_interface.find_nearest_lanes(start_point, 1)
+        assert(len(lanes_near_start) == 1)
+
+        goal_point = Point2d(-191.789, -50.1725)
+        lanes_near_goal = map_interface.find_nearest_lanes(goal_point, 1)
+        assert(len(lanes_near_goal) == 1)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+
+        time.sleep(2)  # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
+
     def test_between_lanes(self):
         xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
         np.set_printoptions(precision=8)
