@@ -12,6 +12,7 @@
 #include "modules/world/opendrive/lane_section.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/opendrive/odrSpiral.hpp"
+#include "modules/world/tests/make_test_xodr_map.hpp"
 
 using namespace modules::world::opendrive;
 
@@ -143,6 +144,8 @@ void python_opendrive(py::module m) {
       .def("get_road", &OpenDriveMap::get_road, "Get road element")
       .def("get_roads", &OpenDriveMap::get_roads, "Get all roads")
       .def("get_junctions", &OpenDriveMap::get_junctions, "Get all junctions");
+  
+  m.def("make_xodr_map_one_road_two_lanes", &modules::world::tests::make_xodr_map_one_road_two_lanes);
 
   py::class_<XodrLaneLink>(m, "XodrLaneLink")
       .def(py::init<>())
