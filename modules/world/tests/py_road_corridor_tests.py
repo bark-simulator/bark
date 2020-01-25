@@ -33,9 +33,9 @@ class RoadCorridorTests(unittest.TestCase):
     world = World(params)
 
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_map)
-    world.set_map(map_interface)
-    open_drive_map = world.map.get_open_drive_map()
+    map_interface.SetOpenDriveMap(xodr_map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -55,7 +55,7 @@ class RoadCorridorTests(unittest.TestCase):
     self.assertEqual(len(road_corridor.roads), 1)
     
     # Assert: road1: 2 lanes
-    self.assertEqual(len(road_corridor.get_road(roads[0]).lanes), 3)
+    self.assertEqual(len(road_corridor.GetRoad(roads[0]).lanes), 3)
 
     colors = ["blue", "red", "green"]
     count = 0
@@ -79,7 +79,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -142,7 +142,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -206,7 +206,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -243,7 +243,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 

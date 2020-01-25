@@ -83,9 +83,9 @@ class WorldTests(unittest.TestCase):
       # Map Definition
       map_interface = MapInterface()
       xodr_map = MakeXodrMapOneRoadTwoLanes()
-      map_interface.set_open_drive_map(xodr_map)
-      world.set_map(map_interface)
-      #open_drive_map = world.map.get_open_drive_map()
+      map_interface.SetOpenDriveMap(xodr_map)
+      world.SetMap(map_interface)
+      #open_drive_map = world.map.GetOpenDriveMap()
 
       #agent_2d_shape = CarLimousine()
       agent_2d_shape = Polygon2d([1.25, 1, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(3,1), Point2d(3,-1)])
@@ -102,7 +102,7 @@ class WorldTests(unittest.TestCase):
                     agent_params,
                     GoalDefinitionPolygon(goal_polygon), # goal_lane_id
                     map_interface)
-      world.add_agent(agent)
+      world.AddAgent(agent)
 
       evaluator = EvaluatorDrivableArea()
       world.AddEvaluator("drivable_area", evaluator)
