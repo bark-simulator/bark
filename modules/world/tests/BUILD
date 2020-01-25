@@ -173,7 +173,8 @@ py_test(
   srcs = ["py_world_tests.py"],
   data = ['//python:bark.so'],
   imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters"],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime"],
 )
 
 py_test(
