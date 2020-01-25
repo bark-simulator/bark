@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-
+#include "make_test_xodr_map.hpp"
 
 TEST(roadgraph, road_creation)
 {
@@ -648,6 +648,8 @@ TEST(roadgraph, generate_roadgraph_neighbours_test)
   ASSERT_TRUE(out2.second);
   ASSERT_TRUE(out2.first == lane3->get_id());
 
+  // TODO: should use make_map_one_road_two_lanes
+
 }
 
 
@@ -727,6 +729,39 @@ TEST(roadgraph, generate_roadgraph_successors_test)
   ASSERT_TRUE(suc.size() == 1);
   ASSERT_TRUE(suc[0] == lane11->get_id());
   
+  auto all_ids = rg.get_all_laneids();
+  ASSERT_TRUE(all_ids.size() == 2);
+}
+
+
+TEST(roadgraph, make_xodr_map_one_road_two_lanes_test)
+{
+  using namespace modules::geometry;
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+
+  OpenDriveMapPtr open_drive_map = modules::world::tests::make_xodr_map_one_road_two_lanes();
+  Roadgraph rg;
+  rg.Generate(open_drive_map);
+ 
+  rg.print_graph("make_xodr_map_one_road_two_lanes_test.dot");
+
+  auto all_ids = rg.get_all_laneids();
+  ASSERT_TRUE(all_ids.size() == 2);
+}
+
+TEST(roadgraph, make_xodr_map_two_roads_one_lane_test)
+{
+  using namespace modules::geometry;
+  using namespace modules::world::opendrive;
+  using namespace modules::world::map;
+
+  OpenDriveMapPtr open_drive_map = modules::world::tests::make_xodr_map_two_roads_one_lane();
+  Roadgraph rg;
+  rg.Generate(open_drive_map);
+ 
+  rg.print_graph("make_xodr_map_two_roads_one_lane_test.dot");
+
   auto all_ids = rg.get_all_laneids();
   ASSERT_TRUE(all_ids.size() == 2);
 }
