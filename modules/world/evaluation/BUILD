@@ -88,10 +88,6 @@ cc_library(
     deps = [
         "//modules/world/evaluation:base_evaluator",
         "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/world/map:map_interface",
-        "//modules/world/map:roadgraph",
-        "//modules/world/opendrive:opendrive",
         "@boost//:geometry",
         "//modules/world:world",
 
