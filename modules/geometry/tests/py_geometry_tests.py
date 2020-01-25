@@ -35,7 +35,7 @@ class GeometryTests(unittest.TestCase):
         l.addPoint([3, 4])
         l.addPoint([1, 4])
         self.assertTrue(l.valid())
-        arr = l.toArray()
+        arr = l.ToArray()
         print(arr)
 
 
@@ -82,17 +82,17 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(np.array_equal(np.array([2,3]),np.array([bb2[0].x(), bb2[0].y()])))
         self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb2[1].x(), bb2[1].y()])))
 
-        bb_merged = merge_bounding_boxes(bb, bb2)
+        bb_merged = MergeBoundingBoxes(bb, bb2)
 
         self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb_merged[0].x(), bb_merged[0].y()])))
         self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb_merged[1].x(), bb_merged[1].y()])))
 
-    def test_distance(self):
+    def test_Distance(self):
 
         p1 = Point2d(1, 10)
         p2 = Point2d(1, 5)
 
-        self.assertEqual(distance(p1, p2), 5)
+        self.assertEqual(Distance(p1, p2), 5)
 
         l = Line2d()
         l.addPoint(p1)
@@ -105,8 +105,8 @@ class GeometryTests(unittest.TestCase):
         l2.addPoint(p3)
         l2.addPoint(p4)
 
-        self.assertEqual(distance(l2, p3), 0)
-        self.assertEqual(distance(l, l2), 3)
+        self.assertEqual(Distance(l2, p3), 0)
+        self.assertEqual(Distance(l, l2), 3)
 
         p = Polygon2d()
         p.addPoint([0, 0])
@@ -120,9 +120,9 @@ class GeometryTests(unittest.TestCase):
         p2.addPoint([6, 1])
         p2.addPoint([5, 0])
 
-        self.assertEqual(distance(p, p2), 4)
-        self.assertEqual(distance(p, l2), 3)
-        self.assertEqual(distance(p2, Point2d(10, 1)), 4)
+        self.assertEqual(Distance(p, p2), 4)
+        self.assertEqual(Distance(p, l2), 3)
+        self.assertEqual(Distance(p2, Point2d(10, 1)), 4)
 
     # TODO: need assertion in this test
     def test_transformation(self):
@@ -137,8 +137,8 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(p.valid())
 
         # rotate around pi
-        # viewer.drawPolygon2d(p.rotate(math.pi/2),'r',0.2)
-        p.rotate(math.pi / 2)
+        # viewer.drawPolygon2d(p.Rotate(math.pi/2),'r',0.2)
+        p.Rotate(math.pi / 2)
 
         # rotate around top left corner (second point)
         p2 = Polygon2d([1.25, 1, 0], [
@@ -149,12 +149,12 @@ class GeometryTests(unittest.TestCase):
             Point2d(0, 0)
         ])
         for x in np.linspace(0, 2 * math.pi, 7):
-            p2.rotate(x)
-            #viewer.drawPolygon2d(p2.rotate(x), 'b', 0.2)
+            p2.Rotate(x)
+            #viewer.drawPolygon2d(p2.Rotate(x), 'b', 0.2)
 
         # translate into the nirvana based on previous rotations and translations
-        #viewer.drawPolygon2d(p2.translate(Point2d(10,0)), 'g', 0.2)
-        #viewer.drawPolygon2d(p2.transform([5,5,0.4]), 'k', 0.2)
+        #viewer.drawPolygon2d(p2.Translate(Point2d(10,0)), 'g', 0.2)
+        #viewer.drawPolygon2d(p2.Transform([5,5,0.4]), 'k', 0.2)
         #viewer.show()
 
     def test_const_poly_from_array(self):

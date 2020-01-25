@@ -17,23 +17,23 @@ class EnvironmentTests(unittest.TestCase):
         pv = PlanView()
 
         # Line
-        pv.add_line(Point2d(0, 0), 1.57079632679, 10)
-        line = pv.get_reference_line().toArray()
+        pv.AddLine(Point2d(0, 0), 1.57079632679, 10)
+        line = pv.GetReferenceLine().ToArray()
 
         # Spiral
         p = Point2d(line[-1][0], line[-1][1])
-        pv.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = pv.get_reference_line().toArray()
+        pv.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+        line = pv.GetReferenceLine().ToArray()
 
         offset = XodrLaneOffset(1.5, 0, 0, 0)
         lane_width = XodrLaneWidth(0.0, 59.9, offset)
 
-        lane = XodrLane.create_lane_from_lane_width(-1,
-                                                pv.get_reference_line(), lane_width, 0.5)
+        lane = XodrLane.CreateLaneFromLaneWidth(-1,
+                                                pv.GetReferenceLine(), lane_width, 0.5)
 
         print(lane)
-        lane = XodrLane.create_lane_from_lane_width(
-            1, pv.get_reference_line(), lane_width, 0.5)
+        lane = XodrLane.CreateLaneFromLaneWidth(
+            1, pv.GetReferenceLine(), lane_width, 0.5)
         print(lane)
 
     def test_road(self):
@@ -42,16 +42,16 @@ class EnvironmentTests(unittest.TestCase):
         newXodrRoad.name = "Autobahn A9"
 
         newPlanView = PlanView()
-        newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
+        newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10)
 
         newXodrRoad.plan_view = newPlanView
 
-        line = newXodrRoad.plan_view.get_reference_line().toArray()
+        line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
         # Spiral
         p = Point2d(line[-1][0], line[-1][1])
-        newXodrRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newXodrRoad.plan_view.get_reference_line().toArray()
+        newXodrRoad.plan_view.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+        line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
     def test_spiral(self):
         '''

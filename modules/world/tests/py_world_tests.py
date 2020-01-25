@@ -47,25 +47,25 @@ class WorldTests(unittest.TestCase):
         newXodrRoad.id = 1
         newXodrRoad.name = "Autobahn A9"
         newPlanView = PlanView()
-        newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
+        newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10)
         newXodrRoad.plan_view = newPlanView
-        line = newXodrRoad.plan_view.get_reference_line().toArray()
+        line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
         p = Point2d(line[-1][0], line[-1][1])
-        newXodrRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newXodrRoad.plan_view.get_reference_line()
+        newXodrRoad.plan_view.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+        line = newXodrRoad.plan_view.GetReferenceLine()
         lane_section = XodrLaneSection(0)
         lane = XodrLane()
         lane.line = line
-        lane_section.add_lane(lane)
-        newXodrRoad.add_lane_section(lane_section)
-        road_map.add_road(newXodrRoad)
+        lane_section.AddLane(lane)
+        newXodrRoad.AddLaneSection(lane_section)
+        road_map.AddRoad(newXodrRoad)
 
         r = Roadgraph()
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(road_map)
-        map_interface.set_roadgraph(r)
+        map_interface.SetOpenDriveMap(road_map)
+        map_interface.SetRoadgraph(r)
         world = World(params)
-        world.add_agent(agent)
+        world.AddAgent(agent)
 
     
     def test_evaluator_drivable_area(self):
@@ -82,7 +82,7 @@ class WorldTests(unittest.TestCase):
 
       # Map Definition
       map_interface = MapInterface()
-      xodr_map = make_xodr_map_one_road_two_lanes()
+      xodr_map = MakeXodrMapOneRoadTwoLanes()
       map_interface.set_open_drive_map(xodr_map)
       world.set_map(map_interface)
       #open_drive_map = world.map.get_open_drive_map()
@@ -92,7 +92,7 @@ class WorldTests(unittest.TestCase):
       init_state = np.array([0, 3, -1.75, 0, 5])
       agent_params = params.addChild("agent1")
       goal_polygon = Polygon2d([1, 1, 0],[Point2d(0,0),Point2d(0,2),Point2d(2,2), Point2d(2,0)])
-      goal_polygon = goal_polygon.translate(Point2d(50, -2))
+      goal_polygon = goal_polygon.Translate(Point2d(50, -2))
 
       agent = Agent(init_state,
                     behavior_model,
@@ -105,7 +105,7 @@ class WorldTests(unittest.TestCase):
       world.add_agent(agent)
 
       evaluator = EvaluatorDrivableArea()
-      world.add_evaluator("drivable_area", evaluator)
+      world.AddEvaluator("drivable_area", evaluator)
 
       info = world.evaluate()
       self.assertFalse(info["drivable_area"])

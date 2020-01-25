@@ -33,10 +33,10 @@ params = ParameterServer()
 world = World(params)
 
 map_interface = MapInterface()
-map_interface.set_open_drive_map(xodr_parser.map)
-world.set_map(map_interface)
+map_interface.SetOpenDriveMap(xodr_parser.map)
+world.SetMap(map_interface)
 
-open_drive_map = world.map.get_open_drive_map()
+open_drive_map = world.map.GetOpenDriveMao()
 
 viewer = MPViewer(params=params,
                   use_world_bounds=True)
@@ -46,14 +46,14 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 color_triplet_gray = (0.7,0.7,0.7)
 
 # Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   viewer.drawWorld(world)
   viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
   viewer.show(block=True)
   viewer.clear()
 
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
     viewer.drawWorld(world)
     viewer.drawXodrRoad(road, color_triplet_gray)
@@ -62,9 +62,9 @@ for idx_r, road in open_drive_map.get_roads().items():
     viewer.show()
     viewer.clear()
 
-for idx_r, road in open_drive_map.get_roads().items():
+for idx_r, road in open_drive_map.GetRoads().items():
   for idx_ls, lane_section in enumerate(road.lane_sections):
-    for idx_l, lane in lane_section.get_lanes().items():
+    for idx_l, lane in lane_section.GetLanes().items():
       viewer.drawWorld(world)
       viewer.drawXodrRoad(road, color_triplet_gray)
       viewer.drawXodrLaneSection(lane_section, color_triplet_gray)
@@ -74,16 +74,16 @@ for idx_r, road in open_drive_map.get_roads().items():
       viewer.clear()
 
 # XodrLanes of Roadgraph
-roadgraph = map_interface.get_roadgraph()
-roadgraph.print_graph(output_dir + "/" + map_name)
-lane_ids = roadgraph.get_all_laneids ()
+roadgraph = map_interface.GetRoadgraph()
+roadgraph.PrintGraph(output_dir + "/" + map_name)
+lane_ids = roadgraph.GetAllLaneids ()
 
 for lane_id in lane_ids:
   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
   # plot plan_view
   road_id = roadgraph.GetRoadForLaneId(lane_id)
-  road = map_interface.get_open_drive_map().get_road(road_id)
-  plan_view_reference = road.plan_view.get_reference_line()
+  road = map_interface.GetOpenDriveMao().GetRoad(road_id)
+  plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
   outer, inner = roadgraph.compute_lane_boundaries(lane_id)
   center_line = compute_center_line(outer.line, inner.line)

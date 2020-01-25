@@ -27,18 +27,18 @@ class EvaluatorGoalReached : public BaseEvaluator {
   virtual EvaluationReturn Evaluate(const world::World& world) {
     if (agent_id_ == -1) {
       int goal_reached_count = 0;
-      for (auto& agent :  world.get_agents()) {
+      for (auto& agent :  world.GetAgents()) {
         if (agent.second->AtGoal()) {
           goal_reached_count += 1;
         }
       }
-      if (goal_reached_count == world.get_agents().size())
+      if (goal_reached_count == world.GetAgents().size())
         return true;
       return false;
     } else {
-      auto agent_it = world.get_agents().find(agent_id_);
-      if (agent_it != world.get_agents().end()) {
-        return world.get_agents()[agent_id_]->AtGoal();
+      auto agent_it = world.GetAgents().find(agent_id_);
+      if (agent_it != world.GetAgents().end()) {
+        return world.GetAgents()[agent_id_]->AtGoal();
       } else {
         return false;
       }

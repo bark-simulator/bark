@@ -40,10 +40,10 @@ struct XodrRoadLink {
   XodrRoadLinkInfo predecessor_;
   XodrRoadLinkInfo successor_;
   //! getter
-  XodrRoadLinkInfo get_predecessor() const { return predecessor_; }
-  XodrRoadLinkInfo get_successor() const { return successor_; }
-  void set_predecessor(const XodrRoadLinkInfo &info) { predecessor_ = info; }
-  void set_successor(const XodrRoadLinkInfo &info) { successor_ = info; }
+  XodrRoadLinkInfo GetPredecessor() const { return predecessor_; }
+  XodrRoadLinkInfo GetSuccessor() const { return successor_; }
+  void SetPredecessor(const XodrRoadLinkInfo &info) { predecessor_ = info; }
+  void SetSuccessor(const XodrRoadLinkInfo &info) { successor_ = info; }
 };
 
 inline std::string print(const XodrRoadLink &l) {
@@ -59,7 +59,7 @@ struct XodrLaneOffset {
   float a, b, c, d;
 };
 
-inline float polynom(float x, float a, float b, float c, float d) {
+inline float Polynom(float x, float a, float b, float c, float d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
 
@@ -79,8 +79,8 @@ inline std::string print(const XodrLaneLink &l) {
 using XodrLaneLinks = std::vector<XodrLaneLink>;
 
 struct Connection {
-  void add_lane_link(XodrLaneLink link) { lane_links_.push_back(link); }
-  XodrLaneLinks get_lane_links() const { return lane_links_; }
+  void AddLaneLink(XodrLaneLink link) { lane_links_.push_back(link); }
+  XodrLaneLinks GetLaneLinks() const { return lane_links_; }
   uint32_t id_;
   uint32_t incoming_road_;  // TODO(@all): use type XodrRoadId here
   uint32_t connecting_road_;
@@ -172,7 +172,7 @@ struct XodrLaneWidth {
   XodrLaneOffset off;
 };
 
-inline geometry::Line create_line_with_offset_from_line(
+inline geometry::Line CreateLineWithOffsetFromLine(
   geometry::Line previous_line,
   int id,
   XodrLaneWidth lane_width_current_lane,
@@ -185,20 +185,20 @@ inline geometry::Line create_line_with_offset_from_line(
   float scale = 0.0f;
 
   boost::geometry::unique(previous_line.obj_);
-  previous_line.recompute_s();
+  previous_line.RecomputeS();
 
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
-  if (s_end > previous_line.length())
-    s_end = previous_line.length();
+  if (s_end > previous_line.Length())
+    s_end = previous_line.Length();
 
   for (; s <= s_end;) {
-    geometry::Point2d point = get_point_at_s(previous_line, s);
-    normal = get_normal_at_s(previous_line, s);
-    scale = -sign * polynom(
+    geometry::Point2d point = GetPointAtS(previous_line, s);
+    normal = GetNormalAtS(previous_line, s);
+    scale = -sign * Polynom(
       s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
-    tmp_line.add_point(
+    tmp_line.AddPoint(
       geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
                         bg::get<1>(point) + scale * bg::get<1>(normal)));
     if ((s_end - s < s_inc) &&

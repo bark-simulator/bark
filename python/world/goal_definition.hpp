@@ -26,11 +26,11 @@ class PyGoalDefinition : public GoalDefinition {
         AtGoal,
         agent);
   }
-  const modules::geometry::Polygon& get_shape() const override {
+  const modules::geometry::Polygon& GetShape() const override {
     PYBIND11_OVERLOAD(
         modules::geometry::Polygon&,
         GoalDefinition,
-        get_shape);
+        GetShape);
   }
 
 };

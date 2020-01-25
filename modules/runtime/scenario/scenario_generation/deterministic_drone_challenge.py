@@ -73,7 +73,7 @@ class DeterministicDroneChallengeGeneration(ScenarioGeneration):
     for goal_pose in self.goal_frame_poses:
         goal_polygon = Polygon2d(self.goal_frame_center,
                                np.array(self.goal_frame_points))
-        goal_polygon = goal_polygon.transform(goal_pose)
+        goal_polygon = goal_polygon.Transform(goal_pose)
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         goal_list.append(goal_definition)
     
@@ -91,7 +91,7 @@ class DeterministicDroneChallengeGeneration(ScenarioGeneration):
       agent_json["map_interface"] = world.map
       goal_polygon = Polygon2d([0, 0, 0],
                                np.array(agent_json["goal"]["polygon_points"]))
-      goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
+      goal_polygon = goal_polygon.Translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
       agent_json["goal_definition"] = self._build_sequential_goal_definition()
@@ -102,7 +102,7 @@ class DeterministicDroneChallengeGeneration(ScenarioGeneration):
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
                                                    param_server=self._local_params)
-      agent.set_agent_id(agent_json["id"])
+      agent.SetAgentId(agent_json["id"])
       scenario._agent_list.append(agent)
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",
                                 "ID of the ego-agent",

@@ -40,19 +40,19 @@ class ObservedWorld : protected World {
       World(world),
       ego_agent_id_(ego_agent_id) {}
     ~ObservedWorld() {}
-    double get_world_time() const { return World::get_world_time(); }
+    double GetWorldTime() const { return World::GetWorldTime(); }
     const LocalMap& get_local_map() const {
-      return *World::get_agent(ego_agent_id_)->get_local_map();
+      return *World::GetAgent(ego_agent_id_)->get_local_map();
     }
-    AgentPtr get_ego_agent() const {
-      return World::get_agent(ego_agent_id_);
+    AgentPtr GetEgoAgent() const {
+      return World::GetAgent(ego_agent_id_);
     }
-    MapInterfacePtr get_map() const { return World::get_map(); }
-    State current_ego_state() const {
-      return World::get_agents()[ego_agent_id_]->get_current_state();
+    MapInterfacePtr GetMap() const { return World::GetMap(); }
+    State CurrentEgoState() const {
+      return World::GetAgents()[ego_agent_id_]->GetCurrentState();
     }
     Point2d get_ego_point() const {
-      State ego_state = current_ego_state();
+      State ego_state = CurrentEgoState();
       return Point2d(ego_state(X_POSITION), ego_state(Y_POSITION));
     }
 

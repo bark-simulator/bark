@@ -20,17 +20,17 @@ TEST(setter_params, param_tests) {
 
   modules::commons::SetterParams params;
 
-  params.set_real("Test::2", 0.5f);
-  EXPECT_EQ(params.get_real("Test::2","", 1.0f), 0.5f);
+  params.SetReal("Test::2", 0.5f);
+  EXPECT_EQ(params.GetReal("Test::2","", 1.0f), 0.5f);
 
-  params.set_int("Test::2", 2);
-  EXPECT_EQ(params.get_int("Test::2", "", 1),2);
+  params.SetInt("Test::2", 2);
+  EXPECT_EQ(params.GetInt("Test::2", "", 1),2);
 
-  params.set_bool("Test::5", true);
-  EXPECT_EQ(params.get_bool("Test::5", "", false), true);
+  params.SetBool("Test::5", true);
+  EXPECT_EQ(params.GetBool("Test::5", "", false), true);
 
-  params.set_listlist_float("Test::2", {{0,1}, {0,2},{0.5,1.5}});
-  EXPECT_EQ(params.get_listlist_float("Test::2", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,1}, {0,2},{0.5,1.5}}));
+  params.SetListListFloat("Test::2", {{0,1}, {0,2},{0.5,1.5}});
+  EXPECT_EQ(params.GetListListFloat("Test::2", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,1}, {0,2},{0.5,1.5}}));
 }
 
 int main(int argc, char **argv) {

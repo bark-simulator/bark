@@ -24,16 +24,23 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
                  GoalDefinition(),
                  xy_limits_(),
                  angle_limits_() {}
-  GoalDefinitionStateLimits(const modules::geometry::Polygon& xy_limits,
-                            const std::pair<float,float> angle_limits) :
-                             xy_limits_(xy_limits),
-                             angle_limits_(angle_limits) {}
+  GoalDefinitionStateLimits(
+    const modules::geometry::Polygon& xy_limits,
+    const std::pair<float,float> angle_limits) :
+    xy_limits_(xy_limits),
+    angle_limits_(angle_limits) {}
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
-  const modules::geometry::Polygon& get_xy_limits() const {return xy_limits_;}
-  const modules::geometry::Polygon& get_shape() const {return xy_limits_;}
-  const std::pair<float,float> get_angle_limits() const {return angle_limits_;}
+  const modules::geometry::Polygon& GetXyLimits() const {
+    return xy_limits_;
+  }
+  const modules::geometry::Polygon& GetShape() const {
+    return xy_limits_;
+  }
+  const std::pair<float,float> GetAngleLimits() const {
+    return angle_limits_;
+  }
 
  private:
   modules::geometry::Polygon xy_limits_;

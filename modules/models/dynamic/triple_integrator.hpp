@@ -22,7 +22,7 @@ class TripleIntegratorModel : public DynamicModel {
   explicit TripleIntegratorModel(modules::commons::Params *params) :
     DynamicModel(params),
     mass_(0.2) {
-      mass_ = params->get_real("DynamicModel::mass",
+      mass_ = params->GetReal("DynamicModel::mass",
       "Mass of the object.",
       1.);
     }
