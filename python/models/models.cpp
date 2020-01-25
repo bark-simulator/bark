@@ -10,7 +10,12 @@
 #include "python/models/dynamic.hpp"
 
 void python_models(py::module m) {
-  python_behavior(m.def_submodule("behavior", "Behavior wrapping"));
-  python_execution(m.def_submodule("execution", "submodule containing all wrapped execution models"));
-  python_dynamic(m.def_submodule("dynamic", "submodule containing all wrapped dynamic models"));
+  python_behavior(
+    m.def_submodule("behavior", "Behavior wrapping"));
+  python_execution(
+    m.def_submodule("execution",
+    "submodule containing all wrapped execution models"));
+  python_dynamic(
+    m.def_submodule("dynamic",
+    "submodule containing all wrapped dynamic models"));
 }

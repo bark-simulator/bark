@@ -85,7 +85,7 @@ for lane_id in lane_ids:
   road = map_interface.GetOpenDriveMao().GetRoad(road_id)
   plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
-  outer, inner = roadgraph.compute_lane_boundaries(lane_id)
+  outer, inner = roadgraph.ComputeLaneBoundaries(lane_id)
   center_line = compute_center_line(outer.line, inner.line)
   viewer.drawWorld(world)
   color = list(np.random.choice(range(256), size=3)/256)

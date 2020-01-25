@@ -13,15 +13,15 @@ namespace commons {
 
 void python_commons(py::module m) {
     py::class_<Params, PyParams, std::shared_ptr<Params>>(m, "Params")
-        .def(py::init<>())
-        .def("access", &Params::operator[])
-        .def("addChild", &Params::AddChild)
-        .def("getBool", &Params::GetBool)
-        .def("getReal", &Params::GetReal)
-        .def("getInt", &Params::GetInt)
-        .def("setBool", &Params::SetBool)
-        .def("setReal", &Params::SetReal)
-        .def("setInt", &Params::SetInt);
+      .def(py::init<>())
+      .def("Access", &Params::operator[])
+      .def("addChild", &Params::AddChild)
+      .def("getBool", &Params::GetBool)
+      .def("getReal", &Params::GetReal)
+      .def("getInt", &Params::GetInt)
+      .def("setBool", &Params::SetBool)
+      .def("setReal", &Params::SetReal)
+      .def("setInt", &Params::SetInt);
     m.def("ParamsTest", &DoSomeParams);
 }
 
