@@ -33,7 +33,7 @@ for _ in range(0, 1):
   world_state = scenario.get_world_state()
   for _ in range(0, 5):
     video_renderer.drawWorld(world_state, scenario._eval_agent_ids, idx) 
-    world_state.step(sim_step_time)
+    world_state.Step(sim_step_time)
   
 video_renderer.export_video(filename="examples/scenarios/test_video_step")
 
@@ -41,8 +41,8 @@ video_renderer.export_video(filename="examples/scenarios/test_video_step")
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
 world_state = scenario.get_world_state()
 for _ in range(0, 10):
-  world_state.do_planning(sim_step_time)
+  world_state.DoPlanning(sim_step_time)
   video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
-  world_state.do_execution(sim_step_time)
+  world_state.DoExecution(sim_step_time)
 
 video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
