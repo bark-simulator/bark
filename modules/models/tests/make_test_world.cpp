@@ -34,6 +34,9 @@ WorldPtr modules::models::tests::make_test_world(
   double ego_velocity, double velocity_difference,
   const GoalDefinitionPtr& ego_goal_definition) {
 
+  float pos_x = 3.0;
+  float pos_y = -1.75;
+
   OpenDriveMapPtr open_drive_map = make_xodr_map_one_road_two_lanes();
 
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
@@ -46,15 +49,15 @@ WorldPtr modules::models::tests::make_test_world(
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(&params));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(&params));
 
-  Polygon polygon(Pose(1.25, -2, 0),
-    std::vector<Point2d>{Point2d(0, 0),
-                         Point2d(0, 2),
-                         Point2d(4, 2),
-                         Point2d(4, 0),
-                         Point2d(0, 0)});
+  Polygon polygon(Pose(1.25, 1, 0),
+    std::vector<Point2d>{Point2d(-1, -1),
+                         Point2d(-1, 1),
+                         Point2d(3, 1),
+                         Point2d(3, -1),
+                         Point2d(-1, -1)});
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state1 << 0.0, 1.0, -2.0, 0.0, ego_velocity;
+  init_state1 << 0.0, pos_x, pos_y, 0.0, ego_velocity;
   AgentPtr agent1(new Agent(init_state1,
                             beh_model_idm,
                             dyn_model,
@@ -67,7 +70,7 @@ WorldPtr modules::models::tests::make_test_world(
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float rel_dist_vlength = rel_distance + polygon.front_dist_ + polygon.rear_dist_;  // NOLINT
-  init_state2 << 0.0, 1.0+rel_dist_vlength, -2.0, 0.0, ego_velocity - velocity_difference;  // NOLINT
+  init_state2 << 0.0, pos_x+rel_dist_vlength, pos_y, 0.0, ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2,
                             beh_model_const,
                             dyn_model,
@@ -79,7 +82,7 @@ WorldPtr modules::models::tests::make_test_world(
                             geometry::Model3D()));
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state3 << 0.0, 10.0+rel_dist_vlength, -2.0, 0.0, ego_velocity - velocity_difference;   // NOLINT
+  init_state3 << 0.0, pos_x+10.0+rel_dist_vlength, pos_y, 0.0, ego_velocity - velocity_difference;   // NOLINT
   AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, &params,
                             ego_goal_definition,
                             map_interface,

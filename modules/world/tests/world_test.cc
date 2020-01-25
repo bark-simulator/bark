@@ -181,21 +181,30 @@ TEST(world, world_no_collision_agent)
 }
 
 TEST(world, world_outside_drivable_area) {
+  using modules::world::goal_definition::GoalDefinitionPolygon;
+
   DefaultParams params;
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
+
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
 
+  Polygon polygon(Pose(1, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.translate(Point2d(50,-2)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
   float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference=2.0;
-  WorldPtr world = make_test_world(0, rel_distance, ego_velocity, velocity_difference);
+
+  // TODO: pass goal polygon to make_world_test
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
   world->add_evaluator("drivable_area", evaluator_drivable_area);
+  auto eval_res = world->Evaluate()["drivable_area"];
 
-  ASSERT_FALSE(world->Evaluate()["drivable_area"].which());
-
-  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
-  
-  ASSERT_FALSE(world->Evaluate()["drivable_area"].which());
+  ASSERT_FALSE(boost::get<bool>(eval_res));
 }
 
 
