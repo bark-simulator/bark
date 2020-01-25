@@ -18,6 +18,7 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/tests/dummy_road_corridor.hpp"
 #include "modules/models/tests/make_test_world.hpp"
 
 using namespace modules::models::dynamic;
@@ -33,6 +34,7 @@ using namespace modules::world::evaluation;
 using namespace modules::world::prediction;
 using StateDefinition::VEL_POSITION;
 using modules::models::tests::make_test_world;
+using modules::world::tests::DummyRoadCorridor;
 
 TEST(observed_world, agent_in_front) {
   DefaultParams params;
@@ -81,7 +83,7 @@ TEST(observed_world, agent_in_front) {
   inner.add_point(Point2d(2, 0));
   inner.add_point(Point2d(10, 0));
 
-  RoadCorridorPtr road_corridor(new modules::models::tests::DummyRoadCorridor(center, outer, inner));
+  RoadCorridorPtr road_corridor(new DummyRoadCorridor(center, outer, inner));
   agent1->set_road_corridor(road_corridor);
   agent2->set_road_corridor(road_corridor);
 
