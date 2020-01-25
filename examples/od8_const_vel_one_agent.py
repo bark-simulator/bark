@@ -72,7 +72,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 
 for _ in range(0, 100):
   viewer.clear()
-  world.step(sim_step_time)
+  world.Step(sim_step_time)
   viewer.drawWorld(world)
   viewer.drawRoadCorridor(agent.road_corridor)
   viewer.show(block=False)

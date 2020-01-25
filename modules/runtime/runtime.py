@@ -34,7 +34,7 @@ class Runtime(PyRuntime):
 
   def step(self):
     assert(self._reset_has_been_called==True)
-    self._world.step(self._step_time)
+    self._world.Step(self._step_time)
     if self._render:
       self.render()
 
@@ -46,4 +46,4 @@ class Runtime(PyRuntime):
 
   def run(self, steps):
     for step_count in range(steps):
-      self.step()
+      self.Step()

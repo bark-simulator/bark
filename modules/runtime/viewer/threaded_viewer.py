@@ -46,7 +46,7 @@ class ThreadedViewer(BaseViewer, threading.Thread):
             if len(self.world_queue_list) == 0:
                 continue
             current_world = self.world_queue_list[self._closest_world_queue_index()]
-            executed_world = current_world.world_execution_at_time(self.render_time)
+            executed_world = current_world.WorldExecutionAtTime(self.render_time)
             start = timer()
             self.renderer.drawWorld(executed_world)
             end = timer()
