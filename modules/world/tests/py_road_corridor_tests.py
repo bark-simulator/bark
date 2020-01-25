@@ -25,7 +25,6 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
-  @unittest.skip
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
