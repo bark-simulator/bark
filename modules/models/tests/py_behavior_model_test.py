@@ -65,10 +65,10 @@ class PyBehaviorModelTests(unittest.TestCase):
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model.Clone()
 
     np.testing.assert_array_equal(
-      env._world.GetAgent(0).behavior_model.plan(0.2, env._world)[1],
+      env._world.GetAgent(0).behavior_model.Plan(0.2, env._world)[1],
       np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10]))
 
     env.reset()
@@ -111,7 +111,7 @@ class PyBehaviorModelTests(unittest.TestCase):
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model.Clone()
 
 
     env.reset()

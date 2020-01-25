@@ -98,8 +98,8 @@ class EvaluationTests(unittest.TestCase):
     # Model Definition
     dynamic_model = SingleTrackModel(param_server)
     behavior_model = BehaviorMotionPrimitives(dynamic_model, param_server)
-    idx = behavior_model.add_motion_primitive(np.array([1, 0]))
-    behavior_model.action_to_behavior(idx)
+    idx = behavior_model.AddMotionPrimitive(np.array([1, 0]))
+    behavior_model.ActionToBehavior(idx)
     execution_model = ExecutionModelInterpolate(param_server)
 
 
