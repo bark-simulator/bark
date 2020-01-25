@@ -148,33 +148,33 @@ class ParameterServer(Params):
         #return helper
         
     # get values
-    def get_bool(self, param_name, description, default_value):
+    def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_real(self, param_name, description, default_value):
+    def GetReal(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_int(self, param_name, description, default_value):
+    def GetInt(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_listlist_float(self, param_name, description, default_value):
+    def GetListListFloat(self, param_name, description, default_value):
         return self.get_val_from_string(param_name, description, default_value)
 
     def access(self, param_name):
         return self[param_name]
 
-    def set_bool(self, param_name, value):
+    def SetBool(self, param_name, value):
         self[param_name] = value
         return
 
-    def set_real(self, param_name, value):
+    def SetReal(self, param_name, value):
         self[param_name] = value
         return
 
-    def set_int(self, param_name, value):
+    def SetInt(self, param_name, value):
         self[param_name] = value
         return
 

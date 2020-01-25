@@ -27,12 +27,12 @@ DynamicBehaviorModel::DynamicBehaviorModel(
   BehaviorModel(params),
   dynamic_model_(dynamic_model),
   integration_time_delta_(
-    params->get_real("integration_time_delta",
+    params->GetReal("integration_time_delta",
                       "delta t for integration", 0.01)) {
   }
 
 DynamicBehaviorModel::DynamicBehaviorModel(DynamicBehaviorModel* other_behavior) :
-  BehaviorModel(other_behavior->get_params()),
+  BehaviorModel(other_behavior->GetParams()),
   dynamic_model_(other_behavior->dynamic_model_),
   integration_time_delta_(other_behavior->integration_time_delta_) {}
 
@@ -41,27 +41,27 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
     const world::ObservedWorld& observed_world) {
 
   dynamic::State ego_vehicle_state =
-    observed_world.get_ego_agent()->get_current_state();
+    observed_world.GetEgoAgent()->GetCurrentState();
 
-  double start_time = observed_world.get_world_time();
+  double start_time = observed_world.GetWorldTime();
   float dt = integration_time_delta_;
   int num_trajectory_points = static_cast<int>(std::ceil(delta_time / dt));
 
   dynamic::Trajectory traj(
     num_trajectory_points,
-    this->get_params()->get_int("DynamicModel::state_dimension",
+    this->GetParams()->GetInt("DynamicModel::state_dimension",
                                 "state vector length", 5));
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;
   // std::cout << "Action:" << \
-  //   boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()) << std::endl;
+  //   boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()) << std::endl;
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(
       *dynamic_model_,
       traj.row(i-1),
-      boost::get<Input>(observed_world.get_ego_behavior_model()->get_last_action()),
+      boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()),
       dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;
@@ -75,7 +75,7 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
 
   // std::cout << "=====================" << std::endl;
   // std::cout << traj << std::endl;
-  this->set_last_trajectory(traj);
+  this->SetLastTrajectory(traj);
   return traj;
 }
 

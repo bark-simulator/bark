@@ -14,13 +14,15 @@ namespace world {
 namespace map {
 
 struct Frenet {
+  Frenet() : lon(0.0f), lat(0.0f) {}
+  Frenet(const double& longitudinal, const double& lateral) :
+    lon(longitudinal), lat(lateral) {}
+  Frenet(
+    const modules::geometry::Point2d& position,
+    const modules::geometry::Line& path);
 
-Frenet() : lon(0.0f), lat(0.0f) {}
-Frenet(const double& longitudinal, const double& lateral) : lon(longitudinal), lat(lateral) {}
-Frenet(const modules::geometry::Point2d& position, const modules::geometry::Line& path);
-
-double lon;
-double lat;
+  double lon;
+  double lat;
 };
 
 }  // namespace map

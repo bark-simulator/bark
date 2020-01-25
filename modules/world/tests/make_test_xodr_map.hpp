@@ -15,9 +15,9 @@ namespace tests {
 
 using modules::world::opendrive::OpenDriveMapPtr;
 
-OpenDriveMapPtr make_xodr_map_one_road_two_lanes();
+OpenDriveMapPtr MakeXodrMapOneRoadTwoLanes();
 
-OpenDriveMapPtr make_xodr_map_two_roads_one_lane();
+OpenDriveMapPtr MakeXodrMapTwoRoadsOneLane();
 
 }  // namespace tests
 }  // namespace world

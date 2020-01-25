@@ -56,8 +56,8 @@ TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
   auto last_idx = traj1.rows() - 1;
   EXPECT_EQ(dt, traj1(last_idx, StateDefinition::TIME_POSITION));
 
-  auto x = obs_world.get_ego_agent()
-               ->get_current_state()[StateDefinition::X_POSITION];
+  auto x = obs_world.GetEgoAgent()
+               ->GetCurrentState()[StateDefinition::X_POSITION];
   double dx = vel0 * dt + 0.5 * a * dt * dt;
   EXPECT_FLOAT_EQ(dx + x, traj1(last_idx, StateDefinition::X_POSITION));
 }
@@ -76,8 +76,8 @@ TEST(behavior_constant_acceleration_plan, behavior_test_non_zero_velocity) {
   auto last_idx = traj1.rows() - 1;
   EXPECT_EQ(1, traj1(traj1.rows() - 1, StateDefinition::TIME_POSITION));
 
-  auto x = obs_world.get_ego_agent()
-               ->get_current_state()[StateDefinition::X_POSITION];
+  auto x = obs_world.GetEgoAgent()
+               ->GetCurrentState()[StateDefinition::X_POSITION];
   double dx = vel0 * dt + 0.5 * a * dt * dt;
   EXPECT_FLOAT_EQ(dx + x, traj1(traj1.rows() - 1, StateDefinition::X_POSITION));
 }

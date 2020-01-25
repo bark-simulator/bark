@@ -43,8 +43,8 @@ TEST(agent, standard_agent) {
        //! new plan view
     PlanView p_1;
     //! add line
-    p_1.add_line(Point2d(0.0f,0.0f), 0.0, 25.0f);
-    p_1.add_line(Point2d(25.0f,0.0f), 0.0, 25.0f);
+    p_1.AddLine(Point2d(0.0f,0.0f), 0.0, 25.0f);
+    p_1.AddLine(Point2d(25.0f,0.0f), 0.0, 25.0f);
 
     //! lane sections
     XodrLaneSection section_1(0.0f);
@@ -61,23 +61,23 @@ TEST(agent, standard_agent) {
     XodrLane l_2 = p_1.create_lane(1, lane_widths_3);
     XodrLane l_3 = p_1.create_lane(-1, lane_widths_4);
 
-    section_1.add_lane(l_0);
-    section_1.add_lane(l_1);
+    section_1.AddLane(l_0);
+    section_1.AddLane(l_1);
 
-    section_2.add_lane(l_2);
-    section_2.add_lane(l_3);
+    section_2.AddLane(l_2);
+    section_2.AddLane(l_3);
 
     XodrRoad r("highway", 100);
-    r.set_plan_view(p_1);
-    r.add_lane_section(section_1);
-    r.add_lane_section(section_2);
+    r.SetPlanView(p_1);
+    r.AddLaneSection(section_1);
+    r.AddLaneSection(section_2);
 
     modules::world::opendrive::MapPtr map(new modules::world::opendrive::Map());
-    map->add_road(r);
-    world->set_map(map);
+    map->AddRoad(r);
+    world->SetMap(map);
 
 
-    world->add_agent(agent);
+    world->AddAgent(agent);
     
     world->Step(1);
     
@@ -102,16 +102,16 @@ TEST(agent, PolygonFromState) {
   init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, shape, &params));
 
-  Polygon poly_out = agent1->GetPolygonFromState(agent1->get_current_state());
+  Polygon poly_out = agent1->GetPolygonFromState(agent1->GetCurrentState());
   
-  EXPECT_TRUE(equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
+  EXPECT_TRUE(Equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 5.0, 2.0, 3.14, 0.0, 0.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, shape, &params));
 
-  Polygon poly_out2 = agent2->GetPolygonFromState(agent2->get_current_state());
+  Polygon poly_out2 = agent2->GetPolygonFromState(agent2->GetCurrentState());
   
-  EXPECT_FALSE(equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
+  EXPECT_FALSE(Equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
 
 }

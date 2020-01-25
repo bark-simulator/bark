@@ -32,11 +32,11 @@ void python_goal_definition(py::module m)
     .def("__repr__", [](const GoalDefinitionPolygon &g) {
       return "bark.world.goal_definition.GoalDefinitionPolygon";
     })
-    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::get_shape)
+    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::GetShape)
     .def(py::pickle(
       [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
           /* Return a tuple that fully encodes the state of the object */
-          return py::make_tuple(g.get_shape());
+          return py::make_tuple(g.GetShape());
       },
       [](py::tuple t) { // __setstate__
         if (t.size() != 1)
@@ -53,15 +53,15 @@ void python_goal_definition(py::module m)
         return "bark.world.goal_definition.GoalDefinitionStateLimits";
       })
       .def_property_readonly("xy_limits",
-        &GoalDefinitionStateLimits::get_xy_limits)
+        &GoalDefinitionStateLimits::GetXyLimits)
       .def_property_readonly("goal_shape",
-        &GoalDefinitionStateLimits::get_xy_limits)
+        &GoalDefinitionStateLimits::GetShape)
       .def_property_readonly("angle_limits",
-        &GoalDefinitionStateLimits::get_angle_limits)
+        &GoalDefinitionStateLimits::GetAngleLimits)
       .def(py::pickle(
         [](const GoalDefinitionStateLimits& g) -> py::tuple {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.get_xy_limits(), g.get_angle_limits());
+            return py::make_tuple(g.GetShape(), g.GetAngleLimits());
         },
         [](py::tuple t) {  // __setstate__
           if (t.size() != 2)
@@ -81,12 +81,12 @@ void python_goal_definition(py::module m)
     })
     .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
     .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
-    .def_property_readonly("goal_shape", &GoalDefinitionSequential::get_shape)
-    .def_property_readonly("sequential_goals", &GoalDefinitionSequential::get_sequential_goals)
+    .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
+    .def_property_readonly("sequential_goals", &GoalDefinitionSequential::GetSequentialGoals)
     .def(py::pickle(
         [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.get_sequential_goals());
+            return py::make_tuple(g.GetSequentialGoals());
         },
         [](py::tuple t) { // __setstate__
           if (t.size() != 1)

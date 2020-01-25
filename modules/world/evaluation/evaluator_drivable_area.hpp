@@ -25,10 +25,10 @@ class EvaluatorDrivableArea : public BaseEvaluator {
     using modules::geometry::Polygon;
     namespace bg = boost::geometry;
 
-    for (const auto& agent : world.get_agents()) {
+    for (const auto& agent : world.GetAgents()) {
       Polygon poly_agent =
-          agent.second->GetPolygonFromState(agent.second->get_current_state());
-      auto poly_road = agent.second->get_road_corridor()->GetPolygon();
+          agent.second->GetPolygonFromState(agent.second->GetCurrentState());
+      auto poly_road = agent.second->GetRoadCorridor()->GetPolygon();
       if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
         return true;
       }

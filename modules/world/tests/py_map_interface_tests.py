@@ -32,8 +32,8 @@ class EnvironmentTests(unittest.TestCase):
         world = World(params)
 
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_parser.map)
-        world.set_map(map_interface)
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
 
         start_point = Point2d(0, -11)
         lanes_near_start = map_interface.find_nearest_lanes(start_point, 1)
@@ -52,7 +52,7 @@ class EnvironmentTests(unittest.TestCase):
         params = ParameterServer()
         world = World(params)
 
-        xodr_map = make_xodr_map_one_road_two_lanes()
+        xodr_map = MakeXodrMapOneRoadTwoLanes()
 
         map_interface = MapInterface()
         map_interface.set_open_drive_map(xodr_map)
@@ -78,8 +78,8 @@ class EnvironmentTests(unittest.TestCase):
 
         world = World(params)
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_parser.map)
-        world.set_map(map_interface)
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
 
         # Simple test
         point_close = Point2d(5112.68262, 5086.44971)
@@ -113,8 +113,8 @@ class EnvironmentTests(unittest.TestCase):
         params = ParameterServer()
         world = World(params)
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_parser.map)
-        world.set_map(map_interface)
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
 
         lane_sw = map_interface.find_lane(Point2d(46, 180))
         assert lane_sw.lane_type == XodrLaneType.sidewalk
@@ -131,8 +131,8 @@ class EnvironmentTests(unittest.TestCase):
         world = World(params)
 
         map_interface = MapInterface()
-        map_interface.set_open_drive_map(xodr_parser.map)
-        world.set_map(map_interface)
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
         point = Point2d(5111, 5072)
         viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)

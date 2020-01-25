@@ -20,9 +20,9 @@ TEST(road_corridor_tests, xodr_map_one_road_two_lanes) {
   using modules::world::opendrive::XodrDrivingDirection;
   using modules::world::opendrive::XodrRoadId;
 
-  using modules::world::tests::make_xodr_map_one_road_two_lanes;
+  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-  OpenDriveMapPtr open_drive_map = make_xodr_map_one_road_two_lanes();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
@@ -44,9 +44,9 @@ TEST(road_corridor_tests, xodr_map_two_roads_one_lanes) {
   using modules::world::opendrive::XodrDrivingDirection;
   using modules::world::opendrive::XodrRoadId;
 
-  using modules::world::tests::make_xodr_map_two_roads_one_lane;
+  using modules::world::tests::MakeXodrMapTwoRoadsOneLane;
 
-  OpenDriveMapPtr open_drive_map = make_xodr_map_two_roads_one_lane();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapTwoRoadsOneLane();
 
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);

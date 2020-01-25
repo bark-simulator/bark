@@ -19,6 +19,7 @@ namespace world {
 namespace opendrive {
 
 using Junctions = std::map<uint32_t, std::shared_ptr<Junction>>;
+using modules::geometry::Point2d;
 
 class OpenDriveMap {
  public:
@@ -26,38 +27,38 @@ class OpenDriveMap {
   ~OpenDriveMap() {}
 
   //! setter functions
-  bool add_road(std::shared_ptr<XodrRoad> r) {
-    roads_[r->get_id()] = r;
-    XodrLanes road_lanes = r->get_lanes();
+  bool AddRoad(std::shared_ptr<XodrRoad> r) {
+    roads_[r->GetId()] = r;
+    XodrLanes road_lanes = r->GetLanes();
     lanes_.insert(road_lanes.begin(), road_lanes.end());
     return true;
   }
-  bool add_junction(std::shared_ptr<Junction> j) {
-    junctions_[j->get_id()] = j;
+  bool AddJunction(std::shared_ptr<Junction> j) {
+    junctions_[j->GetId()] = j;
     return true;
   }
   //! getter functions
-  XodrRoadPtr get_road(XodrRoadId id) const { return roads_.at(id); }
-  std::shared_ptr<Junction> get_junction(uint32_t id) const {
+  XodrRoadPtr GetRoad(XodrRoadId id) const { return roads_.at(id); }
+  std::shared_ptr<Junction> GetJunction(uint32_t id) const {
     return junctions_.at(id);
   }
-  XodrLanePtr get_lane(XodrLaneId id) const { return lanes_.at(id); }
+  XodrLanePtr GetLane(XodrLaneId id) const { return lanes_.at(id); }
 
-  XodrRoads get_roads() const { return roads_; }
-  Junctions get_junctions() const { return junctions_; }
-  XodrLanes get_lanes() const { return lanes_;}
+  XodrRoads GetRoads() const { return roads_; }
+  Junctions GetJunctions() const { return junctions_; }
+  XodrLanes GetLanes() const { return lanes_;}
 
-  std::pair<modules::geometry::Point2d, modules::geometry::Point2d> bounding_box() const {
+  std::pair<Point2d, Point2d> BoundingBox() const {
     modules::geometry::Line all_lanes_linestrings;
-    for (auto &road : get_roads()) {
-      for (auto &lane_section : road.second->get_lane_sections()) {
-        for (auto &lane : lane_section->get_lanes()) {
-          auto linestring = lane.second->get_line();
-          all_lanes_linestrings.append_linestring(linestring);
+    for (auto &road : GetRoads()) {
+      for (auto &lane_section : road.second->GetLaneSections()) {
+        for (auto &lane : lane_section->GetLanes()) {
+          auto linestring = lane.second->GetLine();
+          all_lanes_linestrings.AppendLinestring(linestring);
         }
       }
     }
-    return all_lanes_linestrings.bounding_box();
+    return all_lanes_linestrings.BoundingBox();
   }
 
  private:

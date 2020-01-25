@@ -66,7 +66,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
     for goal_pose in self.goal_frame_poses:
         goal_polygon = Polygon2d(self.goal_frame_center,
                                np.array(self.goal_frame_points))
-        goal_polygon = goal_polygon.transform(goal_pose)
+        goal_polygon = goal_polygon.Transform(goal_pose)
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         goal_list.append(goal_definition)
     
@@ -82,7 +82,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
       json_converter = ModelJsonConversion()
       agent = json_converter.agent_from_json(agent_json["drone_model"],
                                                    param_server=self._local_params)
-      agent.set_agent_id(agent_json["drone_model"]["id"])
+      agent.SetAgentId(agent_json["drone_model"]["id"])
       scenario._agent_list.append(agent)
 
     scenario._eval_agent_ids = [self._local_params["EgoAgentId",

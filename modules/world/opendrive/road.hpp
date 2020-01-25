@@ -32,24 +32,21 @@ class XodrRoad {
     link_(road->link_),
     reference_(road->reference_),
     lane_sections_(road->lane_sections_) {}
-  
+
   XodrRoad() {}
   virtual ~XodrRoad() {}
 
   //! getter
-  std::shared_ptr<PlanView> get_plan_view() const { return reference_; }
-  std::string get_name() const { return name_; }
-  XodrRoadId get_id() const { return id_; }
-  XodrRoadLink get_link() const { return link_; }
-  XodrLaneSections get_lane_sections() const { return lane_sections_; }
+  std::shared_ptr<PlanView> GetPlanView() const { return reference_; }
+  std::string GetName() const { return name_; }
+  XodrRoadId GetId() const { return id_; }
+  XodrRoadLink GetLink() const { return link_; }
+  XodrLaneSections GetLaneSections() const { return lane_sections_; }
 
-  // TODO (@hart): implement function get_next_roads()
-  // either one road from successor or multiple roads from junction
-
-  XodrLanes get_lanes() const {
+  XodrLanes GetLanes() const {
     XodrLanes lanes;
     for (auto& lane_section : lane_sections_) {
-      XodrLanes section_lanes = lane_section->get_lanes();
+      XodrLanes section_lanes = lane_section->GetLanes();
       lanes.insert(section_lanes.begin(), section_lanes.end());
     }
     return lanes;
@@ -57,14 +54,12 @@ class XodrRoad {
 
 
   //! setter
-  void set_id(XodrRoadId id) { id_ = id; }
-  void set_name(const std::string& name) { name_ = name; }
-  void set_plan_view(PlanViewPtr p) { reference_ = p; }
-  void set_link(XodrRoadLink l) { link_ = l; }
+  void SetId(XodrRoadId id) { id_ = id; }
+  void SetName(const std::string& name) { name_ = name; }
+  void SetPlanView(PlanViewPtr p) { reference_ = p; }
+  void SetLink(XodrRoadLink l) { link_ = l; }
 
-  void add_lane_section(XodrLaneSectionPtr l) {
-    // additionally we need lane 0 in XodrLaneSection
-    // XodrLane lane_0 = create_lane();
+  void AddLaneSection(XodrLaneSectionPtr l) {
     lane_sections_.push_back(l);
   }
 

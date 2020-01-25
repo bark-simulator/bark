@@ -26,7 +26,7 @@ import numpy as np
 
 class RoadCorridorTests(unittest.TestCase):
   def test_two_roads_one_lane(self):
-    xodr_map = make_xodr_map_one_road_two_lanes()
+    xodr_map = MakeXodrMapOneRoadTwoLanes()
 
     # World Definition
     params = ParameterServer()
@@ -77,9 +77,9 @@ class RoadCorridorTests(unittest.TestCase):
     world = World(params)
 
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_parser.map)
-    world.set_map(map_interface)
-    open_drive_map = world.map.get_open_drive_map()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMao()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -99,23 +99,23 @@ class RoadCorridorTests(unittest.TestCase):
     self.assertEqual(len(road_corridor.roads), 3)
     
     # Assert: road1: 2 lanes, road2: 1 lane, road3: 1 lane
-    self.assertEqual(len(road_corridor.get_road(0).lanes), 3)
-    self.assertEqual(len(road_corridor.get_road(1).lanes), 2)
-    self.assertEqual(len(road_corridor.get_road(2).lanes), 3)
+    self.assertEqual(len(road_corridor.GetRoad(0).lanes), 3)
+    self.assertEqual(len(road_corridor.GetRoad(1).lanes), 2)
+    self.assertEqual(len(road_corridor.GetRoad(2).lanes), 3)
 
     # Assert: left and right lanes
-    self.assertEqual(road_corridor.get_road(0).get_lane(2).right_lane.lane_id, 3)
-    self.assertEqual(road_corridor.get_road(0).get_lane(3).left_lane.lane_id, 2)
-    self.assertEqual(road_corridor.get_road(2).get_lane(7).right_lane.lane_id, 8)
-    self.assertEqual(road_corridor.get_road(2).get_lane(8).left_lane.lane_id, 7)
+    self.assertEqual(road_corridor.GetRoad(0).GetLane(2).right_lane.lane_id, 3)
+    self.assertEqual(road_corridor.GetRoad(0).GetLane(3).left_lane.lane_id, 2)
+    self.assertEqual(road_corridor.GetRoad(2).GetLane(7).right_lane.lane_id, 8)
+    self.assertEqual(road_corridor.GetRoad(2).GetLane(8).left_lane.lane_id, 7)
     
     # Assert: next road
-    self.assertEqual(road_corridor.get_road(0).next_road.road_id, 1)
-    self.assertEqual(road_corridor.get_road(1).next_road.road_id, 2)
+    self.assertEqual(road_corridor.GetRoad(0).next_road.road_id, 1)
+    self.assertEqual(road_corridor.GetRoad(1).next_road.road_id, 2)
 
     # Assert: lane links
-    self.assertEqual(road_corridor.get_road(0).get_lane(3).next_lane.lane_id, 5)
-    self.assertEqual(road_corridor.get_road(1).get_lane(5).next_lane.lane_id, 8)
+    self.assertEqual(road_corridor.GetRoad(0).GetLane(3).next_lane.lane_id, 5)
+    self.assertEqual(road_corridor.GetRoad(1).GetLane(5).next_lane.lane_id, 8)
 
     # Assert: LaneCorridor
     self.assertEqual(len(road_corridor.lane_corridors), 3)
@@ -140,9 +140,9 @@ class RoadCorridorTests(unittest.TestCase):
     world = World(params)
 
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_parser.map)
-    world.set_map(map_interface)
-    open_drive_map = world.map.get_open_drive_map()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMao()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -162,23 +162,23 @@ class RoadCorridorTests(unittest.TestCase):
     # self.assertEqual(len(road_corridor.roads), 3)
     
     # # Assert: road1: 2 lanes, road2: 1 lane, road3: 1 lane
-    # self.assertEqual(len(road_corridor.get_road(0).lanes), 3)
-    # self.assertEqual(len(road_corridor.get_road(1).lanes), 2)
-    # self.assertEqual(len(road_corridor.get_road(2).lanes), 3)
+    # self.assertEqual(len(road_corridor.GetRoad(0).lanes), 3)
+    # self.assertEqual(len(road_corridor.GetRoad(1).lanes), 2)
+    # self.assertEqual(len(road_corridor.GetRoad(2).lanes), 3)
 
     # # Assert: left and right lanes
-    # self.assertEqual(road_corridor.get_road(0).get_lane(2).right_lane.lane_id, 3)
-    # self.assertEqual(road_corridor.get_road(0).get_lane(3).left_lane.lane_id, 2)
-    # self.assertEqual(road_corridor.get_road(2).get_lane(7).right_lane.lane_id, 8)
-    # self.assertEqual(road_corridor.get_road(2).get_lane(8).left_lane.lane_id, 7)
+    # self.assertEqual(road_corridor.GetRoad(0).GetLane(2).right_lane.lane_id, 3)
+    # self.assertEqual(road_corridor.GetRoad(0).GetLane(3).left_lane.lane_id, 2)
+    # self.assertEqual(road_corridor.GetRoad(2).GetLane(7).right_lane.lane_id, 8)
+    # self.assertEqual(road_corridor.GetRoad(2).GetLane(8).left_lane.lane_id, 7)
     
     # # Assert: next road
-    # self.assertEqual(road_corridor.get_road(0).next_road.road_id, 1)
-    # self.assertEqual(road_corridor.get_road(1).next_road.road_id, 2)
+    # self.assertEqual(road_corridor.GetRoad(0).next_road.road_id, 1)
+    # self.assertEqual(road_corridor.GetRoad(1).next_road.road_id, 2)
 
     # # Assert: lane links
-    # self.assertEqual(road_corridor.get_road(0).get_lane(3).next_lane.lane_id, 5)
-    # self.assertEqual(road_corridor.get_road(1).get_lane(5).next_lane.lane_id, 8)
+    # self.assertEqual(road_corridor.GetRoad(0).GetLane(3).next_lane.lane_id, 5)
+    # self.assertEqual(road_corridor.GetRoad(1).GetLane(5).next_lane.lane_id, 8)
 
     # # Assert: LaneCorridor
     # self.assertEqual(len(road_corridor.lane_corridors), 3)
@@ -204,9 +204,9 @@ class RoadCorridorTests(unittest.TestCase):
     world = World(params)
 
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_parser.map)
-    world.set_map(map_interface)
-    open_drive_map = world.map.get_open_drive_map()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMao()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -241,9 +241,9 @@ class RoadCorridorTests(unittest.TestCase):
     world = World(params)
 
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_parser.map)
-    world.set_map(map_interface)
-    open_drive_map = world.map.get_open_drive_map()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMao()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 

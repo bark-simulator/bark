@@ -37,7 +37,7 @@ WorldPtr modules::models::tests::make_test_world(
   float pos_x = 3.0;
   float pos_y = -1.75;
 
-  OpenDriveMapPtr open_drive_map = make_xodr_map_one_road_two_lanes();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
@@ -89,15 +89,15 @@ WorldPtr modules::models::tests::make_test_world(
                             geometry::Model3D()));  // NOLINT
 
   WorldPtr world(new World(&params));
-  world->add_agent(agent1);
+  world->AddAgent(agent1);
   if (num_other_agents == 1) {
-    world->add_agent(agent2);
+    world->AddAgent(agent2);
   } else if (num_other_agents == 2) {
-    world->add_agent(agent3);
+    world->AddAgent(agent3);
   }
   world->UpdateAgentRTree();
 
-  world->set_map(map_interface);
+  world->SetMap(map_interface);
   return WorldPtr(world->Clone());
 }
 
@@ -116,6 +116,6 @@ ObservedWorld modules::models::tests::make_test_observed_world(
     ego_goal_definition);
   ObservedWorld observed_world(
     current_world_state,
-    current_world_state->get_agents().begin()->second->get_agent_id());
+    current_world_state->GetAgents().begin()->second->GetAgentId());
   return observed_world;
 }

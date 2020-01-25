@@ -20,12 +20,12 @@ using modules::geometry::Point2d;
 using modules::geometry::Line;
 using modules::models::dynamic::State;
 
-std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
-  State ego_state = current_ego_state();
-  Point2d ego_position = current_ego_position();
+std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFront() const {
+  State ego_state = CurrentEgoState();
+  Point2d ego_position = CurrentEgoPosition();
 
   // TODO(@all): make access safe
-  const auto& lane_corridor = get_road_corridor()
+  const auto& lane_corridor = GetRoadCorridor()
                             ->GetCurrentLaneCorridor(ego_position);
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
   const Line& center_line = lane_corridor->GetCenterLine();
@@ -44,11 +44,11 @@ std::pair<AgentPtr, Frenet> ObservedWorld::get_agent_in_front() const {
   AgentPtr nearest_agent(nullptr);
 
   for (auto aiter = intersecting_agents.begin(); aiter != intersecting_agents.end(); ++aiter) {
-    if (aiter->second->get_agent_id() == ego_agent_id_) {
+    if (aiter->second->GetAgentId() == ego_agent_id_) {
       continue;
     }
 
-    Frenet frenet_other(aiter->second->get_current_position(), center_line);
+    Frenet frenet_other(aiter->second->GetCurrentPosition(), center_line);
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
@@ -79,7 +79,7 @@ WorldPtr ObservedWorld::Predict(float time_span,
     std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
   std::shared_ptr<BehaviorMotionPrimitives> ego_behavior_model =
      std::dynamic_pointer_cast<BehaviorMotionPrimitives>(
-       next_world->get_ego_behavior_model());
+       next_world->GetEgoBehaviorModel());
   if (ego_behavior_model) {
       ego_behavior_model->ActionToBehavior(ego_action);
   } else {

@@ -13,9 +13,9 @@ TEST(query_lanes, map_interface) {
   using modules::world::map::MapInterface;
   using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::opendrive::XodrLanePtr;
-  using modules::world::tests::make_xodr_map_one_road_two_lanes;
+  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-  OpenDriveMapPtr open_drive_map = make_xodr_map_one_road_two_lanes();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
   modules::world::map::MapInterface map_interface;
   map_interface.interface_from_opendrive(open_drive_map);
@@ -36,9 +36,9 @@ TEST(point_in_lane, map_interface) {
   using modules::world::map::MapInterface;
   using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::opendrive::XodrLanePtr;
-  using modules::world::tests::make_xodr_map_one_road_two_lanes;
+  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-  OpenDriveMapPtr open_drive_map = make_xodr_map_one_road_two_lanes();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
   modules::world::map::MapInterface map_interface;
   map_interface.interface_from_opendrive(open_drive_map);

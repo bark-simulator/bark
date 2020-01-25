@@ -16,12 +16,12 @@ void python_commons(py::module m) {
         .def(py::init<>())
         .def("access", &Params::operator[])
         .def("addChild", &Params::AddChild)
-        .def("getBool", &Params::get_bool)
-        .def("getReal", &Params::get_real)
-        .def("getInt", &Params::get_int)
-        .def("setBool", &Params::set_bool)
-        .def("setReal", &Params::set_real)
-        .def("setInt", &Params::set_int);
+        .def("getBool", &Params::GetBool)
+        .def("getReal", &Params::GetReal)
+        .def("getInt", &Params::GetInt)
+        .def("setBool", &Params::SetBool)
+        .def("setReal", &Params::SetReal)
+        .def("setInt", &Params::SetInt);
     m.def("ParamsTest", &DoSomeParams);
 }
 

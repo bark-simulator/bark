@@ -18,7 +18,7 @@ class SingleTrackModel : public DynamicModel {
   explicit SingleTrackModel(modules::commons::Params *params) :
     DynamicModel(params),
     wheel_base_(2.7) {
-      wheel_base_ = params->get_real("DynamicModel::wheel_base",
+      wheel_base_ = params->GetReal("DynamicModel::wheel_base",
       "Wheel base of vehicle.",
       2.7);
     }

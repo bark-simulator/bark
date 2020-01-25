@@ -24,26 +24,26 @@ class XodrLaneSection {
   explicit XodrLaneSection(float s) : s_(s) {}
   ~XodrLaneSection() {}
 
-  XodrLanes get_lanes() const { return lanes_; }
+  XodrLanes GetLanes() const { return lanes_; }
 
-  XodrLanePtr get_lane_by_position(XodrLanePosition pos);
+  XodrLanePtr GetLaneByPosition(XodrLanePosition pos);
 
-  XodrLanePtr get_nearest_lane_on_n(double x, double y, double vx, double vy);
-  XodrLanePtr get_lane_with_offset(const models::dynamic::State& state,
+  XodrLanePtr GetNearestLaneOnN(double x, double y, double vx, double vy);
+  XodrLanePtr GetLaneWithOffset(const models::dynamic::State& state,
                                double angle_offset);
 
-  XodrLanePtr get_left_lane(const models::dynamic::State& state) {
-    return get_lane_with_offset(state, 3.14 / 2);
+  XodrLanePtr GetLeftLane(const models::dynamic::State& state) {
+    return GetLaneWithOffset(state, 3.14 / 2);
   }
-  XodrLanePtr get_right_lane(const models::dynamic::State& state) {
-    return get_lane_with_offset(state, -3.14 / 2);
+  XodrLanePtr GetRightLane(const models::dynamic::State& state) {
+    return GetLaneWithOffset(state, -3.14 / 2);
   }
 
   //! setter functions
-  void add_lane(const XodrLanePtr& l);
+  void AddLane(const XodrLanePtr& l);
 
   //! getter functions
-  float get_s() const { return s_; }
+  float GetS() const { return s_; }
 
  private:
   float s_;
@@ -52,8 +52,8 @@ class XodrLaneSection {
 
 inline std::string print(const XodrLaneSection& ls) {
   std::stringstream ss;
-  ss << "s: " << ls.get_s() << std::endl;
-  for (auto const& l : ls.get_lanes())
+  ss << "s: " << ls.GetS() << std::endl;
+  for (auto const& l : ls.GetLanes())
     ss << "XodrLane: " << print(*(l.second)) << std::endl;
   return ss.str();
 }

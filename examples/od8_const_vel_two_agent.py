@@ -40,14 +40,14 @@ dynamic_model2 = SingleTrackModel(param_server)
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
-map_interface.set_open_drive_map(xodr_parser.map)
-world.set_map(map_interface)
+map_interface.SetOpenDriveMap(xodr_parser.map)
+world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 50/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.translate(Point2d(-63,-61))
+goal_polygon = goal_polygon.Translate(Point2d(-63,-61))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -57,7 +57,7 @@ agent1 = Agent(init_state,
                agent_params,
                GoalDefinitionPolygon(goal_polygon),
                map_interface)
-world.add_agent(agent1)
+world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
 init_state2 = np.array([0, -15, -13, 3.14*3.0/4.0, 5.2])
@@ -70,7 +70,7 @@ agent2 = Agent(init_state2,
                agent_params2,
                GoalDefinitionPolygon(goal_polygon),
                map_interface)
-world.add_agent(agent2)
+world.AddAgent(agent2)
 
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
