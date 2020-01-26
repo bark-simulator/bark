@@ -12,6 +12,7 @@
 #include "modules/world/opendrive/lane_section.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/opendrive/odrSpiral.hpp"
+#include "modules/world/tests/make_test_xodr_map.hpp"
 
 using namespace modules::world::opendrive;
 
@@ -65,7 +66,8 @@ void python_opendrive(py::module m) {
     .value("broken", roadmark::XodrRoadMarkType::BROKEN)
     .export_values();
 
-  py::enum_<roadmark::XodrRoadMarkColor>(m, "XodrRoadMarkColor", py::arithmetic())
+  py::enum_<roadmark::XodrRoadMarkColor>(m,
+    "XodrRoadMarkColor", py::arithmetic())
     .value("standard", roadmark::XodrRoadMarkColor::STANDARD)
     .value("white", roadmark::XodrRoadMarkColor::WHITE)
     .value("yellow", roadmark::XodrRoadMarkColor::YELLOW)
@@ -116,13 +118,15 @@ void python_opendrive(py::module m) {
   py::class_<XodrLaneWidth>(m, "XodrLaneWidth")
     .def(py::init<float, float, XodrLaneOffset>());
 
-  py::class_<XodrLaneSection, std::shared_ptr<XodrLaneSection>>(m, "XodrLaneSection")
+  py::class_<XodrLaneSection, std::shared_ptr<XodrLaneSection>>(m,
+    "XodrLaneSection")
     .def(py::init<float>())
     .def("AddLane", &XodrLaneSection::AddLane, "Add lane element")
     .def("GetLanes", &XodrLaneSection::GetLanes, "Get all lane elements")
     .def("GetLeftLane", &XodrLaneSection::GetLeftLane, "Get left lane")
     .def("GetRightLane", &XodrLaneSection::GetRightLane, "Get right lane")
-    .def("GetLaneByPosition", &XodrLaneSection::GetLaneByPosition, "Get lane by lane position")
+    .def("GetLaneByPosition",
+      &XodrLaneSection::GetLaneByPosition, "Get lane by lane position")
     .def(
         "__repr__",
         [](const XodrLaneSection &ls) {
@@ -143,12 +147,17 @@ void python_opendrive(py::module m) {
       &XodrRoad::AddLaneSection, "Add a lane section to road");
 
   py::class_<OpenDriveMap, std::shared_ptr<OpenDriveMap>>(m, "OpenDriveMap")
-    .def(py::init<>())
-    .def("AddRoad", &OpenDriveMap::AddRoad, "Add road element")
-    .def("AddJunction", &OpenDriveMap::AddJunction, "Add junction element")
-    .def("GetRoad", &OpenDriveMap::GetRoad, "Get road element")
-    .def("GetRoads", &OpenDriveMap::GetRoads, "Get all roads")
-    .def("GetJunctions", &OpenDriveMap::GetJunctions, "Get all junctions");
+      .def(py::init<>())
+      .def("AddRoad", &OpenDriveMap::AddRoad, "Add road element")
+      .def("AddJunction", &OpenDriveMap::AddJunction, "Add junction element")
+      .def("GetRoad", &OpenDriveMap::GetRoad, "Get road element")
+      .def("GetRoads", &OpenDriveMap::GetRoads, "Get all roads")
+      .def("GetJunctions", &OpenDriveMap::GetJunctions, "Get all junctions");
+
+  m.def("MakeXodrMapOneRoadTwoLanes",
+    &modules::world::tests::MakeXodrMapOneRoadTwoLanes);
+  m.def("MakeXodrMapTwoRoadsOneLane",
+  &modules::world::tests::MakeXodrMapTwoRoadsOneLane);
 
   py::class_<XodrLaneLink>(m, "XodrLaneLink")
     .def(py::init<>())
@@ -171,5 +180,4 @@ void python_opendrive(py::module m) {
 
   m.def("FresnelCos", &FresnelCos);
   m.def("FresnelSin", &FresnelSin);
-
 }

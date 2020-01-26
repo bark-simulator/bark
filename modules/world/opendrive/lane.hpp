@@ -102,6 +102,8 @@ inline std::string print(const XodrLane& l) {
   std::stringstream ss;
   ss << "id: " << l.GetId() << ", ";
   ss << "position " << l.GetLanePosition() << ", ";
+  ss << "type " << l.GetLaneType() << ", ";
+  ss << "driving_direction" << l.GetDrivingDirection() << ", ";
   ss << print(l.GetLink());
   ss << print(l.GetRoad_mark());
   ss << "speed: " << l.GetSpeed() << std::endl;
@@ -118,9 +120,7 @@ inline XodrLanePtr CreateLaneFromLaneWidth(XodrLanePosition lane_position,
                                            XodrLaneWidth lane_width_current,
                                            float s_inc = 0.5f) {
   std::shared_ptr<XodrLane> ret_lane(new XodrLane(lane_position));
-
-  bool succ = ret_lane->append(previous_line, lane_width_current, s_inc);
-
+  ret_lane->append(previous_line, lane_width_current, s_inc);
   return ret_lane;
 }
 
