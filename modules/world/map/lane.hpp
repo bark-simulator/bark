@@ -61,11 +61,11 @@ struct Lane : public XodrLane {
   Boundary& GetRightBoundary() {
     return right_boundary_;
   }
-  std::weak_ptr<Lane> GetLeftLane() const {
-    return left_lane_;
+  std::shared_ptr<Lane> GetLeftLane() const {
+    return left_lane_.lock();
   }
-  std::weak_ptr<Lane> GetRightLane() const {
-    return right_lane_;
+  std::shared_ptr<Lane> GetRightLane() const {
+    return right_lane_.lock();
   }
   Line& GetCenterLine() {
     return center_line_;
