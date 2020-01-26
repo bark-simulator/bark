@@ -76,11 +76,11 @@ void python_agent(py::module m) {
             a.GetAgentId(),  // 3
             a.GetExecutionTrajectory(),  // 4
             a.GetBehaviorTrajectory(),  // 5
-            behavior_model_to_python(a.GetBehaviorModel()),  // 6
+            BehaviorModelToPython(a.GetBehaviorModel()),  // 6
             a.GetExecutionModel(),  // 7
             a.GetDynamicModel(),  // 8
             a.GetCurrentState(),  // 9
-            goal_definition_to_python(a.GetGoalDefinition()));  // 10
+            GoalDefinitionToPython(a.GetGoalDefinition()));  // 10
       },
       [](py::tuple t) {
         if (t.size() != 10)
@@ -90,13 +90,13 @@ void python_agent(py::module m) {
         using modules::models::execution::ExecutionModelInterpolate;
         Agent agent(
           t[8].cast<State>(),
-          python_to_behavior_model(t[5].cast<py::tuple>()),
+          PythonToBehaviorModel(t[5].cast<py::tuple>()),
           std::make_shared<SingleTrackModel>(t[7].cast<SingleTrackModel>()),
           std::make_shared<ExecutionModelInterpolate>(
             t[6].cast<ExecutionModelInterpolate>()),
           t[1].cast<modules::geometry::Polygon>(),
           nullptr,
-          python_to_goal_definition(t[9].cast<py::tuple>()));
+          PythonToGoalDefinition(t[9].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
         return agent;
       }));
