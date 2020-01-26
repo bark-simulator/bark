@@ -108,7 +108,7 @@ OpenDriveMapPtr modules::world::tests::MakeXodrMapTwoRoadsOneLane() {
   XodrLaneOffset off2 = {3.5f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 50, off};
   XodrLanePtr lane11 = CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(),
-                                                   lane_width_2, 0.05);
+                                                   lane_width_2, 0.5);
   lane11->SetLaneType(XodrLaneType::DRIVING);
   lane11->SetDrivingDirection(XodrDrivingDirection::FORWARD);
 
