@@ -5,6 +5,7 @@
 
 
 #include <string>
+#include <memory>
 #include <vector>
 #include <map>
 #include "map.hpp"
@@ -86,13 +87,13 @@ py::class_<RoadCorridor,
   .def_property_readonly("lane_corridors",
     &RoadCorridor::GetUniqueLaneCorridors)
   .def(py::pickle(
-  [](const RoadCorridor& rc) -> py::tuple {
+    [](const RoadCorridor& rc) -> py::tuple {
       return py::make_tuple(rc.GetRoads(),
                             rc.GetUniqueLaneCorridors(),
                             rc.GetLaneCorridorMap(),
                             rc.GetPolygon());
-  },
-  [](const py::tuple &t) {
+    },
+    [](const py::tuple &t) {
       if (t.size() != 4)
         throw std::runtime_error("Invalid RoadCorridor state!");
       RoadCorridor rc;
@@ -103,7 +104,7 @@ py::class_<RoadCorridor,
         t[2].cast<std::map<LaneId, LaneCorridorPtr>>());
       rc.SetPolygon(t[3].cast<Polygon>());
       return rc;
-  }));
+    }));
 
 py::class_<LaneCorridor,
            std::shared_ptr<LaneCorridor>>(m, "LaneCorridor")

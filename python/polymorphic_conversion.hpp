@@ -18,12 +18,12 @@ using modules::models::behavior::BehaviorModelPtr;
 // For pickle we need conversion functions between the genereric base types and the derived types
 
 // Behavior Models
-py::tuple behavior_model_to_python(BehaviorModelPtr behavior_model);
-BehaviorModelPtr python_to_behavior_model(py::tuple t);
+py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model);
+BehaviorModelPtr PythonToBehaviorModel(py::tuple t);
 
 // Goal Definition
-py::tuple goal_definition_to_python(GoalDefinitionPtr goal_definition);
-GoalDefinitionPtr python_to_goal_definition(py::tuple t);
+py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition);
+GoalDefinitionPtr PythonToGoalDefinition(py::tuple t);
 
 // Todo: Other polymorphic types, e.g. execution model...
 
