@@ -36,8 +36,14 @@ TEST(free_road_term, behavior_idm_classic) {
   const float max_acceleration = behavior.get_max_acceleration();
   const int exponent = behavior.get_exponent();
 
+
+  // Create an observed world with specific goal definition and the corresponding mcts state
+  Polygon polygon(Pose(1, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50,-2)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
   float ego_velocity = desired_velocity, rel_distance = 7.0, velocity_difference=0.0;
-  auto observed_world = make_test_observed_world(0,rel_distance, ego_velocity, velocity_difference);
+  auto observed_world = make_test_observed_world(0,rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
   double idm_acceleration  = behavior.CalculateLongitudinalAcceleration(observed_world);
 
   // no vehicle is in front only free road term should give acceleration
@@ -70,9 +76,15 @@ TEST(interaction_term, behavior_idm_classic) {
   const float max_acceleration = behavior.get_max_acceleration();
   const float comfortable_braking_acceleration = behavior.get_comfortable_braking_acceleration();
 
+
+  // Create an observed world with specific goal definition and the corresponding mcts state
+  Polygon polygon(Pose(1, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50,-2)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
   // vehicle is in front, zero velocity equal desired velocity thus only interaction term
   float ego_velocity = desired_velocity, rel_distance = 7.0, velocity_difference=0.0;
-  auto observed_world = make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
+  auto observed_world = make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
   double idm_acceleration  = behavior.CalculateLongitudinalAcceleration(observed_world);
   double helper_state = minimum_spacing + ego_velocity*desired_time_headway +
                ego_velocity*velocity_difference/(2*sqrt(max_acceleration*comfortable_braking_acceleration));
@@ -82,7 +94,7 @@ TEST(interaction_term, behavior_idm_classic) {
   
   // velocity difference to other vehicle
   ego_velocity = desired_velocity, rel_distance = 7.0, velocity_difference=5.0;
-  observed_world = make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference);
+  observed_world = make_test_observed_world(1,rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
   idm_acceleration  = behavior.CalculateLongitudinalAcceleration(observed_world);
   helper_state = minimum_spacing + ego_velocity*desired_time_headway +
                ego_velocity*velocity_difference/(2*sqrt(max_acceleration*comfortable_braking_acceleration));
@@ -122,7 +134,13 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   float ego_velocity = desired_velocity, rel_distance = 5.0, velocity_difference=10;
   float time_step=0.2f; // Very small time steps to verify differential integration character
   int num_steps = 10;
-  WorldPtr world = make_test_world(1,rel_distance, ego_velocity, velocity_difference);
+  
+  // Create an observed world with specific goal definition and the corresponding mcts state
+  Polygon polygon(Pose(1, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50,-2)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+  
+  WorldPtr world = make_test_world(1,rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
  /* float v_start = world->GetAgents().begin()->second->GetCurrentState()[StateDefinition::VEL_POSITION];
   for (int i=0; i<num_steps; ++i ) {

@@ -1,3 +1,32 @@
+cc_library(
+    name="make_test_xodr_map",
+    srcs=[
+        "make_test_xodr_map.cpp"
+    ],
+    hdrs = [
+        "make_test_xodr_map.hpp"
+    ],
+    deps = [
+        "//modules/world/map:roadgraph",
+        "//modules/world/opendrive",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name="dummy_road_corridor",
+    srcs=[],
+    hdrs = [
+        "dummy_road_corridor.hpp"
+    ],
+    deps = [
+        "//modules/world/map:map_interface",
+        "//modules/geometry",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
 cc_test(
     name = "opendrive_tests",
     srcs = [
@@ -19,12 +48,10 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-        "//modules/geometry:geometry",
         "//modules/world/opendrive:opendrive",
-        "//modules/world:world",
         "//modules/world/map:road_corridor",
         "//modules/world/map:map_interface",
-        "//modules/models/tests:make_test_world",
+        ":make_test_xodr_map",
         "@gtest//:main",
     ],
 )
@@ -58,7 +85,9 @@ cc_test(
         "//modules/world/opendrive:opendrive",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
-        "//modules/world/evaluation:evaluation",
+        "//modules/world/evaluation:evaluation", 
+        "//modules/models/tests:make_test_world",
+        ":dummy_road_corridor",
         "@gtest//:main",
     ],
 )
@@ -77,8 +106,9 @@ cc_test(
         "//modules/world/opendrive:opendrive",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
+        "//modules/world/evaluation:evaluation",        
         "//modules/models/tests:make_test_world",
-        "//modules/world/evaluation:evaluation",
+        ":dummy_road_corridor",
         "@gtest//:main",
     ],
 )
@@ -92,6 +122,7 @@ cc_test(
     deps = [
         "//modules/world/map:roadgraph",
         "//modules/world/opendrive",
+        ":make_test_xodr_map",
         "@gtest//:main",
     ],
 )
@@ -103,10 +134,9 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-        "//modules/world/map:roadgraph",
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
-        "//modules/models/tests:make_test_world",
+        ":make_test_xodr_map",
         "@gtest//:main",
     ],
 )
@@ -143,7 +173,8 @@ py_test(
   srcs = ["py_world_tests.py"],
   data = ['//python:bark.so'],
   imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters"],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime"],
 )
 
 py_test(

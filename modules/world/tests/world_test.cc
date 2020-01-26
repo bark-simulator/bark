@@ -16,6 +16,9 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "modules/models/tests/make_test_world.hpp"
+
 
 using namespace modules::models::dynamic;
 using namespace modules::geometry;
@@ -31,6 +34,7 @@ using modules::world::opendrive::XodrLaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
+using modules::models::tests::make_test_world;
 
 TEST(world, world_init)
 {
@@ -148,7 +152,7 @@ TEST(world, world_collision)
 }
 
 
-TEST(world, world_no_collision)
+TEST(world, world_no_collision_agent)
 {
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
@@ -174,6 +178,33 @@ TEST(world, world_no_collision)
 
   ASSERT_TRUE(world->Evaluate()["collision_agents"].which());
   
+}
+
+TEST(world, world_outside_drivable_area) {
+  using modules::world::goal_definition::GoalDefinitionPolygon;
+
+  DefaultParams params;
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
+
+  EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
+
+  Polygon polygon(Pose(1, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50,-2)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference=2.0;
+
+  // TODO: pass goal polygon to make_world_test
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+
+  world->AddEvaluator("drivable_area", evaluator_drivable_area);
+  auto eval_res = world->Evaluate()["drivable_area"];
+
+  ASSERT_FALSE(boost::get<bool>(eval_res));
 }
 
 

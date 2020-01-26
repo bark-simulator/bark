@@ -13,6 +13,7 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "modules/world/tests/make_test_xodr_map.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
@@ -23,50 +24,69 @@ using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
 using namespace modules::world::goal_definition;
+using namespace modules::world::tests;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::map::MapInterface;
+using modules::world::map::MapInterfacePtr;
 
 WorldPtr modules::models::tests::make_test_world(
   int num_other_agents, double rel_distance,
   double ego_velocity, double velocity_difference,
   const GoalDefinitionPtr& ego_goal_definition) {
 
+  float pos_x = 3.0;
+  float pos_y = -1.75;
+
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
+
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
+
   DefaultParams params;
+  
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(nullptr);
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(&params));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(&params));
 
   Polygon polygon(Pose(1.25, 1, 0),
-    std::vector<Point2d>{Point2d(0, 0),
-                         Point2d(0, 2),
-                         Point2d(4, 2),
-                         Point2d(4, 0),
-                         Point2d(0, 0)});
+    std::vector<Point2d>{Point2d(-1, -1),
+                         Point2d(-1, 1),
+                         Point2d(3, 1),
+                         Point2d(3, -1),
+                         Point2d(-1, -1)});
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state1 << 0.0, 1.0, 0.0, 0.0, ego_velocity;
+  init_state1 << 0.0, pos_x, pos_y, 0.0, ego_velocity;
   AgentPtr agent1(new Agent(init_state1,
                             beh_model_idm,
                             dyn_model,
                             exec_model,
                             polygon,
                             &params,
-                            ego_goal_definition));
+                            ego_goal_definition,
+                            map_interface,
+                            geometry::Model3D()));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float rel_dist_vlength = rel_distance + polygon.front_dist_ + polygon.rear_dist_;  // NOLINT
-  init_state2 << 0.0, 1.0+rel_dist_vlength, 0.0, 0.0, ego_velocity - velocity_difference;  // NOLINT
+  init_state2 << 0.0, pos_x+rel_dist_vlength, pos_y, 0.0, ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2,
                             beh_model_const,
                             dyn_model,
                             exec_model,
                             polygon,
-                            &params));
+                            &params,
+                            ego_goal_definition,
+                            map_interface,
+                            geometry::Model3D()));
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state3 << 0.0, 10.0+rel_dist_vlength, 0.0, 0.0, ego_velocity - velocity_difference;   // NOLINT
-  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, &params));  // NOLINT
+  init_state3 << 0.0, pos_x+10.0+rel_dist_vlength, pos_y, 0.0, ego_velocity - velocity_difference;   // NOLINT
+  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, &params,
+                            ego_goal_definition,
+                            map_interface,
+                            geometry::Model3D()));  // NOLINT
 
   WorldPtr world(new World(&params));
   world->AddAgent(agent1);
@@ -76,35 +96,8 @@ WorldPtr modules::models::tests::make_test_world(
     world->AddAgent(agent3);
   }
   world->UpdateAgentRTree();
-  world->SetMap(MapInterfacePtr(new DummyMapInterface()));
 
-  // Define some driving corridor from x=1 to x=20, define it in such a way
-  // that no agent collides with the corridor initially
-  Line center;
-  center.AddPoint(Point2d(-10, 0));
-  center.AddPoint(Point2d(1, 0));
-  center.AddPoint(Point2d(2, 0));
-  center.AddPoint(Point2d(2000, 0));
-
-  Line left;
-  left.AddPoint(Point2d(-10, 3));
-  left.AddPoint(Point2d(1, 3));
-  left.AddPoint(Point2d(2, 3));
-  left.AddPoint(Point2d(2000, 3));
-
-  Line right;
-  right.AddPoint(Point2d(-10, -3));
-  right.AddPoint(Point2d(1, -3));
-  right.AddPoint(Point2d(2, -3));
-  right.AddPoint(Point2d(2000, -3));
-
-  RoadCorridorPtr road_corridor(new DummyRoadCorridor(center, left, right));
-  RoadCorridorPtr road_corridor2(new DummyRoadCorridor(center, left, right));
-  RoadCorridorPtr road_corridor3(new DummyRoadCorridor(center, left, right));
-  agent1->SetRoadCorridor(road_corridor);
-  agent2->SetRoadCorridor(road_corridor2);
-  agent3->SetRoadCorridor(road_corridor3);
-
+  world->SetMap(map_interface);
   return WorldPtr(world->Clone());
 }
 
@@ -125,156 +118,4 @@ ObservedWorld modules::models::tests::make_test_observed_world(
     current_world_state,
     current_world_state->GetAgents().begin()->second->GetAgentId());
   return observed_world;
-}
-
-MapInterface modules::models::tests::make_two_lane_map_interface() {
-  using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
-
-  OpenDriveMapPtr map(new OpenDriveMap());
-
-  //! ROAD 1
-  PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-
-  //! XodrLane-Section 1
-  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
-
-  //! PlanView
-  XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  XodrLaneWidth lane_width_0 = {0, 10, off0};
-  XodrLanePtr lane0 = CreateLaneFromLaneWidth(0,
-                                              p->GetReferenceLine(),
-                                              lane_width_0,
-                                              0.05);
-  lane0->SetLaneType(XodrLaneType::DRIVING);
-
-  //! XodrLane
-  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  XodrLaneWidth lane_width_1 = {0, 10, off};
-  XodrLanePtr lane1 = CreateLaneFromLaneWidth(-1,
-                                              p->GetReferenceLine(),
-                                              lane_width_1,
-                                              0.05);
-  lane1->SetLaneType(XodrLaneType::DRIVING);
-  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1,
-                                              p->GetReferenceLine(),
-                                              lane_width_1,
-                                              0.05);
-  lane2->SetLaneType(XodrLaneType::DRIVING);
-
-  ls->AddLane(lane0);
-  ls->AddLane(lane1);
-  ls->AddLane(lane2);
-
-  XodrRoadPtr r(new XodrRoad("highway", 100));
-  r->SetPlanView(p);
-  r->AddLaneSection(ls);
-
-  map->AddRoad(r);
-
-
-  modules::world::map::MapInterface map_interface;
-  map_interface.interface_from_opendrive(map);
-
-  return map_interface;
-}
-
-MapInterface modules::models::tests::make_map_interface_two_connected_roads() {
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
-
-  OpenDriveMapPtr map(new OpenDriveMap());
-
-  //! ROAD 1
-  PlanViewPtr p0(new PlanView());
-  p0->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
-
-  //! XodrLane-Section 1
-  XodrLaneSectionPtr ls0(new XodrLaneSection(0.0));
-
-  //! PlanView
-  XodrLaneOffset off0 = {0.0f, 0.0f, 0.0f, 0.0f};
-  XodrLaneWidth lane_width_0 = {0, 10, off0};
-  XodrLanePtr lane00 = CreateLaneFromLaneWidth(0,
-                                               p0->GetReferenceLine(),
-                                               lane_width_0,
-                                               0.05);
-  lane00->SetLaneType(XodrLaneType::DRIVING);
-
-  //! XodrLane
-  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
-  XodrLaneWidth lane_width_1 = {0, 10, off};
-  XodrLanePtr lane01 = CreateLaneFromLaneWidth(1,
-                                               p0->GetReferenceLine(),
-                                               lane_width_1,
-                                               0.05);
-  lane01->SetLaneType(XodrLaneType::DRIVING);
-
-  XodrLanePtr lane02 = CreateLaneFromLaneWidth(2,
-                                               p0->GetReferenceLine(),
-                                               lane_width_1,
-                                               0.05);
-  lane02->SetLaneType(XodrLaneType::DRIVING);
-
-  ls0->AddLane(lane00);
-  ls0->AddLane(lane01);
-  ls0->AddLane(lane02);
-
-  XodrRoadPtr r0(new XodrRoad("highway", 100));
-  r0->SetPlanView(p0);
-  r0->AddLaneSection(ls0);
-
-  map->AddRoad(r0);
-
-  //! ROAD 2
-  PlanViewPtr p1(new PlanView());
-  p1->AddLine(Point2d(10.0f, 0.0f), 0.0f, 10.0f);
-
-  //! XodrLane-Section 2
-  XodrLaneSectionPtr ls1(new XodrLaneSection(0.0f));
-
-  //! PlanView
-  XodrLanePtr lane10 = CreateLaneFromLaneWidth(0,
-                                               p1->GetReferenceLine(),
-                                               lane_width_0,
-                                               0.05);
-  lane10->SetLaneType(XodrLaneType::DRIVING);
-  lane10->SetLink({0, 0});
-  
-
-  //! XodrLane
-  XodrLanePtr lane11 = CreateLaneFromLaneWidth(1,
-                                               p1->GetReferenceLine(),
-                                               lane_width_1,
-                                               0.05);
-  lane11->SetLaneType(XodrLaneType::DRIVING);
-  lane11->SetLink({1, 1});
-
-  XodrLanePtr lane12 = CreateLaneFromLaneWidth(2,
-                                               p1->GetReferenceLine(),
-                                               lane_width_1,
-                                               0.05);
-  lane12->SetLaneType(XodrLaneType::DRIVING);
-  lane12->SetLink({2, 2});
-
-  ls1->AddLane(lane10);
-  ls1->AddLane(lane11);
-  ls1->AddLane(lane12);
-
-  XodrRoadPtr r1(new XodrRoad("highway", 101));
-  r1->SetPlanView(p1);
-  r1->AddLaneSection(ls1);
-
-  map->AddRoad(r1);
-
-  XodrRoadLinkInfo predecessor(100, "road");
-  XodrRoadLinkInfo successor(101, "road");
-  r1->SetLink(XodrRoadLink(predecessor, successor));
-
-  modules::world::map::MapInterface map_interface;
-  map_interface.interface_from_opendrive(map);
-
-  return map_interface;
 }

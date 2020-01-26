@@ -36,7 +36,7 @@ map_interface = MapInterface()
 map_interface.SetOpenDriveMap(xodr_parser.map)
 world.SetMap(map_interface)
 
-open_drive_map = world.map.GetOpenDriveMao()
+open_drive_map = world.map.GetOpenDriveMap()
 
 viewer = MPViewer(params=params,
                   use_world_bounds=True)
@@ -82,7 +82,7 @@ for lane_id in lane_ids:
   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
   # plot plan_view
   road_id = roadgraph.GetRoadForLaneId(lane_id)
-  road = map_interface.GetOpenDriveMao().GetRoad(road_id)
+  road = map_interface.GetOpenDriveMap().GetRoad(road_id)
   plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
   outer, inner = roadgraph.compute_lane_boundaries(lane_id)
