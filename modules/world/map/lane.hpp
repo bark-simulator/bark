@@ -49,8 +49,6 @@ struct Boundary {
 struct Lane : public XodrLane {
   explicit Lane(const XodrLanePtr& lane) :
     XodrLane(lane),
-    left_lane_(nullptr),
-    right_lane_(nullptr),
     next_lane_(nullptr) {}
 
   //! Getter
@@ -63,10 +61,10 @@ struct Lane : public XodrLane {
   Boundary& GetRightBoundary() {
     return right_boundary_;
   }
-  std::shared_ptr<Lane> GetLeftLane() const {
+  std::weak_ptr<Lane> GetLeftLane() const {
     return left_lane_;
   }
-  std::shared_ptr<Lane> GetRightLane() const {
+  std::weak_ptr<Lane> GetRightLane() const {
     return right_lane_;
   }
   Line& GetCenterLine() {
@@ -102,8 +100,8 @@ struct Lane : public XodrLane {
     right_lane_ = right_lane;
   }
 
-  std::shared_ptr<Lane> left_lane_;  // from_id, to_id
-  std::shared_ptr<Lane> right_lane_;  // from_id, to_id
+  std::weak_ptr<Lane> left_lane_;  // from_id, to_id
+  std::weak_ptr<Lane> right_lane_;  // from_id, to_id
   std::shared_ptr<Lane> next_lane_;
 
   Line center_line_;
