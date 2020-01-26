@@ -25,7 +25,50 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
-  @unittest.skip
+  def test_two_roads_one_lane(self):
+    xodr_map = MakeXodrMapOneRoadTwoLanes()
+
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMap()
+    viewer = MPViewer(params=params,
+                      use_world_bounds=True)
+
+    # Draw map
+    viewer.drawWorld(world)
+    viewer.show(block=False)
+
+    # Generate RoadCorridor
+    roads = [100] 
+    driving_direction = XodrDrivingDirection.forward
+    map_interface.GenerateRoadCorridor(roads, driving_direction)
+    road_corridor = map_interface.GetRoadCorridor(roads, driving_direction)
+
+    # Assert road corridor
+    
+    # Assert: 1 road
+    self.assertEqual(len(road_corridor.roads), 1)
+    
+    # Assert: road1: 2 lanes
+    self.assertEqual(len(road_corridor.GetRoad(roads[0]).lanes), 3)
+
+    colors = ["blue", "red", "green"]
+    count = 0
+    for lane_corridor in road_corridor.lane_corridors:
+      viewer.drawPolygon2d(lane_corridor.polygon, color=colors[count], alpha=0.5)
+      viewer.drawLine2d(lane_corridor.left_boundary, color="red")
+      viewer.drawLine2d(lane_corridor.right_boundary, color="blue")
+      viewer.drawLine2d(lane_corridor.center_line, color="black")
+      viewer.show(block=False)
+      plt.pause(2.)
+      count += 1
+    viewer.show(block=True)
+
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -36,7 +79,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -88,7 +131,7 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
-  
+  @unittest.skip
   def test_road_corridor_highway(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
 
@@ -99,7 +142,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -163,7 +206,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -191,7 +234,7 @@ class RoadCorridorTests(unittest.TestCase):
 
   @unittest.skip
   def test_road_corridor_intersection(self):
-    xodr_parser = XodrParser("modules/runtime/tests/data/4way_intersection.xodr")
+    xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
     # World Definition
     params = ParameterServer()
@@ -200,7 +243,7 @@ class RoadCorridorTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     world.SetMap(map_interface)
-    open_drive_map = world.map.GetOpenDriveMao()
+    open_drive_map = world.map.GetOpenDriveMap()
     viewer = MPViewer(params=params,
                       use_world_bounds=True)
 
@@ -209,7 +252,7 @@ class RoadCorridorTests(unittest.TestCase):
     viewer.show(block=False)
 
     # Generate RoadCorridor
-    roads = [2, 5, 8] 
+    roads = [0, 1, 2] 
     driving_direction = XodrDrivingDirection.forward
     map_interface.GenerateRoadCorridor(roads, driving_direction)
 
