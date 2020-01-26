@@ -193,6 +193,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   if (s_end > previous_line.Length())
     s_end = previous_line.Length();
 
+  // TODO(@all): this is very inefficient for e.g. a straight line
   for (; s <= s_end;) {
     geometry::Point2d point = GetPointAtS(previous_line, s);
     normal = GetNormalAtS(previous_line, s);
@@ -206,14 +207,13 @@ inline geometry::Line CreateLineWithOffsetFromLine(
       s_inc = s_end - s;
     s += s_inc;
   }
-
   return tmp_line;
 }
 
-//using XodrLaneWidths = std::vector<XodrLaneWidth>;
+// using XodrLaneWidths = std::vector<XodrLaneWidth>;
 
 }  // namespace opendrive
 }  // namespace world
-} // namespace modules
+}  // namespace modules
 
 #endif // MODULES_WORLD_OPENDRIVE_COMMONS_HPP_

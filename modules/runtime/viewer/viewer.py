@@ -171,7 +171,7 @@ class BaseViewer(Viewer):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.GetOpenDriveMao())
+            self.drawMap(world.map.GetOpenDriveMap())
 
         # draw agents
         for agent_id, agent in world.agents.items():
