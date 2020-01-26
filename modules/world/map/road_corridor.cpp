@@ -15,13 +15,11 @@ std::pair<LaneCorridorPtr, LaneCorridorPtr>
 RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
   LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
   LanePtr current_lane = current_lane_corr->GetCurrentLane(pt);
-  std::weak_ptr<Lane> left_lane_w, right_lane_w;
+  std::shared_ptr<Lane> left_lane, right_lane;
   if (current_lane) {
-    left_lane_w = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
-    right_lane_w = current_lane_corr->GetCurrentLane(pt)->GetRightLane();
+    left_lane = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
+    right_lane = current_lane_corr->GetCurrentLane(pt)->GetRightLane();
   }
-  LanePtr left_lane = left_lane_w.lock();
-  LanePtr right_lane = right_lane_w.lock();
   LaneId left_lane_id = 10000000;
   LaneId right_lane_id = 10000000;
   if (left_lane)
