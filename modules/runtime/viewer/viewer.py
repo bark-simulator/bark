@@ -162,8 +162,8 @@ class BaseViewer(Viewer):
                 # self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
                 if prev_center.any():
                     line = Line2d()
-                    line.addPoint(Point2d(prev_center[0], prev_center[1]))
-                    line.addPoint(Point2d(goal_pos[0], goal_pos[1]))
+                    line.AddPoint(Point2d(prev_center[0], prev_center[1]))
+                    line.AddPoint(Point2d(goal_pos[0], goal_pos[1]))
                     self.drawLine2d(line, color, alpha=0.9)
                 prev_center = goal_pos
 

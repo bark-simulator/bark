@@ -84,7 +84,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   1]
 
 for _ in range(0, 30):
-  world.step(sim_step_time)
+  world.Step(sim_step_time)
   viewer.drawWorld(world)
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
