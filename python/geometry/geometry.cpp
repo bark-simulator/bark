@@ -60,6 +60,9 @@ void python_geometry(py::module m) {
   m.def("distance", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Point2d &>(&modules::geometry::distance),
         "Returns euclidean distance between polygon and point2d.");
 
+  m.def("collides", py::overload_cast<const modules::geometry::Polygon &, const modules::geometry::Polygon &>(&modules::geometry::Collide),
+        "Returns true if polygons collide.");
+
   m.def("get_nearest_point", &modules::geometry::get_nearest_point, "get the nearest point from point to a line.");
 
   m.def("get_nearest_s", &modules::geometry::get_nearest_s, "get the nearest s value from point to a line.");
