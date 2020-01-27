@@ -78,12 +78,7 @@ class XodrLane {
     return driving_direction_; }
   XodrLaneId GetId() const { return lane_id_; }
   XodrLanePosition GetLanePosition() const { return lane_position_; }
-
-  float CurvatureAt(const float s, const float s_delta = 0.01) const;
-  float CurvatureDotAt(const float s) const;
-  float LaneWidthAt(const float s) const;
-  float SFromPoint(const geometry::Point2d& point) const;
-
+  
  private:
   XodrLaneId lane_id_;
   XodrLanePosition lane_position_;

@@ -6,20 +6,18 @@
 import numpy as np
 import time
 import os
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.world.map import *
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
+from bark.models.behavior import BehaviorConstantVelocity
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
 
 
 # Parameters Definitions
@@ -83,7 +81,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-for _ in range(0, 30):
+for _ in range(0, 10):
   world.Step(sim_step_time)
   viewer.drawWorld(world)
   viewer.show(block=False)
