@@ -39,7 +39,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._ego_goal_end = params_temp["EgoGoalEnd",
       "The center of the ego agent's goal region polygon",
-      [5128, 5200] ]
+      [5117, 5200] ]
     self._ego_goal_start = params_temp["EgoGoalStart",
       "The coordinates of the start of the ego goal,\
            if empty only ego goal end is used as center of polygon ",
@@ -51,18 +51,18 @@ class UniformVehicleDistribution(ScenarioGeneration):
     self._ego_route = params_temp["EgoRoute",
       "A list of two points defining start and end point of initial ego driving corridor. \
            If empty, then one of the other agents is selected as ego agents.",
-      []]
+      [5117.5, 5100], [5117.5, 5200]]
     self._others_source = params_temp["OthersSource",
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. XodrLanes must be near these points \
       (<0.5m) Provide a list of lists with x,y-coordinates",
-     [[5111.626, 5061.8305]]]
+     [[5114.626, 5061.8305]]]
     self._others_sink = params_temp["OthersSink",
       "A list of points defining end of other vehicles routes.\
         Points should be on different lanes and match the order of the\
         source points. XodrLanes must be near these points (<0.5m) \
         Provide a list of lists with x,y-coordinates",
-        [[ 5111.626, 5193.1725]] ]  
+        [[ 5114.626, 5193.1725]] ]  
     assert len(self._others_sink) == len(self._others_source)         
     self._vehicle_distance_range = params_temp["VehicleDistanceRange",
       "Distance range between vehicles in meter given as tuple from which" + \
