@@ -5,6 +5,7 @@
 
 
 #include <string>
+#include <memory>
 #include <vector>
 #include <map>
 #include "map.hpp"
@@ -34,16 +35,18 @@ void python_map(py::module m) {
     .def("SetRoadgraph", &MapInterface::SetRoadgraph)
     .def("GetRoadgraph", &MapInterface::GetRoadgraph)
     .def("GetOpenDriveMap", &MapInterface::GetOpenDriveMap)
-      .def("GenerateRoadCorridor", py::overload_cast<const std::vector<XodrRoadId>&,
-                                  const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
-      .def("GenerateRoadCorridor", py::overload_cast<const modules::geometry::Point2d&,
-                                  const modules::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
+    .def("GenerateRoadCorridor",
+      py::overload_cast<const std::vector<XodrRoadId>&,
+      const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
+    .def("GenerateRoadCorridor",
+      py::overload_cast<const modules::geometry::Point2d&,
+      const modules::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
     .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
     .def("GetLane", &MapInterface::GetLane)
-    .def("compute_all_path_boundaries",
+    .def("ComputeAllPathBoundaries",
       &MapInterface::ComputeAllPathBoundaries)
-    .def("find_lane", &MapInterface::FindXodrLane);
- 
+    .def("FindLane", &MapInterface::FindXodrLane);
+
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
     .def(py::init<>())
     .def("AddLane", &Roadgraph::AddLane)
@@ -67,57 +70,51 @@ void python_map(py::module m) {
     .def("Generate", &Roadgraph::Generate)
     .def("GetLanePolygonForLaneId", &Roadgraph::GetLanePolygonForLaneId)
     .def("GetRoadForLaneId", &Roadgraph::GetRoadForLaneId)
-    .def("compute_lane_boundaries",
-      &Roadgraph::ComputeXodrLaneBoundaries);  // GetRoadForLaneId
+    .def("ComputeLaneBoundaries",
+      &Roadgraph::ComputeXodrLaneBoundaries);
 
-
-
-//! RoadCorridor
 py::class_<RoadCorridor,
            std::shared_ptr<RoadCorridor>>(m, "RoadCorridor")
-    .def(py::init<>())
-    .def_property("roads", &RoadCorridor::GetRoads,
-      &RoadCorridor::SetRoads)
-    .def_property_readonly("lanes", &RoadCorridor::GetLanes)
-    .def("GetRoad", &RoadCorridor::GetRoad)
-    .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
-    .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
-    .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
-    .def("GetLeftRightLaneCorridor", &RoadCorridor::GetLeftRightLaneCorridor)
-    .def_property_readonly("lane_corridors",
-      &RoadCorridor::GetUniqueLaneCorridors)
-    .def(py::pickle(
-    [](const RoadCorridor& rc) -> py::tuple {  // __getstate__
-        /* Return a tuple that fully encodes the state of the object */
-        return py::make_tuple(rc.GetRoads(),
-                              rc.GetUniqueLaneCorridors(),
-                              rc.GetLaneCorridorMap(),
-                              rc.GetPolygon());
+  .def(py::init<>())
+  .def_property("roads", &RoadCorridor::GetRoads,
+    &RoadCorridor::SetRoads)
+  .def_property_readonly("lanes", &RoadCorridor::GetLanes)
+  .def("GetRoad", &RoadCorridor::GetRoad)
+  .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
+  .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
+  .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
+  .def("GetLeftRightLaneCorridor", &RoadCorridor::GetLeftRightLaneCorridor)
+  .def_property_readonly("lane_corridors",
+    &RoadCorridor::GetUniqueLaneCorridors)
+  .def(py::pickle(
+    [](const RoadCorridor& rc) -> py::tuple {
+      return py::make_tuple(rc.GetRoads(),
+                            rc.GetUniqueLaneCorridors(),
+                            rc.GetLaneCorridorMap(),
+                            rc.GetPolygon());
     },
-    [](const py::tuple &t) {  // __setstate__
-        if (t.size() != 4)
-          throw std::runtime_error("Invalid RoadCorridor state!");
-        RoadCorridor rc;
-        rc.SetRoads(t[0].cast<Roads>());
-        rc.SetUniqueLaneCorridors(
-          t[1].cast<std::vector<LaneCorridorPtr>>());
-        rc.SetLaneCorridorMap(
-          t[2].cast<std::map<LaneId, LaneCorridorPtr>>());
-        rc.SetPolygon(t[3].cast<Polygon>());
-        return rc;
+    [](const py::tuple &t) {
+      if (t.size() != 4)
+        throw std::runtime_error("Invalid RoadCorridor state!");
+      RoadCorridor rc;
+      rc.SetRoads(t[0].cast<Roads>());
+      rc.SetUniqueLaneCorridors(
+        t[1].cast<std::vector<LaneCorridorPtr>>());
+      rc.SetLaneCorridorMap(
+        t[2].cast<std::map<LaneId, LaneCorridorPtr>>());
+      rc.SetPolygon(t[3].cast<Polygon>());
+      return rc;
     }));
 
-//! LaneCorridor
-// TODO(@hart): make pickable -> requires XODR to be as well
 py::class_<LaneCorridor,
            std::shared_ptr<LaneCorridor>>(m, "LaneCorridor")
-    .def(py::init<>())
-    .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
-    .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
-    .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
-    .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
-    .def("__eq__", &LaneCorridor::operator== )
-    .def("__neq__", &LaneCorridor::operator!=);
+  .def(py::init<>())
+  .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
+  .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
+  .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
+  .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
+  .def("__eq__", &LaneCorridor::operator== )
+  .def("__neq__", &LaneCorridor::operator!=);
 
 py::class_<Boundary,
            std::shared_ptr<Boundary>>(m, "Boundary")
@@ -125,7 +122,6 @@ py::class_<Boundary,
   .def_property_readonly("line", &Boundary::GetLine)
   .def_property_readonly("type", &Boundary::GetType);
 
-// TODO(@hart): make pickable -> requires XODR to be as well
 py::class_<Lane,
            std::shared_ptr<Lane>>(m, "Lane")
   .def(py::init<XodrLanePtr>())
@@ -141,8 +137,6 @@ py::class_<Lane,
   .def_property_readonly("lane_position", &Lane::GetLanePosition)
   .def_property_readonly("polygon", &Lane::GetPolygon);
 
-
-// TODO(@hart): make pickable -> requires XODR to be as well
 py::class_<Road,
            std::shared_ptr<Road>>(m, "Road")
   .def(py::init<XodrRoadPtr>())

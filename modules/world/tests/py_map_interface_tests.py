@@ -83,18 +83,18 @@ class EnvironmentTests(unittest.TestCase):
 
         # Simple test
         point_close = Point2d(5112.68262, 5086.44971)
-        lane_sw = map_interface.find_lane(point_close)
+        lane_sw = map_interface.FindLane(point_close)
         self.assertIsNotNone(lane_sw, "This point is still in the left lane! XodrLane boundary is 5112.683")
 
         switched_lane = False
         lng_coord = 5086.44971
         i = 5112.0
-        lane_sw = map_interface.find_lane(Point2d(i, lng_coord))
+        lane_sw = map_interface.FindLane(Point2d(i, lng_coord))
         assert lane_sw != None
         prev = lane_sw.lane_id
         prev_i = i
         while (i < 5113.0):
-            lane_sw = map_interface.find_lane(Point2d(i, lng_coord))
+            lane_sw = map_interface.FindLane(Point2d(i, lng_coord))
             self.assertIsNotNone(lane_sw, "Should always be on at least one lane! Currently at ({}, {})".format(i, lng_coord))
             if prev != lane_sw.lane_id:
                 # print(prev)
@@ -116,13 +116,13 @@ class EnvironmentTests(unittest.TestCase):
         map_interface.SetOpenDriveMap(xodr_parser.map)
         world.SetMap(map_interface)
 
-        lane_sw = map_interface.find_lane(Point2d(46, 180))
+        lane_sw = map_interface.FindLane(Point2d(46, 180))
         assert lane_sw.lane_type == XodrLaneType.sidewalk
 
-        lane_rl = map_interface.find_lane(Point2d(52, 130))
+        lane_rl = map_interface.FindLane(Point2d(52, 130))
         assert lane_rl.lane_type == XodrLaneType.driving
 
-        lane_no_lane = map_interface.find_lane(Point2d(120, 140))
+        lane_no_lane = map_interface.FindLane(Point2d(120, 140))
         assert lane_no_lane == None
 
         xodr_parser = XodrParser("modules/runtime/tests/data/city_highway_straight.xodr")
@@ -139,7 +139,7 @@ class EnvironmentTests(unittest.TestCase):
         viewer.drawPoint2d(point, 'red', 1.0)
         viewer.show(block=True)
         time.sleep(0.1)
-        lane_sw = map_interface.find_lane(point)
+        lane_sw = map_interface.FindLane(point)
         self.assertIsNotNone(lane_sw, "This point is clearly on a lane!")
 
 if __name__ == '__main__':

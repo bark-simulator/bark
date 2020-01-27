@@ -25,58 +25,58 @@ class GeometryTests(unittest.TestCase):
         print(p.y)
 
         l = Line2d()
-        l.addPoint(p)
-        l.addPoint(p)
-        l.addPoint(p)
-        self.assertFalse(l.valid())
+        l.AddPoint(p)
+        l.AddPoint(p)
+        l.AddPoint(p)
+        self.assertFalse(l.Valid())
         print(l)
 
         p = Point2d(0.0, 1.0)
-        l.addPoint([3, 4])
-        l.addPoint([1, 4])
-        self.assertTrue(l.valid())
+        l.AddPoint([3, 4])
+        l.AddPoint([1, 4])
+        self.assertTrue(l.Valid())
         arr = l.ToArray()
         print(arr)
 
 
         p = Polygon2d()
-        p.addPoint([0, 0])
-        p.addPoint([1, 0])
-        p.addPoint([1, 1])
+        p.AddPoint([0, 0])
+        p.AddPoint([1, 0])
+        p.AddPoint([1, 1])
         # to few points
-        self.assertFalse(p.valid())
-        p.addPoint([0, 0])
+        self.assertFalse(p.Valid())
+        p.AddPoint([0, 0])
         # wrong orientation
-        self.assertFalse(p.valid())
+        self.assertFalse(p.Valid())
 
         p = Polygon2d()
-        p.addPoint([0, 0])
-        p.addPoint([0, 1])
-        p.addPoint([1, 1])
-        p.addPoint([0, 0])
+        p.AddPoint([0, 0])
+        p.AddPoint([0, 1])
+        p.AddPoint([1, 1])
+        p.AddPoint([0, 0])
         # right orientation
-        self.assertTrue(p.valid())
+        self.assertTrue(p.Valid())
 
     def test_bounding_box(self):
         p = Polygon2d()
-        p.addPoint([0, 0])
-        p.addPoint([0, 1])
-        p.addPoint([1, 1])
-        p.addPoint([0, 0])
+        p.AddPoint([0, 0])
+        p.AddPoint([0, 1])
+        p.AddPoint([1, 1])
+        p.AddPoint([0, 0])
         # right orientation
-        self.assertTrue(p.valid())
+        self.assertTrue(p.Valid())
 
         bb = p.bounding_box
         self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb[0].x(), bb[0].y()])))
         self.assertTrue(np.array_equal(np.array([1,1]),np.array([bb[1].x(), bb[1].y()])))
 
         p = Polygon2d()
-        p.addPoint([2, 3])
-        p.addPoint([2, 4])
-        p.addPoint([3, 4])
-        p.addPoint([2, 3])
+        p.AddPoint([2, 3])
+        p.AddPoint([2, 4])
+        p.AddPoint([3, 4])
+        p.AddPoint([2, 3])
         # right orientation
-        self.assertTrue(p.valid())
+        self.assertTrue(p.Valid())
 
         bb2 = p.bounding_box
         self.assertTrue(np.array_equal(np.array([2,3]),np.array([bb2[0].x(), bb2[0].y()])))
@@ -95,30 +95,30 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(Distance(p1, p2), 5)
 
         l = Line2d()
-        l.addPoint(p1)
-        l.addPoint(p2)
+        l.AddPoint(p1)
+        l.AddPoint(p2)
 
         p3 = Point2d(4, 15)
         p4 = Point2d(4, -5)
 
         l2 = Line2d()
-        l2.addPoint(p3)
-        l2.addPoint(p4)
+        l2.AddPoint(p3)
+        l2.AddPoint(p4)
 
         self.assertEqual(Distance(l2, p3), 0)
         self.assertEqual(Distance(l, l2), 3)
 
         p = Polygon2d()
-        p.addPoint([0, 0])
-        p.addPoint([0, 1])
-        p.addPoint([1, 1])
-        p.addPoint([0, 0])
+        p.AddPoint([0, 0])
+        p.AddPoint([0, 1])
+        p.AddPoint([1, 1])
+        p.AddPoint([0, 0])
 
         p2 = Polygon2d()
-        p2.addPoint([5, 0])
-        p2.addPoint([5, 1])
-        p2.addPoint([6, 1])
-        p2.addPoint([5, 0])
+        p2.AddPoint([5, 0])
+        p2.AddPoint([5, 1])
+        p2.AddPoint([6, 1])
+        p2.AddPoint([5, 0])
 
         self.assertEqual(Distance(p, p2), 4)
         self.assertEqual(Distance(p, l2), 3)
@@ -129,12 +129,12 @@ class GeometryTests(unittest.TestCase):
         #viewer = MPViewer()
 
         p = Polygon2d()
-        p.addPoint([0, 0])
-        p.addPoint([0, 2])
-        p.addPoint([4, 2])
-        p.addPoint([4, 0])
-        p.addPoint([0, 0])
-        self.assertTrue(p.valid())
+        p.AddPoint([0, 0])
+        p.AddPoint([0, 2])
+        p.AddPoint([4, 2])
+        p.AddPoint([4, 0])
+        p.AddPoint([0, 0])
+        self.assertTrue(p.Valid())
 
         # rotate around pi
         # viewer.drawPolygon2d(p.Rotate(math.pi/2),'r',0.2)
@@ -160,7 +160,7 @@ class GeometryTests(unittest.TestCase):
     def test_const_poly_from_array(self):
         arr = np.array([[0, 0], [0, 2], [4, 2], [4, 0], [0, 0]])
         poly = Polygon2d([1, 3, 1], arr)
-        self.assertTrue(poly.valid())
+        self.assertTrue(poly.Valid())
 
     def test_distances_to_center(self):
 

@@ -39,8 +39,8 @@ param_server.save("examples/params/mcts_params_written.json")
 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 for _ in range(0, 40): # run scenario for 100 steps
-  world_state.do_planning(sim_step_time)
+  world_state.DoPlanning(sim_step_time)
   video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
-  world_state.do_execution(sim_step_time)
+  world_state.DoExecution(sim_step_time)
 
 video_renderer.export_video(filename="examples/scenarios/test_video_intermediate", remove_image_dir=True)

@@ -15,10 +15,17 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(bark, m) {
   m.doc() = "Wrapper for fortiss-behave library";
-  python_geometry(m.def_submodule("geometry", "submodule handling geometries"));
-  python_commons(m.def_submodule("commons", "submodule containing all wrapped parameters objects"));
-  python_models(m.def_submodule("models", "submodule containing models such as the behavior, dynamic and execution"));
-  python_world(m.def_submodule("world", "submodule containing all wrapped parameters objects"));
+  python_geometry(
+    m.def_submodule("geometry", "submodule handling geometries"));
+  python_commons(
+    m.def_submodule("commons",
+    "submodule containing all wrapped parameters objects"));
+  python_models(
+    m.def_submodule("models",
+    "submodule containing models such as the behavior, dynamic and execution"));
+  python_world(
+    m.def_submodule("world", "submodule containing all wrapped parameters objects"));
   python_viewer(m.def_submodule("viewer", "submodule containing the viewer"));
-  python_runtime(m.def_submodule("runtime", "submodule containing the runtime"));
+  python_runtime(
+    m.def_submodule("runtime", "submodule containing the runtime"));
 }

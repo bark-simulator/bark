@@ -8,7 +8,7 @@ import numpy as np
 
 from scipy.special import fresnel
 from bark.world import *
-from bark.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth, XodrLane, XodrRoad, fresnel_cos, fresnel_sin
+from bark.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth, XodrLane, XodrRoad, FresnelCos, FresnelSin
 from bark.geometry import Point2d
 
 
@@ -67,8 +67,8 @@ class EnvironmentTests(unittest.TestCase):
         x_odr = []
         y_odr = []
         for t_i in t:
-            x_odr.append(fresnel_cos(t_i))
-            y_odr.append(fresnel_sin(t_i))
+            x_odr.append(FresnelCos(t_i))
+            y_odr.append(FresnelSin(t_i))
 
         x_odr_np = np.asarray(x_odr)
         y_odr_np = np.asarray(y_odr)
