@@ -7,8 +7,7 @@ from lxml import etree
 import pprint
 import logging
 from bark.world.opendrive import *
-from bark.world.map import *
-from bark.geometry import *
+from bark.geometry import Point2d
 logger = logging.getLogger()
 
 class XodrParser(object):
@@ -298,13 +297,12 @@ class XodrParser(object):
           off_x = header["offset"]["x"]
           off_y = header["offset"]["y"]
           off_hdg = header["offset"]["hdg"]
-          print("Transforming PlanView with given offset", header["offset"])
+          logger.info("Transforming PlanView with given offset", header["offset"])
           new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
 
     def create_cpp_road_link(self, link):
-        # TODO(hart): insert road_link
         new_link = XodrRoadLink()
         try:
             new_pre_info = XodrRoadLinkInfo()

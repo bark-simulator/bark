@@ -8,17 +8,10 @@ import time
 import math
 import filecmp
 import matplotlib.pyplot as plt
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.geometry import *
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
+from bark.world import World
 from modules.runtime.commons.parameters import ParameterServer
-from bark.world.opendrive import *
-from bark.world.map import *
+from bark.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
+from bark.world.map import MapInterface
 from modules.runtime.commons.xodr_parser import XodrParser
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 import numpy as np

@@ -3,13 +3,11 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
+from bark.world.agent import Agent
+from bark.world import World
+from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
-
 import copy
 
 
