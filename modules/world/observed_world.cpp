@@ -62,6 +62,17 @@ std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFront() const {
 }
 
 
+std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentBehind() const {
+
+  // TODO(@Klemens): implement
+  double nearest_lon = std::numeric_limits<double>::max();
+  double nearest_lat = std::numeric_limits<double>::max();
+
+  AgentPtr nearest_agent(nullptr);
+
+  return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
+}
+
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
     settings.ApplySettings(*this);
 }
