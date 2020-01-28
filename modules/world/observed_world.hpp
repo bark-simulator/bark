@@ -43,6 +43,9 @@ class ObservedWorld : public World {
     ~ObservedWorld() {}
 
     std::pair<AgentPtr, modules::world::map::Frenet> GetAgentInFront() const;
+
+    std::pair<AgentPtr, modules::world::map::Frenet> GetAgentBehind() const;
+
     virtual double GetWorldTime() const { return World::GetWorldTime(); }
 
     const RoadCorridorPtr GetRoadCorridor() const {

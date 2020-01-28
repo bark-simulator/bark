@@ -42,6 +42,7 @@ double BehaviorIDMClassic::CalculateLongitudinalAccelerationTwoAgents(const std:
 
     const float vehicle_length = ego_agent->GetShape().front_dist_ +
                                   leading_agent->GetShape().rear_dist_;
+    // TODO: that's not correct!
     const double net_distance = distance - vehicle_length - 0.0f ; // For now assume ego longitudinal state at start of driving corridor
     const double net_velocity = ego_state(StateDefinition::VEL_POSITION) - lead_state(StateDefinition::VEL_POSITION);
 
@@ -65,6 +66,7 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
   modules::world::map::Frenet lead_veh_frenet = leading_vehicle.second;
   double distance = lead_veh_frenet.lon;
 
+  // TODO(@Klemens): Distance refers to braking point, should be renamed / clarified
   double acc = CalculateLongitudinalAccelerationTwoAgents(ego_agent, leading_vehicle.first, distance);
   return acc;
 }
