@@ -51,7 +51,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
     self._ego_route = params_temp["EgoRoute",
       "A list of two points defining start and end point of initial ego driving corridor. \
            If empty, then one of the other agents is selected as ego agents.",
-      [5117.5, 5100], [5117.5, 5200]]
+      [[5117.5, 5100], [5117.5, 5200]]]
     self._others_source = params_temp["OthersSource",
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. XodrLanes must be near these points \
