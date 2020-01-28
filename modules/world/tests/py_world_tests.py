@@ -5,20 +5,22 @@
 
 import unittest
 import numpy as np
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
+import time
 from modules.runtime.commons.parameters import ParameterServer
-from bark.world.opendrive import *
-from bark.world.goal_definition import GoalDefinitionPolygon
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.world.evaluation import *
-
+from modules.runtime.commons.xodr_parser import XodrParser
+from bark.models.behavior import BehaviorConstantVelocity
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.agent import Agent
+from bark.world.map import MapInterface, Roadgraph
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
+from bark.world.evaluation import  EvaluatorDrivableArea
+from bark.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
+  MakeXodrMapOneRoadTwoLanes, XodrLaneSection, XodrLane
 
 class WorldTests(unittest.TestCase):
   """This test should create and obstacle, map and agent insert it into the world.
@@ -32,11 +34,11 @@ class WorldTests(unittest.TestCase):
     execution = ExecutionModelInterpolate(params)
     dynamic = SingleTrackModel(params)
     shape = Polygon2d([1.25, 1, 0], [
-        Point2d(0, 0),
-        Point2d(0, 2),
-        Point2d(4, 2),
-        Point2d(4, 0),
-        Point2d(0, 0)
+      Point2d(0, 0),
+      Point2d(0, 2),
+      Point2d(4, 2),
+      Point2d(4, 0),
+      Point2d(0, 0)
     ])
     init_state = np.array([0, 0, 0, 0, 5])
     agent = Agent(init_state, behavior, dynamic, execution, shape,
@@ -117,4 +119,4 @@ class WorldTests(unittest.TestCase):
     viewer.show(block=False)
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

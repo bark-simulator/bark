@@ -3,25 +3,20 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
 import numpy as np
 import time
-import os
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
-
+from bark.models.behavior import BehaviorConstantVelocity
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
 
 # Parameters Definitions
 param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent.json")
@@ -41,6 +36,7 @@ xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
 map_interface.SetOpenDriveMap(xodr_parser.map)
 world.SetMap(map_interface)
+
 # Agent Definition
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 10/3.6])
@@ -70,7 +66,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   100]
 
-for _ in range(0, 100):
+for _ in range(0, 10):
   viewer.clear()
   world.Step(sim_step_time)
   viewer.drawWorld(world)

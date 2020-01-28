@@ -4,20 +4,26 @@
 # https://opensource.org/licenses/MIT
 
 
-import unittest
-import os
 import numpy as np
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
-from bark.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimits, GoalDefinitionSequential
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
-from bark.world.evaluation import *
+import time
+import unittest
 from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.commons.xodr_parser import XodrParser
+from bark.models.behavior import BehaviorConstantVelocity, \
+  BehaviorMotionPrimitives
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel, StateDefinition
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon, \
+  GoalDefinitionStateLimits, GoalDefinitionSequential
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
+from bark.world.evaluation import EvaluatorGoalReached, \
+  EvaluatorCollisionEgoAgent, EvaluatorStepCount
+
 
 
 class EvaluationTests(unittest.TestCase):

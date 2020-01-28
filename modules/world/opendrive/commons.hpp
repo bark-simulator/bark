@@ -141,7 +141,7 @@ enum XodrRoadMarkType {
 };
 
 enum XodrRoadMarkColor {
-  STANDARD = 0, // (equivalent to "white")
+  STANDARD = 0,  // (equivalent to "white")
   /*BLUE = 1,
   GREEN = 2,
   RED = 3,
@@ -151,7 +151,7 @@ enum XodrRoadMarkColor {
   //ORANGE = 6,
 };
 
-} // namespace roadmark
+}  // namespace roadmark
 
 struct XodrRoadMark {
   roadmark::XodrRoadMarkType type_;
@@ -176,7 +176,8 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   geometry::Line previous_line,
   int id,
   XodrLaneWidth lane_width_current_lane,
-  float s_inc = 0.5f) {
+  float s_inc = 0.2f,
+  float s_max_delta = 0.1f) {
 
   namespace bg = boost::geometry;
   XodrLaneOffset off = lane_width_current_lane.off;
@@ -193,7 +194,6 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   if (s_end > previous_line.Length())
     s_end = previous_line.Length();
 
-  // TODO(@all): this is very inefficient for e.g. a straight line
   for (; s <= s_end;) {
     geometry::Point2d point = GetPointAtS(previous_line, s);
     normal = GetNormalAtS(previous_line, s);
@@ -207,7 +207,12 @@ inline geometry::Line CreateLineWithOffsetFromLine(
       s_inc = s_end - s;
     s += s_inc;
   }
-  return tmp_line;
+
+  // SIMPLIFY line with max error
+  geometry::Line simplified_line;
+  boost::geometry::simplify(tmp_line.obj_, simplified_line.obj_, s_max_delta);
+  simplified_line.RecomputeS();
+  return simplified_line;
 }
 
 // using XodrLaneWidths = std::vector<XodrLaneWidth>;
@@ -216,4 +221,4 @@ inline geometry::Line CreateLineWithOffsetFromLine(
 }  // namespace world
 }  // namespace modules
 
-#endif // MODULES_WORLD_OPENDRIVE_COMMONS_HPP_
+#endif  // MODULES_WORLD_OPENDRIVE_COMMONS_HPP_
