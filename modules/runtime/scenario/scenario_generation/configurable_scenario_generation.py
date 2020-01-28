@@ -161,6 +161,17 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def resolve_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
+
+      collisions = self.find_overlaps_in_sources_sinks_agents(
+        collected_sources_sinks_agent_states_geometries
+      )
+      return self.delete_overlaps_in_sources_sinks_agents(
+        collected_sources_sinks_agent_states_geometries,
+        collisions
+      )
+
+  def find_overlaps_in_sources_sinks_agents(self, 
+                  collected_sources_sinks_agent_states_geometries):
     # create kdtree for fast distance lookup between agents
     tree = aabbtree.AABBTree()
     for source_sink_idx, states_geometries in enumerate(
@@ -193,8 +204,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             if source_sink_idx == overlap[0]:
               raise ValueError("Something went wrong. \
                    We have colliding agent within one source sink configuration")
-            key1 = "{}{}".format(source_sink_idx, overlap[0])
-            key2 = "{}{}".format(overlap[0], source_sink_idx, )
+            key1 = "{}-{}".format(source_sink_idx, overlap[0])
+            key2 = "{}-{}".format(overlap[0], source_sink_idx, )
             if key1 in collisions:
               pairwise_collisions = collisions[key1]
             elif key2 in collisions:
@@ -217,10 +228,108 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                                                     agent_state_other[1]))
               if collides(agent_translated_polygon, agent_translated_polygon_other):
                 pairwise_collisions.append(((source_sink_idx, agent_idx), overlap))
+    
+    return collisions
 
-    # use conflict resolution scheme to remove collisions
+  def delete_overlaps_in_sources_sinks_agents(self, 
+                  collected_sources_sinks_agent_states_geometries, collisions):
+    # first find all agents to delete, then delete in go
+    must_delete = defaultdict(list)
+    np.random.seed(self._random_seed)
     for key, pairwise_collisions in collisions.items():
-      # important check if all pairs still exist
+      # get the conflict resolution scheme defined using descriptions in src sink configs  "left_turn/straight": 0.2:0.8
+      source_sink_idx_1 = key.split("-")[0]
+      source_sink_idx_2 = key.split("-")[1]
+
+      source_sink_desc_1 = self._sinks_sources[source_sink_idx_1]["Description"]
+      source_sink_desc_2 = self._sinks_sources[source_sink_idx_2]["Description"]
+         
+      num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution =
+         self.parse_conflict_resolution(source_sink_desc_1, source_sink_desc_2)
+
+      if not probablistic_conflict_resolution:
+        raise NotImplemented("Not implemented yet.")
+      
+      for pairwise_collision in pairwise_collisions:
+        source_sink_idx_1 = pairwise_collisions[0][0]
+        source_sink_idx_2 = pairwise_collisions[1][0]
+        agent_idx_1 = pairwise_collisions[0][1]
+        agent_idx_2 = pairwise_collisions[1][1]
+
+        if probablistic_conflict_resolution:
+          sample = p.random.rand()
+          if 0 <= sample and sample <= num_conflict_res1:
+            if not agent_idx_1 in must_delete[source_sink_idx_1]:
+              must_delete[source_sink_idx_1].append(agent_idx_1)
+          elif num_conflict_res1 < sample <= (num_conflict_res1+num_conflict_res2):
+            if not agent_idx_2 in must_delete[source_sink_idx_2]:
+              must_delete[source_sink_idx_2].append(agent_idx_2)
+          else:
+            if not agent_idx_1 in must_delete[source_sink_idx_1]:
+              must_delete[source_sink_idx_1].append(agent_idx_1)
+            if not agent_idx_2 in must_delete[source_sink_idx_2]:
+              must_delete[source_sink_idx_2].append(agent_idx_2)
+
+    for source_sink_idx, agent_deletions in must_delete:
+      agent_list = collected_sources_sinks_agent_states_geometries[source_sink_idx]
+      for index in sorted(agent_deletions, reverse=True):
+        del agent_list[index]
+
+    return collected_sources_sinks_agent_states_geometries
+
+  def parse_conflict_resolution(self, description1, description_2):
+    # find for two src sink configs the conflict resolution and parse it
+    key = self.conflict_resolution_key_from_src_conf_desc(description1, description_2)
+    key_reverse = self.conflict_resolution_key_from_src_conf_desc(description_2, description1)
+    reversed = False
+    if not key in self._conflict_resolutions:
+      if key_reverese in self._conflict_resolutions:
+        key = key_reverse
+        reversed = True
+      else:
+        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(desc1, desc2))
+    conflict_res_1 = key.split(":")[0]
+    conflict_res_2 = key.split(":")[1]
+    if reversed:
+      tmp = conflict_res_1
+    conflict_res_1 = conflict_res_2
+    conflict_res_2 = tmp
+
+    def int_or_float(s):
+      try:
+        int(s)
+        return True, int(s)
+      except:
+        try:
+          float(s):
+          return False, float(s)
+        except:
+          raise ValueError("Could not parse conflict resolution {}".format(s))
+    
+    num_conflict_res1, is_int_1 = int_or_float(conflict_res_1)
+    num_conflict_res2, is_int_2 = int_or_float(conflict_res_1)
+
+    if is_int_1 and is_int_2:
+      probablistic_conflict_resolution = False
+    elif not is_int_1 and not is_int_2:
+      probablistic_conflict_resolution = True
+    else:
+      raise ValueError("Conflict resolution specifications must be either both integers or both floats")
+
+    return num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution
+
+
+  def find_src_conf_idx_from_desc(self, desc):
+    idx = 0
+    for src_conf in self._sinks_sources:
+      if desc == src_conf["Description"]:
+        return idx
+      idx += 1
+    raise ValueError("Description not found in source sink configs.")
+  
+  @staticmethod
+  def conflict_resolution_key_from_src_conf_desc(desc1, desc2):
+    return "{}/{}".format(desc1, desc2)
 
 
   def create_source_config_agents(self, agent_states, agent_geometries, 
