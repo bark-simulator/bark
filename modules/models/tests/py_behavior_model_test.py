@@ -65,23 +65,23 @@ class PyBehaviorModelTests(unittest.TestCase):
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model.Clone()
 
     np.testing.assert_array_equal(
-      env._world.GetAgent(0).behavior_model.plan(0.2, env._world)[1],
+      env._world.GetAgent(0).behavior_model.Plan(0.2, env._world)[1],
       np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10]))
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.step(0.2)
+    env._world.Step(0.2)
     np.testing.assert_array_equal(
       env._world.GetAgent(0).state,
       np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10], dtype=np.float32))
-    env._world.step(0.2)
+    env._world.Step(0.2)
     np.testing.assert_array_equal(
       env._world.GetAgent(0).state,
       np.array([0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10], dtype=np.float32))
-    env._world.step(0.2)
+    env._world.Step(0.2)
     np.testing.assert_array_equal(
       env._world.GetAgent(0).state,
       np.array([0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10], dtype=np.float32))
@@ -90,7 +90,7 @@ class PyBehaviorModelTests(unittest.TestCase):
     # environment loop
     env.reset()
     for i in range(0, 7):
-      env.step()
+      env.Step()
     
   def test_python_model(self):
     param_server = ParameterServer(
@@ -111,14 +111,14 @@ class PyBehaviorModelTests(unittest.TestCase):
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.clone()
+    env._world.GetAgent(0).behavior_model.Clone()
 
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
     env._world.GetAgent(0).behavior_model.SetLastAction(np.array([1., 2.]))
     print(env._world.GetAgent(0).behavior_model.GetLastAction())
-    env._world.step(0.2)
+    env._world.Step(0.2)
     print(env._world.GetAgent(0).behavior_model.GetLastAction())
 
 

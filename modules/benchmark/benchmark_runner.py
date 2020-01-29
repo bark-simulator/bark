@@ -58,7 +58,7 @@ class BenchmarkRunner:
                 behavior_name=behavior_name,
                 evaluator_results=evaluation_dict,
                 terminal=terminal)
-            world.step(step_time) 
+            world.Step(step_time) 
             step += 1
 
     def _reset_evaluators(self, world, eval_agent_ids):
@@ -71,7 +71,7 @@ class BenchmarkRunner:
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _get_evalution_dict(self, world):
-        return world.evaluate()
+        return world.Evaluate()
 
     def _is_terminal(self, evaluation_dict):
         terminal = False

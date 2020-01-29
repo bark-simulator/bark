@@ -7,8 +7,8 @@ import os
 
 from load.benchmark_database import BenchmarkDatabase
 from modules.benchmark.benchmark_runner import BenchmarkRunner
-
-from bark.world.evaluation import *
+from bark.world.evaluation import EvaluatorGoalReached, \
+  EvaluatorCollisionEgoAgent, EvaluatorStepCount
 from modules.runtime.commons.parameters import ParameterServer
 
 behavior_used = None

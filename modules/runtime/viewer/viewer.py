@@ -162,8 +162,8 @@ class BaseViewer(Viewer):
                 # self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
                 if prev_center.any():
                     line = Line2d()
-                    line.addPoint(Point2d(prev_center[0], prev_center[1]))
-                    line.addPoint(Point2d(goal_pos[0], goal_pos[1]))
+                    line.AddPoint(Point2d(prev_center[0], prev_center[1]))
+                    line.AddPoint(Point2d(goal_pos[0], goal_pos[1]))
                     self.drawLine2d(line, color, alpha=0.9)
                 prev_center = goal_pos
 
@@ -171,7 +171,7 @@ class BaseViewer(Viewer):
         self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.GetOpenDriveMao())
+            self.drawMap(world.map.GetOpenDriveMap())
 
         # draw agents
         for agent_id, agent in world.agents.items():

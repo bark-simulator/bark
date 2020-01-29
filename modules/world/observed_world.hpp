@@ -59,6 +59,8 @@ class ObservedWorld : public World {
     return World::GetAgent(ego_agent_id_);
   }
 
+  AgentId GetEgoAgentId() const { return ego_agent_id_; }
+
   AgentMap GetOtherAgents() const {
     auto tmp_map = World::GetAgents();
     tmp_map.erase(ego_agent_id_);

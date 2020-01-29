@@ -1,177 +1,61 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "gtest/gtest.h"
 #include "modules/world/map/lane.hpp"
+#include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/road.hpp"
 #include "modules/world/map/road_corridor.hpp"
-#include "modules/geometry/geometry.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/map/map_interface.hpp"
-#include "modules/models/tests/make_test_world.hpp"
+#include "modules/world/tests/make_test_xodr_map.hpp"
 
-
-TEST(road_corridor_tests, basic_road_corridor) {
-  using modules::world::opendrive::XodrLanePtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
+TEST(road_corridor_tests, xodr_map_one_road_two_lanes) {
   using modules::world::map::MapInterface;
-  using modules::world::map::Lane;
-  using modules::world::map::LaneId;
-  using modules::world::map::LanePtr;
-  using modules::world::map::Lanes;
-  using modules::world::map::Road;
-  using modules::world::map::RoadId;
-  using modules::world::map::Roads;
-  using modules::world::map::RoadPtr;
-  using modules::world::map::RoadCorridor;
+  using modules::world::map::MapInterfacePtr;
   using modules::world::map::RoadCorridorPtr;
+  using modules::world::opendrive::OpenDriveMapPtr;
+  using modules::world::opendrive::XodrDrivingDirection;
+  using modules::world::opendrive::XodrRoadId;
 
-  using modules::geometry::Point2d;
-  using modules::geometry::Line;
-  using modules::models::tests::make_map_interface_two_connected_roads;
+  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-  MapInterface map_interface = make_map_interface_two_connected_roads();
-  OpenDriveMapPtr open_drive_map = map_interface.GetOpenDriveMao();
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
-  // convert xodr to lane and road
-  Roads roads;
-  for (auto xodr_road : open_drive_map->GetRoads()) {
-    // std::cout << "RoadId: "<< xodr_road.second->GetId() << std::endl;
-    RoadPtr road = std::make_shared<Road>(xodr_road.second);
-    Lanes lanes;
-    for (auto xodr_lane : xodr_road.second->GetLanes()) {
-      // std::cout << "LaneId: "<< xodr_lane.second->GetId() << std::endl;
-      LanePtr lane = std::make_shared<Lane>(xodr_lane.second);
-      lanes[xodr_lane.second->GetId()] = lane;
-    }
-    road->SetLanes(lanes);
-    roads[xodr_road.first] = road;
-  }
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
 
-  // road connections
-  roads[100]->SetNextRoad(roads[101]);
-  roads[101]->SetNextRoad(nullptr);
+  std::vector<XodrRoadId> road_ids{100};
+  XodrDrivingDirection driving_dir = XodrDrivingDirection::FORWARD;
+  map_interface->GenerateRoadCorridor(road_ids, driving_dir);
+  RoadCorridorPtr road_corridor =
+      map_interface->GetRoadCorridor(road_ids, driving_dir);
 
-  // set lane links
-  roads[100]->GetLane(1)->SetNextLane(roads[101]->GetLane(4));
-  roads[100]->GetLane(2)->SetNextLane(roads[101]->GetLane(5));
-  roads[100]->GetLane(3)->SetNextLane(roads[101]->GetLane(6));
-
-  // basic asserts
-  EXPECT_EQ(roads.size(), 2);
-  EXPECT_EQ(roads[100]->GetLanes().size(), 3);
-  EXPECT_EQ(roads[100]->GetLane(1)->GetId(), 1);
-  EXPECT_EQ(roads[100]->GetLane(2)->GetId(), 2);
-  EXPECT_EQ(roads[100]->GetLane(3)->GetId(), 3);
-  EXPECT_EQ(roads[101]->GetLanes().size(), 3);
-  EXPECT_EQ(roads[101]->GetLane(4)->GetId(), 4);
-  EXPECT_EQ(roads[101]->GetLane(5)->GetId(), 5);
-  EXPECT_EQ(roads[101]->GetLane(6)->GetId(), 6);
-
-  // link asserts
-  EXPECT_EQ(roads[100]->GetNextRoad(), roads[101]);
-  EXPECT_EQ(roads[101]->GetNextRoad(), nullptr);
-  EXPECT_EQ(
-    roads[100]->GetLane(1)->GetNextLane(),
-    roads[101]->GetLane(4));
-  EXPECT_EQ(
-    roads[100]->GetLane(2)->GetNextLane(),
-    roads[101]->GetLane(5));
-  EXPECT_EQ(
-    roads[100]->GetLane(3)->GetNextLane(),
-    roads[101]->GetLane(6));
-
-  RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
-  road_corridor->SetRoads(roads);
-
-  // compute stuff
+  EXPECT_EQ(road_corridor->GetRoads().size(), 1);
 }
 
+TEST(road_corridor_tests, xodr_map_two_roads_one_lanes) {
+  using modules::world::map::MapInterface;
+  using modules::world::map::MapInterfacePtr;
+  using modules::world::map::RoadCorridorPtr;
+  using modules::world::opendrive::OpenDriveMapPtr;
+  using modules::world::opendrive::XodrDrivingDirection;
+  using modules::world::opendrive::XodrRoadId;
 
-// TEST(road_corridor_tests, lane_corridor_calculation) {
-//   using modules::world::opendrive::XodrLanePtr;
-//   using modules::world::opendrive::OpenDriveMapPtr;
-//   using modules::world::map::MapInterface;
-//   using modules::world::map::Lane;
-//   using modules::world::map::LaneId;
-//   using modules::world::map::LanePtr;
-//   using modules::world::map::Lanes;
-//   using modules::world::map::Road;
-//   using modules::world::map::RoadId;
-//   using modules::world::map::Roads;
-//   using modules::world::map::RoadPtr;
-//   using modules::world::map::RoadCorridor;
-//   using modules::world::map::RoadCorridorPtr;
+  using modules::world::tests::MakeXodrMapTwoRoadsOneLane;
 
-//   using modules::geometry::Point2d;
-//   using modules::geometry::Line;
-//   using modules::models::tests::make_map_interface_two_connected_roads;
+  OpenDriveMapPtr open_drive_map = MakeXodrMapTwoRoadsOneLane();
 
-//   MapInterface map_interface = make_map_interface_two_connected_roads();
-//   OpenDriveMapPtr open_drive_map = map_interface.GetOpenDriveMao();
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
 
-//   // convert xodr to lane and road
-//   Roads roads;
-//   for (auto xodr_road : open_drive_map->GetRoads()) {
-//     // std::cout << "RoadId: "<< xodr_road.second->GetId() << std::endl;
-//     RoadPtr road = std::make_shared<Road>(xodr_road.second);
-//     Lanes lanes;
-//     for (auto xodr_lane : xodr_road.second->GetLanes()) {
-//       // std::cout << "LaneId: "<< xodr_lane.second->GetId() << std::endl;
-//       LanePtr lane = std::make_shared<Lane>(xodr_lane.second);
-//       lanes[xodr_lane.second->GetId()] = lane;
-//     }
-//     road->SetLanes(lanes);
-//     roads[xodr_road.first] = road;
-//   }
+  std::vector<XodrRoadId> road_ids{100};
+  XodrDrivingDirection driving_dir = XodrDrivingDirection::FORWARD;
+  map_interface->GenerateRoadCorridor(road_ids, driving_dir);
+  RoadCorridorPtr road_corridor =
+      map_interface->GetRoadCorridor(road_ids, driving_dir);
 
-//   // road connections
-//   roads[100]->SetNextRoad(roads[101]);
-//   roads[101]->SetNextRoad(nullptr);
-
-//   // set successors
-//   roads[100]->GetLane(1)->SetNextLane(roads[101]->GetLane(4));
-//   roads[100]->GetLane(2)->SetNextLane(roads[101]->GetLane(5));
-//   roads[100]->GetLane(3)->SetNextLane(roads[101]->GetLane(6));
-
-//   // TODO(@hart): set left and right neighbour
-
-//   // TODO(@hart): set centerline
-
-//   // TODO(@hart): set boundaries
-
-//   // TODO(@hart): set polygons
-
-
-//   // basic asserts
-//   EXPECT_EQ(roads.size(), 2);
-//   EXPECT_EQ(roads[100]->GetLanes().size(), 3);
-//   EXPECT_EQ(roads[100]->GetLane(6)->GetId(), 6);
-//   EXPECT_EQ(roads[100]->GetLane(7)->GetId(), 7);
-//   EXPECT_EQ(roads[100]->GetLane(8)->GetId(), 8);
-//   EXPECT_EQ(roads[101]->GetLanes().size(), 3);
-//   EXPECT_EQ(roads[101]->GetLane(9)->GetId(), 9);
-//   EXPECT_EQ(roads[101]->GetLane(10)->GetId(), 10);
-//   EXPECT_EQ(roads[101]->GetLane(11)->GetId(), 11);
-
-//   // link asserts
-//   EXPECT_EQ(roads[100]->GetNextRoad(), roads[101]);
-//   EXPECT_EQ(roads[101]->GetNextRoad(), nullptr);
-//   EXPECT_EQ(
-//     roads[100]->GetLane(6)->GetNextLane(),
-//     roads[101]->GetLane(9));
-//   EXPECT_EQ(
-//     roads[100]->GetLane(7)->GetNextLane(),
-//     roads[101]->GetLane(10));
-//   EXPECT_EQ(
-//     roads[100]->GetLane(8)->GetNextLane(),
-//     roads[101]->GetLane(11));
-
-//   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
-//   road_corridor->SetRoads(roads);
-
-//   // TODO(@hart): calculate LaneCorridors
-//   // TODO(@hart): assert LaneCorridors
-// }
+  EXPECT_EQ(road_corridor->GetRoads().size(), 1);
+}

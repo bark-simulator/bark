@@ -74,7 +74,7 @@ sim_step_time = param_server["simulation"]["step_time", "Gives the amount of tim
 sim_real_time_factor = param_server["simulation"]["real_time_factor", "How much faster than real-time, simulation shall be played", 1]
 
 for _ in range(0, 30):
-    world.step(sim_step_time)
+    world.Step(sim_step_time)
     viewer.drawWorld(world)
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)

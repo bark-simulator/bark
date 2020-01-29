@@ -22,7 +22,7 @@ for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
   world_state = scenario.get_world_state()
   print("Running scenario {} of {}".format(idx, scenario_generation[0].num_scenarios))
   for _ in range(0, 10): # run each scenario for 3 steps
-    world_state.step(0.2)
+    world_state.Step(0.2)
     viewer.drawWorld(world_state)
     viewer.show(block=False)
     time.sleep(0.2)

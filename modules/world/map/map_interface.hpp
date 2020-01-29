@@ -77,7 +77,7 @@ class MapInterface {
   }
 
   //! Functions
-  OpenDriveMapPtr GetOpenDriveMao() { return open_drive_map_; }
+  OpenDriveMapPtr GetOpenDriveMap() { return open_drive_map_; }
   RoadgraphPtr GetRoadgraph() { return roadgraph_; }
 
   //! RoadCorridor
