@@ -15,7 +15,7 @@ std::pair<LaneCorridorPtr, LaneCorridorPtr>
 RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
   LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
   LanePtr current_lane = current_lane_corr->GetCurrentLane(pt);
-  LanePtr left_lane, right_lane;
+  std::shared_ptr<Lane> left_lane, right_lane;
   if (current_lane) {
     left_lane = current_lane_corr->GetCurrentLane(pt)->GetLeftLane();
     right_lane = current_lane_corr->GetCurrentLane(pt)->GetRightLane();

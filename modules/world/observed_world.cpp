@@ -20,9 +20,8 @@ using modules::models::dynamic::State;
 using modules::world::AgentMap;
 
 std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFrontForId(
-    const AgentId& agent_id,
-    const LaneCorridorPtr& lane_corridor) const {
-  //agent_id = agent->GetAgentId();
+    const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
+  // agent_id = agent->GetAgentId();
   // State ego_state = World::GetAgents()[agent_id]->GetCurrentState();
   Point2d ego_position = World::GetAgents()[agent_id]->GetCurrentPosition();
 
@@ -57,17 +56,18 @@ std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFrontForId(
       nearest_agent = it->second;
     }
   }
+  return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
 }
 
 std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFront() const {
-
-  Point2d ego_position = CurrentEgoPosition();
+  Point2d ego_pos = CurrentEgoPosition();
   // TODO(@all): make access safe
-  const auto& lane_corridor =
-      GetRoadCorridor()->GetCurrentLaneCorridor(ego_position);
-
-  std::pair<AgentPtr, Frenet> agent_front =
-      GetAgentInFrontForId(GetEgoAgent()->GetAgentId(), lane_corridor);
+  const auto& road_corridor = GetRoadCorridor();
+  BARK_EXPECT_TRUE(road_corridor != nullptr);
+  const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
+  BARK_EXPECT_TRUE(lane_corridor != nullptr);
+  std::pair<AgentPtr, Frenet> agent_front;
+  agent_front = GetAgentInFrontForId(GetEgoAgentId(), lane_corridor);
 
   return agent_front;
 }

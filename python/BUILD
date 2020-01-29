@@ -16,6 +16,7 @@ cc_binary(
     "@com_github_eigen_eigen//:eigen", 
     "//modules/geometry:geometry",
     "//modules/world/opendrive:opendrive",
+    "//modules/world/tests:make_test_xodr_map",
     "//modules/world/map:roadgraph",
     "//modules/world/goal_definition:goal_definition",
     "//modules/world/evaluation:evaluation",

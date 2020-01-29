@@ -358,4 +358,4 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.generator.begin(base.cam, self.render)
         super(Panda3dViewer, self).drawWorld(world, eval_agent_ids)
         self.generator.end()
-        self.taskMgr.step()
+        self.taskMgr.Step()

@@ -78,12 +78,7 @@ class XodrLane {
     return driving_direction_; }
   XodrLaneId GetId() const { return lane_id_; }
   XodrLanePosition GetLanePosition() const { return lane_position_; }
-
-  float CurvatureAt(const float s, const float s_delta = 0.01) const;
-  float CurvatureDotAt(const float s) const;
-  float LaneWidthAt(const float s) const;
-  float SFromPoint(const geometry::Point2d& point) const;
-
+  
  private:
   XodrLaneId lane_id_;
   XodrLanePosition lane_position_;
@@ -102,6 +97,8 @@ inline std::string print(const XodrLane& l) {
   std::stringstream ss;
   ss << "id: " << l.GetId() << ", ";
   ss << "position " << l.GetLanePosition() << ", ";
+  ss << "type " << l.GetLaneType() << ", ";
+  ss << "driving_direction" << l.GetDrivingDirection() << ", ";
   ss << print(l.GetLink());
   ss << print(l.GetRoad_mark());
   ss << "speed: " << l.GetSpeed() << std::endl;
@@ -118,9 +115,7 @@ inline XodrLanePtr CreateLaneFromLaneWidth(XodrLanePosition lane_position,
                                            XodrLaneWidth lane_width_current,
                                            float s_inc = 0.5f) {
   std::shared_ptr<XodrLane> ret_lane(new XodrLane(lane_position));
-
-  bool succ = ret_lane->append(previous_line, lane_width_current, s_inc);
-
+  ret_lane->append(previous_line, lane_width_current, s_inc);
   return ret_lane;
 }
 

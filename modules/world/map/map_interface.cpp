@@ -211,9 +211,13 @@ void MapInterface::CalculateLaneCorridors(
 LanePtr MapInterface::GenerateRoadCorridorLane(const XodrLanePtr& xodr_lane) {
   LanePtr lane = std::make_shared<Lane>(xodr_lane);
   // polygons
-  std::pair<PolygonPtr, bool> polygon_success =
-    roadgraph_->ComputeXodrLanePolygon(xodr_lane->GetId());
-  lane->SetPolygon(*polygon_success.first);
+  if (xodr_lane->GetLanePosition() != 0) {
+    std::pair<PolygonPtr, bool> polygon_success =
+      roadgraph_->ComputeXodrLanePolygon(xodr_lane->GetId());
+    // Cannot compute polygon for planview!!
+    if (polygon_success.second)
+      lane->SetPolygon(*polygon_success.first);
+  }
   return lane;
 }
 
