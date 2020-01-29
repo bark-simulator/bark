@@ -101,7 +101,7 @@ TEST(observed_world, agent_in_front) {
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state3 << 0.0, 20.0, 0.0, 0.0, 5.0;
+  init_state3 << 0.0, 20.0, -1.75, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
                             polygon, &params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
@@ -116,6 +116,33 @@ TEST(observed_world, agent_in_front) {
   std::pair<AgentPtr, Frenet> leading_vehicle3 = obs_world3.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
+
+  // Adding a fourth agent in right lane
+  State init_state4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
+  AgentPtr agent4(new Agent(init_state3, beh_model, dyn_model, exec_model,
+                            polygon, &params, goal_ptr, map_interface,
+                            Model3D()));  // NOLINT
+  
+  world->AddAgent(agent4);
+  world->UpdateAgentRTree();
+
+  WorldPtr current_world_state4(world->Clone());
+  ObservedWorld obs_world4(current_world_state4, agent4->GetAgentId());
+
+  std::pair<AgentPtr, Frenet> leading_vehicle4 = obs_world4.GetAgentInFront();
+  EXPECT_FALSE(static_cast<bool>(leading_vehicle4.first));
+
+  const auto& road_corridor4 = agent4->GetRoadCorridor();
+  BARK_EXPECT_TRUE(road_corridor4 != nullptr);
+
+  Point2d ego_pos4 = agent4->GetCurrentPosition();
+  const auto& lane_corridor4 = road_corridor4->GetCurrentLaneCorridor(ego_pos4);
+  BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
+
+  std::pair<AgentPtr, Frenet> leading_vehicle4b = obs_world4.GetAgentInFrontForId(agent4->GetAgentId(), lane_corridor4);
+  EXPECT_TRUE(static_cast<bool>(leading_vehicle4b.first));
+  EXPECT_EQ(leading_vehicle4b.first->GetAgentId(), agent2->GetAgentId());
 }
 
 TEST(observed_world, clone) {
