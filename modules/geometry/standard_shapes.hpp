@@ -15,6 +15,8 @@ namespace standard_shapes {
 
 Polygon CarLimousine();
 
+Polygon CarRectangle();
+
 // TODO(fortiss): add more variants and objects here
 
 }  // namespace standard_shapes
