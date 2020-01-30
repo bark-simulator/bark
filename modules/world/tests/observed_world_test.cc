@@ -120,7 +120,7 @@ TEST(observed_world, agent_in_front) {
   // Adding a fourth agent in right lane
   State init_state4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
-  AgentPtr agent4(new Agent(init_state3, beh_model, dyn_model, exec_model,
+  AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
                             polygon, &params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   
@@ -130,6 +130,7 @@ TEST(observed_world, agent_in_front) {
   WorldPtr current_world_state4(world->Clone());
   ObservedWorld obs_world4(current_world_state4, agent4->GetAgentId());
 
+  // there is no agent in front of agent4
   std::pair<AgentPtr, Frenet> leading_vehicle4 = obs_world4.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle4.first));
 
@@ -137,9 +138,11 @@ TEST(observed_world, agent_in_front) {
   BARK_EXPECT_TRUE(road_corridor4 != nullptr);
 
   Point2d ego_pos4 = agent4->GetCurrentPosition();
-  const auto& lane_corridor4 = road_corridor4->GetCurrentLaneCorridor(ego_pos4);
+  const auto& left_right_lane_corridor = road_corridor4->GetLeftRightLaneCorridor(ego_pos4);
+  const LaneCorridorPtr& lane_corridor4 = left_right_lane_corridor.first;
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
 
+  // in the lane corridor left of agent4, there is agent2 in front
   std::pair<AgentPtr, Frenet> leading_vehicle4b = obs_world4.GetAgentInFrontForId(agent4->GetAgentId(), lane_corridor4);
   EXPECT_TRUE(static_cast<bool>(leading_vehicle4b.first));
   EXPECT_EQ(leading_vehicle4b.first->GetAgentId(), agent2->GetAgentId());
