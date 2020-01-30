@@ -47,7 +47,7 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 using StateDefinition::MIN_STATE_SIZE;
 
-TEST(observed_world, agent_in_front) {
+TEST(observed_world, agent_in_front_back) {
   using modules::geometry::Model3D;
   using modules::geometry::standard_shapes::CarRectangle;
   using modules::world::goal_definition::GoalDefinitionPolygon;
@@ -57,6 +57,7 @@ TEST(observed_world, agent_in_front) {
   using modules::world::map::MapInterfacePtr;
   using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+  using modules::world::FrontRearAgents;
 
   DefaultParams params;
 
@@ -157,10 +158,13 @@ TEST(observed_world, agent_in_front) {
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
 
   // in the lane corridor left of agent4, there is agent2 in front
-  std::pair<AgentPtr, Frenet> leading_vehicle4b =
-      obs_world4.GetAgentInFrontForId(agent4->GetAgentId(), lane_corridor4);
-  EXPECT_TRUE(static_cast<bool>(leading_vehicle4b.first));
-  EXPECT_EQ(leading_vehicle4b.first->GetAgentId(), agent2->GetAgentId());
+  FrontRearAgents fr_vehicle4b = obs_world4.GetAgentFrontRearForId(agent4->GetAgentId(), lane_corridor4);
+  EXPECT_TRUE(static_cast<bool>(fr_vehicle4b.front.first));
+  EXPECT_EQ(fr_vehicle4b.front.first->GetAgentId(), agent2->GetAgentId());
+
+  // in the lane corridor left of agent4, there is agent1 behind
+  EXPECT_TRUE(static_cast<bool>(fr_vehicle4b.rear.first));
+  EXPECT_EQ(fr_vehicle4b.rear.first->GetAgentId(), agent1->GetAgentId());
 }
 
 TEST(observed_world, clone) {
