@@ -23,26 +23,39 @@
 #include "modules/world/tests/dummy_road_corridor.hpp"
 #include "modules/world/tests/make_test_xodr_map.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::geometry;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::models::execution;
-using namespace modules::world::opendrive;
-using namespace modules::world::map;
-using namespace modules::world::objects;
-using namespace modules::world;
-using namespace modules::world::evaluation;
-using namespace modules::world::prediction;
+using modules::models::dynamic::DynamicModelPtr;
+using modules::models::dynamic::SingleTrackModel;
+using modules::models::dynamic::State;
+using modules::models::dynamic::StateDefinition;
+
+using modules::geometry::Point2d;
+using modules::geometry::Polygon;
+using modules::geometry::Pose;
+
+using modules::commons::DefaultParams;
+using modules::commons::SetterParams;
+using modules::models::behavior::BehaviorConstantVelocity;
+using modules::models::behavior::BehaviorModelPtr;
+using modules::models::execution::ExecutionModelInterpolate;
+using modules::models::execution::ExecutionModelPtr;
 using modules::models::tests::make_test_world;
-using modules::world::tests::DummyRoadCorridor;
-using StateDefinition::VEL_POSITION;
+using modules::world::ObservedWorld;
+using modules::world::ObservedWorldPtr;
+using modules::world::World;
+using modules::world::WorldPtr;
+using modules::world::objects::Agent;
+using modules::world::objects::AgentPtr;
+using StateDefinition::MIN_STATE_SIZE;
 
 TEST(observed_world, agent_in_front) {
   using modules::geometry::Model3D;
-  using modules::geometry::Polygon;
   using modules::geometry::standard_shapes::CarRectangle;
   using modules::world::goal_definition::GoalDefinitionPolygon;
+  using modules::world::map::Frenet;
+  using modules::world::map::LaneCorridorPtr;
+  using modules::world::map::MapInterface;
+  using modules::world::map::MapInterfacePtr;
+  using modules::world::opendrive::OpenDriveMapPtr;
   using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
   DefaultParams params;
@@ -67,13 +80,13 @@ TEST(observed_world, agent_in_front) {
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
   Polygon car_polygon = CarRectangle();
 
-  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
                             car_polygon, &params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
-  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
                             car_polygon, &params, goal_ptr, map_interface,
@@ -100,7 +113,7 @@ TEST(observed_world, agent_in_front) {
   EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
-  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state3(static_cast<int>(MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, -1.75, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
                             polygon, &params, goal_ptr, map_interface,
@@ -118,12 +131,12 @@ TEST(observed_world, agent_in_front) {
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
   // Adding a fourth agent in right lane
-  State init_state4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state4(static_cast<int>(MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
   AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
                             polygon, &params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
-  
+
   world->AddAgent(agent4);
   world->UpdateAgentRTree();
 
@@ -138,17 +151,22 @@ TEST(observed_world, agent_in_front) {
   BARK_EXPECT_TRUE(road_corridor4 != nullptr);
 
   Point2d ego_pos4 = agent4->GetCurrentPosition();
-  const auto& left_right_lane_corridor = road_corridor4->GetLeftRightLaneCorridor(ego_pos4);
+  const auto& left_right_lane_corridor =
+      road_corridor4->GetLeftRightLaneCorridor(ego_pos4);
   const LaneCorridorPtr& lane_corridor4 = left_right_lane_corridor.first;
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
 
   // in the lane corridor left of agent4, there is agent2 in front
-  std::pair<AgentPtr, Frenet> leading_vehicle4b = obs_world4.GetAgentInFrontForId(agent4->GetAgentId(), lane_corridor4);
+  std::pair<AgentPtr, Frenet> leading_vehicle4b =
+      obs_world4.GetAgentInFrontForId(agent4->GetAgentId(), lane_corridor4);
   EXPECT_TRUE(static_cast<bool>(leading_vehicle4b.first));
   EXPECT_EQ(leading_vehicle4b.first->GetAgentId(), agent2->GetAgentId());
 }
 
 TEST(observed_world, clone) {
+  using modules::world::evaluation::EvaluatorCollisionAgents;
+  using modules::world::evaluation::EvaluatorPtr;
+
   DefaultParams params;
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
@@ -160,12 +178,12 @@ TEST(observed_world, clone) {
       std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
                            Point2d(4, 0), Point2d(0, 0)});
 
-  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
                             polygon, &params));  // NOLINT
 
-  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
                             polygon, &params));  // NOLINT
@@ -193,6 +211,12 @@ TEST(observed_world, clone) {
 }
 
 TEST(observed_world, predict) {
+  using modules::models::behavior::BehaviorMotionPrimitives;
+  using modules::models::behavior::DiscreteAction;
+  using modules::models::dynamic::Input;
+  using modules::world::prediction::PredictionSettings;
+  using StateDefinition::VEL_POSITION;
+
   SetterParams params;
   params.SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
