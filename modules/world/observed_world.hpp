@@ -25,14 +25,21 @@ using modules::models::behavior::DiscreteAction;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition::X_POSITION;
 using modules::models::dynamic::StateDefinition::Y_POSITION;
+using modules::world::map::Frenet;
 using modules::world::prediction::PredictionSettings;
+using world::map::LaneCorridorPtr;
 using world::map::MapInterfacePtr;
 using world::map::RoadCorridorPtr;
-using world::map::LaneCorridorPtr;
 using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
-using modules::world::map::Frenet;
+
+typedef std::pair<AgentPtr, Frenet> AgentFrenetPair;
+
+struct FrontRearAgents {
+  AgentFrenetPair front;
+  AgentFrenetPair rear;
+};
 
 class ObservedWorld : public World {
  public:
@@ -41,13 +48,15 @@ class ObservedWorld : public World {
 
   ~ObservedWorld() {}
 
-  std::pair<AgentPtr, Frenet> GetAgentInFrontForId(
-      const AgentId& agent_id,
-      const LaneCorridorPtr& lane_corridor) const;
+  //! Function will yield the front and rear agent (and their frenet
+  //! coordinates) in a respective lane_corridor in relation to a given agent.
+  //! Agent specified by agent_id might be outside the lane_corridor.
+  FrontRearAgents GetAgentFrontRearForId(
+      const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
-  std::pair<AgentPtr, modules::world::map::Frenet> GetAgentInFront() const;
+  AgentFrenetPair GetAgentInFront() const;
 
-  std::pair<AgentPtr, modules::world::map::Frenet> GetAgentBehind() const;
+  AgentFrenetPair GetAgentBehind() const;
 
   virtual double GetWorldTime() const { return World::GetWorldTime(); }
 

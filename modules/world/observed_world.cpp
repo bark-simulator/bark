@@ -19,26 +19,28 @@ using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::dynamic::State;
 using modules::world::AgentMap;
 
-std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFrontForId(
+FrontRearAgents ObservedWorld::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
-  // agent_id = agent->GetAgentId();
-  // State ego_state = World::GetAgents()[agent_id]->GetCurrentState();
+  FrontRearAgents fr_agents;
   Point2d ego_position = World::GetAgents()[agent_id]->GetCurrentPosition();
 
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
   const Line& center_line = lane_corridor->GetCenterLine();
   AgentMap intersecting_agents = GetAgentsIntersectingPolygon(corridor_polygon);
   if (intersecting_agents.size() == 0) {
-    return std::make_pair(AgentPtr(nullptr),
-                          Frenet(std::numeric_limits<double>::max(),
-                                 std::numeric_limits<double>::max()));
+    fr_agents.front = std::make_pair(AgentPtr(nullptr), Frenet(0, 0));
+    fr_agents.rear = fr_agents.front;
+    return fr_agents;
   }
 
   Frenet frenet_ego(ego_position, center_line);
-  double nearest_lon = std::numeric_limits<double>::max();
-  double nearest_lat = std::numeric_limits<double>::max();
+  const double numeric_max = std::numeric_limits<double>::max();
 
-  AgentPtr nearest_agent(nullptr);
+  double nearest_lon_front = numeric_max, nearest_lat_front = numeric_max,
+         nearest_lon_rear = numeric_max, nearest_lat_rear = numeric_max;
+
+  AgentPtr nearest_agent_front(nullptr);
+  AgentPtr nearest_agent_rear(nullptr);
 
   for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
        ++it) {
@@ -50,29 +52,41 @@ std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFrontForId(
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
-    if (long_dist > 0.0f && long_dist < nearest_lon) {
-      nearest_lon = long_dist;
-      nearest_lat = lat_dist;
-      nearest_agent = it->second;
+    if (long_dist > 0.0f && long_dist < nearest_lon_front) {
+      nearest_lon_front = long_dist;
+      nearest_lat_front = lat_dist;
+      nearest_agent_front = it->second;
+    } else if (long_dist < 0.0f &&
+               std::abs(long_dist) < std::abs(nearest_lon_rear)) {
+      nearest_lon_rear = long_dist;
+      nearest_lat_rear = lat_dist;
+      nearest_agent_rear = it->second;
     }
   }
-  return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
+
+  Frenet frenet_front = Frenet(nearest_lon_front, nearest_lat_front);
+  fr_agents.front = std::make_pair(nearest_agent_front, frenet_front);
+  Frenet frenet_rear = Frenet(nearest_lon_rear, nearest_lat_rear);
+  fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
+
+  return fr_agents;
 }
 
-std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentInFront() const {
+AgentFrenetPair ObservedWorld::GetAgentInFront() const {
   Point2d ego_pos = CurrentEgoPosition();
   // TODO(@all): make access safe
   const auto& road_corridor = GetRoadCorridor();
   BARK_EXPECT_TRUE(road_corridor != nullptr);
   const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
   BARK_EXPECT_TRUE(lane_corridor != nullptr);
-  std::pair<AgentPtr, Frenet> agent_front;
-  agent_front = GetAgentInFrontForId(GetEgoAgentId(), lane_corridor);
 
-  return agent_front;
+  AgentId id = GetEgoAgentId();
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
+
+  return fr_agent.front;
 }
 
-std::pair<AgentPtr, Frenet> ObservedWorld::GetAgentBehind() const {
+AgentFrenetPair ObservedWorld::GetAgentBehind() const {
   // TODO(@Klemens): implement
   double nearest_lon = std::numeric_limits<double>::max();
   double nearest_lat = std::numeric_limits<double>::max();
