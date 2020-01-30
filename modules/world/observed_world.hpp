@@ -54,6 +54,8 @@ class ObservedWorld : public World {
   FrontRearAgents GetAgentFrontRearForId(
       const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
+  FrontRearAgents GetAgentFrontRear() const;
+
   AgentFrenetPair GetAgentInFront() const;
 
   AgentFrenetPair GetAgentBehind() const;

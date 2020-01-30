@@ -19,6 +19,7 @@ using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::dynamic::State;
 using modules::world::AgentMap;
 
+//! TODO(@Klemens): move to world
 FrontRearAgents ObservedWorld::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
   FrontRearAgents fr_agents;
@@ -72,9 +73,8 @@ FrontRearAgents ObservedWorld::GetAgentFrontRearForId(
   return fr_agents;
 }
 
-AgentFrenetPair ObservedWorld::GetAgentInFront() const {
+FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   Point2d ego_pos = CurrentEgoPosition();
-  // TODO(@all): make access safe
   const auto& road_corridor = GetRoadCorridor();
   BARK_EXPECT_TRUE(road_corridor != nullptr);
   const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
@@ -83,17 +83,17 @@ AgentFrenetPair ObservedWorld::GetAgentInFront() const {
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
 
+  return fr_agent;
+}
+
+AgentFrenetPair ObservedWorld::GetAgentInFront() const {
+  FrontRearAgents fr_agent = GetAgentFrontRear();
   return fr_agent.front;
 }
 
 AgentFrenetPair ObservedWorld::GetAgentBehind() const {
-  // TODO(@Klemens): implement
-  double nearest_lon = std::numeric_limits<double>::max();
-  double nearest_lat = std::numeric_limits<double>::max();
-
-  AgentPtr nearest_agent(nullptr);
-
-  return std::make_pair(nearest_agent, Frenet(nearest_lon, nearest_lat));
+  FrontRearAgents fr_agent = GetAgentFrontRear();
+  return fr_agent.rear;
 }
 
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {

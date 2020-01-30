@@ -106,6 +106,11 @@ TEST(observed_world, agent_in_front_back) {
   std::pair<AgentPtr, Frenet> leading_vehicle = obs_world1.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
+  // Leading agent should not have an agent in front
+  std::pair<AgentPtr, Frenet> following_vehicle = obs_world1.GetAgentBehind();
+  BARK_EXPECT_TRUE(static_cast<bool>(following_vehicle.first));
+  EXPECT_EQ(following_vehicle.first->GetAgentId(), agent1->GetAgentId());
+
   WorldPtr current_world_state2(world->Clone());
   ObservedWorld obs_world2(current_world_state2, agent1->GetAgentId());
 
