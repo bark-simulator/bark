@@ -6,7 +6,7 @@
 #include "Eigen/Core"
 #include "gtest/gtest.h"
 
-#include "make_test_world.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 #include "modules/commons/params/default_params.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
@@ -23,7 +23,7 @@ using namespace modules::models::behavior;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
-using namespace modules::models::tests;
+using namespace modules::world::tests;
 
 // Acceleration
 const double a = 10.0;

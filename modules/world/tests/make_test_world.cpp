@@ -40,7 +40,7 @@ using modules::world::objects::AgentPtr;
 using modules::world::opendrive::OpenDriveMapPtr;
 using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-WorldPtr modules::models::tests::make_test_world(
+WorldPtr modules::world::tests::make_test_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
   float pos_x = 3.0;
@@ -99,11 +99,11 @@ WorldPtr modules::models::tests::make_test_world(
   return WorldPtr(world->Clone());
 }
 
-ObservedWorld modules::models::tests::make_test_observed_world(
+ObservedWorld modules::world::tests::make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
   // Create observed world for first agent
-  WorldPtr current_world_state = modules::models::tests::make_test_world(
+  WorldPtr current_world_state = make_test_world(
       num_other_agents, rel_distance, ego_velocity, velocity_difference,
       ego_goal_definition);
   ObservedWorld observed_world(
@@ -112,7 +112,7 @@ ObservedWorld modules::models::tests::make_test_observed_world(
   return observed_world;
 }
 
-WorldPtr modules::models::tests::MakeTestWorldHighway() {
+WorldPtr modules::world::tests::MakeTestWorldHighway() {
   using modules::commons::DefaultParams;
 
   using modules::geometry::standard_shapes::CarRectangle;

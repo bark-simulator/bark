@@ -12,7 +12,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 from bark.models.behavior import BehaviorConstantVelocity
 from bark.models.execution import ExecutionModelInterpolate
 from bark.models.dynamic import SingleTrackModel
-from bark.world import World
+from bark.world import World, MakeTestWorldHighway
 from bark.world.goal_definition import GoalDefinitionPolygon
 from bark.world.agent import Agent
 from bark.world.map import MapInterface, Roadgraph
@@ -68,6 +68,8 @@ class WorldTests(unittest.TestCase):
     world = World(params)
     world.AddAgent(agent)
 
+  def test_highway(self):
+    world = MakeTestWorldHighway()
   
   def test_evaluator_drivable_area(self):
     # World Definition
