@@ -13,7 +13,7 @@
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
-namespace models {
+namespace world {
 namespace tests {
 
 using modules::geometry::Line;
