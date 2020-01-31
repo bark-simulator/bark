@@ -92,11 +92,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source)
       
       #1) create agent states and geometries for this source
-      config_return, default_params_state_geometry = 
+      agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = 
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigAgentStatesGeometries",
                               road_corridor)
-      agent_states, agent_geometries, kwargs_dict = config_return
       # collect default parameters of this config
       sink_source_config["ConfigAgentStatesGeometries"] = default_params_state_geometry
       collected_sources_sinks_agent_states_geometries.append(tuple(agent_states, agent_geometries))
@@ -360,8 +359,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     eval_config = sink_source_config[config_type]
     eval_config_type = agent_state_geometry_config["type"]
     param_config = ParameterServer(json = eval_config)
-    config_return = eval("{}({})".format(
-        eval_config_type, ", ".join(args)))
+    config_return, default_param_config  = eval("{}({},{})".format(
+        eval_config_type, param_config, ", ".join(args)))
     return config_return, default_param_config
 
   @staticmethod
