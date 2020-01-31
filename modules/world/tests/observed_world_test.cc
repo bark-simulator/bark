@@ -14,51 +14,42 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/tests/make_test_world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
+#include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/tests/dummy_road_corridor.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 #include "modules/world/tests/make_test_xodr_map.hpp"
 
-using modules::models::dynamic::DynamicModelPtr;
-using modules::models::dynamic::SingleTrackModel;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
-
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::geometry::Pose;
+using namespace modules::models::dynamic;
+using namespace modules::models::behavior;
+using namespace modules::models::execution;
+using namespace modules::world::map;
 
 using modules::commons::DefaultParams;
 using modules::commons::SetterParams;
-using modules::models::behavior::BehaviorConstantVelocity;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::models::execution::ExecutionModelInterpolate;
-using modules::models::execution::ExecutionModelPtr;
-using modules::models::tests::make_test_world;
+using modules::geometry::Model3D;
+using modules::geometry::Point2d;
+using modules::geometry::Polygon;
+using modules::geometry::Pose;
+using modules::geometry::standard_shapes::CarRectangle;
+using modules::world::FrontRearAgents;
 using modules::world::ObservedWorld;
 using modules::world::ObservedWorldPtr;
 using modules::world::World;
 using modules::world::WorldPtr;
+using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
+using modules::world::opendrive::OpenDriveMapPtr;
+using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 using StateDefinition::MIN_STATE_SIZE;
 
-TEST(observed_world, agent_in_front_back) {
-  using modules::geometry::Model3D;
-  using modules::geometry::standard_shapes::CarRectangle;
-  using modules::world::goal_definition::GoalDefinitionPolygon;
-  using modules::world::map::Frenet;
-  using modules::world::map::LaneCorridorPtr;
-  using modules::world::map::MapInterface;
-  using modules::world::map::MapInterfacePtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
-  using modules::world::FrontRearAgents;
-
+TEST(observed_world, agent_in_front_same_lane) {
   DefaultParams params;
 
   // Setting Up Map
@@ -135,6 +126,48 @@ TEST(observed_world, agent_in_front_back) {
   std::pair<AgentPtr, Frenet> leading_vehicle3 = obs_world3.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
+}
+
+TEST(observed_world, agent_in_front_other_lane) {
+  DefaultParams params;
+
+  // Setting Up Map
+  OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
+
+  // Goal Definition
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));
+  auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  // Setting Up Agents (one in front of another)
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  Polygon car_polygon = CarRectangle();
+
+  State init_state1(static_cast<int>(MIN_STATE_SIZE));
+  init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
+                            car_polygon, &params, goal_ptr, map_interface,
+                            Model3D()));  // NOLINT
+
+  State init_state2(static_cast<int>(MIN_STATE_SIZE));
+  init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
+                            car_polygon, &params, goal_ptr, map_interface,
+                            Model3D()));  // NOLINT
+
+  // Construct World
+  WorldPtr world(new World(&params));
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->UpdateAgentRTree();
 
   // Adding a fourth agent in right lane
   State init_state4(static_cast<int>(MIN_STATE_SIZE));
@@ -163,7 +196,8 @@ TEST(observed_world, agent_in_front_back) {
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
 
   // in the lane corridor left of agent4, there is agent2 in front
-  FrontRearAgents fr_vehicle4b = obs_world4.GetAgentFrontRearForId(agent4->GetAgentId(), lane_corridor4);
+  FrontRearAgents fr_vehicle4b =
+      obs_world4.GetAgentFrontRearForId(agent4->GetAgentId(), lane_corridor4);
   EXPECT_TRUE(static_cast<bool>(fr_vehicle4b.front.first));
   EXPECT_EQ(fr_vehicle4b.front.first->GetAgentId(), agent2->GetAgentId());
 

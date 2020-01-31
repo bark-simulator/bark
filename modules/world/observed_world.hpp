@@ -11,7 +11,6 @@
 #include <utility>
 #include "modules/geometry/geometry.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/map/frenet.hpp"
 #include "modules/world/prediction/prediction_settings.hpp"
 #include "modules/world/world.hpp"
 
@@ -25,21 +24,13 @@ using modules::models::behavior::DiscreteAction;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition::X_POSITION;
 using modules::models::dynamic::StateDefinition::Y_POSITION;
-using modules::world::map::Frenet;
 using modules::world::prediction::PredictionSettings;
-using world::map::LaneCorridorPtr;
 using world::map::MapInterfacePtr;
 using world::map::RoadCorridorPtr;
 using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 
-typedef std::pair<AgentPtr, Frenet> AgentFrenetPair;
-
-struct FrontRearAgents {
-  AgentFrenetPair front;
-  AgentFrenetPair rear;
-};
 
 class ObservedWorld : public World {
  public:
@@ -47,12 +38,6 @@ class ObservedWorld : public World {
       : World(world), ego_agent_id_(ego_agent_id) {}
 
   ~ObservedWorld() {}
-
-  //! Function will yield the front and rear agent (and their frenet
-  //! coordinates) in a respective lane_corridor in relation to a given agent.
-  //! Agent specified by agent_id might be outside the lane_corridor.
-  FrontRearAgents GetAgentFrontRearForId(
-      const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
   FrontRearAgents GetAgentFrontRear() const;
 

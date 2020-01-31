@@ -17,7 +17,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
-#include "modules/models/tests/make_test_world.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 
 
 using namespace modules::models::dynamic;
