@@ -22,8 +22,8 @@ using modules::geometry::Polygon;
 using modules::geometry::Pose;
 using modules::world::ObservedWorld;
 using modules::world::WorldPtr;
-using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinitionPolygon;
+using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::map::LaneCorridor;
 using modules::world::map::LaneCorridorPtr;
 
@@ -37,6 +37,8 @@ ObservedWorld make_test_observed_world(
     double velocity_difference,
     const GoalDefinitionPtr& ego_goal_definition =
         std::make_shared<GoalDefinitionPolygon>());
+
+WorldPtr MakeTestWorldHighway();
 
 }  // namespace tests
 }  // namespace models

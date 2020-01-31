@@ -13,6 +13,26 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+
+cc_library(
+    name="make_test_world",
+    srcs=[
+        "make_test_world.cpp"
+    ],
+    hdrs = [
+        "make_test_world.hpp"
+    ],
+    deps = [
+        "//modules/geometry",
+        "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
+        "//modules/world/tests:make_test_xodr_map",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name="dummy_road_corridor",
     srcs=[],
@@ -86,7 +106,7 @@ cc_test(
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
         "//modules/world/evaluation:evaluation", 
-        "//modules/models/tests:make_test_world",
+        ":make_test_world",
         ":dummy_road_corridor",
         "@gtest//:main",
     ],
@@ -107,7 +127,7 @@ cc_test(
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
         "//modules/world/evaluation:evaluation",        
-        "//modules/models/tests:make_test_world",
+        ":make_test_world",
         ":dummy_road_corridor",
         "@gtest//:main",
     ],
