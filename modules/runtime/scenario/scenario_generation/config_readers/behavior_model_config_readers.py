@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.config_readers.model_conversio
 from bark.models.behavior import *
 from modules.runtime.commons.parameters import ParameterServer
 
-
+  # this config reader defines behavior models with fixed type for all agents
 class SingleFixedType(ConfigReaderBehaviorModels):
   def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
 

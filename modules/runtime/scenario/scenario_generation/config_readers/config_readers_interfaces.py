@@ -26,11 +26,11 @@ class ConfigReaderDynamicModels(ABC):
 
 class ConfigReaderAgentStatesAndGeometries(ABC):
   @abstractmethod
-  # returns first a tuple containing 1] list of size num agents each element being a python list representing an agent state
+  # returns a tuple containing 1] list of size num agents each element being a python list representing an agent state
   # and 2] a list of size num agents of point lists defining the agent geometries
   #  3] None or a dict passed as kwargs to the other functions (
   # e.g. the dict can contain a type entry specifying for each agent if it is a truck or car)
-  # and second a default_params_dict
+  # and 4] a default_params_dict
   def create_from_config(config_param_object, road_corridor):
     pass
 
