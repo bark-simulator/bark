@@ -11,6 +11,7 @@ from modules.runtime.scenario.scenario_generation.config_readers.model_conversio
        import ModelConversion
 
 from bark.geometry.standard_shapes import *
+from bark.geometry import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
 # it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 
@@ -57,14 +58,15 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 
 
   def select_lane_corridors(self, road_corridor, lane_positions):
-
+    lane_corridors = road_corridor.lane_corridors[lane_positions]
+    return lane_corridors, lane_positions
 
 
   def agents_along_lane_corridor(self,
                               lane_corridor,
                               s_start,
                               s_end):
-
+    linestring = lane_corridor.center_line
     agent_states = []
     agent_geometries = []
     while s < s_end:
