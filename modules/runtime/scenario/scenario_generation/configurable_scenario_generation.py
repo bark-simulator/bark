@@ -55,7 +55,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigAgentStatesGeometries": {"type": "UniformDistribution"},
       "ConfigBehaviorModels": {},
       "ConfigExecutionModels": {},
-      "ConfigDynamicModels": {}
+      "ConfigDynamicModels": {},
+      "ConfigGoalDefinitions": {},
+      "ConfigControlledAgents": {}
     }]
     ]
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
@@ -111,41 +113,46 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_geometries = agent_states_geometries[1]
 
       #3) create behavior, execution and dynamic models
-      config_return, default_params_behavior = 
+      config_return, kwargs_dict_tmp, default_params_behavior = 
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigBehaviorModels",
-                              road_corridor, agent_states)
+                              road_corridor, agent_states, kwargs_dict)
       behavior_models = config_return
       sink_source_config["ConfigBehaviorModels"] = default_params_behavior
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
-      config_return, default_params_execution = 
+      config_return, kwargs_dict_tmp, default_params_execution = 
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigExecutionModels",
-                              road_corridor, agent_states)
+                              road_corridor, agent_states, kwargs_dict)
       execution_models = config_return
       sink_source_config["ConfigExecutionModels"] = default_params_execution
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
-      config_return, default_params_dynamic = 
+
+      config_return, kwargs_dict_tmp, default_params_dynamic = 
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigDynamicModels",
-                              road_corridor, agent_states)
+                              road_corridor, agent_states, kwargs_dict)
       dynamic_models = config_return
       sink_source_config["ConfigDynamicModels"] = default_params_dynamic
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       #4 create goal definitions and controlled agents
+      config_return, kwargs_dict_tmp, default_params_controlled_agents = 
+        PropertyBasedScenarioGeneration.eval_configuration(
+                              sink_source_config, "ConfigControlledAgents",
+                              road_corridor, agent_states, kwargs_dict)
+      controlled_agent_ids = config_return
+      sink_source_config["ConfigControlledAgents"] = default_params_controlled_agents
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
+
       config_return, default_params_goals = 
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigGoalDefinitions",
-                              road_corridor, agent_states)
+                              road_corridor, agent_states, controlled_agent_ids, kwargs_dict)
       goal_definitions = config_return
       sink_source_config["ConfigGoalDefinitions"] = default_params_goals
-
-      config_return, default_params_controlled_agents = 
-        PropertyBasedScenarioGeneration.eval_configuration(
-                              sink_source_config, "ConfigControlledAgents",
-                              road_corridor, agent_states)
-      controlled_agent_ids = config_return
-      sink_source_config["ConfigControlledAgents"] = default_params_controlled_agents
 
       #5 Build all agents for this source config
       sink_source_agents = self.create_source_config_agents(agent_states,
@@ -171,7 +178,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def find_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
-    # create kdtree for fast distance lookup between agents
+    # create aabbtree for fast distance lookup between agents
     tree = aabbtree.AABBTree()
     for source_sink_idx, states_geometries in enumerate(
             collected_sources_sinks_agent_states_geometries):

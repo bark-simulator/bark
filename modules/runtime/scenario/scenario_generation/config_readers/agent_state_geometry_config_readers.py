@@ -54,7 +54,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 
     assert(len(agent_states)==len(agent_geometries))
     assert(len(agent_states)==len(agent_lane_positions))
-    return agent_states, agent_geometries, agent_lane_positions, config_param_object
+    return agent_states, agent_geometries, {"agent_lane_positions": agent_lane_positions}, config_param_object
 
 
   def select_lane_corridors(self, road_corridor, lane_positions):
