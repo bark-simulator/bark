@@ -44,10 +44,10 @@ class ConfigReaderDynamicModels(ABC):
 class ConfigReaderGoalDefinitions(ABC):
   # returns list of size num agents with goal definitions for each agent based on property, default_params_dict
   @abstractmethod
-  def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
+  def create_from_config(config_param_object, road_corridor, agent_states, controlled_agent_ids,  **kwargs):
     pass
 
-class ConfigReaderGoalDefinitions(ABC):
+class ConfigReaderControlledAgents(ABC):
    # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
   @abstractmethod
   def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
