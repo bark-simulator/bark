@@ -94,11 +94,11 @@ TEST(observed_world, agent_in_front_same_lane) {
   ObservedWorld obs_world1(current_world_state1, agent2->GetAgentId());
 
   // Leading agent should not have an agent in front
-  std::pair<AgentPtr, Frenet> leading_vehicle = obs_world1.GetAgentInFront();
+  std::pair<AgentPtr, FrenetPosition> leading_vehicle = obs_world1.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle.first));
 
   // Leading agent should not have an agent in front
-  std::pair<AgentPtr, Frenet> following_vehicle = obs_world1.GetAgentBehind();
+  std::pair<AgentPtr, FrenetPosition> following_vehicle = obs_world1.GetAgentBehind();
   BARK_EXPECT_TRUE(static_cast<bool>(following_vehicle.first));
   EXPECT_EQ(following_vehicle.first->GetAgentId(), agent1->GetAgentId());
 
@@ -106,7 +106,7 @@ TEST(observed_world, agent_in_front_same_lane) {
   ObservedWorld obs_world2(current_world_state2, agent1->GetAgentId());
 
   // Agent behind should have leading agent in front
-  std::pair<AgentPtr, Frenet> leading_vehicle2 = obs_world2.GetAgentInFront();
+  std::pair<AgentPtr, FrenetPosition> leading_vehicle2 = obs_world2.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle2.first));
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 
@@ -123,7 +123,7 @@ TEST(observed_world, agent_in_front_same_lane) {
 
   // Adding a third agent in front of leading agent, still leading agent
   // should be in front
-  std::pair<AgentPtr, Frenet> leading_vehicle3 = obs_world3.GetAgentInFront();
+  std::pair<AgentPtr, FrenetPosition> leading_vehicle3 = obs_world3.GetAgentInFront();
   EXPECT_TRUE(static_cast<bool>(leading_vehicle3.first));
   EXPECT_EQ(leading_vehicle2.first->GetAgentId(), agent2->GetAgentId());
 }
@@ -183,7 +183,7 @@ TEST(observed_world, agent_in_front_other_lane) {
   ObservedWorld obs_world4(current_world_state4, agent4->GetAgentId());
 
   // there is no agent in front of agent4
-  std::pair<AgentPtr, Frenet> leading_vehicle4 = obs_world4.GetAgentInFront();
+  std::pair<AgentPtr, FrenetPosition> leading_vehicle4 = obs_world4.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle4.first));
 
   const auto& road_corridor4 = agent4->GetRoadCorridor();

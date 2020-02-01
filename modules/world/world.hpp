@@ -30,7 +30,7 @@ using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
-using modules::world::map::Frenet;
+using modules::world::map::FrenetPosition;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -45,7 +45,7 @@ using rtree_agent =
     boost::geometry::index::rtree<rtree_agent_value,
                                   boost::geometry::index::linear<16, 4> >;
 
-typedef std::pair<AgentPtr, Frenet> AgentFrenetPair;
+typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
 
 struct FrontRearAgents {
   AgentFrenetPair front;
