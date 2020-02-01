@@ -13,7 +13,7 @@ using modules::geometry::Point2d;
 using modules::geometry::Line;
 using modules::geometry::operator-;
 
-Frenet::Frenet(const Point2d& position, const Line& path) {
+FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   namespace bg = boost::geometry;
 
   // First extract nearest point, extract longitudinal coordinate

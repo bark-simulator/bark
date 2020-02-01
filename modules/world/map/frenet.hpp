@@ -13,11 +13,11 @@ namespace modules {
 namespace world {
 namespace map {
 
-struct Frenet {
-  Frenet() : lon(0.0f), lat(0.0f) {}
-  Frenet(const double& longitudinal, const double& lateral) :
+struct FrenetPosition {
+  FrenetPosition() : lon(0.0f), lat(0.0f) {}
+  FrenetPosition(const double& longitudinal, const double& lateral) :
     lon(longitudinal), lat(lateral) {}
-  Frenet(
+  FrenetPosition(
     const modules::geometry::Point2d& position,
     const modules::geometry::Line& path);
 

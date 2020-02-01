@@ -178,12 +178,12 @@ FrontRearAgents World::GetAgentFrontRearForId(
   const Line& center_line = lane_corridor->GetCenterLine();
   AgentMap intersecting_agents = GetAgentsIntersectingPolygon(corridor_polygon);
   if (intersecting_agents.size() == 0) {
-    fr_agents.front = std::make_pair(AgentPtr(nullptr), Frenet(0, 0));
+    fr_agents.front = std::make_pair(AgentPtr(nullptr), FrenetPosition(0, 0));
     fr_agents.rear = fr_agents.front;
     return fr_agents;
   }
 
-  Frenet frenet_ego(ego_position, center_line);
+  FrenetPosition frenet_ego(ego_position, center_line);
   const double numeric_max = std::numeric_limits<double>::max();
 
   double nearest_lon_front = numeric_max, nearest_lat_front = numeric_max,
@@ -198,7 +198,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
       continue;
     }
 
-    Frenet frenet_other(it->second->GetCurrentPosition(), center_line);
+    FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
@@ -214,9 +214,9 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
   }
 
-  Frenet frenet_front = Frenet(nearest_lon_front, nearest_lat_front);
+  FrenetPosition frenet_front = FrenetPosition(nearest_lon_front, nearest_lat_front);
   fr_agents.front = std::make_pair(nearest_agent_front, frenet_front);
-  Frenet frenet_rear = Frenet(nearest_lon_rear, nearest_lat_rear);
+  FrenetPosition frenet_rear = FrenetPosition(nearest_lon_rear, nearest_lat_rear);
   fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
 
   return fr_agents;

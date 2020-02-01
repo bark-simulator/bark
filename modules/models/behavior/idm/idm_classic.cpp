@@ -19,7 +19,7 @@ using modules::models::dynamic::StateDefinition;
 using modules::world::objects::AgentPtr;
 using modules::world::objects::Agent;
 using modules::geometry::Point2d;
-using modules::world::map::Frenet;
+using modules::world::map::FrenetPosition;
 
 double BehaviorIDMClassic::CalculateLongitudinalAccelerationTwoAgents(const std::shared_ptr<const Agent>& ego_agent, const std::shared_ptr<const Agent>& leading_agent, const double distance) {
 
@@ -60,10 +60,10 @@ double BehaviorIDMClassic::CalculateLongitudinalAccelerationTwoAgents(const std:
 
 double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) {
 
-  std::pair<AgentPtr, modules::world::map::Frenet> leading_vehicle = observed_world.GetAgentInFront();
+  std::pair<AgentPtr, modules::world::map::FrenetPosition> leading_vehicle = observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
-  modules::world::map::Frenet lead_veh_frenet = leading_vehicle.second;
+  modules::world::map::FrenetPosition lead_veh_frenet = leading_vehicle.second;
   double distance = lead_veh_frenet.lon;
 
   // TODO(@Klemens): Distance refers to braking point, should be renamed / clarified
