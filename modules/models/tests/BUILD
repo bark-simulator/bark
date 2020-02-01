@@ -7,6 +7,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet",
         "@gtest//:main",
         "@boost//:geometry",
     ],
@@ -21,6 +22,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet",
         #"//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
