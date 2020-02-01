@@ -2,13 +2,15 @@ cc_library(
     name = "frenet",
     srcs = [
         "frenet.cpp",
+        "frenet_state.cpp",
     ],
     hdrs = [
         "frenet.hpp",
+        "frenet_state.hpp",
     ],
     deps = [
         "//modules/geometry",
-        #"//modules/world/opendrive",
+        "//modules/models/dynamic",
         "@boost//:geometry",
     ],
     linkstatic = 1,
