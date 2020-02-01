@@ -22,7 +22,7 @@ class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
 
   virtual ~BehaviorIDMClassic() {}
 
-  double CalculateLongitudinalAccelerationTwoAgents(
+  double CalcLongAccTwoAgents(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent, const double distance);
 
