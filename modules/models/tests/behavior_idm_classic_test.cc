@@ -25,7 +25,7 @@ using namespace modules::world::map;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
-using namespace modules::models::tests;
+using namespace modules::world::tests;
 
 
 

@@ -180,6 +180,7 @@ TEST(geometry, polygon) {
 TEST(geometry, standard_shapes) {
   using modules::geometry::Polygon;
   using modules::geometry::standard_shapes::CarLimousine;
+  using modules::geometry::standard_shapes::CarRectangle;
 
   Polygon p1 = CarLimousine();
   ASSERT_TRUE(p1.Valid());
