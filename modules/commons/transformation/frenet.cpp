@@ -3,11 +3,11 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/map/frenet.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace modules {
-namespace world {
-namespace map {
+namespace commons {
+namespace transformation {
 
 using modules::geometry::Point2d;
 using modules::geometry::Line;
@@ -39,6 +39,6 @@ FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   lat = lat_val*sign;
 }
 
-}  // namespace map
-}  // namespace world
+}  // namespace transformation
+}  // namespace commons
 }  // namespace modules

@@ -3,15 +3,15 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_MAP_FRENET_HPP_
-#define MODULES_WORLD_MAP_FRENET_HPP_
+#ifndef MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_
+#define MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_
 
 #include "modules/geometry/line.hpp"
 
 
 namespace modules {
-namespace world {
-namespace map {
+namespace commons {
+namespace transformation {
 
 struct FrenetPosition {
   FrenetPosition() : lon(0.0f), lat(0.0f) {}
@@ -25,8 +25,8 @@ struct FrenetPosition {
   double lat;
 };
 
-}  // namespace map
-}  // namespace world
+}  // namespace transformation
+}  // namespace commons
 }  // namespace modules
 
-#endif  // MODULES_WORLD_MAP_FRENET_HPP_
+#endif  // MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_

@@ -32,6 +32,7 @@ using namespace modules::world::map;
 
 using modules::commons::DefaultParams;
 using modules::commons::SetterParams;
+using modules::commons::transformation::FrenetPosition;
 using modules::geometry::Model3D;
 using modules::geometry::Point2d;
 using modules::geometry::Polygon;
