@@ -11,7 +11,7 @@ cc_library(
         "//modules/world:world",
         "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
         "//modules/models/dynamic:dynamic",
-        "//modules/world/map:frenet",
+        "//modules/commons/transformation:frenet",
     ],
     visibility = ["//visibility:public"],
 )

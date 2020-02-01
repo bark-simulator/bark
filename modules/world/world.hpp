@@ -19,7 +19,7 @@
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/map/frenet.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace modules {
 namespace world {
@@ -30,7 +30,7 @@ using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
-using modules::world::map::FrenetPosition;
+using modules::commons::transformation::FrenetPosition;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;

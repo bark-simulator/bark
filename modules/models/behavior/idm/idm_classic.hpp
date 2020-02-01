@@ -8,7 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
-#include "modules/world/map/frenet.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules {
