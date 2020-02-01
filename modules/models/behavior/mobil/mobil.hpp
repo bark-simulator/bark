@@ -1,8 +1,8 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-
 
 #ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
@@ -15,14 +15,17 @@ namespace models {
 namespace behavior {
 
 enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
+enum MobilState { Idle = 0, IsChanging = 1};
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
 class BehaviorMobil : public BehaviorIDMClassic {
  public:
   explicit BehaviorMobil(commons::Params *params)
       : BehaviorIDMClassic(params),
-        is_changing_lane_(false),
-        has_changed_lane_(false) {
+        mobil_state_(MobilState::Idle) {
+    crosstrack_error_gain_ = params->GetReal(
+        "CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
+
     politeness_ = params->GetReal(
         "PolitenessFactor", "Politness factor, suggested [0.2, 0.5]", 0.35f);
 
@@ -53,33 +56,36 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   Trajectory Plan(float delta_time, const world::ObservedWorld &observed_world);
 
-  LaneChangeDecision CheckIfLaneChangeBeneficial(
+  std::pair<LaneChangeDecision, world::map::LaneCorridorPtr> CheckIfLaneChangeBeneficial(
       const world::ObservedWorld &observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
-  bool is_changing_lane_;
-  bool has_changed_lane_;
+  MobilState mobil_state_;
+  
+  double crosstrack_error_gain_;
+
+  world::map::LaneCorridorPtr target_corridor_;
 
   // Measure of altruism, defines how the model weighs an acceleration
   // improvement for the ego agent against an improvement for other agents
-  float politeness_;
+  double politeness_;
 
   // Models intertia to only trigger if there is real improvement
-  float acceleration_threshold_;
+  double acceleration_threshold_;
 
   // Bias to encourage keep right directive
-  float acceleration_bias_;
+  double acceleration_bias_;
 
   // Maximum deceleration for follower in target lane, positive number
-  float safe_deceleration_;
+  double safe_deceleration_;
 
   // Whether passing on the right side is forbidden
   bool asymmetric_passing_rules_;
 
   // Passing on the right side is allowed below this velocity
-  float critical_velocity_;
+  double critical_velocity_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {

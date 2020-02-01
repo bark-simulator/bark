@@ -5,9 +5,10 @@
 
 
 #include "modules/models/behavior/mobil/mobil.hpp"
-#include "modules/world/observed_world.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/dynamic/integration.hpp"
+#include "modules/models/dynamic/single_track.hpp"
+
 
 
 namespace modules {
@@ -20,107 +21,118 @@ using world::objects::AgentPtr;
 using dynamic::StateDefinition;
 using world::map::LaneCorridorPtr;
 using dynamic::State;
+using modules::geometry::Line;
+using modules::commons::transformation::FrenetPosition;
+using modules::models::dynamic::DynamicModelPtr;
+using modules::models::dynamic::CalculateSteeringAngle;
 
 Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_world) {
- /* if (!behavior_pure_pursuit_.is_following_line()) {
-    // Initially set the followed line to the center line of the driving corridor
-    behavior_pure_pursuit_.set_followed_line(observed_world.get_local_map()->get_driving_corridor().get_center());
+
+  const DynamicModelPtr dynamic_model = observed_world.GetEgoAgent()->GetDynamicModel();
+  auto single_track = std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
+  if (!single_track) {
+    LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
 
-  // Determine whether to perform a lane change
-  double acceleration;
-  if (is_changing_lane_) {
-    has_changed_lane_ = true;
-    acceleration = 0;
-    if (behavior_pure_pursuit_.has_reached_line()) {
-      is_changing_lane_ = false;
+  //! Determine whether to perform a lane change
+  if (mobil_state_ == MobilState::IsChanging) {
+    //! checks if lane change has been finished ...
+    FrenetPosition f_state = FrenetPosition(observed_world.CurrentEgoPosition(), target_corridor_->GetCenterLine());
+    if (abs(f_state.lat) < 0.01) {
+      //! if very close to target line, lane change is finished ...
+      // TODO(@Klemens): Make this more generic, maybe based on integation step size?
+      mobil_state_ = MobilState::Idle;
     }
   } else {
-    if (!has_changed_lane_) {
-      InitiateLaneChangeIfBeneficial(observed_world);
-    }
-    auto driving_corridor = std::make_shared<DrivingCorridor>(observed_world.get_local_map()->get_driving_corridor());
-    auto agent_in_front = observed_world.GetAgentInFront();
-    acceleration = CalculateLongitudinalAcceleration(observed_world.get_ego_agent(), agent_in_front.first, agent_in_front.second.lon);
+    LaneChangeDecision decision;
+    auto ben  = CheckIfLaneChangeBeneficial(observed_world);
+    decision = ben.first;
+    target_corridor_ = ben.second;
+    std::cout << "Decision " << decision << std::endl;
   }
-*/
-  float integration_time_delta = GetParams()->GetReal("integration_time_delta", "delta t for integration", 0.01);
-  int n_trajectory_points = static_cast<int>(std::ceil(delta_time / integration_time_delta)) + 1;
 
-  Trajectory traj(n_trajectory_points, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  const int num_traj_time_points = 11;
+  dynamic::Trajectory traj(num_traj_time_points,
+                           int(StateDefinition::MIN_STATE_SIZE));
+  float const dt = delta_time / (num_traj_time_points - 1);
+
   traj.row(0) = observed_world.CurrentEgoState();
-/*
-  for (int t = 1; t < n_trajectory_points; ++t) {
-    double steering = behavior_pure_pursuit_.FindSteeringAngle(traj.row(t - 1));
+
+  double acc;
+  if (mobil_state_ == MobilState::Idle) {
+    auto agent_in_front = observed_world.GetAgentInFront();
+    acc = CalcLongAccTwoAgents(observed_world.GetEgoAgent(), agent_in_front.first, agent_in_front.second.lon);
+  } else {
+    acc = 0;
+  }
+
+  for (int i = 1; i < num_traj_time_points; ++i) {
+    double angle = CalculateSteeringAngle(single_track, traj.row(i - 1), target_corridor_->GetCenterLine(), crosstrack_error_gain_);
 
     dynamic::Input input(2);
-    input << acceleration, steering;
-
-    traj.row(t) = dynamic::euler_int(*dynamic_model_, traj.row(t - 1), input, integration_time_delta);
+    input << acc, angle;
+    traj.row(i) = dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
   }
 
-  set_last_trajectory(traj);*/
+  SetLastTrajectory(traj);
   return traj;
 }
 
-LaneChangeDecision BehaviorMobil::CheckIfLaneChangeBeneficial(const ObservedWorld &observed_world) {
-  using world::map::Frenet;
+std::pair<LaneChangeDecision, LaneCorridorPtr> BehaviorMobil::CheckIfLaneChangeBeneficial(const ObservedWorld &observed_world) {
   using modules::geometry::Point2d;
+  using world::FrontRearAgents;
+  using StateDefinition::VEL_POSITION;
   
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
   const float vehicle_length = ego_agent->GetShape().front_dist_ + ego_agent->GetShape().rear_dist_;
 
-  std::pair<AgentPtr, Frenet> follower_current_lane = observed_world.GetAgentBehind();
-  std::pair<AgentPtr, Frenet> leader_current_lane = observed_world.GetAgentInFront();
+  FrontRearAgents agents_current_lane = observed_world.GetAgentFrontRear();
+  std::pair<AgentPtr, FrenetPosition> follower_current_lane = agents_current_lane.rear;
+  std::pair<AgentPtr, FrenetPosition> leader_current_lane = agents_current_lane.front;
 
   // acceleration of ego vehicle (before ... in the present situation)
-  double acc_c_before = CalculateLongitudinalAccelerationTwoAgents(ego_agent, leader_current_lane.first, leader_current_lane.second.lon);
+  double acc_c_before = CalcLongAccTwoAgents(ego_agent, leader_current_lane.first, leader_current_lane.second.lon);
 
   // acceleration of old follower (before ... in the present situation)
-  const double acc_o_before = CalculateLongitudinalAccelerationTwoAgents(follower_current_lane.first, ego_agent, follower_current_lane.second.lon);
+  const double acc_o_before = CalcLongAccTwoAgents(follower_current_lane.first, ego_agent, follower_current_lane.second.lon);
 
   // acceleration of new follower (after a prospective lane change)
   // TODO(@Klemens): check distance_after term
-  const double distane_after = follower_current_lane.second.lon + vehicle_length + leader_current_lane.second.lon;
-  const double acc_o_after = CalculateLongitudinalAccelerationTwoAgents(follower_current_lane.first, leader_current_lane.first, distane_after);
+  const double distance_after = follower_current_lane.second.lon + vehicle_length + leader_current_lane.second.lon;
+  const double acc_o_after = CalcLongAccTwoAgents(follower_current_lane.first, leader_current_lane.first, distance_after);
 
   double acc_threshold = acceleration_threshold_;
-
-  // TODO: can this be done more elegantly?
-  const State ego_state = observed_world.CurrentEgoState();
-  const float ego_x = ego_state(StateDefinition::X_POSITION);
-  const float ego_y = ego_state(StateDefinition::Y_POSITION);
+  const Point2d ego_pos = observed_world.CurrentEgoPosition();
 
   auto road_corridor = observed_world.GetRoadCorridor();
-  std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corridor = road_corridor->GetLeftRightLaneCorridor(Point2d(ego_x, ego_y));
+  std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corridor = road_corridor->GetLeftRightLaneCorridor(ego_pos);
 
   if (left_right_lane_corridor.second) {
-    std::cout << " Right lane exists: " << std::endl;
-
-    // TODO(@Klemens): Come up with a good interface to access those!!
-    std::pair<AgentPtr, Frenet> right_following; // = observed_world.GetAgentBehind(right_corridor.first);
-    std::pair<AgentPtr, Frenet> right_leading; // = observed_world.get_agent_in_front(right_corridor.first, true);
+    //! Right lane exists
+    FrontRearAgents agents_right_lane = observed_world.GetAgentFrontRearForId(observed_world.GetEgoAgentId(), left_right_lane_corridor.second);
+    std::pair<AgentPtr, FrenetPosition> follower_right_lane = agents_right_lane.rear;
+    std::pair<AgentPtr, FrenetPosition> leader_right_lane = agents_right_lane.front;
 
     // acceleration of ego vehicle (after a prospective lane change)
-    double acc_c_after = CalculateLongitudinalAccelerationTwoAgents(ego_agent, right_leading.first, right_leading.second.lon);
+    double acc_c_after = CalcLongAccTwoAgents(ego_agent, leader_right_lane.first, leader_right_lane.second.lon);
 
     if (leader_current_lane.first && asymmetric_passing_rules_) {
-      float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
-      float left_leading_velocity = leader_current_lane.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+      float ego_velocity = observed_world.CurrentEgoState()(VEL_POSITION);
+      float leader_left_lane_velocity = leader_current_lane.first->GetCurrentState()(VEL_POSITION);
 
       // Passing on the right is disallowed, therefore if the ego vehicle is faster than the leading vehicle on the left lane, its acceleration on the right
       // lane acc_c_after cannot be higher than its acceleration on the left lane acc_c_before
-      if (ego_velocity > left_leading_velocity && left_leading_velocity > critical_velocity_) {
+      if (ego_velocity > leader_left_lane_velocity && leader_left_lane_velocity > critical_velocity_) {
         acc_c_after = std::min(acc_c_before, acc_c_after);
       }
     }
 
-    const double distance_before = right_following.second.lon + vehicle_length + right_leading.second.lon;
+    const double distance_before = follower_right_lane.second.lon + vehicle_length + leader_right_lane.second.lon;
     // acceleration of new follower (before ... in the present situation)
-    const double acc_n_before = CalculateLongitudinalAccelerationTwoAgents(right_following.first, right_leading.first, distance_before);
+    const double acc_n_before = CalcLongAccTwoAgents(follower_right_lane.first, leader_right_lane.first, distance_before);
     // acceleration of new follower (after a prospective lane change)
-    const double acc_n_after = CalculateLongitudinalAccelerationTwoAgents(right_following.first, ego_agent, right_following.second.lon);
+    const double acc_n_after = CalcLongAccTwoAgents(follower_right_lane.first, ego_agent, follower_right_lane.second.lon);
 
     // Safety criterion ensures that the after lane change, the new follower can still safely decelerate to avoid a crash
     if (acc_n_after >= -safe_deceleration_) {
@@ -148,45 +160,42 @@ LaneChangeDecision BehaviorMobil::CheckIfLaneChangeBeneficial(const ObservedWorl
           // std::cout << ", others improve by " << acc_o_after - acc_o_before << std::endl;
         }
         acc_threshold = benefit;
-        //behavior_pure_pursuit_.set_followed_line(right_corridor.first->get_center());
-        is_changing_lane_ = true;
-        return LaneChangeDecision::ChangeRight;
+        return std::make_pair(LaneChangeDecision::ChangeRight, left_right_lane_corridor.second);
       }
     } else {
       // std::cout << " To right would be unsafe: " << acc_n_after << " >= " << -safe_decel_ << std::endl;
     }
   }
 
-  // Try change to left lane
   if (left_right_lane_corridor.first) {
-     std::cout << " Left Lane exists " << std::endl;
+     //! Left Lane exists
 
-    // TODO(@Klemens): fill
-    std::pair<AgentPtr, Frenet> left_following; // = observed_world.get_agent_behind(left_corridor.first);
-    std::pair<AgentPtr, Frenet> left_leading; // = observed_world.get_agent_in_front(left_corridor.first, true);
+    FrontRearAgents agents_left_lane = observed_world.GetAgentFrontRearForId(observed_world.GetEgoAgentId(), left_right_lane_corridor.first);
+    std::pair<AgentPtr, FrenetPosition> follower_left_lane = agents_left_lane.rear;
+    std::pair<AgentPtr, FrenetPosition> leader_left_lane = agents_left_lane.front;
 
-    if (left_following.first == nullptr) {
+    if (follower_left_lane.first == nullptr) {
       // std::cout << " Agent " << observed_world.get_ego_agent()->get_agent_id() << ": Could go left, nobody there" << std::endl;
     }
 
-    const double acc_c_after = CalculateLongitudinalAccelerationTwoAgents(ego_agent, left_leading.first, left_leading.second.lon);
+    const double acc_c_after = CalcLongAccTwoAgents(ego_agent, leader_left_lane.first, leader_left_lane.second.lon);
 
-    if (left_leading.first && asymmetric_passing_rules_) {
+    if (leader_left_lane.first && asymmetric_passing_rules_) {
 
-      float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
-      float left_leading_velocity = left_leading.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+      float ego_velocity = observed_world.CurrentEgoState()(VEL_POSITION);
+      float leader_left_lane_velocity = leader_left_lane.first->GetCurrentState()(VEL_POSITION);
 
       // Passing on the right is disallowed, therefore if the ego vehicle is faster than the leading vehicle on the left lane, its acceleration on the right
       // lane acc_c_before cannot be higher than its acceleration on the right lane acc_c_after
-      if (ego_velocity > left_leading_velocity && left_leading_velocity > critical_velocity_) {
+      if (ego_velocity > leader_left_lane_velocity && leader_left_lane_velocity > critical_velocity_) {
         acc_c_before = std::min(acc_c_before, acc_c_after);
       }
     }
 
     // acceleration of new follower (before ... in the present situation)
-    const double acc_n_before = CalculateLongitudinalAccelerationTwoAgents(left_following.first, left_leading.first, left_following.second.lon + vehicle_length + left_leading.second.lon);
+    const double acc_n_before = CalcLongAccTwoAgents(follower_left_lane.first, leader_left_lane.first, follower_left_lane.second.lon + vehicle_length + leader_left_lane.second.lon);
     // acceleration of new follower (after a prospective lane change)
-    const double acc_n_after = CalculateLongitudinalAccelerationTwoAgents(left_following.first, ego_agent, left_following.second.lon);
+    const double acc_n_after = CalcLongAccTwoAgents(follower_left_lane.first, ego_agent, follower_left_lane.second.lon);
 
     // Safety criterion ensures that the after lane change, the new follower can still safely decelerate to avoid a crash
     if (acc_n_after >= -safe_deceleration_) {
@@ -214,9 +223,7 @@ LaneChangeDecision BehaviorMobil::CheckIfLaneChangeBeneficial(const ObservedWorl
           // std::cout << ", others improve by " << acc_n_after - acc_n_before << std::endl;
         }
         acc_threshold = benefit;
-        // behavior_pure_pursuit_.set_followed_line(left_corridor.first->get_center());
-        is_changing_lane_ = true;
-        return LaneChangeDecision::ChangeLeft;
+        return std::make_pair(LaneChangeDecision::ChangeLeft, left_right_lane_corridor.first);
       } else {
         // std::cout << " Benefit " << acc_c_after << " - " << acc_c_before << " + " << politeness_ << " * (" << acc_n_after << " - " << acc_n_before << ") = " << benefit
         //           << " would be less than the threshold " << threshold << "." << std::endl;
@@ -225,8 +232,7 @@ LaneChangeDecision BehaviorMobil::CheckIfLaneChangeBeneficial(const ObservedWorl
       // std::cout << " To left would be unsafe: " << acc_n_after << std::endl;
     }
   }
-  return LaneChangeDecision::KeepLane;
-  
+  return std::make_pair(LaneChangeDecision::KeepLane, observed_world.GetLaneCorridor());
 }
 
 
