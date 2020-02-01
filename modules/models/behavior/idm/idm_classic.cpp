@@ -21,7 +21,7 @@ using modules::world::objects::Agent;
 using modules::geometry::Point2d;
 using modules::commons::transformation::FrenetPosition;
 
-double BehaviorIDMClassic::CalculateLongitudinalAccelerationTwoAgents(const std::shared_ptr<const Agent>& ego_agent, const std::shared_ptr<const Agent>& leading_agent, const double distance) {
+double BehaviorIDMClassic::CalcLongAccTwoAgents(const std::shared_ptr<const Agent>& ego_agent, const std::shared_ptr<const Agent>& leading_agent, const double distance) {
 
   // Parameters
   const float desired_velocity = get_desired_velocity();
@@ -67,7 +67,7 @@ double BehaviorIDMClassic::CalculateLongitudinalAcceleration(const ObservedWorld
   double distance = lead_veh_frenet.lon;
 
   // TODO(@Klemens): Distance refers to braking point, should be renamed / clarified
-  double acc = CalculateLongitudinalAccelerationTwoAgents(ego_agent, leading_vehicle.first, distance);
+  double acc = CalcLongAccTwoAgents(ego_agent, leading_vehicle.first, distance);
   return acc;
 }
 
