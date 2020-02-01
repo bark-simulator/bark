@@ -18,10 +18,7 @@ using modules::models::dynamic::State;
 using modules::world::AgentMap;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
-  Point2d ego_pos = CurrentEgoPosition();
-  const auto& road_corridor = GetRoadCorridor();
-  BARK_EXPECT_TRUE(road_corridor != nullptr);
-  const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
+  const auto& lane_corridor = GetLaneCorridor();
   BARK_EXPECT_TRUE(lane_corridor != nullptr);
 
   AgentId id = GetEgoAgentId();
@@ -38,6 +35,14 @@ AgentFrenetPair ObservedWorld::GetAgentInFront() const {
 AgentFrenetPair ObservedWorld::GetAgentBehind() const {
   FrontRearAgents fr_agent = GetAgentFrontRear();
   return fr_agent.rear;
+}
+
+const LaneCorridorPtr ObservedWorld::GetLaneCorridor() const {
+  Point2d ego_pos = CurrentEgoPosition();
+  const auto& road_corridor = GetRoadCorridor();
+  BARK_EXPECT_TRUE(road_corridor != nullptr);
+  const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
+  return lane_corridor;
 }
 
 void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {

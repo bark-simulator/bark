@@ -51,6 +51,8 @@ class ObservedWorld : public World {
     return ObservedWorld::GetEgoAgent()->GetRoadCorridor();
   }
 
+  const LaneCorridorPtr GetLaneCorridor() const;
+  
   std::shared_ptr<const Agent> GetEgoAgent() const {
     return World::GetAgent(ego_agent_id_);
   }
