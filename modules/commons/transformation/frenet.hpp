@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_
-#define MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_
+#ifndef MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
+#define MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
 
 #include "modules/geometry/line.hpp"
 
@@ -28,4 +28,4 @@ struct FrenetPosition {
 }  // namespace commons
 }  // namespace modules
 
-#endif  // MODULES_COMMONS_TRANSFORMATION_FRENET_HPP_
+#endif  // MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
