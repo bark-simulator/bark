@@ -258,14 +258,15 @@ TEST(observed_world, predict) {
   using modules::models::behavior::DiscreteAction;
   using modules::models::dynamic::Input;
   using modules::world::prediction::PredictionSettings;
+  using modules::world::tests::make_test_observed_world;
   using StateDefinition::VEL_POSITION;
 
   SetterParams params;
   params.SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(&params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
-  auto observed_world = modules::models::tests::make_test_observed_world(
-      1, rel_distance, ego_velocity, velocity_difference);
+  auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
+                                                 velocity_difference);
 
   // predict all agents with constant velocity
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(&params));

@@ -34,7 +34,7 @@ using modules::world::opendrive::XodrLaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
-using modules::models::tests::make_test_world;
+using modules::world::tests::make_test_world;
 
 TEST(world, world_init)
 {

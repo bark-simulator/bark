@@ -77,6 +77,18 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "behavior_mobil_test",
+    srcs = [
+        "behavior_mobil_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/models/behavior/mobil:mobil",
+        "//modules/world/tests:make_test_world",
+        "@gtest//:main",
+    ],
+)
 
 py_test(
   name = "py_behavior_model_test",
