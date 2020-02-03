@@ -16,9 +16,11 @@ class ScenarioGeneration:
         self._params = ParameterServer()
     else:
         self._params = params
-    self.initialize_params(params=self._params)
-
+    self.initialize_params(self._params)
     self._scenario_list = self.create_scenarios(params, num_scenarios)
+  
+  def initialize_params(self, params):
+    pass
 
   @property
   def params(self):

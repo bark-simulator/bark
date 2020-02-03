@@ -326,15 +326,25 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
     return nullptr;
   }
   const auto start_lane_id = lanes.at(0)->get_id();
-  const XodrDrivingDirection driving_direction =  lanes.at(0)->get_driving_direction();
-
   const XodrRoadId& start_road_id = roadgraph_->GetRoadForLaneId(start_lane_id);
   const XodrRoadId& goal_road_id = roadgraph_->GetRoadForLaneId(goal_lane_id);
-  std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_road_id,
-                                                goal_road_id);
+  return GenerateRoadCorridor(start_road_id, goal_road_id);
+}
 
-  GenerateRoadCorridor(road_ids, driving_direction);
-  return GetRoadCorridor(road_ids, driving_direction);
+RoadCorridorPtr MapInterface::GenerateRoadCorridor(const XodrRoadId& start_road_id,
+    const XodrRoadId& end_road_id) {
+    std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_road_id,
+                                                end_road_id);
+
+    std::pair<std::vector<XodrDrivingDirection>, bool> directions =
+               roadgraph_->GetDrivingDirectionsForRoadId(start_road_id);
+    if (!directions.second) {
+      LOG(ERROR) << "No lanes for start road id " << start_road_id << " found.";
+      return nullptr;
+    }
+    XodrDrivingDirection driving_direction = directions.first.at(0);
+    GenerateRoadCorridor(road_ids, driving_direction);
+    return GetRoadCorridor(road_ids, driving_direction);
 }
 
 bool MapInterface::XodrLaneIdAtPolygon(

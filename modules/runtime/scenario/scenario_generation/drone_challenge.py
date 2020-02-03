@@ -27,8 +27,7 @@ import math
 class DroneChallengeScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(DroneChallengeScenarioGeneration, self).__init__(params,
-                                                          num_scenarios,
-                                                          random_seed)
+                                                          num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
@@ -50,7 +49,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
     self.drone_params = self._local_params["drones", "list of dictionaries with drone definitions", [{"drone_model": _agent_params}]]
     self.ego_agent_id = self._local_params["ego_agent_id","ID of the ego-agent", 0]
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
