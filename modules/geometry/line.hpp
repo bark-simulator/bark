@@ -287,6 +287,17 @@ inline Line get_line_from_s_interval(Line line, float begin, float end) {
   return new_line;
 }
 
+inline Line get_line_shifted_laterally(const Line& line, float lateral_shift) {
+  Line new_line;
+  for(s : line.s_.begin()) {
+    const Point2d normal = get_normal_at_s(line, s);
+    const Point2d point_at_s = get_point_at_s(line, s);
+    const Point2d shifted = point_at_s + (normal * lateral_shift);
+    new_line.add_point(shifted);
+  }
+  return new_line;
+}
+
 
 inline std::tuple<Point2d, double, uint> get_nearest_point_and_s(Line l, const Point2d &p) {  // get_nearest_point
   // edge cases: empty or one-point line
