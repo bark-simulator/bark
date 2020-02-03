@@ -15,6 +15,7 @@ using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
+using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
 using modules::geometry::Line;
@@ -84,27 +85,27 @@ void python_goal_definition(py::module m)
         return "bark.world.goal_definition.GoalDefinitionStateLimitsFrenet";
       })
       .def_property_readonly("center_line",
-        &GoalDefinitionStateLimits::get_center_line)
+        &GoalDefinitionStateLimitsFrenet::get_center_line)
       .def_property_readonly("max_lateral_distances",
-        &GoalDefinitionStateLimits::get_max_lateral_distances)
+        &GoalDefinitionStateLimitsFrenet::get_max_lateral_distances)
       .def_property_readonly("max_orientation_differences",
-        &GoalDefinitionStateLimits::get_max_orientation_differences)
+        &GoalDefinitionStateLimitsFrenet::get_max_orientation_differences)
       .def_property_readonly("velocity_range",
-        &GoalDefinitionStateLimits::get_velocity_range)
+        &GoalDefinitionStateLimitsFrenet::get_velocity_range)
       .def(py::pickle(
         [](const GoalDefinitionStateLimitsFrenet& g) -> py::tuple {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */
             return py::make_tuple(g.get_center_line(),
-                      get_max_lateral_distances(), get_max_orientation_differences(),
-                      get_velocity_range());
+                      g.get_max_lateral_distances(), g.get_max_orientation_differences(),
+                      g.get_velocity_range());
         },
         [](py::tuple t) {  // __setstate__
-          if (t.size() != 5)
-                throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
+          if (t.size() != 4)
+                throw std::runtime_error("Invalid GoalDefinitionStateLimitsFrenet state!");
 
           return new GoalDefinitionStateLimitsFrenet(t[0].cast<Line>(),
                   t[1].cast<std::pair<float, float>>(), t[2].cast<std::pair<float, float>>(),
-                  t[3].cast<std::pair<float, float>>(), t[4].cast<std::pair<float, float>>());
+                  t[3].cast<std::pair<float, float>>());
         }));
 
       

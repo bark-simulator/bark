@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from abs import ABC, abstractmethod
+from abc import ABC, abstractmethod
 
 # The property-based scenario generation must implement all of this interfaces. Property readers only the respective interface
 class ConfigReaderBehaviorModels(ABC):

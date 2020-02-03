@@ -1,10 +1,10 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 fortiss GmbH
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
 
-from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigGoalDefinitions
+from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderGoalDefinitions
 
 from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
 from modules.runtime.commons.parameters import ParameterServer
@@ -48,17 +48,16 @@ class GoalGenerator:
           Lateral maximum distance allowed to both sides of center line, normalized by lanewidth", (0.05, 0.05)]
     long_range = config_param_object["LongitudinalRange" , "Pair with values between 0,1: \
           Goal is within this longitudinal part of center line, normalized by lanewidth", (0.8, 1)]
-    max_orientation_diff = config _param_object["MaxOrientationDifference" , "Pair with values between 0,pi: \
+    max_orientation_diff = config_param_object["MaxOrientationDifference" , "Pair with values between 0,pi: \
           Orientation must be within orientation limits around tangent angle of center line", (0.8, 1)]
-    velocity_range = config _param_object["VelocityRange" , "Pair velocity values specifying allowed range", (0.8, 1)]
+    velocity_range = config_param_object["VelocityRange" , "Pair velocity values specifying allowed range", (0.8, 1)]
 
     goal_line_string = get_line_from_s_interval(line_string, long_range[0], long_range[1])
     goal_definition = GoalDefinitionStateLimitsFrenet(goal_line_string, lateral_max_dist, max_orientation_diff, velocity_range)
     return goal_definition
 
 
-class FixedGoalTypes(ConfigGoalDefinitions):
-  @abstractmethod
+class FixedGoalTypes(ConfigReaderGoalDefinitions):
   def create_from_config(config_param_object, road_corridor, agent_states, controlled_agent_ids, **kwargs):
     self._controlled_agents_goal_type = config_param_object["GoalTypeControlled", "Specifies type of goals \
                           for controlled agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
@@ -71,11 +70,9 @@ class FixedGoalTypes(ConfigGoalDefinitions):
       if controlled_agent_ids[idx]:
         goal_definition = GoalGenerator.get_goal_definition(
           config_param_object, self._controlled_agents_goal_type, road_corridor, **kwargs)
-        )
       else:
           goal_definition = GoalGenerator.get_goal_definition(
           config_param_object, self._other_agents_goal_type, road_corridor, **kwargs)
-        )
       goal_definitions.append(goal_definition)
     
     return goal_definitions, config_param_object

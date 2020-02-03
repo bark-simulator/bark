@@ -1,11 +1,14 @@
 py_library(
-    name = "property_readers",
+    name = "config_readers",
     srcs = [
-     "property_readers.py",
-     "property_readers_interfaces.py",
-     "behavior_model_property_readers.py",
-     "agent_state_property_readers.py"
-     "model_conversion.py"
+     "__init__.py",
+     "config_readers_interfaces.py",
+     "agent_state_geometry_config_readers.py",
+     "behavior_model_config_readers.py",
+     "execution_model_config_readers.py",
+     "dynamic_model_config_readers.py",
+     "controlled_agents_config_readers.py",
+     "goal_definition_config_readers.py"
      ],
     data = ['//python:bark.so'],
     imports = ['../../../python'],

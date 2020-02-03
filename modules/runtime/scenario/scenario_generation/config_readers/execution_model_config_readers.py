@@ -5,8 +5,7 @@
 
 
 
-from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
-from modules.runtime.scenario.scenario_generation.config_readers.model_conversion import ModelConversion
+from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderExecutionModels
 
 from bark.models.execution import *
 from modules.runtime.commons.parameters import ParameterServer

@@ -1,4 +1,4 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 fortiss GmbH
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -6,20 +6,8 @@
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
   import ScenarioGeneration
-from modules.runtime.scenario.scenario_generation.model_json_conversion \
-  import ModelConversion
-from modules.runtime.scenario.scenario_generation.property_readers.property_readers import *
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
-from bark.world.map import *
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import Polygon, Point2d
-from bark.geometry.standard_shapes import *
+from modules.runtime.scenario.scenario_generation.config_readers import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.xodr_parser import XodrParser
 
 import numpy as np
 import math
@@ -29,9 +17,8 @@ from collections import defaultdict
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None):
-    super(UniformVehicleDistribution, self).__init__(params,
-                                                      num_scenarios,
-                                                      random_seed)
+    super(ConfigurableScenarioGeneration, self).__init__(params,
+                                                      num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
@@ -61,7 +48,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     }]
     ]
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
-              sources and sinks resolved", {"south_to_west/south_to_north" : 0.2:0.8}]
+              sources and sinks resolved", {"south_to_west/south_to_north" : (0.2, 0.8)}]
     json_converter = ModelJsonConversion()
     self._agent_params = params_temp["DefaultVehicleModel",
       "How to model the other agents",
@@ -94,7 +81,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source)
       
       #1) create agent states and geometries for this source
-      agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = 
+      agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigAgentStatesGeometries",
                               road_corridor)
@@ -103,7 +90,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       collected_sources_sinks_agent_states_geometries.append(tuple(agent_states, agent_geometries))
 
     #2 remove overlapping agent states from different sources and sinks
-    collected_sources_sinks_agent_states_geometries = 
+    collected_sources_sinks_agent_states_geometries = \
             self.resolve_overlaps_in_sources_sinks_agents(collected_sources_sinks_agent_states_geometries)
 
     agent_list = []
@@ -113,7 +100,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_geometries = agent_states_geometries[1]
 
       #3) create behavior, execution and dynamic models
-      config_return, kwargs_dict_tmp, default_params_behavior = 
+      config_return, kwargs_dict_tmp, default_params_behavior = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigBehaviorModels",
                               road_corridor, agent_states, kwargs_dict)
@@ -121,7 +108,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       sink_source_config["ConfigBehaviorModels"] = default_params_behavior
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
-      config_return, kwargs_dict_tmp, default_params_execution = 
+      config_return, kwargs_dict_tmp, default_params_execution = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigExecutionModels",
                               road_corridor, agent_states, kwargs_dict)
@@ -130,7 +117,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
 
-      config_return, kwargs_dict_tmp, default_params_dynamic = 
+      config_return, kwargs_dict_tmp, default_params_dynamic = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigDynamicModels",
                               road_corridor, agent_states, kwargs_dict)
@@ -139,7 +126,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       #4 create goal definitions and controlled agents
-      config_return, kwargs_dict_tmp, default_params_controlled_agents = 
+      config_return, kwargs_dict_tmp, default_params_controlled_agents = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigControlledAgents",
                               road_corridor, agent_states, kwargs_dict)
@@ -147,7 +134,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       sink_source_config["ConfigControlledAgents"] = default_params_controlled_agents
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
-      config_return, default_params_goals = 
+      config_return, default_params_goals = \
         PropertyBasedScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigGoalDefinitions",
                               road_corridor, agent_states, controlled_agent_ids, kwargs_dict)
@@ -250,7 +237,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       source_sink_desc_1 = self._sinks_sources[source_sink_idx_1]["Description"]
       source_sink_desc_2 = self._sinks_sources[source_sink_idx_2]["Description"]
          
-      num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution =
+      num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution = \
          self.parse_conflict_resolution(source_sink_desc_1, source_sink_desc_2)
 
       if not probablistic_conflict_resolution:
@@ -307,7 +294,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         return True, int(s)
       except:
         try:
-          float(s):
+          float(s)
           return False, float(s)
         except:
           raise ValueError("Could not parse conflict resolution {}".format(s))
@@ -339,8 +326,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
 
   def create_source_config_agents(self, agent_states, agent_geometries, 
-                        behavior_models, execution_models, dynamic_models
-                        goal_definitions, controlled_agent_ids, world)
+                        behavior_models, execution_models, dynamic_models,
+                        goal_definitions, controlled_agent_ids, world):
     num_agents = len(agent_states)
     if any(len(lst) != num_agents for list in [
       agent_geometries, behavior_models, execution_models, dynamic_models, goal_definitions, controlled_agent_ids]):
@@ -389,6 +376,3 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                  and sink {}".format(source, sink) )
 
     return road_corridor
-
-  def _parse_source_sink_properties(source_sink_properties):
-    

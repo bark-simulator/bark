@@ -1,4 +1,4 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 fortiss GmbH
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
@@ -7,8 +7,6 @@
 
 from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
-from modules.runtime.scenario.scenario_generation.config_readers.model_conversion \
-       import ModelConversion
 
 from bark.geometry.standard_shapes import *
 from bark.geometry import *
@@ -44,16 +42,15 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 
     lane_corridors, lane_positions = self.select_lane_corridors(road_corridor, self._lane_positions)
     for lane_corridor in lane_corridors:
-      tmp_agent_states, 
-        tmp_agent_geometries = self.agents_along_lane_corridor(lane_corridor,
+      tmp_agent_states, tmp_agent_geometries = self.agents_along_lane_corridor(lane_corridor,
                    self._s_range[0], self._s_range[1])
 
       agent_states.extend(tmp_agent_states)
       agent_geometries.extend(tmp_agent_geometries)
-      agent_lane_positions.extend([lane_positions[idx]*ken(tmp_agent_states)]
+      agent_lane_positions.extend(lane_positions[idx]*len(tmp_agent_states))
 
-    assert(len(agent_states)==len(agent_geometries))
-    assert(len(agent_states)==len(agent_lane_positions))
+    assert(len(agent_states) == len(agent_geometries))
+    assert(len(agent_states) == len(agent_lane_positions))
     return agent_states, agent_geometries, {"agent_lane_positions": agent_lane_positions}, config_param_object
 
 
