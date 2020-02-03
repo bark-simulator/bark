@@ -152,6 +152,9 @@ class Roadgraph {
 
   std::pair<XodrLaneId, bool> GetPlanViewForRoadId(const XodrRoadId& id) const;
 
+  std::pair<std::vector<XodrDrivingDirection>, bool>
+          GetDrivingDirectionsForRoadId(const XodrRoadId &id) const;
+
   //! outer_lane_id can be some outer_lane_id (position 1,2,3)
   std::pair<XodrLaneId, bool> GetPlanViewForLaneId(
       const XodrLaneId& outer_lane_id) const;

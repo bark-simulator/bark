@@ -92,6 +92,8 @@ class MapInterface {
     const std::vector<XodrRoadId>& road_ids) const;
   void GenerateRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction);
+  RoadCorridorPtr GenerateRoadCorridor(const XodrRoadId& start_road_id,
+    const XodrRoadId& end_road_id);
   RoadCorridorPtr GenerateRoadCorridor(
     const modules::geometry::Point2d& start_point,
     const modules::geometry::Polygon& goal_region);

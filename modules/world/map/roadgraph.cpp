@@ -197,6 +197,20 @@ std::pair<XodrLaneId, bool> Roadgraph::GetPlanViewForRoadId(
   return std::make_pair(0, false);
 }
 
+std::pair<std::vector<XodrDrivingDirection>, bool> Roadgraph::GetDrivingDirectionsForRoadId(
+    const XodrRoadId &id) const {
+  std::vector<XodrDrivingDirection> directions;
+  std::vector<vertex_t> vertices = get_vertices();
+  bool road_found = false;
+  for (auto const &v : vertices) {
+    if (get_lane_graph()[v].road_id == id) {
+      directions.push_back(get_lane_graph()[v].lane->get_driving_direction());
+    }
+  }
+  return std::make_pair(directions, road_found);
+}
+
+
 std::pair<XodrLaneId, bool> Roadgraph::GetPlanViewForLaneId(
     const XodrLaneId &outer_lane_id) const {
   XodrLanePtr lane = get_laneptr(outer_lane_id);

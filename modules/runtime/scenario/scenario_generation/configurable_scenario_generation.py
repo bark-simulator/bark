@@ -17,8 +17,7 @@ from collections import defaultdict
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None):
-    super(ConfigurableScenarioGeneration, self).__init__(params,
-                                                      num_scenarios)
+    super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
@@ -49,16 +48,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     ]
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
               sources and sinks resolved", {"south_to_west/south_to_north" : (0.2, 0.8)}]
-    json_converter = ModelJsonConversion()
-    self._agent_params = params_temp["DefaultVehicleModel",
-      "How to model the other agents",
-      json_converter.agent_to_json(self.default_agent_model())]
-    if not isinstance(self._agent_params, dict):
-        self._agent_params = self._agent_params.convert_to_dict()
     np.random.seed(self._random_seed)
-    self.params = params
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
@@ -78,7 +70,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # Loop through each source sink config and first only create state
     # and geometry information
     for idx, sink_source_config in enumerate(self._sinks_sources):
-      road_corridor = self.get_road_corridor_from_source_sink(sink_source)
+      road_corridor = self.get_road_corridor_from_source_sink(sink_source_config, world.map)
       
       #1) create agent states and geometries for this source
       agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
@@ -358,19 +350,35 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     return config_return, default_param_config
 
   @staticmethod
-  def get_road_corridor_from_source_sink(source_sink_properties):
+  def get_road_corridor_from_source_sink(source_sink_properties, map_interface):
     # generate road corridor between source and sink
-    goal_polygon = Polygon2d([0, 0, 0],
+    source_sink = source_sink_properties["SourceSink"]
+    road_corridor = None
+    if isinstance(source_sink, tuple) and \
+           isinstance(source_sink[0], int):
+           # road id given for start and end of road corridor 
+           start_road_id = source_sink[0]
+           end_road_id = source_sink[1]
+           road_corridor = map_interface.GenerateRoadCorridor(start_road_id,
+                                                end_road_id)
+    elif isinstance(source_sink, tuple) and \
+           isinstance(source_sink[0], tuple)  and \
+           isinstance(source_sink[0][0], float):
+           # point 2d given to find start and end road id road corridor
+            goal_polygon = Polygon2d([0, 0, 0],
                                   [Point2d(-1,0),
                                   Point2d(-1,1),
                                   Point2d(1,1),
                                   Point2d(1,0)])
-    goal_polygon = goal_polygon.translate(Point2d(sink[0],
-                                                      sink[1]))
-    road_corridor = map_interface.GenerateRoadCorridor(
-        Point2d(source[0], source[1]),
-        goal_polygon)
-
+            start_point = Point2d(source_sink[0][0], source_sink[0][1])
+            end_point = Point2d(source_sink[1][0], source_sink[1][1])
+            goal_polygon = goal_polygon.translate(end_point)
+            road_corridor = map_interface.GenerateRoadCorridor(start_point,
+                                                goal_polygon)
+    else:
+      raise ValueError("Unknown specification of start and end \
+              of source sink config {}".format(source_sink))
+    
     if not road_corridor:
       raise ValueError("No road corridor found betwen source {} \
                  and sink {}".format(source, sink) )
