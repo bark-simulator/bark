@@ -149,6 +149,7 @@ std::pair<LaneChangeDecision, LaneCorridorPtr> BehaviorMobil::CheckIfLaneChangeB
     else {
       acc_n_before = 0, acc_n_after = 0;
     }
+
     // Safety criterion ensures that the after lane change, the new follower can still safely decelerate to avoid a crash
     if (acc_n_after >= -safe_deceleration_) {
       double benefit;
@@ -186,18 +187,15 @@ std::pair<LaneChangeDecision, LaneCorridorPtr> BehaviorMobil::CheckIfLaneChangeB
      //! Left Lane exists
 
     FrontRearAgents agents_left_lane = observed_world.GetAgentFrontRearForId(ego_agent_id, left_corridor);
-    std::pair<AgentPtr, FrenetPosition> follower_left_lane = agents_left_lane.rear;
-    std::pair<AgentPtr, FrenetPosition> leader_left_lane = agents_left_lane.front;
+    std::pair<AgentPtr, FrenetPosition> follower_left = agents_left_lane.rear;
+    std::pair<AgentPtr, FrenetPosition> leader_left = agents_left_lane.front;
 
-    if (follower_left_lane.first == nullptr) {
-      // std::cout << " Agent " << observed_world.get_ego_agent()->get_agent_id() << ": Could go left, nobody there" << std::endl;
-    }
+    // acceleration of ego vehicle (after a prospective lane change)
+    const double acc_c_after = CalcLongAccTwoAgents(ego_agent, leader_left.first, leader_left.second.lon);
 
-    const double acc_c_after = CalcLongAccTwoAgents(ego_agent, leader_left_lane.first, leader_left_lane.second.lon);
-
-    if (leader_left_lane.first && asymmetric_passing_rules_) {
+    if (leader_left.first && asymmetric_passing_rules_) {
       float vel_ego = observed_world.CurrentEgoState()(VEL_POSITION);
-      float vel_leader_left = leader_left_lane.first->GetCurrentState()(VEL_POSITION);
+      float vel_leader_left = leader_left.first->GetCurrentState()(VEL_POSITION);
 
       // Passing on the right is disallowed, therefore if the ego vehicle is faster than the leading vehicle on the left lane, its acceleration on the right
       // lane acc_c_before cannot be higher than its acceleration on the right lane acc_c_after
@@ -206,11 +204,17 @@ std::pair<LaneChangeDecision, LaneCorridorPtr> BehaviorMobil::CheckIfLaneChangeB
       }
     }
 
-    const double distance_before = follower_left_lane.second.lon + vehicle_length + leader_left_lane.second.lon;
-    // acceleration of new follower (before ... in the present situation)
-    const double acc_n_before = CalcLongAccTwoAgents(follower_left_lane.first, leader_left_lane.first, distance_before);
-    // acceleration of new follower (after a prospective lane change)
-    const double acc_n_after = CalcLongAccTwoAgents(follower_left_lane.first, ego_agent, follower_left_lane.second.lon);
+    double acc_n_before, acc_n_after;
+    if (follower_left.first) {
+      const double distance_before = follower_left.second.lon + vehicle_length + leader_left.second.lon;
+      // acceleration of new follower (before ... in the present situation)
+      acc_n_before = CalcLongAccTwoAgents(follower_left.first, leader_left.first, distance_before);
+      // acceleration of new follower (after a prospective lane change)
+      acc_n_after = CalcLongAccTwoAgents(follower_left.first, ego_agent, follower_left.second.lon);
+    }
+    else {
+      acc_n_before = 0, acc_n_after = 0;
+    }
 
     // Safety criterion ensures that the after lane change, the new follower can still safely decelerate to avoid a crash
     if (acc_n_after >= -safe_deceleration_) {
