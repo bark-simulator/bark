@@ -71,6 +71,40 @@ void python_goal_definition(py::module m)
                   std::pair<float, float>>());
         }));
 
+    py::class_<GoalDefinitionStateLimitsFrenet, GoalDefinition,
+      std::shared_ptr<GoalDefinitionStateLimitsFrenet>>(m, "GoalDefinitionStateLimitsFrenet")
+      .def(py::init<>())
+      .def(py::init<const modules::geometry::Line&,
+                            const std::pair<float,float>,
+                            const std::pair<float,float>,
+                            const std::pair<float, float>>())
+      .def("__repr__", [](const GoalDefinitionStateLimitsFrenet &g) {
+        return "bark.world.goal_definition.GoalDefinitionStateLimitsFrenet";
+      })
+      .def_property_readonly("center_line",
+        &GoalDefinitionStateLimits::get_center_line)
+      .def_property_readonly("max_lateral_distances",
+        &GoalDefinitionStateLimits::get_max_lateral_distances)
+      .def_property_readonly("max_orientation_differences",
+        &GoalDefinitionStateLimits::get_max_orientation_differences)
+      .def_property_readonly("velocity_range",
+        &GoalDefinitionStateLimits::get_velocity_range)
+      .def(py::pickle(
+        [](const GoalDefinitionStateLimitsFrenet& g) -> py::tuple {  // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(g.get_shape(), g.get_center_line(),
+                      get_max_lateral_distances(), get_max_orientation_differences(),
+                      get_velocity_range());
+        },
+        [](py::tuple t) {  // __setstate__
+          if (t.size() != 5)
+                throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
+
+          return new GoalDefinitionStateLimitsFrenet(t[0].cast<Polygon>(),
+                  t[1].cast<std::pair<float, float>>(), t[2].cast<std::pair<float, float>>(),
+                  t[3].cast<std::pair<float, float>>(), t[4].cast<std::pair<float, float>>());
+        }));
+
       
       py::class_<GoalDefinitionSequential, GoalDefinition,
         std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")
