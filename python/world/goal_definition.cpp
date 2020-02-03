@@ -6,6 +6,7 @@
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/geometry/polygon.hpp"
 
@@ -16,6 +17,7 @@ using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
+using modules::geometry::Line;
 
 void python_goal_definition(py::module m)
 {
@@ -92,7 +94,7 @@ void python_goal_definition(py::module m)
       .def(py::pickle(
         [](const GoalDefinitionStateLimitsFrenet& g) -> py::tuple {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.get_shape(), g.get_center_line(),
+            return py::make_tuple(g.get_center_line(),
                       get_max_lateral_distances(), get_max_orientation_differences(),
                       get_velocity_range());
         },
@@ -100,7 +102,7 @@ void python_goal_definition(py::module m)
           if (t.size() != 5)
                 throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
 
-          return new GoalDefinitionStateLimitsFrenet(t[0].cast<Polygon>(),
+          return new GoalDefinitionStateLimitsFrenet(t[0].cast<Line>(),
                   t[1].cast<std::pair<float, float>>(), t[2].cast<std::pair<float, float>>(),
                   t[3].cast<std::pair<float, float>>(), t[4].cast<std::pair<float, float>>());
         }));

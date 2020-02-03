@@ -13,56 +13,47 @@ from modules.runtime.commons.parameters import ParameterServer
 # helper class to support various types of goals easily generated for the 
 # goal config readers
 class GoalGenerator:
-  
   @staticmethod
   def get_goal_definition(config_param_object, goal_definition, road_corridor, lane_position):
     return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
 
   @staticmethod
   def EndOfLane(config_param_object, road_corridor, lane_position):
-      #define a polygon exactly the width of the lane
-      s_offset = config_param_object["SOffset"]["Goal Polygon s-offset (in 0,1) from end of lane", 0.1]
-      s_offset = config_param_object["SLength"]["Goal Polygon length in s-coordinates (0,1)", 0.05]
-
       lane_corridor = road_corridor.lane_corridors[lane_position]
-      cl = lane_corridor.center_line
-      rl = lane_corridor.right_boundary
-      ll = lane_corridor.left_boundary
-      last_point_cl = cl.toArray()[-1]
-      last_point_rl = rl.toArray()[-1]
-      last_point_ll = ll.toArray()[-1]
-      lane_width = sqrt
-      width_lane_last_point = 
-      goal_polygon = Polygon2d()
-      goal_polygon = goal_polygon.translate(Point2d(self._others_sink[idx][0],
-                                                    self._others_sink[idx][1]))
-      goal_definition = GoalDefinitionPolygon(goal_polygon)
-      return goal_definition
+      return fill_goal_def_state_lim_frenet(config_param_object, lane_corridor.center_line)
 
   @staticmethod
   def LaneChangeRight(config_param_object, road_corridor, lane_position):
-    pass
+    lane_position_right = lane_position+1
+    if lane_position_right <  len(road_corridor.lane_corridors):
+      lane_corridor_right = road_corridor.lane_corridors[lane_position_right]
+      return fill_goal_def_state_lim_frenet(config_param_object, lane_corridor_right.center_line)
+    else:
+      raise ValueError("No lane change right possible with this \
+               road corridor at lane position {}".format(lane_position))
 
   @staticmethod
   def LaneChangeLeft(config_param_object, road_corridor, lane_position):
-    pass
+    lane_position_left = lane_position-1
+    if lane_position_left >= 0:
+      lane_position_left = road_corridor.lane_corridors[lane_position_left]
+      return fill_goal_def_state_lim_frenet(config_param_object, lane_position_left.center_line)
+    else:
+      raise ValueError("No lane change left possible with this \
+               road corridor at lane position {}".format(lane_position))
 
-  
   @staticmethod
-  def GoalDefinitionStateLimitsNearLineString(config_param_object, line_string):
-    lateral_range = config_param_object["LateralRange", "Pair with values between 0,1: \
-          Lateral variations of state allowed to both sides of center line, normalized by lanewidth", [0.05, 0.05]]
+  def fill_goal_def_state_lim_frenet(config_param_object, line_string):
+    lateral_max_dist = config_param_object["MaxLateralDist", "Pair with values between 0,1: \
+          Lateral maximum distance allowed to both sides of center line, normalized by lanewidth", (0.05, 0.05)]
     long_range = config_param_object["LongitudinalRange" , "Pair with values between 0,1: \
-          Goal is within this longitudinal part of center line, normalized by lanewidth", [0.8, 1]]
-    orientation_range = config _param_object["OrientationRange" , "Pair with values between 0,pi: \
-          Orientation must be within orientation variation around center line", [0.8, 1]]
-    goal_limits_left = goal_center_line.translate(Point2d(-lims[0], -lims[1]))
-    goal_limits_right = goal_center_line.translate(Point2d(lims[0], lims[1]))
-    goal_limits_right.reverse()
-    goal_limits_left.append_linestring(goal_limits_right)
-    polygon = Polygon2d([0,0,0], goal_limits_left)
+          Goal is within this longitudinal part of center line, normalized by lanewidth", (0.8, 1)]
+    max_orientation_diff = config _param_object["MaxOrientationDifference" , "Pair with values between 0,pi: \
+          Orientation must be within orientation limits around tangent angle of center line", (0.8, 1)]
+    velocity_range = config _param_object["VelocityRange" , "Pair velocity values specifying allowed range", (0.8, 1)]
 
-    goal_definition = GoalDefinitionStateLimits(polygon, (1.57-0.08, 1.57+0.08))
+    goal_line_string = get_line_from_s_interval(line_string, long_range[0], long_range[1])
+    goal_definition = GoalDefinitionStateLimitsFrenet(goal_line_string, lateral_max_dist, max_orientation_diff, velocity_range)
     return goal_definition
 
 
