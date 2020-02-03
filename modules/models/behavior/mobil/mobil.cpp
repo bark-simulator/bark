@@ -34,7 +34,7 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
 
-  std::cout << "Mobil State " << mobil_state_ << std::endl;
+  LOG(INFO) << "Mobil State " << mobil_state_ << std::endl;
   //! Determine whether to perform a lane change
   if (mobil_state_ == MobilState::IsChanging) {
     //! checks if lane change has been finished ...
@@ -47,7 +47,7 @@ Trajectory BehaviorMobil::Plan(float delta_time, const ObservedWorld &observed_w
   } else {
     LaneChangeDecision decision;
     std::tie(decision, target_corridor_) = CheckIfLaneChangeBeneficial(observed_world);
-    std::cout << "Decision " << decision << std::endl;
+    LOG(INFO) << "Decision " << decision << std::endl;
     if (decision != LaneChangeDecision::KeepLane)
       mobil_state_ = MobilState::IsChanging;
   }
