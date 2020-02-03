@@ -21,6 +21,7 @@ using Eigen::Matrix;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &modules::geometry::standard_shapes::CarLimousine);
+  m.def("CarRectangle", &modules::geometry::standard_shapes::CarRectangle);
 }
 
 void python_geometry(py::module m) {

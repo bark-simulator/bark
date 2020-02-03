@@ -15,7 +15,7 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/tests/make_test_world.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
@@ -25,7 +25,7 @@ using namespace modules::world::map;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
-using namespace modules::models::tests;
+using namespace modules::world::tests;
 
 
 

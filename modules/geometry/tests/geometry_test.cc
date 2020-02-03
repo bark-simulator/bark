@@ -180,9 +180,13 @@ TEST(geometry, polygon) {
 TEST(geometry, standard_shapes) {
   using modules::geometry::Polygon;
   using modules::geometry::standard_shapes::CarLimousine;
+  using modules::geometry::standard_shapes::CarRectangle;
 
-  Polygon p = CarLimousine();
-  ASSERT_TRUE(p.Valid());
+  Polygon p1 = CarLimousine();
+  ASSERT_TRUE(p1.Valid());
+
+  Polygon p2 = CarRectangle();
+  ASSERT_TRUE(p2.Valid());
 }
 
 // poly point collide false

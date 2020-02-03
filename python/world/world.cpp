@@ -7,6 +7,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/map/roadgraph.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 #include "python/world/world.hpp"
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
@@ -51,6 +52,9 @@ void python_world(py::module m) {
     .def("__repr__", [](const World& a) {
       return "bark.world.World";
     });
+
+  m.def("MakeTestWorldHighway",
+    &modules::world::tests::MakeTestWorldHighway);
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
     .def(py::init<const WorldPtr&, const AgentId&>())
