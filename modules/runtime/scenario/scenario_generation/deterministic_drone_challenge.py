@@ -27,8 +27,7 @@ import math
 class DeterministicDroneChallengeGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(DeterministicDroneChallengeGeneration, self).__init__(params,
-                                                                num_scenarios,
-                                                                random_seed)
+                                                                num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):

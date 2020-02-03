@@ -10,7 +10,6 @@ from modules.runtime.commons.parameters import ParameterServer
 class ScenarioGeneration:
   def __init__(self, params=None, num_scenarios=None):
     self._params = params
-    self._random_seed = random_seed
     self._current_scenario_idx = 0
 
     if params is None:
@@ -53,7 +52,7 @@ class ScenarioGeneration:
     else:
         raise StopIteration
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ Creates a list of scenario class instances which should be
         deterministically reproducible given the random seed,
         the params and the number of scenarios

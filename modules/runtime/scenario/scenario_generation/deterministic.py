@@ -27,8 +27,7 @@ import math
 class DeterministicScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(DeterministicScenarioGeneration, self).__init__(params,
-                                                          num_scenarios,
-                                                          random_seed)
+                                                          num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):

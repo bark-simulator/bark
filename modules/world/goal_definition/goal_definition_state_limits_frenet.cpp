@@ -10,29 +10,44 @@ namespace modules {
 namespace world {
 namespace goal_definition {
 
+namespace bg = boost::geometry;
+using modules::geometry::Polygon;
+using modules::geometry::Point2d;
+using modules::geometry::Line;
+using modules::geometry::Pose;
+using modules::geometry::norm_0_2PI;
+using modules::geometry::get_point_at_s;
+using modules::geometry::get_tangent_angle_at_s;
+using modules::geometry::get_nearest_point_and_s;
 
-bool GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(const modules::geometry::Line& center_line,
+GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(const Line& center_line,
                             const std::pair<float,float> max_lateral_distances,
                             const std::pair<float,float> max_orientation_differences,
-                            const std::pair<float, float> velocity_range) {
-    const modules::geometry::Line line_shifted_left = 
+                            const std::pair<float, float> velocity_range)  :
+                            GoalDefinition(),
+                            center_line_(center_line),
+                            max_lateral_distances_(max_lateral_distances),
+                            max_orientation_differences_(max_orientation_differences),
+                            velocity_range_(velocity_range) {
+    Line line_shifted_left = 
             get_line_shifted_laterally(center_line, - max_lateral_distances.first);
-    const modules::geometry::Line line_shifted_right = 
+    Line line_shifted_right = 
             get_line_shifted_laterally(center_line, max_lateral_distances.second);
 
     line_shifted_right.reverse();
-    line_shifted_left.append_linestring(line_shifted_right)
-    const Point2d shape_center_(get_point_at_s(center_line.length()));
-    shape_ = Polygon2d(shape_center_, line_shifted_left);
+    line_shifted_left.append_linestring(line_shifted_right);
+    const Point2d shape_center(get_point_at_s(center_line, center_line.length()));
+
+    shape_ = Polygon(Pose(bg::get<0>(shape_center), bg::get<1>(shape_center), 0), line_shifted_left);
 }
 
 bool GoalDefinitionStateLimitsFrenet::AtGoal(
   const modules::world::objects::Agent& agent) {
   const auto agent_state = agent.get_current_state();
-  const auto agent_angle = modules::geometry::norm_0_2PI(
+  const auto agent_angle = norm_0_2PI(
     agent_state[modules::models::dynamic::StateDefinition::THETA_POSITION]);
-  const modules::geometry::Point2d agent_pos = agent.get_current_position();
-  const agent_velocity = agent_state[modules::models::dynamic::StateDefinition::VEL_POSITION];
+  const Point2d agent_pos = agent.get_current_position();
+  const auto agent_velocity = agent_state[modules::models::dynamic::StateDefinition::VEL_POSITION];
 
   if( agent_velocity < velocity_range_.first ||
       agent_velocity > velocity_range_.second) {
@@ -42,11 +57,11 @@ bool GoalDefinitionStateLimitsFrenet::AtGoal(
   if (!modules::geometry::Within(agent_pos, shape_)) {
     return false;
   }
-  
+
   const std::tuple<Point2d, double, uint> nearest_point = get_nearest_point_and_s(center_line_, agent_pos);
-  const tangent_angle = get_tangent_angle_at_s(center_line_, std::get<double>(nearest_point));
-  const tangent_angle_normalized = modules::geometry::norm_0_2PI(tangent_angle);
-  const angle_diff = tangent_angle_normalized - agent_angle;
+  const auto tangent_angle = get_tangent_angle_at_s(center_line_, std::get<double>(nearest_point));
+  const auto tangent_angle_normalized = norm_0_2PI(tangent_angle);
+  const auto angle_diff = tangent_angle_normalized - agent_angle;
   
   if (angle_diff <= max_orientation_differences_.first &&
           angle_diff >= - max_orientation_differences_.second ) {

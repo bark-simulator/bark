@@ -33,7 +33,7 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
 
   const modules::geometry::Polygon& get_xy_limits() const {return xy_limits_;}
   const modules::geometry::Polygon& get_shape() const {return xy_limits_;}
-  const std::pair<float,float> get_angle_limits() const {return angle_limits_;}
+  virtual const std::pair<float,float> get_angle_limits() const {return angle_limits_;}
 
  private:
   modules::geometry::Polygon xy_limits_;
