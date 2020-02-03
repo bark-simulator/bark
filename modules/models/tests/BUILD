@@ -85,9 +85,11 @@ cc_test(
         "behavior_mobil_test.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
-    deps = [
+    deps = [        
+        "//modules/geometry",
         "//modules/models/behavior/mobil:mobil",
-        "//modules/world/tests:make_test_world",
+        "//modules/models/execution/interpolation:interpolation",
+        "//modules/world/tests:make_test_xodr_map",
         "@gtest//:main",
     ],
 )
