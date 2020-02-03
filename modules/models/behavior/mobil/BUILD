@@ -1,19 +1,19 @@
 cc_library(
-    name = "idm_classic",
+    name = "mobil",
     srcs = [
-        "idm_classic.cpp",
+        "mobil.cpp"
     ],
     hdrs = [
-        "idm_classic.hpp",
+        "mobil.hpp"
     ],
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
+        "//modules/models/behavior/idm:idm_classic",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
     ],
-    visibility = ["//visibility:public"],
+    visibility = ["//visibility:public"]
 )
 
 

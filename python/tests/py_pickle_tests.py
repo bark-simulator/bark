@@ -51,6 +51,11 @@ class PickleTests(unittest.TestCase):
         pa = pickle_unpickle(p)
         self.assertTrue(np.array_equal(p.ToArray(), pa.ToArray()))
 
+        # polygon
+        pr = CarRectangle()
+        pra = pickle_unpickle(pr)
+        self.assertTrue(np.array_equal(pr.ToArray(), pra.ToArray()))
+
     def test_behavior_model_pickle(self):
         
         params = ParameterServer()
