@@ -53,7 +53,7 @@ class PickleTests(unittest.TestCase):
 
         # polygon
         pr = CarRectangle()
-        pra = pickle_unpickle(p)
+        pra = pickle_unpickle(pr)
         self.assertTrue(np.array_equal(pr.ToArray(), pra.ToArray()))
 
     def test_behavior_model_pickle(self):
