@@ -40,8 +40,13 @@ AgentFrenetPair ObservedWorld::GetAgentBehind() const {
 const LaneCorridorPtr ObservedWorld::GetLaneCorridor() const {
   Point2d ego_pos = CurrentEgoPosition();
   const auto& road_corridor = GetRoadCorridor();
-  BARK_EXPECT_TRUE(road_corridor != nullptr);
+  if (!road_corridor) {
+    LOG(ERROR) << "No road corridor found.";
+  }
   const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
+  if(!lane_corridor) {
+      LOG(ERROR) << "No lane corridor found.";
+  }
   return lane_corridor;
 }
 
