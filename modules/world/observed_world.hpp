@@ -90,8 +90,8 @@ class ObservedWorld : public World {
 
   void SetupPrediction(const PredictionSettings& settings);
 
-  WorldPtr Predict(float time_span, const DiscreteAction& ego_action) const;
-  WorldPtr Predict(float time_span) const;
+  ObservedWorldPtr Predict(float time_span, const DiscreteAction& ego_action) const;
+  ObservedWorldPtr Predict(float time_span) const;
 
   virtual WorldPtr Clone() const {
     WorldPtr world_clone(World::Clone());
