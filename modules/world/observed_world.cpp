@@ -42,10 +42,12 @@ const LaneCorridorPtr ObservedWorld::GetLaneCorridor() const {
   const auto& road_corridor = GetRoadCorridor();
   if (!road_corridor) {
     LOG(ERROR) << "No road corridor found.";
+    return nullptr;
   }
   const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
-  if(!lane_corridor) {
-      LOG(ERROR) << "No lane corridor found.";
+  if (!lane_corridor) {
+    LOG(ERROR) << "No lane corridor found.";
+    return nullptr;
   }
   return lane_corridor;
 }
