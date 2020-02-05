@@ -15,14 +15,13 @@ namespace models {
 namespace behavior {
 
 enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
-enum MobilState { Idle = 0, IsChanging = 1};
+enum MobilState { Idle = 0, IsChanging = 1 };
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
 class BehaviorMobil : public BehaviorIDMClassic {
  public:
-  explicit BehaviorMobil(commons::Params *params)
-      : BehaviorIDMClassic(params),
-        mobil_state_(MobilState::Idle) {
+  explicit BehaviorMobil(commons::Params* params)
+      : BehaviorIDMClassic(params), mobil_state_(MobilState::Idle) {
     crosstrack_error_gain_ = params->GetReal(
         "CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
 
@@ -54,16 +53,23 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   virtual ~BehaviorMobil() {}
 
-  Trajectory Plan(float delta_time, const world::ObservedWorld &observed_world);
+  Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
-  std::pair<LaneChangeDecision, world::map::LaneCorridorPtr> CheckIfLaneChangeBeneficial(
-      const world::ObservedWorld &observed_world);
+  double CalcNetDistanceFromFrenet(
+      const std::shared_ptr<const world::objects::Agent>& ego_agent,
+      const modules::commons::transformation::FrenetPosition& ego_frenet,
+      const std::shared_ptr<const world::objects::Agent>& leading_agent,
+      const modules::commons::transformation::FrenetPosition& leading_frenet)
+      const;
+
+  std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
+  CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
   MobilState mobil_state_;
-  
+
   double crosstrack_error_gain_;
 
   world::map::LaneCorridorPtr target_corridor_;

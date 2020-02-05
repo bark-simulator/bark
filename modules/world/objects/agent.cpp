@@ -17,6 +17,7 @@ using models::dynamic::StateDefinition;
 using modules::geometry::Point2d;
 using modules::world::map::MapInterfacePtr;
 using StateDefinition::TIME_POSITION;
+using modules::commons::transformation::FrenetPosition;
 
 Agent::Agent(const State& initial_state,
         const BehaviorModelPtr& behavior_model_ptr,
@@ -114,6 +115,13 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
     return false;
   }
   return true;
+}
+
+FrenetPosition Agent::CurrentFrenetPosition() const {  
+  const modules::geometry::Point2d pos = GetCurrentPosition();
+  const auto& lane_corridor = GetRoadCorridor()->GetCurrentLaneCorridor(pos);
+  FrenetPosition frenet_pos(pos, lane_corridor->GetCenterLine());
+  return frenet_pos;
 }
 
 geometry::Polygon Agent::GetPolygonFromState(const State& state) const {

@@ -7,36 +7,48 @@
 #ifndef MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 
-#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/commons/transformation/frenet.hpp"
+#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
-class BehaviorIDMClassic : public BehaviorLongitudinalAcceleration {
+class BehaviorIDMClassic : public BehaviorModel {
  public:
   explicit BehaviorIDMClassic(commons::Params* params)
-      : BehaviorLongitudinalAcceleration(params) {}
+      : BehaviorModel(params) {}
 
   virtual ~BehaviorIDMClassic() {}
 
-  double CalcLongAccTwoAgents(
+  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+
+  double CalcFreeRoadTerm(const double vel_ego) const;
+  double CalcInteractionTerm(const double net_distance, const double vel_ego,
+                             const double vel_other) const;
+
+  double CalcNetDistance(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
-      const std::shared_ptr<const world::objects::Agent>& leading_agent, const double distance);
+      const std::shared_ptr<const world::objects::Agent>& leading_agent);
 
-  virtual double CalculateLongitudinalAcceleration(
-      const world::ObservedWorld& observed_world);
+  double CalcIDMAcc(const double net_distance, const double vel_ego,
+                    const double vel_other) const;
 
-  const double get_desired_velocity() { return 15.0f; }  // unit is meter/second
-  const float get_minimum_spacing() { return 2.0f; }     // unit is meter
-  const float get_desired_time_headway() { return 1.5f; }  // unit is seconds
-  const float get_max_acceleration() { return 1.7f; }  // unit is meter/second^2
-  const float get_comfortable_braking_acceleration() {
+  virtual float GetMinVelocity() { return 0.0f; }
+  virtual float GetMaxVelocity() { return 50.0f; }
+  const double GetDesiredVelocity() const {
+    return 15.0f;
+  }  // unit is meter/second
+  const float GetMinimumSpacing() const { return 2.0f; }      // unit is meter
+  const float GetDesiredTimeHeadway() const { return 1.5f; }  // unit is seconds
+  const float GetMaxAcceleration() const {
+    return 1.7f;
+  }  // unit is meter/second^2
+  const float GetComfortableBrakingAcceleration() const {
     return 1.67f;
   }  // unit is meter/second^2
-  const int get_exponent() { return 4; }
+  const int GetExponent() const { return 4; }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };

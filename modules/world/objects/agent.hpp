@@ -17,6 +17,7 @@
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/models/execution/execution_model.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace modules {
 namespace world {
@@ -81,6 +82,8 @@ class Agent : public Object {
       state(StateDefinition::X_POSITION),
       state(StateDefinition::Y_POSITION));
   }
+
+  modules::commons::transformation::FrenetPosition CurrentFrenetPosition() const;
 
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
