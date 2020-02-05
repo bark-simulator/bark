@@ -64,7 +64,7 @@ class ScenarioGenerationTests(unittest.TestCase):
   def test_visualization(self):
     param_server = ParameterServer(
       filename="modules/runtime/tests/data/deterministic_scenario.json")
-    scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
+    scenario_generation = DeterministicScenarioGeneration(num_scenarios=1,
                                                           random_seed=0,
                                                           params=param_server)
     viewer = MPViewer(params=param_server,
