@@ -27,24 +27,14 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
 
   // select state and get p0
-  geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),
-                         ego_vehicle_state(StateDefinition::Y_POSITION));
+  geometry::Point2d pose = observed_world.CurrentEgoPosition();
 
-  geometry::Line line;
-  auto road_corr = observed_world.GetRoadCorridor();
-  if (!road_corr) {
-    LOG(ERROR) << "No road corridor for longitudinal acceleration behavior found.";
+  auto lane_corr = observed_world.GetLaneCorridor();
+  if (!lane_corr) {
     this->SetLastTrajectory(traj);
     return traj;
   }
-
-  const auto lane_corr = road_corr->GetCurrentLaneCorridor(pose);
-  if(!lane_corr) {
-      LOG(ERROR) << "No lane corridor for longitudinal acceleration behavior found.";
-      this->SetLastTrajectory(traj);
-      return traj;
-  }
-  line = lane_corr->GetCenterLine();
+  geometry::Line line = lane_corr->GetCenterLine();
 
   // check whether linestring is empty
   if (line.obj_.size() > 0) {
