@@ -113,11 +113,11 @@ TEST(free_road_term, behavior_idm_classic) {
 TEST(interaction_term, behavior_idm_classic) {
   DefaultParams params;
   DummyBehaviorIDM behavior(&params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float minimum_spacing = behavior.GetMinimumSpacing();
-  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
-  const float max_acceleration = behavior.GetMaxAcceleration();
-  const float comfortable_braking_acceleration =
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double minimum_spacing = behavior.GetMinimumSpacing();
+  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const double max_acceleration = behavior.GetMaxAcceleration();
+  const double comfortable_braking_acceleration =
       behavior.GetComfortableBrakingAcceleration();
 
   // Create an observed world with specific goal definition and the
@@ -135,7 +135,7 @@ TEST(interaction_term, behavior_idm_classic) {
 
   // vehicle is in front, zero velocity equal desired velocity thus only
   // interaction term
-  float ego_velocity = desired_velocity, rel_distance = 7.0,
+  double ego_velocity = desired_velocity, rel_distance = 7.0,
         velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
       1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
@@ -145,8 +145,8 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  double desired_acceleration =
-      -max_acceleration * pow(helper_state / rel_distance, 2);
+  double desired_acceleration = std::max(-max_acceleration, 
+      -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 
   // velocity difference to other vehicle
@@ -159,8 +159,8 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  desired_acceleration =
-      -max_acceleration * pow(helper_state / rel_distance, 2);
+  desired_acceleration = std::max(-max_acceleration, 
+      -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 }
 
