@@ -70,9 +70,6 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
 
   SetLastAction(Action(DiscreteAction(active_motion_)));
 
-  DLOG(INFO) << "Motion primitive " << active_motion_ << " with input " << motion_primitives_[active_motion_] <<
-          " gives trajectory " << traj;
-
   this->SetLastTrajectory(traj);
   return traj;
 }
