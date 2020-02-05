@@ -46,6 +46,12 @@ TEST(setter_params, param_tests) {
   child_params2->SetListListFloat("Test::21", {{0,22}, {1,2},{0.5,1.5}});
   EXPECT_EQ(params.GetListListFloat("Child::Child2::Test::21", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,22}, {1,2},{0.5,1.5}}));
 
+  params.SetReal("Test1::Test2::Test3::2", 123123.23783f);
+  auto child_params3 = params.AddChild("Test1")->AddChild("Test2");
+  EXPECT_EQ(child_params3->GetReal("Test3::2","", 1.0f), 123123.23783f);
+  auto child_params4 = child_params3->AddChild("Test3");
+  EXPECT_EQ(child_params4->GetReal("2","", 1.0f), 123123.23783f);
+
 }
 
 int main(int argc, char **argv) {
