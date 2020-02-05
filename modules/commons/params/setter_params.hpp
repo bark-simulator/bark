@@ -10,14 +10,15 @@
 #include <string>
 #include <unordered_map>
 #include "modules/commons/params/params.hpp"
-
+#include "modules/commons/util/util.hpp"
 namespace modules {
 namespace commons {
 
 // This class is mainly useful for test definitions in C++
 class SetterParams : public Params {
  public:
-  SetterParams() : params_bool_(), params_real_(), params_int_(), params_listlist_float_() {}
+  SetterParams(bool log_if_default=false) : params_bool_(), params_real_(), params_int_(),
+                         params_listlist_float_(), log_if_default_(log_if_default) {}
 
   virtual ~SetterParams() {}
 
@@ -56,6 +57,9 @@ class SetterParams : public Params {
       if(it != map.end()) {
         return it->second;
       } else {
+        if(log_if_default_) {
+          LOG(INFO) << "Using default " << default_value <<" for param \"" << param_name << "\"";
+        }
         return default_value;
       }
     }
@@ -63,6 +67,8 @@ class SetterParams : public Params {
     std::unordered_map<std::string, float> params_real_;
     std::unordered_map<std::string, int> params_int_;
     std::unordered_map<std::string, std::vector<std::vector<float>>> params_listlist_float_;
+
+    bool log_if_default_;
 
 };
 

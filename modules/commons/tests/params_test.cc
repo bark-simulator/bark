@@ -18,7 +18,7 @@
 TEST(setter_params, param_tests) {
   std::cout << "Start test\n";
 
-  modules::commons::SetterParams params;
+  modules::commons::SetterParams params(true);
 
   params.SetReal("Test::2", 0.5f);
   EXPECT_EQ(params.GetReal("Test::2","", 1.0f), 0.5f);
