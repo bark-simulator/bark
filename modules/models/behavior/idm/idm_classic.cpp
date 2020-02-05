@@ -79,10 +79,13 @@ double BehaviorIDMClassic::CalcNetDistance(
 double BehaviorIDMClassic::CalcIDMAcc(const double net_distance,
                                       const double vel_ego,
                                       const double vel_other) const {
-  const float max_acceleration = GetMaxAcceleration();
-  const float acc = max_acceleration *
-                    (CalcFreeRoadTerm(vel_ego) -
-                     CalcInteractionTerm(net_distance, vel_ego, vel_other));
+  const float acc_max = GetMaxAcceleration();
+  const float free_road_term = CalcFreeRoadTerm(vel_ego);
+  const float interaction_term =
+      CalcInteractionTerm(net_distance, vel_ego, vel_other);
+  const double acc =
+      std::min(acc_max, acc_max * (free_road_term - interaction_term));
+
   return acc;
 }
 
