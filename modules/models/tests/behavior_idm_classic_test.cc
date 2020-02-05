@@ -45,7 +45,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
       double vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
       acc = CalcIDMAcc(net_distance, vel_i, vel_other);
     } else {
-      acc = get_max_acceleration() * CalcFreeRoadTerm(vel_i);
+      acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
     }
     return acc;
   }
@@ -60,9 +60,9 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 TEST(free_road_term, behavior_idm_classic) {
   DefaultParams params;
   DummyBehaviorIDM behavior(&params);
-  const float desired_velocity = behavior.get_desired_velocity();
-  const float max_acceleration = behavior.get_max_acceleration();
-  const int exponent = behavior.get_exponent();
+  const float desired_velocity = behavior.GetDesiredVelocity();
+  const float max_acceleration = behavior.GetMaxAcceleration();
+  const int exponent = behavior.GetExponent();
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
@@ -113,12 +113,12 @@ TEST(free_road_term, behavior_idm_classic) {
 TEST(interaction_term, behavior_idm_classic) {
   DefaultParams params;
   DummyBehaviorIDM behavior(&params);
-  const float desired_velocity = behavior.get_desired_velocity();
-  const float minimum_spacing = behavior.get_minimum_spacing();
-  const float desired_time_headway = behavior.get_desired_time_headway();
-  const float max_acceleration = behavior.get_max_acceleration();
+  const float desired_velocity = behavior.GetDesiredVelocity();
+  const float minimum_spacing = behavior.GetMinimumSpacing();
+  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const float max_acceleration = behavior.GetMaxAcceleration();
   const float comfortable_braking_acceleration =
-      behavior.get_comfortable_braking_acceleration();
+      behavior.GetComfortableBrakingAcceleration();
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
@@ -167,7 +167,7 @@ TEST(interaction_term, behavior_idm_classic) {
 TEST(drive_free, behavior_idm_classic) {
   DefaultParams params;
   DummyBehaviorIDM behavior(&params);
-  const float desired_velocity = behavior.get_desired_velocity();
+  const float desired_velocity = behavior.GetDesiredVelocity();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
@@ -194,9 +194,9 @@ TEST(drive_free, behavior_idm_classic) {
 TEST(drive_leading_vehicle, behavior_idm_classic) {
   DefaultParams params;
   DummyBehaviorIDM behavior(&params);
-  const float desired_velocity = behavior.get_desired_velocity();
-  const float minimum_spacing = behavior.get_minimum_spacing();
-  const float desired_time_headway = behavior.get_desired_time_headway();
+  const float desired_velocity = behavior.GetDesiredVelocity();
+  const float minimum_spacing = behavior.GetMinimumSpacing();
+  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance

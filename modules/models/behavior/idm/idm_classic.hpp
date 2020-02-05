@@ -37,20 +37,18 @@ class BehaviorIDMClassic : public BehaviorModel {
 
   virtual float GetMinVelocity() { return 0.0f; }
   virtual float GetMaxVelocity() { return 50.0f; }
-  const double get_desired_velocity() const {
+  const double GetDesiredVelocity() const {
     return 15.0f;
   }  // unit is meter/second
-  const float get_minimum_spacing() const { return 2.0f; }  // unit is meter
-  const float get_desired_time_headway() const {
-    return 1.5f;
-  }  // unit is seconds
-  const float get_max_acceleration() const {
+  const float GetMinimumSpacing() const { return 2.0f; }      // unit is meter
+  const float GetDesiredTimeHeadway() const { return 1.5f; }  // unit is seconds
+  const float GetMaxAcceleration() const {
     return 1.7f;
   }  // unit is meter/second^2
-  const float get_comfortable_braking_acceleration() const {
+  const float GetComfortableBrakingAcceleration() const {
     return 1.67f;
   }  // unit is meter/second^2
-  const int get_exponent() const { return 4; }
+  const int GetExponent() const { return 4; }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };

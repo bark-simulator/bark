@@ -22,8 +22,8 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 
 double BehaviorIDMClassic::CalcFreeRoadTerm(const double vel_ego) const {
-  const float desired_velocity = get_desired_velocity();
-  const int exponent = get_exponent();
+  const float desired_velocity = GetDesiredVelocity();
+  const int exponent = GetExponent();
 
   double free_road_term = 1 - pow(vel_ego / desired_velocity, exponent);
   return free_road_term;
@@ -33,11 +33,11 @@ double BehaviorIDMClassic::CalcInteractionTerm(const double net_distance,
                                                const double vel_ego,
                                                const double vel_other) const {
   // Parameters
-  const float minimum_spacing = get_minimum_spacing();
-  const float desired_time_headway = get_desired_time_headway();
-  const float max_acceleration = get_max_acceleration();
+  const float minimum_spacing = GetMinimumSpacing();
+  const float desired_time_headway = GetDesiredTimeHeadway();
+  const float max_acceleration = GetMaxAcceleration();
   const float comfortable_braking_acceleration =
-      get_comfortable_braking_acceleration();
+      GetComfortableBrakingAcceleration();
 
   const double net_velocity = vel_ego - vel_other;
 
@@ -79,15 +79,15 @@ double BehaviorIDMClassic::CalcNetDistance(
 double BehaviorIDMClassic::CalcIDMAcc(const double net_distance,
                                       const double vel_ego,
                                       const double vel_other) const {
-  const float max_acceleration = get_max_acceleration();
+  const float max_acceleration = GetMaxAcceleration();
   const float acc = max_acceleration *
                     (CalcFreeRoadTerm(vel_ego) -
                      CalcInteractionTerm(net_distance, vel_ego, vel_other));
   return acc;
 }
 
-
-//! IDM Model will assume other front vehicle as constant velocity during delta_time
+//! IDM Model will assume other front vehicle as constant velocity during
+//! delta_time
 Trajectory BehaviorIDMClassic::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
@@ -148,7 +148,7 @@ Trajectory BehaviorIDMClassic::Plan(
         traveled_other = vel_other * dt;
         net_distance += traveled_other - traveled_ego;
       } else {
-        acc = get_max_acceleration() * CalcFreeRoadTerm(vel_i);
+        acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
       }
 
       BARK_EXPECT_TRUE(!std::isnan(acc));
