@@ -79,13 +79,13 @@ double BehaviorIDMClassic::CalcNetDistance(
 double BehaviorIDMClassic::CalcIDMAcc(const double net_distance,
                                       const double vel_ego,
                                       const double vel_other) const {
-  const float acc_max = GetMaxAcceleration();
-  const float free_road_term = CalcFreeRoadTerm(vel_ego);
-  const float interaction_term =
+  const double acc_max = GetMaxAcceleration();
+  const double free_road_term = CalcFreeRoadTerm(vel_ego);
+  const double interaction_term =
       CalcInteractionTerm(net_distance, vel_ego, vel_other);
-  const double acc =
-      std::min(acc_max, acc_max * (free_road_term - interaction_term));
-
+  double acc = acc_max * (free_road_term - interaction_term);
+  // For now, we assume the IDM to brake with -acc_max
+  acc = std::max(std::min(acc, acc_max), -acc_max);
   return acc;
 }
 
