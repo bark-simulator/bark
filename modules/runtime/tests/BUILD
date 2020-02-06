@@ -40,6 +40,14 @@ py_test(
 )
 
 py_test(
+  name = "py_param_server_tests",
+  srcs = ["py_param_server_tests.py"],
+  data = ['//python:bark.so'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters" ]
+)
+
+py_test(
   name = "py_evaluation_tests",
   srcs = ["py_evaluation_tests.py"],
   data = ['//python:bark.so'],
