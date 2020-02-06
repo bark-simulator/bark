@@ -21,7 +21,7 @@ class CppParamServerTestObject {
                      {{1.0,3.4545234}, {1.1266135,2.0, 3434.4}});
     }
 
-    bool GetRealValue() const { return value_float_;} 
+    float GetRealValue() const { return value_float_;} 
     bool GetBoolValueTrue() const { return value_bool_true_;} 
     bool GetBoolValueFalse() const { return value_bool_false_;} 
     float GetIntValue() const { return value_int_;} 
@@ -33,7 +33,7 @@ class CppParamServerTestObject {
     float value_float_;
     bool value_bool_false_;
     bool value_bool_true_;
-    bool value_int_;
+    int value_int_;
     modules::commons::ListListFloat value_list_list_float_;
 
     std::shared_ptr<modules::commons::Params> params_;
