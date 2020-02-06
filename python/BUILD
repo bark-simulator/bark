@@ -22,6 +22,7 @@ cc_binary(
     "//modules/world/goal_definition:goal_definition",
     "//modules/world/evaluation:evaluation",
     "//modules/commons/params:params",
+    "//modules/commons/util:util",
     "//modules/models/execution/interpolation:interpolation",
     "//modules/models/behavior/constant_velocity:constant_velocity",
     "//modules/models/behavior/motion_primitives:motion_primitives",

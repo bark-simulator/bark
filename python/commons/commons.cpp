@@ -5,6 +5,7 @@
 
 
 #include "commons.hpp"
+#include "modules/commons/params/setter_params.hpp"
 
 namespace py = pybind11;
 
@@ -22,7 +23,15 @@ void python_commons(py::module m) {
       .def("setBool", &Params::SetBool)
       .def("setReal", &Params::SetReal)
       .def("getCondensedParamList", &Params::GetCondensedParamList)
-      .def("setInt", &Params::SetInt);
+      .def("setInt", &Params::SetInt)
+      .def(py::pickle(
+      [](const Params* p) -> py::list {
+        return py::list(p.GetCondensedParamList());
+      },
+      [](py::list  &l)  {
+        ParamList param_list =  l.cast<ParamList>()
+        return new SetterParams(false, param_list);
+      }));
     m.def("ParamsTest", &DoSomeParams);
 }
 

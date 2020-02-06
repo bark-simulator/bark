@@ -139,6 +139,21 @@ class ParameterServer(Params):
                         hierarchy, description, default_value)
         return
 
+    def getCondensedParamList(self):
+        hierarchy_delimiter = "::"
+        condensed_param_list = []
+        for key, value in self.store.items():
+            if isinstance(value, ParameterServer):
+                child_list = value.getCondensedParamList()
+                for param_tuple in child_list:
+                    param_name = "{}{}{}".format(key,
+                                    hierarchy_delimiter, param_tuple[0])
+                    param_value = param_tuple[1]
+                    condensed_param_list.append(tuple(param_name, param_value))
+            else:
+                condensed_param_list.append(tuple(key, value))
+        return condensed_param_list
+
     def get_val_from_string(self, hierarchy, description, default_value):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
         return self.get_val_iter(hierarchy, description, default_value)
