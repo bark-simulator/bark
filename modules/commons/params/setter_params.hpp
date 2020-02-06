@@ -48,7 +48,7 @@ class SetterParams : public Params {
   virtual void SetListListFloat(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) { set_parameter(params_listlist_float_, param_name, value); }
 
-  virtual CondensedParamList GetCondensedParamList() { throw; } // < not needed atm
+  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
 
   virtual int operator[](const std::string &param_name) { throw; } //< not supported atm 
 
@@ -115,8 +115,9 @@ class SetterParams : public Params {
 
 };
 
+
 struct ParamVisitor : public boost::static_visitor<> {
-  ParamVisitor(const SetterParams* params, const std::string& param_name) :
+  ParamVisitor(SetterParams* params, const std::string& param_name) :
          params_(params), param_name_(param_name) {}
   void operator() (bool b) const { params_->SetBool(param_name_, b); }
   void operator() (float r) const { params_->SetReal(param_name_, r); }
@@ -124,12 +125,14 @@ struct ParamVisitor : public boost::static_visitor<> {
   void operator() (const ListListFloat& l) const { params_->SetListListFloat(param_name_, l); }
 
 private:
-  const SetterParams* params_;
+  SetterParams* params_;
   const std::string& param_name_;
-}
+
+};
+
 
 SetterParams::SetterParams(bool log_if_default, const CondensedParamList& param_list) {
-  for(const& ParamPair param_pair : param_list) {
+  for(const auto& param_pair : param_list) {
     const auto& param_name = param_pair.first;
     const auto& param_variant = param_pair.second;
     boost::apply_visitor(ParamVisitor(this, param_name), param_variant);

@@ -109,8 +109,6 @@ class PyParams : public Params {
         CondensedParamList,
         );
   }
-  }
-
 
 };
 

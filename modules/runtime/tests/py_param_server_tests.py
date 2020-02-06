@@ -3,6 +3,8 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import unittest
+
 from modules.runtime.commons.parameters import ParameterServer
 
 
