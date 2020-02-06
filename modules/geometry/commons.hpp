@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
-#include "modules/commons/util.hpp"
+#include "modules/commons/util/util.hpp"
 
 namespace modules {
 namespace geometry {
