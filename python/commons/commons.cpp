@@ -21,6 +21,7 @@ void python_commons(py::module m) {
       .def("getInt", &Params::GetInt)
       .def("setBool", &Params::SetBool)
       .def("setReal", &Params::SetReal)
+      .def("getCondensedParamList", &Params::GetCondensedParamList)
       .def("setInt", &Params::SetInt);
     m.def("ParamsTest", &DoSomeParams);
 }
