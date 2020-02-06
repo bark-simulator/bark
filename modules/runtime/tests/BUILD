@@ -39,6 +39,15 @@ py_test(
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
+cc_library(
+    name="py_param_server_test_helper",
+    hdrs=["py_param_server_test_helper.hpp"],
+    deps=[
+        "//modules/commons:commons"
+    ],
+    visibility = ["//visibility:public"],
+)
+
 py_test(
   name = "py_param_server_tests",
   srcs = ["py_param_server_tests.py"],

@@ -48,7 +48,7 @@ class SetterParams : public Params {
   virtual void SetListListFloat(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) { set_parameter(params_listlist_float_, param_name, value); }
 
-  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
+  virtual CondensedParamList GetCondensedParamList() { throw; } // < not needed atm
 
   virtual int operator[](const std::string &param_name) { throw; } //< not supported atm 
 
@@ -132,6 +132,7 @@ private:
 
 
 SetterParams::SetterParams(bool log_if_default, const CondensedParamList& param_list) {
+  LOG(INFO) <<"loading params";
   for(const auto& param_pair : param_list) {
     const auto& param_name = param_pair.first;
     const auto& param_variant = param_pair.second;

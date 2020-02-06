@@ -41,6 +41,12 @@ class ParameterServer(Params):
             else:  # else it is a Params instance
                 self.store[new_key] = ParameterServer()
                 return self.store[new_key]
+    
+    def __getstate__(self):
+        return self.convert_to_dict()
+    def __setstate__(self, d):
+        self.store = d
+
 
     def __setitem__(self, key, value):
         if isinstance(key, tuple):
@@ -139,7 +145,7 @@ class ParameterServer(Params):
                         hierarchy, description, default_value)
         return
 
-    def getCondensedParamList(self):
+    def GetCondensedParamList(self):
         hierarchy_delimiter = "::"
         condensed_param_list = []
         for key, value in self.store.items():
@@ -149,9 +155,9 @@ class ParameterServer(Params):
                     param_name = "{}{}{}".format(key,
                                     hierarchy_delimiter, param_tuple[0])
                     param_value = param_tuple[1]
-                    condensed_param_list.append(tuple(param_name, param_value))
+                    condensed_param_list.append((param_name, param_value))
             else:
-                condensed_param_list.append(tuple(key, value))
+                condensed_param_list.append((key, value))
         return condensed_param_list
 
     def get_val_from_string(self, hierarchy, description, default_value):

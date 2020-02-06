@@ -14,6 +14,7 @@ cc_binary(
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen", 
+    "//modules/runtime/tests:py_param_server_test_helper",
     "//modules/geometry:geometry",
     "//modules/world/opendrive:opendrive",
     "//modules/world/tests:make_test_xodr_map",

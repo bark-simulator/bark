@@ -42,7 +42,7 @@ class Params {
                       const std::string &description,
                       const ListListFloat &default_value) = 0;
 
-  virtual CondensedParamList GetCondensedParamList() const = 0;
+  virtual CondensedParamList GetCondensedParamList() = 0;
 
 
   virtual void SetBool(const std::string &param_name, const bool &value) = 0;
