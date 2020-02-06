@@ -15,13 +15,13 @@ using namespace modules::models::execution;
 using namespace modules::commons;
 
 TEST(execution_model, execution_model_interpolate) {
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
   Trajectory test_trajectory(11, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10); // Time 0 to 10 seconds
   test_trajectory.col(StateDefinition::X_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10);
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
 
   State initial_state = test_trajectory.row(0);
   Trajectory followed_trajectory1 = exec_model->Execute(0.5, test_trajectory, dyn_model, initial_state);

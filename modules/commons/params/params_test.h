@@ -14,9 +14,9 @@
 namespace modules {
 namespace commons {
 
-inline void DoSomeParams(Params *params) {
+inline void DoSomeParams(const ParamsPtr params) {
   // CHILD TEST: DOES NOT WORK SINCE P IS NOT OF CLASS PARAMSERVER
-  Params *params2 = params->AddChild("newchild");
+  auto params2 = params->AddChild("newchild");
 
   // test int, bool and real access with hierarchies
   std::cout << params2->GetInt("hierarchy1::hierarchy2", "test", 40);

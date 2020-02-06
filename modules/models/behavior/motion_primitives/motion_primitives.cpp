@@ -14,7 +14,8 @@ namespace behavior {
 
 using modules::models::dynamic::StateDefinition;
 
-BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params) : 
+BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
+                                                   const commons::ParamsPtr& params) : 
     BehaviorModel(params),
     dynamic_model_(dynamic_model),
     motion_primitives_(),

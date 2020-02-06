@@ -14,13 +14,13 @@ A common base class for all BARK classes provides common functionality. Currentl
 ```cpp
 class BaseType {
  public:
-  explicit BaseType(Params* params) : params_(params) {}
+  explicit BaseType(ParamPtr params) : params_(params) {}
   ~BaseType() {}
 
-  Params* GetParams() const { return params_;}
+  ParamPtr GetParams() const { return params_;}
 
  private:
-  Params* params_;  // do not own
+  ParamPtr params_;  // do not own
 };
 ```
 
@@ -56,6 +56,6 @@ class Params {
 
   virtual int operator[](const std::string &param_name) = 0;
 
-  virtual Params* AddChild(const std::string &name) = 0;
+  virtual ParamPtr AddChild(const std::string &name) = 0;
 };
 ```

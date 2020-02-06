@@ -31,7 +31,7 @@ void python_runtime(py::module m) {
   py::class_<Runtime,
              PyRuntime,
              RuntimePtr>(m, "PyRuntime")
-    .def(py::init<modules::commons::Params*>())
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("step", py::overload_cast<>(&Runtime::Step))
     .def("step", py::overload_cast<int>(&Runtime::Step))
     .def("step", py::overload_cast<float>(&Runtime::Step))

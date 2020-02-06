@@ -52,15 +52,15 @@ class SetterParams : public Params {
 
   virtual int operator[](const std::string &param_name) { throw; } //< not supported atm 
 
-  virtual Params *AddChild(const std::string &name) {
+  virtual ParamsPtr AddChild(const std::string &name) {
       const auto it = childs_.find(name);
       if(it != childs_.end()) {
-        return it->second.get();
+        return it->second;
       }
 
       std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
       childs_[name] = child;
-      return child.get();
+      return child;
   }
 
   private: 
@@ -74,7 +74,7 @@ class SetterParams : public Params {
       auto pos = param_name.find(delimiter);
       if (pos != std::string::npos) {
         std::string child_name = param_name.substr(0, pos);
-        auto child_param = dynamic_cast<SetterParams*>(this->AddChild(child_name));
+        auto child_param = std::dynamic_pointer_cast<SetterParams>(this->AddChild(child_name));
         std::string child_param_name = param_name.erase(0, pos + delimiter.length());
         child_param->set_parameter(child_param->get_param_map<T>(), child_param_name, value);
         return;
@@ -94,7 +94,7 @@ class SetterParams : public Params {
         auto pos = param_name.find(delimiter);
         if (pos != std::string::npos) {
           std::string child_name = param_name.substr(0, pos);
-          auto child_param = dynamic_cast<SetterParams*>(this->AddChild(child_name));
+          auto child_param = std::dynamic_pointer_cast<SetterParams>(this->AddChild(child_name));
           std::string child_param_name = param_name.erase(0, pos + delimiter.length());
           return child_param->get_parameter(child_param->get_param_map<T>(), child_param_name, default_value);
         }
