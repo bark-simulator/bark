@@ -101,6 +101,17 @@ class PyParams : public Params {
         AddChild,
         name);
   }
+
+  CondensedParamList GetCondensedParamList() const override {
+    PYBIND11_OVERLOAD_PURE(
+        CondensedParamList,
+        Params,
+        CondensedParamList,
+        );
+  }
+  }
+
+
 };
 
 void python_commons(py::module m);
