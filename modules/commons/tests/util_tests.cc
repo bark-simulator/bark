@@ -11,7 +11,7 @@
 #include <boost/make_shared.hpp>
 #include "gtest/gtest.h"
 
-#include "modules/commons/util.hpp"
+#include "modules/commons/util/util.hpp"
 
 
 // TODO(fortiss): fill our this test

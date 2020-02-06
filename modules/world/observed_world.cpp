@@ -56,14 +56,14 @@ void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
   settings.ApplySettings(*this);
 }
 
-WorldPtr ObservedWorld::Predict(float time_span) const {
+ObservedWorldPtr ObservedWorld::Predict(float time_span) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
   next_world->Step(time_span);
-  return std::dynamic_pointer_cast<World>(next_world);
+  return next_world;
 }
 
-WorldPtr ObservedWorld::Predict(float time_span,
+ObservedWorldPtr ObservedWorld::Predict(float time_span,
                                 const DiscreteAction& ego_action) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
@@ -77,7 +77,7 @@ WorldPtr ObservedWorld::Predict(float time_span,
                   "ego prediction, adjust prediction settings.";  // NOLINT
   }
   next_world->Step(time_span);
-  return std::dynamic_pointer_cast<World>(next_world);
+  return next_world;
 }
 
 }  // namespace world

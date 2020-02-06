@@ -11,6 +11,7 @@
 #include <iostream>     // std::cerr
 #include <boost/stacktrace.hpp>
 #include <glog/logging.h>
+#include "modules/commons/util/operators.hpp"
 
 
 namespace modules {
