@@ -15,15 +15,15 @@ namespace commons {
 
 class BaseType {
  public:
-  explicit BaseType(Params* params) : params_(params) {}
+  explicit BaseType(ParamsPtr params) : params_(params) {}
 
   BaseType(const BaseType& base) : params_(base.params_) {}
   ~BaseType() {}
 
-  Params* GetParams() const { return params_;}
+  ParamsPtr GetParams() const { return params_;}
 
  private:
-  Params* params_;  // do not own
+  ParamsPtr params_;  // do not own
 };
 
 }  // namespace commons

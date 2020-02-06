@@ -23,7 +23,7 @@ using modules::world::objects::AgentPtr;
 
 
 
-BehaviorIDMClassic::BehaviorIDMClassic(commons::Params* params) : BehaviorModel(params) {
+BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params) {
   if(params) {
     param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
     param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);

@@ -54,7 +54,7 @@ struct FrontRearAgents {
 
 class World : public commons::BaseType {
  public:
-  explicit World(commons::Params* params);
+  explicit World(const commons::ParamsPtr& params);
   explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
 

@@ -52,8 +52,10 @@ class Params {
     const std::string &param_name,
     const ListListFloat &value) = 0;
   virtual int operator[](const std::string &param_name) = 0;
-  virtual Params* AddChild(const std::string &name) = 0;
+  virtual std::shared_ptr<Params> AddChild(const std::string &name) = 0;
 };
+
+typedef std::shared_ptr<Params> ParamsPtr;
 
 
 }  // namespace commons

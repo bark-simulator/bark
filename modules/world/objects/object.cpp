@@ -13,7 +13,7 @@ namespace objects {
 AgentId Object::agent_count = 0;
 
 Object::Object(const geometry::Polygon& shape,
-               commons::Params* params,
+               const commons::ParamsPtr& params,
                const geometry::Model3D& model_3d) :
   BaseType(params),
   shape_(shape),

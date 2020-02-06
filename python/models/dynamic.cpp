@@ -15,13 +15,13 @@ using namespace modules::commons;
 
 void python_dynamic(py::module m) {
   py::class_<DynamicModel, PyDynamicModel, DynamicModelPtr>(m, "DynamicModel")
-      .def(py::init<Params*>())
+      .def(py::init<ParamsPtr>())
       .def("stateSpaceModel", &DynamicModel::StateSpaceModel);
 
   py::class_<SingleTrackModel,
              DynamicModel,
              std::shared_ptr<SingleTrackModel>>(m, "SingleTrackModel")
-    .def(py::init<Params*>())
+    .def(py::init<ParamsPtr>())
     .def("__repr__", [](const SingleTrackModel &m) {
       return "bark.dynamic.SingleTrackModel";
     })
@@ -33,13 +33,13 @@ void python_dynamic(py::module m) {
         if (s != "SingleTrackModel")
           throw std::runtime_error("Invalid dynamic modelstate!");
         // param pointer must be set via python
-        return new SingleTrackModel(new DefaultParams());
+        return new SingleTrackModel(std::make_shared<DefaultParams>());
     }));
 
   py::class_<TripleIntegratorModel,
              DynamicModel,
              std::shared_ptr<TripleIntegratorModel>>(m, "TripleIntegratorModel")
-    .def(py::init<Params*>())
+    .def(py::init<ParamsPtr>())
     .def("__repr__", [](const TripleIntegratorModel &m) {
       return "bark.dynamic.TripleIntegratorModel";
     })
@@ -50,7 +50,7 @@ void python_dynamic(py::module m) {
       [](std::string s) {  // __setstate__
         if (s != "TripleIntegratorModel")
           throw std::runtime_error("Invalid dynamic modelstate!");
-        return new TripleIntegratorModel(new DefaultParams());
+        return new TripleIntegratorModel(std::make_shared<DefaultParams>());
     }));
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())

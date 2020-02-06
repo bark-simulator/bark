@@ -17,7 +17,7 @@ namespace behavior {
 
 class BehaviorIDMClassic : public BehaviorModel {
  public:
-  explicit BehaviorIDMClassic(commons::Params* params);
+  explicit BehaviorIDMClassic(const commons::ParamsPtr& params);
 
   virtual ~BehaviorIDMClassic() {}
 
@@ -53,7 +53,7 @@ class BehaviorIDMClassic : public BehaviorModel {
 
   private:
     // Parameters
-    void set_parameters(commons::Params* params);
+    void set_parameters(const commons::ParamsPtr& params);
     float param_minimum_spacing_;
     float param_desired_time_head_way_;
     float param_max_acceleration_;

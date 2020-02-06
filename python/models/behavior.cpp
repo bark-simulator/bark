@@ -27,7 +27,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorModel,
              PyBehaviorModel,
              BehaviorModelPtr>(m, "BehaviorModel")
-    .def(py::init<modules::commons::Params *>())
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("Plan", &BehaviorModel::Plan)
     .def("Clone", &BehaviorModel::Clone)
     .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
@@ -41,7 +41,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorConstantVelocity>>(m,
                                                    "BehaviorConstantVelocity")
-    .def(py::init<modules::commons::Params*>())
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorConstantVelocity &m) {
       return "bark.behavior.BehaviorConstantVelocity";
     })
@@ -59,7 +59,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorIDMClassic,
              BehaviorModel,
              shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
-    .def(py::init<modules::commons::Params*>())
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorIDMClassic &m) {
       return "bark.behavior.BehaviorIDMClassic";
     })
@@ -76,7 +76,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorMobil,
              BehaviorModel,
              shared_ptr<BehaviorMobil>>(m, "BehaviorMobil")
-      .def(py::init<modules::commons::Params *>())
+      .def(py::init<const modules::commons::ParamsPtr&>())
       .def("__repr__", [](const BehaviorMobil &m) {
         return "bark.behavior.BehaviorMobil";
       })
@@ -96,7 +96,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorMotionPrimitives>>(m,
     "BehaviorMotionPrimitives")
-    .def(py::init<const DynamicModelPtr&, modules::commons::Params *>())
+    .def(py::init<const DynamicModelPtr&, const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorMotionPrimitives &b) {
       return "bark.behavior.BehaviorMotionPrimitives";
     })
@@ -107,7 +107,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<DynamicBehaviorModel>>(m, "DynamicBehaviorModel")
       .def(py::init<const DynamicModelPtr&,
-           modules::commons::Params *>())
+           const modules::commons::ParamsPtr&>())
       .def("__repr__", [](const DynamicBehaviorModel &b) {
         return "bark.behavior.DynamicBehaviorModel";
       });
