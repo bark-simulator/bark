@@ -18,7 +18,7 @@
 TEST(setter_params, param_tests) {
   std::cout << "Start test\n";
 
-  modules::commons::SetterParams params;
+  modules::commons::SetterParams params(true);
 
   params.SetReal("Test::2", 0.5f);
   EXPECT_EQ(params.GetReal("Test::2","", 1.0f), 0.5f);
@@ -31,6 +31,27 @@ TEST(setter_params, param_tests) {
 
   params.SetListListFloat("Test::2", {{0,1}, {0,2},{0.5,1.5}});
   EXPECT_EQ(params.GetListListFloat("Test::2", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,1}, {0,2},{0.5,1.5}}));
+
+  auto child_params = params.AddChild("Child");
+  child_params->SetInt("Test::4", 21);
+  EXPECT_EQ(params.GetInt("Child::Test::4", "", 1), 21);
+
+  child_params->SetBool("Test::5", true);
+  EXPECT_EQ(params.GetBool("Child::Test::5", "", false), true);
+
+  auto child_params2 = child_params->AddChild("Child2");
+  child_params2->SetReal("Test::22", 4031.1f);
+  EXPECT_EQ(params.GetReal("Child::Child2::Test::22", "", 1), 4031.1f);
+
+  child_params2->SetListListFloat("Test::21", {{0,22}, {1,2},{0.5,1.5}});
+  EXPECT_EQ(params.GetListListFloat("Child::Child2::Test::21", "", {{0,1}, {0,2}}), std::vector<std::vector<float>>({{0,22}, {1,2},{0.5,1.5}}));
+
+  params.SetReal("Test1::Test2::Test3::2", 123123.23783f);
+  auto child_params3 = params.AddChild("Test1")->AddChild("Test2");
+  EXPECT_EQ(child_params3->GetReal("Test3::2","", 1.0f), 123123.23783f);
+  auto child_params4 = child_params3->AddChild("Test3");
+  EXPECT_EQ(child_params4->GetReal("2","", 1.0f), 123123.23783f);
+
 }
 
 int main(int argc, char **argv) {

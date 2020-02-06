@@ -9,6 +9,9 @@ cc_library(
         "setter_params.hpp"
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//modules/commons/util:util"
+    ]
 )
 
 cc_library(
