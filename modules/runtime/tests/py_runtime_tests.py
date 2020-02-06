@@ -61,27 +61,6 @@ class ScenarioGenerationTests(unittest.TestCase):
     #np.testing.assert_array_equal(scenario_loader._scenario_list[0]._agent_list[1].state,
     #  np.array([0., 10., 0., 0., 5.0]))
 
-  def test_visualization(self):
-    param_server = ParameterServer(
-      filename="modules/runtime/tests/data/deterministic_scenario.json")
-    scenario_generation = DeterministicScenarioGeneration(num_scenarios=1,
-                                                          random_seed=0,
-                                                          params=param_server)
-    viewer = MPViewer(params=param_server,
-                      follow_agent_id=False,
-                      use_world_bounds=True)
-    env = Runtime(0.2,
-                  viewer,
-                  scenario_generation,
-                  render=True)
-
-    env.reset()
-
-    for _ in range(0, 5):
-      print("Scenario {}:".format(str(env._scenario_generator._current_scenario_idx)))
-      for _ in range(0, 5):
-        env.step()
-      env.reset()
 
 if __name__ == '__main__':
   unittest.main()
