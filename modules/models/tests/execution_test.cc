@@ -46,7 +46,7 @@ TEST(execution_model, execution_model_interpolate) {
 /*
 TEST(execution_model, execution_model_mpc) {
 
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
   Trajectory test_trajectory(3, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) = Eigen::ArrayXf::LinSpaced(3, 0, 10); // Time 0 to 10 seconds
@@ -55,8 +55,8 @@ TEST(execution_model, execution_model_mpc) {
   test_trajectory.col(StateDefinition::THETA_POSITION) = Eigen::ArrayXf::LinSpaced(3, 0, 0);
   test_trajectory.col(StateDefinition::VEL_POSITION) = Eigen::ArrayXf::LinSpaced(3, 1, 1);
 
-  ExecutionModelPtr exec_model(new ExecutionModelMpc(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelMpc(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
 
   Trajectory followed_trajectory1 = exec_model->Execute(0.5, test_trajectory, dyn_model, test_trajectory.row(0));
 }

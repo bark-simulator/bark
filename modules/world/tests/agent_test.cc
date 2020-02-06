@@ -25,10 +25,10 @@ using namespace modules::world;
 /*
 TEST(agent, standard_agent) {
 
-    DefaultParams params;
-    ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+    auto params = std::make_shared<DefaultParams>();
+    ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
     DynamicModelPtr dyn_model(new SingleTrackModel());
-    BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+    BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
     Polygon polygon(Pose(1.25,1,0),std::vector<Point2d>{Point2d(0,0),Point2d(0,2),Point2d(4,2),Point2d(4,0),Point2d(0,0)});
 
     ASSERT_TRUE(polygon.Valid());
@@ -36,8 +36,8 @@ TEST(agent, standard_agent) {
     State init_state((int)StateDefinition::MIN_STATE_SIZE);
     init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
 
-    AgentPtr agent(new Agent(init_state,beh_model,dyn_model,exec_model, polygon, &params));
-    WorldPtr world(new World(&params));
+    AgentPtr agent(new Agent(init_state,beh_model,dyn_model,exec_model, polygon, params));
+    WorldPtr world(new World(params));
     
 
        //! new plan view
@@ -91,16 +91,16 @@ TEST(agent, standard_agent) {
 
 TEST(agent, PolygonFromState) {
 
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
 
   Polygon shape(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, shape, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, shape, params));
 
   Polygon poly_out = agent1->GetPolygonFromState(agent1->GetCurrentState());
   
@@ -108,7 +108,7 @@ TEST(agent, PolygonFromState) {
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 5.0, 2.0, 3.14, 0.0, 0.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, shape, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, shape, params));
 
   Polygon poly_out2 = agent2->GetPolygonFromState(agent2->GetCurrentState());
   
