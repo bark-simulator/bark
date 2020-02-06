@@ -46,6 +46,8 @@ class DefaultParams : public Params {
 
   virtual int operator[](const std::string &param_name) { return 0; }
 
+  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
+
   virtual Params *AddChild(const std::string &name) { return this; }
 };
 

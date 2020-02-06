@@ -25,11 +25,11 @@ void python_commons(py::module m) {
       .def("getCondensedParamList", &Params::GetCondensedParamList)
       .def("setInt", &Params::SetInt)
       .def(py::pickle(
-      [](const Params* p) -> py::list {
-        return py::list(p.GetCondensedParamList());
+      [](const Params* p) -> py::tuple {
+        return py::make_tuple(p->GetCondensedParamList());
       },
-      [](py::list  &l)  {
-        ParamList param_list =  l.cast<ParamList>()
+      [](py::tuple  &t)  {
+        CondensedParamList param_list =  t[0].cast<CondensedParamList>();
         return new SetterParams(false, param_list);
       }));
     m.def("ParamsTest", &DoSomeParams);
