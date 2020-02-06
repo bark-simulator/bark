@@ -38,16 +38,16 @@ using modules::world::tests::make_test_world;
 
 TEST(world, world_init)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  AgentPtr agent(new Agent(init_state, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent(new Agent(init_state, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent);
   world->AddAgent(agent);
   world->AddAgent(agent);
@@ -56,16 +56,16 @@ TEST(world, world_init)
 
 TEST(world, world_step)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   ASSERT_TRUE(polygon.Valid());
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  AgentPtr agent(new Agent(init_state, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent(new Agent(init_state, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent);
 
   //! new plan view
@@ -125,23 +125,23 @@ TEST(world, world_step)
 
 TEST(world, world_collision)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 1.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
 
@@ -154,23 +154,23 @@ TEST(world, world_collision)
 
 TEST(world, world_no_collision_agent)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
 
@@ -183,11 +183,11 @@ TEST(world, world_no_collision_agent)
 TEST(world, world_outside_drivable_area) {
   using modules::world::goal_definition::GoalDefinitionPolygon;
 
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
@@ -210,23 +210,23 @@ TEST(world, world_outside_drivable_area) {
 
 TEST(world, nearest_agents)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 1.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
 
@@ -246,7 +246,7 @@ TEST(world, nearest_agents)
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 1.0, 5.0, 0.0, 5.0;
-  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, params));
 
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
@@ -260,23 +260,23 @@ TEST(world, nearest_agents)
 
 TEST(world, agents_intersection_polygon)
 {
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
   
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, polygon, params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, 0.0, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, polygon, params));
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
 
@@ -299,7 +299,7 @@ TEST(world, agents_intersection_polygon)
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 1.0, 3.0, 0.0, 5.0;
-  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, &params));
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model, polygon, params));
 
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
