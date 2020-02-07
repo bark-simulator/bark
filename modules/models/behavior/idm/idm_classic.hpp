@@ -53,7 +53,6 @@ class BehaviorIDMClassic : public BehaviorModel {
 
   private:
     // Parameters
-    void set_parameters(const commons::ParamsPtr& params);
     float param_minimum_spacing_;
     float param_desired_time_head_way_;
     float param_max_acceleration_;
@@ -61,7 +60,7 @@ class BehaviorIDMClassic : public BehaviorModel {
     float param_comfortable_braking_acceleration_;
     float param_min_velocity_;
     float param_max_velocity_;
-    float param_exponent_;
+    int param_exponent_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {

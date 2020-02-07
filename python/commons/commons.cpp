@@ -7,6 +7,7 @@
 #include "commons.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/runtime/tests/py_param_server_test_helper.hpp"
+#include "python/polymorphic_conversion.hpp"
 
 namespace py = pybind11;
 
@@ -25,14 +26,6 @@ void python_commons(py::module m) {
       .def("setReal", &Params::SetReal)
       .def("getCondensedParamList", &Params::GetCondensedParamList)
       .def("setInt", &Params::SetInt);
-      /*.def(py::pickle(
-      [](const Params* p) -> py::tuple {
-        return py::make_tuple(dynamic_cast<const PyParams*>(p)->GetCondensedParamList());
-      },
-      [](py::tuple  &t)  {
-        CondensedParamList param_list =  t[0].cast<CondensedParamList>();
-        return new SetterParams(false, param_list);
-      }));*/
 
 
     m.def("ParamsTest", &DoSomeParams);
@@ -47,11 +40,11 @@ void python_commons(py::module m) {
       .def("GetParams", &CppParamServerTestObject::GetParams)
       .def(py::pickle(
       [](const CppParamServerTestObject& p) -> py::tuple {
-        return py::make_tuple(p.GetParams()->GetCondensedParamList());
+        return py::make_tuple(ParamsToPython(p.GetParams()));
       },
       [](py::tuple  &t)  {
-          const auto param_list = t[0].cast<CondensedParamList>();
-          return CppParamServerTestObject(std::make_shared<SetterParams>(true, param_list));
+          auto params_ptr = PythonToParams(t[0].cast<py::tuple>());
+          return CppParamServerTestObject(params_ptr);
       }));
 
 }
