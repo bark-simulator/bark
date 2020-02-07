@@ -8,7 +8,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include "python/polymorphic_conversion.hpp"
+#include "polymorphic_conversion.hpp"
 
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
