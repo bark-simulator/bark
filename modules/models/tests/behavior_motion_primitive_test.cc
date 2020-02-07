@@ -27,7 +27,7 @@ using namespace modules::geometry;
 class DummyObservedWorld : public ObservedWorld {
  public:
   DummyObservedWorld(const State& init_state,
-                     const ParamPtr& params) :
+                     const ParamsPtr& params) :
     ObservedWorld(std::make_shared<World>(params), AgentId()),
     init_state_(init_state) { }
 

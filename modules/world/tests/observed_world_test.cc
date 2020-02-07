@@ -262,8 +262,8 @@ TEST(observed_world, predict) {
   using modules::world::tests::make_test_observed_world;
   using StateDefinition::VEL_POSITION;
 
-  SetterParams params;
-  params.SetReal("integration_time_delta", 0.01);
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
