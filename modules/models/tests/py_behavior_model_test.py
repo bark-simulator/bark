@@ -60,8 +60,8 @@ class PyBehaviorModelTests(unittest.TestCase):
                   viewer,
                   scenario_generation,
                   render=True)
-    
-    behavior_model = DummyBehaviorModel(param_server)
+    param_server_default = ParameterServer()
+    behavior_model = DummyBehaviorModel(param_server_default)
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
@@ -107,7 +107,8 @@ class PyBehaviorModelTests(unittest.TestCase):
                   render=True)
     
     single_track_model = SingleTrackModel(param_server)
-    behavior_model = DynamicBehaviorModel(single_track_model, param_server)
+    param_server_default = ParameterServer()
+    behavior_model = DynamicBehaviorModel(single_track_model, param_server_default)
 
     env.reset()
     env._world.GetAgent(0).behavior_model = behavior_model
