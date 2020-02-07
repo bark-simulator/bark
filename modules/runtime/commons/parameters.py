@@ -140,6 +140,19 @@ class ParameterServer(Params):
         return
 
     def GetCondensedParamList(self):
+        def check_append(value):
+          if isinstance(value, float) or isinstance(value, int) \
+              or isinstance(value,bool):
+              return True
+          elif isinstance(value, list):
+              for el in value:
+                if not isinstance(el, list):
+                  return False
+                for e in el:
+                  if not isinstance(e, float):
+                    return False
+              return True
+          return False
         hierarchy_delimiter = "::"
         condensed_param_list = []
         for key, value in self.store.items():
@@ -149,9 +162,11 @@ class ParameterServer(Params):
                     param_name = "{}{}{}".format(key,
                                     hierarchy_delimiter, param_tuple[0])
                     param_value = param_tuple[1]
-                    condensed_param_list.append((param_name, param_value))
+                    if check_append(param_value):
+                        condensed_param_list.append((param_name, param_value))
             else:
-                condensed_param_list.append((key, value))
+                if check_append(value):
+                    condensed_param_list.append((key, value))
         test = condensed_param_list
         print(condensed_param_list)
         return condensed_param_list
@@ -198,6 +213,6 @@ class ParameterServer(Params):
     def AddChild(self, name):
         if not name in self.store:
             self.store[name] = ParameterServer()
-        if not isinstance(self.store[name], ParameterServer):
-          self.store[name] = ParameterServer(json=self.store[name])
+        #if not isinstance(self.store[name], ParameterServer):
+        #  self.store[name] = ParameterServer(json=self.store[name])
         return self.store[name]
