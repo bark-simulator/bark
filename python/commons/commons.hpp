@@ -102,7 +102,7 @@ class PyParams : public Params {
         name);
   }
 
-  CondensedParamList GetCondensedParamList() override {
+  CondensedParamList GetCondensedParamList() const override {
     PYBIND11_OVERLOAD_PURE(
         CondensedParamList,
         Params,

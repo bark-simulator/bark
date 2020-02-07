@@ -46,7 +46,7 @@ class DefaultParams : public Params, std::enable_shared_from_this<DefaultParams>
 
   virtual int operator[](const std::string &param_name) { return 0; }
 
-  virtual CondensedParamList GetCondensedParamList() { throw; } // < not needed atm
+  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
 
   virtual ParamsPtr AddChild(const std::string &name) { return shared_from_this(); } // < not needed atm
 };
