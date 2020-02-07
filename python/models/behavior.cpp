@@ -55,7 +55,7 @@ void python_behavior(py::module m) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorConstantVelocity(PythonToParams(t[1].cast<py::tuple>()));
+        return new BehaviorConstantVelocity(PythonToParams(t[0].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorIDMClassic,
@@ -73,7 +73,7 @@ void python_behavior(py::module m) {
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new BehaviorIDMClassic(PythonToParams(t[1].cast<py::tuple>()));
+        return new BehaviorIDMClassic(PythonToParams(t[0].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorMobil,
@@ -92,7 +92,7 @@ void python_behavior(py::module m) {
                 throw std::runtime_error("Invalid behavior model state!");
 
             /* Create a new C++ instance */
-            return new BehaviorMobil(PythonToParams(t[1].cast<py::tuple>())); // param pointer must be set afterwards
+            return new BehaviorMobil(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
         }));
 
   py::class_<BehaviorMotionPrimitives,
