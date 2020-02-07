@@ -5,12 +5,14 @@
 
 
 #include "behavior.hpp"
+#include "python/polymorphic_conversion.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
 #include "python/models/plan/plan.hpp"
+
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
@@ -20,7 +22,7 @@ using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorMobil;
-using  modules::models::dynamic::DynamicModelPtr;
+using modules::models::dynamic::DynamicModelPtr;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -47,13 +49,13 @@ void python_behavior(py::module m) {
     })
     .def(py::pickle(
       [](const BehaviorConstantVelocity& b) {
-        return py::make_tuple(b.GetLastTrajectory());
+        return py::make_tuple(ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorConstantVelocity(nullptr);
+        return new BehaviorConstantVelocity(PythonToParams(t[1].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorIDMClassic,
@@ -65,12 +67,13 @@ void python_behavior(py::module m) {
     })
     .def(py::pickle(
       [](const BehaviorIDMClassic& b) {
-        return py::make_tuple(b.GetLastTrajectory());
+        // We throw away other information such as last trajectories
+        return py::make_tuple(ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new BehaviorIDMClassic(nullptr);
+        return new BehaviorIDMClassic(PythonToParams(t[1].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorMobil,
@@ -82,14 +85,14 @@ void python_behavior(py::module m) {
       })
       .def(py::pickle(
         [](const BehaviorMobil &b) { 
-            return py::make_tuple(b.GetLastTrajectory()); // 0
+            return py::make_tuple(ParamsToPython(b.GetParams()));
         },
         [](py::tuple t) { // __setstate__
             if (t.size() != 1)
                 throw std::runtime_error("Invalid behavior model state!");
 
             /* Create a new C++ instance */
-            return new BehaviorMobil(nullptr); // param pointer must be set afterwards
+            return new BehaviorMobil(PythonToParams(t[1].cast<py::tuple>())); // param pointer must be set afterwards
         }));
 
   py::class_<BehaviorMotionPrimitives,

@@ -43,7 +43,7 @@ cc_binary(
 # needed for external python wrapping (planners)
 cc_library(
     name = "common",
-    hdrs = ["common.hpp"],
+    hdrs = ["common.hpp", "polymorphic_conversion.hpp"],
     deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
