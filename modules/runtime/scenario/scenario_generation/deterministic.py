@@ -83,8 +83,9 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
         agent_state = np.random.uniform(low=agent_state[:, 0],
                                         high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
+      param_server_default = self._local_params.AddChild("Agents")
       agent = self._json_converter.agent_from_json(agent_json,
-                                                   param_server=self._local_params)
+                                                   param_server=param_server_default)
       agent.SetAgentId(agent_json["id"])
       scenario._agent_list.append(agent)
     

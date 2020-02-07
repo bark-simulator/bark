@@ -231,7 +231,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
       agent_params["map_interface"] = world.map
 
       converter = ModelJsonConversion()
-      bark_agent = converter.agent_from_json(agent_params, self._params.AddChild("Agent{}".format(len(agent_list))))
+      param_server = ParameterServer(json=agent_params)
+      bark_agent = converter.agent_from_json(agent_params, param_server)
       agent_list.append(bark_agent)
 
       # move forward on linestring based on vehicle size and max/min distance
