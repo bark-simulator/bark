@@ -115,16 +115,21 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
   return net_distance;
 }
 
-double BehaviorMobil::CalcLongAccLaneCorrEnd(
+double BehaviorMobil::CalcLongAccWithoutLeader(
     const world::LaneCorridorPtr& lane_corridor,
     const std::shared_ptr<const world::objects::Agent>& agent) {
+  double acc;
   const float ego_velocity = agent->GetCurrentState()(VEL_POSITION);
-  // Brake at end of lane corridor
-  const double net_distance =
-      lane_corridor->LengthUntilEnd(agent->GetCurrentPosition()) -
-      agent->GetShape().front_dist_;
-  // setting vel_other to zero
-  const double acc = CalcIDMAcc(net_distance, ego_velocity, 0.0);
+  if (stop_at_lane_ending_) {
+    // Brake at end of lane corridor
+    const double net_distance = lane_corridor->LengthUntilEnd(agent->GetCurrentPosition()) -
+        agent->GetShape().front_dist_;
+    // setting vel_other to zero
+    acc = CalcIDMAcc(net_distance, ego_velocity, 0.0);
+  }
+  else {
+    acc = GetMaxAcceleration() * CalcFreeRoadTerm(ego_velocity);
+  }
   return acc;
 }
 
@@ -138,6 +143,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
 
   const float vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
+  const LaneCorridorPtr current_corridor = observed_world.GetLaneCorridor();
 
   FrontRearAgents agents_current_lane = observed_world.GetAgentFrontRear();
   std::pair<AgentPtr, FrenetPosition> follower_current =
@@ -151,14 +157,15 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
     // ---------------------------------------------------
     // >>>>  [ego_agent] >>>> [leader_current] >>>>
     // ---------------------------------------------------
-    const double distance_c_before = CalcNetDistanceFromFrenet(
+    const double dist_c_before = CalcNetDistanceFromFrenet(
         ego_agent, frenet_ego, leader_current.first, leader_current.second);
     acc_c_before =
-        CalcIDMAcc(distance_c_before, vel_ego,
+        CalcIDMAcc(dist_c_before, vel_ego,
                    leader_current.first->GetCurrentState()(VEL_POSITION));
 
   } else {
-    acc_c_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+    // acc_c_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+    acc_c_before = CalcLongAccWithoutLeader(current_corridor, ego_agent);
   }
 
   // [STEP 2] acceleration of old follower (before & after a prospective lane
@@ -168,21 +175,26 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
     // ---------------------------------------------------
     // >>>>  [follower_current] >>>> [ego_agent] >>>>
     // ---------------------------------------------------
-    const double distance_o_before = CalcNetDistanceFromFrenet(
+    const double dist_o_before = CalcNetDistanceFromFrenet(
         follower_current.first, follower_current.second, ego_agent, frenet_ego);
     acc_o_before = CalcIDMAcc(
-        distance_o_before,
-        follower_current.first->GetCurrentState()(VEL_POSITION), vel_ego);
+        dist_o_before, follower_current.first->GetCurrentState()(VEL_POSITION),
+        vel_ego);
     // ---------------------------------------------------
     // >>>>  [follower_current] >>>> [leader_current] >>>>
     // ---------------------------------------------------
-    const double distance_o_after = CalcNetDistanceFromFrenet(
-        follower_current.first, follower_current.second, leader_current.first,
-        leader_current.second);
-    acc_o_after =
-        CalcIDMAcc(distance_o_after,
-                   follower_current.first->GetCurrentState()(VEL_POSITION),
-                   leader_current.first->GetCurrentState()(VEL_POSITION));
+    if (leader_current.first) {
+      const double dist_o_after = CalcNetDistanceFromFrenet(
+          follower_current.first, follower_current.second, leader_current.first,
+          leader_current.second);
+      acc_o_after = CalcIDMAcc(
+          dist_o_after, follower_current.first->GetCurrentState()(VEL_POSITION),
+          leader_current.first->GetCurrentState()(VEL_POSITION));
+    } else
+    {
+      // acc_o_after = GetMaxAcceleration() * CalcFreeRoadTerm(follower_current.first->GetCurrentState()(VEL_POSITION));
+      acc_o_after = CalcLongAccWithoutLeader(current_corridor, follower_current.first);
+    }
   } else {
     acc_o_before = 0, acc_o_after = 0;
   }
@@ -210,14 +222,15 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       // ---------------------------------------------------
       // >>>>  [ego_agent] >>>> [leader_right] >>>>
       // ---------------------------------------------------
-      const double distance_c_after = CalcNetDistanceFromFrenet(
+      const double dist_c_after = CalcNetDistanceFromFrenet(
           ego_agent, frenet_ego, leader_right.first, leader_right.second);
       acc_c_after =
-          CalcIDMAcc(distance_c_after, vel_ego,
+          CalcIDMAcc(dist_c_after, vel_ego,
                      leader_right.first->GetCurrentState()(VEL_POSITION));
 
     } else {
-      acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      acc_c_after = CalcLongAccWithoutLeader(right_corridor, ego_agent);
     }
 
     // TODO(@Klemens): is this correct?
@@ -244,23 +257,23 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double vel_follower_right =
           follower_right.first->GetCurrentState()(VEL_POSITION);
       if (leader_right.first) {
-        const double distance_n_before = CalcNetDistanceFromFrenet(
+        const double dist_n_before = CalcNetDistanceFromFrenet(
             follower_right.first, follower_right.second, leader_right.first,
             leader_right.second);
         acc_n_before =
-            CalcIDMAcc(distance_n_before, vel_follower_right,
+            CalcIDMAcc(dist_n_before, vel_follower_right,
                        leader_right.first->GetCurrentState()(VEL_POSITION));
       } else {
-        acc_n_before =
-            GetMaxAcceleration() * CalcFreeRoadTerm(vel_follower_right);
+        // acc_n_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_follower_right);
+        acc_n_before = CalcLongAccWithoutLeader(right_corridor, follower_right.first);
       }
       // [STEP 5] acceleration of new follower (after a prospective lane change)
       // ---------------------------------------------------
       // >>>>  [follower_right] >>>> [ego_agent] >>>>
       // ---------------------------------------------------
-      const double distance_n_after = CalcNetDistanceFromFrenet(
+      const double dist_n_after = CalcNetDistanceFromFrenet(
           follower_right.first, follower_right.second, ego_agent, frenet_ego);
-      acc_n_after = CalcIDMAcc(distance_n_after, vel_follower_right, vel_ego);
+      acc_n_after = CalcIDMAcc(dist_n_after, vel_follower_right, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
@@ -322,14 +335,15 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       // ---------------------------------------------------
       // >>>>  [ego_agent] >>>> [leader_left] >>>>
       // ---------------------------------------------------
-      const double distance_c_after = CalcNetDistanceFromFrenet(
+      const double dist_c_after = CalcNetDistanceFromFrenet(
           ego_agent, frenet_ego, leader_left.first, leader_left.second);
       acc_c_after =
-          CalcIDMAcc(distance_c_after, vel_ego,
+          CalcIDMAcc(dist_c_after, vel_ego,
                      leader_left.first->GetCurrentState()(VEL_POSITION));
 
     } else {
-      acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      acc_c_after = CalcLongAccWithoutLeader(left_corridor, ego_agent);
     }
 
     // TODO(@Klemens): is this correct?
@@ -355,23 +369,19 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double vel_follower_left =
           follower_left.first->GetCurrentState()(VEL_POSITION);
       if (leader_left.first) {
-        const double distance_n_before =
-            CalcNetDistanceFromFrenet(follower_left.first, follower_left.second,
-                                      leader_left.first, leader_left.second);
-        acc_n_before =
-            CalcIDMAcc(distance_n_before, vel_follower_left,
-                       leader_left.first->GetCurrentState()(VEL_POSITION));
+        const double dist_n_before = CalcNetDistanceFromFrenet(follower_left.first, follower_left.second, leader_left.first, leader_left.second);
+        acc_n_before = CalcIDMAcc(dist_n_before, vel_follower_left, leader_left.first->GetCurrentState()(VEL_POSITION));
       } else {
-        acc_n_before =
-            GetMaxAcceleration() * CalcFreeRoadTerm(vel_follower_left);
+        // acc_n_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_follower_left);
+        acc_n_before = CalcLongAccWithoutLeader(left_corridor, follower_left.first);
       }
       // acceleration of new follower (after a prospective lane change)
       // ---------------------------------------------------
       // >>>>  [follower_left] >>>> [ego_agent] >>>>
       // ---------------------------------------------------
-      const double distance_n_after = CalcNetDistanceFromFrenet(
+      const double dist_n_after = CalcNetDistanceFromFrenet(
           follower_left.first, follower_left.second, ego_agent, frenet_ego);
-      acc_n_after = CalcIDMAcc(distance_n_after, vel_follower_left, vel_ego);
+      acc_n_after = CalcIDMAcc(dist_n_after, vel_follower_left, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
