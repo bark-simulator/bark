@@ -55,6 +55,10 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
+  double CalcLongAccLaneCorrEnd(
+      const world::LaneCorridorPtr& lane_corridor,
+      const std::shared_ptr<const world::objects::Agent>& ego_agent);
+
   double CalcNetDistanceFromFrenet(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const modules::commons::transformation::FrenetPosition& ego_frenet,
