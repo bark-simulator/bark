@@ -21,7 +21,9 @@ using modules::commons::transformation::FrenetPosition;
 using modules::geometry::Line;
 using modules::models::dynamic::CalculateSteeringAngle;
 using modules::models::dynamic::DynamicModelPtr;
+using StateDefinition::VEL_POSITION;
 using world::Agent;
+using world::AgentFrenetPair;
 using world::ObservedWorld;
 using world::map::LaneCorridorPtr;
 using world::objects::AgentPtr;
@@ -36,7 +38,8 @@ Trajectory BehaviorMobil::Plan(float delta_time,
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
 
-  LOG(INFO) << "Mobil State " << mobil_state_ << std::endl;
+  VLOG(2) << "Agent: " << observed_world.GetEgoAgentId() << ", Mobil State "
+          << mobil_state_ << std::endl;
   //! Determine whether to perform a lane change
   if (mobil_state_ == MobilState::IsChanging) {
     //! checks if lane change has been finished ...
@@ -52,7 +55,7 @@ Trajectory BehaviorMobil::Plan(float delta_time,
     LaneChangeDecision decision;
     std::tie(decision, target_corridor_) =
         CheckIfLaneChangeBeneficial(observed_world);
-    LOG(INFO) << "Decision " << decision << std::endl;
+    VLOG(2) << "Decision " << decision << std::endl;
     if (decision != LaneChangeDecision::KeepLane)
       mobil_state_ = MobilState::IsChanging;
   }
@@ -65,24 +68,24 @@ Trajectory BehaviorMobil::Plan(float delta_time,
   traj.row(0) = observed_world.CurrentEgoState();
 
   double acc;
-  if (mobil_state_ == MobilState::Idle) {
-    auto agent_in_front = observed_world.GetAgentInFront();
+  // Get leading agent in target lane (lane we are changing to in case of a lane
+  // change, otherwise it's the lane the agent is currently in)
+  AgentFrenetPair agent_in_front =
+      observed_world
+          .GetAgentFrontRearForId(observed_world.GetEgoAgentId(),
+                                  target_corridor_)
+          .front;
 
-    std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
-    FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
-    const float vel_ego =
-        ego_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
-    if (agent_in_front.first) {
-      const double distance = CalcNetDistanceFromFrenet(
-          ego_agent, frenet_ego, agent_in_front.first, agent_in_front.second);
-      acc = CalcIDMAcc(distance, vel_ego,
-                       agent_in_front.first->GetCurrentState()(
-                           StateDefinition::VEL_POSITION));
-    } else {
-      acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
-    }
+  std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
+  FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
+  const float vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
+  if (agent_in_front.first) {
+    const double distance = CalcNetDistanceFromFrenet(
+        ego_agent, frenet_ego, agent_in_front.first, agent_in_front.second);
+    acc = CalcIDMAcc(distance, vel_ego,
+                     agent_in_front.first->GetCurrentState()(VEL_POSITION));
   } else {
-    acc = 0;
+    acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
   }
 
   for (int i = 1; i < num_traj_time_points; ++i) {
@@ -112,11 +115,23 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
   return net_distance;
 }
 
+double BehaviorMobil::CalcLongAccLaneCorrEnd(
+    const world::LaneCorridorPtr& lane_corridor,
+    const std::shared_ptr<const world::objects::Agent>& agent) {
+  const float ego_velocity = agent->GetCurrentState()(VEL_POSITION);
+  // Brake at end of lane corridor
+  const double net_distance =
+      lane_corridor->LengthUntilEnd(agent->GetCurrentPosition()) -
+      agent->GetShape().front_dist_;
+  // setting vel_other to zero
+  const double acc = CalcIDMAcc(net_distance, ego_velocity, 0.0);
+  return acc;
+}
+
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorMobil::CheckIfLaneChangeBeneficial(
     const ObservedWorld& observed_world) {
   using modules::geometry::Point2d;
-  using StateDefinition::VEL_POSITION;
   using world::FrontRearAgents;
 
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
