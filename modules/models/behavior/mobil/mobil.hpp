@@ -50,18 +50,18 @@ class BehaviorMobil : public BehaviorIDMClassic {
         "Passing on the right side is allowed below this velocity",
         16.66f);  // 16.66 m/s = 60 km/h
 
-    stop_at_lane_ending_ = params->GetBool(
-        "StopAtLaneEnding",
-        "Flag to let vehicle slow down at lane ending", true);
+    stop_at_lane_ending_ =
+        params->GetBool("StopAtLaneEnding",
+                        "Flag to let vehicle slow down at lane ending", true);
   }
 
   virtual ~BehaviorMobil() {}
 
   Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
-  double CalcLongAccWithoutLeader(
-      const world::LaneCorridorPtr& lane_corridor,
-      const std::shared_ptr<const world::objects::Agent>& ego_agent);
+  double CalcLongAccWithoutLeader(const world::LaneCorridorPtr& lane_corridor,
+                                  const modules::geometry::Point2d& pos,
+                                  const float vel);
 
   double CalcNetDistanceFromFrenet(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
