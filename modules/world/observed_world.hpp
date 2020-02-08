@@ -31,7 +31,6 @@ using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 
-
 class ObservedWorld : public World {
  public:
   ObservedWorld(const WorldPtr& world, const AgentId& ego_agent_id)
@@ -52,7 +51,7 @@ class ObservedWorld : public World {
   }
 
   const LaneCorridorPtr GetLaneCorridor() const;
-  
+
   std::shared_ptr<const Agent> GetEgoAgent() const {
     return World::GetAgent(ego_agent_id_);
   }
@@ -90,7 +89,12 @@ class ObservedWorld : public World {
 
   void SetupPrediction(const PredictionSettings& settings);
 
-  ObservedWorldPtr Predict(float time_span, const DiscreteAction& ego_action) const;
+  ObservedWorldPtr Predict(float time_span,
+                           const DiscreteAction& ego_action) const;
+  ObservedWorldPtr Predict(float time_span,
+                           const std::unordered_map<AgentId, DiscreteAction>&
+                               agent_action_map) const;
+
   ObservedWorldPtr Predict(float time_span) const;
 
   virtual WorldPtr Clone() const {
