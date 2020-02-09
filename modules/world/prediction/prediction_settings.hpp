@@ -28,8 +28,8 @@ struct PredictionSettings {
   PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction);
   virtual ~PredictionSettings() {}
 
-  BehaviorModelPtr get_ego_prediction_model() const { return ego_prediction_model_;}
-  BehaviorModelPtr get_others_prediction_model() const { return others_prediction_model_;}
+  BehaviorModelPtr GetEgoPredictionModel() const { return ego_prediction_model_;}
+  BehaviorModelPtr GetOthersPredictionModel() const { return others_prediction_model_;}
 
   void ApplySettings(ObservedWorld& observed_world) const;
 

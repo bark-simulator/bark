@@ -8,22 +8,22 @@
 #define MODULES_COMMONS_BASE_TYPE_HPP_
 
 #include "modules/commons/params/params.hpp"
-#include "modules/commons/util.hpp"
+#include "modules/commons/util/util.hpp"
 
 namespace modules {
 namespace commons {
 
 class BaseType {
  public:
-  explicit BaseType(Params* params) : params_(params) {}
+  explicit BaseType(ParamsPtr params) : params_(params) {}
 
   BaseType(const BaseType& base) : params_(base.params_) {}
   ~BaseType() {}
 
-  Params* get_params() const { return params_;}
+  ParamsPtr GetParams() const { return params_;}
 
  private:
-  Params* params_;  // do not own
+  ParamsPtr params_;  // do not own
 };
 
 }  // namespace commons

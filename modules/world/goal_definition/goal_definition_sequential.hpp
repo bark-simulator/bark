@@ -39,12 +39,12 @@ class GoalDefinitionSequential : public GoalDefinition  {
   GoalDefinitionPtr GetNextGoal() const;
   GoalDefinitionPtr GetCurrentGoal() const;
 
-  std::vector<GoalDefinitionPtr> get_sequential_goals() const {
+  std::vector<GoalDefinitionPtr> GetSequentialGoals() const {
     return sequential_goals_;
   }
 
-  virtual const modules::geometry::Polygon& get_shape() const {
-    return GetCurrentGoal()->get_shape();
+  virtual const modules::geometry::Polygon& GetShape() const {
+    return GetCurrentGoal()->GetShape();
   }
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);

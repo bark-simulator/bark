@@ -6,20 +6,18 @@
 import numpy as np
 import time
 import os
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.world.map import *
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
+from bark.models.behavior import BehaviorConstantVelocity
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
 
 
 # Parameters Definitions
@@ -40,14 +38,14 @@ dynamic_model2 = SingleTrackModel(param_server)
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
-map_interface.set_open_drive_map(xodr_parser.map)
-world.set_map(map_interface)
+map_interface.SetOpenDriveMap(xodr_parser.map)
+world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 50/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.translate(Point2d(-63,-61))
+goal_polygon = goal_polygon.Translate(Point2d(-63,-61))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -57,7 +55,7 @@ agent1 = Agent(init_state,
                agent_params,
                GoalDefinitionPolygon(goal_polygon),
                map_interface)
-world.add_agent(agent1)
+world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
 init_state2 = np.array([0, -15, -13, 3.14*3.0/4.0, 5.2])
@@ -70,7 +68,7 @@ agent2 = Agent(init_state2,
                agent_params2,
                GoalDefinitionPolygon(goal_polygon),
                map_interface)
-world.add_agent(agent2)
+world.AddAgent(agent2)
 
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
@@ -83,8 +81,8 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-for _ in range(0, 30):
-  world.step(sim_step_time)
+for _ in range(0, 10):
+  world.Step(sim_step_time)
   viewer.drawWorld(world)
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)

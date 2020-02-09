@@ -7,12 +7,12 @@ The runtime module implements the actual simulation in Python. Currently, it use
 class Runtime:
     def __init__(self, world, step_time, viewer):
         self.world = world
-        self.step_time = step_time
+        self.Step_time = step_time
 	self.viewer = viewer
 
     def run(self, steps):
         for step_count in trange(steps, leave=True):
-            self.world.step(self.step_time)
+            self.world.Step(self.Step_time)
 	    self.viewer.drawWorld(self.world)
 	    sleep(...)
 ```

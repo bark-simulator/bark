@@ -139,6 +139,38 @@ class ParameterServer(Params):
                         hierarchy, description, default_value)
         return
 
+    def GetCondensedParamList(self):
+        def check_append(value):
+          if isinstance(value, float) or isinstance(value, int) \
+              or isinstance(value,bool):
+              return True
+          elif isinstance(value, list):
+              for el in value:
+                if not isinstance(el, list):
+                  return False
+                for e in el:
+                  if not isinstance(e, float):
+                    return False
+              return True
+          return False
+        hierarchy_delimiter = "::"
+        condensed_param_list = []
+        for key, value in self.store.items():
+            if isinstance(value, ParameterServer):
+                child_list = value.GetCondensedParamList()
+                for param_tuple in child_list:
+                    param_name = "{}{}{}".format(key,
+                                    hierarchy_delimiter, param_tuple[0])
+                    param_value = param_tuple[1]
+                    if check_append(param_value):
+                        condensed_param_list.append((param_name, param_value))
+            else:
+                if check_append(value):
+                    condensed_param_list.append((key, value))
+        test = condensed_param_list
+        print(condensed_param_list)
+        return condensed_param_list
+
     def get_val_from_string(self, hierarchy, description, default_value):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
         return self.get_val_iter(hierarchy, description, default_value)
@@ -148,37 +180,35 @@ class ParameterServer(Params):
         #return helper
         
     # get values
-    def get_bool(self, param_name, description, default_value):
+    def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_real(self, param_name, description, default_value):
+    def GetReal(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_int(self, param_name, description, default_value):
+    def GetInt(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
         return self.get_val_from_string(param_name, description, default_value)
 
-    def get_listlist_float(self, param_name, description, default_value):
+    def GetListListFloat(self, param_name, description, default_value):
         return self.get_val_from_string(param_name, description, default_value)
 
     def access(self, param_name):
         return self[param_name]
 
-    def set_bool(self, param_name, value):
+    def SetBool(self, param_name, value):
         self[param_name] = value
         return
 
-    def set_real(self, param_name, value):
+    def SetReal(self, param_name, value):
         self[param_name] = value
         return
 
-    def set_int(self, param_name, value):
+    def SetInt(self, param_name, value):
         self[param_name] = value
         return
 
     def AddChild(self, name):
-        if not name in self.store:
-            self.store[name] = ParameterServer()
-        return self.store[name]
+        return self.__getitem__(name)

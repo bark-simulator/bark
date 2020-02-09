@@ -31,15 +31,15 @@ void python_runtime(py::module m) {
   py::class_<Runtime,
              PyRuntime,
              RuntimePtr>(m, "PyRuntime")
-      .def(py::init<modules::commons::Params*>())
-      .def("step", py::overload_cast<>(&Runtime::Step))
-      .def("step", py::overload_cast<int>(&Runtime::Step))
-      .def("step", py::overload_cast<float>(&Runtime::Step))
-      .def("step", py::overload_cast<double>(&Runtime::Step))
-      .def("step",
-        py::overload_cast<Eigen::Matrix<float,
-                                        Eigen::Dynamic,
-                                        Eigen::Dynamic>>(&Runtime::Step));
+    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def("step", py::overload_cast<>(&Runtime::Step))
+    .def("step", py::overload_cast<int>(&Runtime::Step))
+    .def("step", py::overload_cast<float>(&Runtime::Step))
+    .def("step", py::overload_cast<double>(&Runtime::Step))
+    .def("step",
+      py::overload_cast<Eigen::Matrix<float,
+                                      Eigen::Dynamic,
+                                      Eigen::Dynamic>>(&Runtime::Step));
 
   m.def("eval_runtime", py::overload_cast<Runtime, int>(&EvalRuntime));
   m.def("eval_runtime", py::overload_cast<Runtime,

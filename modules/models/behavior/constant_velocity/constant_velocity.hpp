@@ -20,7 +20,7 @@ using world::ObservedWorld;
 
 class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
  public:
-  explicit BehaviorConstantVelocity(commons::Params *params) :
+  explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
     BehaviorLongitudinalAcceleration(params) {}
 
   virtual ~BehaviorConstantVelocity() {}

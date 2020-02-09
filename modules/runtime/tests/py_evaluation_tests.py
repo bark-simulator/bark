@@ -4,20 +4,26 @@
 # https://opensource.org/licenses/MIT
 
 
-import unittest
-import os
 import numpy as np
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
-from bark.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimits, GoalDefinitionSequential
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
-from bark.world.evaluation import *
+import time
+import unittest
 from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.commons.xodr_parser import XodrParser
+from bark.models.behavior import BehaviorConstantVelocity, \
+  BehaviorMotionPrimitives
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel, StateDefinition
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon, \
+  GoalDefinitionStateLimits, GoalDefinitionSequential
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
+from bark.world.evaluation import EvaluatorGoalReached, \
+  EvaluatorCollisionEgoAgent, EvaluatorStepCount
+
 
 
 class EvaluationTests(unittest.TestCase):
@@ -37,7 +43,7 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(-1,1),
                               Point2d(1,1),
                               Point2d(1,-1)])
-    goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
     agent = Agent(init_state,
                 behavior_model,
@@ -49,12 +55,12 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
 
-    info = world.evaluate()
+    info = world.Evaluate()
     self.assertEqual(info["success"], True)
 
   def test_one_agent_at_goal_state_limits(self):
@@ -73,7 +79,7 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(-1,1),
                               Point2d(1,1),
                               Point2d(1,-1)])
-    goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
     agent = Agent(init_state,
                 behavior_model,
@@ -85,12 +91,12 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
 
-    info = world.evaluate()
+    info = world.Evaluate()
     self.assertEqual(info["success"], True)
 
   def test_one_agent_at_goal_sequential(self):
@@ -98,8 +104,8 @@ class EvaluationTests(unittest.TestCase):
     # Model Definition
     dynamic_model = SingleTrackModel(param_server)
     behavior_model = BehaviorMotionPrimitives(dynamic_model, param_server)
-    idx = behavior_model.add_motion_primitive(np.array([1, 0]))
-    behavior_model.action_to_behavior(idx)
+    idx = behavior_model.AddMotionPrimitive(np.array([1, 0]))
+    behavior_model.ActionToBehavior(idx)
     execution_model = ExecutionModelInterpolate(param_server)
 
 
@@ -113,9 +119,9 @@ class EvaluationTests(unittest.TestCase):
                               Point2d(1,1),
                               Point2d(1,-1)])
 
-    goal_polygon1 = goal_frame.translate(Point2d(10, 0))
-    goal_polygon2 = goal_frame.translate(Point2d(20, 0))
-    goal_polygon3 = goal_frame.translate(Point2d(30, 0))
+    goal_polygon1 = goal_frame.Translate(Point2d(10, 0))
+    goal_polygon2 = goal_frame.Translate(Point2d(20, 0))
+    goal_polygon3 = goal_frame.Translate(Point2d(30, 0))
 
     goal_def1 = GoalDefinitionStateLimits(goal_polygon1, [-0.08, 0.08])
     goal_def2 = GoalDefinitionStateLimits(goal_polygon2, [-0.08, 0.08])
@@ -136,14 +142,14 @@ class EvaluationTests(unittest.TestCase):
                   None)
 
     world = World(param_server)
-    world.add_agent(agent)
+    world.AddAgent(agent)
     evaluator = EvaluatorGoalReached(agent.id)
-    world.add_evaluator("success", evaluator)
+    world.AddEvaluator("success", evaluator)
 
     # just drive with the single motion primitive should be successful 
     for _ in range(0,1000):
-        world.step(0.2)
-        info = world.evaluate()
+        world.Step(0.2)
+        info = world.Evaluate()
         if info["success"]:
             break
     

@@ -61,7 +61,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
       agent_json["map_interface"] = world.map
       goal_polygon = Polygon2d([0, 0, 0],
                                np.array(agent_json["goal"]["polygon_points"]))
-      goal_polygon = goal_polygon.translate(Point2d(agent_json["goal"]["center_pose"][0],
+      goal_polygon = goal_polygon.Translate(Point2d(agent_json["goal"]["center_pose"][0],
                                                     agent_json["goal"]["center_pose"][1]))
 
       sequential_goals = []
@@ -83,8 +83,8 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                         high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
-                                                   param_server=self._local_params)
-      agent.set_agent_id(agent_json["id"])
+                                                   param_server=self._params)
+      agent.SetAgentId(agent_json["id"])
       scenario._agent_list.append(agent)
     
     # TODO(@hart): this could be mult. agents

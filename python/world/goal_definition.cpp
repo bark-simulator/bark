@@ -3,6 +3,9 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+
+#include <utility>
+#include <vector>
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
@@ -20,8 +23,7 @@ using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
 using modules::geometry::Line;
 
-void python_goal_definition(py::module m)
-{
+void python_goal_definition(py::module m) {
   py::class_<GoalDefinition,
              PyGoalDefinition,
              GoalDefinitionPtr>(m, "GoalDefinition")
@@ -35,13 +37,12 @@ void python_goal_definition(py::module m)
     .def("__repr__", [](const GoalDefinitionPolygon &g) {
       return "bark.world.goal_definition.GoalDefinitionPolygon";
     })
-    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::get_shape)
+    .def_property_readonly("goal_shape", &GoalDefinitionPolygon::GetShape)
     .def(py::pickle(
-      [](const GoalDefinitionPolygon& g) -> py::tuple { // __getstate__
-          /* Return a tuple that fully encodes the state of the object */
-          return py::make_tuple(g.get_shape());
+      [](const GoalDefinitionPolygon& g) -> py::tuple {
+          return py::make_tuple(g.GetShape());
       },
-      [](py::tuple t) { // __setstate__
+      [](py::tuple t) {
         if (t.size() != 1)
               throw std::runtime_error("Invalid GoalDefinitionPolygon state!");
 
@@ -49,27 +50,26 @@ void python_goal_definition(py::module m)
       }));
 
     py::class_<GoalDefinitionStateLimits, GoalDefinition,
-      std::shared_ptr<GoalDefinitionStateLimits>>(m, "GoalDefinitionStateLimits")
+      std::shared_ptr<GoalDefinitionStateLimits>>(m,
+        "GoalDefinitionStateLimits")
       .def(py::init<>())
       .def(py::init<const Polygon&, const std::pair<float, float>&>())
       .def("__repr__", [](const GoalDefinitionStateLimits &g) {
         return "bark.world.goal_definition.GoalDefinitionStateLimits";
       })
       .def_property_readonly("xy_limits",
-        &GoalDefinitionStateLimits::get_xy_limits)
+        &GoalDefinitionStateLimits::GetXyLimits)
       .def_property_readonly("goal_shape",
-        &GoalDefinitionStateLimits::get_xy_limits)
+        &GoalDefinitionStateLimits::GetShape)
       .def_property_readonly("angle_limits",
-        &GoalDefinitionStateLimits::get_angle_limits)
+        &GoalDefinitionStateLimits::GetAngleLimits)
       .def(py::pickle(
-        [](const GoalDefinitionStateLimits& g) -> py::tuple {  // __getstate__
-            /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.get_xy_limits(), g.get_angle_limits());
+        [](const GoalDefinitionStateLimits& g) -> py::tuple {
+            return py::make_tuple(g.GetShape(), g.GetAngleLimits());
         },
-        [](py::tuple t) {  // __setstate__
+        [](py::tuple t) {
           if (t.size() != 2)
-                throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");
-
+            throw std::runtime_error("Invalid GoalDefinitionStateLimits state!");  // NOLINT
           return new GoalDefinitionStateLimits(t[0].cast<Polygon>(), t[1].cast<
                   std::pair<float, float>>());
         }));
@@ -125,11 +125,11 @@ void python_goal_definition(py::module m)
             /* Return a tuple that fully encodes the state of the object */
             return py::make_tuple(g.get_sequential_goals());
         },
-        [](py::tuple t) { // __setstate__
+        [](py::tuple t) {
           if (t.size() != 1)
-                throw std::runtime_error("Invalid GoalDefinitionSequential state!");
-
-          return new GoalDefinitionSequential(t[0].cast<std::vector<GoalDefinitionPtr>>());
+            throw std::runtime_error("Invalid GoalDefinitionSequential state!");
+          return new GoalDefinitionSequential(
+            t[0].cast<std::vector<GoalDefinitionPtr>>());
         }));
 
 

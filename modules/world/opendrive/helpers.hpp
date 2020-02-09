@@ -14,12 +14,12 @@ namespace modules {
 namespace world {
 namespace opendrive {
 
-XodrLaneSequence intersect_based_on_ids(const XodrLaneSequence& lane_sequence, const XodrLanes& lanes)
-{
+XodrLaneSequence IntersectBasedOnIds(
+  const XodrLaneSequence& lane_sequence, const XodrLanes& lanes) {
   XodrLaneSequence intersect;
   for (auto& lane_id_1: lane_sequence ) {
     for (auto& lane2: lanes) {
-      if (lane_id_1 == lane2.second->get_id())
+      if (lane_id_1 == lane2.second->GetId())
       {
         intersect.push_back(lane_id_1);
       }
@@ -29,8 +29,8 @@ XodrLaneSequence intersect_based_on_ids(const XodrLaneSequence& lane_sequence, c
 }
 
 
-bool concatenate_lanes(const XodrLane& lane1, XodrLane& concatenated_lane)
-{
+bool ConcatenateLanes(
+  const XodrLane& lane1, XodrLane& concatenated_lane) {
   return false;
 }
 

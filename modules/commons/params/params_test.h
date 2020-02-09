@@ -14,16 +14,16 @@
 namespace modules {
 namespace commons {
 
-inline void DoSomeParams(Params *params) {
+inline void DoSomeParams(const ParamsPtr params) {
   // CHILD TEST: DOES NOT WORK SINCE P IS NOT OF CLASS PARAMSERVER
-  Params *params2 = params->AddChild("newchild");
+  auto params2 = params->AddChild("newchild");
 
   // test int, bool and real access with hierarchies
-  std::cout << params2->get_int("hierarchy1::hierarchy2", "test", 40);
-  std::cout << params2->get_bool("hierarchy1::hierarchy2-1::hierarchy3",
+  std::cout << params2->GetInt("hierarchy1::hierarchy2", "test", 40);
+  std::cout << params2->GetBool("hierarchy1::hierarchy2-1::hierarchy3",
                                  "test2",
                                  false);
-  std::cout << params2->get_real("param_cpp", "test param_cpp", 16.5);
+  std::cout << params2->GetReal("param_cpp", "test param_cpp", 16.5);
 }
 
 }  // namespace commons

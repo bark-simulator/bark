@@ -12,8 +12,9 @@ namespace world {
 namespace map {
 
 template <class Predicate>
-bool Roadgraph::check_id_in_filtered_graph(const FilteredXodrLaneGraph_t<Predicate>& fg,
-                                const XodrLaneId& lane_id) const {
+bool Roadgraph::CheckIdInFilteredGraph(
+  const FilteredXodrLaneGraph_t<Predicate>& fg,
+  const XodrLaneId& lane_id) const {
   typename boost::graph_traits<
       FilteredXodrLaneGraph_t<Predicate>>::vertex_iterator i,
       end;
@@ -26,28 +27,28 @@ bool Roadgraph::check_id_in_filtered_graph(const FilteredXodrLaneGraph_t<Predica
 }
 
 template <class Predicate>
-std::vector<XodrLaneId> Roadgraph::find_path(const XodrLaneId& startid,
+std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
                                              const XodrLaneId& goalid) {
   std::vector<XodrLaneId> path;
 
-  std::pair<vertex_t, bool> start_vertex = get_vertex_by_lane_id(startid);
-  std::pair<vertex_t, bool> goal_vertex = get_vertex_by_lane_id(goalid);
+  std::pair<vertex_t, bool> start_vertex = GetVertexByLaneId(startid);
+  std::pair<vertex_t, bool> goal_vertex = GetVertexByLaneId(goalid);
 
   // filter graph
   Predicate predicate{&g_};
   FilteredXodrLaneGraph_t<Predicate> fg(g_, predicate, predicate);
   bool start_goal_valid_in_fg =
-      check_id_in_filtered_graph<Predicate>(fg, startid) &&
-      check_id_in_filtered_graph<Predicate>(fg, goalid);
+      CheckIdInFilteredGraph<Predicate>(fg, startid) &&
+      CheckIdInFilteredGraph<Predicate>(fg, goalid);
 
   if (start_vertex.second && goal_vertex.second && start_goal_valid_in_fg) {
     // std::cout << "start_vertex: " << start_vertex.first << " id " <<
-    // g_[start_vertex.first].lane->get_id()<< std::endl; std::cout <<
+    // g_[start_vertex.first].lane->GetId()<< std::endl; std::cout <<
     // "goal_vertex: " << goal_vertex.first << " id " <<
-    // g_[goal_vertex.first].lane->get_id() <<std::endl; std::cout <<
-    // "goal_vertex type: " << g_[goal_vertex.first].lane->get_lane_type() <<
+    // g_[goal_vertex.first].lane->GetId() <<std::endl; std::cout <<
+    // "goal_vertex type: " << g_[goal_vertex.first].lane->GetLaneType() <<
     // std::endl; std::cout << "goal_vertex type: " <<
-    // fg[goal_vertex.first].lane->get_lane_type() << std::endl;
+    // fg[goal_vertex.first].lane->GetLaneType() << std::endl;
 
     size_t num_vertices = boost::num_vertices(fg);
 
@@ -73,35 +74,14 @@ std::vector<XodrLaneId> Roadgraph::find_path(const XodrLaneId& startid,
         goal_vertex.first;
     while (current != start_vertex.first && idx < stop_the_loop) {
       path.push_back(fg[current].global_lane_id);
-      // std::cout << "current vertex " << current << " id " <<
-      // fg[current].global_lane_id << std::endl;
       if (current == p[current]) {
         return std::vector<XodrLaneId>();
       }
       current = p[current];
       ++idx;
     }
-    // std::cout << "current vertex " << current << " id " <<
-    // fg[current].global_lane_id << std::endl;
-
     path.push_back(fg[start_vertex.first].global_lane_id);
     std::reverse(path.begin(), path.end());
-
-    // std::cout << "p: " << std::endl;
-    // for (auto &pi : p) {
-    //     std::cout << pi << " ";
-    // }
-    // std::cout << std::endl;
-
-    // std::cout << "d: " << std::endl;
-    // for (auto &di : d) {
-    //     std::cout << di << " ";
-    // }
-
-    // std::cout << "pathi: " << std::endl;
-    // for (auto &pathi : path) {
-    //     std::cout << pathi << " ";
-    // }
   }
   return path;
 }

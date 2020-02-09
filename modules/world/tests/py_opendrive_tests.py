@@ -7,75 +7,75 @@ import unittest
 import numpy as np
 
 from scipy.special import fresnel
-from bark.world import *
-from bark.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth, XodrLane, XodrRoad, fresnel_cos, fresnel_sin
+from bark.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth,\
+  XodrLane, XodrRoad, FresnelCos, FresnelSin
 from bark.geometry import Point2d
 
 
 class EnvironmentTests(unittest.TestCase):
-    def test_line(self):
-        pv = PlanView()
+  def test_line(self):
+    pv = PlanView()
 
-        # Line
-        pv.add_line(Point2d(0, 0), 1.57079632679, 10)
-        line = pv.get_reference_line().toArray()
+    # Line
+    pv.AddLine(Point2d(0, 0), 1.57079632679, 10)
+    line = pv.GetReferenceLine().ToArray()
 
-        # Spiral
-        p = Point2d(line[-1][0], line[-1][1])
-        pv.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = pv.get_reference_line().toArray()
+    # Spiral
+    p = Point2d(line[-1][0], line[-1][1])
+    pv.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+    line = pv.GetReferenceLine().ToArray()
 
-        offset = XodrLaneOffset(1.5, 0, 0, 0)
-        lane_width = XodrLaneWidth(0.0, 59.9, offset)
+    offset = XodrLaneOffset(1.5, 0, 0, 0)
+    lane_width = XodrLaneWidth(0.0, 59.9, offset)
 
-        lane = XodrLane.create_lane_from_lane_width(-1,
-                                                pv.get_reference_line(), lane_width, 0.5)
+    lane = XodrLane.CreateLaneFromLaneWidth(-1,
+                                            pv.GetReferenceLine(), lane_width, 0.5)
 
-        print(lane)
-        lane = XodrLane.create_lane_from_lane_width(
-            1, pv.get_reference_line(), lane_width, 0.5)
-        print(lane)
+    print(lane)
+    lane = XodrLane.CreateLaneFromLaneWidth(
+        1, pv.GetReferenceLine(), lane_width, 0.5)
+    print(lane)
 
-    def test_road(self):
-        newXodrRoad = XodrRoad()
-        newXodrRoad.id = 1
-        newXodrRoad.name = "Autobahn A9"
+  def test_road(self):
+    newXodrRoad = XodrRoad()
+    newXodrRoad.id = 1
+    newXodrRoad.name = "Autobahn A9"
 
-        newPlanView = PlanView()
-        newPlanView.add_line(Point2d(0, 0), 1.57079632679, 10)
+    newPlanView = PlanView()
+    newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10)
 
-        newXodrRoad.plan_view = newPlanView
+    newXodrRoad.plan_view = newPlanView
 
-        line = newXodrRoad.plan_view.get_reference_line().toArray()
+    line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
-        # Spiral
-        p = Point2d(line[-1][0], line[-1][1])
-        newXodrRoad.plan_view.add_spiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
-        line = newXodrRoad.plan_view.get_reference_line().toArray()
+    # Spiral
+    p = Point2d(line[-1][0], line[-1][1])
+    newXodrRoad.plan_view.AddSpiral(p, 1.57079632679, 50.0, 0.0, 0.3, 0.4)
+    line = newXodrRoad.plan_view.GetReferenceLine().ToArray()
 
-    def test_spiral(self):
-        '''
-        spiral test compares outcome of wrapped odrSpiral implementation with 
-        scipy fresnel calculation
-        '''
+  def test_spiral(self):
+    '''
+    spiral test compares outcome of wrapped odrSpiral implementation with 
+    scipy fresnel calculation
+    '''
 
-        # spiral using scipy
-        t = np.linspace(-7, 7, 250)
-        y, x = fresnel(t)
+    # spiral using scipy
+    t = np.linspace(-7, 7, 250)
+    y, x = fresnel(t)
 
-        # spiral using odrSpiral
-        x_odr = []
-        y_odr = []
-        for t_i in t:
-            x_odr.append(fresnel_cos(t_i))
-            y_odr.append(fresnel_sin(t_i))
+    # spiral using odrSpiral
+    x_odr = []
+    y_odr = []
+    for t_i in t:
+      x_odr.append(FresnelCos(t_i))
+      y_odr.append(FresnelSin(t_i))
 
-        x_odr_np = np.asarray(x_odr)
-        y_odr_np = np.asarray(y_odr)
+    x_odr_np = np.asarray(x_odr)
+    y_odr_np = np.asarray(y_odr)
 
-        assert (np.allclose(x, x_odr_np) == 1)
-        assert (np.allclose(y, y_odr_np) == 1)
+    assert (np.allclose(x, x_odr_np) == 1)
+    assert (np.allclose(y, y_odr_np) == 1)
 
 
 if __name__ == '__main__':
-    unittest.main()
+  unittest.main()

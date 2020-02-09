@@ -23,14 +23,14 @@ TEST(polygon, base_functionality) {
   Point2d_t<float> point_4(0.0, 4.0);
 
   Polygon_t<Point2d_t<float>> polygon;
-  polygon.add_point(point_1);
-  polygon.add_point(point_2);
-  polygon.add_point(point_3);
-  polygon.add_point(point_4);
+  polygon.AddPoint(point_1);
+  polygon.AddPoint(point_2);
+  polygon.AddPoint(point_3);
+  polygon.AddPoint(point_4);
 
   Point2d_t<float> check_point(5.0, 2.0);
 
-  EXPECT_NEAR(distance(polygon, check_point), 1.0, 0.01);
+  EXPECT_NEAR(Distance(polygon, check_point), 1.0, 0.01);
 
   // polygon <--> polygon
   Point2d pointf_1(5.0, 2.0);
@@ -39,12 +39,12 @@ TEST(polygon, base_functionality) {
   Point2d pointf_4(7.5, 4.0);
 
   Polygon polygon_2;
-  polygon_2.add_point(pointf_1);
-  polygon_2.add_point(pointf_2);
-  polygon_2.add_point(pointf_3);
-  polygon_2.add_point(pointf_4);
+  polygon_2.AddPoint(pointf_1);
+  polygon_2.AddPoint(pointf_2);
+  polygon_2.AddPoint(pointf_3);
+  polygon_2.AddPoint(pointf_4);
 
-  EXPECT_NEAR(distance(polygon, polygon_2), 1.0, 0.01);
+  EXPECT_NEAR(Distance(polygon, polygon_2), 1.0, 0.01);
 }
 
 TEST(line, base_functionality) {
@@ -59,13 +59,13 @@ TEST(line, base_functionality) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
 
   Point2d_t<float> check_point(2.5, 2.0);
 
-  EXPECT_NEAR(distance(line, check_point), 2.5, 0.01);
+  EXPECT_NEAR(Distance(line, check_point), 2.5, 0.01);
 }
 
 TEST(geometry, line) {
@@ -75,59 +75,59 @@ TEST(geometry, line) {
   namespace bg = boost::geometry;
 
   Line l;  // vertical
-  l.add_point(Point2d(0.0f, 0.0f));
-  l.add_point(Point2d(0.0f, 10.0f));
+  l.AddPoint(Point2d(0.0f, 0.0f));
+  l.AddPoint(Point2d(0.0f, 10.0f));
 
-  Point2d p = get_point_at_s(l, 5.0f);
+  Point2d p = GetPointAtS(l, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
-  p = get_normal_at_s(l, 5.0f);
+  p = GetNormalAtS(l, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_nearest_point(l, Point2d(5.0f, 5.0f));
+  p = GetNearestPoint(l, Point2d(5.0f, 5.0f));
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
   Line l2;  // horizontal
-  l2.add_point(Point2d(0.0f, 0.0f));
-  l2.add_point(Point2d(10.0f, 0.0f));
+  l2.AddPoint(Point2d(0.0f, 0.0f));
+  l2.AddPoint(Point2d(10.0f, 0.0f));
 
-  p = get_point_at_s(l2, 5.0f);
+  p = GetPointAtS(l2, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(l2, 5.0f);
+  p = GetNormalAtS(l2, 5.0f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = get_nearest_point(l2, Point2d(5.0f, 5.0f));
+  p = GetNearestPoint(l2, Point2d(5.0f, 5.0f));
   EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
   Line l3;  // 45 deg
-  l3.add_point(Point2d(0.0f, 0.0f));
-  l3.add_point(Point2d(10.0f, 10.0f));
+  l3.AddPoint(Point2d(0.0f, 0.0f));
+  l3.AddPoint(Point2d(10.0f, 10.0f));
 
-  p = get_point_at_s(l3, 0.5 * sqrt(200));
+  p = GetPointAtS(l3, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), 5.0f, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0f, 0.1);
 
-  p = get_normal_at_s(l3, 0.5 * sqrt(200));
+  p = GetNormalAtS(l3, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.7, 0.1);
 
   Line l4;  // 45 deg
-  l4.add_point(Point2d(0.0f, 0.0f));
-  l4.add_point(Point2d(-10.0f, 10.0f));
+  l4.AddPoint(Point2d(0.0f, 0.0f));
+  l4.AddPoint(Point2d(-10.0f, 10.0f));
 
-  p = get_normal_at_s(l4, 0.5 * sqrt(200));
+  p = GetNormalAtS(l4, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -0.7, 0.1);
 
-  EXPECT_NEAR(get_nearest_s(l, Point2d(5, 5)), 5.0f, 0.1f);
-  EXPECT_NEAR(get_nearest_s(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1f);
+  EXPECT_NEAR(GetNearestS(l, Point2d(5, 5)), 5.0f, 0.1f);
+  EXPECT_NEAR(GetNearestS(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1f);
 }
 
 TEST(geometry, line_transform) {
@@ -136,23 +136,23 @@ TEST(geometry, line_transform) {
   namespace bg = boost::geometry;
 
   Line line_in;  // vertical
-  line_in.add_point(Point2d(0.0f, 0.0f));
-  line_in.add_point(Point2d(0.0f, 10.0f));
+  line_in.AddPoint(Point2d(0.0f, 0.0f));
+  line_in.AddPoint(Point2d(0.0f, 10.0f));
 
   float hdg = 3.14159265359;
   float offset_x = 1;
   float offset_y = 2;
 
-  Line obj_rotated = rotate(line_in, hdg);
-  EXPECT_NEAR(line_in.length(), obj_rotated.length(), 0.01);
+  Line obj_rotated = Rotate(line_in, hdg);
+  EXPECT_NEAR(line_in.Length(), obj_rotated.Length(), 0.01);
 
   EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(0)), 0, 0);
   EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(0)), 0, 0);
   EXPECT_NEAR(bg::get<0>(obj_rotated.obj_.at(1)), 0, 0.1);
   EXPECT_NEAR(bg::get<1>(obj_rotated.obj_.at(1)), -10, 0.1);
 
-  Line obj_transformed = translate(obj_rotated, offset_x, offset_y);
-  EXPECT_NEAR(line_in.length(), obj_transformed.length(), 0.01);
+  Line obj_transformed = Translate(obj_rotated, offset_x, offset_y);
+  EXPECT_NEAR(line_in.Length(), obj_transformed.Length(), 0.01);
 
   EXPECT_NEAR(bg::get<0>(obj_transformed.obj_.at(0)), 1, 0);
   EXPECT_NEAR(bg::get<1>(obj_transformed.obj_.at(0)), 2, 0);
@@ -165,24 +165,28 @@ TEST(geometry, polygon) {
   using modules::geometry::Polygon;
 
   Polygon p;
-  p.add_point(Point2d(0, 0));
-  p.add_point(Point2d(0, 2));
-  p.add_point(Point2d(2, 4));
-  p.add_point(Point2d(4, 0));
-  p.add_point(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 2));
+  p.AddPoint(Point2d(2, 4));
+  p.AddPoint(Point2d(4, 0));
+  p.AddPoint(Point2d(0, 0));
 
   EXPECT_TRUE(p.Valid());
 
   std::shared_ptr<Polygon> p2 =
-      std::dynamic_pointer_cast<Polygon>(p.rotate(3.14 / 2));
+      std::dynamic_pointer_cast<Polygon>(p.Rotate(3.14 / 2));
 }
 
 TEST(geometry, standard_shapes) {
   using modules::geometry::Polygon;
   using modules::geometry::standard_shapes::CarLimousine;
+  using modules::geometry::standard_shapes::CarRectangle;
 
-  Polygon p = CarLimousine();
-  ASSERT_TRUE(p.Valid());
+  Polygon p1 = CarLimousine();
+  ASSERT_TRUE(p1.Valid());
+
+  Polygon p2 = CarRectangle();
+  ASSERT_TRUE(p2.Valid());
 }
 
 // poly point collide false
@@ -192,11 +196,11 @@ TEST(collision, poly2point1) {
   using modules::geometry::Polygon;
 
   Polygon p;
-  p.add_point(Point2d(0, 0));
-  p.add_point(Point2d(0, 2));
-  p.add_point(Point2d(2, 4));
-  p.add_point(Point2d(4, 0));
-  p.add_point(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 2));
+  p.AddPoint(Point2d(2, 4));
+  p.AddPoint(Point2d(4, 0));
+  p.AddPoint(Point2d(0, 0));
 
   Point2d pt(-2, -2);
 
@@ -210,11 +214,11 @@ TEST(collision, poly2point2) {
   using modules::geometry::Polygon;
 
   Polygon p;
-  p.add_point(Point2d(0, 0));
-  p.add_point(Point2d(0, 2));
-  p.add_point(Point2d(2, 4));
-  p.add_point(Point2d(4, 0));
-  p.add_point(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 0));
+  p.AddPoint(Point2d(0, 2));
+  p.AddPoint(Point2d(2, 4));
+  p.AddPoint(Point2d(4, 0));
+  p.AddPoint(Point2d(0, 0));
 
   Point2d pt(1, 1);
 
@@ -228,18 +232,18 @@ TEST(collision, poly2poly1) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Polygon p2;
-  p2.add_point(Point2d(10, 10));
-  p2.add_point(Point2d(10, 11));
-  p2.add_point(Point2d(11, 11));
-  p2.add_point(Point2d(11, 10));
-  p2.add_point(Point2d(10, 10));
+  p2.AddPoint(Point2d(10, 10));
+  p2.AddPoint(Point2d(10, 11));
+  p2.AddPoint(Point2d(11, 11));
+  p2.AddPoint(Point2d(11, 10));
+  p2.AddPoint(Point2d(10, 10));
 
   EXPECT_FALSE(Collide(p1, p2));
 
@@ -253,18 +257,18 @@ TEST(collision, poly2poly2) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Polygon p2;
-  p2.add_point(Point2d(0.5, 0.5));
-  p2.add_point(Point2d(0.5, 1.5));
-  p2.add_point(Point2d(1.5, 1.5));
-  p2.add_point(Point2d(1.5, 0.5));
-  p2.add_point(Point2d(0.5, 0.5));
+  p2.AddPoint(Point2d(0.5, 0.5));
+  p2.AddPoint(Point2d(0.5, 1.5));
+  p2.AddPoint(Point2d(1.5, 1.5));
+  p2.AddPoint(Point2d(1.5, 0.5));
+  p2.AddPoint(Point2d(0.5, 0.5));
 
   EXPECT_TRUE(Collide(p1, p2));
 
@@ -278,18 +282,18 @@ TEST(collision, poly2poly3) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Polygon p2;
-  p2.add_point(Point2d(1, 1));
-  p2.add_point(Point2d(1, 2));
-  p2.add_point(Point2d(2, 2));
-  p2.add_point(Point2d(2, 1));
-  p2.add_point(Point2d(1, 1));
+  p2.AddPoint(Point2d(1, 1));
+  p2.AddPoint(Point2d(1, 2));
+  p2.AddPoint(Point2d(2, 2));
+  p2.AddPoint(Point2d(2, 1));
+  p2.AddPoint(Point2d(1, 1));
 
   EXPECT_TRUE(Collide(p1, p2));
 
@@ -303,18 +307,18 @@ TEST(collision, poly2poly4) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Polygon p2;
-  p2.add_point(Point2d(1, 1));
-  p2.add_point(Point2d(2, 1));
-  p2.add_point(Point2d(2, 0));
-  p2.add_point(Point2d(1, 0));
-  p2.add_point(Point2d(1, 1));
+  p2.AddPoint(Point2d(1, 1));
+  p2.AddPoint(Point2d(2, 1));
+  p2.AddPoint(Point2d(2, 0));
+  p2.AddPoint(Point2d(1, 0));
+  p2.AddPoint(Point2d(1, 1));
 
   EXPECT_TRUE(Collide(p1, p2));
 
@@ -328,18 +332,18 @@ TEST(collision, poly2poly5) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Polygon p2;
-  p2.add_point(Point2d(1.5, 1.5));
-  p2.add_point(Point2d(0.5, 1.5));
-  p2.add_point(Point2d(0.5, 0.5));
-  p2.add_point(Point2d(1.5, 0.5));
-  p2.add_point(Point2d(1.5, 1.5));
+  p2.AddPoint(Point2d(1.5, 1.5));
+  p2.AddPoint(Point2d(0.5, 1.5));
+  p2.AddPoint(Point2d(0.5, 0.5));
+  p2.AddPoint(Point2d(1.5, 0.5));
+  p2.AddPoint(Point2d(1.5, 1.5));
 
   EXPECT_TRUE(Collide(p1, p2));
 
@@ -354,15 +358,15 @@ TEST(collision, poly2line1) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Line l1;
-  l1.add_point(Point2d(1.5, 1.5));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1.5, 1.5));
+  l1.AddPoint(Point2d(2, 2));
 
   EXPECT_FALSE(Collide(p1, l1));
 }
@@ -375,21 +379,21 @@ TEST(collision, poly2line2) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Line l1;
-  l1.add_point(Point2d(0.5, 0.5));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(0.5, 0.5));
+  l1.AddPoint(Point2d(2, 2));
 
   EXPECT_TRUE(Collide(p1, l1));
 
   Line l2;
-  l2.add_point(Point2d(-0.5, -0.5));
-  l2.add_point(Point2d(2, 2));
+  l2.AddPoint(Point2d(-0.5, -0.5));
+  l2.AddPoint(Point2d(2, 2));
 
   EXPECT_TRUE(Collide(p1, l2));
 }
@@ -402,15 +406,15 @@ TEST(collision, poly2line3) {
   using modules::geometry::Polygon;
 
   Polygon p1;
-  p1.add_point(Point2d(0, 0));
-  p1.add_point(Point2d(0, 1));
-  p1.add_point(Point2d(1, 1));
-  p1.add_point(Point2d(1, 0));
-  p1.add_point(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
 
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   EXPECT_TRUE(Collide(p1, l1));
 }
@@ -422,8 +426,8 @@ TEST(collision, line2point1) {
   using modules::geometry::Point2d;
 
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   Point2d p(0, 0);
 
@@ -437,8 +441,8 @@ TEST(collision, line2point2) {
   using modules::geometry::Point2d;
 
   Line l1;
-  l1.add_point(Point2d(0, 0));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(0, 0));
+  l1.AddPoint(Point2d(2, 2));
 
   Point2d p(0.5, 0.5);
 
@@ -452,8 +456,8 @@ TEST(collision, line2point3) {
   using modules::geometry::Point2d;
 
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   Point2d p(1, 1);
 
@@ -467,12 +471,12 @@ TEST(collision, line2line1) {
   using modules::geometry::Point2d;
 
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   Line l2;
-  l2.add_point(Point2d(3, 3));
-  l2.add_point(Point2d(4, 4));
+  l2.AddPoint(Point2d(3, 3));
+  l2.AddPoint(Point2d(4, 4));
 
   EXPECT_FALSE(Collide(l1, l2));
 }
@@ -483,12 +487,12 @@ TEST(collision, line2line2) {
   using modules::geometry::Line;
   using modules::geometry::Point2d;
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   Line l2;
-  l2.add_point(Point2d(1, 1));
-  l2.add_point(Point2d(4, 4));
+  l2.AddPoint(Point2d(1, 1));
+  l2.AddPoint(Point2d(4, 4));
 
   EXPECT_TRUE(Collide(l1, l2));
   EXPECT_TRUE(Collide(l2, l1));
@@ -501,12 +505,12 @@ TEST(collision, line2line3) {
   using modules::geometry::Point2d;
 
   Line l1;
-  l1.add_point(Point2d(1, 1));
-  l1.add_point(Point2d(2, 2));
+  l1.AddPoint(Point2d(1, 1));
+  l1.AddPoint(Point2d(2, 2));
 
   Line l2;
-  l2.add_point(Point2d(2, 2));
-  l2.add_point(Point2d(4, 4));
+  l2.AddPoint(Point2d(2, 2));
+  l2.AddPoint(Point2d(4, 4));
 
   EXPECT_TRUE(Collide(l1, l2));
   EXPECT_TRUE(Collide(l2, l1));
@@ -521,9 +525,9 @@ TEST(collision, carshape1) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(10, 10, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(10, 10, 0)));
 
   EXPECT_FALSE(Collide(*car1, *car2));
 }
@@ -537,9 +541,9 @@ TEST(collision, carshape2) {
 
   Polygon outline = CarLimousine();
   std::shared_ptr<Polygon> car1 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(0, 0, 0)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(0, 0, 0)));
   std::shared_ptr<Polygon> car2 =
-      std::dynamic_pointer_cast<Polygon>(outline.transform(Pose(1, 0, 3.14)));
+      std::dynamic_pointer_cast<Polygon>(outline.Transform(Pose(1, 0, 3.14)));
 
   // TODO(@hart): HACK
   // EXPECT_TRUE(Collide(car1.get(), car2.get()));
@@ -556,9 +560,9 @@ TEST(line, s1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
 
   EXPECT_DOUBLE_EQ(line.s_[0], 0.0);
   EXPECT_DOUBLE_EQ(line.s_[1], 1.0);
@@ -577,10 +581,10 @@ TEST(line, s2) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
-  line.add_point(point_4);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+  line.AddPoint(point_4);
 
   EXPECT_EQ(line.s_.size(), 4u);
   EXPECT_DOUBLE_EQ(line.s_[0], 0.0);
@@ -589,7 +593,7 @@ TEST(line, s2) {
   EXPECT_DOUBLE_EQ(line.s_[3], 4.0);
 }
 
-TEST(line, get_s_at_pt_1) {
+TEST(line, GetS_at_pt_1) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -601,16 +605,16 @@ TEST(line, get_s_at_pt_1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
 
-  Point2d p1 = get_point_at_s(line, 0.0);
-  Point2d p2 = get_point_at_s(line, 1.0);
-  Point2d p3 = get_point_at_s(line, 2.0);
+  Point2d p1 = GetPointAtS(line, 0.0);
+  Point2d p2 = GetPointAtS(line, 1.0);
+  Point2d p3 = GetPointAtS(line, 2.0);
 
-  Point2d p4 = get_point_at_s(line, 0.5);
-  Point2d p5 = get_point_at_s(line, 1.5);
+  Point2d p4 = GetPointAtS(line, 0.5);
+  Point2d p5 = GetPointAtS(line, 1.5);
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -620,7 +624,7 @@ TEST(line, get_s_at_pt_1) {
   EXPECT_TRUE(Point2d(0.0, 2.5) == p5);
 }
 
-TEST(line, get_line_from_s_interval) {
+TEST(line, GetLineFromSInterval) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -631,21 +635,21 @@ TEST(line, get_line_from_s_interval) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
 
-  Line_t<Point2d> line_segment = get_line_from_s_interval(line, 0.5, 1.5);
+  Line_t<Point2d> line_segment = GetLineFromSInterval(line, 0.5, 1.5);
 
-  Point2d p1 = get_point_at_s(line_segment, 0.0);
-  Point2d p2 = get_point_at_s(line_segment, 0.5);
-  Point2d p3 = get_point_at_s(line_segment, 1.0);
+  Point2d p1 = GetPointAtS(line_segment, 0.0);
+  Point2d p2 = GetPointAtS(line_segment, 0.5);
+  Point2d p3 = GetPointAtS(line_segment, 1.0);
 
   EXPECT_TRUE(Point2d(0.0, 1.5) == p1);
   EXPECT_TRUE(point_2 == p2);
   EXPECT_TRUE(Point2d(0.0, 2.5) == p3);
 }
-TEST(line, get_line_from_s_interval_entire_line) {
+TEST(line, GetLineFromSInterval_entire_line) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -655,16 +659,16 @@ TEST(line, get_line_from_s_interval_entire_line) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
 
-  Line_t<Point2d> line_segment = get_line_from_s_interval(line, 0.0, 2.0);
+  Line_t<Point2d> line_segment = GetLineFromSInterval(line, 0.0, 2.0);
 
   EXPECT_TRUE(Point2d(0.0, 0.0) == point_1);
   EXPECT_TRUE(Point2d(0.0, 2.0) == point_2);
 }
 
-TEST(line, get_nearest_point_1) {
+TEST(line, GetNearestPoint_1) {
   using modules::geometry::Line_t;
   using modules::geometry::Point2d;
   using modules::geometry::operator==;
@@ -676,19 +680,19 @@ TEST(line, get_nearest_point_1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
 
-  Point2d p1 = get_nearest_point(line, point_1);
-  Point2d p2 = get_nearest_point(line, point_2);
-  Point2d p3 = get_nearest_point(line, point_3);
+  Point2d p1 = GetNearestPoint(line, point_1);
+  Point2d p2 = GetNearestPoint(line, point_2);
+  Point2d p3 = GetNearestPoint(line, point_3);
 
-  Point2d p4 = get_nearest_point(line, Point2d(0, 0));
-  Point2d p5 = get_nearest_point(line, Point2d(0, 4));
+  Point2d p4 = GetNearestPoint(line, Point2d(0, 0));
+  Point2d p5 = GetNearestPoint(line, Point2d(0, 4));
 
-  Point2d p6 = get_nearest_point(line, Point2d(1, 1));
-  Point2d p7 = get_nearest_point(line, Point2d(1, 2.2));
+  Point2d p6 = GetNearestPoint(line, Point2d(1, 1));
+  Point2d p7 = GetNearestPoint(line, Point2d(1, 2.2));
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -714,16 +718,16 @@ TEST(line, segment_intersection_check_1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
-  line.add_point(point_4);
-  line.add_point(point_5);
-  line.add_point(point_6);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+  line.AddPoint(point_4);
+  line.AddPoint(point_5);
+  line.AddPoint(point_6);
 
-  EXPECT_NEAR(get_segment_end_idx(line, 0.0f), 1, 0.1f);
-  EXPECT_NEAR(get_segment_end_idx(line, 3.0f), 4, 0.1f);
-  EXPECT_NEAR(get_segment_end_idx(line, 6.0), 5, 0.1f);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 0.0f), 1, 0.1f);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 3.0f), 4, 0.1f);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 6.0), 5, 0.1f);
 }
 TEST(line, segment_intersection_tangent_1) {
   using modules::geometry::Line_t;
@@ -738,14 +742,14 @@ TEST(line, segment_intersection_tangent_1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
-  line.add_point(point_4);
-  line.add_point(point_5);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+  line.AddPoint(point_4);
+  line.AddPoint(point_5);
 
-  EXPECT_NEAR(get_tangent_angle_at_s(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(get_tangent_angle_at_s(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141,
+  EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141,
               0.1f);
 
   // template
@@ -757,14 +761,14 @@ TEST(line, segment_intersection_tangent_1) {
 
   Line_t<Point2d> line2;
 
-  line2.add_point(point_6);
-  line2.add_point(point_7);
-  line2.add_point(point_8);
-  line2.add_point(point_9);
-  line2.add_point(point_10);
+  line2.AddPoint(point_6);
+  line2.AddPoint(point_7);
+  line2.AddPoint(point_8);
+  line2.AddPoint(point_9);
+  line2.AddPoint(point_10);
 
-  EXPECT_NEAR(get_tangent_angle_at_s(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1f);
-  EXPECT_NEAR(get_tangent_angle_at_s(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1f);
 }
 
 TEST(line, segment_get_normal_1) {
@@ -780,29 +784,29 @@ TEST(line, segment_get_normal_1) {
 
   Line_t<Point2d> line;
 
-  line.add_point(point_1);
-  line.add_point(point_2);
-  line.add_point(point_3);
-  line.add_point(point_4);
-  line.add_point(point_1);
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+  line.AddPoint(point_4);
+  line.AddPoint(point_1);
 
-  Point2d p = get_normal_at_s(line, 0.5f);
+  Point2d p = GetNormalAtS(line, 0.5f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = get_normal_at_s(line, 1.5f);
+  p = GetNormalAtS(line, 1.5f);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(line, 2.5f);
+  p = GetNormalAtS(line, 2.5f);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -1.0, 0.1);
 
-  p = get_normal_at_s(line, 3.5f);
+  p = GetNormalAtS(line, 3.5f);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = get_normal_at_s(line, 4.0f);
+  p = GetNormalAtS(line, 4.0f);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
@@ -812,31 +816,31 @@ TEST(optimizer, shrink_polygon) {
   using modules::geometry::Polygon;
 
   Polygon polygon;
-  polygon.add_point(Point2d(0, 0));
-  polygon.add_point(Point2d(4, 0));
-  polygon.add_point(Point2d(4, 2));
-  polygon.add_point(Point2d(6, 2));
-  polygon.add_point(Point2d(6, 0));
-  polygon.add_point(Point2d(10, 0));
-  polygon.add_point(Point2d(10, 4));
-  polygon.add_point(Point2d(0, 4));
-  polygon.add_point(Point2d(0, 0));
+  polygon.AddPoint(Point2d(0, 0));
+  polygon.AddPoint(Point2d(4, 0));
+  polygon.AddPoint(Point2d(4, 2));
+  polygon.AddPoint(Point2d(6, 2));
+  polygon.AddPoint(Point2d(6, 0));
+  polygon.AddPoint(Point2d(10, 0));
+  polygon.AddPoint(Point2d(10, 4));
+  polygon.AddPoint(Point2d(0, 4));
+  polygon.AddPoint(Point2d(0, 0));
 
   Polygon shrunk_polygon;
   ShrinkPolygon(polygon, -1, &shrunk_polygon);
 
   Polygon expected_shrunk_polygon;
-  polygon.add_point(Point2d(1, 1));
-  polygon.add_point(Point2d(3, 1));
-  polygon.add_point(Point2d(3, 3));
-  polygon.add_point(Point2d(7, 3));
-  polygon.add_point(Point2d(7, 1));
-  polygon.add_point(Point2d(7, 1));
-  polygon.add_point(Point2d(9, 3));
-  polygon.add_point(Point2d(9, 3));
-  polygon.add_point(Point2d(1, 1));
+  polygon.AddPoint(Point2d(1, 1));
+  polygon.AddPoint(Point2d(3, 1));
+  polygon.AddPoint(Point2d(3, 3));
+  polygon.AddPoint(Point2d(7, 3));
+  polygon.AddPoint(Point2d(7, 1));
+  polygon.AddPoint(Point2d(7, 1));
+  polygon.AddPoint(Point2d(9, 3));
+  polygon.AddPoint(Point2d(9, 3));
+  polygon.AddPoint(Point2d(1, 1));
 
-  ASSERT_TRUE(equals(expected_shrunk_polygon, shrunk_polygon));
+  ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
 int main(int argc, char **argv) {

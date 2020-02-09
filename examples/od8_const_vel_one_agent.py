@@ -3,25 +3,20 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
 import numpy as np
 import time
-import os
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.models.dynamic import *
-from bark.models.execution import *
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
-
+from bark.models.behavior import BehaviorConstantVelocity
+from bark.models.execution import ExecutionModelInterpolate
+from bark.models.dynamic import SingleTrackModel
+from bark.world import World
+from bark.world.goal_definition import GoalDefinitionPolygon
+from bark.world.agent import Agent
+from bark.world.map import MapInterface
+from bark.geometry.standard_shapes import CarLimousine
+from bark.geometry import Point2d, Polygon2d
 
 # Parameters Definitions
 param_server = ParameterServer(filename="examples/params/od8_const_vel_one_agent.json")
@@ -39,14 +34,15 @@ dynamic_model = SingleTrackModel(param_server)
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
-map_interface.set_open_drive_map(xodr_parser.map)
-world.set_map(map_interface)
+map_interface.SetOpenDriveMap(xodr_parser.map)
+world.SetMap(map_interface)
+
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -15, -13, 3.14*3.0/4.0, 10/3.6])
+init_state = np.array([0, -15, -13, 3.14*5.0/4.0, 10/3.6])
 agent_params = param_server.addChild("agent1")
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.translate(Point2d(-191.789,-50.1725))
+goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
 agent = Agent(init_state,
               behavior_model,
@@ -56,7 +52,7 @@ agent = Agent(init_state,
               agent_params,
               GoalDefinitionPolygon(goal_polygon), # goal_lane_id
               map_interface)
-world.add_agent(agent)
+world.AddAgent(agent)
 
 # viewer
 viewer = MPViewer(params=param_server,
@@ -70,9 +66,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   100]
 
-for _ in range(0, 100):
+for _ in range(0, 10):
   viewer.clear()
-  world.step(sim_step_time)
+  world.Step(sim_step_time)
   viewer.drawWorld(world)
   viewer.drawRoadCorridor(agent.road_corridor)
   viewer.show(block=False)

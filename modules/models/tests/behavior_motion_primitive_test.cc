@@ -27,15 +27,15 @@ using namespace modules::geometry;
 class DummyObservedWorld : public ObservedWorld {
  public:
   DummyObservedWorld(const State& init_state,
-                     Params* params) :
+                     const ParamsPtr& params) :
     ObservedWorld(std::make_shared<World>(params), AgentId()),
     init_state_(init_state) { }
 
-  virtual State current_ego_state() const {
+  virtual State CurrentEgoState() const {
     return init_state_;
   }
 
-  virtual double get_world_time() const {
+  virtual double GetWorldTime() const {
     return 0.0f;
   }
  private:
@@ -43,7 +43,7 @@ class DummyObservedWorld : public ObservedWorld {
 };
 
 TEST(behavior_motion_primitives_add, behavior_test) {
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   BehaviorMotionPrimitives behavior(dynamics, params);
   Input u(2);
@@ -52,8 +52,8 @@ TEST(behavior_motion_primitives_add, behavior_test) {
 }
 
 TEST(behavior_motion_primitives_plan, behavior_test) {
-  SetterParams* params = new SetterParams();
-  params->set_real("integration_time_delta", 0.01);
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 
   BehaviorMotionPrimitives behavior(dynamics, params);

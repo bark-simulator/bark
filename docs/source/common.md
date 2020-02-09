@@ -14,13 +14,13 @@ A common base class for all BARK classes provides common functionality. Currentl
 ```cpp
 class BaseType {
  public:
-  explicit BaseType(Params* params) : params_(params) {}
+  explicit BaseType(ParamPtr params) : params_(params) {}
   ~BaseType() {}
 
-  Params* get_params() const { return params_;}
+  ParamPtr GetParams() const { return params_;}
 
  private:
-  Params* params_;  // do not own
+  ParamPtr params_;  // do not own
 };
 ```
 
@@ -37,25 +37,25 @@ class Params {
   virtual ~Params() {}
 
   // get and set parameters as in python
-  virtual bool get_bool(const std::string &param_name,
+  virtual bool GetBool(const std::string &param_name,
                         const std::string &description,
                         const bool &default_value) = 0;
 
-  virtual float get_real(const std::string &param_name,
+  virtual float GetReal(const std::string &param_name,
                          const std::string &description,
                          const float &default_value) = 0;
 
-  virtual int get_int(const std::string &param_name,
+  virtual int GetInt(const std::string &param_name,
                       const std::string &description,
                       const int &default_value) = 0;
 
   // not used atm
-  virtual void set_bool(const std::string &param_name, const bool &value) = 0;
-  virtual void set_real(const std::string &param_name, const float &value) = 0;
-  virtual void set_int(const std::string &param_name, const int &value) = 0;
+  virtual void SetBool(const std::string &param_name, const bool &value) = 0;
+  virtual void SetReal(const std::string &param_name, const float &value) = 0;
+  virtual void SetInt(const std::string &param_name, const int &value) = 0;
 
   virtual int operator[](const std::string &param_name) = 0;
 
-  virtual Params* AddChild(const std::string &name) = 0;
+  virtual ParamPtr AddChild(const std::string &name) = 0;
 };
 ```

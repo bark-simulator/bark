@@ -49,10 +49,10 @@ class PygameViewer(BaseViewer):
             lanes_np = []
             lanes_dashed = []
 
-            for _, road in map.get_roads().items():
+            for _, road in map.GetRoads().items():
                 for lane_section in road.lane_sections:
-                    for _, lane in lane_section.get_lanes().items():
-                        lane_np = lane.line.toArray()
+                    for _, lane in lane_section.GetLanes().items():
+                        lane_np = lane.line.ToArray()
                         lanes_np.append(lane_np)
                         lanes_dashed.append(lane.road_mark.type == XodrRoadMarkType.broken
                                             or lane.road_mark.type == XodrRoadMarkType.none)
@@ -151,7 +151,7 @@ class PygameViewer(BaseViewer):
         if isinstance(points, list):
             points = np.array(points)
         elif not isinstance(points, np.ndarray):
-            points = points.toArray()
+            points = points.ToArray()
 
         return np.array([0, self.screen_height])+(points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]]))*np.array([1, -1]) \
             / self.camera_view_size*self.screen_dims
