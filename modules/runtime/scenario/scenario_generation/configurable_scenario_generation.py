@@ -28,16 +28,16 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._random_seed = params_temp["RandomSeed", "Random seed used for sampling", 1000]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
-      "SourceSink": (509, 509),
-      "Description": "south_to_north",
+      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformDistribution"},
       "ConfigBehaviorModels": {},
       "ConfigExecutionModels": {},
       "ConfigDynamicModels": {}
     },
     {
-      "SourceSink": (509, 509),
-      "Description": "south_to_west",
+      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "Description": "right_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformDistribution"},
       "ConfigBehaviorModels": {},
       "ConfigExecutionModels": {},
@@ -381,6 +381,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     
     if not road_corridor:
       raise ValueError("No road corridor found betwen source {} \
-                 and sink {}".format(source, sink) )
+              "" and sink {}".format(source_sink[0], source_sink[1]) )
 
     return road_corridor
