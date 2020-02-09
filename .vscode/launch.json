@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/scenario_dump_load.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/scenario_dump_load.runfiles/bark_project"
+                "PYTHONPATH": "${workspaceFolder}/bazel-bin/modules/runtime/tests/py_scenario_generation_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/modules/runtime/tests/py_scenario_generation_tests.runfiles/bark_project"
 			   }
         },
         {
