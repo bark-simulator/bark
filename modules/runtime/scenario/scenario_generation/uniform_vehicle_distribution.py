@@ -159,7 +159,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         agent_params["map_interface"] = world.map
 
         converter = ModelJsonConversion()
-        ego_agent = converter.agent_from_json(agent_params, self._params)
+        ego_agent = converter.agent_from_json(agent_params, self._params["Agent"])
         # TODO(@bernhard): ensure that ego agent not collides with others
     
     agent_list.append(ego_agent)
@@ -231,7 +231,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       agent_params["map_interface"] = world.map
 
       converter = ModelJsonConversion()
-      bark_agent = converter.agent_from_json(agent_params, self._params)
+      bark_agent = converter.agent_from_json(agent_params, self._params["Agent"])
       agent_list.append(bark_agent)
 
       # move forward on linestring based on vehicle size and max/min distance

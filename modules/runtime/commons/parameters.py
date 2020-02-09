@@ -211,8 +211,4 @@ class ParameterServer(Params):
         return
 
     def AddChild(self, name):
-        if not name in self.store:
-            self.store[name] = ParameterServer()
-        #if not isinstance(self.store[name], ParameterServer):
-        #  self.store[name] = ParameterServer(json=self.store[name])
-        return self.store[name]
+        return self.__getitem__(name)
