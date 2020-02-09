@@ -37,7 +37,7 @@ typedef std::vector<StateActionPair> StateActionHistory;
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
-  explicit BehaviorModel(commons::Params* params) :
+  explicit BehaviorModel(const commons::ParamsPtr& params) :
     commons::BaseType(params),
     last_trajectory_(),
     last_action_() {}

@@ -51,12 +51,12 @@ WorldPtr modules::world::tests::make_test_world(
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(nullptr);
-  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(&params));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(&params));
+  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
 
   Polygon polygon(
       Pose(1.25, 1, 0),
@@ -66,7 +66,7 @@ WorldPtr modules::world::tests::make_test_world(
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, pos_x, pos_y, 0.0, ego_velocity;
   AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model,
-                            polygon, &params, ego_goal_definition,
+                            polygon, params, ego_goal_definition,
                             map_interface, geometry::Model3D()));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -75,18 +75,18 @@ WorldPtr modules::world::tests::make_test_world(
   init_state2 << 0.0, pos_x + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model,
-                            polygon, &params, ego_goal_definition,
+                            polygon, params, ego_goal_definition,
                             map_interface, geometry::Model3D()));
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model,
-                            polygon, &params, ego_goal_definition,
+                            polygon, params, ego_goal_definition,
                             map_interface,
                             geometry::Model3D()));  // NOLINT
 
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   if (num_other_agents == 1) {
     world->AddAgent(agent2);
@@ -118,7 +118,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   using modules::geometry::standard_shapes::CarRectangle;
   using StateDefinition::MIN_STATE_SIZE;
 
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -135,25 +135,25 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   // Setting Up Agents (one in front of another)
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   // Construct World
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
   world->UpdateAgentRTree();
@@ -161,7 +161,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   State init_state3(static_cast<int>(MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, -1.75, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
-                            polygon, &params, goal_ptr, map_interface,
+                            polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
@@ -170,7 +170,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   State init_state4(static_cast<int>(MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
   AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
-                            polygon, &params, goal_ptr, map_interface,
+                            polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   world->AddAgent(agent4);

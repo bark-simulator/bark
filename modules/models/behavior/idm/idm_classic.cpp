@@ -21,6 +21,22 @@ using modules::models::dynamic::StateDefinition;
 using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 
+
+
+BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params) {
+  if(params) {
+    param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
+    param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);
+    param_max_acceleration_ = params->GetReal("BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
+    param_desired_velocity_ = params->GetReal("BehaviorIDMClassic::DesiredVelocity", "See Wikipedia IDM article", 15.0f);
+    param_comfortable_braking_acceleration_ = params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", "See Wikipedia IDM article", 1.67f);
+    param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity", "See Wikipedia IDM article", 0.0f);
+    param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity", "See Wikipedia IDM article", 50.0f);
+    param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent", "See Wikipedia IDM article", 4);
+  }
+}
+
+
 double BehaviorIDMClassic::CalcFreeRoadTerm(const double vel_ego) const {
   const float desired_velocity = GetDesiredVelocity();
   const int exponent = GetExponent();

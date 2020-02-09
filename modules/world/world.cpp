@@ -11,7 +11,7 @@
 namespace modules {
 namespace world {
 
-World::World(commons::Params* params)
+World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
       map_(),
       agents_(),

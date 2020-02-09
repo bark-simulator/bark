@@ -44,7 +44,7 @@ class DummyConstantAcceleration : public BehaviorLongitudinalAcceleration {
 };
 
 TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<SetterParams>();
   DummyConstantAcceleration behavior(params);
 
   float dt = 1.0;
@@ -63,7 +63,7 @@ TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
 }
 
 TEST(behavior_constant_acceleration_plan, behavior_test_non_zero_velocity) {
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<SetterParams>();
   DummyConstantAcceleration behavior(params);
 
   float dt = 1.0;

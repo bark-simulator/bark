@@ -25,7 +25,7 @@ using world::ObservedWorld;
 class DynamicBehaviorModel : public BehaviorModel {
  public:
   DynamicBehaviorModel(const DynamicModelPtr& dynamic_model,
-                       commons::Params *params);
+                       const commons::ParamsPtr& params);
 
   DynamicBehaviorModel(DynamicBehaviorModel* other_behavior);
   virtual ~DynamicBehaviorModel() {}

@@ -20,7 +20,7 @@ using world::ObservedWorld;
 
 class BehaviorLongitudinalAcceleration : public BehaviorModel {
  public:
-  explicit BehaviorLongitudinalAcceleration(commons::Params *params) :
+  explicit BehaviorLongitudinalAcceleration(const commons::ParamsPtr& params) :
     BehaviorModel(params) {}
 
   virtual ~BehaviorLongitudinalAcceleration() {}

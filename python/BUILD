@@ -14,6 +14,7 @@ cc_binary(
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen", 
+    "//modules/runtime/tests:py_param_server_test_helper",
     "//modules/geometry:geometry",
     "//modules/world/opendrive:opendrive",
     "//modules/world/tests:make_test_xodr_map",
@@ -22,6 +23,7 @@ cc_binary(
     "//modules/world/goal_definition:goal_definition",
     "//modules/world/evaluation:evaluation",
     "//modules/commons/params:params",
+    "//modules/commons/util:util",
     "//modules/models/execution/interpolation:interpolation",
     "//modules/models/behavior/constant_velocity:constant_velocity",
     "//modules/models/behavior/motion_primitives:motion_primitives",
@@ -41,7 +43,7 @@ cc_binary(
 # needed for external python wrapping (planners)
 cc_library(
     name = "common",
-    hdrs = ["common.hpp"],
+    hdrs = ["common.hpp", "polymorphic_conversion.hpp"],
     deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
