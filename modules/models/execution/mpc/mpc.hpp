@@ -28,7 +28,7 @@ using Eigen::Matrix;
 
 class ExecutionModelMpc : public ExecutionModel {
  public:
-  explicit ExecutionModelMpc(commons::Params *params);
+  explicit ExecutionModelMpc(const commons::ParamsPtr& params);
 
   ~ExecutionModelMpc() {}
 

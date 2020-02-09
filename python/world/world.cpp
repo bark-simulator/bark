@@ -22,12 +22,12 @@ using namespace modules::world::opendrive;
 using modules::world::World;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorldPtr;
-using modules::commons::Params;
+using modules::commons::ParamsPtr;
 
 
 void python_world(py::module m) {
   py::class_<World, std::shared_ptr<World>>(m, "World")
-    .def(py::init<Params*>())
+    .def(py::init<ParamsPtr>())
     .def("Step", &World::Step)
     .def("DoPlanning", &World::DoPlanning)
     .def("DoExecution", &World::DoExecution)

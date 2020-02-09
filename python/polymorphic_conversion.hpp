@@ -14,6 +14,7 @@
 namespace py = pybind11;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::models::behavior::BehaviorModelPtr;
+using modules::commons::ParamsPtr;
 
 // For pickle we need conversion functions between the genereric base types and the derived types
 
@@ -24,6 +25,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t);
 // Goal Definition
 py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition);
 GoalDefinitionPtr PythonToGoalDefinition(py::tuple t);
+
+py::tuple ParamsToPython(const ParamsPtr& params);
+ParamsPtr PythonToParams(py::tuple t);
 
 // Todo: Other polymorphic types, e.g. execution model...
 

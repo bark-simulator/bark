@@ -94,13 +94,21 @@ class PyParams : public Params {
         param_name, value);
   }
 
-  Params *AddChild(const std::string &name) override {
+  ParamsPtr AddChild(const std::string &name) override {
     PYBIND11_OVERLOAD_PURE(
-        Params *,
+        ParamsPtr,
         Params,
         AddChild,
         name);
   }
+
+  CondensedParamList GetCondensedParamList() const override {
+    PYBIND11_OVERLOAD_PURE(
+        CondensedParamList,
+        Params,
+        GetCondensedParamList,);
+  }
+
 };
 
 void python_commons(py::module m);

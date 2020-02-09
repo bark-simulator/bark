@@ -23,7 +23,7 @@ using dynamic::Input;
 
 DynamicBehaviorModel::DynamicBehaviorModel(
   const DynamicModelPtr& dynamic_model,
-  commons::Params *params) :
+  const commons::ParamsPtr& params) :
   BehaviorModel(params),
   dynamic_model_(dynamic_model),
   integration_time_delta_(

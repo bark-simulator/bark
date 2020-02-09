@@ -44,7 +44,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   auto map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
   Polygon car_polygon = CarRectangle();
 
   Polygon polygon(
@@ -59,29 +59,29 @@ TEST(slower_preceding_agent, behavior_mobil) {
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   // Ego Agent
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorMobil(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorMobil(params));
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_definition_ptr,
+                            car_polygon, params, goal_definition_ptr,
                             map_interface, modules::geometry::Model3D()));
 
   // Preceding Agent
-  ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model2(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model2(new BehaviorMobil(&params));
+  ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model2(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model2(new BehaviorMobil(params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 15.0, -1.75, 0.0, 2.0;
   AgentPtr agent2(new Agent(init_state2, beh_model2, dyn_model2, exec_model2,
-                            car_polygon, &params, goal_definition_ptr,
+                            car_polygon, params, goal_definition_ptr,
                             map_interface, modules::geometry::Model3D()));
 
   // Construct World
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
   world->UpdateAgentRTree();

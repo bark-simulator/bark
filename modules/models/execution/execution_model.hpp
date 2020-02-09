@@ -23,7 +23,7 @@ using dynamic::State;
 
 class ExecutionModel : public commons::BaseType {
  public:
-  explicit ExecutionModel(modules::commons::Params *params) :
+  explicit ExecutionModel(modules::commons::ParamsPtr params) :
     BaseType(params),
     last_trajectory_() {}
 

@@ -84,7 +84,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                         high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
-                                                   param_server=self._local_params)
+                                                   param_server=self._params)
       agent.SetAgentId(agent_json["id"])
       scenario._agent_list.append(agent)
     

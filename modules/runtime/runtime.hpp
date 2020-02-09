@@ -17,7 +17,7 @@ namespace runtime {
 
 class Runtime : public modules::commons::BaseType {
  public:
-  explicit Runtime(commons::Params *params) : commons::BaseType(params) {}
+  explicit Runtime(const commons::ParamsPtr& params) : commons::BaseType(params) {}
 
   Runtime(const Runtime& runtime) :
               commons::BaseType(runtime.GetParams()) {}

@@ -20,7 +20,7 @@ enum MobilState { Idle = 0, IsChanging = 1 };
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
 class BehaviorMobil : public BehaviorIDMClassic {
  public:
-  explicit BehaviorMobil(commons::Params* params)
+  explicit BehaviorMobil(const commons::ParamsPtr& params)
       : BehaviorIDMClassic(params), mobil_state_(MobilState::Idle) {
     crosstrack_error_gain_ = params->GetReal(
         "CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);

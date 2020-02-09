@@ -18,7 +18,7 @@ void python_execution(py::module m) {
   py::class_<ExecutionModel,
              PyExecutionModel,
              ExecutionModelPtr>(m, "ExecutionModel")
-    .def(py::init<Params *>())
+    .def(py::init<const ParamsPtr&>())
     .def("Execute", &ExecutionModel::Execute)
     .def_property_readonly("last_trajectory",
       &ExecutionModel::GetLastTrajectory);
@@ -27,7 +27,7 @@ void python_execution(py::module m) {
              ExecutionModel,
              shared_ptr<ExecutionModelInterpolate>>(m,
     "ExecutionModelInterpolate")
-    .def(py::init<Params *>())
+    .def(py::init<const ParamsPtr&>())
     .def("__repr__", [](const ExecutionModelInterpolate &m) {
       return "bark.dynamic.ExecutionModelInterpolate";
     })

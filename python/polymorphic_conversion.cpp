@@ -8,13 +8,14 @@
 #include <memory>
 #include <stdexcept>
 
-#include "python/polymorphic_conversion.hpp"
+#include "polymorphic_conversion.hpp"
 
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
+#include "modules/commons/params/setter_params.hpp"
 
 namespace py = pybind11;
 
@@ -23,6 +24,7 @@ using modules::world::goal_definition::GoalDefinitionStateLimits;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorConstantVelocity;
+using modules::commons::SetterParams;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
@@ -77,4 +79,13 @@ GoalDefinitionPtr PythonToGoalDefinition(py::tuple t) {
   } else {
     throw;
   }
+}
+
+py::tuple ParamsToPython(const ParamsPtr& params) {
+  return py::make_tuple(params->GetCondensedParamList());
+}
+
+ParamsPtr PythonToParams(py::tuple t) {
+  const auto param_list = t[0].cast<modules::commons::CondensedParamList>();
+  return std::make_shared<SetterParams>(true, param_list);
 }
