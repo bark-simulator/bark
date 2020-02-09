@@ -74,7 +74,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       
       #1) create agent states and geometries for this source
       agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigAgentStatesGeometries",
                               road_corridor)
       # collect default parameters of this config
@@ -93,7 +93,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       #3) create behavior, execution and dynamic models
       config_return, kwargs_dict_tmp, default_params_behavior = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigBehaviorModels",
                               road_corridor, agent_states, kwargs_dict)
       behavior_models = config_return
@@ -101,7 +101,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       config_return, kwargs_dict_tmp, default_params_execution = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigExecutionModels",
                               road_corridor, agent_states, kwargs_dict)
       execution_models = config_return
@@ -110,7 +110,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
 
       config_return, kwargs_dict_tmp, default_params_dynamic = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigDynamicModels",
                               road_corridor, agent_states, kwargs_dict)
       dynamic_models = config_return
@@ -119,7 +119,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       #4 create goal definitions and controlled agents
       config_return, kwargs_dict_tmp, default_params_controlled_agents = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigControlledAgents",
                               road_corridor, agent_states, kwargs_dict)
       controlled_agent_ids = config_return
@@ -127,7 +127,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       config_return, default_params_goals = \
-        PropertyBasedScenarioGeneration.eval_configuration(
+        ConfigurableScenarioGeneration.eval_configuration(
                               sink_source_config, "ConfigGoalDefinitions",
                               road_corridor, agent_states, controlled_agent_ids, kwargs_dict)
       goal_definitions = config_return
@@ -343,7 +343,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
   @staticmethod
   def eval_configuration(sink_source_config, config_type, *args):
     eval_config = sink_source_config[config_type]
-    eval_config_type = agent_state_geometry_config["type"]
+    eval_config_type = eval_config["type"]
     param_config = ParameterServer(json = eval_config)
     config_return, default_param_config  = eval("{}({},{})".format(
         eval_config_type, param_config, ", ".join(args)))
@@ -372,7 +372,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                                   Point2d(1,0)])
             start_point = Point2d(source_sink[0][0], source_sink[0][1])
             end_point = Point2d(source_sink[1][0], source_sink[1][1])
-            goal_polygon = goal_polygon.translate(end_point)
+            goal_polygon = goal_polygon.Translate(end_point)
             road_corridor = map_interface.GenerateRoadCorridor(start_point,
                                                 goal_polygon)
     else:
