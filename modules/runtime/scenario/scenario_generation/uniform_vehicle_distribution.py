@@ -39,7 +39,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._ego_goal_end = params_temp["EgoGoalEnd",
       "The center of the ego agent's goal region polygon",
-      [5128, 5200] ]
+      [5117, 5200] ]
     self._ego_goal_start = params_temp["EgoGoalStart",
       "The coordinates of the start of the ego goal,\
            if empty only ego goal end is used as center of polygon ",
@@ -51,18 +51,18 @@ class UniformVehicleDistribution(ScenarioGeneration):
     self._ego_route = params_temp["EgoRoute",
       "A list of two points defining start and end point of initial ego driving corridor. \
            If empty, then one of the other agents is selected as ego agents.",
-      []]
+      [[5117.5, 5100], [5117.5, 5200]]]
     self._others_source = params_temp["OthersSource",
       "A list of points around which other vehicles spawn. \
         Points should be on different lanes. XodrLanes must be near these points \
       (<0.5m) Provide a list of lists with x,y-coordinates",
-     [[5111.626, 5061.8305]]]
+     [[5114.626, 5061.8305]]]
     self._others_sink = params_temp["OthersSink",
       "A list of points defining end of other vehicles routes.\
         Points should be on different lanes and match the order of the\
         source points. XodrLanes must be near these points (<0.5m) \
         Provide a list of lists with x,y-coordinates",
-        [[ 5111.626, 5193.1725]] ]  
+        [[ 5114.626, 5193.1725]] ]  
     assert len(self._others_sink) == len(self._others_source)         
     self._vehicle_distance_range = params_temp["VehicleDistanceRange",
       "Distance range between vehicles in meter given as tuple from which" + \
@@ -111,7 +111,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                 Point2d(-1.5,8),
                                 Point2d(1.5,8),
                                 Point2d(1.5,0)])
-      goal_polygon = goal_polygon.translate(Point2d(self._others_sink[idx][0],
+      goal_polygon = goal_polygon.Translate(Point2d(self._others_sink[idx][0],
                                                     self._others_sink[idx][1]))
       goal_definition = GoalDefinitionPolygon(goal_polygon)
       agent_list.extend(
@@ -139,8 +139,8 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                  self._ego_route[1])
 
         sego = self.sample_srange_uniform([s_start, s_end])
-        xy_point =  get_point_at_s(connecting_center_line, sego)
-        angle = get_tangent_angle_at_s(connecting_center_line, sego)
+        xy_point =  GetPointAtS(connecting_center_line, sego)
+        angle = GetTangentAngleAtS(connecting_center_line, sego)
         velocity = self.sample_velocity_uniform(self._ego_velocity_range)
         agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
 
@@ -152,14 +152,14 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                 Point2d(-1.5,8),
                                 Point2d(1.5,8),
                                 Point2d(1.5,0)])
-        goal_polygon = goal_polygon.translate(Point2d(self._ego_route[1][0],
+        goal_polygon = goal_polygon.Translate(Point2d(self._ego_route[1][0],
                                                     self._ego_route[1][1]))
         goal_definition = GoalDefinitionPolygon(goal_polygon)
         agent_params["goal_definition"] = goal_definition
         agent_params["map_interface"] = world.map
 
         converter = ModelJsonConversion()
-        ego_agent = converter.agent_from_json(agent_params, self._params)
+        ego_agent = converter.agent_from_json(agent_params, self._params["Agent"])
         # TODO(@bernhard): ensure that ego agent not collides with others
     
     agent_list.append(ego_agent)
@@ -178,7 +178,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                     Point2d(-1.5,8),
                                     Point2d(1.5,8),
                                     Point2d(1.5,0)])
-          goal_polygon = goal_polygon.translate(Point2d(self._ego_goal_end[0],
+          goal_polygon = goal_polygon.Translate(Point2d(self._ego_goal_end[0],
                                                       self._ego_goal_end[1]))
           ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
     else:
@@ -187,14 +187,14 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                  self._ego_goal_start,
                                                  self._ego_goal_end)
 
-        goal_center_line = get_line_from_s_interval(connecting_center_line, s_start, s_end)
+        goal_center_line = GetLineFromSInterval(connecting_center_line, s_start, s_end)
 
         # build polygon representing state limits
         lims = self._ego_goal_state_limits
-        goal_limits_left = goal_center_line.translate(Point2d(-lims[0], -lims[1]))
-        goal_limits_right = goal_center_line.translate(Point2d(lims[0], lims[1]))
-        goal_limits_right.reverse()
-        goal_limits_left.append_linestring(goal_limits_right)
+        goal_limits_left = goal_center_line.Translate(Point2d(-lims[0], -lims[1]))
+        goal_limits_right = goal_center_line.Translate(Point2d(lims[0], lims[1]))
+        goal_limits_right.Reverse()
+        goal_limits_left.AppendLinestring(goal_limits_right)
         polygon = Polygon2d([0,0,0], goal_limits_left)
 
         ego_agent.goal_definition = GoalDefinitionStateLimits(polygon, (1.57-0.08, 1.57+0.08))
@@ -213,14 +213,14 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                     goal_definition):
     s = s_start
     if s_end < s_start:
-      linestring.reverse()
+      linestring.Reverse()
       s = s_end
       s_end = s_start
     agent_list = []
     while s < s_end:
       # set agent state on linestring with random velocity
-      xy_point =  get_point_at_s(linestring, s)
-      angle = get_tangent_angle_at_s(linestring, s)
+      xy_point =  GetPointAtS(linestring, s)
+      angle = GetTangentAngleAtS(linestring, s)
       
       velocity = self.sample_velocity_uniform(self._other_velocity_range)
       agent_state = np.array([0, xy_point.x(), xy_point.y(), angle, velocity ])
@@ -231,7 +231,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       agent_params["map_interface"] = world.map
 
       converter = ModelJsonConversion()
-      bark_agent = converter.agent_from_json(agent_params, self._params)
+      bark_agent = converter.agent_from_json(agent_params, self._params["Agent"])
       agent_list.append(bark_agent)
 
       # move forward on linestring based on vehicle size and max/min distance
@@ -256,7 +256,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                   Point2d(-1,1),
                                   Point2d(1,1),
                                   Point2d(1,0)])
-    goal_polygon = goal_polygon.translate(Point2d(sink[0],
+    goal_polygon = goal_polygon.Translate(Point2d(sink[0],
                                                       sink[1]))
     road_corridor = map_interface.GenerateRoadCorridor(
         Point2d(source[0], source[1]),
@@ -274,9 +274,9 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
     center_line = lane_corridor_sink.center_line
 
-    _, s_start, _ = get_nearest_point_and_s(center_line,
+    _, s_start, _ = GetNearestPointAndS(center_line,
                                             Point2d(source[0],source[1]))
-    _, s_end, _ = get_nearest_point_and_s(center_line,
+    _, s_end, _ = GetNearestPointAndS(center_line,
                                           Point2d(sink[0],sink[1]))
     return center_line, \
            s_start, \

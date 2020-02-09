@@ -20,8 +20,8 @@ class Object : public commons::BaseType {
  public:
   friend class world::World;
 
-  Object(const geometry::Polygon &shape, commons::Params *params,
-         const geometry::Model3D &model_3d = geometry::Model3D());
+  Object(const geometry::Polygon& shape, const commons::ParamsPtr& params,
+         const geometry::Model3D& model_3d = geometry::Model3D());
 
   Object(const Object& object) :
     BaseType(object),
@@ -31,12 +31,12 @@ class Object : public commons::BaseType {
 
   virtual ~Object() {}
 
-  geometry::Polygon get_shape() const { return shape_; }
-  geometry::Model3D get_model_3d() const { return model_3d_; }
+  geometry::Polygon GetShape() const { return shape_; }
+  geometry::Model3D GetModel3d() const { return model_3d_; }
 
-  AgentId get_agent_id() const { return agent_id_; }
+  AgentId GetAgentId() const { return agent_id_; }
 
-  void set_agent_id(const AgentId& agent_id) { agent_id_ = agent_id;}
+  void SetAgentId(const AgentId& agent_id) { agent_id_ = agent_id;}
 
   virtual std::shared_ptr<Object> Clone() const;
 

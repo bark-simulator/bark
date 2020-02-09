@@ -24,13 +24,13 @@ class Junction {
   using Connections = std::map<uint32_t, Connection>;
 
   //! setter functions
-  void add_connection(Connection con) { connections_[con.id_] = con; }
-  void set_id(uint32_t id) { id_ = id; }
+  void AddConnection(Connection con) { connections_[con.id_] = con; }
+  void SetId(uint32_t id) { id_ = id; }
 
   //! getter functions
-  Connections get_connections() const { return connections_; }
-  Connection get_connection(uint32_t id) const { return connections_.at(id); }
-  uint32_t get_id() const { return id_; }
+  Connections GetConnections() const { return connections_; }
+  Connection GetConnection(uint32_t id) const { return connections_.at(id); }
+  uint32_t GetId() const { return id_; }
 
  private:
   uint32_t id_;

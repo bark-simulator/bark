@@ -1,57 +1,68 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef MODULES_WORLD_WORLD_HPP_
 #define MODULES_WORLD_WORLD_HPP_
 
-#include <unordered_map>
 #include <map>
-#include <vector>
-#include <utility>
 #include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
-#include "modules/world/opendrive/opendrive.hpp"
 #include <boost/geometry/index/rtree.hpp>
+#include "modules/world/evaluation/base_evaluator.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
-#include "modules/world/evaluation/base_evaluator.hpp"
+#include "modules/world/opendrive/opendrive.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace modules {
 namespace world {
 
+using world::evaluation::EvaluatorPtr;
 using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
-using world::evaluation::EvaluatorPtr;
+using world::map::LaneCorridorPtr;
+using modules::commons::transformation::FrenetPosition;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
-typedef std::map<std::string,
-                 modules::world::evaluation::EvaluationReturn> EvaluationMap;
+typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
+    EvaluationMap;
 
-using rtree_agent_model = \
-  boost::geometry::model::box<modules::geometry::Point2d>;
+using rtree_agent_model =
+    boost::geometry::model::box<modules::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
-using rtree_agent = boost::geometry::index::rtree<rtree_agent_value,
-                    boost::geometry::index::linear<16, 4> >;
+using rtree_agent =
+    boost::geometry::index::rtree<rtree_agent_value,
+                                  boost::geometry::index::linear<16, 4> >;
+
+typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
+
+struct FrontRearAgents {
+  AgentFrenetPair front;
+  AgentFrenetPair rear;
+};
 
 class World : public commons::BaseType {
  public:
-  explicit World(commons::Params *params);
+  explicit World(const commons::ParamsPtr& params);
   explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
 
   //! Getter
-  double get_world_time() const { return world_time_; }
-  world::map::MapInterfacePtr get_map() const { return map_; }
-  AgentMap get_agents() const { return agents_; }
-  AgentPtr get_agent(AgentId id) const {
+  double GetWorldTime() const { return world_time_; }
+  world::map::MapInterfacePtr GetMap() const { return map_; }
+  AgentMap GetAgents() const { return agents_; }
+  AgentPtr GetAgent(AgentId id) const {
     auto agent_it = agents_.find(id);
     if (agent_it != agents_.end()) {
       return agents_.at(id);
@@ -59,39 +70,46 @@ class World : public commons::BaseType {
       return AgentPtr(nullptr);
     }
   }
-  ObjectMap get_objects() const { return objects_; }
-  std::map<std::string,
-           EvaluatorPtr> get_evaluators() const { return evaluators_; }
+  ObjectMap GetObjects() const { return objects_; }
+  std::map<std::string, EvaluatorPtr> GetEvaluators() const {
+    return evaluators_;
+  }
 
-  bool get_remove_agents() const { return remove_agents_; }
+  bool GetRemoveAgents() const { return remove_agents_; }
 
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
 
   AgentMap GetAgentsIntersectingPolygon(
-    const modules::geometry::Polygon& polygon) const;
+      const modules::geometry::Polygon& polygon) const;
+
+  //! Function will yield the front and rear agent (and their frenet
+  //! coordinates) in a respective lane_corridor in relation to a given agent.
+  //! Agent specified by agent_id might be outside the lane_corridor.
+  FrontRearAgents GetAgentFrontRearForId(
+      const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
   //! Setter
-  void set_map(const world::map::MapInterfacePtr& map) { map_ = map;}
+  void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
 
-  std::pair<modules::geometry::Point2d,
-            modules::geometry::Point2d> bounding_box() const {
+  std::pair<modules::geometry::Point2d, modules::geometry::Point2d>
+  BoundingBox() const {
     return map_->BoundingBox();
   }
 
-  void add_agent(const AgentPtr& agent);
+  void AddAgent(const AgentPtr& agent);
 
-  void add_object(const ObjectPtr& object);
+  void AddObject(const ObjectPtr& object);
 
-  void add_evaluator(const std::string& name, const EvaluatorPtr& evaluator);
+  void AddEvaluator(const std::string& name, const EvaluatorPtr& evaluator);
 
   //! Functions
-  void clear_evaluators() { evaluators_.clear(); }
-  void clear_agents() { agents_.clear(); }
-  void clear_objects() { objects_.clear(); }
-  void clear_all()  {
-    clear_agents();
-    clear_objects();
+  void ClearEvaluators() { evaluators_.clear(); }
+  void ClearAgents() { agents_.clear(); }
+  void ClearObjects() { objects_.clear(); }
+  void ClearAll() {
+    ClearAgents();
+    ClearObjects();
     evaluators_.clear();
   }
 
@@ -107,10 +125,9 @@ class World : public commons::BaseType {
   void UpdateAgentRTree();
   void RemoveOutOfMapAgents();
 
-
   virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(
-    const float& execution_time) const;
+      const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;
@@ -126,13 +143,13 @@ typedef std::shared_ptr<world::World> WorldPtr;
 
 inline WorldPtr World::Clone() const {
   WorldPtr new_world = std::make_shared<World>(*this);
-  new_world->clear_all();
+  new_world->ClearAll();
   for (auto agent = agents_.begin(); agent != agents_.end(); ++agent) {
-    new_world->add_agent(
-      std::dynamic_pointer_cast<Agent>(agent->second->Clone()));
+    new_world->AddAgent(
+        std::dynamic_pointer_cast<Agent>(agent->second->Clone()));
   }
   for (auto object = objects_.begin(); object != objects_.end(); ++object) {
-    new_world->add_object(object->second->Clone());
+    new_world->AddObject(object->second->Clone());
   }
   return new_world;
 }

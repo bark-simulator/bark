@@ -5,6 +5,9 @@
 
 
 #include "commons.hpp"
+#include "python/polymorphic_conversion.hpp"
+#include "modules/commons/params/setter_params.hpp"
+#include "modules/runtime/tests/py_param_server_test_helper.hpp"
 
 namespace py = pybind11;
 
@@ -13,16 +16,37 @@ namespace commons {
 
 void python_commons(py::module m) {
     py::class_<Params, PyParams, std::shared_ptr<Params>>(m, "Params")
-        .def(py::init<>())
-        .def("access", &Params::operator[])
-        .def("addChild", &Params::AddChild)
-        .def("getBool", &Params::get_bool)
-        .def("getReal", &Params::get_real)
-        .def("getInt", &Params::get_int)
-        .def("setBool", &Params::set_bool)
-        .def("setReal", &Params::set_real)
-        .def("setInt", &Params::set_int);
+      .def(py::init<>())
+      .def("Access", &Params::operator[])
+      .def("addChild", &Params::AddChild)
+      .def("getBool", &Params::GetBool)
+      .def("getReal", &Params::GetReal)
+      .def("getInt", &Params::GetInt)
+      .def("setBool", &Params::SetBool)
+      .def("setReal", &Params::SetReal)
+      .def("getCondensedParamList", &Params::GetCondensedParamList)
+      .def("setInt", &Params::SetInt);
+
+
     m.def("ParamsTest", &DoSomeParams);
+
+    py::class_<CppParamServerTestObject, std::shared_ptr<CppParamServerTestObject>>(m, "CppParamServerTestObject")
+      .def(py::init<std::shared_ptr<modules::commons::Params>>())
+      .def("GetRealValue", &CppParamServerTestObject::GetRealValue)
+      .def("GetBoolValueTrue", &CppParamServerTestObject::GetBoolValueTrue)
+      .def("GetBoolValueFalse", &CppParamServerTestObject::GetBoolValueFalse)
+      .def("GetIntValue", &CppParamServerTestObject::GetIntValue)
+      .def("GetListListFloatValue", &CppParamServerTestObject::GetListListFloatValue)
+      .def("GetParams", &CppParamServerTestObject::GetParams)
+      .def(py::pickle(
+      [](const CppParamServerTestObject& p) -> py::tuple {
+        return py::make_tuple(ParamsToPython(p.GetParams()));
+      },
+      [](py::tuple  &t)  {
+          auto params_ptr = PythonToParams(t[0].cast<py::tuple>());
+          return CppParamServerTestObject(params_ptr);
+      }));
+
 }
 
 }  // namespace commons

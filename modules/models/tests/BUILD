@@ -7,6 +7,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet",
         "@gtest//:main",
         "@boost//:geometry",
     ],
@@ -21,6 +22,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet",
         #"//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
@@ -50,7 +52,7 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-        ":make_test_world",
+        "//modules/world/tests:make_test_world",
         "//modules/geometry",
         "//modules/models/behavior/longitudinal_acceleration",
         "//modules/models/dynamic",
@@ -73,26 +75,23 @@ cc_test(
         "//modules/models/execution/interpolation:interpolation",
         "@gtest//:main",
         "@com_github_eigen_eigen//:eigen",
-        ":make_test_world",
+        "//modules/world/tests:make_test_world",
     ],
 )
 
-cc_library(
-    name="make_test_world",
-    srcs=[
-        "make_test_world.cpp"
+cc_test(
+    name = "behavior_mobil_test",
+    srcs = [
+        "behavior_mobil_test.cc",
     ],
-    hdrs = [
-        "make_test_world.hpp"
-    ],
-    deps = [
+    copts = ["-Iexternal/gtest/include"],
+    deps = [        
         "//modules/geometry",
-        "//modules/models/behavior/idm:idm_classic",
-        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/behavior/mobil:mobil",
         "//modules/models/execution/interpolation:interpolation",
-        "@com_github_eigen_eigen//:eigen",
+        "//modules/world/tests:make_test_xodr_map",
+        "@gtest//:main",
     ],
-    visibility = ["//visibility:public"],
 )
 
 py_test(

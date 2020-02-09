@@ -32,7 +32,7 @@ class Model3D {
                                 type_(type) {}
   ~Model3D() {}
 
-  Type get_type() { return type_; }
+  Type GetType() { return type_; }
   void UpdateScale(const Polygon bounding_box) {}
 
  private:

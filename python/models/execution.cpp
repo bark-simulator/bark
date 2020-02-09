@@ -3,7 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
+#include <string>
 #include "execution.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 //#include "modules/models/execution/mpc/mpc.hpp"
@@ -18,41 +18,27 @@ void python_execution(py::module m) {
   py::class_<ExecutionModel,
              PyExecutionModel,
              ExecutionModelPtr>(m, "ExecutionModel")
-      .def(py::init<Params *>())
-      .def("execute", &ExecutionModel::Execute)
-      .def_property_readonly("last_trajectory",
-                             &ExecutionModel::get_last_trajectory);
+    .def(py::init<const ParamsPtr&>())
+    .def("Execute", &ExecutionModel::Execute)
+    .def_property_readonly("last_trajectory",
+      &ExecutionModel::GetLastTrajectory);
 
   py::class_<ExecutionModelInterpolate,
              ExecutionModel,
              shared_ptr<ExecutionModelInterpolate>>(m,
-                                                    "ExecutionModelInterpolate")
-      .def(py::init<Params *>())
-      .def("__repr__", [](const ExecutionModelInterpolate &m) {
-        return "bark.dynamic.ExecutionModelInterpolate";
-      })
-      .def(py::pickle(
-        [](const ExecutionModelInterpolate &m) -> std::string { 
-            return "ExecutionModelInterpolate"; // 0
-        },
-        [](std::string s) { // __setstate__
-            if (s != "ExecutionModelInterpolate" )
-                throw std::runtime_error("Invalid tyoe of execution model!");
+    "ExecutionModelInterpolate")
+    .def(py::init<const ParamsPtr&>())
+    .def("__repr__", [](const ExecutionModelInterpolate &m) {
+      return "bark.dynamic.ExecutionModelInterpolate";
+    })
+    .def(py::pickle(
+      [](const ExecutionModelInterpolate &m) -> std::string {
+          return "ExecutionModelInterpolate";
+      },
+      [](std::string s) {
+        if (s != "ExecutionModelInterpolate" )
+          throw std::runtime_error("Invalid tyoe of execution model!");
+        return new ExecutionModelInterpolate(nullptr);
+      }));
 
-            /* Create a new C++ instance */
-            return new ExecutionModelInterpolate(nullptr); // param pointer must be set via python
-        }));
-     
-
-  // py::class_<ExecutionModelMpc,
-  //            ExecutionModel,
-  //            shared_ptr<ExecutionModelMpc>>(m, "ExecutionModelMpc")
-  //     .def(py::init<Params *>())
-  //     .def("__repr__", [](const ExecutionModelMpc &m) {
-  //       return "bark.dynamic.ExecutionModelMpc";
-  //     })
-  //     .def_property_readonly("last_weights",
-  //                            &ExecutionModelMpc::get_last_weights)
-  //     .def_property_readonly("last_desired_states_",
-  //                            &ExecutionModelMpc::get_last_desired_states);
 }

@@ -35,21 +35,26 @@ class PickleTests(unittest.TestCase):
 
         # linestring
         l = Line2d()
-        l.addPoint(p)
-        l.addPoint(Point2d(10,4))
-        l.addPoint(Point2d(1.555555, 1.244222))
+        l.AddPoint(p)
+        l.AddPoint(Point2d(10,4))
+        l.AddPoint(Point2d(1.555555, 1.244222))
 
         la = pickle_unpickle(l)
-        self.assertTrue(np.array_equal(l.toArray(), la.toArray()))
+        self.assertTrue(np.array_equal(l.ToArray(), la.ToArray()))
 
         l = Line2d()
         la = pickle_unpickle(l)
-        self.assertTrue(np.array_equal(l.toArray(), la.toArray()))
+        self.assertTrue(np.array_equal(l.ToArray(), la.ToArray()))
 
         # polygon
         p = CarLimousine()
         pa = pickle_unpickle(p)
-        self.assertTrue(np.array_equal(p.toArray(), pa.toArray()))
+        self.assertTrue(np.array_equal(p.ToArray(), pa.ToArray()))
+
+        # polygon
+        pr = CarRectangle()
+        pra = pickle_unpickle(pr)
+        self.assertTrue(np.array_equal(pr.ToArray(), pra.ToArray()))
 
     def test_behavior_model_pickle(self):
         
@@ -90,11 +95,11 @@ class PickleTests(unittest.TestCase):
         goal_definition_sequential_after = pickle_unpickle(goal_definition_sequential)
 
         sequential_goals_after = goal_definition_sequential_after.sequential_goals
-        self.assertTrue(np.array_equal(sequential_goals_after[0].xy_limits.toArray(), \
-                                        goal_definition.xy_limits.toArray()))
+        self.assertTrue(np.array_equal(sequential_goals_after[0].xy_limits.ToArray(), \
+                                        goal_definition.xy_limits.ToArray()))
 
-        self.assertTrue(np.array_equal(sequential_goals_after[1].xy_limits.toArray(), \
-                                        goal_definition2.xy_limits.toArray()))
+        self.assertTrue(np.array_equal(sequential_goals_after[1].xy_limits.ToArray(), \
+                                        goal_definition2.xy_limits.ToArray()))
 
     def test_agent_pickle(self):
         params = ParameterServer()

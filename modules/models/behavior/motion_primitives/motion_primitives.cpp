@@ -14,19 +14,20 @@ namespace behavior {
 
 using modules::models::dynamic::StateDefinition;
 
-BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model, commons::Params *params) : 
+BehaviorMotionPrimitives::BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
+                                                   const commons::ParamsPtr& params) : 
     BehaviorModel(params),
     dynamic_model_(dynamic_model),
     motion_primitives_(),
     active_motion_(),
-    integration_time_delta_(params->get_real("integration_time_delta",
+    integration_time_delta_(params->GetReal("integration_time_delta",
                                              "the size of the time steps used within the euler integration loop", 0.02))
     {}
 
 dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
-  dynamic::State ego_vehicle_state = observed_world.current_ego_state();
-  double start_time = observed_world.get_world_time();
+  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
+  double start_time = observed_world.GetWorldTime();
   const float dt = integration_time_delta_;
   const int num_trajectory_points =
       static_cast<int>(std::ceil(delta_time / dt)) + 1;
@@ -68,9 +69,9 @@ dynamic::Trajectory BehaviorMotionPrimitives::Plan(
     traj(traj_idx, StateDefinition::VEL_POSITION) = state(StateDefinition::VEL_POSITION);
   }
 
-  set_last_action(Action(DiscreteAction(active_motion_)));
+  SetLastAction(Action(DiscreteAction(active_motion_)));
 
-  this->set_last_trajectory(traj);
+  this->SetLastTrajectory(traj);
   return traj;
 }
 

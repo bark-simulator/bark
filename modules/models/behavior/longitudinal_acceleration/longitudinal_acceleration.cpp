@@ -17,34 +17,24 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   using namespace dynamic;
 
   //! TODO(@fortiss): parameters
-  const float min_velocity = get_min_velocity();
-  const float max_velocity = get_max_velocity();
+  const float min_velocity = GetMinVelocity();
+  const float max_velocity = GetMaxVelocity();
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
                            int(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
 
-  dynamic::State ego_vehicle_state = observed_world.current_ego_state();
+  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
 
   // select state and get p0
-  geometry::Point2d pose(ego_vehicle_state(StateDefinition::X_POSITION),
-                         ego_vehicle_state(StateDefinition::Y_POSITION));
+  geometry::Point2d pose = observed_world.CurrentEgoPosition();
 
-  geometry::Line line;
-  auto road_corr = observed_world.get_road_corridor();
-  if (!road_corr) {
-    LOG(ERROR) << "No road corridor for longitudinal acceleration behavior found.";
-    this->set_last_trajectory(traj);
+  auto lane_corr = observed_world.GetLaneCorridor();
+  if (!lane_corr) {
+    this->SetLastTrajectory(traj);
     return traj;
   }
-
-  const auto lane_corr = road_corr->GetCurrentLaneCorridor(pose);
-  if(!lane_corr) {
-      LOG(ERROR) << "No lane corridor for longitudinal acceleration behavior found.";
-      this->set_last_trajectory(traj);
-      return traj;
-  }
-  line = lane_corr->GetCenterLine();
+  geometry::Line line = lane_corr->GetCenterLine();
 
   // check whether linestring is empty
   if (line.obj_.size() > 0) {
@@ -53,8 +43,8 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
             0, 0);
 
-    float s_start = get_nearest_s(line, pose);  // checked
-    double start_time = observed_world.get_world_time();
+    float s_start = GetNearestS(line, pose);  // checked
+    double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     double acc = CalculateLongitudinalAcceleration(observed_world);  // checked
     BARK_EXPECT_TRUE(!std::isnan(acc));
@@ -67,8 +57,8 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       vel_i = std::max(std::min(temp_velocity, max_velocity), min_velocity);
       t_i = static_cast<float>(i) * dt + start_time;
 
-      geometry::Point2d traj_point = get_point_at_s(line, s_i);  // checked
-      float traj_angle = get_tangent_angle_at_s(line, s_i);      // checked
+      geometry::Point2d traj_point = GetPointAtS(line, s_i);  // checked
+      float traj_angle = GetTangentAngleAtS(line, s_i);      // checked
 
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));
@@ -83,10 +73,10 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
       traj(i, StateDefinition::VEL_POSITION) = vel_i;         // checked
     }
 
-    set_last_action(Action(Continuous1DAction(acc)));
+    SetLastAction(Action(Continuous1DAction(acc)));
   }
 
-  this->set_last_trajectory(traj);
+  this->SetLastTrajectory(traj);
   return traj;
 }
 

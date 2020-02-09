@@ -7,6 +7,7 @@
 #include "modules/world/world.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/map/roadgraph.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 #include "python/world/world.hpp"
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
@@ -17,53 +18,51 @@
 namespace py = pybind11;
 using namespace modules::world::objects;
 using namespace modules::world::map;
-using namespace modules::models::dynamic;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::geometry;
-using namespace modules::world;
+using namespace modules::world::opendrive;
+using modules::world::World;
+using modules::world::WorldPtr;
+using modules::world::ObservedWorldPtr;
+using modules::commons::ParamsPtr;
+
 
 void python_world(py::module m) {
   py::class_<World, std::shared_ptr<World>>(m, "World")
-    .def(py::init<Params *>())
-    .def("__repr__", [](const World &a) {
+    .def(py::init<ParamsPtr>())
+    .def("Step", &World::Step)
+    .def("DoPlanning", &World::DoPlanning)
+    .def("DoExecution", &World::DoExecution)
+    .def("Observe", &World::Observe)
+    .def("AddAgent", &World::AddAgent)
+    .def("AddObject", &World::AddObject)
+    .def("GetParams", &World::GetParams)
+    .def("ClearEvaluators", &World::ClearEvaluators)
+    .def("SetMap", &World::SetMap)
+    .def("AddEvaluator", &World::AddEvaluator)
+    .def("GetNearestAgents", &World::GetNearestAgents)
+    .def_property_readonly("evaluators", &World::GetEvaluators)
+    .def("Evaluate", &World::Evaluate)
+    .def_property_readonly("agents", &World::GetAgents)
+    .def_property_readonly("objects", &World::GetObjects)
+    .def_property_readonly("time", &World::GetWorldTime)
+    .def_property_readonly("bounding_box", &World::BoundingBox)
+    .def("GetAgent", &World::GetAgent)
+    .def_property("map", &World::GetMap, &World::SetMap)
+    .def("Copy", &World::Clone)
+    .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
+    .def("__repr__", [](const World& a) {
       return "bark.world.World";
-    })
-    .def("step", &World::Step)
-    .def("do_planning", &World::DoPlanning)
-    .def("do_execution", &World::DoExecution)
-    .def("observe", &World::Observe)
-    .def("add_agent", &World::add_agent)
-    .def("add_object", &World::add_object)
-    .def("get_params", &World::get_params)
-    .def("clear_evaluators", &World::clear_evaluators)
-    .def("set_map", &World::set_map)
-    .def("add_evaluator", &World::add_evaluator)
-    .def_property_readonly("evaluators", &World::get_evaluators)
-    .def("evaluate", &World::Evaluate)
-    .def_property_readonly("agents", &World::get_agents)
-    .def_property_readonly("objects", &World::get_objects)
-    .def_property_readonly("time", &World::get_world_time)
-    .def_property_readonly("bounding_box", &World::bounding_box)
-    .def("get_agent", &World::get_agent)
-    .def_property("map", &World::get_map, &World::set_map)
-    .def("copy",&World::Clone)
-    .def("world_execution_at_time", &World::WorldExecutionAtTime);
+    });
 
+  m.def("MakeTestWorldHighway",
+    &modules::world::tests::MakeTestWorldHighway);
 
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
-      .def(py::init<const WorldPtr&, const AgentId&>())
-      .def_property_readonly("ego_agent", &ObservedWorld::get_ego_agent)
-      .def_property_readonly("other_agents", &ObservedWorld::get_other_agents)
-      .def("__repr__", [](const ObservedWorld &a) {
-        return "bark.world.ObservedWorld";
-      });
-
-  python_goal_definition(m.def_submodule("goal_definition", "agent goal definitions"));
-  python_agent(m.def_submodule("agent", "Agent wrapping"));
-  python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
-  python_map(m.def_submodule("map", "mapInterface wrapping"));
-  python_evaluation(m.def_submodule("evaluation", "evaluators"));
+    .def(py::init<const WorldPtr&, const AgentId&>())
+    .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
+    .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
+    .def("__repr__", [](const ObservedWorld& a) {
+      return "bark.world.ObservedWorld";
+    });
 
   py::class_<vertex_t>(m, "vertex_t")
     .def(py::init<>());
@@ -71,10 +70,11 @@ void python_world(py::module m) {
   py::class_<edge_t>(m, "edge_t")
     .def(py::init<>());
 
-  py::class_<XodrLaneVertex, std::shared_ptr<XodrLaneVertex>>(m, "XodrLaneVertex")
+  py::class_<XodrLaneVertex, std::shared_ptr<XodrLaneVertex>>(
+    m, "XodrLaneVertex")
     .def(py::init<int, int, XodrLanePtr>())
-    .def_property_readonly("lane_id", &XodrLaneVertex::get_global_line_id)
-    .def_property_readonly("lane", &XodrLaneVertex::get_lane);
+    .def_property_readonly("lane_id", &XodrLaneVertex::GetGlobalLineId)
+    .def_property_readonly("lane", &XodrLaneVertex::GetLane);
 
   py::enum_<XodrLaneEdgeType>(m, "XodrLaneEdgeType")
     .value("LANE_SUCCESSOR_EDGE", XodrLaneEdgeType::LANE_SUCCESSOR_EDGE)
@@ -84,6 +84,16 @@ void python_world(py::module m) {
 
   py::class_<XodrLaneEdge, std::shared_ptr<XodrLaneEdge>>(m, "XodrLaneEdge")
     .def(py::init<XodrLaneEdgeType>())
-    .def_property_readonly("edge_type", &XodrLaneEdge::get_edge_type);
+    .def_property_readonly("edge_type", &XodrLaneEdge::GetEdgeType);
 
+  python_goal_definition(
+    m.def_submodule("goal_definition", "agent goal definitions"));
+
+  python_agent(m.def_submodule("agent", "Agent wrapping"));
+
+  python_opendrive(m.def_submodule("opendrive", "OpenDrive wrapping"));
+
+  python_map(m.def_submodule("map", "mapInterface wrapping"));
+
+  python_evaluation(m.def_submodule("evaluation", "evaluators"));
 }

@@ -41,7 +41,7 @@ class ModelJsonConversion:
     agent_json["id"] = agent.id
     agent_json["state"] = agent.state.tolist()
     agent_json["shape"] = {}
-    agent_json["shape"]["polygon_points"] = agent.shape.toArray().tolist()
+    agent_json["shape"]["polygon_points"] = agent.shape.ToArray().tolist()
     agent_json["shape"]["center_pose"] = agent.shape.center.tolist()
     agent_json["followed_trajectory"] = agent.followed_trajectory.tolist()
     agent_json["planned_trajectory"] = agent.planned_trajectory.tolist()

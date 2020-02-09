@@ -6,7 +6,7 @@
 #include "Eigen/Core"
 #include "gtest/gtest.h"
 
-#include "make_test_world.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 #include "modules/commons/params/default_params.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
@@ -23,7 +23,7 @@ using namespace modules::models::behavior;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
-using namespace modules::models::tests;
+using namespace modules::world::tests;
 
 // Acceleration
 const double a = 10.0;
@@ -44,7 +44,7 @@ class DummyConstantAcceleration : public BehaviorLongitudinalAcceleration {
 };
 
 TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<SetterParams>();
   DummyConstantAcceleration behavior(params);
 
   float dt = 1.0;
@@ -56,14 +56,14 @@ TEST(behavior_constant_acceleration_plan, behavior_test_zero_velocity) {
   auto last_idx = traj1.rows() - 1;
   EXPECT_EQ(dt, traj1(last_idx, StateDefinition::TIME_POSITION));
 
-  auto x = obs_world.get_ego_agent()
-               ->get_current_state()[StateDefinition::X_POSITION];
+  auto x = obs_world.GetEgoAgent()
+               ->GetCurrentState()[StateDefinition::X_POSITION];
   double dx = vel0 * dt + 0.5 * a * dt * dt;
   EXPECT_FLOAT_EQ(dx + x, traj1(last_idx, StateDefinition::X_POSITION));
 }
 
 TEST(behavior_constant_acceleration_plan, behavior_test_non_zero_velocity) {
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<SetterParams>();
   DummyConstantAcceleration behavior(params);
 
   float dt = 1.0;
@@ -76,8 +76,8 @@ TEST(behavior_constant_acceleration_plan, behavior_test_non_zero_velocity) {
   auto last_idx = traj1.rows() - 1;
   EXPECT_EQ(1, traj1(traj1.rows() - 1, StateDefinition::TIME_POSITION));
 
-  auto x = obs_world.get_ego_agent()
-               ->get_current_state()[StateDefinition::X_POSITION];
+  auto x = obs_world.GetEgoAgent()
+               ->GetCurrentState()[StateDefinition::X_POSITION];
   double dx = vel0 * dt + 0.5 * a * dt * dt;
   EXPECT_FLOAT_EQ(dx + x, traj1(traj1.rows() - 1, StateDefinition::X_POSITION));
 }

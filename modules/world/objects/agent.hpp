@@ -17,6 +17,7 @@
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/models/execution/execution_model.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace modules {
 namespace world {
@@ -46,7 +47,7 @@ class Agent : public Object {
         const DynamicModelPtr &dynamic_model_ptr,
         const ExecutionModelPtr &execution_model,
         const geometry::Polygon &shape,
-        commons::Params *params,
+        const commons::ParamsPtr& params,
         const GoalDefinitionPtr& goal_definition = GoalDefinitionPtr(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
         const geometry::Model3D &model_3d = geometry::Model3D());
@@ -55,50 +56,52 @@ class Agent : public Object {
 
   Agent(const Agent& other_agent);
 
-  BehaviorModelPtr get_behavior_model() const { return behavior_model_; }
+  BehaviorModelPtr GetBehaviorModel() const { return behavior_model_; }
 
-  ExecutionModelPtr get_execution_model() const { return execution_model_; }
+  ExecutionModelPtr GetExecutionModel() const { return execution_model_; }
 
-  DynamicModelPtr get_dynamic_model() const { return dynamic_model_; }
+  DynamicModelPtr GetDynamicModel() const { return dynamic_model_; }
 
-  StateActionHistory get_state_input_history() const { return history_; }
+  StateActionHistory GetStateInputHistory() const { return history_; }
 
-  GoalDefinitionPtr get_goal_definition() const {return goal_definition_;}
+  GoalDefinitionPtr GetGoalDefinition() const {return goal_definition_;}
 
-  Trajectory get_execution_trajectory() const {
-    return execution_model_->get_last_trajectory();
+  Trajectory GetExecutionTrajectory() const {
+    return execution_model_->GetLastTrajectory();
   }
 
-  Trajectory get_behavior_trajectory() const {
-    return behavior_model_->get_last_trajectory();
+  Trajectory GetBehaviorTrajectory() const {
+    return behavior_model_->GetLastTrajectory();
   }
 
-  State get_current_state() const { return history_.back().first; }
+  State GetCurrentState() const { return history_.back().first; }
 
-  modules::geometry::Point2d get_current_position() const {
-    const State& state = get_current_state();
+  modules::geometry::Point2d GetCurrentPosition() const {
+    const State& state = GetCurrentState();
     return modules::geometry::Point2d(
       state(StateDefinition::X_POSITION),
       state(StateDefinition::Y_POSITION));
   }
 
+  modules::commons::transformation::FrenetPosition CurrentFrenetPosition() const;
+
   geometry::Polygon GetPolygonFromState(const State& state) const;
 
-  const RoadCorridorPtr get_road_corridor() const {
+  const RoadCorridorPtr GetRoadCorridor() const {
     return road_corridor_;
   }
 
-  void set_behavior_model(const BehaviorModelPtr &behavior_model_ptr) {
+  void SetBehaviorModel(const BehaviorModelPtr &behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;
   }
 
-  void set_goal_definition(const GoalDefinitionPtr &goal_definition) {
+  void SetGoalDefinition(const GoalDefinitionPtr &goal_definition) {
     goal_definition_ = goal_definition;
   }
 
   bool GenerateRoadCorridor(const MapInterfacePtr& map_interface);
 
-  void set_road_corridor(const RoadCorridorPtr road_corridor) {
+  void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
   }
 

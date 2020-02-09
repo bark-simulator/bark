@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -7,22 +8,13 @@
 #define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
 
 #include <vector>
-#include "modules/world/evaluation/base_evaluator.hpp"
-#include "modules/world/opendrive/commons.hpp"
-#include "modules/world/map/roadgraph.hpp"
 #include "modules/geometry/geometry.hpp"
+#include "modules/world/evaluation/base_evaluator.hpp"
 
 namespace modules {
 namespace world {
 class World;
 namespace evaluation {
-
-using modules::world::map::RoadgraphPtr;
-using modules::world::opendrive::XodrLaneId;
-using modules::world::map::PolygonPtr;
-using modules::geometry::Polygon;
-using modules::geometry::Point2d;
-
 
 class EvaluatorDrivableArea : public BaseEvaluator {
  public:
@@ -30,12 +22,16 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
-    for (const auto& agent : world.get_agents()) {
-      Polygon poly_agent = agent.second->GetPolygonFromState(
-        agent.second->get_current_state());
-      if (!boost::geometry::within(poly_agent.obj_,
-          agent.second->get_road_corridor()->GetPolygon().obj_))
+    using modules::geometry::Polygon;
+    namespace bg = boost::geometry;
+
+    for (const auto& agent : world.GetAgents()) {
+      Polygon poly_agent =
+          agent.second->GetPolygonFromState(agent.second->GetCurrentState());
+      auto poly_road = agent.second->GetRoadCorridor()->GetPolygon();
+      if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
         return true;
+      }
     }
     return false;
   }
@@ -46,4 +42,3 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 }  // namespace modules
 
 #endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
-

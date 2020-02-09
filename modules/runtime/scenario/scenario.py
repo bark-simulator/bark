@@ -3,13 +3,11 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark.world.agent import *
-from bark.models.behavior import *
-from bark.world import *
-from bark.world.map import *
+from bark.world.agent import Agent
+from bark.world import World
+from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
-
 import copy
 
 
@@ -47,10 +45,10 @@ class Scenario:
     if self._map_interface is None:
         world = self.setup_map(world, self._map_file_name)
     else:
-        world.set_map(self._map_interface)
+        world.SetMap(self._map_interface)
     for agent in self._agent_list:
       agent.GenerateRoadCorridor(self._map_interface)
-      world.add_agent(agent)
+      world.AddAgent(agent)
     return world
 
   def __getstate__(self):
@@ -67,9 +65,9 @@ class Scenario:
         return world
     xodr_parser = XodrParser(_map_file_name )
     map_interface = MapInterface()
-    map_interface.set_open_drive_map(xodr_parser.map)
+    map_interface.SetOpenDriveMap(xodr_parser.map)
     self._map_interface = map_interface
-    world.set_map(map_interface)
+    world.SetMap(map_interface)
     return world
 
 

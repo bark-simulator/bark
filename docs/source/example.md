@@ -45,9 +45,9 @@ xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
 Furthermore, the `XodrParser` generates the `OpenDriveMap` and `Roadgraph`. These generated entities are then passed to the `MapInterface`.
 ```python
 map_interface = MapInterface()
-map_interface.set_open_drive_map(xodr_parser.map)
-map_interface.set_roadgraph(xodr_parser.roadgraph)
-world.set_map(map_interface)
+map_interface.SetOpenDriveMap(xodr_parser.map)
+map_interface.SetRoadgraph(xodr_parser.roadgraph)
+world.SetMap(map_interface)
 ```
 
 Next, our environment needs agents! Therefore, we initiate our agent with a vehicle-shape, a new parameter and an initial-state `x = [t, x, y, theta, v]`.
@@ -58,7 +58,7 @@ agent_2d_shape = CarLimousine()
 init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 50/3.6]) 
 agent_params = param_server.addChild("agent1")
 agent = Agent(init_state, behavior_model, dynamic_model, execution_model, agent_2d_shape, agent_params, 2, map_interface)
-world.add_agent(agent)
+world.AddAgent(agent)
 ```
 
 In order to have insights on how our agent act we can specify a viewer. Here we choose a simple, real-time 2D-viewer (PygameViewer).
@@ -74,7 +74,7 @@ sim_step_time = param_server["simulation"]["step_time", "Gives the amount of tim
 sim_real_time_factor = param_server["simulation"]["real_time_factor", "How much faster than real-time, simulation shall be played", 1]
 
 for _ in range(0, 30):
-    world.step(sim_step_time)
+    world.Step(sim_step_time)
     viewer.drawWorld(world)
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)

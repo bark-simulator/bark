@@ -30,77 +30,85 @@ class PyParams : public Params {
         param_name);
   }
 
-  bool get_bool(const std::string &param_name, const std::string &description, const bool &default_value) override {
+  bool GetBool(const std::string &param_name, const std::string &description, const bool &default_value) override {
     PYBIND11_OVERLOAD_PURE(
         bool,
         Params,
-        get_bool,
+        GetBool,
         param_name, description, default_value);
   }
 
-  float get_real(const std::string &param_name, const std::string &description, const float &default_value) override {
+  float GetReal(const std::string &param_name, const std::string &description, const float &default_value) override {
     PYBIND11_OVERLOAD_PURE(
         float,
         Params,
-        get_real,
+        GetReal,
         param_name, description, default_value);
   }
 
-  int get_int(const std::string &param_name, const std::string &description, const int &default_value) override {
+  int GetInt(const std::string &param_name, const std::string &description, const int &default_value) override {
     PYBIND11_OVERLOAD_PURE(
         int,
         Params,
-        get_int,
+        GetInt,
         param_name, description, default_value);
   }
 
-  std::vector<std::vector<float>> get_listlist_float(const std::string &param_name, const std::string &description, const std::vector<std::vector<float>> &default_value) override {
+  std::vector<std::vector<float>> GetListListFloat(const std::string &param_name, const std::string &description, const std::vector<std::vector<float>> &default_value) override {
     PYBIND11_OVERLOAD_PURE(
         std::vector<std::vector<float>>,
         Params,
-        get_listlist_float,
+        GetListListFloat,
         param_name, description, default_value);
   }
 
-  void set_bool(const std::string &param_name, const bool &value) override {
+  void SetBool(const std::string &param_name, const bool &value) override {
     PYBIND11_OVERLOAD_PURE(
         void,
         Params,
-        set_bool,
+        SetBool,
         param_name, value);
   }
 
-  void set_real(const std::string &param_name, const float &value) override {
+  void SetReal(const std::string &param_name, const float &value) override {
     PYBIND11_OVERLOAD_PURE(
         void,
         Params,
-        set_real,
+        SetReal,
         param_name, value);
   }
 
-  void set_int(const std::string &param_name, const int &value) override {
+  void SetInt(const std::string &param_name, const int &value) override {
     PYBIND11_OVERLOAD_PURE(
         void,
         Params,
-        set_int,
+        SetInt,
         param_name, value);
   }
 
-  void set_listlist_float(const std::string &param_name, const std::vector<std::vector<float>> &value) override {
+  void SetListListFloat(const std::string &param_name, const std::vector<std::vector<float>> &value) override {
     PYBIND11_OVERLOAD_PURE(
         void,
         Params,
-        set_listlist_float,
+        SetListListFloat,
         param_name, value);
   }
 
-  Params *AddChild(const std::string &name) override {
+  ParamsPtr AddChild(const std::string &name) override {
     PYBIND11_OVERLOAD_PURE(
-        Params *,
+        ParamsPtr,
         Params,
         AddChild,
         name);
   }
+
+  CondensedParamList GetCondensedParamList() const override {
+    PYBIND11_OVERLOAD_PURE(
+        CondensedParamList,
+        Params,
+        GetCondensedParamList,);
+  }
+
 };
 
 void python_commons(py::module m);

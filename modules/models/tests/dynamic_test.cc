@@ -30,7 +30,7 @@ TEST(single_track_model, dynamic_test) {
   u << 0, 0;
 
   DynamicModel *m;
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   SingleTrackModel single_track_model(params);
   m = &single_track_model;
 
@@ -57,7 +57,7 @@ TEST(triple_integrator_model, dynamic_test) {
   u0 << 0, 0, 0.;
 
   DynamicModel *m;
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   TripleIntegratorModel triple_int_model(params);
   m = &triple_int_model;
 

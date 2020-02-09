@@ -2,7 +2,7 @@
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
-
+import matplotlib
 from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 
@@ -29,7 +29,7 @@ class MPViewer(BaseViewer):
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
         lineStyle_string = '--' if dashed else '-'
-        line2d_np = line2d.toArray()
+        line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],
             line2d_np[:, 1], 
@@ -38,8 +38,8 @@ class MPViewer(BaseViewer):
             alpha=alpha)
 
     def drawPolygon2d(self, polygon, color, alpha):
-        points = polygon.toArray()
-        polygon_draw = Polygon(
+        points = polygon.ToArray()
+        polygon_draw = matplotlib.patches.Polygon(
             points,
             True,
             facecolor=self.getColor(color),

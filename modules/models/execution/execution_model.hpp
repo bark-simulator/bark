@@ -23,19 +23,19 @@ using dynamic::State;
 
 class ExecutionModel : public commons::BaseType {
  public:
-  explicit ExecutionModel(modules::commons::Params *params) :
+  explicit ExecutionModel(modules::commons::ParamsPtr params) :
     BaseType(params),
     last_trajectory_() {}
 
   ExecutionModel(const ExecutionModel& execution_model) :
-    BaseType(execution_model.get_params()),
-    last_trajectory_(execution_model.get_last_trajectory()) {}
+    BaseType(execution_model.GetParams()),
+    last_trajectory_(execution_model.GetLastTrajectory()) {}
 
   virtual ~ExecutionModel() {}
 
-  Trajectory get_last_trajectory() const { return last_trajectory_; }
+  Trajectory GetLastTrajectory() const { return last_trajectory_; }
 
-  void set_last_trajectory(const Trajectory& trajectory) {
+  void SetLastTrajectory(const Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
 

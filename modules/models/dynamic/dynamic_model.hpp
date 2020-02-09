@@ -36,7 +36,7 @@ using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 
 class DynamicModel : public commons::BaseType {
  public:
-  explicit DynamicModel(modules::commons::Params *params) :
+  explicit DynamicModel(modules::commons::ParamsPtr params) :
     BaseType(params), input_size_(0) {}
 
   virtual ~DynamicModel() {}
