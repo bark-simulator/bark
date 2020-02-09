@@ -25,6 +25,7 @@ class ParamServerTests(unittest.TestCase):
   def test_pickle(self):
     params = ParameterServer()
     params_child = params["test_child"]
+    del params
     value_float = params_child["Child1"]["Child2"]["ValueFloat", "Desc", 2.0]
     value_bool_false = params_child["Child1"]["Child2"]["ValueBoolFalse", "Desc", False]
     value_bool_true = params_child["Child3"]["Child2"]["ValueBoolTrue", "Desc", True]
