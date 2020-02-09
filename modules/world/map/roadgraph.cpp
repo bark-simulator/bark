@@ -200,11 +200,11 @@ std::pair<XodrLaneId, bool> Roadgraph::GetPlanViewForRoadId(
 std::pair<std::vector<XodrDrivingDirection>, bool> Roadgraph::GetDrivingDirectionsForRoadId(
     const XodrRoadId &id) const {
   std::vector<XodrDrivingDirection> directions;
-  std::vector<vertex_t> vertices = get_vertices();
+  std::vector<vertex_t> vertices = GetVertices();
   bool road_found = false;
   for (auto const &v : vertices) {
-    if (get_lane_graph()[v].road_id == id) {
-      directions.push_back(get_lane_graph()[v].lane->get_driving_direction());
+    if (GetLaneGraph()[v].road_id == id) {
+      directions.push_back(GetLaneGraph()[v].lane->GetDrivingDirection());
     }
   }
   return std::make_pair(directions, road_found);

@@ -319,13 +319,13 @@ inline Line GetLineFromSInterval(Line line, float begin, float end) {
   return new_line;
 }
 
-inline Line get_line_shifted_laterally(const Line& line, float lateral_shift) {
+inline Line GetLineShiftedLaterally(const Line& line, float lateral_shift) {
   Line new_line;
   for(const auto& s : line.s_) {
-    const Point2d normal = get_normal_at_s(line, s);
-    const Point2d point_at_s = get_point_at_s(line, s);
+    const Point2d normal = GetNormalAtS(line, s);
+    const Point2d point_at_s = GetPointAtS(line, s);
     const Point2d shifted = point_at_s + (normal * lateral_shift);
-    new_line.add_point(shifted);
+    new_line.AddPoint(shifted);
   }
   return new_line;
 }

@@ -33,11 +33,11 @@ class GoalDefinitionStateLimitsFrenet : public GoalDefinition  {
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
-  const modules::geometry::Line& get_center_line() const {return center_line_;}
-  const std::pair<float,float>& get_max_lateral_distances() const {return max_lateral_distances_;}
-  const std::pair<float,float>& get_max_orientation_differences() const {return max_orientation_differences_;}
-  const std::pair<float,float>& get_velocity_range() const {return velocity_range_;}
-  virtual const modules::geometry::Polygon& get_shape() const { return shape_;}
+  const modules::geometry::Line& GetCenterLine() const {return center_line_;}
+  const std::pair<float,float>& GetMaxLateralDistance() const {return max_lateral_distances_;}
+  const std::pair<float,float>& GetMaxOrientationDifferences() const {return max_orientation_differences_;}
+  const std::pair<float,float>& GetVelocityRange() const {return velocity_range_;}
+  virtual const modules::geometry::Polygon& GetShape() const { return shape_;}
 
  private:
   const modules::geometry::Line center_line_;
