@@ -5,10 +5,15 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <utility>
+
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/observed_world.hpp"
-
-#include <cmath>
 
 namespace modules {
 namespace models {
@@ -49,8 +54,8 @@ double BehaviorIDMClassic::CalcInteractionTerm(double net_distance,
   BARK_EXPECT_TRUE(!std::isnan(helper_state));
   double interaction_term =
       (helper_state / net_distance) * (helper_state / net_distance);
-  if(std::isnan(interaction_term)) {
-   interaction_term = std::numeric_limits<double>::infinity();
+  if (std::isnan(interaction_term)) {
+    interaction_term = std::numeric_limits<double>::infinity();
   }
   return interaction_term;
 }
@@ -77,8 +82,7 @@ double BehaviorIDMClassic::CalcNetDistance(
   return net_distance;
 }
 
-double BehaviorIDMClassic::CalcIDMAcc(double net_distance,
-                                      double vel_ego,
+double BehaviorIDMClassic::CalcIDMAcc(double net_distance, double vel_ego,
                                       double vel_other) const {
   const double acc_max = GetMaxAcceleration();
   double acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
@@ -103,14 +107,14 @@ Trajectory BehaviorIDMClassic::Plan(
       observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
-  using namespace dynamic;
+  using dynamic::StateDefinition;
   //! TODO(@fortiss): parameters
   const float min_velocity = GetMinVelocity();
   const float max_velocity = GetMaxVelocity();
 
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
-                           int(StateDefinition::MIN_STATE_SIZE));
+                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
 
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();

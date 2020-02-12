@@ -7,6 +7,9 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 
+#include <utility>
+#include <memory>
+
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -59,9 +62,9 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
-  double CalcLongRawAccWithoutLeader(const world::LaneCorridorPtr& lane_corridor,
-                                  const modules::geometry::Point2d& pos,
-                                  const float vel);
+  double CalcLongRawAccWithoutLeader(
+      const world::LaneCorridorPtr& lane_corridor,
+      const modules::geometry::Point2d& pos, const float vel);
 
   double CalcNetDistanceFromFrenet(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
