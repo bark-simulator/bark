@@ -78,8 +78,9 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
     linestring = lane_corridor.center_line
     agent_states = []
     agent_geometries = []
-    s = 0.0
-    while s < s_end:
+    corridor_length = lane_corridor.center_line.Length()
+    s = s_start*corridor_length
+    while s < s_end*corridor_length:
       # set agent state on linestring with random velocity
       xy_point =  GetPointAtS(linestring, s)
       angle = GetTangentAngleAtS(linestring, s)
