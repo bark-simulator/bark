@@ -12,18 +12,25 @@ from modules.runtime.commons.parameters import ParameterServer
 
   # this config reader defines behavior models with fixed type for all agents
 class FixedBehaviorType(ConfigReaderBehaviorModels):
+  def __init__(self):
+    self.param_servers = []
+
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     model_type = config_param_object["ModelType", "Type of behavior model \
                 used for all vehicles", "BehaviorIDMClassic"]
     behavior_models = []
     behavior_model_types = []
     for _ in agent_states:
-      bark_model = self.model_from_model_type(model_type)
+      bark_model, params = self.model_from_model_type(model_type)
       behavior_models.append(bark_model)
+      self.param_servers.append(params)
       behavior_model_types.append(model_type)
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
 
   def model_from_model_type(self, model_type):
     params = ParameterServer()
     bark_model = eval("{}(params)".format(model_type))    
-    return bark_model
+    return bark_model, params
+
+  def get_param_servers(self):
+    return self.param_servers

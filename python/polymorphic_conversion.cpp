@@ -14,6 +14,7 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/commons/params/setter_params.hpp"
 
@@ -21,6 +22,7 @@ namespace py = pybind11;
 
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
+using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorConstantVelocity;
@@ -33,6 +35,7 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
     behavior_model_name = "BehaviorIDMClassic";
   } else {
+    LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
     throw;
   }
   return py::make_tuple(behavior_model, behavior_model_name);
@@ -47,6 +50,7 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
     return std::make_shared<BehaviorIDMClassic>(
       t[0].cast<BehaviorIDMClassic>());
   } else {
+    LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
     throw;
   }
 }
@@ -59,7 +63,10 @@ py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition) {
     goal_definition_name = "GoalDefinitionStateLimits";
   } else if (typeid(*goal_definition) == typeid(GoalDefinitionSequential)) {
     goal_definition_name = "GoalDefinitionSequential";
+  } else if (typeid(*goal_definition) == typeid(GoalDefinitionStateLimitsFrenet)) {
+    goal_definition_name = "GoalDefinitionStateLimitsFrenet";
   } else {
+    LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
     throw;
   }
   return py::make_tuple(goal_definition, goal_definition_name);
@@ -76,7 +83,11 @@ GoalDefinitionPtr PythonToGoalDefinition(py::tuple t) {
   } else if (goal_definition_name.compare("GoalDefinitionSequential") == 0) {
     return std::make_shared<GoalDefinitionSequential>(
       t[0].cast<GoalDefinitionSequential>());
+  } else if (goal_definition_name.compare("GoalDefinitionStateLimitsFrenet") == 0) {
+    return std::make_shared<GoalDefinitionStateLimitsFrenet>(
+      t[0].cast<GoalDefinitionStateLimitsFrenet>());
   } else {
+    LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
     throw;
   }
 }
