@@ -59,7 +59,7 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
-  double CalcLongAccWithoutLeader(const world::LaneCorridorPtr& lane_corridor,
+  double CalcLongRawAccWithoutLeader(const world::LaneCorridorPtr& lane_corridor,
                                   const modules::geometry::Point2d& pos,
                                   const float vel);
 
