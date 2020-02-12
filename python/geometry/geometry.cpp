@@ -15,6 +15,7 @@ using modules::geometry::Line;
 using modules::geometry::Polygon;
 using modules::geometry::Pose;
 using modules::geometry::Distance;
+using modules::geometry::Collide;
 using modules::geometry::SignedDistance;
 using Eigen::Dynamic;
 using Eigen::Matrix;
@@ -106,6 +107,18 @@ void python_geometry(py::module m) {
 
   m.def("ComputeCenterLine",
     &modules::geometry::ComputeCenterLine, "computes the center line.");
+  
+  m.def("Collide", py::overload_cast<const Polygon &, const Point2d &>(
+    &Collide),
+    "Returns true if polygon and point2d collide.");
+
+  m.def("Collide", py::overload_cast<const Polygon &, const Line &>(
+    &Collide),
+    "Returns true if polygon and line collide.");
+
+  m.def("Collide", py::overload_cast<const Polygon &, const Polygon &>(
+    &Collide),
+    "Returns true if polygon and polygon collide.");
 
   py::class_<Line,
              std::shared_ptr<Line>>(m, "Line2d")

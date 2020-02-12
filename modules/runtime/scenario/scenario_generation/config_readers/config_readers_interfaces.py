@@ -10,7 +10,7 @@ class ConfigReaderBehaviorModels(ABC):
   # returns list of size num agents with behavior models based on property, default_params_dict
   @abstractmethod
   def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
-    pass
+    pass 
 
 class ConfigReaderExecutionModels(ABC):
   # returns list of size num agents with execution models based on property, default_params_dict
