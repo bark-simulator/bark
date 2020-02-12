@@ -18,7 +18,6 @@ BehaviorMotionPrimitives::BehaviorMotionPrimitives(
     const DynamicModelPtr& dynamic_model, commons::Params* params)
     : BehaviorModel(params),
       dynamic_model_(dynamic_model),
-      motion_primitives_(),
       active_motion_(),
       integration_time_delta_(params->GetReal(
           "integration_time_delta",
@@ -43,8 +42,9 @@ Trajectory BehaviorMotionPrimitives::Plan(
     } else {
       integration_time = dt;
     }
+    Input input = GetAction();
     traj.row(i) = dynamic::euler_int(*dynamic_model_, traj.row(i - 1),
-                                     motion_primitives_[active_motion_],
+                                     input,
                                      integration_time);
   }
 
@@ -52,12 +52,6 @@ Trajectory BehaviorMotionPrimitives::Plan(
 
   this->SetLastTrajectory(traj);
   return traj;
-}
-
-BehaviorMotionPrimitives::MotionIdx
-BehaviorMotionPrimitives::AddMotionPrimitive(const Input& dynamic_input) {
-  motion_primitives_.push_back(dynamic_input);
-  return motion_primitives_.size() - 1;
 }
 
 void BehaviorMotionPrimitives::ActionToBehavior(const MotionIdx& motion_idx) {
