@@ -21,7 +21,9 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
 
   virtual ~BehaviorMPContinuousActions() {}
 
-  virtual MotionIdx GetNumMotionPrimitives() const {
+  virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+
+  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorld& observed_world) const {
     return motion_primitives_.size();
   }
   virtual Input GetAction() const { return motion_primitives_[active_motion_]; }
