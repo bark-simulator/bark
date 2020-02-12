@@ -32,6 +32,9 @@ class BehaviorIDMClassic : public BehaviorModel {
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent);
 
+  double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other) const;
+
   double CalcIDMAcc(const double net_distance, const double vel_ego,
                     const double vel_other) const;
 
