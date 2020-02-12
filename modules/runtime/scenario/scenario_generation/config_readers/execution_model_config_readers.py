@@ -11,20 +11,20 @@ from bark.models.execution import *
 from modules.runtime.commons.parameters import ParameterServer
 
 # this config reader execution behavior models with fixed type for all agents
-class SingleFixedType(ConfigReaderExecutionModels):
-  def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
-
+class FixedExecutionType(ConfigReaderExecutionModels):
+  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+    model_type = config_param_object["ModelType", "Type of dynamic model \
+                used for all vehicles", "ExecutionModelInterpolate"]
     execution_models = []
     for _ in agent_states:
-      bark_model = self.model_from_config_params(config_param_object)
+      bark_model = self.model_from_model_type(model_type)
       execution_models.append(bark_model)
-    return execution_models 
+    return execution_models, {},  config_param_object
 
   def default_params(self):
     return {"ModelType": "ExecutionModelInterpolate"}
 
-  def model_from_config_params(self, config_params):
-    model_type = config_params.pop("ModelType", self.default_params["ModelType"])
-    params = ParameterServer(config_params)
+  def model_from_model_type(self, model_type):
+    params = ParameterServer()
     bark_model = eval("{}(params)".format(model_type))    
     return bark_model
