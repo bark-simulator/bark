@@ -11,7 +11,7 @@
 #include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
@@ -261,11 +261,13 @@ TEST(observed_world, clone) {
 
 TEST(observed_world, predict) {
   using modules::models::behavior::BehaviorMotionPrimitives;
+  using modules::models::behavior::BehaviorMPContinuousActions;
   using modules::models::behavior::DiscreteAction;
   using modules::models::dynamic::Input;
   using modules::world::prediction::PredictionSettings;
   using modules::world::tests::make_test_observed_world;
   using StateDefinition::VEL_POSITION;
+  namespace mg = modules::geometry;
 
   SetterParams params;
   params.SetReal("integration_time_delta", 0.01);
@@ -281,13 +283,13 @@ TEST(observed_world, predict) {
   WorldPtr predicted_world = observed_world.Predict(1.0f);
   ObservedWorldPtr observed_predicted_world =
       std::dynamic_pointer_cast<ObservedWorld>(predicted_world);
-  double distance_ego = modules::geometry::Distance(
-      observed_predicted_world->CurrentEgoPosition(),
-      observed_world.CurrentEgoPosition());
-  double distance_other = modules::geometry::Distance(
+  double distance_ego =
+      mg::Distance(observed_predicted_world->CurrentEgoPosition(),
+                   observed_world.CurrentEgoPosition());
+  double distance_other = mg::Distance(
       observed_predicted_world->GetOtherAgents()
           .begin()
-          ->second->GetCurrentPosition(),  // NOLINT
+          ->second->GetCurrentPosition(),
       observed_world.GetOtherAgents().begin()->second->GetCurrentPosition());
 
   // distance current and predicted state should be
@@ -302,17 +304,13 @@ TEST(observed_world, predict) {
 
   // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(
-      new BehaviorMotionPrimitives(dyn_model, &params));
+      new BehaviorMPContinuousActions(dyn_model, &params));
   Input u1(2);
   u1 << 2, 0;
   Input u2(2);
   u2 << 0, 1;
-  BehaviorMotionPrimitives::MotionIdx idx1 =
-      std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)
-          ->AddMotionPrimitive(u1);  // NOLINT
-  BehaviorMotionPrimitives::MotionIdx idx2 =
-      std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model)
-          ->AddMotionPrimitive(u2);  // NOLINT
+  BehaviorMotionPrimitives::MotionIdx idx1 = std::dynamic_pointer_cast<BehaviorMPContinuousActions>(ego_prediction_model)->AddMotionPrimitive(u1);  // NOLINT
+  BehaviorMotionPrimitives::MotionIdx idx2 = std::dynamic_pointer_cast<BehaviorMPContinuousActions>(ego_prediction_model)->AddMotionPrimitive(u2);  // NOLINT
 
   BehaviorModelPtr others_prediction_model(
       new BehaviorConstantVelocity(&params));

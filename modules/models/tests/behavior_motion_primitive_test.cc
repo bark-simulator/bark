@@ -45,7 +45,7 @@ class DummyObservedWorld : public ObservedWorld {
 TEST(behavior_motion_primitives_add, behavior_test) {
   DefaultParams* params = new DefaultParams();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
-  BehaviorMPContinousActions behavior(dynamics, params);
+  BehaviorMPContinuousActions behavior(dynamics, params);
   Input u(2);
   u << 0, 0;
   behavior.AddMotionPrimitive(u);
@@ -56,16 +56,16 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 
-  BehaviorMPContinousActions behavior(dynamics, params);
+  BehaviorMPContinuousActions behavior(dynamics, params);
   Input u1(2);
   u1 << 2, 0;
-  BehaviorMPContinousActions::MotionIdx idx1 = behavior.AddMotionPrimitive(u1);
+  BehaviorMPContinuousActions::MotionIdx idx1 = behavior.AddMotionPrimitive(u1);
   Input u2(2);
   u2 << 0, 1;
-  BehaviorMPContinousActions::MotionIdx idx2 = behavior.AddMotionPrimitive(u2);
+  BehaviorMPContinuousActions::MotionIdx idx2 = behavior.AddMotionPrimitive(u2);
   Input u3(2);
   u3 << 0, 0;
-  BehaviorMPContinousActions::MotionIdx idx3 = behavior.AddMotionPrimitive(u3);
+  BehaviorMPContinuousActions::MotionIdx idx3 = behavior.AddMotionPrimitive(u3);
 
   // X Longitudinal with zero velocity
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));

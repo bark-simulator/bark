@@ -2,9 +2,11 @@ cc_library(
     name = "motion_primitives",
     srcs = [
         "motion_primitives.cpp",
+        "continuous_actions.cpp",
     ],
     hdrs = [
         "motion_primitives.hpp",
+        "continuous_actions.hpp",
     ],
     deps = [
         "//modules/commons:commons",
