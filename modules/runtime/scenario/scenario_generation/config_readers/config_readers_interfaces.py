@@ -11,6 +11,10 @@ class ConfigReaderBehaviorModels(ABC):
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     pass 
+  
+  # reimplement as param servers behavior models are serialized
+  def get_param_servers(self):
+    return []
 
 class ConfigReaderExecutionModels(ABC):
   # returns list of size num agents with execution models based on property, default_params_dict
@@ -18,11 +22,19 @@ class ConfigReaderExecutionModels(ABC):
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     pass
 
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []
+
 class ConfigReaderDynamicModels(ABC):
   # returns list of size num agents with dynamic models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     pass
+
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []
 
 class ConfigReaderAgentStatesAndGeometries(ABC):
   @abstractmethod
@@ -34,11 +46,19 @@ class ConfigReaderAgentStatesAndGeometries(ABC):
   def create_from_config(self, config_param_object, road_corridor):
     pass
 
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []
+
 class ConfigReaderDynamicModels(ABC):
   # returns list of size num agents with behavior models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     pass
+
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []
 
 
 class ConfigReaderGoalDefinitions(ABC):
@@ -47,8 +67,16 @@ class ConfigReaderGoalDefinitions(ABC):
   def create_from_config(self, config_param_object, road_corridor, agent_states, controlled_agent_ids,  **kwargs):
     pass
 
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []
+
 class ConfigReaderControlledAgents(ABC):
    # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     pass
+
+  # only reimplement if param server for this object shall be serialized (currently not needed)
+  def get_param_servers(self):
+    return []

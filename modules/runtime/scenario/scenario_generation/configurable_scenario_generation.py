@@ -22,7 +22,6 @@ from collections import defaultdict
 class ConfigurableScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None):
     super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios)
-    self.initialize_params(params)
 
   def initialize_params(self, params):
     params_temp = \
@@ -58,6 +57,16 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
               sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
     np.random.seed(self._random_seed)
 
+    # all parameter servers used by all bark class instances must be persisted
+    # otherwise parameter server serialization fails
+    self._sink_source_parameter_servers = defaultdict(list)
+
+  def add_config_reader_parameter_servers(self, description, config_type, config_reader):
+    self._sink_source_parameter_servers[config_type].append(
+      {"Description": description,
+       "ParameterServers" : config_reader.get_param_servers()}
+    )
+
   def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
@@ -87,8 +96,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #1) create agent states and geometries for this source
       args = [road_corridor]
       agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
-        ConfigurableScenarioGeneration.eval_configuration(
-                              sink_source_config, "ConfigAgentStatesGeometries",
+        self.eval_configuration( sink_source_config, "ConfigAgentStatesGeometries",
                               args, {})
       kwargs_agent_states_geometry.append(kwargs_dict)
 
@@ -102,6 +110,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             self.resolve_overlaps_in_sources_sinks_agents(collected_sources_sinks_agent_states_geometries)
 
     agent_list = []
+    controlled_agent_ids_all = []
     for idx, agent_states_geometries in enumerate(
                     collected_sources_sinks_agent_states_geometries):
       agent_states = agent_states_geometries[0]
@@ -115,7 +124,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       args_list = [road_corridor, agent_states ]
       kwargs_dict = {**kwargs_agent_states_geometry[idx]}
       config_return, kwargs_dict_tmp, default_params_behavior = \
-        ConfigurableScenarioGeneration.eval_configuration(
+        self.eval_configuration(
                               sink_source_config, "ConfigBehaviorModels", 
                               args_list, kwargs_dict)
       behavior_models = config_return
@@ -123,7 +132,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       config_return, kwargs_dict_tmp, default_params_execution = \
-        ConfigurableScenarioGeneration.eval_configuration(
+        self.eval_configuration(
                               sink_source_config, "ConfigExecutionModels",
                               args_list, kwargs_dict)
       execution_models = config_return
@@ -132,7 +141,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
 
       config_return, kwargs_dict_tmp, default_params_dynamic = \
-        ConfigurableScenarioGeneration.eval_configuration(
+        self.eval_configuration(
                               sink_source_config, "ConfigDynamicModels",
                               args_list, kwargs_dict)
       dynamic_models = config_return
@@ -141,16 +150,17 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       #4 create goal definitions and controlled agents
       config_return, kwargs_dict_tmp, default_params_controlled_agents = \
-        ConfigurableScenarioGeneration.eval_configuration(
+        self.eval_configuration(
                               sink_source_config, "ConfigControlledAgents",
                               args_list, kwargs_dict)
       controlled_agent_ids = config_return
+      controlled_agent_ids_all.extend(controlled_agent_ids)
       sink_source_default_params[idx]["ConfigControlledAgents"] = default_params_controlled_agents.convert_to_dict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       args_list = [*args_list, controlled_agent_ids]
       config_return, kwargs_dict_tmp, default_params_goals = \
-        ConfigurableScenarioGeneration.eval_configuration(
+        self.eval_configuration(
                               sink_source_config, "ConfigGoalDefinitions", 
                               args_list, kwargs_dict)
       goal_definitions = config_return
@@ -167,7 +177,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
-      return agent_list
+    scenario._agent_list = agent_list
+    scenario._eval_agent_ids = controlled_agent_ids_all
+    
+    return scenario
 
   def resolve_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
@@ -377,14 +390,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     
     return agents
 
-  
-  @staticmethod
-  def eval_configuration(sink_source_config, config_type, args, kwargs):
+  def eval_configuration(self, sink_source_config, config_type, args, kwargs):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["type"]
     param_config = ParameterServer(json = eval_config)
-    config_instance = eval("{}()".format(eval_config_type))
-    config_return  = config_instance.create_from_config(param_config, *args, **kwargs)
+    config_reader = eval("{}()".format(eval_config_type))
+    config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
+    self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
 
   @staticmethod
