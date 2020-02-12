@@ -9,9 +9,9 @@
 namespace modules {
 namespace models {
 namespace behavior {
-  
+
 BehaviorMotionPrimitives::MotionIdx
-BehaviorMPContinousActions::AddMotionPrimitive(const Input& dynamic_input) {
+BehaviorMPContinuousActions::AddMotionPrimitive(const Input& dynamic_input) {
   motion_primitives_.push_back(dynamic_input);
   return motion_primitives_.size() - 1;
 }
