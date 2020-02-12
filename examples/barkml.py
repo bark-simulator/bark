@@ -1,14 +1,56 @@
+
+# Copyright (c) 2019 fortiss GmbH
+#
+# This software is released under the MIT License.
+# https://opensource.org/licenses/MIT
+
+import os
+import numpy as np
 from modules.runtime.commons.parameters import ParameterServer
 
 from configurations.bark_agent import BARKMLBehaviorModel
 from configurations.sac_highway.configuration import SACHighwayConfiguration
-
-
-params = ParameterServer(filename="examples/params/deterministic_scenario.json")
+from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from load.benchmark_database import BenchmarkDatabase
+from modules.benchmark.benchmark_runner import BenchmarkRunner
+from bark.world.evaluation import EvaluatorGoalReached, \
+  EvaluatorCollisionEgoAgent, EvaluatorStepCount
+from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.runtime import Runtime
 
 # NOTE(@all): this won't work as a test since we need to have writing access
 #             to the summaries folder in bark-ml
+# NOTE(@all): need to be in the BARK-ML virtual environment
 
-# bark_agent is of type behavior model (can be a trained ml agent)
-# sac_configuration = SACHighwayConfiguration(params)
-# bark_agent = BARKMLBehaviorModel(configuration=sac_configuration)
+
+# some path magic
+base_dir = "/home/hart/Dokumente/2020/bark-ml"
+params = ParameterServer(filename=base_dir + "/configurations/sac_highway/config.json")
+scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
+map_filename = scenario_generation["MapFilename"]
+scenario_generation["MapFilename"] = base_dir + "/" + map_filename
+params["BaseDir"] = base_dir
+
+# actual model
+sac_configuration = SACHighwayConfiguration(params)
+ml_behavior = BARKMLBehaviorModel(configuration=sac_configuration)
+
+scenario_generator = sac_configuration._scenario_generator
+viewer = MPViewer(params=params, x_range=[5060, 5160], y_range=[5070, 5150])
+
+env = Runtime(0.2,
+              viewer,
+              scenario_generator,
+              render=True)
+
+env.reset()
+env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = ml_behavior
+
+print(ml_behavior)
+for _ in range(0, 30):
+  env.step()
+
+
+
+
+
