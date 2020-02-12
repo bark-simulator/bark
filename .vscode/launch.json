@@ -38,7 +38,7 @@
             "request": "attach",
             "program": "${workspaceFolder}/python/venv/bin/python3",
             "cwd" : "${workspaceFolder}",
-            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/scenario_dump_load.runfiles/bark_project/python",
+            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/modules/models/tests/py_behavior_model_test.runfiles/bark_project/python",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}

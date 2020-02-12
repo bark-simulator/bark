@@ -25,11 +25,11 @@ A quick guide on how to get started with BARK. Make sure to have all prerequesit
 
 ### Prerequesites
 * Bazel (version > 1.0)
-* Python3.6
-* virtualenv (Virtual environment)
+* Python3.7 and virtualenv (Virtual environment): python3.7-dev python3.7-venv python3.7-tk
+* GCC 7
 
 ### Installation on Ubuntu/MacOS
-1. [Clone the repository](https://git.fortiss.org/bark-simulator/bark), change to base repository directory 
+1. [Clone the repository](https://git.fortiss.org/bark-simulator/bark), change to base repository directory; change the .bazelrc: build --action_env CC=/usr/bin/gcc-7 --cxxopt='-std=c++14'
 2. `bash install.sh`: this will create a virtual python environment (located in python/venv) and install all necessary python dependencies.
 2. `source dev_into.sh`: this will activate the virtual environment (keep this in mind for the future: each time you use Bazel, even beyond this installation, be sure to have run this command beforehand)
 3. `bazel build //...`: this will build the whole library and test cases (specific test cases or specify individual modules can be built with e.g `bazel build //modules/world/tests:world_test`, see the documentation of Bazel for more insights).

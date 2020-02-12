@@ -21,20 +21,20 @@ class PyBehaviorModel : public BehaviorModel {
   using BehaviorModel::BehaviorModel;
 
   Trajectory Plan(float delta_time,
-                  const ObservedWorld& observed_world) override {
+                  const ObservedWorld& observed_world) {
     PYBIND11_OVERLOAD_PURE(
-        modules::models::dynamic::Trajectory,
-        BehaviorModel,
-        plan,
-        delta_time,
-        observed_world);
+      modules::models::dynamic::Trajectory,
+      BehaviorModel,
+      Plan,
+      delta_time,
+      observed_world);
   }
 
-  std::shared_ptr<BehaviorModel> Clone() const override {
+  std::shared_ptr<BehaviorModel> Clone() const {
     PYBIND11_OVERLOAD_PURE(
-        std::shared_ptr<BehaviorModel>,
-        BehaviorModel,
-        clone);
+      std::shared_ptr<BehaviorModel>,
+      BehaviorModel,
+      Clone);
   }
 
 };
@@ -42,3 +42,4 @@ class PyBehaviorModel : public BehaviorModel {
 void python_behavior(py::module m);
 
 #endif  // PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_HPP_
+
