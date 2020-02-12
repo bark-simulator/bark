@@ -11,8 +11,8 @@ from bark.models.behavior import *
 from modules.runtime.commons.parameters import ParameterServer
 
   # this config reader defines behavior models with fixed type for all agents
-class SingleFixedType(ConfigReaderBehaviorModels):
-  def create_from_config(config_param_object, road_corridor, agent_states,  **kwargs):
+class FixedBehaviorType(ConfigReaderBehaviorModels):
+  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     model_type = config_param_object["ModelType", "Type of behavior model \
                 used for all vehicles", "BehaviorIDMClassic"]
     behavior_models = []
@@ -24,6 +24,6 @@ class SingleFixedType(ConfigReaderBehaviorModels):
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
 
   def model_from_model_type(self, model_type):
-    params = ParameterServer(config_params)
+    params = ParameterServer()
     bark_model = eval("{}(params)".format(model_type))    
     return bark_model
