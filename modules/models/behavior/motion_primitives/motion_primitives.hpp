@@ -24,17 +24,23 @@ using world::objects::AgentId;
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
   BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
-                           commons::Params* params);
+                           commons::Params* params)
+      : BehaviorModel(params),
+        dynamic_model_(dynamic_model),
+        active_motion_(),
+        integration_time_delta_(params->GetReal(
+            "integration_time_delta",
+            "the size of the time steps used within the euler integration loop",
+            0.02)) {}
 
   virtual ~BehaviorMotionPrimitives() {}
 
-  virtual Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world);
-
   typedef unsigned int MotionIdx;
-  virtual MotionIdx GetNumMotionPrimitives() const = 0;
-  virtual Input GetAction() const = 0;
-  void ActionToBehavior(const MotionIdx& motion_idx);
+  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorld& observed_world) const = 0;
+  //virtual Input GetAction() const = 0;
+  void ActionToBehavior(const MotionIdx& motion_idx) {
+    active_motion_ = motion_idx;
+  }
 
  protected:
   DynamicModelPtr dynamic_model_;

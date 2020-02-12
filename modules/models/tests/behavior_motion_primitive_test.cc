@@ -12,6 +12,8 @@
 #include "modules/geometry/commons.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
+#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
+#include "modules/models/behavior/motion_primitives/primitives.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/commons/params/default_params.hpp"
 #include "modules/world/observed_world.hpp"
@@ -104,6 +106,26 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
   EXPECT_NEAR(traj3(traj3.rows() - 1,
                     StateDefinition::X_POSITION),
               0.5 * 2, 0.005);
+}
+
+TEST(primitive_constant_velocity, behavior_test) {
+  using modules::models::behavior::primitives::PrimitiveConstantVelocity;
+  DefaultParams* params = new DefaultParams();
+  // DynamicModelPtr dynamics(new SingleTrackModel(params));
+  PrimitiveConstantVelocity primitive(params);
+
+  State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
+  DummyObservedWorld world1(init_state, params);
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1));
+}
+
+TEST(macro_actions, behavior_test) {
+  SetterParams* params = new SetterParams();
+  params->SetReal("integration_time_delta", 0.01);
+  DynamicModelPtr dynamics(new SingleTrackModel(params));
+  
+  BehaviorMPMacroActions behavior(dynamics, params);
 }
 
 int main(int argc, char **argv) {
