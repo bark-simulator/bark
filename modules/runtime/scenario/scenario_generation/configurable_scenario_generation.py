@@ -223,8 +223,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
               agent_geometry_other = collected_sources_sinks_agent_states_geometries[overlap[0]][1][overlap[1]]
               agent_state_other = collected_sources_sinks_agent_states_geometries[overlap[0]][0][overlap[1]]
               agent_translated_polygon_other = agent_geometry_other.Translate(
-                                              Point2d(agent_state_other[0],
-                                                    agent_state_other[1]))
+                                              Point2d(agent_state_other[1],
+                                                    agent_state_other[2]))
               if Collide(agent_translated_polygon, agent_translated_polygon_other):
                 pairwise_collisions.append(((source_sink_idx, agent_idx), overlap))
             
