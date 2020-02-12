@@ -40,7 +40,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     self._json_converter = ModelJsonConversion()
 
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
