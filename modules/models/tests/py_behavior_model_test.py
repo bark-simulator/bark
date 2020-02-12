@@ -49,7 +49,7 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
   """Dummy Python behavior model
   """
   def __init__(self,
-               dynamic_behavior_model = None,
+               dynamic_model = None,
                params = None):
     BehaviorModel.__init__(
       self, params)
@@ -67,7 +67,6 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
 
 
 class PyBehaviorModelTests(unittest.TestCase):
-  @unittest.skip("...")
   def test_python_model(self):
     param_server = ParameterServer(
       filename="modules/runtime/tests/data/deterministic_scenario.json")
