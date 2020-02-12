@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
+import numpy as np
 
 from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
@@ -16,7 +16,7 @@ from bark.geometry import *
 # in what lanes vehicles are placed, or if None in all lanes they are placed
 class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
-    self._lane_positions = config_param_object["LanePositions", "List of values out of 1:max_num_lanes. \
+    self._lane_positions = config_param_object["LanePositions", "List of values out of 0:max_num_lanes-1. \
             Vehicles are placed only this lanes \
            or None if vehicles shall be placed at alles lanes", None]
     self._vehicle_distance_range = config_param_object["VehicleDistanceRange",
@@ -41,13 +41,13 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
     agent_lane_positions = []
 
     lane_corridors, lane_positions = self.select_lane_corridors(road_corridor, self._lane_positions)
-    for lane_corridor in lane_corridors:
+    for idx, lane_corridor in enumerate(lane_corridors):
       tmp_agent_states, tmp_agent_geometries = self.agents_along_lane_corridor(lane_corridor,
                    self._s_range[0], self._s_range[1])
 
       agent_states.extend(tmp_agent_states)
       agent_geometries.extend(tmp_agent_geometries)
-      agent_lane_positions.extend(lane_positions[idx]*len(tmp_agent_states))
+      agent_lane_positions.extend([lane_positions[idx]]*len(tmp_agent_states))
 
     assert(len(agent_states) == len(agent_geometries))
     assert(len(agent_states) == len(agent_lane_positions))
@@ -55,8 +55,20 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 
 
   def select_lane_corridors(self, road_corridor, lane_positions):
-    lane_corridors = road_corridor.lane_corridors[lane_positions]
+    lane_corridors = []
+    if lane_positions:
+      for lane_position in lane_positions:
+        lane_corridors.append(road_corridor.lane_corridors[lane_position])
+    else:
+        lane_corridors = road_corridor.lane_corridors
+        lane_positions = list(range(1, len(lane_corridors)+1))
     return lane_corridors, lane_positions
+
+  def sample_velocity_uniform(self, velocity_range):
+    return np.random.uniform(velocity_range[0], velocity_range[1])
+
+  def sample_distance_uniform(self, distance_range):
+    return np.random.uniform(distance_range[0], distance_range[1])
 
 
   def agents_along_lane_corridor(self,
@@ -66,10 +78,11 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
     linestring = lane_corridor.center_line
     agent_states = []
     agent_geometries = []
+    s = 0.0
     while s < s_end:
       # set agent state on linestring with random velocity
-      xy_point =  get_point_at_s(linestring, s)
-      angle = get_tangent_angle_at_s(linestring, s)
+      xy_point =  GetPointAtS(linestring, s)
+      angle = GetTangentAngleAtS(linestring, s)
       
       velocity = self.sample_velocity_uniform(self._other_velocity_range)
       agent_state = [0, xy_point.x(), xy_point.y(), angle, velocity ]
@@ -78,7 +91,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
       agent_geometries.append(self._vehicle_2d_shape)
 
       # move forward on linestring based on vehicle size and max/min distance
-      s += bark_agent.shape.front_dist + bark_agent.shape.rear_dist + \
+      s += self._vehicle_2d_shape.front_dist + self._vehicle_2d_shape.rear_dist + \
                   self.sample_distance_uniform(self._vehicle_distance_range)
-    return agent_list
+    return agent_states, agent_geometries
 

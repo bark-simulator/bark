@@ -9,8 +9,11 @@ from modules.runtime.scenario.scenario_generation.scenario_generation \
 from modules.runtime.scenario.scenario_generation.config_readers import *
 from modules.runtime.commons.parameters import ParameterServer
 
+from bark.geometry import *
+
 import numpy as np
 import math
+import copy
 import aabbtree
 from collections import defaultdict 
 
@@ -30,24 +33,27 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
       "Description": "left_lane",
-      "ConfigAgentStatesGeometries": {"type": "UniformDistribution"},
-      "ConfigBehaviorModels": {},
-      "ConfigExecutionModels": {},
-      "ConfigDynamicModels": {}
+      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"type": "SingleFixedType"},
+      "ConfigExecutionModels": {"type": "SingleFixedType"},
+      "ConfigDynamicModels": {"type": "SingleFixedType"},
+      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"type": "RandomSingleAgent"}
     },
     {
       "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
       "Description": "right_lane",
-      "ConfigAgentStatesGeometries": {"type": "UniformDistribution"},
-      "ConfigBehaviorModels": {},
-      "ConfigExecutionModels": {},
-      "ConfigDynamicModels": {},
-      "ConfigGoalDefinitions": {},
-      "ConfigControlledAgents": {}
-    }]
+      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [1]},
+      "ConfigBehaviorModels": {"type": "SingleFixedType"},
+      "ConfigExecutionModels": {"type": "SingleFixedType"},
+      "ConfigDynamicModels": {"type": "SingleFixedType"},
+      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"type": "NoneControlled"}
+    }
+    ]
     ]
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
-              sources and sinks resolved", {"south_to_west/south_to_north" : (0.2, 0.8)}]
+              sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
     np.random.seed(self._random_seed)
 
   def create_scenarios(self, params, num_scenarios):
@@ -79,7 +85,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               road_corridor)
       # collect default parameters of this config
       sink_source_config["ConfigAgentStatesGeometries"] = default_params_state_geometry
-      collected_sources_sinks_agent_states_geometries.append(tuple(agent_states, agent_geometries))
+      collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
     #2 remove overlapping agent states from different sources and sinks
     collected_sources_sinks_agent_states_geometries = \
@@ -147,7 +153,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
   def resolve_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
 
-      collisions = self.find_overlaps_in_sources_sinks_agents(
+      collisions = ConfigurableScenarioGeneration.find_overlaps_in_sources_sinks_agents(
         collected_sources_sinks_agent_states_geometries
       )
       return self.delete_overlaps_in_sources_sinks_agents(
@@ -155,7 +161,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         collisions
       )
 
-  def find_overlaps_in_sources_sinks_agents(self, 
+
+  @staticmethod
+  def find_overlaps_in_sources_sinks_agents( 
                   collected_sources_sinks_agent_states_geometries):
     # create aabbtree for fast distance lookup between agents
     tree = aabbtree.AABBTree()
@@ -164,11 +172,11 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_states = states_geometries[0]
       agent_geometries = states_geometries[1]
       for agent_idx, agent_state in enumerate(agent_states):
-        agent_translated_polygon = agent_geometries[agent_idx].translate(
-                                                      Point2d(agent_state[0],
-                                                            agent_state[1]))
+        agent_translated_polygon = agent_geometries[agent_idx].Translate(
+                                                      Point2d(agent_state[1],
+                                                            agent_state[2]))
         tmp = agent_translated_polygon.bounding_box
-        bb = [(tmp[0].x, tmp[0].y), (tmp[1].x, tmp[1].y)]
+        bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), (tmp[0].y(), tmp[1].y())])
         tree.add(bb, (source_sink_idx, agent_idx))
 
     # check for all agents in a source sink config collision with
@@ -179,25 +187,31 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         agent_states = states_geometries[0]
         agent_geometries = states_geometries[1]
         for agent_idx, agent_state in enumerate(agent_states):
-          agent_translated_polygon = agent_geometries[agent_idx].translate(
-                                                        Point2d(agent_state[0],
-                                                              agent_state[1]))
+          agent_translated_polygon = agent_geometries[agent_idx].Translate(
+                                                        Point2d(agent_state[1],
+                                                              agent_state[2]))
           tmp = agent_translated_polygon.bounding_box
-          bb = [(tmp[0].x, tmp[0].y), (tmp[1].x, tmp[1].y)]
+          bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), ( tmp[0].y() , tmp[1].y())])
           overlaps = tree.overlap_values(bb)
           for overlap in overlaps:
             if source_sink_idx == overlap[0]:
-              raise ValueError("Something went wrong. \
-                   We have colliding agent within one source sink configuration")
+              if agent_idx == overlap[1]:
+                continue
+              else:
+                raise ValueError("Something went wrong. \
+                    We have colliding agent within one source sink configuration")
+          
             key1 = "{}-{}".format(source_sink_idx, overlap[0])
             key2 = "{}-{}".format(overlap[0], source_sink_idx, )
+            key = None
             if key1 in collisions:
-              pairwise_collisions = collisions[key1]
+              key = key1
             elif key2 in collisions:
-              pairwise_collisions = collisions[key2]
+              key = key2
             else:
-              pairwise_collisions = []
-              
+              key = key1
+
+            pairwise_collisions = collisions[key]
             found = False
             for collision in pairwise_collisions:
               # exclude the case where this collision was already detected in a previous
@@ -206,13 +220,15 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
               if overlap[0] == agent_desc1[0] and overlap[1] == agent_desc1[1]:
                 found = True
             if not found:
-              agent_geometry_other = collected_sources_sinks_agent_states_geometries[overlap[0]][overlap[1]]
-              agent_state_other = collected_sources_sinks_agent_states_geometries[overlap[0]][overlap[1]]
-              agent_translated_polygon_other = agent_geometry_other.translate(
+              agent_geometry_other = collected_sources_sinks_agent_states_geometries[overlap[0]][1][overlap[1]]
+              agent_state_other = collected_sources_sinks_agent_states_geometries[overlap[0]][0][overlap[1]]
+              agent_translated_polygon_other = agent_geometry_other.Translate(
                                               Point2d(agent_state_other[0],
                                                     agent_state_other[1]))
-              if collides(agent_translated_polygon, agent_translated_polygon_other):
+              if Collide(agent_translated_polygon, agent_translated_polygon_other):
                 pairwise_collisions.append(((source_sink_idx, agent_idx), overlap))
+            
+                collisions[key] = pairwise_collisions
     
     return collisions
 
@@ -341,13 +357,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   
   @staticmethod
-  def eval_configuration(sink_source_config, config_type, *args):
+  def eval_configuration(sink_source_config, config_type, *args, **kwargs):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["type"]
     param_config = ParameterServer(json = eval_config)
-    config_return, default_param_config  = eval("{}({},{})".format(
-        eval_config_type, param_config, ", ".join(args)))
-    return config_return, default_param_config
+    config_instance = eval("{}()".format(eval_config_type))
+    config_return  = config_instance.create_from_config(param_config, *args, **kwargs)
+    return config_return
 
   @staticmethod
   def get_road_corridor_from_source_sink(source_sink_properties, map_interface):
