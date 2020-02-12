@@ -50,18 +50,19 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
   dynamic::Trajectory traj(
     num_trajectory_points,
     this->GetParams()->GetInt("DynamicModel::state_dimension",
-                                "state vector length", 5));
+                              "state vector length", 5));
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;
-  // std::cout << "Action:" << \
-  //   boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()) << std::endl;
+  Input action = boost::get<Input>(
+    this->GetLastAction());
+  std::cout << "Action:" << action << std::endl;
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state = dynamic::euler_int(
       *dynamic_model_,
       traj.row(i-1),
-      boost::get<Input>(observed_world.GetEgoBehaviorModel()->GetLastAction()),
+      action,
       dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i*dt;
