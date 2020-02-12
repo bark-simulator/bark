@@ -38,7 +38,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigExecutionModels": {"type": "FixedExecutionType"},
       "ConfigDynamicModels": {"type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "RandomSingleAgent"}
+      "ConfigControlledAgents": {"type": "RandomSingleAgent"},
+      "AgentParams" : {}
     },
     {
       "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
@@ -113,6 +114,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     controlled_agent_ids_all = []
     for idx, agent_states_geometries in enumerate(
                     collected_sources_sinks_agent_states_geometries):
+      sink_source_config = self._sinks_sources[idx]
       agent_states = agent_states_geometries[0]
       agent_geometries = agent_states_geometries[1]
       road_corridor = road_corridors[idx]
