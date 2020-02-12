@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_STATE_DELTA_STATE_DELTA_HPP_
-#define MODULES_MODELS_BEHAVIOR_STATE_DELTA_STATE_DELTA_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_HPP_
+#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_HPP_
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -57,4 +57,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_HPP_
