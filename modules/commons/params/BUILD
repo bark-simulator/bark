@@ -8,6 +8,7 @@ cc_library(
         "default_params.hpp",
         "setter_params.hpp"
     ],
+    srcs = ["setter_params.cpp"],
     visibility = ["//visibility:public"],
     deps = [
         "//modules/commons/util:util"
