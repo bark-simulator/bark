@@ -70,8 +70,10 @@ void python_map(py::module m) {
     .def("Generate", &Roadgraph::Generate)
     .def("GetLanePolygonForLaneId", &Roadgraph::GetLanePolygonForLaneId)
     .def("GetRoadForLaneId", &Roadgraph::GetRoadForLaneId)
-    .def("ComputeLaneBoundaries",
-      &Roadgraph::ComputeXodrLaneBoundaries);
+    .def("GetDrivingDirectionsForRoadId", &Roadgraph::GetDrivingDirectionsForRoadId)
+    .def("compute_lane_boundaries",
+      &Roadgraph::ComputeXodrLaneBoundaries);  // GetRoadForLaneId
+
 
 py::class_<RoadCorridor,
            std::shared_ptr<RoadCorridor>>(m, "RoadCorridor")
