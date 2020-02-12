@@ -21,30 +21,53 @@ from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
 
 
-class PythonBehaviorModelWrapper(DynamicBehaviorModel):
+class PythonBehaviorModelWrapper(BehaviorModel):
   """Dummy Python behavior model
   """
   def __init__(self,
                dynamic_model = None,
                params = None):
-    DynamicBehaviorModel.__init__(self, dynamic_model, params)
+    # DynamicBehaviorModel.__init__(self, dynamic_model, params)
+    BehaviorModel.__init__(self, params)
+    self._dynamic_model = dynamic_model
+    self._params = params
 
   def Plan(self, delta_time, world):
-    behavior_model = world.ego_agent.behavior_model
-
-    # THIS DOES NOT WORK
-    behavior_model.SetLastAction(
+    super(PythonBehaviorModelWrapper, self).SetLastAction(
       np.array([2., 1.], dtype=np.float32))
+    # print(super(PythonBehaviorModelWrapper, self).GetLastAction())
+    trajectory = np.array([[0., 0., 0., 0., 0.],
+                           [0., 0., 0., 0., 0.]], dtype=np.float32)
+    super(PythonBehaviorModelWrapper, self).SetLastTrajectory(trajectory)
+    return trajectory
 
-    # should call Plan call of parent class
-    return behavior_model.Plan(
-      delta_time, observed_world)
+  def Clone(self):
+    return self
+
+
+class PythonBehaviorModelWrapperInheritance(BehaviorModel):
+  """Dummy Python behavior model
+  """
+  def __init__(self,
+               dynamic_behavior_model = None,
+               params = None):
+    BehaviorModel.__init__(
+      self, params)
+    self._dynamic_behavior_model = DynamicBehaviorModel(dynamic_model, params)
+  
+  def Plan(self, delta_time, world):
+    self._dynamic_behavior_model.SetLastAction(
+      np.array([2., 1.], dtype=np.float32))
+    trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
+    super(PythonBehaviorModelWrapperInheritance, self).SetLastTrajectory(trajectory)
+    return trajectory
 
   def Clone(self):
     return self
 
 
 class PyBehaviorModelTests(unittest.TestCase):
+  @unittest.skip("...")
   def test_python_model(self):
     param_server = ParameterServer(
       filename="modules/runtime/tests/data/deterministic_scenario.json")
@@ -56,11 +79,30 @@ class PyBehaviorModelTests(unittest.TestCase):
                       use_world_bounds=True)
     scenario, idx = scenario_generation.get_next_scenario()
     world = scenario.get_world_state()
-    
     single_track_model = SingleTrackModel(param_server)
-    behavior_model = PythonBehaviorModelWrapper(single_track_model, param_server)
+    behavior_model = PythonBehaviorModelWrapper(
+      single_track_model, param_server)
+    world.GetAgent(0).behavior_model = behavior_model
+    world.GetAgent(0).behavior_model.SetLastAction(
+      np.array([1., 1.], dtype=np.float32))
+    world.Step(0.2)
 
-    # this should fail as there is no last action
+  def test_python_model_inheritance(self):
+    param_server = ParameterServer(
+      filename="modules/runtime/tests/data/deterministic_scenario.json")
+    scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
+                                                          random_seed=0,
+                                                          params=param_server)
+    viewer = MPViewer(params=param_server,
+                      follow_agent_id=False,
+                      use_world_bounds=True)
+    scenario, idx = scenario_generation.get_next_scenario()
+    world = scenario.get_world_state()
+    single_track_model = SingleTrackModel(param_server)
+
+    behavior_model = PythonBehaviorModelWrapperInheritance(
+      single_track_model, param_server)
+    
     world.GetAgent(0).behavior_model = behavior_model
     world.GetAgent(0).behavior_model.SetLastAction(
       np.array([1., 1.], dtype=np.float32))
