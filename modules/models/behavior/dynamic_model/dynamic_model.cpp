@@ -53,9 +53,9 @@ dynamic::Trajectory DynamicBehaviorModel::Plan(
                               "state vector length", 5));
 
   // std::cout << "State:" << ego_vehicle_state << std::endl;
-  Input action = boost::get<Input>(
-    this->GetLastAction());
-  std::cout << "Action:" << action << std::endl;
+  // Input action = boost::get<Input>(
+  //   this->GetLastAction());
+  // std::cout << "Action:" << action << std::endl;
 
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
