@@ -30,7 +30,6 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(len(scenario_loader._scenario_list), 2)
     self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
 
-  @unittest.skip
   def test_find_overlaps_configurable_scenario_generation(self):
     shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
                       Point2d(-1,1),
