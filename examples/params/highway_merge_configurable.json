@@ -1,4 +1,54 @@
 {
+    "Visualization": {
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Agents": {
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.2
+            ],
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "AlphaVehicle": 0.8,
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
     "Scenario": {
         "Generation": {
             "ConfigurableScenarioGeneration": {
@@ -121,7 +171,7 @@
                                 30
                             ],
                             "SRange": [
-                                0.1,
+                                0.2,
                                 0.5
                             ]
                         },
