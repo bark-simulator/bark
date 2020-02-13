@@ -16,7 +16,7 @@ namespace behavior {
 class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
  public:
   BehaviorMPContinuousActions(const DynamicModelPtr& dynamic_model,
-                             commons::Params* params)
+                             const commons::ParamsPtr& params)
       : BehaviorMotionPrimitives(dynamic_model, params), motion_primitives_() {}
 
   virtual ~BehaviorMPContinuousActions() {}
@@ -39,7 +39,7 @@ inline std::shared_ptr<BehaviorModel> BehaviorMPContinuousActions::Clone()
     const {
   std::shared_ptr<BehaviorMPContinuousActions> model_ptr =
       std::make_shared<BehaviorMPContinuousActions>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

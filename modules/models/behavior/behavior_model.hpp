@@ -37,7 +37,7 @@ typedef std::vector<StateActionPair> StateActionHistory;
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
-  explicit BehaviorModel(commons::Params* params) :
+  explicit BehaviorModel(const commons::ParamsPtr& params) :
     commons::BaseType(params),
     last_trajectory_(),
     last_action_() {}
@@ -57,9 +57,9 @@ class BehaviorModel : public modules::commons::BaseType {
   }
   bool GetActiveModel() const { return active_model_; }
   virtual Trajectory Plan(float delta_time,
-                          const world::ObservedWorld& observed_world) {}
+                          const world::ObservedWorld& observed_world) = 0;
 
-  virtual std::shared_ptr<BehaviorModel> Clone() const;
+  virtual std::shared_ptr<BehaviorModel> Clone() const = 0;
 
   Action GetLastAction() const {return last_action_; }
   void SetLastAction(const Action action) {last_action_ = action;}
@@ -70,9 +70,6 @@ class BehaviorModel : public modules::commons::BaseType {
   bool active_model_;
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorModel::Clone() const {
-  return std::make_shared<BehaviorModel>(*this);
-}
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
 

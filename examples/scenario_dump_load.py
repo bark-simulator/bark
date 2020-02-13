@@ -6,16 +6,16 @@
 
 
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import ConfigurableScenarioGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 import time
 import os
 
-scenario_param_file ="highway_merging.json" # must be within examples params folder
+scenario_param_file ="highway_merge_configurable.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
-scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
+scenario_generation = ConfigurableScenarioGeneration(num_scenarios=3, params=param_server)
 
 viewer = MPViewer(
   params=param_server,
@@ -41,6 +41,6 @@ for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
   print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
   for _ in range(0, 10): # run each scenario for 10 steps
     world_state.Step(sim_step_time)
-    viewer.drawWorld(world_state)
+    viewer.drawWorld(world_state, scenario._eval_agent_ids)
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)

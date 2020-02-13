@@ -27,7 +27,7 @@ The constant-velocity model interpolates an agent along a set route with constan
 ```cpp
 class BehaviorConstantVelocity : public BehaviorModel {
  public:
-  explicit BehaviorConstantVelocity(commons::Params *params) :
+  explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
     BehaviorModel(params) {}
 
   virtual ~BehaviorConstantVelocity() {}
@@ -46,7 +46,7 @@ The execution-model validates or makes the generated behavior dynamically feasib
 ```cpp
 class ExecutionModel : public commons::BaseType {
  public:
-  explicit ExecutionModel(modules::commons::Params *params) :
+  explicit ExecutionModel(const modules::commons::ParamsPtr params) :
     BaseType(params),
     last_trajectory_() {}
 
@@ -78,7 +78,7 @@ The MPC is implemented utilizing the [Ceres-solver](http://ceres-solver.org/) li
 ```cpp
 class ExecutionModelMpc : public ExecutionModel {
  public:
-  explicit ExecutionModelMpc(commons::Params *params);
+  explicit ExecutionModelMpc(const commons::ParamsPtr& params);
 
   ~ExecutionModelMpc() {}
 

@@ -20,6 +20,7 @@ class SetterParams : public Params {
   SetterParams(bool log_if_default=false)
                        : params_bool_(), params_real_(), params_int_(),
                          params_listlist_float_(), log_if_default_(log_if_default) {}
+  SetterParams(bool log_if_default, const CondensedParamList& param_list);
 
   virtual ~SetterParams() {}
 
@@ -47,17 +48,19 @@ class SetterParams : public Params {
   virtual void SetListListFloat(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) { set_parameter(params_listlist_float_, param_name, value); }
 
+  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
+
   virtual int operator[](const std::string &param_name) { throw; } //< not supported atm 
 
-  virtual Params *AddChild(const std::string &name) {
+  virtual ParamsPtr AddChild(const std::string &name) {
       const auto it = childs_.find(name);
       if(it != childs_.end()) {
-        return it->second.get();
+        return it->second;
       }
 
       std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
       childs_[name] = child;
-      return child.get();
+      return child;
   }
 
   private: 
@@ -71,7 +74,7 @@ class SetterParams : public Params {
       auto pos = param_name.find(delimiter);
       if (pos != std::string::npos) {
         std::string child_name = param_name.substr(0, pos);
-        auto child_param = dynamic_cast<SetterParams*>(this->AddChild(child_name));
+        auto child_param = std::dynamic_pointer_cast<SetterParams>(this->AddChild(child_name));
         std::string child_param_name = param_name.erase(0, pos + delimiter.length());
         child_param->set_parameter(child_param->get_param_map<T>(), child_param_name, value);
         return;
@@ -91,7 +94,7 @@ class SetterParams : public Params {
         auto pos = param_name.find(delimiter);
         if (pos != std::string::npos) {
           std::string child_name = param_name.substr(0, pos);
-          auto child_param = dynamic_cast<SetterParams*>(this->AddChild(child_name));
+          auto child_param = std::dynamic_pointer_cast<SetterParams>(this->AddChild(child_name));
           std::string child_param_name = param_name.erase(0, pos + delimiter.length());
           return child_param->get_parameter(child_param->get_param_map<T>(), child_param_name, default_value);
         }
@@ -112,23 +115,39 @@ class SetterParams : public Params {
 
 };
 
+
+struct ParamVisitor : public boost::static_visitor<> {
+  ParamVisitor(SetterParams* params, const std::string& param_name) :
+         params_(params), param_name_(param_name) {}
+  void operator() (bool b) const { params_->SetBool(param_name_, b); }
+  void operator() (float r) const { params_->SetReal(param_name_, r); }
+  void operator() (int i) const { params_->SetInt(param_name_, i); }
+  void operator() (const ListListFloat& l) const { params_->SetListListFloat(param_name_, l); }
+
+private:
+  SetterParams* params_;
+  const std::string& param_name_;
+
+};
+
+
 template <>
-std::unordered_map<std::string, bool>& SetterParams::get_param_map() {
+inline std::unordered_map<std::string, bool>& SetterParams::get_param_map() {
   return params_bool_;
 }
 
 template <>
-std::unordered_map<std::string, float>& SetterParams::get_param_map() {
+inline std::unordered_map<std::string, float>& SetterParams::get_param_map() {
   return params_real_;
 }
 
 template <>
-std::unordered_map<std::string, int>& SetterParams::get_param_map() {
+inline std::unordered_map<std::string, int>& SetterParams::get_param_map() {
   return params_int_;
 }
 
 template <>
-std::unordered_map<std::string, std::vector<std::vector<float>>>& SetterParams::get_param_map() {
+inline std::unordered_map<std::string, std::vector<std::vector<float>>>& SetterParams::get_param_map() {
   return params_listlist_float_;
 }
 

@@ -27,8 +27,7 @@ import math
 class DeterministicScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(DeterministicScenarioGeneration, self).__init__(params,
-                                                          num_scenarios,
-                                                          random_seed)
+                                                          num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
@@ -41,7 +40,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     self._json_converter = ModelJsonConversion()
 
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
@@ -84,7 +83,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                         high=agent_state[:, 1])
       agent_json["state"] = agent_state.tolist()
       agent = self._json_converter.agent_from_json(agent_json,
-                                                   param_server=self._local_params)
+                                                   param_server=self._params)
       agent.SetAgentId(agent_json["id"])
       scenario._agent_list.append(agent)
     

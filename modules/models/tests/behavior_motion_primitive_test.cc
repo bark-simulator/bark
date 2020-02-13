@@ -28,20 +28,24 @@ using namespace modules::geometry;
 
 class DummyObservedWorld : public ObservedWorld {
  public:
-  DummyObservedWorld(const State& init_state, Params* params)
-      : ObservedWorld(std::make_shared<World>(params), AgentId()),
-        init_state_(init_state) {}
+  DummyObservedWorld(const State& init_state,
+                     const ParamsPtr& params) :
+    ObservedWorld(std::make_shared<World>(params), AgentId()),
+    init_state_(init_state) { }
 
-  virtual State CurrentEgoState() const { return init_state_; }
+  virtual State CurrentEgoState() const {
+    return init_state_;
+  }
 
-  virtual double GetWorldTime() const { return 0.0f; }
-
+  virtual double GetWorldTime() const {
+    return 0.0f;
+  }
  private:
   State init_state_;
 };
 
 TEST(behavior_motion_primitives_add, behavior_test) {
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   BehaviorMPContinuousActions behavior(dynamics, params);
   Input u(2);
@@ -50,7 +54,7 @@ TEST(behavior_motion_primitives_add, behavior_test) {
 }
 
 TEST(behavior_motion_primitives_plan, behavior_test) {
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<SetterParams>();
   params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 
@@ -102,7 +106,7 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
 
 TEST(primitive_constant_acceleration, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAcceleration;
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAcceleration primitive(params, dynamics, 0, 0.1);
 
@@ -115,7 +119,7 @@ TEST(primitive_constant_acceleration, behavior_test) {
 
 TEST(primitive_change_left, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveChangeToLeft;
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveChangeToLeft primitive(params, dynamics, 0.1);
 
@@ -128,7 +132,7 @@ TEST(primitive_change_left, behavior_test) {
 
 TEST(primitive_gap_keeping, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveGapKeeping;
-  DefaultParams* params = new DefaultParams();
+  auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveGapKeeping primitive(params, dynamics);
 
@@ -142,7 +146,7 @@ TEST(primitive_gap_keeping, behavior_test) {
 TEST(macro_actions, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAcceleration;
 
-  SetterParams* params = new SetterParams();
+  auto params = std::make_shared<DefaultParams>();
   params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 

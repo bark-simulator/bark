@@ -17,8 +17,7 @@ namespace behavior {
 
 class BehaviorIDMClassic : public BehaviorModel {
  public:
-  explicit BehaviorIDMClassic(commons::Params* params)
-      : BehaviorModel(params) {}
+  explicit BehaviorIDMClassic(const commons::ParamsPtr& params);
 
   virtual ~BehaviorIDMClassic() {}
 
@@ -35,28 +34,47 @@ class BehaviorIDMClassic : public BehaviorModel {
   double CalcIDMAcc(const double net_distance, const double vel_ego,
                     const double vel_other) const;
 
-  virtual float GetMinVelocity() { return 0.0f; }
-  virtual float GetMaxVelocity() { return 50.0f; }
+  virtual float GetMinVelocity() { return param_min_velocity_; }
+  virtual float GetMaxVelocity() { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
-    return 15.0f;
+    return param_desired_velocity_;
   }  // unit is meter/second
-  const float GetMinimumSpacing() const { return 2.0f; }      // unit is meter
-  const float GetDesiredTimeHeadway() const { return 1.5f; }  // unit is seconds
+  const float GetMinimumSpacing() const { return param_minimum_spacing_; }      // unit is meter
+  const float GetDesiredTimeHeadway() const { return param_desired_time_head_way_; }  // unit is seconds
   const float GetMaxAcceleration() const {
-    return 1.7f;
+    return param_max_acceleration_;
   }  // unit is meter/second^2
+  const float GetAccelerationLowerBound() const {
+    return param_acceleration_lower_bound_;
+  } 
+  const float GetAccelerationUpperBound() const {
+    return param_acceleration_upper_bound_;
+  } 
   const float GetComfortableBrakingAcceleration() const {
-    return 1.67f;
+    return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
-  const int GetExponent() const { return 4; }
+  const int GetExponent() const { return param_exponent_; }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
+
+  private:
+    // Parameters
+    float param_minimum_spacing_;
+    float param_desired_time_head_way_;
+    float param_max_acceleration_;
+    float param_acceleration_lower_bound_;
+    float param_acceleration_upper_bound_;
+    float param_desired_velocity_;
+    float param_comfortable_braking_acceleration_;
+    float param_min_velocity_;
+    float param_max_velocity_;
+    int param_exponent_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
   std::shared_ptr<BehaviorIDMClassic> model_ptr =
       std::make_shared<BehaviorIDMClassic>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

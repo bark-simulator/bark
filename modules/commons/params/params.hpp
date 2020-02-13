@@ -9,10 +9,14 @@
 
 #include <string>
 #include <vector>
+#include "boost/variant.hpp"
 
 namespace modules {
 namespace commons {
 
+typedef std::vector<std::vector<float>> ListListFloat;
+typedef std::pair<std::string, boost::variant<bool, float, int, ListListFloat>> ParamPair;
+typedef std::vector<ParamPair> CondensedParamList;
 
 class Params {
  public:
@@ -36,17 +40,22 @@ class Params {
   virtual std::vector<std::vector<float>> GetListListFloat(
                       const std::string &param_name,
                       const std::string &description,
-                      const std::vector<std::vector<float>> &default_value) = 0;
+                      const ListListFloat &default_value) = 0;
+
+  virtual CondensedParamList GetCondensedParamList() const = 0;
+
 
   virtual void SetBool(const std::string &param_name, const bool &value) = 0;
   virtual void SetReal(const std::string &param_name, const float &value) = 0;
   virtual void SetInt(const std::string &param_name, const int &value) = 0;
   virtual void SetListListFloat(
     const std::string &param_name,
-    const std::vector<std::vector<float>> &value) = 0;
+    const ListListFloat &value) = 0;
   virtual int operator[](const std::string &param_name) = 0;
-  virtual Params* AddChild(const std::string &name) = 0;
+  virtual std::shared_ptr<Params> AddChild(const std::string &name) = 0;
 };
+
+typedef std::shared_ptr<Params> ParamsPtr;
 
 
 }  // namespace commons

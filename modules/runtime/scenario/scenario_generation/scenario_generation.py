@@ -8,27 +8,18 @@ import os
 from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
-  def __init__(self, params=None, num_scenarios=None, random_seed=None):
+  def __init__(self, params=None, num_scenarios=None):
     self._params = params
-    self._random_seed = random_seed
     self._current_scenario_idx = 0
 
     if params is None:
         self._params = ParameterServer()
     else:
         self._params = params
-    self.initialize_params(params=self._params)
-
-    self._scenario_list = self.create_scenarios(params, num_scenarios, random_seed)
-
+    self.initialize_params(self._params)
+    self._scenario_list = self.create_scenarios(params, num_scenarios)
+  
   def initialize_params(self, params):
-    """Initialize params or default params necessary for scenario creation
-    
-    Arguments:
-        params {[modules.runtime.commons.parameters.ParameterServer]} --
-              [a parameter server instance to init params from]
-
-    """
     pass
 
   @property
@@ -63,7 +54,7 @@ class ScenarioGeneration:
     else:
         raise StopIteration
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ Creates a list of scenario class instances which should be
         deterministically reproducible given the random seed,
         the params and the number of scenarios

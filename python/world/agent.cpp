@@ -35,7 +35,7 @@ void python_agent(py::module m) {
       const BehaviorModelPtr &,
       const DynamicModelPtr &,
       const ExecutionModelPtr &,
-      const Polygon &, Params *,
+      const Polygon &, const ParamsPtr&,
       const GoalDefinitionPtr &,
       const MapInterfacePtr &,
       const Model3D &>(),
@@ -104,7 +104,7 @@ void python_agent(py::module m) {
   py::class_<Object, ObjectPtr>(m, "Object")
     .def(
       py::init<const Polygon &,
-      Params *,
+      const ParamsPtr&,
       const Model3D &>(),
       py::arg("shape"),
       py::arg("params"),

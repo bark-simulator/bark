@@ -18,7 +18,7 @@ namespace execution {
 // Implement an optimal trajectory tracking based on interpolation
 class ExecutionModelInterpolate : public ExecutionModel {
  public:
-  explicit ExecutionModelInterpolate(modules::commons::Params *params) : ExecutionModel(params) {}
+  explicit ExecutionModelInterpolate(const modules::commons::ParamsPtr& params) : ExecutionModel(params) {}
   ~ExecutionModelInterpolate() {}
 
   virtual dynamic::Trajectory Execute(const float &new_world_time,

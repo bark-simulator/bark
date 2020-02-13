@@ -20,15 +20,21 @@ using world::ObservedWorld;
 
 class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
  public:
-  explicit BehaviorConstantVelocity(commons::Params *params) :
+  explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
     BehaviorLongitudinalAcceleration(params) {}
 
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(float delta_time,
-                  const ObservedWorld& observed_world) { return BehaviorLongitudinalAcceleration::Plan(delta_time, observed_world); };
+                  const ObservedWorld& observed_world) {
+    return BehaviorLongitudinalAcceleration::Plan(delta_time, observed_world);
+  }
 
-  virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) {return 0.0f;}
+  // TODO(@all): make pure virtual
+  virtual double CalculateLongitudinalAcceleration(
+    const ObservedWorld& observed_world) {
+    return 0.0f;
+  }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };
@@ -36,7 +42,7 @@ class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
 inline std::shared_ptr<BehaviorModel> BehaviorConstantVelocity::Clone() const {
   std::shared_ptr<BehaviorConstantVelocity> model_ptr =
     std::make_shared<BehaviorConstantVelocity>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

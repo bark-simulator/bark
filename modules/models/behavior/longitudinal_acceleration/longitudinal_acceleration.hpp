@@ -20,7 +20,7 @@ using world::ObservedWorld;
 
 class BehaviorLongitudinalAcceleration : public BehaviorModel {
  public:
-  explicit BehaviorLongitudinalAcceleration(commons::Params *params) :
+  explicit BehaviorLongitudinalAcceleration(const commons::ParamsPtr& params) :
     BehaviorModel(params) {}
 
   virtual ~BehaviorLongitudinalAcceleration() {}
@@ -31,7 +31,6 @@ class BehaviorLongitudinalAcceleration : public BehaviorModel {
   virtual float GetMinVelocity() { return 0.0f;}
   virtual float GetMaxVelocity() { return 50.0f;}
 
-  
   virtual double CalculateLongitudinalAcceleration(const ObservedWorld& observed_world) = 0;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const = 0;

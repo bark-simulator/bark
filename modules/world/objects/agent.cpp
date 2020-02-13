@@ -24,7 +24,7 @@ Agent::Agent(const State& initial_state,
         const DynamicModelPtr& dynamic_model_ptr,
         const ExecutionModelPtr& execution_model,
         const geometry::Polygon& shape,
-        commons::Params* params,
+        const commons::ParamsPtr& params,
         const GoalDefinitionPtr& goal_definition,
         const MapInterfacePtr& map_interface,
         const geometry::Model3D& model_3d) :

@@ -19,7 +19,7 @@ namespace dynamic {
  */
 class TripleIntegratorModel : public DynamicModel {
  public:
-  explicit TripleIntegratorModel(modules::commons::Params *params) :
+  explicit TripleIntegratorModel(const modules::commons::ParamsPtr params) :
     DynamicModel(params),
     mass_(0.2) {
       mass_ = params->GetReal("DynamicModel::mass",
