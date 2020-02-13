@@ -16,6 +16,7 @@ using modules::geometry::Polygon;
 using modules::geometry::Pose;
 using modules::geometry::Distance;
 using modules::geometry::SignedDistance;
+using modules::geometry::Norm0To2PI;
 using Eigen::Dynamic;
 using Eigen::Matrix;
 
@@ -105,6 +106,10 @@ void python_geometry(py::module m) {
 
   m.def("ComputeCenterLine",
     &modules::geometry::ComputeCenterLine, "computes the center line.");
+
+  m.def("Norm0To2PI",
+    &modules::geometry::Norm0To2PI,
+    "limit input to 0..2pi");
 
   py::class_<Line,
              std::shared_ptr<Line>>(m, "Line2d")

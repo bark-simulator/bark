@@ -11,6 +11,7 @@
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "python/models/plan/plan.hpp"
 
 
@@ -23,6 +24,7 @@ using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorMobil;
 using modules::models::dynamic::DynamicModelPtr;
+using modules::models::behavior::BehaviorStaticTrajectory;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -113,6 +115,15 @@ void python_behavior(py::module m) {
            const modules::commons::ParamsPtr&>())
       .def("__repr__", [](const DynamicBehaviorModel &b) {
         return "bark.behavior.DynamicBehaviorModel";
+      });
+
+  py::class_<BehaviorStaticTrajectory,
+             BehaviorModel,
+             shared_ptr<BehaviorStaticTrajectory>>(m, "BehaviorStaticTrajectory")
+      .def(py::init<const modules::commons::ParamsPtr&>())
+      .def_property_readonly("static_trajectory", &BehaviorStaticTrajectory::get_static_trajectory)
+      .def("__repr__", [](const BehaviorStaticTrajectory &b) {
+        return "bark.behavior.BehaviorStaticTrajectory";
       });
 
   python_behavior_plan(m);
