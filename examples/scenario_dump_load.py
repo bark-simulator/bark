@@ -6,16 +6,16 @@
 
 
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import ConfigurableScenarioGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 import time
 import os
 
-scenario_param_file ="highway_merging.json" # must be within examples params folder
+scenario_param_file ="highway_merge_configurable.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
-scenario_generation = UniformVehicleDistribution(num_scenarios=3, random_seed=0, params=param_server)
+scenario_generation = ConfigurableScenarioGeneration(num_scenarios=3, params=param_server)
 
 viewer = MPViewer(
   params=param_server,

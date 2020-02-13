@@ -31,7 +31,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._random_seed = params_temp["RandomSeed", "Random seed used for sampling", 1000]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
-      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
       "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
@@ -42,7 +42,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "AgentParams" : {}
     },
     {
-      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "right_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [1]},
       "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 30.0}},
@@ -421,8 +421,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
            end_road_id = source_sink[1]
            road_corridor = map_interface.GenerateRoadCorridor(start_road_id,
                                                 end_road_id)
-    elif isinstance(source_sink, tuple) and \
-           isinstance(source_sink[0], tuple)  and \
+    elif isinstance(source_sink, list) and \
+           isinstance(source_sink[0], list)  and \
            isinstance(source_sink[0][0], float):
            # point 2d given to find start and end road id road corridor
             goal_polygon = Polygon2d([0, 0, 0],
