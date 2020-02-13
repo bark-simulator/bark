@@ -117,6 +117,8 @@ TEST(interaction_term, behavior_idm_classic) {
   const double minimum_spacing = behavior.GetMinimumSpacing();
   const double desired_time_headway = behavior.GetDesiredTimeHeadway();
   const double max_acceleration = behavior.GetMaxAcceleration();
+  const double acc_lower_bound = behavior.GetAccelerationLowerBound();
+  const double acc_upper_bound = behavior.GetAccelerationUpperBound();
   const double comfortable_braking_acceleration =
       behavior.GetComfortableBrakingAcceleration();
 
@@ -145,7 +147,7 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  double desired_acceleration = std::max(-max_acceleration, 
+  double desired_acceleration = std::max(acc_lower_bound, 
       -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 
@@ -159,7 +161,7 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  desired_acceleration = std::max(-max_acceleration, 
+  desired_acceleration = std::max(acc_lower_bound, 
       -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 }
