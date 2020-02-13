@@ -58,8 +58,8 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 };
 
 TEST(free_road_term, behavior_idm_classic) {
-  DefaultParams params;
-  DummyBehaviorIDM behavior(&params);
+  auto params = std::make_shared<DefaultParams>();
+  DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
   const float max_acceleration = behavior.GetMaxAcceleration();
   const int exponent = behavior.GetExponent();
@@ -111,12 +111,14 @@ TEST(free_road_term, behavior_idm_classic) {
 }
 
 TEST(interaction_term, behavior_idm_classic) {
-  DefaultParams params;
-  DummyBehaviorIDM behavior(&params);
+  auto params = std::make_shared<DefaultParams>();
+  DummyBehaviorIDM behavior(params);
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
   const double desired_time_headway = behavior.GetDesiredTimeHeadway();
   const double max_acceleration = behavior.GetMaxAcceleration();
+  const double acc_lower_bound = behavior.GetAccelerationLowerBound();
+  const double acc_upper_bound = behavior.GetAccelerationUpperBound();
   const double comfortable_braking_acceleration =
       behavior.GetComfortableBrakingAcceleration();
 
@@ -145,7 +147,7 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  double desired_acceleration = std::max(-max_acceleration, 
+  double desired_acceleration = std::max(acc_lower_bound, 
       -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 
@@ -159,14 +161,14 @@ TEST(interaction_term, behavior_idm_classic) {
       minimum_spacing + ego_velocity * desired_time_headway +
       ego_velocity * velocity_difference /
           (2 * sqrt(max_acceleration * comfortable_braking_acceleration));
-  desired_acceleration = std::max(-max_acceleration, 
+  desired_acceleration = std::max(acc_lower_bound, 
       -max_acceleration * pow(helper_state / rel_distance, 2));
   EXPECT_NEAR(idm_acceleration, desired_acceleration, 0.001);
 }
 
 TEST(drive_free, behavior_idm_classic) {
-  DefaultParams params;
-  DummyBehaviorIDM behavior(&params);
+  auto params = std::make_shared<DefaultParams>();
+  DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
 
   // First case, we start with the desired velocity. After num steps, we should
@@ -192,8 +194,8 @@ TEST(drive_free, behavior_idm_classic) {
 }
 
 TEST(drive_leading_vehicle, behavior_idm_classic) {
-  DefaultParams params;
-  DummyBehaviorIDM behavior(&params);
+  auto params = std::make_shared<DefaultParams>();
+  DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
   const float minimum_spacing = behavior.GetMinimumSpacing();
   const float desired_time_headway = behavior.GetDesiredTimeHeadway();

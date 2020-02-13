@@ -29,7 +29,7 @@ using world::map::LaneCorridorPtr;
 
 class Primitive : public modules::commons::BaseType {
  public:
-  explicit Primitive(commons::Params* params,
+  explicit Primitive(const commons::ParamsPtr& params,
                      const DynamicModelPtr& dynamic_model)
       : commons::BaseType(params),
         dynamic_model_(dynamic_model),
@@ -53,7 +53,7 @@ typedef std::shared_ptr<Primitive> PrimitivePtr;
 
 class PrimitiveLaneFollowing : public Primitive {
  public:
-  PrimitiveLaneFollowing(commons::Params* params,
+  PrimitiveLaneFollowing(const commons::ParamsPtr& params,
                          const DynamicModelPtr& dynamic_model)
       : Primitive(params, dynamic_model) {}
 
@@ -64,7 +64,7 @@ class PrimitiveLaneFollowing : public Primitive {
 class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
-  PrimitiveConstAcceleration(commons::Params* params,
+  PrimitiveConstAcceleration(const commons::ParamsPtr& params,
                              const DynamicModelPtr& dynamic_model,
                              float acceleration, float crosstrack_error_gain)
       : PrimitiveLaneFollowing(params, dynamic_model),
@@ -117,7 +117,7 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
 
 class PrimitiveGapKeeping : public PrimitiveLaneFollowing, BehaviorIDMClassic {
  public:
-  PrimitiveGapKeeping(commons::Params* params,
+  PrimitiveGapKeeping(const commons::ParamsPtr& params,
                       const DynamicModelPtr& dynamic_model)
       : PrimitiveLaneFollowing(params, dynamic_model),
         BehaviorIDMClassic(params) {}
@@ -135,7 +135,7 @@ class PrimitiveGapKeeping : public PrimitiveLaneFollowing, BehaviorIDMClassic {
 
 class PrimitiveChangeToLeft : public PrimitiveConstAcceleration {
  public:
-  PrimitiveChangeToLeft(commons::Params* params,
+  PrimitiveChangeToLeft(const commons::ParamsPtr& params,
                         const DynamicModelPtr& dynamic_model,
                         float crosstrack_error_gain)
       : PrimitiveConstAcceleration(params, dynamic_model, 0,
@@ -177,7 +177,7 @@ class PrimitiveChangeToLeft : public PrimitiveConstAcceleration {
 
 class PrimitiveChangeToRight : public PrimitiveConstAcceleration {
  public:
-  PrimitiveChangeToRight(commons::Params* params,
+  PrimitiveChangeToRight(const commons::ParamsPtr& params,
                          const DynamicModelPtr& dynamic_model,
                          float crosstrack_error_gain)
       : PrimitiveConstAcceleration(params, dynamic_model, 0,

@@ -18,7 +18,7 @@ namespace dynamic {
 
 class SingleTrackModel : public DynamicModel {
  public:
-  explicit SingleTrackModel(modules::commons::Params* params)
+  explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
       : DynamicModel(params), wheel_base_(2.7), steering_angle_max_(0.2) {
     wheel_base_ = params->GetReal("DynamicModel::wheel_base",
                                   "Wheel base of vehicle.", 2.7);

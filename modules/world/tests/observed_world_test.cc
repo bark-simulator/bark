@@ -51,7 +51,7 @@ using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 using StateDefinition::MIN_STATE_SIZE;
 
 TEST(observed_world, agent_in_front_same_lane) {
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -68,25 +68,25 @@ TEST(observed_world, agent_in_front_same_lane) {
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   // Setting Up Agents (one in front of another)
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   // Construct World
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
   world->UpdateAgentRTree();
@@ -117,7 +117,7 @@ TEST(observed_world, agent_in_front_same_lane) {
   State init_state3(static_cast<int>(MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, -1.75, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
-                            polygon, &params, goal_ptr, map_interface,
+                            polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
@@ -134,7 +134,7 @@ TEST(observed_world, agent_in_front_same_lane) {
 }
 
 TEST(observed_world, agent_in_front_other_lane) {
-  DefaultParams params;
+  auto params = std::make_shared<DefaultParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -151,25 +151,25 @@ TEST(observed_world, agent_in_front_other_lane) {
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   // Setting Up Agents (one in front of another)
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
-                            car_polygon, &params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   // Construct World
-  WorldPtr world(new World(&params));
+  WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
   world->UpdateAgentRTree();
@@ -178,7 +178,7 @@ TEST(observed_world, agent_in_front_other_lane) {
   State init_state4(static_cast<int>(MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
   AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
-                            polygon, &params, goal_ptr, map_interface,
+                            polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   world->AddAgent(agent4);
@@ -216,10 +216,10 @@ TEST(observed_world, clone) {
   using modules::world::evaluation::EvaluatorCollisionAgents;
   using modules::world::evaluation::EvaluatorPtr;
 
-  DefaultParams params;
-  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(&params));
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(&params));
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(
@@ -230,14 +230,14 @@ TEST(observed_world, clone) {
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
-                            polygon, &params));  // NOLINT
+                            polygon, params));  // NOLINT
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 8.0, 0.0, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
-                            polygon, &params));  // NOLINT
+                            polygon, params));  // NOLINT
 
-  WorldPtr world = std::make_shared<World>(&params);
+  WorldPtr world = std::make_shared<World>(params);
   world->AddAgent(agent1);
   world->AddAgent(agent2);
   world->UpdateAgentRTree();
@@ -269,15 +269,15 @@ TEST(observed_world, predict) {
   using StateDefinition::VEL_POSITION;
   namespace mg = modules::geometry;
 
-  SetterParams params;
-  params.SetReal("integration_time_delta", 0.01);
-  DynamicModelPtr dyn_model(new SingleTrackModel(&params));
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("integration_time_delta", 0.01);
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
                                                  velocity_difference);
 
   // predict all agents with constant velocity
-  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(&params));
+  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   observed_world.SetupPrediction(prediction_settings);
   WorldPtr predicted_world = observed_world.Predict(1.0f);
@@ -304,7 +304,7 @@ TEST(observed_world, predict) {
 
   // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(
-      new BehaviorMPContinuousActions(dyn_model, &params));
+      new BehaviorMPContinuousActions(dyn_model, params));
   Input u1(2);
   u1 << 2, 0;
   Input u2(2);
@@ -313,7 +313,7 @@ TEST(observed_world, predict) {
   BehaviorMotionPrimitives::MotionIdx idx2 = std::dynamic_pointer_cast<BehaviorMPContinuousActions>(ego_prediction_model)->AddMotionPrimitive(u2);  // NOLINT
 
   BehaviorModelPtr others_prediction_model(
-      new BehaviorConstantVelocity(&params));
+      new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings2(ego_prediction_model,
                                           others_prediction_model);
   observed_world.SetupPrediction(prediction_settings2);

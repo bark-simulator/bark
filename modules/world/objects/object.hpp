@@ -20,7 +20,7 @@ class Object : public commons::BaseType {
  public:
   friend class world::World;
 
-  Object(const geometry::Polygon& shape, commons::Params* params,
+  Object(const geometry::Polygon& shape, const commons::ParamsPtr& params,
          const geometry::Model3D& model_3d = geometry::Model3D());
 
   Object(const Object& object) :

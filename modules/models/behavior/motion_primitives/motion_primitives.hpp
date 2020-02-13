@@ -24,7 +24,7 @@ using world::objects::AgentId;
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
   BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
-                           commons::Params* params)
+                           const commons::ParamsPtr& params)
       : BehaviorModel(params),
         dynamic_model_(dynamic_model),
         active_motion_(),
@@ -42,13 +42,22 @@ class BehaviorMotionPrimitives : public BehaviorModel {
     active_motion_ = motion_idx;
   }
 
+  // virtual std::shared_ptr<BehaviorModel> Clone() const;
+
  protected:
   DynamicModelPtr dynamic_model_;
+  std::vector<Input> motion_primitives_;
   MotionIdx active_motion_;
 
   // Parameters
   float integration_time_delta_;
 };
+
+// inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
+//   std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
+//     std::make_shared<BehaviorMotionPrimitives>(*this);
+//   return model_ptr;
+// }
 
 }  // namespace behavior
 }  // namespace models

@@ -22,12 +22,12 @@ using namespace modules::world::opendrive;
 using modules::world::World;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorldPtr;
-using modules::commons::Params;
+using modules::commons::ParamsPtr;
 
 
 void python_world(py::module m) {
   py::class_<World, std::shared_ptr<World>>(m, "World")
-    .def(py::init<Params*>())
+    .def(py::init<ParamsPtr>())
     .def("Step", &World::Step)
     .def("DoPlanning", &World::DoPlanning)
     .def("DoExecution", &World::DoExecution)
@@ -59,6 +59,7 @@ void python_world(py::module m) {
   py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
+    .def_property_readonly("agents", &World::GetAgents)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
     .def("__repr__", [](const ObservedWorld& a) {
       return "bark.world.ObservedWorld";

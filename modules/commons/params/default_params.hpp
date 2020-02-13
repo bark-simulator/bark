@@ -14,7 +14,7 @@ namespace modules {
 namespace commons {
 
 // This class is mainly useful for test definitions in C++
-class DefaultParams : public Params {
+class DefaultParams : public Params, std::enable_shared_from_this<DefaultParams> {
  public:
   DefaultParams() {}
 
@@ -46,7 +46,9 @@ class DefaultParams : public Params {
 
   virtual int operator[](const std::string &param_name) { return 0; }
 
-  virtual Params *AddChild(const std::string &name) { return this; }
+  virtual CondensedParamList GetCondensedParamList() const { throw; } // < not needed atm
+
+  virtual ParamsPtr AddChild(const std::string &name) { return shared_from_this(); } // < not needed atm
 };
 
 }  // namespace commons

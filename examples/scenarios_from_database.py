@@ -10,7 +10,12 @@ import time
 
                                                 
 db = BenchmarkDatabase(database_root="external/benchmark_database_release")
-scenario_generation = db.get_scenario_generator(scenario_set_id=0)
+try:
+  scenario_generation = db.get_scenario_generator(scenario_set_id=0)
+except Exception as e:
+  print("Error during loading of databse: {}".format(e))
+  print("Please perform a release of the benchmark database with the current BARK pickling version.")
+  exit()
 param_server = ParameterServer()
 viewer = MPViewer(
   params=param_server,
