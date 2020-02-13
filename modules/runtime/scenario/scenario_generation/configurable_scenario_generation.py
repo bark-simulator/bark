@@ -25,24 +25,24 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def initialize_params(self, params):
     params_temp = \
-      self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]
+      self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
     self._random_seed = params_temp["RandomSeed", "Random seed used for sampling", 1000]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
-      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
       "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
       "ConfigExecutionModels": {"type": "FixedExecutionType"},
       "ConfigDynamicModels": {"type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "RandomSingleAgent"},
+      "ConfigControlledAgents": {"type": "NoneControlled"},
       "AgentParams" : {}
     },
     {
-      "SourceSink": ( (5111.626, 5006.8305),  (5110.789, 5193.1725) ),
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "right_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [1]},
       "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 30.0}},
@@ -62,6 +62,12 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # otherwise parameter server serialization fails
     self._sink_source_parameter_servers = defaultdict(list)
 
+    self._sink_source_default_params = None
+
+  def update_defaults_params(self):
+    self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]["SinksSources"] = \
+        self._sink_source_default_params
+
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
     self._sink_source_parameter_servers[config_type].append(
       {"Description": description,
@@ -76,6 +82,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     for scenario_idx in range(0, num_scenarios):
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
+    self.update_defaults_params()
     return scenario_list
 
   def create_single_scenario(self):
@@ -102,7 +109,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_agent_states_geometry.append(kwargs_dict)
 
       # collect default parameters of this config
-      sink_source_default_params.append({})
+      sink_source_default_params.append(sink_source_config)
       sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.convert_to_dict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
@@ -179,10 +186,16 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
-    scenario._agent_list = agent_list
-    scenario._eval_agent_ids = controlled_agent_ids_all
+    self._sink_source_default_params = sink_source_default_params
+    scenario._agent_list = self.update_agent_ids(agent_list)
+    scenario._eval_agent_ids = [idx for idx, value in enumerate(controlled_agent_ids_all) if value==True]
     
     return scenario
+
+  def update_agent_ids(self, agent_list):
+    for idx, agent in enumerate(agent_list):
+      agent.SetAgentId(idx)
+    return agent_list
 
   def resolve_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
@@ -413,8 +426,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
            end_road_id = source_sink[1]
            road_corridor = map_interface.GenerateRoadCorridor(start_road_id,
                                                 end_road_id)
-    elif isinstance(source_sink, tuple) and \
-           isinstance(source_sink[0], tuple)  and \
+    elif isinstance(source_sink, list) and \
+           isinstance(source_sink[0], list)  and \
            isinstance(source_sink[0][0], float):
            # point 2d given to find start and end road id road corridor
             goal_polygon = Polygon2d([0, 0, 0],

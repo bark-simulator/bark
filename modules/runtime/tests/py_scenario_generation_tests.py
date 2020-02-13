@@ -6,22 +6,22 @@
 
 import unittest
 import os
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution\
-  import UniformVehicleDistribution
 from modules.runtime.scenario.scenario_generation.scenario_generation\
   import ScenarioGeneration
 
 from modules.runtime.scenario.scenario_generation.configurable_scenario_generation \
   import ConfigurableScenarioGeneration
-from modules.runtime.scenario.scenario_generation.drone_challenge\
-  import DroneChallengeScenarioGeneration
+
+from modules.runtime.commons.parameters import ParameterServer
 
 from bark.geometry import *
 
 
+
 class ScenarioGenerationTests(unittest.TestCase):
   def test_configurable_scenario_generation_default_params(self):
-    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2)
+    params = ParameterServer()
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
     scenario_loader = ScenarioGeneration()
@@ -29,6 +29,8 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     self.assertEqual(len(scenario_loader._scenario_list), 2)
     self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
+
+    params.save("default_params.json")
 
   def test_find_overlaps_configurable_scenario_generation(self):
     shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
