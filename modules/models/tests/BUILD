@@ -39,7 +39,7 @@ cc_test(
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior/motion_primitives:motion_primitives",
-        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/behavior/idm:idm_classic",
         "//modules/world:world",
         "@gtest//:main",
         "@com_github_eigen_eigen//:eigen",

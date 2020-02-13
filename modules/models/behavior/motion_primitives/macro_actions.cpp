@@ -22,6 +22,7 @@ BehaviorMPMacroActions::AddMotionPrimitive(const primitives::PrimitivePtr& primi
 
 Trajectory BehaviorMPMacroActions::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  // TODO: move this to Predicate
   const float dt = integration_time_delta_;
   const int num_trajectory_points =
       static_cast<int>(std::ceil(delta_time / dt)) + 1;
@@ -29,6 +30,7 @@ Trajectory BehaviorMPMacroActions::Plan(
   Trajectory traj(num_trajectory_points,
                   static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
+  traj = motion_primitives_.at(active_motion_)->Plan(delta_time, observed_world);
   // traj = 
 
   // SetLastAction(Action(DiscreteAction(active_motion_)));
