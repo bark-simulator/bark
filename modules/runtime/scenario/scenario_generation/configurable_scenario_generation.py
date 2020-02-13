@@ -25,7 +25,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def initialize_params(self, params):
     params_temp = \
-      self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]
+      self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
@@ -38,7 +38,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigExecutionModels": {"type": "FixedExecutionType"},
       "ConfigDynamicModels": {"type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "RandomSingleAgent"},
+      "ConfigControlledAgents": {"type": "NoneControlled"},
       "AgentParams" : {}
     },
     {
@@ -62,6 +62,12 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # otherwise parameter server serialization fails
     self._sink_source_parameter_servers = defaultdict(list)
 
+    self._sink_source_default_params = None
+
+  def update_defaults_params(self):
+    self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]["SinksSources"] = \
+        self._sink_source_default_params
+
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
     self._sink_source_parameter_servers[config_type].append(
       {"Description": description,
@@ -76,6 +82,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     for scenario_idx in range(0, num_scenarios):
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
+    self.update_defaults_params()
     return scenario_list
 
   def create_single_scenario(self):
@@ -102,7 +109,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_agent_states_geometry.append(kwargs_dict)
 
       # collect default parameters of this config
-      sink_source_default_params.append({})
+      sink_source_default_params.append(sink_source_config)
       sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.convert_to_dict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
@@ -179,6 +186,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
+    self._sink_source_default_params = sink_source_default_params
     scenario._agent_list = agent_list
     scenario._eval_agent_ids = controlled_agent_ids_all
     
