@@ -25,13 +25,15 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   virtual Trajectory Plan(float delta_time,
                           const ObservedWorld& observed_world);
 
-  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorld& observed_world) const {
+  virtual MotionIdx GetNumMotionPrimitives(
+      const ObservedWorld& observed_world) const {
     MotionIdx count = 0;
     for (auto const& p : motion_primitives_) {
       if (p->IsPreConditionSatisfied(observed_world)) {
         count++;
       }
     }
+    // TODO: this should be a vector!!
     return count;
   }
 
