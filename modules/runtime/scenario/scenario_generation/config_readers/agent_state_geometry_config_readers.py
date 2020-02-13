@@ -27,10 +27,6 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
       "Lower and upper bound of velocity in km/h given as tuple from which" + \
       " velocities are sampled uniformly",
       (20,30)]
-    self._ego_velocity_range = config_param_object["EgoVehicleVelocityRange",
-      "Lower and upper bound of velocity in km/h given as tuple from which" + \
-      " velocities are sampled uniformly",
-      (20,30)]
     self._s_range = config_param_object["SRange", "pair of values (tuple) between 0 and 1 to limit placement  \
                      to certain part of road corridor", (0, 1)]
     # todo make parameterizable, but not only based on 2d points
