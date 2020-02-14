@@ -13,7 +13,6 @@ SetterParams::SetterParams(bool log_if_default, const CondensedParamList& param_
   for(const auto& param_pair : param_list) {
     const auto& param_name = param_pair.first;
     const auto& param_variant = param_pair.second;
-    LOG(INFO) << "Deserializing param " << param_name;
     boost::apply_visitor(ParamVisitor(this, param_name), param_variant);
   }
 }
