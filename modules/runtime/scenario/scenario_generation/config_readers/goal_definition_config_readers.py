@@ -54,7 +54,8 @@ class GoalGenerator:
           Orientation must be within orientation limits around tangent angle of center line", (0.8, 1)]
     velocity_range = config_param_object["VelocityRange" , "Pair velocity values specifying allowed range", (0.8, 1)]
 
-    goal_line_string = GetLineFromSInterval(line_string, long_range[0], long_range[1])
+    length = line_string.Length()
+    goal_line_string = GetLineFromSInterval(line_string, long_range[0]*length, long_range[1]*length)
     goal_definition = GoalDefinitionStateLimitsFrenet(goal_line_string, lateral_max_dist, max_orientation_diff, velocity_range)
     return goal_definition
 

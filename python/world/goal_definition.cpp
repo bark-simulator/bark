@@ -92,6 +92,8 @@ void python_goal_definition(py::module m) {
         &GoalDefinitionStateLimitsFrenet::GetMaxOrientationDifferences)
       .def_property_readonly("velocity_range",
         &GoalDefinitionStateLimitsFrenet::GetVelocityRange)
+      .def_property_readonly("goal_shape",
+         &GoalDefinitionStateLimitsFrenet::GetShape)
       .def(py::pickle(
         [](const GoalDefinitionStateLimitsFrenet& g) -> py::tuple {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */

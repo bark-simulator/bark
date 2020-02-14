@@ -20,8 +20,8 @@ from collections import defaultdict
 
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
-  def __init__(self, num_scenarios, params=None):
-    super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios)
+  def __init__(self, num_scenarios, params=None, random_seed=1000):
+    super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios, random_seed)
 
   def initialize_params(self, params):
     params_temp = \
@@ -29,7 +29,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
-    self._random_seed = params_temp["RandomSeed", "Random seed used for sampling", 1000]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
@@ -56,7 +55,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     ]
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
               sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
-    np.random.seed(self._random_seed)
+    self._random_state = np.random.RandomState(self._random_seed)
 
     # all parameter servers used by all bark class instances must be persisted
     # otherwise parameter server serialization fails
@@ -409,7 +408,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["type"]
     param_config = ParameterServer(json = eval_config)
-    config_reader = eval("{}()".format(eval_config_type))
+    config_reader = eval("{}(self._random_state)".format(eval_config_type))
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
