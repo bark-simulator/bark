@@ -3,7 +3,9 @@ py_library(
     srcs = ["benchmark_runner.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
-    deps = ["//modules/runtime:runtime"],
+    deps = [
+        "//modules/runtime:runtime",
+        ],
     visibility = ["//visibility:public"],
 )
 
