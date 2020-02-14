@@ -105,3 +105,17 @@ py_test(
           "//modules/runtime:runtime",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
+
+cc_test(
+    name = "behavior_static_trajectory_test",
+    srcs = [
+        "behavior_static_trajectory_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/models/behavior/static_trajectory",
+        "@com_github_eigen_eigen//:eigen",
+        "@gtest//:main",
+    ],
+)
