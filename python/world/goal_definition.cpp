@@ -9,6 +9,7 @@
 #include "goal_definition.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/geometry/polygon.hpp"
 
@@ -17,8 +18,10 @@ using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::world::goal_definition::GoalDefinitionPolygon;
 using modules::world::goal_definition::GoalDefinitionStateLimits;
+using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::geometry::Polygon;
+using modules::geometry::Line;
 
 void python_goal_definition(py::module m) {
   py::class_<GoalDefinition,
@@ -71,21 +74,56 @@ void python_goal_definition(py::module m) {
                   std::pair<float, float>>());
         }));
 
-    py::class_<GoalDefinitionSequential, GoalDefinition,
-        std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")  // NOLINT
+    py::class_<GoalDefinitionStateLimitsFrenet, GoalDefinition,
+      std::shared_ptr<GoalDefinitionStateLimitsFrenet>>(m, "GoalDefinitionStateLimitsFrenet")
       .def(py::init<>())
-      .def(py::init<const std::vector<GoalDefinitionPtr>&>())
-      .def("__repr__", [](const GoalDefinitionSequential &g) {
-        return "bark.world.goal_definition.GoalDefinitionSequential";
+      .def(py::init<const modules::geometry::Line&,
+                            const std::pair<float,float>,
+                            const std::pair<float,float>,
+                            const std::pair<float, float>>())
+      .def("__repr__", [](const GoalDefinitionStateLimitsFrenet &g) {
+        return "bark.world.goal_definition.GoalDefinitionStateLimitsFrenet";
       })
-      .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
-      .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
-      .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
-      .def_property_readonly("sequential_goals",
-        &GoalDefinitionSequential::GetSequentialGoals)
+      .def_property_readonly("center_line",
+        &GoalDefinitionStateLimitsFrenet::GetCenterLine)
+      .def_property_readonly("max_lateral_distances",
+        &GoalDefinitionStateLimitsFrenet::GetMaxLateralDistance)
+      .def_property_readonly("max_orientation_differences",
+        &GoalDefinitionStateLimitsFrenet::GetMaxOrientationDifferences)
+      .def_property_readonly("velocity_range",
+        &GoalDefinitionStateLimitsFrenet::GetVelocityRange)
       .def(py::pickle(
-        [](const GoalDefinitionSequential& g) -> py::tuple {
-          return py::make_tuple(g.GetSequentialGoals());
+        [](const GoalDefinitionStateLimitsFrenet& g) -> py::tuple {  // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(g.GetCenterLine(),
+                      g.GetMaxLateralDistance(), g.GetMaxOrientationDifferences(),
+                      g.GetVelocityRange());
+        },
+        [](py::tuple t) {  // __setstate__
+          if (t.size() != 4)
+                throw std::runtime_error("Invalid GoalDefinitionStateLimitsFrenet state!");
+
+          return new GoalDefinitionStateLimitsFrenet(t[0].cast<Line>(),
+                  t[1].cast<std::pair<float, float>>(), t[2].cast<std::pair<float, float>>(),
+                  t[3].cast<std::pair<float, float>>());
+        }));
+
+      
+      py::class_<GoalDefinitionSequential, GoalDefinition,
+        std::shared_ptr<GoalDefinitionSequential>>(m, "GoalDefinitionSequential")
+    .def(py::init<>())
+    .def(py::init<const std::vector<GoalDefinitionPtr>&>())
+    .def("__repr__", [](const GoalDefinitionSequential &g) {
+      return "bark.world.goal_definition.GoalDefinitionSequential";
+    })
+    .def("GetNextGoal", &GoalDefinitionSequential::GetNextGoal)
+    .def("GetCurrentGoal", &GoalDefinitionSequential::GetCurrentGoal)
+    .def_property_readonly("goal_shape", &GoalDefinitionSequential::GetShape)
+    .def_property_readonly("sequential_goals", &GoalDefinitionSequential::GetSequentialGoals)
+    .def(py::pickle(
+        [](const GoalDefinitionSequential& g) -> py::tuple { // __getstate__
+            /* Return a tuple that fully encodes the state of the object */
+            return py::make_tuple(g.GetSequentialGoals());
         },
         [](py::tuple t) {
           if (t.size() != 1)

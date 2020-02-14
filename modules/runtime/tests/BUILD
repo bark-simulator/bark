@@ -64,3 +64,13 @@ py_test(
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime"],
 )
+
+py_test(
+  name = "py_interaction_dataset_reader_test",
+  srcs = ["py_interaction_dataset_reader_test.py"],
+  data = ['//python:bark.so', ':xodr_data'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",],
+)
