@@ -142,7 +142,7 @@ py_binary(
 
 config_setting(
     name = "_interaction_dataset_present",
-    define_values = {"interaction_dataset_present": "true"},
+    define_values = {"interaction_dataset_present": "false"},
 )
 
 py_binary(
