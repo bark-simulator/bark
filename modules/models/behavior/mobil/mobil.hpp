@@ -97,7 +97,7 @@ class BehaviorMobil : public BehaviorIDMClassic {
 inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
   std::shared_ptr<BehaviorMobil> model_ptr =
       std::make_shared<BehaviorMobil>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

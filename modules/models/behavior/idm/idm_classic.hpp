@@ -44,6 +44,12 @@ class BehaviorIDMClassic : public BehaviorModel {
   const float GetMaxAcceleration() const {
     return param_max_acceleration_;
   }  // unit is meter/second^2
+  const float GetAccelerationLowerBound() const {
+    return param_acceleration_lower_bound_;
+  } 
+  const float GetAccelerationUpperBound() const {
+    return param_acceleration_upper_bound_;
+  } 
   const float GetComfortableBrakingAcceleration() const {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
@@ -56,6 +62,8 @@ class BehaviorIDMClassic : public BehaviorModel {
     float param_minimum_spacing_;
     float param_desired_time_head_way_;
     float param_max_acceleration_;
+    float param_acceleration_lower_bound_;
+    float param_acceleration_upper_bound_;
     float param_desired_velocity_;
     float param_comfortable_braking_acceleration_;
     float param_min_velocity_;
@@ -66,7 +74,7 @@ class BehaviorIDMClassic : public BehaviorModel {
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
   std::shared_ptr<BehaviorIDMClassic> model_ptr =
       std::make_shared<BehaviorIDMClassic>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

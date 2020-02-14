@@ -71,7 +71,7 @@ class ParameterServer(Params):
                 param = ParameterServer()
                 self.store[key] = param.convert_to_param(value)
             else:
-                self.store[key] = value
+                self.get_val_from_string(key, "", value)
 
         return self
 
@@ -168,7 +168,6 @@ class ParameterServer(Params):
                 if check_append(value):
                     condensed_param_list.append((key, value))
         test = condensed_param_list
-        print(condensed_param_list)
         return condensed_param_list
 
     def get_val_from_string(self, hierarchy, description, default_value):
