@@ -28,7 +28,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   virtual ~BehaviorMotionPrimitives() {}
 
-  virtual Trajectory Plan(float delta_time,
+  Trajectory Plan(float delta_time,
                  const ObservedWorld& observed_world);
 
   typedef unsigned int MotionIdx;
@@ -37,9 +37,10 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   void ActionToBehavior(const MotionIdx& motion_idx);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
-private:
+
+ private:
   DynamicModelPtr dynamic_model_;
-  std::vector<Input> motion_primitives_; 
+  std::vector<Input> motion_primitives_;
   MotionIdx active_motion_;
 
   // Parameters
@@ -49,7 +50,7 @@ private:
 inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
   std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
     std::make_shared<BehaviorMotionPrimitives>(*this);
-  return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+  return model_ptr;
 }
 
 }  // namespace behavior

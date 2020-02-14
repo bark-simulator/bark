@@ -26,14 +26,14 @@ import math
 
 class UniformVehicleDistribution(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=None):
-    super(UniformVehicleDistribution, self).__init__(params,
-                                                      num_scenarios,
-                                                      random_seed)
+    super(UniformVehicleDistribution, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
     params_temp = \
       self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]
+    self._random_seed = 1000 # since ScenarioGeneration UniformVehicleDistribution
+      # will soon be deprecated we introduce this hack
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
       "modules/runtime/tests/data/city_highway_straight.xodr",    ]
@@ -85,7 +85,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
     np.random.seed(self._random_seed)
 
 
-  def create_scenarios(self, params, num_scenarios, random_seed):
+  def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """

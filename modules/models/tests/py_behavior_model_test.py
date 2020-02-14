@@ -20,30 +20,50 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
 from bark.models.dynamic import SingleTrackModel
 
-class DummyBehaviorModel(BehaviorModel):
+
+class PythonBehaviorModelWrapper(BehaviorModel):
   """Dummy Python behavior model
   """
   def __init__(self,
-               params=None):
+               dynamic_model = None,
+               params = None):
+    # DynamicBehaviorModel.__init__(self, dynamic_model, params)
     BehaviorModel.__init__(self, params)
+    self._dynamic_model = dynamic_model
     self._params = params
 
-  def plan(self, delta_time, world):
-    # time, x, y, theta, vel
-    traj = np.array([[0.0, 5111.626, 5106.8305 + 0.0, 1.5, 10],
-                     [0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10],
-                     [0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10],
-                     [0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10],
-                     [0.8, 5111.626, 5106.8305 + 0.8, 1.5, 10],
-                     [1.0, 5111.626, 5106.8305 + 1.0, 1.5, 10],
-                     [1.2, 5111.626, 5106.8305 + 1.2, 1.5, 10]])
-    # this is required for the history
-    super(DummyBehaviorModel, self).SetLastAction(1.23)
-    super(DummyBehaviorModel, self).SetLastTrajectory(traj)
-    return traj
+  def Plan(self, delta_time, world):
+    super(PythonBehaviorModelWrapper, self).SetLastAction(
+      np.array([2., 1.], dtype=np.float32))
+    # print(super(PythonBehaviorModelWrapper, self).GetLastAction())
+    trajectory = np.array([[0., 0., 0., 0., 0.],
+                           [0., 0., 0., 0., 0.]], dtype=np.float32)
+    super(PythonBehaviorModelWrapper, self).SetLastTrajectory(trajectory)
+    return trajectory
 
-  def clone(self):
-    return DummyBehaviorModel(self._params)
+  def Clone(self):
+    return self
+
+
+class PythonBehaviorModelWrapperInheritance(BehaviorModel):
+  """Dummy Python behavior model
+  """
+  def __init__(self,
+               dynamic_model = None,
+               params = None):
+    BehaviorModel.__init__(
+      self, params)
+    self._dynamic_behavior_model = DynamicBehaviorModel(dynamic_model, params)
+  
+  def Plan(self, delta_time, world):
+    self._dynamic_behavior_model.SetLastAction(
+      np.array([2., 1.], dtype=np.float32))
+    trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
+    super(PythonBehaviorModelWrapperInheritance, self).SetLastTrajectory(trajectory)
+    return trajectory
+
+  def Clone(self):
+    return self
 
 
 class PyBehaviorModelTests(unittest.TestCase):
@@ -56,43 +76,17 @@ class PyBehaviorModelTests(unittest.TestCase):
     viewer = MPViewer(params=param_server,
                       follow_agent_id=False,
                       use_world_bounds=True)
-    env = Runtime(0.2,
-                  viewer,
-                  scenario_generation,
-                  render=True)
-    param_server_default = ParameterServer()
-    behavior_model = DummyBehaviorModel(param_server_default)
+    scenario, idx = scenario_generation.get_next_scenario()
+    world = scenario.get_world_state()
+    single_track_model = SingleTrackModel(param_server)
+    behavior_model = PythonBehaviorModelWrapper(
+      single_track_model, param_server)
+    world.GetAgent(0).behavior_model = behavior_model
+    world.GetAgent(0).behavior_model.SetLastAction(
+      np.array([1., 1.], dtype=np.float32))
+    world.Step(0.2)
 
-    env.reset()
-    env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.Clone()
-
-    np.testing.assert_array_equal(
-      env._world.GetAgent(0).behavior_model.Plan(0.2, env._world)[1],
-      np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10]))
-
-    env.reset()
-    env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.Step(0.2)
-    np.testing.assert_array_equal(
-      env._world.GetAgent(0).state,
-      np.array([0.2, 5111.626, 5106.8305 + 0.2, 1.5, 10], dtype=np.float32))
-    env._world.Step(0.2)
-    np.testing.assert_array_equal(
-      env._world.GetAgent(0).state,
-      np.array([0.4, 5111.626, 5106.8305 + 0.4, 1.5, 10], dtype=np.float32))
-    env._world.Step(0.2)
-    np.testing.assert_array_equal(
-      env._world.GetAgent(0).state,
-      np.array([0.6, 5111.626, 5106.8305 + 0.6, 1.5, 10], dtype=np.float32))
-
-    print("History:", env._world.GetAgent(0).history)
-    # environment loop
-    env.reset()
-    for i in range(0, 7):
-      env.Step()
-    
-  def test_python_model(self):
+  def test_python_model_inheritance(self):
     param_server = ParameterServer(
       filename="modules/runtime/tests/data/deterministic_scenario.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
@@ -101,26 +95,17 @@ class PyBehaviorModelTests(unittest.TestCase):
     viewer = MPViewer(params=param_server,
                       follow_agent_id=False,
                       use_world_bounds=True)
-    env = Runtime(0.2,
-                  viewer,
-                  scenario_generation,
-                  render=True)
-    
+    scenario, idx = scenario_generation.get_next_scenario()
+    world = scenario.get_world_state()
     single_track_model = SingleTrackModel(param_server)
-    param_server_default = ParameterServer()
-    behavior_model = DynamicBehaviorModel(single_track_model, param_server_default)
 
-    env.reset()
-    env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.Clone()
-
-
-    env.reset()
-    env._world.GetAgent(0).behavior_model = behavior_model
-    env._world.GetAgent(0).behavior_model.SetLastAction(np.array([1., 2.]))
-    print(env._world.GetAgent(0).behavior_model.GetLastAction())
-    env._world.Step(0.2)
-    print(env._world.GetAgent(0).behavior_model.GetLastAction())
+    behavior_model = PythonBehaviorModelWrapperInheritance(
+      single_track_model, param_server)
+    
+    world.GetAgent(0).behavior_model = behavior_model
+    world.GetAgent(0).behavior_model.SetLastAction(
+      np.array([1., 1.], dtype=np.float32))
+    world.Step(0.2)
 
 
 if __name__ == '__main__':

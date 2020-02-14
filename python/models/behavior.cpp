@@ -111,11 +111,13 @@ void python_behavior(py::module m) {
   py::class_<DynamicBehaviorModel,
              BehaviorModel,
              shared_ptr<DynamicBehaviorModel>>(m, "DynamicBehaviorModel")
-      .def(py::init<const DynamicModelPtr&,
-           const modules::commons::ParamsPtr&>())
-      .def("__repr__", [](const DynamicBehaviorModel &b) {
-        return "bark.behavior.DynamicBehaviorModel";
-      });
+    .def(py::init<const DynamicModelPtr&,
+          const modules::commons::ParamsPtr&>())
+    .def("SetLastAction", &BehaviorModel::SetLastAction)
+    .def("GetLastAction", &BehaviorModel::GetLastAction)
+    .def("__repr__", [](const DynamicBehaviorModel &b) {
+      return "bark.behavior.DynamicBehaviorModel";
+    });
 
   py::class_<BehaviorStaticTrajectory,
              BehaviorModel,

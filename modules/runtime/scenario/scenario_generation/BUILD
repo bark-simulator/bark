@@ -2,6 +2,7 @@ py_library(
     name = "scenario_generation",
     srcs = ["scenario_generation.py",
             "uniform_vehicle_distribution.py",
+            "configurable_scenario_generation.py",
             "model_json_conversion.py",
             "deterministic.py",
             "deterministic_drone_challenge.py",
@@ -12,6 +13,8 @@ py_library(
     imports = ['../../../python'],
     deps = [
         "//modules/runtime/scenario:scenario",
-        "@com_github_interaction-dataset_interaction-dataset//:interaction-tools"],
+        "@com_github_interaction-dataset_interaction-dataset//:interaction-tools",
+        "//modules/runtime/scenario/scenario_generation/config_readers:config_readers"
+    ],
     visibility = ["//visibility:public"],
 )

@@ -32,6 +32,7 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
+
   const modules::geometry::Polygon& GetXyLimits() const {
     return xy_limits_;
   }
