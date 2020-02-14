@@ -198,6 +198,17 @@ py_test(
 )
 
 py_test(
+  name = "py_system_tests",
+  srcs = ["py_system_tests.py"],
+  data = ['//python:bark.so',
+          '//examples:params'],
+  imports = ['../../../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime",
+          "//modules/runtime/viewer:video_renderer"],
+)
+
+py_test(
   name = "py_roadgraph_test",
   srcs = ["py_roadgraph_test.py"],
   data = ['//python:bark.so',
