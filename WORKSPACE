@@ -61,9 +61,9 @@ new_git_repository(
     shallow_since = "1568028656 +0200",
 )
 
-git_repository(
-  name = "interaction_dataset_fortiss_internal",
-  branch = "master",
-  remote = "https://git.fortiss.org/autosim/interaction_dataset"
-)
+#git_repository(
+#  name = "interaction_dataset_fortiss_internal",
+#  branch = "master",
+#  remote = "https://git.fortiss.org/autosim/interaction_dataset"
+#)
 
