@@ -1,7 +1,7 @@
 workspace(name = "bark_project")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_repository")
 
 
 # ---- BARK Internal Dependencies ----------------
@@ -52,3 +52,18 @@ load("@benchmark_database//load:load.bzl", "benchmark_database_release")
 benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
+
+new_git_repository(
+    name = "com_github_interaction-dataset_interaction-dataset",
+    build_file = "@//tools/interaction-dataset:interaction-dataset.BUILD",
+    commit = "8e53eecfa9cdcb2203517af2f8ed154ad40c2956",
+    remote = "https://github.com/interaction-dataset/interaction-dataset.git",
+    shallow_since = "1568028656 +0200",
+)
+
+#git_repository(
+#  name = "interaction_dataset_fortiss_internal",
+#  branch = "master",
+#  remote = "https://git.fortiss.org/autosim/interaction_dataset"
+#)
+
