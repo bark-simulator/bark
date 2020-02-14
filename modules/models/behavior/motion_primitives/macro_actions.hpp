@@ -26,7 +26,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
                           const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(
-      const ObservedWorld& observed_world) const {
+      const ObservedWorldPtr& observed_world) const {
     MotionIdx count = 0;
     for (auto const& p : motion_primitives_) {
       if (p->IsPreConditionSatisfied(observed_world)) {
