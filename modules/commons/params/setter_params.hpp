@@ -99,7 +99,7 @@ class SetterParams : public Params {
           return child_param->get_parameter(child_param->get_param_map<T>(), child_param_name, default_value);
         }
         if (log_if_default_) {
-          LOG(INFO) << "Using default " << default_value <<" for param \"" << param_name << "\"";
+          LOG(WARNING) << "Using default " << default_value <<" for param \"" << param_name << "\"";
         }
         return default_value;
       }
