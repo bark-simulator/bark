@@ -168,7 +168,7 @@ class BaseViewer(Viewer):
                 prev_center = goal_pos
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
-        self.clear()
+        # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
