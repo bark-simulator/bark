@@ -16,11 +16,12 @@ from bark.models.execution import ExecutionModelInterpolate
 from bark.models.dynamic import SingleTrackModel, StateDefinition
 from bark.world import World
 from bark.world.goal_definition import GoalDefinitionPolygon, \
-  GoalDefinitionStateLimits, GoalDefinitionSequential
+  GoalDefinitionStateLimits, GoalDefinitionSequential, \
+    GoalDefinitionStateLimitsFrenet
 from bark.world.agent import Agent
 from bark.world.map import MapInterface
 from bark.geometry.standard_shapes import CarLimousine
-from bark.geometry import Point2d, Polygon2d
+from bark.geometry import Point2d, Polygon2d, Line2d
 from bark.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount
 
@@ -156,6 +157,136 @@ class EvaluationTests(unittest.TestCase):
     self.assertEqual(info["success"], True)
     self.assertAlmostEqual(agent.state[int(StateDefinition.X_POSITION)], 30, delta=0.5)
       
+
+  def test_one_agent_at_goal_state_limits_frenet(self):
+    param_server = ParameterServer()
+    # Model Definition
+    behavior_model = BehaviorConstantVelocity(param_server)
+    execution_model = ExecutionModelInterpolate(param_server)
+    dynamic_model = SingleTrackModel(param_server)
+
+    # Agent Definition
+    agent_2d_shape = CarLimousine()
+    agent_params = param_server.addChild("agent1")
+
+    center_line = Line2d()
+    center_line.AddPoint(Point2d(5.0, 5.0))
+    center_line.AddPoint(Point2d(10.0, 10.0))
+    center_line.AddPoint(Point2d(20.0, 10.0))
+
+    max_lateral_dist = (0.4,1)
+    max_orientation_diff = (0.08, 0.1)
+    velocity_range = (20.0, 25.0)
+    goal_definition = GoalDefinitionStateLimitsFrenet(center_line,
+                    max_lateral_dist, max_orientation_diff,
+                    velocity_range)
+
+    # not at goal x,y, others yes
+    agent1 = Agent(np.array([0, 6, 8, 3.14/4.0 , velocity_range[0]]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+    # at goal x,y and others
+    agent2 = Agent(np.array([0, 5.0, 5.5, 3.14/4.0 , velocity_range[1]]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+    # not at goal x,y,v yes but not orientation
+    agent3 = Agent(np.array([0, 5, 5.5, 3.14/4.0+max_orientation_diff[1]+0.001 , 20]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+
+    # not at goal x,y, orientation but not v
+    agent4 = Agent(np.array([0, 5, 4.5, 3.14/4-max_orientation_diff[0], velocity_range[0]-0.01]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+    # at goal x,y, at lateral limit 
+    agent5 = Agent(np.array([0, 15, 10-max_lateral_dist[0]+0.05, 0, velocity_range[1]]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+    # not at goal x,y slightly out of lateral limit 
+    agent6 = Agent(np.array([0, 15, 10+max_lateral_dist[0]+0.05, 3.14/4+max_orientation_diff[0], velocity_range[0]]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+
+    # not at goal x,y,v yes but not orientation
+    agent7 = Agent(np.array([0, 5, 5.5, 3.14/4.0-max_orientation_diff[0]-0.001 , 20]),
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                goal_definition,
+                  None)
+
+
+    world = World(param_server)
+    world.AddAgent(agent1)
+    world.AddAgent(agent2)
+    world.AddAgent(agent3)
+    world.AddAgent(agent4)
+    world.AddAgent(agent5)
+    world.AddAgent(agent6)
+    world.AddAgent(agent7)
+
+    evaluator1 = EvaluatorGoalReached(agent1.id)
+    evaluator2 = EvaluatorGoalReached(agent2.id)
+    evaluator3 = EvaluatorGoalReached(agent3.id)
+    evaluator4 = EvaluatorGoalReached(agent4.id)
+    evaluator5 = EvaluatorGoalReached(agent5.id)
+    evaluator6 = EvaluatorGoalReached(agent6.id)
+    evaluator7 = EvaluatorGoalReached(agent7.id)
+    world.AddEvaluator("success1", evaluator1)
+    world.AddEvaluator("success2", evaluator2)
+    world.AddEvaluator("success3", evaluator3)
+    world.AddEvaluator("success4", evaluator4)
+    world.AddEvaluator("success5", evaluator5)
+    world.AddEvaluator("success6", evaluator6)
+    world.AddEvaluator("success7", evaluator7)
+
+
+    info = world.Evaluate()
+    self.assertEqual(info["success1"], False)
+    self.assertEqual(info["success2"], True)
+    self.assertEqual(info["success3"], False)
+    self.assertEqual(info["success4"], False)
+    self.assertEqual(info["success5"], True)
+    self.assertEqual(info["success6"], False)
+    self.assertEqual(info["success7"], False)
         
 if __name__ == '__main__':
   unittest.main()
