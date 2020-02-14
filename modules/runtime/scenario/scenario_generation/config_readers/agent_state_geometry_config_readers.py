@@ -61,10 +61,10 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
     return lane_corridors, lane_positions
 
   def sample_velocity_uniform(self, velocity_range):
-    return np.random.uniform(velocity_range[0], velocity_range[1])
+    return self.random_state.uniform(velocity_range[0], velocity_range[1])
 
   def sample_distance_uniform(self, distance_range):
-    return np.random.uniform(distance_range[0], distance_range[1])
+    return self.random_state.uniform(distance_range[0], distance_range[1])
 
 
   def agents_along_lane_corridor(self,

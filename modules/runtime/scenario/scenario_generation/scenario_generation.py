@@ -8,9 +8,10 @@ import os
 from modules.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
-  def __init__(self, params=None, num_scenarios=None):
+  def __init__(self, params=None, num_scenarios=None, random_seed=1000):
     self._params = params
     self._current_scenario_idx = 0
+    self._random_seed = random_seed
 
     if params is None:
         self._params = ParameterServer()
@@ -30,7 +31,7 @@ class ScenarioGeneration:
     if self._current_scenario_idx >= self.num_scenarios:
       self._current_scenario_idx = 0
       #print("Resetting scenario index to zero")
-    scenario = self.GetScenario(self._current_scenario_idx)
+    scenario = self.get_scenario(self._current_scenario_idx)
     scenario_idx = self._current_scenario_idx
     self._current_scenario_idx += 1
     return scenario, scenario_idx
@@ -38,7 +39,7 @@ class ScenarioGeneration:
   def get_num_scenarios(self):
     return len(self._scenario_list)
 
-  def GetScenario(self, idx):
+  def get_scenario(self, idx):
     return self._scenario_list[idx].copy()
 
   def __iter__(self):
@@ -47,7 +48,7 @@ class ScenarioGeneration:
 
   def __next__(self):
     if self._current_iter_idx < self.get_num_scenarios():
-        scenario = self.GetScenario(self._current_iter_idx)
+        scenario = self.get_scenario(self._current_iter_idx)
         idx = self._current_iter_idx
         self._current_iter_idx += 1
         return scenario, idx

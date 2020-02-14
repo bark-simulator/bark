@@ -12,7 +12,8 @@ from modules.runtime.commons.parameters import ParameterServer
 
   # this config reader defines behavior models with fixed type for all agents
 class FixedBehaviorType(ConfigReaderBehaviorModels):
-  def __init__(self):
+  def __init__(self, random_state):
+    super().__init__(random_state)
     self.param_servers = []
 
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
