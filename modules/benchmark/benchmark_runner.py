@@ -3,63 +3,141 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import pickle
+import ray
 import pandas as pd
 import logging
 logging.getLogger().setLevel(logging.INFO)
+
+from modules.runtime.commons.parameters import ParameterServer
+
+# contains information for a single benchmark run
+class BenchmarkConfig:
+  def __init__(self, config_idx, behavior, behavior_name,
+    scenario, scenario_idx, scenario_set_name):
+    self.config_idx = config_idx
+    self.behavior = behavior
+    self.behavior_name = behavior_name
+    self.scenario = scenario
+    self.scenario_idx = scenario_idx
+    self.scenario_set_name = scenario_set_name
+
+# result of benchmark run
+class BenchmarkResult:
+  def __init__(self, result_dict, benchmark_configs, **kwargs):
+    self.__result_dict = result_dict
+    self.__benchmark_configs = benchmark_configs
+    self.__data_frame = None
+
+  def get_data_frame(self):
+      if not self.__data_frame:
+          self.__data_frame = pd.DataFrame(self.__result_dict)
+      return self.__data_frame
+
+  def get_result_dict(self):
+      return self.__result_dict
+
+  def get_eval_configs(self):
+      return self.__benchmark_configs
+
+  def get_eval_config(self, config_idx):
+      if not self.__benchmark_configs:
+          self._sort_bench_confs()
+      bench_conf = self.__benchmark_configs[config_idx]
+      assert(bench_conf.config_idx == config_idx)
+      return bench_conf
+
+  def _sort_bench_confs(self):
+      def sort_key(bench_conf):
+          return bench_conf.config_idx
+      self.__benchmark_configs.sort(key=sort_key)
+
+  @staticmethod 
+  def load(filename):
+      with open(filename, 'rb') as handle:
+          dmp = pickle.load(handle)
+      return dmp
+
+  def dump(self, filename):
+      if self.data_frame:
+          self.data_frame = None
+      with open(filename, 'wb') as handle:
+          pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 class BenchmarkRunner:
     def __init__(self,
                benchmark_database=None,
                evaluators=None,
                terminal_when=None,
-               behaviors=None):
+               behaviors=None,
+               num_scenarios=None,
+               benchmark_configs=None):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
         self.terminal_when = terminal_when or []
         self.behaviors = behaviors or {}
+        self.benchmark_configs = benchmark_configs or \
+               self._create_configurations(num_scenarios)
 
-        self.dataframe = pd.DataFrame()
-
-    def run(self, num_scenarios=None):
-        # run over each behavior
-        for behavior_name, behavior_bark in self.behaviors.items():
+    def _create_configurations(self, num_scenarios=None):
+      benchmark_configs = []
+      for behavior_name, behavior_bark in self.behaviors.items():
             # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_SetName in self.benchmark_database:
-                step_time = scenario_generator.params["simulation"]["step_time"]
-                SetName = scenario_generator.params["simulation"]["step_time"]
-                for scenario, idx in scenario_generator:
-                    if idx > num_scenarios-1:
-                        break
-                    self._run_scenario(scenario_SetName,
-                                       scenario,
-                                       idx,
-                                       behavior_name,
-                                       behavior_bark,
-                                       step_time)
+            for scenario_generator, scenario_set_name in self.benchmark_database:
+                  for scenario, scenario_idx in scenario_generator:
+                    if num_scenarios and scenario_idx >= num_scenarios:
+                      break
+                    benchmark_config = \
+                    BenchmarkConfig(
+                      len(benchmark_configs),
+                      behavior_bark,
+                      behavior_name,
+                      scenario,
+                      scenario_idx,
+                      scenario_set_name
+                    )
+                    benchmark_configs.append(benchmark_config)
+      return benchmark_configs
 
+    def run(self):
+      logging.info("Having to run {} benchmark configurations.".format(
+                  len(self.benchmark_configs)))
+      results = []
+      for bmark_conf in self.benchmark_configs:
+        logging.info("Running config idx {}{}: Scenario {} of {} for {}".format(
+            bmark_conf.config_idx, len(self.benchmark_configs), bmark_conf.scenario_idx,
+            bmark_conf.scenario_set_name, bmark_conf.behavior_name))
+        result_dict = self._run_benchmark_config(bmark_conf)
+        results.append(result_dict)
+      return BenchmarkResult(results, self.benchmark_configs)
                     
-    def _run_scenario(self, scenario_SetName, scenario, idx, behavior_name, behavior_bark, step_time):
-        logging.info("Running Set {}, Idx {} for behavior {}".format(
-            scenario_SetName, idx, behavior_name
-        ))
+    def _run_benchmark_config(self, benchmark_config):
+        scenario = benchmark_config.scenario
+        behavior = benchmark_config.behavior
+        parameter_server = ParameterServer(json=scenario._json_params)
         world = scenario.get_world_state()
-        world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior_bark
+        world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
         self._reset_evaluators(world, scenario._eval_agent_ids)
+
+        step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
         terminal = False
         step = 0
+        terminal_why = None
         while not terminal:
             evaluation_dict = self._get_evalution_dict(world)
-            terminal = self._is_terminal(evaluation_dict)
-            self._add_step_result(
-                scenario_SetName=scenario_SetName,
-                scenario_idx=idx,
-                step=step,
-                behavior_name=behavior_name,
-                evaluator_results=evaluation_dict,
-                terminal=terminal)
+            terminal, terminal_why = self._is_terminal(evaluation_dict)
             world.Step(step_time) 
             step += 1
+
+        dct = {"scen_set": benchmark_config.scenario_set_name,
+              "scen_idx" : benchmark_config.scenario_idx,
+              "step": step,
+              "behavior" : benchmark_config.behavior_name,
+              **evaluation_dict,
+              "Terminal": terminal_why}
+
+        return dct
 
     def _reset_evaluators(self, world, eval_agent_ids):
         for evaluator_name, evaluator_type in self.evaluators.items():
@@ -75,25 +153,9 @@ class BenchmarkRunner:
 
     def _is_terminal(self, evaluation_dict):
         terminal = False
+        terminal_why = []
         for evaluator_name, function in self.terminal_when.items():
-            terminal = terminal or function(evaluation_dict[evaluator_name])
-        return terminal
-
-    def _add_step_result(self,
-                     scenario_SetName,
-                     scenario_idx,
-                     step,
-                     behavior_name,
-                     evaluator_results,
-                     terminal,
-                     **kwargs):
-
-        dict = {"Set": scenario_SetName,
-                "Idx" : scenario_idx,
-                "Step": step,
-                "Behavior" : behavior_name,
-                **evaluator_results,
-                "Terminal": terminal,
-                **kwargs}
-
-        self.dataframe = self.dataframe.append(dict, ignore_index=True)
+          if function(evaluation_dict[evaluator_name]):
+            terminal = True
+            terminal_why.append(evaluator_name)
+        return terminal, terminal_why
