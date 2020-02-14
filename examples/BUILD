@@ -138,6 +138,11 @@ py_binary(
           "@bark_ml//configurations:bark_agent"],
 )
 
+config_setting(
+    name = "_interaction_dataset_present",
+    define_values = {"interaction_dataset_present": "true"},
+)
+
 py_binary(
     name = "interaction_dataset_runner",
     srcs = ["interaction_dataset_runner.py"],
@@ -145,8 +150,8 @@ py_binary(
         ":params",
         "//modules/runtime/tests:xodr_data",
         "//python:bark.so",
-        "@interaction_dataset_fortiss_internal//:maps_tracks"
-    ],
+    ] + 
+    select({":_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
     deps = [
         "//modules/runtime",

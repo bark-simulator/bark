@@ -50,6 +50,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
   this->SetLastTrajectory(traj);
   return traj;
 }
+
 std::pair<int, int> BehaviorStaticTrajectory::interpolate(
     const double t, StateRowVector *interpolated) const {
   StateRowVector delta;
@@ -80,11 +81,13 @@ std::pair<int, int> BehaviorStaticTrajectory::interpolate(
     return {idx, idx + 1};
   }
 }
+
 std::shared_ptr<BehaviorModel> BehaviorStaticTrajectory::Clone() const {
   std::shared_ptr<BehaviorStaticTrajectory> model_ptr =
       std::make_shared<BehaviorStaticTrajectory>(*this);
   return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
+
 Trajectory BehaviorStaticTrajectory::trajectory_from_listlist_float(
     std::vector<std::vector<float>> list) {
   Trajectory traj(list.size(), list[0].size());
@@ -96,6 +99,7 @@ Trajectory BehaviorStaticTrajectory::trajectory_from_listlist_float(
   }
   return traj;
 }
+
 const Trajectory &BehaviorStaticTrajectory::get_static_trajectory() const {
   return static_trajectory_;
 }
