@@ -20,6 +20,7 @@ using dynamic::State;
 using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::objects::AgentId;
+typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
@@ -36,7 +37,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   virtual ~BehaviorMotionPrimitives() {}
 
   typedef unsigned int MotionIdx;
-  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorld& observed_world) const = 0;
+  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorldPtr& observed_world) const = 0;
   //virtual Input GetAction() const = 0;
   void ActionToBehavior(const MotionIdx& motion_idx) {
     active_motion_ = motion_idx;
