@@ -38,7 +38,7 @@ class ScenarioGeneration:
   def get_num_scenarios(self):
     return len(self._scenario_list)
 
-  def GetScenario(self, idx):
+  def get_scenario(self, idx):
     return self._scenario_list[idx].copy()
 
   def __iter__(self):
