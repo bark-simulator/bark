@@ -71,7 +71,7 @@ class ParameterServer(Params):
                 param = ParameterServer()
                 self.store[key] = param.convert_to_param(value)
             else:
-                self.store[key] = value
+                self.get_val_from_string(key, "", value)
 
         return self
 

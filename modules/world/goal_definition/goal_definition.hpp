@@ -25,7 +25,9 @@ class GoalDefinition  {
     virtual ~GoalDefinition() {}
 
     virtual bool AtGoal(const modules::world::objects::Agent& agent) = 0;
+
     virtual const modules::geometry::Polygon& GetShape() const {}
+
 };
 
 typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;

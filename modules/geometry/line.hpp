@@ -319,6 +319,17 @@ inline Line GetLineFromSInterval(Line line, float begin, float end) {
   return new_line;
 }
 
+inline Line GetLineShiftedLaterally(const Line& line, float lateral_shift) {
+  Line new_line;
+  for(const auto& s : line.s_) {
+    const Point2d normal = GetNormalAtS(line, s);
+    const Point2d point_at_s = GetPointAtS(line, s);
+    const Point2d shifted = point_at_s + (normal * lateral_shift);
+    new_line.AddPoint(shifted);
+  }
+  return new_line;
+}
+
 
 inline std::tuple<Point2d, double, uint> GetNearestPointAndS(
   Line l, const Point2d &p) {  // GetNearestPoint

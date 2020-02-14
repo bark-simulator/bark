@@ -3,7 +3,8 @@ cc_library(
     srcs = [
         "goal_definition_polygon.cpp",
         "goal_definition_state_limits.cpp",
-        "goal_definition_sequential.cpp"
+        "goal_definition_sequential.cpp",
+        "goal_definition_state_limits_frenet.cpp"
     ],
     hdrs = [
         "goal_definition.hpp",
