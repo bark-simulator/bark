@@ -139,3 +139,28 @@ py_binary(
           "@bark_ml//configurations/sac_highway_uniform:configuration",
           "@bark_ml//configurations:bark_agent"],
 )
+
+config_setting(
+    name = "_interaction_dataset_present",
+    define_values = {"interaction_dataset_present": "false"},
+)
+
+py_binary(
+    name = "interaction_dataset_runner",
+    srcs = ["interaction_dataset_runner.py"],
+    data = [
+        ":params",
+        "//modules/runtime/tests:xodr_data",
+        "//python:bark.so",
+    ] + 
+    select({":_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
+    imports = ["../python/"],
+    deps = [
+        "//modules/runtime",
+        "//modules/runtime/commons:parameters",
+        "//modules/runtime/commons:xodr_parser",
+        "//modules/runtime/scenario/scenario_generation",
+        "//modules/runtime/viewer:matplotlib_viewer",
+        "//modules/runtime/viewer:video_renderer",
+    ],
+)
