@@ -30,6 +30,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(len(scenario_loader._scenario_list), 2)
     self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
 
+    scenario = scenario_loader.get_scenario(idx=0)
+
     params.save("default_params.json")
 
   def test_find_overlaps_configurable_scenario_generation(self):
