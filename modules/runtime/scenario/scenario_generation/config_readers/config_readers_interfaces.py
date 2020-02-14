@@ -3,10 +3,22 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+class ConfigReader:
+  def __init__(self, random_state):
+  # holds a global random state which should be used for sampling in config readers
+    self.__random_state = random_state
+
+  @property
+  def random_state(self):
+    return self.__random_state
+
 
 # The property-based scenario generation must implement all of this interfaces. Property readers only the respective interface
-class ConfigReaderBehaviorModels(ABC):
+class ConfigReaderBehaviorModels(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   # returns list of size num agents with behavior models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
@@ -16,7 +28,9 @@ class ConfigReaderBehaviorModels(ABC):
   def get_param_servers(self):
     return []
 
-class ConfigReaderExecutionModels(ABC):
+class ConfigReaderExecutionModels(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   # returns list of size num agents with execution models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
@@ -26,7 +40,9 @@ class ConfigReaderExecutionModels(ABC):
   def get_param_servers(self):
     return []
 
-class ConfigReaderDynamicModels(ABC):
+class ConfigReaderDynamicModels(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   # returns list of size num agents with dynamic models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
@@ -36,7 +52,9 @@ class ConfigReaderDynamicModels(ABC):
   def get_param_servers(self):
     return []
 
-class ConfigReaderAgentStatesAndGeometries(ABC):
+class ConfigReaderAgentStatesAndGeometries(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   @abstractmethod
   # returns a tuple containing 1] list of size num agents each element being a python list representing an agent state
   # and 2] a list of size num agents of point lists defining the agent geometries
@@ -50,7 +68,9 @@ class ConfigReaderAgentStatesAndGeometries(ABC):
   def get_param_servers(self):
     return []
 
-class ConfigReaderDynamicModels(ABC):
+class ConfigReaderDynamicModels(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   # returns list of size num agents with behavior models based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
@@ -61,7 +81,9 @@ class ConfigReaderDynamicModels(ABC):
     return []
 
 
-class ConfigReaderGoalDefinitions(ABC):
+class ConfigReaderGoalDefinitions(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
   # returns list of size num agents with goal definitions for each agent based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states, controlled_agent_ids,  **kwargs):
@@ -71,7 +93,9 @@ class ConfigReaderGoalDefinitions(ABC):
   def get_param_servers(self):
     return []
 
-class ConfigReaderControlledAgents(ABC):
+class ConfigReaderControlledAgents(ConfigReader):
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
    # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
   @abstractmethod
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
