@@ -4,7 +4,6 @@
 # https://opensource.org/licenses/MIT
 
 import pickle
-import ray
 import pandas as pd
 import logging
 logging.getLogger().setLevel(logging.INFO)
@@ -105,8 +104,8 @@ class BenchmarkRunner:
                   len(self.benchmark_configs)))
       results = []
       for bmark_conf in self.benchmark_configs:
-        logging.info("Running config idx {}{}: Scenario {} of {} for {}".format(
-            bmark_conf.config_idx, len(self.benchmark_configs), bmark_conf.scenario_idx,
+        logging.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
+            bmark_conf.config_idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
         result_dict = self._run_benchmark_config(bmark_conf)
         results.append(result_dict)
