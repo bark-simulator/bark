@@ -9,3 +9,14 @@ py_library(
     visibility = ["//visibility:public"],
 )
 
+py_library(
+  name = "benchmark_runner_mp",
+  srcs = ["benchmark_runner_mp.py"],
+  data = ["//python:bark.so"],
+  imports = ['../python/'],
+  deps = [
+      "//modules/benchmark:benchmark_runner"
+      ],
+  visibility = ["//visibility:public"],
+)
+
