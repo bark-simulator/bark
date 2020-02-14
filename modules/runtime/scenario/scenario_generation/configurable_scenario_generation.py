@@ -20,8 +20,8 @@ from collections import defaultdict
 
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
-  def __init__(self, num_scenarios, params=None):
-    super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios)
+  def __init__(self, num_scenarios, params=None, random_seed=1000):
+    super(ConfigurableScenarioGeneration, self).__init__(params, num_scenarios, random_seed)
 
   def initialize_params(self, params):
     params_temp = \
