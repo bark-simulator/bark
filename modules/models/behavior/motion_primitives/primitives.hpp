@@ -41,7 +41,8 @@ class Primitive : public modules::commons::BaseType {
 
   virtual ~Primitive() {}
 
-  virtual bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) = 0;
+  virtual bool IsPreConditionSatisfied(
+      const ObservedWorldPtr& observed_world) = 0;
   virtual Trajectory Plan(float delta_time,
                           const ObservedWorld& observed_world) = 0;
 
@@ -57,6 +58,13 @@ class PrimitiveLaneFollowing : public Primitive {
   PrimitiveLaneFollowing(const commons::ParamsPtr& params,
                          const DynamicModelPtr& dynamic_model)
       : Primitive(params, dynamic_model) {}
+  void EnsureTargetCorridor(const ObservedWorld& observed_world) {
+    // make sure target_corridor_ is not null, as we cannot initialize it before
+    if (!target_corridor_)
+      target_corridor_ =
+          observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+              observed_world.CurrentEgoPosition());
+  }
 
  protected:
   LaneCorridorPtr target_corridor_;
@@ -75,7 +83,8 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
     return true;
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
-    // auto traj = BehaviorConstantVelocity::Plan(delta_time, observed_world);
+    PrimitiveLaneFollowing::EnsureTargetCorridor(observed_world);
+
     auto single_track =
         std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model_);
     if (!single_track) {
@@ -102,7 +111,7 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       float angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
                                            target_corridor_->GetCenterLine(),
                                            crosstrack_error_gain_);
-      Input input;
+      Input input(2);
       input << acceleration_, angle;
 
       traj.row(i) = dynamic::euler_int(*single_track, traj.row(i - 1), input,
@@ -158,6 +167,8 @@ class PrimitiveChangeToLeft : public PrimitiveConstAcceleration {
     return satisfied;
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
+    PrimitiveLaneFollowing::EnsureTargetCorridor(observed_world);
+
     const Point2d ego_pos = observed_world.CurrentEgoPosition();
     //! agent may not have reached target lane yet, so we match point on target
     //! lane
@@ -184,6 +195,7 @@ class PrimitiveChangeToRight : public PrimitiveConstAcceleration {
       : PrimitiveConstAcceleration(params, dynamic_model, 0,
                                    crosstrack_error_gain) {}
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
+
     const Point2d ego_pos = observed_world->CurrentEgoPosition();
     //! agent may not have reached target lane yet, so we match point on target
     //! lane
@@ -200,6 +212,8 @@ class PrimitiveChangeToRight : public PrimitiveConstAcceleration {
     return satisfied;
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
+    PrimitiveLaneFollowing::EnsureTargetCorridor(observed_world);
+
     const Point2d ego_pos = observed_world.CurrentEgoPosition();
     //! agent may not have reached target lane yet, so we match point on target
     //! lane
