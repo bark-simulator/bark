@@ -35,6 +35,7 @@ void python_world(py::module m) {
     .def("AddAgent", &World::AddAgent)
     .def("AddObject", &World::AddObject)
     .def("GetParams", &World::GetParams)
+    .def("UpdateAgentRTree", &World::UpdateAgentRTree)
     .def("ClearEvaluators", &World::ClearEvaluators)
     .def("SetMap", &World::SetMap)
     .def("AddEvaluator", &World::AddEvaluator)
