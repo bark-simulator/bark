@@ -54,9 +54,9 @@ struct RoadCorridor {
   std::map<LaneId, LaneCorridorPtr> GetLaneCorridorMap() const {
     return lane_corridors_;
   }
-  virtual LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
-    for (auto& lane_corr : unique_lane_corridors_) {
-      if (Within(pt, lane_corr->GetMergedPolygon()))
+  LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
+    for (const auto& lane_corr : unique_lane_corridors_) {
+      if (Collide(pt, lane_corr->GetMergedPolygon()))
         return lane_corr;
     }
     return nullptr;
