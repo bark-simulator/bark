@@ -151,19 +151,21 @@ class PrimitiveChangeToLeft : public PrimitiveConstAcceleration {
       : PrimitiveConstAcceleration(params, dynamic_model, 0,
                                    crosstrack_error_gain) {}
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    const Point2d ego_pos = observed_world->CurrentEgoPosition();
-    //! agent may not have reached target lane yet, so we match point on target
-    //! lane
-    const Point2d point_on_target_line =
-        GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
+    
+    // const Point2d ego_pos = observed_world->CurrentEgoPosition();
+    // //! agent may not have reached target lane yet, so we match point on target
+    // //! lane
+    // const Point2d point_on_target_line =
+    //     GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
 
-    auto road_corridor = observed_world->GetRoadCorridor();
-    LaneCorridorPtr left_corridor;
-    LaneCorridorPtr right_corridor;
-    std::tie(left_corridor, right_corridor) =
-        road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+    // auto road_corridor = observed_world->GetRoadCorridor();
+    // LaneCorridorPtr left_corridor;
+    // LaneCorridorPtr right_corridor;
+    // std::tie(left_corridor, right_corridor) =
+    //     road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
 
-    bool satisfied = (left_corridor) ? true : false;
+    // bool satisfied = (left_corridor) ? true : false;
+    bool satisfied = true;
     return satisfied;
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
@@ -196,19 +198,20 @@ class PrimitiveChangeToRight : public PrimitiveConstAcceleration {
                                    crosstrack_error_gain) {}
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
 
-    const Point2d ego_pos = observed_world->CurrentEgoPosition();
-    //! agent may not have reached target lane yet, so we match point on target
-    //! lane
-    const Point2d point_on_target_line =
-        GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
+    // const Point2d ego_pos = observed_world->CurrentEgoPosition();
+    // //! agent may not have reached target lane yet, so we match point on target
+    // //! lane
+    // const Point2d point_on_target_line =
+    //     GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
 
-    auto road_corridor = observed_world->GetRoadCorridor();
-    LaneCorridorPtr left_corridor;
-    LaneCorridorPtr right_corridor;
-    std::tie(left_corridor, right_corridor) =
-        road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+    // auto road_corridor = observed_world->GetRoadCorridor();
+    // LaneCorridorPtr left_corridor;
+    // LaneCorridorPtr right_corridor;
+    // std::tie(left_corridor, right_corridor) =
+    //     road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
 
-    bool satisfied = (right_corridor) ? true : false;
+    // bool satisfied = (right_corridor) ? true : false;
+    bool satisfied = true;
     return satisfied;
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
