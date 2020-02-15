@@ -110,7 +110,7 @@ class World : public commons::BaseType {
   void ClearAll() {
     ClearAgents();
     ClearObjects();
-    evaluators_.clear();
+    ClearEvaluators();
   }
 
   EvaluationMap Evaluate() const;
@@ -150,6 +150,9 @@ inline WorldPtr World::Clone() const {
   }
   for (auto object = objects_.begin(); object != objects_.end(); ++object) {
     new_world->AddObject(object->second->Clone());
+  }
+  for (const auto& evaluator : evaluators_) {
+    new_world->AddEvaluator(evaluator.first, evaluator.second);
   }
   return new_world;
 }
