@@ -26,10 +26,11 @@ class GoalDefinitionStateLimitsFrenet : public GoalDefinition  {
                 max_lateral_distances_(),
                 max_orientation_differences_(),
                 velocity_range_() {}
-  GoalDefinitionStateLimitsFrenet(const modules::geometry::Line& center_line,
-                            const std::pair<float,float> max_lateral_distances,
-                            const std::pair<float,float> max_orientation_differences,
-                            const std::pair<float, float> velocity_range);
+  GoalDefinitionStateLimitsFrenet(
+    const modules::geometry::Line& center_line,
+    const std::pair<float,float> max_lateral_distances,
+    const std::pair<float,float> max_orientation_differences,
+    const std::pair<float, float> velocity_range);
 
   virtual bool AtGoal(const modules::world::objects::Agent& agent);
 
