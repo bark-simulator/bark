@@ -338,11 +338,11 @@ class XodrParser(object):
             try:
                 new_link.from_position = int(link["predecessor"])
             except:
-                logger.info("No XodrLaneLink.predecessor")
+                pass
             try:
                 new_link.to_position = int(link["successor"])
             except:
-                logger.info("No XodrLaneLink.successor")
+                pass
         else:
             logger.info("No XodrLaneLink")
             
