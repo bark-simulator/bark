@@ -3,7 +3,20 @@ py_library(
     srcs = ["benchmark_runner.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
-    deps = ["//modules/runtime:runtime"],
+    deps = [
+        "//modules/runtime:runtime",
+        ],
     visibility = ["//visibility:public"],
+)
+
+py_library(
+  name = "benchmark_runner_mp",
+  srcs = ["benchmark_runner_mp.py"],
+  data = ["//python:bark.so"],
+  imports = ['../python/'],
+  deps = [
+      "//modules/benchmark:benchmark_runner"
+      ],
+  visibility = ["//visibility:public"],
 )
 
