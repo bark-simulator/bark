@@ -27,10 +27,10 @@ def deserialize_benchmark_config(bc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-  def __init__(self, evaluators, terminal_when, benchmark_configs):
-        super().__init__(evaluators=evaluators, 
-                          terminal_when=terminal_when,
-                          benchmark_configs=benchmark_configs)
+    def __init__(self, evaluators, terminal_when, benchmark_configs):
+          super().__init__(evaluators=evaluators, 
+                            terminal_when=terminal_when,
+                            benchmark_configs=benchmark_configs)
 
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
