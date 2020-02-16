@@ -9,6 +9,7 @@ import logging
 logging.getLogger().setLevel(logging.INFO)
 
 from modules.runtime.commons.parameters import ParameterServer
+from bark.world.evaluation import * 
 
 # contains information for a single benchmark run
 class BenchmarkConfig:
@@ -36,7 +37,7 @@ class BenchmarkResult:
   def get_result_dict(self):
       return self.__result_dict
 
-  def get_eval_configs(self):
+  def get_benchmark_configs(self):
       return self.__benchmark_configs
 
   def get_eval_config(self, config_idx):
@@ -142,9 +143,9 @@ class BenchmarkRunner:
         for evaluator_name, evaluator_type in self.evaluators.items():
             evaluator_bark = None
             try:
-                evaluator_bark = evaluator_type(eval_agent_ids[0])
+                evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_type))
             except:
-                evaluator_bark = evaluator_type()
+                evaluator_bark = eval("{}()".format(evaluator_type))
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _get_evalution_dict(self, world):
