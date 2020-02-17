@@ -9,6 +9,7 @@
 from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import ConfigurableScenarioGeneration
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.pygame_viewer import PygameViewer
 import time
 import os
@@ -29,19 +30,10 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-# TODO(@hart): does not work with bazel test //... because of read only file-system
-# scenario_generation.dump_scenario_list(filename="examples/scenarios/highway_merging_dump.bark_scenarios")
-
-# load scenario list
-#scenario_generation.load_scenario_list(filename="examples/scenarios/highway_merging_dump.bark_scenarios")
-
-for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
-  scenario, idx = scenario_generation.get_next_scenario()
-  world_state = scenario.get_world_state()
-  print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
-  for _ in range(0, 10): # run each scenario for 10 steps
-    world_state.Step(sim_step_time)
-    viewer.clear()
-    viewer.drawWorld(world_state, scenario._eval_agent_ids)
-    viewer.show(block=False)
-    time.sleep(sim_step_time/sim_real_time_factor)
+env = Runtime(0.2,
+              viewer,
+              scenario_generation,
+              render=True)
+env.reset()
+for _ in range(0, 5):
+  env.step()
