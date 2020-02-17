@@ -48,12 +48,12 @@ class ScenarioGeneration:
 
   def __next__(self):
     if self._current_iter_idx < self.get_num_scenarios():
-        scenario = self.get_scenario(self._current_iter_idx)
-        idx = self._current_iter_idx
-        self._current_iter_idx += 1
-        return scenario, idx
+      scenario = self.get_scenario(self._current_iter_idx)
+      idx = self._current_iter_idx
+      self._current_iter_idx += 1
+      return scenario, idx
     else:
-        raise StopIteration
+      raise StopIteration
 
   def create_scenarios(self, params, num_scenarios):
     """ Creates a list of scenario class instances which should be

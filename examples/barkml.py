@@ -25,7 +25,7 @@ from modules.runtime.runtime import Runtime
 
 # some path magic
 base_dir = "/home/hart/Dokumente/2020/bark-ml"
-params = ParameterServer(filename=base_dir + "/configurations/sac_highway/config.json")
+params = ParameterServer(filename=base_dir + "/configurations/highway/config_five.json")
 scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
 map_filename = scenario_generation["MapFilename"]
 scenario_generation["MapFilename"] = base_dir + "/" + map_filename
@@ -50,6 +50,26 @@ print(ml_behavior)
 for _ in range(0, 30):
   env.step()
 
+
+# db
+# db = BenchmarkDatabase(database_root="./examples/scenarios/benchmark_database_0.0.1.zip")
+# evaluators = {"success" : EvaluatorGoalReached,
+#               "collision" : EvaluatorCollisionEgoAgent,
+#               "max_steps": EvaluatorStepCount}
+# terminal_when = {"collision" :lambda x: x,
+#                  "max_steps": lambda x : x>2}
+# # params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
+# behaviors_tested = {"bark_ml": ml_behavior }
+                                
+
+# benchmark_runner = BenchmarkRunner(benchmark_database=db,
+#                                    evaluators=evaluators,
+#                                    terminal_when=terminal_when,
+#                                    behaviors=behaviors_tested)
+
+# benchmark_runner.run(1) 
+
+# # benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")
 
 
 
