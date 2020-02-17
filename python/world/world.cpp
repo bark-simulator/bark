@@ -61,6 +61,7 @@ void python_world(py::module m) {
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def_property_readonly("agents", &World::GetAgents)
+    .def("Evaluate", &World::Evaluate)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
     .def("__repr__", [](const ObservedWorld& a) {
       return "bark.world.ObservedWorld";

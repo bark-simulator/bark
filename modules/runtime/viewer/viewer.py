@@ -150,6 +150,8 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(goal_definition.goal_shape, color, alpha=0.1)
         elif isinstance(goal_definition, GoalDefinitionStateLimits):
             self.drawPolygon2d(goal_definition.xy_limits, color, alpha=0.1)
+        elif isinstance(goal_definition, GoalDefinitionStateLimitsFrenet):
+            self.drawPolygon2d(goal_definition.goal_shape, color, alpha=0.1)
         elif isinstance(goal_definition, GoalDefinitionSequential):
             prev_center = np.array([])
             for idx, goal_def in enumerate(goal_definition.sequential_goals):
