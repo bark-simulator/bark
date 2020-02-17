@@ -41,6 +41,7 @@ for _ in range(0, 5): # run 5 scenarios in a row, repeating after 3
   print("Running scenario {} of {}".format(idx, scenario_generation.num_scenarios))
   for _ in range(0, 10): # run each scenario for 10 steps
     world_state.Step(sim_step_time)
+    viewer.clear()
     viewer.drawWorld(world_state, scenario._eval_agent_ids)
     viewer.show(block=False)
     time.sleep(sim_step_time/sim_real_time_factor)
