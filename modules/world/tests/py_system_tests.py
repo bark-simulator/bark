@@ -9,7 +9,11 @@ import time
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
-from bark.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorUCTSingleAgent
+try:
+  from bark.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorUCTSingleAgent
+except:
+  print("Rerun with --define planner_uct=true")
+  exit()
 from bark.models.execution import ExecutionModelInterpolate
 from bark.models.dynamic import SingleTrackModel
 from bark.world import World, MakeTestWorldHighway
@@ -74,20 +78,20 @@ class SystemTests(unittest.TestCase):
 
         # World Simulation
         sim_step_time = params["simulation"]["step_time",
-                                              "Step-time in simulation", 0.05]
+                                              "Step-time in simulation", 0.2]
         sim_real_time_factor = params["simulation"]["real_time_factor",
                                                     "execution in real-time or faster", 1]
 
         # Draw map
         video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
-        for _ in range(0, 50):
+        for _ in range(0, 20):
             world.Step(sim_step_time)
             video_renderer.drawWorld(world)
             video_renderer.drawGoalDefinition(GoalDefinitionPolygon(goal_polygon))
             time.sleep(sim_step_time/sim_real_time_factor)
 
-        video_renderer.export_video(filename="/home/esterle/development/test_video_intermediate", remove_image_dir=True)
+        video_renderer.export_video(filename="./test_video_intermediate", remove_image_dir=True)
 
 
 if __name__ == '__main__':
