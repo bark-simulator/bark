@@ -109,8 +109,8 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
     return false;
   }
   road_corridor_ = map_interface->GenerateRoadCorridor(
-  GetCurrentPosition(),
-  goal_definition_->GetShape());
+    GetCurrentPosition(),
+    goal_definition_->GetShape());
   if(!road_corridor_) {
     return false;
   }
