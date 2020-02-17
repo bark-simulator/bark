@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
+#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
+#define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
 
 #include <limits>
 #include <vector>
@@ -50,6 +50,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
     }
     return false;
   }
+
  private:
   AgentId agent_id_;
 };
@@ -58,4 +59,4 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
+#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
