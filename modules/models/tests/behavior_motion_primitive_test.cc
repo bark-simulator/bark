@@ -28,18 +28,14 @@ using namespace modules::geometry;
 
 class DummyObservedWorld : public ObservedWorld {
  public:
-  DummyObservedWorld(const State& init_state,
-                     const ParamsPtr& params) :
-    ObservedWorld(std::make_shared<World>(params), AgentId()),
-    init_state_(init_state) { }
+  DummyObservedWorld(const State& init_state, const ParamsPtr& params)
+      : ObservedWorld(std::make_shared<World>(params), AgentId()),
+        init_state_(init_state) {}
 
-  virtual State CurrentEgoState() const {
-    return init_state_;
-  }
+  virtual State CurrentEgoState() const { return init_state_; }
 
-  virtual double GetWorldTime() const {
-    return 0.0f;
-  }
+  virtual double GetWorldTime() const { return 0.0f; }
+
  private:
   State init_state_;
 };
@@ -112,7 +108,7 @@ TEST(primitive_constant_acceleration, behavior_test) {
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto  world1 = std::make_shared<DummyObservedWorld>(init_state, params);
+  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
   EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1));
   // auto traj = primitive.Plan(0.5, world1);
 }
@@ -125,7 +121,7 @@ TEST(primitive_change_left, behavior_test) {
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto  world1 = std::make_shared<DummyObservedWorld>(init_state, params);
+  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
   // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
   // auto traj = primitive.Plan(0.5, world1);
 }
@@ -138,23 +134,37 @@ TEST(primitive_gap_keeping, behavior_test) {
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto  world1 = std::make_shared<DummyObservedWorld>(init_state, params);
+  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
   // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
   // auto traj = primitive.Plan(0.5, world1);
 }
 
 TEST(macro_actions, behavior_test) {
+  using namespace modules::models::behavior::primitives;
   using modules::models::behavior::primitives::PrimitiveConstAcceleration;
 
   auto params = std::make_shared<DefaultParams>();
   params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dynamics(new SingleTrackModel(params));
 
-  BehaviorMPMacroActions behavior(dynamics, params);
+  std::vector<std::shared_ptr<Primitive>> prim_vec;
+  
+  auto primitive =
+      std::make_shared<PrimitiveConstAcceleration>(params, dynamics, 0, 0.1);
+  prim_vec.push_back(primitive);
 
-  auto primitive = std::make_shared<PrimitiveConstAcceleration>(
-      params, dynamics, 0, 0.1);
-  auto idx = behavior.AddMotionPrimitive(primitive);
+  auto primitive_left =
+      std::make_shared<PrimitiveChangeToLeft>(params, dynamics, 0.1);
+  prim_vec.push_back(primitive_left);
+
+  auto primitive_right =
+      std::make_shared<PrimitiveChangeToRight>(params, dynamics, 0.1);
+  prim_vec.push_back(primitive_right);
+
+  BehaviorMPMacroActions behavior(dynamics, params);
+  for (auto& p : prim_vec) {
+    auto idx = behavior.AddMotionPrimitive(primitive);
+  }
 }
 
 int main(int argc, char** argv) {
