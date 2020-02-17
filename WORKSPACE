@@ -43,7 +43,7 @@ load_bark()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="436e665360daac6ac19285b2aab64bb27a2bc02d",
+  commit="feca819b1ad03898a13527ecacfa3881c9786dd1",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
@@ -53,13 +53,6 @@ benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
 
-new_git_repository(
-    name = "com_github_interaction-dataset_interaction-dataset",
-    build_file = "@//tools/interaction-dataset:interaction-dataset.BUILD",
-    commit = "8e53eecfa9cdcb2203517af2f8ed154ad40c2956",
-    remote = "https://github.com/interaction-dataset/interaction-dataset.git",
-    shallow_since = "1568028656 +0200",
-)
 
 #git_repository(
 #  name = "interaction_dataset_fortiss_internal",
