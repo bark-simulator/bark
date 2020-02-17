@@ -8,6 +8,7 @@
 #include "python/polymorphic_conversion.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
@@ -20,6 +21,7 @@ using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
+using modules::models::behavior::BehaviorMPContinuousActions;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorMobil;
@@ -101,12 +103,16 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorMotionPrimitives>>(m,
     "BehaviorMotionPrimitives")
-    .def(py::init<const DynamicModelPtr&, const modules::commons::ParamsPtr&>())
-    .def("__repr__", [](const BehaviorMotionPrimitives &b) {
-      return "bark.behavior.BehaviorMotionPrimitives";
-    })
-    .def("AddMotionPrimitive", &BehaviorMotionPrimitives::AddMotionPrimitive)
     .def("ActionToBehavior", &BehaviorMotionPrimitives::ActionToBehavior);
+
+  py::class_<BehaviorMPContinuousActions,
+             BehaviorMotionPrimitives,
+             shared_ptr<BehaviorMPContinuousActions>>(m, "BehaviorMPContinuousActions")
+    .def(py::init<const DynamicModelPtr&, const modules::commons::ParamsPtr&>())
+    .def("__repr__", [](const BehaviorMPContinuousActions &b) {
+      return "bark.behavior.BehaviorMPContinuousActions";
+    })
+    .def("AddMotionPrimitive", &BehaviorMPContinuousActions::AddMotionPrimitive);
 
   py::class_<DynamicBehaviorModel,
              BehaviorModel,
