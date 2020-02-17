@@ -64,7 +64,7 @@ class BenchmarkResult:
       with open(filename, 'wb') as handle:
           pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
       logging.info("Saved BenchmarkResult to {}".format(
-        filename))
+        os.path.abspath(filename)))
 
 class BenchmarkRunner:
     def __init__(self,
