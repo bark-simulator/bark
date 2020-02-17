@@ -25,7 +25,6 @@ cc_library(
         "//modules/geometry:include",
         "//modules/world/map:include",
         "//modules/world/opendrive:include",
-        "//modules/world/map:map_interface",
         "//modules/commons/transformation:include",
         "//modules/commons:include",
         "//modules/models:include",
