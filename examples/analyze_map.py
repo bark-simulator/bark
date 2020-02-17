@@ -20,7 +20,7 @@ import numpy as np
 # Name and Output Directory
 # CHANGE THIS #
 map_name = "city_highway_straight"
-output_dir = "/home/bernhard/" + map_name
+output_dir = "/home/hart/Dokumente/2020/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -50,7 +50,7 @@ for idx_r, road in open_drive_map.GetRoads().items():
   viewer.drawWorld(world)
   viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-  viewer.show(block=True)
+  viewer.show(block=False)
   viewer.clear()
 
 for idx_r, road in open_drive_map.GetRoads().items():
@@ -76,7 +76,7 @@ for idx_r, road in open_drive_map.GetRoads().items():
 # XodrLanes of Roadgraph
 roadgraph = map_interface.GetRoadgraph()
 roadgraph.PrintGraph(output_dir + "/" + map_name)
-lane_ids = roadgraph.GetAllLaneids ()
+lane_ids = roadgraph.GetAllLaneids()
 
 for lane_id in lane_ids:
   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
@@ -85,15 +85,12 @@ for lane_id in lane_ids:
   road = map_interface.GetOpenDriveMap().GetRoad(road_id)
   plan_view_reference = road.plan_view.GetReferenceLine()
   # plot polygon with center line
-  outer, inner = roadgraph.ComputeLaneBoundaries(lane_id)
-  center_line = ComputeCenterLine(outer.line, inner.line)
   viewer.drawWorld(world)
   color = list(np.random.choice(range(256), size=3)/256)
   viewer.drawPolygon2d(lane_polygon, color, 1.0)
-  viewer.drawLine2d(center_line)
   viewer.drawLine2d(plan_view_reference, color="red")
   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-  viewer.show(block=False)
+  viewer.show(block=True)
 
 
 #for rc in all_corridors:
