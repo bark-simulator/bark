@@ -63,6 +63,8 @@ class BenchmarkResult:
           self.data_frame = None
       with open(filename, 'wb') as handle:
           pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+      logging.info("Saved BenchmarkResult to {}".format(
+        filename))
 
 class BenchmarkRunner:
     def __init__(self,
@@ -115,6 +117,7 @@ class BenchmarkRunner:
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
         world = scenario.get_world_state()
+        old_behavior = world.agents[scenario._eval_agent_ids[0]].behavior_model
         world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
         self._reset_evaluators(world, scenario._eval_agent_ids)
 
@@ -128,6 +131,9 @@ class BenchmarkRunner:
             world.Step(step_time) 
             step += 1
 
+        # maintain state to avoid complicated deserialization of eg mcts in multiprocessing case 
+        world.agents[scenario._eval_agent_ids[0]].behavior_model = old_behavior
+        
         dct = {"scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
               "step": step,
