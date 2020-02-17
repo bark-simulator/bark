@@ -108,6 +108,7 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",
           "@benchmark_database//load:benchmark_database"],
 )
 
@@ -157,11 +158,11 @@ py_binary(
     select({":_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
     deps = [
-        "//modules/runtime",
         "//modules/runtime/commons:parameters",
         "//modules/runtime/commons:xodr_parser",
         "//modules/runtime/scenario/scenario_generation",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime/viewer:video_renderer",
+        "//modules/runtime:runtime",
     ],
 )

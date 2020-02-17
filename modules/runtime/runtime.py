@@ -39,6 +39,7 @@ class Runtime(PyRuntime):
       self.render()
 
   def render(self):
+    self._viewer.clear()
     self._viewer.drawWorld(
       self._world,
       self._scenario._eval_agent_ids,
