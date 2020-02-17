@@ -7,6 +7,7 @@
 #define MODULES_WORLD_EVALUATION_EVALUATOR_GOAL_REACHED_HPP_
 
 #include <memory>
+#include <limits>
 
 #include "modules/world/evaluation/base_evaluator.hpp"
 #include "modules/world/objects/agent.hpp"
@@ -19,13 +20,13 @@ namespace evaluation {
 class EvaluatorGoalReached : public BaseEvaluator {
  public:
   EvaluatorGoalReached() :
-    agent_id_(-1) {}
+    agent_id_(std::numeric_limits<AgentId>::max()) {}
   explicit EvaluatorGoalReached(const AgentId& agent_id) :
     agent_id_(agent_id) {}
   virtual ~EvaluatorGoalReached() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
-    if (agent_id_ == -1) {
+    if (agent_id_ == std::numeric_limits<AgentId>::max()) {
       int goal_reached_count = 0;
       for (auto& agent :  world.GetAgents()) {
         if (agent.second->AtGoal()) {
