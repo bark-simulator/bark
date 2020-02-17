@@ -1,16 +1,21 @@
 cc_library(
     name = "motion_primitives",
     srcs = [
-        "motion_primitives.cpp",
+        "continuous_actions.cpp",
+        "macro_actions.cpp",
     ],
     hdrs = [
         "motion_primitives.hpp",
+        "continuous_actions.hpp",
+        "macro_actions.hpp",
+        "primitives.hpp",
     ],
     deps = [
         "//modules/commons:commons",
         "//modules/world:include",
         "//modules/models/behavior:behavior",
-        "//modules/models/dynamic:dynamic"
+        "//modules/models/dynamic:dynamic",
+        "//modules/models/behavior:include",
     ],
     visibility = ["//visibility:public"],
 )

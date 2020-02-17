@@ -120,6 +120,7 @@ filegroup(
 filegroup(
     name="params",
     srcs=glob(["params/**"]),
+    visibility = ["//visibility:public"],
 )
 
 

@@ -11,7 +11,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 from bark.models.behavior import BehaviorConstantVelocity, \
-  BehaviorMotionPrimitives
+  BehaviorMPContinuousActions
 from bark.models.execution import ExecutionModelInterpolate
 from bark.models.dynamic import SingleTrackModel, StateDefinition
 from bark.world import World
@@ -104,7 +104,7 @@ class EvaluationTests(unittest.TestCase):
     param_server = ParameterServer()
     # Model Definition
     dynamic_model = SingleTrackModel(param_server)
-    behavior_model = BehaviorMotionPrimitives(dynamic_model, param_server)
+    behavior_model = BehaviorMPContinuousActions(dynamic_model, param_server)
     idx = behavior_model.AddMotionPrimitive(np.array([1, 0]))
     behavior_model.ActionToBehavior(idx)
     execution_model = ExecutionModelInterpolate(param_server)
