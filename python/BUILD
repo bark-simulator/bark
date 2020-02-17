@@ -56,7 +56,7 @@ cc_library(
 cc_library(
     name = "behavior",
     hdrs = ["models/behavior.hpp"],
-    srcs = ["models/behavior.cpp"],
+    srcs = ["models/behavior.cpp", "polymorphic_conversion.cpp"],
     deps = [
     "//python/models/plan:planners",
     ":common",

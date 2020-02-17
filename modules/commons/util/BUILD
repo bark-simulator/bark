@@ -19,7 +19,8 @@ cc_library(
 cc_library(
     name="include",
     hdrs=[
-        "util.hpp"
+        "util.hpp",
+        "operators.hpp"
     ],
     deps = [
         "@boost//:system",
