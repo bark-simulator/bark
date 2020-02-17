@@ -158,4 +158,3 @@ Town01.xodr
 modules/runtime/tests/data/DR_DEU_Merging_MT.xodr
 modules/runtime/tests/data/Osterwaldstrasse_v1.xodr
 examples/scenarios/benchmark_database_0.0.1.zip
-.bazelrc
