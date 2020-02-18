@@ -7,6 +7,7 @@ import os
 import pickle
 import pandas as pd
 import logging
+import copy
 logging.getLogger().setLevel(logging.INFO)
 
 from modules.runtime.commons.parameters import ParameterServer
@@ -110,7 +111,7 @@ class BenchmarkRunner:
         logging.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
             idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
-        result_dict = self._run_benchmark_config(bmark_conf)
+        result_dict = self._run_benchmark_config(copy.deepcopy(bmark_conf))
         results.append(result_dict)
       return BenchmarkResult(results, self.benchmark_configs)
                     
@@ -157,9 +158,6 @@ class BenchmarkRunner:
                 self._append_exception(benchmark_config, e)
                 break
             step += 1
-
-        # maintain state to avoid complicated deserialization of eg mcts in multiprocessing case 
-        world.agents[scenario._eval_agent_ids[0]].behavior_model = old_behavior
 
         dct = {"scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
