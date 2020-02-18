@@ -9,7 +9,7 @@ import numpy as np
 from modules.runtime.commons.parameters import ParameterServer
 
 from configurations.bark_agent import BARKMLBehaviorModel
-from configurations.sac_highway.configuration import SACHighwayConfiguration
+from configurations.highway.configuration import HighwayConfiguration
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from load.benchmark_database import BenchmarkDatabase
 from modules.benchmark.benchmark_runner import BenchmarkRunner
@@ -25,17 +25,17 @@ from modules.runtime.runtime import Runtime
 
 # some path magic
 base_dir = "/home/hart/Dokumente/2020/bark-ml"
-params = ParameterServer(filename=base_dir + "/configurations/highway/config_five.json")
-scenario_generation = params["Scenario"]["Generation"]["DeterministicScenarioGeneration"]
+params = ParameterServer(filename=base_dir + "/configurations/highway/config.json")
+scenario_generation = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
 map_filename = scenario_generation["MapFilename"]
 scenario_generation["MapFilename"] = base_dir + "/" + map_filename
 params["BaseDir"] = base_dir
 
 # actual model
-sac_configuration = SACHighwayConfiguration(params)
-ml_behavior = BARKMLBehaviorModel(configuration=sac_configuration)
+ml_config = HighwayConfiguration(params)
+ml_behavior = BARKMLBehaviorModel(configuration=ml_config)
 
-scenario_generator = sac_configuration._scenario_generator
+scenario_generator = ml_config._scenario_generator
 viewer = MPViewer(params=params, x_range=[5060, 5160], y_range=[5070, 5150])
 
 env = Runtime(0.2,
@@ -47,29 +47,28 @@ env.reset()
 env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = ml_behavior
 
 print(ml_behavior)
-for _ in range(0, 30):
+for _ in range(0, 5):
   env.step()
 
-
 # db
-# db = BenchmarkDatabase(database_root="./examples/scenarios/benchmark_database_0.0.1.zip")
-# evaluators = {"success" : EvaluatorGoalReached,
-#               "collision" : EvaluatorCollisionEgoAgent,
-#               "max_steps": EvaluatorStepCount}
-# terminal_when = {"collision" :lambda x: x,
-#                  "max_steps": lambda x : x>2}
-# # params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
-# behaviors_tested = {"bark_ml": ml_behavior }
+db = BenchmarkDatabase(database_root="./examples/scenarios/benchmark_database_0.0.1.zip")
+evaluators = {"success" : EvaluatorGoalReached,
+              "collision" : EvaluatorCollisionEgoAgent,
+              "max_steps": EvaluatorStepCount}
+terminal_when = {"collision" :lambda x: x,
+                 "max_steps": lambda x : x>2}
+# params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
+behaviors_tested = {"bark_ml": ml_behavior }
                                 
 
-# benchmark_runner = BenchmarkRunner(benchmark_database=db,
-#                                    evaluators=evaluators,
-#                                    terminal_when=terminal_when,
-#                                    behaviors=behaviors_tested)
+benchmark_runner = BenchmarkRunner(benchmark_database=db,
+                                   evaluators=evaluators,
+                                   terminal_when=terminal_when,
+                                   behaviors=behaviors_tested)
 
-# benchmark_runner.run(1) 
+benchmark_runner.run() 
 
-# # benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")
+# benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")
 
 
 
