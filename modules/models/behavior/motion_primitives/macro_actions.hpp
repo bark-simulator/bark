@@ -27,14 +27,14 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
 
   virtual MotionIdx GetNumMotionPrimitives(
       const ObservedWorldPtr& observed_world) const {
-    MotionIdx count = 0;
-    for (auto const& p : motion_primitives_) {
-      if (p->IsPreConditionSatisfied(observed_world)) {
-        count++;
-      }
-    }
+    // MotionIdx count = 0;
+    // for (auto const& p : motion_primitives_) {
+    //   if (p->IsPreConditionSatisfied(observed_world)) {
+    //     count++;
+    //   }
+    // }
     // TODO: this should be a vector!!
-    return count;
+    return motion_primitives_.size();
   }
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
