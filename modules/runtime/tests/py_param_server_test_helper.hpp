@@ -26,6 +26,8 @@ class CppParamServerTestObject {
     bool GetBoolValueFalse() const { return value_bool_false_;} 
     float GetIntValue() const { return value_int_;} 
     modules::commons::ListListFloat GetListListFloatValue() const { return value_list_list_float_;} 
+    modules::commons::ListFloat GetListFloatValue() const { return value_list_float_;} 
+
 
     std::shared_ptr<modules::commons::Params> GetParams() const { return params_; }
 
@@ -35,6 +37,7 @@ class CppParamServerTestObject {
     bool value_bool_true_;
     int value_int_;
     modules::commons::ListListFloat value_list_list_float_;
+    modules::commons::ListFloat value_list_float_;
 
     std::shared_ptr<modules::commons::Params> params_;
 };
