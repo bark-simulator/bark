@@ -14,6 +14,7 @@ class ParameterServer(Params):
     def __init__(self, **kwargs):
         Params.__init__(self)
         self.param_filename = None
+        self.log_if_default = kwargs.pop("log_if_default", False)
         if "filename" in kwargs:
             self.load(kwargs["filename"])
             self.param_filename = kwargs["filename"]
@@ -22,7 +23,6 @@ class ParameterServer(Params):
         else:
             self.store = dict()
         self.param_descriptions = dict()
-        self.log_if_default = kwargs.pop("log_if_default", False)
         
 
     def __getitem__(self, key):
