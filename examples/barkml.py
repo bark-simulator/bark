@@ -8,6 +8,8 @@ import os
 import numpy as np
 from modules.runtime.commons.parameters import ParameterServer
 
+from load.benchmark_database import BenchmarkDatabase
+from serialization.database_serializer import DatabaseSerializer
 from configurations.bark_agent import BARKMLBehaviorModel
 from configurations.highway.configuration import HighwayConfiguration
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
@@ -50,14 +52,18 @@ print(ml_behavior)
 for _ in range(0, 5):
   env.step()
 
-# db
-db = BenchmarkDatabase(database_root="./examples/scenarios/benchmark_database_0.0.1.zip")
-evaluators = {"success" : EvaluatorGoalReached,
-              "collision" : EvaluatorCollisionEgoAgent,
-              "max_steps": EvaluatorStepCount}
+# to find database files
+os.chdir("../benchmark_database/")
+dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+dbs.process("database")
+local_release_filename = dbs.release(version="test")
+db = BenchmarkDatabase(database_root=local_release_filename)
+
+evaluators = {"success" : "EvaluatorGoalReached",
+              "collision" : "EvaluatorCollisionEgoAgent",
+              "max_steps": "EvaluatorStepCount"}
 terminal_when = {"collision" :lambda x: x,
                  "max_steps": lambda x : x>2}
-# params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
 behaviors_tested = {"bark_ml": ml_behavior }
                                 
 
@@ -66,9 +72,8 @@ benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                    terminal_when=terminal_when,
                                    behaviors=behaviors_tested)
 
-benchmark_runner.run() 
-
-# benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")
+result = benchmark_runner.run()
+print(result)
 
 
 

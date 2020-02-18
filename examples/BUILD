@@ -131,6 +131,7 @@ py_binary(
           "@bark_ml_external//tests/data:bark_data",
           '//modules/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
+          "@benchmark_database//database:database",
           "@bark_ml_external//python:bark_ml.so",
           ':params',
           ':scenarios'],
@@ -141,6 +142,7 @@ py_binary(
           "//modules/models/behavior/plan:py_planners",
           "//modules/benchmark:benchmark_runner",
           "@benchmark_database//load:benchmark_database",
+          "@benchmark_database//serialization:database_serializer",
           "@bark_ml_external//configurations/highway:configuration",
           "@bark_ml_external//configurations:bark_agent"],
 )
