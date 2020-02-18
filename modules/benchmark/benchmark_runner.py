@@ -82,6 +82,7 @@ class BenchmarkRunner:
         self.behaviors = behaviors or {}
         self.benchmark_configs = benchmark_configs or \
                self._create_configurations(num_scenarios)
+        self.exceptions_caught = []
 
     def _create_configurations(self, num_scenarios=None):
       benchmark_configs = []
@@ -117,7 +118,17 @@ class BenchmarkRunner:
         scenario = benchmark_config.scenario
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
-        world = scenario.get_world_state()
+        try:
+            world = scenario.get_world_state()
+        except Exception as e:
+            logging.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
+                                                        benchmark_config.config_idx, e))
+            self._append_exception(benchmark_config, e)
+            return {"scen_set": benchmark_config.scenario_set_name,
+              "scen_idx" : benchmark_config.scenario_idx,
+              "step": step,
+              "behavior" : benchmark_config.behavior_name,
+              "Terminal": "exception_raised"}
         old_behavior = world.agents[scenario._eval_agent_ids[0]].behavior_model
         world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
         self._reset_evaluators(world, scenario._eval_agent_ids)
@@ -127,9 +138,24 @@ class BenchmarkRunner:
         step = 0
         terminal_why = None
         while not terminal:
-            evaluation_dict = self._get_evalution_dict(world)
+            try:
+                evaluation_dict = self._get_evalution_dict(world)
+            except Exception as e:
+                logging.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                                                        benchmark_config.config_idx, e))
+                terminal_why = "exception_raised"
+                self._append_exception(benchmark_config, e)
+                evaluation_dict = {}
+                break 
             terminal, terminal_why = self._is_terminal(evaluation_dict)
-            world.Step(step_time) 
+            try:
+                world.Step(step_time)
+            except Exception as e:
+                logging.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                                                        benchmark_config.config_idx, e))
+                terminal_why = "exception_raised"
+                self._append_exception(benchmark_config, e)
+                break
             step += 1
 
         # maintain state to avoid complicated deserialization of eg mcts in multiprocessing case 
@@ -143,6 +169,9 @@ class BenchmarkRunner:
               "Terminal": terminal_why}
 
         return dct
+
+    def _append_exception(self, benchmark_config, exception):
+        self.exceptions_caught.append(benchmark_config.config_idx, exception)
 
     def _reset_evaluators(self, world, eval_agent_ids):
         for evaluator_name, evaluator_type in self.evaluators.items():
