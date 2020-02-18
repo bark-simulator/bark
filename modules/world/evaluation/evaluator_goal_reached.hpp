@@ -36,9 +36,9 @@ class EvaluatorGoalReached : public BaseEvaluator {
         return true;
       return false;
     } else {
-      auto agent_it = world.GetAgents().find(agent_id_);
-      if (agent_it != world.GetAgents().end()) {
-        return world.GetAgents()[agent_id_]->AtGoal();
+      const auto agent_ptr = world.GetAgent(agent_id_);
+      if (agent_ptr) {
+        return agent_ptr->AtGoal();
       } else {
         return false;
       }
