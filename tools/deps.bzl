@@ -85,6 +85,18 @@ def bark_dependencies():
     urls = ["https://github.com/ceres-solver/ceres-solver/archive/1.14.0.tar.gz"]
     )
 
+    git_repository(
+      name = "bark_ml_external",
+      commit="99499314d71abe5a2f5fab24d1d043a8bd27f7aa",
+      remote = "https://github.com/bark-simulator/bark-ml"
+    )
+
+    # _maybe(
+    #   native.local_repository,
+    #   name = "bark_ml_external",
+    #   path="/home/hart/Dokumente/2020/bark-ml"
+    # )
+
     _maybe(
     native.new_local_repository,
     name = "python_linux",
