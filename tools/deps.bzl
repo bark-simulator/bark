@@ -87,7 +87,7 @@ def bark_dependencies():
 
     git_repository(
       name = "bark_ml_external",
-      commit="99499314d71abe5a2f5fab24d1d043a8bd27f7aa",
+      commit="c319b696fbabb9e3eaf37bab610ce27cdf783d13",
       remote = "https://github.com/bark-simulator/bark-ml"
     )
 
