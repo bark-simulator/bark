@@ -12,12 +12,8 @@ from bark.commons import CppParamServerTestObject
 from bark.models.behavior import BehaviorIDMClassic
 
 def pickle_unpickle(object):
-    with open('temp.pickle','wb') as f:
-        pickle.dump(object,f)
-    object = None
-    with open( 'temp.pickle', "rb" ) as f:
-        object = pickle.load(f)
-    return object
+    return pickle.loads(
+      pickle.dumps(object))
 
 
 
