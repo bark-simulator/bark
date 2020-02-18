@@ -50,6 +50,15 @@ class ParamServerTests(unittest.TestCase):
       for idx2, _ in enumerate(list1[idx]):
         self.assertAlmostEqual(list1[idx][idx2], list2[idx][idx2], places=5)
 
+  def test_key_not_found(self):
+    params = ParameterServer(log_if_default=True)
+    params_child = params["test_child"]
+    del params
+    params_child["Child1"]["Child2"]["ValueFloat"] = 2.0
+    params_child["Child1"]["Child10"]["ValueBoolFalse"] = False
+
+    cpp_object = CppParamServerTestObject(params_child)
+
 
 
 if __name__ == '__main__':
