@@ -91,7 +91,7 @@ class ParameterServer(Params):
                 param = ParameterServer(log_if_default = self.log_if_default)
                 self.store[key] = param.convert_to_param(value)
             else:
-                self.get_val_from_string(key, "", value, False)
+                self.get_val_from_string(key, "", value)
 
         return self
 
@@ -165,6 +165,11 @@ class ParameterServer(Params):
               or isinstance(value,bool):
               return True
           elif isinstance(value, list):
+              # list float
+              for el in value:
+                if not isinstance(el, float):
+                    return False
+              # listlist float
               for el in value:
                 if not isinstance(el, list):
                   return False
@@ -190,13 +195,13 @@ class ParameterServer(Params):
         test = condensed_param_list
         return condensed_param_list
 
-    def get_val_from_string(self, hierarchy, description, default_value, log_if_default):
+    def get_val_from_string(self, hierarchy, description, default_value):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
-        if log_if_default:
+        if self.log_if_default:
           # first search for key, otherwise default already integrated into store
           found_key = self.find_key(hierarchy[-1])
         value, used_default = self.get_val_iter(hierarchy.copy(), description, default_value)
-        if log_if_default and used_default:
+        if self.log_if_default and used_default:
           logging.warning("Using default {} for {}".format(
                                 default_value, hierarchy))
           if found_key:
@@ -208,21 +213,18 @@ class ParameterServer(Params):
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.get_val_from_string(param_name, description, default_value)
 
     def GetReal(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.get_val_from_string(param_name, description, default_value)
 
     def GetInt(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.get_val_from_string(param_name, description, default_value)
 
     def GetListListFloat(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
-    
-    def GetListFloat(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.get_val_from_string(param_name, description, default_value)
 
     def access(self, param_name):
         return self[param_name]
