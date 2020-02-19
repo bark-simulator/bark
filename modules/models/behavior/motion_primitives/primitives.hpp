@@ -101,13 +101,15 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       } else {
         integration_time = dt;
       }
-      const auto& center_line = target_corridor_->GetCenterLine();
-      float angle = 0.0f;
-      if(center_line.Valid()) {
-        angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
-                                    center_line, crosstrack_error_gain_);
-      }
 
+      float angle = 0.0f;
+      if(target_corridor_) {
+        const auto& center_line = target_corridor_->GetCenterLine();
+        if(center_line.Valid()) {
+          angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
+                                      center_line, crosstrack_error_gain_);
+        }
+      }
       Input input(2);
       input << acceleration_, angle;
 
