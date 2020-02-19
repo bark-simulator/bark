@@ -19,6 +19,8 @@ class CppParamServerTestObject {
       value_int_ = params_->GetInt("Child1::Child4::ValueInt", "Desc", 234);
       value_list_list_float_ = params_->GetListListFloat("Child1::Child4::ValueListListFloat", "Desc",
                      {{1.0,3.4545234}, {1.1266135,2.0, 3434.4}});
+      value_list_float_ = params_->GetListFloat("Child1::Child5::ValueListFloat", "Desc",
+                     {1.0,3.4545234, 1.1266135,2.0, 3434.4});
     }
 
     float GetRealValue() const { return value_float_;} 
