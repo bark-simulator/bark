@@ -28,6 +28,8 @@ class ParamServerTests(unittest.TestCase):
     value_int = params_child["Child1"]["Child4"]["ValueInt", "Desc", 2041]
     value_list_list_float = params_child["Child1"]["Child4"]["ValueListListFloat", "Desc",
          [[1.0, 2.0, float(5.4545234)], [float(1.1266135),2.0], [float(123.234234)]]]
+    value_list_float = params_child["Child1"]["Child5"]["ValueListFloat", "Desc",
+         [1.0, 2.0, float(5.4545234), float(1.1266135),2.0, float(123.234234)]]
 
     behavior = BehaviorIDMClassic(params_child)
     cpp_object = CppParamServerTestObject(params_child)
@@ -40,11 +42,18 @@ class ParamServerTests(unittest.TestCase):
     list1 = cpp_object.GetListListFloatValue()
     list2 =[[1.0,2.0, float(5.4545234)], [float(1.1266135),2.0], [float(123.234234)]]
 
+    list3 = cpp_object.GetListFloatValue()
+    list4 =[1.0, 2.0, float(5.4545234), float(1.1266135),2.0, float(123.234234)]
+
     self.assertEqual(len(list1), len(list2))
     for idx, _ in enumerate(list1):
       self.assertEqual(len(list1[idx]), len(list2[idx]))
       for idx2, _ in enumerate(list1[idx]):
         self.assertAlmostEqual(list1[idx][idx2], list2[idx][idx2], places=5)
+
+    self.assertEqual(len(list3), len(list4))
+    for idx, _ in enumerate(list3):
+        self.assertAlmostEqual(list3[idx], list4[idx], places=5)
 
   def test_key_not_found(self):
     params = ParameterServer(log_if_default=True)

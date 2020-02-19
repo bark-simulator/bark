@@ -18,8 +18,8 @@ typedef std::vector<std::vector<float>> ListListFloat;
 
 typedef std::vector<float> ListFloat;
 
-typedef std::pair<std::string, boost::variant<bool, float, int, ListListFloat>>
-    ParamPair;
+typedef std::pair<std::string, boost::variant<bool, float, int,
+     ListListFloat, ListFloat>> ParamPair;
 typedef std::vector<ParamPair> CondensedParamList;
 
 class Params {

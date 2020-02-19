@@ -225,6 +225,9 @@ class ParameterServer(Params):
 
     def GetListListFloat(self, param_name, description, default_value):
         return self.get_val_from_string(param_name, description, default_value)
+    
+    def GetListFloat(self, param_name, description, default_value):
+        return self.get_val_from_string(param_name, description, default_value)
 
     def access(self, param_name):
         return self[param_name]
