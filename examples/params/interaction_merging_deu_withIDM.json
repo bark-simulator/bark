@@ -1,0 +1,216 @@
+{
+  "labels": [
+    {
+      "type": "LaneTypeLabelEvaluator",
+      "label_str": "on_driving_lane",
+      "lane_type": "driving"
+    }
+  ],
+  "rules": {
+    "common": [
+      {
+        "formula": "G !collision_ego",
+        "weight": -1.0,
+        "priority": 0
+      },
+      {
+        "formula": "G on_driving_lane",
+        "weight": -1.0,
+        "priority": 1
+      }
+    ]
+  },
+  "Scenario": {
+    "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
+    "Generation": {
+      "InteractionDataset": {
+        "MapFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
+        "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
+        "TrackIds": [
+          63,
+          64,
+          65,
+          66,
+          67,
+          68
+        ],
+        "StartTs": 232000,
+        "EndTs": 269000,
+        "EgoTrackId": 67,
+        "BehaviorModel": {"67":"BehaviorIDMClassic"}
+      }
+    }
+  },
+  "Visualization": {
+    "Agents": {
+      "Color": {
+        "Other": [
+          0.7,
+          0.7,
+          0.7
+        ],
+        "Controlled": [
+          0.9,
+          0,
+          0
+        ]
+      },
+      "AlphaVehicle": 0.8,
+      "ColorRoute": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "DrawRoute": false,
+      "DrawEvalGoals": false,
+      "EvalGoalColor": [
+        0.0,
+        0.0,
+        0.7
+      ],
+      "DrawHistory": true
+    },
+    "Map": {
+      "Lanes": {
+        "Boundaries": {
+          "Color": [
+            0.7,
+            0.7,
+            0.7
+          ],
+          "Alpha": 1.0
+        }
+      },
+      "Plane": {
+        "Color": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "Alpha": 1.0
+      },
+      "xrange": [
+        880,
+        1009
+      ],
+      "yrange": [
+        977,
+        1034
+      ]
+    }
+  },
+  "simulation": {
+    "step_time": 0.2,
+    "real_time_factor": 1,
+    "simulation_time_steps": 120
+  },
+  "DynamicModel": {
+    "wheel_base": 2.700000047683716
+  },
+  "agent": {
+    "MaxHistoryLength": 50
+  },
+  "MvmctsStateParameters": {
+    "OutOfMapWeight": -1.0,
+    "PotentialWeight": 0.0,
+    "AccelerationWeight": -1.0,
+    "RadialAccelerationWeight": -1.0,
+    "DesiredVelocityWeight": -2.0,
+    "LaneCenterDeviationWeight": 0.0,
+    "DesiredVelocity": 10,
+    "GoalLaneDeviationWeight": -1.0
+  },
+  "BehaviorMCTSAgent": {
+    "MultiAgent": true,
+    "DumpTree": false,
+    "MotionPrimitiveInputs": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        1.0,
+        0.0
+      ],
+      [
+        -1.0,
+        0.0
+      ],
+      [
+        4.0,
+        0.0
+      ],
+      [
+        -4.0,
+        0.0
+      ],
+      [
+        0.0,
+        -0.13
+      ],
+      [
+        0.0,
+        0.13
+      ],
+      [
+        -1.0,
+        -0.13
+      ],
+      [
+        -1.0,
+        0.13
+      ],
+      [
+        1.0,
+        -0.13
+      ],
+      [
+        1.0,
+        0.13
+      ]
+    ],
+    "OthersMotionPrimitiveInputs": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        4.0,
+        0.0
+      ],
+      [
+        -8.0,
+        0.0
+      ],
+      [
+        0.0,
+        -0.13
+      ],
+      [
+        0.0,
+        0.13
+      ]
+    ],
+    "ReturnLowerBound": -50000.0,
+    "ReturnUpperBound": 0.0,
+    "MaxNumIterationsRandomHeuristic": 20,
+    "MaxNumIterations": 200,
+    "DiscountFactor": 0.9,
+    "RandomSeed": 1000,
+    "UCTExplorationConstant": 0.7,
+    "RewardVectorSize": 5,
+    "CooperationFactor": 0.0,
+    "EnableProgressiveWidening": false,
+    "ProgressiveWideningAlpha": 0.25,
+    "Threshold": [
+      [
+        -0.1,
+        -0.8,
+        -0.8,
+        -0.8,
+        1000000
+      ]
+    ]
+  }
+}

@@ -39,6 +39,7 @@ for _ in range(0, sim_time_steps):
     world_state.DoPlanning(sim_step_time)
     viewer.drawWorld(world_state, scenario._eval_agent_ids)
     viewer.show(block=False)
+    viewer.clear()
     world_state.DoExecution(sim_step_time)
 
     
