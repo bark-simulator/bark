@@ -189,7 +189,9 @@ class BenchmarkRunner:
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):
-        return [eval_crit for eval_crit, _ in self.evaluators.items()]
+        bark_evals = [eval_crit for eval_crit, _ in self.evaluators.items()]
+        bark_evals.append("step")
+        return bark_evals
 
     def _get_evalution_dict(self, world):
         return world.Evaluate()
@@ -206,6 +208,6 @@ class BenchmarkRunner:
     def _log_eval_average(self, result_dct_list):
         bresult = BenchmarkResult(result_dct_list, None)
         df = bresult.get_data_frame()
-        grouped = df.groupby(["scen_set","behavior"]).mean()[self._evaluation_criteria()]
-        self.logger.info("------------------- Current Evaluation Results ---------------------- \n {} \n \
-                          ---------------------------------------------------------------------".format(grouped.to_string()))
+        grouped = df.apply(pd.to_numeric, errors='ignore').groupby(["scen_set","behavior"]).mean()[self._evaluation_criteria()]
+        self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
+---------------------------------------------------------------------".format(len(result_dct_list), grouped.to_string()))
