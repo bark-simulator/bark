@@ -126,6 +126,7 @@ void World::RemoveOutOfMapAgents() {
   rtree_agents_.query(!boost::geometry::index::within(query_box),
                       std::back_inserter(query_results));
   for (auto& result_pair : query_results) {
+    LOG(INFO) << "Removed agent " << result_pair.second;
     agents_.erase(result_pair.second);
   }
   UpdateAgentRTree();
