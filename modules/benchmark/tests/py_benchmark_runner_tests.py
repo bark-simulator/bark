@@ -32,9 +32,9 @@ class DatabaseRunnerTests(unittest.TestCase):
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
-        evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollisionEgoAgent,
-                      "max_steps": EvaluatorStepCount}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
+        evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
+                      "max_steps": "EvaluatorStepCount"}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
                                         
@@ -42,7 +42,8 @@ class DatabaseRunnerTests(unittest.TestCase):
         benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
-                                           behaviors=behaviors_tested)
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=1)
 
         result = benchmark_runner.run()
         df = result.get_data_frame()
@@ -57,14 +58,15 @@ class DatabaseRunnerTests(unittest.TestCase):
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>3}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>5}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
-                                           behaviors=behaviors_tested)
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=10)
 
         result = benchmark_runner.run()
         

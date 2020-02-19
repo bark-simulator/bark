@@ -27,10 +27,12 @@ def deserialize_benchmark_config(bc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs):
+    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every):
           super().__init__(evaluators=evaluators, 
                             terminal_when=terminal_when,
-                            benchmark_configs=benchmark_configs)
+                            benchmark_configs=benchmark_configs,
+                            logger_name=logger_name,
+                            log_eval_avg_every=log_eval_avg_every)
 
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
@@ -39,12 +41,13 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                terminal_when=None,
                behaviors=None,
                num_scenarios=None,
-               benchmark_configs=None, num_cpus=None):
+               benchmark_configs=None,
+               log_eval_avg_every=None,
+               num_cpus=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, num_scenarios=num_scenarios,
-                          benchmark_configs=benchmark_configs,
-                          )
+                          benchmark_configs=benchmark_configs)
         num_cpus_available = psutil.cpu_count(logical=True)
         if num_cpus and num_cpus <= num_cpus_available:
             pass
@@ -60,7 +63,9 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         self.benchmark_config_split = [self.benchmark_configs[i::num_cpus] for i in range(0, num_cpus)]
         self.actors = [_BenchmarkRunnerActor.remote(evaluators=evaluators,
                                                     terminal_when=terminal_when,
-                                                    benchmark_configs=self.benchmark_config_split[i]) for i in range(num_cpus) ]
+                                                    benchmark_configs=self.benchmark_config_split[i],
+                                                    logger_name="BenchmarkingActor{}".format(i),
+                                                    log_eval_avg_every=log_eval_avg_every) for i in range(num_cpus) ]
 
     def run(self):
         results_tmp = ray.get([actor.run.remote() for actor in self.actors])
