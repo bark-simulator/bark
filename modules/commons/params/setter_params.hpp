@@ -19,7 +19,7 @@ class SetterParams : public Params {
  public:
   SetterParams(bool log_if_default=false)
                        : params_bool_(), params_real_(), params_int_(),
-                         params_listlist_float_(), log_if_default_(log_if_default) {}
+                         params_listlist_float_(), params_list_float_(), log_if_default_(log_if_default) {}
   SetterParams(bool log_if_default, const CondensedParamList& param_list);
 
   virtual ~SetterParams() {}
@@ -41,12 +41,18 @@ class SetterParams : public Params {
                       const std::string &description,
                       const std::vector<std::vector<float>> &default_value)  { return get_parameter(params_listlist_float_, param_name, default_value);}
 
+  virtual std::vector<float> GetListFloat(const std::string &param_name,
+                      const std::string &description,
+                      const std::vector<float> &default_value)  { return get_parameter(params_list_float_, param_name, default_value);}
+
   // not used atm
   virtual void SetBool(const std::string &param_name, const bool &value) { set_parameter(params_bool_, param_name, value); }
   virtual void SetReal(const std::string &param_name, const float &value) { set_parameter(params_real_, param_name, value); }
   virtual void SetInt(const std::string &param_name, const int &value) { set_parameter(params_int_, param_name, value); }
   virtual void SetListListFloat(const std::string &param_name,
                       const std::vector<std::vector<float>> &value) { set_parameter(params_listlist_float_, param_name, value); }
+  virtual void SetListFloat(const std::string &param_name,
+                      const std::vector<float> &value) { set_parameter(params_list_float_, param_name, value); }
 
   virtual CondensedParamList GetCondensedParamList() const; // < not needed atm
 
@@ -110,6 +116,7 @@ class SetterParams : public Params {
     std::unordered_map<std::string, float> params_real_;
     std::unordered_map<std::string, int> params_int_;
     std::unordered_map<std::string, std::vector<std::vector<float>>> params_listlist_float_;
+    std::unordered_map<std::string, std::vector<float>> params_list_float_;
 
     bool log_if_default_;
 
@@ -123,6 +130,7 @@ struct ParamVisitor : public boost::static_visitor<> {
   void operator() (float r) const { params_->SetReal(param_name_, r); }
   void operator() (int i) const { params_->SetInt(param_name_, i); }
   void operator() (const ListListFloat& l) const { params_->SetListListFloat(param_name_, l); }
+  void operator() (const ListFloat& l) const { params_->SetListFloat(param_name_, l); }
 
 private:
   SetterParams* params_;
@@ -149,6 +157,11 @@ inline std::unordered_map<std::string, int>& SetterParams::get_param_map() {
 template <>
 inline std::unordered_map<std::string, std::vector<std::vector<float>>>& SetterParams::get_param_map() {
   return params_listlist_float_;
+}
+
+template <>
+inline std::unordered_map<std::string, std::vector<float>>& SetterParams::get_param_map() {
+  return params_list_float_;
 }
 
 }  // namespace commons
