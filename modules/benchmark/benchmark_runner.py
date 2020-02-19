@@ -8,6 +8,7 @@ import pickle
 import pandas as pd
 import logging
 import copy
+logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 from modules.runtime.commons.parameters import ParameterServer
@@ -75,7 +76,9 @@ class BenchmarkRunner:
                terminal_when=None,
                behaviors=None,
                num_scenarios=None,
-               benchmark_configs=None):
+               benchmark_configs=None,
+               logger_name=None,
+               log_eval_avg_every=None):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
@@ -84,6 +87,9 @@ class BenchmarkRunner:
         self.benchmark_configs = benchmark_configs or \
                self._create_configurations(num_scenarios)
         self.exceptions_caught = []
+        self.log_eval_avg_every = log_eval_avg_every
+        self.logger = logging.getLogger(logger_name or "BenchmarkRunner")
+        self.logger.setLevel(logging.DEBUG)
 
     def _create_configurations(self, num_scenarios=None):
       benchmark_configs = []
@@ -108,11 +114,13 @@ class BenchmarkRunner:
     def run(self):
       results = []
       for idx, bmark_conf in enumerate(self.benchmark_configs):
-        logging.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
+        self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
             idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
         result_dict = self._run_benchmark_config(copy.deepcopy(bmark_conf))
         results.append(result_dict)
+        if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
+          self._log_eval_average(results)
       return BenchmarkResult(results, self.benchmark_configs)
                     
     def _run_benchmark_config(self, benchmark_config):
@@ -122,7 +130,7 @@ class BenchmarkRunner:
         try:
             world = scenario.get_world_state()
         except Exception as e:
-            logging.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
+            self.logger.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
                                                         benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
             return {"scen_set": benchmark_config.scenario_set_name,
@@ -142,7 +150,7 @@ class BenchmarkRunner:
             try:
                 evaluation_dict = self._get_evalution_dict(world)
             except Exception as e:
-                logging.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                self.logger.error("For config-idx {}, Exception thrown in world.Step: {}".format(
                                                         benchmark_config.config_idx, e))
                 terminal_why = "exception_raised"
                 self._append_exception(benchmark_config, e)
@@ -152,7 +160,7 @@ class BenchmarkRunner:
             try:
                 world.Step(step_time)
             except Exception as e:
-                logging.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                self.logger.error("For config-idx {}, Exception thrown in world.Step: {}".format(
                                                         benchmark_config.config_idx, e))
                 terminal_why = "exception_raised"
                 self._append_exception(benchmark_config, e)
@@ -180,6 +188,9 @@ class BenchmarkRunner:
                 evaluator_bark = eval("{}()".format(evaluator_type))
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
+    def _evaluation_criteria(self):
+        return [eval_crit for eval_crit, _ in self.evaluators.items()]
+
     def _get_evalution_dict(self, world):
         return world.Evaluate()
 
@@ -191,3 +202,10 @@ class BenchmarkRunner:
             terminal = True
             terminal_why.append(evaluator_name)
         return terminal, terminal_why
+
+    def _log_eval_average(self, result_dct_list):
+        bresult = BenchmarkResult(result_dct_list, None)
+        df = bresult.get_data_frame()
+        grouped = df.groupby(["scen_set","behavior"]).mean()[self._evaluation_criteria()]
+        self.logger.info("------------------- Current Evaluation Results ---------------------- \n {} \n \
+                          ---------------------------------------------------------------------".format(grouped.to_string()))
