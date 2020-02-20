@@ -5,10 +5,15 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
+
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <utility>
+
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/observed_world.hpp"
-
-#include <math.h>
 
 namespace modules {
 namespace models {
@@ -46,16 +51,16 @@ double BehaviorIDMClassic::CalcFreeRoadTerm(const double vel_ego) const {
   return free_road_term;
 }
 
-double BehaviorIDMClassic::CalcInteractionTerm(const double net_distance,
-                                               const double vel_ego,
-                                               const double vel_other) const {
+double BehaviorIDMClassic::CalcInteractionTerm(double net_distance,
+                                               double vel_ego,
+                                               double vel_other) const {
   // Parameters
   const float minimum_spacing = GetMinimumSpacing();
   const float desired_time_headway = GetDesiredTimeHeadway();
   const float max_acceleration = GetMaxAcceleration();
   const float comfortable_braking_acceleration =
       GetComfortableBrakingAcceleration();
-
+  net_distance = std::max(net_distance, 0.0);
   const double net_velocity = vel_ego - vel_other;
 
   const double helper_state =
@@ -66,8 +71,9 @@ double BehaviorIDMClassic::CalcInteractionTerm(const double net_distance,
   BARK_EXPECT_TRUE(!std::isnan(helper_state));
   double interaction_term =
       (helper_state / net_distance) * (helper_state / net_distance);
-  BARK_EXPECT_TRUE(!std::isnan(interaction_term));
-
+  if (std::isnan(interaction_term)) {
+    interaction_term = std::numeric_limits<double>::infinity();
+  }
   return interaction_term;
 }
 
@@ -107,6 +113,14 @@ double BehaviorIDMClassic::CalcIDMAcc(const double net_distance,
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
   return acc;
 }
+double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
+                                         const double& vel_ego,
+                                         const double& vel_other) const {
+  const double free_road_term = CalcFreeRoadTerm(vel_ego);
+  const double interaction_term =
+      CalcInteractionTerm(net_distance, vel_ego, vel_other);
+  return GetMaxAcceleration() * (free_road_term - interaction_term);
+}
 
 //! IDM Model will assume other front vehicle as constant velocity during
 //! delta_time
@@ -116,14 +130,14 @@ Trajectory BehaviorIDMClassic::Plan(
       observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
-  using namespace dynamic;
+  using dynamic::StateDefinition;
   //! TODO(@fortiss): parameters
   const float min_velocity = GetMinVelocity();
   const float max_velocity = GetMaxVelocity();
 
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
-                           int(StateDefinition::MIN_STATE_SIZE));
+                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
 
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
@@ -148,7 +162,7 @@ Trajectory BehaviorIDMClassic::Plan(
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
   }
 
-  if (line.obj_.size() > 0) {
+  if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
