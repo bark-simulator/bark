@@ -120,6 +120,10 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
 FrenetPosition Agent::CurrentFrenetPosition() const {  
   const modules::geometry::Point2d pos = GetCurrentPosition();
   const auto& lane_corridor = GetRoadCorridor()->GetCurrentLaneCorridor(pos);
+  if(!lane_corridor) {
+    // assume vehicle is far far away on same lane (until better failure handling implemented)
+    return FrenetPosition(0.0f, std::numeric_limits<double>::max());
+  }
   FrenetPosition frenet_pos(pos, lane_corridor->GetCenterLine());
   return frenet_pos;
 }

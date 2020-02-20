@@ -19,6 +19,8 @@ class CppParamServerTestObject {
       value_int_ = params_->GetInt("Child1::Child4::ValueInt", "Desc", 234);
       value_list_list_float_ = params_->GetListListFloat("Child1::Child4::ValueListListFloat", "Desc",
                      {{1.0,3.4545234}, {1.1266135,2.0, 3434.4}});
+      value_list_float_ = params_->GetListFloat("Child1::Child5::ValueListFloat", "Desc",
+                     {1.0,3.4545234, 1.1266135,2.0, 3434.4});
     }
 
     float GetRealValue() const { return value_float_;} 
@@ -26,6 +28,8 @@ class CppParamServerTestObject {
     bool GetBoolValueFalse() const { return value_bool_false_;} 
     float GetIntValue() const { return value_int_;} 
     modules::commons::ListListFloat GetListListFloatValue() const { return value_list_list_float_;} 
+    modules::commons::ListFloat GetListFloatValue() const { return value_list_float_;} 
+
 
     std::shared_ptr<modules::commons::Params> GetParams() const { return params_; }
 
@@ -35,6 +39,7 @@ class CppParamServerTestObject {
     bool value_bool_true_;
     int value_int_;
     modules::commons::ListListFloat value_list_list_float_;
+    modules::commons::ListFloat value_list_float_;
 
     std::shared_ptr<modules::commons::Params> params_;
 };

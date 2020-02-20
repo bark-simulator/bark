@@ -9,6 +9,7 @@
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
+#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
@@ -21,6 +22,7 @@ using modules::models::behavior::BehaviorModel;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorMotionPrimitives;
+using modules::models::behavior::BehaviorMPMacroActions;
 using modules::models::behavior::BehaviorMPContinuousActions;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
@@ -113,6 +115,12 @@ void python_behavior(py::module m) {
       return "bark.behavior.BehaviorMPContinuousActions";
     })
     .def("AddMotionPrimitive", &BehaviorMPContinuousActions::AddMotionPrimitive);
+
+  py::class_<BehaviorMPMacroActions,
+             BehaviorModel,
+             shared_ptr<BehaviorMPMacroActions>>(m,
+    "BehaviorMPMacroActions")
+    .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives);
 
   py::class_<DynamicBehaviorModel,
              BehaviorModel,

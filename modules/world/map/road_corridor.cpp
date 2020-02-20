@@ -14,6 +14,11 @@ namespace map {
 std::pair<LaneCorridorPtr, LaneCorridorPtr>
 RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
   LaneCorridorPtr current_lane_corr = GetCurrentLaneCorridor(pt);
+  if(!current_lane_corr) {
+      return std::make_pair(
+    LaneCorridorPtr(nullptr),
+        LaneCorridorPtr(nullptr));
+  }
   LanePtr current_lane = current_lane_corr->GetCurrentLane(pt);
   std::shared_ptr<Lane> left_lane, right_lane;
   if (current_lane) {
