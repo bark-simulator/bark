@@ -8,6 +8,7 @@ import pickle
 import pandas as pd
 import logging
 import copy
+import time
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
@@ -33,7 +34,7 @@ class BenchmarkResult:
     self.__data_frame = None
 
   def get_data_frame(self):
-      if not self.__data_frame:
+      if not isinstance(self.__data_frame, pd.DataFrame):
           self.__data_frame = pd.DataFrame(self.__result_dict)
       return self.__data_frame
 
@@ -43,7 +44,7 @@ class BenchmarkResult:
   def get_benchmark_configs(self):
       return self.__benchmark_configs
 
-  def get_eval_config(self, config_idx):
+  def get_benchmark_config(self, config_idx):
       if not self.__benchmark_configs:
           self._sort_bench_confs()
       bench_conf = self.__benchmark_configs[config_idx]
@@ -122,8 +123,15 @@ class BenchmarkRunner:
         if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
           self._log_eval_average(results)
       return BenchmarkResult(results, self.benchmark_configs)
+
+    def run_benchmark_config(self, config_idx, viewer):
+        br = BenchmarkResult(result_dict=None, \
+                  benchmark_configs=self.benchmark_configs)
+        benchmark_config = br.get_benchmark_config(config_idx)
+        return self._run_benchmark_config(benchmark_config, viewer)
+
                     
-    def _run_benchmark_config(self, benchmark_config):
+    def _run_benchmark_config(self, benchmark_config, viewer = None):
         scenario = benchmark_config.scenario
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
@@ -157,6 +165,12 @@ class BenchmarkRunner:
                 evaluation_dict = {}
                 break 
             terminal, terminal_why = self._is_terminal(evaluation_dict)
+
+            if viewer:
+              viewer.drawWorld(world, scenario._eval_agent_ids, scenario_idx=benchmark_config.scenario_idx)
+              viewer.show(block=False)
+              time.sleep(step_time)
+              viewer.clear()
             try:
                 world.Step(step_time)
             except Exception as e:
