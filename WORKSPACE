@@ -35,8 +35,6 @@ git_repository(
 )
 # --------------------------------------------------
 
-
-
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",

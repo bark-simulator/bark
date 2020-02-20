@@ -43,22 +43,22 @@ class Scenario:
     param_server = ParameterServer(json=self._json_params)
     world = World(param_server)
     if self._map_interface is None:
-        world = self.setup_map(world, self._map_file_name)
+      world = self.setup_map(world, self._map_file_name)
     else:
-        world.SetMap(self._map_interface)
+      world.SetMap(self._map_interface)
     for agent in self._agent_list:
       agent.GenerateRoadCorridor(self._map_interface)
       world.AddAgent(agent)
     return world
 
   def __getstate__(self):
-      odict = self.__dict__.copy()
-      del odict['_map_interface']
-      return odict
+    odict = self.__dict__.copy()
+    del odict['_map_interface']
+    return odict
 
   def __setstate__(self, sdict):
-      sdict['_map_interface'] = None
-      self.__dict__.update(sdict)
+    sdict['_map_interface'] = None
+    self.__dict__.update(sdict)
 
   def setup_map(self, world, _map_file_name):
     if not _map_file_name:

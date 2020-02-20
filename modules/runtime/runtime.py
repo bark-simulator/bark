@@ -39,10 +39,12 @@ class Runtime(PyRuntime):
       self.render()
 
   def render(self):
+    # self._viewer.clear()
     self._viewer.drawWorld(
       self._world,
       self._scenario._eval_agent_ids,
       scenario_idx=self._scenario_idx)
+    self._viewer.clear()
 
   def run(self, steps):
     for step_count in range(steps):
