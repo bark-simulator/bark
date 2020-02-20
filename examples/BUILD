@@ -108,6 +108,7 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",
           "@benchmark_database//load:benchmark_database"],
 )
 
@@ -127,18 +128,23 @@ py_binary(
   name = "barkml",
   srcs = ["barkml.py"],
   data = ['//python:bark.so',
-          "@bark_ml//tests/data:bark_data",
+          "@bark_ml_external//tests/data:bark_data",
           '//modules/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
-          ':params'],
-  imports = ["../python/"],
+          "@benchmark_database//database:database",
+          "@bark_ml_external//python:bark_ml.so",
+          ':params',
+          ':scenarios'],
+  imports = ["../python/",
+             "../external/bark_ml_external/python/"],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
           "//modules/models/behavior/plan:py_planners",
           "//modules/benchmark:benchmark_runner",
           "@benchmark_database//load:benchmark_database",
-          "@bark_ml//configurations/highway:configuration",
-          "@bark_ml//configurations:bark_agent"],
+          "@benchmark_database//serialization:database_serializer",
+          "@bark_ml_external//configurations/highway:configuration",
+          "@bark_ml_external//configurations:bark_agent"],
 )
 
 config_setting(
@@ -157,11 +163,11 @@ py_binary(
     select({":_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
     deps = [
-        "//modules/runtime",
         "//modules/runtime/commons:parameters",
         "//modules/runtime/commons:xodr_parser",
         "//modules/runtime/scenario/scenario_generation",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime/viewer:video_renderer",
+        "//modules/runtime:runtime",
     ],
 )

@@ -4,9 +4,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
+#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
+#define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
 
+#include <limits>
 #include <vector>
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/evaluation/base_evaluator.hpp"
@@ -18,12 +19,26 @@ namespace evaluation {
 
 class EvaluatorDrivableArea : public BaseEvaluator {
  public:
-  EvaluatorDrivableArea() {}
+  EvaluatorDrivableArea() :
+    agent_id_(std::numeric_limits<AgentId>::max()) {}
+  explicit EvaluatorDrivableArea(const AgentId& agent_id) :
+    agent_id_(agent_id) {}
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
     using modules::geometry::Polygon;
     namespace bg = boost::geometry;
+
+    if (agent_id_ != std::numeric_limits<AgentId>::max()) {
+      const auto& agent = world.GetAgent(agent_id_);
+      Polygon poly_agent =
+        agent->GetPolygonFromState(agent->GetCurrentState());
+      const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
+      if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
+        return true;
+      }
+      return false;
+    }
 
     for (const auto& agent : world.GetAgents()) {
       Polygon poly_agent =
@@ -35,10 +50,13 @@ class EvaluatorDrivableArea : public BaseEvaluator {
     }
     return false;
   }
+
+ private:
+  AgentId agent_id_;
 };
 
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_
+#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_

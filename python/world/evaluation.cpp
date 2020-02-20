@@ -39,6 +39,7 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorDrivableArea, BaseEvaluator,
     std::shared_ptr<EvaluatorDrivableArea> >(m, "EvaluatorDrivableArea")
     .def(py::init<>())
+    .def(py::init<const AgentId&>())
     .def("__repr__", [](const EvaluatorDrivableArea &g) {
       return "bark.world.evaluation.EvaluatorDrivableArea";
     });
