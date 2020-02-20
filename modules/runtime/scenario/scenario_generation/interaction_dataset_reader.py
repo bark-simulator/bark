@@ -10,8 +10,8 @@ from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.geometry import Point2d, Polygon2d, Norm0To2PI
 from modules.runtime.scenario.scenario_generation.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
-from python.utils import dataset_reader
-from python.utils import dict_utils
+from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
+from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils
 import numpy as np
 
 
