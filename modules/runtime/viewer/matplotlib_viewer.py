@@ -79,7 +79,7 @@ class MPViewer(BaseViewer):
             return color
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
-        self.clear()
+        # self.clear()
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx)
         self._set_visualization_options()
         self.show()
