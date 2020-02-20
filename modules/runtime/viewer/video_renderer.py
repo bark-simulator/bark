@@ -68,5 +68,8 @@ class VideoRenderer(BaseViewer):
         if remove_image_dir:
             shutil.rmtree(os.path.abspath(self.video_frame_dir))
 
+    def clear(self):
+      self.renderer.clear()
+
 
 
