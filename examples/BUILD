@@ -137,7 +137,7 @@ py_binary(
           "//modules/models/behavior/plan:py_planners",
           "//modules/benchmark:benchmark_runner",
           "@benchmark_database//load:benchmark_database",
-          "@bark_ml//configurations/sac_highway_uniform:configuration",
+          "@bark_ml//configurations/highway:configuration",
           "@bark_ml//configurations:bark_agent"],
 )
 
