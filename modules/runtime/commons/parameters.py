@@ -6,12 +6,15 @@
 import json
 import os
 from bark.commons import Params
+import logging
+logging.getLogger().setLevel(logging.DEBUG)
 
 
 class ParameterServer(Params):
     def __init__(self, **kwargs):
         Params.__init__(self)
         self.param_filename = None
+        self.log_if_default = kwargs.pop("log_if_default", False)
         if "filename" in kwargs:
             self.load(kwargs["filename"])
             self.param_filename = kwargs["filename"]
@@ -37,10 +40,27 @@ class ParameterServer(Params):
         else:
             if isinstance(key, tuple):  # if key for parameter
                 self.store[new_key] = default_val
+                if self.log_if_default:
+                  logging.warning("Using default {} for {}".format(
+                  default_val, new_key))
                 return self.store[new_key]
             else:  # else it is a Params instance
-                self.store[new_key] = ParameterServer()
+                self.store[new_key] = ParameterServer(log_if_default = self.log_if_default)
                 return self.store[new_key]
+
+    def find_key(self, param_key):
+      delimiter = "::"
+      for key, value in self.store.items():
+                  if isinstance(value, ParameterServer):
+                      found_key_tmp =  value.find_key(param_key)
+                      if found_key_tmp:
+                        return "{}{}{}".format(key, delimiter,
+                              found_key_tmp)
+                  else:
+                      if param_key == key:
+                        return param_key
+      return None
+
 
     def __setitem__(self, key, value):
         if isinstance(key, tuple):
@@ -68,10 +88,10 @@ class ParameterServer(Params):
         self.store = dict()
         for key, value in new_dict.items():
             if isinstance(value, dict):
-                param = ParameterServer()
+                param = ParameterServer(log_if_default = self.log_if_default)
                 self.store[key] = param.convert_to_param(value)
             else:
-                self.get_val_from_string(key, "", value)
+                self.get_val_from_string(key, "", value, log_if_default=False)
 
         return self
 
@@ -128,13 +148,13 @@ class ParameterServer(Params):
                     return self.store[key].get_val_iter(
                         hierarchy, description, default_value)
                 else:
-                    return self.store[key]
+                    return self.store[key], False
             else:
                 if not hierarchy:
                     self.store[key] = default_value
-                    return default_value
+                    return default_value, True
                 else:
-                    self.store[key] = ParameterServer()
+                    self.store[key] = ParameterServer(log_if_default = self.log_if_default)
                     return self.store[key].get_val_iter(
                         hierarchy, description, default_value)
         return
@@ -144,6 +164,10 @@ class ParameterServer(Params):
           if isinstance(value, float) or isinstance(value, int) \
               or isinstance(value,bool):
               return True
+          # list float
+          elif all(isinstance(el, float) for el in value):
+            return True
+          # list list float
           elif isinstance(value, list):
               for el in value:
                 if not isinstance(el, list):
@@ -170,29 +194,39 @@ class ParameterServer(Params):
         test = condensed_param_list
         return condensed_param_list
 
-    def get_val_from_string(self, hierarchy, description, default_value):
+    def get_val_from_string(self, hierarchy, description, default_value, log_if_default):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
-        return self.get_val_iter(hierarchy, description, default_value)
-        #helper = self
-        #for key in hierarchy:
-        #	helper = helper[key, description, default_value]
-        #return helper
+        if log_if_default:
+          # first search for key, otherwise default already integrated into store
+          found_key = self.find_key(hierarchy[-1])
+        value, used_default = self.get_val_iter(hierarchy.copy(), description, default_value)
+        if log_if_default and used_default:
+          logging.warning("Using default {} for {}".format(
+                                default_value, hierarchy))
+          if found_key:
+            logging.warning("Did you mean param {}".format(found_key))
+          else:
+            logging.warning("Key was nowhere found.")
+        return value
         
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value)
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
 
     def GetReal(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value)
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
 
     def GetInt(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value)
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
 
     def GetListListFloat(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value)
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+    
+    def GetListFloat(self, param_name, description, default_value):
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
 
     def access(self, param_name):
         return self[param_name]

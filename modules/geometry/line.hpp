@@ -64,7 +64,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
     return points;
   }
 
-  virtual bool Valid() {
+  virtual bool Valid() const {
     return Shape<bg::model::linestring<T>, T>::Valid() &&
     s_.size() == size();
   }

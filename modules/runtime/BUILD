@@ -9,6 +9,7 @@ py_library(
             "//modules/runtime/viewer:py_viewer",
             "//modules/runtime/viewer:panda3d_viewer",
             "//modules/runtime/viewer:matplotlib_viewer",
+            "//modules/runtime/viewer:video_renderer",
             "//modules/runtime/commons:xodr_parser",
             "//modules/runtime/scenario:scenario"],
     visibility = ["//visibility:public"],
