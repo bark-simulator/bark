@@ -167,7 +167,7 @@ class BenchmarkRunner:
             terminal, terminal_why = self._is_terminal(evaluation_dict)
 
             if viewer:
-              viewer.drawWorld(world, scenario._eval_agent_ids, benchmark_config.scenario_idx)
+              viewer.drawWorld(world, scenario._eval_agent_ids, scneario_idx=benchmark_config.scenario_idx)
               viewer.show(block=False)
               time.sleep(step_time)
               viewer.clear()
