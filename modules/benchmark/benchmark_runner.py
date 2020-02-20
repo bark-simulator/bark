@@ -170,7 +170,7 @@ class BenchmarkRunner:
               viewer.drawWorld(world, scenario._eval_agent_ids, benchmark_config.scenario_idx)
               viewer.show(block=False)
               time.sleep(step_time)
-
+              viewer.clear()
             try:
                 world.Step(step_time)
             except Exception as e:
