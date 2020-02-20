@@ -36,7 +36,7 @@ def bark_dependencies():
 
     _maybe(
     new_git_repository,
-    name = "com_github_interaction-dataset_interaction-dataset",
+    name = "com_github_interaction_dataset_interaction_dataset",
     build_file = "@bark_project//tools/interaction-dataset:interaction-dataset.BUILD",
     commit = "8e53eecfa9cdcb2203517af2f8ed154ad40c2956",
     remote = "https://github.com/interaction-dataset/interaction-dataset.git",
