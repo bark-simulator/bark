@@ -33,9 +33,6 @@ git_repository(
   branch="master",
   remote = "https://github.com/bark-simulator/bark-ml"
 )
-
-load("@bark_ml//utils:dependencies.bzl", "load_bark")
-load_bark()
 # --------------------------------------------------
 
 
