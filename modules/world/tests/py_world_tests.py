@@ -9,7 +9,7 @@ import time
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
-from bark.models.behavior import BehaviorConstantVelocity, BehaviorMobil
+from bark.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorIDMLaneTracking
 from bark.models.execution import ExecutionModelInterpolate
 from bark.models.dynamic import SingleTrackModel
 from bark.world import World, MakeTestWorldHighway
@@ -133,7 +133,7 @@ class WorldTests(unittest.TestCase):
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 
-        behavior_model2 = BehaviorConstantVelocity(params)
+        behavior_model2 = BehaviorIDMLaneTracking(params)
         execution_model2 = ExecutionModelInterpolate(params)
         dynamic_model2 = SingleTrackModel(params)
 
@@ -170,7 +170,7 @@ class WorldTests(unittest.TestCase):
                                                     "execution in real-time or faster", 100]
 
         # Draw map
-        for _ in range(0, 10):
+        for _ in range(0, 100):
             viewer.clear()
             world.Step(sim_step_time)
             viewer.drawWorld(world)
