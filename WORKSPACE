@@ -18,7 +18,7 @@ boost_deps()
 # ------ Planner UCT ------------------------------
 git_repository(
   name = "planner_uct",
-  commit="5188f0ba186ddaed3d9d3250ea46bf385aab923b",
+  commit="071a3750581cb5b4224546e874bed9eb8a69dd18",
   remote = "https://github.com/bark-simulator/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
