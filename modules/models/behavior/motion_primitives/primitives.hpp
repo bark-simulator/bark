@@ -139,6 +139,7 @@ class PrimitiveGapKeeping : public Primitive,
   }
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
     auto traj = BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
+    return traj;
   }
 };
 
