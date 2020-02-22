@@ -124,12 +124,12 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
   float crosstrack_error_gain_;
 };
 
-class PrimitiveGapKeeping : public PrimitiveLaneFollowing,
+class PrimitiveGapKeeping : public Primitive,
                             BehaviorIDMLaneTracking {
  public:
   PrimitiveGapKeeping(const commons::ParamsPtr& params,
                       const DynamicModelPtr& dynamic_model)
-      : PrimitiveLaneFollowing(params, dynamic_model),
+      : Primitive(params, dynamic_model),
         BehaviorIDMLaneTracking(params) {}
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // TODO: which lane to check? should be checked for target lane
