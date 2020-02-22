@@ -170,7 +170,7 @@ class WorldTests(unittest.TestCase):
                                                     "execution in real-time or faster", 100]
 
         # Draw map
-        for _ in range(0, 100):
+        for _ in range(0, 10):
             viewer.clear()
             world.Step(sim_step_time)
             viewer.drawWorld(world)
