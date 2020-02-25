@@ -85,7 +85,7 @@ class MPViewer(BaseViewer):
       return (w/h)
 
     def _get_ax_size(self):
-        scale = fig.dpi_scale_trans.inverted()
+        scale = self.axes.get_figure().dpi_scale_trans.inverted()
         bbox = self.axes.get_window_extent().transformed(scale)
         width, height = bbox.width, bbox.height
         width *= fig.dpi
