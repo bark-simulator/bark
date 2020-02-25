@@ -19,6 +19,7 @@ class MPViewer(BaseViewer):
         super(MPViewer, self).__init__(params=params, **kwargs)
         self.axes = kwargs.pop("axes", plt.subplots()[1])
 
+
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
             point2d.x(),
@@ -77,6 +78,18 @@ class MPViewer(BaseViewer):
             }.get(color, 'k')
         else:
             return color
+
+    def get_aspect_ratio(self):
+      # ratio is width / height
+      [w, h] = self._get_ax_size()
+      return (w/h)
+
+    def _get_ax_size(self):
+        bbox = self.axes.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+        width, height = bbox.width, bbox.height
+        width *= fig.dpi
+        height *= fig.dpi
+        return width, height
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()

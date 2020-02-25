@@ -35,18 +35,38 @@ class BaseViewer(Viewer):
         self.plane_color = params["Visualization"]["Map"]["Plane"]["Color", "Color of the background plane", (1, 1, 1, 1)]
         self.plane_alpha = params["Visualization"]["Map"]["Plane"]["Alpha", "Alpha of the background plane", 1.0]
 
-
         self.parameters = params
+
+        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
+        self.follow_agent_id = kwargs.pop("follow_agent_id", None)
+
+        self.center = kwargs.pop("center", np.array([0, 0]))
 
         self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
         self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
-        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
-        self.follow_agent_id = kwargs.pop("follow_agent_id", None)
+
+        self.enforce_x_range = kwargs.pop("enforce_x_range", True)
+        self.enforce_y_range = kwargs.pop("enforce_y_range", False)
+        self.x_length = kwargs.pop("enforce_y_range", np.sum(self.world_x_range))
+        self.y_length = kwargs.pop("enforce_y_range", np.sum(self.world_y_range))
+
+        if not self.use_world_bounds:
+          aspect_ratio = self.get_aspect_ratio()
+          if self.enforce_x_range:
+            self.world_y_range = [-self.y_length/2/aspect_ratio + self.center[1], self.y_length/2/aspect_ratio + self.center[1]]
+            logger.info("Overwriting world y range with valid range.")
+
+          if self.enforce_y_range:
+            self.world_x_range = [-self.x_length/2/aspect_ratio + self.center[0], self.x_length/2/aspect_ratio + self.center[0]]
+            logger.info("Overwriting world x range with valid range.")
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
 
     def reset():
+        pass
+
+    def get_aspect_ratio(self):
         pass
 
     def _get_draw_eval_agent_ids(self, world, eval_agent_ids=None, ):
@@ -90,12 +110,12 @@ class BaseViewer(Viewer):
             diffy = abs(self.dynamic_world_y_range[1] - self.dynamic_world_y_range[0])
 
             # enforce that in both dimensions  the same range is covered
-            # if diffx > diffy:
-            #     self.dynamic_world_y_range[0] -= (diffx - diffy)/2
-            #     self.dynamic_world_y_range[1] += (diffx - diffy)/2
-            # else:
-            #     self.dynamic_world_x_range[0] -= (diffy - diffx)/2
-            #     self.dynamic_world_x_range[1] += (diffy - diffx)/2
+            if diffx > diffy:
+                self.dynamic_world_y_range[0] -= (diffx - diffy)/2
+                self.dynamic_world_y_range[1] += (diffx - diffy)/2
+            else:
+                self.dynamic_world_x_range[0] -= (diffy - diffx)/2
+                self.dynamic_world_x_range[1] += (diffy - diffx)/2
 
     def drawPoint2d(self, point2d, color, alpha):
         pass
