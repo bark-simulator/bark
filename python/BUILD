@@ -29,6 +29,7 @@ cc_binary(
     "//modules/models/behavior/motion_primitives:motion_primitives",
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
+    "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/mobil:mobil",
     "//modules/models/behavior/static_trajectory",
     #"//modules/models/execution/mpc:mpc",
@@ -68,6 +69,7 @@ cc_library(
     "//modules/models/behavior/motion_primitives:motion_primitives",
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
+    "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/static_trajectory",
     ]
 )
