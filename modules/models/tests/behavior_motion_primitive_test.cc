@@ -126,18 +126,18 @@ TEST(primitive_change_left, behavior_test) {
   // auto traj = primitive.Plan(0.5, world1);
 }
 
-// TEST(primitive_gap_keeping, behavior_test) {
-//   using modules::models::behavior::primitives::PrimitiveGapKeeping;
-//   auto params = std::make_shared<DefaultParams>();
-//   DynamicModelPtr dynamics(new SingleTrackModel(params));
-//   PrimitiveGapKeeping primitive(params, dynamics);
+TEST(primitive_gap_keeping, behavior_test) {
+  using modules::models::behavior::primitives::PrimitiveGapKeeping;
+  auto params = std::make_shared<DefaultParams>();
+  DynamicModelPtr dynamics(new SingleTrackModel(params));
+  PrimitiveGapKeeping primitive(params, dynamics);
 
-//   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-//   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-//   auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
-//   // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
-//   // auto traj = primitive.Plan(0.5, world1);
-// }
+  State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
+  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
+  // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
+  // auto traj = primitive.Plan(0.5, world1);
+}
 
 TEST(macro_actions, behavior_test) {
   using namespace modules::models::behavior::primitives;
