@@ -18,6 +18,11 @@
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/commons/params/setter_params.hpp"
 
+#ifdef PLANNER_UCT
+#include "src/behavior_uct_single_agent.hpp"
+using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
+#endif
+
 namespace py = pybind11;
 
 using modules::world::goal_definition::GoalDefinitionPolygon;
@@ -34,7 +39,13 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorConstantVelocity";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
     behavior_model_name = "BehaviorIDMClassic";
-  } else {
+  }
+#ifdef PLANNER_UCT
+  else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
+    behavior_model_name = "BehaviorUCTSingleAgentMacroActions";
+  }
+#endif
+  else {
     LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
     throw;
   }
@@ -49,7 +60,15 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
     return std::make_shared<BehaviorIDMClassic>(
       t[0].cast<BehaviorIDMClassic>());
-  } else {
+  }
+#ifdef PLANNER_UCT
+  else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
+    return std::make_shared<BehaviorUCTSingleAgentMacroActions>(
+      t[0].cast<BehaviorUCTSingleAgentMacroActions>());
+
+  }
+#endif
+  else {
     LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
     throw;
   }
