@@ -45,20 +45,10 @@ class BaseViewer(Viewer):
         self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
         self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
 
-        self.enforce_x_range = kwargs.pop("enforce_x_range", True)
-        self.enforce_y_range = kwargs.pop("enforce_y_range", False)
-        self.x_length = kwargs.pop("enforce_y_range", np.sum(np.absolute(self.world_x_range)))
-        self.y_length = kwargs.pop("enforce_y_range", np.sum(np.absolute(self.world_y_range)))
-
-        if not self.use_world_bounds:
-          aspect_ratio = self.get_aspect_ratio()
-          if self.enforce_x_range:
-            self.world_y_range = [-self.y_length/2/aspect_ratio + self.center[1], self.y_length/2/aspect_ratio + self.center[1]]
-            logger.info("Overwriting world y range with valid range.")
-
-          if self.enforce_y_range:
-            self.world_x_range = [-self.x_length/2/aspect_ratio + self.center[0], self.x_length/2/aspect_ratio + self.center[0]]
-            logger.info("Overwriting world x range with valid range.")
+        self.enforce_x_length = kwargs.pop("enforce_x_length", True)
+        self.enforce_y_length = kwargs.pop("enforce_y_length", False)
+        self.x_length = kwargs.pop("x_length", np.sum(np.absolute(self.world_x_range)))
+        self.y_length = kwargs.pop("y_length", np.sum(np.absolute(self.world_y_range)))
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
@@ -116,6 +106,18 @@ class BaseViewer(Viewer):
             else:
                 self.dynamic_world_x_range[0] -= (diffy - diffx)/2
                 self.dynamic_world_x_range[1] += (diffy - diffx)/2
+
+        
+        aspect_ratio = self.get_aspect_ratio()
+        if self.enforce_x_length:
+          self.dynamic_world_x_range = [-self.x_length/2 + self.center[0], self.x_length/2 + self.center[0]]
+          self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + self.center[1]]
+          logger.info("Overwriting world y range with valid range.")
+
+        if self.enforce_y_length:
+          self.dynamic_world_x_range = [-self.y_length/2/aspect_ratio + self.center[0], self.y_length/2/aspect_ratio + self.center[0]]
+          self.dynamic_world_y_range = [-self.y_length/2 + center[1], self.y_length/2 + center[1]]
+          logger.info("Overwriting world x range with valid range.")
 
     def drawPoint2d(self, point2d, color, alpha):
         pass

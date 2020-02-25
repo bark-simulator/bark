@@ -16,9 +16,13 @@ from modules.runtime.viewer.viewer import BaseViewer
 class MPViewer(BaseViewer):
     # we do not need an init function as pybind11 implements it
     def __init__(self, params=None, **kwargs):
-        self.axes = kwargs.pop("axes", plt.subplots()[1])
         super(MPViewer, self).__init__(params=params, **kwargs)
-
+        if 'axis' in kwargs:
+          self.axes = kwargs.pop("axis")
+        else:
+          self.axes = plt.subplots()[1]
+          # removes whitespace
+          plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -85,12 +89,13 @@ class MPViewer(BaseViewer):
       return (w/h)
 
     def _get_ax_size(self):
-        scale = self.axes.get_figure().dpi_scale_trans.inverted()
-        bbox = self.axes.get_window_extent().transformed(scale)
-        width, height = bbox.width, bbox.height
-        width *= fig.dpi
-        height *= fig.dpi
-        return width, height
+      fig = self.axes.get_figure()
+      scale = fig.dpi_scale_trans.inverted()
+      bbox = self.axes.get_window_extent().transformed(scale)
+      width, height = bbox.width, bbox.height
+      width *= fig.dpi
+      height *= fig.dpi
+      return width, height
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
