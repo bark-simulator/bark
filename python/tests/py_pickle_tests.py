@@ -137,8 +137,27 @@ class PickleTests(unittest.TestCase):
         self.assertEqual(agent_list_after[0].id , agent.id)
         self.assertTrue(np.array_equal(agent_list_after[0].state, agent.state) )
 
+    def test_agent_pickle_uct_planner(self):
+        try:
+          from bark.models.behavior import BehaviorUCTSingleAgentMacroActions
+        except:
+          print("Rerun test with ---define planner_uct=true")
+          exit()
 
+        params = ParameterServer()
+        behavior = BehaviorUCTSingleAgentMacroActions(params)
+        execution = ExecutionModelInterpolate(params)
+        dynamic = SingleTrackModel(params)
+        shape = CarLimousine()
+        init_state = np.array([0, 0, 0, 0, 5])
+        goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+        goal_definition = GoalDefinitionPolygon(goal_polygon)
+        agent = Agent(init_state, behavior, dynamic, execution, shape, params.AddChild("agent"), goal_definition )
 
+        agent_after = pickle_unpickle(agent)
+
+        self.assertTrue(isinstance(agent_after.behavior_model, 
+                                BehaviorUCTSingleAgentMacroActions))
 
 
 
