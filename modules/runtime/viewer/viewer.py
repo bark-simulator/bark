@@ -47,8 +47,8 @@ class BaseViewer(Viewer):
 
         self.enforce_x_range = kwargs.pop("enforce_x_range", True)
         self.enforce_y_range = kwargs.pop("enforce_y_range", False)
-        self.x_length = kwargs.pop("enforce_y_range", np.sum(self.world_x_range))
-        self.y_length = kwargs.pop("enforce_y_range", np.sum(self.world_y_range))
+        self.x_length = kwargs.pop("enforce_y_range", np.sum(np.absolute(self.world_x_range)))
+        self.y_length = kwargs.pop("enforce_y_range", np.sum(np.absolute(self.world_y_range)))
 
         if not self.use_world_bounds:
           aspect_ratio = self.get_aspect_ratio()
