@@ -90,12 +90,12 @@ class BaseViewer(Viewer):
             diffy = abs(self.dynamic_world_y_range[1] - self.dynamic_world_y_range[0])
 
             # enforce that in both dimensions  the same range is covered
-            if diffx > diffy:
-                self.dynamic_world_y_range[0] -= (diffx - diffy)/2
-                self.dynamic_world_y_range[1] += (diffx - diffy)/2
-            else:
-                self.dynamic_world_x_range[0] -= (diffy - diffx)/2
-                self.dynamic_world_x_range[1] += (diffy - diffx)/2
+            # if diffx > diffy:
+            #     self.dynamic_world_y_range[0] -= (diffx - diffy)/2
+            #     self.dynamic_world_y_range[1] += (diffx - diffy)/2
+            # else:
+            #     self.dynamic_world_x_range[0] -= (diffy - diffx)/2
+            #     self.dynamic_world_x_range[1] += (diffy - diffx)/2
 
     def drawPoint2d(self, point2d, color, alpha):
         pass
