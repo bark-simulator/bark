@@ -72,14 +72,27 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         result = benchmark_runner.run()
 
-        params = ParameterServer()
+        params2 = ParameterServer()
         viewer = MPViewer(
-              params=params,
+              params=params2,
               x_range=[5060, 5160],
               y_range=[5070,5150],
               use_world_bounds=True)
-        rst = benchmark_runner.run_benchmark_config(10, viewer)
-        
+        rst, _ = benchmark_runner.run_benchmark_config(10, viewer=viewer)
+
+        rst, scenario_history = benchmark_runner.run_benchmark_config(11, viewer=None, maintain_history=True)
+        print(scenario_history)
+        viewer = MPViewer(
+              params=params2,
+              x_range=[5060, 5160],
+              y_range=[5070,5150],
+              use_world_bounds=True)
+        viewer.drawWorld(world=scenario_history[5].get_world_state(),
+                          eval_agent_ids=scenario_history[5].eval_agent_ids)
+
+        viewer.show(block=True)
+
+
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 20) # 2 Behaviors * 10 Serialize Scenarios
