@@ -139,10 +139,10 @@ class PickleTests(unittest.TestCase):
 
     def test_agent_pickle_uct_planner(self):
         try:
-          from bark.models.behavior import BehaviorUCTSingleAgentMacroActions
+            from bark.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
-          print("Rerun test with ---define planner_uct=true")
-          exit()
+            print("Rerun test with ---define planner_uct=true")
+            return
 
         params = ParameterServer()
         behavior = BehaviorUCTSingleAgentMacroActions(params)
