@@ -26,7 +26,7 @@ class BaseViewer(Viewer):
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
-        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
+        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", True]
         # map
@@ -114,7 +114,7 @@ class BaseViewer(Viewer):
             logger.info("Overwriting world y range with valid range.")
 
           if self.enforce_y_length:
-            self.dynamic_world_x_range = [-self.y_length/2/aspect_ratio + self.center[0], self.y_length/2/aspect_ratio + self.center[0]]
+            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + self.center[0]]
             self.dynamic_world_y_range = [-self.y_length/2 + self.center[1], self.y_length/2 + self.center[1]]
             logger.info("Overwriting world x range with valid range.")
 
@@ -196,11 +196,10 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
-        # draw agents
+        # draw agent goals
         for agent_id, agent in world.agents.items():
-            # TODO(@hart): draw agents and goals in the same color
-            #              support mult. eval. agents and goals
-            if self.draw_eval_goals and agent.goal_definition:
+            if self.draw_eval_goals and agent.goal_definition and \
+                    agent_id == eval_agent_ids[0]:
                 color = self.eval_goal_color
                 try:
                   color = tuple(
@@ -208,7 +207,8 @@ class BaseViewer(Viewer):
                 except:
                   pass
                 self.drawGoalDefinition(agent.goal_definition, color)
-            
+
+        # draw agent shapes
         for agent_id, agent in world.agents.items():
             color = "blue"
             if eval_agent_ids and agent.id in eval_agent_ids:
