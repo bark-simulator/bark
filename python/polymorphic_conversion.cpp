@@ -20,9 +20,10 @@
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
+using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
 
-using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
+
 
 
 namespace py = pybind11;
