@@ -7,6 +7,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 
+#include <memory>
+
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
@@ -30,6 +32,9 @@ class BehaviorIDMClassic : public BehaviorModel {
   double CalcNetDistance(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent);
+
+  double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other) const;
 
   double CalcIDMAcc(const double net_distance, const double vel_ego,
                     const double vel_other) const;

@@ -13,7 +13,7 @@ py_library(
     imports = ['../../../python'],
     deps = [
         "//modules/runtime/scenario:scenario",
-        "@com_github_interaction-dataset_interaction-dataset//:interaction-tools",
+        "@com_github_interaction_dataset_interaction_dataset//:interaction-tools",
         "//modules/runtime/scenario/scenario_generation/config_readers:config_readers"
     ],
     visibility = ["//visibility:public"],

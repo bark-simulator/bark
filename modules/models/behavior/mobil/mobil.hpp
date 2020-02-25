@@ -7,6 +7,9 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 
+#include <utility>
+#include <memory>
+
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -49,11 +52,19 @@ class BehaviorMobil : public BehaviorIDMClassic {
         "CriticalVelocity",
         "Passing on the right side is allowed below this velocity",
         16.66f);  // 16.66 m/s = 60 km/h
+
+    stop_at_lane_ending_ =
+        params->GetBool("StopAtLaneEnding",
+                        "Flag to let vehicle slow down at lane ending", true);
   }
 
   virtual ~BehaviorMobil() {}
 
   Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
+
+  double CalcLongRawAccWithoutLeader(
+      const world::LaneCorridorPtr& lane_corridor,
+      const modules::geometry::Point2d& pos, const float vel);
 
   double CalcNetDistanceFromFrenet(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
@@ -92,6 +103,9 @@ class BehaviorMobil : public BehaviorIDMClassic {
 
   // Passing on the right side is allowed below this velocity
   double critical_velocity_;
+
+  // Flag to let vehicle slow down (and eventually stop) at lane ending
+  bool stop_at_lane_ending_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
