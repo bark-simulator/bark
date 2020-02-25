@@ -1,3 +1,9 @@
+filegroup(
+    name="params2",
+    srcs=glob(["params/**"]),
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name="make_test_xodr_map",
     srcs=[
@@ -201,7 +207,7 @@ py_test(
   name = "py_system_tests",
   srcs = ["py_system_tests.py"],
   data = ['//python:bark.so',
-          '//examples:params'],
+          ':params2'],
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
