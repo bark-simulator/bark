@@ -169,7 +169,7 @@ class BaseViewer(Viewer):
                     self.drawLine2d(line, color, alpha=0.9)
                 prev_center = goal_pos
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
@@ -200,9 +200,9 @@ class BaseViewer(Viewer):
             else:
                 color = self.color_other_agents
             self.drawAgent(agent, color)
-
-        self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
-        self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
+        if debug_text
+          self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
+          self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
 
     def drawMap(self, map):
         # draw the boundary of each lane
