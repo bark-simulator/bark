@@ -200,7 +200,7 @@ class BaseViewer(Viewer):
             else:
                 color = self.color_other_agents
             self.drawAgent(agent, color)
-        if debug_text
+        if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
           self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
 
