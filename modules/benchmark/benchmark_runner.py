@@ -46,16 +46,21 @@ class BenchmarkResult:
       return self.__benchmark_configs
 
   def get_benchmark_config(self, config_idx):
-      if not self.__benchmark_configs:
-          self._sort_bench_confs()
-      bench_conf = self.__benchmark_configs[config_idx]
+      return BenchmarkResult.find_benchmark_config(
+                    self.benchmark_configs, config_idx)
+
+  @staticmethod
+  def find_benchmark_config(benchmark_configs, config_idx):
+      BenchmarkResult._sort_bench_confs(benchmark_configs)
+      bench_conf = benchmark_configs[config_idx]
       assert(bench_conf.config_idx == config_idx)
       return bench_conf
 
-  def _sort_bench_confs(self):
+  @staticmethod
+  def _sort_bench_confs(benchmark_configs):
       def sort_key(bench_conf):
           return bench_conf.config_idx
-      self.__benchmark_configs.sort(key=sort_key)
+      benchmark_configs.sort(key=sort_key)
 
   @staticmethod 
   def load(filename):
@@ -125,12 +130,12 @@ class BenchmarkRunner:
           self._log_eval_average(results)
       return BenchmarkResult(results, self.benchmark_configs)
 
-    def run_benchmark_config(self, config_idx, viewer, start_time=None, end_tme):
-        br = BenchmarkResult(result_dict=None, \
-                  benchmark_configs=self.benchmark_configs)
-        benchmark_config = br.get_benchmark_config(config_idx)
-        return self._run_benchmark_config(benchmark_config, viewer)
-
+    def run_benchmark_config(self, config_idx, **kwargs):
+        for idx, bmark_conf in enumerate(self.benchmark_configs):
+            if bmark_conf.config_idx == config_idx:
+                return self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+        self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
+        return
                     
     def _run_benchmark_config(self, benchmark_config, viewer = None, maintain_history = False):
         scenario = benchmark_config.scenario
@@ -196,11 +201,11 @@ class BenchmarkRunner:
         return dct, scenario_history
 
     def _append_to_scenario_history(self, scenario_history, world, scenario):
-        scenario = Scenario(agent_list = world.agents,
+        scenario = Scenario(agent_list = list(world.agents.values()),
                             map_file_name = scenario.map_file_name,
                             eval_agent_ids = scenario.eval_agent_ids,
                             json_params = scenario.json_params)
-        scenario_history.append(copy.deepcopy(scenario))
+        scenario_history.append(scenario.copy())
 
 
     def _append_exception(self, benchmark_config, exception):
