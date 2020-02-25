@@ -16,8 +16,8 @@ from modules.runtime.viewer.viewer import BaseViewer
 class MPViewer(BaseViewer):
     # we do not need an init function as pybind11 implements it
     def __init__(self, params=None, **kwargs):
-        super(MPViewer, self).__init__(params=params, **kwargs)
         self.axes = kwargs.pop("axes", plt.subplots()[1])
+        super(MPViewer, self).__init__(params=params, **kwargs)
 
 
     def drawPoint2d(self, point2d, color, alpha):
