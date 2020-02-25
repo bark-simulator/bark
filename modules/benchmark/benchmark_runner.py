@@ -13,6 +13,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.scenario.scenario import Scenario
 from bark.world.evaluation import * 
 
 # contains information for a single benchmark run
@@ -45,16 +46,21 @@ class BenchmarkResult:
       return self.__benchmark_configs
 
   def get_benchmark_config(self, config_idx):
-      if not self.__benchmark_configs:
-          self._sort_bench_confs()
-      bench_conf = self.__benchmark_configs[config_idx]
+      return BenchmarkResult.find_benchmark_config(
+                    self.benchmark_configs, config_idx)
+
+  @staticmethod
+  def find_benchmark_config(benchmark_configs, config_idx):
+      BenchmarkResult._sort_bench_confs(benchmark_configs)
+      bench_conf = benchmark_configs[config_idx]
       assert(bench_conf.config_idx == config_idx)
       return bench_conf
 
-  def _sort_bench_confs(self):
+  @staticmethod
+  def _sort_bench_confs(benchmark_configs):
       def sort_key(bench_conf):
           return bench_conf.config_idx
-      self.__benchmark_configs.sort(key=sort_key)
+      benchmark_configs.sort(key=sort_key)
 
   @staticmethod 
   def load(filename):
@@ -118,23 +124,24 @@ class BenchmarkRunner:
         self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
             idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
-        result_dict = self._run_benchmark_config(copy.deepcopy(bmark_conf))
+        result_dict, _ = self._run_benchmark_config(copy.deepcopy(bmark_conf))
         results.append(result_dict)
         if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
           self._log_eval_average(results)
       return BenchmarkResult(results, self.benchmark_configs)
 
-    def run_benchmark_config(self, config_idx, viewer):
-        br = BenchmarkResult(result_dict=None, \
-                  benchmark_configs=self.benchmark_configs)
-        benchmark_config = br.get_benchmark_config(config_idx)
-        return self._run_benchmark_config(benchmark_config, viewer)
-
+    def run_benchmark_config(self, config_idx, **kwargs):
+        for idx, bmark_conf in enumerate(self.benchmark_configs):
+            if bmark_conf.config_idx == config_idx:
+                return self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+        self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
+        return
                     
-    def _run_benchmark_config(self, benchmark_config, viewer = None):
+    def _run_benchmark_config(self, benchmark_config, viewer = None, maintain_history = False):
         scenario = benchmark_config.scenario
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
+        scenario_history = []
         try:
             world = scenario.get_world_state()
         except Exception as e:
@@ -158,7 +165,7 @@ class BenchmarkRunner:
             try:
                 evaluation_dict = self._get_evalution_dict(world)
             except Exception as e:
-                self.logger.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                self.logger.error("For config-idx {}, Exception thrown in evaluation: {}".format(
                                                         benchmark_config.config_idx, e))
                 terminal_why = "exception_raised"
                 self._append_exception(benchmark_config, e)
@@ -167,10 +174,10 @@ class BenchmarkRunner:
             terminal, terminal_why = self._is_terminal(evaluation_dict)
 
             if viewer:
-              viewer.drawWorld(world, scenario._eval_agent_ids, scenario_idx=benchmark_config.scenario_idx)
-              viewer.show(block=False)
-              time.sleep(step_time)
-              viewer.clear()
+                viewer.drawWorld(world, scenario._eval_agent_ids, scenario_idx=benchmark_config.scenario_idx)
+                viewer.show(block=False)
+                time.sleep(step_time)
+                viewer.clear()
             try:
                 world.Step(step_time)
             except Exception as e:
@@ -179,6 +186,9 @@ class BenchmarkRunner:
                 terminal_why = "exception_raised"
                 self._append_exception(benchmark_config, e)
                 break
+            
+            if maintain_history:
+               self._append_to_scenario_history(scenario_history, world, scenario)
             step += 1
 
         dct = {"scen_set": benchmark_config.scenario_set_name,
@@ -188,10 +198,18 @@ class BenchmarkRunner:
               **evaluation_dict,
               "Terminal": terminal_why}
 
-        return dct
+        return dct, scenario_history
+
+    def _append_to_scenario_history(self, scenario_history, world, scenario):
+        scenario = Scenario(agent_list = list(world.agents.values()),
+                            map_file_name = scenario.map_file_name,
+                            eval_agent_ids = scenario.eval_agent_ids,
+                            json_params = scenario.json_params)
+        scenario_history.append(scenario.copy())
+
 
     def _append_exception(self, benchmark_config, exception):
-        self.exceptions_caught.append(benchmark_config.config_idx, exception)
+        self.exceptions_caught.append((benchmark_config.config_idx, exception))
 
     def _reset_evaluators(self, world, eval_agent_ids):
         for evaluator_name, evaluator_type in self.evaluators.items():
