@@ -1,0 +1,55 @@
+{
+    "BehaviorUctSingleAgent": {
+        "DumpTree": false,
+        "PredictionSettings": {
+            "EgoVehicle": {
+                "DynamicModel": {
+                    "wheel_base": 2.700000047683716,
+                    "delta_max": 0.20000000298023224
+                },
+                "integration_time_delta": 0.019999999552965164
+            },
+            "OtherVehicles": {
+                "BehaviorIDMClassic": {
+                    "MaxVelocity": 30.0,
+                    "MinimumSpacing": 2.0,
+                    "DesiredTimeHeadway": 3.0,
+                    "MaxAcceleration": 1.7000000476837158,
+                    "AccelerationLowerBound": -15.0,
+                    "AccelerationUpperBound": 8.0,
+                    "DesiredVelocity": 0.1,
+                    "ComfortableBrakingAcceleration": 1.6699999570846558,
+                    "MinVelocity": 0.0,
+                    "Exponent": 4
+                }
+            }
+        },
+        "Mcts": {
+            "MaxSearchTime": 100000,
+            "UctStatistic": {
+                "ReturnLowerBound": -1000.0,
+                "ReturnUpperBound": 100.0,
+                "ExplorationConstant": 0.699999988079071
+            },
+            "RandomSeed": 1000,
+            "DiscountFactor": 0.8999999761581421,
+            "MaxNumIterations": 2000,
+            "RandomHeuristic": {
+                "MaxSearchTime": 100,
+                "MaxNumIterations": 10000
+            }
+        },
+        "BehaviorIDMClassic": {
+            "MaxVelocity": 30.0,
+            "MinimumSpacing": 2.0,
+            "DesiredTimeHeadway": 3.0,
+            "MaxAcceleration": 1.7000000476837158,
+            "AccelerationLowerBound": -15.0,
+            "AccelerationUpperBound": 8.0,
+            "DesiredVelocity": 20.0,
+            "ComfortableBrakingAcceleration": 1.6699999570846558,
+            "MinVelocity": 0.0,
+            "Exponent": 4
+        }
+    }
+}

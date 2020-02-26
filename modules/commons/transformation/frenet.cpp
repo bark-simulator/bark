@@ -40,6 +40,10 @@ FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   lat = lat_val * sign;
 }
 
+FrenetPosition FrenetPosition::operator+(const FrenetPosition& rhs) {
+  return {lon + rhs.lon, lat + rhs.lat};
+}
+
 }  // namespace transformation
 }  // namespace commons
 }  // namespace modules

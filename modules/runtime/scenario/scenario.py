@@ -24,6 +24,18 @@ class Scenario:
     self._json_params = json_params
     self._map_interface = map_interface
 
+  @property
+  def map_file_name(self):
+    return self._map_file_name
+  
+  @property
+  def json_params(self):
+    return self._json_params
+
+  @property
+  def eval_agent_ids(self):
+    return self._eval_agent_ids
+
   def get_world_state(self):
     """get initial world state of scenario to start simulation from here
     

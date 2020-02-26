@@ -9,7 +9,7 @@
 
 #include <memory>
 #include "modules/commons/base_type.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/dynamic/integration.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/world/map/road_corridor.hpp"
@@ -22,7 +22,7 @@ namespace primitives {
 
 using dynamic::Trajectory;
 using modules::geometry::Point2d;
-using modules::models::behavior::BehaviorIDMClassic;
+using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::dynamic::StateDefinition;
 using world::ObservedWorld;
 using world::ObservedWorldPtr;
@@ -103,11 +103,11 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       }
 
       float angle = 0.0f;
-      if(target_corridor_) {
+      if (target_corridor_) {
         const auto& center_line = target_corridor_->GetCenterLine();
-        if(center_line.Valid()) {
+        if (center_line.Valid()) {
           angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
-                                      center_line, crosstrack_error_gain_);
+                                         center_line, crosstrack_error_gain_);
         }
       }
       Input input(2);
@@ -124,24 +124,24 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
   float crosstrack_error_gain_;
 };
 
-// class PrimitiveGapKeeping : public PrimitiveLaneFollowing, BehaviorIDMClassic
-// {
-//  public:
-//   PrimitiveGapKeeping(const commons::ParamsPtr& params,
-//                       const DynamicModelPtr& dynamic_model)
-//       : PrimitiveLaneFollowing(params, dynamic_model),
-//         BehaviorIDMClassic(params) {}
-//   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-//     // TODO: which lane to check? should be checked for target lane
-//     auto leading_vehicle = observed_world->GetAgentInFront();
-//     bool satisfied = (leading_vehicle.first) ? true : false;
-//   }
-//   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
-//     // TODO: better call IDM that tracks a lane using a controller
-//     auto traj = BehaviorIDMClassic::Plan(delta_time, observed_world);
-//     return traj;
-//   }
-// };
+class PrimitiveGapKeeping : public Primitive,
+                            BehaviorIDMLaneTracking {
+ public:
+  PrimitiveGapKeeping(const commons::ParamsPtr& params,
+                      const DynamicModelPtr& dynamic_model)
+      : Primitive(params, dynamic_model),
+        BehaviorIDMLaneTracking(params) {}
+  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
+    // TODO: which lane to check? should be checked for target lane
+    // auto leading_vehicle = observed_world->GetAgentInFront();
+    // bool satisfied = (leading_vehicle.first) ? true : false;
+    return true;
+  }
+  Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
+    auto traj = BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
+    return traj;
+  }
+};
 
 class PrimitiveConstAccStayLane : public PrimitiveConstAcceleration {
  public:

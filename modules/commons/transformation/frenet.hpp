@@ -19,7 +19,7 @@ struct FrenetPosition {
       : lon(longitudinal), lat(lateral) {}
   FrenetPosition(const modules::geometry::Point2d& position,
                  const modules::geometry::Line& path);
-
+  FrenetPosition operator+(const FrenetPosition& rhs);
   double lon;
   double lat;
 };
