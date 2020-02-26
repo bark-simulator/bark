@@ -11,6 +11,7 @@ from bark.models.dynamic import *
 from bark.world.opendrive import *
 from bark.world.goal_definition import *
 from modules.runtime.commons.parameters import ParameterServer
+import math
 
 logger = logging.getLogger()
 
@@ -23,10 +24,12 @@ class BaseViewer(Viewer):
         # agents
         self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
         self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
-        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw eval agent goals", True]
+        self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", False]
+        self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", True]
         # map
@@ -208,8 +211,8 @@ class BaseViewer(Viewer):
                   pass
                 self.drawGoalDefinition(agent.goal_definition, color)
 
-        # draw agent shapes
-        for agent_id, agent in world.agents.items():
+        num_agents = len(world.agents.items())
+        for i, (agent_id, agent) in enumerate(world.agents.items()):
             color = "blue"
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color = self.color_eval_agents
@@ -219,7 +222,10 @@ class BaseViewer(Viewer):
                 except:
                   pass
             else:
-                color = self.color_other_agents
+                if self.use_colormap_for_other_agents:
+                  color = self.getColorFromMap(float(i) / float(num_agents))
+                else:
+                  color = self.color_other_agents
             self.drawAgent(agent, color)
         if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
@@ -258,6 +264,13 @@ class BaseViewer(Viewer):
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
             transformed_polygon = shape.Transform(pose)
+
+            centerx = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist)) * math.cos(pose[2]) + pose[0]
+            centery = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist))* math.sin(pose[2]) + pose[1]
+
+            if self.draw_agent_id:
+              self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id), coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+            
             self.drawPolygon2d(transformed_polygon, color, 1.0)
 
     def drawLaneCorridor(self, lane_corridor):

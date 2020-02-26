@@ -4,6 +4,7 @@
 # https://opensource.org/licenses/MIT
 import matplotlib
 from matplotlib.patches import Polygon
+from matplotlib import cm
 import matplotlib.pyplot as plt
 
 from bark.viewer import *
@@ -125,3 +126,7 @@ class MPViewer(BaseViewer):
 
     def clear(self):
         self.axes.cla()
+      
+    
+    def getColorFromMap(self, float_color):
+        return cm.Accent(float_color)
