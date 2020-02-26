@@ -198,7 +198,7 @@ class BaseViewer(Viewer):
 
         # draw agent goals
         for agent_id, agent in world.agents.items():
-            if self.draw_eval_goals and agent.goal_definition and \
+            if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
                     agent_id == eval_agent_ids[0]:
                 color = self.eval_goal_color
                 try:
