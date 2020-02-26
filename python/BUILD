@@ -37,7 +37,8 @@ cc_binary(
     "//modules/world:world",
     "//modules/runtime:cc_runtime",
     "//python/models/plan:planners"
-  ],
+  ] + select({"//modules/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []}),
+  copts=select({"//modules/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []}), 
   linkshared = 1,
   linkstatic = 1
 )
