@@ -131,7 +131,20 @@ void python_behavior(py::module m) {
     .def("GetLastAction", &BehaviorModel::GetLastAction)
     .def("__repr__", [](const DynamicBehaviorModel &b) {
       return "bark.behavior.DynamicBehaviorModel";
-    });
+    })
+    .def(py::pickle(
+      [](const DynamicBehaviorModel& b) {
+        return py::make_tuple(
+          b.GetDynamicModel(),
+          ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 2)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new DynamicBehaviorModel(
+          t[0].cast<DynamicModelPtr>(),
+          PythonToParams(t[1].cast<py::tuple>()));
+      }));
 
   py::class_<BehaviorStaticTrajectory,
              BehaviorModel,
