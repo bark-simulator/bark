@@ -24,7 +24,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
     def initialize_params(self, params):
         super().initialize_params(params)
         params_temp = \
-            self._params["Scenario"]["Generation"]["InteractionDataset"]
+            self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
                                           "modules/runtime/tests/data/DR_DEU_Merging_MT.xodr"]
@@ -34,10 +34,24 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         self._track_ids = params_temp["TrackIds",
                                       "IDs of the vehicle tracks to import.",
                                       [1]]
-        self.start_time = params_temp["StartTs", "Timestamp when to start the scenario (ms)", 0]
-        self.end_time = params_temp["EndTs", "Timestamp when to end the scenario (ms)", None]
+        self.start_time = params_temp["StartTs",
+            "Timestamp when to start the scenario (ms)", 0]
+        self.end_time = params_temp["EndTs",
+            "Timestamp when to end the scenario (ms)", None]
         self.ego_track_id = params_temp["EgoTrackId", "TrackID of ego", -1]
-        self.behavior_models = params_temp["BehaviorModel", "Overwrite static trajectory with prediction model", {}]
+        self.behavior_models = params_temp["BehaviorModel",
+            "Overwrite static trajectory with prediction model", {}]
+
+    # TODO: remove code duplication with configurable scenario generation
+    def create_scenarios(self, params, num_scenarios):
+        """ 
+            see baseclass
+        """
+        scenario_list = []
+        for scenario_idx in range(0, num_scenarios):
+          scenario = self.create_single_scenario()     
+          scenario_list.append(scenario)
+        return scenario_list
 
     def create_single_scenario(self):
         scenario = Scenario(map_file_name=self._map_file_name,
@@ -58,10 +72,11 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
                 track_params["behavior_model"] = self.behavior_models[str(track_id)]
             else:
                 track_params["behavior_model"] = None
-            agent = agent_from_trackfile(track_params, self._params)
+            agent = agent_from_trackfile(track_params, self._params, track_id)
             agent_list.append(agent)
             if track_id == self.ego_track_id:
                 eval_agent_ids = [agent.id]
         scenario._agent_list = agent_list
+
         scenario._eval_agent_ids = eval_agent_ids
         return scenario

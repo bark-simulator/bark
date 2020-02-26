@@ -12,6 +12,8 @@
 
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
@@ -34,6 +36,8 @@ using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorConstantVelocity;
+using modules::models::behavior::BehaviorStaticTrajectory;
+using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -42,6 +46,10 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorConstantVelocity";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
     behavior_model_name = "BehaviorIDMClassic";
+  } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
+    behavior_model_name = "BehaviorStaticTrajectory";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
+    behavior_model_name = "BehaviorMobil";
   }
 #ifdef PLANNER_UCT
   else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
@@ -63,6 +71,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
     return std::make_shared<BehaviorIDMClassic>(
       t[0].cast<BehaviorIDMClassic>());
+  } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
+    return std::make_shared<BehaviorStaticTrajectory>(
+      t[0].cast<BehaviorStaticTrajectory>());
+  } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
+    return std::make_shared<BehaviorMobil>(
+      t[0].cast<BehaviorMobil>());
   }
 #ifdef PLANNER_UCT
   else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
