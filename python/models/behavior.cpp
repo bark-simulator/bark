@@ -12,6 +12,7 @@
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "python/models/plan/plan.hpp"
@@ -26,6 +27,7 @@ using modules::models::behavior::BehaviorMPMacroActions;
 using modules::models::behavior::BehaviorMPContinuousActions;
 using modules::models::behavior::DynamicBehaviorModel;
 using modules::models::behavior::BehaviorIDMClassic;
+using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorMobil;
 using modules::models::dynamic::DynamicModelPtr;
 using modules::models::behavior::BehaviorStaticTrajectory;
@@ -80,6 +82,24 @@ void python_behavior(py::module m) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         return new BehaviorIDMClassic(PythonToParams(t[0].cast<py::tuple>()));
+      }));
+  
+  py::class_<BehaviorIDMLaneTracking,
+             BehaviorModel,
+             shared_ptr<BehaviorIDMLaneTracking>>(m, "BehaviorIDMLaneTracking")
+    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def("__repr__", [](const BehaviorIDMLaneTracking &m) {
+      return "bark.behavior.BehaviorIDMLaneTracking";
+    })
+    .def(py::pickle(
+      [](const BehaviorIDMLaneTracking& b) {
+        // We throw away other information such as last trajectories
+        return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new BehaviorIDMLaneTracking(PythonToParams(t[0].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorMobil,

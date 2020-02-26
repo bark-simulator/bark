@@ -9,6 +9,7 @@ py_test(
   deps = [
       "//modules/benchmark:benchmark_runner",
       "//modules/benchmark:benchmark_runner_mp",
+      "//modules/runtime/viewer:matplotlib_viewer",
       "@benchmark_database//load:benchmark_database",
       "@benchmark_database//serialization:database_serializer",
       "//modules/runtime/commons:parameters",

@@ -16,6 +16,19 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "idm_lane_tracking",
+    srcs = [
+        "idm_lane_tracking.cpp",
+    ],
+    hdrs = [
+        "idm_lane_tracking.hpp",
+    ],
+    deps = [
+        "//modules/models/behavior/idm:idm_classic",
+    ],
+    visibility = ["//visibility:public"],
+)
 
 cc_library(
     name="include",

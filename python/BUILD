@@ -29,6 +29,7 @@ cc_binary(
     "//modules/models/behavior/motion_primitives:motion_primitives",
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
+    "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/mobil:mobil",
     "//modules/models/behavior/static_trajectory",
     #"//modules/models/execution/mpc:mpc",
@@ -36,7 +37,8 @@ cc_binary(
     "//modules/world:world",
     "//modules/runtime:cc_runtime",
     "//python/models/plan:planners"
-  ],
+  ] + select({"//modules/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []}),
+  copts=select({"//modules/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []}), 
   linkshared = 1,
   linkstatic = 1
 )
@@ -67,6 +69,7 @@ cc_library(
     "//modules/models/behavior/motion_primitives:motion_primitives",
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
+    "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/static_trajectory",
     ]
 )
