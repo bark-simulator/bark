@@ -8,6 +8,9 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/tests/make_test_world.hpp"
+#include "modules/models/behavior/behavior_model.hpp"
+#include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "python/world/world.hpp"
 #include "python/world/agent.hpp"
 #include "python/world/map.hpp"
@@ -20,9 +23,12 @@ using namespace modules::world::objects;
 using namespace modules::world::map;
 using namespace modules::world::opendrive;
 using modules::world::World;
+using modules::models::behavior::DynamicBehaviorModel;
+using modules::models::behavior::BehaviorIDMClassic;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorldPtr;
 using modules::commons::ParamsPtr;
+using modules::models::behavior::Action;
 
 
 void python_world(py::module m) {
@@ -62,6 +68,8 @@ void python_world(py::module m) {
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def_property_readonly("agents", &World::GetAgents)
     .def("Evaluate", &World::Evaluate)
+    .def("PredictWithOthersIDM",
+      &ObservedWorld::Predict<BehaviorIDMClassic, DynamicBehaviorModel>)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
     .def("__repr__", [](const ObservedWorld& a) {
       return "bark.world.ObservedWorld";
