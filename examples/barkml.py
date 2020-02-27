@@ -38,7 +38,7 @@ ml_config = HighwayConfiguration(params)
 ml_behavior = BARKMLBehaviorModel(configuration=ml_config)
 
 scenario_generator = ml_config._scenario_generator
-viewer = MPViewer(params=params, x_range=[5060, 5160], y_range=[5070, 5150])
+viewer = MPViewer(params=params, use_world_bounds=True)
 
 env = Runtime(0.2,
               viewer,
@@ -49,31 +49,31 @@ env.reset()
 env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = ml_behavior
 
 print(ml_behavior)
-for _ in range(0, 5):
+for _ in range(0, 50):
   env.step()
 
-# to find database files
-os.chdir("../benchmark_database/")
-dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
-dbs.process("database")
-local_release_filename = dbs.release(version="test")
-db = BenchmarkDatabase(database_root=local_release_filename)
+# # to find database files
+# os.chdir("../benchmark_database/")
+# dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+# dbs.process("database")
+# local_release_filename = dbs.release(version="test")
+# db = BenchmarkDatabase(database_root=local_release_filename)
 
-evaluators = {"success" : "EvaluatorGoalReached",
-              "collision" : "EvaluatorCollisionEgoAgent",
-              "max_steps": "EvaluatorStepCount"}
-terminal_when = {"collision" :lambda x: x,
-                 "max_steps": lambda x : x>2}
-behaviors_tested = {"bark_ml": ml_behavior }
+# evaluators = {"success" : "EvaluatorGoalReached",
+#               "collision" : "EvaluatorCollisionEgoAgent",
+#               "max_steps": "EvaluatorStepCount"}
+# terminal_when = {"collision" :lambda x: x,
+#                  "max_steps": lambda x : x>2}
+# behaviors_tested = {"bark_ml": ml_behavior }
                                 
 
-benchmark_runner = BenchmarkRunner(benchmark_database=db,
-                                   evaluators=evaluators,
-                                   terminal_when=terminal_when,
-                                   behaviors=behaviors_tested)
+# benchmark_runner = BenchmarkRunner(benchmark_database=db,
+#                                    evaluators=evaluators,
+#                                    terminal_when=terminal_when,
+#                                    behaviors=behaviors_tested)
 
-result = benchmark_runner.run()
-print(result)
+# result = benchmark_runner.run()
+# print(result)
 
 
 
