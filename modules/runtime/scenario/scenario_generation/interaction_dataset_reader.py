@@ -112,4 +112,6 @@ def agent_from_trackfile(track_params, param_server, agent_id):
         param_server.addChild("agent{}".format(agent_id)),
         goal_definition_from_track(track, end),
         track_params["map_interface"])
+    # set agent id from track
+    bark_agent.SetAgentId(track_id)
     return bark_agent
