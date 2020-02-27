@@ -68,9 +68,11 @@ class BenchmarkResult:
           dmp = pickle.load(handle)
       return dmp
 
-  def dump(self, filename):
+  def dump(self, filename, dump_configs=True):
       if isinstance(self.__data_frame, pd.DataFrame):
           self.__data_frame = None
+      if not dump_configs:
+        self.__benchmark_configs = None
       with open(filename, 'wb') as handle:
           pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
       logging.info("Saved BenchmarkResult to {}".format(

@@ -87,16 +87,9 @@ def bark_dependencies():
 
     git_repository(
       name = "bark_ml_external",
-      commit="c319b696fbabb9e3eaf37bab610ce27cdf783d13",
+      branch="master",
       remote = "https://github.com/bark-simulator/bark-ml"
     )
-
-    # _maybe(
-    #   native.local_repository,
-    #   name = "bark_ml_external",
-    #   path="/home/hart/Dokumente/2020/bark-ml"
-    # )
-
     _maybe(
     native.new_local_repository,
     name = "python_linux",
