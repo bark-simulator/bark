@@ -109,18 +109,17 @@ class BaseViewer(Viewer):
             else:
                 self.dynamic_world_x_range[0] -= (diffy - diffx)/2
                 self.dynamic_world_x_range[1] += (diffy - diffx)/2
+        else:
+          aspect_ratio = self.get_aspect_ratio()
+          if self.enforce_x_length:
+            self.dynamic_world_x_range = [-self.x_length/2 + self.center[0], self.x_length/2 + self.center[0]]
+            self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + self.center[1]]
+            logger.info("Overwriting world y range with valid range.")
 
-        
-        aspect_ratio = self.get_aspect_ratio()
-        if self.enforce_x_length:
-          self.dynamic_world_x_range = [-self.x_length/2 + self.center[0], self.x_length/2 + self.center[0]]
-          self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + self.center[1]]
-          logger.info("Overwriting world y range with valid range.")
-
-        if self.enforce_y_length:
-          self.dynamic_world_x_range = [-self.y_length/2/aspect_ratio + self.center[0], self.y_length/2/aspect_ratio + self.center[0]]
-          self.dynamic_world_y_range = [-self.y_length/2 + center[1], self.y_length/2 + center[1]]
-          logger.info("Overwriting world x range with valid range.")
+          if self.enforce_y_length:
+            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + self.center[0]]
+            self.dynamic_world_y_range = [-self.y_length/2 + self.center[1], self.y_length/2 + self.center[1]]
+            logger.info("Overwriting world x range with valid range.")
 
     def drawPoint2d(self, point2d, color, alpha):
         pass
@@ -200,11 +199,10 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
-        # draw agents
+        # draw agent goals
         for agent_id, agent in world.agents.items():
-            # TODO(@hart): draw agents and goals in the same color
-            #              support mult. eval. agents and goals
-            if self.draw_eval_goals and agent.goal_definition:
+            if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
+                    agent_id == eval_agent_ids[0]:
                 color = self.eval_goal_color
                 try:
                   color = tuple(

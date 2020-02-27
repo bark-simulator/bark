@@ -153,10 +153,12 @@ class BenchmarkRunner:
               "step": step,
               "behavior" : benchmark_config.behavior_name,
               "Terminal": "exception_raised"}
-        old_behavior = world.agents[scenario._eval_agent_ids[0]].behavior_model
-        world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
-        self._reset_evaluators(world, scenario._eval_agent_ids)
 
+        # if behavior is not None (None specifies that also the default model can be evalauted)
+        if behavior:
+          world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
+
+        self._reset_evaluators(world, scenario._eval_agent_ids)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
         terminal = False
         step = 0

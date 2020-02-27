@@ -173,7 +173,18 @@ void python_behavior(py::module m) {
       .def_property_readonly("static_trajectory", &BehaviorStaticTrajectory::get_static_trajectory)
       .def("__repr__", [](const BehaviorStaticTrajectory &b) {
         return "bark.behavior.BehaviorStaticTrajectory";
-      });
+      })
+      .def(py::pickle(
+      [](const BehaviorStaticTrajectory& b) {
+        return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        /* Create a new C++ instance */
+        return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()));
+      }));
+
 
   python_behavior_plan(m);
 }

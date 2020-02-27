@@ -35,7 +35,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
     agent_list = []
     for track_id in track_ids:
       track_params["track_id"] = track_id 
-      agent = agent_from_trackfile(track_params, params)
+      agent = agent_from_trackfile(track_params, params, 1)
       agent_list.append(agent)
       print(agent.behavior_model)
       
