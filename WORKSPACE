@@ -27,14 +27,6 @@ planner_uct_rules_dependencies()
 
 
 
-# ------ Planner BARK-ML ---------------------------
-git_repository(
-  name = "bark_ml",
-  branch="master",
-  remote = "https://github.com/bark-simulator/bark-ml"
-)
-# --------------------------------------------------
-
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
