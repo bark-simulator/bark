@@ -86,7 +86,7 @@ def track_from_trackfile(filename, track_id):
     return track
 
 
-def agent_from_trackfile(track_params, param_server):
+def agent_from_trackfile(track_params, param_server, agent_id):
     fname = track_params["filename"]
     track_id = track_params["track_id"]
     track = track_from_trackfile(fname, track_id)
@@ -99,7 +99,8 @@ def agent_from_trackfile(track_params, param_server):
         end = track.time_stamp_ms_last
     model_converter = ModelJsonConversion()
     if behavior_model is None:
-        behavior = behavior_from_track(track, param_server, start, end)
+        # each agent need's its own param server
+        behavior = behavior_from_track(track, param_server.addChild("agent{}".format(agent_id)), start, end)
     else:
         behavior = model_converter.convert_model(behavior_model, param_server)
     bark_agent = Agent(
@@ -108,7 +109,7 @@ def agent_from_trackfile(track_params, param_server):
         model_converter.convert_model(track_params["dynamic_model"], param_server),
         model_converter.convert_model(track_params["execution_model"], param_server),
         shape_from_track(track, param_server["DynamicModel"]["wheel_base", "Distance between front and rear wheel center", 2.7]),
-        param_server.addChild("agent"),
+        param_server.addChild("agent{}".format(agent_id)),
         goal_definition_from_track(track, end),
         track_params["map_interface"])
     return bark_agent
