@@ -63,7 +63,7 @@ void python_world(py::module m) {
   m.def("MakeTestWorldHighway",
     &modules::world::tests::MakeTestWorldHighway);
 
-  py::class_<ObservedWorld, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
+  py::class_<ObservedWorld, World, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def_property_readonly("agents", &World::GetAgents)
