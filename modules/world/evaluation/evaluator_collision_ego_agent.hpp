@@ -10,6 +10,7 @@
 
 #include "modules/world/evaluation/base_evaluator.hpp"
 #include "modules/world/world.hpp"
+#include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace world {
@@ -21,6 +22,8 @@ class EvaluatorCollisionEgoAgent : public BaseEvaluator {
     agent_id_(agent_id) { }
   virtual ~EvaluatorCollisionEgoAgent() { }
   virtual EvaluationReturn Evaluate(const world::World& world);
+  virtual EvaluationReturn Evaluate(
+    const world::ObservedWorld& observed_world);
 
  private:
   AgentId agent_id_;

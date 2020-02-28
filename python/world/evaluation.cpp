@@ -19,7 +19,11 @@ void python_evaluation(py::module m) {
   py::class_<BaseEvaluator,
              PyBaseEvaluator,
              EvaluatorPtr>(m, "BaseEvaluator")
-      .def(py::init<>());
+      .def(py::init<>())
+      .def("Evaluate",
+        py::overload_cast<const World&>(&BaseEvaluator::Evaluate))
+      .def("Evaluate",
+        py::overload_cast<const ObservedWorld&>(&BaseEvaluator::Evaluate));
 
   py::class_<EvaluatorGoalReached, BaseEvaluator,
       std::shared_ptr<EvaluatorGoalReached> >(m, "EvaluatorGoalReached")

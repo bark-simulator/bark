@@ -11,10 +11,12 @@
 #include <vector>
 #include "modules/geometry/geometry.hpp"
 #include "modules/world/evaluation/base_evaluator.hpp"
+#include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace world {
 class World;
+class ObservedWorld;
 namespace evaluation {
 
 class EvaluatorDrivableArea : public BaseEvaluator {
@@ -49,6 +51,21 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       }
     }
     return false;
+  }
+
+  virtual EvaluationReturn Evaluate(
+    const world::ObservedWorld& observed_world) {
+      using modules::geometry::Polygon;
+      namespace bg = boost::geometry;
+
+      const auto& agent = observed_world.GetEgoAgent();
+      Polygon poly_agent =
+        agent->GetPolygonFromState(agent->GetCurrentState());
+      const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
+      if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
+        return true;
+      }
+      return false;
   }
 
  private:
