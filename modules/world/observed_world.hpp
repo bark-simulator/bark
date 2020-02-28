@@ -124,6 +124,7 @@ class ObservedWorld : public World {
         std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
     return std::dynamic_pointer_cast<World>(observed_world);
   }
+  virtual EvaluationMap Evaluate() const;
 
  private:
   AgentId ego_agent_id_;
