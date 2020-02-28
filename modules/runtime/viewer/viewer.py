@@ -22,8 +22,10 @@ class BaseViewer(Viewer):
         Viewer.__init__(self)
         # color parameters
         # agents
-        self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0.7,0.7,0.7)]
-        self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.7,0.7,0.7)]
+        self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
+        self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
         self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
@@ -128,7 +130,7 @@ class BaseViewer(Viewer):
     def drawLine2d(self, line2d, color, alpha, line_style=None):
         pass
 
-    def drawPolygon2d(self, polygon, color, alpha):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
         pass
 
     def drawTrajectory(self, trajectory, color):
@@ -217,7 +219,8 @@ class BaseViewer(Viewer):
             color = "blue"
             alpha = 1.0
             if eval_agent_ids and agent.id in eval_agent_ids:
-                color = self.color_eval_agents
+                color_line = self.color_eval_agents_line
+                color_face = self.color_eval_agents_face
                 alpha = self.alpha_eval_agent
                 try:
                   color = tuple(
@@ -229,8 +232,9 @@ class BaseViewer(Viewer):
                 if self.use_colormap_for_other_agents:
                   color = self.getColorFromMap(float(i) / float(num_agents))
                 else:
-                  color = self.color_other_agents
-            self.drawAgent(agent, color, alpha)
+                  color_line = self.color_other_agents_line
+                  color_face = self.color_other_agents_face
+            self.drawAgent(agent, color, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
           self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
@@ -258,7 +262,7 @@ class BaseViewer(Viewer):
         dashed = True
       self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
 
-    def drawAgent(self, agent, color, alpha):
+    def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
@@ -273,9 +277,12 @@ class BaseViewer(Viewer):
             centery = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist))* math.sin(pose[2]) + pose[1]
 
             if self.draw_agent_id:
-              self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id), coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+              self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),\
+                 coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
-            self.drawPolygon2d(transformed_polygon, color, alpha)
+            self.drawPolygon2d(transformed_polygon, color, alpha, facecolor)
+        else:
+            raise NotImplementedError("Shape drawing not implemented.")
 
     def drawLaneCorridor(self, lane_corridor):
       self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=.5)
