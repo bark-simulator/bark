@@ -25,7 +25,8 @@ class BaseViewer(Viewer):
         self.color_other_agents = params["Visualization"]["Agents"]["Color"]["Other", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents = params["Visualization"]["Agents"]["Color"]["Controlled", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
-        self.alpha_agents = params["Visualization"]["Agents"]["AlphaVehicle", "Alpha of agents", 0.8]
+        self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
+        self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", False]
@@ -214,19 +215,22 @@ class BaseViewer(Viewer):
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
             color = "blue"
+            alpha = 1.0
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color = self.color_eval_agents
+                alpha = self.alpha_eval_agent
                 try:
                   color = tuple(
                     self.parameters["Scenario"]["ColorMap"][str(agent_id), "color", [1., 0., 0.]])
                 except:
                   pass
             else:
+                alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
                   color = self.getColorFromMap(float(i) / float(num_agents))
                 else:
                   color = self.color_other_agents
-            self.drawAgent(agent, color)
+            self.drawAgent(agent, color, alpha)
         if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
           self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
@@ -254,7 +258,7 @@ class BaseViewer(Viewer):
         dashed = True
       self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
 
-    def drawAgent(self, agent, color):
+    def drawAgent(self, agent, color, alpha):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             pose = np.zeros(3)
@@ -271,7 +275,7 @@ class BaseViewer(Viewer):
             if self.draw_agent_id:
               self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id), coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
-            self.drawPolygon2d(transformed_polygon, color, 1.0)
+            self.drawPolygon2d(transformed_polygon, color, alpha)
 
     def drawLaneCorridor(self, lane_corridor):
       self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=.5)
