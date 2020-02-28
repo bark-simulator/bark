@@ -223,18 +223,20 @@ class BaseViewer(Viewer):
                 color_face = self.color_eval_agents_face
                 alpha = self.alpha_eval_agent
                 try:
-                  color = tuple(
+                  color_line = tuple(
                     self.parameters["Scenario"]["ColorMap"][str(agent_id), "color", [1., 0., 0.]])
+                  color_face = color_line
                 except:
                   pass
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                  color = self.getColorFromMap(float(i) / float(num_agents))
+                  color_line = self.getColorFromMap(float(i) / float(num_agents))
+                  color_line = color_face
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
-            self.drawAgent(agent, color, alpha, color_face)
+            self.drawAgent(agent, color_line, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
           self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
