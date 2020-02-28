@@ -99,6 +99,10 @@ class Agent : public Object {
     goal_definition_ = goal_definition;
   }
 
+  void SetStateInputHistory(const StateActionHistory& history) {
+    history_ = history;
+  }
+
   bool GenerateRoadCorridor(const MapInterfacePtr& map_interface);
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
