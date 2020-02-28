@@ -98,6 +98,7 @@ void python_agent(py::module m) {
           nullptr,
           PythonToGoalDefinition(t[9].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
+        agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
         return agent;
       }));
 

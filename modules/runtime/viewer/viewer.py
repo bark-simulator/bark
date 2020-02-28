@@ -155,7 +155,7 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
 
-    def drawHistory(self, agent, color):
+    def drawHistory(self, agent, color, alpha, facecolor):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             history = agent.history
@@ -170,19 +170,19 @@ class BaseViewer(Viewer):
                 transformed_polygon = shape.Transform(pose)
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
-                self.drawPolygon2d(transformed_polygon, color, alpha) # fade to 0.2 after 10 steps
+                self.drawPolygon2d(transformed_polygon, color, alpha, facecolor) # fade to 0.2 after 10 steps
     
-    def drawGoalDefinition(self, goal_definition, color="blue"):
+    def drawGoalDefinition(self, goal_definition, color, alpha, facecolor):
         if isinstance(goal_definition, GoalDefinitionPolygon):
-            self.drawPolygon2d(goal_definition.goal_shape, color, alpha=0.1)
+            self.drawPolygon2d(goal_definition.goal_shape, color, alpha, facecolor)
         elif isinstance(goal_definition, GoalDefinitionStateLimits):
-            self.drawPolygon2d(goal_definition.xy_limits, color, alpha=0.1)
+            self.drawPolygon2d(goal_definition.xy_limits, color, alpha, facecolor)
         elif isinstance(goal_definition, GoalDefinitionStateLimitsFrenet):
-            self.drawPolygon2d(goal_definition.goal_shape, color, alpha=0.1)
+            self.drawPolygon2d(goal_definition.goal_shape, color, alpha, facecolor)
         elif isinstance(goal_definition, GoalDefinitionSequential):
             prev_center = np.array([])
             for idx, goal_def in enumerate(goal_definition.sequential_goals):
-                self.drawGoalDefinition(goal_def, color=color)
+                self.drawGoalDefinition(goal_def, color, alpha, facecolor)
                 goal_pos = None
                 if isinstance(goal_def, GoalDefinitionPolygon):
                     goal_pos = goal_def.goal_shape.center
@@ -206,13 +206,10 @@ class BaseViewer(Viewer):
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
                     agent_id == eval_agent_ids[0]:
-                color = self.eval_goal_color
-                try:
-                  color = tuple(
-                    self.parameters["Scenario"]["ColorMap"][str(agent_id), "color", [1., 0., 0.]])
-                except:
-                  pass
-                self.drawGoalDefinition(agent.goal_definition, color)
+                color_line = self.color_eval_agents_line
+                color_face = self.color_eval_agents_face
+                alpha = self.alpha_eval_agent
+                self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
@@ -222,12 +219,6 @@ class BaseViewer(Viewer):
                 color_line = self.color_eval_agents_line
                 color_face = self.color_eval_agents_face
                 alpha = self.alpha_eval_agent
-                try:
-                  color_line = tuple(
-                    self.parameters["Scenario"]["ColorMap"][str(agent_id), "color", [1., 0., 0.]])
-                  color_face = color_line
-                except:
-                  pass
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
@@ -237,6 +228,8 @@ class BaseViewer(Viewer):
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
             self.drawAgent(agent, color_line, alpha, color_face)
+            if self.drawHistory:
+                self.drawHistory(agent, color_line, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
           self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
