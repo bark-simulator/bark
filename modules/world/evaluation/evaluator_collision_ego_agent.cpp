@@ -57,7 +57,7 @@ EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
     ego_position, num_agents);
 
   for (const auto& agent : nearby_agents) {
-    if (this->agent_id_ != agent.second->GetAgentId()) {
+    if (ego_agent->GetAgentId() != agent.second->GetAgentId()) {
       const Polygon& agent_polygon =
         agent.second->GetPolygonFromState(agent.second->GetCurrentState());
       if ( Collide(ego_polygon, agent_polygon) ) {

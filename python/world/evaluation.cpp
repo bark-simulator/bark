@@ -29,6 +29,7 @@ void python_evaluation(py::module m) {
       std::shared_ptr<EvaluatorGoalReached> >(m, "EvaluatorGoalReached")
       .def(py::init<>())
       .def(py::init<const AgentId&>())
+      .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorGoalReached";
       });
@@ -51,6 +52,7 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator,
     std::shared_ptr<EvaluatorCollisionEgoAgent>>(m, "EvaluatorCollisionEgoAgent")  // NOLINT
     .def(py::init<const AgentId&>())
+    .def(py::init<>())
     .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
       return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
     });

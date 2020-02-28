@@ -20,7 +20,7 @@ namespace evaluation {
 class EvaluatorCollisionEgoAgent : public BaseEvaluator {
  public:
   EvaluatorCollisionEgoAgent() :
-    agent_id_(std::numeric_limits<AgentId>()) {}
+    agent_id_(std::numeric_limits<AgentId>::max()) {}
   explicit EvaluatorCollisionEgoAgent(const AgentId& agent_id) :
     agent_id_(agent_id) {}
   virtual ~EvaluatorCollisionEgoAgent() { }
