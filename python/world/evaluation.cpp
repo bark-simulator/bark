@@ -37,8 +37,8 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorCollisionAgents, BaseEvaluator,
     std::shared_ptr<EvaluatorCollisionAgents> >(m, "EvaluatorCollisionAgents")
     .def(py::init<>())
-    .def("__repr__", [](const EvaluatorGoalReached &g) {
-      return "bark.world.evaluation.EvaluatorGoalReached";
+    .def("__repr__", [](const EvaluatorCollisionAgents &g) {
+      return "bark.world.evaluation.EvaluatorCollisionAgents";
     });
 
   py::class_<EvaluatorDrivableArea, BaseEvaluator,
