@@ -120,14 +120,16 @@ class BenchmarkRunner:
                     benchmark_configs.append(benchmark_config)
       return benchmark_configs
 
-    def run(self):
+    def run(self, viewer = None, maintain_history = False):
       results = []
+      histories = {}
       for idx, bmark_conf in enumerate(self.benchmark_configs):
         self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
             idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
-        result_dict, _ = self._run_benchmark_config(copy.deepcopy(bmark_conf))
+        result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer, maintain_history)
         results.append(result_dict)
+        histories[bmark_conf.config_idx] = scenario_history
         if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
           self._log_eval_average(results)
       return BenchmarkResult(results, self.benchmark_configs)
@@ -150,7 +152,8 @@ class BenchmarkRunner:
             self.logger.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
                                                         benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
-            return {"scen_set": benchmark_config.scenario_set_name,
+            return {"config_idx": benchmark_config.config_idx,
+              "scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
               "step": step,
               "behavior" : benchmark_config.behavior_name,
@@ -195,7 +198,8 @@ class BenchmarkRunner:
                self._append_to_scenario_history(scenario_history, world, scenario)
             step += 1
 
-        dct = {"scen_set": benchmark_config.scenario_set_name,
+        dct = {"config_idx": benchmark_config.config_idx,
+              "scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
               "step": step,
               "behavior" : benchmark_config.behavior_name,
