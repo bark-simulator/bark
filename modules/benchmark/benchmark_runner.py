@@ -51,7 +51,7 @@ class BenchmarkResult:
 
   def get_benchmark_config(self, config_idx):
       return BenchmarkResult.find_benchmark_config(
-                    self.benchmark_configs, config_idx)
+                    self.__benchmark_configs, config_idx)
 
   def get_history(self, config_idx):
       return self.__histories[config_idx]
