@@ -80,6 +80,10 @@ class DatabaseRunnerTests(unittest.TestCase):
               use_world_bounds=True)
         rst, _ = benchmark_runner.run_benchmark_config(10, viewer=viewer)
 
+
+        rst = benchmark_runner.run(maintain_history=True)
+        self.assertEqual(len(rst.get_histories()), 20)
+
         rst, scenario_history = benchmark_runner.run_benchmark_config(11, viewer=None, maintain_history=True)
         print(scenario_history)
         viewer = MPViewer(
