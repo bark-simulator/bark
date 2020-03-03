@@ -16,3 +16,18 @@ py_test(
       ],
 )
 
+py_test(
+  name = "py_benchmark_analyzer_tests",
+  srcs = ["py_benchmark_analyzer_tests.py"],
+  data = ["//python:bark.so",
+          ],
+  imports = ['../python/'],
+  deps = [
+      "//modules/benchmark:benchmark_runner",
+      "//modules/benchmark:benchmark_analyzer",
+      "//modules/runtime/viewer:matplotlib_viewer",
+      "//modules/runtime/commons:parameters",
+      ],
+)
+
+
