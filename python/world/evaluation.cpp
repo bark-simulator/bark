@@ -19,12 +19,17 @@ void python_evaluation(py::module m) {
   py::class_<BaseEvaluator,
              PyBaseEvaluator,
              EvaluatorPtr>(m, "BaseEvaluator")
-      .def(py::init<>());
+      .def(py::init<>())
+      .def("Evaluate",
+        py::overload_cast<const World&>(&BaseEvaluator::Evaluate))
+      .def("Evaluate",
+        py::overload_cast<const ObservedWorld&>(&BaseEvaluator::Evaluate));
 
   py::class_<EvaluatorGoalReached, BaseEvaluator,
       std::shared_ptr<EvaluatorGoalReached> >(m, "EvaluatorGoalReached")
       .def(py::init<>())
       .def(py::init<const AgentId&>())
+      .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorGoalReached";
       });
@@ -32,8 +37,8 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorCollisionAgents, BaseEvaluator,
     std::shared_ptr<EvaluatorCollisionAgents> >(m, "EvaluatorCollisionAgents")
     .def(py::init<>())
-    .def("__repr__", [](const EvaluatorGoalReached &g) {
-      return "bark.world.evaluation.EvaluatorGoalReached";
+    .def("__repr__", [](const EvaluatorCollisionAgents &g) {
+      return "bark.world.evaluation.EvaluatorCollisionAgents";
     });
 
   py::class_<EvaluatorDrivableArea, BaseEvaluator,
@@ -47,6 +52,7 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator,
     std::shared_ptr<EvaluatorCollisionEgoAgent>>(m, "EvaluatorCollisionEgoAgent")  // NOLINT
     .def(py::init<const AgentId&>())
+    .def(py::init<>())
     .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
       return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
     });

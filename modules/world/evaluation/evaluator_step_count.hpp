@@ -9,11 +9,13 @@
 #include <memory>
 
 #include "modules/world/evaluation/base_evaluator.hpp"
+#include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace world {
 
 class World;
+class ObservedWorld;
 namespace evaluation {
 
 class EvaluatorStepCount : public BaseEvaluator {
@@ -22,6 +24,11 @@ class EvaluatorStepCount : public BaseEvaluator {
   virtual ~EvaluatorStepCount() { }
 
   EvaluationReturn Evaluate(const world::World& world) {
+    this->steps_++;
+    return this->steps_;
+  }
+
+  EvaluationReturn Evaluate(const world::ObservedWorld& world) {
     this->steps_++;
     return this->steps_;
   }
