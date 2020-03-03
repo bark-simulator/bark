@@ -35,6 +35,10 @@ class DynamicBehaviorModel : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  DynamicModelPtr GetDynamicModel() const {
+    return dynamic_model_;
+  }
+  
  private:
   DynamicModelPtr dynamic_model_;
 
