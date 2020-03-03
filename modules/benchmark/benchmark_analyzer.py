@@ -13,12 +13,9 @@ class BenchmarkAnalyzer:
   # accepts a dict with lambda functions specifying evaluation criteria which must be fullfilled
   # e.g. evaluation_criteria={"success": lambda x: x, "collision" : lambda x : not x}
   # returns a list of config indices fullfilling these criteria
-  def find_configs(self, evaluation_criteria, behavior=None):
+  def find_configs(self, criteria):
       df_satisfied =  self._data_frame.copy()
-      if behavior:
-        df_satisfied = df_satisfied.loc[df_satisfied["behavior"] == behavior]
-
-      for eval_crit, function in evaluation_criteria.items():
+      for eval_crit, function in criteria.items():
           df_satisfied = df_satisfied.loc[df_satisfied[eval_crit].apply(function)]
       return list(df_satisfied["config_idx"].values)
 
