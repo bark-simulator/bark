@@ -126,7 +126,7 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=1):
+    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=10):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
