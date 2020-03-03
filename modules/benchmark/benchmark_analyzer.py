@@ -23,7 +23,7 @@ class BenchmarkAnalyzer:
       configs_found.sort()
       return configs_found
 
-  def visualize(self, criteria, viewer, real_time_factor=1.0):
+  def visualize(self, criteria, viewer, real_time_factor=1.0, display_info=True, **kwargs):
       configs_found = self.find_configs(criteria)
       for config_idx in configs_found:
           benchmark_config = self._benchmark_result.get_benchmark_config(config_idx)
@@ -42,9 +42,14 @@ class BenchmarkAnalyzer:
           for scenario in histories:
               world = scenario.get_world_state()
               world.time = world_time
+              if display_info:
+                  info_text_list = benchmark_config.get_info_string_list()
+                  info_text = " | ".join(info_text_list)
+                  viewer.drawText(text=info_text, position=(0.5,1.05), **kwargs)
               viewer.drawWorld(world = world,
                           eval_agent_ids = benchmark_config.scenario.eval_agent_ids, \
-                          scenario_idx = benchmark_config.scenario_idx)
+                          scenario_idx = None, debug_text=False)
+
               viewer.show()
               world_time += sim_time
               if real_time_factor:

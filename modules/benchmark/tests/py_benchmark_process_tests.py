@@ -7,6 +7,8 @@ import unittest
 import os
 import ray
 
+import matplotlib.pyplot as plt
+
 from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
 from modules.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, BenchmarkResult
@@ -47,14 +49,19 @@ class DatabaseRunnerTests(unittest.TestCase):
         result_loaded = BenchmarkResult.load(os.path.join("./benchmark_results.pickle"))
 
         params2 = ParameterServer()
+
+        fig = plt.figure(figsize=[10, 10])
         viewer = MPViewer(
               params=params2,
-              use_world_bounds=True)
+              center=[5112, 5165],
+              y_length = 100,
+              enforce_y_length=True,
+              axis = fig.gca())
         analyzer = BenchmarkAnalyzer(benchmark_result=result_loaded)
         viewer.show(block=False)
 
         analyzer.visualize(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x}, \
-                          viewer = viewer, real_time_factor=10)
+                          viewer = viewer, real_time_factor=10, fontsize=12)
 
 
 if __name__ == '__main__':

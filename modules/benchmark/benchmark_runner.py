@@ -27,6 +27,13 @@ class BenchmarkConfig:
     self.scenario_idx = scenario_idx
     self.scenario_set_name = scenario_set_name
 
+  def get_info_string_list(self):
+    info_strings = ["ConfigIdx: {}".format(self.config_idx),
+                    "Behavior: {}".format(self.behavior_name),
+                    "ScenarioSet: {}".format(self.scenario_set_name),
+                    "ScenarioIdx: {}".format(self.scenario_idx)]
+    return info_strings
+
 # result of benchmark run
 class BenchmarkResult:
   def __init__(self, result_dict, benchmark_configs, histories=None):
