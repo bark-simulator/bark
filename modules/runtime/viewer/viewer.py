@@ -126,7 +126,7 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha, line_style=None):
+    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=1):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
@@ -255,7 +255,7 @@ class BaseViewer(Viewer):
       # center line is type none and is drawn as broken
       if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none: 
         dashed = True
-      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
+      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=2)
 
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
