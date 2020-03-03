@@ -90,12 +90,9 @@ class BaseViewer(Viewer):
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
 
-            # center range on agents coordinates
-            self.dynamic_world_x_range[0] = pose[0] + self.world_x_range[0]
-            self.dynamic_world_x_range[1] = pose[0] + self.world_x_range[1]
+            center = [pose[0],  pose[1]]
+            self._update_world_dynamic_range(center)
 
-            self.dynamic_world_y_range[0] = pose[1] + self.world_y_range[0]
-            self.dynamic_world_y_range[1] = pose[1] + self.world_y_range[1]
         else:
           if self.use_world_bounds:
               bb = world.bounding_box
@@ -113,16 +110,19 @@ class BaseViewer(Viewer):
                   self.dynamic_world_x_range[0] -= (diffy - diffx)/2
                   self.dynamic_world_x_range[1] += (diffy - diffx)/2
           else:
-            aspect_ratio = self.get_aspect_ratio()
-            if self.enforce_x_length:
-              self.dynamic_world_x_range = [-self.x_length/2 + self.center[0], self.x_length/2 + self.center[0]]
-              self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + self.center[1]]
-              logger.info("Overwriting world y range with valid range.")
+              center = self.center
+              self._update_world_dynamic_range(center)
 
-            if self.enforce_y_length:
-              self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + self.center[0]]
-              self.dynamic_world_y_range = [-self.y_length/2 + self.center[1], self.y_length/2 + self.center[1]]
-              logger.info("Overwriting world x range with valid range.")
+
+    def _update_world_dynamic_range(self, center):
+        aspect_ratio = self.get_aspect_ratio()
+        if self.enforce_x_length:
+            self.dynamic_world_x_range = [-self.x_length/2 + center[0], self.x_length/2 + center[0]]
+            self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + center[1]]
+
+        if self.enforce_y_length:
+            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + center[0]]
+            self.dynamic_world_y_range = [-self.y_length/2 + center[1], self.y_length/2 + center[1]]
 
     def drawPoint2d(self, point2d, color, alpha):
         pass
