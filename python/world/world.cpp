@@ -50,7 +50,7 @@ void python_world(py::module m) {
     .def("Evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::GetAgents)
     .def_property_readonly("objects", &World::GetObjects)
-    .def_property_readonly("time", &World::GetWorldTime)
+    .def_property("time", &World::GetWorldTime, &World::SetWorldTime)
     .def_property_readonly("bounding_box", &World::BoundingBox)
     .def("GetAgent", &World::GetAgent)
     .def_property("map", &World::GetMap, &World::SetMap)
