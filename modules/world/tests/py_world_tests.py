@@ -118,7 +118,7 @@ class WorldTests(unittest.TestCase):
                           use_world_bounds=True)
 
         # Draw map
-        viewer.drawGoalDefinition(goal_polygon)
+        viewer.drawGoalDefinition(goal_polygon, color=(1,0,0), alpha=0.5, facecolor= (1,0,0))
         viewer.drawWorld(world)
         viewer.drawRoadCorridor(agent.road_corridor)
         viewer.show(block=False)

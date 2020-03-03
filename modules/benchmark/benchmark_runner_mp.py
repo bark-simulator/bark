@@ -67,8 +67,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                                                     logger_name="BenchmarkingActor{}".format(i),
                                                     log_eval_avg_every=log_eval_avg_every) for i in range(num_cpus) ]
 
-    def run(self):
-        results_tmp = ray.get([actor.run.remote() for actor in self.actors])
+    def run(self, viewer = None, maintain_history = False):
+        results_tmp = ray.get([actor.run.remote(viewer, maintain_history) for actor in self.actors])
         result_dict = []
         benchmark_configs = []
         for result_tmp in results_tmp:
