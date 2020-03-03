@@ -104,5 +104,14 @@ ObservedWorldPtr ObservedWorld::Predict(
   return next_world;
 }
 
+EvaluationMap ObservedWorld::Evaluate() const {
+  EvaluationMap evaluation_results;
+  for (auto const& evaluator : World::GetEvaluators()) {
+    evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this);
+  }
+  return evaluation_results;
+}
+
+
 }  // namespace world
 }  // namespace modules

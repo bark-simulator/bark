@@ -11,10 +11,12 @@
 
 #include "modules/world/evaluation/base_evaluator.hpp"
 #include "modules/world/objects/agent.hpp"
+#include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace world {
 class World;
+class ObservedWorld;
 namespace evaluation {
 
 class EvaluatorGoalReached : public BaseEvaluator {
@@ -43,6 +45,16 @@ class EvaluatorGoalReached : public BaseEvaluator {
       } else {
         return false;
       }
+    }
+  }
+
+  virtual EvaluationReturn Evaluate(
+    const world::ObservedWorld& observed_world) {
+    const auto agent_ptr = observed_world.GetEgoAgent();
+    if (agent_ptr) {
+      return agent_ptr->AtGoal();
+    } else {
+      return false;
     }
   }
 
