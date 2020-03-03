@@ -12,6 +12,7 @@ import inspect
 import bark.world.evaluation
 logging.getLogger().setLevel(logging.INFO)
 
+from modules.runtime.scenario.scenario import Scenario
 from modules.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkResult, BenchmarkConfig
 
 # implement a parallelized version of benchmark running based on ray
@@ -22,6 +23,12 @@ def serialize_benchmark_config(bc):
 
 def deserialize_benchmark_config(bc):
   return pickle.loads(bc)
+
+def serialize_scenario(sc):
+  return pickle.dumps(sc)
+
+def deserialize_scenario(sc):
+  return pickle.loads(sc)
 
 
 # actor class running on a single core
@@ -58,8 +65,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
         ray.register_custom_serializer(
-          BenchmarkConfig, serializer=serialize_benchmark_config,
-          deserializer=deserialize_benchmark_config)
+          Scenario, serializer=serialize_scenario,
+          deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.benchmark_configs[i::num_cpus] for i in range(0, num_cpus)]
         self.actors = [_BenchmarkRunnerActor.remote(evaluators=evaluators,
                                                     terminal_when=terminal_when,
@@ -71,8 +78,12 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history) for actor in self.actors])
         result_dict = []
         benchmark_configs = []
+        histories = {}
         for result_tmp in results_tmp:
             result_dict.extend(result_tmp.get_result_dict())
             benchmark_configs.extend(result_tmp.get_benchmark_configs())
-        ray.shutdown()
-        return BenchmarkResult(result_dict, benchmark_configs)
+            histories.update(result_tmp.get_histories())
+        return BenchmarkResult(result_dict, benchmark_configs, histories=histories)
+
+    def __del__(self):
+       ray.shutdown()
