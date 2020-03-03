@@ -29,10 +29,11 @@ class BenchmarkConfig:
 
 # result of benchmark run
 class BenchmarkResult:
-  def __init__(self, result_dict, benchmark_configs, **kwargs):
+  def __init__(self, result_dict, benchmark_configs, histories=None):
     self.__result_dict = result_dict
     self.__benchmark_configs = benchmark_configs
     self.__data_frame = None
+    self.__histories = histories or []
 
   def get_data_frame(self):
       if not isinstance(self.__data_frame, pd.DataFrame):
@@ -45,9 +46,15 @@ class BenchmarkResult:
   def get_benchmark_configs(self):
       return self.__benchmark_configs
 
+  def get_histories(self):
+      return self.__histories
+
   def get_benchmark_config(self, config_idx):
       return BenchmarkResult.find_benchmark_config(
                     self.benchmark_configs, config_idx)
+
+  def get_history(self, config_idx):
+      return self.__histories[config_idx]
 
   @staticmethod
   def find_benchmark_config(benchmark_configs, config_idx):
@@ -132,7 +139,7 @@ class BenchmarkRunner:
         histories[bmark_conf.config_idx] = scenario_history
         if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
           self._log_eval_average(results)
-      return BenchmarkResult(results, self.benchmark_configs)
+      return BenchmarkResult(results, self.benchmark_configs, histories = histories)
 
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
