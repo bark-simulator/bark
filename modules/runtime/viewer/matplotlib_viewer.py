@@ -43,12 +43,12 @@ class MPViewer(BaseViewer):
             color=self.getColor(color),
             alpha=alpha)
 
-    def drawPolygon2d(self, polygon, color, alpha):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
         points = polygon.ToArray()
         polygon_draw = matplotlib.patches.Polygon(
             points,
             True,
-            facecolor=self.getColor(color),
+            facecolor=self.getColor(facecolor),
             edgecolor=self.getColor(color),
             alpha=alpha)
         t_start = self.axes.transData
