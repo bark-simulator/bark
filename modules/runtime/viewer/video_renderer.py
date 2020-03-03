@@ -42,6 +42,9 @@ class VideoRenderer(BaseViewer):
                 self._renderWorld(executed_world, eval_agent_ids, scenario_idx)
                 world_time = world_time + self.world_step_time/self.render_intermediate_steps
 
+    def drawText(self, **kwargs):
+        self.renderer.drawText(**kwargs)
+
     def _renderWorld(self, world, eval_agent_ids=None, scenario_idx=None, debug_text=False):
         image_path = os.path.join(self.video_frame_dir, "{}.png".format(self.frame_count))
         self.renderer.drawWorld(world=world, eval_agent_ids=eval_agent_ids,
