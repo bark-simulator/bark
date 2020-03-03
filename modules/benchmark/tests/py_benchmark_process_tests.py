@@ -54,7 +54,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         viewer = MPViewer(
               params=params2,
               center=[5112, 5165],
-              y_length = 100,
+              y_length = 120,
               enforce_y_length=True,
               axis = fig.gca())
         analyzer = BenchmarkAnalyzer(benchmark_result=result_loaded)
