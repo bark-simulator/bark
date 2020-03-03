@@ -11,7 +11,8 @@ from modules.runtime.commons.parameters import ParameterServer
 from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
 from configurations.bark_agent import BARKMLBehaviorModel
-from configurations.highway.configuration import HighwayConfiguration
+from configurations.highway.configuration_lib import HighwayConfiguration
+
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from load.benchmark_database import BenchmarkDatabase
 from modules.benchmark.benchmark_runner import BenchmarkRunner
@@ -38,7 +39,7 @@ ml_config = HighwayConfiguration(params)
 ml_behavior = BARKMLBehaviorModel(configuration=ml_config)
 
 scenario_generator = ml_config._scenario_generator
-viewer = MPViewer(params=params, x_range=[5060, 5160], y_range=[5070, 5150])
+viewer = MPViewer(params=params, use_world_bounds=True)
 
 env = Runtime(0.2,
               viewer,
@@ -49,7 +50,7 @@ env.reset()
 env._world.agents[env._scenario._eval_agent_ids[0]].behavior_model = ml_behavior
 
 print(ml_behavior)
-for _ in range(0, 5):
+for _ in range(0, 50):
   env.step()
 
 # to find database files
@@ -63,14 +64,15 @@ evaluators = {"success" : "EvaluatorGoalReached",
               "collision" : "EvaluatorCollisionEgoAgent",
               "max_steps": "EvaluatorStepCount"}
 terminal_when = {"collision" :lambda x: x,
-                 "max_steps": lambda x : x>2}
+                 "max_steps": lambda x : x>31}
 behaviors_tested = {"bark_ml": ml_behavior }
                                 
 
 benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                    evaluators=evaluators,
                                    terminal_when=terminal_when,
-                                   behaviors=behaviors_tested)
+                                   behaviors=behaviors_tested,
+                                   log_eval_avg_every=1)
 
 result = benchmark_runner.run()
 print(result)

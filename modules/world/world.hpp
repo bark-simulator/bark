@@ -113,7 +113,7 @@ class World : public commons::BaseType {
     ClearEvaluators();
   }
 
-  EvaluationMap Evaluate() const;
+  virtual EvaluationMap Evaluate() const;
 
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
