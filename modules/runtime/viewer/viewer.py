@@ -92,7 +92,6 @@ class BaseViewer(Viewer):
 
             center = [pose[0],  pose[1]]
             self._update_world_dynamic_range(center)
-
         else:
           if self.use_world_bounds:
               bb = world.bounding_box
@@ -118,10 +117,10 @@ class BaseViewer(Viewer):
         aspect_ratio = self.get_aspect_ratio()
         if self.enforce_x_length:
             self.dynamic_world_x_range = [-self.x_length/2 + center[0], self.x_length/2 + center[0]]
-            self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + center[1]]
+            self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + center[1], self.x_length/2/aspect_ratio + center[1]]
 
         if self.enforce_y_length:
-            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + center[0]]
+            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + center[0], self.y_length/2*aspect_ratio + center[0]]
             self.dynamic_world_y_range = [-self.y_length/2 + center[1], self.y_length/2 + center[1]]
 
     def drawPoint2d(self, point2d, color, alpha):
