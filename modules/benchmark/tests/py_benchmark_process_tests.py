@@ -57,13 +57,31 @@ class DatabaseRunnerTests(unittest.TestCase):
               y_length = 120,
               enforce_y_length=True,
               axis = fig.gca())
+
         analyzer = BenchmarkAnalyzer(benchmark_result=result_loaded)
-        viewer.show(block=False)
-
         configs = analyzer.find_configs(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x})
+        configs_const = analyzer.find_configs(criteria={"behavior": lambda x: x=="Const", "success": lambda x : not x})
 
-        analyzer.visualize(configs_idx_list = configs,
-                          viewer = viewer, real_time_factor=10, fontsize=12)
+        #analyzer.visualize(configs_idx_list = configs,
+                         # viewer = viewer, real_time_factor=10, fontsize=12)
+        plt.close(fig)
+
+        
+        fig, (ax1, ax2) = plt.subplots(1, 2)
+        viewer1 = MPViewer(
+              params=params2,
+              center=[5112, 5165],
+              y_length = 120,
+              enforce_y_length=True,
+              axis = ax1)
+        viewer2 = MPViewer(
+              params=params2,
+              center=[5112, 5165],
+              y_length = 120,
+              enforce_y_length=True,
+              axis = ax2)
+        analyzer.visualize(configs_idx_list = [configs, configs_const],
+                          viewer = [viewer1, viewer2], viewer_names=["IDM", "ConstVelocity"], real_time_factor=1, fontsize=12)
 
 
 

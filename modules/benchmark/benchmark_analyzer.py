@@ -103,8 +103,9 @@ class BenchmarkAnalyzer:
                   viewer.drawWorld(world = world,
                               eval_agent_ids = scenario.eval_agent_ids, \
                               scenario_idx = None, debug_text=False)
-                  viewer.show()
-                  world_time += sim_time
-                  if real_time_factor:
-                      time.sleep(step_time)
-                  viewer.clear()
+                  viewer_list[viewer_idx].show()
+              world_time += sim_time
+              if real_time_factor:
+                  time.sleep(step_time)
+              for viewer_idx in range(0, len(viewer_list)):
+                  viewer_list[viewer_idx].clear()
