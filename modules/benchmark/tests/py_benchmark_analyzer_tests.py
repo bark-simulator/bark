@@ -41,6 +41,8 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
         configs_found = analyzer.find_configs({"collision" : lambda x : x, "behavior" : lambda x : x=="test2"})
         self.assertEqual(configs_found, [])
 
+        configs_found = analyzer.find_configs(scenario_idx_list=[12, 3 , 5])
+        self.assertEqual(configs_found, [2, 3, 11])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x}, scenario_idx_list=[12, 3 , 5])
         self.assertEqual(configs_found, [2, 3])
