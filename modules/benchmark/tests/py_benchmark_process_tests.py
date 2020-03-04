@@ -60,11 +60,11 @@ class DatabaseRunnerTests(unittest.TestCase):
         analyzer = BenchmarkAnalyzer(benchmark_result=result_loaded)
         viewer.show(block=False)
 
-        analyzer.visualize(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x}, \
-                          viewer = viewer, num_configs=2, real_time_factor=10, fontsize=12)
+        configs = analyzer.find_configs(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x})
 
-        analyzer.visualize(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x}, \
-            viewer = viewer, num_configs=2, real_time_factor=10, fontsize=12)
+        analyzer.visualize(configs_idx_list = configs,
+                          viewer = viewer, real_time_factor=10, fontsize=12)
+
 
 
 if __name__ == '__main__':

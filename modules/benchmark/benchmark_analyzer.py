@@ -13,12 +13,9 @@ class BenchmarkAnalyzer:
       self._benchmark_result = benchmark_result
       self._data_frame = benchmark_result.get_data_frame()
 
-  def get_scenario_ids(self, config_ids):
-      scenario_idxs = []
-      for config_id in config_ids:
-          bc = self._benchmark_resultget_benchmark_config(config_idx)
-          scenario_idxs.append(bc.scenario_idx)
-      return scenario_idxs
+  def get_scenario_ids(self, config_idx_list):
+      scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]["scen_idx"]
+      return list(scenario_idxs.values)
 
   # accepts a dict with lambda functions specifying evaluation criteria which must be fullfilled
   # e.g. evaluation_criteria={"success": lambda x: x, "collision" : lambda x : not x}
@@ -38,12 +35,8 @@ class BenchmarkAnalyzer:
       configs_found.sort()
       return configs_found
 
-  def visualize(self, viewer, real_time_factor=1.0, criteria=None, num_configs=None, configs_found=None, display_info=True, **kwargs):
-      if not configs_found:
-        configs_found = self.find_configs(criteria)
-      if num_configs:
-        configs_found = random.sample(configs_found, num_configs)
-      for config_idx in configs_found:
+  def visualize(self, configs_idx_list, viewer, real_time_factor=1.0, display_info=True, **kwargs):
+      for config_idx in configs_idx_list:
           benchmark_config = self._benchmark_result.get_benchmark_config(config_idx)
           histories = self._benchmark_result.get_history(config_idx)
           if len(histories) == 0:
