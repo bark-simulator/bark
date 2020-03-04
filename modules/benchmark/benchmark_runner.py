@@ -27,6 +27,13 @@ class BenchmarkConfig:
     self.scenario_idx = scenario_idx
     self.scenario_set_name = scenario_set_name
 
+  def get_info_string_list(self):
+    info_strings = ["ConfigIdx: {}".format(self.config_idx),
+                    "Behavior: {}".format(self.behavior_name),
+                    "ScenarioSet: {}".format(self.scenario_set_name),
+                    "ScenarioIdx: {}".format(self.scenario_idx)]
+    return info_strings
+
 # result of benchmark run
 class BenchmarkResult:
   def __init__(self, result_dict, benchmark_configs, histories=None):
@@ -51,7 +58,7 @@ class BenchmarkResult:
 
   def get_benchmark_config(self, config_idx):
       return BenchmarkResult.find_benchmark_config(
-                    self.benchmark_configs, config_idx)
+                    self.__benchmark_configs, config_idx)
 
   def get_history(self, config_idx):
       return self.__histories[config_idx]
@@ -169,7 +176,8 @@ class BenchmarkRunner:
         # if behavior is not None (None specifies that also the default model can be evalauted)
         if behavior:
           world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
-
+        if maintain_history:
+          self._append_to_scenario_history(scenario_history, world, scenario)
         self._reset_evaluators(world, scenario._eval_agent_ids)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
         terminal = False
