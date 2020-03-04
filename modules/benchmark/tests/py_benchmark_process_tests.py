@@ -61,7 +61,10 @@ class DatabaseRunnerTests(unittest.TestCase):
         viewer.show(block=False)
 
         analyzer.visualize(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x}, \
-                          viewer = viewer, real_time_factor=10, fontsize=12)
+                          viewer = viewer, num_configs=2, real_time_factor=10, fontsize=12)
+
+        analyzer.visualize(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x}, \
+            viewer = viewer, num_configs=2, real_time_factor=10, fontsize=12)
 
 
 if __name__ == '__main__':
