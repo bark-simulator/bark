@@ -80,7 +80,7 @@ class DatabaseRunnerTests(unittest.TestCase):
               y_length = 120,
               enforce_y_length=True,
               axis = ax2)
-        analyzer.visualize(configs_idx_list = [configs, configs_const],
+        analyzer.visualize(configs_idx_list = [configs[1:3], configs_const[1:3]],
                           viewer = [viewer1, viewer2], viewer_names=["IDM", "ConstVelocity"], real_time_factor=1, fontsize=12)
 
 

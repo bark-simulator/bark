@@ -222,7 +222,7 @@ class BaseViewer(Viewer):
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
                   color_line = self.getColorFromMap(float(i) / float(num_agents))
-                  color_line = color_face
+                  color_face = self.getColorFromMap(float(i) / float(num_agents))
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
