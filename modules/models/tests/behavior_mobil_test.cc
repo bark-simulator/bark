@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
@@ -44,7 +44,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   auto map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   Polygon car_polygon = CarRectangle();
 
   Polygon polygon(
