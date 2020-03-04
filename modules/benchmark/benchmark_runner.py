@@ -176,7 +176,8 @@ class BenchmarkRunner:
         # if behavior is not None (None specifies that also the default model can be evalauted)
         if behavior:
           world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
-
+        if maintain_history:
+          self._append_to_scenario_history(scenario_history, world, scenario)
         self._reset_evaluators(world, scenario._eval_agent_ids)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
         terminal = False

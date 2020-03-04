@@ -10,12 +10,12 @@ from modules.benchmark.benchmark_runner import BenchmarkResult
 
 def dummy_benchmark_results():
     return [
-      {"config_idx": 1, "collision":True, "metric1": 23.5, "behavior": "test"},
-      {"config_idx": 2, "collision":False, "metric1": 1, "behavior": "test2"},
-      {"config_idx": 3, "collision":False, "metric1": 23676.5, "behavior": "test1"},
-      {"config_idx": 121, "collision":False, "metric1": 1, "behavior": "test2"},
-      {"config_idx": 11, "collision":True, "metric1": 0.1, "behavior": "test"},
-      {"config_idx": 24, "collision":False, "metric1": 0.1, "behavior": "test1"},
+      {"config_idx": 1, "collision":True, "metric1": 23.5, "behavior": "test", "scen_idx": 10},
+      {"config_idx": 2, "collision":False, "metric1": 1, "behavior": "test2", "scen_idx": 12},
+      {"config_idx": 3, "collision":False, "metric1": 23676.5, "behavior": "test1", "scen_idx": 3},
+      {"config_idx": 121, "collision":False, "metric1": 1, "behavior": "test2", "scen_idx": 4},
+      {"config_idx": 11, "collision":True, "metric1": 0.1, "behavior": "test", "scen_idx": 5},
+      {"config_idx": 24, "collision":False, "metric1": 0.1, "behavior": "test1", "scen_idx": 7},
     ]
 
 class BenchmarkAnalyzerTests(unittest.TestCase):
@@ -27,7 +27,7 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
         self.assertEqual(configs_found, [1, 11])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x})
-        self.assertEqual(configs_found, [2, 3, 121, 24])
+        self.assertEqual(configs_found, [2, 3, 24, 121])
 
         configs_found = analyzer.find_configs({"metric1" : lambda x : x == 0.1})
         self.assertEqual(configs_found, [11, 24])
@@ -40,6 +40,10 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x, "behavior" : lambda x : x=="test2"})
         self.assertEqual(configs_found, [])
+
+
+        configs_found = analyzer.find_configs({"collision" : lambda x : not x}, scenario_idx_list=[12, 3 , 5])
+        self.assertEqual(configs_found, [2, 3])
 
 
 if __name__ == '__main__':
