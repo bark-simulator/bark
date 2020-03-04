@@ -24,8 +24,9 @@ class BenchmarkAnalyzer:
   # returns a list of config indices fullfilling these criteria
   def find_configs(self, criteria=None, scenario_idx_list=None, scenarios_as_in_configs=None):
       df_satisfied =  self._data_frame.copy()
-      for eval_crit, function in criteria.items():
-          df_satisfied = df_satisfied.loc[df_satisfied[eval_crit].apply(function)]
+      if criteria:
+        for eval_crit, function in criteria.items():
+            df_satisfied = df_satisfied.loc[df_satisfied[eval_crit].apply(function)]
       if scenarios_as_in_configs:
         scenario_idx_list = self.get_scenario_ids(scenarios_as_in_configs)
       if scenario_idx_list:
