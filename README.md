@@ -5,9 +5,9 @@
 ![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![NIGHTLY Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY/badge.svg)
 
-# BARK - a tool for **B**ehavior benchm**Ark**ing
+# BARK - a tool for **B**ehavior benchm**ARK**ing
 BARK is a semantic simulation framework for autonomous agents with a special focus on autonomous driving.
-Its behavior model centric design allows for the rapid development, training and benchmarking of various decision-making algorithms.
+Its behavior model-centric design allows for the rapid development, training and benchmarking of various decision-making algorithms.
 Due to its fast, semantic runtime, it is especially suited for computationally expensive tasks, such as reinforcement learning.
 
 
@@ -35,8 +35,8 @@ If you use BARK, please cite us using the following paper:
 Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
 Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/master/docs/source/installation.md).
 
-After the installation, you can explore the examples e.g. by running `source dev_into.sh && bazel run //examples:od8_const_vel_two_agent`.
-This runs the semantic simulation and a matplotlib viewer visualizes the world.
+After the installation, you can explore the examples by e.g. running `source dev_into.sh && bazel run //examples:od8_const_vel_two_agent`.
+
 
 For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
 
