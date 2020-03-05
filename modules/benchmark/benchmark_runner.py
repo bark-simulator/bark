@@ -160,6 +160,7 @@ class BenchmarkRunner:
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
         scenario_history = []
+        step = 0
         try:
             world = scenario.get_world_state()
         except Exception as e:
@@ -180,8 +181,9 @@ class BenchmarkRunner:
           self._append_to_scenario_history(scenario_history, world, scenario)
         self._reset_evaluators(world, scenario._eval_agent_ids)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
+        if not isinstance(step_time, float):
+            step_time = 0.2
         terminal = False
-        step = 0
         terminal_why = None
         while not terminal:
             try:
