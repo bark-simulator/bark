@@ -13,8 +13,6 @@ load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 # -------------------------------------------------
 
-
-
 # ------ Planner UCT ------------------------------
 git_repository(
   name = "planner_uct",
@@ -25,7 +23,13 @@ load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
 # --------------------------------------------------
 
-
+# ------ Planner BARK-ML ---------------------------
+git_repository(
+  name = "bark_ml",
+  branch="master",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+# --------------------------------------------------
 
 # -------- Benchmark Database -----------------------
 git_repository(
