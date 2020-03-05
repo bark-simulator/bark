@@ -20,7 +20,7 @@ class BehaviorIDMLaneTracking : public BehaviorIDMClassic {
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
       : BehaviorIDMClassic(params) {
     crosstrack_error_gain_ = params->GetReal(
-        "CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
+        "BehaviorIDMLaneTracking::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
