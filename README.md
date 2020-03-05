@@ -37,6 +37,9 @@ Then follow the instructions at [How to Install BARK](https://github.com/bark-si
 
 After the installation, you can explore the examples by e.g. running `source dev_into.sh && bazel run //examples:od8_const_vel_two_agent`.
 
+<p align="center">
+<img src="docs/source/example_map.gif" alt="BARK" />
+</p>
 
 For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
 
