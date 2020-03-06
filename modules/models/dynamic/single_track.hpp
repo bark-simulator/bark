@@ -19,11 +19,17 @@ namespace dynamic {
 class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
-      : DynamicModel(params), wheel_base_(2.7), steering_angle_max_(0.2) {
+      : DynamicModel(params),
+        wheel_base_(2.7),
+        steering_angle_max_(0.2),
+        lat_acceleration_max_(4.0) {
     wheel_base_ = params->GetReal("DynamicModel::wheel_base",
-                                  "Wheel base of vehicle.", 2.7);
+                                  "Wheel base of vehicle [m]", 2.7);
     steering_angle_max_ = params->GetReal("DynamicModel::delta_max",
-                                          "Maximum Steering Angle.", 0.2);
+                                          "Maximum Steering Angle [rad]", 0.2);
+    lat_acceleration_max_ =
+        params->GetReal("DynamicModel::lat_acc_max",
+                        "Maximum lateral acceleration [m/s^2]", 4.0);
   }
   virtual ~SingleTrackModel() {}
 
@@ -47,10 +53,12 @@ class SingleTrackModel : public DynamicModel {
 
   double GetWheelBase() const { return wheel_base_; }
   double GetSteeringAngleMax() const { return steering_angle_max_; }
+  double GetLatAccelerationMax() const { return lat_acceleration_max_; }
 
  private:
   double wheel_base_;
   double steering_angle_max_;
+  double lat_acceleration_max_;
 };
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
@@ -81,7 +89,10 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double vel = state(StateDefinition::VEL_POSITION);
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
-  double delta_max = model->GetSteeringAngleMax();
+  double delta_max = std::min(
+      model->GetSteeringAngleMax(),
+      std::abs(std::atan2(
+          model->GetLatAccelerationMax() * model->GetWheelBase(), vel * vel)));
   double clamped_delta = std::min(delta, delta_max);
   clamped_delta = std::max(clamped_delta, -delta_max);
 

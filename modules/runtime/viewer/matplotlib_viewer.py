@@ -33,7 +33,7 @@ class MPViewer(BaseViewer):
             alpha=alpha,
             marker='x')
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1):
         lineStyle_string = '--' if dashed else '-'
         line2d_np = line2d.ToArray()
         self.axes.plot(
@@ -41,7 +41,8 @@ class MPViewer(BaseViewer):
             line2d_np[:, 1], 
             lineStyle=lineStyle_string,
             color=self.getColor(color),
-            alpha=alpha)
+            alpha=alpha,
+            zorder=zorder)
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
         points = polygon.ToArray()
