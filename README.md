@@ -14,10 +14,14 @@ Due to its fast, semantic runtime, it is especially suited for computationally e
 ## BARK Ecosystem
 The BARK ecosystem is composed of multiple components that all share the common goal to develop and benchmark behavior models.
 
-The currently available modules are:
-* [BARK-ML](https://github.com/bark-simulator/bark-ml/): Machine learning library for BARK
-* [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Database with serialized scenarios for benchmarking of behavior models
-* [CARLA-Interface](https://github.com/bark-simulator/carla-interface): Interface with Carla enabling BARK models
+BARK provides two components to develop search-based and machine-learning based behavior models:
+* [BARK-ML](https://github.com/bark-simulator/bark-ml/): Machine learning library for BARK.
+developmentThe currently available modules are
+* [BARK-MCTS](https://github.com/bark-simulator/planner-mcts): Integrates a template-based C++ Monte Carlo Tree Search Library into BARK to support both single- and multi-agent search methods.
+
+
+* [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Provides a framework to integrate multiple BARK scenario sets into a database. The database module supports binary seriliazation of randomly generated scenarios to ensure exact  teproducibility of behavior benchmarks accross systems. 
+* [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
 
 
 ## Paper
