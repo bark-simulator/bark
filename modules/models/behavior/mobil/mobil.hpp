@@ -21,11 +21,12 @@ enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
 enum MobilState { Idle = 0, IsChanging = 1 };
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
-class BehaviorMobil : public BehaviorIDMClassic {
+class BehaviorMobil : public BehaviorModel {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-      : BehaviorIDMClassic(params->AddChild("BehaviorMobil")),
-        mobil_state_(MobilState::Idle) {
+      : BehaviorModel(params),
+    idm_(std::make_shared<BehaviorIDMClassic>(params->AddChild("BehaviorMobil"))),
+    mobil_state_(MobilState::Idle) {
     crosstrack_error_gain_ = params->GetReal("BehaviorMobil::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
     politeness_ = params->GetReal("BehaviorMobil::PolitenessFactor", "Politness factor, suggested [0.2, 0.5]", 0.35f);
 
@@ -59,6 +60,8 @@ class BehaviorMobil : public BehaviorIDMClassic {
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
+  std::shared_ptr<BehaviorIDMClassic> idm_;
+
   MobilState mobil_state_;
 
   double crosstrack_error_gain_;

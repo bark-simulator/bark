@@ -165,7 +165,7 @@ class ParameterServer(Params):
               or isinstance(value,bool):
               return True
           # list float
-          elif all(isinstance(el, float) for el in value):
+          elif isinstance(value, list) and all(isinstance(el, float) for el in value):
             return True
           # list list float
           elif isinstance(value, list):
