@@ -24,9 +24,13 @@ The currently available modules are:
 If you use BARK, please cite us using the following paper:
 
 ```
-@inproceedings{BARK,
-  title = {BARK: Open Behavior Benchmarking in Multi-Agent Environments},
-  author = {Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler},
+@misc{bernhard2020bark,
+    title={BARK: Open Behavior Benchmarking in Multi-Agent Environments},
+    author={Julian Bernhard and Klemens Esterle and Patrick Hart and Tobias Kessler},
+    year={2020},
+    eprint={2003.02604},
+    archivePrefix={arXiv},
+    primaryClass={cs.MA}
 }
 ```
 
