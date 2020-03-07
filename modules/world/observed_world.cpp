@@ -105,23 +105,35 @@ ObservedWorldPtr ObservedWorld::Predict(
 }
 
 // Predict each agent with specific behavior model and action
-ObservedWorldPtr ObservedWorld::Predict(float time_span, const std::unordered_map<AgentId, std::pair<
-          BehaviorModelPtr, Action> action_behavior_map) const {
+  ObservedWorldPtr Predict(float time_span, BehaviorMotionPrimitivesPtr ego_behavior_model,
+                       const Action& ego_action,
+         const std::unordered_map<AgentId, std::pair<
+          BehaviorActionStorePtr, Action> other_action_behavior_map) const;
+ {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
-  for (const auto& agent_action : agent_action_map) {
-    if (!next_world->GetAgent(agent_action.first)) {
+
+  ego_agent_ptr = GetEgoAgent();
+  if(ego_agent_ptr) {
+
+  }
+
+  
+  for (const auto& behahvior_action_pair : agent_action_map) {
+    const auto& agent_ptr = next_world->GetAgent(agent_action.first)
+    if (!agent_ptr) {
+      LOG(WARNING) << "Agent Id" << agent_action.first 
+              <<" not existens in observed world during prediction";
       continue;
     }
-    std::shared_ptr<BehaviorActionStore> behavior_model =
-        std::dynamic_pointer_cast<BehaviorMotionPrimitives>(
-            next_world->GetAgent(agent_action.first)->GetBehaviorModel());
+    std::shared_ptr<BehaviorActionStore> behavior_model = behavior_action_pair.second.first;
     if (behavior_model) {
-      behavior_model->ActionToBehavior(agent_action.second);
+      behavior_model->ActionToBehavior(behavior_action_pair.second.second);
+      agent_ptr->SetBehaviorModel(behavior_model);
     } else {
       LOG(ERROR)
-          << "Currently only BehaviorMotionPrimitive model supported for "
-             "ego prediction, adjust prediction settings.";  // NOLINT
+          << "Currently only BehaviorActionStore model supported for "
+             "other agent.";  // NOLINT
     }
   }
   next_world->Step(time_span);

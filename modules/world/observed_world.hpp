@@ -102,8 +102,10 @@ class ObservedWorld : public World {
                                agent_action_map) const;
 
 // Predict each agent with specific behavior model and action
-  ObservedWorldPtr Predict(float time_span, const std::unordered_map<AgentId, std::pair<
-          BehaviorModelPtr, Action> action_behavior_map) const;
+  ObservedWorldPtr Predict(float time_span, BehaviorMotionPrimitivesPtr ego_behavior_model,
+                       const Action& ego_action,
+         const std::unordered_map<AgentId, std::pair<
+          BehaviorActionStorePtr, Action> other_action_behavior_map) const;
 
 
   template<class Behavior, class EgoBehavior>
