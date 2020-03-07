@@ -125,6 +125,30 @@ ObservedWorldPtr ObservedWorld::Predict(
   return next_world;
 }
 
+// Predict each agent with specific behavior model and action
+ObservedWorldPtr ObservedWorld::Predict(float time_span, const std::unordered_map<AgentId, std::pair<
+          BehaviorModelPtr, Action> action_behavior_map) const {
+  std::shared_ptr<ObservedWorld> next_world =
+      std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
+  for (const auto& agent_action : agent_action_map) {
+    if (!next_world->GetAgent(agent_action.first)) {
+      continue;
+    }
+    std::shared_ptr<BehaviorActionStore> behavior_model =
+        std::dynamic_pointer_cast<BehaviorMotionPrimitives>(
+            next_world->GetAgent(agent_action.first)->GetBehaviorModel());
+    if (behavior_model) {
+      behavior_model->ActionToBehavior(agent_action.second);
+    } else {
+      LOG(ERROR)
+          << "Currently only BehaviorMotionPrimitive model supported for "
+             "ego prediction, adjust prediction settings.";  // NOLINT
+    }
+  }
+  next_world->Step(time_span);
+  return next_world;
+}
+
 EvaluationMap ObservedWorld::Evaluate() const {
   EvaluationMap evaluation_results;
   for (auto const& evaluator : World::GetEvaluators()) {

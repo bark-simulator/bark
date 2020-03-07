@@ -102,18 +102,25 @@ class ObservedWorld : public World {
 
   void SetupPrediction(const PredictionSettings& settings);
 
+
+  // Specify ego action, others are predicted based on observation
   ObservedWorldPtr Predict(float time_span,
                            const DiscreteAction& ego_action) const;
+
+  // Requires all agents to have set up a motion primitive based behavior model
+  // Motion primitive action passed for each agent
   ObservedWorldPtr Predict(float time_span,
                            const std::unordered_map<AgentId, DiscreteAction>&
                                agent_action_map) const;
 
-  ObservedWorldPtr Predict(float time_span) const;
+// Predict each agent with specific behavior model and action
+  ObservedWorldPtr Predict(float time_span, const std::unordered_map<AgentId, std::pair<
+          BehaviorModelPtr, Action> action_behavior_map) const;
 
 
   template<class Behavior, class EgoBehavior>
   ObservedWorldPtr Predict(float time_span,
-                           const Action& ego_action) const {
+                           const Action& ego_action) const; {
     std::shared_ptr<ObservedWorld> next_obs_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
     // for all other agents set Behavior
