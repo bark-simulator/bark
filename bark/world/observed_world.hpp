@@ -17,15 +17,16 @@
 namespace bark {
 namespace world {
 
-using bark::geometry::Point2d;
-using bark::models::behavior::BehaviorModel;
-using bark::models::behavior::BehaviorModelPtr;
-using bark::models::behavior::DiscreteAction;
-using bark::models::behavior::Action;
-using bark::models::dynamic::State;
-using bark::models::dynamic::StateDefinition::X_POSITION;
-using bark::models::dynamic::StateDefinition::Y_POSITION;
-using bark::world::prediction::PredictionSettings;
+using modules::geometry::Point2d;
+using modules::models::behavior::BehaviorModel;
+using modules::models::behavior::BehaviorModelPtr;
+using modules::models::behavior::DiscreteAction;
+using modules::models::behavior::Action;
+using modules::models::behavior::ActionHash;
+using modules::models::dynamic::State;
+using modules::models::dynamic::StateDefinition::X_POSITION;
+using modules::models::dynamic::StateDefinition::Y_POSITION;
+using modules::world::prediction::PredictionSettings;
 using world::map::MapInterfacePtr;
 using world::map::RoadCorridorPtr;
 using world::objects::Agent;
@@ -63,7 +64,7 @@ class ObservedWorld : public World {
 
   const LaneCorridorPtr GetLaneCorridor() const;
 
-  std::shared_ptr<const Agent> GetEgoAgent() const {
+  const AgentPtr GetEgoAgent() const {
     return World::GetAgent(ego_agent_id_);
   }
 
@@ -103,6 +104,10 @@ class ObservedWorld : public World {
   void SetupPrediction(const PredictionSettings& settings);
 
 
+// Predict with internal models
+ ObservedWorldPtr Predict(float time_span) const;
+
+
   // Specify ego action, others are predicted based on observation
   ObservedWorldPtr Predict(float time_span,
                            const DiscreteAction& ego_action) const;
@@ -113,16 +118,14 @@ class ObservedWorld : public World {
                            const std::unordered_map<AgentId, DiscreteAction>&
                                agent_action_map) const;
 
-// Predict each agent with specific behavior model and action
-  ObservedWorldPtr Predict(float time_span, BehaviorMotionPrimitivesPtr ego_behavior_model,
-                       const Action& ego_action,
-         const std::unordered_map<AgentId, std::pair<
-          BehaviorActionStorePtr, Action> other_action_behavior_map) const;
+// No Prediction Setup Required -> pass all behavior models
+ ObservedWorldPtr Predict(float time_span, BehaviorModelPtr ego_behavior_model,
+         const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const;
 
 
   template<class Behavior, class EgoBehavior>
   ObservedWorldPtr Predict(float time_span,
-                           const Action& ego_action) const; {
+                           const Action& ego_action) const {
     std::shared_ptr<ObservedWorld> next_obs_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
     // for all other agents set Behavior
