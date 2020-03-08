@@ -54,6 +54,8 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   float integration_time_delta_;
 };
 
+typedef std::shared_ptr<BehaviorMotionPrimitives> BehaviorMotionPrimitivesPtr;
+
 // inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
 //   std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
 //     std::make_shared<BehaviorMotionPrimitives>(*this);

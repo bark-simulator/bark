@@ -10,6 +10,7 @@
 #include <memory>
 #include <Eigen/Dense>
 
+
 #include "modules/commons/base_type.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 
@@ -30,6 +31,8 @@ typedef unsigned int DiscreteAction;
 typedef double Continuous1DAction;
 using dynamic::Input;
 typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
+typedef std::size_t ActionHash;
+
 
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
@@ -70,8 +73,9 @@ class BehaviorModel : public modules::commons::BaseType {
   bool active_model_;
 };
 
-
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
+
+
 
 }  // namespace behavior
 }  // namespace models
