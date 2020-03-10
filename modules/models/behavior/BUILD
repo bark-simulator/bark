@@ -23,6 +23,7 @@ cc_library(
         "//modules/models/behavior/motion_primitives:include",
         "//modules/models/behavior/static_trajectory:include",
         "//modules/models/behavior/action_store:include",
+        "//modules/models/behavior/hypothesis:include",
         "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
