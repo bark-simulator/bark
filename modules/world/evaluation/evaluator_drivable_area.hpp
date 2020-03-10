@@ -33,6 +33,9 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 
     if (agent_id_ != std::numeric_limits<AgentId>::max()) {
       const auto& agent = world.GetAgent(agent_id_);
+      if(!agent) {
+        return true;
+      }
       Polygon poly_agent =
         agent->GetPolygonFromState(agent->GetCurrentState());
       const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
