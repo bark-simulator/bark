@@ -9,23 +9,24 @@
 
 
 #include <Eigen/Core>
+#include <vector>
 
 namespace modules {
 namespace commons {
 
 typedef double Probability;
 typedef float RandomVariableSupport;
-typedef Eigen::Matrix<RandomVariableSupport, Eigen::Dynamic, 1> RandomSample;
+typedef unsigned int RandomSeed;
+typedef std::vector<RandomVariableSupport> RandomSample;
 
 class Distribution : public BaseType{
   public:
     Distribution(const ParamsPtr& params) : BaseType(params) {}
 
-    virtual RandomSample sample() = 0;
-
-    virtual Probability GetProbability(const RandomSample& random_sample) const = 0;
+    virtual RandomSample Sample() = 0;
 };
 
+std::shared_ptr<Distribution> DistributionPtr;
 
 
 }  // namespace commons
