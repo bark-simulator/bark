@@ -4,7 +4,8 @@ cc_library(
         "behavior_hypothesis.hpp",
     ],
     deps = [
-        "//modules/models/behavior:behavior"
+        "//modules/models/behavior:behavior",
+        "//modules/commons/distribution:distribution"
     ],
     visibility = ["//visibility:public"],
 )
