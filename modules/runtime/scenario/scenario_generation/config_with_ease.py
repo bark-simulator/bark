@@ -11,7 +11,7 @@ from modules.runtime.scenario.scenario_generation.model_json_conversion\
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits, GoalDefinitionSequential
+from bark.world.goal_definition import *
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
@@ -19,6 +19,7 @@ from bark.geometry import *
 from bark.geometry.standard_shapes import *
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
+from bark.world.opendrive import *
 
 import numpy as np
 import math
@@ -39,13 +40,18 @@ class LaneCorridorConfig:
     pose = self.position(world)
     if pose is None:
       return None
-    velocity = self.velocity()
+    velocity = self.velocity
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
   def position(self, world, min_distance=5., min_s=0., max_s=1.):
     if self._road_corridor == None:
-      world.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
+      world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+    if road_corr is None:
+      return None
+    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    if lane_corr is None:
+      return None
     centerline = lane_corr.center_line
     if self._current_s == None:
       self._current_s = min_s
@@ -54,24 +60,26 @@ class LaneCorridorConfig:
     if self._current_s > max_s:
       return None
     self._current_s += 0.1
-    return Pose(xy_point.x(), xy_point.y(), angle)
+    return (xy_point.x(), xy_point.y(), angle)
 
   @property
   def velocity(self, min_vel=10., max_vel=15.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   @property
-  def behavior_model(self, agent_controlled=False):
+  def behavior_model(self):
     """Returns behavior model
     """
     return BehaviorConstantVelocity(self._params)
 
-  def execution_model(self, agent_controlled=False):
+  @property
+  def execution_model(self):
     """Returns exec. model
     """
     return ExecutionModelInterpolate(self._params)
 
-  def dynamic_model(self, agent_controlled=False):
+  @property
+  def dynamic_model(self):
     """Returns dyn. model
     """
     return SingleTrackModel(self._params)
@@ -80,26 +88,35 @@ class LaneCorridorConfig:
   def shape(self):
     """Returns shape
     """
-    return Polygon2d([Point2d(-2, -1),
+    return Polygon2d([0, 0, 0], [Point2d(-2, -1),
                       Point2d(2, -1),
                       Point2d(2, 1),
                       Point2d(-2, 1),
                       Point2d(-2, -1)])
 
-  def controlled(self, world):
-    """Returns bool
+  def controlled_ids(self, agent_list):
+    """Returns an id-list
     """
-    return False
+    random_int = [np.random.randint(0, len(agent_list))]
+    return random_int
 
-  def goal(self, world, agent_controlled=False):
+  def goal(self, world):
     """Returns goal def.
     """
-    # TODO(@hart): set different goal for controlled agent
-    lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
+    # should be access safe, otherwise would not reach.
+    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.2, 0.2),
                                            (0.1, 0.1),
                                            (10., 15.))
+
+  def controlled_goal(self, world):
+    return self.goal
+
+  @property
+  def controlled_behavior_model(self):
+    return self.behavior_model
 
   def reset(self):
     self._current_s = None
@@ -114,9 +131,9 @@ class ConfigWithEase(ScenarioGeneration):
                params=None,
                random_seed=None,
                lane_corridor_configs=None):
+    self._lane_corridor_configs = lane_corridor_configs or []
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
-    self._lane_corridor_configs = lane_corridor_configs or []
 
   def initialize_params(self, params):
     self._local_params = \
@@ -145,15 +162,16 @@ class ConfigWithEase(ScenarioGeneration):
     scenario._agent_list = []
     scenario._eval_agent_ids = []
     for lc_config in self._lane_corridor_configs:
-      agent_state = lc_config.state(world)
-      if agent_state is not None:
-        agent_controlled = lc_config.controlled(world)
-        agent_behavior = lc_config.behavior_model(agent_controlled, agent_controlled)
-        agent_dyn = lc_config.dynamic_model(agent_controlled, agent_controlled)
-        agent_exec = lc_config.execution_model(agent_controlled, agent_controlled)
-        agent_polygon = Polygon2d([0, 0, 0], lc_config.shape)
+      agent_state = True
+      lc_agents = []
+      while agent_state is not None:
+        agent_state = lc_config.state(world)
+        agent_behavior = lc_config.behavior_model
+        agent_dyn = lc_config.dynamic_model
+        agent_exec = lc_config.execution_model
+        agent_polygon = lc_config.shape
         agent_params = self._params.addChild("agent")
-        agent_goal = lc_config.goal(world, agent_controlled)
+        agent_goal = lc_config.goal(world)
 
         new_agent = Agent(
           agent_state, 
@@ -165,7 +183,7 @@ class ConfigWithEase(ScenarioGeneration):
           agent_goal,
           map_interface)
         
-        if agent_controlled:
-          scenario._eval_agent_ids.append(new_agent.id)
-        scenario._agent_list.append(new_agent)
+        lc_agents.append(new_agent)
+      scenario._eval_agent_ids.extend(lc_config.controlled_ids(lc_agents))
+      scenario._agent_list.extend(lc_agents)
     return scenario
