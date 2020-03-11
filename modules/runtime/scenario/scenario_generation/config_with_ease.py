@@ -23,16 +23,7 @@ from modules.runtime.commons.xodr_parser import XodrParser
 import numpy as np
 import math
 
-# bark_agent = Agent(
-#   np.array(agent_json["state"]), 
-#   self.convert_model(agent_json["behavior_model"], param_server), 
-#   self.convert_model(agent_json["dynamic_model"], param_server),
-#   self.convert_model(agent_json["execution_model"], param_server), 
-#   Polygon2d(agent_json["shape"]["center_pose"],
-#   np.array(agent_json["shape"]["polygon_points"])),
-#   param_server.addChild("agent"),
-#   agent_json["goal_definition"],
-#   agent_json["map_interface"])
+
 
 class LaneCorridorConfig:
   def __init__(self,
@@ -43,18 +34,29 @@ class LaneCorridorConfig:
     self._road_ids = road_ids
     self._lane_corridor_id = lane_corridor_id
     self._params = params
+    self._current_s = None
   
-  @property
+  def state(self, world):
+    pose = self.position(world)
+    velocity = self.velocity()
+    return np.array([0, pose[0], pose[1], pose[2], velocity])
+
   def position(self, world, min_distance=5., min_s=0., max_s=1.):
     if self._road_corridor == None:
       world.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
     lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
-    centerline = lane_corr.centerline
-
-    return Pose(0, 0., 0.)
+    centerline = lane_corr.center_line
+    if self._current_s == None:
+      self._current_s = min_s
+    xy_point =  GetPointAtS(centerline, self._current_s)
+    angle = GetTangentAngleAtS(centerline, self._current_s)
+    if self._current_s > max_s:
+      return None
+    self._current_s += 0.1
+    return Pose(xy_point.x(), xy_point.y(), angle)
 
   @property
-  def velocity(self, centerline, min_vel=10., max_vel=15.):
+  def velocity(self, min_vel=10., max_vel=15.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   @property
@@ -85,20 +87,23 @@ class LaneCorridorConfig:
                       Point2d(-2, 1),
                       Point2d(-2, -1)])
 
-  @property
-  def goal(self, world):
-    """Returns goal def.
-    """
-    lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
-
-
-    pass
-
-  @property
   def controlled(self, world):
     """Returns bool
     """
     return False
+
+  def goal(self, world):
+    """Returns goal def.
+    """
+    # based on whether the agent is controlled we should be able to set other goals
+    lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
+    return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
+                                           (0.2, 0.2),
+                                           (0.1, 0.1),
+                                           (10., 15.))
+
+  def reset(self):
+    self._current_s = None
 
 
 class ConfigWithEase(ScenarioGeneration):
@@ -112,7 +117,7 @@ class ConfigWithEase(ScenarioGeneration):
                lane_corridor_configs=None):
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
-    self._lane_corridor_configs = lane_corridor_configs
+    self._lane_corridor_configs = lane_corridor_configs or []
 
   def initialize_params(self, params):
     self._local_params = \
@@ -137,55 +142,30 @@ class ConfigWithEase(ScenarioGeneration):
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.convert_to_dict())
     world = scenario.get_world_state()
-    agent_json["map_interface"] = world.map
+    map_interface = world.map
 
-    # where, how, where to
-    # world.map.GenerateRoadCorridor(start_road_id, end_road_id)
-
-    # FOR EACH LANE_CORR
-    # 1. place_agents(centerline)
-    # 2. assign_models(agents)
-    # 3. set_controlled_agent(agents)
-    for lc_config in self._lane_corridor_configs:
-      vehicle_positions = lc_config.vehicle_positions
-      vehicle_models = lc_config.vehicle_models
-      controlled_agent_ids = lc_config.controlled_agents
-
-      
-    agent_list = []
     scenario._agent_list = []
-    for agent_json_ in self._local_params["Agents"]:
-      agent_json = agent_json_["VehicleModel"].copy()
-      goal_polygon = Polygon2d([0, 0, 0],
-                               np.array(agent_json["goal"]["polygon_points"]))
-      goal_polygon = goal_polygon.Translate(Point2d(agent_json["goal"]["center_pose"][0],
-                                                    agent_json["goal"]["center_pose"][1]))
+    scenario._eval_agent_ids = []
+    for lc_config in self._lane_corridor_configs:
+      agent_state = lc_config.state(world)
+      agent_behavior = lc_config.behavior_model
+      agent_dyn = lc_config.dynamic_model
+      agent_exec = lc_config.execution_model
+      agent_polygon = Polygon2d([0, 0, 0], lc_config.shape)
+      agent_params = self._params.addChild("agent")
+      agent_goal = lc_config.goal(world)
 
-      sequential_goals = []
-      goal = GoalDefinitionPolygon(goal_polygon)
-      if "goal_type" in agent_json["goal"]:
-        goal_type = agent_json["goal"]["goal_type"]
-        if goal_type == "GoalDefinitionStateLimits":
-          goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
-
-      # state_limit_goal = GoalDefinitionStateLimits(goal_polygon, (1.49, 1.65))
-      for _ in range(self._local_params["goal"]["num_reached", "num", 5]):
-        sequential_goals.append(goal)
-      sequential_goal = GoalDefinitionSequential(sequential_goals)
-      agent_json["goal_definition"] = sequential_goal
-
-      agent_state = np.array(agent_json["state"])
-      if len(np.shape(agent_state)) > 1:
-        agent_state = np.random.uniform(low=agent_state[:, 0],
-                                        high=agent_state[:, 1])
-      agent_json["state"] = agent_state.tolist()
-      agent = self._json_converter.agent_from_json(agent_json,
-                                                   param_server=self._params)
-      agent.SetAgentId(agent_json["id"])
-      scenario._agent_list.append(agent)
-    
-    # TODO(@hart): this could be mult. agents
-    scenario._eval_agent_ids = self._local_params["controlled_ids",
-                                "IDs of agents to be controlled. ",
-                                [0]]
+      new_agent = Agent(
+        agent_state, 
+        agent_behavior, 
+        agent_dyn,
+        agent_exec, 
+        agent_polygon,
+        agent_params,
+        agent_goal,
+        map_interface)
+      
+      if lc_config.controlled(world):
+        scenario._eval_agent_ids.append(new_agent.id)
+      scenario._agent_list.append(new_agent)
     return scenario
