@@ -24,7 +24,6 @@ import numpy as np
 import math
 
 
-
 class LaneCorridorConfig:
   def __init__(self,
                road_ids=None,
@@ -38,6 +37,8 @@ class LaneCorridorConfig:
   
   def state(self, world):
     pose = self.position(world)
+    if pose is None:
+      return None
     velocity = self.velocity()
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
@@ -60,19 +61,17 @@ class LaneCorridorConfig:
     return np.random.uniform(low=min_vel, high=max_vel)
 
   @property
-  def behavior_model(self):
+  def behavior_model(self, agent_controlled=False):
     """Returns behavior model
     """
     return BehaviorConstantVelocity(self._params)
 
-  @property
-  def execution_model(self):
+  def execution_model(self, agent_controlled=False):
     """Returns exec. model
     """
     return ExecutionModelInterpolate(self._params)
 
-  @property
-  def dynamic_model(self):
+  def dynamic_model(self, agent_controlled=False):
     """Returns dyn. model
     """
     return SingleTrackModel(self._params)
@@ -92,10 +91,10 @@ class LaneCorridorConfig:
     """
     return False
 
-  def goal(self, world):
+  def goal(self, world, agent_controlled=False):
     """Returns goal def.
     """
-    # based on whether the agent is controlled we should be able to set other goals
+    # TODO(@hart): set different goal for controlled agent
     lane_corr = world.map.GetLaneCorridor(self._lane_corridor_id)
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.2, 0.2),
@@ -148,25 +147,27 @@ class ConfigWithEase(ScenarioGeneration):
     scenario._eval_agent_ids = []
     for lc_config in self._lane_corridor_configs:
       agent_state = lc_config.state(world)
-      agent_behavior = lc_config.behavior_model
-      agent_dyn = lc_config.dynamic_model
-      agent_exec = lc_config.execution_model
-      agent_polygon = Polygon2d([0, 0, 0], lc_config.shape)
-      agent_params = self._params.addChild("agent")
-      agent_goal = lc_config.goal(world)
+      if agent_state is not None:
+        agent_controlled = lc_config.controlled(world)
+        agent_behavior = lc_config.behavior_model(agent_controlled)
+        agent_dyn = lc_config.dynamic_model(agent_controlled)
+        agent_exec = lc_config.execution_model(agent_controlled)
+        agent_polygon = Polygon2d([0, 0, 0], lc_config.shape)
+        agent_params = self._params.addChild("agent")
+        agent_goal = lc_config.goal(world, agent_controlled)
 
-      new_agent = Agent(
-        agent_state, 
-        agent_behavior, 
-        agent_dyn,
-        agent_exec, 
-        agent_polygon,
-        agent_params,
-        agent_goal,
-        map_interface)
-      
-      if lc_config.controlled(world):
-        scenario._eval_agent_ids.append(new_agent.id)
-      scenario._agent_list.append(new_agent)
-      
+        new_agent = Agent(
+          agent_state, 
+          agent_behavior, 
+          agent_dyn,
+          agent_exec, 
+          agent_polygon,
+          agent_params,
+          agent_goal,
+          map_interface)
+        
+        if agent_controlled:
+          scenario._eval_agent_ids.append(new_agent.id)
+        scenario._agent_list.append(new_agent)
+
     return scenario
