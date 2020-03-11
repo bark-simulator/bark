@@ -64,7 +64,7 @@ using boost_uniform = boost::math::uniform_distribution<RandomVariableSupport>;
 template<>
 boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(const ParamsPtr& params) const {
   const RandomVariableSupport lower_bound = params->GetReal("LowerBound", "Lower bound of uniform distr.", 0.0f);
-  const RandomVariableSupport upper_bound = params->GetReal("UpperBound", "Lower bound of uniform distr.", 1.0f);
+  const RandomVariableSupport upper_bound = params->GetReal("UpperBound", "Upper bound of uniform distr.", 1.0f);
   return boost_uniform(lower_bound, upper_bound);
 }
 
@@ -76,7 +76,7 @@ boost_normal BoostDistribution1D<boost_normal>::DistFromParams(const ParamsPtr& 
 }
 
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;
-using UniformDistribution1D = BoostDistribution1D<boost_normal>;
+using UniformDistribution1D = BoostDistribution1D<boost_uniform>;
 
 
 }  // namespace commons
