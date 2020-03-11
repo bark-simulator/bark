@@ -168,4 +168,5 @@ class ConfigWithEase(ScenarioGeneration):
       if lc_config.controlled(world):
         scenario._eval_agent_ids.append(new_agent.id)
       scenario._agent_list.append(new_agent)
+      
     return scenario
