@@ -130,19 +130,14 @@ class ConfigWithEase(ScenarioGeneration):
   """
   def __init__(self,
                num_scenarios,
+               map_file_name=None,
                params=None,
                random_seed=None,
                lane_corridor_configs=None):
+    self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
-
-  def initialize_params(self, params):
-    self._local_params = \
-      self._params["Scenario"]["Generation"]["ConfigWithEase"]
-    self._map_file_name = self._local_params["MapFilename",
-     "Path to the open drive map", 
-     "modules/runtime/tests/data/Crossing8Course.xodr"]
 
   def create_scenarios(self, params, num_scenarios):
     """ 
