@@ -10,15 +10,17 @@
 #include <string>
 #include <vector>
 #include "boost/variant.hpp"
+#include "modules/commons/distribution/distribution.hpp"
 
 namespace modules {
 namespace commons {
+
 
 typedef std::vector<std::vector<float>> ListListFloat;
 
 typedef std::vector<float> ListFloat;
 
-typedef std::pair<std::string, boost::variant<bool, float, int,
+typedef std::pair<std::string, boost::variant<bool, float, int, std::string,
      ListListFloat, ListFloat>> ParamPair;
 typedef std::vector<ParamPair> CondensedParamList;
 
@@ -41,6 +43,10 @@ class Params {
                      const std::string &description,
                      const int &default_value) = 0;
 
+  virtual std::string GetString(const std::string &param_name,
+                     const std::string &description,
+                     const std::string &default_value) = 0;
+
   virtual std::vector<std::vector<float>> GetListListFloat(
       const std::string &param_name, const std::string &description,
       const ListListFloat &default_value) = 0;
@@ -48,6 +54,12 @@ class Params {
   virtual std::vector<float> GetListFloat(const std::string &param_name,
                                           const std::string &description,
                                           const ListFloat &default_value) = 0;
+
+  DistributionPtr GetDistributionFromType(const std::string& distribution_type, const std::shared_ptr<Params>& distr_params) const;
+
+  virtual DistributionPtr GetDistribution(const std::string &param_name, 
+                     const std::string &description,
+                     const std::string& default_distribution_type) = 0;
 
   virtual CondensedParamList GetCondensedParamList() const = 0;
 
@@ -58,8 +70,14 @@ class Params {
                                 const ListListFloat &value) = 0;
   virtual void SetListFloat(const std::string &param_name,
                                 const ListFloat &value) = 0;
+  virtual void SetDistribution(const std::string &param_name, const std::string& distribution_type) = 0;
+
+  virtual void SetString(const std::string &param_name,
+                     const std::string &default_value) = 0;
+
   virtual int operator[](const std::string &param_name) = 0;
   virtual std::shared_ptr<Params> AddChild(const std::string &name) = 0;
+
 };
 
 typedef std::shared_ptr<Params> ParamsPtr;

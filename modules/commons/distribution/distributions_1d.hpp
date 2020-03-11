@@ -19,26 +19,23 @@ namespace modules {
 namespace commons {
 
 
-typedef double RandomVariate1D;
-std::shared_ptr<Distribution<RandomVariate1D>> Distribution1DPtr;
-
 template<class BoostDistType>
-class BoostDistribution1D : public Distribution<RandomVariate1D>  {
+class BoostDistribution1D : public Distribution  {
   public:
-    BoostDistribution1D(const ParamsPtr& params) : Distribution<RandomVariate1D>(params),
+    BoostDistribution1D(const ParamsPtr& params) : Distribution(params),
              seed_(params->GetInt("RandomSeed", "Specifies seed for mersenne twister engine", 1234)),
              generator_(seed_),
              dist_(DistFromParams(params)),
              uniform_generator_(0, 1.0) {}
 
-    virtual RandomVariate1D Sample();
+    virtual RandomVariate Sample();
 
-    virtual Probability Density(const RandomVariate1D& variate) const {
-          return boost::math::pdf(dist_, variate);
+    virtual Probability Density(const RandomVariate& variate) const {
+          return boost::math::pdf(dist_, variate[0]);
           };
 
-    virtual Probability CDF(const RandomVariate1D& variate) const {
-      return boost::math::cdf(dist_, variate); 
+    virtual Probability CDF(const RandomVariate& variate) const {
+      return boost::math::cdf(dist_, variate[0]); 
       }; 
 
     BoostDistType DistFromParams(const ParamsPtr& params) const;
@@ -52,10 +49,11 @@ class BoostDistribution1D : public Distribution<RandomVariate1D>  {
 
 
 template<class BoostDistType>
-RandomVariate1D BoostDistribution1D<BoostDistType>::Sample() {
+RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
   // Boost does not provide direct sampling, but we can go over the quantile function
   auto probability = uniform_generator_(generator_);
-  return boost::math::quantile(dist_, probability);
+  auto sample = boost::math::quantile(dist_, probability);
+  return RandomVariate(1, sample);
 }
 
 using boost_normal = boost::math::normal_distribution<RandomVariableSupport>;

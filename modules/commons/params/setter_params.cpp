@@ -36,6 +36,11 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 
+  // Add Strings
+  for (const auto param : params_string_) {
+    param_list.push_back(std::make_pair(param.first, param.second));
+  }
+
   // Add List List Floats
   for (const auto param : params_listlist_float_) {
     param_list.push_back(std::make_pair(param.first, param.second));

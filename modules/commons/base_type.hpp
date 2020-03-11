@@ -7,11 +7,13 @@
 #ifndef MODULES_COMMONS_BASE_TYPE_HPP_
 #define MODULES_COMMONS_BASE_TYPE_HPP_
 
-#include "modules/commons/params/params.hpp"
 #include "modules/commons/util/util.hpp"
 
 namespace modules {
 namespace commons {
+
+class Params;
+typedef std::shared_ptr<Params> ParamsPtr;
 
 class BaseType {
  public:

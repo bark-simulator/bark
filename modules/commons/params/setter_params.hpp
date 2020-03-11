@@ -14,7 +14,7 @@
 namespace modules {
 namespace commons {
 
-// This class is mainly useful for test definitions in C++
+
 class SetterParams : public Params {
  public:
   SetterParams(bool log_if_default = false)
@@ -46,6 +46,11 @@ class SetterParams : public Params {
     return get_parameter(params_int_, param_name, default_value);
   }
 
+  virtual std::string GetString(const std::string &param_name,
+                     const std::string &description,
+                     const std::string &default_value) {
+    return get_parameter(params_string_, param_name, default_value);
+  }
   virtual std::vector<std::vector<float>> GetListListFloat(
       const std::string &param_name, const std::string &description,
       const std::vector<std::vector<float>> &default_value) {
@@ -58,7 +63,16 @@ class SetterParams : public Params {
     return get_parameter(params_list_float_, param_name, default_value);
   }
 
-  // not used atm
+  virtual DistributionPtr GetDistribution(const std::string &param_name, 
+                     const std::string &description,
+                     const std::string& default_distribution_type) {
+    auto param_name_distribution_type = param_name + "::" + "DistributionType";
+    auto distribution_type = get_parameter(params_string_, param_name_distribution_type, default_distribution_type);
+    auto param_child_distribution = AddChild(param_name);
+    return GetDistributionFromType(distribution_type, param_child_distribution);
+  }
+
+
   virtual void SetBool(const std::string &param_name, const bool &value) {
     set_parameter(params_bool_, param_name, value);
   }
@@ -67,6 +81,10 @@ class SetterParams : public Params {
   }
   virtual void SetInt(const std::string &param_name, const int &value) {
     set_parameter(params_int_, param_name, value);
+  }
+  virtual void SetString(const std::string &param_name,
+                     const std::string &default_value) {
+    set_parameter(params_string_, param_name, default_value);
   }
   virtual void SetListListFloat(const std::string &param_name,
                                 const std::vector<std::vector<float>> &value) {
@@ -77,6 +95,11 @@ class SetterParams : public Params {
     set_parameter(params_list_float_, param_name, value);
   }
 
+  virtual void SetDistribution(const std::string &param_name, const std::string& distribution_type) {
+    auto param_name_distribution_type = param_name + "::" + "DistributionType";
+    set_parameter(params_string_, param_name_distribution_type, distribution_type);
+  }
+
   virtual CondensedParamList GetCondensedParamList() const;  // < not needed atm
 
   virtual int operator[](const std::string &param_name) {
@@ -84,11 +107,23 @@ class SetterParams : public Params {
   }  //< not supported atm
 
   virtual ParamsPtr AddChild(const std::string &name) {
+    std::string delimiter = "::";
+    // Child already existing?
     const auto it = childs_.find(name);
     if (it != childs_.end()) {
       return it->second;
     }
-
+    // No, then try to resolve hierarchy
+    auto pos = name.find(delimiter);
+    if (pos != std::string::npos) {
+      auto child_name = name.substr(0, pos);
+      auto param_rest_name = name;
+      param_rest_name.erase(0, pos + delimiter.length());
+      std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
+      childs_[child_name] = child;
+      return child->AddChild(param_rest_name);
+    }
+    // Child not existent and no hierarchy specified
     std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
     childs_[name] = child;
     return child;
@@ -149,6 +184,7 @@ class SetterParams : public Params {
   std::unordered_map<std::string, std::vector<std::vector<float>>>
       params_listlist_float_;
   std::unordered_map<std::string, std::vector<float>> params_list_float_;
+  std::unordered_map<std::string, std::string> params_string_;
 
   bool log_if_default_;
 };
@@ -165,6 +201,10 @@ struct ParamVisitor : public boost::static_visitor<> {
   void operator()(const ListFloat &l) const {
     params_->SetListFloat(param_name_, l);
   }
+  void operator()(const std::string &s) const {
+    params_->SetString(param_name_, s);
+  }
+
 
  private:
   SetterParams *params_;
@@ -196,6 +236,12 @@ template <>
 inline std::unordered_map<std::string, std::vector<float>>
     &SetterParams::get_param_map() {
   return params_list_float_;
+}
+
+template <>
+inline std::unordered_map<std::string, std::string>
+    &SetterParams::get_param_map() {
+  return params_string_;
 }
 
 }  // namespace commons

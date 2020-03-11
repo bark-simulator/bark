@@ -8,7 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/commons/distribution.hpp"
+#include "modules/commons/distributions_1d.hpp"
 
 namespace modules {
 namespace models {
@@ -27,7 +27,7 @@ class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
   void SampleParameters(); 
 
   protected:
-    modules::commons::DistributionPtr param_dist_headway_;
+    modules::commons::Distribution1DPtr param_dist_headway_;
    
 };
 

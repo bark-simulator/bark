@@ -12,9 +12,8 @@
 #include "gtest/gtest.h"
 
 #include "modules/commons/params/setter_params.hpp"
+#include "modules/commons/distribution/distributions_1d.hpp"
 
-
-// TODO(fortiss): fill our this test
 TEST(setter_params, param_tests) {
   std::cout << "Start test\n";
 
@@ -55,6 +54,17 @@ TEST(setter_params, param_tests) {
   auto child_params4 = child_params3->AddChild("Test3");
   EXPECT_EQ(child_params4->GetReal("2","", 1.0f), 123123.23783f);
 
+
+  // Setters used for distribution spec
+  params.SetReal("Test2::25::123::UniformDistribution1D::LowerBound", 10.0f);
+  params.SetDistribution("Test2::25::123", "UniformDistribution1D");
+  auto dist_uniform = params.GetDistribution("Test2::25::123","some description", "NormalDistribution1D");
+  EXPECT_TRUE(typeid(dist_uniform)== typeid(modules::commons::UniformDistribution1D));
+  EXPECT_EQ(dist_uniform->GetParams()->GetReal("LowerBound", "some description", 2323.0), 10.0f);
+
+  // No defaults for dist spec fiven
+  auto dist_uniform2 = params.GetDistribution("Test2::25::123123","some description", "NormalDistribution1D");
+  EXPECT_TRUE(typeid(dist_uniform)== typeid(modules::commons::NormalDistribution1D));
 }
 
 int main(int argc, char **argv) {

@@ -9,11 +9,13 @@ cc_library(
         "setter_params.hpp"
     ],
     srcs = [
-        "setter_params.cpp"
+        "setter_params.cpp",
+        "params.cpp"
     ],
     visibility = ["//visibility:public"],
     deps = [
         "//modules/commons/util:util",
+        "//modules/commons/distribution:distribution",
         "@boost//:geometry", # add since sometimes "boost/variant.hpp" not found
     ]
 )

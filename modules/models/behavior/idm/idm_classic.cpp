@@ -176,6 +176,7 @@ Trajectory BehaviorIDMClassic::Plan(
     double acc;
     double traveled_ego;
     double traveled_other;
+    double initial_acceleration;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
       if (leading_vehicle.first) {
@@ -185,6 +186,11 @@ Trajectory BehaviorIDMClassic::Plan(
         net_distance += traveled_other - traveled_ego;
       } else {
         acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+      }
+
+      // Set initial acceleration to maintain action value
+      if(i == 1) {
+        initial_acceleration = acc;
       }
 
       BARK_EXPECT_TRUE(!std::isnan(acc));
@@ -210,7 +216,7 @@ Trajectory BehaviorIDMClassic::Plan(
       traj(i, StateDefinition::VEL_POSITION) = vel_i;         // checked
     }
 
-    SetLastAction(Action(Continuous1DAction(acc)));
+    SetLastAction(Action(Continuous1DAction(initial_acceleration)));
   }
   this->SetLastTrajectory(traj);
   return traj;

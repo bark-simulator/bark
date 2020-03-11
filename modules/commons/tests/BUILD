@@ -1,7 +1,7 @@
 cc_test(
     name = "params_tests",
     srcs = [
-        "params_test.cc",
+        "params_tests.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [

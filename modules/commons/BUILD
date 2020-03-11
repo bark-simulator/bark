@@ -13,6 +13,14 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "base_type",
+    hdrs = [
+        "base_type.hpp"
+    ],
+    visibility = ["//visibility:public"],
+)
+
 
 cc_library(
     name="include",

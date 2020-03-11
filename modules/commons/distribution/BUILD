@@ -8,8 +8,8 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//modules/commons/params:params",
-        "@com_github_eigen_eigen//:eigen"
+        "@com_github_eigen_eigen//:eigen",
+        "//modules/commons:base_type"
     ]
 )
 
