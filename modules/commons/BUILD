@@ -7,7 +7,8 @@ cc_library(
     ],
     deps = [
         "//modules/commons/params:params",
-        "//modules/commons/util:util"
+        "//modules/commons/util:util",
+        "//modules/commons/distribution:distribution"
     ],
     visibility = ["//visibility:public"],
 )

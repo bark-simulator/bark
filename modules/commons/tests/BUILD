@@ -11,6 +11,18 @@ cc_test(
 )
 
 cc_test(
+    name = "distribution_tests",
+    srcs = [
+        "distribution_tests.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/commons:commons",
+        "@gtest//:main",
+    ],
+)
+
+cc_test(
     name = "util_tests",
     srcs = [
         "util_tests.cc",

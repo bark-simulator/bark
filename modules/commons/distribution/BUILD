@@ -3,7 +3,8 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "distribution",
     hdrs = [
-        "distribution.hpp"
+        "distribution.hpp",
+        "distributions_1d.hpp"
     ],
     visibility = ["//visibility:public"],
     deps = [
