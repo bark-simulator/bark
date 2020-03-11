@@ -43,6 +43,9 @@ class LaneCorridorConfig:
     velocity = self.velocity
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
+  def ds(self, s_min=5., s_max=10.):
+    return np.random.uniform(s_min, s_max)
+
   def position(self, world, min_distance=5., min_s=0., max_s=100.):
     if self._road_corridor == None:
       world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
@@ -59,7 +62,7 @@ class LaneCorridorConfig:
     angle = GetTangentAngleAtS(centerline, self._current_s)
     if self._current_s > max_s:
       return None
-    self._current_s += 10.
+    self._current_s += self.ds()
     return (xy_point.x(), xy_point.y(), angle)
 
   @property
@@ -70,7 +73,7 @@ class LaneCorridorConfig:
   def behavior_model(self):
     """Returns behavior model
     """
-    return BehaviorConstantVelocity(self._params)
+    return BehaviorIDMClassic(self._params)
 
   @property
   def execution_model(self):
@@ -108,11 +111,11 @@ class LaneCorridorConfig:
   def controlled_ids(self, agent_list):
     """Returns an id-list
     """
-    random_int = [agent_list[np.random.randint(0, len(agent_list))].id]
+    random_int = [agent_list[np.random.randint(0, len(agent_list))]]
     return random_int
 
   def controlled_goal(self, world):
-    return self.goal
+    return self.goal(world)
 
   @property
   def controlled_behavior_model(self):
@@ -157,7 +160,6 @@ class ConfigWithEase(ScenarioGeneration):
                         json_params=self._params.convert_to_dict())
     world = scenario.get_world_state()
     map_interface = world.map
-
     # fill agent list of the BARK world and set agents that are controlled
     scenario._agent_list = []
     scenario._eval_agent_ids = []
@@ -183,7 +185,13 @@ class ConfigWithEase(ScenarioGeneration):
             agent_goal,
             map_interface)
           lc_agents.append(new_agent)
-      scenario._eval_agent_ids.extend(lc_config.controlled_ids(lc_agents))
+      # handle controlled agents
+      controlled_agent_ids = []
+      for controlled_agent in lc_config.controlled_ids(lc_agents):
+        controlled_agent.goal_definition = lc_config.controlled_goal(world)
+        controlled_agent.behavior_model = lc_config.controlled_behavior_model
+        controlled_agent_ids.append(controlled_agent.id)
+      scenario._eval_agent_ids.extend(controlled_agent_ids)
       scenario._agent_list.extend(lc_agents)
       lc_config.reset()
     return scenario
