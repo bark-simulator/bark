@@ -121,11 +121,9 @@ class ConfigWithEase(ScenarioGeneration):
   def initialize_params(self, params):
     self._local_params = \
       self._params["Scenario"]["Generation"]["ConfigWithEase"]
-    
     self._map_file_name = self._local_params["MapFilename",
      "Path to the open drive map", 
      "modules/runtime/tests/data/Crossing8Course.xodr"]
-    self._json_converter = ModelJsonConversion()
 
   def create_scenarios(self, params, num_scenarios):
     """ 
@@ -143,15 +141,16 @@ class ConfigWithEase(ScenarioGeneration):
     world = scenario.get_world_state()
     map_interface = world.map
 
+    # fill agent list of the BARK world and set agents that are controlled
     scenario._agent_list = []
     scenario._eval_agent_ids = []
     for lc_config in self._lane_corridor_configs:
       agent_state = lc_config.state(world)
       if agent_state is not None:
         agent_controlled = lc_config.controlled(world)
-        agent_behavior = lc_config.behavior_model(agent_controlled)
-        agent_dyn = lc_config.dynamic_model(agent_controlled)
-        agent_exec = lc_config.execution_model(agent_controlled)
+        agent_behavior = lc_config.behavior_model(agent_controlled, agent_controlled)
+        agent_dyn = lc_config.dynamic_model(agent_controlled, agent_controlled)
+        agent_exec = lc_config.execution_model(agent_controlled, agent_controlled)
         agent_polygon = Polygon2d([0, 0, 0], lc_config.shape)
         agent_params = self._params.addChild("agent")
         agent_goal = lc_config.goal(world, agent_controlled)
@@ -169,5 +168,4 @@ class ConfigWithEase(ScenarioGeneration):
         if agent_controlled:
           scenario._eval_agent_ids.append(new_agent.id)
         scenario._agent_list.append(new_agent)
-
     return scenario
