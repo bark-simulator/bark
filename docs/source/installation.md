@@ -25,6 +25,7 @@ We recommend using Ubuntu.
 4. Set this as your global Python version: `pyenv global 3.7-dev`.
 5. Also add this Python version to your `~/.zshrc` by adding `eval "$(pyenv init -)"`.
 6. Install an older version of the virtualenv package by running: `pip install virtualenv==16.7.8`
+7. Modify the file `install.sh` by using `virtualenv -p python ./python/venv` instead as python is now the pyenv version.
 7. Now you can follow the same steps as when using Linux.
 
 ## Frequently Asked Questions (FAQs)
