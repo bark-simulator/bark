@@ -39,9 +39,43 @@ TEST(distribution_test, normal_dist_1d) {
   }
   EXPECT_NEAR(sqrt(std_dev/samples), 2.0f, 0.01);
 
-
   
 }
+
+// TODO(fortiss): fill our this test
+TEST(distribution_test, uniform_dist_1d) {
+
+  auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
+  const double lower_bound = -3.0f;
+  const double upper_bound = 10.0f;
+  params_ptr->SetReal("LowerBound", -3.0f);
+  params_ptr->SetReal("UpperBound", 10.0f);
+
+  auto dist_normal = modules::commons::UniformDistribution1D(params_ptr);
+
+  size_t samples = 10000;
+  double mean = 0.0f;
+  int num_buckets = 100;
+  double bucket_size = (upper_bound - lower_bound)/num_buckets;
+  std::vector<std::vector<modules::commons::RandomVariate1D>> sample_container(num_buckets);
+  for(size_t i = 0; i< samples; ++i) {
+    auto sample = dist_normal.Sample();
+    EXPECT_TRUE(sample<= upper_bound);
+    EXPECT_TRUE(sample>= lower_bound);
+    sample_container[std::floor((sample-lower_bound)/bucket_size)].push_back(sample);
+    mean += sample;
+  }
+
+  for(const auto& container : sample_container) {
+    auto bucket_prob = static_cast<float>(container.size())/static_cast<float>(samples);
+    EXPECT_NEAR(bucket_prob, bucket_size*1.0f/(upper_bound - lower_bound), 0.01);
+  }
+
+  EXPECT_NEAR(mean/samples, (lower_bound + upper_bound)/2.0f, 0.05);
+}
+
+
+
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
