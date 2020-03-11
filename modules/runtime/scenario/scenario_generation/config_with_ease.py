@@ -94,12 +94,6 @@ class LaneCorridorConfig:
                       Point2d(-2, 1),
                       Point2d(-2, -1)])
 
-  def controlled_ids(self, agent_list):
-    """Returns an id-list
-    """
-    random_int = [np.random.randint(0, len(agent_list))]
-    return random_int
-
   def goal(self, world):
     """Returns goal def.
     """
@@ -110,6 +104,12 @@ class LaneCorridorConfig:
                                            (0.2, 0.2),
                                            (0.1, 0.1),
                                            (10., 15.))
+
+  def controlled_ids(self, agent_list):
+    """Returns an id-list
+    """
+    random_int = [agent_list[np.random.randint(0, len(agent_list))].id]
+    return random_int
 
   def controlled_goal(self, world):
     return self.goal
@@ -148,7 +148,7 @@ class ConfigWithEase(ScenarioGeneration):
     """
     scenario_list = []
     for scenario_idx in range(0, num_scenarios):
-      scenario = self.create_single_scenario()     
+      scenario = self.create_single_scenario()
       scenario_list.append(scenario)
     return scenario_list
 
@@ -166,24 +166,24 @@ class ConfigWithEase(ScenarioGeneration):
       lc_agents = []
       while agent_state is not None:
         agent_state = lc_config.state(world)
-        agent_behavior = lc_config.behavior_model
-        agent_dyn = lc_config.dynamic_model
-        agent_exec = lc_config.execution_model
-        agent_polygon = lc_config.shape
-        agent_params = self._params.addChild("agent")
-        agent_goal = lc_config.goal(world)
-
-        new_agent = Agent(
-          agent_state, 
-          agent_behavior, 
-          agent_dyn,
-          agent_exec, 
-          agent_polygon,
-          agent_params,
-          agent_goal,
-          map_interface)
-        
-        lc_agents.append(new_agent)
+        if agent_state is not None:
+          agent_behavior = lc_config.behavior_model
+          agent_dyn = lc_config.dynamic_model
+          agent_exec = lc_config.execution_model
+          agent_polygon = lc_config.shape
+          agent_params = self._params.addChild("agent")
+          agent_goal = lc_config.goal(world)
+          new_agent = Agent(
+            agent_state, 
+            agent_behavior, 
+            agent_dyn,
+            agent_exec, 
+            agent_polygon,
+            agent_params,
+            agent_goal,
+            map_interface)
+          lc_agents.append(new_agent)
       scenario._eval_agent_ids.extend(lc_config.controlled_ids(lc_agents))
       scenario._agent_list.extend(lc_agents)
+      lc_config.reset()
     return scenario
