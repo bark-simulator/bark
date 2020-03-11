@@ -18,6 +18,13 @@ We recommend using Ubuntu.
 3. Use`bazel test //...` to validate that BARK is working.
 4. Finally, try one of the examples provided in BARK by running `bazel run //examples:od8_const_vel_two_agent`.
 
+## Setup on MacOS
+1. Install pyenv: `brew install pyenv`.
+2. Run `pyenv install python3.7-dev`.
+3. Set this as your global Python version: `pyenv global 3.7-dev`.
+4. Also add this Python version to your `~/.zshrc` by adding `eval "$(pyenv init -)"`.
+5. Install an older version of the virtualenv package by running: `pip install virtualenv==16.7.8`
+6. Now you can follow the same steps as when using Linux.
 
 ## Frequently Asked Questions (FAQs)
 #### Python.h not found
