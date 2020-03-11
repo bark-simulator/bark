@@ -19,8 +19,8 @@ namespace commons {
 typedef double Probability;
 typedef float RandomVariableSupport;
 typedef unsigned int RandomSeed;
+typedef std::vector<RandomVariableSupport> RandomVariate;
 
-template<class RandomVariate>
 class Distribution : public BaseType {
   public:
     Distribution(const ParamsPtr& params) : BaseType(params) {}
@@ -32,7 +32,7 @@ class Distribution : public BaseType {
     virtual Probability CDF(const RandomVariate& variate) const = 0; 
 };
 
-
+typedef std::shared_ptr<Distribution> DistributionPtr;
 
 }  // namespace commons
 }  // namespace modules

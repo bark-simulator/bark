@@ -1,5 +1,4 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
-// Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -12,14 +11,13 @@
 #include <boost/make_shared.hpp>
 #include "gtest/gtest.h"
 
-#include "bark/commons/params/setter_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
+#include "modules/commons/distribution/distributions_1d.hpp"
 
-
-// TODO(@all): fill our this test
 TEST(setter_params, param_tests) {
   std::cout << "Start test\n";
 
-  bark::commons::SetterParams params(true);
+  modules::commons::SetterParams params(true);
 
   params.SetReal("Test::2", 0.5f);
   EXPECT_EQ(params.GetReal("Test::2","", 1.0f), 0.5f);
@@ -55,6 +53,7 @@ TEST(setter_params, param_tests) {
   EXPECT_EQ(child_params3->GetReal("Test3::2","", 1.0f), 123123.23783f);
   auto child_params4 = child_params3->AddChild("Test3");
   EXPECT_EQ(child_params4->GetReal("2","", 1.0f), 123123.23783f);
+
 
   // Setters used for distribution spec
   params.SetReal("Test2::25::123::UniformDistribution1D::LowerBound", 10.0f);

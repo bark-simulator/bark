@@ -8,11 +8,13 @@
 #ifndef BARK_COMMONS_BASE_TYPE_HPP_
 #define BARK_COMMONS_BASE_TYPE_HPP_
 
-#include "bark/commons/params/params.hpp"
-#include "bark/commons/util/util.hpp"
+#include "modules/commons/util/util.hpp"
 
 namespace bark {
 namespace commons {
+
+class Params;
+typedef std::shared_ptr<Params> ParamsPtr;
 
 class BaseType {
  public:
