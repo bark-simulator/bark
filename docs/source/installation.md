@@ -15,16 +15,17 @@ We recommend using Ubuntu.
 1. Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
 2. Run `bash install.sh`: creates a virtual environment (located in python/venv) and installs all python packages
 2. Run `source dev_into.sh`: activates the virtual environment (make sure to run this before bazel)
-3. Use`bazel test //...` to validate that BARK is working.
+3. Use `bazel test //...` to validate that BARK is working.
 4. Finally, try one of the examples provided in BARK by running `bazel run //examples:od8_const_vel_two_agent`.
 
 ## Setup on MacOS
 1. Install pyenv: `brew install pyenv`.
-2. Run `pyenv install python3.7-dev`.
-3. Set this as your global Python version: `pyenv global 3.7-dev`.
-4. Also add this Python version to your `~/.zshrc` by adding `eval "$(pyenv init -)"`.
-5. Install an older version of the virtualenv package by running: `pip install virtualenv==16.7.8`
-6. Now you can follow the same steps as when using Linux.
+2. Install a newer version of tcl-tk: `brew upgrade tcl-tk`.
+3. Run `pyenv install python3.7-dev`.
+4. Set this as your global Python version: `pyenv global 3.7-dev`.
+5. Also add this Python version to your `~/.zshrc` by adding `eval "$(pyenv init -)"`.
+6. Install an older version of the virtualenv package by running: `pip install virtualenv==16.7.8`
+7. Now you can follow the same steps as when using Linux.
 
 ## Frequently Asked Questions (FAQs)
 #### Python.h not found
