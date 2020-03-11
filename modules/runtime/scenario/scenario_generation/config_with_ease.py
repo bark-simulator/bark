@@ -43,7 +43,7 @@ class LaneCorridorConfig:
     velocity = self.velocity
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
-  def position(self, world, min_distance=5., min_s=0., max_s=1.):
+  def position(self, world, min_distance=5., min_s=0., max_s=100.):
     if self._road_corridor == None:
       world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
     road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
@@ -59,7 +59,7 @@ class LaneCorridorConfig:
     angle = GetTangentAngleAtS(centerline, self._current_s)
     if self._current_s > max_s:
       return None
-    self._current_s += 0.1
+    self._current_s += 10.
     return (xy_point.x(), xy_point.y(), angle)
 
   @property
