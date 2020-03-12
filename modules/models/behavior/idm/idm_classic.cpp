@@ -91,7 +91,7 @@ double BehaviorIDMClassic::CalcNetDistance(
   const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
   FrenetPosition frenet_leading = leading_agent->CurrentFrenetPosition();
- 
+
   const float vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
