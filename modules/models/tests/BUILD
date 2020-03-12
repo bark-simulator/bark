@@ -81,6 +81,23 @@ cc_test(
 )
 
 cc_test(
+    name = "behavior_hypothesis_test",
+    srcs = [
+        "behavior_hypothesis_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/models/behavior/hypothesis/idm:hypothesis_idm",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/execution/interpolation:interpolation",
+        "@gtest//:main",
+        "@com_github_eigen_eigen//:eigen",
+        "//modules/world/tests:make_test_world",
+    ],
+)
+
+cc_test(
     name = "behavior_mobil_test",
     srcs = [
         "behavior_mobil_test.cc",
