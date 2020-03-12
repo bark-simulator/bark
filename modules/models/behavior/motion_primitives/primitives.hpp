@@ -130,7 +130,8 @@ class PrimitiveGapKeeping : public Primitive,
   PrimitiveGapKeeping(const commons::ParamsPtr& params,
                       const DynamicModelPtr& dynamic_model)
       : Primitive(params, dynamic_model),
-        BehaviorIDMLaneTracking(params) {}
+        BehaviorIDMLaneTracking(params),
+        BehaviorModel(params) {}
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // TODO: which lane to check? should be checked for target lane
     // auto leading_vehicle = observed_world->GetAgentInFront();

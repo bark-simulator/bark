@@ -20,7 +20,7 @@ class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
 
   virtual ~BehaviorIDMStochasticHeadway() {}
 
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 

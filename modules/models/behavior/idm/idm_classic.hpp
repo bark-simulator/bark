@@ -17,7 +17,7 @@ namespace modules {
 namespace models {
 namespace behavior {
 
-class BehaviorIDMClassic : public BehaviorModel {
+class BehaviorIDMClassic : virtual public BehaviorModel {
  public:
   explicit BehaviorIDMClassic(const commons::ParamsPtr& params);
 

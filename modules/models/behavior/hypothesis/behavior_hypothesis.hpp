@@ -23,9 +23,9 @@ namespace models {
 namespace behavior {
 
 
-class BehaviorHypothesis {
+class BehaviorHypothesis : public virtual BehaviorModel {
   public:
-    BehaviorHypothesis() {}
+    BehaviorHypothesis(const commons::ParamsPtr& params) : BehaviorModel(params) {}
     virtual ~BehaviorHypothesis() {}
 
     virtual modules::commons::Probability GetProbability(const Action& action,
