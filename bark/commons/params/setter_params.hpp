@@ -108,25 +108,31 @@ class SetterParams : public Params {
 
   virtual ParamsPtr AddChild(const std::string &name) {
     std::string delimiter = "::";
-    // Child already existing?
-    const auto it = childs_.find(name);
-    if (it != childs_.end()) {
-      return it->second;
-    }
-    // No, then try to resolve hierarchy
-    auto pos = name.find(delimiter);
+    // Try to resolve hierarchy
+    auto child_name = name;
+    std::string rest_name = "";
+
+    auto pos = child_name.find(delimiter);
     if (pos != std::string::npos) {
-      auto child_name = name.substr(0, pos);
-      auto param_rest_name = name;
-      param_rest_name.erase(0, pos + delimiter.length());
-      std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
-      childs_[child_name] = child;
-      return child->AddChild(param_rest_name);
+      child_name = name.substr(0, pos);
+      rest_name = name;
+      rest_name.erase(0, pos + delimiter.length());
     }
-    // Child not existent and no hierarchy specified
-    std::shared_ptr<SetterParams> child(new SetterParams(log_if_default_));
-    childs_[name] = child;
-    return child;
+
+    const auto it = childs_.find(child_name);
+    std::shared_ptr<SetterParams> child;
+    if (it != childs_.end()) {
+      child = it->second;
+    } else {
+      child = std::make_shared<SetterParams>(log_if_default_);
+      childs_[child_name] = child;
+    }
+    if(rest_name.empty()) {
+      return child;
+    } else {
+      return child->AddChild(rest_name);
+    }
+
   }
 
  private:
