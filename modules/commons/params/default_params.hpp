@@ -39,6 +39,12 @@ class DefaultParams : public Params,
     return default_value;
   }
 
+  virtual std::string GetString(const std::string &param_name,
+                     const std::string &description,
+                     const std::string &default_value) {
+    return default_value;
+  }
+
   virtual std::vector<std::vector<float>> GetListListFloat(
       const std::string &param_name, const std::string &description,
       const std::vector<std::vector<float>> &default_value) {
@@ -51,14 +57,23 @@ class DefaultParams : public Params,
     return default_value;
   }
 
+  virtual DistributionPtr GetDistribution(const std::string &param_name, 
+                     const std::string &description,
+                     const std::string& default_distribution_type) {};
+
   // not used atm
   virtual void SetBool(const std::string &param_name, const bool &value) {}
   virtual void SetReal(const std::string &param_name, const float &value) {}
   virtual void SetInt(const std::string &param_name, const int &value) {}
   virtual void SetListListFloat(const std::string &param_name,
                                 const std::vector<std::vector<float>> &value) {}
+
+  virtual void SetString(const std::string &param_name,
+                     const std::string &default_value) {}
   virtual void SetListFloat(const std::string &param_name,
                             const std::vector<float> &value) {}
+
+  virtual void SetDistribution(const std::string &param_name, const std::string& distribution_type) {};
 
   virtual int operator[](const std::string &param_name) { return 0; }
 

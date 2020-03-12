@@ -10,7 +10,7 @@
 #include <Eigen/Core>
 #include <memory>
 
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 
 namespace modules {

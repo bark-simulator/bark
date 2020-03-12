@@ -44,12 +44,26 @@ class PyParams : public Params {
                            default_value);
   }
 
+  std::string GetString(const std::string &param_name, const std::string &description,
+             const std::string &default_value) override {
+    PYBIND11_OVERLOAD_PURE(std::string, Params, GetString, param_name, description,
+                           default_value);
+  }
+
   std::vector<std::vector<float>> GetListListFloat(
       const std::string &param_name, const std::string &description,
       const std::vector<std::vector<float>> &default_value) override {
     PYBIND11_OVERLOAD_PURE(std::vector<std::vector<float>>, Params,
                            GetListListFloat, param_name, description,
                            default_value);
+  }
+
+  DistributionPtr GetDistribution(const std::string &param_name, 
+                     const std::string &description,
+                     const std::string& default_distribution_type) override {
+    PYBIND11_OVERLOAD_PURE(DistributionPtr, Params,
+                           GetDistribution, param_name, description,
+                           default_distribution_type);
   }
 
   std::vector<float> GetListFloat(
@@ -71,6 +85,10 @@ class PyParams : public Params {
     PYBIND11_OVERLOAD_PURE(void, Params, SetInt, param_name, value);
   }
 
+  void SetString(const std::string &param_name, const std::string &value) override {
+    PYBIND11_OVERLOAD_PURE(void, Params, SetString, param_name, value);
+  }
+
   void SetListListFloat(const std::string &param_name,
                         const std::vector<std::vector<float>> &value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListListFloat, param_name, value);
@@ -79,6 +97,10 @@ class PyParams : public Params {
   void SetListFloat(const std::string &param_name,
                     const std::vector<float> &value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListFloat, param_name, value);
+  }
+
+  void SetDistribution(const std::string &param_name, const std::string& distribution_type) override {
+    PYBIND11_OVERLOAD_PURE(void, Params, SetDistribution, param_name, distribution_type);
   }
 
   ParamsPtr AddChild(const std::string &name) override {

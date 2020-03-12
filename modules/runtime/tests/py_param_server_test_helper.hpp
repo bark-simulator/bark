@@ -7,7 +7,7 @@
 #ifndef MODULES_RUNTIME_TESTS_PARAM_SERVER_TEST_HELPER_HPP_
 #define MODULES_RUNTIME_TESTS_PARAM_SERVER_TEST_HELPER_HPP_
 
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 
 
 class CppParamServerTestObject {

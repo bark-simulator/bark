@@ -8,7 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVES_HPP_
 
 #include <memory>
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/dynamic/integration.hpp"
 #include "modules/models/dynamic/single_track.hpp"

@@ -22,8 +22,10 @@ void python_commons(py::module m) {
       .def("getBool", &Params::GetBool)
       .def("getReal", &Params::GetReal)
       .def("getInt", &Params::GetInt)
+      .def("getString", &Params::GetString)
       .def("setBool", &Params::SetBool)
       .def("setReal", &Params::SetReal)
+      .def("setString", &Params::SetString)
       .def("getCondensedParamList", &Params::GetCondensedParamList)
       .def("setInt", &Params::SetInt);
 

@@ -7,7 +7,7 @@
 #ifndef MODULES_WORLD_OBJECTS_OBJECT_HPP_
 #define MODULES_WORLD_OBJECTS_OBJECT_HPP_
 
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/geometry/model_3d.hpp"
 

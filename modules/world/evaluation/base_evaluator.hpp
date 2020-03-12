@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <boost/variant.hpp>
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 
 namespace modules {
 namespace world {

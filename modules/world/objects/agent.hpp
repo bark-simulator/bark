@@ -7,7 +7,7 @@
 #ifndef MODULES_WORLD_OBJECTS_AGENT_HPP_
 #define MODULES_WORLD_OBJECTS_AGENT_HPP_
 
-#include "modules/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/world/map/road_corridor.hpp"
 #include "modules/world/map/map_interface.hpp"
