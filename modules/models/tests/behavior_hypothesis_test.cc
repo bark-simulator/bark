@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/world/observed_world.hpp"
@@ -27,7 +27,7 @@ using namespace modules::world::tests;
 
 TEST(hypothesis_idm_headway, behavior_hypothesis) {
   // Behavior params
-    auto params = std::make_shared<SetterParams>();
+    auto params = std::make_shared<SetterParams>(true);
     // IDM Classic
     params->SetReal("BehaviorIDMClassic::MinimumSpacing", 2.0f);
     params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 1.5f);
@@ -44,10 +44,10 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
     params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::UpperBound", 3.0f);
     params->SetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution", "UniformDistribution1D");
     // IDM Hypothesis
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 10000)),
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 100)),
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", 0.0f)),
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", 5.0f))
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 10000);
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 100);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", 0.0f);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", 5.0f);
 
   // Create an observed world with specific goal definition
   Polygon polygon(
@@ -61,20 +61,19 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
-  float ego_velocity = desired_velocity, rel_distance = 7.0,
+  float ego_velocity = 1.0, rel_distance = 7.0,
         velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
       0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
   // create behavior model
-
   auto behavior = BehaviorHypothesisIDMStochasticHeadway(params);
 
   // no other agent in front
   Action action(Continuous1DAction(1.0f));
   auto ego_agent_id = observed_world.GetAgents().begin()->first;
   auto action_prob = behavior.GetProbability(action, observed_world, ego_agent_id);
-  EXPECT_NEAR(action_prob, )
+  EXPECT_NEAR(action_prob, 1, 0.1);
 
 }
 

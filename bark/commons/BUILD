@@ -27,8 +27,9 @@ cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
     deps= [
-        "//bark/commons/params:include",
-        "//bark/commons/util:include",
+        "//modules/commons/params:include",
+        "//modules/commons/util:include",
+        "//modules/commons/distribution:include",
         "@boost//:system",
         "@boost//:smart_ptr",
         "@boost//:move",
