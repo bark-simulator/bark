@@ -31,8 +31,11 @@ class FixedBehaviorType(ConfigReaderBehaviorModels):
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
 
   def model_from_model_type(self, model_type, params):
-    bark_model = eval("{}(params)".format(model_type))    
+    bark_model = eval("{}(params)".format(model_type))
     return bark_model, params
 
   def get_param_servers(self):
     return self.param_servers
+
+
+

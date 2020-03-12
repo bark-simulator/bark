@@ -62,7 +62,7 @@ class BehaviorIDMClassic : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  private:
+  protected:
     // Parameters
     float param_minimum_spacing_;
     float param_desired_time_head_way_;

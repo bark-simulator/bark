@@ -4,11 +4,11 @@ cc_library(
         "idm_stochastic_headway.cpp",
     ],
     hdrs = [
-        "behavior_stochastic.hpp",
         "idm_stochastic_headway.hpp",
     ],
     deps = [
-        "//modules/models/behavior:behavior"
+        "//modules/models/behavior/idm:idm_classic",
+        "//modules/commons/distribution:distribution"
     ],
     visibility = ["//visibility:public"],
 )

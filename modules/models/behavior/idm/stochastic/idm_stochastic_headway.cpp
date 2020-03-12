@@ -18,10 +18,10 @@ BehaviorIDMStochasticHeadway::BehaviorIDMStochasticHeadway(const commons::Params
 
 
 void BehaviorIDMStochasticHeadway::SampleParameters() {
-  param_desired_time_head_way_ = param_dist_headway_.Sample();
+  param_desired_time_head_way_ = param_dist_headway_->Sample()[0];
 }
 
-Trajectory BehaviorIDMClassic::Plan(float delta_time, const ObservedWorld& observed_world)
+Trajectory BehaviorIDMStochasticHeadway::Plan(float delta_time, const ObservedWorld& observed_world) {
   SampleParameters();
   return BehaviorIDMClassic::Plan(delta_time, observed_world);
 }

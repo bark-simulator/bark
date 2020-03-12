@@ -31,6 +31,8 @@ class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadw
                              const world::ObservedWorld& observed_world,
                              const AgentId& agent_id) const;
 
+  virtual std::shared_ptr<BehaviorModel> Clone() const;
+
   private: 
     const unsigned int num_samples_;
     const unsigned int num_buckets_;
@@ -38,6 +40,12 @@ class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadw
     const modules::commons::RandomVariate1D buckets_lower_bound_; 
 };
 
+
+inline std::shared_ptr<BehaviorModel> BehaviorHypothesisIDMStochasticHeadway::Clone() const {
+  std::shared_ptr<BehaviorHypothesisIDMStochasticHeadway> model_ptr =
+      std::make_shared<BehaviorHypothesisIDMStochasticHeadway>(*this);
+  return model_ptr;
+}
 
 }  // namespace behavior
 }  // namespace models

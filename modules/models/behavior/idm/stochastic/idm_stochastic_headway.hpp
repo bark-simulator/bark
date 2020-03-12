@@ -8,7 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/commons/distributions_1d.hpp"
+#include "modules/commons/distribution/distributions_1d.hpp"
 
 namespace modules {
 namespace models {
@@ -27,13 +27,13 @@ class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
   void SampleParameters(); 
 
   protected:
-    modules::commons::Distribution1DPtr param_dist_headway_;
+    modules::commons::DistributionPtr param_dist_headway_;
    
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
-  std::shared_ptr<BehaviorIDMClassic> model_ptr =
-      std::make_shared<BehaviorIDMClassic>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorIDMStochasticHeadway::Clone() const {
+  std::shared_ptr<BehaviorIDMStochasticHeadway> model_ptr =
+      std::make_shared<BehaviorIDMStochasticHeadway>(*this);
   return model_ptr;
 }
 
