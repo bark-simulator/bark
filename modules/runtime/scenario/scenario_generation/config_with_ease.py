@@ -40,7 +40,7 @@ class LaneCorridorConfig:
     pose = self.position(world)
     if pose is None:
       return None
-    velocity = self.velocity
+    velocity = self.velocity()
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
   def ds(self, s_min=5., s_max=10.):
@@ -65,7 +65,6 @@ class LaneCorridorConfig:
     self._current_s += self.ds()
     return (xy_point.x(), xy_point.y(), angle)
 
-  @property
   def velocity(self, min_vel=10., max_vel=15.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
@@ -131,19 +130,14 @@ class ConfigWithEase(ScenarioGeneration):
   """
   def __init__(self,
                num_scenarios,
+               map_file_name=None,
                params=None,
                random_seed=None,
                lane_corridor_configs=None):
+    self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
-
-  def initialize_params(self, params):
-    self._local_params = \
-      self._params["Scenario"]["Generation"]["ConfigWithEase"]
-    self._map_file_name = self._local_params["MapFilename",
-     "Path to the open drive map", 
-     "modules/runtime/tests/data/Crossing8Course.xodr"]
 
   def create_scenarios(self, params, num_scenarios):
     """ 
