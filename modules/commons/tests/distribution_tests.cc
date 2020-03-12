@@ -27,14 +27,14 @@ TEST(distribution_test, normal_dist_1d) {
   size_t samples = 10000;
   double mean = 0.0f;
   for(size_t i = 0; i< samples; ++i) {
-    mean += dist_normal.Sample();
+    mean += dist_normal.Sample()[0];
   }
   mean /= samples;
   EXPECT_NEAR(mean, -3.0f, 0.01);
 
   double std_dev = 0.0f;
   for (size_t i = 0; i < samples; ++i) {
-    auto sample = dist_normal.Sample();
+    auto sample = dist_normal.Sample()[0];
     std_dev += abs(mean - sample) * abs(mean - sample);
   }
   EXPECT_NEAR(sqrt(std_dev/samples), 2.0f, 0.01);
@@ -57,9 +57,9 @@ TEST(distribution_test, uniform_dist_1d) {
   double mean = 0.0f;
   int num_buckets = 100;
   double bucket_size = (upper_bound - lower_bound)/num_buckets;
-  std::vector<std::vector<modules::commons::RandomVariate1D>> sample_container(num_buckets);
+  std::vector<std::vector<double>> sample_container(num_buckets);
   for(size_t i = 0; i< samples; ++i) {
-    auto sample = dist_uniform.Sample();
+    auto sample = dist_uniform.Sample()[0];
     EXPECT_TRUE(sample<= upper_bound);
     EXPECT_TRUE(sample>= lower_bound);
     sample_container[std::floor((sample-lower_bound)/bucket_size)].push_back(sample);
@@ -74,12 +74,12 @@ TEST(distribution_test, uniform_dist_1d) {
 
   EXPECT_NEAR(mean/samples, (lower_bound + upper_bound)/2.0f, 0.05);
 
-  EXPECT_NEAR(dist_uniform.Density(2.0f), uniform_prob, 0.001f);
-  EXPECT_NEAR(dist_uniform.Density(3.0f), uniform_prob, 0.001f);
-  EXPECT_NEAR(dist_uniform.Density(12.0f), 0.0f, 0.001f);
-  EXPECT_NEAR(dist_uniform.Density(-4.0f), 0.0f, 0.001f);
+  EXPECT_NEAR(dist_uniform.Density({2.0f}), uniform_prob, 0.001f);
+  EXPECT_NEAR(dist_uniform.Density({3.0f}), uniform_prob, 0.001f);
+  EXPECT_NEAR(dist_uniform.Density({12.0f}), 0.0f, 0.001f);
+  EXPECT_NEAR(dist_uniform.Density({-4.0f}), 0.0f, 0.001f);
 
-  EXPECT_NEAR(dist_uniform.CDF(0.0f), 3.0f*uniform_prob, 0.001f);
+  EXPECT_NEAR(dist_uniform.CDF({0.0f}), 3.0f*uniform_prob, 0.001f);
 }
 
 

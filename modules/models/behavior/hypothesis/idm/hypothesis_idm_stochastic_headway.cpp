@@ -57,7 +57,7 @@ virtual modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::Ge
 
   // sample a lot of actions for this environment state to approximate the probability
   double bucket_size = (buckets_upper_bound_ - buckets_lower_bound_)/num_buckets_;
-  std::vector<std::vector<RandomVariate1D>> sample_container(num_buckets_,
+  std::vector<std::vector<double>> sample_container(num_buckets_,
          std::vector<RandomVariate1D>(std::ceil(static_cast<float(num_samples)/num_buckets)));
    for(size_t i = 0; i < num_samples_; ++i) {
     auto action_sample = BehaviorIDMStochasticHeadway::CalcIDMAcc(net_distance, vel_ego, vel_other);

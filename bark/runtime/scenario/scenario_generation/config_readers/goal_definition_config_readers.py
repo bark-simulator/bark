@@ -68,7 +68,7 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
     
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
-    
+
     goal_definitions = []
     agent_lane_positions = kwargs.pop("agent_lane_positions")
     for idx, _ in enumerate(agent_states):
@@ -82,5 +82,7 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
       goal_definitions.append(goal_definition)
     
     return goal_definitions, {}, config_param_object
+
+
 
 
