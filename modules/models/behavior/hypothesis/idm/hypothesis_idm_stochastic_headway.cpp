@@ -22,7 +22,8 @@ using modules::commons::UniformDistribution1D;
 
 BehaviorHypothesisIDMStochasticHeadway::BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params) :
                              BehaviorIDMStochasticHeadway(params),
-                             BehaviorHypothesis(),
+                             BehaviorHypothesis(params),
+                             BehaviorModel(params),
                              num_samples_(params->GetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples",
                                  "Number of samples used for probability approximation", 10000)),
                              num_buckets_(params->GetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets",

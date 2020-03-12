@@ -18,7 +18,8 @@ namespace behavior {
 class BehaviorIDMLaneTracking : public BehaviorIDMClassic {
  public:
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BehaviorIDMClassic(params) {
+      : BehaviorIDMClassic(params),
+      BehaviorModel(params) {
     crosstrack_error_gain_ = params->GetReal(
         "BehaviorIDMLaneTracking::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
   }

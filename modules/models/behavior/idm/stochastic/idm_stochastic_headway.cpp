@@ -13,6 +13,7 @@ namespace behavior {
 
 
 BehaviorIDMStochasticHeadway::BehaviorIDMStochasticHeadway(const commons::ParamsPtr& params) : BehaviorIDMClassic(params),
+    BehaviorModel(params),
     param_dist_headway_(params->GetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution",
      "From what distribution is the desired time headway sampled in each planning steo", "UniformDistribution1D")) {}
 
