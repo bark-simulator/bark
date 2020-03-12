@@ -4,34 +4,6 @@
     "agent1": {
         "MaxHistoryLength": 50
     },
-    "Visualization": {
-        "Agents": {
-            "ColorVehicle": [
-                0,
-                0.4,
-                0
-            ],
-            "AlphaVehicle": 0.8,
-            "ColorRoute": [
-                0.2,
-                0.2,
-                0.2
-            ],
-            "DrawRoute": true
-        },
-        "Map": {
-            "XodrLanes": {
-                "Boundaries": {
-                    "Color": [
-                        0.7,
-                        0.7,
-                        0.7
-                    ],
-                    "Alpha": 1.0
-                }
-            }
-        }
-    },
     "simulation": {
         "step_time": 1,
         "real_time_factor": 10

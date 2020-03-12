@@ -30,7 +30,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
         dynamic_model_(dynamic_model),
         active_motion_(),
         integration_time_delta_(params->GetReal(
-            "integration_time_delta",
+            "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
             0.02)) {}
 

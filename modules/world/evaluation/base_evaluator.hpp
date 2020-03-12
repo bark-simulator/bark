@@ -12,21 +12,23 @@
 
 namespace modules {
 namespace world {
-
 class World;
+class ObservedWorld;
 namespace evaluation {
 
-typedef boost::variant<float, bool, std::string, int> EvaluationReturn; 
+typedef boost::variant<float, bool, std::string, int> EvaluationReturn;
 
 class BaseEvaluator {
  public:
   BaseEvaluator() { }
   virtual ~BaseEvaluator() { }
   virtual EvaluationReturn Evaluate(const world::World& world) { return false; }
+  virtual EvaluationReturn Evaluate(
+    const world::ObservedWorld& observed_world) { return false; }
 };
 typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 
-}  // namespace collision
+}  // namespace evaluation
 }  // namespace world
 }  // namespace modules
 

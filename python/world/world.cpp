@@ -50,7 +50,7 @@ void python_world(py::module m) {
     .def("Evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::GetAgents)
     .def_property_readonly("objects", &World::GetObjects)
-    .def_property_readonly("time", &World::GetWorldTime)
+    .def_property("time", &World::GetWorldTime, &World::SetWorldTime)
     .def_property_readonly("bounding_box", &World::BoundingBox)
     .def("GetAgent", &World::GetAgent)
     .def_property("map", &World::GetMap, &World::SetMap)
@@ -66,8 +66,7 @@ void python_world(py::module m) {
   py::class_<ObservedWorld, World, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
-    .def_property_readonly("agents", &World::GetAgents)
-    .def("Evaluate", &World::Evaluate)
+    .def("Evaluate", &ObservedWorld::Evaluate)
     .def("PredictWithOthersIDM",
       &ObservedWorld::Predict<BehaviorIDMClassic, DynamicBehaviorModel>)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)

@@ -116,13 +116,12 @@ class ObservedWorld : public World {
                            const Action& ego_action) const {
     std::shared_ptr<ObservedWorld> next_obs_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
-
     // for all other agents set Behavior
     for (auto& agent : next_obs_world->GetOtherAgents()) {
       agent.second->SetBehaviorModel(
-        std::make_shared<Behavior>(next_obs_world->GetParams()));
+        std::make_shared<Behavior>(
+          agent.second->GetBehaviorModel()->GetParams()));
     }
-
     std::shared_ptr<EgoBehavior> ego_behavior_model =
       std::dynamic_pointer_cast<EgoBehavior>(
         next_obs_world->GetEgoBehaviorModel());
@@ -137,6 +136,7 @@ class ObservedWorld : public World {
         std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
     return std::dynamic_pointer_cast<World>(observed_world);
   }
+  virtual EvaluationMap Evaluate() const;
 
  private:
   AgentId ego_agent_id_;

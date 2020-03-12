@@ -35,7 +35,7 @@ class Primitive : public modules::commons::BaseType {
       : commons::BaseType(params),
         dynamic_model_(dynamic_model),
         integration_time_delta_(params->GetReal(
-            "integration_time_delta",
+            "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
             0.02)) {}
 

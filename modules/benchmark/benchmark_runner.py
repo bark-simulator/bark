@@ -27,12 +27,20 @@ class BenchmarkConfig:
     self.scenario_idx = scenario_idx
     self.scenario_set_name = scenario_set_name
 
+  def get_info_string_list(self):
+    info_strings = ["ConfigIdx: {}".format(self.config_idx),
+                    "Behavior: {}".format(self.behavior_name),
+                    "ScenarioSet: {}".format(self.scenario_set_name),
+                    "ScenarioIdx: {}".format(self.scenario_idx)]
+    return info_strings
+
 # result of benchmark run
 class BenchmarkResult:
-  def __init__(self, result_dict, benchmark_configs, **kwargs):
+  def __init__(self, result_dict, benchmark_configs, histories=None):
     self.__result_dict = result_dict
     self.__benchmark_configs = benchmark_configs
     self.__data_frame = None
+    self.__histories = histories or []
 
   def get_data_frame(self):
       if not isinstance(self.__data_frame, pd.DataFrame):
@@ -45,9 +53,15 @@ class BenchmarkResult:
   def get_benchmark_configs(self):
       return self.__benchmark_configs
 
+  def get_histories(self):
+      return self.__histories
+
   def get_benchmark_config(self, config_idx):
       return BenchmarkResult.find_benchmark_config(
-                    self.benchmark_configs, config_idx)
+                    self.__benchmark_configs, config_idx)
+
+  def get_history(self, config_idx):
+      return self.__histories[config_idx]
 
   @staticmethod
   def find_benchmark_config(benchmark_configs, config_idx):
@@ -120,17 +134,19 @@ class BenchmarkRunner:
                     benchmark_configs.append(benchmark_config)
       return benchmark_configs
 
-    def run(self):
+    def run(self, viewer = None, maintain_history = False):
       results = []
+      histories = {}
       for idx, bmark_conf in enumerate(self.benchmark_configs):
         self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
             idx, len(self.benchmark_configs)-1, bmark_conf.scenario_idx,
             bmark_conf.scenario_set_name, bmark_conf.behavior_name))
-        result_dict, _ = self._run_benchmark_config(copy.deepcopy(bmark_conf))
+        result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer, maintain_history)
         results.append(result_dict)
+        histories[bmark_conf.config_idx] = scenario_history
         if self.log_eval_avg_every and (idx+1) % self.log_eval_avg_every == 0:
           self._log_eval_average(results)
-      return BenchmarkResult(results, self.benchmark_configs)
+      return BenchmarkResult(results, self.benchmark_configs, histories = histories)
 
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
@@ -144,13 +160,15 @@ class BenchmarkRunner:
         behavior = benchmark_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
         scenario_history = []
+        step = 0
         try:
             world = scenario.get_world_state()
         except Exception as e:
             self.logger.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
                                                         benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
-            return {"scen_set": benchmark_config.scenario_set_name,
+            return {"config_idx": benchmark_config.config_idx,
+              "scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
               "step": step,
               "behavior" : benchmark_config.behavior_name,
@@ -159,11 +177,13 @@ class BenchmarkRunner:
         # if behavior is not None (None specifies that also the default model can be evalauted)
         if behavior:
           world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
-
+        if maintain_history:
+          self._append_to_scenario_history(scenario_history, world, scenario)
         self._reset_evaluators(world, scenario._eval_agent_ids)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
+        if not isinstance(step_time, float):
+            step_time = 0.2
         terminal = False
-        step = 0
         terminal_why = None
         while not terminal:
             try:
@@ -195,7 +215,8 @@ class BenchmarkRunner:
                self._append_to_scenario_history(scenario_history, world, scenario)
             step += 1
 
-        dct = {"scen_set": benchmark_config.scenario_set_name,
+        dct = {"config_idx": benchmark_config.config_idx,
+              "scen_set": benchmark_config.scenario_set_name,
               "scen_idx" : benchmark_config.scenario_idx,
               "step": step,
               "behavior" : benchmark_config.behavior_name,

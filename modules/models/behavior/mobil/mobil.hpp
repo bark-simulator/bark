@@ -7,8 +7,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
 
-#include <utility>
 #include <memory>
+#include <utility>
 
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/observed_world.hpp"
@@ -21,41 +21,22 @@ enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
 enum MobilState { Idle = 0, IsChanging = 1 };
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
-class BehaviorMobil : public BehaviorIDMClassic {
+class BehaviorMobil : public BehaviorModel {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-      : BehaviorIDMClassic(params), mobil_state_(MobilState::Idle) {
-    crosstrack_error_gain_ = params->GetReal(
-        "CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
-
-    politeness_ = params->GetReal(
-        "PolitenessFactor", "Politness factor, suggested [0.2, 0.5]", 0.35f);
+      : BehaviorModel(params),
+    idm_(std::make_shared<BehaviorIDMClassic>(params->AddChild("BehaviorMobil"))),
+    mobil_state_(MobilState::Idle) {
+    crosstrack_error_gain_ = params->GetReal("BehaviorMobil::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
+    politeness_ = params->GetReal("BehaviorMobil::PolitenessFactor", "Politness factor, suggested [0.2, 0.5]", 0.35f);
 
     //! Acceleration bias needs to be larger than the acceleration threshold
-    acceleration_threshold_ = params->GetReal(
-        "AccelerationThreshold",
-        "Models intertia to only trigger if there is real improvement", 0.1f);
-
-    acceleration_bias_ = params->GetReal(
-        "AccelerationBias", "Bias to encourage keep right directive", 0.1f);
-
-    safe_deceleration_ = params->GetReal(
-        "SafeDeceleration",
-        "Maximum deceleration for follower in target lane, positive number",
-        2.0f);
-
-    asymmetric_passing_rules_ = params->GetBool(
-        "AsymmetricPassingRules",
-        "Whether passing on the right side is forbidden", false);
-
-    critical_velocity_ = params->GetReal(
-        "CriticalVelocity",
-        "Passing on the right side is allowed below this velocity",
-        16.66f);  // 16.66 m/s = 60 km/h
-
-    stop_at_lane_ending_ =
-        params->GetBool("StopAtLaneEnding",
-                        "Flag to let vehicle slow down at lane ending", true);
+    acceleration_threshold_ = params->GetReal("BehaviorMobil::AccelerationThreshold", "Models intertia to only trigger if there is real improvement", 0.1f);
+    acceleration_bias_ = params->GetReal("BehaviorMobil::AccelerationBias", "Bias to encourage keep right directive", 0.1f);
+    safe_deceleration_ = params->GetReal("BehaviorMobil::SafeDeceleration", "Maximum deceleration for follower in target lane, positive number", 2.0f);
+    asymmetric_passing_rules_ = params->GetBool("BehaviorMobil::AsymmetricPassingRules", "Whether passing on the right side is forbidden", false);
+    critical_velocity_ = params->GetReal("BehaviorMobil::CriticalVelocity", "Passing on the right side is allowed below this velocity", 16.66f);  // 16.66 m/s = 60 km/h
+    stop_at_lane_ending_ = params->GetBool("BehaviorMobil::StopAtLaneEnding", "Flag to let vehicle slow down at lane ending", true);
   }
 
   virtual ~BehaviorMobil() {}
@@ -79,6 +60,8 @@ class BehaviorMobil : public BehaviorIDMClassic {
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
+  std::shared_ptr<BehaviorIDMClassic> idm_;
+
   MobilState mobil_state_;
 
   double crosstrack_error_gain_;

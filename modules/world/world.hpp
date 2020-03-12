@@ -60,6 +60,7 @@ class World : public commons::BaseType {
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
+  void SetWorldTime(const double& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
   AgentMap GetAgents() const { return agents_; }
   AgentPtr GetAgent(AgentId id) const {
@@ -113,7 +114,7 @@ class World : public commons::BaseType {
     ClearEvaluators();
   }
 
-  EvaluationMap Evaluate() const;
+  virtual EvaluationMap Evaluate() const;
 
   bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);

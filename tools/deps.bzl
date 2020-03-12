@@ -35,6 +35,13 @@ def bark_dependencies():
     )
 
     _maybe(
+    git_repository,
+    name = "bark_ml",
+    branch = "master",
+    remote = "https://github.com/bark-simulator/bark-ml"
+    )
+
+    _maybe(
     new_git_repository,
     name = "com_github_interaction_dataset_interaction_dataset",
     build_file = "@bark_project//tools/interaction-dataset:interaction-dataset.BUILD",
@@ -85,11 +92,6 @@ def bark_dependencies():
     urls = ["https://github.com/ceres-solver/ceres-solver/archive/1.14.0.tar.gz"]
     )
 
-    git_repository(
-      name = "bark_ml_external",
-      branch="master",
-      remote = "https://github.com/bark-simulator/bark-ml"
-    )
     _maybe(
     native.new_local_repository,
     name = "python_linux",
