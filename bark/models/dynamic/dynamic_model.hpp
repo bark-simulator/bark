@@ -14,7 +14,7 @@
 #include <memory>
 #include <utility>
 
-#include "bark/commons/base_type.hpp"
+#include "modules/commons/commons.hpp"
 
 namespace bark {
 namespace models {

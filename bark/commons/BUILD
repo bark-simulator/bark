@@ -3,7 +3,8 @@ package(default_visibility = ["//visibility:public"])
 cc_library(
     name = "commons",
     hdrs = [
-        "base_type.hpp"
+        "base_type.hpp",
+        "commons.hpp"
     ],
     deps = [
         "//modules/commons/params:params",

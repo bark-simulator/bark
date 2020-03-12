@@ -20,14 +20,16 @@ void python_commons(py::module m) {
     py::class_<Params, PyParams, std::shared_ptr<Params>>(m, "Params")
       .def(py::init<>())
       .def("Access", &Params::operator[])
-      .def("AddChild", &Params::AddChild)
-      .def("GetBool", &Params::GetBool)
-      .def("GetReal", &Params::GetReal)
-      .def("GetInt", &Params::GetInt)
-      .def("SetBool", &Params::SetBool)
-      .def("SetReal", &Params::SetReal)
-      .def("GetCondensedParamList", &Params::GetCondensedParamList)
-      .def("SetInt", &Params::SetInt);
+      .def("addChild", &Params::AddChild)
+      .def("getBool", &Params::GetBool)
+      .def("getReal", &Params::GetReal)
+      .def("getInt", &Params::GetInt)
+      .def("getString", &Params::GetString)
+      .def("setBool", &Params::SetBool)
+      .def("setReal", &Params::SetReal)
+      .def("setString", &Params::SetString)
+      .def("getCondensedParamList", &Params::GetCondensedParamList)
+      .def("setInt", &Params::SetInt);
 
 
     m.def("ParamsTest", &DoSomeParams);

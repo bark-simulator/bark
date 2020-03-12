@@ -8,9 +8,9 @@
 #ifndef BARK_WORLD_OBJECTS_OBJECT_HPP_
 #define BARK_WORLD_OBJECTS_OBJECT_HPP_
 
-#include "bark/commons/base_type.hpp"
-#include "bark/geometry/polygon.hpp"
-#include "bark/geometry/model_3d.hpp"
+#include "modules/commons/commons.hpp"
+#include "modules/geometry/polygon.hpp"
+#include "modules/geometry/model_3d.hpp"
 
 namespace bark {
 namespace world {
