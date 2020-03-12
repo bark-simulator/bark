@@ -29,6 +29,7 @@ cc_library(
     deps= [
         "//modules/commons/params:include",
         "//modules/commons/util:include",
+        "//modules/commons/distribution:include",
         "@boost//:system",
         "@boost//:smart_ptr",
         "@boost//:move",

@@ -79,7 +79,7 @@ double BehaviorIDMClassic::CalcInteractionTerm(double net_distance,
 
 double BehaviorIDMClassic::CalcNetDistance(
     const std::shared_ptr<const Agent>& ego_agent,
-    const std::shared_ptr<const Agent>& leading_agent) {
+    const std::shared_ptr<const Agent>& leading_agent) const {
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
@@ -91,7 +91,7 @@ double BehaviorIDMClassic::CalcNetDistance(
   const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
   FrenetPosition frenet_leading = leading_agent->CurrentFrenetPosition();
-
+ 
   const float vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =

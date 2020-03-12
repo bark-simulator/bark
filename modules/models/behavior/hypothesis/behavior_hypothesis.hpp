@@ -23,10 +23,12 @@ namespace models {
 namespace behavior {
 
 
-class BehaviorHypothesis : public BehaviorModel {
+class BehaviorHypothesis {
   public:
+    BehaviorHypothesis() {}
+    virtual ~BehaviorHypothesis() {}
 
-  virtual modules::commons::Probability GetProbability(const Action& action,
+    virtual modules::commons::Probability GetProbability(const Action& action,
                              const world::ObservedWorld& observed_world,
                              const AgentId& agent_id) const = 0;
 };

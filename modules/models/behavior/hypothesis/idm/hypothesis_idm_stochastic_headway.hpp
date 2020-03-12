@@ -25,7 +25,8 @@ namespace behavior {
 
 class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadway, BehaviorHypothesis {
   public:
-  explicit BehaviorIDMStochasticHeadway(const commons::ParamsPtr& params);
+  explicit BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params);
+  virtual ~BehaviorHypothesisIDMStochasticHeadway()  {}
 
   virtual modules::commons::Probability GetProbability(const Action& action,
                              const world::ObservedWorld& observed_world,
@@ -33,11 +34,15 @@ class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadw
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
+    return BehaviorIDMStochasticHeadway::Plan(delta_time, observed_world);
+  };
+
   private: 
     const unsigned int num_samples_;
     const unsigned int num_buckets_;
-    const modules::commons::RandomVariate1D buckets_upper_bound_;
-    const modules::commons::RandomVariate1D buckets_lower_bound_; 
+    const Continuous1DAction buckets_upper_bound_;
+    const Continuous1DAction buckets_lower_bound_; 
 };
 
 
