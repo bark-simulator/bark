@@ -26,6 +26,11 @@ import math
 
 
 class LaneCorridorConfig:
+  """This class enables the configuration of a single LaneCorridor
+     It assigns all models for the agents, determines their positions and more.
+     Additionally, it can be chosen which agents should be controlled,
+     what goal and model they should have.
+  """
   def __init__(self,
                road_ids=None,
                lane_corridor_id=0,
@@ -37,6 +42,14 @@ class LaneCorridorConfig:
     self._current_s = None
   
   def state(self, world):
+    """Returns a state of the agent
+    
+    Arguments:
+        world {BARK.world}
+    
+    Returns:
+        np.array -- time, x, y, theta, velocity
+    """
     pose = self.position(world)
     if pose is None:
       return None
@@ -44,9 +57,30 @@ class LaneCorridorConfig:
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
   def ds(self, s_min=5., s_max=10.):
+    """Increment for placing the agents
+    
+    Keyword Arguments:
+        s_min {float} -- Min. lon. distance (default: {5.})
+        s_max {float} -- Max. lon. distance (default: {10.})
+    
+    Returns:
+        float -- delta s-value
+    """
     return np.random.uniform(s_min, s_max)
 
-  def position(self, world, min_distance=5., min_s=0., max_s=100.):
+  def position(self, world, min_s=0., max_s=100.):
+    """Using the defined LaneCorridor it finds positions for the agents
+    
+    Arguments:
+        world {BARK.world} -- BARK world
+    
+    Keyword Arguments:
+        min_s {float} -- Min. lon. value (default: {0.})
+        max_s {float} -- Max. lon. value (default: {100.})
+    
+    Returns:
+        tuple -- (x, y, theta)
+    """
     if self._road_corridor == None:
       world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
     road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
@@ -108,19 +142,34 @@ class LaneCorridorConfig:
                                            (10., 15.))
 
   def controlled_ids(self, agent_list):
-    """Returns an id-list
+    """Returns an ID-List of controlled agents
     """
     random_int = [agent_list[np.random.randint(0, len(agent_list))]]
     return random_int
 
   def controlled_goal(self, world):
+    """Goal for the controlled agent
+    
+    Arguments:
+        world {BARK.world} -- BARK world
+    
+    Returns:
+        GoalDefinition -- Goal for the controlled agent
+    """
     return self.goal(world)
 
   @property
   def controlled_behavior_model(self):
+    """Behavior model for controlled agent
+    
+    Returns:
+        BehaviorModel -- BARK behavior model
+    """
     return self.behavior_model
 
   def reset(self):
+    """Resets the LaneCorridorConfig
+    """
     self._current_s = None
 
 
@@ -140,8 +189,7 @@ class ConfigWithEase(ScenarioGeneration):
     self.initialize_params(params)
 
   def create_scenarios(self, params, num_scenarios):
-    """ 
-        see baseclass
+    """see baseclass
     """
     scenario_list = []
     for scenario_idx in range(0, num_scenarios):
@@ -150,6 +198,11 @@ class ConfigWithEase(ScenarioGeneration):
     return scenario_list
 
   def create_single_scenario(self):
+    """Creates one scenario using the defined LaneCorridorConfig
+    
+    Returns:
+        Scenario -- Returns a BARK scenario
+    """
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.convert_to_dict())
     world = scenario.get_world_state()
