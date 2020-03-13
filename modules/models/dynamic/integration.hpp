@@ -8,6 +8,8 @@
 #define MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
 #include <Eigen/Core>
 
+#include "modules/models/dynamic/dynamic_model.hpp"
+
 namespace modules {
 namespace models {
 namespace dynamic {

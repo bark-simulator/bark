@@ -33,24 +33,27 @@ class MPViewer(BaseViewer):
             alpha=alpha,
             marker='x')
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
-        lineStyle_string = '--' if dashed else '-'
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
+        lineStyle_string = (0, (5, 10)) if dashed else '-'
         line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],
             line2d_np[:, 1], 
             lineStyle=lineStyle_string,
             color=self.getColor(color),
-            alpha=alpha)
+            alpha=alpha,
+            zorder=zorder,
+            linewidth=linewidth)
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1):
         points = polygon.ToArray()
         polygon_draw = matplotlib.patches.Polygon(
             points,
             True,
             facecolor=self.getColor(facecolor),
             edgecolor=self.getColor(color),
-            alpha=alpha)
+            alpha=alpha,
+            linewidth=linewidth)
         t_start = self.axes.transData
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)

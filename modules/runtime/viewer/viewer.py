@@ -26,7 +26,7 @@ class BaseViewer(Viewer):
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
-        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
+        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", True]
         self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
@@ -90,12 +90,8 @@ class BaseViewer(Viewer):
             pose[1] = state[int(StateDefinition.Y_POSITION)]
             pose[2] = state[int(StateDefinition.THETA_POSITION)]
 
-            # center range on agents coordinates
-            self.dynamic_world_x_range[0] = pose[0] + self.world_x_range[0]
-            self.dynamic_world_x_range[1] = pose[0] + self.world_x_range[1]
-
-            self.dynamic_world_y_range[0] = pose[1] + self.world_y_range[0]
-            self.dynamic_world_y_range[1] = pose[1] + self.world_y_range[1]
+            center = [pose[0],  pose[1]]
+            self._update_world_dynamic_range(center)
         else:
           if self.use_world_bounds:
               bb = world.bounding_box
@@ -113,21 +109,24 @@ class BaseViewer(Viewer):
                   self.dynamic_world_x_range[0] -= (diffy - diffx)/2
                   self.dynamic_world_x_range[1] += (diffy - diffx)/2
           else:
-            aspect_ratio = self.get_aspect_ratio()
-            if self.enforce_x_length:
-              self.dynamic_world_x_range = [-self.x_length/2 + self.center[0], self.x_length/2 + self.center[0]]
-              self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + self.center[1], self.x_length/2/aspect_ratio + self.center[1]]
-              logger.info("Overwriting world y range with valid range.")
+              center = self.center
+              self._update_world_dynamic_range(center)
 
-            if self.enforce_y_length:
-              self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + self.center[0], self.y_length/2*aspect_ratio + self.center[0]]
-              self.dynamic_world_y_range = [-self.y_length/2 + self.center[1], self.y_length/2 + self.center[1]]
-              logger.info("Overwriting world x range with valid range.")
+
+    def _update_world_dynamic_range(self, center):
+        aspect_ratio = self.get_aspect_ratio()
+        if self.enforce_x_length:
+            self.dynamic_world_x_range = [-self.x_length/2 + center[0], self.x_length/2 + center[0]]
+            self.dynamic_world_y_range = [-self.x_length/2/aspect_ratio + center[1], self.x_length/2/aspect_ratio + center[1]]
+
+        if self.enforce_y_length:
+            self.dynamic_world_x_range = [-self.y_length/2*aspect_ratio + center[0], self.y_length/2*aspect_ratio + center[0]]
+            self.dynamic_world_y_range = [-self.y_length/2 + center[1], self.y_length/2 + center[1]]
 
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha, line_style=None):
+    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=10):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
@@ -223,7 +222,7 @@ class BaseViewer(Viewer):
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
                   color_line = self.getColorFromMap(float(i) / float(num_agents))
-                  color_line = color_face
+                  color_face = self.getColorFromMap(float(i) / float(num_agents))
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
@@ -231,8 +230,9 @@ class BaseViewer(Viewer):
             if self.drawHistory:
                 self.drawHistory(agent, color_line, alpha, color_face)
         if debug_text:
-          self.drawText(position=(0.1,0.9), text="Scenario: {}".format(scenario_idx), fontsize=18)
-          self.drawText(position=(0.1,0.95), text="Time: {:.2f}".format(world.time), fontsize=18)
+          self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
+          self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
+      
 
     def drawMap(self, map):
         # draw the boundary of each lane
@@ -255,7 +255,7 @@ class BaseViewer(Viewer):
       # center line is type none and is drawn as broken
       if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none: 
         dashed = True
-      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed)
+      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=2)
 
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape

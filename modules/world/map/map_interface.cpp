@@ -190,6 +190,14 @@ void MapInterface::CalculateLaneCorridors(
       lane_corridor->GetMergedPolygon().ConcatenatePolygons(
         next_lane->GetPolygon());
 
+      // TODO(@hart): use parameter
+      geometry::Line simplified_line;
+      boost::geometry::simplify(lane_corridor->GetCenterLine().obj_,
+                                simplified_line.obj_, 0.1);
+      simplified_line.RecomputeS();
+      lane_corridor->SetCenterLine(simplified_line);
+      // end of fix
+
       total_s = lane_corridor->GetCenterLine().Length();
       lane_corridor->SetLane(
         total_s,

@@ -35,8 +35,7 @@ def trajectory_from_track(track, start=0, end=None):
     start_offset = filtered_motion_states[0][0]
     for i, state in enumerate(filtered_motion_states):
         traj[i, :] = bark_state_from_motion_state(state[1], start_offset)
-    listlistfloat = [list(state) for state in traj]
-    return listlistfloat
+    return traj
 
 
 def shape_from_track(track, wheelbase=2.7):
@@ -74,10 +73,7 @@ def goal_definition_from_track(track, end):
 
 
 def behavior_from_track(track, params, start, end):
-    # Do not write the trajectory to the original parameter object
-    temp_params = params
-    temp_params["static_trajectory"] = trajectory_from_track(track, start, end)
-    return BehaviorStaticTrajectory(temp_params)
+    return BehaviorStaticTrajectory(params, trajectory_from_track(track, start, end))
 
 
 def track_from_trackfile(filename, track_id):
