@@ -5,6 +5,7 @@ py_library(
             "configurable_scenario_generation.py",
             "model_json_conversion.py",
             "deterministic.py",
+            "config_with_ease.py",
             "deterministic_drone_challenge.py",
             "drone_challenge.py",
             "interaction_dataset_reader.py",

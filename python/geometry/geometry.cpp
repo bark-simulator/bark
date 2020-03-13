@@ -211,12 +211,7 @@ void python_geometry(py::module m) {
       [](py::tuple  &t)  {
         if (t.size() != 2)
           throw std::runtime_error("Invalid point state!");
-        Polygon p;
-        auto points = t[0].cast<Matrix<float, Dynamic, Dynamic>>();
-        for (int i = 0; i < points.rows(); ++i) {
-          p.AddPoint(Point2d(points(i, 0), points(i, 1)));
-        }
-        p.center_ = t[1].cast<Pose>();
+        Polygon p(t[1].cast<Pose>(), t[0].cast<Matrix<float, Dynamic, Dynamic>>());
         return p;
       }));
 
