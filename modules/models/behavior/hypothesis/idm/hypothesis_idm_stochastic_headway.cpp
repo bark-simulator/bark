@@ -68,7 +68,7 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
   auto vel_ego = ego_vehicle_state(StateDefinition::VEL_POSITION);
 
   double net_distance = std::numeric_limits<double>::max();
-  double vel_other = std::numeric_limits<double>::max();
+  double vel_other = 0.0f; // makes interaction term go to zero, if distance is infinite
   if(leading_vehicle.first) {
     net_distance = BehaviorIDMStochasticHeadway::CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
