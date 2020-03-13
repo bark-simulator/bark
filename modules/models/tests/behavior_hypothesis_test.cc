@@ -25,29 +25,32 @@ using namespace modules::world;
 using namespace modules::geometry;
 using namespace modules::world::tests;
 
-ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper) {
+ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float fixed_headway,
+                                 float acc_lower_bound=-5.0f, float acc_upper_bound=8.0f,
+                                 float buckets_lower_bound = -8.0f, float buckets_upper_bound=9.0f) {
     // Behavior params
     auto params = std::make_shared<SetterParams>(true);
     // IDM Classic
     params->SetReal("BehaviorIDMClassic::MinimumSpacing", 2.0f);
-    params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 1.5f);
-    params->SetReal("BehaviorIDMClassic::MaxAcceleration",  1.7f);
-    params->SetReal("BehaviorIDMClassic::AccelerationLowerBound",  -5.0f);
-    params->SetReal("BehaviorIDMClassic::AccelerationUpperBound",  8.0f);
+    params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", fixed_headway);
+    params->SetReal("BehaviorIDMClassic::MaxAcceleration", 1.7f);
+    params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", acc_lower_bound);
+    params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", acc_upper_bound);
     params->SetReal("BehaviorIDMClassic::DesiredVelocity", 15.0f);
     params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration",  1.67f);
     params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
     params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
     params->SetInt("BehaviorIDMClassic::Exponent", 4);
     // IDM Stochastic Headway
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::LowerBound", headway_lower);
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::UpperBound", headway_upper);
+    params->SetInt("BehaviorIDMStochasticHeadway::HeadwayDistribution::RandomSeed", 1234);
+    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::LowerBound", headway_lower);
+    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UpperBound", headway_upper);
     params->SetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution", "UniformDistribution1D");
     // IDM Hypothesis
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100000);
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100);
     params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 1000);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", -8.0f);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", 9.0f);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", buckets_lower_bound);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", buckets_upper_bound);
 
     return params;
 }
@@ -66,25 +69,63 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
+  
   // No other agent in front -> outside max min acceleration limits (exactly on des. velocity)
-  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0));
+  {
+  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0, 1.5));
   const float desired_velocity = behavior.GetDesiredVelocity();
-  const float max_acceleration = behavior.GetMaxAcceleration();
-  const int exponent = behavior.GetExponent();
 
-  float ego_velocity = desired_velocity, rel_distance = 7.0, velocity_difference = 0.0;
+  float ego_velocity = desired_velocity, rel_distance = 20.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
       0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
   auto traj = behavior.Plan(0.2, observed_world);
   Action action(behavior.GetLastAction());
   auto ego_agent_id = observed_world.GetAgents().begin()->first;
-  auto start = std::chrono::steady_clock::now();
   auto action_prob = behavior.GetProbability(action, observed_world, ego_agent_id);
-  auto end = std::chrono::steady_clock::now();
-  EXPECT_NEAR(action_prob, 1, 0.1);
+  EXPECT_NEAR(action_prob, 1, 0.01);
 
-  LOG(INFO) << "Prob calculation took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " [ms]";
+  action_prob = behavior.GetProbability(Action(Continuous1DAction(1.5)), observed_world, ego_agent_id);
+  EXPECT_NEAR(action_prob, 0, 0.01);
+  }
+
+  // No other agent in front, ego velocity higher than desired velocity
+  {
+  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0, 1.0));
+  const float desired_velocity = behavior.GetDesiredVelocity();
+
+  float ego_velocity = desired_velocity + 10, rel_distance = 7.0, velocity_difference = 0.0;
+  auto observed_world = make_test_observed_world(
+      0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+
+  auto traj = behavior.Plan(0.2, observed_world);
+  Action action2(behavior.GetLastAction());
+  auto ego_agent_id = observed_world.GetAgents().begin()->first;
+  auto action_prob = behavior.GetProbability(action2, observed_world, ego_agent_id);
+  EXPECT_NEAR(action_prob, 1, 0.01);
+
+  action_prob = behavior.GetProbability(Action(boost::get<Continuous1DAction>(action2)+0.4f), observed_world, ego_agent_id);
+  EXPECT_NEAR(action_prob, 0, 0.01);
+  }
+
+  // Other agent in front, plan action for single parameter (t=1.5 in uniform range (1.0, 3.0))
+  // compare to distribution parameter approach, no acceleration limits
+  {
+  auto params = make_params_hypothesis(1.0, 3.0, 1.5, -100, 100, -110, 110);
+  auto behavior = BehaviorHypothesisIDMStochasticHeadway(params);
+  const float desired_velocity = behavior.GetDesiredVelocity();
+
+  float ego_velocity = desired_velocity+2, rel_distance = 30.0, velocity_difference = 0.0;
+  auto observed_world = make_test_observed_world(
+      1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+
+  auto idm_det_behavior = BehaviorIDMClassic(params);
+  auto traj = idm_det_behavior.Plan(0.2, observed_world);
+  Action action(idm_det_behavior.GetLastAction());
+  auto ego_agent_id = observed_world.GetAgents().begin()->first;
+  auto action_prob = behavior.GetProbability(action, observed_world, ego_agent_id);
+  EXPECT_NEAR(action_prob, 1/(3.0-1.0), 0.01);
+  }
 }
 
 int main(int argc, char** argv) {

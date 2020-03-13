@@ -153,8 +153,8 @@ Trajectory BehaviorIDMClassic::Plan(
 
   geometry::Line line = lane_corr->GetCenterLine();
 
-  double net_distance = .0f;
-  double vel_other = 1e6;
+  double net_distance = std::numeric_limits<double>::max();
+  double vel_other = 0.0f;
   if (leading_vehicle.first) {
     net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
@@ -179,14 +179,10 @@ Trajectory BehaviorIDMClassic::Plan(
     double initial_acceleration;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
-      if (leading_vehicle.first) {
-        acc = CalcIDMAcc(net_distance, vel_i, vel_other);
-        traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
-        traveled_other = vel_other * dt;
-        net_distance += traveled_other - traveled_ego;
-      } else {
-        acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
-      }
+      acc = CalcIDMAcc(net_distance, vel_i, vel_other);
+      traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
+      traveled_other = vel_other * dt;
+      net_distance += traveled_other - traveled_ego;
 
       // Set initial acceleration to maintain action value
       if(i == 1) {

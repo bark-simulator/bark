@@ -19,6 +19,7 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 using modules::world::FrontRearAgents;
 using modules::commons::UniformDistribution1D;
+using modules::models::behavior::BehaviorIDMStochasticHeadway;
 
 BehaviorHypothesisIDMStochasticHeadway::BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params) :
                              BehaviorIDMStochasticHeadway(params),
@@ -78,13 +79,16 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
 
   // sample a lot of actions for this environment state to approximate the probability
   double bucket_size = (buckets_upper_bound_ - buckets_lower_bound_)/num_buckets_;
-  std::vector<std::vector<double>> sample_container(num_buckets_,
-         std::vector<Continuous1DAction>(std::ceil(static_cast<float>(num_samples_)/num_buckets_)));
-   for(size_t i = 0; i < num_samples_; ++i) {
-    auto action_sample = BehaviorIDMStochasticHeadway::CalcIDMAcc(net_distance, vel_ego, vel_other);
+  std::vector<unsigned int> sample_container(num_buckets_, 0);
+  auto behavior_idm_stoch = std::dynamic_pointer_cast<BehaviorIDMStochasticHeadway>(
+    BehaviorIDMStochasticHeadway::Clone());
+  for(size_t i = 0; i < num_samples_; ++i) {
+    behavior_idm_stoch->SampleParameters();
+    auto action_sample = behavior_idm_stoch->CalcIDMAcc(net_distance, vel_ego, vel_other);
+    LOG(INFO) << "action_sample" << action_sample;
     BARK_EXPECT_TRUE(action_sample >= buckets_lower_bound_);
     BARK_EXPECT_TRUE(action_sample <= buckets_upper_bound_);
-    sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)].push_back(action_sample);
+    sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)] += 1;
   }
 
   auto idm_acc = boost::get<Continuous1DAction>(action);
@@ -95,8 +99,9 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
 
   // percentage in bucket the action falls into must be scaled by bucket size to be independent
   // of number of buckets
-  const auto& bucket = sample_container[std::floor((idm_acc-buckets_lower_bound_)/bucket_size)];
-  return static_cast<double>(bucket.size())/(num_samples_*bucket_size);
+  const auto& sample_count = sample_container[std::floor((idm_acc-buckets_lower_bound_)/bucket_size)];
+  // size of buckets is maximum density resolution or can be considered as integration delta for density normalization
+  return static_cast<double>(sample_count)/static_cast<double>(num_samples_);
 }
 
 }  // namespace behavior
