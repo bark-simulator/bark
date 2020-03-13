@@ -18,7 +18,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-bin/modules/commons/tests/distribution_tests",
+            "program": "${workspaceFolder}/bazel-bin/modules/models/tests/behavior_hypothesis_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
