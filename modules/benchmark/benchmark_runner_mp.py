@@ -50,17 +50,27 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                num_scenarios=None,
                benchmark_configs=None,
                log_eval_avg_every=None,
-               num_cpus=None):
+               num_cpus=None,
+               memory_total=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, num_scenarios=num_scenarios,
                           benchmark_configs=benchmark_configs)
         num_cpus_available = psutil.cpu_count(logical=True)
         if num_cpus and num_cpus <= num_cpus_available:
-            pass
+          pass
         else:
-            num_cpus = num_cpus_available
-        ray.init(num_cpus=num_cpus)
+          num_cpus = num_cpus_available
+        
+        mem = psutil.virtual_memory()
+        memory_available = mem.available
+        if memory_total and memory_total <= memory_available:
+          pass
+        else:
+          memory_total = memory_available
+
+        ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7) # we split memory between workers (30%) and objects (70%)
+        
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
