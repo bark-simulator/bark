@@ -4,6 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+#include <chrono>
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
@@ -24,9 +25,8 @@ using namespace modules::world;
 using namespace modules::geometry;
 using namespace modules::world::tests;
 
-
-TEST(hypothesis_idm_headway, behavior_hypothesis) {
-  // Behavior params
+ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper) {
+    // Behavior params
     auto params = std::make_shared<SetterParams>(true);
     // IDM Classic
     params->SetReal("BehaviorIDMClassic::MinimumSpacing", 2.0f);
@@ -40,15 +40,20 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
     params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
     params->SetInt("BehaviorIDMClassic::Exponent", 4);
     // IDM Stochastic Headway
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::LowerBound", 1.0f);
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::UpperBound", 3.0f);
+    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::LowerBound", headway_lower);
+    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UniformDistribution1D::UpperBound", headway_upper);
     params->SetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution", "UniformDistribution1D");
     // IDM Hypothesis
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 10000);
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 100);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", 0.0f);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", 5.0f);
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100000);
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 1000);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", -8.0f);
+    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", 9.0f);
 
+    return params;
+}
+
+
+TEST(hypothesis_idm_headway, behavior_hypothesis) {
   // Create an observed world with specific goal definition
   Polygon polygon(
       Pose(1, 1, 0),
@@ -61,20 +66,25 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
-  float ego_velocity = 1.0, rel_distance = 7.0,
-        velocity_difference = 0.0;
+  // No other agent in front -> outside max min acceleration limits (exactly on des. velocity)
+  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0));
+  const float desired_velocity = behavior.GetDesiredVelocity();
+  const float max_acceleration = behavior.GetMaxAcceleration();
+  const int exponent = behavior.GetExponent();
+
+  float ego_velocity = desired_velocity, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
       0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
 
-  // create behavior model
-  auto behavior = BehaviorHypothesisIDMStochasticHeadway(params);
-
-  // no other agent in front
-  Action action(Continuous1DAction(1.0f));
+  auto traj = behavior.Plan(0.2, observed_world);
+  Action action(behavior.GetLastAction());
   auto ego_agent_id = observed_world.GetAgents().begin()->first;
+  auto start = std::chrono::steady_clock::now();
   auto action_prob = behavior.GetProbability(action, observed_world, ego_agent_id);
+  auto end = std::chrono::steady_clock::now();
   EXPECT_NEAR(action_prob, 1, 0.1);
 
+  LOG(INFO) << "Prob calculation took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " [ms]";
 }
 
 int main(int argc, char** argv) {
