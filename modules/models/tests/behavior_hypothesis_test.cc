@@ -47,7 +47,7 @@ ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float
     params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UpperBound", headway_upper);
     params->SetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution", "UniformDistribution1D");
     // IDM Hypothesis
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100);
+    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100000);
     params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 1000);
     params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", buckets_lower_bound);
     params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", buckets_upper_bound);
