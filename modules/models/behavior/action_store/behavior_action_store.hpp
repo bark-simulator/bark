@@ -39,12 +39,20 @@ class BehaviorActionStore : public BehaviorModel {
     active_behavior_ = action_hash;
   }
 
+  virtual BehaviorModelPtr Clone() const;
+
   virtual Trajectory Plan(float delta_time, const modules::world::ObservedWorld& observed_world);
 
   private:
     std::unordered_map<ActionHash, Trajectory> trajectory_store_;
     ActionHash active_behavior_;
 };
+
+inline BehaviorModelPtr BehaviorActionStore::Clone() const {
+  std::shared_ptr<BehaviorActionStore> model_ptr =
+      std::make_shared<BehaviorActionStore>(*this);
+  return model_ptr;
+}
 
 
 typedef std::shared_ptr<BehaviorActionStore> BehaviorActionStorePtr;

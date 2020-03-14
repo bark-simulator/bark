@@ -32,6 +32,7 @@ cc_binary(
     "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/mobil:mobil",
     "//modules/models/behavior/static_trajectory",
+    "//modules/models/behavior/action_store:behavior_action_store",
     #"//modules/models/execution/mpc:mpc",
     "//modules/runtime/viewer:viewer",
     "//modules/world:world",
