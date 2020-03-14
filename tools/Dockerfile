@@ -10,10 +10,9 @@ COPY installers /tmp/installers
 RUN bash /tmp/installers/install_bazel.sh
 RUN bash /tmp/installers/install_python_venv.sh
 
-COPY requirements.txt /tmp/requirements.txt
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
-RUN pip3 install -r /tmp/requirements.txt
+RUN pip3 install -r /tmp/installers/requirements.txt
 
 # renewe bash
 CMD [ "/bin/bash" ]
