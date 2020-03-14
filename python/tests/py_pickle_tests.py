@@ -59,10 +59,10 @@ class PickleTests(unittest.TestCase):
     def test_behavior_model_pickle(self):
         
         params = ParameterServer()
-        b = BehaviorConstantVelocity(params)
+        b = BehaviorIDMClassic(params)
 
         ba = pickle_unpickle(b)
-        self.assertTrue(isinstance(ba, BehaviorConstantVelocity))
+        self.assertTrue(isinstance(ba, BehaviorIDMClassic))
 
     def test_execution_model_pickle(self):
         
@@ -103,7 +103,7 @@ class PickleTests(unittest.TestCase):
 
     def test_agent_pickle(self):
         params = ParameterServer()
-        behavior = BehaviorConstantVelocity(params)
+        behavior = BehaviorIDMClassic(params)
         execution = ExecutionModelInterpolate(params)
         dynamic = SingleTrackModel(params)
         shape = CarLimousine()
