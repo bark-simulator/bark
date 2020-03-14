@@ -68,7 +68,7 @@ void python_behavior(py::module m) {
 
   py::class_<BehaviorIDMClassic,
              BehaviorModel,
-             shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
+             shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic", py::multiple_inheritance())
     .def(py::init<const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorIDMClassic &m) {
       return "bark.behavior.BehaviorIDMClassic";
