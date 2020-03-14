@@ -64,7 +64,7 @@ struct ActionHasher : public boost::static_visitor<std::size_t>
     std::size_t operator()(const Input& x) const { return std::size_t(); }
 };
 
-ActionHash ActionToHash(const Action& action) {
+inline ActionHash ActionToHash(const Action& action) {
   return boost::apply_visitor(ActionHasher(), action);
 }
 
