@@ -30,7 +30,7 @@ class BehaviorHypothesis : public virtual BehaviorModel {
 
     virtual modules::commons::Probability GetProbability(const Action& action,
                              const world::ObservedWorld& observed_world,
-                             const AgentId& agent_id) const = 0;
+                             const world::objects::AgentId& agent_id) const = 0;
 };
 
 typedef std::shared_ptr<BehaviorHypothesis> BehaviorHypothesisPtr;

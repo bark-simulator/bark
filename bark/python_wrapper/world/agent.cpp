@@ -72,32 +72,30 @@ void python_agent(py::module m) {
     .def(py::pickle(
       [](const Agent& a) -> py::tuple {
           return py::make_tuple(
-            a.GetStateInputHistory(),  // 1
-            a.GetShape(),  // 2
-            a.GetAgentId(),  // 3
-            a.GetExecutionTrajectory(),  // 4
-            a.GetBehaviorTrajectory(),  // 5
-            BehaviorModelToPython(a.GetBehaviorModel()),  // 6
-            a.GetExecutionModel(),  // 7
-            a.GetDynamicModel(),  // 8
-            a.GetCurrentState(),  // 9
-            GoalDefinitionToPython(a.GetGoalDefinition()));  // 10
+            a.GetStateInputHistory(),  // 0
+            a.GetShape(),  // 1
+            a.GetAgentId(),  // 2
+            BehaviorModelToPython(a.GetBehaviorModel()),  // 3
+            a.GetExecutionModel(),  // 4
+            a.GetDynamicModel(),  // 5
+            a.GetCurrentState(),  // 6
+            GoalDefinitionToPython(a.GetGoalDefinition()));  // 7
       },
       [](py::tuple t) {
-        if (t.size() != 10)
+        if (t.size() != 8)
           throw std::runtime_error("Invalid agent state!");
 
         using bark::models::dynamic::SingleTrackModel;
         using bark::models::execution::ExecutionModelInterpolate;
         Agent agent(
-          t[8].cast<State>(),
-          PythonToBehaviorModel(t[5].cast<py::tuple>()),
-          std::make_shared<SingleTrackModel>(t[7].cast<SingleTrackModel>()),
+          t[6].cast<State>(),
+          PythonToBehaviorModel(t[3].cast<py::tuple>()),
+          std::make_shared<SingleTrackModel>(t[5].cast<SingleTrackModel>()),
           std::make_shared<ExecutionModelInterpolate>(
-            t[6].cast<ExecutionModelInterpolate>()),
-          t[1].cast<bark::geometry::Polygon>(),
+            t[4].cast<ExecutionModelInterpolate>()),
+          t[1].cast<modules::geometry::Polygon>(),
           nullptr,
-          PythonToGoalDefinition(t[9].cast<py::tuple>()));
+          PythonToGoalDefinition(t[7].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
         agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
         return agent;

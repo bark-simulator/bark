@@ -29,7 +29,8 @@ using namespace bark::world::tests;
 
 class DummyBehaviorIDM : public BehaviorIDMClassic {
  public:
-  using BehaviorIDMClassic::BehaviorIDMClassic;
+  DummyBehaviorIDM(const ParamsPtr& params) : 
+      BehaviorIDMClassic(params), BehaviorModel(params) {}
   virtual double CalculateLongitudinalAcceleration(
       const ObservedWorld& observed_world) {
     std::pair<AgentPtr, FrenetPosition> leading_vehicle =
