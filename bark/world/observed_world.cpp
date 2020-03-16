@@ -15,7 +15,6 @@ namespace world {
 using modules::geometry::Point2d;
 using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::behavior::BehaviorMotionPrimitivesPtr;
-using modules::models::behavior::BehaviorActionStorePtr;
 using modules::models::dynamic::State;
 using modules::world::AgentMap;
 
