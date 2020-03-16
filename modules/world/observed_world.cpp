@@ -7,7 +7,6 @@
 #include <limits>
 
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/behavior/action_store/behavior_action_store.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
