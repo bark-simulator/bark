@@ -63,7 +63,7 @@ cc_test(
         "//modules/geometry",
         "//modules/world/opendrive",
         "//modules/world:world",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -78,7 +78,7 @@ cc_test(
         "//modules/world/map:road_corridor",
         "//modules/world/map:map_interface",
         ":make_test_xodr_map",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -93,7 +93,7 @@ cc_test(
         "//modules/world:world",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -114,7 +114,7 @@ cc_test(
         "//modules/world/evaluation:evaluation", 
         ":make_test_world",
         ":dummy_road_corridor",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -135,7 +135,7 @@ cc_test(
         "//modules/world/evaluation:evaluation",        
         ":make_test_world",
         ":dummy_road_corridor",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -149,7 +149,7 @@ cc_test(
         "//modules/world/map:roadgraph",
         "//modules/world/opendrive",
         ":make_test_xodr_map",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -163,7 +163,7 @@ cc_test(
         "//modules/world/map:map_interface",
         "//modules/world/opendrive",
         ":make_test_xodr_map",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
