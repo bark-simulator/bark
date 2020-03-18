@@ -152,6 +152,13 @@ ObservedWorldPtr ObservedWorld::Predict(
   return next_world;
 }
 
+ObservedWorldPtr ObservedWorld::ObserveForOtherAgent(const AgentId& other_agent_id) const {
+  std::shared_ptr<ObservedWorld> others_world =
+      std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
+  others_world->ego_agent_id_ = other_agent_id;
+  return others_world;
+}
+
 EvaluationMap ObservedWorld::Evaluate() const {
   EvaluationMap evaluation_results;
   for (auto const& evaluator : World::GetEvaluators()) {

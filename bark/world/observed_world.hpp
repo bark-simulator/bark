@@ -151,6 +151,8 @@ class ObservedWorld : public World {
 
   virtual EvaluationMap Evaluate() const;
 
+  ObservedWorldPtr ObserveForOtherAgent(const AgentId& other_agent_id) const;
+
  private:
   AgentId ego_agent_id_;
 };
