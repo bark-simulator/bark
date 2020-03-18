@@ -8,7 +8,7 @@ cc_test(
         "//modules/geometry",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
         "@boost//:geometry",
     ],
 )
@@ -25,7 +25,7 @@ cc_test(
         "//modules/commons/transformation:frenet",
         #"//modules/models/execution/mpc:mpc",
         "//modules/models/execution/interpolation:interpolation",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -41,7 +41,7 @@ cc_test(
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/models/behavior/idm:idm_lane_tracking",
         "//modules/world:world",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
     ],
 )
@@ -59,7 +59,7 @@ cc_test(
         "//modules/models/dynamic",
         "//modules/world",
         "@com_github_eigen_eigen//:eigen",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -74,7 +74,7 @@ cc_test(
         "//modules/models/behavior/idm:idm_classic",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
         "//modules/world/tests:make_test_world",
     ],
@@ -91,7 +91,7 @@ cc_test(
         "//modules/models/behavior/mobil:mobil",
         "//modules/models/execution/interpolation:interpolation",
         "//modules/world/tests:make_test_xodr_map",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -117,6 +117,6 @@ cc_test(
         "//modules/geometry",
         "//modules/models/behavior/static_trajectory",
         "@com_github_eigen_eigen//:eigen",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )

@@ -5,18 +5,15 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "bark_project",
-    # commit="846c3a736a2606a7aeb067a55b25b9e354bd25bf",
     branch = "master",
     remote = "https://github.com/bark-simulator/bark"
     )
 
     _maybe(
-    http_archive,
+    git_repository,
     name = "gtest",
-    url = "https://github.com/google/googletest/archive/release-1.7.0.zip",
-    sha256 = "b58cb7547a28b2c718d1e38aee18a3659c9e3ff52440297e965f5edffe34b6d0",
-    build_file = "@bark_project//tools:gtest.BUILD",
-    strip_prefix = "googletest-release-1.7.0"
+    branch = "master",
+    remote = "https://github.com/google/googletest"
     )
 
     _maybe(
@@ -62,34 +59,19 @@ def bark_dependencies():
     ]
     )
 
+
     _maybe(
-    http_archive,
-    name = "com_github_gflags_gflags",
-    sha256 = "6e16c8bc91b1310a44f3965e616383dbda48f83e8c1eaa2370a215057b00cabe",
-    strip_prefix = "gflags-77592648e3f3be87d6c7123eb81cbad75f9aef5a",
-    urls = [
-        "https://mirror.bazel.build/github.com/gflags/gflags/archive/77592648e3f3be87d6c7123eb81cbad75f9aef5a.tar.gz",
-        "https://github.com/gflags/gflags/archive/77592648e3f3be87d6c7123eb81cbad75f9aef5a.tar.gz",
-    ]
+      git_repository,
+      name = "com_github_gflags_gflags",
+      branch = "master",
+      remote = "https://github.com/gflags/gflags"
     )
 
     _maybe(
-    http_archive,
-    name = "com_github_google_glog",
-    sha256 = "7083af285bed3995b5dc2c982f7de39bced9f0e6fd78d631f3285490922a0c3d",
-    strip_prefix = "glog-3106945d8d3322e5cbd5658d482c9ffed2d892c0",
-    urls = [
-        "https://github.com/drigz/glog/archive/3106945d8d3322e5cbd5658d482c9ffed2d892c0.tar.gz",
-    ]
-    )
-
-    _maybe(
-    http_archive,
-    name = "com_google_ceres_solver", 
-    strip_prefix = "ceres-solver-1.14.0", 
-    sha256 = "1296330fcf1e09e6c2f926301916f64d4a4c5c0ff12d460a9bc5d4c48411518f",
-    build_file = "@bark_project//tools/ceres:ceres.BUILD",
-    urls = ["https://github.com/ceres-solver/ceres-solver/archive/1.14.0.tar.gz"]
+      git_repository,
+      name = "com_github_google_glog",
+      branch = "master",
+      remote = "https://github.com/google/glog"
     )
 
     _maybe(
