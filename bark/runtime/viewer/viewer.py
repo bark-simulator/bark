@@ -206,10 +206,10 @@ class BaseViewer(Viewer):
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
-                  agent_id in eval_agent_ids:
-                color_line = self.eval_goal_color
-                color_face = self.eval_goal_color
-                alpha = .5
+                    agent_id == eval_agent_ids[0]:
+                color_line = self.color_eval_agents_line
+                color_face = self.color_eval_agents_face
+                alpha = self.alpha_eval_agent
                 self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
         num_agents = len(world.agents.items())

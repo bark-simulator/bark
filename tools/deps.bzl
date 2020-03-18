@@ -5,15 +5,18 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "bark_project",
+    # commit="846c3a736a2606a7aeb067a55b25b9e354bd25bf",
     branch = "master",
     remote = "https://github.com/bark-simulator/bark"
     )
 
     _maybe(
-    git_repository,
+    http_archive,
     name = "gtest",
-    commit = "482ac6ee63429af2aa9c44f4e6427873fb68fb1f",
-    remote = "https://github.com/google/googletest"
+    url = "https://github.com/google/googletest/archive/release-1.7.0.zip",
+    sha256 = "b58cb7547a28b2c718d1e38aee18a3659c9e3ff52440297e965f5edffe34b6d0",
+    build_file = "@bark_project//tools:gtest.BUILD",
+    strip_prefix = "googletest-release-1.7.0"
     )
 
     _maybe(
@@ -29,6 +32,13 @@ def bark_dependencies():
     name = "com_github_nelhage_rules_boost",
     branch = "master",
     remote = "https://github.com/nelhage/rules_boost"
+    )
+
+    _maybe(
+    git_repository,
+    name = "bark_ml",
+    branch = "master",
+    remote = "https://github.com/bark-simulator/bark-ml"
     )
 
     _maybe(
@@ -52,10 +62,13 @@ def bark_dependencies():
     )
 
     _maybe(
-      git_repository,
-      name = "com_github_gflags_gflags",
-      commit = "addd749114fab4f24b7ea1e0f2f837584389e52c",
-      remote = "https://github.com/gflags/gflags"
+    http_archive,
+    name = "com_github_google_glog",
+    sha256 = "7083af285bed3995b5dc2c982f7de39bced9f0e6fd78d631f3285490922a0c3d",
+    strip_prefix = "glog-3106945d8d3322e5cbd5658d482c9ffed2d892c0",
+    urls = [
+        "https://github.com/drigz/glog/archive/3106945d8d3322e5cbd5658d482c9ffed2d892c0.tar.gz",
+    ]
     )
 
     _maybe(
