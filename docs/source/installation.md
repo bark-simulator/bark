@@ -6,11 +6,10 @@ We recommend using Ubuntu.
 
 ## Prerequisites
 * Bazel (requires Java)
-* Python3.7 (`sudo apt-get install python3.7 python3.7-dev python3.7-tk` and `pip install virtualenv`)
+* Python3.7 (`sudo apt-get install python3.7 python3.7-dev python3.7-tk`)
+* Virtual Env (`pip3 install virtualenv==16.7.8`) (note that the newest version does not seem to link the Python.h)
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
-* virtualenv (16.7.8, as the newest version does not seem to link the Python.h)
-
 
 ## Setup on Linux
 1. Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
