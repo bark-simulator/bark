@@ -28,6 +28,7 @@ ActionHash BehaviorActionStore::Store(const Action& action, const Trajectory& tr
 Trajectory BehaviorActionStore::Retrieve(const ActionHash& action_hash) const {
   auto it = trajectory_store_.find(action_hash);
   BARK_EXPECT_TRUE(it != trajectory_store_.end());
+  SetLastTrajectory(it->second);
   return it->second;
 }
 
