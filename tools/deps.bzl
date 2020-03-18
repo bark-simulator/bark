@@ -12,7 +12,7 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "gtest",
-    branch = "master",
+    commit = "482ac6ee63429af2aa9c44f4e6427873fb68fb1f",
     remote = "https://github.com/google/googletest"
     )
 
@@ -63,14 +63,14 @@ def bark_dependencies():
     _maybe(
       git_repository,
       name = "com_github_gflags_gflags",
-      branch = "master",
+      commit = "addd749114fab4f24b7ea1e0f2f837584389e52c",
       remote = "https://github.com/gflags/gflags"
     )
 
     _maybe(
       git_repository,
       name = "com_github_google_glog",
-      branch = "master",
+      commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
       remote = "https://github.com/google/glog"
     )
 
