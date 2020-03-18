@@ -23,7 +23,7 @@ namespace models {
 namespace behavior {
 
 
-class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadway, BehaviorHypothesis {
+class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadway, public BehaviorHypothesis {
   public:
   explicit BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params);
   virtual ~BehaviorHypothesisIDMStochasticHeadway()  {}
