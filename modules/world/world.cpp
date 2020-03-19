@@ -229,7 +229,7 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
 
   for (const auto& agent_state : state_map) {
     AgentPtr agent = NULL;
-    agent = get_agent(agent_state.first);
+    agent = GetAgent(agent_state.first);
 
     if (agent) {
       // TODO: read control from Carla
@@ -237,13 +237,13 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
       pair.first = agent_state.second;
       pair.second = modules::models::behavior::Action(
         modules::models::behavior::DiscreteAction(0));
-      agent->add_trajectory_step(pair);
+      agent->addTrajectoryStep(pair);
     } else {
       std::cout << "Agent" << agent_state.first << " doesn't exist." << std::endl;
     }
   }
 
-  UpdateHorizonDrivingCorridors();
+  //UpdateHorizonDrivingCorridors();
 }
 
 AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
@@ -255,7 +255,7 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
   // Behavioral and execution planning
   for (const auto& agent_id : agent_ids) {
     AgentPtr agent = NULL;
-    agent = get_agent(agent_id);
+    agent = GetAgent(agent_id);
 
     if (agent) {
       //! clone current world
@@ -264,7 +264,7 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
       agent->BehaviorPlan(delta_time, observed_world);
       agent->ExecutionPlan(delta_time);
 
-      trajectory_map[agent_id]=agent->get_execution_trajectory();
+      trajectory_map[agent_id]=agent->GetExecutionTrajectory();
     } else {
       std::cout << "Agent" << agent_id << " doesn't exist." << std::endl;
     }
