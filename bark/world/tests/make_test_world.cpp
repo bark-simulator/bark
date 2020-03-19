@@ -55,7 +55,7 @@ WorldPtr bark::world::tests::make_test_world(
   auto params = std::make_shared<SetterParams>();
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
-  DynamicModelPtr dyn_model(nullptr);
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
 
