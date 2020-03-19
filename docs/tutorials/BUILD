@@ -1,6 +1,7 @@
 filegroup(
   name = "notebooks_folder",
-  srcs = glob(["*.ipynb"])
+  srcs = glob(["*.ipynb"],
+               exclude=["run.py", "run", "__init__.py"])
 )
 
 # add bark deps here
@@ -17,8 +18,8 @@ py_binary(
 )
 
 py_test(
-  name = "notebooks_tests",
-  srcs = ["notebooks_tests.py"],
+  name = "notebook_tests",
+  srcs = ["notebook_tests.py"],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:matplotlib_viewer",

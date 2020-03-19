@@ -17,8 +17,8 @@ class NotebookTests(unittest.TestCase):
       else:
         new_py_file_name = "notebook_unittest_" + notebook_name
         output = os.system(
-          "jupyter nbconvert --to script --output " + new_py_file_name + " notebooks/" + notebook_name + ".ipynb")
-        exec(open("notebooks/" + new_py_file_name + ".py").read())
+          "jupyter nbconvert --to script --output " + new_py_file_name + " docs/tutorials/" + notebook_name + ".ipynb")
+        exec(open("docs/tutorials/" + new_py_file_name + ".py").read())
 
 
 if __name__ == '__main__':
