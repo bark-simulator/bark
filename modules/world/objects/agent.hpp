@@ -110,7 +110,7 @@ class Agent : public Object {
     road_corridor_ = road_corridor;
   }
 
-  void add_trajectory_step(const StateActionPair& state_action_pair);
+  void addTrajectoryStep(const StateActionPair& state_action_pair);
 
   void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
 
