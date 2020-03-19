@@ -165,19 +165,3 @@ py_binary(
         "//modules/runtime:runtime",
     ],
 )
-
-py_binary(
-  name = "read_from_carla",
-  srcs = ["read_from_carla.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params',
-          "//tools/carla:carla_python_lib",],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:pygame_viewer",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/carla:carla_client",],
-)
