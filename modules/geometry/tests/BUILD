@@ -7,7 +7,7 @@ cc_test(
     deps = [
         "//modules/geometry:geometry",
         "//modules/world:world",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
