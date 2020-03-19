@@ -19,6 +19,7 @@
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/commons/params/setter_params.hpp"
+#include "python/models/behavior.hpp"
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
@@ -50,6 +51,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
     behavior_model_name = "BehaviorMobil";
+  } else if (typeid(*behavior_model) == typeid(PyBehaviorModel)) {
+    behavior_model_name = "PyBehaviorModel";
   }
 #ifdef PLANNER_UCT
   else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
@@ -77,6 +80,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
     return std::make_shared<BehaviorMobil>(
       t[0].cast<BehaviorMobil>());
+  } else if (behavior_model_name.compare("PyBehaviorModel") == 0) {
+    return std::make_shared<PyBehaviorModel>(
+      t[0].cast<PyBehaviorModel>());
   }
 #ifdef PLANNER_UCT
   else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
