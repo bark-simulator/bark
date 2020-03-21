@@ -8,6 +8,7 @@
 #include "python/polymorphic_conversion.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/runtime/tests/py_param_server_test_helper.hpp"
+#include "modules/commons/transformation/frenet.hpp"
 
 namespace py = pybind11;
 
@@ -47,6 +48,12 @@ void python_commons(py::module m) {
           auto params_ptr = PythonToParams(t[0].cast<py::tuple>());
           return CppParamServerTestObject(params_ptr);
       }));
+
+
+    py::class_<transformation::FrenetPosition, std::shared_ptr<transformation::FrenetPosition>>(m, "FrenetPosition")
+      .def(py::init<>())
+      .def_readwrite("lon", &transformation::FrenetPosition::lon)
+      .def_readwrite("lat", &transformation::FrenetPosition::lat);
 
 }
 

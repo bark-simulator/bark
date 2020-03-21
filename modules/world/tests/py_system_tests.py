@@ -9,13 +9,8 @@ import time
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.xodr_parser import XodrParser
-try:
-  from bark.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorUCTSingleAgentMacroActions
-except:
-  print("Rerun with --define planner_uct=true")
-  exit()
 from bark.models.execution import ExecutionModelInterpolate
-from bark.models.dynamic import SingleTrackModel
+from bark.models.dynamic import SingleTrackModel, StateDefinition
 from bark.world import World, MakeTestWorldHighway
 from bark.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimitsFrenet
 from bark.world.agent import Agent
@@ -26,8 +21,53 @@ from bark.world.evaluation import EvaluatorDrivableArea
 from bark.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
     MakeXodrMapOneRoadTwoLanes, XodrLaneSection, XodrLane
 from modules.runtime.viewer.video_renderer import VideoRenderer
-
+from bark.models.behavior import BehaviorModel, BehaviorConstantVelocity, BehaviorMobil
 import os
+
+
+class PythonBehaviorObservedWorldInterface(BehaviorModel):
+  """Python behavior model to give an example of observed world interfaces
+  """
+  def __init__(self, params = None):
+    BehaviorModel.__init__(
+      self, params)
+
+  def Plan(self, delta_time, observed_world):
+    # Get state of observer
+    ego_agent = observed_world.ego_agent
+    ego_agent_state = observed_world.ego_state # or via ego_agent.state
+    ego_velocity = ego_agent_state[int(StateDefinition.VEL_POSITION)]
+    ego_x = ego_agent_state[int(StateDefinition.X_POSITION)]
+    ego_y = ego_agent_state[int(StateDefinition.Y_POSITION)]
+    ego_theta = ego_agent_state[int(StateDefinition.THETA_POSITION)]
+    print("Ego x: {}, y: {}, v: {}, theta: {}".format(
+        ego_x, ego_y, ego_velocity, ego_theta))
+
+    # get distance and state of observer's leading vehicle
+    # 1) get tuple with agent and frenet position
+    leading_agent_pair = observed_world.GetAgentInFront() # to get agent behind use GetAgentBehind()
+    
+    # 2) get state of leading agent from tuple
+    leading_agent = leading_agent_pair[0]
+    leading_agent_state = leading_agent.state
+    leading_agent_x = leading_agent_state[int(StateDefinition.X_POSITION)]
+    # to get other state values, same procedure as for ego agent
+    # ....
+    # 3) get frenet longitudinal distance to leading agent from tuple
+    leading_frenet = leading_agent_pair[1]
+    longitudinal_dist = leading_frenet.lon
+    # 4) subtract vehicle shapes rear front to get true physical distance
+    vehicle_margins = ego_agent.shape.front_dist + leading_agent.shape.rear_dist
+    longitudinal_dist_margins = longitudinal_dist - vehicle_margins
+
+    print("Leading x: {}, ... long dist: {}, long dist margins: {}".format(
+        leading_agent_x, longitudinal_dist, longitudinal_dist_margins))
+
+    # select some action and convert via motion primitive to trajectory
+
+  def Clone(self):
+    return self
+
 
 
 class SystemTests(unittest.TestCase):
@@ -35,6 +75,11 @@ class SystemTests(unittest.TestCase):
     """
     #@unittest.skip
     def test_uct_single_agent(self):
+        try:
+            from bark.models.behavior import BehaviorUCTSingleAgentMacroActions
+        except:
+            print("Rerun with --define planner_uct=true")
+            return
         # World Definition
         scenario_param_file ="macro_actions_test.json" # must be within examples params folder
         params = ParameterServer(filename= os.path.join("modules/world/tests/params/",scenario_param_file))
@@ -108,6 +153,76 @@ class SystemTests(unittest.TestCase):
 
         video_renderer.export_video(filename="/home/esterle/test_video_intermediate", remove_image_dir=True)
 
+
+    def test_python_behavior_model(self):
+        # World Definition
+        scenario_param_file ="macro_actions_test.json" # must be within examples params folder
+        params = ParameterServer(filename= os.path.join("modules/world/tests/params/",scenario_param_file))
+
+        world = World(params)
+
+        # Define two behavior models one python one standard c++ model
+        behavior_model = PythonBehaviorObservedWorldInterface(params)
+        execution_model = ExecutionModelInterpolate(params)
+        dynamic_model = SingleTrackModel(params)
+
+        behavior_model2 = BehaviorConstantVelocity(params)
+        execution_model2 = ExecutionModelInterpolate(params)
+        dynamic_model2 = SingleTrackModel(params)
+        
+        # Define the map interface and load a testing map
+        map_interface = MapInterface()
+        xodr_map = MakeXodrMapOneRoadTwoLanes()
+        map_interface.SetOpenDriveMap(xodr_map)
+        world.SetMap(map_interface)
+
+        # Define the agent shapes
+        agent_2d_shape = CarRectangle()
+        init_state = np.array([0, 3, -5.25, 0, 20])
+        
+        # Define the goal definition for agents
+        center_line = Line2d()
+        center_line.AddPoint(Point2d(0.0, -1.75))
+        center_line.AddPoint(Point2d(100.0, -1.75))
+
+        max_lateral_dist = (0.4,0.5)
+        max_orientation_diff = (0.08, 0.1)
+        velocity_range = (5.0, 20.0)
+        goal_definition = GoalDefinitionStateLimitsFrenet(center_line,
+                        max_lateral_dist, max_orientation_diff,
+                        velocity_range)
+
+        # define two agents with the different behavior models
+        agent_params = params.addChild("agent1")
+        agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
+                      agent_2d_shape, agent_params, goal_definition, map_interface)
+        world.AddAgent(agent)
+
+        init_state2 = np.array([0, 25, -5.25, 0, 0])
+        agent2 = Agent(init_state2, behavior_model2, dynamic_model2, execution_model2,
+                        agent_2d_shape, agent_params, goal_definition, map_interface)
+        world.AddAgent(agent2)
+
+        # viewer
+        viewer = MPViewer(params=params, use_world_bounds=True)
+
+        # World Simulation
+        sim_step_time = params["simulation"]["step_time",
+                                              "Step-time in simulation", 0.2]
+        sim_real_time_factor = params["simulation"]["real_time_factor",
+                                                    "execution in real-time or faster", 1]
+
+        # Draw map
+        video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
+
+        for _ in range(0, 5):
+            world.Step(sim_step_time)
+            viewer.clear()
+            video_renderer.drawWorld(world)
+            video_renderer.drawGoalDefinition(goal_definition)
+            time.sleep(sim_step_time/sim_real_time_factor)
+
+        video_renderer.export_video(filename="/home/esterle/test_video_intermediate", remove_image_dir=True)
 
 if __name__ == '__main__':
     unittest.main()
