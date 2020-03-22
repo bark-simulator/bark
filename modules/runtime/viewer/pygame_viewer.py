@@ -132,10 +132,12 @@ class PygameViewer(BaseViewer):
     def clear(self):
         self.screen_surface.fill((255, 255, 255))
 
-    """
-        points: numpy array
-        return: numpy array
+    def getColorFromMap(self, float_color):
+        # TODO
+        return (1.0, 0, 0)
 
+    def get_aspect_ratio(self):
+        return 1
         The origin of pygame surface is located at top left, increment downward
         therefore all the coordinates need to be transformed
 
