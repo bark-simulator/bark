@@ -57,21 +57,57 @@ class PygameViewer(BaseViewer):
                         lanes_dashed.append(lane.road_mark.type == XodrRoadMarkType.broken
                                             or lane.road_mark.type == XodrRoadMarkType.none)
 
-                        self.map_min_boundary = np.minimum(self.map_min_boundary, np.amin(lane_np, axis=0))
-                        self.map_max_boundary = np.maximum(self.map_max_boundary, np.amax(lane_np, axis=0))
+                        self.map_min_bound = np.minimum(
+                            self.map_min_bound, np.amin(lane_np, axis=0))
+                        self.map_max_bound = np.maximum(
+                            self.map_max_bound, np.amax(lane_np, axis=0))
 
-            self.map_size = self.map_max_boundary-self.map_min_boundary
-            # the size needed to be scaling larger for better visualization
-            # as a pygame surface is stored as pixels
-            self.map_surface = pg.Surface(tuple(self.map_size*self.screen_map_ratio))
+                if self.use_world_bounds:
+                    # scale to the map size
+                    self.screen_map_ratio = min([self.screen_width / np.diff(self.dynamic_world_x_range)[0],
+                                                 self.screen_height / np.diff(self.dynamic_world_y_range)[0]])
+                    self.map_surface_size = self.screen_dims
+                else:
+                    # scale larger to have detailed visualization
+                    self.screen_map_ratio = max([self.screen_width / (np.diff(self.world_x_range)[0]),
+                                                 self.screen_height / (np.diff(self.world_y_range)[0])])
+                    self.map_surface_size = (
+                        self.map_max_bound - self.map_min_bound) * self.screen_map_ratio
+
+            self.map_surface = pg.Surface(tuple(self.map_surface_size))
             self.map_surface.fill((255, 255, 255))
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
-                pg.draw.aalines(self.map_surface, self.getColor(self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
+                # TODO: enable dashed
+                pg.draw.aalines(self.map_surface, self.getColor(
+                    self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
 
-        camera_coordinate = self.mapToSurfaceCoordinates(np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
-        camera_view_range = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])*self.screen_map_ratio
-        self.screen_surface.blit(self.map_surface, (0, 0), tuple(np.around(np.concatenate((camera_coordinate, camera_view_range)))))
+        if self.use_world_bounds:
+            camera_coordinate = np.array([0, 0])
+            camera_view_range = self.screen_dims
+
+            map_x_range = self.map_max_bound[0] - self.map_min_bound[0]
+            map_y_range = self.map_max_bound[1] - self.map_min_bound[1]
+
+            # blit map to the center of screen
+            if map_x_range > map_y_range:
+                self.source_dest = (
+                    0, int(map_x_range - map_y_range) / 2 * self.screen_map_ratio)
+            elif map_x_range < map_y_range:
+                self.source_dest = (
+                    int(map_y_range - map_x_range) / 2 * self.screen_map_ratio, 0)
+            else:
+                self.source_dest = (0, 0)
+
+        else:
+            # project the coordinate of top left corner of dynamic world window
+            camera_coordinate = self.mapToSurfaceCoordinates(
+                np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
+            camera_view_range = self.camera_view_size * self.screen_map_ratio
+            self.source_dest = (0, 0)
+
+        self.screen.blit(self.map_surface, self.source_dest, tuple(
+            np.around((camera_coordinate, camera_view_range))))
 
     def drawPoint2d(self, point2d, color, alpha):
         pg.draw.circle(self.screen, self.getColor(color, alpha),
@@ -155,7 +191,8 @@ class PygameViewer(BaseViewer):
     """
 
     def mapToSurfaceCoordinates(self, points):
-        return (points * np.array([1, -1]) + np.array([-self.map_min_boundary[0], self.map_max_boundary[1]])) * self.screen_map_ratio
+        return (points - np.array([self.map_min_bound[0], self.map_max_bound[1]])
+                ) * np.array([1, -1]) * self.screen_map_ratio
 
     def pointsToCameraCoordinate(self, points):
         if isinstance(points, list):
@@ -163,5 +200,9 @@ class PygameViewer(BaseViewer):
         elif not isinstance(points, np.ndarray):
             points = points.ToArray()
 
-        return np.array([0, self.screen_height])+(points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]]))*np.array([1, -1]) \
-            / self.camera_view_size*self.screen_dims
+        if self.use_world_bounds:
+            return np.array([0, self.screen_height]) + (points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]])) * np.array([1, -1]) \
+                * self.screen_map_ratio
+        else:
+            return np.array([0, self.screen_height]) + (points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]])) * np.array([1, -1]) \
+                / self.camera_view_size * self.screen_dims
