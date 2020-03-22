@@ -80,9 +80,12 @@ class PygameViewer(BaseViewer):
             self.map_surface.fill(self.background_color)
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
-                # TODO: enable dashed
-                pg.draw.lines(self.map_surface, self.getColor(
-                    self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
+                if lane_dashed:
+                    self.drawDashedLines(self.map_surface, self.getColor(
+                        self.color_lane_boundaries), self.mapToSurfaceCoordinates(lane_np), 3)
+                else:
+                    pg.draw.lines(self.map_surface, self.getColor(
+                        self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
 
         if self.use_world_bounds:
             camera_coordinate = np.array([0, 0])
@@ -123,12 +126,21 @@ class PygameViewer(BaseViewer):
 
     def drawLine2d(self, line2d, color="blue", alpha=1.0,
                    dashed=False, zorder=10, linewidth=1):
-        # TODO: enable dashed
         transformed_lines = self.pointsToCameraCoordinate(line2d)
         if alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
-            pg.draw.lines(s, self.getColor(color), False, transformed_lines, linewidth)
+
+            if dashed:
+                self.drawDashedLines(
+                    s, self.getColor(color), transformed_lines, 3)
+            else:
+                pg.draw.lines(
+                    s,
+                    self.getColor(color),
+                    False,
+                    transformed_lines,
+                    linewidth)
             self.screen.blit(s, (0, 0))
         else:
             pg.draw.lines(self.screen, self.getColor(
@@ -156,7 +168,7 @@ class PygameViewer(BaseViewer):
                                state[round(StateDefinition.Y_POSITION)]])
 
         pg.draw.lines(self.screen, self.getColor(color), False,
-                       self.pointsToCameraCoordinate(point_list), 5)
+                      self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
@@ -239,3 +251,16 @@ class PygameViewer(BaseViewer):
         s.set_colorkey(background_color)
         s.set_alpha(int(alpha * 255))
         return s
+
+    def drawDashedLines(self, surface, color, points, width, dashed_length=5):
+        for i in range(len(points) - 1):
+            origin = points[i]
+            target = points[i + 1]
+            diff = target - origin
+            length = np.linalg.norm(diff)
+            slope = diff / length
+
+            for j in np.arange(0, length / dashed_length, 2):
+                start = origin + slope * j * dashed_length
+                end = start + slope * dashed_length
+                pg.draw.line(surface, color, start, end, width)
