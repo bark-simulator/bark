@@ -21,16 +21,20 @@ from bark.world.evaluation import EvaluatorDrivableArea
 from bark.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
     MakeXodrMapOneRoadTwoLanes, XodrLaneSection, XodrLane
 from modules.runtime.viewer.video_renderer import VideoRenderer
-from bark.models.behavior import BehaviorModel, BehaviorConstantVelocity, BehaviorMobil
+from bark.models.behavior import * 
 import os
 
 
-class PythonBehaviorObservedWorldInterface(BehaviorModel):
+class PythonDistanceBehavior(BehaviorModel):
   """Python behavior model to give an example of observed world interfaces
   """
   def __init__(self, params = None):
     BehaviorModel.__init__(
       self, params)
+    self._params = params
+    self._distance_range_constant_velocity = \
+            self._params["PythonDistanceBehavior::RangeConstantVelocity", \
+           "Range in meters defining when controlled vehicle does not change velocity", [10, 20]]
 
   def Plan(self, delta_time, observed_world):
     # Get state of observer
@@ -63,7 +67,29 @@ class PythonBehaviorObservedWorldInterface(BehaviorModel):
     print("Leading x: {}, ... long dist: {}, long dist margins: {}".format(
         leading_agent_x, longitudinal_dist, longitudinal_dist_margins))
 
-    # select some action and convert via motion primitive to trajectory
+    # select some action 
+    # we choose a very simple heuristic to select among actions 
+    # decelerate, constant velocity or accelerate
+    acceleration = None
+    if longitudinal_dist_margins < self._distance_range_constant_velocity[0]:
+      acceleration = -4.0
+    elif longitudinal_dist_margins > self._distance_range_constant_velocity[0] and \
+          longitudinal_dist_margins < self._distance_range_constant_velocity[1]:
+      acceleration = 0.0
+    else:
+      acceleration = 4.0
+
+    # a motion primitive model converts it to trajectory
+    single_track_model = SingleTrackModel(self._params)
+    behavior = PrimitiveConstAccStayLane(self._params, single_track_model,
+                                        acceleration, 0.0)
+    traj = behavior.Plan(delta_time, observed_world)
+
+    # set internal behavior parameters
+    super(PythonDistanceBehavior, self).SetLastTrajectory(traj)
+    super(PythonDistanceBehavior, self).SetLastAction(acceleration)
+    print("Trajectory: {}".format(traj))
+    return traj
 
   def Clone(self):
     return self
@@ -151,7 +177,7 @@ class SystemTests(unittest.TestCase):
             video_renderer.drawGoalDefinition(goal_definition)
             time.sleep(sim_step_time/sim_real_time_factor)
 
-        video_renderer.export_video(filename="/home/esterle/test_video_intermediate", remove_image_dir=True)
+        video_renderer.export_video(filename="./test_video_intermediate", remove_image_dir=True)
 
 
     def test_python_behavior_model(self):
@@ -162,7 +188,7 @@ class SystemTests(unittest.TestCase):
         world = World(params)
 
         # Define two behavior models one python one standard c++ model
-        behavior_model = PythonBehaviorObservedWorldInterface(params)
+        behavior_model = PythonDistanceBehavior(params)
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 
@@ -198,7 +224,7 @@ class SystemTests(unittest.TestCase):
                       agent_2d_shape, agent_params, goal_definition, map_interface)
         world.AddAgent(agent)
 
-        init_state2 = np.array([0, 25, -5.25, 0, 0])
+        init_state2 = np.array([0, 25, -5.25, 0, 15])
         agent2 = Agent(init_state2, behavior_model2, dynamic_model2, execution_model2,
                         agent_2d_shape, agent_params, goal_definition, map_interface)
         world.AddAgent(agent2)
@@ -215,14 +241,14 @@ class SystemTests(unittest.TestCase):
         # Draw map
         video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
-        for _ in range(0, 5):
+        for _ in range(0, 20):
             world.Step(sim_step_time)
             viewer.clear()
             video_renderer.drawWorld(world)
-            video_renderer.drawGoalDefinition(goal_definition)
+            video_renderer.drawGoalDefinition(goal_definition, "red", 0.5, "red")
             time.sleep(sim_step_time/sim_real_time_factor)
 
-        video_renderer.export_video(filename="/home/esterle/test_video_intermediate", remove_image_dir=True)
+        video_renderer.export_video(filename="./test_video_intermediate", remove_image_dir=True)
 
 if __name__ == '__main__':
     unittest.main()
