@@ -31,7 +31,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/commons/transformation:frenet",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
