@@ -103,17 +103,18 @@ class PygameViewer(BaseViewer):
         self.screen_surface.blit(text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
 
     def getColor(self, color):
-        if isinstance(color, Viewer.Color):
+        if isinstance(color, str):
             return {
-                Viewer.Color.White: (255, 255, 255),
-                Viewer.Color.Red: (255, 0, 0),
-                Viewer.Color.Blue: (0, 0, 255),
-                Viewer.Color.Magenta: (100, 255, 100),
-                Viewer.Color.Brown: (150, 50, 50),
-                Viewer.Color.Black: (0, 0, 0)
-            }.get(color, (0, 0, 0))
+                "white": pg.Color(255, 255, 255),
+                "red": pg.Color(255, 0, 0),
+                "blue": pg.Color(0, 0, 255),
+                "magenta": pg.Color(100, 255, 100),
+                "brown": pg.Color(150, 50, 50),
+                "black": pg.Color(0, 0, 0)
+            }.get(color, pg.Color(0, 0, 0))
         else:
-            return (color[0] * 255, color[1] * 255, color[2] * 255)
+            return pg.Color(int(color[0] * 255),
+                            int(color[1] * 255), int(color[2] * 255))
 
     def drawWorld(self, world, eval_agent_ids=None, show=True):
         self.clear()
