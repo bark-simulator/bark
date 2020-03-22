@@ -19,18 +19,9 @@
 
 
 namespace py = pybind11;
-using modules::models::behavior::BehaviorModel;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::models::behavior::BehaviorConstantVelocity;
-using modules::models::behavior::BehaviorMotionPrimitives;
-using modules::models::behavior::BehaviorMPMacroActions;
-using modules::models::behavior::BehaviorMPContinuousActions;
-using modules::models::behavior::DynamicBehaviorModel;
-using modules::models::behavior::BehaviorIDMClassic;
-using modules::models::behavior::BehaviorIDMLaneTracking;
-using modules::models::behavior::BehaviorMobil;
+using namespace modules::models::behavior;
+using namespace modules::models::behavior::primitives;
 using modules::models::dynamic::DynamicModelPtr;
-using modules::models::behavior::BehaviorStaticTrajectory;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -136,11 +127,42 @@ void python_behavior(py::module m) {
     })
     .def("AddMotionPrimitive", &BehaviorMPContinuousActions::AddMotionPrimitive);
 
+  py::class_<Primitive,
+            PyPrimitive,
+            PrimitivePtr>(m, "Primitive")
+  .def(py::init<const modules::commons::ParamsPtr&,
+      const modules::models::dynamic::DynamicModelPtr&>())
+  .def("Plan", &Primitive::Plan)
+  .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
+
   py::class_<BehaviorMPMacroActions,
-             BehaviorModel,
-             shared_ptr<BehaviorMPMacroActions>>(m,
-    "BehaviorMPMacroActions")
-    .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives);
+            BehaviorModel,
+            shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
+  .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
+                const modules::commons::ParamsPtr&>())
+  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive);
+
+  py::class_<PrimitiveConstAccStayLane,
+             Primitive,
+             std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstAccStayLane")
+    .def(py::init<const modules::commons::ParamsPtr&,
+        const modules::models::dynamic::DynamicModelPtr&,
+        float, float>());
+
+  py::class_<PrimitiveConstAccChangeToLeft,
+             Primitive,
+             std::shared_ptr<PrimitiveConstAccChangeToLeft>>(m, "PrimitiveConstAccChangeToLeft")
+    .def(py::init<const modules::commons::ParamsPtr&,
+        const modules::models::dynamic::DynamicModelPtr&,
+        float>());
+  
+  py::class_<PrimitiveConstAccChangeToRight,
+             Primitive,
+             std::shared_ptr<PrimitiveConstAccChangeToRight>>(m, "PrimitiveConstAccChangeToRight")
+    .def(py::init<const modules::commons::ParamsPtr&,
+        const modules::models::dynamic::DynamicModelPtr&,
+        float>());
 
   py::class_<DynamicBehaviorModel,
              BehaviorModel,

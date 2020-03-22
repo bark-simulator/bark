@@ -22,6 +22,19 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "frenet_test",
+    srcs = [
+        "frenet_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//modules/geometry",
+        "//modules/commons/transformation:frenet",
+        "@gtest//:gtest_main",
+    ],
+)
+
 
 
 py_test(
