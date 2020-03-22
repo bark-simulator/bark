@@ -81,7 +81,7 @@ class PygameViewer(BaseViewer):
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
                 # TODO: enable dashed
-                pg.draw.aalines(self.map_surface, self.getColor(
+                pg.draw.lines(self.map_surface, self.getColor(
                     self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
 
         if self.use_world_bounds:
@@ -128,10 +128,10 @@ class PygameViewer(BaseViewer):
         if alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
-            pg.draw.aalines(s, self.getColor(color), False, transformed_lines, linewidth)
+            pg.draw.lines(s, self.getColor(color), False, transformed_lines, linewidth)
             self.screen.blit(s, (0, 0))
         else:
-            pg.draw.aalines(self.screen, self.getColor(
+            pg.draw.lines(self.screen, self.getColor(
                 color), False, transformed_lines, linewidth)
 
     def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
@@ -155,7 +155,7 @@ class PygameViewer(BaseViewer):
             point_list.append([state[round(StateDefinition.X_POSITION)],
                                state[round(StateDefinition.Y_POSITION)]])
 
-        pg.draw.aalines(self.screen, self.getColor(color), False,
+        pg.draw.lines(self.screen, self.getColor(color), False,
                        self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
