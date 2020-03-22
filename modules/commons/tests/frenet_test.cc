@@ -7,7 +7,7 @@
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/commons/transformation/frenet_state.hpp"
 
-using namespace modules::world::map;
+using namespace modules::commons::transformation;
 using namespace modules::geometry;
 using namespace modules::models::dynamic;
 using st = modules::models::dynamic::StateDefinition;
@@ -47,10 +47,10 @@ TEST(frenet_state_one_way, slope_1) {
 
   // some line with three points from x=1 to x=10, y=0
   Line line;
-  line.add_point(Point2d(0,0));
-  line.add_point(Point2d(1,1));
-  line.add_point(Point2d(2,2));
-  line.add_point(Point2d(4,4));
+  line.AddPoint(Point2d(0,0));
+  line.AddPoint(Point2d(1,1));
+  line.AddPoint(Point2d(2,2));
+  line.AddPoint(Point2d(4,4));
 
   // state on path with orientation on path
   test_state_one_way(1 , 0, atan2(1,1), 5, line,
@@ -61,10 +61,10 @@ TEST(frenet_state_one_way, slope_05) {
 
   // some line with three points from x=1 to x=10, y=0
   Line line;
-  line.add_point(Point2d(-4,-2));
-  line.add_point(Point2d(-2,-1));
-  line.add_point(Point2d(2,1));
-  line.add_point(Point2d(4,2));
+  line.AddPoint(Point2d(-4,-2));
+  line.AddPoint(Point2d(-2,-1));
+  line.AddPoint(Point2d(2,1));
+  line.AddPoint(Point2d(4,2));
 
   // state on path with orientation orthogonal on path
   test_state_one_way(1 , 0.5, B_PI_2, 5.5, line,
@@ -82,9 +82,9 @@ TEST(frenet_state_two_way, straight_line_right) {
 
   // some line with three points from x=1 to x=10, y=0
   Line line;
-  line.add_point(Point2d(1,0));
-  line.add_point(Point2d(2,0));
-  line.add_point(Point2d(10,0));
+  line.AddPoint(Point2d(1,0));
+  line.AddPoint(Point2d(2,0));
+  line.AddPoint(Point2d(10,0));
 
   // state on path with orientation on path
   test_state_two_way(3, 0, 0, 5, line);
@@ -100,9 +100,9 @@ TEST(frenet_state_two_way, straight_line_top) {
 
   // some line with three points from x=1 to x=10, y=0
   Line line;
-  line.add_point(Point2d(0,1));
-  line.add_point(Point2d(0,2));
-  line.add_point(Point2d(0,10));
+  line.AddPoint(Point2d(0,1));
+  line.AddPoint(Point2d(0,2));
+  line.AddPoint(Point2d(0,10));
 
   // state on path with orientation on path
   test_state_two_way(0 , 3, B_PI_2, 5, line);
@@ -118,10 +118,10 @@ TEST(frenet_state_two_way, straight_line_top_right) {
 
   // some line with three points from x=1 to x=10, y=0
   Line line;
-  line.add_point(Point2d(-4,-2));
-  line.add_point(Point2d(-2,-1));
-  line.add_point(Point2d(2,1));
-  line.add_point(Point2d(4,2));
+  line.AddPoint(Point2d(-4,-2));
+  line.AddPoint(Point2d(-2,-1));
+  line.AddPoint(Point2d(2,1));
+  line.AddPoint(Point2d(4,2));
 
   // state on path with orientation on path
   test_state_two_way(1 , 0.5, B_PI_2, 5.5, line);
