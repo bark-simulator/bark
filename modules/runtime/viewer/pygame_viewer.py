@@ -27,15 +27,14 @@ class PygameViewer(BaseViewer):
         self.map_surface = None
         self.map_surface_size = None
 
+        self.background_color = (255, 255, 255)
+
         pg.font.init()
 
         try:
             self.screen = pg.display.set_mode(
                 self.screen_dims, pg.DOUBLEBUF)
             pg.display.set_caption("Bark")
-
-            self.clear()
-            self.show()
         except pg.error:
             self.screen = None
             print("No available video device")
@@ -77,8 +76,8 @@ class PygameViewer(BaseViewer):
                     self.map_surface_size = (
                         self.map_max_bound - self.map_min_bound) * self.screen_map_ratio
 
-            self.map_surface = pg.Surface(tuple(self.map_surface_size))
-            self.map_surface.fill((255, 255, 255))
+            self.map_surface = pg.Surface(self.map_surface_size)
+            self.map_surface.fill(self.background_color)
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
                 # TODO: enable dashed
@@ -92,7 +91,7 @@ class PygameViewer(BaseViewer):
             map_x_range = self.map_max_bound[0] - self.map_min_bound[0]
             map_y_range = self.map_max_bound[1] - self.map_min_bound[1]
 
-            # blit map to the center of screen
+            # calculate source destination to blit map to the center of screen
             if map_x_range > map_y_range:
                 self.source_dest = (
                     0, int(map_x_range - map_y_range) / 2 * self.screen_map_ratio)
@@ -109,23 +108,44 @@ class PygameViewer(BaseViewer):
             camera_view_range = self.camera_view_size * self.screen_map_ratio
             self.source_dest = (0, 0)
 
-        self.screen.blit(self.map_surface, self.source_dest, tuple(
-            np.around((camera_coordinate, camera_view_range))))
+        self.screen.blit(self.map_surface, self.source_dest,
+                         np.around((camera_coordinate, camera_view_range)))
 
-    def drawPoint2d(self, point2d, color, alpha):
-        pg.draw.circle(self.screen, self.getColor(color, alpha),
-                       self.pointsToCameraCoordinate(point2d), 1, 0)
+    def drawPoint2d(self, point2d, color, alpha=1.0):
+        transformed_points = self.pointsToCameraCoordinate(point2d)
+        if alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+            self.screen.blit(s, (0, 0))
+        else:
+            pg.draw.circle(self.screen, self.getColor(color),
+                           transformed_points, 1, 0)
 
     def drawLine2d(self, line2d, color="blue", alpha=1.0,
                    dashed=False, zorder=10, linewidth=1):
         # TODO: enable dashed
-        line2d = self.pointsToCameraCoordinate(line2d)
-        pg.draw.lines(self.screen, self.getColor(
-            color), False, line2d, linewidth)
+        transformed_lines = self.pointsToCameraCoordinate(line2d)
+        if alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+            pg.draw.aalines(s, self.getColor(color), False, transformed_lines, linewidth)
+            self.screen.blit(s, (0, 0))
+        else:
+            pg.draw.aalines(self.screen, self.getColor(
+                color), False, transformed_lines, linewidth)
 
     def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
-        points = self.pointsToCameraCoordinate(polygon)
-        pg.draw.polygon(self.screen_surface, self.getColor(color), points)
+        transformed_points = self.pointsToCameraCoordinate(polygon)
+        if alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+            pg.draw.polygon(s, self.getColor(color), transformed_points)
+            self.screen.blit(s, (0, 0))
+        else:
+            pg.draw.polygon(
+                self.screen,
+                self.getColor(color),
+                transformed_points)
 
     def drawTrajectory(self, trajectory, color):
         if len(trajectory) < 1:
@@ -135,14 +155,15 @@ class PygameViewer(BaseViewer):
             point_list.append([state[round(StateDefinition.X_POSITION)],
                                state[round(StateDefinition.Y_POSITION)]])
 
-        pg.draw.lines(self.screen, self.getColor(color), False,
-                      self.pointsToCameraCoordinate(point_list), 5)
+        pg.draw.aalines(self.screen, self.getColor(color), False,
+                       self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
         font_size = kwargs.pop("fontsize", 18)
         color = kwargs.pop("color", (0, 0, 0))
-        background_color = kwargs.pop("background_color", (255, 255, 255))
+        background_color = kwargs.pop(
+            "background_color", self.background_color)
         text_surface = pg.font.SysFont(font, font_size).render(
             text, True, color, background_color)
         self.screen.blit(
@@ -160,7 +181,8 @@ class PygameViewer(BaseViewer):
             }.get(color, pg.Color(0, 0, 0))
         else:
             return pg.Color(int(color[0] * 255),
-                            int(color[1] * 255), int(color[2] * 255))
+                            int(color[1] * 255),
+                            int(color[2] * 255))
 
     def drawWorld(self, world, eval_agent_ids=None, show=True):
         self.clear()
@@ -171,12 +193,11 @@ class PygameViewer(BaseViewer):
     def show(self, block=True):
         if self.screen is None:
             return
-        self.screen.blit(self.screen_surface, (0, 0))
         pg.display.flip()
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
-        self.screen_surface.fill((255, 255, 255))
+        self.screen.fill(self.background_color)
 
     def getColorFromMap(self, float_color):
         # TODO
@@ -184,6 +205,8 @@ class PygameViewer(BaseViewer):
 
     def get_aspect_ratio(self):
         return 1
+
+    """
         The origin of pygame surface is located at top left, increment downward
         therefore all the coordinates need to be transformed
 
@@ -209,3 +232,10 @@ class PygameViewer(BaseViewer):
         else:
             return np.array([0, self.screen_height]) + (points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]])) * np.array([1, -1]) \
                 / self.camera_view_size * self.screen_dims
+
+    def createTransparentSurace(self, dims, background_color, alpha):
+        s = pg.Surface(dims)
+        s.fill(background_color)
+        s.set_colorkey(background_color)
+        s.set_alpha(int(alpha * 255))
+        return s
