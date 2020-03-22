@@ -16,14 +16,13 @@ class PygameViewer(BaseViewer):
     def __init__(self, params=None, **kwargs):
         super(PygameViewer, self).__init__(params=params, **kwargs)
 
-        self.screen_dims = kwargs.pop("screen_dims", np.array([1024, 1024]))
+        self.screen_dims = kwargs.pop("screen_dims", np.array([600, 600]))
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
         self.screen_map_ratio = None
         self.source_dest = None
 
-        self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[
-                                         0], np.diff(self.dynamic_world_y_range)[0]])
+        self.camera_view_size = None
 
         self.map_surface = None
         self.map_surface_size = None
@@ -32,7 +31,7 @@ class PygameViewer(BaseViewer):
 
         try:
             self.screen = pg.display.set_mode(
-                (self.screen_width, self.screen_height), pg.DOUBLEBUF)
+                self.screen_dims, pg.DOUBLEBUF)
             pg.display.set_caption("Bark")
 
             self.clear()
@@ -41,6 +40,7 @@ class PygameViewer(BaseViewer):
             self.screen = None
             print("No available video device")
 
+    # draw map and initialize camera
     def drawMap(self, map):
         if self.map_surface is None:
             # find boundary to create fixed size pygame surface
@@ -62,10 +62,13 @@ class PygameViewer(BaseViewer):
                         self.map_max_bound = np.maximum(
                             self.map_max_bound, np.amax(lane_np, axis=0))
 
+                self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[
+                    0], np.diff(self.dynamic_world_y_range)[0]])
+
                 if self.use_world_bounds:
                     # scale to the map size
-                    self.screen_map_ratio = min([self.screen_width / np.diff(self.dynamic_world_x_range)[0],
-                                                 self.screen_height / np.diff(self.dynamic_world_y_range)[0]])
+                    self.screen_map_ratio = min(
+                        self.screen_dims / self.camera_view_size)
                     self.map_surface_size = self.screen_dims
                 else:
                     # scale larger to have detailed visualization
@@ -137,13 +140,13 @@ class PygameViewer(BaseViewer):
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
-        fontsize = kwargs.pop("fontsize", 18)
+        font_size = kwargs.pop("fontsize", 18)
         color = kwargs.pop("color", (0, 0, 0))
         background_color = kwargs.pop("background_color", (255, 255, 255))
-        text_surface = pg.font.SysFont(font, fontsize).render(
+        text_surface = pg.font.SysFont(font, font_size).render(
             text, True, color, background_color)
         self.screen.blit(
-            text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
+            text_surface, (position[0] * self.screen_width, (1 - position[1]) * self.screen_height))
 
     def getColor(self, color):
         if isinstance(color, str):
