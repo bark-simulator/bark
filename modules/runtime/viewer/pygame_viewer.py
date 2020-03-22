@@ -19,20 +19,20 @@ class PygameViewer(BaseViewer):
         self.screen_dims = kwargs.pop("screen_dims", np.array([1024, 1024]))
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
+        self.screen_map_ratio = None
+        self.source_dest = None
 
-        self.screen_map_ratio = max(self.screen_width/(np.diff(self.world_x_range)[0]),
-                                    self.screen_height/(np.diff(self.world_y_range)[0]))
-        self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])
+        self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[
+                                         0], np.diff(self.dynamic_world_y_range)[0]])
 
         self.map_surface = None
-        self.map_size = None
-
-        self.screen_surface = pg.Surface((self.screen_width, self.screen_height))
+        self.map_surface_size = None
 
         pg.font.init()
 
         try:
-            self.screen = pg.display.set_mode((self.screen_width, self.screen_height), pg.DOUBLEBUF)
+            self.screen = pg.display.set_mode(
+                (self.screen_width, self.screen_height), pg.DOUBLEBUF)
             pg.display.set_caption("Bark")
 
             self.clear()
@@ -42,10 +42,10 @@ class PygameViewer(BaseViewer):
             print("No available video device")
 
     def drawMap(self, map):
-        if self.map_surface == None:
+        if self.map_surface is None:
             # find boundary to create fixed size pygame surface
-            self.map_min_boundary = np.full(2, np.inf)
-            self.map_max_boundary = np.full(2, -np.inf)
+            self.map_min_bound = np.full(2, np.inf)
+            self.map_max_bound = np.full(2, -np.inf)
             lanes_np = []
             lanes_dashed = []
 
@@ -74,14 +74,17 @@ class PygameViewer(BaseViewer):
         self.screen_surface.blit(self.map_surface, (0, 0), tuple(np.around(np.concatenate((camera_coordinate, camera_view_range)))))
 
     def drawPoint2d(self, point2d, color, alpha):
-        pg.draw.circle(self.screen_surface, self.getColor(color), self.pointsToCameraCoordinate(point2d), 1, 0)
+        pg.draw.circle(self.screen, self.getColor(color, alpha),
+                       self.pointsToCameraCoordinate(point2d), 1, 0)
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
-        # TODO: enable dashed line
+    def drawLine2d(self, line2d, color="blue", alpha=1.0,
+                   dashed=False, zorder=10, linewidth=1):
+        # TODO: enable dashed
         line2d = self.pointsToCameraCoordinate(line2d)
-        pg.draw.lines(self.screen_surface, self.getColor(color), False, line2d, 3)
+        pg.draw.lines(self.screen, self.getColor(
+            color), False, line2d, linewidth)
 
-    def drawPolygon2d(self, polygon, color, alpha):
+    def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
         points = self.pointsToCameraCoordinate(polygon)
         pg.draw.polygon(self.screen_surface, self.getColor(color), points)
 
@@ -90,17 +93,21 @@ class PygameViewer(BaseViewer):
             return
         point_list = []
         for state in trajectory:
-            point_list.append([state[round(StateDefinition.X_POSITION)], state[round(StateDefinition.Y_POSITION)]])
+            point_list.append([state[round(StateDefinition.X_POSITION)],
+                               state[round(StateDefinition.Y_POSITION)]])
 
-        pg.draw.lines(self.screen_surface, self.getColor(color), False, self.pointsToCameraCoordinate(point_list), 5)
+        pg.draw.lines(self.screen, self.getColor(color), False,
+                      self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
         fontsize = kwargs.pop("fontsize", 18)
         color = kwargs.pop("color", (0, 0, 0))
         background_color = kwargs.pop("background_color", (255, 255, 255))
-        text_surface = pg.font.SysFont(font, fontsize).render(text, True, color, background_color)
-        self.screen_surface.blit(text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
+        text_surface = pg.font.SysFont(font, fontsize).render(
+            text, True, color, background_color)
+        self.screen.blit(
+            text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
 
     def getColor(self, color):
         if isinstance(color, str):
