@@ -11,6 +11,8 @@ bark_dependencies()
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
+
+
 # -------------------------------------------------
 
 # ------ Planner UCT ------------------------------
@@ -36,6 +38,13 @@ benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
 
+# ------------------- BARK-ML ----------------------
+git_repository(
+  name = "bark_ml",
+  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+# --------------------------------------------------
 
 # ------------------- LTL RuleMonitor --------------
 load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")

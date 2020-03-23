@@ -5,8 +5,8 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-        "//bark/geometry:geometry",
-        "//bark/world:world",
+        "//modules/geometry:geometry",
+        "//modules/world:world",
         "@gtest//:gtest_main",
     ],
 )

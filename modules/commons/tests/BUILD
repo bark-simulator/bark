@@ -18,7 +18,7 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "//modules/commons:commons",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
@@ -30,7 +30,7 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "//modules/commons:commons",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
     ],
 )
 
