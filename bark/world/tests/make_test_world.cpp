@@ -92,9 +92,10 @@ WorldPtr bark::world::tests::make_test_world(
 
   WorldPtr world(new World(params));
   world->AddAgent(agent1);
-  if (num_other_agents == 1) {
+  if (num_other_agents >= 1) {
     world->AddAgent(agent2);
-  } else if (num_other_agents == 2) {
+  }
+  if (num_other_agents >= 2) {
     world->AddAgent(agent3);
   }
   world->UpdateAgentRTree();
