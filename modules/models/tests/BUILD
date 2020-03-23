@@ -91,7 +91,7 @@ cc_test(
         "//modules/models/behavior/hypothesis/idm:hypothesis_idm",
         "//modules/models/behavior/constant_velocity:constant_velocity",
         "//modules/models/execution/interpolation:interpolation",
-        "@gtest//:main",
+        "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
         "//modules/world/tests:make_test_world",
     ],
