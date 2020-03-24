@@ -27,6 +27,10 @@ class PygameViewer(BaseViewer):
         self.map_surface = None
         self.map_surface_size = None
 
+        # NOTE: optimize to support alpha value in pygame
+        # https://stackoverflow.com/questions/6339057/draw-a-transparent-rectangle-in-pygame
+        self.alpha_surface = None
+
         self.background_color = (255, 255, 255)
 
         pg.font.init()
@@ -116,18 +120,17 @@ class PygameViewer(BaseViewer):
 
     def drawPoint2d(self, point2d, color, alpha=1.0):
         transformed_points = self.pointsToCameraCoordinate(point2d)
-        if alpha < 1:
+        if 0 < alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
-            self.screen.blit(s, (0, 0))
-        else:
+        elif alpha == 1:
             pg.draw.circle(self.screen, self.getColor(color),
                            transformed_points, 1, 0)
 
     def drawLine2d(self, line2d, color="blue", alpha=1.0,
                    dashed=False, zorder=10, linewidth=1):
         transformed_lines = self.pointsToCameraCoordinate(line2d)
-        if alpha < 1:
+        if 0 < alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
 
@@ -141,19 +144,17 @@ class PygameViewer(BaseViewer):
                     False,
                     transformed_lines,
                     linewidth)
-            self.screen.blit(s, (0, 0))
-        else:
+        elif alpha == 1:
             pg.draw.lines(self.screen, self.getColor(
                 color), False, transformed_lines, linewidth)
 
     def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
         transformed_points = self.pointsToCameraCoordinate(polygon)
-        if alpha < 1:
+        if 0 < alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
             pg.draw.polygon(s, self.getColor(color), transformed_points)
-            self.screen.blit(s, (0, 0))
-        else:
+        elif alpha == 1:
             pg.draw.polygon(
                 self.screen,
                 self.getColor(color),
@@ -199,6 +200,10 @@ class PygameViewer(BaseViewer):
     def drawWorld(self, world, eval_agent_ids=None, show=True):
         self.clear()
         super(PygameViewer, self).drawWorld(world, eval_agent_ids)
+
+        for s in self.alpha_surf.keys():
+            self.screen.blit(s, (0, 0))
+
         if show:
             self.show()
 
@@ -209,6 +214,7 @@ class PygameViewer(BaseViewer):
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
+        self.alpha_surface = dict()
         self.screen.fill(self.background_color)
 
     def getColorFromMap(self, float_color):
@@ -246,10 +252,14 @@ class PygameViewer(BaseViewer):
                 / self.camera_view_size * self.screen_dims
 
     def createTransparentSurace(self, dims, background_color, alpha):
-        s = pg.Surface(dims)
-        s.fill(background_color)
-        s.set_colorkey(background_color)
-        s.set_alpha(int(alpha * 255))
+        if float(alpha) not in self.alpha_surface:
+            s = pg.Surface(dims)
+            s.fill(background_color)
+            s.set_colorkey(background_color)
+            s.set_alpha(int(alpha * 255))
+        else:
+            s = self.alpha_surface[float(alpha)]
+
         return s
 
     def drawDashedLines(self, surface, color, points, width, dashed_length=5):
