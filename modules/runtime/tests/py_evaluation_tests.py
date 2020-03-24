@@ -40,10 +40,10 @@ class EvaluationTests(unittest.TestCase):
     init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
     agent_params = param_server.addChild("agent1")
     goal_polygon = Polygon2d([0, 0, 0],
-                             [Point2d(-1,-1),
-                              Point2d(-1,1),
-                              Point2d(1,1),
-                              Point2d(1,-1)])
+                             [Point2d(-4,-4),
+                              Point2d(-4,4),
+                              Point2d(4,4),
+                              Point2d(4,-4)])
     goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
 
     agent = Agent(init_state,
