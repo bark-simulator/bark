@@ -74,5 +74,7 @@ cc_library(
     "//modules/models/behavior/idm:idm_classic",
     "//modules/models/behavior/idm:idm_lane_tracking",
     "//modules/models/behavior/static_trajectory",
+    "//modules/models/behavior/idm/stochastic:stochastic",
+    "//modules/models/behavior/hypothesis/idm:hypothesis_idm",
     ]
 )
