@@ -39,7 +39,9 @@ class ScenarioGenerationTests(unittest.TestCase):
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
-      "ConfigBehaviorModels": {"type": "ParameterSampling", "ModelType" : "BehaviorIDMStochasticHeadway"},
+      "ConfigBehaviorModels": {"type": "ParameterSampling", "ModelType" : "BehaviorIDMStochasticHeadway", \
+           "ModelParams" : {"BehaviorIDMStochasticHeadway::HeadwayDistribution::Range" : [10, 20],
+                            "BehaviorIDMStochasticHeadway::HeadwayDistribution::Width": [0.5, 1.0]}},
       "ConfigExecutionModels": {"type": "FixedExecutionType"},
       "ConfigDynamicModels": {"type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
@@ -61,6 +63,12 @@ class ScenarioGenerationTests(unittest.TestCase):
     scenario = scenario_loader.get_scenario(idx=0)
 
     params.save("default_params_sampling.json")
+
+    peristed_param_servers = scenario_generation.get_persisted_param_servers()
+    behavior_models_params = peristed_param_servers["ConfigBehaviorModels"][0]["ParameterServers"]
+    for behavior_param in behavior_models_params:
+      dct = behavior_param.convert_to_dict()
+      print(dct)
 
   def test_find_overlaps_configurable_scenario_generation(self):
     shape = Polygon2d([0, 0, 0], [Point2d(-1,0),

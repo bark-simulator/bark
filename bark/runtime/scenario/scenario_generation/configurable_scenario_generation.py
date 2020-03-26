@@ -78,12 +78,15 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
        "ParameterServers" : config_reader.get_param_servers()}
     )
 
+  def get_persisted_param_servers(self):
+    return self._sink_source_parameter_servers
+
   def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
     scenario_list = []
-    for scenario_idx in range(0, num_scenarios):
+    for _ in range(0, num_scenarios):
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
     self.update_defaults_params()

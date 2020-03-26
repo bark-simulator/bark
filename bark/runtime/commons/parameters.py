@@ -72,7 +72,8 @@ class ParameterServer(Params):
         self.store[new_key] = value
 
     def __delitem__(self, key):
-        del self.store[key]
+        if key in self.store:
+          del self.store[key]
 
     def __iter__(self):
         return iter(self.store)
@@ -209,7 +210,7 @@ class ParameterServer(Params):
           else:
             logging.warning("Key was nowhere found.")
         return value
-        
+
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]

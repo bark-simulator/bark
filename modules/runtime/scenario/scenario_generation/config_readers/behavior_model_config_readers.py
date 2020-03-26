@@ -62,16 +62,17 @@ class ParameterSampling(ConfigReaderBehaviorModels):
       behavior_model_types.append(model_type)
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
 
-  def _sample_params_from_param_ranges(self, param_range_descriptions):
+  def _sample_params_from_param_ranges(self, model_params):
     """
     searches through param server to find distribution keys
     """
     param_dict = ParameterServer()
-    for key, value in param_range_descriptions.store.items():
+    for key, value in model_params.store.items():
       if "Distribution" in key:
-        if "Uniform" in key:
+        distribution_type = value["DistributionType"]
+        if "Uniform" in distribution_type:
           param_dict[key] = self._sample_uniform_dist_params(value)
-        elif "Gauss" in key:
+        elif "Gauss" in distribution_type:
           param_dict[key] = self._sample_gauss_dist_params(value)
       elif isinstance(value, ParameterServer):
         param_dict[key] = self._sample_params_from_param_ranges(value)
@@ -80,15 +81,21 @@ class ParameterSampling(ConfigReaderBehaviorModels):
     return param_dict
 
   def _sample_uniform_dist_params(self, params_distribution):
-    max_range = params_distribution["MaxRange", "From what range are distribution bound sampled,", [0, 1]]
-    max_width = params_distribution["MaxWidth", "What maximum width can distribution have", [0, 1]]
+    uni_range = params_distribution["Range", "From what range are distribution bounds sampled,", [0, 1]]
+    uni_width = params_distribution["Width", "What minimum and maximum width can distribution have", [0.1, 0.3]]
 
-    lower_bound = self.random_state.uniform(max_range[0], max_range[1])
-    upper_bound = self.random_state.uniform(lower_bound,  lower_bound + max_width)
+    #delete unnecessary params json dumping
+    del params_distribution["LowerBound"]
+    del params_distribution["UpperBound"]
 
-    _ = params_distribution["LowerBound", "", lower_bound]
-    _ = params_distribution["UpperBound", "", upper_bound]
-    return params_distribution
+    lower_bound = self.random_state.uniform(uni_range[0], uni_range[1] - uni_width[0])
+    upper_bound = self.random_state.uniform(lower_bound + uni_width[0],  lower_bound + uni_width[1])
+
+    sampled_params = ParameterServer(log_if_default = True)
+    sampled_params["LowerBound"] = lower_bound
+    sampled_params["UpperBound"] = upper_bound
+    sampled_params["RandomSeed"] = params_distribution["RandomSeed"]
+    return sampled_params
 
 
   def _sample_gauss_dist_params(self, params_distribution):
