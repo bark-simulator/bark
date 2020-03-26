@@ -57,9 +57,10 @@ class Params {
 
   DistributionPtr GetDistributionFromType(const std::string& distribution_type, const std::shared_ptr<Params>& distr_params) const;
 
-  virtual DistributionPtr GetDistribution(const std::string &param_name, 
+  // getting is implemented in C++ to avoid wrapping all distribution types to python
+  DistributionPtr GetDistribution(const std::string &param_name, 
                      const std::string &description,
-                     const std::string& default_distribution_type) = 0;
+                     const std::string& default_distribution_type);
 
   virtual CondensedParamList GetCondensedParamList() const = 0;
 

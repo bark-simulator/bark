@@ -28,7 +28,6 @@ class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
 
   protected:
     modules::commons::DistributionPtr param_dist_headway_;
-   
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMStochasticHeadway::Clone() const {

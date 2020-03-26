@@ -24,6 +24,15 @@ DistributionPtr Params::GetDistributionFromType(const std::string& distribution_
   throw;
 }
 
+DistributionPtr Params::GetDistribution(const std::string &param_name, 
+                     const std::string &description,
+                     const std::string& default_distribution_type) {
+  auto param_name_distribution_type = param_name + "::" + "DistributionType";
+  auto distribution_type = GetString(param_name_distribution_type, "", default_distribution_type);
+  auto param_child_distribution = AddChild(param_name);
+  return GetDistributionFromType(distribution_type, param_child_distribution);
+}
+
 
 
 

@@ -49,7 +49,7 @@ class BoostDistribution1D : public Distribution  {
 
 
 template<class BoostDistType>
-RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
+inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
   // Boost does not provide direct sampling, but we can go over the quantile function
   auto probability = uniform_generator_(generator_);
   auto sample = boost::math::quantile(dist_, probability);
@@ -60,14 +60,14 @@ using boost_normal = boost::math::normal_distribution<RandomVariableSupport>;
 using boost_uniform = boost::math::uniform_distribution<RandomVariableSupport>;
 
 template<>
-boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(const ParamsPtr& params) const {
+inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(const ParamsPtr& params) const {
   const RandomVariableSupport lower_bound = params->GetReal("LowerBound", "Lower bound of uniform distr.", 0.0f);
   const RandomVariableSupport upper_bound = params->GetReal("UpperBound", "Upper bound of uniform distr.", 1.0f);
   return boost_uniform(lower_bound, upper_bound);
 }
 
 template<>
-boost_normal BoostDistribution1D<boost_normal>::DistFromParams(const ParamsPtr& params) const {
+inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(const ParamsPtr& params) const {
   const RandomVariableSupport mean = params->GetReal("Mean", "Mean of normal distribution", 0.0f);
   const RandomVariableSupport std = params->GetReal("StdDev", "Standard deviation of normal distribution", 1.0f);
   return boost_normal(mean, std);

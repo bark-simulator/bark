@@ -63,16 +63,6 @@ class SetterParams : public Params {
     return get_parameter(params_list_float_, param_name, default_value);
   }
 
-  virtual DistributionPtr GetDistribution(const std::string &param_name, 
-                     const std::string &description,
-                     const std::string& default_distribution_type) {
-    auto param_name_distribution_type = param_name + "::" + "DistributionType";
-    auto distribution_type = get_parameter(params_string_, param_name_distribution_type, default_distribution_type);
-    auto param_child_distribution = AddChild(param_name);
-    return GetDistributionFromType(distribution_type, param_child_distribution);
-  }
-
-
   virtual void SetBool(const std::string &param_name, const bool &value) {
     set_parameter(params_bool_, param_name, value);
   }

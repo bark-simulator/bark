@@ -58,14 +58,6 @@ class PyParams : public Params {
                            default_value);
   }
 
-  DistributionPtr GetDistribution(const std::string &param_name, 
-                     const std::string &description,
-                     const std::string& default_distribution_type) override {
-    PYBIND11_OVERLOAD_PURE(DistributionPtr, Params,
-                           GetDistribution, param_name, description,
-                           default_distribution_type);
-  }
-
   std::vector<float> GetListFloat(
       const std::string &param_name, const std::string &description,
       const std::vector<float> &default_value) override {

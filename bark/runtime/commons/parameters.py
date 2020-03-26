@@ -163,7 +163,7 @@ class ParameterServer(Params):
     def GetCondensedParamList(self):
         def check_append(value):
           if isinstance(value, float) or isinstance(value, int) \
-              or isinstance(value,bool):
+              or isinstance(value,bool) or isinstance(value, str):
               return True
           # list float
           elif isinstance(value, list) and all(isinstance(el, float) for el in value):
@@ -229,6 +229,9 @@ class ParameterServer(Params):
     def GetListFloat(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
+    def GetString(self, param_name, description, default_value):
+        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+
     def access(self, param_name):
         return self[param_name]
 
@@ -245,4 +248,23 @@ class ParameterServer(Params):
         return
 
     def AddChild(self, name):
-        return self.__getitem__(name)
+        delim = "::"
+        rest_name = ""
+        child_name = name
+
+        found = name.find(delim)
+        if found > -1:
+          child_name = name[0:found]
+          rest_name = name[found + len(delim):]
+
+        child = None
+        if child_name in self.store:
+          child = self.store[child_name]
+        else:
+          self.store[child_name] = ParameterServer()
+          child = self.store[child_name]
+
+        if len(rest_name) == 0:
+          return child
+        else:
+          return child.AddChild(rest_name)
