@@ -6,10 +6,11 @@
 
 
 #include "commons.hpp"
-#include "bark/python_wrapper/polymorphic_conversion.hpp"
-#include "bark/commons/params/setter_params.hpp"
-#include "bark/runtime/tests/py_param_server_test_helper.hpp"
-#include "bark/commons/transformation/frenet.hpp"
+#include "python/polymorphic_conversion.hpp"
+#include "modules/commons/params/setter_params.hpp"
+#include "modules/runtime/tests/py_param_server_test_helper.hpp"
+#include "modules/commons/transformation/frenet.hpp"
+#include "modules/commons/base_type.hpp"
 
 namespace py = pybind11;
 
@@ -60,6 +61,11 @@ void python_commons(py::module m) {
 
     m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
     m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });
+
+    py::class_<BaseType, std::shared_ptr<BaseType>>(m, "BaseType")
+      .def(py::init<const ParamsPtr&>())
+      .def_property_readonly("params", &BaseType::GetParams);
+
 }
 
 }  // namespace commons

@@ -59,10 +59,12 @@ class PickleTests(unittest.TestCase):
     def test_behavior_model_pickle(self):
         
         params = ParameterServer()
+        params["BehaviorIDMClassic"]["MaxAcceleration"] = 300.0
         b = BehaviorIDMClassic(params)
 
         ba = pickle_unpickle(b)
         self.assertTrue(isinstance(ba, BehaviorIDMClassic))
+        self.assertEqual(ba.params.getReal("BehaviorIDMClassic::MaxAcceleration", "", 100), 300)
 
     def test_execution_model_pickle(self):
         

@@ -29,7 +29,7 @@ using modules::models::dynamic::DynamicModelPtr;
 using std::shared_ptr;
 void python_behavior(py::module m) {
   py::class_<BehaviorModel,
-             PyBehaviorModel,
+             PyBehaviorModel, modules::commons::BaseType,
              BehaviorModelPtr>(m, "BehaviorModel")
     .def(py::init<const modules::commons::ParamsPtr&>())
     .def("Plan", &BehaviorModel::Plan)
