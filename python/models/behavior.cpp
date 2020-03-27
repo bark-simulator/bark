@@ -12,6 +12,7 @@
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/idm/stochastic/idm_stochastic_headway.hpp"
 #include "modules/models/behavior/hypothesis/idm/hypothesis_idm_stochastic_headway.hpp"
+#include "modules/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
@@ -252,6 +253,7 @@ void python_behavior(py::module m) {
         return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<modules::models::dynamic::Trajectory>());
       }));
 
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   python_behavior_plan(m);
 }
