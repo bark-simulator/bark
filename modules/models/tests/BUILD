@@ -137,3 +137,14 @@ cc_test(
         "@gtest//:gtest_main",
     ],
 )
+
+py_test(
+  name = "py_behavior_space_test",
+  srcs = ["py_behavior_space_test.py"],
+  data = ['//python:bark.so',
+          '//modules/models/behavior/hypothesis/behavior_space:behavior_space'],
+  imports = ['../../../python/'],
+  deps = [
+      "//modules/runtime/commons:parameters",
+         ],
+)
