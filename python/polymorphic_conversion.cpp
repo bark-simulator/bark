@@ -69,8 +69,7 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   }
 #endif
   else {
-    LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
-    throw;
+    LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to python: " << typeid(*behavior_model).name();
   }
   return py::make_tuple(behavior_model, behavior_model_name);
 }
@@ -107,8 +106,7 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   }
 #endif
   else {
-    LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
-    throw;
+    LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to C++ : " << behavior_model_name;
   }
 }
 
