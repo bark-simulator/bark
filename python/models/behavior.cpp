@@ -94,9 +94,15 @@ void python_behavior(py::module m) {
           throw std::runtime_error("Invalid behavior model state!");
         return new BehaviorIDMStochasticHeadway(PythonToParams(t[0].cast<py::tuple>()));
       }));
+
+
+    py::class_<BehaviorHypothesis,
+             BehaviorModel,
+             shared_ptr<BehaviorHypothesis>>(m,
+    "BehaviorHypothesis");
     
       py::class_<BehaviorHypothesisIDMStochasticHeadway,
-             BehaviorModel,
+             BehaviorHypothesis,
              shared_ptr<BehaviorHypothesisIDMStochasticHeadway>>(m, "BehaviorHypothesisIDMStochasticHeadway", py::multiple_inheritance())
     .def(py::init<const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorHypothesisIDMStochasticHeadway &m) {
@@ -246,10 +252,6 @@ void python_behavior(py::module m) {
         return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<modules::models::dynamic::Trajectory>());
       }));
 
-    py::class_<BehaviorHypothesis,
-             BehaviorModel,
-             shared_ptr<BehaviorHypothesis>>(m,
-    "BehaviorHypothesis");
 
   python_behavior_plan(m);
 }
