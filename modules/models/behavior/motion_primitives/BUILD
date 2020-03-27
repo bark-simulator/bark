@@ -25,5 +25,8 @@ cc_library(
 cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
+    deps = [
+        "//modules/models/behavior/motion_primitives/param_config:include"
+    ],
     visibility = ["//visibility:public"],
 )
