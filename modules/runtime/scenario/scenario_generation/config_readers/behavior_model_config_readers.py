@@ -43,12 +43,6 @@ class ParameterSampling(ConfigReaderBehaviorModels):
     self.param_servers = []
 
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
-    model_type = config_param_object["ModelType", "Type of behavior model \
-                used for all vehicles", "BehaviorIDMStochasticHeadway"]
-
-    # only to get the default params of default model type
-    model_params = config_param_object.AddChild("ModelParams")
-    bark_model, _ = self.model_from_model_type(model_type, model_params)
 
     # now do the true sampling
     behavior_models = []
@@ -61,45 +55,6 @@ class ParameterSampling(ConfigReaderBehaviorModels):
       behavior_models.append(bark_model)
       behavior_model_types.append(model_type)
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
-
-  def _sample_params_from_param_ranges(self, model_params):
-    """
-    searches through param server to find distribution keys
-    """
-    param_dict = ParameterServer()
-    for key, value in model_params.store.items():
-      if "Distribution" in key:
-        distribution_type = value["DistributionType"]
-        if "Uniform" in distribution_type:
-          param_dict[key] = self._sample_uniform_dist_params(value)
-        elif "Gauss" in distribution_type:
-          param_dict[key] = self._sample_gauss_dist_params(value)
-      elif isinstance(value, ParameterServer):
-        param_dict[key] = self._sample_params_from_param_ranges(value)
-      else:
-        param_dict[key] = value
-    return param_dict
-
-  def _sample_uniform_dist_params(self, params_distribution):
-    uni_range = params_distribution["Range", "From what range are distribution bounds sampled,", [0, 1]]
-    uni_width = params_distribution["Width", "What minimum and maximum width can distribution have", [0.1, 0.3]]
-
-    #delete unnecessary params json dumping
-    del params_distribution["LowerBound"]
-    del params_distribution["UpperBound"]
-
-    lower_bound = self.random_state.uniform(uni_range[0], uni_range[1] - uni_width[0])
-    upper_bound = self.random_state.uniform(lower_bound + uni_width[0],  lower_bound + uni_width[1])
-
-    sampled_params = ParameterServer(log_if_default = True)
-    sampled_params["LowerBound"] = lower_bound
-    sampled_params["UpperBound"] = upper_bound
-    sampled_params["RandomSeed"] = params_distribution["RandomSeed"]
-    return sampled_params
-
-
-  def _sample_gauss_dist_params(self, params_distribution):
-    return {}
 
   def model_from_model_type(self, model_type, params):
     bark_model = eval("{}(params)".format(model_type))
