@@ -23,8 +23,8 @@
 #include "modules/commons/params/setter_params.hpp"
 
 #ifdef PLANNER_UCT
-#include "src/behavior_uct_single_agent_macro_actions.hpp"
-#include "src/behavior_uct_hypothesis.hpp"
+#include "modules/models/behavior/behavior_uct_single_agent_macro_actions.hpp"
+#include "modules/models/behavior/behavior_uct_hypothesis.hpp"
 using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
 using modules::models::behavior::BehaviorUCTHypothesis;
 #endif
