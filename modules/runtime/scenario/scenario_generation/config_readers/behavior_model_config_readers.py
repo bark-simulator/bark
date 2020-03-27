@@ -6,6 +6,7 @@
 import numpy as np
 
 from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
+from modules.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
 
 from bark.models.behavior import *
 from modules.runtime.commons.parameters import ParameterServer
@@ -37,19 +38,19 @@ class FixedBehaviorType(ConfigReaderBehaviorModels):
     return self.param_servers
 
 
-class ParameterSampling(ConfigReaderBehaviorModels):
+class BehaviorSpaceSampling(ConfigReaderBehaviorModels):
   def __init__(self, random_state):
     super().__init__(random_state)
     self.param_servers = []
 
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
-
+    behavior_space = BehaviorSpace(config_param_object)
     # now do the true sampling
     behavior_models = []
     behavior_model_types = []
-    
+
     for _ in agent_states:
-      model_params_sampled = self._sample_params_from_param_ranges(model_params)
+      model_params_sampled, model_type = behavior_space.sample_behavior_parameters(self.random_state)
       self.param_servers.append(model_params_sampled)
       bark_model, _ = self.model_from_model_type(model_type, model_params_sampled)
       behavior_models.append(bark_model)

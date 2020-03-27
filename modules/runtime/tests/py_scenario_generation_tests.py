@@ -34,12 +34,12 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params.save("default_params_standard.json")
 
-  def test_configurable_scenario_generation_behavior_param_sampling(self):
+  def test_configurable_scenario_generation_behavior_space_sampling(self):
     sink_source_dict = {
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
-      "ConfigBehaviorModels": {"type": "ParameterSampling", "ModelType" : "BehaviorIDMStochasticHeadway", \
+      "ConfigBehaviorModels": {"type": "BehaviorSpaceSampling", "ModelType" : "BehaviorIDMStochasticHeadway", \
            "ModelParams" : {"BehaviorIDMStochasticHeadway::HeadwayDistribution::Range" : [10, 20],
                             "BehaviorIDMStochasticHeadway::HeadwayDistribution::Width": [0.5, 1.0]}},
       "ConfigExecutionModels": {"type": "FixedExecutionType"},

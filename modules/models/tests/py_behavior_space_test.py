@@ -16,8 +16,9 @@ class PyBehaviorSpaceTests(unittest.TestCase):
   def test_default_config_model(self):
     param_server = ParameterServer()
     space = BehaviorSpace(param_server)
-    sampled_parameters = space.sample_behavior_parameters()
-    behavior = BehaviorIDMStochasticHeadway (sampled_parameters)
+    sampled_parameters, model_type = space.sample_behavior_parameters()
+    print(model_type)
+    behavior = eval("{}(sampled_parameters)".format(model_type))
     print(sampled_parameters.convert_to_dict())
     param_server.save("behavior_space_defaults.json")
 

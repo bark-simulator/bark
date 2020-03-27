@@ -15,7 +15,6 @@ class BehaviorSpace:
     self._behavior_space_definition = self._params.AddChild("Definition")
     self._sampling_parameters = self._params.AddChild("Sampling")
     self._random_seed = self._sampling_parameters["RandomSeed", "Seed for parameter sampling", 1000]
-    self._hypothesis_parameters = self._params.AddChild("Hypothesis")
     self._config_behavior_space()
     self.random_state = np.random.RandomState(self._random_seed)
 
@@ -23,19 +22,20 @@ class BehaviorSpace:
     if random_state:
       self.random_state = random_state
     return self._sample_params_from_param_ranges(self._behavior_space_range_params, \
-                self._sampling_parameters)
+                self._sampling_parameters), self.model_type
 
 
   def create_hypothesis_set(self):
-    num_hypothesis = self._hypothesis_parameters["NumHypothesis", "Number of hypthesis", 20]
+    hypothesis_parameters = self._params.AddChild("Hypothesis")
+    num_hypothesis = ["NumHypothesis", "Number of hypthesis", 20]
     pass
 
   def _config_behavior_space(self):
-    model_type = self._behavior_space_definition["ModelType", "Type of behavior model \
-                used for all vehicles", "BehaviorIDMStochasticHeadway"]
+    self.model_type = self._behavior_space_definition["ModelType", "Model type over which behavior space is defined", \
+        "BehaviorIDMStochasticHeadway"]
     self._behavior_space_range_params = self._behavior_space_definition.AddChild("SpaceBoundaries")
     model_params = ParameterServer()
-    _, _ = self._model_from_model_type(model_type, model_params)
+    _, _ = self._model_from_model_type(self.model_type, model_params)
 
     def replace_with_ranges(model_params, space_boundary_params):
         for key, value in model_params.store.items():
