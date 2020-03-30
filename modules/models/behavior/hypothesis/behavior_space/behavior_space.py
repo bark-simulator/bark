@@ -3,8 +3,11 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-
+import itertools
 import numpy as np
+import logging
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
 
 from bark.models.behavior import *
 from modules.runtime.commons.parameters import ParameterServer
@@ -26,9 +29,51 @@ class BehaviorSpace:
 
 
   def create_hypothesis_set(self):
-    hypothesis_parameters = self._params.AddChild("Hypothesis")
-    num_hypothesis = ["NumHypothesis", "Number of hypthesis", 20]
-    pass
+    hypothesis_parameters = self._params.AddChild("Hypothesis").AddChild("Partitions")
+    seed = self._params.AddChild("Hypothesis")["RandomSeed", "Seed for hypothesis", 1000]
+    num_hypothesis = hypothesis_parameters["BehaviorIDMStochasticHeadway"]["HeadwayDistribution", "Number of partitions", 20]
+
+    param_partitions = []
+    param_keys = []
+    def fill_param_partitions(hypothesis_params, range_params, key_prefix=None):
+      for split_param, partition_num in hypothesis_params.store.items():
+        if isinstance(partition_num, ParameterServer):
+          prefix = key_prefix + "::" + split_param if key_prefix else split_param
+          fill_param_partitions(partition_num, range_params[split_param], prefix)
+        elif not "Distribution" in split_param:
+          logging.error("Not distribution param type specified for hypothesis splitting.")
+        else:
+          param_range = range_params[split_param]
+          param_range_width = param_range[1] - param_range[0]
+          param_keys.append(key_prefix + "::" + split_param)
+          partitions = []
+          for idx in range(0, partition_num):
+            lower_bound = param_range[0] + float(idx)*param_range_width/partition_num
+            upper_bound = param_range[0] + float(idx+1)*param_range_width/partition_num
+            partitions.append((lower_bound, upper_bound))
+          param_partitions.append(partitions)
+
+    fill_param_partitions(hypothesis_parameters, self._behavior_space_range_params)
+    hypotheses_partitions = list(itertools.product(*param_partitions))
+
+
+    hypothesis_set = []
+    hypothesis_set_params = []
+    for hypotheses_partition in hypotheses_partitions:
+      model_params = self._behavior_space_range_params.clone()
+      for param_idx, _ in enumerate(hypothesis_parameters):
+        # overwrite range parameter by deleting child
+        distribution_params = model_params.AddChild(param_keys[param_idx], delete = True)
+        distribution_params["DistributionType"] = "UniformDistribution1D"
+        distribution_params["RandomSeed"] = seed
+        distribution_params["LowerBound"] = hypotheses_partition[param_idx][0]
+        distribution_params["UpperBound"] = hypotheses_partition[param_idx][1]
+        param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
+      hypothesis_behavior, _ = \
+            self._model_from_model_type(self.model_type, param_server_behavior)
+      hypothesis_set.append(hypothesis_behavior)
+      hypothesis_set_params.append(param_server_behavior)
+    return hypothesis_set, hypothesis_set_params
 
   def _config_behavior_space(self):
     self.model_type = self._behavior_space_definition["ModelType", "Model type over which behavior space is defined", \
@@ -45,7 +90,7 @@ class BehaviorSpace:
           elif isinstance(value, ParameterServer):
             replace_with_ranges(value, space_boundary_params[key])
           else:
-            space_boundary_params[key] = [value]  #
+            space_boundary_params[key] = value  #
 
     replace_with_ranges(model_params, self._behavior_space_range_params)
 
@@ -63,7 +108,7 @@ class BehaviorSpace:
     for key, value in space_params.store.items():
       child = sampling_params[key]
       if "Distribution" in key:
-        distribution_type = sampling_params[key]["DistributionType", "Distribution type for sampling", "UniformDistribution"]
+        distribution_type = sampling_params[key]["DistributionType", "Distribution type for sampling", "UniformDistribution1D"]
         parameter_range = value
         if "Uniform" in distribution_type:
           param_dict[key] = self._sample_uniform_dist_params(parameter_range, child)

@@ -13,7 +13,7 @@ from modules.models.behavior.hypothesis.behavior_space.behavior_space import Beh
 from bark.models.behavior import *
 
 class PyBehaviorSpaceTests(unittest.TestCase):
-  def test_default_config_model(self):
+  def test_default_config_sampling(self):
     param_server = ParameterServer()
     space = BehaviorSpace(param_server)
     sampled_parameters, model_type = space.sample_behavior_parameters()
@@ -25,6 +25,12 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     params_loaded = ParameterServer(filename="behavior_space_defaults.json")
     space = BehaviorSpace(params_loaded)
     sampled_parameters = space.sample_behavior_parameters()
+
+  def test_default_config_hypothesis_creation(self):
+    param_server = ParameterServer()
+    space = BehaviorSpace(param_server)
+    hypothesis_set, hypothesis_parameters = space.create_hypothesis_set()
+    self.assertEqual(len(hypothesis_set), param_server["BehaviorSpace"]["Hypothesis"]["Partitions"]["BehaviorIDMStochasticHeadway"]["HeadwayDistribution"])
 
 
 

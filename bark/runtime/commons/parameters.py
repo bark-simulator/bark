@@ -97,6 +97,9 @@ class ParameterServer(Params):
 
         return self
 
+    def clone(self):
+      return ParameterServer(json = self.convert_to_dict())
+
     def ConvertToDict(self, print_description=False):
         dict = {}
         for key, value in self.store.items():
@@ -248,7 +251,7 @@ class ParameterServer(Params):
         self[param_name] = value
         return
 
-    def AddChild(self, name):
+    def AddChild(self, name, delete = False):
         delim = "::"
         rest_name = ""
         child_name = name
@@ -259,7 +262,7 @@ class ParameterServer(Params):
           rest_name = name[found + len(delim):]
 
         child = None
-        if child_name in self.store:
+        if child_name in self.store and not delete:
           child = self.store[child_name]
         else:
           self.store[child_name] = ParameterServer()
