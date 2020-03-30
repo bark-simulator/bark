@@ -20,9 +20,9 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     print(model_type)
     behavior = eval("{}(sampled_parameters)".format(model_type))
     print(sampled_parameters.convert_to_dict())
-    param_server.save("behavior_space_defaults.json")
+    param_server.save("behavior_space_defaults_sampling.json")
 
-    params_loaded = ParameterServer(filename="behavior_space_defaults.json")
+    params_loaded = ParameterServer(filename="behavior_space_defaults_sampling.json")
     space = BehaviorSpace(params_loaded)
     sampled_parameters = space.sample_behavior_parameters()
 
@@ -41,6 +41,10 @@ class PyBehaviorSpaceTests(unittest.TestCase):
       self.assertAlmostEquals(params.getReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UpperBound", "", 0.0),\
                  default_range[0] + (idx+1)*1/num_hypothesis_desired, 5)
 
+    param_server.save("behavior_space_defaults_hypothesis.json")
+    params_loaded = ParameterServer(filename="behavior_space_defaults_hypothesis.json")
+    space = BehaviorSpace(params_loaded)
+    _,_ = space.create_hypothesis_set()
 
 if __name__ == '__main__':
   unittest.main()

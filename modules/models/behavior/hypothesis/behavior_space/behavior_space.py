@@ -16,12 +16,13 @@ class BehaviorSpace:
   def __init__(self, params):
     self._params = params.AddChild("BehaviorSpace")
     self._behavior_space_definition = self._params.AddChild("Definition")
-    self._sampling_parameters = self._params.AddChild("Sampling")
-    self._random_seed = self._sampling_parameters["RandomSeed", "Seed for parameter sampling", 1000]
     self._config_behavior_space()
-    self.random_state = np.random.RandomState(self._random_seed)
+    
 
   def sample_behavior_parameters(self, random_state = None):
+    self._sampling_parameters = self._params.AddChild("Sampling")
+    random_seed = self._sampling_parameters["RandomSeed", "Seed for parameter sampling", 1000]
+    self.random_state = np.random.RandomState(random_seed)
     if random_state:
       self.random_state = random_state
     return self._sample_params_from_param_ranges(self._behavior_space_range_params, \
