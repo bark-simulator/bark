@@ -6,6 +6,7 @@
 
 #include "modules/commons/params/params.hpp"
 #include "modules/commons/distribution/distributions_1d.hpp"
+#include "modules/commons/distribution/multivariate_normal.hpp"
 #include <string>
 
 namespace modules {
@@ -20,6 +21,7 @@ namespace commons {
 DistributionPtr Params::GetDistributionFromType(const std::string& distribution_type, const ParamsPtr& distr_params) const {
   GET_DISTRIBUTION_IF_TYPE(UniformDistribution1D, distribution_type, distr_params)
   GET_DISTRIBUTION_IF_TYPE(NormalDistribution1D, distribution_type, distr_params)
+  GET_DISTRIBUTION_IF_TYPE(MultivariateDistribution, distribution_type, distr_params)
   LOG(ERROR) << "Unknown distribution type";
   throw;
 }

@@ -4,7 +4,8 @@ cc_library(
     name = "distribution",
     hdrs = [
         "distribution.hpp",
-        "distributions_1d.hpp"
+        "distributions_1d.hpp",
+        "multivariate_distribution.hpp"
     ],
     visibility = ["//visibility:public"],
     deps = [
