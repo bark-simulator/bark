@@ -30,9 +30,16 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     param_server = ParameterServer()
     space = BehaviorSpace(param_server)
     hypothesis_set, hypothesis_parameters = space.create_hypothesis_set()
-    self.assertEqual(len(hypothesis_set), param_server["BehaviorSpace"]["Hypothesis"]["Partitions"]["BehaviorIDMStochasticHeadway"]["HeadwayDistribution"])
+    num_hypothesis_desired = param_server["BehaviorSpace"]["Hypothesis"]["Partitions"]["BehaviorIDMStochasticHeadway"]["HeadwayDistribution"]
+    self.assertEqual(len(hypothesis_set), num_hypothesis_desired)
 
-
+    default_range = [3.0, 4.0]
+    for idx, hypothesis in enumerate(hypothesis_set):
+      params = hypothesis.params
+      self.assertAlmostEquals(params.getReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::LowerBound", "", 0.0), \
+                 default_range[0] + idx*1/num_hypothesis_desired, 5)
+      self.assertAlmostEquals(params.getReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UpperBound", "", 0.0),\
+                 default_range[0] + (idx+1)*1/num_hypothesis_desired, 5)
 
 
 if __name__ == '__main__':

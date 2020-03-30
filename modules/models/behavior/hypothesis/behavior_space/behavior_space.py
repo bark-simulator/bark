@@ -85,7 +85,7 @@ class BehaviorSpace:
     def replace_with_ranges(model_params, space_boundary_params):
         for key, value in model_params.store.items():
           if "Distribution" in key:
-              space_boundary_params[key] = [0, 1] # default range
+              space_boundary_params[key] = [3, 4] # default range
               continue
           elif isinstance(value, ParameterServer):
             replace_with_ranges(value, space_boundary_params[key])
