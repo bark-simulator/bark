@@ -187,6 +187,8 @@ class BaseViewer(Viewer):
                     goal_pos = goal_def.goal_shape.center
                 elif isinstance(goal_def, GoalDefinitionStateLimits):
                     goal_pos = goal_def.xy_limits.center
+                elif isinstance(goal_def, GoalDefinitionStateLimitsFrenet):
+                    goal_pos = goal_def.goal_shape.center
                 # self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
                 if prev_center.any():
                     line = Line2d()
