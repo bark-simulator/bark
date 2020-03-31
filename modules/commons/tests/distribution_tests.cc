@@ -93,7 +93,7 @@ TEST(distribution_test, multivariate_distribution) {
 
   auto dist_multivariate = modules::commons::MultivariateDistribution(params_ptr);
 
-  size_t samples = 10000;
+  size_t samples = 100000;
   std::vector<double> mean(3, 0.0f);
   for(size_t i = 0; i< samples; ++i) {
     auto sample = dist_multivariate.Sample();

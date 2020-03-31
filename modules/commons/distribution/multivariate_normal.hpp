@@ -73,7 +73,7 @@ inline Eigen::MatrixXf MultivariateDistribution::CovarFromParams(const ParamsPtr
 
 inline Eigen::VectorXf MultivariateDistribution::MeanFromParams(const ParamsPtr& params) const {
   auto mean_vector = params->GetListFloat("Mean", "Mean of multivariate distribution" ,{1.0, 2.0, 3.0});
-  Eigen::VectorXf mean(mean_vector.size());
+  Eigen::VectorXf mean = Eigen::Map<Eigen::VectorXf, Eigen::Unaligned>(mean_vector.data(), mean_vector.size());
   return mean;
 }
 
