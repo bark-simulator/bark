@@ -88,12 +88,12 @@ TEST(distribution_test, multivariate_distribution) {
   auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
   const double lower_bound = -3.0f;
   const double upper_bound = 10.0f;
-  params_ptr->SetListListFloat("Covariance", {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}});
+  params_ptr->SetListListFloat("Covariance", {{1.0, 0.2, 0.1}, {0.2, 3.0, -0.5}, {0.1, -0.5, 0.125553}});
   params_ptr->SetListFloat("Mean", {1.2f, 12.0f, 0.1234f});
 
   auto dist_multivariate = modules::commons::MultivariateDistribution(params_ptr);
 
-  size_t samples = 100000;
+  size_t samples = 200000;
   std::vector<double> mean(3, 0.0f);
   for(size_t i = 0; i< samples; ++i) {
     auto sample = dist_multivariate.Sample();
@@ -104,16 +104,31 @@ TEST(distribution_test, multivariate_distribution) {
   for (int j = 0; j < 3; ++j) {
       mean[j] /= samples;
   }
-  EXPECT_NEAR(mean[0], 1.2f, 0.01);
-  EXPECT_NEAR(mean[1], 12.0f, 0.01);
-  EXPECT_NEAR(mean[2], 0.1234f, 0.01);
-
-  /*double std_dev = 0.0f;
-  for (size_t i = 0; i < samples; ++i) {
-    auto sample = dist_normal.Sample()[0];
-    std_dev += abs(mean - sample) * abs(mean - sample);
+  auto mean_desired = params_ptr->GetListFloat("Mean", "", {});
+  for (int j = 0; j < 3; ++j) {
+     EXPECT_NEAR(mean[j], mean_desired[j], 0.01);
   }
-  EXPECT_NEAR(sqrt(std_dev/samples), 2.0f, 0.01);*/
+
+  std::vector<std::vector<double>> covar(3, std::vector<double>(3, 0.0f));
+  for (size_t i = 0; i < samples; ++i) {
+    auto sample = dist_multivariate.Sample();
+    for (int j = 0; j < 3; ++j) {
+      for(int z = 0; z < 3; ++z) {
+        covar[j][z] += (sample[j] - mean[j]) * (sample[z] - mean[z]);
+      }
+    }
+  }
+  for (int j = 0; j < 3; ++j) {
+    for(int z = 0; z < 3; ++z) {
+      covar[j][z] /= samples;
+    }
+  }
+  auto covar_desired = params_ptr->GetListListFloat("Covariance", "", {{}});
+  for (int j = 0; j < 3; ++j) {
+      for(int z = 0; z < 3; ++z) {
+        EXPECT_NEAR(covar[j][z], covar_desired[j][z], 0.01);
+      }
+    }
 }
 
 
