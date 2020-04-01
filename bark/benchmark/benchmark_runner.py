@@ -18,14 +18,31 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.core.world.evaluation import *
 
+# contains information specifying
+class BehaviorConfig:
+    def __init__(self, behavior_name, behavior, param_descriptions=None):
+        self.behavior_name = behavior_name
+        self.behavior = behavior
+        self.param_descriptions = param_descriptions or {}
+
+    def as_dict(self):
+        dct = {"behavior": self.behavior_name, **self.param_descriptions}
+        return dct
+
+    @staticmethod
+    def configs_from_dict(behavior_dict):
+        behavior_configs = []
+        for behavior_name, behavior in behavior_dict.items():
+            config = BehaviorConfig(behavior_name, behavior)
+            behavior_configs.append(config)
+        return behavior_configs
 
 # contains information for a single benchmark run
 class BenchmarkConfig:
-    def __init__(self, config_idx, behavior, behavior_name,
+    def __init__(self, config_idx, behavior_config,
                  scenario, scenario_idx, scenario_set_name):
         self.config_idx = config_idx
-        self.behavior = behavior
-        self.behavior_name = behavior_name
+        self.behavior_config = behavior_config
         self.scenario = scenario
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
@@ -38,10 +55,16 @@ class BenchmarkConfig:
 
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),
-                        "Behavior: {}".format(self.behavior_name),
+                        "Behavior: {}".format(self.behavior_config.behavior_name),
                         "ScenarioSet: {}".format(self.scenario_set_name),
                         "ScenarioIdx: {}".format(self.scenario_idx)]
         return info_strings
+
+    def as_dict(self):
+        return {"config_idx": self.config_idx,
+                "scen_set": self.scenario_set_name,
+                "scen_idx": self.scenario_idx,
+                **self.behavior_config.as_dict()}
 
 
 # result of benchmark run
@@ -126,6 +149,7 @@ class BenchmarkRunner:
                  evaluators=None,
                  terminal_when=None,
                  behaviors=None,
+                 behavior_configs=None,
                  num_scenarios=None,
                  benchmark_configs=None,
                  logger_name=None,
@@ -134,27 +158,31 @@ class BenchmarkRunner:
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
         self.terminal_when = terminal_when or []
-        self.behaviors = behaviors or {}
+        if behaviors:
+          self.behavior_configs = BehaviorConfig.configs_from_dict(behaviors)
+        else:
+          self.behavior_configs = behavior_configs or {}
         self.benchmark_configs = benchmark_configs or \
                                  self._create_configurations(num_scenarios)
+        
         self.exceptions_caught = []
         self.log_eval_avg_every = log_eval_avg_every
         self.logger = logging.getLogger(logger_name or "BenchmarkRunner")
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.info("Total number of {} configs to run".format(len(self.benchmark_configs)))
 
     def _create_configurations(self, num_scenarios=None):
         benchmark_configs = []
-        # run over all scenario generators from benchmark database
-        for scenario_generator, scenario_set_name in self.benchmark_database:
-            for scenario, scenario_idx in scenario_generator:
-                for behavior_name, behavior_bark in self.behaviors.items():
+        for behavior_config in self.behavior_configs:
+            # run over all scenario generators from benchmark database
+            for scenario_generator, scenario_set_name in self.benchmark_database:
+                for scenario, scenario_idx in scenario_generator:
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
                     benchmark_config = \
                         BenchmarkConfig(
                             len(benchmark_configs),
-                            behavior_bark,
-                            behavior_name,
+                            behavior_config,
                             scenario,
                             scenario_idx,
                             scenario_set_name
@@ -168,7 +196,7 @@ class BenchmarkRunner:
         for idx, bmark_conf in enumerate(self.benchmark_configs):
             self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
                 idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
-                bmark_conf.scenario_set_name, bmark_conf.behavior_name))
+                bmark_conf.scenario_set_name, bmark_conf.behavior_config.behavior_name))
             result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer,
                                                                        maintain_history)
             results.append(result_dict)
@@ -201,7 +229,7 @@ class BenchmarkRunner:
 
     def _run_benchmark_config(self, benchmark_config, viewer=None, maintain_history=False):
         scenario = benchmark_config.scenario
-        behavior = benchmark_config.behavior
+        behavior = benchmark_config.behavior_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
         scenario_history = []
         step = 0
@@ -211,11 +239,8 @@ class BenchmarkRunner:
             self.logger.error("For config-idx {}, Exception thrown in scenario.GetWorldState: {}".format(
                 benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
-            return {"config_idx": benchmark_config.config_idx,
-                    "scen_set": benchmark_config.scenario_set_name,
-                    "scen_idx": benchmark_config.scenario_idx,
+            return {**benchmark_config.as_dict(),
                     "step": step,
-                    "behavior": benchmark_config.behavior_name,
                     "Terminal": "exception_raised"}
 
         # if behavior is not None (None specifies that also the default model can be evalauted)
@@ -259,11 +284,8 @@ class BenchmarkRunner:
                     self._append_to_scenario_history(scenario_history, world, scenario)
                 step += 1
 
-        dct = {"config_idx": benchmark_config.config_idx,
-               "scen_set": benchmark_config.scenario_set_name,
-               "scen_idx": benchmark_config.scenario_idx,
+        dct = {**benchmark_config.as_dict(),
                "step": step,
-               "behavior": benchmark_config.behavior_name,
                **evaluation_dict,
                "Terminal": terminal_why}
 

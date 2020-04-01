@@ -27,7 +27,7 @@ os.chdir("../benchmark_database/")
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=2, num_serialize_scenarios=2)
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 

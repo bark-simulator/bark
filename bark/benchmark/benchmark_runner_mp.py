@@ -48,6 +48,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                evaluators=None,
                terminal_when=None,
                behaviors=None,
+               behavior_configs=None,
                num_scenarios=None,
                benchmark_configs=None,
                log_eval_avg_every=None,
@@ -55,7 +56,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                memory_total=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
-                          behaviors=behaviors, num_scenarios=num_scenarios,
+                          behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
                           benchmark_configs=benchmark_configs)
         num_cpus_available = psutil.cpu_count(logical=True)
         if num_cpus and num_cpus <= num_cpus_available:
