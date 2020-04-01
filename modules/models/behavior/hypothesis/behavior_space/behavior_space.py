@@ -3,6 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+import math
 import itertools
 import numpy as np
 import logging
@@ -29,20 +30,52 @@ class BehaviorSpace:
                 self._sampling_parameters), self.model_type
 
 
-  def create_hypothesis_set(self):
-    hypothesis_parameters = self._params.AddChild("Hypothesis").AddChild("Partitions")
-    seed = self._params.AddChild("Hypothesis")["RandomSeed", "Seed for hypothesis", 1000]
-    num_hypothesis = hypothesis_parameters["BehaviorIDMStochasticHeadway"]["HeadwayDistribution", "Number of partitions", 20]
+  def create_hypothesis_set_fixed_split(self, split):
+    hypothesis_parameters = self.get_default_hypothesis_parameters()
+    # todo set parameters
+    def replace_partitioning(partition_parameters):
+      for split_param, partition_num in partition_parameters.store.items():
+        if isinstance(partition_num, ParameterServer):
+          replace_partitioning(partition_num)
+        elif not "Distribution" in split_param:
+          logging.error("None distribution param type specified for hypothesis splitting.")
+        else:
+          partition_parameters[split_param] = split # only a single hypothesis covers whole distribution
+
+    replace_partitioning(hypothesis_parameters.AddChild("Partitions"))
+    return self.create_hypothesis_set(hypothesis_parameters)
+
+  def create_cover_hypothesis(self):
+    return self.create_hypothesis_set_fixed_split(split=1)
+
+  def create_multiple_hypothesis_sets(self, splits):
+    hypothesis_set_collection = {}
+    for split in splits:
+      hypothesis_set_collection[split] = \
+             self.create_hypothesis_set_fixed_split(split=split)
+    return hypothesis_set_collection
+
+  def get_default_hypothesis_parameters(self):
+    hypothesis_parameters = self._params.AddChild("Hypothesis")
+    _ = hypothesis_parameters["RandomSeed", "Seed for hypothesis", 1000]
+    partition_parameters = hypothesis_parameters.AddChild("Partitions")
+    _ = partition_parameters["BehaviorIDMStochasticHeadway"]["HeadwayDistribution", "Number of partitions", 20]
+    return hypothesis_parameters.clone()
+
+  def create_hypothesis_set(self, hypothesis_parameters=None):
+    hypothesis_parameters = hypothesis_parameters or self.get_default_hypothesis_parameters()
+    partition_parameters = hypothesis_parameters.AddChild("Partitions")
+    seed = hypothesis_parameters["RandomSeed"]
 
     param_partitions = []
     param_keys = []
-    def fill_param_partitions(hypothesis_params, range_params, key_prefix=None):
-      for split_param, partition_num in hypothesis_params.store.items():
+    def fill_param_partitions(partition_parameters, range_params, key_prefix=None):
+      for split_param, partition_num in partition_parameters.store.items():
         if isinstance(partition_num, ParameterServer):
           prefix = key_prefix + "::" + split_param if key_prefix else split_param
           fill_param_partitions(partition_num, range_params[split_param], prefix)
         elif not "Distribution" in split_param:
-          logging.error("Not distribution param type specified for hypothesis splitting.")
+          logging.error("None distribution param type specified for hypothesis splitting.")
         else:
           param_range = range_params[split_param]
           param_range_width = param_range[1] - param_range[0]
@@ -54,7 +87,7 @@ class BehaviorSpace:
             partitions.append((lower_bound, upper_bound))
           param_partitions.append(partitions)
 
-    fill_param_partitions(hypothesis_parameters, self._behavior_space_range_params)
+    fill_param_partitions(partition_parameters, self._behavior_space_range_params)
     hypotheses_partitions = list(itertools.product(*param_partitions))
 
 
@@ -62,14 +95,14 @@ class BehaviorSpace:
     hypothesis_set_params = []
     for hypotheses_partition in hypotheses_partitions:
       model_params = self._behavior_space_range_params.clone()
-      for param_idx, _ in enumerate(hypothesis_parameters):
+      for param_idx, _ in enumerate(partition_parameters):
         # overwrite range parameter by deleting child
         distribution_params = model_params.AddChild(param_keys[param_idx], delete = True)
         distribution_params["DistributionType"] = "UniformDistribution1D"
         distribution_params["RandomSeed"] = seed
         distribution_params["LowerBound"] = hypotheses_partition[param_idx][0]
         distribution_params["UpperBound"] = hypotheses_partition[param_idx][1]
-        param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
+      param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
       hypothesis_behavior, _ = \
             self._model_from_model_type(self.model_type, param_server_behavior)
       hypothesis_set.append(hypothesis_behavior)
@@ -86,12 +119,12 @@ class BehaviorSpace:
     def replace_with_ranges(model_params, space_boundary_params):
         for key, value in model_params.store.items():
           if "Distribution" in key:
-              space_boundary_params[key] = [3, 4] # default range
+              space_boundary_params[key] = space_boundary_params[key, "Range for this distribution", [3.0, 4.0]]
               continue
           elif isinstance(value, ParameterServer):
             replace_with_ranges(value, space_boundary_params[key])
           else:
-            space_boundary_params[key] = value  #
+            space_boundary_params[key] = space_boundary_params[key, "Value", value]
 
     replace_with_ranges(model_params, self._behavior_space_range_params)
 
