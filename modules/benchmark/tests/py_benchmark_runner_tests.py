@@ -81,7 +81,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
 
         rst = benchmark_runner.run(maintain_history=True)
-        self.assertEqual(len(rst.get_histories()), 20)
+        self.assertEqual(len(rst.get_histories()), 40)
 
         rst, scenario_history = benchmark_runner.run_benchmark_config(11, viewer=None, maintain_history=True)
         print(scenario_history)
