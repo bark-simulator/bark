@@ -38,14 +38,14 @@ class ScenarioGenerationTests(unittest.TestCase):
     sink_source_dict = {
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
-      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
-      "ConfigBehaviorModels": {"type": "BehaviorSpaceSampling", "ModelType" : "BehaviorIDMStochasticHeadway", \
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"Type": "BehaviorSpaceSampling", "ModelType" : "BehaviorIDMStochasticHeadway", \
            "ModelParams" : {"BehaviorIDMStochasticHeadway::HeadwayDistribution::Range" : [10, 20],
                             "BehaviorIDMStochasticHeadway::HeadwayDistribution::Width": [0.5, 1.0]}},
-      "ConfigExecutionModels": {"type": "FixedExecutionType"},
-      "ConfigDynamicModels": {"type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "NoneControlled"},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "NoneControlled"},
       "AgentParams" : {}
     }
 
