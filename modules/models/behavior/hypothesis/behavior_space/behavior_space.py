@@ -60,13 +60,14 @@ class BehaviorSpace:
     _ = hypothesis_parameters["RandomSeed", "Seed for hypothesis", 1000]
     partition_parameters = hypothesis_parameters.AddChild("Partitions")
     _ = partition_parameters["BehaviorIDMStochasticHeadway"]["HeadwayDistribution", "Number of partitions", 20]
+    _ = hypothesis_parameters["HypothesisModel", "Model used as behavior model for hypothesis", "BehaviorHypothesisIDMStochasticHeadway"]
     return hypothesis_parameters.clone()
 
   def create_hypothesis_set(self, hypothesis_parameters=None):
     hypothesis_parameters = hypothesis_parameters or self.get_default_hypothesis_parameters()
     partition_parameters = hypothesis_parameters.AddChild("Partitions")
     seed = hypothesis_parameters["RandomSeed"]
-
+    hypothesis_model_type = hypothesis_parameters["HypothesisModel"]
     param_partitions = []
     param_keys = []
     def fill_param_partitions(partition_parameters, range_params, key_prefix=None):
@@ -104,7 +105,7 @@ class BehaviorSpace:
         distribution_params["UpperBound"] = hypotheses_partition[param_idx][1]
       param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
       hypothesis_behavior, _ = \
-            self._model_from_model_type(self.model_type, param_server_behavior)
+            self._model_from_model_type(hypothesis_model_type, param_server_behavior)
       hypothesis_set.append(hypothesis_behavior)
       hypothesis_set_params.append(param_server_behavior)
     return hypothesis_set, hypothesis_set_params
