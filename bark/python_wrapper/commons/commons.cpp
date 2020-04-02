@@ -6,6 +6,7 @@
 
 
 #include "commons.hpp"
+#include "glog/logging.h"
 #include "python/polymorphic_conversion.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/runtime/tests/py_param_server_test_helper.hpp"
@@ -66,6 +67,14 @@ void python_commons(py::module m) {
       .def(py::init<const ParamsPtr&>())
       .def_property_readonly("params", &BaseType::GetParams);
 
+    m.def("GLogInit", [](char* program_path, char* log_path, int v_level) {
+    FLAGS_v = v_level;
+    FLAGS_alsologtostderr = true;
+    FLAGS_log_dir = log_path;
+    FLAGS_minloglevel = 0;
+    google::InitGoogleLogging(program_path);
+    LOG(INFO) << "GLog init";
+  }, py::arg("program_path") = "", py::arg("log_path") = "/tmp", py::arg("v_level") = 0);
 }
 
 }  // namespace commons
