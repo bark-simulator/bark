@@ -81,6 +81,12 @@ class ParameterServer(Params):
     def __len__(self):
         return len(self.store)
 
+    def __getstate__(self):
+        return self.convert_to_dict()
+
+    def __setstate__(self, d):
+        self.__init__(json=d)
+
     def load(self, fn):
         with open(fn) as file:
             dict = json.load(file)

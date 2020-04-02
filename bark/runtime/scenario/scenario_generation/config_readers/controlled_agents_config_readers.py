@@ -22,7 +22,7 @@ class NoneControlled(ConfigReaderControlledAgents):
 class RandomSingleAgent(ConfigReaderControlledAgents):
   # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
-    controlled_agent_idx = self.random_state.randint(low=0, high=len(agent_states), size=None) # todo(@bernhard): make seed state global, a.t.m. always same number drawn
+    controlled_agent_idx = self.random_state.randint(low=0, high=len(agent_states), size=None) 
     controlled_list = [False] * len(agent_states)
     controlled_list[controlled_agent_idx] = True
     return controlled_list, {}, config_param_object
