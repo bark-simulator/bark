@@ -98,7 +98,7 @@ class ObservedWorld : public World {
   }
 
   Point2d CurrentEgoPosition() const {
-    return World::GetAgent(ego_agent_id_)->GetCurrentPosition();
+    return GetEgoAgent()->GetCurrentPosition();
   }
 
   void SetupPrediction(const PredictionSettings& settings);
