@@ -40,6 +40,7 @@ class BaseViewer(Viewer):
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
         self.plane_color = params["Visualization"]["Map"]["Plane"]["Color", "Color of the background plane", (1, 1, 1, 1)]
         self.plane_alpha = params["Visualization"]["Map"]["Plane"]["Alpha", "Alpha of the background plane", 1.0]
+        self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth", "Linewidth of linestrings", 1.0]
 
         self.parameters = params
 
@@ -255,7 +256,7 @@ class BaseViewer(Viewer):
       # center line is type none and is drawn as broken
       if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none: 
         dashed = True
-      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=2)
+      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=2, linewidth=self.map_linewidth)
 
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
