@@ -46,9 +46,9 @@ git_repository(
 )
 # --------------------------------------------------
 
-#git_repository(
+# git_repository(
 #  name = "interaction_dataset_fortiss_internal",
-#  branch = "master",
+#  commit = "4152cdddcb04efa9a54524f9d737d1e89b1eafad",
 #  remote = "https://git.fortiss.org/autosim/interaction_dataset"
-#)
+# )
 
