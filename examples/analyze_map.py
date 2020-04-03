@@ -19,8 +19,8 @@ import numpy as np
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "city_highway_straight"
-output_dir = "/home/hart/Dokumente/2020/" + map_name
+map_name = "20200403_DR_CHN_Merging_ZS_partial_v02"
+output_dir = "/tmp/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -90,7 +90,8 @@ for lane_id in lane_ids:
   viewer.drawPolygon2d(lane_polygon, color, 1.0)
   viewer.drawLine2d(plan_view_reference, color="red")
   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-  viewer.show(block=True)
+  viewer.show()
+  viewer.clear()
 
 
 #for rc in all_corridors:
