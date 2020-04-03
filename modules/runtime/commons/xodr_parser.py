@@ -219,7 +219,8 @@ class XodrParser(object):
         lane_sections = lanes.findall("laneSection")
         new_road = self.parse_lane_sections_from_road(lane_sections, new_road)
         new_road = self.parse_plan_view(road.find("planView"), new_road)
-        new_road["link"] = self.parse_road_link(road.find("link"))
+        if road.find("link") is not None:
+          new_road["link"] = self.parse_road_link(road.find("link"))
         self.python_map["roads"].append(new_road)
 
     def parse_junction_links(self, connection):
@@ -327,7 +328,11 @@ class XodrParser(object):
         new_road.name = road["name"]
         new_road.plan_view = self.create_cpp_plan_view(road["plan_view"], header)
         new_road = self.create_cpp_lane_section(new_road, road)
-        new_road.link = self.create_cpp_road_link(road["link"])
+
+        try:
+          new_road.link = self.create_cpp_road_link(road["link"])
+        except:
+          pass
 
         return new_road
 
