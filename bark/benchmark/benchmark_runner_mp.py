@@ -9,6 +9,8 @@ import ray
 import logging
 import psutil
 import inspect
+import os
+import sys
 
 import bark.core.world.evaluation
 logging.getLogger().setLevel(logging.INFO)
@@ -35,12 +37,21 @@ def deserialize_scenario(sc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every):
-          super().__init__(evaluators=evaluators, 
-                            terminal_when=terminal_when,
-                            benchmark_configs=benchmark_configs,
-                            logger_name=logger_name,
-                            log_eval_avg_every=log_eval_avg_every)
+    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, glog_init_settings=None):
+        super().__init__(evaluators=evaluators, 
+                        terminal_when=terminal_when,
+                        benchmark_configs=benchmark_configs,
+                        logger_name=logger_name,
+                        log_eval_avg_every=log_eval_avg_every)
+        glog_init_settings = glog_init_settings or {}
+        log_folder_name = glog_init_settings.pop("log_folder", "logs")
+        log_folder = os.path.abspath(os.path.join(os.getcwd(), log_folder_name))
+        if not os.path.exists(log_folder):
+          os.makedirs(log_folder)
+        self.logger.info("Logging into: {}".format(log_folder))
+        vlevel = glog_init_settings.pop("vlevel", 1)
+        log_stderr = glog_init_settings.pop("log_stderr", False)
+        bark.commons.GLogInit(sys.argv[0], log_folder, vlevel, log_stderr)
 
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
@@ -52,6 +63,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                num_scenarios=None,
                benchmark_configs=None,
                log_eval_avg_every=None,
+               glog_init_settings=None,
                num_cpus=None,
                memory_total=None):
         super().__init__(benchmark_database=benchmark_database,

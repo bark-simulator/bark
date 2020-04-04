@@ -63,6 +63,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 
+        glog_init_settings={"vlevel": 3}
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
