@@ -65,25 +65,31 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                log_eval_avg_every=None,
                glog_init_settings=None,
                num_cpus=None,
-               memory_total=None):
+               memory_total=None,
+               ip_head=None,
+               redis_password=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
                           benchmark_configs=benchmark_configs)
         num_cpus_available = psutil.cpu_count(logical=True)
-        if num_cpus and num_cpus <= num_cpus_available:
-          pass
-        else:
-          num_cpus = num_cpus_available
-        
-        mem = psutil.virtual_memory()
-        memory_available = mem.available
-        if memory_total and memory_total <= memory_available:
-          pass
-        else:
-          memory_total = memory_available
 
-        ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7) # we split memory between workers (30%) and objects (70%)
+        if ip_head and redis_password:
+          ray.init(address=ip_head, redis_password=redis_password)
+        else:
+          if num_cpus and num_cpus <= num_cpus_available:
+            pass
+          else:
+            num_cpus = num_cpus_available
+          
+          mem = psutil.virtual_memory()
+          memory_available = mem.available
+          if memory_total and memory_total <= memory_available:
+            pass
+          else:
+            memory_total = memory_available
+          
+          ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7) # we split memory between workers (30%) and objects (70%)
         
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
