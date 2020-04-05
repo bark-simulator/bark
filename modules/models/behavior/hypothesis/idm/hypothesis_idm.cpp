@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/hypothesis/idm/hypothesis_idm_stochastic_headway.hpp"
+#include "modules/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -19,27 +19,28 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 using modules::world::FrontRearAgents;
 using modules::commons::UniformDistribution1D;
-using modules::models::behavior::BehaviorIDMStochasticHeadway;
+using modules::models::behavior::BehaviorIDMStochastic;
 
-BehaviorHypothesisIDMStochasticHeadway::BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params) :
-                             BehaviorIDMStochasticHeadway(params),
+BehaviorHypothesisIDM::BehaviorHypothesisIDM(const commons::ParamsPtr& params) :
+                             BehaviorIDMStochastic(params),
                              BehaviorHypothesis(params),
                              BehaviorModel(params),
-                             num_samples_(params->GetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples",
+                             num_samples_(params->GetInt("BehaviorHypothesisIDM::NumSamples",
                                  "Number of samples used for probability approximation", 10000)),
-                             num_buckets_(params->GetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets",
+                             num_buckets_(params->GetInt("BehaviorHypothesisIDM::NumBuckets",
                                  "Number of buckets to split uniform probability space", 100)),
-                             buckets_lower_bound_(params->GetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound",
+                             buckets_lower_bound_(params->GetReal("BehaviorHypothesisIDM::BucketsLowerBound",
                                  "Lower bounds where buckets start", -10.0f)),
-                             buckets_upper_bound_(params->GetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound",
+                             buckets_upper_bound_(params->GetReal("BehaviorHypothesisIDM::BucketsUpperBound",
                                  "Upper bounds where buckets end", 10.0f)) 
                             {}
 
-modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbability(const Action& action,
+modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action& action,
                             const world::ObservedWorld& observed_world,
                             const AgentId& agent_id) const {
   // First check if action fits to the hypothesis action type
-  if(action.type() != typeid(Continuous1DAction)) {
+  if(action.type() != typeid(Continuous1DAction) &&
+     action.type() != typeid(LonLatAction)) {
     LOG(WARNING) << "Passed action's type not fitting to hypothesis.";
     return 0.0f;
   }
@@ -71,7 +72,7 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
   double net_distance = std::numeric_limits<double>::max();
   double vel_other = 0.0f; // makes interaction term go to zero, if distance is infinite
   if(leading_vehicle.first) {
-    net_distance = BehaviorIDMStochasticHeadway::CalcNetDistance(ego_agent, leading_vehicle.first);
+    net_distance = BehaviorIDMStochastic::CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
@@ -80,8 +81,8 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
   // sample a lot of actions for this environment state to approximate the probability
   double bucket_size = (buckets_upper_bound_ - buckets_lower_bound_)/num_buckets_;
   std::vector<unsigned int> sample_container(num_buckets_, 0);
-  auto behavior_idm_stoch = std::dynamic_pointer_cast<BehaviorIDMStochasticHeadway>(
-    BehaviorIDMStochasticHeadway::Clone());
+  auto behavior_idm_stoch = std::dynamic_pointer_cast<BehaviorIDMStochastic>(
+    BehaviorIDMStochastic::Clone());
   for(size_t i = 0; i < num_samples_; ++i) {
     behavior_idm_stoch->SampleParameters();
     auto action_sample = behavior_idm_stoch->CalcIDMAcc(net_distance, vel_ego, vel_other);
@@ -90,7 +91,13 @@ modules::commons::Probability BehaviorHypothesisIDMStochasticHeadway::GetProbabi
     sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)] += 1;
   }
 
-  auto idm_acc = boost::get<Continuous1DAction>(action);
+  double idm_acc = 0.0f;
+  if(action.type() == typeid(Continuous1DAction)) {
+    idm_acc = boost::get<Continuous1DAction>(action);
+  } else if (action.type() == typeid(LonLatAction)) {
+    idm_acc = boost::get<LonLatAction>(action).acc_lon;
+  }
+  
   if(idm_acc > buckets_upper_bound_ || idm_acc < buckets_lower_bound_) {
     LOG(WARNING) << "Bucket bounds too small to include action " << idm_acc << ". Returning zero prob.";
     return 0.0f;

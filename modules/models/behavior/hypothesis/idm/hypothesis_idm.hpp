@@ -4,10 +4,10 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_BEHAVIOR_HYPOTHESIS_HYPOTHESIS_IDM_STOCHASTIC_HEADWAY_HPP_
-#define MODULES_MODELS_BEHAVIOR_HYPOTHESIS_HYPOTHESIS_IDM_STOCHASTIC_HEADWAY_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_HYPOTHESIS_hypothesis_idm_HPP_
+#define MODULES_MODELS_BEHAVIOR_HYPOTHESIS_hypothesis_idm_HPP_
 
-#include "modules/models/behavior/idm/stochastic/idm_stochastic_headway.hpp"
+#include "modules/models/behavior/idm/stochastic/idm_stochastic.hpp"
 #include "modules/models/behavior/hypothesis/behavior_hypothesis.hpp"
 
 namespace modules {
@@ -23,10 +23,10 @@ namespace models {
 namespace behavior {
 
 
-class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadway, public BehaviorHypothesis {
+class BehaviorHypothesisIDM : public BehaviorIDMStochastic, public BehaviorHypothesis {
   public:
-  explicit BehaviorHypothesisIDMStochasticHeadway(const commons::ParamsPtr& params);
-  virtual ~BehaviorHypothesisIDMStochasticHeadway()  {}
+  explicit BehaviorHypothesisIDM(const commons::ParamsPtr& params);
+  virtual ~BehaviorHypothesisIDM()  {}
 
   virtual modules::commons::Probability GetProbability(const Action& action,
                              const world::ObservedWorld& observed_world,
@@ -35,7 +35,7 @@ class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadw
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
   virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
-    return BehaviorIDMStochasticHeadway::Plan(delta_time, observed_world);
+    return BehaviorIDMStochastic::Plan(delta_time, observed_world);
   };
 
   private: 
@@ -46,9 +46,9 @@ class BehaviorHypothesisIDMStochasticHeadway : public BehaviorIDMStochasticHeadw
 };
 
 
-inline std::shared_ptr<BehaviorModel> BehaviorHypothesisIDMStochasticHeadway::Clone() const {
-  std::shared_ptr<BehaviorHypothesisIDMStochasticHeadway> model_ptr =
-      std::make_shared<BehaviorHypothesisIDMStochasticHeadway>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorHypothesisIDM::Clone() const {
+  std::shared_ptr<BehaviorHypothesisIDM> model_ptr =
+      std::make_shared<BehaviorHypothesisIDM>(*this);
   return model_ptr;
 }
 
@@ -56,4 +56,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorHypothesisIDMStochasticHeadway::Cl
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_HYPOTHESIS_HYPOTHESIS_IDM_STOCHASTIC_HEADWAY_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_HYPOTHESIS_hypothesis_idm_HPP_

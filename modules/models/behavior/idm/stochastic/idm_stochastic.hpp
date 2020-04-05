@@ -14,11 +14,11 @@ namespace modules {
 namespace models {
 namespace behavior {
 
-class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
+class BehaviorIDMStochastic : public BehaviorIDMClassic {
  public:
-  explicit BehaviorIDMStochasticHeadway(const commons::ParamsPtr& params);
+  explicit BehaviorIDMStochastic(const commons::ParamsPtr& params);
 
-  virtual ~BehaviorIDMStochasticHeadway() {}
+  virtual ~BehaviorIDMStochastic() {}
 
   virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
 
@@ -28,11 +28,15 @@ class BehaviorIDMStochasticHeadway : public BehaviorIDMClassic {
 
   protected:
     modules::commons::DistributionPtr param_dist_headway_;
+    modules::commons::DistributionPtr param_dist_spacing_;
+    modules::commons::DistributionPtr param_dist_max_acc_;
+    modules::commons::DistributionPtr param_dist_desired_vel_;
+    modules::commons::DistributionPtr param_dist_comft_braking_;
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorIDMStochasticHeadway::Clone() const {
-  std::shared_ptr<BehaviorIDMStochasticHeadway> model_ptr =
-      std::make_shared<BehaviorIDMStochasticHeadway>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {
+  std::shared_ptr<BehaviorIDMStochastic> model_ptr =
+      std::make_shared<BehaviorIDMStochastic>(*this);
   return model_ptr;
 }
 
@@ -40,4 +44,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorIDMStochasticHeadway::Clone() cons
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_IDM_STOCHASTIC_IDM_STOCHASTIC_HEADWAY_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_IDM_STOCHASTIC_idm_stochastic_HPP_

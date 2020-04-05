@@ -28,8 +28,9 @@ using modules::world::objects::AgentPtr;
 
 
 
-BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params) {
-
+BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params)
+             {
+    
     param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
     param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);
     param_max_acceleration_ = params->GetReal("BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
@@ -40,6 +41,7 @@ BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : Behav
     param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity", "See Wikipedia IDM article", 0.0f);
     param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity", "See Wikipedia IDM article", 50.0f);
     param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent", "See Wikipedia IDM article", 4);
+    SetLastAction(Continuous1DAction(0.0f));
 }
 
 
