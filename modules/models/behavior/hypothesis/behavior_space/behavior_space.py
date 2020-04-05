@@ -59,8 +59,8 @@ class BehaviorSpace:
     hypothesis_parameters = self._params.AddChild("Hypothesis")
     _ = hypothesis_parameters["RandomSeed", "Seed for hypothesis", 1000]
     partition_parameters = hypothesis_parameters.AddChild("Partitions")
-    _ = partition_parameters["BehaviorIDMStochasticHeadway"]["HeadwayDistribution", "Number of partitions", 20]
-    _ = hypothesis_parameters["HypothesisModel", "Model used as behavior model for hypothesis", "BehaviorHypothesisIDMStochasticHeadway"]
+    _ = partition_parameters["BehaviorIDMStochastic"]["HeadwayDistribution", "Number of partitions", 20]
+    _ = hypothesis_parameters["HypothesisModel", "Model used as behavior model for hypothesis", "BehaviorHypothesisIDM"]
     return hypothesis_parameters.clone()
 
   def create_hypothesis_set(self, hypothesis_parameters=None):
@@ -112,7 +112,7 @@ class BehaviorSpace:
 
   def _config_behavior_space(self):
     self.model_type = self._behavior_space_definition["ModelType", "Model type over which behavior space is defined", \
-        "BehaviorIDMStochasticHeadway"]
+        "BehaviorIDMStochastic"]
     self._behavior_space_range_params = self._behavior_space_definition.AddChild("SpaceBoundaries")
     model_params = ParameterServer()
     _, _ = self._model_from_model_type(self.model_type, model_params)
