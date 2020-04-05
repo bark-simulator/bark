@@ -22,6 +22,7 @@ DistributionPtr Params::GetDistributionFromType(const std::string& distribution_
   GET_DISTRIBUTION_IF_TYPE(UniformDistribution1D, distribution_type, distr_params)
   GET_DISTRIBUTION_IF_TYPE(NormalDistribution1D, distribution_type, distr_params)
   GET_DISTRIBUTION_IF_TYPE(MultivariateDistribution, distribution_type, distr_params)
+  GET_DISTRIBUTION_IF_TYPE(FixedValue, distribution_type, distr_params)
   LOG(ERROR) << "Unknown distribution type";
   throw;
 }
