@@ -1,10 +1,10 @@
 cc_library(
     name = "stochastic",
     srcs = [
-        "idm_stochastic_headway.cpp",
+        "idm_stochastic.cpp",
     ],
     hdrs = [
-        "idm_stochastic_headway.hpp",
+        "idm_stochastic.hpp",
     ],
     deps = [
         "//modules/models/behavior/idm:idm_classic",

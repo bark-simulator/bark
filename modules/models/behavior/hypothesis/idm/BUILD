@@ -1,10 +1,10 @@
 cc_library(
     name = "hypothesis_idm",
     hdrs = [
-        "hypothesis_idm_stochastic_headway.hpp"
+        "hypothesis_idm.hpp"
     ],
     srcs = [
-        "hypothesis_idm_stochastic_headway.cpp",
+        "hypothesis_idm.cpp",
     ],
     deps = [
         "//modules/models/behavior/hypothesis:hypothesis",
