@@ -53,6 +53,11 @@ struct ActionHasher : public boost::static_visitor<std::size_t>
 {
     template<typename T>
     std::size_t operator()(const T& action) const { return boost::hash<T>()(action); }
+    std::size_t operator()(const LonLatAction& action) const {
+          std::size_t hash = boost::hash<double>()(action.acc_lat);
+          boost::hash_combine(hash, action.acc_lon); 
+          return hash;
+    }
     std::size_t operator()(const Input& x) const { return std::size_t(); }
 };
 

@@ -13,7 +13,7 @@
 #include "modules/geometry/polygon.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/tests/make_test_world.hpp"
-#include "modules/models/behavior/hypothesis/idm/hypothesis_idm_stochastic_headway.hpp"
+#include "modules/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
@@ -41,16 +41,26 @@ ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float
     params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
     params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
     params->SetInt("BehaviorIDMClassic::Exponent", 4);
-    // IDM Stochastic Headway
-    params->SetInt("BehaviorIDMStochasticHeadway::HeadwayDistribution::RandomSeed", 1234);
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::LowerBound", headway_lower);
-    params->SetReal("BehaviorIDMStochasticHeadway::HeadwayDistribution::UpperBound", headway_upper);
-    params->SetDistribution("BehaviorIDMStochasticHeadway::HeadwayDistribution", "UniformDistribution1D");
+    // IDM Stochastic
+    params->SetInt("BehaviorIDMStochastic::HeadwayDistribution::RandomSeed", 1234);
+    params->SetReal("BehaviorIDMStochastic::HeadwayDistribution::LowerBound", headway_lower);
+    params->SetReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", headway_upper);
+    params->SetDistribution("BehaviorIDMStochastic::HeadwayDistribution", "UniformDistribution1D");
+
+    params->SetDistribution("BehaviorIDMStochastic::SpacingDistribution", "UniformDistribution1D");
+    params->SetListFloat("BehaviorIDMStochastic::SpacingDistribution::FixedValue", {0.0f});
+    params->SetDistribution("BehaviorIDMStochastic::MaxAccDistribution", "UniformDistribution1D");
+    params->SetListFloat("BehaviorIDMStochastic::MaxAccDistribution::FixedValue", {1.0f});
+    params->SetDistribution("BehaviorIDMStochastic::DesiredVelDistribution", "UniformDistribution1D");
+    params->SetListFloat("BehaviorIDMStochastic::DesiredVelDistribution::FixedValue", {15.0f});
+    params->SetDistribution("BehaviorIDMStochastic::ComftBrakingDistribution", "UniformDistribution1D");
+    params->SetListFloat("BehaviorIDMStochastic::ComftBrakingDistribution::FixedValue", {1.0f});
+
     // IDM Hypothesis
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumSamples", 100000);
-    params->SetInt("BehaviorHypothesisIDMStochasticHeadway::NumBuckets", 1000);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsLowerBound", buckets_lower_bound);
-    params->SetReal("BehaviorHypothesisIDMStochasticHeadway::BucketsUpperBound", buckets_upper_bound);
+    params->SetInt("BehaviorHypothesisIDM::NumSamples", 100000);
+    params->SetInt("BehaviorHypothesisIDM::NumBuckets", 1000);
+    params->SetReal("BehaviorHypothesisIDM::BucketsLowerBound", buckets_lower_bound);
+    params->SetReal("BehaviorHypothesisIDM::BucketsUpperBound", buckets_upper_bound);
 
     return params;
 }
@@ -72,7 +82,7 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
   
   // No other agent in front -> outside max min acceleration limits (exactly on des. velocity)
   {
-  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0, 1.5));
+  auto behavior = BehaviorHypothesisIDM(make_params_hypothesis(1.0, 3.0, 1.5));
   const float desired_velocity = behavior.GetDesiredVelocity();
 
   float ego_velocity = desired_velocity, rel_distance = 20.0, velocity_difference = 0.0;
@@ -91,7 +101,7 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
 
   // No other agent in front, ego velocity higher than desired velocity
   {
-  auto behavior = BehaviorHypothesisIDMStochasticHeadway(make_params_hypothesis(1.0, 3.0, 1.0));
+  auto behavior = BehaviorHypothesisIDM(make_params_hypothesis(1.0, 3.0, 1.0));
   const float desired_velocity = behavior.GetDesiredVelocity();
 
   float ego_velocity = desired_velocity + 10, rel_distance = 7.0, velocity_difference = 0.0;
@@ -112,7 +122,7 @@ TEST(hypothesis_idm_headway, behavior_hypothesis) {
   // compare to distribution parameter approach, no acceleration limits
   {
   auto params = make_params_hypothesis(1.0, 3.0, 1.5, -20, 20, -22, 20);
-  auto behavior = BehaviorHypothesisIDMStochasticHeadway(params);
+  auto behavior = BehaviorHypothesisIDM(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
 
   float ego_velocity = desired_velocity, rel_distance = desired_velocity, velocity_difference = 0.0;
