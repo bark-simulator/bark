@@ -133,6 +133,7 @@ cc_test(
     deps = [
         "//modules/geometry",
         "//modules/models/behavior/static_trajectory",
+        "//modules/world/tests:make_test_world",
         "@com_github_eigen_eigen//:eigen",
         "@gtest//:gtest_main",
     ],
