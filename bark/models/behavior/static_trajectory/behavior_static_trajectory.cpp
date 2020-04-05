@@ -7,7 +7,8 @@
 #include <memory>
 
 #include "behavior_static_trajectory.hpp"
-#include "bark/world/observed_world.hpp"
+#include "modules/world/observed_world.hpp"
+#include "modules/commons/transformation/frenet_state.hpp"
 
 namespace bark {
 namespace models {
@@ -15,17 +16,22 @@ namespace behavior {
 
 using bark::models::dynamic::StateDefinition;
 
-BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-    const commons::ParamsPtr &params)
+BehaviorStaticTrajectory::BehaviorStaticTrajectory(const commons::ParamsPtr& params)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
-      static_trajectory_(ReadInStaticTrajectory(params->GetListListFloat(
-          "static_trajectory",
-          "List of states that form a static trajectory to follow", {{}}))) {}
+      static_trajectory_(
+          trajectory_from_listlist_float(params->GetListListFloat(
+              "static_trajectory",
+              "List of states that form a static trajectory to follow",
+              {{}}))) {
+      SetLastAction(LonLatAction{0.0f, 0.0f});
+              }
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-    const commons::ParamsPtr &params, const Trajectory &static_trajectory)
+    const commons::ParamsPtr& params, const Trajectory &static_trajectory)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
-      static_trajectory_(static_trajectory) {}
+     static_trajectory_(static_trajectory) {
+       SetLastAction(LonLatAction{0.0f, 0.0f});
+     }
 
 Trajectory BehaviorStaticTrajectory::Plan(
     float delta_time, const bark::world::ObservedWorld &observed_world) {
@@ -52,8 +58,21 @@ Trajectory BehaviorStaticTrajectory::Plan(
   traj.block(1, 0, num_rows, traj.cols()) =
       static_trajectory_.block(idx_start, 0, num_rows, traj.cols());
   this->SetLastTrajectory(traj);
-
+  this->SetLastAction(this->CalculateAction(delta_time, observed_world, traj));
   return traj;
+}
+
+Action BehaviorStaticTrajectory::CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) const {
+  auto lane_corridor = observed_world.GetLaneCorridor();
+  BARK_EXPECT_TRUE(bool(lane_corridor));
+
+  auto center_line = lane_corridor->GetCenterLine();
+  modules::commons::transformation::FrenetState frenet_state_start(trajectory.row(0), center_line);
+  modules::commons::transformation::FrenetState frenet_state_end(trajectory.row(trajectory.rows() - 1), center_line);
+  auto acc_lat = (frenet_state_end.vlat - frenet_state_start.vlat)/ delta_time;
+  auto acc_lon = (frenet_state_end.vlon - frenet_state_start.vlon)/ delta_time;
+
+  return LonLatAction{acc_lat, acc_lon};
 }
 
 std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
