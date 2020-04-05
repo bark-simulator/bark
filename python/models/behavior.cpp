@@ -10,8 +10,8 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
-#include "modules/models/behavior/idm/stochastic/idm_stochastic_headway.hpp"
-#include "modules/models/behavior/hypothesis/idm/hypothesis_idm_stochastic_headway.hpp"
+#include "modules/models/behavior/idm/stochastic/idm_stochastic.hpp"
+#include "modules/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "modules/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
@@ -78,22 +78,22 @@ void python_behavior(py::module m) {
         return new BehaviorIDMClassic(PythonToParams(t[0].cast<py::tuple>()));
       }));
 
-    py::class_<BehaviorIDMStochasticHeadway,
+    py::class_<BehaviorIDMStochastic,
              BehaviorModel,
-             shared_ptr<BehaviorIDMStochasticHeadway>>(m, "BehaviorIDMStochasticHeadway", py::multiple_inheritance())
+             shared_ptr<BehaviorIDMStochastic>>(m, "BehaviorIDMStochastic", py::multiple_inheritance())
     .def(py::init<const modules::commons::ParamsPtr&>())
-    .def("__repr__", [](const BehaviorIDMStochasticHeadway &m) {
-      return "bark.behavior.BehaviorIDMStochasticHeadway";
+    .def("__repr__", [](const BehaviorIDMStochastic &m) {
+      return "bark.behavior.BehaviorIDMStochastic";
     })
     .def(py::pickle(
-      [](const BehaviorIDMStochasticHeadway& b) {
+      [](const BehaviorIDMStochastic& b) {
         // We throw away other information such as last trajectories
         return py::make_tuple(ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new BehaviorIDMStochasticHeadway(PythonToParams(t[0].cast<py::tuple>()));
+        return new BehaviorIDMStochastic(PythonToParams(t[0].cast<py::tuple>()));
       }));
 
 
@@ -102,22 +102,22 @@ void python_behavior(py::module m) {
              shared_ptr<BehaviorHypothesis>>(m,
     "BehaviorHypothesis");
     
-      py::class_<BehaviorHypothesisIDMStochasticHeadway,
+      py::class_<BehaviorHypothesisIDM,
              BehaviorHypothesis,
-             shared_ptr<BehaviorHypothesisIDMStochasticHeadway>>(m, "BehaviorHypothesisIDMStochasticHeadway", py::multiple_inheritance())
+             shared_ptr<BehaviorHypothesisIDM>>(m, "BehaviorHypothesisIDM", py::multiple_inheritance())
     .def(py::init<const modules::commons::ParamsPtr&>())
-    .def("__repr__", [](const BehaviorHypothesisIDMStochasticHeadway &m) {
-      return "bark.behavior.BehaviorHypothesisIDMStochasticHeadway";
+    .def("__repr__", [](const BehaviorHypothesisIDM &m) {
+      return "bark.behavior.BehaviorHypothesisIDM";
     })
     .def(py::pickle(
-      [](const BehaviorHypothesisIDMStochasticHeadway& b) {
+      [](const BehaviorHypothesisIDM& b) {
         // We throw away other information such as last trajectories
         return py::make_tuple(ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new BehaviorHypothesisIDMStochasticHeadway(PythonToParams(t[0].cast<py::tuple>()));
+        return new BehaviorHypothesisIDM(PythonToParams(t[0].cast<py::tuple>()));
       }));
   
   py::class_<BehaviorIDMLaneTracking,

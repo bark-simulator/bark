@@ -14,8 +14,8 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "modules/models/behavior/idm/stochastic/idm_stochastic_headway.hpp"
-#include "modules/models/behavior/hypothesis/idm/hypothesis_idm_stochastic_headway.hpp"
+#include "modules/models/behavior/idm/stochastic/idm_stochastic.hpp"
+#include "modules/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
@@ -42,8 +42,8 @@ using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::BehaviorMobil;
-using modules::models::behavior::BehaviorIDMStochasticHeadway;
-using modules::models::behavior::BehaviorHypothesisIDMStochasticHeadway;
+using modules::models::behavior::BehaviorIDMStochastic;
+using modules::models::behavior::BehaviorHypothesisIDM;
 using modules::commons::SetterParams;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -56,10 +56,10 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
     behavior_model_name = "BehaviorMobil";
-  } else if (typeid(*behavior_model) == typeid(BehaviorIDMStochasticHeadway)) {
-    behavior_model_name = "BehaviorIDMStochasticHeadway";
-  } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDMStochasticHeadway)) {
-    behavior_model_name = "BehaviorHypothesisIDMStochasticHeadway";
+  } else if (typeid(*behavior_model) == typeid(BehaviorIDMStochastic)) {
+    behavior_model_name = "BehaviorIDMStochastic";
+  } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
+    behavior_model_name = "BehaviorHypothesisIDM";
   }
 #ifdef PLANNER_UCT
   else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
@@ -88,12 +88,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
     return std::make_shared<BehaviorMobil>(
       t[0].cast<BehaviorMobil>());
-  } else if (behavior_model_name.compare("BehaviorIDMStochasticHeadway") == 0) {
-    return std::make_shared<BehaviorIDMStochasticHeadway>(
-      t[0].cast<BehaviorIDMStochasticHeadway>());
-  } else if (behavior_model_name.compare("BehaviorHypothesisIDMStochasticHeadway") == 0) {
-    return std::make_shared<BehaviorHypothesisIDMStochasticHeadway>(
-      t[0].cast<BehaviorHypothesisIDMStochasticHeadway>());
+  } else if (behavior_model_name.compare("BehaviorIDMStochastic") == 0) {
+    return std::make_shared<BehaviorIDMStochastic>(
+      t[0].cast<BehaviorIDMStochastic>());
+  } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
+    return std::make_shared<BehaviorHypothesisIDM>(
+      t[0].cast<BehaviorHypothesisIDM>());
   }
 #ifdef PLANNER_UCT
   else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
