@@ -18,6 +18,29 @@
 namespace modules {
 namespace commons {
 
+class FixedValue : public Distribution {
+  public:
+    FixedValue(const ParamsPtr& params) : 
+        Distribution(params),
+        fixed_value_(params->GetListFloat(
+          "FixedValue", "Value always returned when called sample", {1.0f})) {}
+
+  virtual RandomVariate Sample() {
+    return fixed_value_;
+  }
+
+  virtual Probability Density(const RandomVariate& variate) const {
+      return 0.0f;
+      };
+
+  virtual Probability CDF(const RandomVariate& variate) const {
+      return 0.0f; 
+      }; 
+
+  private:
+   RandomVariate fixed_value_;
+};
+
 
 template<class BoostDistType>
 class BoostDistribution1D : public Distribution  {
