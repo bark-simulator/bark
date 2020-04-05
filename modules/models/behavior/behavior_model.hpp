@@ -29,10 +29,13 @@ using dynamic::Trajectory;
 
 typedef unsigned int DiscreteAction;
 typedef double Continuous1DAction;
+struct LonLatAction {
+  Continuous1DAction acc_lat;
+  Continuous1DAction acc_lon;
+};
 using dynamic::Input;
-typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
+typedef boost::variant<DiscreteAction, Continuous1DAction, Input, LonLatAction> Action;
 typedef std::size_t ActionHash;
-
 
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
