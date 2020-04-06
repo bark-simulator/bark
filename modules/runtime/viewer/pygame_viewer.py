@@ -37,7 +37,7 @@ class PygameViewer(BaseViewer):
 
         try:
             self.screen = pg.display.set_mode(
-                self.screen_dims, pg.DOUBLEBUF)
+                self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)
             pg.display.set_caption("Bark")
         except pg.error:
             self.screen = None
@@ -123,6 +123,8 @@ class PygameViewer(BaseViewer):
         if 0 < alpha < 1:
             s = self.createTransparentSurace(
                 self.screen_dims, self.background_color, alpha)
+            pg.draw.circle(s, self.getColor(color),
+                           transformed_points, 1, 0)
         elif alpha == 1:
             pg.draw.circle(self.screen, self.getColor(color),
                            transformed_points, 1, 0)
@@ -198,11 +200,7 @@ class PygameViewer(BaseViewer):
                             int(color[2] * 255))
 
     def drawWorld(self, world, eval_agent_ids=None, show=True):
-        self.clear()
         super(PygameViewer, self).drawWorld(world, eval_agent_ids)
-
-        for s in self.alpha_surf.keys():
-            self.screen.blit(s, (0, 0))
 
         if show:
             self.show()
@@ -210,6 +208,10 @@ class PygameViewer(BaseViewer):
     def show(self, block=True):
         if self.screen is None:
             return
+
+        for s in self.alpha_surf.values():
+            self.screen.blit(s, (0, 0))
+
         pg.display.flip()
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
@@ -252,15 +254,16 @@ class PygameViewer(BaseViewer):
                 / self.camera_view_size * self.screen_dims
 
     def createTransparentSurace(self, dims, background_color, alpha):
-        if float(alpha) not in self.alpha_surf:
-            s = pg.Surface(dims)
+        alpha = round(float(alpha), 1)
+        if alpha not in self.alpha_surf:
+            s = pg.Surface(dims, pg.DOUBLEBUF | pg.HWSURFACE)
             s.fill(background_color)
             s.set_colorkey(background_color)
             s.set_alpha(int(alpha * 255))
+            self.alpha_surf[alpha] = s
+            return s
         else:
-            s = self.alpha_surf[float(alpha)]
-
-        return s
+            return self.alpha_surf[alpha]
 
     def drawDashedLines(self, surf, color, points, width, dashed_length=5):
         for i in range(len(points) - 1):
