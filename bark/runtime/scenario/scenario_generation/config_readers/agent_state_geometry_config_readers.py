@@ -117,7 +117,7 @@ class InteractionDataStatesGeometries(ConfigReaderAgentStatesAndGeometries):
       if end_time is None:
           end_time = track.time_stamp_ms_last
       numpy_state = init_state_from_track(track, start_time)
-      agent_state = list(numpy_state)
+      agent_state = numpy_state.reshape(5).tolist()
       agent_states.append(agent_state)
       shape = shape_from_track(track, wheel_base)
       agent_geometries.append(shape)

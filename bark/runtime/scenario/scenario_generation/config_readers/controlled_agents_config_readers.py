@@ -26,3 +26,16 @@ class RandomSingleAgent(ConfigReaderControlledAgents):
     controlled_list = [False] * len(agent_states)
     controlled_list[controlled_agent_idx] = True
     return controlled_list, {}, config_param_object
+
+class AgentIds(ConfigReaderControlledAgents):
+  # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
+  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+    controlled_ids = config_param_object["ControlledIds", "Agent ids which should be controlled", [0, 2]]
+    agent_ids = kwargs["agent_ids"]
+    controlled_list = []
+    for id in agent_ids:
+      if id in controlled_ids: 
+        controlled_list.append(True)
+      else:
+        controlled_list.append(False)
+    return controlled_list, {}, config_param_object
