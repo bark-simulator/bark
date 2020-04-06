@@ -131,7 +131,7 @@ py_binary(
           "@bark_ml//tests/data:bark_data",
           '//modules/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
-          "@benchmark_database//database:database",
+          "@benchmark_database//data/database1:database1",
           "@bark_ml//python:bark_ml.so",
           ':params',
           ':scenarios'],
