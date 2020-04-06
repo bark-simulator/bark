@@ -14,6 +14,7 @@ from modules.runtime.scenario.scenario_generation.interaction_dataset_reader imp
 
 from bark.geometry.standard_shapes import *
 from bark.geometry import *
+from bark.models.dynamic import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
 # it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 
@@ -96,10 +97,10 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
                   self.sample_distance_uniform(self._vehicle_distance_range)
     return agent_states, agent_geometries
 
-class InteractDataStateGeometries(ConfigReaderAgentStatesAndGeometries):
+class InteractionDataStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/vehicle_tracks_000.csv"]
+                                        "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
     track_ids = config_param_object["TrackIds", "IDs of the vehicle tracks to import.", [1]]
     start_time = config_param_object["StartTs", "Timestamp when to start the scenario (ms)", 0]
     end_time = config_param_object["EndTs","Timestamp when to end the scenario (ms)", None]
@@ -107,6 +108,8 @@ class InteractDataStateGeometries(ConfigReaderAgentStatesAndGeometries):
 
     agent_geometries = []
     agent_states = []
+    lane_positions = []
+    tracks = []
     for track_id in track_ids:
       track = track_from_trackfile(track_file_name, track_id)
       if start_time is None:
@@ -118,6 +121,18 @@ class InteractDataStateGeometries(ConfigReaderAgentStatesAndGeometries):
       agent_states.append(agent_state)
       shape = shape_from_track(track, wheel_base)
       agent_geometries.append(shape)
+      tracks.append(track)
+      lane_position = self.find_lane_position(numpy_state, road_corridor)
+      lane_positions.append(lane_position)
 
     assert(len(agent_states) == len(agent_geometries))
-    return agent_states, agent_geometries, {"track_ids": track_ids}, config_param_object
+    return agent_states, agent_geometries, {"track_ids": track_ids, "tracks" : tracks, \
+             "agent_ids" : track_ids, "start_time" : start_time, "end_time" : end_time, \
+               "agent_lane_positions" : lane_positions}, config_param_object
+  
+  def find_lane_position(self, init_state, road_corridor):
+    for idx, lane_corridor in enumerate(road_corridor.lane_corridors):
+      if Collide(lane_corridor.polygon, Point2d(init_state[int(StateDefinition.X_POSITION)], \
+         init_state[int(StateDefinition.Y_POSITION)])):
+        return idx
+    raise ValueError("No lane corridor for init state.")

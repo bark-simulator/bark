@@ -34,6 +34,36 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params.save("default_params_standard.json")
 
+  def test_configurable_scenario_generation_interaction_merging(self):
+    sink_source_dict = {
+      "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
+      "Description": "merging_deu_standard",
+      "ConfigAgentStatesGeometries": {"Type": "InteractionDataStatesGeometries"},
+      "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "NoneControlled"},
+      "AgentParams" : {}
+    }
+
+    params = ParameterServer()
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
+          "modules/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    scenario_loader = ScenarioGeneration()
+    scenario_loader.load_scenario_list("test.scenario")
+
+    self.assertEqual(len(scenario_loader._scenario_list), 2)
+    self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
+
+    scenario = scenario_loader.get_scenario(idx=0)
+
+    params.save("default_params_interaction_dataset.json")
+
   def test_configurable_scenario_generation_behavior_space_sampling(self):
     sink_source_dict = {
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],

@@ -7,6 +7,7 @@ import numpy as np
 
 from modules.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
 from modules.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
+from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import behavior_from_track
 
 from bark.models.behavior import *
 from modules.runtime.commons.parameters import ParameterServer
@@ -65,3 +66,27 @@ class BehaviorSpaceSampling(ConfigReaderBehaviorModels):
     return self.param_servers
 
 
+class InteractionDataBehaviors(ConfigReaderBehaviorModels):
+  def __init__(self, random_state):
+    super().__init__(random_state)
+    self.param_servers = []
+
+  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+    tracks = kwargs["tracks"]
+    start_time = kwargs["start_time"]
+    end_time = kwargs["end_time"]
+
+    behavior_models = []
+    behavior_model_types = []
+
+    for idx, _ in enumerate(agent_states):
+      track = tracks[idx]
+      params = ParameterServer()
+      behavior = behavior_from_track(track, params, start_time, end_time)
+      self.param_servers.append(params)
+      behavior_models.append(behavior)
+      behavior_model_types.append("BehaviorStaticTrajectory")
+    return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
+
+  def get_param_servers(self):
+    return self.param_servers

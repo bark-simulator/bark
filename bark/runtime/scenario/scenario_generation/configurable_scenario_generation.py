@@ -391,7 +391,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def create_source_config_agents(self, agent_states, agent_geometries, 
                         behavior_models, execution_models, dynamic_models,
-                        goal_definitions, controlled_agent_ids, world, agent_params):
+                        goal_definitions, controlled_agent_ids, world, agent_params, **kwargs):
     num_agents = len(agent_states)
     if any(len(lst) != num_agents for lst in [
       agent_geometries, behavior_models, execution_models, dynamic_models, goal_definitions, controlled_agent_ids]):
@@ -406,9 +406,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                           agent_params,
                           goal_definitions[idx],
                           world.map )
-
+      if "agent_ids" in kwargs:
+        bark_agent.SetAgentId(kwargs["agent_ids"][idx])
       agents.append(bark_agent)
-    
     return agents
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
