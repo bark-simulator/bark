@@ -409,6 +409,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                           world.map )
       if "agent_ids" in kwargs:
         bark_agent.SetAgentId(kwargs["agent_ids"][idx])
+      else:
+        bark_agent.SetAgentId(idx)
       agents.append(bark_agent)
     return agents
 
