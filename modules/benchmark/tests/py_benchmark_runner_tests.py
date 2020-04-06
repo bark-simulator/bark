@@ -30,7 +30,7 @@ class DatabaseRunnerTests(unittest.TestCase):
     def test_database_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         cwd = os.getcwd()
-        dbs.process("database")
+        dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
@@ -54,7 +54,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
-        dbs.process("database")
+        dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
