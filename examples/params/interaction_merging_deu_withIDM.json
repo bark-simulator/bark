@@ -2,7 +2,7 @@
   "Scenario": {
     "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
     "Generation": {
-      "InteractionDataset": {
+      "InteractionDatasetScenarioGeneration": {
         "MapFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
         "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
         "TrackIds": [
@@ -23,69 +23,17 @@
   "Visualization": {
     "Agents": {
       "Color": {
-        "Other": [
-          0.7,
-          0.7,
-          0.7
-        ],
-        "Controlled": [
-          0.9,
-          0,
-          0
-        ]
+          "UseColormapForOtherAgents": true
       },
-      "AlphaVehicle": 0.8,
-      "ColorRoute": [
-        0.2,
-        0.2,
-        0.2
-      ],
-      "DrawRoute": false,
+      "DrawAgentId": true,
       "DrawEvalGoals": false,
-      "EvalGoalColor": [
-        0.0,
-        0.0,
-        0.7
-      ],
       "DrawHistory": true
-    },
-    "Map": {
-      "Lanes": {
-        "Boundaries": {
-          "Color": [
-            0.7,
-            0.7,
-            0.7
-          ],
-          "Alpha": 1.0
-        }
-      },
-      "Plane": {
-        "Color": [
-          1,
-          1,
-          1,
-          1
-        ],
-        "Alpha": 1.0
-      },
-      "xrange": [
-        880,
-        1009
-      ],
-      "yrange": [
-        977,
-        1034
-      ]
     }
   },
   "simulation": {
     "step_time": 0.2,
     "real_time_factor": 1,
     "simulation_time_steps": 120
-  },
-  "DynamicModel": {
-    "wheel_base": 2.700000047683716
   },
   "agent": {
     "MaxHistoryLength": 50
