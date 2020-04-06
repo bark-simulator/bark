@@ -7,9 +7,11 @@
 import unittest
 import os
 import numpy as np
+from collections import defaultdict
+from operator import itemgetter
+
 from modules.runtime.commons.parameters import ParameterServer
 from modules.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
-
 from bark.models.behavior import *
 
 class PyBehaviorSpaceTests(unittest.TestCase):
@@ -48,7 +50,9 @@ class PyBehaviorSpaceTests(unittest.TestCase):
 
   def test_cover_hypothesis_creation(self):
     param_server = ParameterServer(log_if_default=True)
-    behavior_space_range = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["HeadwayDistribution"] = [5.34, 10.0]
+    behavior_space_range1 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["HeadwayDistribution"] = [5.34, 10.0]
+    behavior_space_range2 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["SpacingDistribution"] = [1.3434, 10.0]
+    behavior_space_fixed_val = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["DesiredVelDistribution"] = [3.4545]
     space = BehaviorSpace(param_server)
     hypothesis_set, hypothesis_parameters = space.create_cover_hypothesis()
     num_hypothesis_desired = param_server["BehaviorSpace"]["Hypothesis"]["Partitions"]["BehaviorIDMStochastic"]["HeadwayDistribution"]
@@ -56,28 +60,69 @@ class PyBehaviorSpaceTests(unittest.TestCase):
 
     params = hypothesis_set[0].params
     self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::HeadwayDistribution::LowerBound", "", 0.0), \
-                behavior_space_range[0], 5)
+                behavior_space_range1[0], 5)
     self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", "", 0.0),\
-                 behavior_space_range[1], 5)
-  @unittest.skip
+                 behavior_space_range1[1], 5)
+    self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::SpacingDistribution::LowerBound", "", 0.0), \
+                behavior_space_range2[0], 5)
+    self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::SpacingDistribution::UpperBound", "", 0.0),\
+                 behavior_space_range2[1], 5)
+    self.assertAlmostEquals(params.getListFloat("BehaviorIDMStochastic::DesiredVelDistribution::FixedValue", "", [0.0])[0],\
+                 behavior_space_fixed_val[0], 5)
+
   def test_multiple_hypothesis_sets_creation(self):
     param_server = ParameterServer()
-    behavior_space_range = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["HeadwayDistribution"] = [5.3434, 10.14]
+    behavior_space_range1 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["HeadwayDistribution"] = [5.3434, 10.14]
+    behavior_space_range2 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["ComftBrakingDistribution"] = [1.0]
+    behavior_space_range3 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["MaxAccDistribution"] = [15.3]
+    behavior_space_range4 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["SpacingDistribution"] = [1.0, 2.0]
+    behavior_space_range5 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["DesiredVelDistribution"] = [3, 4.5]
     space = BehaviorSpace(param_server)
-    desired_splits = [2, 4, 8, 16, 32 , 64]
-    hypothesis_set_collection = space.create_multiple_hypothesis_sets(splits=[2, 4, 8, 16, 32 , 64])
+    desired_splits = [2, 8]
+    hypothesis_set_collection = space.create_multiple_hypothesis_sets(splits=[2, 8])
 
     self.assertEqual(len(hypothesis_set_collection), len(desired_splits))
+
+    bounds_collected_split = {}
     for split, (hypothesis_set, params_sets) in hypothesis_set_collection.items():
       num_hypothesis_desired = split
+      self.assertEqual(len(hypothesis_set), split**3)
+      bounds_collected_split[split] = defaultdict(list)
+      bounds_collected = bounds_collected_split[split]
       for idx, hypothesis in enumerate(hypothesis_set):
         params = hypothesis.params
-        self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::HeadwayDistribution::LowerBound", "", 0.0), \
-                  behavior_space_range[0] + idx*(behavior_space_range[1]-behavior_space_range[0])/num_hypothesis_desired, 5)
-        self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", "", 0.0),\
-                  behavior_space_range[0] + (idx+1)*(behavior_space_range[1]-behavior_space_range[0])/num_hypothesis_desired, 5)
+        lower = params.getReal("BehaviorIDMStochastic::HeadwayDistribution::LowerBound", "", 0.0)
+        upper = params.getReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", "", 0.0)
+        bounds_collected[1].append([lower, upper])
 
-   
+        self.assertAlmostEquals(params.getListFloat("BehaviorIDMStochastic::ComftBrakingDistribution::FixedValue", "", [4345.0])[0], \
+                  behavior_space_range2[0], 5)
+
+        self.assertAlmostEquals(params.getListFloat("BehaviorIDMStochastic::MaxAccDistribution::FixedValue", "", [2334.0])[0], \
+                  behavior_space_range3[0], 5)
+
+        lower = params.getReal("BehaviorIDMStochastic::SpacingDistribution::LowerBound", "", 0.0)
+        upper = params.getReal("BehaviorIDMStochastic::SpacingDistribution::UpperBound", "", 0.0)
+        bounds_collected[4].append([lower, upper])
+
+        lower = params.getReal("BehaviorIDMStochastic::DesiredVelDistribution::LowerBound", "", 0.0)
+        upper = params.getReal("BehaviorIDMStochastic::DesiredVelDistribution::UpperBound", "", 0.0)
+        bounds_collected[5].append([lower, upper])
+
+    desired_ranges = {1: behavior_space_range1, 4 : behavior_space_range4, 5 : behavior_space_range5}
+    for split in desired_splits: 
+      bounds_collected = bounds_collected_split[split]
+      num_hypothesis_desired = split
+      for behavior_range, bounds in bounds_collected.items():
+          tmp = set(tuple(bound) for bound in bounds)
+          splits = sorted(list(tmp), key=itemgetter(0))
+          for idx, split in enumerate(splits):
+            desired_range = desired_ranges[behavior_range]
+            self.assertAlmostEquals(split[0], \
+                      desired_range[0] + idx*(desired_range[1]-desired_range[0])/num_hypothesis_desired, 2)
+            self.assertAlmostEquals(split[1],\
+                      desired_range[0] + (idx+1)*(desired_range[1]-desired_range[0])/num_hypothesis_desired, 2)
+
 
 if __name__ == '__main__':
   unittest.main()
