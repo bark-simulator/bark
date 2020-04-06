@@ -253,6 +253,26 @@ void python_behavior(py::module m) {
         return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<modules::models::dynamic::Trajectory>());
       }));
 
+  py::class_<LonLatAction,
+             shared_ptr<LonLatAction>>(m, "LonLatAction")
+      .def(py::init<>())
+      .def_readwrite("acc_lat", &LonLatAction::acc_lat)
+      .def_readwrite("acc_lon", &LonLatAction::acc_lon)
+      .def("__repr__", [](const LonLatAction &b) {
+        return "bark.behavior.LonLatAction";
+      })
+      .def(py::pickle(
+      [](const LonLatAction& a) {
+        return py::make_tuple(a.acc_lat, a.acc_lon);
+      },
+      [](py::tuple t) {
+        if (t.size() != 2)
+          throw std::runtime_error("Invalid LonLatAction model state!");
+        /* Create a new C++ instance */
+        return new LonLatAction{t[0].cast<Continuous1DAction>(), t[1].cast<Continuous1DAction>()};
+      }));
+
+
   m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   python_behavior_plan(m);
