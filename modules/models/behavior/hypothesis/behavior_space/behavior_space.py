@@ -59,7 +59,24 @@ class BehaviorSpace:
     hypothesis_parameters = self._params.AddChild("Hypothesis")
     _ = hypothesis_parameters["RandomSeed", "Seed for hypothesis", 1000]
     partition_parameters = hypothesis_parameters.AddChild("Partitions")
-    _ = partition_parameters["BehaviorIDMStochastic"]["HeadwayDistribution", "Number of partitions", 20]
+
+    def add_default_partition_params(range_params, part_params):
+      for param, value in range_params.store.items():
+        if isinstance(value, ParameterServer):
+          add_default_partition_params(self._behavior_space_range_params[param], part_params[param])
+        if "Distribution" in param:
+          _ = part_params[param, "Number of partitions", 1]
+    
+    def clean_default_partition_params(part_params):
+      for param, value in part_params.store.copy().items():
+        if isinstance(value, ParameterServer):
+          if len(value.store) == 0:
+            del part_params.store[param]
+          else:
+            clean_default_partition_params(value)
+
+    add_default_partition_params(self._behavior_space_range_params, partition_parameters)
+    clean_default_partition_params(partition_parameters)
     _ = hypothesis_parameters["HypothesisModel", "Model used as behavior model for hypothesis", "BehaviorHypothesisIDM"]
     return hypothesis_parameters.clone()
 
@@ -79,14 +96,19 @@ class BehaviorSpace:
           logging.error("None distribution param type specified for hypothesis splitting.")
         else:
           param_range = range_params[split_param]
-          param_range_width = param_range[1] - param_range[0]
-          param_keys.append(key_prefix + "::" + split_param)
-          partitions = []
-          for idx in range(0, partition_num):
-            lower_bound = param_range[0] + float(idx)*param_range_width/partition_num
-            upper_bound = param_range[0] + float(idx+1)*param_range_width/partition_num
-            partitions.append((lower_bound, upper_bound))
-          param_partitions.append(partitions)
+          # uniform distribution type
+          if len(param_range) == 2:
+            param_range_width = param_range[1] - param_range[0]
+            param_keys.append(key_prefix + "::" + split_param)
+            partitions = []
+            for idx in range(0, partition_num):
+              lower_bound = param_range[0] + float(idx)*param_range_width/partition_num
+              upper_bound = param_range[0] + float(idx+1)*param_range_width/partition_num
+              partitions.append((lower_bound, upper_bound))
+            param_partitions.append(partitions)
+          # distribution type fixed value
+          elif len(param_range) == 1:
+            param_partitions.append((param_range[0]))
 
     fill_param_partitions(partition_parameters, self._behavior_space_range_params)
     hypotheses_partitions = list(itertools.product(*param_partitions))
@@ -96,13 +118,19 @@ class BehaviorSpace:
     hypothesis_set_params = []
     for hypotheses_partition in hypotheses_partitions:
       model_params = self._behavior_space_range_params.clone()
-      for param_idx, _ in enumerate(partition_parameters):
+      for param_idx in range(0, len(hypotheses_partition)):
         # overwrite range parameter by deleting child
-        distribution_params = model_params.AddChild(param_keys[param_idx], delete = True)
-        distribution_params["DistributionType"] = "UniformDistribution1D"
-        distribution_params["RandomSeed"] = seed
-        distribution_params["LowerBound"] = hypotheses_partition[param_idx][0]
-        distribution_params["UpperBound"] = hypotheses_partition[param_idx][1]
+        distribution_params = model_params.AddChild(param_keys[param_idx], delete = param_idx == 0)
+        # uniform distribution for this dimension of behavior space
+        if len(hypotheses_partition[param_idx]) == 2:
+          distribution_params["DistributionType"] = "UniformDistribution1D"
+          distribution_params["RandomSeed"] = seed
+          distribution_params["LowerBound"] = hypotheses_partition[param_idx][0]
+          distribution_params["UpperBound"] = hypotheses_partition[param_idx][1]
+        # fixed value distribution for this part of behavior space
+        elif len(hypotheses_partition[param_idx])==1:
+          distribution_params["DistributionType"] = "FixedValue"
+          distribution_params["FixedValue"] = [hypotheses_partition[param_idx][0]]
       param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
       hypothesis_behavior, _ = \
             self._model_from_model_type(hypothesis_model_type, param_server_behavior)
