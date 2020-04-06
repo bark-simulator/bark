@@ -58,11 +58,11 @@ Trajectory BehaviorStaticTrajectory::Plan(
   traj.block(1, 0, num_rows, traj.cols()) =
       static_trajectory_.block(idx_start, 0, num_rows, traj.cols());
   this->SetLastTrajectory(traj);
-  this->SetLastAction(this->CalculateAction(delta_time, observed_world, traj));
+  this->SetLastAction(BehaviorStaticTrajectory::CalculateAction(delta_time, observed_world, traj));
   return traj;
 }
 
-Action BehaviorStaticTrajectory::CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) const {
+Action BehaviorStaticTrajectory::CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) {
   auto lane_corridor = observed_world.GetLaneCorridor();
   BARK_EXPECT_TRUE(bool(lane_corridor));
 

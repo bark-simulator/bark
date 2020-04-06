@@ -33,9 +33,9 @@ class BehaviorStaticTrajectory : public BehaviorModel {
                   const world::ObservedWorld& observed_world) override;
   std::shared_ptr<BehaviorModel> Clone() const override;
   const Trajectory& get_static_trajectory() const;
-
+   static Action CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world,
+                           const dynamic::Trajectory& trajectory);
  private:
- Action CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) const;
   static Trajectory trajectory_from_listlist_float(std::vector<std::vector<float>> list);
   std::pair<int,int> interpolate(const double t, StateRowVector *interpolated) const;
   Trajectory static_trajectory_;
