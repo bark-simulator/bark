@@ -195,15 +195,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
     self._sink_source_default_params = sink_source_default_params
-    scenario._agent_list = self.update_agent_ids(agent_list)
     scenario._eval_agent_ids = [idx for idx, value in enumerate(controlled_agent_ids_all) if value==True]
     
     return scenario
-
-  def update_agent_ids(self, agent_list):
-    for idx, agent in enumerate(agent_list):
-      agent.SetAgentId(idx)
-    return agent_list
 
   def resolve_overlaps_in_sources_sinks_agents(self, 
                   collected_sources_sinks_agent_states_geometries):
