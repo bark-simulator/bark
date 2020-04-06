@@ -183,6 +183,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.ConvertToDict()
 
       #5 Build all agents for this source config
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       agent_params = ParameterServer(json = sink_source_config["AgentParams"])
       sink_source_agents = self.create_source_config_agents(agent_states,
                       agent_geometries, behavior_models, execution_models,
