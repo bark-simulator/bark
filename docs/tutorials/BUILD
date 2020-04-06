@@ -20,7 +20,7 @@ py_binary(
   data = [":notebooks_folder",
           "//python:bark.so",
           "//modules/runtime/tests:xodr_data",
-          "@benchmark_database//database:database",
+          "@benchmark_database//data/database1:database1",
           ]
 )
 
@@ -39,6 +39,6 @@ py_test(
   data = [":notebooks_folder",
           "//python:bark.so",
           "//modules/runtime/tests:xodr_data",
-          "@benchmark_database//database:database",
+          "@benchmark_database//data/database1:database1",
           ]
 )
