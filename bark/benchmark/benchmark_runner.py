@@ -220,10 +220,8 @@ class BenchmarkRunner:
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
             if bmark_conf.config_idx == config_idx:
-                self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
-                    idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
-                    bmark_conf.scenario_set_name, bmark_conf.behavior_name))
-                return self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+                result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+                return BenchmarkResult(result_dict, [bmark_conf], histories={config_idx : scenario_history})
         self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
         return
 
