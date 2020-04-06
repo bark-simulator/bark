@@ -9,8 +9,11 @@ import numpy as np
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from bark.core.geometry.standard_shapes import *
-from bark.core.geometry import *
+from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import shape_from_track, \
+    bark_state_from_motion_state, init_state_from_track, track_from_trackfile
+
+from bark.geometry.standard_shapes import *
+from bark.geometry import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
 # it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 
@@ -93,3 +96,28 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
                   self.sample_distance_uniform(self._vehicle_distance_range)
     return agent_states, agent_geometries
 
+class InteractDataStateGeometries(ConfigReaderAgentStatesAndGeometries):
+  def create_from_config(self, config_param_object, road_corridor):
+    track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
+                                        "modules/runtime/tests/data/vehicle_tracks_000.csv"]
+    track_ids = config_param_object["TrackIds", "IDs of the vehicle tracks to import.", [1]]
+    start_time = config_param_object["StartTs", "Timestamp when to start the scenario (ms)", 0]
+    end_time = config_param_object["EndTs","Timestamp when to end the scenario (ms)", None]
+    wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
+
+    agent_geometries = []
+    agent_states = []
+    for track_id in track_ids:
+      track = track_from_trackfile(track_file_name, track_id)
+      if start_time is None:
+          start_time = track.time_stamp_ms_first
+      if end_time is None:
+          end_time = track.time_stamp_ms_last
+      numpy_state = init_state_from_track(track, start_time)
+      agent_state = list(numpy_state)
+      agent_states.append(agent_state)
+      shape = shape_from_track(track, wheel_base)
+      agent_geometries.append(shape)
+
+    assert(len(agent_states) == len(agent_geometries))
+    return agent_states, agent_geometries, {"track_ids": track_ids}, config_param_object
