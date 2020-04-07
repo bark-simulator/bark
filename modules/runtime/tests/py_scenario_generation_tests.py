@@ -34,6 +34,36 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params.save("default_params.json")
 
+  def test_configurable_scenario_generation_sample_behavior_types(self):
+    sink_source_dict = [{
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "Description": "left_lane",
+      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
+      "ConfigExecutionModels": {"type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"type": "NoneControlled"},
+      "AgentParams" : {}
+    },
+    {
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "Description": "right_lane",
+      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [1]},
+      "ConfigBehaviorModels": {"type": "SampleBehaviorType"},
+      "ConfigExecutionModels": {"type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"type": "RandomSingleAgent"},
+      "AgentParams" : {}
+    }]
+    params = ParameterServer()
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    params.save("default_params_behavior_type_sampling.json")
+
   def test_find_overlaps_configurable_scenario_generation(self):
     shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
                       Point2d(-1,1),
