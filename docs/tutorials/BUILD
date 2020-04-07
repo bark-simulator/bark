@@ -11,10 +11,15 @@ py_binary(
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime"],
+          "//modules/runtime:runtime",
+          "@benchmark_database//load:benchmark_database",
+          "@benchmark_database//serialization:database_serializer",
+          "//modules/benchmark:benchmark_runner",
+          "//modules/benchmark:benchmark_analyzer",],
   data = [":notebooks_folder",
           "//python:bark.so",
-          "//modules/runtime/tests:xodr_data"]
+          "//modules/runtime/tests:xodr_data",
+          "@benchmark_database//database:database",]
 )
 
 py_test(
