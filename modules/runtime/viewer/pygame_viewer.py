@@ -21,6 +21,8 @@ class PygameViewer(BaseViewer):
         self.screen_height = self.screen_dims[1]
         self.screen_map_ratio = None
         self.source_dest = None
+        self.screen_surface = pg.Surface(
+            self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)
 
         self.camera_view_size = None
 
@@ -115,8 +117,8 @@ class PygameViewer(BaseViewer):
             camera_view_range = self.camera_view_size * self.screen_map_ratio
             self.source_dest = (0, 0)
 
-        self.screen.blit(self.map_surf, self.source_dest,
-                         np.around((camera_coordinate, camera_view_range)))
+        self.screen_surface.blit(self.map_surf, self.source_dest,
+                                 np.around((camera_coordinate, camera_view_range)))
 
     def drawPoint2d(self, point2d, color, alpha=1.0):
         transformed_points = self.pointsToCameraCoordinate(point2d)
@@ -126,7 +128,7 @@ class PygameViewer(BaseViewer):
             pg.draw.circle(s, self.getColor(color),
                            transformed_points, 1, 0)
         elif alpha == 1:
-            pg.draw.circle(self.screen, self.getColor(color),
+            pg.draw.circle(self.screen_surface, self.getColor(color),
                            transformed_points, 1, 0)
 
     def drawLine2d(self, line2d, color="blue", alpha=1.0,
@@ -147,7 +149,7 @@ class PygameViewer(BaseViewer):
                     transformed_lines,
                     linewidth)
         elif alpha == 1:
-            pg.draw.lines(self.screen, self.getColor(
+            pg.draw.lines(self.screen_surface, self.getColor(
                 color), False, transformed_lines, linewidth)
 
     def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
@@ -158,7 +160,7 @@ class PygameViewer(BaseViewer):
             pg.draw.polygon(s, self.getColor(color), transformed_points)
         elif alpha == 1:
             pg.draw.polygon(
-                self.screen,
+                self.screen_surface,
                 self.getColor(color),
                 transformed_points)
 
@@ -170,7 +172,7 @@ class PygameViewer(BaseViewer):
             point_list.append([state[round(StateDefinition.X_POSITION)],
                                state[round(StateDefinition.Y_POSITION)]])
 
-        pg.draw.lines(self.screen, self.getColor(color), False,
+        pg.draw.lines(self.screen_surface, self.getColor(color), False,
                       self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
@@ -181,7 +183,7 @@ class PygameViewer(BaseViewer):
             "background_color", self.background_color)
         text_surf = pg.font.SysFont(font, font_size).render(
             text, True, color, background_color)
-        self.screen.blit(
+        self.screen_surface.blit(
             text_surf, (position[0] * self.screen_width, (1 - position[1]) * self.screen_height))
 
     def getColor(self, color):
@@ -202,6 +204,9 @@ class PygameViewer(BaseViewer):
     def drawWorld(self, world, eval_agent_ids=None, show=True):
         super(PygameViewer, self).drawWorld(world, eval_agent_ids)
 
+        for s in self.alpha_surf.values():
+            self.screen_surface.blit(s, (0, 0))
+
         if show:
             self.show()
 
@@ -209,8 +214,7 @@ class PygameViewer(BaseViewer):
         if self.screen is None:
             return
 
-        for s in self.alpha_surf.values():
-            self.screen.blit(s, (0, 0))
+        self.screen.blit(self.screen_surface, (0, 0))
 
         pg.display.flip()
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
@@ -218,6 +222,7 @@ class PygameViewer(BaseViewer):
     def clear(self):
         self.alpha_surf = dict()
         self.screen.fill(self.background_color)
+        self.screen_surface.fill(self.background_color)
 
     def getColorFromMap(self, float_color):
         # TODO
