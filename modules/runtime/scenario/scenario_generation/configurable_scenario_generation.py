@@ -63,8 +63,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
     self._sink_source_default_params = None
 
+    self._registered_types = {}
+
   def update_defaults_params(self):
-    self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]["SinksSources"] = \
+    self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
         self._sink_source_default_params
 
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
@@ -206,7 +208,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         collected_sources_sinks_agent_states_geometries,
         collisions
       )
-
 
   @staticmethod
   def find_overlaps_in_sources_sinks_agents( 
