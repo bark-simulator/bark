@@ -2,7 +2,7 @@ py_test(
   name = "py_benchmark_runner_tests",
   srcs = ["py_benchmark_runner_tests.py"],
   data = ["//python:bark.so",
-          "@benchmark_database//database:database",
+          "@benchmark_database//data/database1:database1",
           "//modules/runtime/tests:xodr_data"
           ],
   imports = ['../python/'],
@@ -35,7 +35,7 @@ py_test(
   name = "py_benchmark_process_tests",
   srcs = ["py_benchmark_process_tests.py"],
   data = ["//python:bark.so",
-        "@benchmark_database//database:database",
+        "@benchmark_database//data/database1:database1",
           "//modules/runtime/tests:xodr_data"
           ],
   imports = ['../python/'],

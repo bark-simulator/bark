@@ -406,7 +406,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
     eval_config = sink_source_config[config_type]
-    eval_config_type = eval_config["type"]
+    eval_config_type = eval_config["Type"]
     param_config = ParameterServer(json = eval_config)
     config_reader = eval("{}(self._random_state)".format(eval_config_type))
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)

@@ -15,3 +15,4 @@ ray==0.7.6
 psutil==5.6.6
 notebook==6.0.3
 jupyter==1.0.0
+ipython==7.13.0

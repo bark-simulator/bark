@@ -279,11 +279,11 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawLaneCorridor(self, lane_corridor):
-      self.drawPolygon2d(lane_corridor.polygon, color="blue", alpha=.5)
+    def drawLaneCorridor(self, lane_corridor, color="blue"):
+      self.drawPolygon2d(lane_corridor.polygon, color=color, alpha=.5)
 
-    def drawRoadCorridor(self, road_corridor):
+    def drawRoadCorridor(self, road_corridor, color="blue"):
       # TODO(@hart): use agent specific coloring
-      self.drawPolygon2d(road_corridor.polygon, color="blue", alpha=.2)
+      self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
