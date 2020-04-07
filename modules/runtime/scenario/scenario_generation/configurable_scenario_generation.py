@@ -32,23 +32,23 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",
-      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [0]},
-      "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
-      "ConfigExecutionModels": {"type": "FixedExecutionType"},
-      "ConfigDynamicModels": {"type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "NoneControlled"},
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "NoneControlled"},
       "AgentParams" : {}
     },
     {
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "right_lane",
-      "ConfigAgentStatesGeometries": {"type": "UniformVehicleDistribution", "LanePositions": [1]},
-      "ConfigBehaviorModels": {"type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 30.0}},
-      "ConfigExecutionModels": {"type": "FixedExecutionType"},
-      "ConfigDynamicModels": {"type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"type": "RandomSingleAgent"},
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
+      "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 30.0}},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
       "AgentParams" : {}
     }
     ]
