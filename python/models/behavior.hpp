@@ -37,7 +37,7 @@ class PyBehaviorModel : public BehaviorModel {
   }
 
   std::shared_ptr<BehaviorModel> Clone() const {
-    PYBIND11_OVERLOAD_PURE(
+    PYBIND11_OVERLOAD(
       std::shared_ptr<BehaviorModel>,
       BehaviorModel,
       Clone);
