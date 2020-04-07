@@ -2,9 +2,9 @@
   "Scenario": {
     "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
     "Generation": {
-      "InteractionDataset": {
-        "MapFilename": "/home/kessler/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
-        "TrackFilename": "/home/kessler/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
+      "InteractionDatasetScenarioGeneration": {
+        "MapFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
+        "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
         "TrackIds": [
           63,
           64,
@@ -20,13 +20,20 @@
       }
     }
   },
+  "Visualization": {
+    "Agents": {
+      "Color": {
+          "UseColormapForOtherAgents": true
+      },
+      "DrawAgentId": true,
+      "DrawEvalGoals": false,
+      "DrawHistory": true
+    }
+  },
   "simulation": {
     "step_time": 0.2,
     "real_time_factor": 1,
     "simulation_time_steps": 120
-  },
-  "DynamicModel": {
-    "wheel_base": 2.700000047683716
   },
   "agent": {
     "MaxHistoryLength": 50
