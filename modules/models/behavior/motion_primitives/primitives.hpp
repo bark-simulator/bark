@@ -21,6 +21,7 @@ namespace behavior {
 namespace primitives {
 
 using dynamic::Trajectory;
+using modules::models::dynamic::DynamicModelPtr;
 using modules::geometry::Point2d;
 using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::dynamic::StateDefinition;

@@ -5,9 +5,10 @@
 
 
 #include "python/models/models.hpp"
+#include "python/models/dynamic.hpp"
 #include "python/models/behavior.hpp"
 #include "python/models/execution.hpp"
-#include "python/models/dynamic.hpp"
+
 
 void python_models(py::module m) {
   python_behavior(
