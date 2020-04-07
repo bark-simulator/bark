@@ -3,8 +3,8 @@
     "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
     "Generation": {
       "InteractionDataset": {
-        "MapFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
-        "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
+        "MapFilename": "/home/kessler/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr",
+        "TrackFilename": "/home/kessler/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
         "TrackIds": [
           63,
           64,
@@ -18,65 +18,6 @@
         "EgoTrackId": 67,
         "BehaviorModel": {"67":"BehaviorIDMClassic"}
       }
-    }
-  },
-  "Visualization": {
-    "Agents": {
-      "Color": {
-        "Other": [
-          0.7,
-          0.7,
-          0.7
-        ],
-        "Controlled": [
-          0.9,
-          0,
-          0
-        ]
-      },
-      "AlphaVehicle": 0.8,
-      "ColorRoute": [
-        0.2,
-        0.2,
-        0.2
-      ],
-      "DrawRoute": false,
-      "DrawEvalGoals": false,
-      "EvalGoalColor": [
-        0.0,
-        0.0,
-        0.7
-      ],
-      "DrawHistory": true
-    },
-    "Map": {
-      "Lanes": {
-        "Boundaries": {
-          "Color": [
-            0.7,
-            0.7,
-            0.7
-          ],
-          "Alpha": 1.0
-        }
-      },
-      "Plane": {
-        "Color": [
-          1,
-          1,
-          1,
-          1
-        ],
-        "Alpha": 1.0
-      },
-      "xrange": [
-        880,
-        1009
-      ],
-      "yrange": [
-        977,
-        1034
-      ]
     }
   },
   "simulation": {
