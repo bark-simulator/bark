@@ -25,8 +25,40 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     param_server.save("behavior_space_defaults_sampling.json")
 
     params_loaded = ParameterServer(filename="behavior_space_defaults_sampling.json")
-    space = BehaviorSpace(params_loaded)
-    sampled_parameters = space.sample_behavior_parameters()
+
+    params_loaded["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["SpacingDistribution"] = [1.23, 20.2]
+    params_loaded["BehaviorSpace"]["Sampling"]["BehaviorIDMStochastic"]["SpacingDistribution"]["StdRange"] = [0.2, 0.4]
+    params_loaded["BehaviorSpace"]["Sampling"]["BehaviorIDMStochastic"]["SpacingDistribution"]["DistributionType"] = "NormalDistribution1D"
+
+    params_loaded["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["DesiredVelDistribution"] = [4.5, 6.07]
+    params_loaded["BehaviorSpace"]["Sampling"]["BehaviorIDMStochastic"]["DesiredVelDistribution"]["Width"] = [0.1, 0.3]
+    params_loaded["BehaviorSpace"]["Sampling"]["BehaviorIDMStochastic"]["DesiredVelDistribution"]["DistributionType"] = "UniformDistribution1D"
+
+    params_loaded["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["MaxAccDistribution"] = [1.7]
+
+    params_loaded["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["ComftBrakingDistribution"] = [20]
+    space = BehaviorSpace(params_loaded) 
+
+    num_sampled_parameters = 100
+    for _ in range(0, num_sampled_parameters):
+      sampled_parameters, model_type = space.sample_behavior_parameters()
+      behavior = eval("{}(sampled_parameters)".format(model_type))
+
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["MaxAccDistribution"]["DistributionType", "", ""], "FixedValue")
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["MaxAccDistribution"]["FixedValue", "", 1.0], [1.7]) 
+
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["ComftBrakingDistribution"]["DistributionType", "", ""], "FixedValue")
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["ComftBrakingDistribution"]["FixedValue", "", 1.2], [20])
+      
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["SpacingDistribution"]["DistributionType", "", ""], "NormalDistribution1D")
+      self.assertTrue(sampled_parameters["BehaviorIDMStochastic"]["SpacingDistribution"]["Std", "", 0.2] <= 0.4)
+      self.assertTrue(sampled_parameters["BehaviorIDMStochastic"]["SpacingDistribution"]["Std", "", 0.1] >= 0.2)
+
+      self.assertEqual(sampled_parameters["BehaviorIDMStochastic"]["DesiredVelDistribution"]["DistributionType", "", ""], "UniformDistribution1D")
+      self.assertTrue(sampled_parameters["BehaviorIDMStochastic"]["DesiredVelDistribution"]["LowerBound", "", 1.0]>= 4.5)
+      lb = sampled_parameters["BehaviorIDMStochastic"]["DesiredVelDistribution"]["LowerBound", "", 1.0]
+      self.assertTrue(sampled_parameters["BehaviorIDMStochastic"]["DesiredVelDistribution"]["UpperBound", "", 0.2] >= lb+0.1)
+      self.assertTrue(sampled_parameters["BehaviorIDMStochastic"]["DesiredVelDistribution"]["UpperBound", "", 0.1] <= lb+0.3)
 
   def test_default_config_hypothesis_creation(self):
     param_server = ParameterServer()

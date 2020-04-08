@@ -174,10 +174,12 @@ class BehaviorSpace:
       if "Distribution" in key:
         distribution_type = sampling_params[key]["DistributionType", "Distribution type for sampling", "UniformDistribution1D"]
         parameter_range = value
-        if "Uniform" in distribution_type:
+        if "Uniform" in distribution_type and len(parameter_range) == 2:
           param_dict[key] = self._sample_uniform_dist_params(parameter_range, child)
-        elif "Gauss" in distribution_type:
-          param_dict[key] = self._sample_gauss_dist_params(parameter_range, child)
+        elif "Normal" in distribution_type and len(parameter_range) == 2:
+          param_dict[key] = self._sample_normal_dist_params(parameter_range, child)
+        elif "Fixed" in distribution_type or len(parameter_range) == 1:
+          param_dict[key] = self._get_fixed_dist_params(parameter_range, child)
       elif isinstance(value, ParameterServer):
         param_dict[key] = self._sample_params_from_param_ranges(value, child)
       else:
@@ -211,6 +213,21 @@ class BehaviorSpace:
     sampled_params["RandomSeed"] = sampling_params["RandomSeed", "Seed for stochastic behavior", 1000]
     return sampled_params
 
+  def _get_fixed_dist_params(self, range, sampling_params):
+    sampled_params = ParameterServer(log_if_default = True)
+    sampled_params["DistributionType"] = "FixedValue"
+    sampled_params["FixedValue"] = range
+    return sampled_params
 
-  def _sample_gauss_dist_params(self, range, sampling_params):
-    return {}
+  def _sample_normal_dist_params(self, range, sampling_params):
+    std_range = sampling_params["Width", "What minimum and maximum width should sampled distribution have", [0.1, 0.3]]
+
+    std = self.random_state.uniform(std_range[0], std_range[1])
+    mean = self.random_state.uniform(range[0], range[1])
+
+    sampled_params = ParameterServer(log_if_default = True)
+    sampled_params["DistributionType"] = "NormalDistribution1D"
+    sampled_params["Mean"] = mean
+    sampled_params["Std"] = std
+    sampled_params["RandomSeed"] = sampling_params["RandomSeed", "Seed for stochastic behavior", 1000]
+    return sampled_params
