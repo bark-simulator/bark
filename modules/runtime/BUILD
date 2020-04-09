@@ -12,7 +12,9 @@ py_library(
             "//modules/runtime/viewer:video_renderer",
             "//modules/runtime/commons:xodr_parser",
             "//modules/models/behavior/hypothesis/behavior_space:behavior_space",
-            "//modules/runtime/scenario:scenario"],
+            "//modules/runtime/scenario:scenario",
+            "//modules/runtime/commons/tools:tools"
+            ],
     visibility = ["//visibility:public"],
 )
 

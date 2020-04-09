@@ -5,6 +5,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import pickle 
+import time
 import ray
 import logging
 import psutil
@@ -52,7 +53,12 @@ class _BenchmarkRunnerActor(BenchmarkRunner):
         vlevel = glog_init_settings.pop("vlevel", 1)
         log_stderr = glog_init_settings.pop("log_stderr", False)
         bark.commons.GLogInit(sys.argv[0], log_folder, vlevel, log_stderr)
+        self.actor_id = actor_id
 
+    def get_checkpoint_file_name(self):
+        time_point = time.strftime("%Y/%m/%d--%H:%M:%S")
+        return "{}_benchmark_runner_actor{}.{}".format(time_point, \
+          self.get_checkpoint_extension(), self.actor_id)
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
     def __init__(self, benchmark_database=None,
@@ -107,8 +113,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                                                     actor_id=i,
                                                     glog_init_settings=glog_init_settings) for i in range(num_cpus) ]
 
-    def run(self, viewer=None, maintain_history=False, stage_dir=None):
-        results_tmp = ray.get([actor.run.remote(viewer, maintain_history, stage_dir) for actor in self.actors])
+    def run(self, viewer = None, maintain_history = False, checkpoint_every=None):
+        results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every) for actor in self.actors])
         result_dict = []
         benchmark_configs = []
         histories = {}
@@ -117,7 +123,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
             benchmark_configs.extend(result_tmp.get_benchmark_configs())
             histories.update(result_tmp.get_histories())
         benchmark_result = BenchmarkResult(result_dict, benchmark_configs, histories=histories)
-        return self.existing_benchmark_result.extend(benchmark_result)
+        self.existing_benchmark_result.extend(benchmark_result)
+        return self.existing_benchmark_result
 
     def __del__(self):
        ray.shutdown()

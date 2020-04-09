@@ -8,6 +8,11 @@ import unittest
 import os
 import ray
 
+try:
+    import tools.debug_settings
+except:
+    pass
+
 import matplotlib.pyplot as plt
 
 from benchmark_database.load.benchmark_database import BenchmarkDatabase

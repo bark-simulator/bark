@@ -71,10 +71,10 @@ class BenchmarkConfig:
 # result of benchmark run
 class BenchmarkResult:
     def __init__(self, result_dict = None, benchmark_configs = None, histories = None):
-        self.__result_dict = result_dict or {}
+        self.__result_dict = result_dict or []
         self.__benchmark_configs = benchmark_configs or []
         self.__data_frame = None
-        self.__histories = histories or []
+        self.__histories = histories or {}
 
     def drop_histories(self):
         self.__histories.clear()
@@ -152,10 +152,10 @@ class BenchmarkResult:
         overlap = set(new_idxs) & set(this_idxs)
         if len(overlap) != 0:
             raise ValueError("Overlapping config indices. No extension possible.")
-        self.__result_dict.update(benchmark_result.get_result_dict())
+        self.__result_dict.extend(benchmark_result.get_result_dict())
         self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())
         self.__data_frame = None
-        self.__histories.extend(benchmark_result.get_histories())
+        self.__histories.update(benchmark_result.get_histories())
 
 
 class BenchmarkRunner:
@@ -202,19 +202,18 @@ class BenchmarkRunner:
         self.log_eval_avg_every = log_eval_avg_every
 
 
-    @staticmethod
-    def get_checkpoint_extension():
+    def get_checkpoint_extension(self):
         return "br_ckpnt"
 
     def get_checkpoint_file_name(self):
       time_point = time.strftime("%Y/%m/%d--%H:%M:%S")
       return "{}_benchmark_runner.{}".format(time_point, \
-          BenchmarkRunner.get_checkpoint_extension())
+          self.get_checkpoint_extension())
 
     @staticmethod
     def merge_checkpoint_benchmark_results(checkpoint_dir):
         checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.{}") \
-                .format(BenchmarkRunner.get_checkpoint_extension), recursive=True)
+                .format(BenchmarkRunner.get_checkpoint_extension()), recursive=True)
         merged_result = BenchmarkResult()
         for checkpoint_file in checkpoint_files:
             next_result = BenchmarkResult.load(checkpoint_file)
@@ -268,7 +267,10 @@ class BenchmarkRunner:
                          self.configs_to_run[0:idx+1], histories=histories)
                 intermediate_result.dump(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name()))
         benchmark_result = BenchmarkResult(results, self.configs_to_run, histories=histories)
-        return self.existing_benchmark_result.extend(benchmark_result)
+        print("Bresult: {}".format(benchmark_result.get_benchmark_config_indices()))
+        print("Existing Bresult: {}".format(self.existing_benchmark_result.get_benchmark_config_indices()))
+        self.existing_benchmark_result.extend(benchmark_result)
+        return self.existing_benchmark_result
 
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
