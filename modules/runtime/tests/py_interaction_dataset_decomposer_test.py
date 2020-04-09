@@ -6,10 +6,10 @@
 import unittest
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.scenario.dataset_decomposer.dataset_decomposer import DatasetDecomposer
-
+import os
 
 class DatasetDecomposerTest(unittest.TestCase):
-    @unittest.skip
+    #@unittest.skip
     def test_decompose_dataset(self):
 
         map_filename = "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr"
@@ -18,10 +18,7 @@ class DatasetDecomposerTest(unittest.TestCase):
         dataset_decomposer = DatasetDecomposer(
             map_filename=map_filename, track_filename=track_filename)
 
-        # prepare output directory
-        output_dir = "/tmp/" + map_filename.split("/")[-1].split(".")[0] + "_" \
-            + track_filename.split("/")[-1].split(".")[0]
-        dataset_decomposer.decompose(output_dir)
+        dataset_decomposer.decompose()
 
 
 

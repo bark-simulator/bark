@@ -169,3 +169,25 @@ py_binary(
         "//modules/runtime:runtime",
     ],
 )
+
+py_binary(
+    name = "dataset_analysis",
+    srcs = ["dataset_analysis.py"],
+    data = [
+        ":params",
+        "//python:bark.so",
+        "//database",
+    ],
+    imports = ["../python/"],
+    deps = [
+        "//modules/runtime/commons:parameters",
+        "//modules/runtime/scenario/scenario_generation",
+        "//modules/runtime/viewer:matplotlib_viewer",
+        "//modules/runtime/viewer:video_renderer",
+        "//modules/runtime:runtime",
+        "//modules/benchmark:benchmark_runner",
+        "//modules/benchmark:benchmark_analyzer",
+        "@benchmark_database//serialization:database_serializer",
+        "@benchmark_database//load:benchmark_database",
+        ],
+)
