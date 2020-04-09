@@ -169,7 +169,8 @@ class BenchmarkRunner:
                  benchmark_configs=None,
                  logger_name=None,
                  log_eval_avg_every=None,
-                 checkpoint_dir=None):
+                 checkpoint_dir=None,
+                 merge_existing=False):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
@@ -187,8 +188,8 @@ class BenchmarkRunner:
         self.existing_benchmark_result = BenchmarkResult()
         self.configs_to_run = self.benchmark_configs
 
-        self.checkpoint_dir = None
-        if checkpoint_dir:
+        self.checkpoint_dir = checkpoint_dir or "checkpoints"
+        if merge_existing:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
             self.logger.info("Merged {} processed configs in folder {}". \
@@ -196,38 +197,33 @@ class BenchmarkRunner:
             self.configs_to_run = self.get_configs_to_run(self.benchmark_configs, \
                                                             self.existing_benchmark_result)
             self.logger.info("Remaining  number of {} configs to run".format(len(self.configs_to_run)))
-            self.checkpoint_dir = checkpoint_dir
+        if not os.path.exists(self.checkpoint_dir):
+            os.makedirs(self.checkpoint_dir)
 
         self.exceptions_caught = []
         self.log_eval_avg_every = log_eval_avg_every
 
-
-    def get_checkpoint_extension(self):
-        return "br_ckpnt"
-
     def get_checkpoint_file_name(self):
-      time_point = time.strftime("%Y/%m/%d--%H:%M:%S")
-      return "{}_benchmark_runner.{}".format(time_point, \
-          self.get_checkpoint_extension())
+      return "benchmark_runner.ckpnt"
 
     @staticmethod
     def merge_checkpoint_benchmark_results(checkpoint_dir):
-        checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.{}") \
-                .format(BenchmarkRunner.get_checkpoint_extension()), recursive=True)
+        checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.ckpnt"), recursive=True)
         merged_result = BenchmarkResult()
         for checkpoint_file in checkpoint_files:
-            next_result = BenchmarkResult.load(checkpoint_file)
+            logging.info("Loading checkpoint {}".format(os.path.abspath(checkpoint_file)))
+            next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file))
             merged_result.extend(next_result)
         return merged_result
 
     @staticmethod
     def get_configs_to_run(benchmark_configs, existing_benchmark_result):
         existing_inds = existing_benchmark_result.get_benchmark_config_indices()
-        required_inds = benchmark_configs.get_benchmark_config_indices()
+        required_inds = BenchmarkResult(benchmark_configs=benchmark_configs).get_benchmark_config_indices()
         missing_inds = list(set(required_inds) - set(existing_inds))
 
         filtered_configs = filter(lambda bc : bc.config_idx in missing_inds, benchmark_configs)
-        return filtered_configs
+        return list(filtered_configs)
 
     def _create_configurations(self, num_scenarios=None):
         benchmark_configs = []
@@ -262,13 +258,13 @@ class BenchmarkRunner:
             if self.log_eval_avg_every and (idx + 1) % self.log_eval_avg_every == 0:
                 self._log_eval_average(results)
 
-            if self.checkpoint_dir and (idx+1) % checkpoint_every == 0:
+            if checkpoint_every and (idx+1) % checkpoint_every == 0:
                 intermediate_result = BenchmarkResult(results, \
                          self.configs_to_run[0:idx+1], histories=histories)
-                intermediate_result.dump(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name()))
+                checkpoint_file = os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name())
+                intermediate_result.dump(checkpoint_file)
+                self.logger.info("Saved checkpoint {}".format(checkpoint_file))
         benchmark_result = BenchmarkResult(results, self.configs_to_run, histories=histories)
-        print("Bresult: {}".format(benchmark_result.get_benchmark_config_indices()))
-        print("Existing Bresult: {}".format(self.existing_benchmark_result.get_benchmark_config_indices()))
         self.existing_benchmark_result.extend(benchmark_result)
         return self.existing_benchmark_result
 

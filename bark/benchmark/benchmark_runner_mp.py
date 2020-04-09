@@ -38,12 +38,14 @@ def deserialize_scenario(sc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, actor_id, glog_init_settings=None):
+    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
         super().__init__(evaluators=evaluators, 
                         terminal_when=terminal_when,
                         benchmark_configs=benchmark_configs,
                         logger_name=logger_name,
-                        log_eval_avg_every=log_eval_avg_every)
+                        log_eval_avg_every=log_eval_avg_every,
+                        checkpoint_dir=checkpoint_dir,
+                        merge_existing=False)
         glog_init_settings = glog_init_settings or {}
         log_folder_name = glog_init_settings.pop("log_folder", "logs")
         log_folder = os.path.abspath(os.path.join(os.getcwd(), log_folder_name))
@@ -56,9 +58,9 @@ class _BenchmarkRunnerActor(BenchmarkRunner):
         self.actor_id = actor_id
 
     def get_checkpoint_file_name(self):
-        time_point = time.strftime("%Y/%m/%d--%H:%M:%S")
-        return "{}_benchmark_runner_actor{}.{}".format(time_point, \
-          self.get_checkpoint_extension(), self.actor_id)
+        return "benchmark_runner_actor{}.ckpnt".format(self.actor_id)
+
+
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
     def __init__(self, benchmark_database=None,
@@ -71,6 +73,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                log_eval_avg_every=None,
                glog_init_settings=None,
                checkpoint_dir=None,
+               merge_existing=False,
                num_cpus=None,
                memory_total=None,
                ip_head=None,
@@ -78,7 +81,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
-                          benchmark_configs=benchmark_configs, checkpoint_dir=checkpoint_dir)
+                          benchmark_configs=benchmark_configs, checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
         num_cpus_available = psutil.cpu_count(logical=True)
 
         if ip_head and redis_password:
@@ -110,6 +113,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),
                                                     log_eval_avg_every=log_eval_avg_every,
+                                                    checkpoint_dir=checkpoint_dir,
                                                     actor_id=i,
                                                     glog_init_settings=glog_init_settings) for i in range(num_cpus) ]
 

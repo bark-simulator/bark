@@ -74,9 +74,30 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
-                                           log_eval_avg_every=1)
+                                           log_eval_avg_every=1,
+                                           checkpoint_dir="checkpoints1/")
 
-        result = benchmark_runner.run()
+        # one run after 30 steps benchmark dumped
+        result = benchmark_runner.run(checkpoint_every = 30)
+        df = result.get_data_frame()
+        print(df)
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+
+        merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
+        df = merged_result.get_data_frame()
+        self.assertEqual(len(df.index), 30)
+
+        configs_to_run = BenchmarkRunner.get_configs_to_run(benchmark_runner.configs_to_run, merged_result)
+        self.assertEqual(len(configs_to_run), 10)
+
+        benchmark_runner2 = BenchmarkRunner(benchmark_database=db,
+                                           evaluators=evaluators,
+                                           terminal_when=terminal_when,
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=1,
+                                           checkpoint_dir="checkpoints1/")
+
+        result = benchmark_runner2.run(checkpoint_every = 10)
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
@@ -148,6 +169,51 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         viewer.show(block=True)
 
+    def test_database_multiprocessing_runner_checkpoint(self):
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs.process("data/database1")
+        local_release_filename = dbs.release(version="test")
+
+        db = BenchmarkDatabase(database_root=local_release_filename)
+        evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
+                      "max_steps": "EvaluatorStepCount"}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
+        params = ParameterServer() # only for evaluated agents not passed to scenario!
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+                                        
+
+        benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
+                                           evaluators=evaluators,
+                                           terminal_when=terminal_when,
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=1,
+                                           num_cpus=4,
+                                           checkpoint_dir="checkpoints2/")
+
+        # one run after 30 steps benchmark dumped
+        result = benchmark_runner.run(checkpoint_every = 3)
+        df = result.get_data_frame()
+        print(df)
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+
+        merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints2/")
+        df = merged_result.get_data_frame()
+        self.assertEqual(len(df.index), 4*9)
+
+        configs_to_run = BenchmarkRunner.get_configs_to_run(benchmark_runner.configs_to_run, merged_result)
+        self.assertEqual(len(configs_to_run), 4)
+        ray.shutdown()
+        benchmark_runner2 = BenchmarkRunnerMP(benchmark_database=db,
+                                           evaluators=evaluators,
+                                           terminal_when=terminal_when,
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=1,
+                                           checkpoint_dir="checkpoints2/")
+
+        result = benchmark_runner2.run(checkpoint_every = 5)
+        df = result.get_data_frame()
+        print(df)
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
 
 if __name__ == '__main__':
