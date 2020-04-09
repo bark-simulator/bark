@@ -18,58 +18,51 @@ class DatasetDecomposer:
         self.track_filename = track_filename
         self.track_dict = dataset_reader.read_tracks(track_filename)
 
-    def __find_others__(self, id_ego):
-        list_others = []
+    def __find_all_ids__(self, id_ego):
+        list_ids = []
         time_ego_first = self.track_dict[id_ego].time_stamp_ms_first
         time_ego_last = self.track_dict[id_ego].time_stamp_ms_last
 
-        for id_other in self.track_dict.keys():
-            if id_ego != id_other:
-                if self.track_dict[id_other].time_stamp_ms_last < time_ego_first:
-                    # other ends too early
-                    pass
-                elif self.track_dict[id_other].time_stamp_ms_first > time_ego_last:
-                    # other starts too late
-                    pass
-                else:
-                    list_others.append(id_other)
+        for id_current in self.track_dict.keys():
+            if self.track_dict[id_current].time_stamp_ms_last < time_ego_first:
+                # other ends too early
+                pass
+            elif self.track_dict[id_current].time_stamp_ms_first > time_ego_last:
+                # other starts too late
+                pass
+            else:
+                list_ids.append(id_current)
 
-        return list_others
+        return list_ids
 
     def __find_all_scenarios__(self):
         # for each agent extract ids of other agents present in the same time span
-        list_others_dict = {}
+        list_track_dict = {}
 
         for id_ego in self.track_dict.keys():
-            list_others_dict[id_ego] = self.__find_others__(id_ego)
+            list_track_dict[id_ego] = self.__find_all_ids__(id_ego)
 
-        return list_others_dict
+        return list_track_dict
 
-    def __fill_scenario_params__(self, list_others_dict, id_ego):
-        params_temp = ParameterServer()
-        params_temp["MapFilename"] = self.map_filename
-        params_temp["TrackFilename"] = self.track_filename
-        params_temp["TrackIds"] = list_others_dict[id_ego]
-        params_temp["StartTs"] = self.track_dict[id_ego].time_stamp_ms_first
-        params_temp["EndTs"] = self.track_dict[id_ego].time_stamp_ms_last
-        params_temp["EgoTrackId"] = id_ego
+    def __fill_dict_scenario__(self, list_others_dict, id_ego):
 
-        # hacking new child InteractionDatasetScenarioGeneration
-        params = ParameterServer()
-        params["InteractionDatasetScenarioGeneration"] = params_temp
+        dict_scenario = {}
+        dict_scenario["MapFilename"] = self.map_filename
+        dict_scenario["TrackFilename"] = self.track_filename
+        dict_scenario["TrackIds"] = list_others_dict[id_ego]
+        dict_scenario["StartTs"] = self.track_dict[id_ego].time_stamp_ms_first
+        dict_scenario["EndTs"] = self.track_dict[id_ego].time_stamp_ms_last
+        dict_scenario["EgoTrackId"] = id_ego
 
-        return params
+        return dict_scenario
 
-    def decompose(self, output_dir):
+    def decompose(self):
 
-        if os.path.exists(output_dir):
-            shutil.rmtree(output_dir)
-            os.makedirs(output_dir, exist_ok=True)
+        list_track_dict = self.__find_all_scenarios__()
 
-        list_others_dict = self.__find_all_scenarios__()
+        dict_scenario_list = []
+        for id_ego in list_track_dict:
+            dict_scenario_list.append(
+                self.__fill_dict_scenario__(list_track_dict, id_ego))
 
-        # create json file
-        for id_ego in list_others_dict:
-            params_filename = output_dir + "/params_id_ego_" + str(id_ego)
-            params = self.__fill_scenario_params__(list_others_dict, id_ego)
-            params.save(params_filename + ".json")
+        return dict_scenario_list
