@@ -10,6 +10,7 @@ import pandas as pd
 import logging
 import copy
 import time
+import glob
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -69,9 +70,9 @@ class BenchmarkConfig:
 
 # result of benchmark run
 class BenchmarkResult:
-    def __init__(self, result_dict, benchmark_configs, histories=None):
-        self.__result_dict = result_dict
-        self.__benchmark_configs = benchmark_configs
+    def __init__(self, result_dict = None, benchmark_configs = None, histories = None):
+        self.__result_dict = result_dict or {}
+        self.__benchmark_configs = benchmark_configs or []
         self.__data_frame = None
         self.__histories = histories or []
 
@@ -95,6 +96,9 @@ class BenchmarkResult:
     def get_benchmark_config(self, config_idx):
         return BenchmarkResult.find_benchmark_config(
             self.__benchmark_configs, config_idx)
+
+    def get_benchmark_config_indices(self):
+        return [bc.config_idx for bc in self.__benchmark_configs]
 
     def get_history(self, config_idx):
         return self.__histories[config_idx]
@@ -142,6 +146,17 @@ class BenchmarkResult:
         logging.info('Saved BenchmarkResult to {}'.format(
             os.path.abspath(filename)))
 
+    def extend(self, benchmark_result):
+        new_idxs = benchmark_result.get_benchmark_config_indices()
+        this_idxs = self.get_benchmark_config_indices()
+        overlap = set(new_idxs) & set(this_idxs)
+        if len(overlap) != 0:
+            raise ValueError("Overlapping config indices. No extension possible.")
+        self.__result_dict.update(benchmark_result.get_result_dict())
+        self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())
+        self.__data_frame = None
+        self.__histories.extend(benchmark_result.get_histories())
+
 
 class BenchmarkRunner:
     def __init__(self,
@@ -153,7 +168,8 @@ class BenchmarkRunner:
                  num_scenarios=None,
                  benchmark_configs=None,
                  logger_name=None,
-                 log_eval_avg_every=None):
+                 log_eval_avg_every=None,
+                 checkpoint_dir=None):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
@@ -164,12 +180,55 @@ class BenchmarkRunner:
           self.behavior_configs = behavior_configs or {}
         self.benchmark_configs = benchmark_configs or \
                                  self._create_configurations(num_scenarios)
-        
-        self.exceptions_caught = []
-        self.log_eval_avg_every = log_eval_avg_every
+
         self.logger = logging.getLogger(logger_name or "BenchmarkRunner")
         self.logger.setLevel(logging.DEBUG)
         self.logger.info("Total number of {} configs to run".format(len(self.benchmark_configs)))
+        self.existing_benchmark_result = BenchmarkResult()
+        self.configs_to_run = self.benchmark_configs
+
+        self.checkpoint_dir = None
+        if checkpoint_dir:
+            self.existing_benchmark_result = \
+                BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
+            self.logger.info("Merged {} processed configs in folder {}". \
+                format(len(self.existing_benchmark_result.get_benchmark_configs()), checkpoint_dir)) 
+            self.configs_to_run = self.get_configs_to_run(self.benchmark_configs, \
+                                                            self.existing_benchmark_result)
+            self.logger.info("Remaining  number of {} configs to run".format(len(self.configs_to_run)))
+            self.checkpoint_dir = checkpoint_dir
+
+        self.exceptions_caught = []
+        self.log_eval_avg_every = log_eval_avg_every
+
+
+    @staticmethod
+    def get_checkpoint_extension():
+        return "br_ckpnt"
+
+    def get_checkpoint_file_name(self):
+      time_point = time.strftime("%Y/%m/%d--%H:%M:%S")
+      return "{}_benchmark_runner.{}".format(time_point, \
+          BenchmarkRunner.get_checkpoint_extension())
+
+    @staticmethod
+    def merge_checkpoint_benchmark_results(checkpoint_dir):
+        checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.{}") \
+                .format(BenchmarkRunner.get_checkpoint_extension), recursive=True)
+        merged_result = BenchmarkResult()
+        for checkpoint_file in checkpoint_files:
+            next_result = BenchmarkResult.load(checkpoint_file)
+            merged_result.extend(next_result)
+        return merged_result
+
+    @staticmethod
+    def get_configs_to_run(benchmark_configs, existing_benchmark_result):
+        existing_inds = existing_benchmark_result.get_benchmark_config_indices()
+        required_inds = benchmark_configs.get_benchmark_config_indices()
+        missing_inds = list(set(required_inds) - set(existing_inds))
+
+        filtered_configs = filter(lambda bc : bc.config_idx in missing_inds, benchmark_configs)
+        return filtered_configs
 
     def _create_configurations(self, num_scenarios=None):
         benchmark_configs = []
@@ -190,10 +249,10 @@ class BenchmarkRunner:
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
 
-    def run(self, viewer=None, maintain_history=False, stage_dir=None):
+    def run(self, viewer=None, maintain_history=False, checkpoint_every=None):
         results = []
         histories = {}
-        for idx, bmark_conf in enumerate(self.benchmark_configs):
+        for idx, bmark_conf in enumerate(self.configs_to_run ):
             self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
                 idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
                 bmark_conf.scenario_set_name, bmark_conf.behavior_config.behavior_name))
@@ -203,19 +262,13 @@ class BenchmarkRunner:
             histories[bmark_conf.config_idx] = scenario_history
             if self.log_eval_avg_every and (idx + 1) % self.log_eval_avg_every == 0:
                 self._log_eval_average(results)
-                if stage_dir:
-                    stage_result = BenchmarkResult(results, self.benchmark_configs, histories=histories)
-                    try:
-                        stage_result.dump(os.path.join(stage_dir, "stage_{}_{}.pickle".format(os.getpid(), idx + 1)))
-                    except Exception as e:
-                        logging.error('Failed to save stage: {}'.format(e))
-                        if maintain_history:
-                            logging.warning('Retrying without history')
-                            stage_result.drop_histories()
-                            stage_result.dump(
-                                os.path.join(stage_dir, "stage_{}_{}_no_history.pickle".format(os.getpid(), idx + 1)))
 
-        return BenchmarkResult(results, self.benchmark_configs, histories=histories)
+            if self.checkpoint_dir and (idx+1) % checkpoint_every == 0:
+                intermediate_result = BenchmarkResult(results, \
+                         self.configs_to_run[0:idx+1], histories=histories)
+                intermediate_result.dump(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name()))
+        benchmark_result = BenchmarkResult(results, self.configs_to_run, histories=histories)
+        return self.existing_benchmark_result.extend(benchmark_result)
 
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):

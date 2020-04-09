@@ -37,7 +37,7 @@ def deserialize_scenario(sc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, glog_init_settings=None):
+    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, actor_id, glog_init_settings=None):
         super().__init__(evaluators=evaluators, 
                         terminal_when=terminal_when,
                         benchmark_configs=benchmark_configs,
@@ -64,6 +64,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                benchmark_configs=None,
                log_eval_avg_every=None,
                glog_init_settings=None,
+               checkpoint_dir=None,
                num_cpus=None,
                memory_total=None,
                ip_head=None,
@@ -71,7 +72,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
-                          benchmark_configs=benchmark_configs)
+                          benchmark_configs=benchmark_configs, checkpoint_dir=checkpoint_dir)
         num_cpus_available = psutil.cpu_count(logical=True)
 
         if ip_head and redis_password:
@@ -97,12 +98,14 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         ray.register_custom_serializer(
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
-        self.benchmark_config_split = [self.benchmark_configs[i::num_cpus] for i in range(0, num_cpus)]
+        self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
         self.actors = [_BenchmarkRunnerActor.remote(evaluators=evaluators,
                                                     terminal_when=terminal_when,
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),
-                                                    log_eval_avg_every=log_eval_avg_every) for i in range(num_cpus) ]
+                                                    log_eval_avg_every=log_eval_avg_every,
+                                                    actor_id=i,
+                                                    glog_init_settings=glog_init_settings) for i in range(num_cpus) ]
 
     def run(self, viewer=None, maintain_history=False, stage_dir=None):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history, stage_dir) for actor in self.actors])
@@ -113,7 +116,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
             result_dict.extend(result_tmp.get_result_dict())
             benchmark_configs.extend(result_tmp.get_benchmark_configs())
             histories.update(result_tmp.get_histories())
-        return BenchmarkResult(result_dict, benchmark_configs, histories=histories)
+        benchmark_result = BenchmarkResult(result_dict, benchmark_configs, histories=histories)
+        return self.existing_benchmark_result.extend(benchmark_result)
 
     def __del__(self):
        ray.shutdown()
