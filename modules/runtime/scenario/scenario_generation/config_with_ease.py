@@ -137,11 +137,11 @@ class LaneCorridorConfig:
     road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
     lane_corr = road_corr.lane_corridors[0]
     goal = GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
-                                           (0.2, 0.2),
+                                           (0.4, 0.4),
                                            (0.1, 0.1),
                                            (10., 15.))
     sequential_goals = []                                
-    for _ in range(5):
+    for _ in range(10):
       sequential_goals.append(goal)
     sequential_goal = GoalDefinitionSequential(sequential_goals)
     return sequential_goal
