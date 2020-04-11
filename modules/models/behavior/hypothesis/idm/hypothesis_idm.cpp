@@ -66,16 +66,36 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
   auto leading_vehicle = front_rear_agents.front;
   std::shared_ptr<const Agent> ego_agent = observed_world.GetAgent(agent_id);
 
-  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
+  dynamic::State ego_vehicle_state = agent_ptr->GetCurrentState();
   auto vel_ego = ego_vehicle_state(StateDefinition::VEL_POSITION);
+  auto last_action_ego = agent_ptr->GetBehaviorModel()->GetLastAction();
+  double acc_ego = 0.0f;
+  if(last_action_ego.type() == typeid(Continuous1DAction)) {
+      acc_ego = boost::get<Continuous1DAction>(last_action_ego);
+    } else if (last_action_ego.type() == typeid(LonLatAction)) {
+      acc_ego = boost::get<LonLatAction>(last_action_ego).acc_lon;
+    } else {
+      LOG(WARNING) << "Other's action not known for cah calculation";
+  }
 
   double net_distance = std::numeric_limits<double>::max();
   double vel_other = 0.0f; // makes interaction term go to zero, if distance is infinite
+  double acc_other = 0.0f;
   if(leading_vehicle.first) {
     net_distance = BehaviorIDMStochastic::CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
+
+    // Get acceleration action other
+    auto last_action_other = leading_vehicle.first->GetBehaviorModel()->GetLastAction();
+    if(last_action_other.type() == typeid(Continuous1DAction)) {
+      acc_other = boost::get<Continuous1DAction>(last_action_other);
+    } else if (last_action_other.type() == typeid(LonLatAction)) {
+      acc_other = boost::get<LonLatAction>(last_action_other).acc_lon;
+    } else {
+      LOG(WARNING) << "Other's action not known for cah calculation";
+    }
   }
 
   // sample a lot of actions for this environment state to approximate the probability
@@ -85,7 +105,7 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
     BehaviorIDMStochastic::Clone());
   for(size_t i = 0; i < num_samples_; ++i) {
     behavior_idm_stoch->SampleParameters();
-    auto action_sample = behavior_idm_stoch->CalcACCAcc(net_distance, vel_ego, vel_other);
+    auto action_sample = behavior_idm_stoch->CalcACCAcc(net_distance, vel_ego, vel_other, acc_ego, acc_other);
     BARK_EXPECT_TRUE(action_sample >= buckets_lower_bound_);
     BARK_EXPECT_TRUE(action_sample <= buckets_upper_bound_);
     sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)] += 1;

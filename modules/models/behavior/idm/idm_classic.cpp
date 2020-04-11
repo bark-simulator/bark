@@ -40,6 +40,7 @@ BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : Behav
     param_comfortable_braking_acceleration_ = params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", "See Wikipedia IDM article", 1.67f);
     param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity", "See Wikipedia IDM article", 0.0f);
     param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity", "See Wikipedia IDM article", 50.0f);
+    param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent", "See Wikipedia IDM article", 4);
     param_coolness_factor_ = params->GetReal("BehaviorIDMClassic::CoolnessFactor", "If non zero, constant accleration heuristic is applied", 0.0f);
     SetLastAction(Continuous1DAction(0.0f));
 }
@@ -86,8 +87,6 @@ double BehaviorIDMClassic::CalcNetDistance(
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
 
-  const float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
-
   // Leading vehicle exists in driving corridor, we calculate interaction term
   const State leading_state = leading_agent->GetCurrentState();
   const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
@@ -124,44 +123,46 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
   return GetMaxAcceleration() * (free_road_term - interaction_term);
 }
 
-double CalcCAHAcc(const double& net_distance, const double& vel_ego,
+double BehaviorIDMClassic::CalcCAHAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other, const double& acc_ego,
-                       const double& acc_other) {
+                       const double& acc_other) const {
   // implements equation 11.25 on on page 198
   
-  const float max_acceleration = GetMaxAcceleration();
+  const double max_acceleration = GetMaxAcceleration();
   const double effect_acc_other = std::min(acc_other, max_acceleration);
   if(vel_other*(vel_ego - vel_other) <= -2*net_distance*effect_acc_other) {
     return vel_ego*vel_ego*effect_acc_other / (vel_other*vel_other - 2*net_distance*effect_acc_other);
   } else {
-    const double step_function = vel_ego - vel_other >= 0 ? 1.0 : 0.0 
+    const double step_function = (vel_ego - vel_other) >= 0.0f ? 1.0f : 0.0f ;
     return effect_acc_other - (vel_ego - vel_other)*(vel_ego - vel_other) * step_function / (2* net_distance);
   }
 }
 
-double CalcACCAcc(const double& net_distance, const double& vel_ego,
+double BehaviorIDMClassic::CalcACCAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other, const double& acc_ego,
                        const double& acc_other) const {
   // implements equation 11.26 on on page 199
-  const double idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
-  if (param_coolness_factor_ = 0.0f) {
-    return idm_acc;
+  const float c = GetCoolnessFactor();
+  const float acc_lower_bound = GetAccelerationLowerBound();
+  const float acc_upper_bound = GetAccelerationUpperBound();
+  const float idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
+  if (c == 0.0f) {
+    return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);
   }
 
   const double cah_acc = CalcCAHAcc(net_distance, vel_ego, vel_other,
                                    acc_ego, acc_other);
-  const double b = GetComfortableBrakingAcceleration();
-  double acc = 0.0f;
+  const float b = GetComfortableBrakingAcceleration();
+  
+  float acc = 0.0f;
   if (idm_acc >= cah_acc) {
     acc = idm_acc;
   } else {
-    acc = (1 - param_coolness_factor_) * idm_acc + param_coolness_factor_ * ( cah_acc + b * tanh( (idm_acc - cah_acc) / b ) );
+    acc = (1 - c) * idm_acc + c * ( cah_acc + b * tanh( (idm_acc - cah_acc) / b ) );
   }
 
-  const float acc_lower_bound = GetAccelerationLowerBound();
-  const float acc_upper_bound = GetAccelerationUpperBound();
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
-  return acc
+  return acc;
 }
 
 //! IDM Model will assume other front vehicle as constant velocity during
@@ -209,7 +210,7 @@ Trajectory BehaviorIDMClassic::Plan(
       auto last_action = leading_vehicle.first->GetBehaviorModel()->GetLastAction();
       if(last_action.type() == typeid(Continuous1DAction)) {
         acc_other = boost::get<Continuous1DAction>(last_action);
-      } else if (action.type() == typeid(LonLatAction)) {
+      } else if (last_action.type() == typeid(LonLatAction)) {
         acc_other = boost::get<LonLatAction>(last_action).acc_lon;
       } else {
         LOG(WARNING) << "Other's action not known for cah calculation";

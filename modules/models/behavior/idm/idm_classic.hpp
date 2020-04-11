@@ -68,6 +68,10 @@ class BehaviorIDMClassic : virtual public BehaviorModel {
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
 
+  const float GetCoolnessFactor() const {
+    return param_coolness_factor_;
+  }
+
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
   protected:
@@ -86,7 +90,7 @@ class BehaviorIDMClassic : virtual public BehaviorModel {
     // constant acceleration heuristic
     // according chapter 11. Car-Following Models based on Driving Strategies 
     // in "Traffic Flow Dynamics" by M.Treiber and A.Kesting
-    bool param_coolness_factor_; 
+    float param_coolness_factor_; 
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
