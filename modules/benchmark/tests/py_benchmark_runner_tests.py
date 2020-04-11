@@ -95,7 +95,8 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=1,
-                                           checkpoint_dir="checkpoints1/")
+                                           checkpoint_dir="checkpoints1/",
+                                           merge_existing=True)
 
         result = benchmark_runner2.run(checkpoint_every = 10)
         df = result.get_data_frame()
@@ -188,7 +189,8 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=1,
                                            num_cpus=4,
-                                           checkpoint_dir="checkpoints2/")
+                                           checkpoint_dir="checkpoints2/",
+                                           merge_existing=True)
 
         # one run after 30 steps benchmark dumped
         result = benchmark_runner.run(checkpoint_every = 3)
