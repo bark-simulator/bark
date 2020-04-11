@@ -85,7 +85,7 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
     BehaviorIDMStochastic::Clone());
   for(size_t i = 0; i < num_samples_; ++i) {
     behavior_idm_stoch->SampleParameters();
-    auto action_sample = behavior_idm_stoch->CalcIDMAcc(net_distance, vel_ego, vel_other);
+    auto action_sample = behavior_idm_stoch->CalcACCAcc(net_distance, vel_ego, vel_other);
     BARK_EXPECT_TRUE(action_sample >= buckets_lower_bound_);
     BARK_EXPECT_TRUE(action_sample <= buckets_upper_bound_);
     sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)] += 1;

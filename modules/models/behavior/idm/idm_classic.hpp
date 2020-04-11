@@ -39,6 +39,14 @@ class BehaviorIDMClassic : virtual public BehaviorModel {
   double CalcIDMAcc(const double net_distance, const double vel_ego,
                     const double vel_other) const;
 
+  double CalcCAHAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other, const double& acc_ego,
+                       const double& acc_other) const ;
+
+  double CalcACCAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other, const double& acc_ego,
+                       const double& acc_other) const;
+
   virtual float GetMinVelocity() { return param_min_velocity_; }
   virtual float GetMaxVelocity() { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
@@ -63,7 +71,7 @@ class BehaviorIDMClassic : virtual public BehaviorModel {
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
   protected:
-    // Parameters
+    // IDM Parameters
     float param_minimum_spacing_;
     float param_desired_time_head_way_;
     float param_max_acceleration_;
@@ -74,6 +82,11 @@ class BehaviorIDMClassic : virtual public BehaviorModel {
     float param_min_velocity_;
     float param_max_velocity_;
     int param_exponent_;
+
+    // constant acceleration heuristic
+    // according chapter 11. Car-Following Models based on Driving Strategies 
+    // in "Traffic Flow Dynamics" by M.Treiber and A.Kesting
+    bool param_coolness_factor_; 
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
