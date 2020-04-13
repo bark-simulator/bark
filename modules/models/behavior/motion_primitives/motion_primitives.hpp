@@ -32,18 +32,17 @@ class BehaviorMotionPrimitives : public BehaviorModel {
         integration_time_delta_(params->GetReal(
             "integration_time_delta",
             "the size of the time steps used within the euler integration loop",
-            0.02)) { }
+            0.02)) {
+             }
 
   virtual ~BehaviorMotionPrimitives() {}
 
   typedef unsigned int MotionIdx;
   virtual MotionIdx GetNumMotionPrimitives(const ObservedWorldPtr& observed_world) const = 0;
-  //virtual Input GetAction() const = 0;
+
   void ActionToBehavior(const MotionIdx& motion_idx) {
     active_motion_ = motion_idx;
   }
-
-  // virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  protected:
   DynamicModelPtr dynamic_model_;
@@ -55,12 +54,6 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 };
 
 typedef std::shared_ptr<BehaviorMotionPrimitives> BehaviorMotionPrimitivesPtr;
-
-// inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
-//   std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
-//     std::make_shared<BehaviorMotionPrimitives>(*this);
-//   return model_ptr;
-// }
 
 }  // namespace behavior
 }  // namespace models
