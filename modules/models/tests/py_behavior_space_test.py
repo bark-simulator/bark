@@ -109,6 +109,7 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     behavior_space_range3 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["MaxAccDistribution"] = [15.3]
     behavior_space_range4 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["SpacingDistribution"] = [1.0, 2.0]
     behavior_space_range5 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["DesiredVelDistribution"] = [3, 4.5]
+    behavior_space_range6 = param_server["BehaviorSpace"]["Definition"]["SpaceBoundaries"]["BehaviorIDMStochastic"]["CoolnessFactorDistribution"] = [ 0.99 ]
     space = BehaviorSpace(param_server)
     desired_splits = [2, 8]
     hypothesis_set_collection = space.create_multiple_hypothesis_sets(splits=[2, 8])
@@ -132,6 +133,9 @@ class PyBehaviorSpaceTests(unittest.TestCase):
 
         self.assertAlmostEquals(params.getListFloat("BehaviorIDMStochastic::MaxAccDistribution::FixedValue", "", [2334.0])[0], \
                   behavior_space_range3[0], 5)
+
+        self.assertAlmostEquals(params.getListFloat("BehaviorIDMStochastic::CoolnessFactorDistribution::FixedValue", "", [2334.0])[0], \
+                  behavior_space_range6[0], 5)
 
         lower = params.getReal("BehaviorIDMStochastic::SpacingDistribution::LowerBound", "", 0.0)
         upper = params.getReal("BehaviorIDMStochastic::SpacingDistribution::UpperBound", "", 0.0)

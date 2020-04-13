@@ -32,6 +32,7 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
     modules::commons::DistributionPtr param_dist_max_acc_;
     modules::commons::DistributionPtr param_dist_desired_vel_;
     modules::commons::DistributionPtr param_dist_comft_braking_;
+    modules::commons::DistributionPtr param_dist_coolness_factor_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {
