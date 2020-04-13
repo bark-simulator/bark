@@ -18,6 +18,7 @@ BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::AddMotionPrimitive(const primitives::PrimitivePtr& primitive) {
   motion_primitives_.push_back(primitive);
   return motion_primitives_.size() - 1;
+  this->SetLastAction(motion_primitives_.at(active_motion_)->GetLastAction());
 }
 
 Trajectory BehaviorMPMacroActions::Plan(
