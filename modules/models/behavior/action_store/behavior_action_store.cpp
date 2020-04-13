@@ -18,20 +18,21 @@ ActionHash BehaviorActionStore::Store(const Action& action, const Trajectory& tr
   const auto action_hash = ActionToHash(action);
   auto it = trajectory_store_.find(action_hash);
   if(it == trajectory_store_.end()) {
-    trajectory_store_.emplace(std::make_pair(action_hash, trajectory));
+    trajectory_store_.emplace(std::make_pair(action_hash, std::make_pair<trajectory, action>));
   }
   return action_hash;
 }
 
-Trajectory BehaviorActionStore::Retrieve(const ActionHash& action_hash) const {
+std::pair<Trajectory, Action> BehaviorActionStore::Retrieve(const ActionHash& action_hash) const {
   auto it = trajectory_store_.find(action_hash);
   BARK_EXPECT_TRUE(it != trajectory_store_.end());
   return it->second;
 }
 
 Trajectory BehaviorActionStore::Plan(float delta_time, const modules::world::ObservedWorld& observed_world) {
-  const auto& traj = Retrieve(active_behavior_);
-  SetLastTrajectory(traj);
+  const auto& pair = Retrieve(active_behavior_);
+  SetLastTrajectory(pair.first);
+  SetLastAction(pair.second);
   return traj;
 }
 

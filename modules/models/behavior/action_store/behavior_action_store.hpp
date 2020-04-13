@@ -33,7 +33,7 @@ class BehaviorActionStore : public BehaviorModel {
   virtual ~BehaviorActionStore() {}
 
   ActionHash Store(const Action& action, const Trajectory& trajectory);
-  Trajectory Retrieve(const ActionHash& action_hash) const;
+  std::pair<Trajectory, Action> Retrieve(const ActionHash& action_hash) const;
 
   void MakeBehaviorActive(const ActionHash& action_hash) {
     active_behavior_ = action_hash;
@@ -42,7 +42,7 @@ class BehaviorActionStore : public BehaviorModel {
   virtual Trajectory Plan(float delta_time, const modules::world::ObservedWorld& observed_world);
 
   private:
-    std::unordered_map<ActionHash, Trajectory> trajectory_store_;
+    std::unordered_map<ActionHash, std::pair<Trajectory, Action>> trajectory_store_;
     ActionHash active_behavior_;
 };
 
