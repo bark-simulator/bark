@@ -141,7 +141,8 @@ class PrimitiveGapKeeping : public Primitive,
                       const DynamicModelPtr& dynamic_model)
       : Primitive(params, dynamic_model),
         BehaviorIDMLaneTracking(params),
-        BehaviorModel(params) {}
+        BehaviorModel(params) {
+        }
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // TODO: which lane to check? should be checked for target lane
     // auto leading_vehicle = observed_world->GetAgentInFront();
@@ -152,6 +153,8 @@ class PrimitiveGapKeeping : public Primitive,
     auto traj = BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
     return traj;
   }
+
+  Action GetLastAction() const { return BehaviorIDMLaneTracking::GetLastAction();}
 };
 
 class PrimitiveConstAccStayLane : public PrimitiveConstAcceleration {
