@@ -191,6 +191,7 @@ Trajectory BehaviorIDMClassic::Plan(
   auto lane_corr = observed_world.GetLaneCorridor();
   if (!lane_corr) {
     this->SetLastTrajectory(traj);
+    this->SetLastAction(Action(Continuous1DAction(0.0f)));
     return traj;
   }
 
@@ -207,7 +208,7 @@ Trajectory BehaviorIDMClassic::Plan(
 
     // Get acceleration action other
     if (param_coolness_factor_ > 0.0f) {
-      auto last_action = leading_vehicle.first->GetBehaviorModel()->GetLastAction();
+      auto last_action = leading_vehicle.first->GetStateInputHistory().back().second;
       if(last_action.type() == typeid(Continuous1DAction)) {
         acc_other = boost::get<Continuous1DAction>(last_action);
       } else if (last_action.type() == typeid(LonLatAction)) {
@@ -218,6 +219,7 @@ Trajectory BehaviorIDMClassic::Plan(
     }
   }
 
+  double initial_acceleration = 0.0f;
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
@@ -233,7 +235,6 @@ Trajectory BehaviorIDMClassic::Plan(
     double acc;
     double traveled_ego;
     double traveled_other;
-    double initial_acceleration;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
       acc = CalcACCAcc(net_distance, vel_i, vel_other, acc_i, acc_other);
@@ -269,8 +270,8 @@ Trajectory BehaviorIDMClassic::Plan(
       traj(i, StateDefinition::VEL_POSITION) = vel_i;         // checked
     }
 
-    SetLastAction(Action(Continuous1DAction(initial_acceleration)));
   }
+  this->SetLastAction(Action(Continuous1DAction(initial_acceleration)));
   this->SetLastTrajectory(traj);
   return traj;
 }
