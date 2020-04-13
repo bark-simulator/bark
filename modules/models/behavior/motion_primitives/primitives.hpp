@@ -46,9 +46,13 @@ class Primitive : public modules::commons::BaseType {
   virtual Trajectory Plan(float delta_time,
                           const ObservedWorld& observed_world) = 0;
 
+  virtual Action GetLastAction() const { return last_action_; };
+  virtual Action SetLastAction(const Action& action) { last_action_ = action; };
+
  protected:
   float integration_time_delta_;
   DynamicModelPtr dynamic_model_;
+  Action last_action_;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;
@@ -72,7 +76,9 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
                              float acceleration, float crosstrack_error_gain)
       : PrimitiveLaneFollowing(params, dynamic_model),
         acceleration_(acceleration),
-        crosstrack_error_gain_(crosstrack_error_gain) {}
+        crosstrack_error_gain_(crosstrack_error_gain) {
+          SetLastAction(Continuous1DAction(acceleration_));
+        }
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     return true;
   }
@@ -116,6 +122,7 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       traj.row(i) = dynamic::euler_int(*single_track, traj.row(i - 1), input,
                                        integration_time);
     }
+
     return traj;
   }
 

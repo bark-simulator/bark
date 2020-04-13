@@ -32,7 +32,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
         integration_time_delta_(params->GetReal(
             "integration_time_delta",
             "the size of the time steps used within the euler integration loop",
-            0.02)) {}
+            0.02)) { }
 
   virtual ~BehaviorMotionPrimitives() {}
 
