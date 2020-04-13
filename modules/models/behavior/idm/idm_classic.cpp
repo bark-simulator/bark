@@ -214,7 +214,7 @@ Trajectory BehaviorIDMClassic::Plan(
       } else if (last_action.type() == typeid(LonLatAction)) {
         acc_other = boost::get<LonLatAction>(last_action).acc_lon;
       } else {
-        LOG(WARNING) << "Other's action not known for cah calculation";
+        LOG(FATAL) << "Other's action type unknown in cah calculation";
       }
     }
   }
