@@ -68,7 +68,7 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
 
   dynamic::State ego_vehicle_state = agent_ptr->GetCurrentState();
   auto vel_ego = ego_vehicle_state(StateDefinition::VEL_POSITION);
-  auto last_action_ego = agent_ptr->GetBehaviorModel()->GetLastAction();
+  auto last_action_ego = agent_ptr->GetStateInputHistory().back().second;
   double acc_ego = 0.0f;
   if(last_action_ego.type() == typeid(Continuous1DAction)) {
       acc_ego = boost::get<Continuous1DAction>(last_action_ego);
@@ -88,7 +88,7 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
 
     // Get acceleration action other
-    auto last_action_other = leading_vehicle.first->GetBehaviorModel()->GetLastAction();
+    auto last_action_other = leading_vehicle.first->GetStateInputHistory().back().second;
     if(last_action_other.type() == typeid(Continuous1DAction)) {
       acc_other = boost::get<Continuous1DAction>(last_action_other);
     } else if (last_action_other.type() == typeid(LonLatAction)) {
