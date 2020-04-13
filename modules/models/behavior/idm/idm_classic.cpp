@@ -208,13 +208,13 @@ Trajectory BehaviorIDMClassic::Plan(
 
     // Get acceleration action other
     if (param_coolness_factor_ > 0.0f) {
-      auto last_action = leading_vehicle.first->GetStateInputHistory().back().second;
+      Action last_action = leading_vehicle.first->GetStateInputHistory().back().second;
       if(last_action.type() == typeid(Continuous1DAction)) {
         acc_other = boost::get<Continuous1DAction>(last_action);
       } else if (last_action.type() == typeid(LonLatAction)) {
         acc_other = boost::get<LonLatAction>(last_action).acc_lon;
       } else {
-        LOG(FATAL) << "Other's action type unknown in cah calculation";
+        LOG(FATAL) << "Other's action type unknown in cah calculation: " << boost::apply_visitor(action_tostring_visitor(), last_action);
       }
     }
   }

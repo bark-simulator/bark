@@ -47,6 +47,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
 
   if (idx_start < 0 || idx_end < 0) {
     auto traj = dynamic::Trajectory();
+    this->SetLastAction(LonLatAction{0.0f, 0.0f});
     this->SetLastTrajectory(traj);
     return traj;
   }

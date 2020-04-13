@@ -40,6 +40,33 @@ typedef std::size_t ActionHash;
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
 
+struct action_tostring_visitor : boost::static_visitor<std::string>
+{
+    std::string operator()(DiscreteAction const& val) const {
+        std::stringstream ss;
+        ss << "Discrete Action: " << val;
+        return ss.str();
+    }
+
+    std::string operator()(Continuous1DAction const& val) const {
+        std::stringstream ss;
+        ss << "Continuous1DAction: val";
+        return ss.str();
+    }
+
+    std::string operator()(Input const& val) const {
+        std::stringstream ss;
+        ss << "ActionInput: " << val;
+        return ss.str();
+    }
+
+    std::string operator()(modules::models::behavior::LonLatAction const& val) const {
+        std::stringstream ss;
+        ss << "LonLatAction: acc_lon=" << val.acc_lat << ", acc_lat=" << val.acc_lat;
+        return ss.str();
+    }
+};
+
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
