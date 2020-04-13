@@ -18,7 +18,7 @@ ActionHash BehaviorActionStore::Store(const Action& action, const Trajectory& tr
   const auto action_hash = ActionToHash(action);
   auto it = trajectory_store_.find(action_hash);
   if(it == trajectory_store_.end()) {
-    trajectory_store_.emplace(std::make_pair(action_hash, std::make_pair<trajectory, action>));
+    trajectory_store_.emplace(std::make_pair(action_hash, std::make_pair(trajectory, action)));
   }
   return action_hash;
 }
@@ -33,7 +33,7 @@ Trajectory BehaviorActionStore::Plan(float delta_time, const modules::world::Obs
   const auto& pair = Retrieve(active_behavior_);
   SetLastTrajectory(pair.first);
   SetLastAction(pair.second);
-  return traj;
+  return pair.first;
 }
 
 

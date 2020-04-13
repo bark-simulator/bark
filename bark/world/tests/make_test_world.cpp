@@ -43,7 +43,8 @@ using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
 WorldPtr bark::world::tests::make_test_world(
     int num_other_agents, double rel_distance, double ego_velocity,
-    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
+    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
+    float ego_acc, float other_acc) {
   float pos_x = 3.0;
   float pos_y = -1.75;
 
@@ -57,7 +58,9 @@ WorldPtr bark::world::tests::make_test_world(
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  beh_model_idm->SetLastAction(Continuous1DAction(ego_acc));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  beh_model_const->SetLastAction(Continuous1DAction(other_acc));
 
   Polygon polygon(
       Pose(1.25, 1, 0),
@@ -106,11 +109,12 @@ WorldPtr bark::world::tests::make_test_world(
 
 ObservedWorld bark::world::tests::make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,
-    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
+    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
+    float ego_acc, float other_acc) {
   // Create observed world for first agent
   WorldPtr current_world_state = make_test_world(
       num_other_agents, rel_distance, ego_velocity, velocity_difference,
-      ego_goal_definition);
+      ego_goal_definition, ego_acc, other_acc);
   ObservedWorld observed_world(
       current_world_state,
       current_world_state->GetAgents().begin()->second->GetAgentId());

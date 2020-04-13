@@ -288,9 +288,8 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
-                                   velocity_difference, goal_definition_ptr);
-  observed_world.GetAgents().begin()->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_ego));
-  std::next(observed_world.GetAgents().begin())->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_other));
+                                   velocity_difference, goal_definition_ptr,
+                                   acc_ego, acc_other);
 
   auto traj = behavior.Plan(time_step, observed_world);
   auto action = behavior.GetLastAction();
@@ -345,9 +344,8 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
-                                   velocity_difference, goal_definition_ptr);
-  observed_world.GetAgents().begin()->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_ego));
-  std::next(observed_world.GetAgents().begin())->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_other));
+                                   velocity_difference, goal_definition_ptr,
+                                   acc_ego, acc_other);
 
   auto traj = behavior.Plan(time_step, observed_world);
   auto action = behavior.GetLastAction();
@@ -402,9 +400,8 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
-                                   velocity_difference, goal_definition_ptr);
-  observed_world.GetAgents().begin()->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_ego));
-  std::next(observed_world.GetAgents().begin())->second->GetBehaviorModel()->SetLastAction(Continuous1DAction(acc_other));
+                                   velocity_difference, goal_definition_ptr,
+                                   acc_ego, acc_other);
 
   auto traj = behavior.Plan(time_step, observed_world);
   auto action = behavior.GetLastAction();
