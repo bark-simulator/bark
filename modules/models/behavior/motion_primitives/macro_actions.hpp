@@ -19,13 +19,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   BehaviorMPMacroActions(const DynamicModelPtr& dynamic_model,
                          const commons::ParamsPtr& params)
       : BehaviorMotionPrimitives(dynamic_model, params),
-       motion_primitives_() { }
-
-  BehaviorMPMacroActions(const BehaviorMPMacroActions& other_behavior) :
-    BehaviorMotionPrimitives(other_behavior.dynamic_model_, other_behavior.GetParams()),
-    motion_primitives_(other_behavior.motion_primitives_) {
-      this->SetLastAction(motion_primitives_.at(active_motion_)->GetLastAction());
-    }
+       motion_primitives_() {  }
 
   virtual ~BehaviorMPMacroActions() {}
 

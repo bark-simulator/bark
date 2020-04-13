@@ -50,7 +50,7 @@ struct action_tostring_visitor : boost::static_visitor<std::string>
 
     std::string operator()(Continuous1DAction const& val) const {
         std::stringstream ss;
-        ss << "Continuous1DAction: val";
+        ss << "Continuous1DAction: " << val;
         return ss.str();
     }
 
