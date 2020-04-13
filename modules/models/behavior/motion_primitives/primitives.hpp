@@ -48,11 +48,12 @@ class Primitive : public modules::commons::BaseType {
                           const ObservedWorld& observed_world) = 0;
 
   Action GetLastAction() const { return last_action_; };
-  Action SetLastAction(const Action action) { last_action_ = action; };
+  void SetLastAction(const Action action) { last_action_ = action; };
 
  protected:
   float integration_time_delta_;
   DynamicModelPtr dynamic_model_;
+ private:
   Action last_action_;
 };
 
@@ -78,6 +79,8 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       : PrimitiveLaneFollowing(params, dynamic_model),
         acceleration_(acceleration),
         crosstrack_error_gain_(crosstrack_error_gain) {
+          // Maybe extend by lat accerlation too
+          this->SetLastAction(Action(Continuous1DAction(acceleration_)));
         }
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     return true;
@@ -122,8 +125,7 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
       traj.row(i) = dynamic::euler_int(*single_track, traj.row(i - 1), input,
                                        integration_time);
     }
-    // Maybe extend by lat accerlation too
-    SetLastAction(Action(Continuous1DAction(acceleration_)));
+
     return traj;
   }
 
