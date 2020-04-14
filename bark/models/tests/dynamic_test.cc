@@ -16,11 +16,12 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
+using namespace std;
+using namespace modules::geometry;
+using namespace modules::models::dynamic;
+using namespace modules::commons;
+
 TEST(single_track_model, dynamic_test) {
-  using namespace std;
-  using namespace bark::geometry;
-  using namespace bark::models::dynamic;
-  using namespace bark::commons;
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   x << 0, 0, 0, 0, 5;
@@ -38,6 +39,65 @@ TEST(single_track_model, dynamic_test) {
     x = euler_int(*m, x, u, dt);
     cout << x << endl;
   }
+}
+
+TEST(valid_state_test, dynamic_test) { 
+  State x1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x1 << 50.0f, 0.0f, 0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_TRUE(IsValid(x1));
+
+  // nan
+  State x2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x2 << 50.0f, 0.0f, 1/0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x2));
+
+  // inf
+  State x3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x3 << 50.0f, 0.0f/0.0f, 1/0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x3));
+
+  // nan and inf
+  State x4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x4 << 50.0f, 0.0/0.0f, 1/0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x4));
+
+}
+
+TEST(valid_trajectory_test, dynamic_test) { 
+  Trajectory traj1(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj1 <<
+  0, 0, 0, 0, 1,
+  1, 1, 0, 0, 1,
+  2, 2, 0, 0, 1,
+  3, 3, 0, 0, 1;
+  EXPECT_TRUE(IsValid(traj1));
+
+  // inf
+  Trajectory traj2(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj2 <<
+  0, 0, 0, 0, 1,
+  1, 1, 0, 0, 1,
+  2, 2, 1/0.0f, 0, 1,
+  3, 3, 0, 0, 1;
+  EXPECT_FALSE(IsValid(traj2));
+
+  // nan
+  Trajectory traj3(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj3 <<
+  0, 0, 0, 0, 1,
+  1, 1, 0, 0, 1,
+  2, 2, 0.0/0.0f, 0, 1,
+  3, 3, 0, 0, 1;
+  EXPECT_FALSE(IsValid(traj3));
+
+  // both
+  Trajectory traj4(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj4 <<
+  0, 1/0.0f, 0, 0, 1,
+  1, 1, 0, 0, 1,
+  2, 2, 0, 0, 1,
+  3, 3, 0, 0, 0.0/0.0f;
+  EXPECT_FALSE(IsValid(traj4));
 }
 
 TEST(CalculateSteeringAngle, dynamic_test) {

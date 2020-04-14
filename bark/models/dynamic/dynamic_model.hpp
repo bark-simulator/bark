@@ -37,6 +37,15 @@ using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 
+inline bool IsValid(const State& state) {
+  return ( (state - state).array() == (state - state).array()).all() &&
+          ((state.array() == state.array())).all();
+}
+
+inline bool IsValid(const Trajectory& state) {
+  return ( (state - state).array() == (state - state).array()).all() &&
+          ((state.array() == state.array())).all();
+}
 
 class DynamicModel : public commons::BaseType {
  public:
