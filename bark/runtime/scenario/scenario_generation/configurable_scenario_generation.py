@@ -86,7 +86,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         see baseclass
     """
     scenario_list = []
-    for _ in range(0, num_scenarios):
+    for idx in range(0, num_scenarios):
+      self._current_scenario_idx = idx
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
     self.update_defaults_params()
@@ -418,7 +419,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
     param_config = ParameterServer(json = eval_config, log_if_default = self._params.log_if_default)
-    config_reader = eval("{}(self._random_state)".format(eval_config_type))
+    config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
