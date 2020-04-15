@@ -34,6 +34,11 @@ typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
 typedef std::pair<models::dynamic::State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
 
+enum BehaviorStatus : unsigned int {
+  NOT_STARTED_YET = 0,
+  READY = 1,
+  EXPIRED = 2
+};
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
@@ -56,6 +61,15 @@ class BehaviorModel : public modules::commons::BaseType {
     last_trajectory_ = trajectory;
   }
   bool GetActiveModel() const { return active_model_; }
+
+  void UpdateBehaviorStatus(float delta_time,
+                            const world::ObservedWorld& observed_world) {
+    SetBehaviorStatus(BehaviorStatus::READY);
+  }
+
+  BehaviorStatus GetBehaviorStatus() const { return behavior_status_; }
+  void SetBehaviorStatus(const BehaviorStatus status) {behavior_status_ = status; }
+
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
@@ -68,6 +82,7 @@ class BehaviorModel : public modules::commons::BaseType {
   dynamic::Trajectory last_trajectory_;
   Action last_action_;
   bool active_model_;
+  BehaviorStatus behavior_status_;
 };
 
 

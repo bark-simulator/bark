@@ -18,7 +18,7 @@ using modules::models::dynamic::StateDefinition;
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(const commons::ParamsPtr& params)
     : BehaviorModel(params),
       static_trajectory_(
-          trajectory_from_listlist_float(params->GetListListFloat(
+          ReadInStaticTrajectory(params->GetListListFloat(
               "static_trajectory",
               "List of states that form a static trajectory to follow",
               {{}}))) {}
@@ -31,10 +31,14 @@ Trajectory BehaviorStaticTrajectory::Plan(
     float delta_time, const modules::world::ObservedWorld &observed_world) {
   const double start_time = observed_world.GetWorldTime();
   const double end_time = start_time + delta_time;
+
+  UpdateBehaviorStatus(delta_time, observed_world);
+
   StateRowVector interp_start;
   StateRowVector interp_end;
-  int idx_start = interpolate(start_time, &interp_start).second;
-  int idx_end = interpolate(end_time, &interp_end).first;
+  int idx_start = Interpolate(start_time, &interp_start).second;
+  int idx_end = Interpolate(end_time, &interp_end).first;
+
   if (idx_start < 0 || idx_end < 0) {
     auto traj = dynamic::Trajectory();
     this->SetLastTrajectory(traj);
@@ -48,10 +52,12 @@ Trajectory BehaviorStaticTrajectory::Plan(
   traj.block(1, 0, num_rows, traj.cols()) =
       static_trajectory_.block(idx_start, 0, num_rows, traj.cols());
   this->SetLastTrajectory(traj);
+  
+
   return traj;
 }
 
-std::pair<int, int> BehaviorStaticTrajectory::interpolate(
+std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
     const double t, StateRowVector *interpolated) const {
   StateRowVector delta;
   double alpha;
@@ -60,6 +66,7 @@ std::pair<int, int> BehaviorStaticTrajectory::interpolate(
   for (int i = 0; i < static_trajectory_.rows() - 1; ++i) {
     float t_i = static_trajectory_(i, dynamic::TIME_POSITION);
     float t_i_succ = static_trajectory_(i + 1, dynamic::TIME_POSITION);
+
     if (t_i <= t && t <= t_i_succ) {
       idx = i;
       break;
@@ -88,7 +95,7 @@ std::shared_ptr<BehaviorModel> BehaviorStaticTrajectory::Clone() const {
   return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
 }
 
-Trajectory BehaviorStaticTrajectory::trajectory_from_listlist_float(
+Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
     std::vector<std::vector<float>> list) {
   Trajectory traj(list.size(), list[0].size());
   for (int i = 0; i < traj.rows(); ++i) {
@@ -102,6 +109,24 @@ Trajectory BehaviorStaticTrajectory::trajectory_from_listlist_float(
 
 const Trajectory &BehaviorStaticTrajectory::get_static_trajectory() const {
   return static_trajectory_;
+}
+
+void BehaviorStaticTrajectory::UpdateBehaviorStatus(float delta_time, const modules::world::ObservedWorld &observed_world) {
+  const double start_time = observed_world.GetWorldTime();
+  const double end_time = start_time + delta_time;
+
+  const double start_time_static_traj = (static_trajectory_.col(dynamic::TIME_POSITION)).minCoeff();
+  const double end_time_static_traj = (static_trajectory_.col(dynamic::TIME_POSITION)).maxCoeff();
+
+  if (start_time_static_traj> start_time) {
+    SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
+  }
+  else if (end_time_static_traj <= end_time) {
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+  }
+  else {
+    SetBehaviorStatus(BehaviorStatus::READY);
+  }
 }
 
 }  // namespace behavior
