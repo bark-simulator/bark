@@ -124,7 +124,7 @@ class World : public commons::BaseType {
   void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
-  void RemoveOutOfMapAgents();
+  void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(

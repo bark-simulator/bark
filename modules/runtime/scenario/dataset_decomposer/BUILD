@@ -7,7 +7,6 @@ py_library(
         ],
     imports = ["../../../python/"],
     deps = [
-        "//modules/runtime/scenario/scenario_generation",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime:runtime",
     ],
