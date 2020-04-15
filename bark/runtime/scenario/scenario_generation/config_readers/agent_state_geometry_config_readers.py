@@ -11,6 +11,7 @@ from bark.runtime.scenario.scenario_generation.config_readers.config_readers_int
 
 from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import shape_from_track, \
     bark_state_from_motion_state, init_state_from_track, track_from_trackfile
+from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
 from bark.geometry.standard_shapes import *
 from bark.geometry import *

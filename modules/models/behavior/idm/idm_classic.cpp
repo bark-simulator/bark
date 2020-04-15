@@ -152,6 +152,9 @@ double BehaviorIDMClassic::CalcACCAcc(const double& net_distance, const double& 
 
   const double cah_acc = CalcCAHAcc(net_distance, vel_ego, vel_other,
                                    acc_ego, acc_other);
+  if(std::isnan(cah_acc)) {
+    LOG(FATAL) << "cah_acc isnan for net_dist " << net_distance << ". ve = " << vel_ego << ", vo=" << vel_other << ", ao=" << acc_other;
+  }
   const float b = GetComfortableBrakingAcceleration();
   
   float acc = 0.0f;
