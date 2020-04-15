@@ -85,7 +85,7 @@ void Agent::Execute(const float& world_time) {
   float min_time_diff = std::numeric_limits<float>::max();
   Trajectory last_trajectory = execution_model_->GetLastTrajectory();
   if(!models::dynamic::IsValid(last_trajectory)) {
-    LOG(FATAL) << "Invalid execution trajectory of agent " << GetAgentId();
+    LOG(FATAL) << "Invalid execution trajectory of agent " << GetAgentId() << " : \n" << last_trajectory;
   }
   for (int i = 0; i < last_trajectory.rows(); i++) {
     float diff_time = fabs(last_trajectory(i, TIME_POSITION) - world_time);
