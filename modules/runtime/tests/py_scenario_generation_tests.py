@@ -3,6 +3,10 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+try: 
+  import debug_settings
+except:
+  print("No debugging")
 
 import unittest
 import os
@@ -34,7 +38,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params.save("default_params_standard.json")
 
-  def test_configurable_scenario_generation_interaction_merging(self):
+  def test_configurable_scenario_generation_interaction_merging_track_ids(self):
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
       "Description": "merging_deu_standard",
@@ -58,6 +62,36 @@ class ScenarioGenerationTests(unittest.TestCase):
     scenario_loader.load_scenario_list("test.scenario")
 
     self.assertEqual(len(scenario_loader._scenario_list), 2)
+    self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
+
+    scenario = scenario_loader.get_scenario(idx=0)
+
+    params.save("default_params_interaction_dataset.json")
+
+  def test_configurable_scenario_generation_interaction_merging_window(self):
+    sink_source_dict = {
+      "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
+      "Description": "merging_deu_standard",
+      "ConfigAgentStatesGeometries": {"Type": "InteractionDataWindowStatesGeometries"},
+      "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "AgentIds", "ControlledIds" : [1]},
+      "AgentParams" : {}
+    }
+
+    params = ParameterServer()
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
+          "modules/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    scenario_loader = ScenarioGeneration()
+    scenario_loader.load_scenario_list("test.scenario")
+
+    self.assertEqual(len(scenario_loader._scenario_list), 1)
     self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
 
     scenario = scenario_loader.get_scenario(idx=0)

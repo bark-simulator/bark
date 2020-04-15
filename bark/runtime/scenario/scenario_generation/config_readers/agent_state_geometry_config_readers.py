@@ -140,33 +140,41 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
         lps.append(idx)
     return lps
 
-class InteractionDataMultipleStatesGeometries(ConfigReaderAgentStatesAndGeometries):
+class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   window_start = None
   window_end = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
                                         "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
-    window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 5]
-    skip_time_delta = config_param_object["SkipTimeDelta", "Time delta between start of current and next search window", 2.7]
-    time_offset = config_param_object["SkipTimeDelta", "Time offset from beginning of track file to start searching", 0.0]
+    window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 0.2]
+    skip_time_delta = config_param_object["SkipTimeDelta", "Time delta between start of current and next search window", 0.1]
+    min_time = config_param_object["MinTime", "Time offset from beginning of track file to start searching", 0.0]
+    max_time = config_param_object["MaxTime", "Max time included in search", 100.0]
     only_on_one_lane = config_param_object["OnlyOnOneLane", "If True only scenarios are defined where agents are on a single lane", True]
-    minimum_numbers_per_lane = config_param_object["OnlyOnOneLane", "List where each element specifies how man vehicles must be at minimum at this lane,\
-                                  lane position equals list index", [5, 5]]
+    minimum_numbers_per_lane = config_param_object["MinimumNumbersPerLane", "List where each element specifies how man vehicles must be at minimum at this lane,\
+                                  lane position equals list index", [1, 0]]
 
     # todo: would be better to load this only once for the whole scenario genarion
-    track_dict = dataset_reader.read_tracks(track_filename)
+    track_dict = dataset_reader.read_tracks(track_file_name)
     agent_geometries = []
     agent_states = []
     lane_positions = []
     tracks = []
 
-    scenario_track_ids = self.find_next_start_end_window_times(track_dict, only_on_one_lane, minimum_numbers_per_lane,
-                        window_length, skip_time_delta, time_offset, road_corridor)
-    for track_id in track_ids:
-      numpy_state = self.get_init_state(track_dict, track_id)
+    window_start = InteractionDataWindowStatesGeometries.window_start
+    window_end = InteractionDataWindowStatesGeometries.window_end
+
+    scenario_track_ids, window_start, window_end = self.find_track_ids_moving_window(window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane,
+                        window_length, skip_time_delta, min_time, max_time, road_corridor)
+    if len(scenario_track_ids) < 1:
+      raise ValueError("No track ids found for scenario idx {}. Consider lowering the number of scenarios.".format(self.current_scenario_idx))
+
+    for track_id in scenario_track_ids:
+      numpy_state = self.get_init_state(track_dict, track_id, window_start, window_end)
       agent_state = numpy_state.reshape(5).tolist()
       agent_states.append(agent_state)
+      track = track_dict[track_id]
       shape = shape_from_track(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
@@ -174,58 +182,66 @@ class InteractionDataMultipleStatesGeometries(ConfigReaderAgentStatesAndGeometri
       lane_positions.append(lane_positions)
 
     assert(len(agent_states) == len(agent_geometries))
-    return agent_states, agent_geometries, {"track_ids": track_ids, "tracks" : tracks, \
-             "agent_ids" : track_ids, "start_time" : start_time, "end_time" : end_time, \
+    InteractionDataWindowStatesGeometries.window_start = window_start
+    InteractionDataWindowStatesGeometries.window_end = window_end
+    return agent_states, agent_geometries, {"track_ids": scenario_track_ids, "tracks" : tracks, \
+             "agent_ids" : scenario_track_ids, "start_time" : window_start*1000, "end_time" : window_end*1000, \
                "agent_lane_positions" : lane_positions}, config_param_object
 
-  def find_next_start_end_window_times(self, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
-                                      window_length, skip_time_delta, time_offset, road_corridor):
-        # init window
-    if not window_end or not window_start:
-      window_start = time_offset
-      window_end = window_start + window_length
-
+  def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
+                                      window_length, skip_time_delta, time_offset, max_time, road_corridor):
     def move_window(window_start, window_end):
-      window_start = window_track_ids + skip_time_delta
-      window_end = window_start + window_length
+      if window_end is None or window_start is None :
+        window_start = time_offset
+        window_end = window_start + window_length
+      else:
+        window_start += skip_time_delta
+        window_end = window_start + window_length
       return window_start, window_end
 
-
-    numbers_per_lane = defaultdict(list)
-    scenario_found = False
-    while not scenario_found:
+    while True:
+      window_start, window_end = move_window(window_start, window_end)
+      if window_end > max_time:
+        return [], window_start, window_end
       window_track_ids = self.find_track_ids(track_dict, window_start, window_end)
+      lane_positions_valid = True
+      if len(window_track_ids) < 1:
+        continue
+
+      lane_positions_valid = True
+      numbers_per_lane = defaultdict(list)
       for track_id in window_track_ids:
-        init_state = self.get_init_state(track_dict, track_id)
-        lane_positions = self.find_lane_positions()
+        init_state = self.get_init_state(track_dict, track_id, window_start, window_end)
+        lane_positions = self.find_lane_positions(init_state, road_corridor)
         # skip whole window if lane positions not fulfilled
         if only_on_one_lane and len(lane_positions) != 1:
-          window_start, window_end = move_window(window_start, window_end)
+          lane_positions_valid = False
           break
-
         numbers_per_lane[lane_positions[0]].append(track_id)
-
-      for lane_pos, track_ids in numbers_per_lane.items():
-        if len(track_ids) < minimum_numbers_per_lane[lane_pos]:
+      if not lane_positions_valid:
+        continue
+      
+      minimum_number_valid = True
+      for lane_pos, minimum_number in enumerate(minimum_numbers_per_lane):
+        if len(numbers_per_lane[lane_pos]) < minimum_number:
+          minimum_number_valid = False
           break
+      if not minimum_number_valid:
+        continue
+      else:
+        break
 
-      scenario_found = True
+    return window_track_ids, window_start, window_end
 
-    return window_track_ids
-
-  def get_init_state(track_dict, track_id):
+  def get_init_state(self, track_dict, track_id, start_time, end_time):
     track = track_dict[track_id]
-    if start_time is None:
-        start_time = track.time_stamp_ms_first
-    if end_time is None:
-        end_time = track.time_stamp_ms_last
     return init_state_from_track(track, start_time)
 
   def find_track_ids(self, track_dict, start_time, end_time):
     list_ids = []
-    for id_current in self.track_dict.keys():
-        if track_dict[id_current].time_stamp_ms_last >= start_time and \
-          track_dict[id_current].time_stamp_ms_first <= end_time:
+    for id_current in track_dict.keys():
+        if track_dict[id_current].time_stamp_ms_last / 1000.0 >= end_time and \
+          track_dict[id_current].time_stamp_ms_first / 1000.0 <= start_time:
             list_ids.append(id_current)
     return list_ids
 
