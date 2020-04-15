@@ -73,6 +73,8 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
     agent_lane_positions = kwargs.pop("agent_lane_positions")
     for idx, _ in enumerate(agent_states):
       lane_position = agent_lane_positions[idx]
+      if isinstance(lane_position, list):
+        lane_position = lane_position[0]
       if controlled_agent_ids[idx]:
         goal_definition = GoalGenerator.get_goal_definition(
           config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)

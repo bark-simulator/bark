@@ -38,7 +38,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
       "Description": "merging_deu_standard",
-      "ConfigAgentStatesGeometries": {"Type": "InteractionDataStatesGeometries"},
+      "ConfigAgentStatesGeometries": {"Type": "InteractionDataTrackIdsStatesGeometries"},
       "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
       "ConfigExecutionModels": {"Type": "FixedExecutionType"},
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
