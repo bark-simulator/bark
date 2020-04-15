@@ -127,10 +127,12 @@ double BehaviorIDMClassic::CalcCAHAcc(const double& net_distance, const double& 
                        const double& vel_other, const double& acc_ego,
                        const double& acc_other) const {
   // implements equation 11.25 on on page 198
+  // we deviate from eq. 11.25 for the equality case to avoid a nan acceleration
+  // when both the leading velocity and effective acceleration are zero
   
   const double max_acceleration = GetMaxAcceleration();
   const double effect_acc_other = std::min(acc_other, max_acceleration);
-  if(vel_other*(vel_ego - vel_other) <= -2*net_distance*effect_acc_other) {
+  if(vel_other*(vel_ego - vel_other) < -2*net_distance*effect_acc_other) {
     return vel_ego*vel_ego*effect_acc_other / (vel_other*vel_other - 2*net_distance*effect_acc_other);
   } else {
     const double step_function = (vel_ego - vel_other) >= 0.0f ? 1.0f : 0.0f ;
