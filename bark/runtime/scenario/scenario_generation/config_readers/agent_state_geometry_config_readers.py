@@ -152,7 +152,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     skip_time_search = config_param_object["SkipTimeSearch", "Time delta between start of current and next search window", 100]
     min_time = config_param_object["MinTime", "Time offset from beginning of track file to start searching", 0]
     max_time = config_param_object["MaxTime", "Max time included in search", 100000]
-    only_on_one_lane = config_param_object["OnlyOnOneLane", "If True only scenarios are defined where agents are on a single lane", True]
+    only_on_one_lane = config_param_object["OnlyOnOneLane", "If True only scenarios are defined where agents are on a single lane", False]
     minimum_numbers_per_lane = config_param_object["MinimumNumbersPerLane", "List where each element specifies how man vehicles must be at minimum at this lane,\
                                   lane position equals list index", [1, 0]]
 
@@ -175,19 +175,19 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     window_end += skip_time_scenarios
 
     scenario_track_ids, window_start, window_end = self.find_track_ids_moving_window(window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane,
-                        window_length, skip_time_search, min_time, max_time, road_corridor)
+                        window_length, skip_time_search, min_time, max_time, road_corridor, wheel_base)
     if len(scenario_track_ids) < 1:
       raise ValueError("No track ids found for scenario idx {}. Consider lowering the number of scenarios.".format(self.current_scenario_idx))
 
     for track_id in scenario_track_ids:
-      numpy_state = self.get_init_state(track_dict, track_id, window_start, window_end)
+      track = track_dict[track_id]
+      numpy_state = self.get_init_state(track, window_start)
       agent_state = numpy_state.reshape(5).tolist()
       agent_states.append(agent_state)
-      track = track_dict[track_id]
       shape = shape_from_track(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
-      lane_positions_single = self.find_lane_positions(numpy_state, road_corridor)
+      lane_positions_single = self.find_lane_positions(road_corridor, self.get_shape_at_time_point(track, window_start, wheel_base))
       lane_positions.append(lane_positions_single)
 
     assert(len(agent_states) == len(agent_geometries))
@@ -198,7 +198,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
                "agent_lane_positions" : lane_positions}, config_param_object
 
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
-                                      window_length, skip_time_search, time_offset, max_time, road_corridor):
+                                      window_length, skip_time_search, time_offset, max_time, road_corridor, wheel_base):
     def move_window(window_start, window_end):
       window_start += skip_time_search
       window_end = window_start + window_length
@@ -214,10 +214,13 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
       numbers_per_lane = defaultdict(list)
       for track_id in window_track_ids:
-        init_state = self.get_init_state(track_dict, track_id, window_start, window_end)
-        lane_positions = self.find_lane_positions(init_state, road_corridor)
+        track = track_dict[track_id]
+        shape = self.get_shape_at_time_point(track, window_start, wheel_base)
+        lane_positions = self.find_lane_positions(road_corridor, shape)
         # skip whole window if lane positions not fulfilled
         if only_on_one_lane and len(lane_positions) != 1:
+          continue
+        if len(lane_positions) == 0:
           continue
         numbers_per_lane[lane_positions[0]].append(track_id)
 
@@ -232,8 +235,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
     return valid_track_ids, window_start, window_end
 
-  def get_init_state(self, track_dict, track_id, start_time, end_time):
-    track = track_dict[track_id]
+  def get_init_state(self, track, start_time):
     return init_state_from_track(track, start_time)
 
   def find_track_ids(self, track_dict, start_time, end_time):
@@ -244,17 +246,17 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
             list_ids.append(id_current)
     return list_ids
 
-  def is_only_on_lane(self, init_state, lane_position, road_corridor):
-    lane_positions = self.find_lane_positions(init_state, road_corridor)
-    if len(lane_positions) == 1 and lane_position in lane_positions:
-      return True
-    else:
-      return False
+  def get_shape_at_time_point(self, track, time_point, wheel_base):
+    init_state = self.get_init_state(track, time_point)
+    shape = shape_from_track(track, wheel_base)
+    shape_at_timepoint = shape.Transform([init_state[int(StateDefinition.X_POSITION)], \
+                                   init_state[int(StateDefinition.Y_POSITION)], \
+                                   init_state[int(StateDefinition.THETA_POSITION)]])
+    return shape_at_timepoint
 
-  def find_lane_positions(self, init_state, road_corridor):
+  def find_lane_positions(self, road_corridor, shape):
     lps = []
     for idx, lane_corridor in enumerate(road_corridor.lane_corridors):
-      if Collide(lane_corridor.polygon, Point2d(init_state[int(StateDefinition.X_POSITION)], \
-         init_state[int(StateDefinition.Y_POSITION)])):
+      if Collide(lane_corridor.polygon, shape):
         lps.append(idx)
     return lps
