@@ -209,34 +209,28 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
       if window_end > max_time:
         return [], window_start, window_end
       window_track_ids = self.find_track_ids(track_dict, window_start, window_end)
-      lane_positions_valid = True
       if len(window_track_ids) < 1:
         continue
 
-      lane_positions_valid = True
       numbers_per_lane = defaultdict(list)
       for track_id in window_track_ids:
         init_state = self.get_init_state(track_dict, track_id, window_start, window_end)
         lane_positions = self.find_lane_positions(init_state, road_corridor)
         # skip whole window if lane positions not fulfilled
         if only_on_one_lane and len(lane_positions) != 1:
-          lane_positions_valid = False
-          break
+          continue
         numbers_per_lane[lane_positions[0]].append(track_id)
-      if not lane_positions_valid:
-        continue
-      
-      minimum_number_valid = True
-      for lane_pos, minimum_number in enumerate(minimum_numbers_per_lane):
-        if len(numbers_per_lane[lane_pos]) < minimum_number:
-          minimum_number_valid = False
-          break
-      if not minimum_number_valid:
-        continue
-      else:
-        break
 
-    return window_track_ids, window_start, window_end
+      valid_track_ids = []
+      for lane_pos, minimum_number in enumerate(minimum_numbers_per_lane):
+        if len(numbers_per_lane[lane_pos]) >= minimum_number:
+          valid_track_ids.extend(numbers_per_lane[lane_pos])
+      if len(valid_track_ids) > 0:
+        break
+      else:
+        continue
+
+    return valid_track_ids, window_start, window_end
 
   def get_init_state(self, track_dict, track_id, start_time, end_time):
     track = track_dict[track_id]
