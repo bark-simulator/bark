@@ -144,7 +144,7 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
 class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   window_start = None
   window_end = None
-  track_dict = None
+  track_dict_list = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
                                         "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_*00.csv"]
@@ -167,17 +167,21 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
     window_start = InteractionDataWindowStatesGeometries.window_start 
     window_end = InteractionDataWindowStatesGeometries.window_end
-    track_dict = InteractionDataWindowStatesGeometries.track_dict
+    track_dict_list = InteractionDataWindowStatesGeometries.track_dict_list
     # reset when a new scenario generation starts
     if self.current_scenario_idx == 0:
       window_start = min_time
       window_end = min_time + window_length
-      track_dict = self.load_tracks(track_file_names)
+      track_dict_list = self.load_tracks(track_file_names)
     # offset between scenarios
     window_start += skip_time_scenarios
     window_end += skip_time_scenarios
 
-    scenario_track_ids, window_start, window_end = self.find_track_ids_moving_window(window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane,
+    current_track_file = 0
+    scenario_track_ids = []
+    while len(scenario_track_ids) == 0 and current_track_file < len(track_dict_list):
+      track_dict = track_dict_list[current_track_file]
+      scenario_track_ids, window_start, window_end = self.find_track_ids_moving_window(window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane,
                         window_length, skip_time_search, min_time, max_time, road_corridor, wheel_base)
     if len(scenario_track_ids) < 1:
       raise ValueError("No track ids found for scenario idx {}. Consider lowering the number of scenarios.".format(self.current_scenario_idx))
@@ -196,27 +200,21 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     assert(len(agent_states) == len(agent_geometries))
     InteractionDataWindowStatesGeometries.window_start = window_start
     InteractionDataWindowStatesGeometries.window_end = window_end
-    InteractionDataWindowStatesGeometries.track_dict = track_dict
+    InteractionDataWindowStatesGeometries.track_dict_list = track_dict_list
     return agent_states, agent_geometries, {"track_ids": scenario_track_ids, "tracks" : tracks, \
              "agent_ids" : scenario_track_ids, "start_time" : window_start, "end_time" : window_end, \
                "agent_lane_positions" : lane_positions}, config_param_object
 
   def load_tracks(self, track_filenames):
-    track_dict = {}
+    track_dict_list = []
     if isinstance(track_filenames, list):
       track_files_found = track_filenames
     else:
       track_files_found = glob.glob(track_filenames)
     for filename in track_files_found:
-      new_data = dataset_reader.read_tracks(filename)
-
-      # append some offset 
-      num_existing_tracks = len(track_dict)
-      new_data_changed_tracks = {}
-      for track_id, track in new_data.items():
-        new_data_changed_tracks[track_id + num_existing_tracks] = track
-      track_dict.update(new_data_changed_tracks)
-    return track_dict
+      track_dict = dataset_reader.read_tracks(filename)
+      track_dict_list.append(track_dict)
+    return track_dict_list
 
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
                                       window_length, skip_time_search, time_offset, max_time, road_corridor, wheel_base):
