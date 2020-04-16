@@ -92,7 +92,7 @@ class Agent : public Object {
     return road_corridor_;
   }
 
-  BehaviorStatus GetBehaviorStatus() {
+  BehaviorStatus GetBehaviorStatus() const {
     return behavior_model_->GetBehaviorStatus();
   }
 

@@ -26,6 +26,20 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "evaluator_behavior_expired",
+    hdrs = [
+        "evaluator_behavior_expired.hpp",
+    ],
+    deps = [
+        "//modules/world:world",
+        "//modules/models/behavior:behavior",
+        ":base_evaluator",
+        "@boost//:geometry",
+
+    ],
+    visibility = ["//visibility:public"],
+)
 
 cc_library(
     name = "evaluator_collision_agents",
@@ -103,7 +117,8 @@ cc_library(
         ":evaluator_collision_agents",
         ":evaluator_drivable_area",
         ":evaluator_collision_ego_agent",
-        ":evaluator_step_count"
+        ":evaluator_step_count",
+        ":evaluator_behavior_expired",
     ],
     visibility = ["//visibility:public"],
 )
