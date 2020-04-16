@@ -143,9 +143,10 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
 class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   window_start = None
   window_end = None
+  track_dict = None
   def create_from_config(self, config_param_object, road_corridor):
-    track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
+    track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
+                                        ["modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
     skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
@@ -157,7 +158,6 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
                                   lane position equals list index", [1, 0]]
 
     # todo: would be better to load this only once for the whole scenario genarion
-    track_dict = dataset_reader.read_tracks(track_file_name)
     agent_geometries = []
     agent_states = []
     lane_positions = []
@@ -166,10 +166,14 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
     window_start = InteractionDataWindowStatesGeometries.window_start 
     window_end = InteractionDataWindowStatesGeometries.window_end
+    track_dict = InteractionDataWindowStatesGeometries.track_dict
     # reset when a new scenario generation starts
     if self.current_scenario_idx == 0:
       window_start = min_time
       window_end = min_time + window_length
+      track_dict = {}
+      for filename in track_file_names:
+        track_dict.update(dataset_reader.read_tracks(filename))
     # offset between scenarios
     window_start += skip_time_scenarios
     window_end += skip_time_scenarios
@@ -193,6 +197,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     assert(len(agent_states) == len(agent_geometries))
     InteractionDataWindowStatesGeometries.window_start = window_start
     InteractionDataWindowStatesGeometries.window_end = window_end
+    InteractionDataWindowStatesGeometries.track_dict = track_dict
     return agent_states, agent_geometries, {"track_ids": scenario_track_ids, "tracks" : tracks, \
              "agent_ids" : scenario_track_ids, "start_time" : window_start, "end_time" : window_end, \
                "agent_lane_positions" : lane_positions}, config_param_object
