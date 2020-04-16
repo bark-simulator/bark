@@ -227,10 +227,14 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
         numbers_per_lane[lane_positions[0]].append(track_id)
 
       valid_track_ids = []
+      desired_number_valid = True
       for lane_pos, minimum_number in enumerate(minimum_numbers_per_lane):
-        if len(numbers_per_lane[lane_pos]) >= minimum_number:
+        if len(numbers_per_lane[lane_pos]) < minimum_number:
+          desired_number_valid = False
+          break
+        else:
           valid_track_ids.extend(numbers_per_lane[lane_pos])
-      if len(valid_track_ids) > 0:
+      if desired_number_valid:
         break
       else:
         continue
