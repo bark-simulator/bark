@@ -148,7 +148,8 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
                                         "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
-    skip_time_delta = config_param_object["SkipTimeDelta", "Time delta between start of current and next search window", 100]
+    skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
+    skip_time_search = config_param_object["SkipTimeSearc", "Time delta between start of current and next search window", 100]
     min_time = config_param_object["MinTime", "Time offset from beginning of track file to start searching", 0]
     max_time = config_param_object["MaxTime", "Max time included in search", 100000]
     only_on_one_lane = config_param_object["OnlyOnOneLane", "If True only scenarios are defined where agents are on a single lane", True]
@@ -162,16 +163,19 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     lane_positions = []
     tracks = []
 
+
+    window_start = InteractionDataWindowStatesGeometries.window_start 
+    window_end = InteractionDataWindowStatesGeometries.window_end
     # reset when a new scenario generation starts
     if self.current_scenario_idx == 0:
-      InteractionDataWindowStatesGeometries.window_start = None;
-      InteractionDataWindowStatesGeometries.window_end = None;
-
-    window_start = InteractionDataWindowStatesGeometries.window_start
-    window_end = InteractionDataWindowStatesGeometries.window_end
+      window_start = min_time
+      window_end = min_time + window_length
+    # offset between scenarios
+    window_start += skip_time_scenarios
+    window_end += skip_time_scenarios
 
     scenario_track_ids, window_start, window_end = self.find_track_ids_moving_window(window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane,
-                        window_length, skip_time_delta, min_time, max_time, road_corridor)
+                        window_length, skip_time_search, min_time, max_time, road_corridor)
     if len(scenario_track_ids) < 1:
       raise ValueError("No track ids found for scenario idx {}. Consider lowering the number of scenarios.".format(self.current_scenario_idx))
 
@@ -194,14 +198,10 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
                "agent_lane_positions" : lane_positions}, config_param_object
 
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
-                                      window_length, skip_time_delta, time_offset, max_time, road_corridor):
+                                      window_length, skip_time_search, time_offset, max_time, road_corridor):
     def move_window(window_start, window_end):
-      if window_end is None or window_start is None:
-        window_start = time_offset
-        window_end = window_start + window_length
-      else:
-        window_start += skip_time_delta
-        window_end = window_start + window_length
+      window_start += skip_time_search
+      window_end = window_start + window_length
       return window_start, window_end
 
     while True:
