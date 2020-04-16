@@ -5,6 +5,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import numpy as np
+import glob
 from collections import defaultdict
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
@@ -146,7 +147,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
   track_dict = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
-                                        ["modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]]
+                                        "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_*00.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
     skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
@@ -172,7 +173,11 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
       window_start = min_time
       window_end = min_time + window_length
       track_dict = {}
-      for filename in track_file_names:
+      if isinstance(track_file_names, list):
+        track_files_found = track_file_names
+      else:
+        track_files_found = glob.glob(track_file_names)
+      for filename in track_files_found:
         track_dict.update(dataset_reader.read_tracks(filename))
     # offset between scenarios
     window_start += skip_time_scenarios
