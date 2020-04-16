@@ -79,7 +79,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 track_params["behavior_model"] = None
             agent = agent_from_trackfile(track_params, self._params, track_id)
             agent_list.append(agent)
-            if track_id == track_params["EgoTrackId"]:
+            if track_id == dict_scenario["EgoTrackId"]:
                 eval_agent_ids = [agent.id]
 
         scenario._agent_list = agent_list
