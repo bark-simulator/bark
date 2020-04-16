@@ -147,10 +147,10 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
                                         "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
-    window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 0.2]
-    skip_time_delta = config_param_object["SkipTimeDelta", "Time delta between start of current and next search window", 0.1]
-    min_time = config_param_object["MinTime", "Time offset from beginning of track file to start searching", 0.0]
-    max_time = config_param_object["MaxTime", "Max time included in search", 100.0]
+    window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
+    skip_time_delta = config_param_object["SkipTimeDelta", "Time delta between start of current and next search window", 100]
+    min_time = config_param_object["MinTime", "Time offset from beginning of track file to start searching", 0]
+    max_time = config_param_object["MaxTime", "Max time included in search", 100000]
     only_on_one_lane = config_param_object["OnlyOnOneLane", "If True only scenarios are defined where agents are on a single lane", True]
     minimum_numbers_per_lane = config_param_object["MinimumNumbersPerLane", "List where each element specifies how man vehicles must be at minimum at this lane,\
                                   lane position equals list index", [1, 0]]
@@ -190,7 +190,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     InteractionDataWindowStatesGeometries.window_start = window_start
     InteractionDataWindowStatesGeometries.window_end = window_end
     return agent_states, agent_geometries, {"track_ids": scenario_track_ids, "tracks" : tracks, \
-             "agent_ids" : scenario_track_ids, "start_time" : window_start*1000, "end_time" : window_end*1000, \
+             "agent_ids" : scenario_track_ids, "start_time" : window_start, "end_time" : window_end, \
                "agent_lane_positions" : lane_positions}, config_param_object
 
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
@@ -234,13 +234,13 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
   def get_init_state(self, track_dict, track_id, start_time, end_time):
     track = track_dict[track_id]
-    return init_state_from_track(track, start_time * 1000)
+    return init_state_from_track(track, start_time)
 
   def find_track_ids(self, track_dict, start_time, end_time):
     list_ids = []
     for id_current in track_dict.keys():
-        if track_dict[id_current].time_stamp_ms_last / 1000.0 >= end_time and \
-          track_dict[id_current].time_stamp_ms_first / 1000.0 <= start_time:
+        if track_dict[id_current].time_stamp_ms_last >= end_time and \
+          track_dict[id_current].time_stamp_ms_first <= start_time:
             list_ids.append(id_current)
     return list_ids
 
