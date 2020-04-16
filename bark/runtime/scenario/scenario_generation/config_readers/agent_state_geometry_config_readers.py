@@ -183,8 +183,8 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
       shape = shape_from_track(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
-      lane_positions = self.find_lane_positions(numpy_state, road_corridor)
-      lane_positions.append(lane_positions)
+      lane_positions_single = self.find_lane_positions(numpy_state, road_corridor)
+      lane_positions.append(lane_positions_single)
 
     assert(len(agent_states) == len(agent_geometries))
     InteractionDataWindowStatesGeometries.window_start = window_start
@@ -234,7 +234,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
   def get_init_state(self, track_dict, track_id, start_time, end_time):
     track = track_dict[track_id]
-    return init_state_from_track(track, start_time)
+    return init_state_from_track(track, start_time * 1000)
 
   def find_track_ids(self, track_dict, start_time, end_time):
     list_ids = []
