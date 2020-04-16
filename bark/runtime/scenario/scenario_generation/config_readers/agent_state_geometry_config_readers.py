@@ -222,6 +222,8 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
           continue
         if len(lane_positions) == 0:
           continue
+        if not Within(shape, road_corridor.polygon):
+          continue
         numbers_per_lane[lane_positions[0]].append(track_id)
 
       valid_track_ids = []
