@@ -172,13 +172,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     if self.current_scenario_idx == 0:
       window_start = min_time
       window_end = min_time + window_length
-      track_dict = {}
-      if isinstance(track_file_names, list):
-        track_files_found = track_file_names
-      else:
-        track_files_found = glob.glob(track_file_names)
-      for filename in track_files_found:
-        track_dict.update(dataset_reader.read_tracks(filename))
+      track_dict = self.load_tracks(track_file_names)
     # offset between scenarios
     window_start += skip_time_scenarios
     window_end += skip_time_scenarios
@@ -206,6 +200,23 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     return agent_states, agent_geometries, {"track_ids": scenario_track_ids, "tracks" : tracks, \
              "agent_ids" : scenario_track_ids, "start_time" : window_start, "end_time" : window_end, \
                "agent_lane_positions" : lane_positions}, config_param_object
+
+  def load_tracks(self, track_filenames):
+    track_dict = {}
+    if isinstance(track_filenames, list):
+      track_files_found = track_filenames
+    else:
+      track_files_found = glob.glob(track_filenames)
+    for filename in track_files_found:
+      new_data = dataset_reader.read_tracks(filename)
+
+      # append some offset 
+      num_existing_tracks = len(track_dict)
+      new_data_changed_tracks = {}
+      for track_id, track in new_data.items():
+        new_data_changed_tracks[track_id + num_existing_tracks] = track
+      track_dict.update(new_data_changed_tracks)
+    return track_dict
 
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
                                       window_length, skip_time_search, time_offset, max_time, road_corridor, wheel_base):
