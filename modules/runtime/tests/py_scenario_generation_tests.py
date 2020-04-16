@@ -76,7 +76,7 @@ class ScenarioGenerationTests(unittest.TestCase):
       "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
       "ConfigExecutionModels": {"Type": "FixedExecutionType"},
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes", "EnforceControlledGoal": False},
       "ConfigControlledAgents": {"Type": "PositioningSingleAgent", "LanePosition" : 0},
       "AgentParams" : {}
     }
