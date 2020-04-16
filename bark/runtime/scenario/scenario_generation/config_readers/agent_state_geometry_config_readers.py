@@ -162,6 +162,11 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     lane_positions = []
     tracks = []
 
+    # reset when a new scenario generation starts
+    if self.current_scenario_idx == 0:
+      InteractionDataWindowStatesGeometries.window_start = None;
+      InteractionDataWindowStatesGeometries.window_end = None;
+
     window_start = InteractionDataWindowStatesGeometries.window_start
     window_end = InteractionDataWindowStatesGeometries.window_end
 
@@ -191,7 +196,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
   def find_track_ids_moving_window(self, window_start, window_end, track_dict, only_on_one_lane, minimum_numbers_per_lane, \
                                       window_length, skip_time_delta, time_offset, max_time, road_corridor):
     def move_window(window_start, window_end):
-      if window_end is None or window_start is None :
+      if window_end is None or window_start is None:
         window_start = time_offset
         window_end = window_start + window_length
       else:

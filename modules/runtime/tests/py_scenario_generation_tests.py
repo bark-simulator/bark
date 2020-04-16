@@ -96,6 +96,10 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     scenario = scenario_loader.get_scenario(idx=0)
 
+    # test if window is reset
+    scenario_generation2 = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    self.assertEqual(len(scenario_generation2._scenario_list), 2)
+
     params.save("default_params_interaction_dataset.json")
 
   def test_configurable_scenario_generation_behavior_space_sampling(self):
