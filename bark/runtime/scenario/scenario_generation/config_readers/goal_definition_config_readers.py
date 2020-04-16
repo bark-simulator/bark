@@ -11,7 +11,7 @@ from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark.core.geometry import *
-
+import logging
 
 # helper class to support various types of goals easily generated for the 
 # goal config readers
@@ -65,6 +65,7 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
   def create_from_config(self, config_param_object, road_corridor, agent_states, controlled_agent_ids, **kwargs):
     self._controlled_agents_goal_type = config_param_object["GoalTypeControlled", "Specifies type of goals \
                           for controlled agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
+    self._enforce_controlled_goal = config_param_object["EnforceControlledGoal", "If true exception is raised if goal not available", True]
     
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
@@ -76,8 +77,17 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
       if isinstance(lane_position, list):
         lane_position = lane_position[0]
       if controlled_agent_ids[idx]:
-        goal_definition = GoalGenerator.get_goal_definition(
-          config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
+        if self._enforce_controlled_goal:
+          goal_definition = GoalGenerator.get_goal_definition(
+            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
+        else:
+          try:
+            goal_definition = GoalGenerator.get_goal_definition(
+            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
+          except:
+            # goal must always be available
+            goal_definition = GoalGenerator.get_goal_definition(
+            config_param_object, "EndOfLane", road_corridor, lane_position)
       else:
           goal_definition = GoalGenerator.get_goal_definition(
           config_param_object, self._other_agents_goal_type, road_corridor, lane_position)
