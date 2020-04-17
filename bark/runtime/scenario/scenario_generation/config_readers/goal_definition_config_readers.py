@@ -17,8 +17,14 @@ import logging
 # goal config readers
 class GoalGenerator:
   @staticmethod
-  def get_goal_definition(config_param_object, goal_definition, road_corridor, lane_position):
-    return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+  def get_goal_definition(config_param_object, goal_definition, road_corridor, lane_position, enforce_goal):
+    if enforce_goal:
+      return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+    else:
+      try:
+        return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+      except:
+        return eval("GoalGenerator.EndOfLane(config_param_object, road_corridor, lane_position)")
 
   @staticmethod
   def EndOfLane(config_param_object, road_corridor, lane_position):
@@ -69,6 +75,7 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
     
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
+    self._enforce_others_goal = config_param_object["EnforceOthersGoal", "If true exception is raised if goal not available", True]
 
     goal_definitions = []
     agent_lane_positions = kwargs.pop("agent_lane_positions")
@@ -77,22 +84,12 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
       if isinstance(lane_position, list):
         lane_position = lane_position[0]
       if controlled_agent_ids[idx]:
-        if self._enforce_controlled_goal:
           goal_definition = GoalGenerator.get_goal_definition(
-            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
-        else:
-          try:
-            goal_definition = GoalGenerator.get_goal_definition(
-            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
-          except:
-            # goal must always be available
-            goal_definition = GoalGenerator.get_goal_definition(
-            config_param_object, "EndOfLane", road_corridor, lane_position)
+            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position, self._enforce_controlled_goal)
       else:
           goal_definition = GoalGenerator.get_goal_definition(
-          config_param_object, self._other_agents_goal_type, road_corridor, lane_position)
+          config_param_object, self._other_agents_goal_type, road_corridor, lane_position, self._enforce_others_goal)
       goal_definitions.append(goal_definition)
-    
     return goal_definitions, {}, config_param_object
 
 
