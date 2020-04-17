@@ -22,6 +22,7 @@ BehaviorMPMacroActions::AddMotionPrimitive(const primitives::PrimitivePtr& primi
 
 Trajectory BehaviorMPMacroActions::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
   // TODO: move this to Predicate
   const float dt = integration_time_delta_;
   const int num_trajectory_points =
