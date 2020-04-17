@@ -45,7 +45,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       return false;
     }
 
-    for (const auto& agent : world.GetAgents()) {
+    for (const auto& agent : world.GetValidAgents()) {
       Polygon poly_agent =
           agent.second->GetPolygonFromState(agent.second->GetCurrentState());
       auto poly_road = agent.second->GetRoadCorridor()->GetPolygon();

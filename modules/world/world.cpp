@@ -31,6 +31,20 @@ World::World(const std::shared_ptr<World>& world)
       remove_agents_(world->GetRemoveAgents()),
       rtree_agents_(world->rtree_agents_) {}
 
+AgentMap World::GetValidAgents() const {
+  AgentMap agents_valid(agents_);
+  AgentMap::iterator it;
+  for (it = agents_valid.begin(); it != agents_valid.end();) {
+    if ((*it).second->GetBehaviorStatus() !=
+        models::behavior::BehaviorStatus::VALID) {
+      agents_valid.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+  return agents_valid;
+}
+
 void World::AddAgent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
 }
@@ -62,7 +76,7 @@ void World::DoExecution(const float& delta_time) {
   // Execute motion
   for (auto agent : agents_) {
     if (agent.second->GetBehaviorStatus() ==
-        models::behavior::BehaviorStatus::READY) {
+        models::behavior::BehaviorStatus::VALID) {
       agent.second->Execute(world_time_);
     }
   }
@@ -153,7 +167,7 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
 
   AgentMap nearest_agents;
   for (auto& result_pair : results_n) {
-    nearest_agents[result_pair.second] = GetAgents()[result_pair.second];
+    nearest_agents[result_pair.second] = GetAgent(result_pair.second);
   }
   return nearest_agents;
 }
@@ -170,7 +184,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
-    auto agent = GetAgents()[result_pair.second];
+    auto agent = GetAgent(result_pair.second);
     if (modules::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon)) {
       intersecting_agents[result_pair.second] = agent;
@@ -185,7 +199,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
   using modules::geometry::Polygon;
 
   FrontRearAgents fr_agents;
-  Point2d ego_position = World::GetAgents()[agent_id]->GetCurrentPosition();
+  Point2d ego_position = World::GetAgent(agent_id)->GetCurrentPosition();
 
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
   const Line& center_line = lane_corridor->GetCenterLine();

@@ -36,7 +36,7 @@ typedef std::vector<StateActionPair> StateActionHistory;
 
 enum BehaviorStatus : unsigned int {
   NOT_STARTED_YET = 0,
-  READY = 1,
+  VALID = 1,
   EXPIRED = 2
 };
 
@@ -61,11 +61,6 @@ class BehaviorModel : public modules::commons::BaseType {
     last_trajectory_ = trajectory;
   }
   bool GetActiveModel() const { return active_model_; }
-
-  void UpdateBehaviorStatus(float delta_time,
-                            const world::ObservedWorld& observed_world) {
-    SetBehaviorStatus(BehaviorStatus::READY);
-  }
 
   BehaviorStatus GetBehaviorStatus() const { return behavior_status_; }
   void SetBehaviorStatus(const BehaviorStatus status) {behavior_status_ = status; }
