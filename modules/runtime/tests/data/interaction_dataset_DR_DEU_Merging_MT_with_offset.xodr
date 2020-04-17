@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<OpenDRIVE>
-    <header revMajor="1" revMinor="4" name="" version="1" date="2019-11-21T21:45:24" north="-7.6004117845663274e+1" south="-1.2522845493868498e+2" east="-8.7330002849013425e+1" west="-2.5239985854951536e+2">
-        <geoReference><![CDATA[+proj=tmerc +lat_0=0.01 +lon_0=0.01 +k=1 +x_0=0 +y_0=0 +datum=WGS84 +units=m +geoidgrids=egm96_15.gtx +vunits=m +no_defs ]]></geoReference>
-    </header>
-</OpenDRIVE>
