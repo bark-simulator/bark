@@ -16,6 +16,7 @@ using modules::models::dynamic::StateDefinition;
 
 Trajectory BehaviorMPContinuousActions::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
   const float dt = integration_time_delta_;
   const int num_trajectory_points =
       static_cast<int>(std::ceil(delta_time / dt)) + 1;

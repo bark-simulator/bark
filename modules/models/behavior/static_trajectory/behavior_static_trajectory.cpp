@@ -29,10 +29,11 @@ BehaviorStaticTrajectory::BehaviorStaticTrajectory(
 
 Trajectory BehaviorStaticTrajectory::Plan(
     float delta_time, const modules::world::ObservedWorld &observed_world) {
-  const double start_time = observed_world.GetWorldTime();
-  const double end_time = start_time + delta_time;
 
   UpdateBehaviorStatus(delta_time, observed_world);
+
+  const double start_time = observed_world.GetWorldTime();
+  const double end_time = start_time + delta_time;
 
   StateRowVector interp_start;
   StateRowVector interp_end;
@@ -125,7 +126,7 @@ void BehaviorStaticTrajectory::UpdateBehaviorStatus(float delta_time, const modu
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
   }
   else {
-    SetBehaviorStatus(BehaviorStatus::READY);
+    SetBehaviorStatus(BehaviorStatus::VALID);
   }
 }
 

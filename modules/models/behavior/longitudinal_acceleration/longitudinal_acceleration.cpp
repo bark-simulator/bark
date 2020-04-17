@@ -15,6 +15,7 @@ namespace models {
 dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   using namespace dynamic;
+  SetBehaviorStatus(BehaviorStatus::VALID);
 
   //! TODO(@fortiss): parameters
   const float min_velocity = GetMinVelocity();

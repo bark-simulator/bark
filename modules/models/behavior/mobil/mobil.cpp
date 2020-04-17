@@ -33,6 +33,8 @@ using world::objects::AgentPtr;
 
 Trajectory BehaviorMobil::Plan(float delta_time,
                                const ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
   const DynamicModelPtr dynamic_model =
       observed_world.GetEgoAgent()->GetDynamicModel();
   auto single_track =
@@ -183,9 +185,9 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
     const double dist_c_before =
         CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_current.first,
                                   leader_current.second + frenet_ego);
-    acc_c_before =
-        idm_->CalcRawIDMAcc(dist_c_before, vel_ego,
-                      leader_current.first->GetCurrentState()(VEL_POSITION));
+    acc_c_before = idm_->CalcRawIDMAcc(
+        dist_c_before, vel_ego,
+        leader_current.first->GetCurrentState()(VEL_POSITION));
 
   } else {
     // acc_c_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
@@ -215,9 +217,9 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_o_after = CalcNetDistanceFromFrenet(
           follower_current.first, follower_current.second + frenet_ego,
           leader_current.first, leader_current.second + frenet_ego);
-      acc_o_after =
-          idm_->CalcRawIDMAcc(dist_o_after, vel_follower_current,
-                     leader_current.first->GetCurrentState()(VEL_POSITION));
+      acc_o_after = idm_->CalcRawIDMAcc(
+          dist_o_after, vel_follower_current,
+          leader_current.first->GetCurrentState()(VEL_POSITION));
     } else {
       // acc_o_after = GetMaxAcceleration() *
       // CalcFreeRoadTerm(follower_current.first->GetCurrentState()(VEL_POSITION));
@@ -255,9 +257,9 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_c_after =
           CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_right.first,
                                     leader_right.second + frenet_ego);
-      acc_c_after =
-          idm_->CalcRawIDMAcc(dist_c_after, vel_ego,
-                        leader_right.first->GetCurrentState()(VEL_POSITION));
+      acc_c_after = idm_->CalcRawIDMAcc(
+          dist_c_after, vel_ego,
+          leader_right.first->GetCurrentState()(VEL_POSITION));
 
     } else {
       // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
@@ -292,9 +294,9 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         const double dist_n_before = CalcNetDistanceFromFrenet(
             follower_right.first, follower_right.second + frenet_ego,
             leader_right.first, leader_right.second + frenet_ego);
-        acc_n_before =
-            idm_->CalcRawIDMAcc(dist_n_before, vel_follower_right,
-                          leader_right.first->GetCurrentState()(VEL_POSITION));
+        acc_n_before = idm_->CalcRawIDMAcc(
+            dist_n_before, vel_follower_right,
+            leader_right.first->GetCurrentState()(VEL_POSITION));
       } else {
         // acc_n_before = GetMaxAcceleration() *
         // CalcFreeRoadTerm(vel_follower_right);
@@ -310,7 +312,8 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_n_after = CalcNetDistanceFromFrenet(
           follower_right.first, follower_right.second + frenet_ego, ego_agent,
           frenet_ego);
-      acc_n_after = idm_->CalcRawIDMAcc(dist_n_after, vel_follower_right, vel_ego);
+      acc_n_after =
+          idm_->CalcRawIDMAcc(dist_n_after, vel_follower_right, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
@@ -373,10 +376,11 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       // >>>>  [ego_agent] >>>> [leader_left] >>>>
       // ---------------------------------------------------
       const double dist_c_after =
-          CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_left.first, leader_left.second + frenet_ego);
-        acc_c_after =
-            idm_->CalcRawIDMAcc(dist_c_after, vel_ego,
-                       leader_left.first->GetCurrentState()(VEL_POSITION));
+          CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_left.first,
+                                    leader_left.second + frenet_ego);
+      acc_c_after = idm_->CalcRawIDMAcc(
+          dist_c_after, vel_ego,
+          leader_left.first->GetCurrentState()(VEL_POSITION));
     } else {
       // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
       acc_c_after = CalcLongRawAccWithoutLeader(
@@ -409,9 +413,9 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         const double dist_n_before = CalcNetDistanceFromFrenet(
             follower_left.first, follower_left.second + frenet_ego,
             leader_left.first, leader_left.second + frenet_ego);
-        acc_n_before =
-            idm_->CalcRawIDMAcc(dist_n_before, vel_follower_left,
-                          leader_left.first->GetCurrentState()(VEL_POSITION));
+        acc_n_before = idm_->CalcRawIDMAcc(
+            dist_n_before, vel_follower_left,
+            leader_left.first->GetCurrentState()(VEL_POSITION));
       } else {
         // acc_n_before = GetMaxAcceleration() *
         // CalcFreeRoadTerm(vel_follower_left);
@@ -427,7 +431,8 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           follower_left.first, follower_left.second + frenet_ego, ego_agent,
           frenet_ego);
 
-        acc_n_after = idm_->CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
+      acc_n_after =
+          idm_->CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
@@ -478,7 +483,8 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       VLOG(2) << " To left would be unsafe: " << acc_n_after;
     }
   }
-  return std::make_pair(LaneChangeDecision::KeepLane, observed_world.GetLaneCorridor());
+  return std::make_pair(LaneChangeDecision::KeepLane,
+                        observed_world.GetLaneCorridor());
 }
 }  // namespace behavior
 }  // namespace models
