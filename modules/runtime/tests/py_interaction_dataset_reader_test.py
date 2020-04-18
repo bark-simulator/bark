@@ -8,7 +8,7 @@ import unittest
 from modules.runtime.commons.parameters import ParameterServer
 
 class InteractionDatasetReaderTest(unittest.TestCase):
-  @unittest.skip
+  #@unittest.skip
   def test_agent_from_trackfile(self):
 
     track_ids = [1, 2, 3]
@@ -16,7 +16,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
     params = ParameterServer()
     params_id = params["Scenario"]["Generation"]["InteractionDataset"]
     params_id["MapFilename", "", "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"]
-    params_id["TrackFilename", "", "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
+    params_id["TrackFilename", "", "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
     params_id["TrackIds", "", track_ids]
     params_id["StartTs", "", 100]
     params_id["EndTs", "", None]
