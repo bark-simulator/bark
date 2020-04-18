@@ -7,8 +7,8 @@
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
     import ScenarioGeneration
-from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import agent_from_trackfile
-from modules.runtime.scenario.dataset.dataset_decomposer import DatasetDecomposer
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
 from modules.runtime.commons.parameters import ParameterServer
 # PyBind imports
 from bark.world.map import *
@@ -17,6 +17,8 @@ from bark.models.execution import *
 
 
 class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
+  # This class reads in a track file from the interaction dataset
+  # and generates a scenario for each agent as the eval agent.
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         super().__init__(params, num_scenarios, random_seed)
@@ -46,10 +48,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                track_filename=self._track_file_name)
         dict_scen_list = dataset_decomposer.decompose()
 
-        # TODO(@Klemens): limitieren durch num_scenarios?
         # for scenario_idx in range(0, num_scenarios):
         for idx_s, dict_scen in enumerate(dict_scen_list):
-            #print(dict_scen)
             if idx_s < num_scenarios:
                 scenario = self.__create_single_scenario__(dict_scen)
                 scenario_list.append(scenario)

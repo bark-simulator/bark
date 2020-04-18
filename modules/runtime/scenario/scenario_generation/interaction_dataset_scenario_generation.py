@@ -7,7 +7,7 @@
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
     import ScenarioGeneration
-from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
 from modules.runtime.commons.parameters import ParameterServer
 # PyBind imports
 from bark.world.map import *

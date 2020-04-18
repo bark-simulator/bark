@@ -8,8 +8,10 @@ config_setting(
 )
 
 py_library(
-    name = "dataset_decomposer",
-    srcs = ["dataset_decomposer.py"],
+    name = "interaction_dataset_processing",
+    srcs = ["dataset_decomposer.py",
+            "interaction_dataset_reader.py",
+            ],
     data = [
         "//python:bark.so",
         ] + 
@@ -18,6 +20,8 @@ py_library(
     deps = [
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime:runtime",
+        "//modules/runtime/commons:model_json_conversion",
+        "@com_github_interaction_dataset_interaction_dataset//:interaction-tools",
     ],
     visibility = ["//visibility:public"],
 )

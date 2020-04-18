@@ -8,7 +8,7 @@ from bark.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.models.dynamic import StateDefinition
 from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.geometry import Point2d, Polygon2d, Norm0To2PI
-from modules.runtime.scenario.scenario_generation.model_json_conversion import ModelJsonConversion
+from modules.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils

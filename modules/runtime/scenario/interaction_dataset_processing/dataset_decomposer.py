@@ -7,7 +7,7 @@ import os
 import shutil
 
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
