@@ -30,6 +30,7 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
@@ -80,7 +81,7 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
           ],
 )
 
@@ -95,7 +96,7 @@ py_test(
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
-          "//modules/runtime/scenario/dataset:dataset_decomposer",
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
           "//modules/runtime/scenario/scenario_generation:scenario_generation",
           ],
 )

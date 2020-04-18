@@ -5,7 +5,7 @@
 
 import unittest
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.dataset.dataset_decomposer import DatasetDecomposer
+from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
 import os
 
 class DatasetDecomposerTest(unittest.TestCase):
