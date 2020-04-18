@@ -21,6 +21,8 @@ from serialization.database_serializer import DatabaseSerializer
 
 from load.benchmark_database import BenchmarkDatabase
 
+from bark.world.evaluation import EvaluatorBehaviorExpired, EvaluatorCollisionEgoAgent, EvaluatorCollisionAgents
+
 from modules.benchmark.benchmark_runner import BenchmarkRunner
 
 from modules.runtime.commons.parameters import ParameterServer
@@ -29,7 +31,7 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
 
 sim_step_time = 0.1
-num_scenarios = 1
+num_scenarios = 10
 params = ParameterServer()
 
 dbs = DatabaseSerializer(test_scenarios=1, test_world_steps=5, num_serialize_scenarios=num_scenarios)
@@ -41,9 +43,8 @@ db = BenchmarkDatabase(database_root=local_release_filename)
 
 # Run Benchmark
 behaviors_tested = {"default" : None}
-evaluators = {"collision": "EvaluatorCollisionAgents", "max_steps": "EvaluatorStepCount"}
-# terminal_when = {"collision": lambda x: x,"max_steps": lambda x : x>100}
-terminal_when = {"max_steps": lambda x : x>100}
+evaluators = {"expired" : "EvaluatorBehaviorExpired", "collision": "EvaluatorCollisionAgents"}
+terminal_when = {"expired" : lambda x: x, "collision" : lambda x: x}
 
 benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                    evaluators=evaluators,
@@ -66,6 +67,8 @@ gs = gridspec.GridSpec(1, 1, left=0.0, right=1, bottom=0, top=0.9)
 axis = plt.subplot(gs[0])
 params2 = ParameterServer()
 params2["Visualization"]["Agents"]["DrawAgentId"] = True
+params2["Visualization"]["Agents"]["DrawEvalGoals"] = False
+
 viewer = MPViewer(params=params2, use_world_bounds=True, axis=axis)
 video_exporter = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
