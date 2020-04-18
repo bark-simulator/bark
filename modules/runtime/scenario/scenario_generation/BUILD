@@ -17,7 +17,7 @@ py_library(
         "//modules/runtime/scenario:scenario",
         "@com_github_interaction_dataset_interaction_dataset//:interaction-tools",
         "//modules/runtime/scenario/scenario_generation/config_readers:config_readers",
-          "//modules/runtime/scenario/dataset_decomposer:dataset_decomposer",
+        "//modules/runtime/scenario/dataset:dataset_decomposer",
     ],
     visibility = ["//visibility:public"],
 )

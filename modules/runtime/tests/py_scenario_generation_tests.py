@@ -102,11 +102,11 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
-        map_filename = "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr"
-        track_filename = "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv"
+        map_filename = "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"
+        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
 
