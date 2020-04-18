@@ -12,6 +12,19 @@ py_test(
           "//modules/runtime:runtime",],
 )
 
+py_binary(
+  name = "analyze_map",
+  srcs = ["analyze_map.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",],
+)
+
 py_test(
   name = "planner_uct_benchmark",
   srcs = ["planner_uct_benchmark.py"],
@@ -152,24 +165,3 @@ py_binary(
     ],
 )
 
-py_binary(
-    name = "dataset_analysis",
-    srcs = ["dataset_analysis.py"],
-    data = [
-        ":params",
-        "//python:bark.so",
-        "//database",
-    ],
-    imports = ["../python/"],
-    deps = [
-        "//modules/runtime/commons:parameters",
-        "//modules/runtime/scenario/scenario_generation",
-        "//modules/runtime/viewer:matplotlib_viewer",
-        "//modules/runtime/viewer:video_renderer",
-        "//modules/runtime:runtime",
-        "//modules/benchmark:benchmark_runner",
-        "//modules/benchmark:benchmark_analyzer",
-        "@benchmark_database//serialization:database_serializer",
-        "@benchmark_database//load:benchmark_database",
-        ],
-)
