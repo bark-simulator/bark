@@ -6,8 +6,7 @@
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
   import ScenarioGeneration
-from modules.runtime.scenario.scenario_generation.model_json_conversion \
-  import ModelJsonConversion
+from modules.runtime.commons.model_json_conversion import ModelJsonConversion
 from bark.world.agent import *
 from bark.models.behavior import *
 from bark.world import *

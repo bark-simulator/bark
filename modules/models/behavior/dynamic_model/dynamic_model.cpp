@@ -39,6 +39,7 @@ DynamicBehaviorModel::DynamicBehaviorModel(DynamicBehaviorModel* other_behavior)
 dynamic::Trajectory DynamicBehaviorModel::Plan(
     float delta_time,
     const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
 
   dynamic::State ego_vehicle_state =
     observed_world.GetEgoAgent()->GetCurrentState();

@@ -131,7 +131,7 @@ py_binary(
           "@bark_ml//tests/data:bark_data",
           '//modules/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
-          "@benchmark_database//database:database",
+          "@benchmark_database//data/database1:database1",
           "@bark_ml//python:bark_ml.so",
           ':params',
           ':scenarios'],
@@ -147,11 +147,6 @@ py_binary(
           "@bark_ml//configurations:bark_agent"],
 )
 
-config_setting(
-    name = "_interaction_dataset_present",
-    define_values = {"interaction_dataset_present": "true"},
-)
-
 py_binary(
     name = "interaction_dataset_runner",
     srcs = ["interaction_dataset_runner.py"],
@@ -159,13 +154,15 @@ py_binary(
         ":params",
         "//python:bark.so",
     ] + 
-    select({":_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
+    select({"//modules/runtime/scenario/interaction_dataset_processing:_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
     deps = [
         "//modules/runtime/commons:parameters",
-        "//modules/runtime/scenario/scenario_generation",
+        "//modules/runtime/scenario/scenario_generation:scenario_generation",
+        "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime/viewer:video_renderer",
         "//modules/runtime:runtime",
     ],
 )
+

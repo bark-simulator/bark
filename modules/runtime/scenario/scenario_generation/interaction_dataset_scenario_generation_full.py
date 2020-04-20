@@ -8,6 +8,7 @@ from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
     import ScenarioGeneration
 from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
 from modules.runtime.commons.parameters import ParameterServer
 # PyBind imports
 from bark.world.map import *
@@ -15,7 +16,9 @@ from bark.models.dynamic import *
 from bark.models.execution import *
 
 
-class InteractionDatasetScenarioGeneration(ScenarioGeneration):
+class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
+  # This class reads in a track file from the interaction dataset
+  # and generates a scenario for each agent as the eval agent.
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         super().__init__(params, num_scenarios, random_seed)
@@ -24,36 +27,37 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
     def initialize_params(self, params):
         super().initialize_params(params)
         params_temp = \
-            self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]
+            self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
-                                          "modules/runtime/tests/data/DR_DEU_Merging_MT.xodr"]
+                                          "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"]
         self._track_file_name = params_temp["TrackFilename",
                                             "Path to track file (csv)",
-                                            "modules/runtime/tests/data/vehicle_tracks_000.csv"]
-        self._track_ids = params_temp["TrackIds",
-                                      "IDs of the vehicle tracks to import.",
-                                      [1]]
-        self.start_time = params_temp["StartTs",
-            "Timestamp when to start the scenario (ms)", 0]
-        self.end_time = params_temp["EndTs",
-            "Timestamp when to end the scenario (ms)", None]
-        self.ego_track_id = params_temp["EgoTrackId", "TrackID of ego", -1]
+                                            "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
         self.behavior_models = params_temp["BehaviorModel",
-            "Overwrite static trajectory with prediction model", {}]
+                                           "Overwrite static trajectory with prediction model", {}]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
-        """ 
+        """
             see baseclass
         """
         scenario_list = []
-        for scenario_idx in range(0, num_scenarios):
-          scenario = self.create_single_scenario()     
-          scenario_list.append(scenario)
+
+        dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
+                                               track_filename=self._track_file_name)
+        dict_scen_list = dataset_decomposer.decompose()
+
+        # for scenario_idx in range(0, num_scenarios):
+        for idx_s, dict_scen in enumerate(dict_scen_list):
+            if idx_s < num_scenarios:
+                scenario = self.__create_single_scenario__(dict_scen)
+                scenario_list.append(scenario)
+            else:
+                break
         return scenario_list
 
-    def create_single_scenario(self):
+    def __create_single_scenario__(self, dict_scenario):
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.convert_to_dict())
         world = scenario.get_world_state()
@@ -64,19 +68,22 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         track_params["execution_model"] = 'ExecutionModelInterpolate'
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = world.map
-        track_params["start_offset"] = self.start_time
-        track_params["end_offset"] = self.end_time
-        for track_id in self._track_ids:
+        track_params["start_offset"] = dict_scenario["StartTs"]
+        track_params["end_offset"] = dict_scenario["EndTs"]
+
+        for track_id in dict_scenario["TrackIds"]:
             track_params["track_id"] = track_id
             if str(track_id) in self.behavior_models:
-                track_params["behavior_model"] = self.behavior_models[str(track_id)]
+                track_params["behavior_model"] = self.behavior_models[str(
+                    track_id)]
             else:
                 track_params["behavior_model"] = None
             agent = agent_from_trackfile(track_params, self._params, track_id)
             agent_list.append(agent)
-            if track_id == self.ego_track_id:
+            if track_id == dict_scenario["EgoTrackId"]:
                 eval_agent_ids = [agent.id]
-        scenario._agent_list = agent_list
 
+        scenario._agent_list = agent_list
         scenario._eval_agent_ids = eval_agent_ids
+
         return scenario
