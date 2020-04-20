@@ -27,6 +27,7 @@ class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
 
   Trajectory Plan(float delta_time,
                   const ObservedWorld& observed_world) {
+    SetBehaviorStatus(BehaviorStatus::VALID);
     return BehaviorLongitudinalAcceleration::Plan(delta_time, observed_world);
   }
 

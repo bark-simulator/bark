@@ -24,3 +24,12 @@ py_library(
     deps = [],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "model_json_conversion",
+    srcs = ["model_json_conversion.py"],
+    data = ['//python:bark.so'],
+    imports = ['../../../python'],
+    deps = [],
+    visibility = ["//visibility:public"],
+)

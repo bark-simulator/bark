@@ -66,26 +66,26 @@ class ObservedWorld : public World {
   }
 
   const std::shared_ptr<BehaviorModel> GetEgoBehaviorModel() const {
-    return World::GetAgents()[ego_agent_id_]->GetBehaviorModel();
+    return World::GetAgent(ego_agent_id_)->GetBehaviorModel();
   }
 
   void SetEgoBehaviorModel(const BehaviorModelPtr& behavior_model) const {
-    return World::GetAgents()[ego_agent_id_]->SetBehaviorModel(behavior_model);
+    return World::GetAgent(ego_agent_id_)->SetBehaviorModel(behavior_model);
   }
 
   void SetBehaviorModel(const AgentId& agent_id,
                         const BehaviorModelPtr& behavior_model) const {
-    return World::GetAgents()[agent_id]->SetBehaviorModel(behavior_model);
+    return World::GetAgent(agent_id)->SetBehaviorModel(behavior_model);
   }
 
   const MapInterfacePtr GetMap() const { return World::GetMap(); }
 
   virtual State CurrentEgoState() const {
-    return World::GetAgents()[ego_agent_id_]->GetCurrentState();
+    return World::GetAgent(ego_agent_id_)->GetCurrentState();
   }
 
   Point2d CurrentEgoPosition() const {
-    return World::GetAgents()[ego_agent_id_]->GetCurrentPosition();
+    return World::GetAgent(ego_agent_id_)->GetCurrentPosition();
   }
 
   void SetupPrediction(const PredictionSettings& settings);
