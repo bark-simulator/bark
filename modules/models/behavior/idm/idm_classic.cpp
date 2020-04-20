@@ -150,6 +150,7 @@ Trajectory BehaviorIDMClassic::Plan(
   auto lane_corr = observed_world.GetLaneCorridor();
   if (!lane_corr) {
     this->SetLastTrajectory(traj);
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return traj;
   }
 
