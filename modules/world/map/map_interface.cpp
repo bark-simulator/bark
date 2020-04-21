@@ -173,6 +173,7 @@ void MapInterface::CalculateLaneCorridors(
     lane_corridor->SetLane(
       total_s,
       current_lane);
+
     // add initial lane
     road_corridor->SetLaneCorridor(current_lane->GetId(), lane_corridor);
 
@@ -259,9 +260,12 @@ void MapInterface::GenerateRoadCorridor(
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
 
   // links can only be set once all roads have been calculated
+  int count = 0;
   for (auto& road : roads) {
     // road successor
-    RoadPtr next_road = GetNextRoad(road.first, roads, road_ids);
+    RoadPtr next_road;
+    if (count < road_ids.size() - 1)
+      next_road = roads[road_ids[++count]];
     road.second->SetNextRoad(next_road);
     for (auto& lane : road.second->GetLanes()) {
       // lane successor
