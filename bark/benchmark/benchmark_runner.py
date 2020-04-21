@@ -248,8 +248,8 @@ class BenchmarkRunner:
         results = []
         histories = {}
         for idx, bmark_conf in enumerate(self.configs_to_run ):
-            self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
-                idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
+            self.logger.info("Running config idx {} being {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
+                bmark_conf.config_idx, idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
                 bmark_conf.scenario_set_name, bmark_conf.behavior_config.behavior_name))
             result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer,
                                                                        maintain_history)
