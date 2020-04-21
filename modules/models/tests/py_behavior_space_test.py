@@ -3,6 +3,11 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
+try:
+  import debug_settings
+except:
+  pass
+
 
 import unittest
 import os
