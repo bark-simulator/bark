@@ -76,7 +76,7 @@ struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
     bool filtered_e =
         (*g)[ed].edge_type == XodrLaneEdgeType::LANE_SUCCESSOR_EDGE;
 
-    bool filtered = filtered_s && filtered_t; // && filtered_e;
+    bool filtered = filtered_s && filtered_t && filtered_e;
     return filtered;
   }
 

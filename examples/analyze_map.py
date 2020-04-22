@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "three_way_plain_old"
+map_name = "DR_DEU_Merging_MT_v01_shifted"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition
@@ -50,12 +50,12 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 color_triplet_gray = (0.7,0.7,0.7)
 
 # Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
-# for idx_r, road in open_drive_map.GetRoads().items():
-#   viewer.drawWorld(world)
-#   viewer.drawXodrRoad(road)
-#   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-#   viewer.show(block=False)
-#   viewer.clear()
+for idx_r, road in open_drive_map.GetRoads().items():
+  viewer.drawWorld(world)
+  viewer.drawXodrRoad(road)
+  viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
+  viewer.show(block=False)
+  viewer.clear()
 
 # for idx_r, road in open_drive_map.GetRoads().items():
 #   for idx_ls, lane_section in enumerate(road.lane_sections):
@@ -97,25 +97,56 @@ for lane_id in lane_ids:
   viewer.show()
   viewer.clear()
 
-# starting on the left
+
 comb_all = []
-start_point = [Point2d(-30, -2)]
-end_point_list = [Point2d(30, -2)]
+start_point = [Point2d(1003, 1007)]
+end_point_list = [Point2d(892, 1008)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
-# starting on the right
-start_point = [Point2d(30, 2)]
-end_point_list = [Point2d(-30, 2)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# starting on the left
+# comb_all = []
+# start_point = [Point2d(-30, -2)]
+# end_point_list = [Point2d(30, -2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
-# starting on the bottom
-start_point = [Point2d(2, -30)]
-end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# # starting on the right
+# start_point = [Point2d(30, 2)]
+# end_point_list = [Point2d(-30, 2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
+# # starting on the bottom
+# start_point = [Point2d(2, -30)]
+# end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
+
+# starting on the left
+# comb_all = []
+# start_point = [Point2d(153, 168)]
+# end_point_list = [Point2d(188, 168), Point2d(172, 187), Point2d(168, 153)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
+
+# # starting on the right
+# start_point = [Point2d(188, 172)]
+# end_point_list = [Point2d(153, 172), Point2d(172, 187), Point2d(168, 153)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
+
+# # starting on the bottom
+# start_point = [Point2d(172, 153)]
+# end_point_list = [Point2d(153, 172), Point2d(172, 187), Point2d(188, 168)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
+
+# # starting on the top
+# start_point = [Point2d(168, 187)]
+# end_point_list = [Point2d(153, 172), Point2d(168, 153), Point2d(188, 168)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
 print("comb_all", comb_all)
 
