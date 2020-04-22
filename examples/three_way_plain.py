@@ -43,9 +43,9 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -30, -2, 0, 50/3.6])
+init_state = np.array([0, 2, -20, 3.14/2, 50/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.Translate(Point2d(-2, -30))
+goal_polygon = goal_polygon.Translate(Point2d(-30, 2))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -60,7 +60,7 @@ world.AddAgent(agent1)
 agent_2d_shape2 = CarLimousine()
 init_state2 = np.array([0, 30, 2, -3.14, 50/3.6])
 agent_params2 = param_server.addChild("agent2")
-goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(-30, 2))
 agent2 = Agent(init_state2,
                behavior_model2,
@@ -89,7 +89,8 @@ for _ in range(0, 20):
   viewer.clear()
   viewer.drawWorld(world)
   viewer.drawRoadCorridor(agent1.road_corridor, color="green")
-  viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
+
+  # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 
