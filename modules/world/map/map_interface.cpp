@@ -210,8 +210,9 @@ void MapInterface::CalculateLaneCorridors(
 }
 
 void MapInterface::CalculateLaneCorridors(
-  RoadCorridorPtr& road_corridor) {
-  RoadPtr first_road = road_corridor->GetRoads()[0];
+  RoadCorridorPtr& road_corridor,
+  const XodrRoadId& road_id) {
+  RoadPtr first_road = road_corridor->GetRoads()[road_id];
   for (auto& road : road_corridor->GetRoads()) {
     CalculateLaneCorridors(road_corridor, road.second);
   }
@@ -324,7 +325,7 @@ void MapInterface::GenerateRoadCorridor(
     return;
   RoadCorridorPtr road_corridor = std::make_shared<RoadCorridor>();
   road_corridor->SetRoads(roads);
-  CalculateLaneCorridors(road_corridor);
+  CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
   road_corridors_[road_corridor_hash] = road_corridor;
 }

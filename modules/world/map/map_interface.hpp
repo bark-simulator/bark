@@ -84,7 +84,7 @@ class MapInterface {
   void CalculateLaneCorridors(
     RoadCorridorPtr& road_corridor,
     const RoadPtr& road);
-  void CalculateLaneCorridors(RoadCorridorPtr& road_corridor);
+  void CalculateLaneCorridors(RoadCorridorPtr& road_corridor, const XodrRoadId&);
   LanePtr GenerateRoadCorridorLane(const XodrLanePtr& lane);
   RoadPtr GenerateRoadCorridorRoad(const XodrRoadId& road_id);
   RoadPtr GetNextRoad(const XodrRoadId& current_road_id,

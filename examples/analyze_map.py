@@ -82,20 +82,20 @@ roadgraph = map_interface.GetRoadgraph()
 roadgraph.PrintGraph(output_dir + "/" + map_name)
 lane_ids = roadgraph.GetAllLaneids()
 
-# for lane_id in lane_ids:
-#   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
-#   # plot plan_view
-#   road_id = roadgraph.GetRoadForLaneId(lane_id)
-#   road = map_interface.GetOpenDriveMap().GetRoad(road_id)
-#   plan_view_reference = road.plan_view.GetReferenceLine()
-#   # plot polygon with center line
-#   viewer.drawWorld(world)
-#   color = list(np.random.choice(range(256), size=3)/256)
-#   viewer.drawPolygon2d(lane_polygon, color, 1.0)
-#   viewer.drawLine2d(plan_view_reference, color="red")
-#   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-#   viewer.show()
-#   viewer.clear()
+for lane_id in lane_ids:
+  lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
+  # plot plan_view
+  road_id = roadgraph.GetRoadForLaneId(lane_id)
+  road = map_interface.GetOpenDriveMap().GetRoad(road_id)
+  plan_view_reference = road.plan_view.GetReferenceLine()
+  # plot polygon with center line
+  viewer.drawWorld(world)
+  color = list(np.random.choice(range(256), size=3)/256)
+  viewer.drawPolygon2d(lane_polygon, color, 1.0)
+  viewer.drawLine2d(plan_view_reference, color="red")
+  viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
+  viewer.show()
+  viewer.clear()
 
 # starting on the left
 comb_all = []
@@ -111,46 +111,19 @@ comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
 # # starting on the bottom
-start_point = [Point2d(2, -30)]
-end_point_list = [Point2d(30, -2)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# start_point = [Point2d(2, -30)]
+# end_point_list = [Point2d(30, -2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
 
 print("comb_all", comb_all)
 
-# for cnt, (start_p, end_p) in enumerate(comb_all):
-#   polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-#   start_polygon = polygon.Translate(start_p)
-#   goal_polygon = polygon.Translate(end_p)
-#   rc = map_interface.GenerateRoadCorridor(start_p, goal_polygon)
-#   if rc:
-#     roads = rc.roads
-#     road_ids = list(roads.keys())
-#     print(road_ids)
-    
-#     viewer.drawWorld(world)
-#     viewer.drawRoadCorridor(rc, "blue")
-#     viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
-#     viewer.show()
-#     viewer.clear()
-
-#     for idx, lane_corridor in enumerate(rc.lane_corridors):
-#       viewer.drawWorld(world)
-#       viewer.drawLaneCorridor(lane_corridor, "green")
-#       viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
-#       viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
-#       viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
-#       viewer.show()
-#       viewer.clear()
-    
-#     viewer.show()
-#     viewer.clear()
-
-
-def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
-  map_interface.GenerateRoadCorridor(road_ids, dr)
-  rc = map_interface.GetRoadCorridor(road_ids, dr)
+for cnt, (start_p, end_p) in enumerate(comb_all):
+  polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+  start_polygon = polygon.Translate(start_p)
+  goal_polygon = polygon.Translate(end_p)
+  rc = map_interface.GenerateRoadCorridor(start_p, goal_polygon)
   if rc:
     roads = rc.roads
     road_ids = list(roads.keys())
@@ -158,23 +131,50 @@ def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
     
     viewer.drawWorld(world)
     viewer.drawRoadCorridor(rc, "blue")
-    viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + ".png")
+    viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
     viewer.show()
     viewer.clear()
 
     for idx, lane_corridor in enumerate(rc.lane_corridors):
       viewer.drawWorld(world)
       viewer.drawLaneCorridor(lane_corridor, "green")
-      viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
+      viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
+      viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
+      viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
       viewer.show()
       viewer.clear()
     
     viewer.show()
     viewer.clear()
 
-road_ids = [1, 10, 0]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
-road_ids = [0, 11, 1]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
-road_ids = [2, 4, 0]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+
+# def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
+#   map_interface.GenerateRoadCorridor(road_ids, dr)
+#   rc = map_interface.GetRoadCorridor(road_ids, dr)
+#   if rc:
+#     roads = rc.roads
+#     road_ids = list(roads.keys())
+#     print(road_ids)
+    
+#     viewer.drawWorld(world)
+#     viewer.drawRoadCorridor(rc, "blue")
+#     viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + ".png")
+#     viewer.show()
+#     viewer.clear()
+
+#     for idx, lane_corridor in enumerate(rc.lane_corridors):
+#       viewer.drawWorld(world)
+#       viewer.drawLaneCorridor(lane_corridor, "green")
+#       viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
+#       viewer.show()
+#       viewer.clear()
+    
+#     viewer.show()
+#     viewer.clear()
+
+# road_ids = [1, 10, 0]
+# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+# road_ids = [0, 11, 1]
+# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+# road_ids = [2, 4, 0]
+# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
