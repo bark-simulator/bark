@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'BARK'
-copyright = '2019, fortiss GmbH'
+copyright = '2020, fortiss GmbH'
 author = 'fortiss GmbH'
 
 # The short X.Y version
