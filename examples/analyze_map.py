@@ -112,7 +112,7 @@ comb_all = comb_all + comb
 
 # starting on the bottom
 start_point = [Point2d(2, -30)]
-end_point_list = [Point2d(30, -2)]
+end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 

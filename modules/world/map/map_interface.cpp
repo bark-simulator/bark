@@ -165,7 +165,7 @@ void MapInterface::CalculateLaneCorridors(
     LanePtr current_lane = lane.second;
     float total_s = current_lane->GetCenterLine().Length();
     lane_corridor->SetCenterLine(current_lane->GetCenterLine());
-    lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
+    // lane_corridor->SetMergedPolygon(current_lane->GetPolygon());
     lane_corridor->SetLeftBoundary(
       current_lane->GetLeftBoundary().line_);
     lane_corridor->SetRightBoundary(
@@ -176,7 +176,8 @@ void MapInterface::CalculateLaneCorridors(
 
     // add initial lane
     road_corridor->SetLaneCorridor(current_lane->GetId(), lane_corridor);
-
+    // std::cout << "Current Poly" << std::endl;
+    // std::cout << current_lane->GetPolygon().ToArray() << std::endl;
     LanePtr next_lane = current_lane;
     for (;;) {
       next_lane = next_lane->GetNextLane();
@@ -188,8 +189,10 @@ void MapInterface::CalculateLaneCorridors(
         next_lane->GetLeftBoundary().line_);
       lane_corridor->GetRightBoundary().ConcatenateLinestring(
         next_lane->GetRightBoundary().line_);
-      lane_corridor->GetMergedPolygon().ConcatenatePolygons(
-        next_lane->GetPolygon());
+      // std::cout << "New Poly" << std::endl;
+      // std::cout << next_lane->GetPolygon().ToArray() << std::endl;
+      // lane_corridor->GetMergedPolygon().ConcatenatePolygons(
+      //   next_lane->GetPolygon());
 
       // TODO(@hart): use parameter
       geometry::Line simplified_line;
@@ -206,6 +209,20 @@ void MapInterface::CalculateLaneCorridors(
       // all following lanes should point to the same LaneCorridor
       road_corridor->SetLaneCorridor(next_lane->GetId(), lane_corridor);
     }
+
+    // merged polygons
+    PolygonPtr polygon = std::make_shared<modules::geometry::Polygon>();
+    for (auto const &p : lane_corridor->GetLeftBoundary()) {
+      polygon->AddPoint(p);
+    }
+    auto reversed_outer = lane_corridor->GetRightBoundary();
+    reversed_outer.Reverse();
+    for (auto const &p : reversed_outer) {
+      polygon->AddPoint(p);
+    }
+    // Polygons need to be closed!
+    polygon->AddPoint(*(lane_corridor->GetLeftBoundary().begin()));
+    lane_corridor->SetMergedPolygon(*polygon);
   }
 }
 
