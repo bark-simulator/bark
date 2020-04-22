@@ -15,7 +15,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
     params = ParameterServer()
     params_id = params["Scenario"]["Generation"]["InteractionDataset"]
-    params_id["MapFilename", "", "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"]
+    params_id["MapFilename", "", "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
     params_id["TrackFilename", "", "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
     params_id["TrackIds", "", track_ids]
     params_id["StartTs", "", 100]

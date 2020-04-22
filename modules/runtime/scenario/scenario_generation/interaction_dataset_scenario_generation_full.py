@@ -30,7 +30,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
-                                          "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"]
+                                          "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
         self._track_file_name = params_temp["TrackFilename",
                                             "Path to track file (csv)",
                                             "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
