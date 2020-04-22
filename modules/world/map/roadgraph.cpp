@@ -89,7 +89,7 @@ std::vector<XodrRoadId> Roadgraph::FindRoadPath(const XodrRoadId &startid,
 
 std::vector<XodrLaneId> Roadgraph::FindDrivableLanePath(
     const XodrLaneId &startid, const XodrLaneId &goalid) {
-  return FindPath<TypeDrivingAndEdgeTypeLaneSuccessor>(startid, goalid);
+  return FindPath<TypeDriving>(startid, goalid);
 }
 
 std::vector<std::vector<XodrLaneId>> Roadgraph::FindAllPathsInSubgraph(
