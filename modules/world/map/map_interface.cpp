@@ -377,12 +377,8 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
   }
 
   const auto start_lane_id = lanes.at(0)->GetId();
-  const XodrDrivingDirection driving_direction =  lanes.at(0)->GetDrivingDirection();
-
-  // const XodrRoadId& start_road_id = roadgraph_->GetRoadForLaneId(start_lane_id);
-  // const XodrRoadId& goal_road_id = roadgraph_->GetRoadForLaneId(goal_lane_id);
-  // std::vector<XodrRoadId> road_ids = roadgraph_->FindRoadPath(start_road_id,
-  //                                               goal_road_id);
+  const XodrDrivingDirection driving_direction =
+    lanes.at(0)->GetDrivingDirection();
 
   std::vector<XodrRoadId> road_ids;
   std::vector<XodrLaneId> lane_ids = roadgraph_->FindDrivableLanePath(
@@ -391,7 +387,8 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
     std::pair<vertex_t, bool> v_des = roadgraph_->GetVertexByLaneId(lid);
     XodrLaneVertex lv = roadgraph_->GetVertex(v_des.first);
     road_ids.push_back(lv.road_id);
-    std::cout << "lane_id: " << lid << ", road_id: " << lv.road_id << std::endl;
+    // std::cout << "lane_id: " << lid << ", road_id: ";
+    // std::cout << lv.road_id << std::endl;
   }
   GenerateRoadCorridor(road_ids, driving_direction);
   return GetRoadCorridor(road_ids, driving_direction);
