@@ -99,7 +99,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           else:
             memory_total = memory_available
           
-          ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7) # we split memory between workers (30%) and objects (70%)
+          ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, \
+             _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
