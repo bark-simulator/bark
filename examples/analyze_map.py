@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "DR_DEU_Merging_MT_v01_shifted"
+map_name = "three_way_plain"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition
@@ -54,7 +54,7 @@ for idx_r, road in open_drive_map.GetRoads().items():
   viewer.drawWorld(world)
   viewer.drawXodrRoad(road)
   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-  viewer.show(block=False)
+  viewer.show(block=True)
   viewer.clear()
 
 # for idx_r, road in open_drive_map.GetRoads().items():
