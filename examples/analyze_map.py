@@ -140,6 +140,7 @@ for cnt, (start_p, end_p) in enumerate(comb_all):
       viewer.drawLaneCorridor(lane_corridor, "green")
       viewer.drawLine2d(lane_corridor.left_boundary, color="red")
       viewer.drawLine2d(lane_corridor.right_boundary, color="green")
+      viewer.drawLine2d(lane_corridor.center_line, color="green")
       viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
       viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
       viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
