@@ -102,7 +102,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
-        map_filename = "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"
+        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
