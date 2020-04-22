@@ -11,7 +11,7 @@ import os
 class DatasetDecomposerTest(unittest.TestCase):
     def test_decompose_dataset(self):
 
-        map_filename = "modules/runtime/tests/data/interaction_dataset_DR_DEU_Merging_MT_with_offset.xodr"
+        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
         dataset_decomposer = DatasetDecomposer(
