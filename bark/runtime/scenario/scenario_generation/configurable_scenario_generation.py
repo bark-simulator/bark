@@ -105,10 +105,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     road_corridors = []
     kwargs_agent_states_geometry = []
     sink_source_default_params = []
+
+    from modules.runtime.viewer.matplotlib_viewer import MPViewer
+
     for idx, sink_source_config in enumerate(self._sinks_sources):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source_config, world.map)
       road_corridors.append(road_corridor)
-      
+  
       #1) create agent states and geometries for this source
       args = [road_corridor]
       agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
@@ -249,8 +252,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                 continue
               else:
                 raise ValueError("Something went wrong. \
-                    We have colliding agent within one source sink configuration")
-          
+                   We have colliding agent within one source sink configuration")
+
             key1 = "{}-{}".format(source_sink_idx, overlap[0])
             key2 = "{}-{}".format(overlap[0], source_sink_idx, )
             key = None
@@ -341,7 +344,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         key = key_reverse
         reversed = True
       else:
-        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(desc1, desc2))
+        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(description1, description_2))
     conflict_res_1 = self._conflict_resolutions[key][0]
     conflict_res_2 = self._conflict_resolutions[key][1]
     if reversed:
