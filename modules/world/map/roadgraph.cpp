@@ -35,7 +35,7 @@ bool Roadgraph::AddLaneSuccessor(const XodrLaneId &prev,
 }
 
 bool Roadgraph::AddRoadSuccessor(const XodrLaneId &prev,
-                                   const XodrLaneId &succ) {
+                                const XodrLaneId &succ) {
   return AddEdgeOfType(prev, succ, ROAD_SUCCESSOR_EDGE);
 }
 
@@ -472,6 +472,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
             auto succ_pv = GetPlanViewForLaneId(successor_lane->GetId());
             assert(lane_pv.second && succ_pv.second);
             AddRoadSuccessor(lane_pv.first, succ_pv.first);
+            AddRoadSuccessor(succ_pv.first, lane_pv.first);
           }
         }
 
@@ -499,6 +500,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
               auto pred_pv = GetPlanViewForLaneId(predecessor_lane->GetId());
               assert(lane_pv.second && pred_pv.second);
               AddRoadSuccessor(pred_pv.first, lane_pv.first);
+              AddRoadSuccessor(pred_pv.first, pred_pv.first);
             }
           }
         } catch (const std::exception &ex) {
@@ -563,12 +565,13 @@ void Roadgraph::GenerateFromJunctions(OpenDriveMapPtr map) {
                     lane_link_element.to_position);
             if (pre_lane && successor_lane) {
               bool success = AddLaneSuccessor(pre_lane->GetId(),
-                                                successor_lane->GetId());
+                                              successor_lane->GetId());
               // also connect road elements (through plan view)
               auto pre_plan_view = GetPlanViewForLaneId(pre_lane->GetId());
               auto succ_plan_view =
                   GetPlanViewForLaneId(successor_lane->GetId());
-               success = AddRoadSuccessor(pre_plan_view.first, succ_plan_view.first);
+              success = AddRoadSuccessor(pre_plan_view.first, succ_plan_view.first);
+              success = AddRoadSuccessor(succ_plan_view.first, pre_plan_view.first);
             }
           } catch (...) {
             LOG(INFO) << "Junction has no connections. \n";

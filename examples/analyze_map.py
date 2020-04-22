@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "three_way_plain"
+map_name = "three_way_plain_old"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition

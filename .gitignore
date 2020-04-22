@@ -162,3 +162,4 @@ examples/scenarios/benchmark_database_0.0.1.zip
 /examples/maps
 modules/runtime/tests/data/three_way_plain.xodr
 output.png
+modules/runtime/tests/data/three_way_plain_old.xodr
