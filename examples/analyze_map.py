@@ -110,11 +110,11 @@ end_point_list = [Point2d(-30, 2)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
-# # starting on the bottom
-# start_point = [Point2d(2, -30)]
-# end_point_list = [Point2d(30, -2)]
-# comb = list(itertools.product(start_point, end_point_list))
-# comb_all = comb_all + comb
+# starting on the bottom
+start_point = [Point2d(2, -30)]
+end_point_list = [Point2d(30, -2)]
+comb = list(itertools.product(start_point, end_point_list))
+comb_all = comb_all + comb
 
 
 print("comb_all", comb_all)
@@ -175,6 +175,6 @@ for cnt, (start_p, end_p) in enumerate(comb_all):
 # road_ids = [1, 10, 0]
 # DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
 # road_ids = [0, 11, 1]
-# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+# DrawRoadCorridor(road_ids, XodrDrivingDirection.backward)
 # road_ids = [2, 4, 0]
 # DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
