@@ -36,41 +36,42 @@ class ScenarioGenerationTests(unittest.TestCase):
 
         params.save("default_params.json")
 
-  def test_configurable_scenario_generation_sample_behavior_types(self):
-    sink_source_dict = [{
-      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
-      "Description": "left_lane",
-      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
-      "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
-      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
-      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"Type": "NoneControlled"},
-      "AgentParams" : {}
-    },
-    {
-      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
-      "Description": "right_lane",
-      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
-      "ConfigBehaviorModels": {"Type": "SampleBehaviorType"},
-      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
-      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
-      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
-      "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
-      "AgentParams" : {}
-    }]
-    params = ParameterServer()
-    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
-    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
-    scenario_generation.dump_scenario_list("test.scenario")
+    def test_configurable_scenario_generation_sample_behavior_types(self):
+        sink_source_dict = [{
+            "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725]],
+            "Description": "left_lane",
+            "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
+            "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType": "BehaviorIDMClassic", "ModelParams":  {"BehaviorIDMClassic::MaxVelocity": 60.0}},
+            "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+            "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+            "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+            "ConfigControlledAgents": {"Type": "NoneControlled"},
+            "AgentParams": {}
+        },
+            {
+            "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725]],
+            "Description": "right_lane",
+            "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
+            "ConfigBehaviorModels": {"Type": "SampleBehaviorType"},
+            "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+            "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+            "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+            "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+            "AgentParams": {}
+        }]
+        params = ParameterServer()
+        params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
+        scenario_generation = ConfigurableScenarioGeneration(
+            num_scenarios=2, params=params)
+        scenario_generation.dump_scenario_list("test.scenario")
 
-    params.save("default_params_behavior_type_sampling.json")
+        params.save("default_params_behavior_type_sampling.json")
 
-  def test_find_overlaps_configurable_scenario_generation(self):
-    shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
-                      Point2d(-1,1),
-                      Point2d(1,1),
-                      Point2d(1,0)])
+    def test_find_overlaps_configurable_scenario_generation(self):
+        shape = Polygon2d([0, 0, 0], [Point2d(-1, 0),
+                                      Point2d(-1, 1),
+                                      Point2d(1, 1),
+                                      Point2d(1, 0)])
 
         agent_states1 = [[0, 1, 0, 0, 0], [0, 4, 0, 0, 0],
                          [0, 8, 0, 0, 0]]  # agents along x axis
@@ -81,7 +82,8 @@ class ScenarioGenerationTests(unittest.TestCase):
         agent_geometries2 = [shape, shape, shape]
 
         # some agents two colliding with other configs
-        agent_states3 = [[0, 20, -20, 0, 0], [0, 1, 0, 0, 0], [0, 4, 20, 0, 0]]
+        agent_states3 = [[0, 20, -20, 0, 0],
+                         [0, 1, 0, 0, 0], [0, 4, 20, 0, 0]]
         agent_geometries3 = [shape, shape, shape]
 
         collected_sources_sinks_agent_states_geometries = [(agent_states1, agent_geometries1),
@@ -129,18 +131,18 @@ class ScenarioGenerationTests(unittest.TestCase):
         self.assertEqual(collisions_03[0][0][1], 2)
         self.assertEqual(collisions_03[0][1][1], 2)
 
-    def test_dataset_scenario_generation(self):
-        params = ParameterServer()
+        def test_dataset_scenario_generation(self):
+            params = ParameterServer()
 
-        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+            map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+            track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+            params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+            params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
 
-        scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
+            scenario_generation = InteractionDatasetScenarioGenerationFull(
+                params=params, num_scenarios=2)
 
 
 if __name__ == '__main__':
     unittest.main()
-

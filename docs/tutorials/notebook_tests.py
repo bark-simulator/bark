@@ -7,7 +7,7 @@ import os.path
 class NotebookTests(unittest.TestCase):
   def test_run_converted_notebook(self):
     notebook_list = glob.glob("docs/tutorials/*.ipynb")
-    exclude_notebooks_list = ["02_maps", "03_Benchmarking"]
+    exclude_notebooks_list = ["02_maps", "05_Benchmarking"]
     for full_notebook_name in notebook_list:
       notebook_name_ipynb = os.path.basename(full_notebook_name)
       notebook_name = notebook_name_ipynb.split('.')[0]
