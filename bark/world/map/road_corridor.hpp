@@ -59,6 +59,11 @@ struct RoadCorridor {
   std::vector<XodrRoadId> GetRoadIds() const {
     return road_ids_;
   }
+
+  XodrDrivingDirection GetDrivingDirection() const {
+    return driving_direction_;
+  }
+
   LaneCorridorPtr GetCurrentLaneCorridor(const Point2d& pt) const {
     for (const auto& lane_corr : unique_lane_corridors_) {
       if (Collide(pt, lane_corr->GetMergedPolygon()))
@@ -95,6 +100,11 @@ struct RoadCorridor {
       unique_lane_corridors_.push_back(corr);
     }
   }
+
+  void SetDrivingDirection(const XodrDrivingDirection& driving_direction ) {
+    driving_direction_ = driving_direction;
+  }
+
   void SetUniqueLaneCorridors(
     const std::vector<LaneCorridorPtr>& unique_lane_corridors) {
     unique_lane_corridors_ = unique_lane_corridors;
@@ -129,6 +139,7 @@ struct RoadCorridor {
   Polygon road_polygon_;
   std::vector<LaneCorridorPtr> unique_lane_corridors_;
   std::vector<XodrRoadId> road_ids_;
+  XodrDrivingDirection driving_direction_;
   std::map<LaneId, LaneCorridorPtr> lane_corridors_;
 };
 using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;

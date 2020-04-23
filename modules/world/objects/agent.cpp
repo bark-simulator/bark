@@ -67,7 +67,8 @@ Agent::Agent(const Agent& other_agent) :
   history_(other_agent.history_),
   max_history_length_(other_agent.max_history_length_),
   goal_definition_(other_agent.goal_definition_),
-  road_corridor_road_ids_(other_agent.road_corridor_road_ids_) {}
+  road_corridor_road_ids_(other_agent.road_corridor_road_ids_),
+  road_corridor_driving_direction_(other_agent.road_corridor_driving_direction_) {}
 
 
 void Agent::BehaviorPlan(const float &dt, const ObservedWorld &observed_world) {
@@ -115,10 +116,13 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
     GetCurrentPosition(),
     goal_definition_->GetShape());
     road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
   } else if(!road_corridor_road_ids_.empty()) {
     LOG(INFO) << "Road corridor from ids" << road_corridor_road_ids_;
+    map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
+                                  road_corridor_driving_direction_);
     road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
-                                XodrDrivingDirection::FORWARD);
+                                              road_corridor_driving_direction_);
   } else {
     LOG(INFO) << "Agent has map interface but no information to generate road corridor.";
     return false;
