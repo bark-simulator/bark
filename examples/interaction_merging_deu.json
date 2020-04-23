@@ -9,7 +9,7 @@
         "NumScenarios": 1,
         "NumSets": 1,
         "InteractionDatasetScenarioGeneration": {
-          "MapFilename": "database/maps/DR_DEU_Merging_MT_shifted.xodr",
+          "MapFilename": "database/maps/DR_DEU_Merging_MT_v01_shifted.xodr",
           "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
           "TrackIds": [
             63,
