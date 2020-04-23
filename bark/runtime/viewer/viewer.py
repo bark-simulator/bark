@@ -44,6 +44,8 @@ class BaseViewer(Viewer):
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth", "Linewidth of linestrings", 1.0]
 
         self.parameters = params
+        self.agent_color_map = {}
+        self.max_agents_color_map = 0
 
         self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
@@ -214,7 +216,6 @@ class BaseViewer(Viewer):
 
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
-            color = "blue"
             alpha = 1.0
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color_line = self.color_eval_agents_line
@@ -223,8 +224,15 @@ class BaseViewer(Viewer):
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                  color_line = self.getColorFromMap(float(i) / float(num_agents))
-                  color_face = self.getColorFromMap(float(i) / float(num_agents))
+                  if num_agents > self.max_agents_color_map:
+                      # reinit colormap
+                      self.max_agents_color_map = num_agents
+                      self.agent_color_map = {}
+                  if agent_id in self.agent_color_map:
+                    color_line = self.agent_color_map[agent_id]
+                    color_face = self.agent_color_map[agent_id]
+                  else:
+                    self.agent_color_map[agent_id] = self.getColorFromMap(float(i) / self.max_agents_color_map)
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
