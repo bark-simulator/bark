@@ -5,6 +5,7 @@ import os.path
 
 
 class NotebookTests(unittest.TestCase):
+  @unittest.skip
   def test_run_converted_notebook(self):
     notebook_list = glob.glob("docs/tutorials/*.ipynb")
     exclude_notebooks_list = ["02_maps", "05_Benchmarking"]
