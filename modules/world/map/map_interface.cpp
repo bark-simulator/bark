@@ -277,7 +277,7 @@ void MapInterface::GenerateRoadCorridor(
   Roads roads;
   for (auto& road_id : road_ids)
     roads[road_id] = GenerateRoadCorridorRoad(road_id);
-  
+
   // links can only be set once all roads have been calculated
   int count = 0;
   for (auto& road_id : road_ids) {
