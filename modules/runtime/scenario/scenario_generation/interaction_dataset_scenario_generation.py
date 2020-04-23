@@ -28,7 +28,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             self._params["Scenario"]["Generation"]["InteractionDataset"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
-                                          os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_shifted.xodr"]
+                                          os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr"]
         self._track_file_name = params_temp["TrackFilename",
                                             "Path to track file (csv)",
                                             os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv"]
