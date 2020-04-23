@@ -18,6 +18,7 @@ using modules::geometry::Point2d;
 using modules::world::map::MapInterfacePtr;
 using StateDefinition::TIME_POSITION;
 using modules::commons::transformation::FrenetPosition;
+using modules::world::opendrive::XodrDrivingDirection;
 
 Agent::Agent(const State& initial_state,
         const BehaviorModelPtr& behavior_model_ptr,
@@ -34,7 +35,8 @@ dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
 max_history_length_(10),
-goal_definition_(goal_definition) {
+goal_definition_(goal_definition),
+road_corridor_road_ids_() {
   if (params) {
     max_history_length_ = params->GetInt(
     "MaxHistoryLength",
@@ -64,7 +66,8 @@ Agent::Agent(const Agent& other_agent) :
   road_corridor_(other_agent.road_corridor_),
   history_(other_agent.history_),
   max_history_length_(other_agent.max_history_length_),
-  goal_definition_(other_agent.goal_definition_) {}
+  goal_definition_(other_agent.goal_definition_),
+  road_corridor_road_ids_(other_agent.road_corridor_road_ids_) {}
 
 
 void Agent::BehaviorPlan(const float &dt, const ObservedWorld &observed_world) {
@@ -106,14 +109,23 @@ void Agent::Execute(const float& world_time) {
 }
 
 
-bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
-  if (!goal_definition_) {
-    return false;
-  }
-  road_corridor_ = map_interface->GenerateRoadCorridor(
+bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) { 
+  if (goal_definition_ && road_corridor_road_ids_.empty()) {
+    road_corridor_ = map_interface->GenerateRoadCorridor(
     GetCurrentPosition(),
     goal_definition_->GetShape());
+    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+  } else if(!road_corridor_road_ids_.empty()) {
+    LOG(INFO) << "Road corridor from ids" << road_corridor_road_ids_;
+    road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
+                                XodrDrivingDirection::FORWARD);
+  } else {
+    LOG(INFO) << "Agent has map interface but no information to generate road corridor.";
+    return false;
+  }
+
   if(!road_corridor_) {
+    LOG(INFO) << "No corridor for agent found.";
     return false;
   }
   return true;

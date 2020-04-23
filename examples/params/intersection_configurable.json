@@ -8,31 +8,31 @@
                     {
                         "SourceSink": [
                             [
-                                -30.0,
-                                -2.0
+                                2.0,
+                                -20.0
                             ],
                             [
-                                30.0,
-                                -2.0
+                                -30.0,
+                                2.0
                             ]
                         ],
-                        "Description": "west_east",
+                        "Description": "east_west",
                         "ConfigAgentStatesGeometries": {
                             "Type": "UniformVehicleDistribution",
                             "LanePositions": [
-                                1
+                                0
                             ],
                             "VehicleDistanceRange": [
-                                2,
-                                4
+                                4,
+                                6
                             ],
                             "OtherVehicleVelocityRange": [
-                                4,
-                                5
+                                5,
+                                10
                             ],
                             "SRange": [
                                 0.1,
-                                0.9
+                                0.3
                             ]
                         },
                         "ConfigBehaviorModels": {
@@ -41,12 +41,12 @@
                             "ModelParams": {
                                 "BehaviorIDMClassic": {
                                     "MaxVelocity": 30.0,
-                                    "MinimumSpacing": 5.0,
-                                    "DesiredTimeHeadway": 1.5,
+                                    "MinimumSpacing": 1.0,
+                                    "DesiredTimeHeadway": 1.2,
                                     "MaxAcceleration": 1.7000000476837158,
-                                    "AccelerationLowerBound": -15.0,
+                                    "AccelerationLowerBound": -10.0,
                                     "AccelerationUpperBound": 8.0,
-                                    "DesiredVelocity": 4.0,
+                                    "DesiredVelocity": 20.0,
                                     "ComfortableBrakingAcceleration": 1.6699999570846558,
                                     "MinVelocity": 0.0,
                                     "Exponent": 4
@@ -93,30 +93,30 @@
                         "SourceSink": [
                             [
                                 30.0,
-                                2.0
+                                -2.0
                             ],
                             [
                                 -30.0,
-                                2.0
+                                -2.0
                             ]
                         ],
-                        "Description": "east_west",
+                        "Description": "south_west",
                         "ConfigAgentStatesGeometries": {
                             "Type": "UniformVehicleDistribution",
                             "LanePositions": [
-                                0
+                                1
                             ],
                             "VehicleDistanceRange": [
-                                5,
-                                8
+                                4,
+                                6
                             ],
                             "OtherVehicleVelocityRange": [
                                 4,
-                                5
+                                6
                             ],
                             "SRange": [
                                 0.1,
-                                0.9
+                                0.4
                             ]
                         },
                         "ConfigBehaviorModels": {
@@ -125,12 +125,12 @@
                             "ModelParams": {
                                 "BehaviorIDMClassic": {
                                     "MaxVelocity": 30.0,
-                                    "MinimumSpacing": 5.0,
-                                    "DesiredTimeHeadway": 1.5,
+                                    "MinimumSpacing": 1.0,
+                                    "DesiredTimeHeadway": 1.2,
                                     "MaxAcceleration": 1.7000000476837158,
-                                    "AccelerationLowerBound": -15.0,
+                                    "AccelerationLowerBound": -10.0,
                                     "AccelerationUpperBound": 8.0,
-                                    "DesiredVelocity": 4.0,
+                                    "DesiredVelocity": 20.0,
                                     "ComfortableBrakingAcceleration": 1.6699999570846558,
                                     "MinVelocity": 0.0,
                                     "Exponent": 4

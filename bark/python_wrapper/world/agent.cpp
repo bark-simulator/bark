@@ -21,13 +21,14 @@
 
 
 namespace py = pybind11;
-using namespace bark::world::objects;
-using namespace bark::world::goal_definition;
-using namespace bark::models::dynamic;
-using namespace bark::commons;
-using namespace bark::models::behavior;
-using namespace bark::models::execution;
-using namespace bark::geometry;
+using namespace modules::world::objects;
+using namespace modules::world::goal_definition;
+using namespace modules::models::dynamic;
+using namespace modules::commons;
+using namespace modules::models::behavior;
+using namespace modules::models::execution;
+using namespace modules::geometry;
+using modules::world::opendrive::XodrRoadId;
 
 void python_agent(py::module m) {
   py::class_<Agent, AgentPtr>(m, "Agent")
@@ -72,17 +73,20 @@ void python_agent(py::module m) {
     .def(py::pickle(
       [](const Agent& a) -> py::tuple {
           return py::make_tuple(
-            a.GetStateInputHistory(),  // 0
-            a.GetShape(),  // 1
-            a.GetAgentId(),  // 2
-            BehaviorModelToPython(a.GetBehaviorModel()),  // 3
-            a.GetExecutionModel(),  // 4
-            a.GetDynamicModel(),  // 5
-            a.GetCurrentState(),  // 6
-            GoalDefinitionToPython(a.GetGoalDefinition()));  // 7
+            a.GetStateInputHistory(),  // 1
+            a.GetShape(),  // 2
+            a.GetAgentId(),  // 3
+            a.GetExecutionTrajectory(),  // 4
+            a.GetBehaviorTrajectory(),  // 5
+            BehaviorModelToPython(a.GetBehaviorModel()),  // 6
+            a.GetExecutionModel(),  // 7
+            a.GetDynamicModel(),  // 8
+            a.GetCurrentState(),  // 9
+            GoalDefinitionToPython(a.GetGoalDefinition()), // 10
+            a.GetRoadCorridorRoadIds());  // 11
       },
       [](py::tuple t) {
-        if (t.size() != 8)
+        if (t.size() != 11)
           throw std::runtime_error("Invalid agent state!");
 
         using bark::models::dynamic::SingleTrackModel;
@@ -98,6 +102,7 @@ void python_agent(py::module m) {
           PythonToGoalDefinition(t[7].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
         agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+        agent.SetRoadCorridorRoadIds(t[10].cast<std::vector<XodrRoadId>>());
         return agent;
       }));
 

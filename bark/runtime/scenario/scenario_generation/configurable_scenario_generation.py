@@ -106,8 +106,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     kwargs_agent_states_geometry = []
     sink_source_default_params = []
 
-    from modules.runtime.viewer.matplotlib_viewer import MPViewer
-
     for idx, sink_source_config in enumerate(self._sinks_sources):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source_config, world.map)
       road_corridors.append(road_corridor)
