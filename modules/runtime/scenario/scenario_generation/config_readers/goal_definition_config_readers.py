@@ -47,12 +47,12 @@ class GoalGenerator:
   @staticmethod
   def fill_goal_def_state_lim_frenet(config_param_object, line_string):
     lateral_max_dist = config_param_object["MaxLateralDist", "Pair with values between 0,1: \
-          Lateral maximum distance allowed to both sides of center line, normalized by lanewidth", (0.05, 0.05)]
+          Lateral maximum distance allowed to both sides of center line, normalized by lanewidth", (0.1, 0.1)]
     long_range = config_param_object["LongitudinalRange" , "Pair with values between 0,1: \
-          Goal is within this longitudinal part of center line, normalized by lanewidth", (0.8, 1)]
+          Goal is within this longitudinal part of center line, normalized by lanewidth", (0, 1.0)]
     max_orientation_diff = config_param_object["MaxOrientationDifference" , "Pair with values between 0,pi: \
-          Orientation must be within orientation limits around tangent angle of center line", (0.8, 1)]
-    velocity_range = config_param_object["VelocityRange" , "Pair velocity values specifying allowed range", (0.8, 1)]
+          Orientation must be within orientation limits around tangent angle of center line", (0.08, 0.08)]
+    velocity_range = config_param_object["VelocityRange" , "Pair velocity values specifying allowed range", (10, 20)]
 
     length = line_string.Length()
     goal_line_string = GetLineFromSInterval(line_string, long_range[0]*length, long_range[1]*length)
