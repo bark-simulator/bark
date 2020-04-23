@@ -1,0 +1,138 @@
+{
+    "Scenario": {
+      "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
+      "Generation": {
+        "GeneratorName": "InteractionDatasetScenarioGeneration",
+        "GeneratorSeed": 1000,
+        "SetName": "test_1",
+        "SetDescription": "Ego vehicle is the only vehicle on the right lane. Must merge to left lane where it is crowded with IDM vehicles",
+        "NumScenarios": 1,
+        "NumSets": 1,
+        "InteractionDatasetScenarioGeneration": {
+          "MapFilename": "database/maps/DR_DEU_Merging_MT_shifted.xodr",
+          "TrackFilename": "../interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv",
+          "TrackIds": [
+            63,
+            64,
+            65,
+            66,
+            67,
+            68
+          ],
+          "StartTs": 232000,
+          "EndTs": 432000,
+          "BehaviorModel": {}
+        }
+      }
+    },
+    "Visualization": {
+      "Agents": {
+        "Color": {
+          "Other": [
+            0.7,
+            0.7,
+            0.7
+          ],
+          "Controlled": [
+            0.9,
+            0,
+            0
+          ]
+        },
+        "AlphaVehicle": 0.8,
+        "ColorRoute": [
+          0.2,
+          0.2,
+          0.2
+        ],
+        "DrawRoute": false,
+        "DrawEvalGoals": false,
+        "EvalGoalColor": [
+          0.0,
+          0.0,
+          0.7
+        ],
+        "DrawHistory": true
+      },
+      "Map": {
+        "Lanes": {
+          "Boundaries": {
+            "Color": [
+              0.7,
+              0.7,
+              0.7
+            ],
+            "Alpha": 1.0
+          }
+        },
+        "Plane": {
+          "Color": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "Alpha": 1.0
+        },
+        "xrange": [
+          880,
+          1009
+        ],
+        "yrange": [
+          977,
+          1034
+        ]
+      }
+    },
+    "Simulation": {
+      "StepTime": 0.1,
+      "simulation_time_steps": 300
+    },
+    "DynamicModel": {
+      "wheel_base": 2.700000047683716
+    },
+    "agent": {
+      "MaxHistoryLength": 50
+    },
+    "BehaviorUctSingleAgent": {
+      "DumpTree": false,
+      "PredictionSettings": {
+          "EgoVehicle": {
+              "DynamicModel": {
+                  "wheel_base": 2.700000047683716,
+                  "delta_max": 0.20000000298023224
+              },
+              "integration_time_delta": 0.019999999552965164
+          },
+          "OtherVehicles": {
+              "BehaviorIDMClassic": {
+                  "MaxVelocity": 30.0,
+                  "MinimumSpacing": 2.0,
+                  "DesiredTimeHeadway": 3.0,
+                  "MaxAcceleration": 1.7000000476837158,
+                  "AccelerationLowerBound": -15.0,
+                  "AccelerationUpperBound": 8.0,
+                  "DesiredVelocity": 15.0,
+                  "ComfortableBrakingAcceleration": 1.6699999570846558,
+                  "MinVelocity": 0.0,
+                  "Exponent": 4
+              }
+          }
+      },
+      "Mcts": {
+          "MaxSearchTime": 100000,
+          "UctStatistic": {
+              "ReturnLowerBound": -1000.0,
+              "ReturnUpperBound": 100.0,
+              "ExplorationConstant": 0.699999988079071
+          },
+          "RandomSeed": 1000,
+          "DiscountFactor": 0.8999999761581421,
+          "MaxNumIterations": 2000,
+          "RandomHeuristic": {
+              "MaxSearchTime": 100,
+              "MaxNumIterations": 10000
+          }
+      }
+    }
+  }

@@ -46,6 +46,7 @@ After the installation, you can explore the examples by e.g. running `source dev
 <img src="docs/source/example_map.gif" alt="BARK" />
 </p>
 
+To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.
 For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
 
 

@@ -36,11 +36,41 @@ class ScenarioGenerationTests(unittest.TestCase):
 
         params.save("default_params.json")
 
-    def test_find_overlaps_configurable_scenario_generation(self):
-        shape = Polygon2d([0, 0, 0], [Point2d(-1, 0),
-                                      Point2d(-1, 1),
-                                      Point2d(1, 1),
-                                      Point2d(1, 0)])
+  def test_configurable_scenario_generation_sample_behavior_types(self):
+    sink_source_dict = [{
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "Description": "left_lane",
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "NoneControlled"},
+      "AgentParams" : {}
+    },
+    {
+      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "Description": "right_lane",
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
+      "ConfigBehaviorModels": {"Type": "SampleBehaviorType"},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+      "AgentParams" : {}
+    }]
+    params = ParameterServer()
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    params.save("default_params_behavior_type_sampling.json")
+
+  def test_find_overlaps_configurable_scenario_generation(self):
+    shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
+                      Point2d(-1,1),
+                      Point2d(1,1),
+                      Point2d(1,0)])
 
         agent_states1 = [[0, 1, 0, 0, 0], [0, 4, 0, 0, 0],
                          [0, 8, 0, 0, 0]]  # agents along x axis
