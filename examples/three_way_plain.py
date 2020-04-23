@@ -49,9 +49,9 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, 2, -20, 3.14/2, 43/3.6])
+init_state = np.array([0, -20, -2, 0, 43/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.Translate(Point2d(-30, 2))
+goal_polygon = goal_polygon.Translate(Point2d(30, -2))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -82,7 +82,7 @@ agent_2d_shape3 = CarLimousine()
 init_state3 = np.array([0, -30, -2, -3.14, 50/3.6])
 agent_params3 = param_server.addChild("agent3")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.Translate(Point2d(30, -2))
+goal_polygon = goal_polygon.Translate(Point2d(-2, -30))
 agent3 = Agent(init_state3,
                behavior_model3,
                dynamic_model3,
@@ -93,13 +93,14 @@ agent3 = Agent(init_state3,
                map_interface)
 world.AddAgent(agent3)
 
+
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.25]
+                                           0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
@@ -108,7 +109,7 @@ for _ in range(0, 20):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)
-  viewer.drawRoadCorridor(agent1.road_corridor, color="green")
+  viewer.drawRoadCorridor(agent3.road_corridor, color="green")
 
   # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
   viewer.show(block=False)

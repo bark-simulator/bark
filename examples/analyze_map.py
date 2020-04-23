@@ -50,12 +50,12 @@ viewer.saveFig(output_dir + "/" + "world_plain.png")
 color_triplet_gray = (0.7,0.7,0.7)
 
 # Open Drive Elements (XodrRoads, XodrLane Sections, XodrLanes)
-for idx_r, road in open_drive_map.GetRoads().items():
-  viewer.drawWorld(world)
-  viewer.drawXodrRoad(road)
-  viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
-  viewer.show(block=True)
-  viewer.clear()
+# for idx_r, road in open_drive_map.GetRoads().items():
+#   viewer.drawWorld(world)
+#   viewer.drawXodrRoad(road)
+#   viewer.saveFig(output_dir + "/" + "open_drive_map_road_" + str(idx_r) + ".png")
+#   viewer.show(block=True)
+#   viewer.clear()
 
 # for idx_r, road in open_drive_map.GetRoads().items():
 #   for idx_ls, lane_section in enumerate(road.lane_sections):
@@ -98,30 +98,30 @@ for lane_id in lane_ids:
   viewer.clear()
 
 
+# comb_all = []
+# start_point = [Point2d(1003, 1007)]
+# end_point_list = [Point2d(892, 1008)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
+
+# starting on the left
 comb_all = []
-start_point = [Point2d(1003, 1007)]
-end_point_list = [Point2d(892, 1008)]
+start_point = [Point2d(-30, -2)]
+end_point_list = [Point2d(30, -2), Point2d(-2, -30)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
-# starting on the left
-# comb_all = []
-# start_point = [Point2d(-30, -2)]
-# end_point_list = [Point2d(30, -2)]
-# comb = list(itertools.product(start_point, end_point_list))
-# comb_all = comb_all + comb
+# starting on the right
+start_point = [Point2d(30, 2)]
+end_point_list = [Point2d(-30, 2)]
+comb = list(itertools.product(start_point, end_point_list))
+comb_all = comb_all + comb
 
-# # starting on the right
-# start_point = [Point2d(30, 2)]
-# end_point_list = [Point2d(-30, 2)]
-# comb = list(itertools.product(start_point, end_point_list))
-# comb_all = comb_all + comb
-
-# # starting on the bottom
-# start_point = [Point2d(2, -30)]
-# end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
-# comb = list(itertools.product(start_point, end_point_list))
-# comb_all = comb_all + comb
+# starting on the bottom
+start_point = [Point2d(2, -30)]
+end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
+comb = list(itertools.product(start_point, end_point_list))
+comb_all = comb_all + comb
 
 # starting on the left
 # comb_all = []
