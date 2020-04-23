@@ -158,7 +158,7 @@ for cnt, (start_p, end_p) in enumerate(comb_all):
   if rc:
     roads = rc.roads
     road_ids = list(roads.keys())
-    print(road_ids)
+    print(road_ids, rc.road_ids)
     
     viewer.drawWorld(world)
     viewer.drawRoadCorridor(rc, "blue")
