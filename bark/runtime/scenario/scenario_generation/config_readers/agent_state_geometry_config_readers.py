@@ -103,7 +103,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_000.csv"]
+                                        "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
     track_ids = config_param_object["TrackIds", "IDs of the vehicle tracks to import.", [1]]
     start_time = config_param_object["StartTs", "Timestamp when to start the scenario (ms)", 0]
     end_time = config_param_object["EndTs","Timestamp when to end the scenario (ms)", None]
@@ -148,7 +148,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
   current_track_file = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/interaction_dataset_DE_merging_vehicle_tracks_*00.csv"]
+                                        "modules/runtime/tests/data/interaction_dataset_dummy_*.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
     skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
