@@ -23,11 +23,12 @@ class BaseViewer(Viewer):
         Viewer.__init__(self)
         # color parameters
         # agents
-        self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.7,0.7,0.7)]
+        self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.1,0.1,0.1)]
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", True]
+        self.if_colormap_use_line_others = params["Visualization"]["Agents"]["Color"]["IfColormapUseLineColorOthers", "Flag to enable that line color can be fixed for other agents while using colormap", True]
         self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
@@ -36,6 +37,8 @@ class BaseViewer(Viewer):
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (.49, .63, .83)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
+        self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace", "Flag to specify if face is drawn in history mode", False]
+
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
@@ -230,13 +233,20 @@ class BaseViewer(Viewer):
                       self.agent_color_map = {}
                   if not agent_id in self.agent_color_map:
                     self.agent_color_map[agent_id] = self.getColorFromMap(float(agent_id) / self.max_agents_color_map)
-                  color_line = self.agent_color_map[agent_id]
+                  if self.if_colormap_use_line_others:
+                    color_line = self.color_other_agents_line
+                  else:
+                    color_line = self.agent_color_map[agent_id]
                   color_face = self.agent_color_map[agent_id]
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
             self.drawAgent(agent, color_line, alpha, color_face)
             if self.draw_history:
+                if self.draw_history_draw_face:
+                  color_face = color_face
+                else:
+                  color_face = None
                 self.drawHistory(agent, color_line, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
