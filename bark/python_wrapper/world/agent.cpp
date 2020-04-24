@@ -93,14 +93,14 @@ void python_agent(py::module m) {
         using bark::models::dynamic::SingleTrackModel;
         using bark::models::execution::ExecutionModelInterpolate;
         Agent agent(
-          t[6].cast<State>(),
-          PythonToBehaviorModel(t[3].cast<py::tuple>()),
-          std::make_shared<SingleTrackModel>(t[5].cast<SingleTrackModel>()),
+          t[8].cast<State>(),
+          PythonToBehaviorModel(t[5].cast<py::tuple>()),
+          std::make_shared<SingleTrackModel>(t[7].cast<SingleTrackModel>()),
           std::make_shared<ExecutionModelInterpolate>(
-            t[4].cast<ExecutionModelInterpolate>()),
+            t[6].cast<ExecutionModelInterpolate>()),
           t[1].cast<modules::geometry::Polygon>(),
           nullptr,
-          PythonToGoalDefinition(t[7].cast<py::tuple>()));
+          PythonToGoalDefinition(t[9].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());
         agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
         agent.SetRoadCorridorRoadIds(t[10].cast<std::vector<XodrRoadId>>());

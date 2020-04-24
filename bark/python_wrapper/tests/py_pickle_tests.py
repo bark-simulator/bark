@@ -1,3 +1,9 @@
+
+try:
+    import debug_settings
+except:
+    pass
+
 import unittest
 import pickle
 import numpy as np
