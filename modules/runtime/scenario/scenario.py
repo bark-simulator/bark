@@ -81,13 +81,13 @@ class Scenario:
     if map_file_load_test.is_file():
       xodr_parser = XodrParser(_map_file_name)
     else:
-      pathlib_obj = Path('.').rglob(_map_file_name)
-      if pathlib_obj is None:
+      objects_found = sorted(Path().rglob(_map_file_name))
+      if len(objects_found) == 0:
         raise ValueError("No Map found")
+      elif len(objects_found) > 0:
+        raise ValueError("Multiple Maps found")
       else:
-        for path in pathlib_obj:
-          xodr_parser = XodrParser(path.as_posix())
-          break
+        xodr_parser = XodrParser(objects_found[0].as_posix())
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
