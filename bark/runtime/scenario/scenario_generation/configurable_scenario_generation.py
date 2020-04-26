@@ -233,9 +233,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_states = states_geometries[0]
       agent_geometries = states_geometries[1]
       for agent_idx, agent_state in enumerate(agent_states):
-        agent_translated_polygon = agent_geometries[agent_idx].Translate(
-                                                      Point2d(agent_state[1],
-                                                            agent_state[2]))
+        agent_translated_polygon = agent_geometries[agent_idx].Transform(
+                                                        [agent_state[1],
+                                                        agent_state[2], 
+                                                        agent_state[3]])
         tmp = agent_translated_polygon.bounding_box
         bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), (tmp[0].y(), tmp[1].y())])
         tree.add(bb, (source_sink_idx, agent_idx))
@@ -248,9 +249,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         agent_states = states_geometries[0]
         agent_geometries = states_geometries[1]
         for agent_idx, agent_state in enumerate(agent_states):
-          agent_translated_polygon = agent_geometries[agent_idx].Translate(
-                                                        Point2d(agent_state[1],
-                                                              agent_state[2]))
+          agent_translated_polygon = agent_geometries[agent_idx].Transform(
+                                                        [agent_state[1],
+                                                        agent_state[2], 
+                                                        agent_state[3]])
           tmp = agent_translated_polygon.bounding_box
           bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), ( tmp[0].y() , tmp[1].y())])
           overlaps = tree.overlap_values(bb)
@@ -283,9 +285,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             if not found:
               agent_geometry_other = collected_sources_sinks_agent_states_geometries[overlap[0]][1][overlap[1]]
               agent_state_other = collected_sources_sinks_agent_states_geometries[overlap[0]][0][overlap[1]]
-              agent_translated_polygon_other = agent_geometry_other.Translate(
-                                              Point2d(agent_state_other[1],
-                                                    agent_state_other[2]))
+              agent_translated_polygon_other = agent_geometry_other.Transform(
+                                                        [agent_state_other[1],
+                                                        agent_state_other[2], 
+                                                        agent_state_other[3]])
               if Collide(agent_translated_polygon, agent_translated_polygon_other):
                 pairwise_collisions.append(((source_sink_idx, agent_idx), overlap))
             
