@@ -8,7 +8,7 @@ repo_paths = ["bark_project", "bark_project/python", "benchmark_database", "com_
 
 executed_file = sys.argv[0]
 tmp = executed_file.replace("modules", "bazel-bin/modules")
-tmp = executed_file.replace("python/", "bazel-bin/python/")
+tmp = tmp.replace("python/", "bazel-bin/python/")
 runfiles_dir = tmp.replace(".py", ".runfiles")
 
 sys.path.append(runfiles_dir)

@@ -189,6 +189,8 @@ class BenchmarkRunner:
         self.configs_to_run = self.benchmark_configs
 
         self.checkpoint_dir = checkpoint_dir or "checkpoints"
+        if not os.path.exists(self.checkpoint_dir):
+              os.makedirs(self.checkpoint_dir)
         if merge_existing:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
@@ -197,8 +199,6 @@ class BenchmarkRunner:
             self.configs_to_run = self.get_configs_to_run(self.benchmark_configs, \
                                                             self.existing_benchmark_result)
             self.logger.info("Remaining  number of {} configs to run".format(len(self.configs_to_run)))
-        if not os.path.exists(self.checkpoint_dir):
-            os.makedirs(self.checkpoint_dir)
 
         self.exceptions_caught = []
         self.log_eval_avg_every = log_eval_avg_every
@@ -210,10 +210,23 @@ class BenchmarkRunner:
     def merge_checkpoint_benchmark_results(checkpoint_dir):
         checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.ckpnt"), recursive=True)
         merged_result = BenchmarkResult()
+        # merge all checkpoints with new results
         for checkpoint_file in checkpoint_files:
-            logging.info("Loading checkpoint {}".format(os.path.abspath(checkpoint_file)))
-            next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file))
-            merged_result.extend(next_result)
+          logging.info("Loading checkpoint {}".format(os.path.abspath(checkpoint_file)))
+          next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file))
+          merged_result.extend(next_result)
+        # dump merged result
+        if len(merged_result.get_result_dict()) > 0:
+          logging.info("Dumping merged result")
+          merged_result_filename = os.path.join(checkpoint_dir,"merged_results.ckpnt")
+          merged_result.dump(merged_result_filename)
+
+        # delete checkpoints
+        for checkpoint_file in checkpoint_files:
+          if checkpoint_file == merged_result_filename:
+            continue
+          os.remove(checkpoint_file)
+          logging.info("Removed old checkpoint file {}".format(checkpoint_file))
         return merged_result
 
     @staticmethod

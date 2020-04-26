@@ -82,7 +82,12 @@ class DatabaseRunnerTests(unittest.TestCase):
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
-
+        # check twice first, merging from checkpoints
+        merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
+        df = merged_result.get_data_frame()
+        self.assertEqual(len(df.index), 30)
+        # second load merged results
+        self.assertTrue(os.path.exists(os.path.join("checkpoints1/merged_results.ckpnt")))
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 30)
@@ -98,10 +103,15 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            checkpoint_dir="checkpoints1/",
                                            merge_existing=True)
 
-        result = benchmark_runner2.run(checkpoint_every = 10)
+        result = benchmark_runner2.run(checkpoint_every = 7)
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+
+        # check if results maintained in existing result dump, 30 from previous run + 7 after new checkpoint
+        merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
+        df = merged_result.get_data_frame()
+        self.assertEqual(len(df.index), 37)
 
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
@@ -115,7 +125,6 @@ class DatabaseRunnerTests(unittest.TestCase):
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 
-        
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
@@ -210,12 +219,18 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=1,
-                                           checkpoint_dir="checkpoints2/")
+                                           checkpoint_dir="checkpoints2/",
+                                           merge_existing=True)
 
-        result = benchmark_runner2.run(checkpoint_every = 5)
+        result = benchmark_runner2.run(checkpoint_every = 1)
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+
+        # check if existing result is incorporated for mergin result
+        merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints2/")
+        df = merged_result.get_data_frame()
+        self.assertEqual(len(df.index), 40)
 
 
 if __name__ == '__main__':
