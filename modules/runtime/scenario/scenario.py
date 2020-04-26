@@ -77,15 +77,15 @@ class Scenario:
         return world
 
     map_file_load_test = Path(_map_file_name)
-    
+
     if map_file_load_test.is_file():
       xodr_parser = XodrParser(_map_file_name)
     else:
-      path_obj_list = Path('.').rglob(_map_file_name)
-      if len(path_obj_list) == 0:
+      pathlib_obj = Path('.').rglob(_map_file_name)
+      if pathlib_obj is None:
         raise ValueError("No Map found")
       else:
-        for path in path_obj_list:
+        for path in pathlib_obj:
           xodr_parser = XodrParser(path.as_posix())
           break
 
