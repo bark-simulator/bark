@@ -37,7 +37,7 @@ class BaseViewer(Viewer):
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (.49, .63, .83)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
-        self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace", "Flag to specify if face is drawn in history mode", False]
+        self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace", "Flag to specify if face is drawn in history mode", True]
 
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
