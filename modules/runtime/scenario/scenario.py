@@ -84,7 +84,7 @@ class Scenario:
       objects_found = sorted(Path().rglob(_map_file_name))
       if len(objects_found) == 0:
         raise ValueError("No Map found")
-      elif len(objects_found) > 0:
+      elif len(objects_found) > 1:
         raise ValueError("Multiple Maps found")
       else:
         xodr_parser = XodrParser(objects_found[0].as_posix())
