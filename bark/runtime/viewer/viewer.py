@@ -220,6 +220,7 @@ class BaseViewer(Viewer):
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
             alpha = 1.0
+
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color_line = self.color_eval_agents_line
                 color_face = self.color_eval_agents_face
@@ -243,16 +244,14 @@ class BaseViewer(Viewer):
                   color_face = self.color_other_agents_face
             if self.draw_history:
               if self.draw_history_draw_face:
-                color_face = color_face
+                color_face_history = color_face
               else:
-                color_face = (1.0, 1.0, 1,.0)
-              self.drawHistory(agent, color_line, alpha, color_face)
+                color_face_history = (1.0, 1.0, 1,.0)
+              self.drawHistory(agent, color_line, alpha, color_face_history)
             self.drawAgent(agent, color_line, alpha, color_face)
-
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
           self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
-      
 
     def drawMap(self, map):
         # draw the boundary of each lane
