@@ -57,6 +57,9 @@ class DatabaseRunnerTests(unittest.TestCase):
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
+        groups = result.get_evaluation_groups()
+        self.assertEqual(set(groups), set(["behavior", "scen_set"]))
+    @unittest.skip
     def test_database_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -112,7 +115,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 37)
-
+    @unittest.skip
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -144,7 +147,7 @@ class DatabaseRunnerTests(unittest.TestCase):
               y_range=[5070,5150],
               use_world_bounds=True)
         rst  = benchmark_runner.run_benchmark_config(10, viewer=viewer)
-
+    @unittest.skip
     def test_database_multiprocessing_history(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -178,7 +181,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                           eval_agent_ids=scenario_history[5].eval_agent_ids)
 
         viewer.show(block=True)
-
+    @unittest.skip
     def test_database_multiprocessing_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")

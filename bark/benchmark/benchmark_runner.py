@@ -67,6 +67,9 @@ class BenchmarkConfig:
                 "scen_idx": self.scenario_idx,
                 **self.behavior_config.as_dict()}
 
+    def get_evaluation_groups(self):
+      return ["scen_set", *list(self.behavior_config.as_dict().keys())]
+
 
 # result of benchmark run
 class BenchmarkResult:
@@ -102,6 +105,12 @@ class BenchmarkResult:
 
     def get_history(self, config_idx):
         return self.__histories[config_idx]
+
+    def get_evaluation_groups(self):
+        evaluation_groups = {"scen_set"}
+        for conf in self.__benchmark_configs:
+            evaluation_groups.update(set(conf.get_evaluation_groups()))
+        return list(evaluation_groups)
 
     @staticmethod
     def find_benchmark_config(benchmark_configs, config_idx):
@@ -269,7 +278,7 @@ class BenchmarkRunner:
             results.append(result_dict)
             histories[bmark_conf.config_idx] = scenario_history
             if self.log_eval_avg_every and (idx + 1) % self.log_eval_avg_every == 0:
-                self._log_eval_average(results)
+                self._log_eval_average(results, self.configs_to_run)
 
             if checkpoint_every and (idx+1) % checkpoint_every == 0:
                 intermediate_result = BenchmarkResult(results, \
@@ -389,10 +398,10 @@ class BenchmarkRunner:
                 terminal_why.append(evaluator_name)
         return terminal, terminal_why
 
-    def _log_eval_average(self, result_dct_list):
-        bresult = BenchmarkResult(result_dct_list, None)
+    def _log_eval_average(self, result_dct_list, configs):
+        bresult = BenchmarkResult(result_dct_list, configs)
         df = bresult.get_data_frame()
-        grouped = df.apply(pd.to_numeric, errors='ignore').groupby(["scen_set", "behavior"]).mean()[
+        grouped = df.apply(pd.to_numeric, errors='ignore').groupby(bresult.get_evaluation_groups()).mean()[
             self._evaluation_criteria()]
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
 ---------------------------------------------------------------------".format(len(result_dct_list),
