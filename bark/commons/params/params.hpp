@@ -19,10 +19,19 @@ namespace commons {
 typedef std::vector<std::vector<float>> ListListFloat;
 
 typedef std::vector<float> ListFloat;
+typedef boost::variant<bool, float, int, std::string,
+     ListListFloat, ListFloat> Parameter;
+typedef std::pair<std::string, Parameter> ParamPair;
 
-typedef std::pair<std::string, boost::variant<bool, float, int, std::string,
-     ListListFloat, ListFloat>> ParamPair;
+inline std::ostream& operator<<(std::ostream& os, const Parameter& p) {
+    return boost::apply_visitor([&os](const auto& p) -> std::ostream& {
+        return os << p;
+    }, p);
+}
+
+
 typedef std::vector<ParamPair> CondensedParamList;
+
 
 class Params {
  public:
@@ -63,6 +72,8 @@ class Params {
                      const std::string& default_distribution_type);
 
   virtual CondensedParamList GetCondensedParamList() const = 0;
+
+  std::string Print() const;
 
   virtual void SetBool(const std::string &param_name, const bool &value) = 0;
   virtual void SetReal(const std::string &param_name, const float &value) = 0;

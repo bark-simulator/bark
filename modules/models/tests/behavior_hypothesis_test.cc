@@ -40,6 +40,7 @@ ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float
     params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration",  1.0f);
     params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
     params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
+    params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.0f);
     params->SetInt("BehaviorIDMClassic::Exponent", 4);
     // IDM Stochastic
     params->SetInt("BehaviorIDMStochastic::HeadwayDistribution::RandomSeed", 1234);
@@ -47,14 +48,16 @@ ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float
     params->SetReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", headway_upper);
     params->SetDistribution("BehaviorIDMStochastic::HeadwayDistribution", "UniformDistribution1D");
 
-    params->SetDistribution("BehaviorIDMStochastic::SpacingDistribution", "UniformDistribution1D");
+    params->SetDistribution("BehaviorIDMStochastic::SpacingDistribution", "FixedValue");
     params->SetListFloat("BehaviorIDMStochastic::SpacingDistribution::FixedValue", {0.0f});
-    params->SetDistribution("BehaviorIDMStochastic::MaxAccDistribution", "UniformDistribution1D");
+    params->SetDistribution("BehaviorIDMStochastic::MaxAccDistribution", "FixedValue");
     params->SetListFloat("BehaviorIDMStochastic::MaxAccDistribution::FixedValue", {1.0f});
-    params->SetDistribution("BehaviorIDMStochastic::DesiredVelDistribution", "UniformDistribution1D");
+    params->SetDistribution("BehaviorIDMStochastic::DesiredVelDistribution", "FixedValue");
     params->SetListFloat("BehaviorIDMStochastic::DesiredVelDistribution::FixedValue", {15.0f});
-    params->SetDistribution("BehaviorIDMStochastic::ComftBrakingDistribution", "UniformDistribution1D");
+    params->SetDistribution("BehaviorIDMStochastic::ComftBrakingDistribution", "FixedValue");
     params->SetListFloat("BehaviorIDMStochastic::ComftBrakingDistribution::FixedValue", {1.0f});
+    params->SetDistribution("BehaviorIDMStochastic::CoolnessFactorDistribution", "FixedValue");
+    params->SetListFloat("BehaviorIDMStochastic::CoolnessFactorDistribution::FixedValue", {0.0f});
 
     // IDM Hypothesis
     params->SetInt("BehaviorHypothesisIDM::NumSamples", 100000);

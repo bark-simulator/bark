@@ -113,6 +113,10 @@ modules::commons::Probability BehaviorHypothesisIDM::GetProbability(const Action
     sample_container[std::floor((action_sample-buckets_lower_bound_)/bucket_size)] += 1;
   }
 
+  VLOG(4) << "Hypothesis action distribution of IDMStochasticHeadway with params \n "
+          << GetParams()->AddChild("BehaviorIDMStochasticHeadway")->Print() << "\n" 
+          << sample_container;
+
   double idm_acc = 0.0f;
   if(action.type() == typeid(Continuous1DAction)) {
     idm_acc = boost::get<Continuous1DAction>(action);

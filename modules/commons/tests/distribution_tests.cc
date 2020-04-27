@@ -22,10 +22,11 @@ TEST(distribution_test, normal_dist_1d) {
   auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
   params_ptr->SetReal("Mean", -3.0f);
   params_ptr->SetReal("StdDev", 2.0f);
+  params_ptr->SetInt("RandomSeed", 1000.0f);
 
   auto dist_normal = modules::commons::NormalDistribution1D(params_ptr);
 
-  size_t samples = 10000;
+  size_t samples = 30000;
   double mean = 0.0f;
   for(size_t i = 0; i< samples; ++i) {
     mean += dist_normal.Sample()[0];
@@ -51,6 +52,7 @@ TEST(distribution_test, uniform_dist_1d) {
   const double upper_bound = 10.0f;
   params_ptr->SetReal("LowerBound", -3.0f);
   params_ptr->SetReal("UpperBound", 10.0f);
+  params_ptr->SetInt("RandomSeed", 1000.0f);
 
   auto dist_uniform = modules::commons::UniformDistribution1D(params_ptr);
 
@@ -90,6 +92,7 @@ TEST(distribution_test, multivariate_distribution) {
   const double upper_bound = 10.0f;
   params_ptr->SetListListFloat("Covariance", {{1.0, 0.2, 0.1}, {0.2, 3.0, -0.5}, {0.1, -0.5, 0.125553}});
   params_ptr->SetListFloat("Mean", {1.2f, 12.0f, 0.1234f});
+  params_ptr->SetInt("RandomSeed", 1000.0f);
 
   auto dist_multivariate = modules::commons::MultivariateDistribution(params_ptr);
 

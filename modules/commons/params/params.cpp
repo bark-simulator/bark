@@ -7,6 +7,7 @@
 #include "modules/commons/params/params.hpp"
 #include "modules/commons/distribution/distributions_1d.hpp"
 #include "modules/commons/distribution/multivariate_normal.hpp"
+#include "modules/commons/util/operators.hpp"
 #include <string>
 
 namespace modules {
@@ -23,8 +24,7 @@ DistributionPtr Params::GetDistributionFromType(const std::string& distribution_
   GET_DISTRIBUTION_IF_TYPE(NormalDistribution1D, distribution_type, distr_params)
   GET_DISTRIBUTION_IF_TYPE(MultivariateDistribution, distribution_type, distr_params)
   GET_DISTRIBUTION_IF_TYPE(FixedValue, distribution_type, distr_params)
-  LOG(ERROR) << "Unknown distribution type";
-  throw;
+  LOG(FATAL) << "Unknown distribution type";
 }
 
 DistributionPtr Params::GetDistribution(const std::string &param_name, 
@@ -36,7 +36,14 @@ DistributionPtr Params::GetDistribution(const std::string &param_name,
   return GetDistributionFromType(distribution_type, param_child_distribution);
 }
 
-
+std::string Params::Print() const {
+  std::stringstream ss;
+  CondensedParamList params_list = this->GetCondensedParamList();
+  for (const auto& param_pair : params_list ) {
+    ss << param_pair.first << ": " << param_pair.second << "\n";
+  }
+  return ss.str();
+}
 
 
 }  // namespace commons

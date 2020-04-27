@@ -90,7 +90,7 @@ class SetterParams : public Params {
     set_parameter(params_string_, param_name_distribution_type, distribution_type);
   }
 
-  virtual CondensedParamList GetCondensedParamList() const;  // < not needed atm
+  virtual CondensedParamList GetCondensedParamList() const;
 
   virtual int operator[](const std::string &param_name) {
     throw;

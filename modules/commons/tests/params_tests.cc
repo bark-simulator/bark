@@ -57,13 +57,17 @@ TEST(setter_params, param_tests) {
 
   // Setters used for distribution spec
   params.SetReal("Test2::25::123::LowerBound", -10.0f);
+  params.SetReal("Test2::25::123::UpperBound", 10.0f);
+  params.SetInt("Test2::25::123::RandomSeed", 1000);
   params.SetDistribution("Test2::25::123", "UniformDistribution1D");
+
   auto dist_uniform = params.GetDistribution("Test2::25::123","some description", "NormalDistribution1D");
   EXPECT_TRUE(typeid(*dist_uniform)== typeid(modules::commons::UniformDistribution1D));
   EXPECT_EQ(dist_uniform->GetParams()->GetReal("LowerBound", "some description", 2323.0), -10.0f);
 
   // No defaults for dist spec fiven
-  auto dist_uniform2 = params.GetDistribution("Test2::25::123123","some description", "NormalDistribution1D");
+  modules::commons::SetterParams params2(false);
+  auto dist_uniform2 = params2.GetDistribution("Test2::25::123123","some description", "NormalDistribution1D");
   EXPECT_TRUE(typeid(*dist_uniform2)== typeid(modules::commons::NormalDistribution1D));
 }
 
