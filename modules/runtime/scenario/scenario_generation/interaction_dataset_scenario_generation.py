@@ -25,7 +25,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
     def initialize_params(self, params):
         super().initialize_params(params)
         params_temp = \
-            self._params["Scenario"]["Generation"]["InteractionDataset"]
+            self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
                                           os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr"]
