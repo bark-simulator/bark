@@ -34,12 +34,16 @@ scenario = scenario_generation.create_single_scenario()
 
 world_state = scenario.get_world_state()
 
-sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of time steps to simulate", 40]
+sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of time steps to simulate", 50]
+video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
+
 for _ in range(0, sim_time_steps):
     world_state.DoPlanning(sim_step_time)
-    viewer.drawWorld(world_state, scenario._eval_agent_ids)
-    viewer.show(block=False)
+
     viewer.clear()
+    video_renderer.drawWorld(world_state)
+
     world_state.DoExecution(sim_step_time)
 
+video_renderer.export_video(filename="./interaction_dataset", remove_image_dir=True)
     

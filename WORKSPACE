@@ -48,7 +48,7 @@ git_repository(
 
 # git_repository(
 #  name = "interaction_dataset_fortiss_internal",
-#  commit = "4152cdddcb04efa9a54524f9d737d1e89b1eafad",
+#  commit = "9ace5fde9260c20736b0463026e0f407b7d395ba",
 #  remote = "https://git.fortiss.org/autosim/interaction_dataset"
 # )
 
