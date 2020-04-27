@@ -147,11 +147,21 @@ class SetterParams : public Params {
     map[param_name] = value;  // no child specification found, simply set value
   }
 
-  template <typename M, typename T>
-  T get_parameter(M map, std::string param_name, const T &default_value) {
+template <typename M, typename T>
+T get_parameter(M map, std::string param_name, const T &default_value) {
+      auto search_result = get_parameter_recursive(map, param_name, default_value);
+      if (!search_result.second && log_if_default_) {
+      LOG(WARNING) << "Using default " << default_value << " for param \""
+                    << param_name << "\"";
+      }
+      return search_result.first;
+}
+
+template <typename M, typename T>
+std::pair<T, bool> get_parameter_recursive(M map, std::string param_name, const T &default_value) {
     const auto it = map.find(param_name);
     if (it != map.end()) {
-      return it->second;
+      return std::make_pair(it->second, true);
     } else {
       // find first child search there
       std::string delimiter = "::";
@@ -162,14 +172,10 @@ class SetterParams : public Params {
             std::dynamic_pointer_cast<SetterParams>(this->AddChild(child_name));
         std::string child_param_name =
             param_name.erase(0, pos + delimiter.length());
-        return child_param->get_parameter(child_param->get_param_map<T>(),
+        return child_param->get_parameter_recursive(child_param->get_param_map<T>(),
                                           child_param_name, default_value);
       }
-      if (log_if_default_) {
-        LOG(WARNING) << "Using default " << default_value << " for param \""
-                     << param_name << "\"";
-      }
-      return default_value;
+      return std::make_pair(default_value, false);
     }
   }
 
