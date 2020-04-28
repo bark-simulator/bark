@@ -105,7 +105,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-for _ in range(0, 20):
+for _ in range(0, 10):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)
@@ -113,7 +113,3 @@ for _ in range(0, 20):
   # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
-
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "params",
-                  "od8_const_vel_one_agent_written.json"))

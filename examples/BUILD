@@ -15,7 +15,7 @@ py_test(
 
 py_test(
   name = "highway",
-  srcs = ["od8_const_vel_two_agent.py"],
+  srcs = ["highway.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
           ':params'],
@@ -24,6 +24,7 @@ py_test(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
           "//modules/runtime:runtime"],
 )
 

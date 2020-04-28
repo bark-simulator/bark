@@ -13,8 +13,8 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
 
-scenario_param_file ="highway_merging.json" # must be within examples params folder
-param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
+scenario_param_file = "highway_merging.json"
+param_server = ParameterServer(filename= os.path.join("modules/runtime/tests/data/",scenario_param_file))
 scenario_generation = UniformVehicleDistribution(num_scenarios=10, random_seed=0, params=param_server)
 
 viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])

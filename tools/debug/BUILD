@@ -3,7 +3,7 @@ py_binary(
   srcs = ["analyze_map.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
-          ':params'],
+          '//examples:params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",

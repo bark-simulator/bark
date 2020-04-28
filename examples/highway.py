@@ -44,9 +44,9 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1, params=param_server)
 
 scenario_generator = \
   ConfigWithEase(num_scenarios=5,
-                 map_file_name="/tests/data/city_highway_straight.xodr",
+                 map_file_name="modules/runtime/tests/data/city_highway_straight.xodr",
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=[left_lane, right_lane])
 
-env = Runtime()
+# env = Runtime()
