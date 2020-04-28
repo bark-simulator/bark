@@ -22,25 +22,6 @@ import numpy as np
 
 
 class EnvironmentTests(unittest.TestCase):
-  def test_Crossing8Course(self):
-    xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
-
-    params = ParameterServer()
-    world = World(params)
-
-    map_interface = MapInterface()
-    map_interface.SetOpenDriveMap(xodr_parser.map)
-    world.SetMap(map_interface)
-
-    start_point = Point2d(0, -11)
-    lanes_near_start = map_interface.find_nearest_lanes(start_point, 1)
-    assert(len(lanes_near_start) == 1)
-
-    goal_point = Point2d(-191.789, -50.1725)
-    lanes_near_goal = map_interface.find_nearest_lanes(goal_point, 1)
-    assert(len(lanes_near_goal) == 1)
-    time.sleep(2) # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
-
   def test_two_roads_one_lane(self):
     params = ParameterServer()
     world = World(params)

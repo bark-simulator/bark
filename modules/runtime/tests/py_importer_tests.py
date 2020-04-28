@@ -45,18 +45,18 @@ def helper_plot(xodr_parser):
 
 class ImporterTests(unittest.TestCase):
 
-  def test_map_4way_intersection(self):
+  def test_map_highway(self):
     xodr_parser = XodrParser(
-      "modules/runtime/tests/data/4way_intersection.xodr")
+      "modules/runtime/tests/data/city_highway_straight.xodr")
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
 
-  def test_map_Crossing8(self):
+  def test_map_DR_DEU_Merging_MT_v01_shifted(self):
     xodr_parser = XodrParser(
-      "modules/runtime/tests/data/Crossing8Course.xodr")
+      "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
