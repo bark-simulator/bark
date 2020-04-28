@@ -1,17 +1,17 @@
 {
   "Scenario": {
-    "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
+    "Name": "DR_DEU_Merging_MT\ninteraction_dataset_dummy_track.csv",
     "Generation": {
       "InteractionDatasetScenarioGeneration": {
-        "MapFilename": "/home/hart/Dokumente/2020/bark/modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
-        "TrackFilename": "/home/hart/Dokumente/2020/bark/modules/runtime/tests/data/vehicle_tracks.csv",
+        "MapFilename": "../bark_project/modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+        "TrackFilename": "../bark_project/modules/runtime/tests/data/interaction_dataset_dummy_track.csv",
         "TrackIds": [
           1,
           2,
           3
         ],
-        "StartTs": 0,
-        "EndTs": 4100
+        "StartTs": 100,
+        "EndTs": 5000
       }
     }
   },

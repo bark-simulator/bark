@@ -60,6 +60,7 @@ py_binary(
     data = [
         ":params",
         "//python:bark.so",
+        "//modules/runtime/tests:xodr_data"
     ] + 
     select({"//modules/runtime/scenario/interaction_dataset_processing:_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
@@ -69,7 +70,7 @@ py_binary(
         "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime/viewer:video_renderer",
-        "//modules/runtime:runtime",
+        "//modules/runtime:runtime"
     ],
 )
 

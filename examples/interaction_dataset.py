@@ -12,19 +12,13 @@ from modules.runtime.viewer.video_renderer import VideoRenderer
 import os
 import argparse
 
-# Parse scenario file name
-# parser = argparse.ArgumentParser(description="Interaction dataset file in bark")
-# parser.add_argument("scenario_file", metavar="scenario_name", type=str, help="name of the scenario parameter file")
-# args = parser.parse_args()
-# scenario_param_file = args.scenario_file  # must be within examples params folder
 
+# set you json config that contains a map and matching tracks.
 param_server = ParameterServer(filename=os.path.join("examples/params/interaction_example.json"))
 scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1,
                                                            random_seed=0,
                                                            params=param_server)
 
-# viewer = MPViewer(params=param_server, x_range=[-234 + 1114, -105 + 1114], y_range=[-130 + 1107, -73 + 1107])
-# viewer = MPViewer(params=param_server)
 viewer = MPViewer(params=param_server, use_world_bounds=True)
 
 sim_step_time = param_server["simulation"]["step_time",
@@ -40,12 +34,10 @@ sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
 for _ in range(0, sim_time_steps):
-    world_state.DoPlanning(sim_step_time)
+  world_state.DoPlanning(sim_step_time)
+  viewer.clear()
+  video_renderer.drawWorld(world_state)
+  world_state.DoExecution(sim_step_time)
 
-    viewer.clear()
-    video_renderer.drawWorld(world_state)
-
-    world_state.DoExecution(sim_step_time)
-
-video_renderer.export_video(filename="./interaction_dataset", remove_image_dir=True)
+# video_renderer.export_video(filename="./interaction_dataset", remove_image_dir=True)
     
