@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "three_way_plain"
+map_name = "city_highway_straight"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition
@@ -98,6 +98,14 @@ for lane_id in lane_ids:
   viewer.clear()
 
 
+comb_all = []
+start_point = [Point2d(5118, 5065)]
+end_point_list = [Point2d(5118, 5200)]
+comb = list(itertools.product(start_point, end_point_list))
+comb_all = comb_all + comb
+
+
+# OpenDrive8
 # comb_all = []
 # start_point = [Point2d(1003, 1007)]
 # end_point_list = [Point2d(892, 1008)]
@@ -105,23 +113,24 @@ for lane_id in lane_ids:
 # comb_all = comb_all + comb
 
 # starting on the left
-comb_all = []
-start_point = [Point2d(-30, -2)]
-end_point_list = [Point2d(30, -2), Point2d(-2, -30)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# three_way_plain
+# comb_all = []
+# start_point = [Point2d(-30, -2)]
+# end_point_list = [Point2d(30, -2), Point2d(-2, -30)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
-# starting on the right
-start_point = [Point2d(30, 2)]
-end_point_list = [Point2d(-30, 2)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# # starting on the right
+# start_point = [Point2d(30, 2)]
+# end_point_list = [Point2d(-30, 2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
-# starting on the bottom
-start_point = [Point2d(2, -30)]
-end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
-comb = list(itertools.product(start_point, end_point_list))
-comb_all = comb_all + comb
+# # starting on the bottom
+# start_point = [Point2d(2, -30)]
+# end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
+# comb = list(itertools.product(start_point, end_point_list))
+# comb_all = comb_all + comb
 
 # starting on the left
 # comb_all = []
