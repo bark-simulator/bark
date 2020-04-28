@@ -75,6 +75,7 @@ class Scenario:
   def setup_map(self, world, _map_file_name):
     if not _map_file_name:
         return world
+    print(_map_file_name)
     xodr_parser = XodrParser(_map_file_name )
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)

@@ -13,13 +13,15 @@ import os
 import argparse
 
 # Parse scenario file name
-parser = argparse.ArgumentParser(description="Interaction dataset file in bark")
-parser.add_argument("scenario_file", metavar="scenario_name", type=str, help="name of the scenario parameter file")
-args = parser.parse_args()
-scenario_param_file = args.scenario_file  # must be within examples params folder
-param_server = ParameterServer(filename=os.path.join("examples/params/", scenario_param_file))
+# parser = argparse.ArgumentParser(description="Interaction dataset file in bark")
+# parser.add_argument("scenario_file", metavar="scenario_name", type=str, help="name of the scenario parameter file")
+# args = parser.parse_args()
+# scenario_param_file = args.scenario_file  # must be within examples params folder
 
-scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1, random_seed=0, params=param_server)
+param_server = ParameterServer(filename=os.path.join("examples/params/interaction_example.json"))
+scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1,
+                                                           random_seed=0,
+                                                           params=param_server)
 
 # viewer = MPViewer(params=param_server, x_range=[-234 + 1114, -105 + 1114], y_range=[-130 + 1107, -73 + 1107])
 # viewer = MPViewer(params=param_server)

@@ -1,0 +1,36 @@
+{
+  "Scenario": {
+    "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
+    "Generation": {
+      "InteractionDatasetScenarioGeneration": {
+        "MapFilename": "/home/hart/Dokumente/2020/bark/modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+        "TrackFilename": "/home/hart/Dokumente/2020/bark/modules/runtime/tests/data/vehicle_tracks.csv",
+        "TrackIds": [
+          1,
+          2,
+          3
+        ],
+        "StartTs": 0,
+        "EndTs": 4100
+      }
+    }
+  },
+  "Visualization": {
+    "Agents": {
+      "Color": {
+          "UseColormapForOtherAgents": true
+      },
+      "DrawAgentId": true,
+      "DrawEvalGoals": false,
+      "DrawHistory": true
+    }
+  },
+  "simulation": {
+    "step_time": 0.2,
+    "real_time_factor": 1,
+    "simulation_time_steps": 15
+  },
+  "agent": {
+    "MaxHistoryLength": 50
+  }
+}

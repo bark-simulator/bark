@@ -42,22 +42,6 @@ py_test(
           "//modules/runtime:runtime"],
 )
 
-py_test(
-  name = "video_rendering",
-  srcs = ["video_rendering.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params',
-          ':scenarios'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime/viewer:video_renderer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
-)
-
 filegroup(
     name="scenarios",
     srcs=glob(["scenarios/**"]),
