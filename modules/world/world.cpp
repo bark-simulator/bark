@@ -31,6 +31,20 @@ World::World(const std::shared_ptr<World>& world)
       remove_agents_(world->GetRemoveAgents()),
       rtree_agents_(world->rtree_agents_) {}
 
+AgentMap World::GetValidAgents() const {
+  AgentMap agents_valid(agents_);
+  AgentMap::iterator it;
+  for (it = agents_valid.begin(); it != agents_valid.end();) {
+    if ((*it).second->GetBehaviorStatus() !=
+        models::behavior::BehaviorStatus::VALID) {
+      agents_valid.erase(it++);
+    } else {
+      ++it;
+    }
+  }
+  return agents_valid;
+}
+
 void World::AddAgent(const objects::AgentPtr& agent) {
   agents_[agent->agent_id_] = agent;
 }
@@ -61,11 +75,13 @@ void World::DoExecution(const float& delta_time) {
   world_time_ += delta_time;
   // Execute motion
   for (auto agent : agents_) {
-    agent.second->Execute(world_time_);
+    if (agent.second->GetBehaviorStatus() ==
+        models::behavior::BehaviorStatus::VALID) {
+      agent.second->Execute(world_time_);
+    }
   }
-  if (remove_agents_) {
-    RemoveOutOfMapAgents();
-  }
+
+  RemoveInvalidAgents();
 }
 
 WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
@@ -117,17 +133,28 @@ void World::UpdateAgentRTree() {
   }
 }
 
-void World::RemoveOutOfMapAgents() {
-  std::vector<rtree_agent_value> query_results;
-  auto bounding_box = this->BoundingBox();
-  boost::geometry::model::box<modules::geometry::Point2d> query_box(
-      bounding_box.first, bounding_box.second);
+void World::RemoveInvalidAgents() {
+  using models::behavior::BehaviorStatus;
 
-  rtree_agents_.query(!boost::geometry::index::within(query_box),
-                      std::back_inserter(query_results));
-  for (auto& result_pair : query_results) {
-    agents_.erase(result_pair.second);
+  if (remove_agents_) {
+    std::vector<rtree_agent_value> query_results;
+    auto bounding_box = this->BoundingBox();
+    boost::geometry::model::box<modules::geometry::Point2d> query_box(
+        bounding_box.first, bounding_box.second);
+
+    rtree_agents_.query(!boost::geometry::index::within(query_box),
+                        std::back_inserter(query_results));
+    for (auto& result_pair : query_results) {
+      agents_.erase(result_pair.second);
+    }
   }
+
+  for (auto& agent : agents_) {
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
+      agents_.erase(agent.first);
+    }
+  }
+
   UpdateAgentRTree();
 }
 
@@ -140,7 +167,7 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
 
   AgentMap nearest_agents;
   for (auto& result_pair : results_n) {
-    nearest_agents[result_pair.second] = GetAgents()[result_pair.second];
+    nearest_agents[result_pair.second] = GetAgent(result_pair.second);
   }
   return nearest_agents;
 }
@@ -157,7 +184,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
-    auto agent = GetAgents()[result_pair.second];
+    auto agent = GetAgent(result_pair.second);
     if (modules::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon)) {
       intersecting_agents[result_pair.second] = agent;
@@ -172,7 +199,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
   using modules::geometry::Polygon;
 
   FrontRearAgents fr_agents;
-  Point2d ego_position = World::GetAgents()[agent_id]->GetCurrentPosition();
+  Point2d ego_position = World::GetAgent(agent_id)->GetCurrentPosition();
 
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
   const Line& center_line = lane_corridor->GetCenterLine();
@@ -214,9 +241,11 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
   }
 
-  FrenetPosition frenet_front = FrenetPosition(nearest_lon_front, nearest_lat_front);
+  FrenetPosition frenet_front =
+      FrenetPosition(nearest_lon_front, nearest_lat_front);
   fr_agents.front = std::make_pair(nearest_agent_front, frenet_front);
-  FrenetPosition frenet_rear = FrenetPosition(nearest_lon_rear, nearest_lat_rear);
+  FrenetPosition frenet_rear =
+      FrenetPosition(nearest_lon_rear, nearest_lat_rear);
   fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
 
   return fr_agents;

@@ -26,7 +26,7 @@ class BaseViewer(Viewer):
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
         self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
         self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
-        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", True]
+        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
         self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
@@ -34,7 +34,7 @@ class BaseViewer(Viewer):
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
-        self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", True]
+        self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
@@ -228,7 +228,7 @@ class BaseViewer(Viewer):
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
             self.drawAgent(agent, color_line, alpha, color_face)
-            if self.drawHistory:
+            if self.draw_history:
                 self.drawHistory(agent, color_line, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
@@ -280,13 +280,11 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawLaneCorridor(self, lane_corridor, color=None):
-      if color is None:
-        color = color="blue"
-      self.drawPolygon2d(lane_corridor.polygon, color=color, facecolor=color, alpha=.3)
+    def drawLaneCorridor(self, lane_corridor, color="blue"):
+      self.drawPolygon2d(lane_corridor.polygon, color=color, alpha=.5)
 
-    def drawRoadCorridor(self, road_corridor, color=None):
+    def drawRoadCorridor(self, road_corridor, color="blue"):
       # TODO(@hart): use agent specific coloring
-      if color is None:
-        color = color="blue"
-      self.drawPolygon2d(road_corridor.polygon, color, facecolor=color, alpha=.2)
+      self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
+      for lane_corridor in road_corridor.lane_corridors:
+        self.drawLaneCorridor(lane_corridor)

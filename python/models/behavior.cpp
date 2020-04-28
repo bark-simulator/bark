@@ -37,7 +37,7 @@ void python_behavior(py::module m) {
     .def_property("last_trajectory",
                   &BehaviorModel::GetLastTrajectory,
                   &BehaviorModel::SetLastTrajectory);
-
+                  
   py::class_<BehaviorConstantVelocity,
              BehaviorModel,
              shared_ptr<BehaviorConstantVelocity>>(m,
