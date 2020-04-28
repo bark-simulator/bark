@@ -19,6 +19,8 @@ from bark.geometry.standard_shapes import CarLimousine
 from bark.geometry import Point2d, Polygon2d
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
+from modules.runtime.runtime import Runtime
+
 
 # Parameters
 param_server = ParameterServer()
@@ -42,11 +44,20 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0, params=param_server)
 right_lane = CustomLaneCorridorConfig(lane_corridor_id=1, params=param_server)
 
-scenario_generator = \
+scenarios = \
   ConfigWithEase(num_scenarios=5,
                  map_file_name="modules/runtime/tests/data/city_highway_straight.xodr",
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=[left_lane, right_lane])
 
-# env = Runtime()
+mp_viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])
+
+
+# gym like interface
+env = Runtime(step_time=0.2,
+              viewer=mp_viewer,
+              scenario_generator=scenarios)
+env.reset()
+for _ in range(0, 10):
+  env.step()
