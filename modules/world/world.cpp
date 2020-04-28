@@ -266,13 +266,11 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
       pair.first = agent_state.second;
       pair.second = modules::models::behavior::Action(
         modules::models::behavior::DiscreteAction(0));
-      agent->addTrajectoryStep(pair);
+      agent->AddTrajectoryStep(pair);
     } else {
-      std::cout << "Agent" << agent_state.first << " doesn't exist." << std::endl;
+      LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist." << std::endl;
     }
   }
-
-  //UpdateHorizonDrivingCorridors();
 }
 
 AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
@@ -295,7 +293,7 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
 
       trajectory_map[agent_id]=agent->GetExecutionTrajectory();
     } else {
-      std::cout << "Agent" << agent_id << " doesn't exist." << std::endl;
+     LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
     }
   }
 
