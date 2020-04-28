@@ -80,7 +80,7 @@ void Agent::ExecutionPlan(const float &dt) {
                             history_.back().first);
 }
 
-void Agent::addTrajectoryStep(const StateActionPair& state_action_pair){
+void Agent::AddTrajectoryStep(const StateActionPair& state_action_pair){
   // !add one step to the last trajectory
   history_.push_back(state_action_pair);
 
