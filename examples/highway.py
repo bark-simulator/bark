@@ -7,16 +7,6 @@ import numpy as np
 import time
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.commons.xodr_parser import XodrParser
-from bark.models.behavior import BehaviorConstantVelocity
-from bark.models.execution import ExecutionModelInterpolate
-from bark.models.dynamic import SingleTrackModel
-from bark.world import World
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.world.agent import Agent
-from bark.world.map import MapInterface
-from bark.geometry.standard_shapes import CarLimousine
-from bark.geometry import Point2d, Polygon2d
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from modules.runtime.runtime import Runtime
