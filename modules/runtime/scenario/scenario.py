@@ -9,7 +9,7 @@ from bark.world.map import MapInterface
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
 import copy
-
+from pathlib import Path
 
 class Scenario:
   def __init__(self,
@@ -75,7 +75,20 @@ class Scenario:
   def setup_map(self, world, _map_file_name):
     if not _map_file_name:
         return world
-    xodr_parser = XodrParser(_map_file_name )
+
+    map_file_load_test = Path(_map_file_name)
+
+    if map_file_load_test.is_file():
+      xodr_parser = XodrParser(_map_file_name)
+    else:
+      objects_found = sorted(Path().rglob(_map_file_name))
+      if len(objects_found) == 0:
+        raise ValueError("No Map found")
+      elif len(objects_found) > 1:
+        raise ValueError("Multiple Maps found")
+      else:
+        xodr_parser = XodrParser(objects_found[0].as_posix())
+
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     self._map_interface = map_interface
