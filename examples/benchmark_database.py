@@ -16,7 +16,7 @@ try:
   from bark.models.behavior import BehaviorUCTSingleAgent
   behavior_used = BehaviorUCTSingleAgent
 except:
-  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:uct_planner --define planner_uct=true ")
+  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:benchmark_database --define planner_uct=true")
   exit()
 
 db = BenchmarkDatabase(database_root="external/benchmark_database_release")
