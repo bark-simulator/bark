@@ -77,13 +77,15 @@ class BehaviorModel : public modules::commons::BaseType {
   explicit BehaviorModel(const commons::ParamsPtr& params) :
     commons::BaseType(params),
     last_trajectory_(),
-    last_action_() {}
+    last_action_(),
+    behavior_status_(BehaviorStatus::NOT_STARTED_YET) {}
 
   BehaviorModel(const BehaviorModel &behavior_model) :
     commons::BaseType(behavior_model.GetParams()),
     last_trajectory_(behavior_model.GetLastTrajectory()),
     last_action_(behavior_model.GetLastAction()),
-    active_model_(behavior_model.GetActiveModel()) {}
+    active_model_(behavior_model.GetActiveModel()),
+    behavior_status_(behavior_model.GetBehaviorStatus()) {}
 
   virtual ~BehaviorModel() {}
 
