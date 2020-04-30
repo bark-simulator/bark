@@ -252,8 +252,6 @@ Trajectory BehaviorIDMClassic::Plan(
         initial_acceleration = acc;
       }
 
-      BARK_EXPECT_TRUE(!std::isnan(acc));
-
       s_i += +0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;
       vel_i = std::max(std::min(temp_velocity, max_velocity), min_velocity);
@@ -262,9 +260,11 @@ Trajectory BehaviorIDMClassic::Plan(
       geometry::Point2d traj_point = GetPointAtS(line, s_i);  // checked
       float traj_angle = GetTangentAngleAtS(line, s_i);       // checked
 
-      BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
-      BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));
-      BARK_EXPECT_TRUE(!std::isnan(traj_angle));
+      if (std::isnan(acc) || std::isnan(boost::geometry::get<0>(traj_point)) || 
+            std::isnan(boost::geometry::get<1>(traj_point)) || std::isnan(traj_angle)) {
+        SetBehaviorStatus(BehaviorStatus::EXPIRED);
+        return traj;
+      }
 
       traj(i, StateDefinition::TIME_POSITION) = t_i;  // checked
       traj(i, StateDefinition::X_POSITION) =
