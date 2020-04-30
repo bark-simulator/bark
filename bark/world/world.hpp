@@ -128,7 +128,7 @@ class World : public commons::BaseType {
 
   bool GetRemoveAgents() { return remove_agents_; }
 
-  void SetRemoveAgents(const bool& remove_agents ) const { remove_agents_ = remove_agents; }
+  void SetRemoveAgents(const bool& remove_agents ) { remove_agents_ = remove_agents; }
 
   AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
