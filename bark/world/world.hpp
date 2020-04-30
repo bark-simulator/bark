@@ -126,7 +126,7 @@ class World : public commons::BaseType {
     return evaluators_;
   }
 
-  bool GetRemoveAgents() const { return remove_agents_; }
+  bool GetRemoveAgents() { return remove_agents_; }
 
   void SetRemoveAgents(const bool& remove_agents ) const { remove_agents_ = remove_agents; }
 
