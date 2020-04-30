@@ -32,6 +32,10 @@ typedef double Continuous1DAction;
 struct LonLatAction {
   Continuous1DAction acc_lat;
   Continuous1DAction acc_lon;
+
+  inline bool operator==(LonLatAction other) {
+       return acc_lat == other.acc_lat && acc_lon == other.acc_lon;
+    }
 };
 using dynamic::Input;
 typedef boost::variant<DiscreteAction, Continuous1DAction, Input, LonLatAction> Action;
