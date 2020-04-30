@@ -10,7 +10,8 @@ namespace bark {
 namespace commons {
 
 SetterParams::SetterParams(bool log_if_default,
-                           const CondensedParamList& param_list) {
+                           const CondensedParamList& param_list) : 
+                           log_if_default_(log_if_default) {
   for (const auto& param_pair : param_list) {
     const auto& param_name = param_pair.first;
     const auto& param_variant = param_pair.second;
