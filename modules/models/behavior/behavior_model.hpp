@@ -33,7 +33,7 @@ struct LonLatAction {
   Continuous1DAction acc_lat;
   Continuous1DAction acc_lon;
 
-  inline bool operator==(const LonLatAction& other) {
+  inline bool operator==(const LonLatAction& other) const {
        return acc_lat == other.acc_lat && acc_lon == other.acc_lon;
     }
 };
