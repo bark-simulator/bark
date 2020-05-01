@@ -23,6 +23,7 @@ namespace behavior {
 using dynamic::Trajectory;
 using dynamic::Input;
 
+
 class BehaviorActionStore : public BehaviorModel {
  public:
   BehaviorActionStore(const commons::ParamsPtr& params)
@@ -32,8 +33,8 @@ class BehaviorActionStore : public BehaviorModel {
 
   virtual ~BehaviorActionStore() {}
 
-  ActionHash Store(const Action& action, const Trajectory& trajectory);
-  std::pair<Trajectory, Action> Retrieve(const ActionHash& action_hash) const;
+  ActionHash Store(const Action& action, const Trajectory& trajectory, const BehaviorStatus& status);
+  std::tuple<Trajectory, Action, BehaviorStatus> Retrieve(const ActionHash& action_hash) const;
 
   void MakeBehaviorActive(const ActionHash& action_hash) {
     active_behavior_ = action_hash;
@@ -42,7 +43,7 @@ class BehaviorActionStore : public BehaviorModel {
   virtual Trajectory Plan(float delta_time, const modules::world::ObservedWorld& observed_world);
 
   private:
-    std::unordered_map<ActionHash, std::pair<Trajectory, Action>> trajectory_store_;
+    std::unordered_map<ActionHash, std::tuple<Trajectory, Action, BehaviorStatus>> trajectory_store_;
     ActionHash active_behavior_;
 };
 
