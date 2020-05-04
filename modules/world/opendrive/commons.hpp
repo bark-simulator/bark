@@ -176,8 +176,8 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   geometry::Line previous_line,
   int id,
   XodrLaneWidth lane_width_current_lane,
-  float s_inc = 0.2f,
-  float s_max_delta = 0.1f) {
+  float s_inc = 0.1f,
+  float s_max_delta = 0.01f) {
 
   namespace bg = boost::geometry;
   XodrLaneOffset off = lane_width_current_lane.off;

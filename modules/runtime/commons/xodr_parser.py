@@ -375,7 +375,7 @@ class XodrParser(object):
               lane_width = XodrLaneWidth(s_start_temp, s_end_temp, offset)        
 
               # TODO (@hart): make sampling flexible           
-              succ = new_lane.append(reference_line, lane_width, 1.0)
+              succ = new_lane.append(reference_line, lane_width, 0.2)
 
             new_lane.lane_type = lane["type"]
             new_lane.driving_direction = lane["driving_direction"]

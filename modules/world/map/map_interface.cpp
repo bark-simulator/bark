@@ -197,7 +197,7 @@ void MapInterface::CalculateLaneCorridors(
       // TODO(@hart): use parameter
       geometry::Line simplified_line;
       boost::geometry::simplify(lane_corridor->GetCenterLine().obj_,
-                                simplified_line.obj_, 0.1);
+                                simplified_line.obj_, 0.05);
       simplified_line.RecomputeS();
       lane_corridor->SetCenterLine(simplified_line);
       // end of fix

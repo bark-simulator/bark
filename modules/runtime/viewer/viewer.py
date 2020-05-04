@@ -111,7 +111,7 @@ class BaseViewer(Viewer):
                   self.dynamic_world_x_range[1] += (diffy - diffx)/2
           else:
               center = self.center
-              self._update_world_dynamic_range(center)
+              # self._update_world_dynamic_range(center)
 
 
     def _update_world_dynamic_range(self, center):

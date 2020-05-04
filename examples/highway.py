@@ -10,6 +10,7 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from modules.runtime.runtime import Runtime
+from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 
 
 # parameters
@@ -43,13 +44,26 @@ scenarios = \
 # viewer
 mp_viewer = MPViewer(params=param_server,
                      use_world_bounds=True)
+# viewer = Panda3dViewer(params=param_server,
+#                        use_world_bounds=True,
+#                        x_range=[-40, 40],
+#                        y_range=[-40, 40],
+#                        follow_agent_id=1)
 
 
 # gym like interface
 env = Runtime(step_time=0.2,
-              viewer=mp_viewer,
+              viewer=viewer,
               scenario_generator=scenarios,
               render=True)
+      
+sim_step_time = param_server["simulation"]["step_time",
+                                          "Step-time used in simulation",
+                                          0.05]
+sim_real_time_factor = param_server["simulation"]["real_time_factor",
+                                                  "execution in real-time or faster",
+                                                  1]
 env.reset()
 for _ in range(0, 10):
   env.step()
+  time.sleep(sim_step_time/sim_real_time_factor)

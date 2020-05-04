@@ -8,6 +8,7 @@ import time
 import os
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 from bark.models.behavior import BehaviorConstantVelocity, BehaviorIDMClassic
 from bark.models.execution import ExecutionModelInterpolate
@@ -95,17 +96,22 @@ world.AddAgent(agent3)
 
 
 # viewer
-viewer = MPViewer(params=param_server, use_world_bounds=True)
+# viewer = MPViewer(params=param_server, use_world_bounds=True)
+viewer = Panda3dViewer(params=param_server,
+                       use_world_bounds=True,
+                       x_range=[-40, 40],
+                       y_range=[-40, 40],
+                       follow_agent_id=True)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.2]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 
-for _ in range(0, 10):
+for _ in range(0, 200):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)

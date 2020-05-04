@@ -32,7 +32,7 @@ class RoadgraphTests(unittest.TestCase):
       edge = road_graph.GetEdge(edge_descr)
       print(edge.edge_type)
   
- 
+  
 
 if __name__ == '__main__':
     unittest.main()

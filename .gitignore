@@ -163,3 +163,4 @@ examples/scenarios/benchmark_database_0.0.1.zip
 modules/runtime/tests/data/three_way_plain.xodr
 output.png
 modules/runtime/tests/data/three_way_plain_old.xodr
+modules/runtime/viewer/models/car.mtl
