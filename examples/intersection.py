@@ -106,10 +106,10 @@ viewer = Panda3dViewer(params=param_server,
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.01]
+                                           0.1]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
-                                                  1]
+                                                  1.]
 
 for _ in range(0, 400):
   world.Step(sim_step_time)

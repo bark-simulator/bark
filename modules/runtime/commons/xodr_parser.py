@@ -285,13 +285,13 @@ class XodrParser(object):
                 new_plan_view.AddArc(starting_point, float(geometry["hdg"]),
                                       float(geometry["length"]),
                                       float(geometry["geometry"]["curvature"]),
-                                      0.1) # TODO: s_inc
+                                      0.025) # TODO: s_inc
             if geometry["geometry"]["type"] == "spiral":
                 new_plan_view.AddSpiral(
                     starting_point, float(geometry["hdg"]),
                     float(geometry["length"]),
                     float(geometry["geometry"]["curv_start"]),
-                    float(geometry["geometry"]["curv_end"]), 2) # TODO: s_inc
+                    float(geometry["geometry"]["curv_end"]), 0.1) # TODO: s_inc
         
         # now use header/ offset to modify plan view
         if "offset" in header:

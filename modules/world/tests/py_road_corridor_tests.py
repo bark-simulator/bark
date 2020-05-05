@@ -9,6 +9,7 @@ import math
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world import World
+from bark.geometry import *
 from modules.runtime.commons.parameters import ParameterServer
 from bark.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
 from bark.world.map import MapInterface
@@ -18,6 +19,7 @@ import numpy as np
 
 
 class RoadCorridorTests(unittest.TestCase):
+  @unittest.skip("...")
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser("modules/runtime/tests/data/road_corridor_test.xodr")
 
@@ -74,6 +76,67 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
- 
+  def test_three_way_plain(self):
+    # three_way_plain
+    xodr_parser = XodrParser("modules/runtime/tests/data/three_way_plain.xodr")
+
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    world.SetMap(map_interface)
+    open_drive_map = world.map.GetOpenDriveMap()
+    viewer = MPViewer(params=params,
+                      use_world_bounds=True)
+    comb_all = []
+    start_point = [Point2d(-30, -2)]
+    end_point_list = [Point2d(30, -2), Point2d(-2, -30)]
+    comb = list(itertools.product(start_point, end_point_list))
+    comb_all = comb_all + comb
+
+    # starting on the right
+    start_point = [Point2d(30, 2)]
+    end_point_list = [Point2d(-30, 2)]
+    comb = list(itertools.product(start_point, end_point_list))
+    comb_all = comb_all + comb
+
+    # starting on the bottom
+    start_point = [Point2d(2, -30)]
+    end_point_list = [Point2d(30, -2), Point2d(-30, 2)]
+    comb = list(itertools.product(start_point, end_point_list))
+    comb_all = comb_all + comb
+
+    for cnt, (start_p, end_p) in enumerate(comb_all):
+      polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+      start_polygon = polygon.Translate(start_p)
+      goal_polygon = polygon.Translate(end_p)
+      rc = map_interface.GenerateRoadCorridor(start_p, goal_polygon)
+      if rc:
+        roads = rc.roads
+        road_ids = list(roads.keys())
+        print(road_ids, rc.road_ids)
+        
+        viewer.drawWorld(world)
+        viewer.drawRoadCorridor(rc, "blue")
+        viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
+        viewer.show()
+        viewer.clear()
+
+        for idx, lane_corridor in enumerate(rc.lane_corridors):
+          viewer.drawWorld(world)
+          viewer.drawLaneCorridor(lane_corridor, "green")
+          viewer.drawLine2d(lane_corridor.left_boundary, color="red")
+          viewer.drawLine2d(lane_corridor.right_boundary, color="green")
+          viewer.drawLine2d(lane_corridor.center_line, color="green")
+          viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
+          viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
+          viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
+          viewer.show()
+          viewer.clear()
+        
+        viewer.show()
+        viewer.clear()
 if __name__ == '__main__':
   unittest.main()

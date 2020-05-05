@@ -176,8 +176,8 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   geometry::Line previous_line,
   int id,
   XodrLaneWidth lane_width_current_lane,
-  float s_inc = 0.05f,
-  float s_max_delta = 0.05f) {
+  float s_inc = 0.025f,
+  float s_max_delta = 0.01f) {
 
   namespace bg = boost::geometry;
   XodrLaneOffset off = lane_width_current_lane.off;
@@ -209,8 +209,8 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     float tangent_angle = atan2(
       bg::get<1>(current_point) - bg::get<1>(prev_point),
       bg::get<0>(current_point) - bg::get<0>(prev_point));
-    geometry::Point2d normal(cos(tangent_angle+asin(1)),
-                             sin(tangent_angle+asin(1)));
+    normal = geometry::Point2d(cos(tangent_angle+asin(1)),
+                               sin(tangent_angle+asin(1)));
     scale = -sign * off.a;
     tmp_line.AddPoint(
       geometry::Point2d(bg::get<0>(prev_point) + scale * bg::get<0>(normal),

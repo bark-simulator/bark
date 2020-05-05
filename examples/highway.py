@@ -21,19 +21,40 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
                road_ids=[16],
                lane_corridor_id=0,
-               params=None):
+               params=None,
+               controlled_agent=None):
     super(CustomLaneCorridorConfig, self).__init__(road_ids,
                                                    lane_corridor_id,
                                                    params)
+    self._controlled_agent = controlled_agent
 
   def position(self, world, min_s=10., max_s=150.):
+    """Min. and max values where the agents should be places
+    """
     return super(CustomLaneCorridorConfig, self).position(world, min_s, max_s)
 
   def ds(self, s_min=20., s_max=35.):
+    """Sample distance on the route
+    """
     return np.random.uniform(s_min, s_max)
 
+  def controlled_ids(self, agent_list):
+    """Define controlled agents
+    """
+    if self._controlled_agent is None:
+      return []
+    else:
+      return super().controlled_ids(agent_list)
+
+
+# configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0, params=param_server)
-right_lane = CustomLaneCorridorConfig(lane_corridor_id=1, params=param_server)
+right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
+                                      params=param_server,
+                                      controlled_agent=True)
+
+
+# create 5 scenarios
 scenarios = \
   ConfigWithEase(num_scenarios=5,
                  map_file_name="modules/runtime/tests/data/city_highway_straight.xodr",
@@ -45,10 +66,9 @@ scenarios = \
 viewer = MPViewer(params=param_server,
                   use_world_bounds=True)
 viewer = Panda3dViewer(params=param_server,
-                       use_world_bounds=True,
                        x_range=[-40, 40],
                        y_range=[-40, 40],
-                       follow_agent_id=1)
+                       follow_agent_id=True)
 
 
 # gym like interface
@@ -62,9 +82,12 @@ sim_step_time = param_server["simulation"]["step_time",
                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
-                                                  1]
-for _ in range(0, 3):
+                                                  0.5]
+
+# run 3 scenarios
+for episode in range(0, 3):
   env.reset()
-  for _ in range(0, 10):
+  # step each scenario 20 times
+  for step in range(0, 20):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
