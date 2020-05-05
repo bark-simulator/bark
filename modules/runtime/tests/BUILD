@@ -5,6 +5,12 @@ filegroup(
    visibility = ["//visibility:public"],
 )
 
+filegroup(
+   name="track_data",
+   srcs=glob(["data/*.csv"]),
+   visibility = ["//visibility:public"],
+)
+
 py_test(
   name = "py_importer_tests",
   srcs = ["py_importer_tests.py"],
@@ -24,6 +30,7 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
           "//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
@@ -68,9 +75,28 @@ py_test(
 py_test(
   name = "py_interaction_dataset_reader_test",
   srcs = ["py_interaction_dataset_reader_test.py"],
-  data = ['//python:bark.so', ':xodr_data'],
+  data = ['//python:bark.so', 
+          ':xodr_data',
+         ],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation",],
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
+          ],
+)
+
+
+py_test(
+  name = "py_interaction_dataset_decomposer_test",
+  srcs = ["py_interaction_dataset_decomposer_test.py"],
+  data = ['//python:bark.so', 
+          ':xodr_data',
+          ':track_data',
+         ],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime",
+          "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          ],
 )

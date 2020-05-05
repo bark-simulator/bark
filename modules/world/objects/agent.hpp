@@ -31,6 +31,7 @@ using models::dynamic::DynamicModelPtr;
 using models::execution::ExecutionModelPtr;
 using models::behavior::StateActionPair;
 using models::behavior::StateActionHistory;
+using models::behavior::BehaviorStatus;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::XodrLaneId;
 using modules::world::map::MapInterfacePtr;
@@ -90,6 +91,10 @@ class Agent : public Object {
 
   const RoadCorridorPtr GetRoadCorridor() const {
     return road_corridor_;
+  }
+
+  BehaviorStatus GetBehaviorStatus() const {
+    return behavior_model_->GetBehaviorStatus();
   }
 
   void SetBehaviorModel(const BehaviorModelPtr &behavior_model_ptr) {

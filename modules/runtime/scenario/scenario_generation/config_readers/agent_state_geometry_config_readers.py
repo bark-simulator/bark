@@ -28,7 +28,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
       " velocities are sampled uniformly",
       (20,30)]
     self._s_range = config_param_object["SRange", "pair of values (tuple) between 0 and 1 to limit placement  \
-                     to certain part of road corridor", (0, 1)]
+                     to certain part of road corridor", (0.1, 0.7)]
     # todo make parameterizable, but not only based on 2d points
     self._vehicle_2d_shape = CarLimousine()
 

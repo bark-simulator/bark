@@ -49,6 +49,7 @@ void python_world(py::module m) {
     .def_property_readonly("evaluators", &World::GetEvaluators)
     .def("Evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::GetAgents)
+    .def_property_readonly("agents_valid", &World::GetValidAgents)
     .def_property_readonly("objects", &World::GetObjects)
     .def_property("time", &World::GetWorldTime, &World::SetWorldTime)
     .def_property_readonly("bounding_box", &World::BoundingBox)

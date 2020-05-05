@@ -33,10 +33,14 @@ class BehaviorStaticTrajectory : public BehaviorModel {
                   const world::ObservedWorld& observed_world) override;
   std::shared_ptr<BehaviorModel> Clone() const override;
   const Trajectory& get_static_trajectory() const;
+  void UpdateBehaviorStatus(float delta_time,
+                            const world::ObservedWorld& observed_world);
 
  private:
-  static Trajectory trajectory_from_listlist_float(std::vector<std::vector<float>> list);
-  std::pair<int,int> interpolate(const double t, StateRowVector *interpolated) const;
+  static Trajectory ReadInStaticTrajectory(
+      std::vector<std::vector<float>> list);
+  std::pair<int, int> Interpolate(const double t,
+                                  StateRowVector* interpolated) const;
   Trajectory static_trajectory_;
 };
 
