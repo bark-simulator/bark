@@ -8,7 +8,7 @@ import os
 from bark.viewer import Viewer
 from bark.models.dynamic import StateDefinition
 from modules.runtime.viewer.viewer import BaseViewer
-from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath, PointLight
+from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath, PointLight, Plane
 
 class Panda3dViewer(BaseViewer, ShowBase):
     def __init__(self, params=None, **kwargs):
@@ -21,6 +21,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.path = os.path.join(os.path.dirname(os.path.abspath(__file__))) # TODO(@fortiss): load into parameter at a earlier stage
         self.agent_model_path = kwargs.pop("model_path",
                                            self.path + "/models/car.obj")
+        self.texture_path = kwargs.pop("model_path",
+                                           self.path + "/models/white_texture.png")
         self.agent_scale = kwargs.pop("model_scale",
                                       np.array([1.2,1.2,1.2], dtype=float))
         self.agent_orientation = \
@@ -82,7 +84,6 @@ class Panda3dViewer(BaseViewer, ShowBase):
             0: ["bird_agent", "third", "first"]
         }
         self.perspective = self.perspectives[self.camIndex(kwargs.pop("perspective", -3))]
-
         self.line_thickness = self.line_thicknesses[self.camIndex(kwargs.pop("perspective", -3))][0]
         self.addButtons()
 
@@ -98,7 +99,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.generatorNode = self.generator.getRoot()
         self.generatorNode.reparentTo(self.render)
 
-    def createPlane(self, frame=None, color=VBase4(1, 1, 1, 1)):
+    def createPlane(self, frame=None, color=VBase4(1, 1, 11, 1)):
         """ Creates a Plane/Card with the Panda3d Cardmaker() class
         Keyword Arguments:
             frame {list} -- The coordinates [x1,y1,x2,y2] of the planes/cards edges (default: {[-1, -1, 1, 1]})
@@ -110,10 +111,11 @@ class Panda3dViewer(BaseViewer, ShowBase):
         card.set_frame(frame[0], frame[1], frame[2], frame[3])
         n = NodePath()
         self.plane = n.attach_new_node(card.generate())
-        self.plane.reparentTo(self.render)
         self.plane.setHpr(0, 270, 0)
+        self.plane.reparentTo(self.render)
 
-    def setLight(self, color=VBase4(0.1, .1, .1, 1)):
+
+    def setLight(self, color=VBase4(.1, .1, .1, 1)):
         """Sets an ambient and omnidirectional light for rendering
         Keyword Arguments:
             color {VBase4} -- color of the ambient light (default: {VBase4(1, 1, 1, 1)})
@@ -126,7 +128,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         plight = PointLight('plight')
         plight.setColor((1, 1, 1, 1))
         self.plnp = self.render.attachNewNode(plight)
-        self.plnp.setPos(0, 0, 250)
+        self.plnp.setPos(0, 0, 10000)
         self.render.setLight(self.plnp)
 
         self.render.setLight(alnp)
@@ -333,8 +335,6 @@ class Panda3dViewer(BaseViewer, ShowBase):
                  
         self.agent_nodes[agent.id].setHpr(angle, self.agent_orientation[1],
                                           self.agent_orientation[2])
-        # self.plnp.setPos(self.agent_orientation[1], self.agent_orientation[2], 80)
-        # self.render.setLight(self.plnp)
         
         translation = self.agent_translation
         if not np.all(translation == 0):
@@ -377,3 +377,10 @@ class Panda3dViewer(BaseViewer, ShowBase):
         super(Panda3dViewer, self).drawWorld(world, eval_agent_ids)
         self.generator.end()
         self.taskMgr.step()
+
+    def Reset(self):
+      # for key, agent in self.agent_nodes.items():
+      #   agent.removeNode()
+      # self.agent_poses = {}
+      # self.agent_nodes = {}
+      pass

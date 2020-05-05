@@ -42,13 +42,13 @@ scenarios = \
                  lane_corridor_configs=[left_lane, right_lane])
 
 # viewer
-mp_viewer = MPViewer(params=param_server,
-                     use_world_bounds=True)
-# viewer = Panda3dViewer(params=param_server,
-#                        use_world_bounds=True,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=1)
+viewer = MPViewer(params=param_server,
+                  use_world_bounds=True)
+viewer = Panda3dViewer(params=param_server,
+                       use_world_bounds=True,
+                       x_range=[-40, 40],
+                       y_range=[-40, 40],
+                       follow_agent_id=1)
 
 
 # gym like interface
@@ -63,7 +63,8 @@ sim_step_time = param_server["simulation"]["step_time",
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
-env.reset()
-for _ in range(0, 10):
-  env.step()
-  time.sleep(sim_step_time/sim_real_time_factor)
+for _ in range(0, 3):
+  env.reset()
+  for _ in range(0, 10):
+    env.step()
+    time.sleep(sim_step_time/sim_real_time_factor)

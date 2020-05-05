@@ -288,3 +288,6 @@ class BaseViewer(Viewer):
       self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
+
+    def Reset(self):
+      pass

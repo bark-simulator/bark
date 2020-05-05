@@ -31,6 +31,7 @@ class Runtime(PyRuntime):
         self._scenario_generator.get_next_scenario()
     self._world = self._scenario.get_world_state()
     self._reset_has_been_called = True
+    self._viewer.Reset()
 
   def step(self):
     assert(self._reset_has_been_called==True)
