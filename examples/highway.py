@@ -64,12 +64,9 @@ scenarios = \
 
 # viewer
 viewer = MPViewer(params=param_server,
-                  use_world_bounds=True)
-viewer = Panda3dViewer(params=param_server,
-                       x_range=[-40, 40],
-                       y_range=[-40, 40],
-                       follow_agent_id=True)
-
+                  x_range=[-40, 40],
+                  y_range=[-40, 40],
+                  follow_agent_id=True)
 
 # gym like interface
 env = Runtime(step_time=0.2,
@@ -85,9 +82,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   0.5]
 
 # run 3 scenarios
-for episode in range(0, 5):
+for episode in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 40):
+  for step in range(0, 10):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

@@ -99,7 +99,7 @@ world.AddAgent(agent3)
 
 
 agent_2d_shape4 = CarLimousine()
-init_state4 = np.array([0, 2, -30, 3.14/2, 45/3.6])
+init_state4 = np.array([0, 2, -30, 3.14/2, 40/3.6])
 agent_params4 = param_server.addChild("agent4")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
@@ -129,7 +129,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-for _ in range(0, 400):
+for _ in range(0, 30):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)

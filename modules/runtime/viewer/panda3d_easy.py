@@ -109,7 +109,6 @@ class Panda3dViewer(BaseViewer, ShowBase):
     return self._screen_dims[0] / self._screen_dims[1]
   
   def drawAgent(self, agent, color, alpha, facecolor):
-    # add
     x_pos = agent.state[int(StateDefinition.X_POSITION)]
     y_pos = agent.state[int(StateDefinition.Y_POSITION)]
     if not agent.id in self._agent_nodes:
