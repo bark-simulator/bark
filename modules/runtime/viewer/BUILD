@@ -73,6 +73,18 @@ py_library(
 )
 
 py_library(
+    name = "panda3d_easy",
+    srcs = ["panda3d_easy.py"],
+    data = ['//python:bark.so',
+            ':model_data'],
+    imports = ['../../../python/'],
+    deps = ["//modules/runtime/commons:parameters",
+            ":py_viewer",
+            "//modules/runtime/commons:commons"],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "matplotlib_viewer",
     srcs = ["matplotlib_viewer.py"],
     data = ['//python:bark.so'],

@@ -10,7 +10,7 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from modules.runtime.runtime import Runtime
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
+from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 
 
 # parameters
@@ -85,9 +85,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   0.5]
 
 # run 3 scenarios
-for episode in range(0, 3):
+for episode in range(0, 5):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 20):
+  for step in range(0, 40):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

@@ -8,7 +8,7 @@ import time
 import os
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.panda3d_viewer import Panda3dViewer
+from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 from bark.models.behavior import BehaviorConstantVelocity, BehaviorIDMClassic
 from bark.models.execution import ExecutionModelInterpolate
@@ -42,6 +42,9 @@ behavior_model3 = BehaviorIDMClassic(param_server)
 execution_model3 = ExecutionModelInterpolate(param_server)
 dynamic_model3 = SingleTrackModel(param_server)
 
+behavior_model4 = BehaviorIDMClassic(param_server)
+execution_model4 = ExecutionModelInterpolate(param_server)
+dynamic_model4 = SingleTrackModel(param_server)
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/three_way_plain.xodr")
 map_interface = MapInterface()
@@ -95,13 +98,28 @@ agent3 = Agent(init_state3,
 world.AddAgent(agent3)
 
 
+agent_2d_shape4 = CarLimousine()
+init_state4 = np.array([0, 2, -30, 3.14/2, 45/3.6])
+agent_params4 = param_server.addChild("agent4")
+goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
+goal_polygon = goal_polygon.Translate(Point2d(30, -2))
+agent4 = Agent(init_state4,
+               behavior_model4,
+               dynamic_model4,
+               execution_model4,
+               agent_2d_shape4,
+               agent_params4,
+               GoalDefinitionPolygon(goal_polygon),
+               map_interface)
+world.AddAgent(agent4)
+
+
 # viewer
 # viewer = MPViewer(params=param_server, use_world_bounds=True)
 viewer = Panda3dViewer(params=param_server,
-                       use_world_bounds=True,
                        x_range=[-40, 40],
                        y_range=[-40, 40],
-                       follow_agent_id=agent2.id)
+                       follow_agent_id=agent3.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

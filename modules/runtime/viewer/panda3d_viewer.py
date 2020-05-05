@@ -16,15 +16,16 @@ class Panda3dViewer(BaseViewer, ShowBase):
         super(Panda3dViewer, self).__init__(params=params)
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.follow_agent_id = kwargs.pop("follow_agent_id", -1)
+        self.follow_agent_id = kwargs.pop("follow_agent_id", True)
+        self.perspective = kwargs.pop("perspective", -3)
         self.screen_dims = kwargs.pop("screen_dims", [1024, 1024])
-        self.path = os.path.join(os.path.dirname(os.path.abspath(__file__))) # TODO(@fortiss): load into parameter at an earlier stage
+        self.path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
         self.agent_model_path = kwargs.pop("model_path",
                                            self.path + "/models/car.obj")
         self.texture_path = kwargs.pop("model_path",
                                            self.path + "/models/white_texture.png")
         self.agent_scale = kwargs.pop("model_scale",
-                                      np.array([1.2,1.2,1.2], dtype=float))
+                                      np.array([1.,1.,1.], dtype=float))
         self.agent_orientation = \
             kwargs.pop("model_orientation",np.array([0, 90, 90],
                        dtype=float))
@@ -83,8 +84,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
         # Set up the line generator
         self.setDrawer(budget=100000)
 
-        self.perspective = self.perspectives[self.camIndex(kwargs.pop("perspective", -3))]
-        self.line_thickness = self.line_thicknesses[self.camIndex(kwargs.pop("perspective", -3))][0]
+        self.perspective = self.perspectives[self.camIndex(self.perspective)]
+        self.line_thickness = self.line_thicknesses[self.camIndex(self.perspective)][0]
         self.addButtons()
 
     def setDrawer(self, budget=100000):
@@ -145,7 +146,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             pos=Vec3(0.9, 0, 0.85))
 
     def camIndex(self, follow_id):
-        return np.minimum(follow_id, 0)
+        return follow_id
 
     def switchCamera(self):
         # Switches between global and agent cameras
@@ -209,7 +210,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.mat.invertInPlace()
         base.mouseInterfaceNode.setMat(self.mat)
         base.enableMouse()
-        self.follow_agent_id = -2
+        # self.follow_agent_id = -2
         self.perspective = self.perspectives[self.camIndex(
             self.follow_agent_id)].copy()
 
@@ -381,6 +382,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         # for key, agent in self.agent_nodes.items():
         #   agent.removeNode()
         # self.agent_nodes = {}
+        # self.follow_agent_id = 
         for an in self.agent_nodes.values():
           an.removeNode()
         self.agent_poses = {}
