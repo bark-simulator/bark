@@ -8,7 +8,7 @@ from bark.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.models.dynamic import StateDefinition
 from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.geometry import Point2d, Polygon2d, Norm0To2PI
-from modules.runtime.scenario.scenario_generation.model_json_conversion import ModelJsonConversion
+from modules.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils
@@ -34,7 +34,7 @@ def trajectory_from_track(track, start=0, end=None):
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
     start_offset = filtered_motion_states[0][0]
     for i, state in enumerate(filtered_motion_states):
-        traj[i, :] = bark_state_from_motion_state(state[1], start_offset)
+        traj[i, :] = bark_state_from_motion_state(state[1], start)
     return traj
 
 

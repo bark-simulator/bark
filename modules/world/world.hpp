@@ -66,6 +66,7 @@ class World : public commons::BaseType {
   void SetWorldTime(const double& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
   AgentMap GetAgents() const { return agents_; }
+  AgentMap GetValidAgents() const;
   AgentPtr GetAgent(AgentId id) const {
     auto agent_it = agents_.find(id);
     if (agent_it != agents_.end()) {
@@ -131,7 +132,7 @@ class World : public commons::BaseType {
   void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
-  void RemoveOutOfMapAgents();
+  void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(

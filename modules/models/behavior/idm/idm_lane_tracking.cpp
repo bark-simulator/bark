@@ -33,6 +33,8 @@ using modules::models::dynamic::DynamicModelPtr;
 //! delta_time
 Trajectory BehaviorIDMLaneTracking::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
+  
   const DynamicModelPtr dynamic_model =
       observed_world.GetEgoAgent()->GetDynamicModel();
   auto single_track =

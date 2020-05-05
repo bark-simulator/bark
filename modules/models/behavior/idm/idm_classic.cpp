@@ -126,6 +126,8 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
 //! delta_time
 Trajectory BehaviorIDMClassic::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
+  
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
       observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();

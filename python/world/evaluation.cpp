@@ -6,6 +6,7 @@
 #include "evaluation.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
+#include "modules/world/evaluation/evaluator_behavior_expired.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
@@ -32,6 +33,14 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorGoalReached";
+      });
+
+  py::class_<EvaluatorBehaviorExpired, BaseEvaluator,
+      std::shared_ptr<EvaluatorBehaviorExpired> >(m, "EvaluatorBehaviorExpired")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorBehaviorExpired &g) {
+        return "bark.world.evaluation.EvaluatorBehaviorExpired";
       });
 
   py::class_<EvaluatorCollisionAgents, BaseEvaluator,

@@ -26,11 +26,11 @@ from bark.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 os.chdir("../benchmark_database/")
 
 class DatabaseRunnerTests(unittest.TestCase):
-    @unittest.skip
+    #@unittest.skip
     def test_database_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         cwd = os.getcwd()
-        dbs.process("database")
+        dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
@@ -50,11 +50,12 @@ class DatabaseRunnerTests(unittest.TestCase):
         result = benchmark_runner.run()
         df = result.get_data_frame()
         print(df)
-        self.assertEqual(len(df.index), 20) # 2 Behaviors * 10 Serialize Scenarios
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
+    @unittest.skip
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
-        dbs.process("database")
+        dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
@@ -82,7 +83,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
 
         rst = benchmark_runner.run(maintain_history=True)
-        self.assertEqual(len(rst.get_histories()), 20)
+        self.assertEqual(len(rst.get_histories()), 40)
 
         rst, scenario_history = benchmark_runner.run_benchmark_config(11, viewer=None, maintain_history=True)
         print(scenario_history)
@@ -99,7 +100,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         df = result.get_data_frame()
         print(df)
-        self.assertEqual(len(df.index), 20) # 2 Behaviors * 10 Serialize Scenarios
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
 if __name__ == '__main__':
     unittest.main()
