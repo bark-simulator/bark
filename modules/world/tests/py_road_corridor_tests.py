@@ -121,7 +121,7 @@ class RoadCorridorTests(unittest.TestCase):
         
         viewer.drawWorld(world)
         viewer.drawRoadCorridor(rc, "blue")
-        viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
+        # viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
         viewer.show()
         viewer.clear()
 
@@ -133,7 +133,7 @@ class RoadCorridorTests(unittest.TestCase):
           viewer.drawLine2d(lane_corridor.center_line, color="green")
           viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
           viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
-          viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
+          # viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
           viewer.show()
           viewer.clear()
         

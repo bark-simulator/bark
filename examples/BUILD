@@ -29,7 +29,7 @@ py_test(
           "//modules/runtime:runtime"],
 )
 
-py_test(
+py_binary(
   name = "intersection",
   srcs = ["intersection.py"],
   data = ['//python:bark.so',
