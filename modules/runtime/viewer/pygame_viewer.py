@@ -16,36 +16,41 @@ class PygameViewer(BaseViewer):
     def __init__(self, params=None, **kwargs):
         super(PygameViewer, self).__init__(params=params, **kwargs)
 
-        self.screen_dims = kwargs.pop("screen_dims", np.array([1024, 1024]))
+        self.screen_dims = kwargs.pop("screen_dims", np.array([600, 600]))
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
+        self.screen_map_ratio = None
+        self.source_dest = None
+        self.screen_surface = pg.Surface(
+            self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)
 
-        self.screen_map_ratio = max(self.screen_width/(np.diff(self.world_x_range)[0]),
-                                    self.screen_height/(np.diff(self.world_y_range)[0]))
-        self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])
+        self.camera_view_size = None
 
-        self.map_surface = None
-        self.map_size = None
+        self.map_surf = None
+        self.map_surf_size = None
 
-        self.screen_surface = pg.Surface((self.screen_width, self.screen_height))
+        # NOTE: optimize to support alpha value in pygame
+        # https://stackoverflow.com/questions/6339057/draw-a-transparent-rectangle-in-pygame
+        self.alpha_surf = None
+
+        self.background_color = (255, 255, 255)
 
         pg.font.init()
 
         try:
-            self.screen = pg.display.set_mode((self.screen_width, self.screen_height), pg.DOUBLEBUF)
+            self.screen = pg.display.set_mode(
+                self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)
             pg.display.set_caption("Bark")
-
-            self.clear()
-            self.show()
         except pg.error:
             self.screen = None
             print("No available video device")
 
+    # draw map and initialize camera
     def drawMap(self, map):
-        if self.map_surface == None:
-            # find boundary to create fixed size pygame surface
-            self.map_min_boundary = np.full(2, np.inf)
-            self.map_max_boundary = np.full(2, -np.inf)
+        if self.map_surf is None:
+            # find boundary to create fixed size pygame surf
+            self.map_min_bound = np.full(2, np.inf)
+            self.map_max_bound = np.full(2, -np.inf)
             lanes_np = []
             lanes_dashed = []
 
@@ -57,85 +62,177 @@ class PygameViewer(BaseViewer):
                         lanes_dashed.append(lane.road_mark.type == XodrRoadMarkType.broken
                                             or lane.road_mark.type == XodrRoadMarkType.none)
 
-                        self.map_min_boundary = np.minimum(self.map_min_boundary, np.amin(lane_np, axis=0))
-                        self.map_max_boundary = np.maximum(self.map_max_boundary, np.amax(lane_np, axis=0))
+                        self.map_min_bound = np.minimum(
+                            self.map_min_bound, np.amin(lane_np, axis=0))
+                        self.map_max_bound = np.maximum(
+                            self.map_max_bound, np.amax(lane_np, axis=0))
 
-            self.map_size = self.map_max_boundary-self.map_min_boundary
-            # the size needed to be scaling larger for better visualization
-            # as a pygame surface is stored as pixels
-            self.map_surface = pg.Surface(tuple(self.map_size*self.screen_map_ratio))
-            self.map_surface.fill((255, 255, 255))
+                self.camera_view_size = np.array([np.diff(self.dynamic_world_x_range)[
+                    0], np.diff(self.dynamic_world_y_range)[0]])
+
+                if self.use_world_bounds:
+                    # scale to the map size
+                    self.screen_map_ratio = min(
+                        self.screen_dims / self.camera_view_size)
+                    self.map_surf_size = self.screen_dims
+                else:
+                    # scale larger to have detailed visualization
+                    self.screen_map_ratio = max([self.screen_width / (np.diff(self.world_x_range)[0]),
+                                                 self.screen_height / (np.diff(self.world_y_range)[0])])
+                    self.map_surf_size = (
+                        self.map_max_bound - self.map_min_bound) * self.screen_map_ratio
+
+            self.map_surf = pg.Surface(self.map_surf_size)
+            self.map_surf.fill(self.background_color)
 
             for lane_np, lane_dashed in zip(lanes_np, lanes_dashed):
-                pg.draw.aalines(self.map_surface, self.getColor(self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
+                if lane_dashed:
+                    self.drawDashedLines(self.map_surf, self.getColor(
+                        self.color_lane_boundaries), self.mapToSurfaceCoordinates(lane_np), 3)
+                else:
+                    pg.draw.lines(self.map_surf, self.getColor(
+                        self.color_lane_boundaries), False, self.mapToSurfaceCoordinates(lane_np), 3)
 
-        camera_coordinate = self.mapToSurfaceCoordinates(np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
-        camera_view_range = np.array([np.diff(self.dynamic_world_x_range)[0], np.diff(self.dynamic_world_y_range)[0]])*self.screen_map_ratio
-        self.screen_surface.blit(self.map_surface, (0, 0), tuple(np.around(np.concatenate((camera_coordinate, camera_view_range)))))
+        if self.use_world_bounds:
+            camera_coordinate = np.array([0, 0])
+            camera_view_range = self.screen_dims
 
-    def drawPoint2d(self, point2d, color, alpha):
-        pg.draw.circle(self.screen_surface, self.getColor(color), self.pointsToCameraCoordinate(point2d), 1, 0)
+            map_x_range = self.map_max_bound[0] - self.map_min_bound[0]
+            map_y_range = self.map_max_bound[1] - self.map_min_bound[1]
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False):
-        # TODO: enable dashed line
-        line2d = self.pointsToCameraCoordinate(line2d)
-        pg.draw.lines(self.screen_surface, self.getColor(color), False, line2d, 3)
+            # calculate source destination to blit map to the center of screen
+            if map_x_range > map_y_range:
+                self.source_dest = (
+                    0, int(map_x_range - map_y_range) / 2 * self.screen_map_ratio)
+            elif map_x_range < map_y_range:
+                self.source_dest = (
+                    int(map_y_range - map_x_range) / 2 * self.screen_map_ratio, 0)
+            else:
+                self.source_dest = (0, 0)
 
-    def drawPolygon2d(self, polygon, color, alpha):
-        points = self.pointsToCameraCoordinate(polygon)
-        pg.draw.polygon(self.screen_surface, self.getColor(color), points)
+        else:
+            # project the coordinate of top left corner of dynamic world window
+            camera_coordinate = self.mapToSurfaceCoordinates(
+                np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[1]]))
+            camera_view_range = self.camera_view_size * self.screen_map_ratio
+            self.source_dest = (0, 0)
+
+        self.screen_surface.blit(self.map_surf, self.source_dest,
+                                 np.around((camera_coordinate, camera_view_range)))
+
+    def drawPoint2d(self, point2d, color, alpha=1.0):
+        transformed_points = self.pointsToCameraCoordinate(point2d)
+        if 0 < alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+            pg.draw.circle(s, self.getColor(color),
+                           transformed_points, 1, 0)
+        elif alpha == 1:
+            pg.draw.circle(self.screen_surface, self.getColor(color),
+                           transformed_points, 1, 0)
+
+    def drawLine2d(self, line2d, color="blue", alpha=1.0,
+                   dashed=False, zorder=10, linewidth=1):
+        transformed_lines = self.pointsToCameraCoordinate(line2d)
+        if 0 < alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+
+            if dashed:
+                self.drawDashedLines(
+                    s, self.getColor(color), transformed_lines, 3)
+            else:
+                pg.draw.lines(
+                    s,
+                    self.getColor(color),
+                    False,
+                    transformed_lines,
+                    linewidth)
+        elif alpha == 1:
+            pg.draw.lines(self.screen_surface, self.getColor(
+                color), False, transformed_lines, linewidth)
+
+    def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
+        transformed_points = self.pointsToCameraCoordinate(polygon)
+        if 0 < alpha < 1:
+            s = self.createTransparentSurace(
+                self.screen_dims, self.background_color, alpha)
+            pg.draw.polygon(s, self.getColor(color), transformed_points)
+        elif alpha == 1:
+            pg.draw.polygon(
+                self.screen_surface,
+                self.getColor(color),
+                transformed_points)
 
     def drawTrajectory(self, trajectory, color):
         if len(trajectory) < 1:
             return
         point_list = []
         for state in trajectory:
-            point_list.append([state[round(StateDefinition.X_POSITION)], state[round(StateDefinition.Y_POSITION)]])
+            point_list.append([state[round(StateDefinition.X_POSITION)],
+                               state[round(StateDefinition.Y_POSITION)]])
 
-        pg.draw.lines(self.screen_surface, self.getColor(color), False, self.pointsToCameraCoordinate(point_list), 5)
+        pg.draw.lines(self.screen_surface, self.getColor(color), False,
+                      self.pointsToCameraCoordinate(point_list), 5)
 
     def drawText(self, position, text, **kwargs):
         font = pg.font.get_default_font()
-        fontsize = kwargs.pop("fontsize", 18)
+        font_size = kwargs.pop("fontsize", 18)
         color = kwargs.pop("color", (0, 0, 0))
-        background_color = kwargs.pop("background_color", (255, 255, 255))
-        text_surface = pg.font.SysFont(font, fontsize).render(text, True, color, background_color)
-        self.screen_surface.blit(text_surface, (position[0] * self.screen_width, position[1] * self.screen_height))
+        background_color = kwargs.pop(
+            "background_color", self.background_color)
+        text_surf = pg.font.SysFont(font, font_size).render(
+            text, True, color, background_color)
+        self.screen_surface.blit(
+            text_surf, (position[0] * self.screen_width, (1 - position[1]) * self.screen_height))
 
     def getColor(self, color):
-        if isinstance(color, Viewer.Color):
+        if isinstance(color, str):
             return {
-                Viewer.Color.White: (255, 255, 255),
-                Viewer.Color.Red: (255, 0, 0),
-                Viewer.Color.Blue: (0, 0, 255),
-                Viewer.Color.Magenta: (100, 255, 100),
-                Viewer.Color.Brown: (150, 50, 50),
-                Viewer.Color.Black: (0, 0, 0)
-            }.get(color, (0, 0, 0))
+                "white": pg.Color(255, 255, 255),
+                "red": pg.Color(255, 0, 0),
+                "blue": pg.Color(0, 0, 255),
+                "magenta": pg.Color(100, 255, 100),
+                "brown": pg.Color(150, 50, 50),
+                "black": pg.Color(0, 0, 0)
+            }.get(color, pg.Color(0, 0, 0))
         else:
-            return (color[0] * 255, color[1] * 255, color[2] * 255)
+            return pg.Color(int(color[0] * 255),
+                            int(color[1] * 255),
+                            int(color[2] * 255))
 
     def drawWorld(self, world, eval_agent_ids=None, show=True):
-        self.clear()
         super(PygameViewer, self).drawWorld(world, eval_agent_ids)
+
+        for s in self.alpha_surf.values():
+            self.screen_surface.blit(s, (0, 0))
+
         if show:
             self.show()
 
     def show(self, block=True):
         if self.screen is None:
             return
+
         self.screen.blit(self.screen_surface, (0, 0))
+
         pg.display.flip()
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
-        self.screen_surface.fill((255, 255, 255))
+        self.alpha_surf = dict()
+        self.screen.fill(self.background_color)
+        self.screen_surface.fill(self.background_color)
+
+    def getColorFromMap(self, float_color):
+        # TODO
+        return (1.0, 0, 0)
+
+    def get_aspect_ratio(self):
+        return 1
 
     """
-        points: numpy array
-        return: numpy array
-
-        The origin of pygame surface is located at top left, increment downward
+        The origin of pygame surf is located at top left, increment downward
         therefore all the coordinates need to be transformed
 
         1. Mirror by y-axis
@@ -145,7 +242,8 @@ class PygameViewer(BaseViewer):
     """
 
     def mapToSurfaceCoordinates(self, points):
-        return (points * np.array([1, -1]) + np.array([-self.map_min_boundary[0], self.map_max_boundary[1]])) * self.screen_map_ratio
+        return (points - np.array([self.map_min_bound[0], self.map_max_bound[1]])
+                ) * np.array([1, -1]) * self.screen_map_ratio
 
     def pointsToCameraCoordinate(self, points):
         if isinstance(points, list):
@@ -153,5 +251,34 @@ class PygameViewer(BaseViewer):
         elif not isinstance(points, np.ndarray):
             points = points.ToArray()
 
-        return np.array([0, self.screen_height])+(points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]]))*np.array([1, -1]) \
-            / self.camera_view_size*self.screen_dims
+        if self.use_world_bounds:
+            return np.array([0, self.screen_height]) + (points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]])) * np.array([1, -1]) \
+                * self.screen_map_ratio
+        else:
+            return np.array([0, self.screen_height]) + (points - np.array([self.dynamic_world_x_range[0], self.dynamic_world_y_range[0]])) * np.array([1, -1]) \
+                / self.camera_view_size * self.screen_dims
+
+    def createTransparentSurace(self, dims, background_color, alpha):
+        alpha = round(float(alpha), 1)
+        if alpha not in self.alpha_surf:
+            s = pg.Surface(dims, pg.DOUBLEBUF | pg.HWSURFACE)
+            s.fill(background_color)
+            s.set_colorkey(background_color)
+            s.set_alpha(int(alpha * 255))
+            self.alpha_surf[alpha] = s
+            return s
+        else:
+            return self.alpha_surf[alpha]
+
+    def drawDashedLines(self, surf, color, points, width, dashed_length=5):
+        for i in range(len(points) - 1):
+            origin = points[i]
+            target = points[i + 1]
+            diff = target - origin
+            length = np.linalg.norm(diff)
+            slope = diff / length
+
+            for j in np.arange(0, length / dashed_length, 2):
+                start = origin + slope * j * dashed_length
+                end = start + slope * dashed_length
+                pg.draw.line(surf, color, start, end, width)
