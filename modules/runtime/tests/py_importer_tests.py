@@ -44,7 +44,6 @@ def helper_plot(xodr_parser):
 
 
 class ImporterTests(unittest.TestCase):
-
   def test_map_highway(self):
     xodr_parser = XodrParser(
       "modules/runtime/tests/data/city_highway_straight.xodr")

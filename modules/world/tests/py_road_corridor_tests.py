@@ -6,6 +6,7 @@
 import unittest
 import time
 import math
+import itertools
 import filecmp
 import matplotlib.pyplot as plt
 from bark.world import World
@@ -138,5 +139,6 @@ class RoadCorridorTests(unittest.TestCase):
         
         viewer.show()
         viewer.clear()
+
 if __name__ == '__main__':
   unittest.main()

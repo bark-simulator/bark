@@ -186,21 +186,23 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   float scale = 0.0f;
 
   boost::geometry::unique(previous_line.obj_);
-  previous_line.RecomputeS();
 
   geometry::Line simplified_prev_line;
   boost::geometry::simplify(previous_line.obj_,
                             simplified_prev_line.obj_,
                             s_max_delta);
+  simplified_prev_line.RecomputeS();
 
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
-  if (s_end > previous_line.Length())
-    s_end = previous_line.Length();
+  if (s_end > simplified_prev_line.Length())
+    s_end = simplified_prev_line.Length();
 
-  // b,c,d = 0 simplification
-  if (off.b == 0. &&  off.c == 0. && off.d == 0.) {
+  // b, c, d, s_start = 0 simplification
+  if (off.b == 0. &&  off.c == 0. && off.d == 0. &&
+      simplified_prev_line.obj_.size() > 1 && s == 0. &&
+      fabs((s_end-s) - simplified_prev_line.Length()) < 1.) {
     // we can loop through all innter lane points
     // previous_line == inner_line
     geometry::Point2d prev_point = simplified_prev_line.obj_[0],
@@ -215,6 +217,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     tmp_line.AddPoint(
       geometry::Point2d(bg::get<0>(prev_point) + scale * bg::get<0>(normal),
                         bg::get<1>(prev_point) + scale * bg::get<1>(normal)));
+
 
     for (int i = 1; i < simplified_prev_line.obj_.size(); i++) {
       prev_point = simplified_prev_line.obj_[i-1];
