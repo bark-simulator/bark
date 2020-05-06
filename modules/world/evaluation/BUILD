@@ -27,6 +27,20 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_distance_to_goal",
+    hdrs = [
+        "evaluator_distance_to_goal.hpp",
+    ],
+    deps = [
+        "//modules/world:world",
+        ":base_evaluator",
+        "@boost//:geometry",
+
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluator_behavior_expired",
     hdrs = [
         "evaluator_behavior_expired.hpp",
@@ -119,6 +133,7 @@ cc_library(
         ":evaluator_collision_ego_agent",
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
+        ":evaluator_distance_to_goal"
     ],
     visibility = ["//visibility:public"],
 )
