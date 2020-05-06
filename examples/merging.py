@@ -41,6 +41,9 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     """
     return np.random.uniform(s_min, s_max)
 
+  def velocity(self, min_vel=5., max_vel=6.):
+
+    return np.random.uniform(low=min_vel, high=max_vel)
   def controlled_ids(self, agent_list):
     """Define controlled agents
     """
@@ -61,7 +64,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
                                      params=param_server,
-                                     road_ids=[0])
+                                     road_ids=[0, 1])
 right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
                                       params=param_server,
                                       controlled_agent=True,
@@ -69,6 +72,7 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 
 
 # create 5 scenarios
+param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 scenarios = \
   ConfigWithEase(num_scenarios=5,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
@@ -81,12 +85,12 @@ viewer = MPViewer(params=param_server,
                   x_range=[-40, 40],
                   y_range=[-40, 40],
                   follow_agent_id=True)
-viewer = Panda3dViewer(params=param_server,
-                       x_range=[-40, 40],
-                       y_range=[-40, 40],
-                       follow_agent_id=True,
-                       light_pose=[1000, 1000, 100000],
-                       camera_pose=[1000, 980, 100])
+# viewer = Panda3dViewer(params=param_server,
+#                        x_range=[-40, 40],
+#                        y_range=[-40, 40],
+#                        follow_agent_id=True,
+#                        light_pose=[1000, 1000, 100000],
+#                        camera_pose=[1000, 980, 100])
 # gym like interface
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -95,14 +99,15 @@ env = Runtime(step_time=0.2,
       
 sim_step_time = param_server["simulation"]["step_time",
                                           "Step-time used in simulation",
-                                          0.05]
+                                          0.15]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
-                                                  0.5]
+                                                  1.]
 
 # run 3 scenarios
-env.reset()
-# step each scenario 20 times
-for step in range(0, 10):
-  env.step()
-  time.sleep(sim_step_time/sim_real_time_factor)
+for _ in range(0, 3):
+  env.reset()
+  # step each scenario 20 times
+  for step in range(0, 50):
+    env.step()
+    time.sleep(sim_step_time/sim_real_time_factor)

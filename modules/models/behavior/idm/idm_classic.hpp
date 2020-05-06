@@ -74,6 +74,7 @@ class BehaviorIDMClassic : public BehaviorModel {
     float param_min_velocity_;
     float param_max_velocity_;
     int param_exponent_;
+    bool brake_lane_end_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {

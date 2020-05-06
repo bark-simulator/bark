@@ -11,6 +11,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <tuple>
 
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/observed_world.hpp"
@@ -30,16 +31,20 @@ using modules::world::objects::AgentPtr;
 
 BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params) {
 
-    param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
-    param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);
-    param_max_acceleration_ = params->GetReal("BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
-    param_acceleration_lower_bound_ = params->GetReal("BehaviorIDMClassic::AccelerationLowerBound", "See Wikipedia IDM article", -5.0f);
-    param_acceleration_upper_bound_ = params->GetReal("BehaviorIDMClassic::AccelerationUpperBound", "See Wikipedia IDM article", 8.0f);
-    param_desired_velocity_ = params->GetReal("BehaviorIDMClassic::DesiredVelocity", "See Wikipedia IDM article", 15.0f);
-    param_comfortable_braking_acceleration_ = params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", "See Wikipedia IDM article", 1.67f);
-    param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity", "See Wikipedia IDM article", 0.0f);
-    param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity", "See Wikipedia IDM article", 50.0f);
-    param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent", "See Wikipedia IDM article", 4);
+  param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
+  param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);
+  param_max_acceleration_ = params->GetReal("BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
+  param_acceleration_lower_bound_ = params->GetReal("BehaviorIDMClassic::AccelerationLowerBound", "See Wikipedia IDM article", -5.0f);
+  param_acceleration_upper_bound_ = params->GetReal("BehaviorIDMClassic::AccelerationUpperBound", "See Wikipedia IDM article", 8.0f);
+  param_desired_velocity_ = params->GetReal("BehaviorIDMClassic::DesiredVelocity", "See Wikipedia IDM article", 15.0f);
+  param_comfortable_braking_acceleration_ = params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", "See Wikipedia IDM article", 1.67f);
+  param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity", "See Wikipedia IDM article", 0.0f);
+  param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity", "See Wikipedia IDM article", 50.0f);
+  param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent", "See Wikipedia IDM article", 4);
+  brake_lane_end_ = params->GetBool(
+    "BehaviorIDMClassic::BrakeForLaneEnd",
+    "Whether the vehicle should stop at the end of its LaneCorridor.",
+    false);
 }
 
 
@@ -127,9 +132,9 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
 Trajectory BehaviorIDMClassic::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
-  
+
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
-      observed_world.GetAgentInFront();
+    observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
   using dynamic::StateDefinition;
@@ -155,13 +160,32 @@ Trajectory BehaviorIDMClassic::Plan(
 
   geometry::Line line = lane_corr->GetCenterLine();
 
-  double net_distance = .0f;
+  double net_distance = .0;
   double vel_other = 1e6;
   if (leading_vehicle.first) {
     net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
+  }
+
+  // TODO(@hart): integrate distance to end of LaneCorridor
+  bool brake_for_lane_corr_end = false;
+  if (brake_lane_end_) {
+    const double s_until_end =
+      lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition()) - 20.;
+    if (s_until_end < 50.)
+      brake_for_lane_corr_end = true;
+    // if no leading vehicle
+    if (net_distance == 0.) {
+      net_distance = s_until_end;
+      vel_other = 0.;
+    } else {  // if there is a leading vehicle
+      net_distance = std::min(net_distance, s_until_end);
+      // the lane end is closer then the other vehicle
+      if (net_distance == s_until_end)
+        vel_other = 0.;
+    }
   }
 
   if (!line.obj_.empty()) {
@@ -180,7 +204,7 @@ Trajectory BehaviorIDMClassic::Plan(
     double traveled_other;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
-      if (leading_vehicle.first) {
+      if (leading_vehicle.first || brake_for_lane_corr_end) {
         acc = CalcIDMAcc(net_distance, vel_i, vel_other);
         traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
         traveled_other = vel_other * dt;

@@ -82,10 +82,10 @@ class LaneCorridorConfig:
     """
     if self._road_corridor == None:
       world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    if road_corr is None:
+    self._road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+    if self._road_corr is None:
       return None
-    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    lane_corr = self._road_corr.lane_corridors[self._lane_corridor_id]
     if lane_corr is None:
       return None
     centerline = lane_corr.center_line
@@ -230,7 +230,10 @@ class ConfigWithEase(ScenarioGeneration):
             agent_params,
             agent_goal,
             map_interface)
+          new_agent.road_corridor = lc_config._road_corr
           lc_agents.append(new_agent)
+        # set the road corridor
+
       # handle controlled agents
       controlled_agent_ids = []
       for controlled_agent in lc_config.controlled_ids(lc_agents):

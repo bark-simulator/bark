@@ -63,7 +63,7 @@ void python_agent(py::module m) {
     .def_property_readonly("dynamic_model", &Agent::GetDynamicModel)
     .def_property_readonly("model3d", &Agent::GetModel3d)
     .def_property_readonly("state", &Agent::GetCurrentState)
-    .def_property_readonly("road_corridor", &Agent::GetRoadCorridor)
+    .def_property("road_corridor", &Agent::GetRoadCorridor, &Agent::SetRoadCorridor)
     .def_property("goal_definition",
       &Agent::GetGoalDefinition, &Agent::SetGoalDefinition)
     .def("SetAgentId", &Object::SetAgentId)

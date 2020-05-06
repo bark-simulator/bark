@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "city_highway_straight"
+map_name = "DR_DEU_Merging_MT_v01_shifted"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition
@@ -99,8 +99,8 @@ for lane_id in lane_ids:
 
 
 comb_all = []
-start_point = [Point2d(5118, 5065)]
-end_point_list = [Point2d(5118, 5200)]
+start_point = [Point2d(1004, 1003),Point2d(1004, 1006)]
+end_point_list = [Point2d(886, 1008)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
