@@ -30,7 +30,6 @@ using modules::world::objects::AgentPtr;
 
 
 BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : BehaviorModel(params) {
-
   param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
   param_desired_time_head_way_ = params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway", "See Wikipedia IDM article", 1.5f);
   param_max_acceleration_ = params->GetReal("BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
@@ -139,46 +138,30 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
 //! delta_time
 Trajectory BehaviorIDMClassic::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
-
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
     observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
-  using dynamic::StateDefinition;
-  //! TODO(@fortiss): parameters
-  const float min_velocity = GetMinVelocity();
-  const float max_velocity = GetMaxVelocity();
-
-  // TODO(@all): why 11
-  const int num_traj_time_points = 11;
-  dynamic::Trajectory traj(num_traj_time_points,
-                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  float const dt = delta_time / (num_traj_time_points - 1);
-  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
-
-  // select state and get p0
-  geometry::Point2d pose = observed_world.CurrentEgoPosition();
-
-
   // TODO(@hart): could also be a different lane corridor
   auto lane_corr = observed_world.GetLaneCorridor();
   if (!lane_corr) {
-    this->SetLastTrajectory(traj);
-    return traj;
+    return GetLastTrajectory();
   }
-
   geometry::Line line = lane_corr->GetCenterLine();
 
+  // TODO(@hart): refactor into CalcNetValues -> return net_distance and net_vel
   double net_distance = .0;
   double vel_other = 1e6;
   if (leading_vehicle.first) {
     net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
     dynamic::State other_vehicle_state =
-        leading_vehicle.first->GetCurrentState();
+      leading_vehicle.first->GetCurrentState();
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
   }
 
+  // TODO(@hart): refactor into CalcNetValues
   // brake for end of LaneCorridor
   bool brake_for_lane_corr_end = false;
   if (brake_lane_end_) {
@@ -197,7 +180,18 @@ Trajectory BehaviorIDMClassic::Plan(
         vel_other = 0.;
     }
   }
+  // TODO(@hart): end refactor into CalcNetValues 
 
+  // TODO(@hart): refactor into trajectory generation
+
+  // TODO(@all): why 11
+  const int num_traj_time_points = 11;
+  dynamic::Trajectory traj(num_traj_time_points,
+                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  float const dt = delta_time / (num_traj_time_points - 1);
+  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
+  // select state and get p0
+  geometry::Point2d pose = observed_world.CurrentEgoPosition();
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
@@ -227,7 +221,7 @@ Trajectory BehaviorIDMClassic::Plan(
 
       s_i += +0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;
-      vel_i = std::max(std::min(temp_velocity, max_velocity), min_velocity);
+      vel_i = std::max(std::min(temp_velocity, GetMaxVelocity()), GetMinVelocity());
       t_i = static_cast<float>(i) * dt + start_time;
 
       geometry::Point2d traj_point = GetPointAtS(line, s_i);  // checked
