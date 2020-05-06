@@ -16,9 +16,9 @@ class Panda3dViewer(BaseViewer, ShowBase):
     super(Panda3dViewer, self).__init__(params=params, **kwargs)
     self._model_path = kwargs.pop(
       "model_path",
-      os.path.join(os.path.dirname(os.path.abspath(__file__))) + "/models/car.obj")
+      os.path.join(os.path.dirname(os.path.abspath(__file__))) + "/models/car_model.obj")
     self._model_scale = kwargs.pop("model_scale",
-                                   np.array([1.,1.,1.], dtype=float))
+                                   np.array([.3,.3,.3], dtype=float))
     self._model_orientation = \
       kwargs.pop("model_orientation",
                  np.array([0, 90, 90],
@@ -29,8 +29,10 @@ class Panda3dViewer(BaseViewer, ShowBase):
     self._line_thickness = kwargs.pop("line_thickness", 0.05)
     self._follow_agent = kwargs.pop("follow_agent", True)
     self._follow_agent_id = kwargs.pop("follow_agent_id", None)
-    self._camera_pose = kwargs.pop("camera_pose", [0, 20, 100]) 
+    self._camera_pose = kwargs.pop("camera_pose", [0, 20, 60])
+    self._light_pose = kwargs.pop("light_pose", [0, 0, 10000])
     self._camera_orientation = kwargs.pop("camera_pose", [0, 270, 0])
+    self._frame_count = 0
 
     # Panda3d
     self._window = WindowProperties().getDefault()
@@ -81,7 +83,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
     plight = PointLight('plight')
     plight.setColor((1., 1., 1., 1))
     self._point_light = self.render.attachNewNode(plight)
-    self._point_light.setPos(0, 0, 100000)
+    self._point_light.setPos(self._light_pose[0], self._light_pose[1], self._light_pose[2])
     self.render.setLight(self._point_light)
 
   def AddGenerator(self, budget=1000):
@@ -100,10 +102,10 @@ class Panda3dViewer(BaseViewer, ShowBase):
     for point in line2d_np:
       self._generator.link_segment(
         Vec3(point[0], point[1], 0.1),
-        self.getColor(color),
+        Vec4(0, 0, 1, 1),
         self._line_thickness,
-        self.getColor(color))
-    self._generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(color))
+        self.getColor(Viewer.Color.Blue))
+    self._generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(Viewer.Color.Blue))
 
   def get_aspect_ratio(self):
     return self._screen_dims[0] / self._screen_dims[1]
@@ -117,7 +119,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
       self._agent_nodes[agent.id].reparentTo(self.render)
       self._agent_nodes[agent.id].setScale(
         self._model_scale[0], self._model_scale[1], self._model_scale[2])
-      self._agent_nodes[agent.id].setColor(self.getColor(color))
+      self._agent_nodes[agent.id].setColor(self.getColor(Viewer.Color.Blue))
+      self._agent_nodes[agent.id].setColorScale(self.getColor(Viewer.Color.Blue))
 
     angle = ((agent.state[int(StateDefinition.THETA_POSITION)] * 180) / pi +
               self._model_orientation[0])
@@ -162,6 +165,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
     #   self._camera_orientation[2],
     #   self._camera_orientation[1],
     #   self._camera_orientation[0])
+    base.win.saveScreenshot("/Users/hart/2019/bark/screenshots/screen_{:02d}.png".format((self._frame_count)))
+    self._frame_count += 1
     self._generator.end()
     self.taskMgr.step()
 

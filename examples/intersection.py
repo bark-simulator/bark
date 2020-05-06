@@ -53,7 +53,7 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -20, -2, 0, 43/3.6])
+init_state = np.array([0, -20, -2, 0, 33/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
 agent_params = param_server.addChild("agent1")
@@ -68,7 +68,7 @@ agent1 = Agent(init_state,
 world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, 30, 2, -3.14, 50/3.6])
+init_state2 = np.array([0, 30, 2, -3.14, 40/3.6])
 agent_params2 = param_server.addChild("agent2")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(-30, 2))
@@ -83,7 +83,7 @@ agent2 = Agent(init_state2,
 world.AddAgent(agent2)
 
 agent_2d_shape3 = CarLimousine()
-init_state3 = np.array([0, -30, -2, -3.14, 50/3.6])
+init_state3 = np.array([0, -30, -2, -3.14, 40/3.6])
 agent_params3 = param_server.addChild("agent3")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(-2, -30))
@@ -99,7 +99,7 @@ world.AddAgent(agent3)
 
 
 agent_2d_shape4 = CarLimousine()
-init_state4 = np.array([0, 2, -30, 3.14/2, 40/3.6])
+init_state4 = np.array([0, 2, -30, 3.14/2, 30/3.6])
 agent_params4 = param_server.addChild("agent4")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
@@ -129,7 +129,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-for _ in range(0, 30):
+for _ in range(0, 50):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)
