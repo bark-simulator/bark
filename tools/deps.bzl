@@ -70,6 +70,15 @@ glog_library(with_gflags=0)
     )
 
     _maybe(
+    http_archive,
+    name = "rss_lib",
+    build_file = "@bark_project//tools:rss.BUILD",
+    sha256 = "b77c658434399815f02dd12ecf83e40f8bf015ca29a8407c4361a3b3b0c28eb7",
+    strip_prefix = "ad-rss-lib-3.0.0",
+    urls = ["https://github.com/intel/ad-rss-lib/archive/v3.0.0.tar.gz"],
+    )
+
+    _maybe(
     native.new_local_repository,
     name = "python_linux",
     path = "./bark/python_wrapper/venv/",
