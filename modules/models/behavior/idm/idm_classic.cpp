@@ -174,6 +174,19 @@ double BehaviorIDMClassic::CalcACCAcc(const double& net_distance, const double& 
 //! delta_time
 Trajectory BehaviorIDMClassic::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
+  const int num_traj_time_points = 11;
+  dynamic::Trajectory traj(num_traj_time_points,
+                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  auto lane_corr = observed_world.GetLaneCorridor();
+  if (!lane_corr) {
+    this->SetLastTrajectory(traj);
+    this->SetLastAction(Action(Continuous1DAction(0.0f)));
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return traj;
+  }
+
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
       observed_world.GetAgentInFront();
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
@@ -182,24 +195,12 @@ Trajectory BehaviorIDMClassic::Plan(
   //! TODO(@fortiss): parameters
   const float min_velocity = GetMinVelocity();
   const float max_velocity = GetMaxVelocity();
-
-  const int num_traj_time_points = 11;
-  dynamic::Trajectory traj(num_traj_time_points,
-                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  
   float const dt = delta_time / (num_traj_time_points - 1);
-
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
 
   // select state and get p0
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
-
-  auto lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
-    this->SetLastTrajectory(traj);
-    this->SetLastAction(Action(Continuous1DAction(0.0f)));
-    return traj;
-  }
-
   geometry::Line line = lane_corr->GetCenterLine();
 
   double net_distance = std::numeric_limits<double>::max();

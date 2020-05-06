@@ -20,7 +20,11 @@ using modules::world::AgentMap;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
-  BARK_EXPECT_TRUE(lane_corridor != nullptr);
+  if(!lane_corridor) {
+    return FrontRearAgents{
+                AgentFrenetPair(nullptr, FrenetPosition()),
+                AgentFrenetPair(nullptr, FrenetPosition())};
+  }
 
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
