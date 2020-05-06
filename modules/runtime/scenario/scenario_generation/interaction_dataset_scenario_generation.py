@@ -13,6 +13,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from bark.world.map import *
 from bark.models.dynamic import *
 from bark.models.execution import *
+import os.path
 
 
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):
@@ -27,10 +28,10 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
-                                          "modules/runtime/tests/data/DR_DEU_Merging_MT.xodr"]
+                                          os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/map/DR_DEU_Merging_MT_v01_shifted.xodr"]
         self._track_file_name = params_temp["TrackFilename",
                                             "Path to track file (csv)",
-                                            "modules/runtime/tests/data/vehicle_tracks_000.csv"]
+                                            os.path.expanduser('~') + "/bark-simulator/interaction_dataset_fortiss_internal/DR_DEU_Merging_MT/tracks/vehicle_tracks_013.csv"]
         self._track_ids = params_temp["TrackIds",
                                       "IDs of the vehicle tracks to import.",
                                       [1]]
