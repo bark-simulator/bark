@@ -45,6 +45,14 @@ BehaviorIDMClassic::BehaviorIDMClassic(const commons::ParamsPtr& params) : Behav
     "BehaviorIDMClassic::BrakeForLaneEnd",
     "Whether the vehicle should stop at the end of its LaneCorridor.",
     false);
+  brake_lane_end_enabled_distance_ = params->GetReal(
+    "BehaviorIDMClassic::BrakeForLaneEndEnabledDistance",
+    "Range in m when the braking should be active",
+    150);
+  brake_lane_end_distance_offset_ = params->GetReal(
+    "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
+    "Distance offset for vehicle to stop at.",
+    20);
 }
 
 
@@ -123,7 +131,7 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
                                          const double& vel_other) const {
   const double free_road_term = CalcFreeRoadTerm(vel_ego);
   const double interaction_term =
-      CalcInteractionTerm(net_distance, vel_ego, vel_other);
+    CalcInteractionTerm(net_distance, vel_ego, vel_other);
   return GetMaxAcceleration() * (free_road_term - interaction_term);
 }
 
@@ -142,16 +150,18 @@ Trajectory BehaviorIDMClassic::Plan(
   const float min_velocity = GetMinVelocity();
   const float max_velocity = GetMaxVelocity();
 
+  // TODO(@all): why 11
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
-
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
 
   // select state and get p0
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
 
+
+  // TODO(@hart): could also be a different lane corridor
   auto lane_corr = observed_world.GetLaneCorridor();
   if (!lane_corr) {
     this->SetLastTrajectory(traj);
@@ -169,12 +179,12 @@ Trajectory BehaviorIDMClassic::Plan(
     vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
   }
 
-  // TODO(@hart): integrate distance to end of LaneCorridor
+  // brake for end of LaneCorridor
   bool brake_for_lane_corr_end = false;
   if (brake_lane_end_) {
     const double s_until_end =
-      lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition()) - 20.;
-    if (s_until_end < 50.)
+      lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition()) - brake_lane_end_distance_offset_;
+    if (s_until_end < brake_lane_end_enabled_distance_)
       brake_for_lane_corr_end = true;
     // if no leading vehicle
     if (net_distance == 0.) {

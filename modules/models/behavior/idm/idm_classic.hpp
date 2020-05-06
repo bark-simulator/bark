@@ -62,19 +62,23 @@ class BehaviorIDMClassic : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  private:
-    // Parameters
-    float param_minimum_spacing_;
-    float param_desired_time_head_way_;
-    float param_max_acceleration_;
-    float param_acceleration_lower_bound_;
-    float param_acceleration_upper_bound_;
-    float param_desired_velocity_;
-    float param_comfortable_braking_acceleration_;
-    float param_min_velocity_;
-    float param_max_velocity_;
-    int param_exponent_;
-    bool brake_lane_end_;
+ private:
+  // Parameters
+  float param_minimum_spacing_;
+  float param_desired_time_head_way_;
+  float param_max_acceleration_;
+  float param_acceleration_lower_bound_;
+  float param_acceleration_upper_bound_;
+  float param_desired_velocity_;
+  float param_comfortable_braking_acceleration_;
+  float param_min_velocity_;
+  float param_max_velocity_;
+  int param_exponent_;
+
+  // IDM extension to stop at the LaneCorridor end
+  bool brake_lane_end_;
+  float brake_lane_end_enabled_distance_;
+  float brake_lane_end_distance_offset_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
