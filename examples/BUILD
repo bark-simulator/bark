@@ -29,6 +29,22 @@ py_test(
           "//modules/runtime:runtime"],
 )
 
+py_test(
+  name = "merging",
+  srcs = ["merging.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:pygame_viewer",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime/viewer:panda3d_easy",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          "//modules/runtime:runtime"],
+)
+
 py_binary(
   name = "intersection",
   srcs = ["intersection.py"],
