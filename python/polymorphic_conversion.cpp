@@ -12,6 +12,7 @@
 
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/mobil/mobil.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
@@ -36,6 +37,7 @@ using modules::world::goal_definition::GoalDefinitionStateLimits;
 using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
+using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::BehaviorMobil;
@@ -45,6 +47,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
   if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
     behavior_model_name = "BehaviorConstantVelocity";
+  } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
+    behavior_model_name = "BehaviorIDMLaneTracking";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
     behavior_model_name = "BehaviorIDMClassic";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
@@ -71,6 +75,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   if (behavior_model_name.compare("BehaviorConstantVelocity") == 0) {
       return std::make_shared<BehaviorConstantVelocity>(
         t[0].cast<BehaviorConstantVelocity>());
+  } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
+    return std::make_shared<BehaviorIDMLaneTracking>(
+      t[0].cast<BehaviorIDMLaneTracking>());
   } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
     return std::make_shared<BehaviorIDMClassic>(
       t[0].cast<BehaviorIDMClassic>());

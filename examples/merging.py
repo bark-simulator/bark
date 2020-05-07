@@ -15,6 +15,7 @@ from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 
 from bark.world.opendrive import *
 from bark.world.goal_definition import *
+from bark.models.behavior import *
 
 # parameters
 param_server = ParameterServer()
@@ -42,8 +43,8 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return np.random.uniform(s_min, s_max)
 
   def velocity(self, min_vel=5., max_vel=6.):
-
     return np.random.uniform(low=min_vel, high=max_vel)
+
   def controlled_ids(self, agent_list):
     """Define controlled agents
     """
@@ -59,8 +60,13 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
       return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
     else:
       super().controlled_goal(world)
-
-
+  
+  def controlled_behavior_model(self, world):
+    model = BehaviorIDMLaneTracking(self._params)
+    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = road_corr.lane_corridors[0]
+    return model
+    
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
                                      params=param_server,
@@ -73,6 +79,7 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 
 # create 5 scenarios
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
 scenarios = \
   ConfigWithEase(num_scenarios=5,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",

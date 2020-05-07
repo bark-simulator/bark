@@ -79,6 +79,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorIDMLaneTracking>>(m, "BehaviorIDMLaneTracking")
     .def(py::init<const modules::commons::ParamsPtr&>())
+    .def("SetLaneCorridor", &BehaviorIDMClassic::SetLaneCorridor)
     .def("__repr__", [](const BehaviorIDMLaneTracking &m) {
       return "bark.behavior.BehaviorIDMLaneTracking";
     })

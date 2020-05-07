@@ -23,6 +23,10 @@ class BehaviorIDMLaneTracking : public BaseIDM {
       "BehaviorIDMLaneTracking::CrosstrackErrorGain",
       "Tuning factor of stanley controller",
       1.0);
+    lane_corr_id_ = params->GetInt(
+      "BehaviorIDMLaneTracking::LaneCorridorID",
+      "Id of LaneCorridor.",
+      -1);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
@@ -32,10 +36,14 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     const LaneCorridorPtr& lane_corr,
     const std::tuple<double, double, bool>& rel_values,
     float delta_time) const;
-  
+
+  Trajectory Plan(
+    float delta_time, const world::ObservedWorld& observed_world);
+
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
+  int lane_corr_id_;
   double crosstrack_error_gain_;
 };
 

@@ -101,8 +101,7 @@ class LaneCorridorConfig:
   def velocity(self, min_vel=10., max_vel=15.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
-  @property
-  def behavior_model(self):
+  def behavior_model(self, world):
     """Returns behavior model
     """
     return BehaviorIDMClassic(self._params)
@@ -157,14 +156,13 @@ class LaneCorridorConfig:
     """
     return self.goal(world)
 
-  @property
-  def controlled_behavior_model(self):
+  def controlled_behavior_model(self, world):
     """Behavior model for controlled agent
     
     Returns:
         BehaviorModel -- BARK behavior model
     """
-    return self.behavior_model
+    return self.behavior_model(world)
 
   def reset(self):
     """Resets the LaneCorridorConfig
@@ -215,7 +213,7 @@ class ConfigWithEase(ScenarioGeneration):
       while agent_state is not None:
         agent_state = lc_config.state(world)
         if agent_state is not None:
-          agent_behavior = lc_config.behavior_model
+          agent_behavior = lc_config.behavior_model(world)
           agent_dyn = lc_config.dynamic_model
           agent_exec = lc_config.execution_model
           agent_polygon = lc_config.shape
@@ -238,7 +236,7 @@ class ConfigWithEase(ScenarioGeneration):
       controlled_agent_ids = []
       for controlled_agent in lc_config.controlled_ids(lc_agents):
         controlled_agent.goal_definition = lc_config.controlled_goal(world)
-        controlled_agent.behavior_model = lc_config.controlled_behavior_model
+        controlled_agent.behavior_model = lc_config.controlled_behavior_model(world)
         controlled_agent_ids.append(controlled_agent.id)
       scenario._eval_agent_ids.extend(controlled_agent_ids)
       scenario._agent_list.extend(lc_agents)

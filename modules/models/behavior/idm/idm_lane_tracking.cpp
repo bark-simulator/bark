@@ -90,6 +90,41 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   return std::tuple<Trajectory, Action>(traj, action);
 }
 
+//! IDM Model will assume other front vehicle as constant velocity during
+Trajectory BehaviorIDMLaneTracking::Plan(
+    float delta_time, const world::ObservedWorld& observed_world) {
+  using dynamic::StateDefinition;
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
+  if (lane_corr_id_ != -1) {
+    const auto& road_corr = observed_world.GetRoadCorridor();
+    SetLaneCorridor(
+      road_corr->GetUniqueLaneCorridors()[lane_corr_id_]);
+  } else {
+    SetLaneCorridor(observed_world.GetLaneCorridor());
+  }
+
+  if (!GetLaneCorridor()) {
+    return GetLastTrajectory();
+  }
+
+  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
+    observed_world,
+    GetLaneCorridor());
+  // TODO(@hart): could calculate the values for both corrs. to avoid cols.
+
+  std::tuple<Trajectory, Action> traj_action =
+    GenerateTrajectory(
+      observed_world, GetLaneCorridor(), rel_values, delta_time);
+
+  // set values
+  Trajectory traj = std::get<0>(traj_action);
+  Action action = std::get<1>(traj_action);
+  SetLastTrajectory(traj);
+  SetLastAction(action);
+  return traj;
+}
+
 }  // namespace behavior
 }  // namespace models
 }  // namespace modules

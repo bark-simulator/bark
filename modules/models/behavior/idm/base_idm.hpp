@@ -77,9 +77,9 @@ class BaseIDM : public BehaviorModel {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
-
+  LaneCorridorPtr GetLaneCorridor() const { return lane_corr_; }
   void SetLaneCorridor(const LaneCorridorPtr& lane_corr) {
-    set_lane_corr_ = lane_corr;
+    lane_corr_ = lane_corr;
   }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
@@ -96,12 +96,12 @@ class BaseIDM : public BehaviorModel {
   float param_min_velocity_;
   float param_max_velocity_;
   int param_exponent_;
+  LaneCorridorPtr lane_corr_;
 
   // IDM extension to stop at the LaneCorridor end
   bool brake_lane_end_;
   float brake_lane_end_enabled_distance_;
   float brake_lane_end_distance_offset_;
-  LaneCorridorPtr lane_corr_, set_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BaseIDM::Clone() const {

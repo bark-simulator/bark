@@ -201,12 +201,7 @@ Trajectory BaseIDM::Plan(
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
-  if (set_lane_corr_) {
-    lane_corr_ = set_lane_corr_;
-  } else {
-    lane_corr_ = observed_world.GetLaneCorridor();
-  }
-
+  lane_corr_ = observed_world.GetLaneCorridor();
   if (!lane_corr_) {
     return GetLastTrajectory();
   }
@@ -214,6 +209,7 @@ Trajectory BaseIDM::Plan(
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(
     observed_world,
     lane_corr_);
+  
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
       observed_world, lane_corr_, rel_values, delta_time);
