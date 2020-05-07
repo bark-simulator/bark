@@ -52,9 +52,9 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
     behavior_model_name = "BehaviorIDMLaneTracking";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
-    behavior_model_name = "BehaviorSimpleRuleBased";
-  } else if (typeid(*behavior_model) == typeid(BehaviorSimpleRuleBased)) {
     behavior_model_name = "BehaviorIDMClassic";
+  } else if (typeid(*behavior_model) == typeid(BehaviorSimpleRuleBased)) {
+    behavior_model_name = "BehaviorSimpleRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
@@ -82,9 +82,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
     return std::make_shared<BehaviorIDMLaneTracking>(
       t[0].cast<BehaviorIDMLaneTracking>());
-  } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
-    return std::make_shared<BehaviorIDMLaneTracking>(
-      t[0].cast<BehaviorIDMLaneTracking>());
+  } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
+    return std::make_shared<BehaviorIDMClassic>(
+      t[0].cast<BehaviorIDMClassic>());
   } else if (behavior_model_name.compare("BehaviorSimpleRuleBased") == 0) {
     return std::make_shared<BehaviorSimpleRuleBased>(
       t[0].cast<BehaviorSimpleRuleBased>());

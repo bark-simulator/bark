@@ -23,14 +23,14 @@ using modules::world::FrenetPosition;
 
 class BehaviorSimpleRuleBased : public BehaviorRuleBased {
  public:
-  explicit BehaviorSimpleRuleBased(const commons::ParamsPtr& params)
-    : BehaviorRuleBased(params) {
+  explicit BehaviorSimpleRuleBased(const commons::ParamsPtr& params) :
+    BehaviorRuleBased(params) {
   }
 
   virtual ~BehaviorSimpleRuleBased() {}
 
   std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
-    CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);
+    CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };

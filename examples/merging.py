@@ -64,6 +64,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   def controlled_behavior_model(self, world):
     # model = BehaviorIDMLaneTracking(self._params)
     model = BehaviorSimpleRuleBased(self._params)
+    # model = BehaviorMobil(self._params)
     return model
     
 # configure both lanes of the highway. the right lane has one controlled agent

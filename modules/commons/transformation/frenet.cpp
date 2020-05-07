@@ -16,10 +16,12 @@ using modules::geometry::operator-;
 
 FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   namespace bg = boost::geometry;
-
+  
+  // TODO(@hart): cover edge cases
+  
   // First extract nearest point, extract longitudinal coordinate
   std::tuple<Point2d, double, uint> nearest =
-      modules::geometry::GetNearestPointAndS(path, position);
+    modules::geometry::GetNearestPointAndS(path, position);
   lon = std::get<1>(nearest);
 
   // calculate lateral coordinate value manually
@@ -33,8 +35,8 @@ FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   auto tangent_angle = modules::geometry::GetTangentAngleAtS(path, lon);
   auto direction_vector = position - nearest_point;
   double diff = modules::geometry::SignedAngleDiff(
-      tangent_angle,
-      atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
+    tangent_angle,
+    atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
 
   lat = lat_val * sign;
