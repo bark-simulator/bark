@@ -14,6 +14,7 @@ cc_library(
     ],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
+    deps = ["@spdlog"],
 )
 
 # cc_test(
@@ -32,6 +33,7 @@ cc_library(
     includes = ["ad_map_opendrive_reader/include"],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
+    deps =["@pugixml"],
 )
 
 cc_library(
