@@ -10,7 +10,7 @@
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
-#include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"

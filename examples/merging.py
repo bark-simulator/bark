@@ -79,7 +79,7 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 
 # create 5 scenarios
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-# param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
+param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
 scenarios = \
   ConfigWithEase(num_scenarios=5,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",

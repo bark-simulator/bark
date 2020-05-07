@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>

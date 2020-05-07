@@ -30,7 +30,7 @@ cc_binary(
     "//modules/models/behavior/dynamic_model:dynamic_model",
     "//modules/models/behavior/idm:idm_classic",
     "//modules/models/behavior/idm:idm_lane_tracking",
-    "//modules/models/behavior/mobil:mobil",
+    "//modules/models/behavior/rule_based:mobil",
     "//modules/models/behavior/static_trajectory",
     #"//modules/models/execution/mpc:mpc",
     "//modules/runtime/viewer:viewer",
