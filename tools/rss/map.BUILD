@@ -1,7 +1,13 @@
 cc_library(
     name = "ad_physics",
-    srcs = glob(["ad_physics/**/*.cpp"]),
-    hdrs = glob(["ad_physics/**/*.hpp"]),
+    srcs = glob([
+        "ad_physics/generated/src/**/*.cpp",
+        "ad_physics/impl/src/**/*.cpp",
+    ]),
+    hdrs = glob([
+        "ad_physics/generated/include/**/*.hpp",
+        "ad_physics/impl/include/**/*.hpp",
+    ]),
     includes = [
         "ad_physics/generated/include",
         "ad_physics/impl/include",
