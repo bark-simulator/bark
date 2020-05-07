@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>
@@ -48,15 +49,12 @@ double BehaviorMobil::CalcLongRawAccWithoutLeader(
     const modules::geometry::Point2d& pos, const float vel) const {
   double acc;
   if (stop_at_lane_ending_) {
-    // Brake at end of lane corridor
-    // const double net_distance =
-    // lane_corridor->LengthUntilEnd(agent->GetCurrentPosition()) -
-    // agent->GetShape().front_dist_;
+    // TODO(@hart): change to parameter
     const double net_distance = lane_corridor->LengthUntilEnd(pos) - 15.0;
     // setting vel_other to zero
-    acc = idm_->CalcRawIDMAcc(net_distance, vel, 0.0);
+    acc = BaseIDM::CalcRawIDMAcc(net_distance, vel, 0.0);
   } else {
-    acc = idm_->GetMaxAcceleration() * idm_->CalcFreeRoadTerm(vel);
+    acc = BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
   }
   return acc;
 }

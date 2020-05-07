@@ -113,6 +113,24 @@ void python_behavior(py::module m) {
             return new BehaviorMobil(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
         }));
 
+  py::class_<BehaviorSimpleRuleBased,
+             BehaviorModel,
+             shared_ptr<BehaviorSimpleRuleBased>>(m, "BehaviorSimpleRuleBased")
+    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def("__repr__", [](const BehaviorSimpleRuleBased &m) {
+      return "bark.behavior.BehaviorSimpleRuleBased";
+    })
+    .def(py::pickle(
+      [](const BehaviorSimpleRuleBased &b) { 
+          return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) { // __setstate__
+          if (t.size() != 1)
+              throw std::runtime_error("Invalid behavior model state!");
+          /* Create a new C++ instance */
+          return new BehaviorSimpleRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
+      }));
+
   py::class_<BehaviorMotionPrimitives,
              BehaviorModel,
              shared_ptr<BehaviorMotionPrimitives>>(m,

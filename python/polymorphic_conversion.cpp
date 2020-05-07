@@ -14,6 +14,7 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/simple_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
@@ -40,6 +41,7 @@ using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
+using modules::models::behavior::BehaviorSimpleRuleBased;
 using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
 
@@ -50,6 +52,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
     behavior_model_name = "BehaviorIDMLaneTracking";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
+    behavior_model_name = "BehaviorSimpleRuleBased";
+  } else if (typeid(*behavior_model) == typeid(BehaviorSimpleRuleBased)) {
     behavior_model_name = "BehaviorIDMClassic";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
     behavior_model_name = "BehaviorStaticTrajectory";
@@ -78,9 +82,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
     return std::make_shared<BehaviorIDMLaneTracking>(
       t[0].cast<BehaviorIDMLaneTracking>());
-  } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
-    return std::make_shared<BehaviorIDMClassic>(
-      t[0].cast<BehaviorIDMClassic>());
+  } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
+    return std::make_shared<BehaviorIDMLaneTracking>(
+      t[0].cast<BehaviorIDMLaneTracking>());
+  } else if (behavior_model_name.compare("BehaviorSimpleRuleBased") == 0) {
+    return std::make_shared<BehaviorSimpleRuleBased>(
+      t[0].cast<BehaviorSimpleRuleBased>());
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
       t[0].cast<BehaviorStaticTrajectory>());

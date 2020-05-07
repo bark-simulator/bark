@@ -9,7 +9,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/idm:base_idm",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
     ],
@@ -27,7 +27,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/rule_based:rule_based",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
@@ -35,6 +35,24 @@ cc_library(
     visibility = ["//visibility:public"]
 )
 
+cc_library(
+    name = "simple_behavior",
+    srcs = [
+      "simple_behavior.cpp"
+    ],
+    hdrs = [
+      "simple_behavior.hpp"
+    ],
+    deps = [
+        "//modules/commons:commons",
+        "//modules/world:world",
+        "//modules/models/behavior/idm:base_idm",
+        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet"
+    ],
+    visibility = ["//visibility:public"]
+)
 
 cc_library(
     name="include",

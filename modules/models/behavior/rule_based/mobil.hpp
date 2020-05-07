@@ -4,27 +4,28 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
-#define MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
+#define MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
 
 #include <memory>
 #include <utility>
 
 #include "modules/models/behavior/rule_based/rule_based.hpp"
+#include "modules/models/behavior/idm/base_idm.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
-enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
-enum MobilState { Idle = 0, IsChanging = 1 };
+using modules::world::Agent;
+using modules::world::FrenetPosition;
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
 class BehaviorMobil : public BehaviorRuleBased {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-    : BehaviorRuledBased(params) {
+    : BehaviorRuleBased(params) {
     crosstrack_error_gain_ = params->GetReal(
       "BehaviorMobil::CrosstrackErrorGain",
       "Tuning factor of stanley controller",
@@ -74,7 +75,7 @@ class BehaviorMobil : public BehaviorRuleBased {
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
-  std::shared_ptr<BehaviorIDMClassic> idm_;
+  // std::shared_ptr<BehaviorIDMClassic> idm_;
   // MobilState mobil_state_;
   double crosstrack_error_gain_;
   world::map::LaneCorridorPtr target_corridor_;
@@ -105,5 +106,6 @@ inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_MOBIL_MOBIL_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
+
 
