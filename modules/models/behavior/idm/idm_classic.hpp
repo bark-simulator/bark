@@ -13,6 +13,7 @@
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
+#include "base_idm.hpp"
 
 namespace modules {
 namespace models {
@@ -22,79 +23,21 @@ using modules::world::map::LaneCorridor;
 using modules::world::map::LaneCorridorPtr;
 
 
-class BehaviorIDMClassic : public BehaviorModel {
+class BehaviorIDMClassic : public BaseIDM {
  public:
-  explicit BehaviorIDMClassic(const commons::ParamsPtr& params);
+  explicit BehaviorIDMClassic(const commons::ParamsPtr& params) :
+    BaseIDM(params) {}
 
   virtual ~BehaviorIDMClassic() {}
 
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
 
-  double CalcFreeRoadTerm(const double vel_ego) const;
-  double CalcInteractionTerm(const double net_distance, const double vel_ego,
-                             const double vel_other) const;
-
-  double CalcNetDistance(
-      const std::shared_ptr<const world::objects::Agent>& ego_agent,
-      const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
-
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const std::tuple<double, double, bool>& rel_values,
     float delta_time) const;
-  
-  double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
-                       const double& vel_other) const;
-
-  double CalcIDMAcc(const double net_distance, const double vel_ego,
-                    const double vel_other) const;
-
-  std::tuple<double, double, bool> CalcRelativeValues(
-    const world::ObservedWorld& observed_world,
-    const LaneCorridorPtr& lane_corr) const;
-
-  virtual float GetMinVelocity() const { return param_min_velocity_; }
-  virtual float GetMaxVelocity() const { return param_max_velocity_; }
-  const double GetDesiredVelocity() const {
-    return param_desired_velocity_;
-  }  // unit is meter/second
-  const float GetMinimumSpacing() const {
-    return param_minimum_spacing_; }  // unit is meter
-  const float GetDesiredTimeHeadway() const {
-    return param_desired_time_head_way_; }  // unit is seconds
-  const float GetMaxAcceleration() const {
-    return param_max_acceleration_;
-  }  // unit is meter/second^2
-  const float GetAccelerationLowerBound() const {
-    return param_acceleration_lower_bound_;
-  }
-  const float GetAccelerationUpperBound() const {
-    return param_acceleration_upper_bound_;
-  }
-  const float GetComfortableBrakingAcceleration() const {
-    return param_comfortable_braking_acceleration_;
-  }  // unit is meter/second^2
-  const int GetExponent() const { return param_exponent_; }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
-
- private:
-  // Parameters
-  float param_minimum_spacing_;
-  float param_desired_time_head_way_;
-  float param_max_acceleration_;
-  float param_acceleration_lower_bound_;
-  float param_acceleration_upper_bound_;
-  float param_desired_velocity_;
-  float param_comfortable_braking_acceleration_;
-  float param_min_velocity_;
-  float param_max_velocity_;
-  int param_exponent_;
-
-  // IDM extension to stop at the LaneCorridor end
-  bool brake_lane_end_;
-  float brake_lane_end_enabled_distance_;
-  float brake_lane_end_distance_offset_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {

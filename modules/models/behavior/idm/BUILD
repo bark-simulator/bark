@@ -1,4 +1,22 @@
 cc_library(
+    name = "base_idm",
+    srcs = [
+        "base_idm.cpp",
+    ],
+    hdrs = [
+        "base_idm.hpp",
+    ],
+    deps = [
+        "//modules/commons:commons",
+        "//modules/world:world",
+        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
+        "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "idm_classic",
     srcs = [
         "idm_classic.cpp",
@@ -12,6 +30,7 @@ cc_library(
         "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
+        ":base_idm"
     ],
     visibility = ["//visibility:public"],
 )
