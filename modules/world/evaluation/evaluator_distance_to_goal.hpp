@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_GOAL_REACHED_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_GOAL_REACHED_HPP_
+#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
+#define MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
 
 #include <memory>
 #include <limits>
@@ -56,4 +56,4 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_GOAL_REACHED_HPP_
+#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
