@@ -81,7 +81,7 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
 scenarios = \
-  ConfigWithEase(num_scenarios=1,
+  ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
                  random_seed=0,
                  params=param_server,
@@ -112,9 +112,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   1.]
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 50):
+  for step in range(0, 40):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

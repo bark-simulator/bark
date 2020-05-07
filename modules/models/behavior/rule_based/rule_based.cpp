@@ -42,8 +42,6 @@ Trajectory BehaviorRuleBased::Plan(
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);
 
-  SetLaneCorridor(observed_world.GetLaneCorridor());
-
   if (!GetLaneCorridor()) {
     return GetLastTrajectory();
   }
@@ -52,17 +50,6 @@ Trajectory BehaviorRuleBased::Plan(
     observed_world,
     GetLaneCorridor());
 
-  // if the vehicle is on a different LaneCorr. than the set LaneCorr.
-  // this only is in effect when setting a different LaneCorr
-  if (GetLaneCorridor() != observed_world.GetLaneCorridor()) {
-    std::tuple<double, double, bool> rel_values_ego_corr = CalcRelativeValues(
-      observed_world,
-      observed_world.GetLaneCorridor());
-    // vehicle on ego LaneCorr. is closer
-    if (std::get<0>(rel_values_ego_corr) < std::get<0>(rel_values)) {
-      rel_values = rel_values_ego_corr;
-    }
-  }
 
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(

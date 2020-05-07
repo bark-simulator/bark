@@ -10,6 +10,7 @@
 #include <memory>
 #include <utility>
 #include <limits>
+#include <tuple>
 #include "modules/models/dynamic/integration.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 
@@ -36,50 +37,49 @@ using world::objects::AgentPtr;
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) const {
-
-  // TODO(@hart): check all LaneCorridors in the RoadCorridor
-  const LaneCorridorPtr& ego_lane_corr = observed_world.GetLaneCorridor();
-
-  // distances
-  FrenetPosition frenet_ego(
-    observed_world.CurrentEgoPosition(), ego_lane_corr->GetCenterLine());
-
-  const RoadCorridorPtr& ego_road_corr = observed_world.GetRoadCorridor();
-  // TODO(@hart): only use neighboring LaneCorridors
-  for (const auto& lane_corr : ego_road_corr->GetUniqueLaneCorridors()) {
-    const auto& front_rear_agent =  observed_world.GetAgentFrontRear(lane_corr);
-    const auto& vehicle_front = front_rear_agent.front;
-    const auto& vehicle_behind = front_rear_agent.rear;
-    double distance_front = std::numeric_limits<double>::max();
-    double distance_behind = -std::numeric_limits<double>::max();
-    // get distances projected on ego lane_corr
-    if (vehicle_front.first) {
-      FrenetPosition frenet_vehicle_front(
-        vehicle_front.first->GetCurrentPosition(),
-        ego_lane_corr->GetCenterLine());
-      distance_front = frenet_vehicle_front.lon;
-    }
-    if (vehicle_behind.first) {
-      FrenetPosition frenet_vehicle_behind(
-        vehicle_behind.first->GetCurrentPosition(),
-        ego_lane_corr->GetCenterLine());
-        distance_behind = frenet_vehicle_behind.lon;
-    }
-
-    // relative distances
-    // TODO(@hart): also include velocities!
-    distance_front = distance_front - frenet_ego.lon;
-    distance_behind = distance_behind - frenet_ego.lon;
-  }
-
-  // we start with a negative offset behind the vehicle
-  // then we calc. free space and put as idx in map
-  // sort map by keys
-  // if we are close to another object and there is free space
-  // on the other lanes --> change lanes
-
   auto lane_corr = observed_world.GetLaneCorridor();
   LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
+
+  // if enough space on ego corr do not change
+  std::tuple<double, double, bool> relative_values =
+    BaseIDM::CalcRelativeValues(
+      observed_world, lane_corr);
+
+  // if there is not enough space
+  if (std::get<0>(relative_values) < 30.) {
+    const auto& road_corr = observed_world.GetRoadCorridor();
+    // std::cout << std::get<0>(relative_values) << std::endl;
+    std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corr =
+      road_corr->GetLeftRightLaneCorridor(
+        observed_world.CurrentEgoPosition());
+
+    // we want to change lanes if there is more free space
+    if (left_right_lane_corr.first) {
+      std::tuple<double, double, bool> relative_values_left_lane =
+        BaseIDM::CalcRelativeValues(
+          observed_world, left_right_lane_corr.first);
+      
+      if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values))
+        return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+          LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
+    }
+    // std::tuple<double, double, bool> relative_values_right_lane =
+    //   BaseIDM::CalcRelativeValues(
+    //     observed_world, left_right_lane_corr.second);
+
+    // if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values) &&
+    //     std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values_right_lane)) {
+    //   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+    //     LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
+    // } else if (std::get<0>(relative_values_right_lane) >= std::get<0>(relative_values) &&
+    //            std::get<0>(relative_values_right_lane) >= std::get<0>(relative_values_left_lane)) {
+    //   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+    // //     LaneChangeDecision::ChangeRight, left_right_lane_corr.second);
+    // }
+
+  }
+
+
 
   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
     change_decision, lane_corr);
