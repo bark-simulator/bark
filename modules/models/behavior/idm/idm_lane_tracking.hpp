@@ -42,6 +42,7 @@ class BehaviorIDMLaneTracking : public BaseIDM {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  friend class BaseIDM;
  private:
   int lane_corr_id_;
   double crosstrack_error_gain_;

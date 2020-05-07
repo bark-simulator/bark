@@ -28,9 +28,9 @@ cc_library(
         "//modules/commons:commons",
         "//modules/world:world",
         "//modules/models/behavior/idm:idm_classic",
+        "//modules/models/behavior/rule_based:rule_based",
         "//modules/models/dynamic:dynamic",
-        "//modules/commons/transformation:frenet",
-        ":rule_based"
+        "//modules/commons/transformation:frenet"
     ],
     visibility = ["//visibility:public"]
 )

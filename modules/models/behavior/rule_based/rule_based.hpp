@@ -14,7 +14,7 @@
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
-#include "modules/models/behavior/idm/idm_lane_trackinh.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 
 namespace modules {
 namespace models {
@@ -28,7 +28,7 @@ using modules::world::map::LaneCorridorPtr;
 // base-class for e.g. Mobil
 class BehaviorRuledBased : public BehaviorIDMLaneTracking {
  public:
-  explicit RuledBased(const commons::ParamsPtr& params) :
+  explicit BehaviorRuleBased(const commons::ParamsPtr& params) :
     BehaviorIDMLaneTracking(params) {}
 
   virtual ~BehaviorRuledBased() {}
@@ -36,7 +36,7 @@ class BehaviorRuledBased : public BehaviorIDMLaneTracking {
   // needs to be implement to set corridor
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
 
-  std::pair<LaneChangeDecision, LaneCorridorPtr>
+  virtual std::pair<LaneChangeDecision, LaneCorridorPtr>
     CheckIfLaneChangeBeneficial(const ObservedWorld& observed_world) const {}
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
