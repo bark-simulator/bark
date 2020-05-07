@@ -15,8 +15,21 @@ cc_library(
     ],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
-    deps = ["@map//:ad_physics"],
+    deps = ["@ad_rss_map_support//:ad_physics"],
 )
+
+# cc_test(
+#     name = "ad_rss_test",
+#     srcs = glob([
+#         "ad_rss/impl/test/**/*.cpp",
+#         "ad_rss/impl/test/**/*.hpp",
+#     ]),
+#     includes=["ad_rss/impl/test/test_support"],
+#     deps = [
+#         ":ad_rss",
+#         "@gtest//:gtest_main",
+#     ],
+# )
 
 cc_library(
     name = "ad_rss_map_integration",
@@ -41,3 +54,16 @@ cc_library(
         "@map//:ad_physics",
     ],
 )
+
+# cc_test(
+#     name = "ad_rss_map_integration_test",
+#     srcs = glob([
+#         "ad_rss_map_integration/impl/tests/**/*.cpp",
+#         "ad_rss_map_integration/impl/tests/**/*.hpp",
+#     ]),
+#     includes=["ad_rss_map_integration/impl/tests/"],
+#     deps = [
+#         ":ad_rss_map_integration",
+#         "@gtest//:gtest_main",
+#     ],
+# )

@@ -16,6 +16,15 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+# cc_test(
+#     name = "ad_physics_test",
+#     srcs = glob(["ad_physics/impl/test/**/*.cpp"]),
+#     deps = [
+#         "@gtest//:gtest_main",
+#         "@map//:ad_physics",
+#     ],
+# )
+
 cc_library(
     name = "ad_map_opendrive_reader",
     srcs = glob(["ad_map_opendrive_reader/src/**/*.cpp"]),
@@ -59,3 +68,20 @@ cc_library(
         ":ad_physics",
     ],
 )
+
+# There are some error inside their test codes, e.g.
+# error: '...' is private within this context
+
+# cc_test(
+#     name = "ad_map_access_test",
+#     srcs = glob(["ad_map_access/impl/tests/**/*.hpp","ad_map_access/impl/tests/**/*.cpp"]),
+#     includes = [
+#         # "ad_map_access/generated/include",
+#         "ad_map_access/impl/include",
+#     ],
+#     deps = [
+#         ":ad_map_access",
+#         ":ad_map_access_test_support",
+#         "@gtest//:gtest_main",
+#     ],
+# )
