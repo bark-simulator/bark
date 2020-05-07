@@ -8,25 +8,31 @@
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_LANE_TRACKING_HPP_
 
 #include <memory>
-
-#include "modules/models/behavior/idm/idm_classic.hpp"
+#include <tuple>
+#include "modules/models/behavior/idm/base_idm.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
-class BehaviorIDMLaneTracking : public BehaviorIDMClassic {
+class BehaviorIDMLaneTracking : public BaseIDM {
  public:
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BehaviorIDMClassic(params) {
+      : BaseIDM(params) {
     crosstrack_error_gain_ = params->GetReal(
-        "BehaviorIDMLaneTracking::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
+      "BehaviorIDMLaneTracking::CrosstrackErrorGain",
+      "Tuning factor of stanley controller",
+      1.0);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
 
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
-
+  std::tuple<Trajectory, Action> GenerateTrajectory(
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr,
+    const std::tuple<double, double, bool>& rel_values,
+    float delta_time) const;
+  
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:

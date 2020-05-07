@@ -32,13 +32,16 @@ using modules::world::map::LaneCorridorPtr;
 
 std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   const world::ObservedWorld& observed_world,
+  const LaneCorridorPtr& lane_corr,
   const std::tuple<double, double, bool>& rel_values,
   float delta_time) const {
+
   // definitions
   double rel_distance = std::get<0>(rel_values);
   double vel_front = std::get<1>(rel_values);
   bool interaction_term_active = std::get<2>(rel_values);
-  auto lane_corr = observed_world.GetLaneCorridor();
+
+  // TODO(@hart): this could be a different lane_corr
   double t_i, acc, traveled_ego, traveled_other;
   geometry::Line line = lane_corr->GetCenterLine();
   // TODO(@hart): why 11
@@ -97,32 +100,6 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
 
   Action action(acc);
   return std::tuple<Trajectory, Action>(traj, action);
-}
-
-//! IDM Model will assume other front vehicle as constant velocity during
-Trajectory BehaviorIDMClassic::Plan(
-    float delta_time, const world::ObservedWorld& observed_world) {
-  using dynamic::StateDefinition;
-  SetBehaviorStatus(BehaviorStatus::VALID);
-
-  // TODO(@hart): could also be a different lane corridor
-  //              for lane tracking
-  auto lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
-    return GetLastTrajectory();
-  }
-  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
-    observed_world,
-    lane_corr);
-  std::tuple<Trajectory, Action> traj_action =
-    GenerateTrajectory(observed_world, rel_values, delta_time);
-
-  // set values
-  Trajectory traj = std::get<0>(traj_action);
-  Action action = std::get<1>(traj_action);
-  SetLastTrajectory(traj);
-  SetLastAction(action);
-  return traj;
 }
 
 }  // namespace behavior

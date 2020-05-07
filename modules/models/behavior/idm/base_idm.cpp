@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/idm/idm_classic.hpp"
+#include "modules/models/behavior/idm/base_idm.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -33,6 +33,7 @@ using modules::world::map::LaneCorridorPtr;
 
 BaseIDM::BaseIDM(
   const commons::ParamsPtr& params) : BehaviorModel(params) {
+  // TODO(@hart): rename BehaviorIDMClassic
   param_minimum_spacing_ = params->GetReal(
     "BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
   param_desired_time_head_way_ = params->GetReal(
@@ -145,9 +146,8 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
   double leading_distance = 0.;
   double leading_velocity = 1e6;
 
-  // TODO(@hart): could be diff lane corr
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
-    observed_world.GetAgentInFront();
+    observed_world.GetAgentInFront(lane_corr);
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
   // vehicles
@@ -161,7 +161,6 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
 
   // 2nd part for lane_corr end
   if (brake_lane_end_) {
-    // TODO(@hart): could be diff lane corr
     const double len_until_end =
       lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition())
       - brake_lane_end_distance_offset_;
@@ -202,17 +201,22 @@ Trajectory BaseIDM::Plan(
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
-  // TODO(@hart): could be diff lane corr
-  auto lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
+  if (set_lane_corr_) {
+    lane_corr_ = set_lane_corr_;
+  } else {
+    lane_corr_ = observed_world.GetLaneCorridor();
+  }
+  
+  if (!lane_corr_) {
     return GetLastTrajectory();
   }
+
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(
     observed_world,
-    lane_corr);
-
+    lane_corr_);
   std::tuple<Trajectory, Action> traj_action =
-    GenerateTrajectory(observed_world, rel_values, delta_time);
+    GenerateTrajectory(
+      observed_world, lane_corr_, rel_values, delta_time);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

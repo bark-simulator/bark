@@ -70,8 +70,14 @@ void python_world(py::module m) {
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def("Evaluate", &ObservedWorld::Evaluate)
-    .def("GetAgentInFront", &ObservedWorld::GetAgentInFront)
-    .def("GetAgentBehind", &ObservedWorld::GetAgentBehind)
+    // .def("GetAgentInFront",
+    //   py::overload_cast<>(&ObservedWorld::GetAgentInFront))
+    // .def("GetAgentInFront",
+    //   py::overload_cast<const LaneCorridorPtr&>(&ObservedWorld::GetAgentInFront))      
+    // .def("GetAgentBehind",
+    //   py::overload_cast<>(&ObservedWorld::GetAgentBehind))
+    // .def("GetAgentBehind",
+    //   py::overload_cast<const LaneCorridorPtr&>(&ObservedWorld::GetAgentBehind))
     .def_property_readonly("road_corridor", &ObservedWorld::GetRoadCorridor)
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def_property_readonly("lane_corridor", &ObservedWorld::GetLaneCorridor)

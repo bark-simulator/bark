@@ -13,7 +13,7 @@
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
-#include "base_idm.hpp"
+#include "modules/models/behavior/idm/base_idm.hpp"
 
 namespace modules {
 namespace models {
@@ -30,10 +30,12 @@ class BehaviorIDMClassic : public BaseIDM {
 
   virtual ~BehaviorIDMClassic() {}
 
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+  // same as base
+  // Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
 
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr,
     const std::tuple<double, double, bool>& rel_values,
     float delta_time) const;
 

@@ -41,8 +41,9 @@ class BaseIDM : public BehaviorModel {
 
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr,
     const std::tuple<double, double, bool>& rel_values,
-    float delta_time) const;
+    float delta_time) const {}
 
   double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other) const;
@@ -77,6 +78,10 @@ class BaseIDM : public BehaviorModel {
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
 
+  void SetLaneCorridor(const LaneCorridorPtr& lane_corr) {
+    set_lane_corr_ = lane_corr;
+  }
+
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
@@ -96,6 +101,7 @@ class BaseIDM : public BehaviorModel {
   bool brake_lane_end_;
   float brake_lane_end_enabled_distance_;
   float brake_lane_end_distance_offset_;
+  LaneCorridorPtr lane_corr_, set_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BaseIDM::Clone() const {

@@ -41,9 +41,18 @@ class ObservedWorld : public World {
 
   FrontRearAgents GetAgentFrontRear() const;
 
+  FrontRearAgents GetAgentFrontRear(
+    const LaneCorridorPtr& lane_corridor) const;
+
+  AgentFrenetPair GetAgentInFront(
+    const LaneCorridorPtr& lane_corridor) const;
+
   AgentFrenetPair GetAgentInFront() const;
 
   AgentFrenetPair GetAgentBehind() const;
+
+  AgentFrenetPair GetAgentBehind(
+    const LaneCorridorPtr& lane_corridor) const;
 
   virtual double GetWorldTime() const { return World::GetWorldTime(); }
 
