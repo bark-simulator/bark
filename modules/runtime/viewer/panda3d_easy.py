@@ -16,9 +16,9 @@ class Panda3dViewer(BaseViewer, ShowBase):
     super(Panda3dViewer, self).__init__(params=params, **kwargs)
     self._model_path = kwargs.pop(
       "model_path",
-      os.path.join(os.path.dirname(os.path.abspath(__file__))) + "/models/car.obj")
+      os.path.join(os.path.dirname(os.path.abspath(__file__))) + "/models/car_model.obj")
     self._model_scale = kwargs.pop("model_scale",
-                                   np.array([1,1,1], dtype=float))
+                                   np.array([.3,.3,.3], dtype=float))
     self._model_orientation = \
       kwargs.pop("model_orientation",
                  np.array([0, 90, 90],
