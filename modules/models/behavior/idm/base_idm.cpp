@@ -206,7 +206,7 @@ Trajectory BaseIDM::Plan(
   } else {
     lane_corr_ = observed_world.GetLaneCorridor();
   }
-  
+
   if (!lane_corr_) {
     return GetLastTrajectory();
   }

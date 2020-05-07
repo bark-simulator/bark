@@ -37,6 +37,14 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     const std::tuple<double, double, bool>& rel_values,
     float delta_time) const {
   // definitions
+  const DynamicModelPtr dynamic_model =
+    observed_world.GetEgoAgent()->GetDynamicModel();
+  auto single_track =
+    std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
+  if (!single_track) {
+    LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
+  }
+  dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   double rel_distance = std::get<0>(rel_values);
   double vel_front = std::get<1>(rel_values);
   bool interaction_term_active = std::get<2>(rel_values);
@@ -56,11 +64,11 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
 
     for (int i = 1; i < num_traj_time_points; ++i) {
-      if (leading_vehicle.first) {
-        acc = CalcIDMAcc(net_distance, vel_i, vel_other);
+      if (interaction_term_active) {
+        acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
         traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
-        traveled_other = vel_other * dt;
-        net_distance += traveled_other - traveled_ego;
+        traveled_other = vel_front * dt;
+        rel_distance += traveled_other - traveled_ego;
       } else {
         acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
       }
@@ -72,13 +80,12 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       dynamic::Input input(2);
       input << acc, angle;
       traj.row(i) =
-          dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
+        dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
       // Do not allow negative speeds
       traj(i, StateDefinition::VEL_POSITION) =
           std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
     }
   }
-
   Action action(acc);
   return std::tuple<Trajectory, Action>(traj, action);
 }
