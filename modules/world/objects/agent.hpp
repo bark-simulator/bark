@@ -101,6 +101,10 @@ class Agent : public Object {
     behavior_model_ = behavior_model_ptr;
   }
 
+  void SetBehaviorModel(const ExecutionModelPtr &execution_model_ptr) {
+    execution_model_ = execution_model_ptr;
+  }
+
   void SetGoalDefinition(const GoalDefinitionPtr &goal_definition) {
     goal_definition_ = goal_definition;
   }
