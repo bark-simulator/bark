@@ -14,6 +14,7 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/simple_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "python/models/plan/plan.hpp"
 
@@ -37,7 +38,7 @@ void python_behavior(py::module m) {
     .def_property("last_trajectory",
                   &BehaviorModel::GetLastTrajectory,
                   &BehaviorModel::SetLastTrajectory);
-                  
+
   py::class_<BehaviorConstantVelocity,
              BehaviorModel,
              shared_ptr<BehaviorConstantVelocity>>(m,

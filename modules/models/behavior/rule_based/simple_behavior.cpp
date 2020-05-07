@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/simple_behavior.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
@@ -34,7 +34,19 @@ using world::objects::AgentPtr;
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) {
-  return observed_world.GetLaneCorridor();
+
+  // TODO(@hart): check all LaneCorridors in the RoadCorridor
+  // we start with a negative offset behind the vehicle
+  // then we calc. free space and put as idx in map
+  // sort map by keys
+  // if we are close to another object and there is free space
+  // on the other lanes --> change lanes
+
+  const auto& lane_corr = observed_world.GetLaneCorridor();
+  LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
+
+  return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+    change_decision, lane_corr);
 }
 
 }  // namespace behavior
