@@ -15,7 +15,7 @@ cc_library(
     ],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
-    deps = ["@ad_rss_map_support//:ad_physics"],
+    deps = ["@map_support//:ad_physics"],
 )
 
 # cc_test(
@@ -50,8 +50,8 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":ad_rss",
-        "@map//:ad_map_access",
-        "@map//:ad_physics",
+        "@map_support//:ad_map_access",
+        "@map_support//:ad_physics",
     ],
 )
 
