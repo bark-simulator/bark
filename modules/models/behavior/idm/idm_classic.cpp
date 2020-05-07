@@ -37,7 +37,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   // definitions
   double rel_distance = std::get<0>(rel_values);
   double vel_front = std::get<1>(rel_values);
-  double interaction_term_active = std::get<2>(rel_values);
+  bool interaction_term_active = std::get<2>(rel_values);
   auto lane_corr = observed_world.GetLaneCorridor();
   double t_i, acc, traveled_ego, traveled_other;
   geometry::Line line = lane_corr->GetCenterLine();
@@ -114,12 +114,10 @@ Trajectory BehaviorIDMClassic::Plan(
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(
     observed_world,
     lane_corr);
-  double rel_distance = std::get<0>(rel_values);
-  double vel_front = std::get<1>(rel_values);
-  double interaction_term_active = std::get<2>(rel_values);
-
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(observed_world, rel_values, delta_time);
+
+  // set values
   Trajectory traj = std::get<0>(traj_action);
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
