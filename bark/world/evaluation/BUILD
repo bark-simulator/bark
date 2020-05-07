@@ -154,6 +154,28 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_binary(
+    name = "evaluator_rss",
+    srcs = [
+        "evaluator_rss.hpp",
+        "evaluator_rss.cpp"
+    ],
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/world:world",
+        "//modules/geometry",
+        "//modules/commons:commons",
+        "//modules/models/dynamic:dynamic",
+        "@spdlog//:spdlog",
+        "@map//:ad_physics",
+        "@map//:ad_map_opendrive_reader",
+        "@map//:ad_map_access",
+        "@ad_rss//:ad_rss",
+        "@boost//:geometry",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
