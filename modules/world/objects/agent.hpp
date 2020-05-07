@@ -105,6 +105,10 @@ class Agent : public Object {
     execution_model_ = execution_model_ptr;
   }
 
+  void SetDynamicModel(const DynamicModelPtr &dynamic_model_ptr) {
+    dynamic_model_ = dynamic_model_ptr;
+  }
+
   void SetGoalDefinition(const GoalDefinitionPtr &goal_definition) {
     goal_definition_ = goal_definition;
   }
