@@ -196,33 +196,24 @@ double BehaviorIDMClassic::CalcRawIDMAcc(const double& net_distance,
   return GetMaxAcceleration() * (free_road_term - interaction_term);
 }
 
-//! IDM Model will assume other front vehicle as constant velocity during
-//! delta_time
-Trajectory BehaviorIDMClassic::Plan(
-    float delta_time, const world::ObservedWorld& observed_world) {
-  using dynamic::StateDefinition;
-  SetBehaviorStatus(BehaviorStatus::VALID);
-
-  // TODO(@hart): could also be a different lane corridor
-  auto lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
-    return GetLastTrajectory();
-  }
-  geometry::Line line = lane_corr->GetCenterLine();
-
-  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
-    observed_world,
-    lane_corr);
+std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
+  const world::ObservedWorld& observed_world,
+  const std::tuple<double, double, bool>& rel_values,
+  float delta_time) const {
+  // definitions
   double rel_distance = std::get<0>(rel_values);
   double vel_front = std::get<1>(rel_values);
   double interaction_term_active = std::get<2>(rel_values);
-
-  // TODO(@hart): refactor into trajectory generation
-  // TODO(@all): why 11
+  auto lane_corr = observed_world.GetLaneCorridor();
+  double t_i, acc, traveled_ego, traveled_other;
+  geometry::Line line = lane_corr->GetCenterLine();
+  // TODO(@hart): why 11
   const int num_traj_time_points = 11;
   dynamic::Trajectory traj(num_traj_time_points,
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float const dt = delta_time / (num_traj_time_points - 1);
+
+  // calculate traj.
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   // select state and get p0
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
@@ -236,15 +227,11 @@ Trajectory BehaviorIDMClassic::Plan(
     double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     float s_i = s_start;
-    double t_i;
-    double acc;
-    double traveled_ego;
-    double traveled_other;
 
     for (int i = 1; i < num_traj_time_points; ++i) {
       if (interaction_term_active) {
         acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
-        traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
+        traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
         traveled_other = vel_front * dt;
         rel_distance += traveled_other - traveled_ego;
       } else {
@@ -252,28 +239,57 @@ Trajectory BehaviorIDMClassic::Plan(
       }
 
       BARK_EXPECT_TRUE(!std::isnan(acc));
-      s_i += +0.5f * acc * dt * dt + vel_i * dt;
+      s_i += 0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;
-      vel_i = std::max(std::min(temp_velocity, GetMaxVelocity()), GetMinVelocity());
+      vel_i = std::max(std::min(
+        temp_velocity, GetMaxVelocity()), GetMinVelocity());
       t_i = static_cast<float>(i) * dt + start_time;
-      geometry::Point2d traj_point = GetPointAtS(line, s_i);  // checked
-      float traj_angle = GetTangentAngleAtS(line, s_i);       // checked
+      geometry::Point2d traj_point = GetPointAtS(line, s_i);
+      float traj_angle = GetTangentAngleAtS(line, s_i);
 
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));
       BARK_EXPECT_TRUE(!std::isnan(traj_angle));
 
-      traj(i, StateDefinition::TIME_POSITION) = t_i;  // checked
+      traj(i, StateDefinition::TIME_POSITION) = t_i;
       traj(i, StateDefinition::X_POSITION) =
-          boost::geometry::get<0>(traj_point);  // checked
+        boost::geometry::get<0>(traj_point);
       traj(i, StateDefinition::Y_POSITION) =
-          boost::geometry::get<1>(traj_point);                // checked
-      traj(i, StateDefinition::THETA_POSITION) = traj_angle;  // checked
-      traj(i, StateDefinition::VEL_POSITION) = vel_i;         // checked
+        boost::geometry::get<1>(traj_point);
+      traj(i, StateDefinition::THETA_POSITION) = traj_angle;
+      traj(i, StateDefinition::VEL_POSITION) = vel_i;
     }
-    SetLastAction(Action(Continuous1DAction(acc)));
   }
-  this->SetLastTrajectory(traj);
+
+  Action action(acc);
+  return std::tuple<Trajectory, Action>(traj, action);
+}
+
+//! IDM Model will assume other front vehicle as constant velocity during
+//! delta_time
+Trajectory BehaviorIDMClassic::Plan(
+    float delta_time, const world::ObservedWorld& observed_world) {
+  using dynamic::StateDefinition;
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
+  // TODO(@hart): could also be a different lane corridor
+  auto lane_corr = observed_world.GetLaneCorridor();
+  if (!lane_corr) {
+    return GetLastTrajectory();
+  }
+  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
+    observed_world,
+    lane_corr);
+  double rel_distance = std::get<0>(rel_values);
+  double vel_front = std::get<1>(rel_values);
+  double interaction_term_active = std::get<2>(rel_values);
+
+  std::tuple<Trajectory, Action> traj_action =
+    GenerateTrajectory(observed_world, rel_values, delta_time);
+  Trajectory traj = std::get<0>(traj_action);
+  Action action = std::get<1>(traj_action);
+  SetLastTrajectory(traj);
+  SetLastAction(action);
   return traj;
 }
 

@@ -38,6 +38,11 @@ class BehaviorIDMClassic : public BehaviorModel {
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
 
+  std::tuple<Trajectory, Action> GenerateTrajectory(
+    const world::ObservedWorld& observed_world,
+    const std::tuple<double, double, bool>& rel_values,
+    float delta_time) const;
+  
   double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other) const;
 
@@ -48,8 +53,8 @@ class BehaviorIDMClassic : public BehaviorModel {
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr) const;
 
-  virtual float GetMinVelocity() { return param_min_velocity_; }
-  virtual float GetMaxVelocity() { return param_max_velocity_; }
+  virtual float GetMinVelocity() const { return param_min_velocity_; }
+  virtual float GetMaxVelocity() const { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
     return param_desired_velocity_;
   }  // unit is meter/second
