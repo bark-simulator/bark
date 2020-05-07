@@ -65,11 +65,11 @@ BaseIDM::BaseIDM(
   brake_lane_end_enabled_distance_ = params->GetReal(
     "BehaviorIDMClassic::BrakeForLaneEndEnabledDistance",
     "Range in m when the braking should be active",
-    150);
+    40);
   brake_lane_end_distance_offset_ = params->GetReal(
     "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
     "Distance offset for vehicle to stop at.",
-    25);
+    20);
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
@@ -164,19 +164,20 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
     const double len_until_end =
       lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition())
       - brake_lane_end_distance_offset_;
-    if (len_until_end < brake_lane_end_enabled_distance_)
+    if (len_until_end < brake_lane_end_enabled_distance_) {
       interaction_term_active = true;
-    // if no leading vehicle
-    if (!leading_vehicle.first &&
-        len_until_end < brake_lane_end_enabled_distance_) {
-      leading_distance = len_until_end;
-      leading_velocity = 0.;
-    // if there is a leading vehicle
-    } else if (len_until_end < brake_lane_end_enabled_distance_) {
-      leading_distance = std::min(leading_distance, len_until_end);
-      // lane end has 0 vel.
-      if (leading_distance == len_until_end)
+      // if no leading vehicle
+      if (!leading_vehicle.first &&
+          len_until_end < brake_lane_end_enabled_distance_) {
+        leading_distance = len_until_end;
         leading_velocity = 0.;
+      // if there is a leading vehicle
+      } else if (len_until_end < brake_lane_end_enabled_distance_) {
+        leading_distance = std::min(leading_distance, len_until_end);
+        // lane end has 0 vel.
+        if (leading_distance == len_until_end)
+          leading_velocity = 0.;
+      }
     }
   }
 

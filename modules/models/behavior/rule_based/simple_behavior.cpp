@@ -46,36 +46,25 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
       observed_world, lane_corr);
 
   // if there is not enough space
-  if (std::get<0>(relative_values) < 30.) {
+  if (std::get<0>(relative_values) < 20.) {
     const auto& road_corr = observed_world.GetRoadCorridor();
-    // std::cout << std::get<0>(relative_values) << std::endl;
-    std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corr =
-      road_corr->GetLeftRightLaneCorridor(
-        observed_world.CurrentEgoPosition());
 
-    // we want to change lanes if there is more free space
-    if (left_right_lane_corr.first) {
-      std::tuple<double, double, bool> relative_values_left_lane =
-        BaseIDM::CalcRelativeValues(
-          observed_world, left_right_lane_corr.first);
-      
-      if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values))
-        return std::pair<LaneChangeDecision, LaneCorridorPtr>(
-          LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
+    if (fabs(std::get<1>(relative_values) / observed_world.CurrentEgoState()[StateDefinition::VEL_POSITION]) < 0.1) {
+      // std::cout << std::get<0>(relative_values) << std::endl;
+      std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corr =
+        road_corr->GetLeftRightLaneCorridor(
+          observed_world.CurrentEgoPosition());
+
+      // we want to change lanes if there is more free space
+      if (left_right_lane_corr.first) {
+        std::tuple<double, double, bool> relative_values_left_lane =
+          BaseIDM::CalcRelativeValues(
+            observed_world, left_right_lane_corr.first);
+        if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values))
+          return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+            LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
+      }
     }
-    // std::tuple<double, double, bool> relative_values_right_lane =
-    //   BaseIDM::CalcRelativeValues(
-    //     observed_world, left_right_lane_corr.second);
-
-    // if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values) &&
-    //     std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values_right_lane)) {
-    //   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
-    //     LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
-    // } else if (std::get<0>(relative_values_right_lane) >= std::get<0>(relative_values) &&
-    //            std::get<0>(relative_values_right_lane) >= std::get<0>(relative_values_left_lane)) {
-    //   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
-    // //     LaneChangeDecision::ChangeRight, left_right_lane_corr.second);
-    // }
 
   }
 

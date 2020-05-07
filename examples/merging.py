@@ -32,17 +32,17 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
                                                    params)
     self._controlled_agent = controlled_agent
 
-  def position(self, world, min_s=10., max_s=50.):
+  def position(self, world, min_s=0., max_s=40.):
     """Min. and max values where the agents should be places
     """
     return super(CustomLaneCorridorConfig, self).position(world, min_s, max_s)
 
-  def ds(self, s_min=20., s_max=35.):
+  def ds(self, s_min=10., s_max=25.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
 
-  def velocity(self, min_vel=5., max_vel=6.):
+  def velocity(self, min_vel=10., max_vel=15.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   def controlled_ids(self, agent_list):
@@ -55,17 +55,17 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   
   def controlled_goal(self, world):
     if self._controlled_agent is not None:
-      road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+      road_corr = world.map.GetRoadCorridor(
+        self._road_ids, XodrDrivingDirection.forward)
       lane_corr = road_corr.lane_corridors[0]
       return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
     else:
       super().controlled_goal(world)
   
-  def controlled_behavior_model(self, world):
-    # model = BehaviorIDMLaneTracking(self._params)
-    model = BehaviorSimpleRuleBased(self._params)
-    # model = BehaviorMobil(self._params)
-    return model
+  def behavior_model(self, world):
+    return BehaviorSimpleRuleBased(self._params)
+    # return BehaviorMobil(self._params)
+
     
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
@@ -79,7 +79,8 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 
 # create 5 scenarios
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
+# param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
+
 scenarios = \
   ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",

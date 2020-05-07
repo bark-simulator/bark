@@ -24,7 +24,7 @@ using modules::world::map::LaneCorridor;
 using modules::world::ObservedWorld;
 using modules::world::map::LaneCorridorPtr;
 
-enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2 };
+enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2, Undefined = 3 };
 enum RuleBasedState { Idle = 0, IsChanging = 1 };
 
 // this agent can brake and change lanes

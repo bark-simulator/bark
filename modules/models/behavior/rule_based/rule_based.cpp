@@ -40,6 +40,7 @@ Trajectory BehaviorRuleBased::Plan(
   // TODO(@hart): while changing lanes do not decide again
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
+
   SetLaneCorridor(lane_res.second);
 
   if (!GetLaneCorridor()) {
@@ -50,7 +51,6 @@ Trajectory BehaviorRuleBased::Plan(
     observed_world,
     GetLaneCorridor());
 
-
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
       observed_world, GetLaneCorridor(), rel_values, delta_time);
@@ -60,6 +60,10 @@ Trajectory BehaviorRuleBased::Plan(
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
   SetLastAction(action);
+  std::cout << observed_world.GetEgoAgentId() << ": " << action
+            << " - " << std::get<0>(rel_values)
+            << " - " << &lane_res.second
+            << " - " << std::get<1>(rel_values) << std::endl;
   return traj;
 }
 
