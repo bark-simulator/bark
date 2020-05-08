@@ -103,6 +103,14 @@ glog_library(with_gflags=0)
     urls = ["https://github.com/zeux/pugixml/releases/download/v1.10/pugixml-1.10.tar.gz"],
     )
     
+    _maybe(
+    http_archive,
+    name = "proj",
+    build_file = "@bark_project//tools/rss:proj.BUILD",
+    sha256 = "a7026d39c9c80d51565cfc4b33d22631c11e491004e19020b3ff5a0791e1779f",
+    strip_prefix = "proj-7.0.1",
+    urls = ["https://download.osgeo.org/proj/proj-7.0.1.tar.gz"],
+    )
     # -------------------------------------------
 
     _maybe(
