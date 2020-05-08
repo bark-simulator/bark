@@ -7,10 +7,10 @@ import numpy as np
 import time
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.video_renderer import VideoRenderer
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from modules.runtime.runtime import Runtime
-from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 
 from bark.world.opendrive import *
@@ -63,7 +63,6 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = road_corr.lane_corridors[0]
     return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
-
   
   def behavior_model(self, world):
     return BehaviorSimpleRuleBased(self._params)
@@ -109,11 +108,7 @@ viewer = MPViewer(params=param_server,
 #                        light_pose=[1000, 1000, 100000],
 #                        camera_pose=[1000, 980, 100])
 # gym like interface
-env = Runtime(step_time=0.2,
-              viewer=viewer,
-              scenario_generator=scenarios,
-              render=True)
-      
+
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
                                            0.2]
@@ -121,10 +116,23 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/Users/hart/2019/bark/video")
+
+env = Runtime(step_time=0.2,
+              viewer=viewer,
+              scenario_generator=scenarios,
+              render=True)
+      
+
+
 # run 3 scenarios
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 65):
+  for step in range(0, 60):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
+
+# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=True)
