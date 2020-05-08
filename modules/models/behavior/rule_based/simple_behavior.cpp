@@ -55,7 +55,12 @@ BehaviorSimpleRuleBased::FrontRearAgents(
     rear_info.rel_velocity =
       GetVelocity(front_rear.rear.first) - GetVelocity(ego_agent);
     rear_info.rel_distance = front_rear.rear.second.lon;
+    // std::cout << "rear dist: " << rear_info.rel_distance << std::endl;
     rear_info.is_vehicle = true;
+  } else {
+    // struct has pos. values by default
+    rear_info.rel_distance = -1000.;
+    rear_info.rel_velocity = 0.;
   }
   return std::pair<AgentInformation, AgentInformation>(
     front_info, rear_info);
@@ -76,7 +81,7 @@ BehaviorSimpleRuleBased::ScanLaneCorridors(
     double remaining_distance = lane_corr->LengthUntilEnd(ego_pos);
     lane_corr_info.front = agent_lane_info.first;
     lane_corr_info.rear = agent_lane_info.second;
-    lane_corr_info.remaining_distance = lane_corr_info.remaining_distance;
+    lane_corr_info.remaining_distance = remaining_distance;
     lane_corr_info.lane_corridor = lane_corr;
     lane_corr_infos.push_back(lane_corr_info);
   }
@@ -105,19 +110,23 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
     FilterLaneCorridors(
       lane_corr_infos,
       [](LaneCorridorInformation li){
-        return li.rear.rel_distance >= 5;});
+        return li.rear.rel_distance <= -5;});
 
   // 3. enough space in front of the ego vehicle to merge
   lane_corr_infos =
     FilterLaneCorridors(
       lane_corr_infos,
       [](LaneCorridorInformation li){
-        return li.front.rel_distance >= 10;});
-
+        return li.front.rel_distance >= 0;});
 
   // select corridor with most free space
-  if (lane_corr_infos.size() > 0)
-    lane_corr = lane_corr_infos[0].lane_corridor;
+  if (lane_corr_infos.size() > 0) {
+    if (lane_corr != lane_corr_infos[0].lane_corridor) {
+      std::cout << "Agent " << observed_world.GetEgoAgentId()
+                << " should change lane." << std::endl;
+      lane_corr = lane_corr_infos[0].lane_corridor;
+    }
+  }
 
   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
     change_decision, lane_corr);

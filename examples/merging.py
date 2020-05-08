@@ -26,23 +26,28 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
                road_ids=[16],
                lane_corridor_id=0,
                params=None,
-               controlled_agent=None):
+               controlled_agent=None,
+               min_s=0,
+               max_s=50):
     super(CustomLaneCorridorConfig, self).__init__(road_ids,
                                                    lane_corridor_id,
                                                    params)
     self._controlled_agent = controlled_agent
+    self._min_s = min_s
+    self._max_s = max_s
 
-  def position(self, world, min_s=0., max_s=40.):
+  def position(self, world, min_s=0., max_s=25.):
     """Min. and max values where the agents should be places
     """
-    return super(CustomLaneCorridorConfig, self).position(world, min_s, max_s)
+    return super(CustomLaneCorridorConfig, self).position(
+      world, self._min_s, self._max_s)
 
-  def ds(self, s_min=10., s_max=25.):
+  def ds(self, s_min=15., s_max=20.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
 
-  def velocity(self, min_vel=10., max_vel=15.):
+  def velocity(self, min_vel=10., max_vel=12.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   def controlled_ids(self, agent_list):
@@ -64,23 +69,25 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   
   def behavior_model(self, world):
     return BehaviorSimpleRuleBased(self._params)
-    # return BehaviorMobil(self._params)
+    # return BehaviorIDMLaneTracking(self._params)
 
     
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
                                      params=param_server,
-                                     road_ids=[0, 1])
+                                     road_ids=[0, 1],
+                                     min_s=0.,
+                                     max_s=50.)
 right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
                                       params=param_server,
                                       controlled_agent=True,
-                                      road_ids=[0, 1])
+                                      road_ids=[0, 1],
+                                      min_s=0.,
+                                      max_s=20.)
 
 
 # create 5 scenarios
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-# param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
-
 scenarios = \
   ConfigWithEase(num_scenarios=1,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
@@ -90,8 +97,8 @@ scenarios = \
 
 # viewer
 viewer = MPViewer(params=param_server,
-                  x_range=[-40, 40],
-                  y_range=[-40, 40],
+                  x_range=[-70, 70],
+                  y_range=[-70, 70],
                   follow_agent_id=True)
 # viewer = Panda3dViewer(params=param_server,
 #                        x_range=[-40, 40],
@@ -113,9 +120,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   1.]
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 40):
+  for step in range(0, 50):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

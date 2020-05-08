@@ -31,7 +31,7 @@ class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
     return BehaviorLongitudinalAcceleration::Plan(delta_time, observed_world);
   }
 
-  // TODO(@all): make pure virtual
+  // TODO(@all): make purely virtual
   virtual double CalculateLongitudinalAcceleration(
     const ObservedWorld& observed_world) {
     return 0.0f;

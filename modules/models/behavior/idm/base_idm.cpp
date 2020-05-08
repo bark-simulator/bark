@@ -65,11 +65,11 @@ BaseIDM::BaseIDM(
   brake_lane_end_enabled_distance_ = params->GetReal(
     "BehaviorIDMClassic::BrakeForLaneEndEnabledDistance",
     "Range in m when the braking should be active",
-    40);
+    60);
   brake_lane_end_distance_offset_ = params->GetReal(
     "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
     "Distance offset for vehicle to stop at.",
-    20);
+    30);
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
@@ -180,6 +180,7 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
       }
     }
   }
+
 
   return std::make_tuple(
     leading_distance,

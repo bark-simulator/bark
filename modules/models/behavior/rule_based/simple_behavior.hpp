@@ -34,7 +34,7 @@ struct AgentInformation {
   // calculated on other LaneCorridor
   AgentFrenetPair agent_info;
   bool is_vehicle = false;
-  double rel_velocity, rel_distance;
+  double rel_velocity=1e6, rel_distance=1e6;
 };
 
 // this is LaneCorridor specific
@@ -71,17 +71,17 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   ScanLaneCorridors(const ObservedWorld& observed_world) const;
 
   // filter lane corridors using lambdas
-  template<typename Func> 
+  template<typename Func>
   std::vector<LaneCorridorInformation>
   FilterLaneCorridors(
     const std::vector<LaneCorridorInformation>& lane_corr_infos,
-    const Func&) const {
+    const Func& filter) const {
     std::vector<LaneCorridorInformation> filtered_lane_corrs;
     std::copy_if(
       lane_corr_infos.begin(),
       lane_corr_infos.end(),
       std::back_inserter(filtered_lane_corrs),
-      [](LaneCorridorInformation li){return li.remaining_distance>=50;});
+      filter);
     return filtered_lane_corrs;
   }
 
