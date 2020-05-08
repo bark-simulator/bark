@@ -70,6 +70,10 @@ glog_library(with_gflags=0)
     )
 
     # -------- ad-rss-lib -----------------------
+    # Build steps:
+    # ad-rss-lib: https://intel.github.io/ad-rss-lib/BUILDING/index.html
+    # map_support: https://ad-map-access.readthedocs.io/en/latest/BUILDING/index.html
+
     _maybe(
     http_archive,
     name = "ad_rss_lib",
@@ -83,6 +87,7 @@ glog_library(with_gflags=0)
       http_archive,
       name = "spdlog",
       build_file = "@bark_project//tools/rss:spdlog.BUILD",
+      sha256 = "b38e0bbef7faac2b82fed550a0c19b0d4e7f6737d5321d4fd8f216b80f8aee8a",
       strip_prefix = "spdlog-1.5.0",
       urls = ["https://github.com/gabime/spdlog/archive/v1.5.0.tar.gz"],
     )
@@ -91,6 +96,7 @@ glog_library(with_gflags=0)
     http_archive,
     name = "map_support",
     build_file = "@bark_project//tools/rss:map_support.BUILD",
+    sha256 = "667a16c029854c51a60ae88f8ef0c24542d7683a78c4f85ec4845c8555d72ac6",
     strip_prefix = "map-2.0.0",
     urls = ["https://github.com/carla-simulator/map/archive/v2.0.0.tar.gz"],
     )
@@ -99,6 +105,7 @@ glog_library(with_gflags=0)
     http_archive,
     name = "pugixml",
     build_file = "@bark_project//tools/rss:pugixml.BUILD",
+    sha256 = "55f399fbb470942410d348584dc953bcaec926415d3462f471ef350f29b5870a",
     strip_prefix = "pugixml-1.10",
     urls = ["https://github.com/zeux/pugixml/releases/download/v1.10/pugixml-1.10.tar.gz"],
     )
