@@ -17,6 +17,7 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/dynamic/integration.hpp"
+#include "modules/commons/params/default_params.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 
 namespace modules {
@@ -24,6 +25,7 @@ namespace models {
 namespace behavior {
 
 using modules::commons::transformation::FrenetPosition;
+using modules::commons::DefaultParams;
 using modules::geometry::Point2d;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition;
@@ -32,20 +34,25 @@ using modules::world::AgentMap;
 using modules::world::objects::AgentPtr;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorld;
+using modules::world::ObservedWorldPtr;
 using modules::models::dynamic::DynamicModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::world::prediction::PredictionSettings;
 
-std::pair<double, bool> BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
+std::tuple<double, bool, AgentPtr>
+BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   const LaneCorridorPtr& lane_corr,
   const ObservedWorld& observed_world,
   double pred_horizon,
   double t_inc) {
-  bool intersecting_agent = false;
+  // TODO(@hart): remove boolean flag as nullptr can be used
+  bool agent_is_intersecting = false;
   double augmented_distance = 0.;
+  AgentPtr intersecting_agent;
 
   // prediction
-  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(GetParams()));
+  auto params = std::make_shared<DefaultParams>();
+  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   // because const Obs.World
   ObservedWorld tmp_observed_world = observed_world;
@@ -53,26 +60,49 @@ std::pair<double, bool> BehaviorIntersectionRuleBased::CheckIntersectingVehicles
   double intersection_time = 0., vel_other = 0.;
 
   // predict for n seconds
-  for (double t = 0.; t < pred_horizon; t *= t_inc) {
+  for (double t = 0.; t < pred_horizon; t += t_inc) {
     WorldPtr predicted_world = tmp_observed_world.Predict(t);
-    AgentMap intersecting_agents = tmp_observed_world.GetAgentsIntersectingPolygon(
-      lane_corr->GetMergedPolygon());
-    // take lowest time
-    if (intersecting_agents.size() > 0) {
-      if (intersecting_agents[0] != tmp_observed_world.GetEgoAgent()) {
-        intersection_time = t;
-        vel_other = BehaviorSimpleRuleBased::GetVelocity(
-          intersecting_agents[0]);
-        intersecting_agent = true;
-        break;
+    AgentMap intersecting_agents =
+      tmp_observed_world.GetAgentsIntersectingPolygon(
+        lane_corr->GetMergedPolygon());
+
+    for (const auto& agent : intersecting_agents) {
+      const auto& road_corr = agent.second->GetRoadCorridor();
+      const auto& agent_pos = agent.second->GetCurrentPosition();
+      const auto& ego_state = observed_world.CurrentEgoState();
+      const auto& ego_pos = observed_world.CurrentEgoPosition();
+      const auto& agent_state = agent.second->GetCurrentState();
+      const auto& lane_corr = road_corr->GetCurrentLaneCorridor(agent_pos);
+
+      if (lane_corr != observed_world.GetLaneCorridor() &&
+          agent.second != observed_world.GetEgoAgent()) {
+        vel_other = agent_state[StateDefinition::VEL_POSITION];
+        // only if s of intersecting agent is larger
+        double s_ego = std::get<1>(GetNearestPointAndS(
+          observed_world.GetLaneCorridor()->GetCenterLine(),
+          ego_pos));
+        double s_other = std::get<1>(
+          GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
+          agent_pos));
+        // TODO(@hart): proper angle check
+        if (fabs(ego_state[StateDefinition::THETA_POSITION] - agent_state[StateDefinition::THETA_POSITION]) > 1.4 &&
+            s_other > s_ego) {
+          agent_is_intersecting = true;
+          intersecting_agent = agent.second;
+          break;
+        }
       }
     }
   }
-  if (intersecting_agent) {
+
+  if (agent_is_intersecting) {
     augmented_distance = vel_other*intersection_time;
-    return std::pair<double, bool>(augmented_distance, intersecting_agent);
+    return std::tuple<double, bool, AgentPtr>(
+      augmented_distance, agent_is_intersecting, intersecting_agent);
   }
-  return std::pair<double, bool>(augmented_distance, intersecting_agent);
+
+  return std::tuple<double, bool, AgentPtr>(
+    augmented_distance, agent_is_intersecting, nullptr);
 }
 
 //! IDM Model will assume other front vehicle as constant velocity during
@@ -91,7 +121,7 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   }
 
   // check intersecting vehicles
-  std::pair<double, bool> dist_isinter = CheckIntersectingVehicles(
+  std::tuple<double, bool, AgentPtr> dist_isinter_agent = CheckIntersectingVehicles(
     GetLaneCorridor(),
     observed_world);
 
@@ -101,8 +131,11 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
     GetLaneCorridor());
 
   // if there is an intersecting vehicle
-  if (dist_isinter.second) {
+  if (std::get<1>(dist_isinter_agent)) {
     // TODO(@hart): integrate logic for breaking
+    LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
+              << ": Agent " << std::get<2>(dist_isinter_agent)->GetAgentId()
+              << " is intersecing my corridor."<< std::endl;
   }
 
   std::tuple<Trajectory, Action> traj_action =

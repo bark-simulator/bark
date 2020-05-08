@@ -96,7 +96,7 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
   std::vector<LaneCorridorInformation> lane_corr_infos =
     ScanLaneCorridors(observed_world);
-  
+
   // find all feasible LaneCorridors by filtering
   // 1. there should be enough remaining distance left
   lane_corr_infos =

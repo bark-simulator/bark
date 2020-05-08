@@ -45,7 +45,7 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
   Trajectory Plan(
     float delta_time, const world::ObservedWorld& observed_world);
   
-  std::pair<double, bool> CheckIntersectingVehicles(
+  std::tuple<double, bool, AgentPtr> CheckIntersectingVehicles(
    const LaneCorridorPtr& lane_corr,
    const ObservedWorld& observed_world,
    double pred_horizon = 5.,
