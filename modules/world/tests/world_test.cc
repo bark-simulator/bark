@@ -17,7 +17,9 @@
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "modules/world/evaluation/evaluator_distance_to_goal.hpp"
 #include "modules/world/tests/make_test_world.hpp"
+#include "modules/world/goal_definition/goal_definition_polygon.hpp"
 
 
 using namespace modules::models::dynamic;
@@ -34,6 +36,7 @@ using modules::world::opendrive::XodrLaneId;
 using namespace modules::world::objects;
 using namespace modules::world;
 using namespace modules::world::evaluation;
+using namespace modules::world::goal_definition;
 using modules::world::tests::make_test_world;
 
 TEST(world, world_init)
@@ -256,6 +259,43 @@ TEST(world, nearest_agents)
   EXPECT_EQ(nearest_agents3[agent1->GetAgentId()]->GetCurrentState(), init_state1 );
   EXPECT_EQ(nearest_agents3[agent3->GetAgentId()]->GetCurrentState(), init_state3 );
   */
+}
+
+TEST(world, distance_to_goal)
+{
+  auto params = std::make_shared<DefaultParams>();
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+  
+  const auto goal_polygon = std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(10, 0)));
+  auto goal_definition_ptr1 =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+  
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, *goal_polygon, params, goal_definition_ptr1));
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 1.0, -5.3, 0.0, 5.0;
+  const auto goal_polygon2 = std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(10, 15)));
+  auto goal_definition_ptr2 =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon2);
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, *goal_polygon2, params, goal_definition_ptr2));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+
+  EvaluatorPtr dist_checker1(new EvaluatorDistanceToGoal(agent1->GetAgentId()));
+  world->AddEvaluator("distance1", dist_checker1);
+
+  EvaluatorPtr dist_checker2(new EvaluatorDistanceToGoal(agent2->GetAgentId()));
+  world->AddEvaluator("distance2", dist_checker2);
+
+  EXPECT_NEAR(boost::get<float>(world->Evaluate()["distance1"]), 10, 0.001);
+  EXPECT_NEAR(boost::get<float>(world->Evaluate()["distance2"]), sqrt(9*9 + (15+5.3)*(15+5.3)), 0.001 );
 }
 
 TEST(world, agents_intersection_polygon)
