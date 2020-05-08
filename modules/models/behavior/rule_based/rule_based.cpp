@@ -60,10 +60,6 @@ Trajectory BehaviorRuleBased::Plan(
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
   SetLastAction(action);
-  // std::cout << observed_world.GetEgoAgentId() << ": " << action
-  //           << " - " << std::get<0>(rel_values)
-  //           << " - " << &lane_res.second
-  //           << " - " << std::get<1>(rel_values) << std::endl;
   return traj;
 }
 

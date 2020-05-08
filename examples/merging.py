@@ -66,6 +66,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   
   def behavior_model(self, world):
     return BehaviorSimpleRuleBased(self._params)
+    # return BehaviorIntersectionRuleBased(self._params)
 
     
 # configure both lanes of the highway. the right lane has one controlled agent

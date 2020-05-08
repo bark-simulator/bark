@@ -55,6 +55,27 @@ cc_library(
 )
 
 cc_library(
+    name = "intersection_behavior",
+    srcs = [
+      "intersection_behavior.cpp"
+    ],
+    hdrs = [
+      "intersection_behavior.hpp"
+    ],
+    deps = [
+        "//modules/commons:commons",
+        "//modules/world:world",
+        "//modules/models/behavior/idm:base_idm",
+        "//modules/models/behavior/constant_velocity:constant_velocity",
+        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/behavior/rule_based:simple_behavior",
+        "//modules/models/dynamic:dynamic",
+        "//modules/commons/transformation:frenet"
+    ],
+    visibility = ["//visibility:public"]
+)
+
+cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
     visibility = ["//visibility:public"],
