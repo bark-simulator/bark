@@ -85,8 +85,10 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
           GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
           agent_pos));
         // TODO(@hart): proper angle check
+        // TODO(@hart): braking distance parameter
         if (fabs(ego_state[StateDefinition::THETA_POSITION] - agent_state[StateDefinition::THETA_POSITION]) > 1.4 &&
-            s_other > s_ego) {
+            s_other > s_ego &&
+            s_other - s_ego < 10.) {
           agent_is_intersecting = true;
           intersecting_agent = agent.second;
           break;
@@ -132,6 +134,8 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
 
   // if there is an intersecting vehicle
   if (std::get<1>(dist_isinter_agent)) {
+    std::get<0>(rel_values) = std::get<0>(dist_isinter_agent);
+    std::get<1>(rel_values) = 0;
     // TODO(@hart): integrate logic for breaking
     LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
               << ": Agent " << std::get<2>(dist_isinter_agent)->GetAgentId()
