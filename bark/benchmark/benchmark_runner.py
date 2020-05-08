@@ -128,7 +128,6 @@ class BenchmarkResult:
     def _sort_bench_confs(benchmark_configs):
         def sort_key(bench_conf):
             return bench_conf.config_idx
-
         benchmark_configs.sort(key=sort_key)
 
     @staticmethod
@@ -136,6 +135,12 @@ class BenchmarkResult:
         with open(filename, 'rb') as handle:
             dmp = pickle.load(handle)
         return dmp
+
+    @staticmethod
+    def _load_and_merge(file_name, filetype):
+        pass
+    
+    def _save_and_split(file_name, filetype, )
 
     def dump(self, filename, dump_configs=True):
         if isinstance(self.__data_frame, pd.DataFrame):
