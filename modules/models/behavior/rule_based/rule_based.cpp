@@ -40,13 +40,13 @@ Trajectory BehaviorRuleBased::Plan(
   // TODO(@hart): while changing lanes do not decide again?
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
-
   SetLaneCorridor(lane_res.second);
 
   if (!GetLaneCorridor()) {
     return GetLastTrajectory();
   }
 
+  // we want to calc. the acc. based on the actual LaneCorridor
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(
     observed_world,
     GetLaneCorridor());

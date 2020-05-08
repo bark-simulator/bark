@@ -42,7 +42,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return super(CustomLaneCorridorConfig, self).position(
       world, self._min_s, self._max_s)
 
-  def ds(self, s_min=10., s_max=30.):
+  def ds(self, s_min=10., s_max=20.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
@@ -58,14 +58,12 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     else:
       return super().controlled_ids(agent_list)
   
-  def controlled_goal(self, world):
-    if self._controlled_agent is not None:
-      road_corr = world.map.GetRoadCorridor(
-        self._road_ids, XodrDrivingDirection.forward)
-      lane_corr = road_corr.lane_corridors[0]
-      return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
-    else:
-      super().controlled_goal(world)
+  def goal(self, world):
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    lane_corr = road_corr.lane_corridors[0]
+    return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
+
   
   def behavior_model(self, world):
     return BehaviorSimpleRuleBased(self._params)
@@ -81,12 +79,17 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
                                       params=param_server,
                                       controlled_agent=True,
                                       road_ids=[0, 1],
-                                      min_s=10.,
+                                      min_s=0.,
                                       max_s=20.)
 
 
 # create 5 scenarios
+# BehaviorSimpleRuleBased::MinVehicleRearDistance
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 40.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 5.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 5.
+
 scenarios = \
   ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
@@ -122,6 +125,6 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 40):
+  for step in range(0, 50):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
