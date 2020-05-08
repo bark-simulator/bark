@@ -42,12 +42,12 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return super(CustomLaneCorridorConfig, self).position(
       world, self._min_s, self._max_s)
 
-  def ds(self, s_min=15., s_max=20.):
+  def ds(self, s_min=10., s_max=30.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
 
-  def velocity(self, min_vel=10., max_vel=12.):
+  def velocity(self, min_vel=5., max_vel=10.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   def controlled_ids(self, agent_list):
@@ -69,7 +69,6 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   
   def behavior_model(self, world):
     return BehaviorSimpleRuleBased(self._params)
-    # return BehaviorIDMLaneTracking(self._params)
 
     
 # configure both lanes of the highway. the right lane has one controlled agent
@@ -82,14 +81,14 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
                                       params=param_server,
                                       controlled_agent=True,
                                       road_ids=[0, 1],
-                                      min_s=0.,
+                                      min_s=10.,
                                       max_s=20.)
 
 
 # create 5 scenarios
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 scenarios = \
-  ConfigWithEase(num_scenarios=1,
+  ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
                  random_seed=0,
                  params=param_server,
@@ -114,7 +113,7 @@ env = Runtime(step_time=0.2,
       
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.15]
+                                           0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
@@ -123,6 +122,6 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 50):
+  for step in range(0, 40):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

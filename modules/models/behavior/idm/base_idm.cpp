@@ -69,7 +69,7 @@ BaseIDM::BaseIDM(
   brake_lane_end_distance_offset_ = params->GetReal(
     "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
     "Distance offset for vehicle to stop at.",
-    30);
+    15);
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {

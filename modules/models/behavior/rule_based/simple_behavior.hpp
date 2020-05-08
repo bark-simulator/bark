@@ -51,6 +51,18 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   explicit BehaviorSimpleRuleBased(
     const commons::ParamsPtr& params) :
     BehaviorRuleBased(params) {
+    min_remaining_distance_ = params->GetReal(
+      "BehaviorSimpleRuleBased::MinRemainingLaneCorridorDistance",
+      "LaneCorridors with less remaning distance are filetered.",
+      60.0);
+    min_vehicle_rear_distance_ = params->GetReal(
+      "BehaviorSimpleRuleBased::MinVehicleRearDistance",
+      "Rear vehicle distance.",
+      5.0);
+    min_vehicle_front_distance_ = params->GetReal(
+      "BehaviorSimpleRuleBased::MinVehicleFrontDistance",
+      "Front vehicle distance.",
+      5.0);
   }
 
   virtual ~BehaviorSimpleRuleBased() {}
@@ -98,6 +110,10 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
+ private:
+  double min_remaining_distance_;
+  double min_vehicle_rear_distance_;
+  double min_vehicle_front_distance_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSimpleRuleBased::Clone() const {
