@@ -82,7 +82,7 @@ param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 # param_server["BehaviorIDMLaneTracking"]["LaneCorridorID"] = 0
 
 scenarios = \
-  ConfigWithEase(num_scenarios=3,
+  ConfigWithEase(num_scenarios=1,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
                  random_seed=0,
                  params=param_server,
@@ -106,14 +106,14 @@ env = Runtime(step_time=0.2,
               render=True)
       
 sim_step_time = param_server["simulation"]["step_time",
-                                          "Step-time used in simulation",
-                                          0.15]
+                                           "Step-time used in simulation",
+                                           0.15]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
 # run 3 scenarios
-for _ in range(0, 3):
+for _ in range(0, 1):
   env.reset()
   # step each scenario 20 times
   for step in range(0, 40):

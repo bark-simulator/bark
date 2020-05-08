@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 #include <limits>
 #include <tuple>
 #include "modules/models/dynamic/integration.hpp"
@@ -25,7 +26,6 @@ using modules::geometry::Line;
 using modules::geometry::Point2d;
 using modules::models::dynamic::CalculateSteeringAngle;
 using modules::models::dynamic::DynamicModelPtr;
-using StateDefinition::VEL_POSITION;
 using world::Agent;
 using world::AgentFrenetPair;
 using world::AgentId;
@@ -34,41 +34,90 @@ using world::map::LaneCorridorPtr;
 using world::map::RoadCorridorPtr;
 using world::objects::AgentPtr;
 
+std::pair<AgentInformation, AgentInformation>
+BehaviorSimpleRuleBased::FrontRearAgents(
+  const ObservedWorld& observed_world,
+  const LaneCorridorPtr& lane_corr) const {
+  AgentInformation front_info, rear_info;
+  const auto& front_rear = observed_world.GetAgentFrontRear(lane_corr);
+  const auto& ego_agent = observed_world.GetEgoAgent();
+  if (front_rear.front.first) {
+    // front info
+    front_info.agent_info = front_rear.front;
+    front_info.rel_velocity =
+      GetVelocity(front_rear.front.first) - GetVelocity(ego_agent);
+    front_info.rel_distance = front_rear.front.second.lon;
+    front_info.is_vehicle = true;
+  }
+  if (front_rear.rear.first) {
+    // rear info
+    rear_info.agent_info = front_rear.rear;
+    rear_info.rel_velocity =
+      GetVelocity(front_rear.rear.first) - GetVelocity(ego_agent);
+    rear_info.rel_distance = front_rear.rear.second.lon;
+    rear_info.is_vehicle = true;
+  }
+  return std::pair<AgentInformation, AgentInformation>(
+    front_info, rear_info);
+}
+
+std::vector<LaneCorridorInformation>
+BehaviorSimpleRuleBased::ScanLaneCorridors(
+  const ObservedWorld& observed_world) const {
+  const auto& road_corr = observed_world.GetRoadCorridor();
+  const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
+  const auto& ego_pos = observed_world.CurrentEgoPosition();  // x, y
+  std::vector<LaneCorridorInformation> lane_corr_infos;
+  for (const auto& lane_corr : lane_corrs) {
+    // all the informations we need
+    LaneCorridorInformation lane_corr_info;
+    std::pair<AgentInformation, AgentInformation> agent_lane_info =
+      FrontRearAgents(observed_world, lane_corr);
+    double remaining_distance = lane_corr->LengthUntilEnd(ego_pos);
+    lane_corr_info.front = agent_lane_info.first;
+    lane_corr_info.rear = agent_lane_info.second;
+    lane_corr_info.remaining_distance = lane_corr_info.remaining_distance;
+    lane_corr_info.lane_corridor = lane_corr;
+    lane_corr_infos.push_back(lane_corr_info);
+  }
+  return lane_corr_infos;
+}
+
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) const {
+  // as we are lazy initially we want to keep the lane
   auto lane_corr = observed_world.GetLaneCorridor();
   LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
 
-  // if enough space on ego corr do not change
-  std::tuple<double, double, bool> relative_values =
-    BaseIDM::CalcRelativeValues(
-      observed_world, lane_corr);
+  std::vector<LaneCorridorInformation> lane_corr_infos =
+    ScanLaneCorridors(observed_world);
 
-  // if there is not enough space
-  if (std::get<0>(relative_values) < 20.) {
-    const auto& road_corr = observed_world.GetRoadCorridor();
+  // 1. there should be enough remaining distance left
+  lane_corr_infos =
+    FilterLaneCorridors(
+      lane_corr_infos,
+      [](LaneCorridorInformation li){
+        return li.remaining_distance >= 50;});
 
-    if (fabs(std::get<1>(relative_values) / observed_world.CurrentEgoState()[StateDefinition::VEL_POSITION]) < 0.1) {
-      // std::cout << std::get<0>(relative_values) << std::endl;
-      std::pair<LaneCorridorPtr, LaneCorridorPtr> left_right_lane_corr =
-        road_corr->GetLeftRightLaneCorridor(
-          observed_world.CurrentEgoPosition());
+  // 2. enough space behind the ego vehicle to merge
+  lane_corr_infos =
+    FilterLaneCorridors(
+      lane_corr_infos,
+      [](LaneCorridorInformation li){
+        return li.rear.rel_distance >= 5;});
 
-      // we want to change lanes if there is more free space
-      if (left_right_lane_corr.first) {
-        std::tuple<double, double, bool> relative_values_left_lane =
-          BaseIDM::CalcRelativeValues(
-            observed_world, left_right_lane_corr.first);
-        if (std::get<0>(relative_values_left_lane) >= std::get<0>(relative_values))
-          return std::pair<LaneChangeDecision, LaneCorridorPtr>(
-            LaneChangeDecision::ChangeLeft, left_right_lane_corr.first);
-      }
-    }
-
-  }
+  // 3. enough space in front of the ego vehicle to merge
+  lane_corr_infos =
+    FilterLaneCorridors(
+      lane_corr_infos,
+      [](LaneCorridorInformation li){
+        return li.front.rel_distance >= 10;});
 
 
+  // select corridor with most free space
+  if (lane_corr_infos.size() > 0)
+    lane_corr = lane_corr_infos[0].lane_corridor;
 
   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
     change_decision, lane_corr);
