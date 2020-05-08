@@ -33,7 +33,16 @@ cc_library(
     includes = ["ad_map_opendrive_reader/include"],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
-    deps =["@pugixml"],
+    deps = [
+        "@proj",
+        "@pugixml",
+        "@boost//:program_options",
+        "@boost//:array",
+        "@boost//:math",
+        "@boost//:geometry",
+        "@boost//:algorithm",
+        "@boost//:filesystem",
+    ],
 )
 
 cc_library(
@@ -68,6 +77,7 @@ cc_library(
     deps = [
         ":ad_map_opendrive_reader",
         ":ad_physics",
+        "@spdlog",
     ],
 )
 
