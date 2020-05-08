@@ -118,7 +118,7 @@ void python_behavior(py::module m) {
              shared_ptr<BehaviorMotionPrimitives>>(m,
     "BehaviorMotionPrimitives")
     .def("ActionToBehavior", &BehaviorMotionPrimitives::ActionToBehavior)
-    .def_property_readonly("num_motion_primitives", &BehaviorMotionPrimitives::GetNumMotionPrimitives);
+    .def("GetNumMotionPrimitives", &BehaviorMotionPrimitives::GetNumMotionPrimitives);
 
   py::class_<BehaviorMPContinuousActions,
              BehaviorMotionPrimitives,
@@ -138,11 +138,10 @@ void python_behavior(py::module m) {
   .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
 
   py::class_<BehaviorMPMacroActions,
-            BehaviorModel,
+            BehaviorMotionPrimitives,
             shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
   .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
                 const modules::commons::ParamsPtr&>())
-  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive);
 
   py::class_<PrimitiveConstAccStayLane,
