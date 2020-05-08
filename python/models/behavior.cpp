@@ -10,6 +10,7 @@
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
+#include "modules/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
@@ -163,6 +164,8 @@ void python_behavior(py::module m) {
     .def(py::init<const modules::commons::ParamsPtr&,
         const modules::models::dynamic::DynamicModelPtr&,
         float>());
+
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   py::class_<DynamicBehaviorModel,
              BehaviorModel,
