@@ -112,8 +112,9 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
     FilterLaneCorridors(
       lane_corr_infos,
       [this](LaneCorridorInformation li) {
-        return (li.rear.rel_distance <=
-                -min_vehicle_rear_distance_ - li.rear.rel_velocity*2.);
+        return (
+          li.rear.rel_distance <=
+          -min_vehicle_rear_distance_-li.rear.rel_velocity*time_keeping_gap_);
       });
 
   // 3. enough space in front of the ego vehicle to merge
@@ -121,14 +122,17 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
     FilterLaneCorridors(
       lane_corr_infos,
       [this](LaneCorridorInformation li) {
-        return (li.front.rel_distance >=
-               min_vehicle_front_distance_ + li.front.rel_velocity*2.);
+        return (
+          li.front.rel_distance >=
+          min_vehicle_front_distance_+li.front.rel_velocity*time_keeping_gap_);
         });
 
   // select corridor with most free space
   // from the remaining
   if (lane_corr_infos.size() > 0) {
     if (lane_corr != lane_corr_infos[0].lane_corridor) {
+      // TODO(@hart): mobil equation
+      // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr
       std::cout << "Agent " << observed_world.GetEgoAgentId()
                 << " should change lane." << std::endl;
       lane_corr = lane_corr_infos[0].lane_corridor;

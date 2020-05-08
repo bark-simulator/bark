@@ -42,7 +42,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return super(CustomLaneCorridorConfig, self).position(
       world, self._min_s, self._max_s)
 
-  def ds(self, s_min=10., s_max=20.):
+  def ds(self, s_min=12.5, s_max=25.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
@@ -87,8 +87,8 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 # BehaviorSimpleRuleBased::MinVehicleRearDistance
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 40.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 5.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 5.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.5
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.5
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
@@ -125,6 +125,6 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 50):
+  for step in range(0, 65):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)

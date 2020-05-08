@@ -63,6 +63,10 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
       "BehaviorSimpleRuleBased::MinVehicleFrontDistance",
       "Front vehicle distance.",
       5.0);
+    time_keeping_gap_ = params->GetReal(
+      "BehaviorSimpleRuleBased::TimeKeepingGap",
+      "Additional time that adds distance based on the rel. vel. to the gap.",
+      1.0);
   }
 
   virtual ~BehaviorSimpleRuleBased() {}
@@ -114,6 +118,7 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   double min_remaining_distance_;
   double min_vehicle_rear_distance_;
   double min_vehicle_front_distance_;
+  double time_keeping_gap_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSimpleRuleBased::Clone() const {

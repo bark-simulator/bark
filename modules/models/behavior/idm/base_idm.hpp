@@ -45,10 +45,12 @@ class BaseIDM : public BehaviorModel {
     const std::tuple<double, double, bool>& rel_values,
     float delta_time) const {}
 
-  double CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
+  double CalcRawIDMAcc(const double& net_distance,
+                       const double& vel_ego,
                        const double& vel_other) const;
 
-  double CalcIDMAcc(const double net_distance, const double vel_ego,
+  double CalcIDMAcc(const double net_distance,
+                    const double vel_ego,
                     const double vel_other) const;
 
   std::tuple<double, double, bool> CalcRelativeValues(
