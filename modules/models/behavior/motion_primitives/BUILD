@@ -15,8 +15,7 @@ cc_library(
         "//modules/commons:commons",
         "//modules/world:include",
         "//modules/models/behavior:behavior",
-        "//modules/models/dynamic:dynamic",
-        "//modules/models/behavior:include",
+        "//modules/models/dynamic:dynamic"
     ],
     visibility = ["//visibility:public"],
 )
