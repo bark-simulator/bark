@@ -26,7 +26,7 @@ from bark.models.behavior import *
 # Parameters Definitions
 param_server = ParameterServer()
 
-param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 1.
+param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
 
 # World Definition
@@ -58,7 +58,7 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -20, -2, 0, 23/3.6])
+init_state = np.array([0, -10, -2, 0, 23/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
 agent_params = param_server.addChild("agent1")
@@ -73,7 +73,7 @@ agent1 = Agent(init_state,
 world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, 30, 2, -3.14, 30/3.6])
+init_state2 = np.array([0, 20, 2, -3.14, 30/3.6])
 agent_params2 = param_server.addChild("agent2")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(-30, 2))
@@ -88,7 +88,7 @@ agent2 = Agent(init_state2,
 world.AddAgent(agent2)
 
 agent_2d_shape3 = CarLimousine()
-init_state3 = np.array([0, -30, -2, 0.0, 30/3.6])
+init_state3 = np.array([0, -20, -2, 0.0, 30/3.6])
 agent_params3 = param_server.addChild("agent3")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(-2, -30))
@@ -104,7 +104,7 @@ world.AddAgent(agent3)
 
 
 agent_2d_shape4 = CarLimousine()
-init_state4 = np.array([0, 2, -30, 3.14/2, 20/3.6])
+init_state4 = np.array([0, 2, -20, 3.14/2, 20/3.6])
 agent_params4 = param_server.addChild("agent4")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
@@ -122,10 +122,10 @@ world.AddAgent(agent4)
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
 
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=agent3.id)
+viewer = Panda3dViewer(params=param_server,
+                       x_range=[-40, 40],
+                       y_range=[-40, 40],
+                       follow_agent_id=agent3.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
@@ -134,11 +134,11 @@ sim_step_time = param_server["simulation"]["step_time",
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
-
+# time.sleep(5)
 # viewer = VideoRenderer(renderer=viewer,
 #                        world_step_time=sim_step_time,
 #                        fig_path="/Users/hart/2019/bark/video")
-for _ in range(0, 95):
+for _ in range(0, 80):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)

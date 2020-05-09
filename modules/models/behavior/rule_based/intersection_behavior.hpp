@@ -11,6 +11,7 @@
 #include <map>
 #include <utility>
 #include <vector>
+#include <tuple>
 
 #include "modules/models/behavior/rule_based/rule_based.hpp"
 #include "modules/models/behavior/rule_based/simple_behavior.hpp"
@@ -39,18 +40,19 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
   explicit BehaviorIntersectionRuleBased(
     const commons::ParamsPtr& params) :
     BehaviorSimpleRuleBased(params) {
-
+    // this is required for the IDM to get around corners
+    SetLimitSteeringRate(false);
   }
 
   Trajectory Plan(
     float delta_time, const world::ObservedWorld& observed_world);
-  
+
   std::tuple<double, bool, AgentPtr> CheckIntersectingVehicles(
-   const LaneCorridorPtr& lane_corr,
-   const ObservedWorld& observed_world,
-   double pred_horizon = 5.,
-   double t_inc = 0.5);
-  
+    const LaneCorridorPtr& lane_corr,
+    const ObservedWorld& observed_world,
+    double pred_horizon = 5.,
+    double t_inc = 0.5);
+
   virtual ~BehaviorIntersectionRuleBased() {}
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;

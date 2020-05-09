@@ -17,8 +17,9 @@ namespace behavior {
 
 class BehaviorIDMLaneTracking : public BaseIDM {
  public:
-  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BaseIDM(params) {
+  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
+    BaseIDM(params),
+    limit_steering_rate_(true) {
     crosstrack_error_gain_ = params->GetReal(
       "BehaviorIDMLaneTracking::CrosstrackErrorGain",
       "Tuning factor of stanley controller",
@@ -41,11 +42,14 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     float delta_time, const world::ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
-
+  void SetLimitSteeringRate(bool limit_steering) {
+    limit_steering_rate_ = limit_steering;
+  }
   friend class BaseIDM;
  private:
   int lane_corr_id_;
   double crosstrack_error_gain_;
+  bool limit_steering_rate_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMLaneTracking::Clone() const {

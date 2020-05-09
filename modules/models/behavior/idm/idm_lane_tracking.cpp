@@ -75,7 +75,8 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
       BARK_EXPECT_TRUE(!std::isnan(acc));
       double angle = CalculateSteeringAngle(
-        single_track, traj.row(i - 1), line, crosstrack_error_gain_);
+        single_track, traj.row(i - 1), line, crosstrack_error_gain_,
+        limit_steering_rate_);
 
       dynamic::Input input(2);
       input << acc, angle;

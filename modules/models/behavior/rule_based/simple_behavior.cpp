@@ -124,7 +124,11 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
         });
 
   // TODO(@hart): mobil equation instead of free space
-  // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr
+  // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr -> change lanes
+  // acc'(ego): CalcIDMAcc(li.front.rel_distance, vel_ego, GetVelocity(li.front.agent))
+  // acc'(behind): CalcIDMAcc(-li.rear.rel_distance, GetVelocity(li.front.agent), vel_ego)
+  // acc(ego): CalcIDMAcc(li_ego.front.rel_distance, vel_ego, GetVelocity(font_agent))
+  // acc(behind): CalcIDMAcc(-li_ego.rear.rel_distance, GetVelocity(li.front.agent), vel_ego)
   if (lane_corr_infos.size() > 0) {
     // select corridor with most free space
     double max_rel_dist = 0.;
