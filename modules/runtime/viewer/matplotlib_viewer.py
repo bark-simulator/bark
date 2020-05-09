@@ -103,6 +103,7 @@ class MPViewer(BaseViewer):
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
+        plt.axis('off')
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
         self._set_visualization_options()
         self.show()

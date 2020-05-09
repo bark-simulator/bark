@@ -27,7 +27,7 @@ using modules::world::AgentPtr;
 using modules::world::FrenetPosition;
 using modules::world::map::LaneCorridorPtr;
 using modules::world::ObservedWorld;
-using modules::world::ObservedWorld;
+using modules::world::AgentMap;
 using modules::world::prediction::PredictionSettings;
 using modules::world::AgentFrenetPair;
 using modules::models::dynamic::StateDefinition::VEL_POSITION;
@@ -47,20 +47,24 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
   Trajectory Plan(
     float delta_time, const world::ObservedWorld& observed_world);
 
-  std::tuple<double, bool, AgentPtr> CheckIntersectingVehicles(
+  std::tuple<double, AgentPtr> CheckIntersectingVehicles(
     const LaneCorridorPtr& lane_corr,
     const ObservedWorld& observed_world,
     double pred_horizon = 5.,
     double t_inc = 0.5);
 
+  AgentPtr FilterLaneCorridorIntersectingAgents(
+    const AgentMap& intersecting_agents,
+    const ObservedWorld& observed_world) const;
+
   virtual ~BehaviorIntersectionRuleBased() {}
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
- private:
 
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorIntersectionRuleBased::Clone() const {
+inline std::shared_ptr<BehaviorModel>
+BehaviorIntersectionRuleBased::Clone() const {
   std::shared_ptr<BehaviorIntersectionRuleBased> model_ptr =
       std::make_shared<BehaviorIntersectionRuleBased>(*this);
   return model_ptr;

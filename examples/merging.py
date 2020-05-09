@@ -42,12 +42,12 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return super(CustomLaneCorridorConfig, self).position(
       world, self._min_s, self._max_s)
 
-  def ds(self, s_min=12.5, s_max=25.):
+  def ds(self, s_min=7.5, s_max=15.):
     """Sample distance on the route
     """
     return np.random.uniform(s_min, s_max)
 
-  def velocity(self, min_vel=5., max_vel=10.):
+  def velocity(self, min_vel=8., max_vel=10.):
     return np.random.uniform(low=min_vel, high=max_vel)
 
   def controlled_ids(self, agent_list):
@@ -86,7 +86,7 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 # create 5 scenarios
 # BehaviorSimpleRuleBased::MinVehicleRearDistance
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 40.
+param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 70.
 param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.5
 param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.5
 
@@ -99,8 +99,8 @@ scenarios = \
 
 # viewer
 viewer = MPViewer(params=param_server,
-                  x_range=[-70, 70],
-                  y_range=[-70, 70],
+                  x_range=[-35, 35],
+                  y_range=[-35, 35],
                   follow_agent_id=True)
 # viewer = Panda3dViewer(params=param_server,
 #                        x_range=[-40, 40],
@@ -136,4 +136,4 @@ for _ in range(0, 3):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=True)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
