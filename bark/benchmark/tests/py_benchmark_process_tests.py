@@ -51,8 +51,11 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         result = benchmark_runner.run(maintain_history=True)
 
-        result.dump(os.path.join("./benchmark_results.pickle"))
-        result_loaded = BenchmarkResult.load(os.path.join("./benchmark_results.pickle"))
+        result.dump(os.path.join("./benchmark_results"), dump_configs=True, \
+                         dump_histories=True, max_mb_per_file=1)
+        result_loaded = BenchmarkResult.load(os.path.join("./benchmark_results"))
+        result_loaded.load_histories()
+        result_loaded.load_benchmark_configs()
 
         params2 = ParameterServer()
 

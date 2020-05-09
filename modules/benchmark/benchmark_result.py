@@ -133,7 +133,9 @@ class BenchmarkResult:
         else:
             return BenchmarkResult.load_results(filename)
 
-    def load_histories(self, config_idx_list):
+    def load_histories(self, config_idx_list = None):
+        if not config_idx_list:
+            config_idx_list = self.get_data_frame()["config_idx"].tolist()
         existing_history_config_indices = self.__histories.keys()
         configs_idx_to_load = list(set(config_idx_list) - set(existing_history_config_indices))
         new_histories = None
@@ -148,7 +150,9 @@ class BenchmarkResult:
             self.extend(new_result)
         return processed_files
 
-    def load_benchmark_configs(self, config_idx_list):
+    def load_benchmark_configs(self, config_idx_list = None):
+        if not config_idx_list:
+            config_idx_list = self.get_data_frame()["config_idx"].tolist()
         existing_config_indices = self.get_benchmark_config_indices()
         configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
         new_bench_configs = None
