@@ -29,6 +29,7 @@ using modules::commons::DefaultParams;
 using modules::geometry::Point2d;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition;
+using modules::models::dynamic::StateDefinition::THETA_POSITION;
 using modules::world::objects::Agent;
 using modules::world::AgentMap;
 using modules::world::objects::AgentPtr;
@@ -64,10 +65,9 @@ AgentPtr BehaviorIntersectionRuleBased::FilterLaneCorridorIntersectingAgents(
         GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
         agent_pos));
       // TODO(@hart): proper angle check
-      // TODO(@hart): braking distance parameter
-      if (fabs(ego_state[StateDefinition::THETA_POSITION] - agent_state[StateDefinition::THETA_POSITION]) > 1.4 &&
+      if (fabs(ego_state[THETA_POSITION] - agent_state[THETA_POSITION]) > angle_diff_for_intersection_ &&
           s_other > s_ego &&
-          s_other - s_ego < 10.) {
+          s_other - s_ego < braking_distance_) {
         intersecting_agent = agent.second;
         break;
       }
@@ -80,7 +80,6 @@ std::tuple<double, AgentPtr>
 BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   const LaneCorridorPtr& lane_corr,
   const ObservedWorld& observed_world,
-  double pred_horizon,
   double t_inc) {
   double augmented_distance = 0.;
   AgentPtr lane_corr_intersecting_agent;
@@ -94,7 +93,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   tmp_observed_world.SetupPrediction(prediction_settings);
 
   // predict for n seconds
-  for (double t = 0.; t < pred_horizon; t += t_inc) {
+  for (double t = 0.; t < prediction_time_horizon_; t += prediction_t_inc_) {
     WorldPtr predicted_world = tmp_observed_world.Predict(t);
     AgentMap intersecting_agents =
       tmp_observed_world.GetAgentsIntersectingPolygon(

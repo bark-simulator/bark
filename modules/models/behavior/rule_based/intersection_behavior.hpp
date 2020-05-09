@@ -42,6 +42,26 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
     BehaviorSimpleRuleBased(params) {
     // this is required for the IDM to get around corners
     SetLimitSteeringRate(false);
+  // double prediction_time_horizon_;
+  // double prediction_t_inc_;
+  // double braking_distance_;
+    // parameters
+    prediction_time_horizon_ = params->GetReal(
+      "BehaviorIntersectionRuleBased::PredictionTimeHorizon",
+      "Prediction time horizon.",
+      5.0);
+    prediction_t_inc_ = params->GetReal(
+      "BehaviorIntersectionRuleBased::PredictionTInc",
+      "Fine graining of prediction collision checking.",
+      0.5);
+    braking_distance_ = params->GetReal(
+      "BehaviorIntersectionRuleBased::BrakingDistance",
+      "Distance at which the vehicle should start to brake.",
+      10.);
+    angle_diff_for_intersection_ = params->GetReal(
+      "BehaviorIntersectionRuleBased::AngleDiffForIntersection",
+      "Angle at which vehicles are counted as intersecting.",
+      1.4);
   }
 
   Trajectory Plan(
@@ -50,7 +70,6 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
   std::tuple<double, AgentPtr> CheckIntersectingVehicles(
     const LaneCorridorPtr& lane_corr,
     const ObservedWorld& observed_world,
-    double pred_horizon = 5.,
     double t_inc = 0.5);
 
   AgentPtr FilterLaneCorridorIntersectingAgents(
@@ -61,6 +80,11 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+ private:
+  double prediction_time_horizon_;
+  double prediction_t_inc_;
+  double angle_diff_for_intersection_;
+  double braking_distance_;
 };
 
 inline std::shared_ptr<BehaviorModel>
