@@ -7,18 +7,14 @@ import os
 import pickle
 import pandas as pd
 import logging
-import copy
-import time
-import glob
 import re
+import zipfile
+import math
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.scenario import Scenario
 
-# contains information specifying
 class BehaviorConfig:
     def __init__(self, behavior_name, behavior, param_descriptions=None):
         self.behavior_name = behavior_name
@@ -66,11 +62,15 @@ class BenchmarkConfig:
 
 # result of benchmark run
 class BenchmarkResult:
-    def __init__(self, result_dict = None, benchmark_configs = None, histories = None):
+    def __init__(self, result_dict = None, benchmark_configs = None, histories = None, data_frame = None, file_name = None):
         self.__result_dict = result_dict or []
         self.__benchmark_configs = benchmark_configs or []
-        self.__data_frame = None
+        if isinstance(data_frame, pd.DataFrame):
+            self.__data_frame = data_frame
+        else:
+            self.__data_frame = None
         self.__histories = histories or {}
+        self.__file_name = file_name or None
 
     def get_data_frame(self):
         if not isinstance(self.__data_frame, pd.DataFrame):
@@ -78,6 +78,8 @@ class BenchmarkResult:
         return self.__data_frame
 
     def get_result_dict(self):
+        if len(self.__result_dict) == 0 and isinstance(self.__data_frame, pd.DataFrame):
+            self.__result_dict = self.__data_frame.to_dict("records")
         return self.__result_dict
 
     def get_benchmark_configs(self):
@@ -102,6 +104,9 @@ class BenchmarkResult:
             evaluation_groups.update(set(conf.get_evaluation_groups()))
         return list(evaluation_groups)
 
+    def get_file_name(self):
+        return self.__file_name
+
     @staticmethod
     def find_benchmark_config(benchmark_configs, config_idx):
         BenchmarkResult._sort_bench_confs(benchmark_configs)
@@ -116,22 +121,45 @@ class BenchmarkResult:
         benchmark_configs.sort(key=sort_key)
 
     @staticmethod
-    def load(filename):
+    def load_pickle(filename):
         with open(filename, 'rb') as handle:
             dmp = pickle.load(handle)
         return dmp
 
     @staticmethod
-    def load_results(filename):
-        pass
+    def load(filename):
+        if filename.endswith(".pickle"):
+            return BenchmarkResult.load_pickle(filename)
+        else:
+            return BenchmarkResult.load_results(filename)
 
-    @staticmethod
-    def load_histories(file_name, config_idx_list):
-        pass
+    def load_histories(self, config_idx_list):
+        existing_history_config_indices = self.__histories.keys()
+        configs_idx_to_load = list(set(config_idx_list) - set(existing_history_config_indices))
+        new_histories = None
+        with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
+            new_histories, configs_not_found = BenchmarkResult._load_and_merge(result_zip_file, \
+                "histories", configs_idx_to_load)
+        if len(configs_not_found) > 0:
+            logging.warning("The histories with config indices {} were not found in {}".format(configs_not_found, self.__file_name))
+        if new_histories:
+            new_result = BenchmarkResult(result_dict=None, benchmark_configs=None,
+                              histories=new_histories)
+            self.extend(new_result)
 
-    @staticmethod
-    def load_benchmark_configs(file_name, config_idx_list):
-        pass
+    def load_benchmark_configs(self, config_idx_list):
+        existing_config_indices = self.get_benchmark_config_indices()
+        configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
+        new_bench_configs = None
+        with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
+            new_bench_configs, configs_not_found = BenchmarkResult._load_and_merge(result_zip_file, \
+                "configs", configs_idx_to_load)
+        if len(configs_not_found) > 0:
+            logging.warning("The benchmark configs with indices {} were not found in {}".format(configs_not_found, self.__file_name))
+        if new_bench_configs:
+            new_result = BenchmarkResult(result_dict=None, benchmark_configs=new_bench_configs,
+                              histories=None)
+            self.extend(new_result)
 
     @staticmethod
     def _load_and_merge(zip_file_handle, filetype, config_idx_list):
@@ -139,14 +167,17 @@ class BenchmarkResult:
                          if filetype in filename]
         merged_iterable = None
         files_to_load = []
+        configs_not_found = set(config_idx_list)
         for file in total_file_list:
-            idx_range = re.findall("config_idx_[0-9]+_to_[0-9]+.{}".format(filetype), file)
-            if len(idx_range) < 1:
+            match = re.search("config_idx_(?P<from>[0-9]+)_to_(?P<to>[0-9]+).{}".format(filetype), file)
+            if not match:
                 continue
-            found_config = filter(lambda conf_idx: config_idx >= idx_range[0] \
-                                 and config_idx <= idx_range[0], config_idx_list)
+            range_dct = match.groupdict()
+            found_config = list(filter(lambda conf_idx: conf_idx >= int(range_dct["from"]) \
+                                 and conf_idx <= int(range_dct["to"]), config_idx_list))
+            configs_not_found -= set(found_config)
             if len(found_config) > 0:
-                files_to_load.extend(file)
+                files_to_load.append(file)
 
         for file in files_to_load:
             bytes = zip_file_handle.read(file)
@@ -159,35 +190,56 @@ class BenchmarkResult:
                 if not merged_iterable:
                     merged_iterable = {}
                 merged_iterable.update(iterable)
-        return merged_iterable
+        return merged_iterable, configs_not_found
 
     @staticmethod
     def _save_and_split(zip_file_handle, filetype, pickable_iterable, max_bytes_per_file):
-        whole_list_byte_size = len(pickle.dumps(pickable_iterable))
+        whole_list_byte_size = len(pickle.dumps(pickable_iterable, \
+                                      protocol=pickle.HIGHEST_PROTOCOL))
         num_files = math.ceil(whole_list_byte_size/max_bytes_per_file)
-        num_configs_per_file = math.ceil(len(pickable_iterable)/num_files)
+        num_configs_per_file = math.floor(len(pickable_iterable)/num_files)
         config_idx_list = list(range(0, len(pickable_iterable)))
         config_idx_splits = [config_idx_list[i:i + num_configs_per_file] \
-                     for range(0, len(config_idx_list), num_configs_per_file)]
+                     for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:
             iterable_to_write = None
             if isinstance(pickable_iterable, list):
-                iterable_to_write = pickable_iterable[config_idx_split]
+                iterable_to_write = [pickable_iterable[i] for i in config_idx_split]
             elif isinstance(pickable_iterable, dict):
                 iterable_to_write = { config_idx : pickable_iterable[config_idx] \
                                       for config_idx in config_idx_split}
 
             filename = os.path.join(filetype, "config_idx_{}_to_{}.{}".format(
                   config_idx_split[0], config_idx_split[-1], filetype))
-            zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write))
+            zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
+                                                protocol=pickle.HIGHEST_PROTOCOL))
 
-    def dump(self, filename, dump_configs=True):
-        if isinstance(self.__data_frame, pd.DataFrame):
-            self.__data_frame = None
-        if not dump_configs:
-            self.__benchmark_configs = None
-        with open(filename, 'wb') as handle:
-            pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    def _dump_results(self, zip_file_handle):
+        zip_file_handle.writestr("benchmark.results", \
+            pickle.dumps(self.get_data_frame(), protocol=pickle.HIGHEST_PROTOCOL))
+
+    def _dump_histories(self, zip_file_handle, max_bytes_per_file):
+        BenchmarkResult._save_and_split(zip_file_handle, "histories", \
+          self.get_histories(), max_bytes_per_file  )
+
+    def _dump_benchmark_configs(self, zip_file_handle, max_bytes_per_file):
+        BenchmarkResult._save_and_split(zip_file_handle, "configs", \
+          self.get_benchmark_configs(), max_bytes_per_file  )
+
+    @staticmethod
+    def load_results(filename):
+        with zipfile.ZipFile(filename, 'r') as result_zip_file:
+            bytes = result_zip_file.read("benchmark.results")
+        data_frame = pickle.loads(bytes)
+        return BenchmarkResult(data_frame = data_frame, file_name = filename)
+
+    def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000):
+        with zipfile.ZipFile(filename, 'w') as result_zip_file:
+            self._dump_results(result_zip_file)
+            if dump_configs:
+                self._dump_benchmark_configs(result_zip_file, max_mb_per_file*10**6)
+            if dump_histories:
+                self._dump_histories(result_zip_file, max_mb_per_file*10**6)
         logging.info("Saved BenchmarkResult to {}".format(
             os.path.abspath(filename)))
 
@@ -199,5 +251,12 @@ class BenchmarkResult:
             raise ValueError("Overlapping config indices. No extension possible.")
         self.__result_dict.extend(benchmark_result.get_result_dict())
         self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())
-        self.__data_frame = None
+
+        other_data_frame = benchmark_result.get_data_frame()
+        if isinstance(self.__data_frame, pd.DataFrame):
+            if isinstance(other_data_frame, pd.DataFrame):
+                self.__data_frame = pd.concat((self.__data_frame, other_data_frame))
+        else:
+            if isinstance(other_data_frame, pd.DataFrame):
+                self.__data_frame = other_data_frame
         self.__histories.update(benchmark_result.get_histories())

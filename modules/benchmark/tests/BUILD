@@ -17,6 +17,14 @@ py_test(
 )
 
 py_test(
+  name = "py_benchmark_result_tests",
+  srcs = ["py_benchmark_result_tests.py"],
+  deps = [
+      "//modules/benchmark:benchmark_result"
+    ],
+)
+
+py_test(
   name = "py_benchmark_analyzer_tests",
   srcs = ["py_benchmark_analyzer_tests.py"],
   data = ["//python:bark.so",
