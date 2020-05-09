@@ -30,6 +30,9 @@ class TestConfig:
     def __init__(self, idx, conf_size):
         self.bytes = bytearray(os.urandom(conf_size))
         self.config_idx = idx
+    def __eq__(self, other):
+        return self.bytes == other.bytes and \
+          self.config_idx == other.config_idx
 def random_benchmark_conf_data(num_confs, conf_size):
     confs = [ TestConfig(i, conf_size)for i in range(0, num_confs)]
     return confs
@@ -65,7 +68,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         br.dump("./results_with_confs", dump_configs=True, max_mb_per_file = 5)
         br_loaded = BenchmarkResult.load("./results_with_confs")
         br_loaded.load_benchmark_configs(config_idx_list = list(range(0, result_num)))
-        loaded_confs = br_loaded.get_histories()
+        loaded_confs = br_loaded.get_benchmark_configs()
         self.assertEqual(confs, loaded_confs)
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(br.get_result_dict(), loaded_dict)
