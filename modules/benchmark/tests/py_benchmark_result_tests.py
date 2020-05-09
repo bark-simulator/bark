@@ -37,7 +37,6 @@ def random_benchmark_conf_data(num_confs, conf_size):
     confs = [ TestConfig(i, conf_size)for i in range(0, num_confs)]
     return confs
 
-
 class DatabaseRunnerTests(unittest.TestCase):
     def test_dump_and_load_results(self):
         result_data = random_result_data(size = 10)
@@ -73,9 +72,35 @@ class DatabaseRunnerTests(unittest.TestCase):
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(br.get_result_dict(), loaded_dict)
 
+    def test_dump_and_partial_load(self):
+        result_num = 100
+        result_data = random_result_data(size = result_num)
+        confs = random_benchmark_conf_data(result_num, 2000000)
+        histories = random_history_data(result_num, 1500000)
+        br = BenchmarkResult(result_dict=result_data,
+          benchmark_configs=confs, histories=histories)
+        br.dump("./results_all", dump_configs=True, dump_histories=True, max_mb_per_file = 5)
+        br_loaded = BenchmarkResult.load("./results_all")
+        loaded_dict = br_loaded.get_result_dict()
+        self.assertEqual(br.get_result_dict(), loaded_dict)
 
-    def test_dump_and_load(self):
-        pass
+        loaded_configs_idx = list(range(10, 20))
+        processed_files = br_loaded.load_benchmark_configs(config_idx_list = loaded_configs_idx)
+        loaded_confs = br_loaded.get_benchmark_configs()
+        self.assertEqual(len(loaded_confs), 10)
+        # 2mb per conf, max 5 mb per file -> 2 confs per file -> 10/2 = 5files
+        self.assertEqual(len(processed_files), 5) 
+        for conf_idx in loaded_configs_idx:
+            self.assertEqual(br_loaded.get_benchmark_config(conf_idx), confs[conf_idx])
+
+        loaded_configs_idx = list(range(10, 27))
+        processed_files = br_loaded.load_histories(config_idx_list = loaded_configs_idx)
+        loaded_histories = br_loaded.get_histories()
+        self.assertEqual(len(loaded_histories), 18) # one more as specified since it was in the last file
+        # 1.5mb per history, max 5 mb per file -> 3 confs per file -> 17/3 = 6files
+        self.assertEqual(len(processed_files), 6)
+        for conf_idx in loaded_configs_idx:
+            self.assertEqual(br_loaded.get_history(conf_idx), histories[conf_idx])
 
 
 if __name__ == '__main__':

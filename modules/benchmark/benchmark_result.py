@@ -109,10 +109,10 @@ class BenchmarkResult:
 
     @staticmethod
     def find_benchmark_config(benchmark_configs, config_idx):
-        BenchmarkResult._sort_bench_confs(benchmark_configs)
-        bench_conf = benchmark_configs[config_idx]
-        assert (bench_conf.config_idx == config_idx)
-        return bench_conf
+        for config in benchmark_configs:
+            if config.config_idx == config_idx:
+                return config
+        return None
 
     @staticmethod
     def _sort_bench_confs(benchmark_configs):
@@ -138,7 +138,7 @@ class BenchmarkResult:
         configs_idx_to_load = list(set(config_idx_list) - set(existing_history_config_indices))
         new_histories = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
-            new_histories, configs_not_found = BenchmarkResult._load_and_merge(result_zip_file, \
+            new_histories, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
                 "histories", configs_idx_to_load)
         if len(configs_not_found) > 0:
             logging.warning("The histories with config indices {} were not found in {}".format(configs_not_found, self.__file_name))
@@ -146,13 +146,14 @@ class BenchmarkResult:
             new_result = BenchmarkResult(result_dict=None, benchmark_configs=None,
                               histories=new_histories)
             self.extend(new_result)
+        return processed_files
 
     def load_benchmark_configs(self, config_idx_list):
         existing_config_indices = self.get_benchmark_config_indices()
         configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
         new_bench_configs = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
-            new_bench_configs, configs_not_found = BenchmarkResult._load_and_merge(result_zip_file, \
+            new_bench_configs, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
                 "configs", configs_idx_to_load)
         if len(configs_not_found) > 0:
             logging.warning("The benchmark configs with indices {} were not found in {}".format(configs_not_found, self.__file_name))
@@ -160,11 +161,14 @@ class BenchmarkResult:
             new_result = BenchmarkResult(result_dict=None, benchmark_configs=new_bench_configs,
                               histories=None)
             self.extend(new_result)
+        return processed_files
 
     @staticmethod
     def _load_and_merge(zip_file_handle, filetype, config_idx_list):
         total_file_list = [filename for filename in zip_file_handle.namelist() \
                          if filetype in filename]
+        if len(total_file_list) < 1:
+            logging.warning("There are no files for type: {}. Have you forgotten to specify it in dump()?".format(filetype))
         merged_iterable = None
         files_to_load = []
         configs_not_found = set(config_idx_list)
@@ -190,7 +194,7 @@ class BenchmarkResult:
                 if not merged_iterable:
                     merged_iterable = {}
                 merged_iterable.update(iterable)
-        return merged_iterable, configs_not_found
+        return merged_iterable, configs_not_found, files_to_load
 
     @staticmethod
     def _save_and_split(zip_file_handle, filetype, pickable_iterable, max_bytes_per_file):
