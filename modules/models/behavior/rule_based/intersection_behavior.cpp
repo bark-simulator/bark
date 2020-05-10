@@ -39,7 +39,7 @@ using modules::world::ObservedWorldPtr;
 using modules::models::dynamic::DynamicModelPtr;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::world::prediction::PredictionSettings;
-
+using modules::geometry::Norm0To2PI;
 
 
 AgentPtr BehaviorIntersectionRuleBased::FilterLaneCorridorIntersectingAgents(
@@ -64,8 +64,9 @@ AgentPtr BehaviorIntersectionRuleBased::FilterLaneCorridorIntersectingAgents(
       double s_other = std::get<1>(
         GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
         agent_pos));
-      // TODO(@hart): proper angle check
-      if (fabs(ego_state[THETA_POSITION] - agent_state[THETA_POSITION]) > angle_diff_for_intersection_ &&
+      double ego_angle = Norm0To2PI(ego_state[THETA_POSITION]);
+      double other_angle = Norm0To2PI(agent_state[THETA_POSITION]);
+      if (fabs(ego_angle - other_angle) > angle_diff_for_intersection_ &&
           s_other > s_ego &&
           s_other - s_ego < braking_distance_) {
         intersecting_agent = agent.second;
@@ -81,9 +82,8 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   const LaneCorridorPtr& lane_corr,
   const ObservedWorld& observed_world,
   double t_inc) {
-  double augmented_distance = 0.;
+  double augmented_distance = 0., intersection_time = 0.;
   AgentPtr lane_corr_intersecting_agent;
-  double intersection_time = 0.;
 
   // prediction
   auto params = std::make_shared<DefaultParams>();
@@ -94,18 +94,19 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
 
   // predict for n seconds
   for (double t = 0.; t < prediction_time_horizon_; t += prediction_t_inc_) {
-    WorldPtr predicted_world = tmp_observed_world.Predict(t);
+    ObservedWorldPtr predicted_world = tmp_observed_world.Predict(t);
     AgentMap intersecting_agents =
-      tmp_observed_world.GetAgentsIntersectingPolygon(
+      predicted_world->GetAgentsIntersectingPolygon(
         lane_corr->GetMergedPolygon());
 
     lane_corr_intersecting_agent =
       FilterLaneCorridorIntersectingAgents(
         intersecting_agents,
-        observed_world);
+        *predicted_world);
     // if there is an agent that intercepts at time t we break
     if (lane_corr_intersecting_agent) {
       intersection_time = t;
+      std::cout << "intersection_time: " << intersection_time << std::endl;
       break;
     }
   }
@@ -122,7 +123,6 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
     augmented_distance, nullptr);
 }
 
-//! IDM Model will assume other front vehicle as constant velocity during
 Trajectory BehaviorIntersectionRuleBased::Plan(
     float delta_time, const ObservedWorld& observed_world) {
   using dynamic::StateDefinition;

@@ -28,6 +28,7 @@ param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 7.5
 
 # World Definition
 world = World(param_server)
@@ -104,7 +105,7 @@ world.AddAgent(agent3)
 
 
 agent_2d_shape4 = CarLimousine()
-init_state4 = np.array([0, 2, -20, 3.14/2, 20/3.6])
+init_state4 = np.array([0, 2, -10, 3.14/2, 20/3.6])
 agent_params4 = param_server.addChild("agent4")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
@@ -122,10 +123,10 @@ world.AddAgent(agent4)
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
 
-viewer = Panda3dViewer(params=param_server,
-                       x_range=[-40, 40],
-                       y_range=[-40, 40],
-                       follow_agent_id=agent3.id)
+# viewer = Panda3dViewer(params=param_server,
+#                        x_range=[-40, 40],
+#                        y_range=[-40, 40],
+#                        follow_agent_id=agent3.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
