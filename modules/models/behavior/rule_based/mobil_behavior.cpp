@@ -50,10 +50,8 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
 
   double acc_ego = 0., acc_change_ego = 0.,
          acc_behind = 0., acc_change_behind = 0.;
-  std::vector<LaneCorridorInformation> all_corrs =
-    ScanLaneCorridors(observed_world);
   LaneCorridorInformation lci = SelectLaneCorridor(
-    all_corrs, GetLaneCorridor());
+    lane_corr_infos, GetLaneCorridor());
   if (lci.front.agent_info.first)
     acc_ego = CalcIDMAcc(
       lci.front.rel_distance,
@@ -81,7 +79,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
           GetVelocity(li.rear.agent_info.first),
           GetVelocity(observed_world.GetEgoAgent()));
 
-      double advantage_ego = acc_ego - acc_change_ego;
+      double advantage_ego = acc_change_ego - acc_ego;
       double advantage_other = acc_behind - acc_change_behind;
       // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr
       if (advantage_ego > politeness_*advantage_other + a_thr_ &&

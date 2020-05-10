@@ -85,10 +85,14 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
 
 # create 5 scenarios
 # BehaviorSimpleRuleBased::MinVehicleRearDistance
+#TimeKeepingGap
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 70.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.5
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.5
+param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 4.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 4.
+param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
+param_server["BehaviorMobilRuleBased"]["Politeness"] = .5
+param_server["BehaviorMobilRuleBased"]["AThr"] = .2
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
@@ -132,7 +136,7 @@ env = Runtime(step_time=0.2,
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 60):
+  for step in range(0, 80):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 

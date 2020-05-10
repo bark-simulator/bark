@@ -95,6 +95,9 @@ BehaviorSimpleRuleBased::ScanLaneCorridors(
     std::pair<AgentInformation, AgentInformation> agent_lane_info =
       FrontRearAgents(observed_world, lane_corr);
     double remaining_distance = lane_corr->LengthUntilEnd(ego_pos);
+    // include distance to the end of the LaneCorridor
+    agent_lane_info.first.rel_distance = std::min(
+      remaining_distance, agent_lane_info.first.rel_distance);
     lane_corr_info.front = agent_lane_info.first;
     lane_corr_info.rear = agent_lane_info.second;
     lane_corr_info.remaining_distance = remaining_distance;
@@ -158,7 +161,8 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
       [this](LaneCorridorInformation li) {
         return (
           li.rear.rel_distance <=
-          -min_vehicle_rear_distance_-li.rear.rel_velocity*time_keeping_gap_);
+          -min_vehicle_rear_distance_ -
+          fabs(li.rear.rel_velocity)*time_keeping_gap_);
       });
   // 3. enough space in front of the ego vehicle to merge
   lane_corr_infos =
@@ -167,7 +171,7 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
       [this](LaneCorridorInformation li) {
         return (
           li.front.rel_distance >=
-          min_vehicle_front_distance_+li.front.rel_velocity*time_keeping_gap_);
+          min_vehicle_front_distance_);
         });
 
   return ChooseLaneCorridor(lane_corr_infos, observed_world);
