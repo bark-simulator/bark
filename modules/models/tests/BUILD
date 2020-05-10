@@ -80,20 +80,20 @@ cc_test(
     ],
 )
 
-cc_test(
-    name = "behavior_mobil_test",
-    srcs = [
-        "behavior_mobil_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [        
-        "//modules/geometry",
-        "//modules/models/behavior/rule_based:mobil",
-        "//modules/models/execution/interpolation:interpolation",
-        "//modules/world/tests:make_test_xodr_map",
-        "@gtest//:gtest_main",
-    ],
-)
+# cc_test(
+#     name = "behavior_mobil_test",
+#     srcs = [
+#         "behavior_mobil_test.cc",
+#     ],
+#     copts = ["-Iexternal/gtest/include"],
+#     deps = [        
+#         "//modules/geometry",
+#         "//modules/models/behavior/rule_based:mobil",
+#         "//modules/models/execution/interpolation:interpolation",
+#         "//modules/world/tests:make_test_xodr_map",
+#         "@gtest//:gtest_main",
+#     ],
+# )
 
 py_test(
   name = "py_behavior_model_test",
