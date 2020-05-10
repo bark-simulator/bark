@@ -104,6 +104,22 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
     return filtered_lane_corrs;
   }
 
+  LaneCorridorInformation SelectLaneCorridor(
+    const std::vector<LaneCorridorInformation>& lane_corr_infos,
+    const LaneCorridorPtr& lane_corr) const {
+    LaneCorridorInformation lc_info;
+    for (auto lci : lane_corr_infos) {
+      if (lci.lane_corridor == lane_corr) {
+        lc_info = lci;
+      }
+    }
+    return lc_info;
+  }
+
+  virtual std::pair<LaneChangeDecision, LaneCorridorPtr> ChooseLaneCorridor(
+    const std::vector<LaneCorridorInformation>& lane_corr_infos,
+    const ObservedWorld& observed_world) const;
+
   double GetVelocity(const AgentPtr& agent) const {
     const auto& state = agent->GetCurrentState();
     return state[VEL_POSITION];

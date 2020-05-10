@@ -104,13 +104,43 @@ BehaviorSimpleRuleBased::ScanLaneCorridors(
   return lane_corr_infos;
 }
 
+/**
+ * @brief Function that chooses the LaneCorridor that has the most
+ *        free-space
+ * 
+ * @return std::pair<LaneChangeDecision, LaneCorridorPtr> 
+ */
+std::pair<LaneChangeDecision, LaneCorridorPtr>
+BehaviorSimpleRuleBased::ChooseLaneCorridor(
+    const std::vector<LaneCorridorInformation>& lane_corr_infos,
+    const ObservedWorld& observed_world) const {
+  auto lane_corr = observed_world.GetLaneCorridor();
+  LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
+  if (lane_corr_infos.size() > 0) {
+    // select corridor with most free space
+    double max_rel_dist = 0.;
+    LaneCorridorPtr tmp_lane_corr;
+    for (const auto& li : lane_corr_infos) {
+      if (li.front.rel_distance > max_rel_dist) {
+        max_rel_dist = li.front.rel_distance;
+        tmp_lane_corr = li.lane_corridor;
+      }
+    }
+    if (tmp_lane_corr != lane_corr) {
+      LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+                << " is changing lanes." << std::endl;
+      lane_corr = tmp_lane_corr;
+    }
+  }
+  return std::pair<LaneChangeDecision, LaneCorridorPtr>(
+    change_decision, lane_corr);
+}
+
 // see base class
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) const {
   // as we are lazy initially we want to keep the lane
-  auto lane_corr = observed_world.GetLaneCorridor();
-  LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
   std::vector<LaneCorridorInformation> lane_corr_infos =
     ScanLaneCorridors(observed_world);
 
@@ -140,31 +170,7 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
           min_vehicle_front_distance_+li.front.rel_velocity*time_keeping_gap_);
         });
 
-  // TODO(@hart): mobil equation instead of free space
-  // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr -> change lanes
-  // acc'(ego): CalcIDMAcc(li.front.rel_distance, vel_ego, GetVelocity(li.front.agent))
-  // acc'(behind): CalcIDMAcc(-li.rear.rel_distance, GetVelocity(li.front.agent), vel_ego)
-  // acc(ego): CalcIDMAcc(li_ego.front.rel_distance, vel_ego, GetVelocity(font_agent))
-  // acc(behind): CalcIDMAcc(-li_ego.rear.rel_distance, GetVelocity(li.front.agent), vel_ego)
-  if (lane_corr_infos.size() > 0) {
-    // select corridor with most free space
-    double max_rel_dist = 0.;
-    LaneCorridorPtr tmp_lane_corr;
-    for (const auto& li : lane_corr_infos) {
-      if (li.front.rel_distance > max_rel_dist) {
-        max_rel_dist = li.front.rel_distance;
-        tmp_lane_corr = li.lane_corridor;
-      }
-    }
-    if (tmp_lane_corr != lane_corr) {
-      LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-                << " is changing lanes." << std::endl;
-      lane_corr = tmp_lane_corr;
-    }
-  }
-
-  return std::pair<LaneChangeDecision, LaneCorridorPtr>(
-    change_decision, lane_corr);
+  return ChooseLaneCorridor(lane_corr_infos, observed_world);
 }
 
 }  // namespace behavior

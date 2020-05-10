@@ -65,7 +65,7 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
   
   def behavior_model(self, world):
-    return BehaviorSimpleRuleBased(self._params)
+    return BehaviorMobilRuleBased(self._params)
     # return BehaviorIntersectionRuleBased(self._params)
 
     

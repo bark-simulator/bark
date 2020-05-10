@@ -15,6 +15,7 @@
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/rule_based/mobil.hpp"
 #include "modules/models/behavior/rule_based/simple_behavior.hpp"
+#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
 #include "modules/models/behavior/rule_based/intersection_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
@@ -30,8 +31,6 @@ using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
 
 
-
-
 namespace py = pybind11;
 
 using modules::world::goal_definition::GoalDefinitionPolygon;
@@ -44,6 +43,7 @@ using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::BehaviorIntersectionRuleBased;
 using modules::models::behavior::BehaviorSimpleRuleBased;
+using modules::models::behavior::BehaviorMobilRuleBased;
 using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
 
@@ -59,6 +59,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIntersectionRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorSimpleRuleBased)) {
     behavior_model_name = "BehaviorSimpleRuleBased";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMobilRuleBased)) {
+    behavior_model_name = "BehaviorMobilRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
@@ -98,6 +100,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
       t[0].cast<BehaviorStaticTrajectory>());
+  } else if (behavior_model_name.compare("BehaviorMobilRuleBased") == 0) {
+    return std::make_shared<BehaviorMobilRuleBased>(
+      t[0].cast<BehaviorMobilRuleBased>());
   } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
     return std::make_shared<BehaviorMobil>(
       t[0].cast<BehaviorMobil>());
