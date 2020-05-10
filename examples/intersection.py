@@ -28,7 +28,7 @@ param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
-param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 7.5
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 4.
 
 # World Definition
 world = World(param_server)

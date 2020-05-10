@@ -42,9 +42,6 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
     BehaviorSimpleRuleBased(params) {
     // this is required for the IDM to get around corners
     SetLimitSteeringRate(false);
-  // double prediction_time_horizon_;
-  // double prediction_t_inc_;
-  // double braking_distance_;
     // parameters
     prediction_time_horizon_ = params->GetReal(
       "BehaviorIntersectionRuleBased::PredictionTimeHorizon",
@@ -68,11 +65,10 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
     float delta_time, const world::ObservedWorld& observed_world);
 
   std::tuple<double, AgentPtr> CheckIntersectingVehicles(
-    const LaneCorridorPtr& lane_corr,
     const ObservedWorld& observed_world,
     double t_inc = 0.5);
 
-  AgentPtr FilterLaneCorridorIntersectingAgents(
+  AgentPtr GetIntersectingAgent(
     const AgentMap& intersecting_agents,
     const ObservedWorld& observed_world) const;
 

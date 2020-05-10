@@ -18,6 +18,7 @@
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/dynamic/integration.hpp"
 
+
 namespace modules {
 namespace models {
 namespace behavior {
@@ -30,14 +31,12 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 using modules::models::dynamic::DynamicModelPtr;
 
-//! IDM Model will assume other front vehicle as constant velocity during
 Trajectory BehaviorRuleBased::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   // whether to change lanes or not
-  // TODO(@hart): while changing lanes do not decide again?
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);

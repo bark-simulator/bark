@@ -123,6 +123,10 @@ double BaseIDM::CalcNetDistance(
   return net_distance;
 }
 
+/**
+ * @brief Calculates the IDM's acceleration
+ * @return double acceleration for the IDM/vehicle
+ */
 double BaseIDM::CalcIDMAcc(const double net_distance,
                                       const double vel_ego,
                                       const double vel_other) const {
@@ -138,7 +142,15 @@ double BaseIDM::CalcIDMAcc(const double net_distance,
   return acc;
 }
 
-
+/**
+ * @brief Calculates relative values to the vehicle in front given a
+ *        LaneCorridor
+ * 
+ * @param observed_world ObservedWorld
+ * @param lane_corr LaneCorridor
+ * @return
+ *   std::tuple<double, double, bool> rel_distance, rel_velocity, is_vehicle
+ */
 std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
   const world::ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr) const {
@@ -211,7 +223,7 @@ Trajectory BaseIDM::Plan(
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(
     observed_world,
     lane_corr_);
-  
+
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
       observed_world, lane_corr_, rel_values, delta_time);

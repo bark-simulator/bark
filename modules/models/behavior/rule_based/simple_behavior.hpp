@@ -71,22 +71,25 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
 
   virtual ~BehaviorSimpleRuleBased() {}
 
-  // check whether a lane change should be performed
   std::pair<LaneChangeDecision, LaneCorridorPtr>
   CheckIfLaneChangeBeneficial(const ObservedWorld& observed_world) const;
 
-  // return neat information for front/rear agent
   std::pair<AgentInformation, AgentInformation>
   FrontRearAgents(
     const ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr) const;
 
-  // check neighboring LaneCorridors (left/right)
-  // include remaining distance
   std::vector<LaneCorridorInformation>
-  ScanLaneCorridors(const ObservedWorld& observed_world) const;
+    ScanLaneCorridors(const ObservedWorld& observed_world) const;
 
-  // filter lane corridors using lambdas
+  /**
+   * @brief Filters std::vector<LaneCorridorInformation> using lambda funcs.
+   * 
+   * @tparam Func Required for lambda function. In c++ 20 can be removed
+   * @param lane_corr_infos Additional LaneCorridor information
+   * @param filter Lambda function for filtering
+   * @return std::vector<LaneCorridorInformation> Filtered infos
+   */
   template<typename Func>
   std::vector<LaneCorridorInformation>
   FilterLaneCorridors(
@@ -106,7 +109,6 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
     return state[VEL_POSITION];
   }
 
-  // TODO(@all): making the agent const is a good idea, but needs to be unified
   double GetVelocity(
     const std::shared_ptr<const modules::world::objects::Agent> agent) const {
     const auto& state = agent->GetCurrentState();
@@ -114,6 +116,7 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
+
  private:
   double min_remaining_distance_;
   double min_vehicle_rear_distance_;

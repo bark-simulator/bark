@@ -113,7 +113,6 @@ Trajectory BehaviorIDMLaneTracking::Plan(
     observed_world,
     GetLaneCorridor());
 
-
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
       observed_world, GetLaneCorridor(), rel_values, delta_time);

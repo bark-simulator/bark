@@ -24,11 +24,21 @@ using modules::world::map::LaneCorridor;
 using modules::world::ObservedWorld;
 using modules::world::map::LaneCorridorPtr;
 
-enum LaneChangeDecision { KeepLane = 0, ChangeLeft = 1, ChangeRight = 2, Undefined = 3 };
-enum RuleBasedState { Idle = 0, IsChanging = 1 };
 
-// this agent can brake and change lanes
-// base-class for e.g. Mobil
+enum LaneChangeDecision {
+  KeepLane = 0,
+  ChangeLeft = 1,
+  ChangeRight = 2,
+  Undefined = 3
+};
+
+
+enum RuleBasedState {
+  Idle = 0,
+  IsChanging = 1
+};
+
+
 class BehaviorRuleBased : public BehaviorIDMLaneTracking {
  public:
   explicit BehaviorRuleBased(const commons::ParamsPtr& params) :
@@ -36,9 +46,23 @@ class BehaviorRuleBased : public BehaviorIDMLaneTracking {
 
   virtual ~BehaviorRuleBased() {}
 
-  // needs to be implement to set corridor
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+  /**
+   * @brief Returns a trajectory for the ego vehicle
+   * 
+   * @param delta_time Planning step time (e.g. 0.2s)
+   * @param observed_world ObserverdWorld of the ego vehicle
+   * @return Trajectory Trajectory at least delta_time long
+   */
+  virtual Trajectory Plan(
+    float delta_time, const ObservedWorld& observed_world);
 
+  /**
+   * @brief Function that decides if a lane change is beneficial
+   * 
+   * @param observed_world ObserverdWorld of the ego vehicle
+   * @return std::pair<LaneChangeDecision, LaneCorridorPtr> decision type and
+   *                                                        which LaneCorr.
+   */
   virtual std::pair<LaneChangeDecision, LaneCorridorPtr>
     CheckIfLaneChangeBeneficial(const ObservedWorld& observed_world) const {}
 

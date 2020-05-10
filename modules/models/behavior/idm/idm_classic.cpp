@@ -41,7 +41,6 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   double vel_front = std::get<1>(rel_values);
   bool interaction_term_active = std::get<2>(rel_values);
 
-  // TODO(@hart): this could be a different lane_corr
   double t_i, acc, traveled_ego, traveled_other;
   geometry::Line line = lane_corr->GetCenterLine();
   // TODO(@hart): why 11

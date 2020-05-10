@@ -34,6 +34,15 @@ using world::map::LaneCorridorPtr;
 using world::map::RoadCorridorPtr;
 using world::objects::AgentPtr;
 
+/**
+ * @brief Calculates relative values for the ego vehicle and a given
+ *        LaneCorridor
+ * 
+ * @param observed_world ObservedWorld for the ego vehicle
+ * @param lane_corr Arbitrary LaneCorridor
+ * @return std::pair<AgentInformation, AgentInformation> front and rear agent
+ *                                                       information
+ */
 std::pair<AgentInformation, AgentInformation>
 BehaviorSimpleRuleBased::FrontRearAgents(
   const ObservedWorld& observed_world,
@@ -65,6 +74,13 @@ BehaviorSimpleRuleBased::FrontRearAgents(
     front_info, rear_info);
 }
 
+/**
+ * @brief Scans all LaneCorridors and composes LaneCorridorInformation
+ *        that contains additional relative information
+ * 
+ * @param observed_world ObservedWorld for vehicle
+ * @return std::vector<LaneCorridorInformation> Additional LaneCorr. info
+ */
 std::vector<LaneCorridorInformation>
 BehaviorSimpleRuleBased::ScanLaneCorridors(
   const ObservedWorld& observed_world) const {
@@ -88,6 +104,7 @@ BehaviorSimpleRuleBased::ScanLaneCorridors(
   return lane_corr_infos;
 }
 
+// see base class
 std::pair<LaneChangeDecision, LaneCorridorPtr>
 BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) const {

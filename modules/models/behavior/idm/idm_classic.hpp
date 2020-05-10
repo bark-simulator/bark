@@ -30,9 +30,6 @@ class BehaviorIDMClassic : public BaseIDM {
 
   virtual ~BehaviorIDMClassic() {}
 
-  // same as base
-  // Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
-
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,

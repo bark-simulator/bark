@@ -32,9 +32,9 @@ class BaseIDM : public BehaviorModel {
     float delta_time, const ObservedWorld& observed_world);
 
   double CalcFreeRoadTerm(const double vel_ego) const;
+
   double CalcInteractionTerm(const double net_distance, const double vel_ego,
                              const double vel_other) const;
-
   double CalcNetDistance(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
@@ -57,6 +57,7 @@ class BaseIDM : public BehaviorModel {
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr) const;
 
+  //! Getter and Setter
   virtual float GetMinVelocity() const { return param_min_velocity_; }
   virtual float GetMaxVelocity() const { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
@@ -100,7 +101,7 @@ class BaseIDM : public BehaviorModel {
   int param_exponent_;
   LaneCorridorPtr lane_corr_;
 
-  // IDM extension to stop at the LaneCorridor end
+  // IDM extension to stop at the end of the LaneCorridor
   bool brake_lane_end_;
   float brake_lane_end_enabled_distance_;
   float brake_lane_end_distance_offset_;
