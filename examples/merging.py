@@ -91,8 +91,7 @@ param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50
 param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 4.
 param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
-param_server["BehaviorMobilRuleBased"]["Politeness"] = .5
-param_server["BehaviorMobilRuleBased"]["AThr"] = .2
+param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
@@ -121,9 +120,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/Users/hart/2019/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time,
+                       fig_path="/Users/hart/2019/bark/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -136,8 +135,8 @@ env = Runtime(step_time=0.2,
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 80):
+  for step in range(0, 90):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
