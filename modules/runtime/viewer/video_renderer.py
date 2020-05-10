@@ -64,7 +64,7 @@ class VideoRenderer(BaseViewer):
             os.remove(filename)
         if not os.path.exists(os.path.dirname(filename)):
             os.makedirs(os.path.dirname(filename))
-        cmd = "ffmpeg -y -framerate {} -i \'{}/%01d.png\' -vcodec h264 -force_key_frames 'expr:gte(t,n_forced*{})' -acodec pcm_s16le -s 1920x1080 -r 30 -b:v 36M -pix_fmt yuv420p -f mp4 \'{}.mp4\'".format(
+        cmd = "ffmpeg -y -framerate {} -i \'{}/%03d.png\' -vcodec h264 -force_key_frames 'expr:gte(t,n_forced*{})' -acodec pcm_s16le -s 1920x1080 -r 30 -b:v 36M -pix_fmt yuv420p -f mp4 \'{}.mp4\'".format(
             framerate, self.video_frame_dir, 1 / framerate, os.path.abspath(filename))
         os.system(cmd)
 
