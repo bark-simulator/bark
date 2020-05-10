@@ -66,8 +66,6 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   
   def behavior_model(self, world):
     return BehaviorMobilRuleBased(self._params)
-    # return BehaviorIntersectionRuleBased(self._params)
-
     
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
@@ -83,13 +81,11 @@ right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
                                       max_s=20.)
 
 
-# create 5 scenarios
-# BehaviorSimpleRuleBased::MinVehicleRearDistance
-#TimeKeepingGap
+# Parameters for BehaviorMobilRuleBased
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 4.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 4.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 0.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 
@@ -120,16 +116,14 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-viewer = VideoRenderer(renderer=viewer,
-                       world_step_time=sim_step_time,
-                       fig_path="/Users/hart/2019/bark/video")
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/Users/hart/2019/bark/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
               render=True)
-      
-
 
 # run 3 scenarios
 for _ in range(0, 3):
@@ -139,4 +133,4 @@ for _ in range(0, 3):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)

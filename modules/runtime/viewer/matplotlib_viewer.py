@@ -34,7 +34,7 @@ class MPViewer(BaseViewer):
             marker='x')
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
-        lineStyle_string = (0, (5, 10)) if dashed else '-'
+        lineStyle_string = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],

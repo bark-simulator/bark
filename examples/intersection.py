@@ -27,8 +27,10 @@ from bark.models.behavior import *
 param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
-param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
-param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 4.
+param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
+# BehaviorIntersectionRuleBased::PredictionTimeHorizon
+param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 2.
 
 # World Definition
 world = World(param_server)
@@ -59,7 +61,7 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, -10, -2, 0, 23/3.6])
+init_state = np.array([0, -10, -2, 0, 30/3.6])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
 agent_params = param_server.addChild("agent1")
@@ -105,7 +107,7 @@ world.AddAgent(agent3)
 
 
 agent_2d_shape4 = CarLimousine()
-init_state4 = np.array([0, 2, -10, 3.14/2, 20/3.6])
+init_state4 = np.array([0, 2, -10, 3.14/2, 30/3.6])
 agent_params4 = param_server.addChild("agent4")
 goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon = goal_polygon.Translate(Point2d(30, -2))
@@ -131,7 +133,7 @@ viewer = MPViewer(params=param_server, use_world_bounds=True)
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.1]
+                                           0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
@@ -139,12 +141,10 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 # viewer = VideoRenderer(renderer=viewer,
 #                        world_step_time=sim_step_time,
 #                        fig_path="/Users/hart/2019/bark/video")
-for _ in range(0, 80):
+for _ in range(0, 18):
   world.Step(sim_step_time)
   viewer.clear()
   viewer.drawWorld(world)
-  # viewer.drawRoadCorridor(agent3.road_corridor, color="green")
-  # viewer.drawRoadCorridor(agent2.road_corridor, color="blue")
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 
