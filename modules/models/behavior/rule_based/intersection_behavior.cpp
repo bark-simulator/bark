@@ -61,7 +61,8 @@ AgentPtr BehaviorIntersectionRuleBased::GetIntersectingAgent(
     const auto& agent_state = agent.second->GetCurrentState();
     const auto& lane_corr = road_corr->GetCurrentLaneCorridor(agent_pos);
     if (lane_corr != observed_world.GetLaneCorridor() &&
-        agent.second != observed_world.GetEgoAgent()) {
+        agent.second != observed_world.GetEgoAgent() &&
+        observed_world.GetLaneCorridor() != nullptr && lane_corr != nullptr) {
       // only if s of intersecting agent is larger
       double s_ego = std::get<1>(GetNearestPointAndS(
         observed_world.GetLaneCorridor()->GetCenterLine(), ego_pos));
