@@ -36,14 +36,14 @@ Trajectory BehaviorRuleBased::Plan(
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
+  if (!observed_world.GetLaneCorridor()) {
+    return GetLastTrajectory();
+  }
+
   // whether to change lanes or not
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);
-
-  if (!GetLaneCorridor()) {
-    return GetLastTrajectory();
-  }
 
   // we want to calc. the acc. based on the actual LaneCorridor
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(

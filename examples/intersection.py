@@ -30,8 +30,9 @@ param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
-param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 5.
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
 param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 3.
+param_server["World"]["remove_agents_out_of_map"] = True
 
 lane_corridors = []
 lane_corridors.append(
@@ -39,22 +40,23 @@ lane_corridors.append(
                      source_pos=[-30, -3],
                      sink_pos=[30, -3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=0.,
-                     s_max=20.))
+                     s_min=5.,
+                     s_max=25.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[30, 3],
                      sink_pos=[-30, 3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=0.,
-                     s_max=20.))
+                     s_min=5.,
+                     s_max=25.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[3, -30],
                      sink_pos=[-30, 3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=0.,
-                     s_max=40.))
+                     controlled_ids=True,
+                     s_min=5.,
+                     s_max=45.))
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
@@ -94,4 +96,4 @@ for _ in range(0, 1):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=True)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/intersection", remove_image_dir=True)

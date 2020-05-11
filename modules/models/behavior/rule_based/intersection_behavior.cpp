@@ -128,13 +128,14 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
+  if (!observed_world.GetLaneCorridor()) {
+    return GetLastTrajectory();
+  }
+
   // check if a lane change would be beneficial
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);
-  if (!GetLaneCorridor()) {
-    return GetLastTrajectory();
-  }
 
   // check intersecting vehicles
   std::tuple<double, AgentPtr> time_agent = CheckIntersectingVehicles(

@@ -17,6 +17,10 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   using namespace dynamic;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
+  if (!observed_world.GetLaneCorridor()) {
+    return GetLastTrajectory();
+  }
+
   //! TODO(@fortiss): parameters
   const float min_velocity = GetMinVelocity();
   const float max_velocity = GetMaxVelocity();
