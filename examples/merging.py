@@ -23,72 +23,41 @@ param_server = ParameterServer()
 # scenario
 class CustomLaneCorridorConfig(LaneCorridorConfig):
   def __init__(self,
-               road_ids=[16],
-               lane_corridor_id=0,
                params=None,
-               controlled_agent=None,
-               min_s=0,
-               max_s=50):
-    super(CustomLaneCorridorConfig, self).__init__(road_ids,
-                                                   lane_corridor_id,
-                                                   params)
-    self._controlled_agent = controlled_agent
-    self._min_s = min_s
-    self._max_s = max_s
-
-  def position(self, world, min_s=0., max_s=25.):
-    """Min. and max values where the agents should be places
-    """
-    return super(CustomLaneCorridorConfig, self).position(
-      world, self._min_s, self._max_s)
-
-  def ds(self, s_min=7.5, s_max=15.):
-    """Sample distance on the route
-    """
-    return np.random.uniform(s_min, s_max)
-
-  def velocity(self, min_vel=8., max_vel=10.):
-    return np.random.uniform(low=min_vel, high=max_vel)
-
-  def controlled_ids(self, agent_list):
-    """Define controlled agents
-    """
-    if self._controlled_agent is None:
-      return []
-    else:
-      return super().controlled_ids(agent_list)
+               **kwargs):
+    super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
   
   def goal(self, world):
     road_corr = world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
     lane_corr = road_corr.lane_corridors[0]
     return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
-  
-  def behavior_model(self, world):
-    return BehaviorMobilRuleBased(self._params)
-    
-# configure both lanes of the highway. the right lane has one controlled agent
-left_lane = CustomLaneCorridorConfig(lane_corridor_id=0,
-                                     params=param_server,
-                                     road_ids=[0, 1],
-                                     min_s=0.,
-                                     max_s=50.)
-right_lane = CustomLaneCorridorConfig(lane_corridor_id=1,
-                                      params=param_server,
-                                      controlled_agent=True,
-                                      road_ids=[0, 1],
-                                      min_s=0.,
-                                      max_s=20.)
 
-
-# Parameters for BehaviorMobilRuleBased
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 0.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 0.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.
+param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 
+    
+# configure both lanes of the highway. the right lane has one controlled agent
+left_lane = CustomLaneCorridorConfig(params=param_server,
+                                     lane_corridor_id=0,
+                                     road_ids=[0, 1],
+                                     behavior_model=BehaviorMobilRuleBased(param_server),
+                                     s_min=0.,
+                                     s_max=50.)
+right_lane = CustomLaneCorridorConfig(params=param_server,
+                                      lane_corridor_id=1,
+                                      controlled_agent=True,
+                                      road_ids=[0, 1],
+                                      behavior_model=BehaviorMobilRuleBased(param_server),
+                                      s_min=0.,
+                                      s_max=20.)
+
+
+# Parameters for BehaviorMobilRuleBased
 scenarios = \
   ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
@@ -126,7 +95,7 @@ env = Runtime(step_time=0.2,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 3):
+for _ in range(0, 1):
   env.reset()
   # step each scenario 20 times
   for step in range(0, 90):

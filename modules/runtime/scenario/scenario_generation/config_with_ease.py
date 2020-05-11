@@ -31,15 +31,26 @@ class LaneCorridorConfig:
      what goal and model they should have.
   """
   def __init__(self,
-               road_ids=None,
-               lane_corridor_id=0,
-               params=None):
+               params=None,
+               **kwargs):
     self._road_corridor = None
-    self._road_ids = road_ids
-    self._lane_corridor_id = lane_corridor_id
     self._params = params
     self._current_s = None
-  
+
+    # set these params
+    # TODO(@hart): unflexible
+    self._road_ids = kwargs.pop("road_ids", [0])
+    self._lane_corridor_id = kwargs.pop("lane_corridor_id", [0])
+    self._s_min = kwargs.pop("s_min", 0.) 
+    self._s_max = kwargs.pop("s_max", 60.)
+    self._ds_min = kwargs.pop("ds_min", 10.)
+    self._ds_max = kwargs.pop("ds_max", 20.)
+    self._min_vel = kwargs.pop("min_vel", 8.)
+    self._max_vel = kwargs.pop("max_vel", 10.)
+    self._behavior_model = kwargs.pop("behavior_model", BehaviorIDMClassic(self._params))
+    self._controlled_behavior_model = kwargs.pop("controlled_behavior_model", None)
+    self._controlled_ids = kwargs.pop("controlled_ids", None)
+
   def state(self, world):
     """Returns a state of the agent
     
@@ -55,7 +66,7 @@ class LaneCorridorConfig:
     velocity = self.velocity()
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
-  def ds(self, s_min=5., s_max=10.):
+  def ds(self):
     """Increment for placing the agents
     
     Keyword Arguments:
@@ -65,9 +76,9 @@ class LaneCorridorConfig:
     Returns:
         float -- delta s-value
     """
-    return np.random.uniform(s_min, s_max)
+    return np.random.uniform(self._ds_min, self._ds_max)
 
-  def position(self, world, min_s=0., max_s=100.):
+  def position(self, world):
     """Using the defined LaneCorridor it finds positions for the agents
     
     Arguments:
@@ -90,21 +101,21 @@ class LaneCorridorConfig:
       return None
     centerline = lane_corr.center_line
     if self._current_s == None:
-      self._current_s = min_s
+      self._current_s = self._s_min
     xy_point =  GetPointAtS(centerline, self._current_s)
     angle = GetTangentAngleAtS(centerline, self._current_s)
-    if self._current_s > max_s:
+    if self._current_s > self._s_max:
       return None
     self._current_s += self.ds()
     return (xy_point.x(), xy_point.y(), angle)
 
-  def velocity(self, min_vel=10., max_vel=15.):
-    return np.random.uniform(low=min_vel, high=max_vel)
+  def velocity(self):
+    return np.random.uniform(low=self._min_vel, high=self._max_vel)
 
   def behavior_model(self, world):
     """Returns behavior model
     """
-    return BehaviorIDMClassic(self._params)
+    return self._behavior_model
 
   @property
   def execution_model(self):
@@ -131,9 +142,10 @@ class LaneCorridorConfig:
   def goal(self, world):
     """Returns goal def.
     """
-    # should be access safe, otherwise would not reach.
+    # TODO: by default should be based on agent's pos
     road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
     lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    # TODO: check
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.2, 0.2),
                                            (0.1, 0.1),
@@ -142,6 +154,8 @@ class LaneCorridorConfig:
   def controlled_ids(self, agent_list):
     """Returns an ID-List of controlled agents
     """
+    if self._controlled_ids is None:
+      return []
     random_int = [agent_list[np.random.randint(0, len(agent_list))]]
     return random_int
 
@@ -162,7 +176,8 @@ class LaneCorridorConfig:
     Returns:
         BehaviorModel -- BARK behavior model
     """
-    return self.behavior_model(world)
+    if self._controlled_behavior_model is None:
+      return self.behavior_model(world)
 
   def reset(self):
     """Resets the LaneCorridorConfig
