@@ -56,7 +56,6 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
                                       s_min=0.,
                                       s_max=20.)
 
-# Parameters for BehaviorMobilRuleBased
 scenarios = \
   ConfigWithEase(num_scenarios=3,
                  map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
@@ -75,7 +74,6 @@ viewer = MPViewer(params=param_server,
 #                        follow_agent_id=True,
 #                        light_pose=[1000, 1000, 100000],
 #                        camera_pose=[1000, 980, 100])
-# gym like interface
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
@@ -84,9 +82,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/Users/hart/2019/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time,
+                       fig_path="/Users/hart/2019/bark/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -101,4 +99,4 @@ for _ in range(0, 1):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)

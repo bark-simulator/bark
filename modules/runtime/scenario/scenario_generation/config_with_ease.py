@@ -38,19 +38,38 @@ class LaneCorridorConfig:
     self._current_s = None
 
     # set these params
-    # TODO(@hart): unflexible
-    self._road_ids = kwargs.pop("road_ids", [0])
-    self._lane_corridor_id = kwargs.pop("lane_corridor_id", [0])
+    self._road_ids = kwargs.pop("road_ids", None)
+    self._lane_corridor_id = kwargs.pop("lane_corridor_id", None)
     self._s_min = kwargs.pop("s_min", 0.) 
     self._s_max = kwargs.pop("s_max", 60.)
     self._ds_min = kwargs.pop("ds_min", 10.)
     self._ds_max = kwargs.pop("ds_max", 20.)
     self._min_vel = kwargs.pop("min_vel", 8.)
     self._max_vel = kwargs.pop("max_vel", 10.)
-    self._behavior_model = kwargs.pop("behavior_model", BehaviorIDMClassic(self._params))
-    self._controlled_behavior_model = kwargs.pop("controlled_behavior_model", None)
+    self._source_pos = kwargs.pop("source_pos", None)
+    self._sink_pos = kwargs.pop("sink_pos", None)
+    self._behavior_model = \
+      kwargs.pop("behavior_model", BehaviorIDMClassic(self._params))
+    self._controlled_behavior_model = \
+      kwargs.pop("controlled_behavior_model", None)
     self._controlled_ids = kwargs.pop("controlled_ids", None)
 
+  def InferRoadIdsAndLaneCorr(self, world):
+    goal_polygon = Polygon2d([0, 0, 0],
+                             [Point2d(-1,0),
+                              Point2d(-1,1),
+                              Point2d(1,1),
+                              Point2d(1,0)])
+    start_point = Point2d(self._source_pos[0], self._source_pos[1])
+    end_point = Point2d(self._sink_pos[0], self._sink_pos[1])
+    goal_polygon = goal_polygon.Translate(end_point)
+    self._road_corridor = world.map.GenerateRoadCorridor(
+      start_point, goal_polygon)
+    self._road_ids = self._road_corridor.road_ids
+    print("RoadIds: ", self._road_ids)
+    self._lane_corridor = self._road_corridor.GetCurrentLaneCorridor(
+      start_point)
+    
   def state(self, world):
     """Returns a state of the agent
     
@@ -92,11 +111,16 @@ class LaneCorridorConfig:
         tuple -- (x, y, theta)
     """
     if self._road_corridor == None:
-      world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    self._road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    if self._road_corr is None:
+      world.map.GenerateRoadCorridor(
+        self._road_ids, XodrDrivingDirection.forward)
+      self._road_corridor = world.map.GetRoadCorridor(
+        self._road_ids, XodrDrivingDirection.forward)
+    if self._road_corridor is None:
       return None
-    lane_corr = self._road_corr.lane_corridors[self._lane_corridor_id]
+    if self._lane_corridor:
+      lane_corr = self._lane_corridor
+    else:
+      lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     if lane_corr is None:
       return None
     centerline = lane_corr.center_line
@@ -143,8 +167,12 @@ class LaneCorridorConfig:
     """Returns goal def.
     """
     # TODO: by default should be based on agent's pos
-    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    if self._lane_corridor:
+      lane_corr = self._lane_corridor
+    else:
+      lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     # TODO: check
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.2, 0.2),
@@ -225,6 +253,8 @@ class ConfigWithEase(ScenarioGeneration):
     for lc_config in self._lane_corridor_configs:
       agent_state = True
       lc_agents = []
+      if lc_config._source_pos is not None and lc_config._sink_pos is not None:
+        lc_config.InferRoadIdsAndLaneCorr(world)
       while agent_state is not None:
         agent_state = lc_config.state(world)
         if agent_state is not None:
@@ -243,7 +273,7 @@ class ConfigWithEase(ScenarioGeneration):
             agent_params,
             agent_goal,
             map_interface)
-          new_agent.road_corridor = lc_config._road_corr
+          new_agent.road_corridor = lc_config._road_corridor
           lc_agents.append(new_agent)
         # set the road corridor
 
@@ -251,7 +281,8 @@ class ConfigWithEase(ScenarioGeneration):
       controlled_agent_ids = []
       for controlled_agent in lc_config.controlled_ids(lc_agents):
         controlled_agent.goal_definition = lc_config.controlled_goal(world)
-        controlled_agent.behavior_model = lc_config.controlled_behavior_model(world)
+        controlled_agent.behavior_model = \
+          lc_config.controlled_behavior_model(world)
         controlled_agent_ids.append(controlled_agent.id)
       scenario._eval_agent_ids.extend(controlled_agent_ids)
       scenario._agent_list.extend(lc_agents)

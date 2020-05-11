@@ -57,6 +57,7 @@ py_binary(
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
           "//modules/runtime/viewer:panda3d_easy",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
           "//modules/runtime:runtime"],
 )
 
