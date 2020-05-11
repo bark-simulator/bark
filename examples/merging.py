@@ -50,12 +50,11 @@ left_lane = CustomLaneCorridorConfig(params=param_server,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,
                                       lane_corridor_id=1,
-                                      controlled_agent=True,
                                       road_ids=[0, 1],
+                                      controlled_ids=True,
                                       behavior_model=BehaviorMobilRuleBased(param_server),
                                       s_min=0.,
                                       s_max=20.)
-
 
 # Parameters for BehaviorMobilRuleBased
 scenarios = \
