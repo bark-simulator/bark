@@ -36,6 +36,7 @@ class LaneCorridorConfig:
     self._road_corridor = None
     self._params = params
     self._current_s = None
+    self._lane_corridor = None
 
     # set these params
     self._road_ids = kwargs.pop("road_ids", None)
@@ -117,7 +118,7 @@ class LaneCorridorConfig:
         self._road_ids, XodrDrivingDirection.forward)
     if self._road_corridor is None:
       return None
-    if self._lane_corridor:
+    if self._lane_corridor is not None:
       lane_corr = self._lane_corridor
     else:
       lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]

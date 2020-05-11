@@ -30,8 +30,8 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
   def goal(self, world):
     road_corr = world.map.GetRoadCorridor(
       self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = road_corr.lane_corridors[0]
-    return GoalDefinitionPolygon(road_corr.lane_corridors[0].polygon)
+    lane_corr = self._road_corridor.lane_corridors[0]
+    return GoalDefinitionPolygon(lane_corr.polygon)
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
@@ -82,9 +82,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-viewer = VideoRenderer(renderer=viewer,
-                       world_step_time=sim_step_time,
-                       fig_path="/Users/hart/2019/bark/video")
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/Users/hart/2019/bark/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -99,4 +99,4 @@ for _ in range(0, 1):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
