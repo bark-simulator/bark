@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/rule_based/rule_based.hpp"
+#include "modules/models/behavior/rule_based/base_rule_based.hpp"
 
 #include <algorithm>
 #include <cmath>

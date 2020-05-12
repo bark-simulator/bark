@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "modules/models/behavior/rule_based/rule_based.hpp"
+#include "modules/models/behavior/rule_based/base_rule_based.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include "modules/world/observed_world.hpp"
 

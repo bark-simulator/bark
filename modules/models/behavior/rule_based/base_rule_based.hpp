@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_RULE_BASED_HPP_
-#define MODULES_MODELS_BEHAVIOR_RULE_BASED_RULE_BASED_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_BASE_RULE_BASED_RULE_BASED_HPP_
+#define MODULES_MODELS_BEHAVIOR_BASE_RULE_BASED_RULE_BASED_HPP_
 
 #include <memory>
 #include <tuple>

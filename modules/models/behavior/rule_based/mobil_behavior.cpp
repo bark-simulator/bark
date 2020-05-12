@@ -66,7 +66,6 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
         GetVelocity(observed_world.GetEgoAgent()));
   }
   if (lane_corr_infos.size() > 0) {
-    // select corridor with most free space
     double max_advantage = -100.;
     LaneCorridorPtr tmp_lane_corr = GetLaneCorridor();
     for (const auto& li : lane_corr_infos) {

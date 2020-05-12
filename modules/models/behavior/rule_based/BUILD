@@ -1,10 +1,10 @@
 cc_library(
-    name = "rule_based",
+    name = "base_rule_based",
     srcs = [
-        "rule_based.cpp"
+        "base_rule_based.cpp"
     ],
     hdrs = [
-        "rule_based.hpp"
+        "base_rule_based.hpp"
     ],
     deps = [
         "//modules/commons:commons",
@@ -28,7 +28,7 @@ cc_library(
         "//modules/commons:commons",
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
-        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/behavior/rule_based:base_rule_based",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],
@@ -47,7 +47,7 @@ cc_library(
         "//modules/commons:commons",
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
-        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/behavior/rule_based:base_rule_based",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],
@@ -67,7 +67,7 @@ cc_library(
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/behavior/rule_based:base_rule_based",
         "//modules/models/behavior/rule_based:simple_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
@@ -88,7 +88,7 @@ cc_library(
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/behavior/rule_based:rule_based",
+        "//modules/models/behavior/rule_based:base_rule_based",
         "//modules/models/behavior/rule_based:simple_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
