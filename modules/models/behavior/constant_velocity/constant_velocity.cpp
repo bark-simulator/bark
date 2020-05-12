@@ -17,16 +17,19 @@ Trajectory BehaviorConstantVelocity::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
-  if (!GetLaneCorridor()) {
+  const auto& lane_corr = observed_world.GetLaneCorridor();
+  if (!lane_corr) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
   double acc = 0.;
-
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, GetLaneCorridor(), acc, dt);
+      observed_world, lane_corr, acc, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

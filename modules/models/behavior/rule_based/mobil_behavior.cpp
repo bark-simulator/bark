@@ -36,8 +36,8 @@ using world::objects::AgentPtr;
 
 
 /**
- * @brief Function that chooses the LaneCorridor that has the most
- *        free-space
+ * @brief Function that chooses the LaneCorridor according to the
+ *        (simple) Mobil model equation
  * 
  * @return std::pair<LaneChangeDecision, LaneCorridorPtr> 
  */

@@ -9,7 +9,6 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
     ],
@@ -27,7 +26,6 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet",
         ":base_idm"

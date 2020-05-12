@@ -23,6 +23,7 @@ namespace models {
 namespace behavior {
 
 using modules::world::Agent;
+using modules::world::AgentId;
 using modules::world::AgentPtr;
 using modules::world::FrenetPosition;
 using modules::world::map::LaneCorridorPtr;

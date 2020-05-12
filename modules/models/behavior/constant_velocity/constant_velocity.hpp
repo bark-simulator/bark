@@ -7,7 +7,6 @@
 #ifndef MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
-// #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/world.hpp"

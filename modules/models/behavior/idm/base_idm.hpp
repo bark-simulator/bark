@@ -11,8 +11,9 @@
 #include <tuple>
 
 #include "modules/commons/transformation/frenet.hpp"
-#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
+#include "modules/world/observed_world.hpp"
+#include "modules/models/behavior/behavior_model.hpp"
 
 namespace modules {
 namespace models {
@@ -20,6 +21,7 @@ namespace behavior {
 
 using modules::world::map::LaneCorridor;
 using modules::world::map::LaneCorridorPtr;
+using modules::world::ObservedWorld;
 
 
 class BaseIDM : public BehaviorModel {

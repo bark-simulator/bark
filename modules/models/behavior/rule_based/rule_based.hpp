@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "modules/commons/transformation/frenet.hpp"
-#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "modules/world/world.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 

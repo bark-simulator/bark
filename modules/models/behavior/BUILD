@@ -19,7 +19,6 @@ cc_library(
         "//modules/models/behavior/dynamic_model:include",
         "//modules/models/behavior/idm:include",
         "//modules/models/behavior/rule_based:include",
-        "//modules/models/behavior/longitudinal_acceleration:include",
         "//modules/models/behavior/motion_primitives:include",
         "//modules/models/behavior/static_trajectory:include",
         "@com_github_eigen_eigen//:eigen",

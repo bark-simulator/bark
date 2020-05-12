@@ -47,23 +47,6 @@ cc_test(
 )
 
 cc_test(
-    name = "behavior_longitudinal_acceleration_test",
-    srcs = [
-        "behavior_longitudinal_acceleration_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/world/tests:make_test_world",
-        "//modules/geometry",
-        "//modules/models/behavior/longitudinal_acceleration",
-        "//modules/models/dynamic",
-        "//modules/world",
-        "@com_github_eigen_eigen//:eigen",
-        "@gtest//:gtest_main",
-    ],
-)
-
-cc_test(
     name = "behavior_idm_classic_test",
     srcs = [
         "behavior_idm_classic_test.cc",

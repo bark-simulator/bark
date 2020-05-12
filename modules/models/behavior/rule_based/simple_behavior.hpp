@@ -34,7 +34,7 @@ struct AgentInformation {
   // calculated on other LaneCorridor
   AgentFrenetPair agent_info;
   bool is_vehicle = false;
-  double rel_velocity=1e6, rel_distance=1e6;
+  double rel_velocity = 1e6, rel_distance = 1e6;
 };
 
 // this is LaneCorridor specific
