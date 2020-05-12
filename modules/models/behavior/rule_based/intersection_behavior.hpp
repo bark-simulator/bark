@@ -33,8 +33,7 @@ using modules::world::AgentFrenetPair;
 using modules::models::dynamic::StateDefinition::VEL_POSITION;
 
 
-// this model can change lanes as well as to slow down for other vehicles
-// at intersections
+// Behavior for intersection; prediction-based; right before left
 class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorIntersectionRuleBased(

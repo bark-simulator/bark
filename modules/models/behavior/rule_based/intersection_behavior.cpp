@@ -167,7 +167,7 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
     observed_world);
 
   // calc. rel. values
-  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
+  IDMRelativeValues rel_values = CalcRelativeValues(
     observed_world,
     GetLaneCorridor());
 
@@ -187,24 +187,21 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
                 << ": Agent " << std::get<1>(time_agent)->GetAgentId()
                 << " is intersecing my corridor with "
                 << angle_diff << "."<< std::endl;
-      std::get<0>(rel_values) =
+      rel_values.leading_distance =
         std::min(
           other_agent_state[VEL_POSITION]*std::get<0>(time_agent),
-          std::get<0>(rel_values));
+          rel_values.leading_distance);
       // we want to break; set velocity to zero
-      std::get<1>(rel_values) = 0.;
-      std::get<2>(rel_values) = true;
+      rel_values.leading_velocity = 0.;
+      rel_values.has_leading_object = true;
     }
   }
 
   // generate traj. using rel_values
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
-  double rel_distance = std::get<0>(rel_values);
-  std::pair<double, double> acc_dist =
-    GetTotalAcc(observed_world, rel_values, rel_distance, dt);
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, GetLaneCorridor(), rel_values, acc_dist.first, dt);
+      observed_world, GetLaneCorridor(), rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

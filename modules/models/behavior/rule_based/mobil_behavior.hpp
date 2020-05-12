@@ -29,6 +29,7 @@ using modules::world::AgentFrenetPair;
 using modules::models::dynamic::StateDefinition::VEL_POSITION;
 
 
+// Mobil lane change model
 class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobilRuleBased(

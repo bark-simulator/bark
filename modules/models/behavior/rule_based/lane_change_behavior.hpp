@@ -57,6 +57,8 @@ struct LaneCorridorInformation {
   double remaining_distance;
 };
 
+
+// Behavior that changes lanes if there is more free-space
 class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
  public:
   explicit BehaviorLaneChangeRuleBased(

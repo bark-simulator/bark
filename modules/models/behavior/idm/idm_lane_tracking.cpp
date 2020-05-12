@@ -34,8 +34,7 @@ using modules::models::dynamic::DynamicModelPtr;
 std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
-    const std::tuple<double, double, bool>& rel_values,
-    double acc,
+    const IDMRelativeValues& rel_values,
     double dt) const {
   // definitions
   const DynamicModelPtr dynamic_model =
@@ -46,7 +45,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
-  double t_i = 0.;
+  double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -58,7 +57,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
         0, 0);
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
 
-    double rel_distance = std::get<0>(rel_values);
+    double rel_distance = rel_values.leading_distance;
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
       std::tie(acc, rel_distance) =
         GetTotalAcc(observed_world, rel_values, rel_distance, dt);

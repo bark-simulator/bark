@@ -8,6 +8,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
+#include <utility>
+
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/world.hpp"
@@ -20,6 +22,7 @@ using dynamic::Trajectory;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
+
 class BehaviorConstantVelocity : public BehaviorIDMClassic {
  public:
   explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
@@ -29,6 +32,12 @@ class BehaviorConstantVelocity : public BehaviorIDMClassic {
 
   Trajectory Plan(float delta_time,
                   const ObservedWorld& observed_world);
+
+  std::pair<double, double> GetTotalAcc(
+    const world::ObservedWorld& observed_world,
+    const IDMRelativeValues& rel_values,
+    double rel_distance,
+    double dt) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };

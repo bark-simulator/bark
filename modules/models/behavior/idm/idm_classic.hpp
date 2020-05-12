@@ -21,7 +21,8 @@ namespace behavior {
 using modules::world::map::LaneCorridor;
 using modules::world::map::LaneCorridorPtr;
 
-
+// IDM that interpolates the vehicles using the center-line
+// of a LaneCorridor
 class BehaviorIDMClassic : public BaseIDM {
  public:
   explicit BehaviorIDMClassic(const commons::ParamsPtr& params) :
@@ -32,8 +33,7 @@ class BehaviorIDMClassic : public BaseIDM {
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
-    const std::tuple<double, double, bool>& rel_values,
-    double acc,
+    const IDMRelativeValues& rel_values,
     double delta_time) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;

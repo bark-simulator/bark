@@ -26,11 +26,10 @@ Trajectory BehaviorConstantVelocity::Plan(
   }
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
-  double acc = 0.;
-  std::tuple<double, double, bool> rel_values(0., 0., false);
+  IDMRelativeValues rel_values{0., 0., false};
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, lane_corr, rel_values, acc, dt);
+      observed_world, lane_corr, rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);
@@ -38,6 +37,19 @@ Trajectory BehaviorConstantVelocity::Plan(
   SetLastTrajectory(traj);
   SetLastAction(action);
   return traj;
+}
+
+/**
+ * @brief Constant acceleration
+ * 
+ * @return std::pair<double, double> acceleration, total_distance
+ */
+std::pair<double, double> BehaviorConstantVelocity::GetTotalAcc(
+  const world::ObservedWorld& observed_world,
+  const IDMRelativeValues& rel_values,
+  double rel_distance,
+  double dt) const {
+  return std::pair<double, double>(0., 0.);
 }
 
 }  // namespace behavior

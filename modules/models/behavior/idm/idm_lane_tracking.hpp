@@ -15,6 +15,9 @@ namespace modules {
 namespace models {
 namespace behavior {
 
+
+// IDM that follows the centerline of a LaneCorridor
+// using the dynamic SingleTrack model
 class BehaviorIDMLaneTracking : public BaseIDM {
  public:
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
@@ -35,8 +38,7 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
-    const std::tuple<double, double, bool>& rel_values,
-    double acc,
+    const IDMRelativeValues& rel_values,
     double delta_time) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;

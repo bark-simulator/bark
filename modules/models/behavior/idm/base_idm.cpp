@@ -30,10 +30,8 @@ using modules::world::map::LaneCorridor;
 using modules::world::map::LaneCorridorPtr;
 
 
-
 BaseIDM::BaseIDM(
   const commons::ParamsPtr& params) : BehaviorModel(params) {
-  // TODO(@hart): rename BehaviorIDMClassic
   param_minimum_spacing_ = params->GetReal(
     "BehaviorIDMClassic::MinimumSpacing", "See Wikipedia IDM article", 2.0f);
   param_desired_time_head_way_ = params->GetReal(
@@ -151,12 +149,13 @@ double BaseIDM::CalcIDMAcc(const double net_distance,
  * @return
  *   std::tuple<double, double, bool> rel_distance, rel_velocity, is_vehicle
  */
-std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
+IDMRelativeValues BaseIDM::CalcRelativeValues(
   const world::ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr) const {
   bool interaction_term_active = false;
   double leading_distance = 0.;
   double leading_velocity = 1e6;
+  IDMRelativeValues rel_values;
 
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
     observed_world.GetAgentInFront(lane_corr);
@@ -192,12 +191,10 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
       }
     }
   }
-
-
-  return std::make_tuple(
-    leading_distance,
-    leading_velocity,
-    interaction_term_active);
+  rel_values.leading_distance = leading_distance;
+  rel_values.leading_velocity = leading_velocity;
+  rel_values.has_leading_object = interaction_term_active;
+  return rel_values;
 }
 
 double BaseIDM::CalcRawIDMAcc(const double& net_distance,
@@ -209,17 +206,21 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance,
   return GetMaxAcceleration() * (free_road_term - interaction_term);
 }
 
-
+/**
+ * @brief Total acceleration of the IDM
+ * 
+ * @return std::pair<double, double> acceleration, total_distance
+ */
 std::pair<double, double> BaseIDM::GetTotalAcc(
   const world::ObservedWorld& observed_world,
-  const std::tuple<double, double, bool>& rel_values,
+  const IDMRelativeValues& rel_values,
   double rel_distance,
   double dt) const {
   double acc, traveled_ego, traveled_other;
-  double vel_front = std::get<1>(rel_values);
+  double vel_front = rel_values.leading_velocity;
   const auto& ego_vehicle_state = observed_world.CurrentEgoState();
   float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
-  bool interaction_term_active = std::get<2>(rel_values);
+  bool interaction_term_active = rel_values.has_leading_object;
   if (interaction_term_active) {
     acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
@@ -245,18 +246,17 @@ Trajectory BaseIDM::Plan(
     return GetLastTrajectory();
   }
 
-  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
+  IDMRelativeValues rel_values = CalcRelativeValues(
     observed_world,
     lane_corr_);
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
-  double rel_distance = std::get<0>(rel_values);
   std::pair<double, double> acc_dist =
-    GetTotalAcc(observed_world, rel_values, rel_distance, dt);
+    GetTotalAcc(observed_world, rel_values, rel_values.leading_distance, dt);
 
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, lane_corr_, rel_values, acc_dist.first, dt);
+      observed_world, lane_corr_, rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

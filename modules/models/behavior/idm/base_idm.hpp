@@ -25,6 +25,13 @@ using modules::world::map::LaneCorridorPtr;
 using modules::world::ObservedWorld;
 
 
+struct IDMRelativeValues {
+  double leading_distance;
+  double leading_velocity;
+  bool has_leading_object;
+};
+
+
 class BaseIDM : public BehaviorModel {
  public:
   explicit BaseIDM(const commons::ParamsPtr& params);
@@ -45,8 +52,7 @@ class BaseIDM : public BehaviorModel {
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
-    const std::tuple<double, double, bool>& rel_values,
-    double acc,
+    const IDMRelativeValues& rel_values,
     double delta_time) const = 0;
 
   double CalcRawIDMAcc(const double& net_distance,
@@ -57,13 +63,13 @@ class BaseIDM : public BehaviorModel {
                     const double vel_ego,
                     const double vel_other) const;
 
-  std::pair<double, double> GetTotalAcc(
+  virtual std::pair<double, double> GetTotalAcc(
     const world::ObservedWorld& observed_world,
-    const std::tuple<double, double, bool>& rel_values,
+    const IDMRelativeValues& rel_values,
     double rel_distance,
     double dt) const;
 
-  std::tuple<double, double, bool> CalcRelativeValues(
+  IDMRelativeValues CalcRelativeValues(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr) const;
 

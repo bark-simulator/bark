@@ -33,10 +33,9 @@ using modules::world::map::LaneCorridorPtr;
 std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   const world::ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr,
-  const std::tuple<double, double, bool>& rel_values,
-  double acc,
+  const IDMRelativeValues& rel_values,
   double dt) const {
-  double t_i = 0.;
+  double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -54,7 +53,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     float s_i = s_start;
 
-    double rel_distance = std::get<0>(rel_values);
+    double rel_distance = rel_values.leading_distance;
     // calc. traj.
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
       std::tie(acc, rel_distance) =
