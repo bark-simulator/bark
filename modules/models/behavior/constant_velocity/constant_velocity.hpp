@@ -7,7 +7,9 @@
 #ifndef MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
-#include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
+// #include "modules/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
+#include "modules/models/behavior/behavior_model.hpp"
+#include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/world/world.hpp"
 
 namespace modules {
@@ -18,24 +20,15 @@ using dynamic::Trajectory;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
-class BehaviorConstantVelocity : public BehaviorLongitudinalAcceleration {
+class BehaviorConstantVelocity : public BehaviorIDMClassic {
  public:
   explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
-    BehaviorLongitudinalAcceleration(params) {}
+    BehaviorIDMClassic(params) {}
 
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(float delta_time,
-                  const ObservedWorld& observed_world) {
-    SetBehaviorStatus(BehaviorStatus::VALID);
-    return BehaviorLongitudinalAcceleration::Plan(delta_time, observed_world);
-  }
-
-  // TODO(@all): make purely virtual
-  virtual double CalculateLongitudinalAcceleration(
-    const ObservedWorld& observed_world) {
-    return 0.0f;
-  }
+                  const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };
