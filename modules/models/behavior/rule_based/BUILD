@@ -29,6 +29,7 @@ cc_library(
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/rule_based:base_rule_based",
+        "//modules/models/behavior/rule_based:simple_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],

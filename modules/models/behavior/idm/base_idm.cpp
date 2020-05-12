@@ -136,12 +136,8 @@ double BaseIDM::CalcIDMAcc(const double net_distance,
                            const double vel_other) const {
   const float acc_lower_bound = GetAccelerationLowerBound();
   const float acc_upper_bound = GetAccelerationUpperBound();
-  const float max_acceleration = GetMaxAcceleration();
-  const float free_road_term = CalcFreeRoadTerm(vel_ego);
-  const float interaction_term =
-    CalcInteractionTerm(net_distance, vel_ego, vel_other);
-  float acc = max_acceleration * (free_road_term - interaction_term);
   // For now, linit acceleration of IDM to brake with -acc_max
+  float acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
   return acc;
 }
@@ -205,8 +201,8 @@ std::tuple<double, double, bool> BaseIDM::CalcRelativeValues(
 }
 
 double BaseIDM::CalcRawIDMAcc(const double& net_distance,
-                                         const double& vel_ego,
-                                         const double& vel_other) const {
+                              const double& vel_ego,
+                              const double& vel_other) const {
   const double free_road_term = CalcFreeRoadTerm(vel_ego);
   const double interaction_term =
     CalcInteractionTerm(net_distance, vel_ego, vel_other);

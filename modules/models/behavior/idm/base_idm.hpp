@@ -45,7 +45,7 @@ class BaseIDM : public BehaviorModel {
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
     double acc,
-    double delta_time) const {}
+    double delta_time) const = 0;
 
   double CalcRawIDMAcc(const double& net_distance,
                        const double& vel_ego,
@@ -95,8 +95,6 @@ class BaseIDM : public BehaviorModel {
     lane_corr_ = lane_corr;
   }
 
-  virtual std::shared_ptr<BehaviorModel> Clone() const;
-
  private:
   // Parameters
   float param_minimum_spacing_;
@@ -118,11 +116,6 @@ class BaseIDM : public BehaviorModel {
   float brake_lane_end_distance_offset_;
 };
 
-inline std::shared_ptr<BehaviorModel> BaseIDM::Clone() const {
-  std::shared_ptr<BaseIDM> model_ptr =
-      std::make_shared<BaseIDM>(*this);
-  return model_ptr;
-}
 
 }  // namespace behavior
 }  // namespace models

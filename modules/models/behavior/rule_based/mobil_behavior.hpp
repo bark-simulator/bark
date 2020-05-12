@@ -37,11 +37,11 @@ class BehaviorMobilRuleBased : public BehaviorSimpleRuleBased {
     BehaviorSimpleRuleBased(params) {
     a_thr_ = params->GetReal(
       "BehaviorMobilRuleBased::AThr",
-      "a_thr.",
+      "Acceleration threshold factor. See Mobil paper.",
       .2);
     politeness_ = params->GetReal(
       "BehaviorMobilRuleBased::Politeness",
-      "Politeness factor.",
+      "Politeness factor. See Mobil paper.",
       .5);
   }
 

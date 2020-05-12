@@ -10,7 +10,7 @@
 #include <memory>
 #include <utility>
 
-#include "modules/models/behavior/rule_based/base_rule_based.hpp"
+#include "modules/models/behavior/rule_based/simple_behavior.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -22,10 +22,10 @@ using modules::world::Agent;
 using modules::world::FrenetPosition;
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
-class BehaviorMobil : public BehaviorRuleBased {
+class BehaviorMobil : public BehaviorSimpleRuleBased {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-    : BehaviorRuleBased(params) {
+    : BehaviorSimpleRuleBased(params) {
     crosstrack_error_gain_ = params->GetReal(
       "BehaviorMobil::CrosstrackErrorGain",
       "Tuning factor of stanley controller",
