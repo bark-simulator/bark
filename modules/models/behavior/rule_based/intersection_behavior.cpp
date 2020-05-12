@@ -36,6 +36,7 @@ using modules::world::objects::Agent;
 using modules::world::AgentMap;
 using modules::world::objects::AgentPtr;
 using modules::world::WorldPtr;
+using modules::world::AgentId;
 using modules::world::ObservedWorld;
 using modules::world::ObservedWorldPtr;
 using modules::models::dynamic::DynamicModelPtr;
@@ -51,10 +52,11 @@ using modules::geometry::Norm0To2PI;
  * @param observed_world ObservedWorld of the vehicle
  * @return AgentPtr Agent that intersects ego LaneCorr. at earliest time
  */
-AgentPtr BehaviorIntersectionRuleBased::GetIntersectingAgent(
+std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
   const AgentMap& intersecting_agents,
   const ObservedWorld& observed_world) const {
-  AgentPtr intersecting_agent;
+  AgentId intersecting_agent_id = 0;
+  bool is_intersecting = false;
   for (const auto& agent : intersecting_agents) {
     const auto& road_corr = agent.second->GetRoadCorridor();
     const auto& agent_pos = agent.second->GetCurrentPosition();
@@ -77,12 +79,13 @@ AgentPtr BehaviorIntersectionRuleBased::GetIntersectingAgent(
       if (fabs(ego_angle - other_angle) > angle_diff_for_intersection_ &&
           s_other > s_ego &&
           s_other - s_ego < braking_distance_) {
-        intersecting_agent = agent.second;
+        intersecting_agent_id = agent.second->GetAgentId();
+        is_intersecting = true;
         break;
       }
     }
   }
-  return intersecting_agent;
+  return std::pair<AgentId, bool>(intersecting_agent_id, is_intersecting);
 }
 
 /**
@@ -104,24 +107,29 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   auto params = std::make_shared<DefaultParams>();
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
-  ObservedWorld tmp_observed_world = observed_world;
-  tmp_observed_world.SetupPrediction(prediction_settings);
+  ObservedWorldPtr tmp_observed_world =
+    std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone());
+  tmp_observed_world->SetupPrediction(prediction_settings);
+
   // predict for n seconds
   for (double t = 0.; t < prediction_time_horizon_; t += prediction_t_inc_) {
-    ObservedWorldPtr predicted_world = tmp_observed_world.Predict(t);
+    ObservedWorldPtr predicted_world = tmp_observed_world->Predict(t);
     // all agents intersecting at time t
     AgentMap intersecting_agents =
       predicted_world->GetAgentsIntersectingPolygon(
         lane_corr->GetMergedPolygon());
     // first agent intersecting
-    lane_corr_intersecting_agent =
-      GetIntersectingAgent(
+    std::pair<AgentId, bool> intersecting_agent_id = GetIntersectingAgent(
         intersecting_agents,
         *predicted_world);
-    // if there is an agent that intersects at time t
-    if (lane_corr_intersecting_agent) {
-      intersection_time = t;
-      break;
+    if (intersecting_agent_id.second) {
+      lane_corr_intersecting_agent =
+        observed_world.GetAgent(intersecting_agent_id.first);
+      // if there is an agent that intersects at time t
+      if (lane_corr_intersecting_agent) {
+        intersection_time = t;
+        break;
+      }
     }
   }
   return std::tuple<double, AgentPtr>(
@@ -135,6 +143,9 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   if (!observed_world.GetLaneCorridor()) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
 
@@ -142,6 +153,14 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);
+
+  // if there is no lane_corr to be chosen
+  if (!observed_world.GetLaneCorridor() && !lane_res.second) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return GetLastTrajectory();
+  }
 
   // check intersecting vehicles
   std::tuple<double, AgentPtr> time_agent = CheckIntersectingVehicles(
@@ -169,7 +188,9 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
                 << " is intersecing my corridor with "
                 << angle_diff << "."<< std::endl;
       std::get<0>(rel_values) =
-        other_agent_state[VEL_POSITION]*std::get<0>(time_agent);
+        std::min(
+          other_agent_state[VEL_POSITION]*std::get<0>(time_agent),
+          std::get<0>(rel_values));
       // we want to break; set velocity to zero
       std::get<1>(rel_values) = 0.;
       std::get<2>(rel_values) = true;

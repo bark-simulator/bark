@@ -87,9 +87,9 @@ sim_step_time = param_server["simulation"]["step_time",
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
-viewer = VideoRenderer(renderer=viewer,
-                       world_step_time=sim_step_time,
-                       fig_path="/Users/hart/2019/bark/video")
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/Users/hart/2019/bark/video")
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
@@ -99,8 +99,8 @@ env = Runtime(step_time=0.2,
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 50):
+  for step in range(0, 80):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-viewer.export_video(filename="/Users/hart/2019/bark/video/intersection", remove_image_dir=True)
+# viewer.export_video(filename="/Users/hart/2019/bark/video/intersection", remove_image_dir=True)

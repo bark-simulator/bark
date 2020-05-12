@@ -18,6 +18,7 @@ dynamic::Trajectory behavior::BehaviorLongitudinalAcceleration::Plan(
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   if (!observed_world.GetLaneCorridor()) {
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
 

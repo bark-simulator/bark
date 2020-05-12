@@ -37,6 +37,9 @@ Trajectory BehaviorRuleBased::Plan(
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   if (!observed_world.GetLaneCorridor()) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
 
@@ -44,6 +47,13 @@ Trajectory BehaviorRuleBased::Plan(
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
   SetLaneCorridor(lane_res.second);
+
+  if (!observed_world.GetLaneCorridor() && !lane_res.second) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return GetLastTrajectory();
+  }
 
   // we want to calc. the acc. based on the actual LaneCorridor
   std::tuple<double, double, bool> rel_values = CalcRelativeValues(

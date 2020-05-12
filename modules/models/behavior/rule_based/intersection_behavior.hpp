@@ -68,7 +68,7 @@ class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
     const ObservedWorld& observed_world,
     double t_inc = 0.5);
 
-  AgentPtr GetIntersectingAgent(
+  std::pair<AgentId, bool> GetIntersectingAgent(
     const AgentMap& intersecting_agents,
     const ObservedWorld& observed_world) const;
 
