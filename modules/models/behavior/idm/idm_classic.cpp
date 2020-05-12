@@ -33,47 +33,28 @@ using modules::world::map::LaneCorridorPtr;
 std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   const world::ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr,
-  const std::tuple<double, double, bool>& rel_values,
-  float delta_time) const {
-
-  // definitions
-  double rel_distance = std::get<0>(rel_values);
-  double vel_front = std::get<1>(rel_values);
-  bool interaction_term_active = std::get<2>(rel_values);
-
-  double t_i, acc, traveled_ego, traveled_other;
+  double acc,
+  double dt) const {
+  double t_i = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
-  // TODO(@hart): why 11
-  const int num_traj_time_points = 11;
-  dynamic::Trajectory traj(num_traj_time_points,
+  dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  float const dt = delta_time / (num_traj_time_points - 1);
-
-  // calculate traj.
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
-  // select state and get p0
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
+
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
-        ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
-            0, 0);
+      ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
+        0, 0);
 
     float s_start = GetNearestS(line, pose);  // checked
     double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     float s_i = s_start;
 
-    for (int i = 1; i < num_traj_time_points; ++i) {
-      if (interaction_term_active) {
-        acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
-        traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
-        traveled_other = vel_front * dt;
-        rel_distance += traveled_other - traveled_ego;
-      } else {
-        acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
-      }
-
+    // calc. traj.
+    for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
       BARK_EXPECT_TRUE(!std::isnan(acc));
       s_i += 0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;

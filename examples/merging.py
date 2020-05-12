@@ -45,7 +45,7 @@ param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
-                                     behavior_model=BehaviorMobilRuleBased(param_server),
+                                     behavior_model=BehaviorIDMClassic(param_server),
                                      s_min=0.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,

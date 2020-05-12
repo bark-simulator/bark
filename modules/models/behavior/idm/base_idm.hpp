@@ -42,8 +42,8 @@ class BaseIDM : public BehaviorModel {
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
-    const std::tuple<double, double, bool>& rel_values,
-    float delta_time) const {}
+    double acc,
+    double delta_time) const {}
 
   double CalcRawIDMAcc(const double& net_distance,
                        const double& vel_ego,
@@ -52,6 +52,11 @@ class BaseIDM : public BehaviorModel {
   double CalcIDMAcc(const double net_distance,
                     const double vel_ego,
                     const double vel_other) const;
+
+  double GetTotalAcc(
+    const world::ObservedWorld& observed_world,
+    const std::tuple<double, double, bool>& rel_values,
+    double dt) const;
 
   std::tuple<double, double, bool> CalcRelativeValues(
     const world::ObservedWorld& observed_world,
@@ -76,6 +81,9 @@ class BaseIDM : public BehaviorModel {
   const float GetAccelerationUpperBound() const {
     return param_acceleration_upper_bound_;
   }
+  const int GetNumTrajectoryTimePoints() const {
+    return num_trajectory_time_points_;
+  }
   const float GetComfortableBrakingAcceleration() const {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
@@ -99,6 +107,7 @@ class BaseIDM : public BehaviorModel {
   float param_min_velocity_;
   float param_max_velocity_;
   int param_exponent_;
+  int num_trajectory_time_points_;
   LaneCorridorPtr lane_corr_;
 
   // IDM extension to stop at the end of the LaneCorridor

@@ -70,6 +70,10 @@ BaseIDM::BaseIDM(
     "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
     "Distance offset for vehicle to stop at.",
     15);
+  num_trajectory_time_points_ = params->GetReal(
+    "BehaviorIDMClassic::NumTrajectoryTimePoints",
+    "Number of points of the trajectory.",
+    11);
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
@@ -128,8 +132,8 @@ double BaseIDM::CalcNetDistance(
  * @return double acceleration for the IDM/vehicle
  */
 double BaseIDM::CalcIDMAcc(const double net_distance,
-                                      const double vel_ego,
-                                      const double vel_other) const {
+                           const double vel_ego,
+                           const double vel_other) const {
   const float acc_lower_bound = GetAccelerationLowerBound();
   const float acc_upper_bound = GetAccelerationUpperBound();
   const float max_acceleration = GetMaxAcceleration();
@@ -209,6 +213,28 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance,
   return GetMaxAcceleration() * (free_road_term - interaction_term);
 }
 
+
+double BaseIDM::GetTotalAcc(
+  const world::ObservedWorld& observed_world,
+  const std::tuple<double, double, bool>& rel_values,
+  double dt) const {
+  double acc, traveled_ego, traveled_other;
+  double rel_distance = std::get<0>(rel_values);
+  double vel_front = std::get<1>(rel_values);
+  const auto& ego_vehicle_state = observed_world.CurrentEgoState();
+  float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
+  bool interaction_term_active = std::get<2>(rel_values);
+  if (interaction_term_active) {
+    acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
+    traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
+    traveled_other = vel_front * dt;
+    rel_distance += traveled_other - traveled_ego;
+  } else {
+    acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+  }
+  return acc;
+}
+
 //! IDM Model will assume other front vehicle as constant velocity during
 Trajectory BaseIDM::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
@@ -224,9 +250,14 @@ Trajectory BaseIDM::Plan(
     observed_world,
     lane_corr_);
 
+  // TODO(@hart): pass dt not delta time to GenerateTrajectory
+  // TODO(@hart): remove rel_values from GenerateTrajectory
+  double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
+  double acc = GetTotalAcc(observed_world, rel_values, dt);
+
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, lane_corr_, rel_values, delta_time);
+      observed_world, lane_corr_, acc, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

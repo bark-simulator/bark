@@ -198,9 +198,11 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   }
 
   // generate traj. using rel_values
+  double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
+  double acc = GetTotalAcc(observed_world, rel_values, dt);
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, GetLaneCorridor(), rel_values, delta_time);
+      observed_world, GetLaneCorridor(), acc, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);
