@@ -34,6 +34,7 @@ using modules::models::dynamic::DynamicModelPtr;
 std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
+    const std::tuple<double, double, bool>& rel_values,
     double acc,
     double dt) const {
   // definitions
@@ -57,7 +58,10 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
         0, 0);
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
 
+    double rel_distance = std::get<0>(rel_values);
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
+      std::tie(acc, rel_distance) =
+        GetTotalAcc(observed_world, rel_values, rel_distance, dt);
       BARK_EXPECT_TRUE(!std::isnan(acc));
       double angle = CalculateSteeringAngle(
         single_track, traj.row(i - 1), line, crosstrack_error_gain_,

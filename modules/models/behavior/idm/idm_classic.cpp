@@ -33,6 +33,7 @@ using modules::world::map::LaneCorridorPtr;
 std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   const world::ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr,
+  const std::tuple<double, double, bool>& rel_values,
   double acc,
   double dt) const {
   double t_i = 0.;
@@ -53,8 +54,11 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     float s_i = s_start;
 
+    double rel_distance = std::get<0>(rel_values);
     // calc. traj.
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
+      std::tie(acc, rel_distance) =
+        GetTotalAcc(observed_world, rel_values, rel_distance, dt);
       BARK_EXPECT_TRUE(!std::isnan(acc));
       s_i += 0.5f * acc * dt * dt + vel_i * dt;
       const float temp_velocity = vel_i + acc * dt;

@@ -27,9 +27,10 @@ Trajectory BehaviorConstantVelocity::Plan(
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
   double acc = 0.;
+  std::tuple<double, double, bool> rel_values(0., 0., false);
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, lane_corr, acc, dt);
+      observed_world, lane_corr, rel_values, acc, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

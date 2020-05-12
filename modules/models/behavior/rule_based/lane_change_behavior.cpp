@@ -207,10 +207,12 @@ Trajectory BehaviorLaneChangeRuleBased::Plan(
     GetLaneCorridor());
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
-  double acc = GetTotalAcc(observed_world, rel_values, dt);
+  double rel_distance = std::get<0>(rel_values);
+  std::pair<double, double> acc_dist =
+    GetTotalAcc(observed_world, rel_values, rel_distance, dt);
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, GetLaneCorridor(), acc, dt);
+      observed_world, GetLaneCorridor(), rel_values, acc_dist.first, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

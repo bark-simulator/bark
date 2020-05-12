@@ -35,6 +35,7 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
+    const std::tuple<double, double, bool>& rel_values,
     double acc,
     double delta_time) const;
 

@@ -210,12 +210,12 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance,
 }
 
 
-double BaseIDM::GetTotalAcc(
+std::pair<double, double> BaseIDM::GetTotalAcc(
   const world::ObservedWorld& observed_world,
   const std::tuple<double, double, bool>& rel_values,
+  double rel_distance,
   double dt) const {
   double acc, traveled_ego, traveled_other;
-  double rel_distance = std::get<0>(rel_values);
   double vel_front = std::get<1>(rel_values);
   const auto& ego_vehicle_state = observed_world.CurrentEgoState();
   float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
@@ -228,10 +228,10 @@ double BaseIDM::GetTotalAcc(
   } else {
     acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
   }
-  return acc;
+  return std::pair<double, double>(acc, rel_distance);
 }
 
-//! IDM Model will assume other front vehicle as constant velocity during
+//! IDM Model will assume const. vel. for the leading vehicle
 Trajectory BaseIDM::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
@@ -250,10 +250,13 @@ Trajectory BaseIDM::Plan(
     lane_corr_);
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
-  double acc = GetTotalAcc(observed_world, rel_values, dt);
+  double rel_distance = std::get<0>(rel_values);
+  std::pair<double, double> acc_dist =
+    GetTotalAcc(observed_world, rel_values, rel_distance, dt);
+
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
-      observed_world, lane_corr_, acc, dt);
+      observed_world, lane_corr_, rel_values, acc_dist.first, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

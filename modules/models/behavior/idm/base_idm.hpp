@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <tuple>
+#include <utility>
 
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/world.hpp"
@@ -44,6 +45,7 @@ class BaseIDM : public BehaviorModel {
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr,
+    const std::tuple<double, double, bool>& rel_values,
     double acc,
     double delta_time) const = 0;
 
@@ -55,9 +57,10 @@ class BaseIDM : public BehaviorModel {
                     const double vel_ego,
                     const double vel_other) const;
 
-  double GetTotalAcc(
+  std::pair<double, double> GetTotalAcc(
     const world::ObservedWorld& observed_world,
     const std::tuple<double, double, bool>& rel_values,
+    double rel_distance,
     double dt) const;
 
   std::tuple<double, double, bool> CalcRelativeValues(
