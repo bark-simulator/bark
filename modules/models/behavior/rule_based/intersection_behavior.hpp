@@ -13,8 +13,7 @@
 #include <vector>
 #include <tuple>
 
-#include "modules/models/behavior/rule_based/base_rule_based.hpp"
-#include "modules/models/behavior/rule_based/simple_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -36,11 +35,11 @@ using modules::models::dynamic::StateDefinition::VEL_POSITION;
 
 // this model can change lanes as well as to slow down for other vehicles
 // at intersections
-class BehaviorIntersectionRuleBased : public BehaviorSimpleRuleBased {
+class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorIntersectionRuleBased(
     const commons::ParamsPtr& params) :
-    BehaviorSimpleRuleBased(params) {
+    BehaviorLaneChangeRuleBased(params) {
     // this is required for the IDM to get around corners
     SetLimitSteeringRate(false);
     // parameters

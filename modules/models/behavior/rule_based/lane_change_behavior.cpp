@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/rule_based/simple_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
@@ -44,7 +44,7 @@ using world::objects::AgentPtr;
  *                                                       information
  */
 std::pair<AgentInformation, AgentInformation>
-BehaviorSimpleRuleBased::FrontRearAgents(
+BehaviorLaneChangeRuleBased::FrontRearAgents(
   const ObservedWorld& observed_world,
   const LaneCorridorPtr& lane_corr) const {
   AgentInformation front_info, rear_info;
@@ -82,7 +82,7 @@ BehaviorSimpleRuleBased::FrontRearAgents(
  * @return std::vector<LaneCorridorInformation> Additional LaneCorr. info
  */
 std::vector<LaneCorridorInformation>
-BehaviorSimpleRuleBased::ScanLaneCorridors(
+BehaviorLaneChangeRuleBased::ScanLaneCorridors(
   const ObservedWorld& observed_world) const {
   const auto& road_corr = observed_world.GetRoadCorridor();
 
@@ -114,7 +114,7 @@ BehaviorSimpleRuleBased::ScanLaneCorridors(
  * @return std::pair<LaneChangeDecision, LaneCorridorPtr> 
  */
 std::pair<LaneChangeDecision, LaneCorridorPtr>
-BehaviorSimpleRuleBased::ChooseLaneCorridor(
+BehaviorLaneChangeRuleBased::ChooseLaneCorridor(
     const std::vector<LaneCorridorInformation>& lane_corr_infos,
     const ObservedWorld& observed_world) const {
   auto lane_corr = observed_world.GetLaneCorridor();
@@ -141,7 +141,7 @@ BehaviorSimpleRuleBased::ChooseLaneCorridor(
 
 // see base class
 std::pair<LaneChangeDecision, LaneCorridorPtr>
-BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
+BehaviorLaneChangeRuleBased::CheckIfLaneChangeBeneficial(
   const ObservedWorld& observed_world) const {
   // as we are lazy initially we want to keep the lane
   std::vector<LaneCorridorInformation> lane_corr_infos =
@@ -175,6 +175,49 @@ BehaviorSimpleRuleBased::CheckIfLaneChangeBeneficial(
         });
 
   return ChooseLaneCorridor(lane_corr_infos, observed_world);
+}
+
+Trajectory BehaviorLaneChangeRuleBased::Plan(
+    float delta_time, const world::ObservedWorld& observed_world) {
+  using dynamic::StateDefinition;
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
+  if (!observed_world.GetLaneCorridor()) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return GetLastTrajectory();
+  }
+
+  // whether to change lanes or not
+  std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
+    CheckIfLaneChangeBeneficial(observed_world);
+  SetLaneCorridor(lane_res.second);
+
+  if (!observed_world.GetLaneCorridor() && !lane_res.second) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return GetLastTrajectory();
+  }
+
+  // we want to calc. the acc. based on the actual LaneCorridor
+  std::tuple<double, double, bool> rel_values = CalcRelativeValues(
+    observed_world,
+    GetLaneCorridor());
+
+  double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
+  double acc = GetTotalAcc(observed_world, rel_values, dt);
+  std::tuple<Trajectory, Action> traj_action =
+    GenerateTrajectory(
+      observed_world, GetLaneCorridor(), acc, dt);
+
+  // set values
+  Trajectory traj = std::get<0>(traj_action);
+  Action action = std::get<1>(traj_action);
+  SetLastTrajectory(traj);
+  SetLastAction(action);
+  return traj;
 }
 
 }  // namespace behavior

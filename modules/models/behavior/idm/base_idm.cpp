@@ -249,11 +249,8 @@ Trajectory BaseIDM::Plan(
     observed_world,
     lane_corr_);
 
-  // TODO(@hart): pass dt not delta time to GenerateTrajectory
-  // TODO(@hart): remove rel_values from GenerateTrajectory
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
   double acc = GetTotalAcc(observed_world, rel_values, dt);
-
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(
       observed_world, lane_corr_, acc, dt);

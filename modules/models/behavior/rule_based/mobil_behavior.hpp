@@ -12,9 +12,8 @@
 #include <utility>
 #include <vector>
 
-#include "modules/models/behavior/rule_based/base_rule_based.hpp"
-#include "modules/models/behavior/rule_based/simple_behavior.hpp"
-#include "modules/models/behavior/idm/base_idm.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -30,11 +29,11 @@ using modules::world::AgentFrenetPair;
 using modules::models::dynamic::StateDefinition::VEL_POSITION;
 
 
-class BehaviorMobilRuleBased : public BehaviorSimpleRuleBased {
+class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobilRuleBased(
     const commons::ParamsPtr& params) :
-    BehaviorSimpleRuleBased(params) {
+    BehaviorLaneChangeRuleBased(params) {
     a_thr_ = params->GetReal(
       "BehaviorMobilRuleBased::AThr",
       "Acceleration threshold factor. See Mobil paper.",

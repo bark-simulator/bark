@@ -14,7 +14,7 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/simple_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "modules/models/behavior/rule_based/mobil_behavior.hpp"
 #include "modules/models/behavior/rule_based/intersection_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
@@ -42,7 +42,7 @@ using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::BehaviorIntersectionRuleBased;
-using modules::models::behavior::BehaviorSimpleRuleBased;
+using modules::models::behavior::BehaviorLaneChangeRuleBased;
 using modules::models::behavior::BehaviorMobilRuleBased;
 using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
@@ -57,8 +57,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIDMClassic";
   } else if (typeid(*behavior_model) == typeid(BehaviorIntersectionRuleBased)) {
     behavior_model_name = "BehaviorIntersectionRuleBased";
-  } else if (typeid(*behavior_model) == typeid(BehaviorSimpleRuleBased)) {
-    behavior_model_name = "BehaviorSimpleRuleBased";
+  } else if (typeid(*behavior_model) == typeid(BehaviorLaneChangeRuleBased)) {
+    behavior_model_name = "BehaviorLaneChangeRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobilRuleBased)) {
     behavior_model_name = "BehaviorMobilRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
@@ -94,9 +94,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIntersectionRuleBased") == 0) {
     return std::make_shared<BehaviorIntersectionRuleBased>(
       t[0].cast<BehaviorIntersectionRuleBased>());
-  } else if (behavior_model_name.compare("BehaviorSimpleRuleBased") == 0) {
-    return std::make_shared<BehaviorSimpleRuleBased>(
-      t[0].cast<BehaviorSimpleRuleBased>());
+  } else if (behavior_model_name.compare("BehaviorLaneChangeRuleBased") == 0) {
+    return std::make_shared<BehaviorLaneChangeRuleBased>(
+      t[0].cast<BehaviorLaneChangeRuleBased>());
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
       t[0].cast<BehaviorStaticTrajectory>());

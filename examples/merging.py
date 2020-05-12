@@ -34,10 +34,10 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
     return GoalDefinitionPolygon(lane_corr.polygon)
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorSimpleRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleRearDistance"] = 2.
-param_server["BehaviorSimpleRuleBased"]["MinVehicleFrontDistance"] = 2.
-param_server["BehaviorSimpleRuleBased"]["TimeKeepingGap"] = 0.
+param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 50.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 2.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
+param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 
     
@@ -45,7 +45,7 @@ param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
-                                     behavior_model=BehaviorIDMClassic(param_server),
+                                     behavior_model=BehaviorMobil(param_server),
                                      s_min=0.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,

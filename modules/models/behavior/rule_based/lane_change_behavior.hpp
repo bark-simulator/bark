@@ -4,16 +4,15 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_SIMPLE_BEHAVIOR_HPP_
-#define MODULES_MODELS_BEHAVIOR_RULE_BASED_SIMPLE_BEHAVIOR_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
+#define MODULES_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
 
 #include <memory>
 #include <map>
 #include <utility>
 #include <vector>
 
-#include "modules/models/behavior/rule_based/base_rule_based.hpp"
-#include "modules/models/behavior/idm/base_idm.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -27,6 +26,18 @@ using modules::world::map::LaneCorridorPtr;
 using modules::world::ObservedWorld;
 using modules::world::AgentFrenetPair;
 using modules::models::dynamic::StateDefinition::VEL_POSITION;
+
+enum LaneChangeDecision {
+  KeepLane = 0,
+  ChangeLeft = 1,
+  ChangeRight = 2,
+  Undefined = 3
+};
+
+enum RuleBasedState {
+  Idle = 0,
+  IsChanging = 1
+};
 
 // Agent and LaneCorridor specific
 struct AgentInformation {
@@ -46,30 +57,30 @@ struct LaneCorridorInformation {
   double remaining_distance;
 };
 
-class BehaviorSimpleRuleBased : public BehaviorRuleBased {
+class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
  public:
-  explicit BehaviorSimpleRuleBased(
+  explicit BehaviorLaneChangeRuleBased(
     const commons::ParamsPtr& params) :
-    BehaviorRuleBased(params) {
+    BehaviorIDMLaneTracking(params) {
     min_remaining_distance_ = params->GetReal(
-      "BehaviorSimpleRuleBased::MinRemainingLaneCorridorDistance",
+      "BehaviorLaneChangeRuleBased::MinRemainingLaneCorridorDistance",
       "LaneCorridors with less remaning distance are filetered.",
       60.0);
     min_vehicle_rear_distance_ = params->GetReal(
-      "BehaviorSimpleRuleBased::MinVehicleRearDistance",
+      "BehaviorLaneChangeRuleBased::MinVehicleRearDistance",
       "Rear vehicle distance.",
       5.0);
     min_vehicle_front_distance_ = params->GetReal(
-      "BehaviorSimpleRuleBased::MinVehicleFrontDistance",
+      "BehaviorLaneChangeRuleBased::MinVehicleFrontDistance",
       "Front vehicle distance.",
       5.0);
     time_keeping_gap_ = params->GetReal(
-      "BehaviorSimpleRuleBased::TimeKeepingGap",
+      "BehaviorLaneChangeRuleBased::TimeKeepingGap",
       "Additional time that adds distance based on the rel. vel. to the gap.",
       1.0);
   }
 
-  virtual ~BehaviorSimpleRuleBased() {}
+  virtual ~BehaviorLaneChangeRuleBased() {}
 
   std::pair<LaneChangeDecision, LaneCorridorPtr>
   CheckIfLaneChangeBeneficial(const ObservedWorld& observed_world) const;
@@ -133,6 +144,9 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
     return state[VEL_POSITION];
   }
 
+  virtual Trajectory Plan(
+    float delta_time, const ObservedWorld& observed_world);
+
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
@@ -142,9 +156,9 @@ class BehaviorSimpleRuleBased : public BehaviorRuleBased {
   double time_keeping_gap_;
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorSimpleRuleBased::Clone() const {
-  std::shared_ptr<BehaviorSimpleRuleBased> model_ptr =
-      std::make_shared<BehaviorSimpleRuleBased>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorLaneChangeRuleBased::Clone() const {
+  std::shared_ptr<BehaviorLaneChangeRuleBased> model_ptr =
+      std::make_shared<BehaviorLaneChangeRuleBased>(*this);
   return model_ptr;
 }
 
@@ -152,6 +166,6 @@ inline std::shared_ptr<BehaviorModel> BehaviorSimpleRuleBased::Clone() const {
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_RULE_BASED_SIMPLE_BEHAVIOR_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
 
 

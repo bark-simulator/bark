@@ -1,22 +1,4 @@
 cc_library(
-    name = "base_rule_based",
-    srcs = [
-        "base_rule_based.cpp"
-    ],
-    hdrs = [
-        "base_rule_based.hpp"
-    ],
-    deps = [
-        "//modules/commons:commons",
-        "//modules/world:world",
-        "//modules/models/behavior/idm:base_idm",
-        "//modules/models/dynamic:dynamic",
-        "//modules/commons/transformation:frenet",
-    ],
-    visibility = ["//visibility:public"]
-)
-
-cc_library(
     name = "mobil",
     srcs = [
         "mobil.cpp"
@@ -27,9 +9,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/idm:base_idm",
-        "//modules/models/behavior/rule_based:base_rule_based",
-        "//modules/models/behavior/rule_based:simple_behavior",
+        "//modules/models/behavior/rule_based:lane_change_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],
@@ -37,18 +17,17 @@ cc_library(
 )
 
 cc_library(
-    name = "simple_behavior",
+    name = "lane_change_behavior",
     srcs = [
-      "simple_behavior.cpp"
+      "lane_change_behavior.cpp"
     ],
     hdrs = [
-      "simple_behavior.hpp"
+      "lane_change_behavior.hpp"
     ],
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/idm:base_idm",
-        "//modules/models/behavior/rule_based:base_rule_based",
+        "//modules/models/behavior/idm:idm_lane_tracking",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],
@@ -66,10 +45,8 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/behavior/rule_based:base_rule_based",
-        "//modules/models/behavior/rule_based:simple_behavior",
+        "//modules/models/behavior/rule_based:lane_change_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],
@@ -89,8 +66,7 @@ cc_library(
         "//modules/world:world",
         "//modules/models/behavior/idm:base_idm",
         "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/behavior/rule_based:base_rule_based",
-        "//modules/models/behavior/rule_based:simple_behavior",
+        "//modules/models/behavior/rule_based:lane_change_behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/commons/transformation:frenet"
     ],

@@ -15,7 +15,7 @@
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
 #include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/simple_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "modules/models/behavior/rule_based/intersection_behavior.hpp"
 #include "modules/models/behavior/rule_based/mobil_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
@@ -117,22 +117,22 @@ void python_behavior(py::module m) {
             return new BehaviorMobil(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
         }));
 
-  py::class_<BehaviorSimpleRuleBased,
+  py::class_<BehaviorLaneChangeRuleBased,
              BehaviorModel,
-             shared_ptr<BehaviorSimpleRuleBased>>(m, "BehaviorSimpleRuleBased")
+             shared_ptr<BehaviorLaneChangeRuleBased>>(m, "BehaviorLaneChangeRuleBased")
     .def(py::init<const modules::commons::ParamsPtr&>())
-    .def("__repr__", [](const BehaviorSimpleRuleBased &m) {
-      return "bark.behavior.BehaviorSimpleRuleBased";
+    .def("__repr__", [](const BehaviorLaneChangeRuleBased &m) {
+      return "bark.behavior.BehaviorLaneChangeRuleBased";
     })
     .def(py::pickle(
-      [](const BehaviorSimpleRuleBased &b) { 
+      [](const BehaviorLaneChangeRuleBased &b) { 
           return py::make_tuple(ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) { // __setstate__
           if (t.size() != 1)
               throw std::runtime_error("Invalid behavior model state!");
           /* Create a new C++ instance */
-          return new BehaviorSimpleRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
+          return new BehaviorLaneChangeRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
       }));
 
   py::class_<BehaviorMobilRuleBased,

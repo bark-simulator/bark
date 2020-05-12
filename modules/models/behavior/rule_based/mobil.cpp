@@ -5,6 +5,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "modules/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
