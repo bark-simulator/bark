@@ -30,9 +30,10 @@ param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
-param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
-param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 3.
-param_server["World"]["remove_agents_out_of_map"] = True
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 5.
+param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 5.
+param_server["BehaviorIntersectionRuleBased"]["AngleDiffForIntersection"] = 0.25
+# "BehaviorIntersectionRuleBased::AngleDiffForIntersection",
 
 lane_corridors = []
 lane_corridors.append(
@@ -40,23 +41,29 @@ lane_corridors.append(
                      source_pos=[-30, -3],
                      sink_pos=[30, -3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=5.,
-                     s_max=25.))
+                     min_vel=5.,
+                     max_vel=5.,
+                     s_min=15.,
+                     s_max=35.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[30, 3],
                      sink_pos=[-30, 3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
-                     s_min=5.,
-                     s_max=25.))
+                     min_vel=5.,
+                     max_vel=5.,
+                     s_min=15.,
+                     s_max=35.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[3, -30],
                      sink_pos=[-30, 3],
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
                      controlled_ids=True,
-                     s_min=5.,
-                     s_max=45.))
+                     min_vel=5.,
+                     max_vel=5.,
+                     s_min=15.,
+                     s_max=35.))
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
@@ -80,20 +87,20 @@ sim_step_time = param_server["simulation"]["step_time",
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/Users/hart/2019/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time,
+                       fig_path="/Users/hart/2019/bark/video")
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
   for step in range(0, 50):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/intersection", remove_image_dir=True)
+viewer.export_video(filename="/Users/hart/2019/bark/video/intersection", remove_image_dir=True)

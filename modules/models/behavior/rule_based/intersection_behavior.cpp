@@ -27,9 +27,11 @@ namespace behavior {
 using modules::commons::transformation::FrenetPosition;
 using modules::commons::DefaultParams;
 using modules::geometry::Point2d;
+using modules::geometry::SignedAngleDiff;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition;
 using modules::models::dynamic::StateDefinition::THETA_POSITION;
+using modules::models::dynamic::StateDefinition::VEL_POSITION;
 using modules::world::objects::Agent;
 using modules::world::AgentMap;
 using modules::world::objects::AgentPtr;
@@ -60,6 +62,7 @@ AgentPtr BehaviorIntersectionRuleBased::GetIntersectingAgent(
     const auto& ego_pos = observed_world.CurrentEgoPosition();
     const auto& agent_state = agent.second->GetCurrentState();
     const auto& lane_corr = road_corr->GetCurrentLaneCorridor(agent_pos);
+
     if (lane_corr != observed_world.GetLaneCorridor() &&
         agent.second != observed_world.GetEgoAgent() &&
         observed_world.GetLaneCorridor() != nullptr && lane_corr != nullptr) {
@@ -106,9 +109,11 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   // predict for n seconds
   for (double t = 0.; t < prediction_time_horizon_; t += prediction_t_inc_) {
     ObservedWorldPtr predicted_world = tmp_observed_world.Predict(t);
+    // all agents intersecting at time t
     AgentMap intersecting_agents =
       predicted_world->GetAgentsIntersectingPolygon(
         lane_corr->GetMergedPolygon());
+    // first agent intersecting
     lane_corr_intersecting_agent =
       GetIntersectingAgent(
         intersecting_agents,
@@ -149,14 +154,26 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
 
   // if there is an intersecting vehicle
   if (std::get<1>(time_agent)) {
-    // calculate augmented dist
-    double vel_other = GetVelocity(std::get<1>(time_agent));
-    std::get<0>(rel_values) = vel_other*std::get<0>(time_agent);
-    // we want to break; set velocity to zero
-    std::get<1>(rel_values) = 0;
-    LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
-              << ": Agent " << std::get<1>(time_agent)->GetAgentId()
-              << " is intersecing my corridor."<< std::endl;
+    const auto& other_agent = std::get<1>(time_agent);
+    const auto& ego_agent = observed_world.GetEgoAgent();
+    const auto& other_agent_state = std::get<1>(time_agent)->GetCurrentState();
+    const auto& ego_agent_state = ego_agent->GetCurrentState();
+    double other_angle = Norm0To2PI(other_agent_state[THETA_POSITION]);
+    double ego_angle = Norm0To2PI(ego_agent_state[THETA_POSITION]);
+    double angle_diff = SignedAngleDiff(ego_angle, other_angle);
+
+    // if there is a vehicle from the right
+    if (angle_diff < 0) {
+      LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
+                << ": Agent " << std::get<1>(time_agent)->GetAgentId()
+                << " is intersecing my corridor with "
+                << angle_diff << "."<< std::endl;
+      std::get<0>(rel_values) =
+        other_agent_state[VEL_POSITION]*std::get<0>(time_agent);
+      // we want to break; set velocity to zero
+      std::get<1>(rel_values) = 0.;
+      std::get<2>(rel_values) = true;
+    }
   }
 
   // generate traj. using rel_values
