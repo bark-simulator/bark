@@ -6,6 +6,10 @@
 #ifndef MODULES_WORLD_EVALUATION_EVALUATOR_LTL_HPP_
 #define MODULES_WORLD_EVALUATION_EVALUATOR_LTL_HPP_
 
+#include <set>
+#include <string>
+#include <vector>
+
 #include "ltl/rule_state.h"
 #include "modules/world/evaluation/base_evaluator.hpp"
 #include "modules/world/evaluation/labels/base_label_evaluator.hpp"
@@ -16,8 +20,8 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-using ltl::RuleState;
 using ltl::RuleMonitor;
+using ltl::RuleState;
 using objects::AgentId;
 
 class EvaluatorLTL : public BaseEvaluator {

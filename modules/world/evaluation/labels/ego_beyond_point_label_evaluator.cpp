@@ -9,10 +9,9 @@
 
 using modules::world::evaluation::LabelMap;
 
-
 modules::world::evaluation::EgoBeyondPointLabelEvaluator::
-EgoBeyondPointLabelEvaluator(const std::string& label_str,
-                             const modules::geometry::Point2d& beyond_point)
+    EgoBeyondPointLabelEvaluator(const std::string& label_str,
+                                 const modules::geometry::Point2d& beyond_point)
     : BaseLabelEvaluator(label_str), beyond_point_(beyond_point) {}
 std::vector<LabelMap::value_type>
 modules::world::evaluation::EgoBeyondPointLabelEvaluator::Evaluate(
@@ -22,9 +21,9 @@ modules::world::evaluation::EgoBeyondPointLabelEvaluator::Evaluate(
   if (lc) {
     FrenetPosition ego_frenet(ego_pos, lc->GetCenterLine());
     FrenetPosition point_frenet(beyond_point_, lc->GetCenterLine());
-    return {{GetLabel(), ((ego_frenet.lon - point_frenet.lon) > 0) }};
+    return {{GetLabel(), ((ego_frenet.lon - point_frenet.lon) > 0)}};
   }
-  return {{GetLabel(), false }};
+  return {{GetLabel(), false}};
 }
 const modules::geometry::Point2d&
 modules::world::evaluation::EgoBeyondPointLabelEvaluator::GetBeyondPoint()

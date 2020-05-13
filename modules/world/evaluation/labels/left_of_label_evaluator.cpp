@@ -10,8 +10,11 @@ bool modules::world::evaluation::LeftOfLabelEvaluator::evaluate_agent(
     const modules::world::objects::AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   const auto ego_lc = observed_world.GetLaneCorridor();
-  if(other_agent) {
-    const auto other_lc = other_agent->GetRoadCorridor()->GetLeftRightLaneCorridor(other_agent->GetCurrentPosition()).first;
+  if (other_agent) {
+    const auto other_lc =
+        other_agent->GetRoadCorridor()
+            ->GetLeftRightLaneCorridor(other_agent->GetCurrentPosition())
+            .first;
     return other_lc == ego_lc;
   }
   return false;

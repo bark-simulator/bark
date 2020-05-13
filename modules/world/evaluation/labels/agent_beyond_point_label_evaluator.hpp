@@ -15,11 +15,12 @@
 namespace modules {
 namespace world {
 namespace evaluation {
-using opendrive::XodrLaneId;
 using geometry::Point2d;
+using opendrive::XodrLaneId;
 class AgentBeyondPointLabelEvaluator : public MultiAgentLabelEvaluator {
  public:
-  AgentBeyondPointLabelEvaluator(const std::string& string, Point2d beyond_point);
+  AgentBeyondPointLabelEvaluator(const std::string& string,
+                                 Point2d beyond_point);
   bool evaluate_agent(const world::ObservedWorld& observed_world,
                       const AgentPtr& other_agent) const override;
   const Point2d& GetBeyondPoint() const;

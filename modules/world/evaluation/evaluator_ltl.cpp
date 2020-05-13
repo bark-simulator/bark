@@ -5,6 +5,10 @@
 
 #include "evaluator_ltl.hpp"
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
 #include "ltl/rule_monitor.h"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/world.hpp"
@@ -13,9 +17,8 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-EvaluatorLTL::EvaluatorLTL(
-    modules::world::objects::AgentId agent_id,
-    const std::string& ltl_formula_str)
+EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
+                           const std::string& ltl_formula_str)
     : violation_count_(0),
       agent_id_(agent_id),
       ltl_formula_str_(ltl_formula_str),

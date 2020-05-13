@@ -10,10 +10,13 @@
 using modules::commons::transformation::FrenetPosition;
 
 bool modules::world::evaluation::FrontOfLabelEvaluator::evaluate_agent(
-    const modules::world::ObservedWorld& observed_world, const AgentPtr &other_agent) const {
+    const modules::world::ObservedWorld& observed_world,
+    const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   if (other_agent) {
-    const auto other_lane = other_agent->GetRoadCorridor()->GetCurrentLaneCorridor(other_agent->GetCurrentPosition());
+    const auto other_lane =
+        other_agent->GetRoadCorridor()->GetCurrentLaneCorridor(
+            other_agent->GetCurrentPosition());
     if (!other_lane) {
       return false;
     } else {

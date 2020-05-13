@@ -15,7 +15,9 @@ bool modules::world::evaluation::BehindOfLabelEvaluator::evaluate_agent(
   const auto ego_agent = observed_world.GetEgoAgent();
   const auto ego_lane = observed_world.GetLaneCorridor();
   if (other_agent) {
-    const auto other_lane = other_agent->GetRoadCorridor()->GetCurrentLaneCorridor(other_agent->GetCurrentPosition());
+    const auto other_lane =
+        other_agent->GetRoadCorridor()->GetCurrentLaneCorridor(
+            other_agent->GetCurrentPosition());
     if (!ego_lane || !other_lane) {
       return false;
     } else {

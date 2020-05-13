@@ -26,23 +26,22 @@ std::vector<LabelMap::value_type> SafeDistanceLabelEvaluator::Evaluate(
   auto ego = std::const_pointer_cast<Agent>(observed_world.GetEgoAgent());
   auto fr_agents = observed_world.GetAgentFrontRearForId(
       ego->GetAgentId(), ego->GetRoadCorridor()->GetCurrentLaneCorridor(
-          ego->GetCurrentPosition()));
+                             ego->GetCurrentPosition()));
   bool distance_safe = true;
   if (to_rear_ && fr_agents.rear.first) {
     distance_safe = CheckSafeDistance(fr_agents.rear.first, ego,
-                                          fr_agents.rear.second, a_o_, a_e_);
-  } else if(fr_agents.front.first) {
+                                      fr_agents.rear.second, a_o_, a_e_);
+  } else if (fr_agents.front.first) {
     distance_safe = CheckSafeDistance(ego, fr_agents.front.first,
-                                          fr_agents.front.second, a_e_, a_o_);
+                                      fr_agents.front.second, a_e_, a_o_);
   }
   return {{GetLabel(), distance_safe}};
 }
 
-bool SafeDistanceLabelEvaluator::CheckSafeDistance(const AgentPtr& rear_agent,
-                                              const AgentPtr& front_agent,
-                                              const FrenetPosition& frenet_dist,
-                                              const double a_r,
-                                              const double a_f) const {
+bool SafeDistanceLabelEvaluator::CheckSafeDistance(
+    const AgentPtr& rear_agent, const AgentPtr& front_agent,
+    const FrenetPosition& frenet_dist, const double a_r,
+    const double a_f) const {
   double dist = std::abs(frenet_dist.lon) - front_agent->GetShape().rear_dist_ -
                 rear_agent->GetShape().front_dist_;
   assert(dist >= 0);
@@ -72,7 +71,7 @@ bool SafeDistanceLabelEvaluator::CheckSafeDistance(const AgentPtr& rear_agent,
 }
 
 double SafeDistanceLabelEvaluator::CalcVelFrontStar(const double v_f,
-                                               const double a_f) const {
+                                                    const double a_f) const {
   // see Theorem 4 in "Formalising and Monitoring Traffic Rules for Autonomous
   // Vehicles in Isabelle/HOL"
   double v_f_star;
@@ -86,30 +85,30 @@ double SafeDistanceLabelEvaluator::CalcVelFrontStar(const double v_f,
 }
 
 double SafeDistanceLabelEvaluator::CalcSafeDistance0(const double v_r,
-                                                const double a_r) const {
+                                                     const double a_r) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r);
 }
 
 double SafeDistanceLabelEvaluator::CalcSafeDistance1(const double v_r,
-                                                const double v_f,
-                                                const double a_r,
-                                                const double a_f) const {
+                                                     const double v_f,
+                                                     const double a_r,
+                                                     const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) + pow(v_f, 2) / (2.0 * a_f);
 }
 
 double SafeDistanceLabelEvaluator::CalcSafeDistance2(const double v_r,
-                                                const double v_f,
-                                                const double a_r,
-                                                const double a_f) const {
+                                                     const double v_f,
+                                                     const double a_r,
+                                                     const double a_f) const {
   double sqrt_numerator = v_f + a_f * delta_ - v_r;
   return pow(sqrt_numerator, 2) / (2.0 * (a_f - a_r)) - v_f * delta_ -
          0.5 * a_f * pow(delta_, 2) + v_r * delta_;
 }
 
 double SafeDistanceLabelEvaluator::CalcSafeDistance3(const double v_r,
-                                                const double v_f,
-                                                const double a_r,
-                                                const double a_f) const {
+                                                     const double v_f,
+                                                     const double a_r,
+                                                     const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) - v_f * delta_ -
          a_f * pow(delta_, 2) / 2.0;
 }

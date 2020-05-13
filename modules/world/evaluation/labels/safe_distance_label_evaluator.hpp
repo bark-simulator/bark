@@ -17,8 +17,8 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-using modules::world::objects::AgentPtr;
 using modules::commons::transformation::FrenetPosition;
+using modules::world::objects::AgentPtr;
 
 class SafeDistanceLabelEvaluator : public BaseLabelEvaluator {
  public:
@@ -28,17 +28,18 @@ class SafeDistanceLabelEvaluator : public BaseLabelEvaluator {
       const world::ObservedWorld& observed_world) const override;
 
  private:
-  bool CheckSafeDistance(const AgentPtr& rear_agent, const AgentPtr& front_agent,
+  bool CheckSafeDistance(const AgentPtr& rear_agent,
+                         const AgentPtr& front_agent,
                          const FrenetPosition& frenet_dist, double a_r,
                          double a_f) const;
   inline double CalcVelFrontStar(double v_f, double a_f) const;
   inline double CalcSafeDistance0(double v_r, double a_r) const;
-  inline double CalcSafeDistance1(double v_r,  double v_f,
-                                  double a_r, double a_f) const;
-  inline double CalcSafeDistance2(double v_r, double v_f,
-                                  double a_r, double a_f) const;
-  inline double CalcSafeDistance3(double v_r, double v_f,
-                                  double a_r, double a_f) const;
+  inline double CalcSafeDistance1(double v_r, double v_f, double a_r,
+                                  double a_f) const;
+  inline double CalcSafeDistance2(double v_r, double v_f, double a_r,
+                                  double a_f) const;
+  inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
+                                  double a_f) const;
 
   bool to_rear_;
   double delta_;  //! Reaction time
