@@ -10,31 +10,23 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.viewer.panda3d_easy import Panda3dViewer
 from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.commons.xodr_parser import XodrParser
 from modules.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.models.behavior import BehaviorConstantVelocity, BehaviorIDMClassic
-from bark.models.execution import ExecutionModelInterpolate
-from bark.models.dynamic import SingleTrackModel
-from bark.world import World
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.world.agent import Agent
-from bark.world.map import MapInterface
 from bark.geometry.standard_shapes import CarLimousine
-from bark.geometry import Point2d, Polygon2d
 from bark.models.behavior import *
 from modules.runtime.runtime import Runtime
+
 
 # Parameters Definitions
 param_server = ParameterServer()
 
 param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
-param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 5.
+param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
 param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 5.
 param_server["BehaviorIntersectionRuleBased"]["AngleDiffForIntersection"] = 0.25
-# "BehaviorIntersectionRuleBased::AngleDiffForIntersection",
 
+# configure the lane corridors and how the agents 
 lane_corridors = []
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
@@ -43,8 +35,10 @@ lane_corridors.append(
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
                      min_vel=5.,
                      max_vel=5.,
+                     ds_min=5.,
+                     ds_max=10.,
                      s_min=15.,
-                     s_max=35.))
+                     s_max=30.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[30, 3],
@@ -52,8 +46,10 @@ lane_corridors.append(
                      behavior_model=BehaviorIntersectionRuleBased(param_server),
                      min_vel=5.,
                      max_vel=5.,
+                     ds_min=5.,
+                     ds_max=10.,
                      s_min=15.,
-                     s_max=35.))
+                     s_max=30.))
 lane_corridors.append(
   LaneCorridorConfig(params=param_server,
                      source_pos=[3, -30],
@@ -62,8 +58,10 @@ lane_corridors.append(
                      controlled_ids=True,
                      min_vel=5.,
                      max_vel=5.,
+                     ds_min=5.,
+                     ds_max=10.,
                      s_min=15.,
-                     s_max=35.))
+                     s_max=30.))
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
