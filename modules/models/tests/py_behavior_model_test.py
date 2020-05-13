@@ -49,11 +49,10 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
   """Dummy Python behavior model
   """
   def __init__(self,
-               dynamic_model = None,
                params = None):
     BehaviorModel.__init__(
       self, params)
-    self._dynamic_behavior_model = BehaviorDynamicModel(dynamic_model, params)
+    self._dynamic_behavior_model = BehaviorDynamicModel(params)
   
   def Plan(self, delta_time, world):
     self._dynamic_behavior_model.SetLastAction(
@@ -97,10 +96,7 @@ class PyBehaviorModelTests(unittest.TestCase):
                       use_world_bounds=True)
     scenario, idx = scenario_generation.get_next_scenario()
     world = scenario.get_world_state()
-    single_track_model = SingleTrackModel(param_server)
-
-    behavior_model = PythonBehaviorModelWrapperInheritance(
-      single_track_model, param_server)
+    behavior_model = PythonBehaviorModelWrapperInheritance(param_server)
     
     world.GetAgent(0).behavior_model = behavior_model
     world.GetAgent(0).behavior_model.SetLastAction(

@@ -9,6 +9,7 @@
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
 #include <utility>
+#include <memory>
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"

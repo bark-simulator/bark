@@ -39,7 +39,6 @@ class DatabaseRunnerTests(unittest.TestCase):
       terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>5}
       params = ParameterServer() # only for evaluated agents not passed to scenario!
       behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
-                                      
 
       benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                          evaluators=evaluators,
