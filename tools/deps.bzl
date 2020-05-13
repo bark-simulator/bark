@@ -84,7 +84,7 @@ cc_library(
     git_repository,
     name = "rule_monitor_project",
     commit = "ab0dd984b4663eadaa209f2a25d6f4887de4bc7f",
-    remote = "git@github.com:bark-simulator/rule-monitoring.git",
+    remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
 
 def _maybe(repo_rule, name, **kwargs):
