@@ -226,28 +226,25 @@ void python_behavior(py::module m) {
 
   m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
-  py::class_<DynamicBehaviorModel,
+  py::class_<BehaviorDynamicModel,
              BehaviorModel,
-             shared_ptr<DynamicBehaviorModel>>(m, "DynamicBehaviorModel")
-    .def(py::init<const DynamicModelPtr&,
-          const modules::commons::ParamsPtr&>())
+             shared_ptr<BehaviorDynamicModel>>(m, "BehaviorDynamicModel")
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("SetLastAction", &BehaviorModel::SetLastAction)
     .def("GetLastAction", &BehaviorModel::GetLastAction)
-    .def("__repr__", [](const DynamicBehaviorModel &b) {
-      return "bark.behavior.DynamicBehaviorModel";
+    .def("__repr__", [](const BehaviorDynamicModel &b) {
+      return "bark.behavior.BehaviorDynamicModel";
     })
     .def(py::pickle(
-      [](const DynamicBehaviorModel& b) {
+      [](const BehaviorDynamicModel& b) {
         return py::make_tuple(
-          b.GetDynamicModel(),
           ParamsToPython(b.GetParams()));
       },
       [](py::tuple t) {
-        if (t.size() != 2)
+        if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new DynamicBehaviorModel(
-          t[0].cast<DynamicModelPtr>(),
-          PythonToParams(t[1].cast<py::tuple>()));
+        return new BehaviorDynamicModel(
+          PythonToParams(t[0].cast<py::tuple>()));
       }));
 
   py::class_<BehaviorStaticTrajectory,

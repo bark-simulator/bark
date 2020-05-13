@@ -31,7 +31,8 @@ struct IDMRelativeValues {
   bool has_leading_object;
 };
 
-
+// Base class for all IDMs and the const. vel.
+// includes all longitudinal acc. functions
 class BaseIDM : public BehaviorModel {
  public:
   explicit BaseIDM(const commons::ParamsPtr& params);

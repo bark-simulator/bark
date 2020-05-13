@@ -22,33 +22,27 @@ using dynamic::Input;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
-class DynamicBehaviorModel : public BehaviorModel {
+// model that uses last_action_ to produce trajectory
+// can e.g. be used for RL
+class BehaviorDynamicModel : public BehaviorModel {
  public:
-  DynamicBehaviorModel(const DynamicModelPtr& dynamic_model,
-                       const commons::ParamsPtr& params);
+  explicit BehaviorDynamicModel(const commons::ParamsPtr& params);
 
-  DynamicBehaviorModel(DynamicBehaviorModel* other_behavior);
-  virtual ~DynamicBehaviorModel() {}
+  virtual ~BehaviorDynamicModel() {}
 
-  virtual Trajectory Plan(float delta_time,
-                  const ObservedWorld& observed_world);
+  virtual Trajectory Plan(
+    float delta_time,
+    const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  DynamicModelPtr GetDynamicModel() const {
-    return dynamic_model_;
-  }
-  
  private:
-  DynamicModelPtr dynamic_model_;
-
-  // Parameters
   float integration_time_delta_;
 };
 
-inline std::shared_ptr<BehaviorModel> DynamicBehaviorModel::Clone() const {
-  std::shared_ptr<DynamicBehaviorModel> model_ptr =
-    std::make_shared<DynamicBehaviorModel>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorDynamicModel::Clone() const {
+  std::shared_ptr<BehaviorDynamicModel> model_ptr =
+    std::make_shared<BehaviorDynamicModel>(*this);
   return model_ptr;
 }
 

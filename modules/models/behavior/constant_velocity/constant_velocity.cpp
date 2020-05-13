@@ -26,6 +26,7 @@ Trajectory BehaviorConstantVelocity::Plan(
   }
 
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
+  // interaction term off and GetTotalAcc returns const. acc.
   IDMRelativeValues rel_values{0., 0., false};
   std::tuple<Trajectory, Action> traj_action =
     GenerateTrajectory(

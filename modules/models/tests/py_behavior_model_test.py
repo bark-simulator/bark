@@ -17,7 +17,7 @@ from bark.world import World
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark.models.dynamic import SingleTrackModel
 
 
@@ -27,7 +27,7 @@ class PythonBehaviorModelWrapper(BehaviorModel):
   def __init__(self,
                dynamic_model = None,
                params = None):
-    # DynamicBehaviorModel.__init__(self, dynamic_model, params)
+    # BehaviorDynamicModel.__init__(self, dynamic_model, params)
     BehaviorModel.__init__(self, params)
     self._dynamic_model = dynamic_model
     self._params = params
@@ -53,7 +53,7 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
                params = None):
     BehaviorModel.__init__(
       self, params)
-    self._dynamic_behavior_model = DynamicBehaviorModel(dynamic_model, params)
+    self._dynamic_behavior_model = BehaviorDynamicModel(dynamic_model, params)
   
   def Plan(self, delta_time, world):
     self._dynamic_behavior_model.SetLastAction(

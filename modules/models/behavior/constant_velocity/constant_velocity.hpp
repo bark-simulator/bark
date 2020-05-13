@@ -22,7 +22,7 @@ using dynamic::Trajectory;
 using world::objects::AgentId;
 using world::ObservedWorld;
 
-
+// behavior model that drives with a const. vel.
 class BehaviorConstantVelocity : public BehaviorIDMClassic {
  public:
   explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :

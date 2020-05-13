@@ -22,6 +22,8 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
   BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
@@ -32,13 +34,13 @@ class BehaviorMotionPrimitives : public BehaviorModel {
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
-            0.02)) {
-             }
+            0.02)) {}
 
   virtual ~BehaviorMotionPrimitives() {}
 
   typedef unsigned int MotionIdx;
-  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorldPtr& observed_world) const = 0;
+  virtual MotionIdx GetNumMotionPrimitives(
+    const ObservedWorldPtr& observed_world) const = 0;
 
   void ActionToBehavior(const MotionIdx& motion_idx) {
     active_motion_ = motion_idx;

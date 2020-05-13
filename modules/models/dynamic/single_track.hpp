@@ -16,6 +16,7 @@ namespace modules {
 namespace models {
 namespace dynamic {
 
+
 class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
@@ -34,7 +35,6 @@ class SingleTrackModel : public DynamicModel {
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State& x, const Input& u) const {
-    // TODO(@fortiss): get parameters from Params
     State tmp(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
     tmp << 1,
         x(StateDefinition::VEL_POSITION) *
