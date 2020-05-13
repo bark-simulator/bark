@@ -34,13 +34,11 @@ class EvaluatorLTL : public BaseEvaluator {
  private:
   EvaluationReturn Evaluate(
       const world::ObservedWorld& observed_world) override;
-  static std::vector<int> AgentListToIds(const AgentMap& agent_map);
-
   std::vector<int> GetKnownAgents();
   void AddKnownAgents(const std::vector<int>& new_agents);
   void RemoveRuleStates(std::vector<int> current_agents);
 
-  unsigned int violation_count_;
+  unsigned int safety_violations_;
   AgentId agent_id_;
   std::string ltl_formula_str_;
   std::vector<RuleState> rule_states_;
