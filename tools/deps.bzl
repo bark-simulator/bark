@@ -80,6 +80,13 @@ cc_library(
     """
     )
 
+    _maybe(
+    git_repository,
+    name = "rule_monitor_project",
+    commit = "ab0dd984b4663eadaa209f2a25d6f4887de4bc7f",
+    remote = "git@github.com:bark-simulator/rule-monitoring.git",
+    )
+
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
         repo_rule(name = name, **kwargs)

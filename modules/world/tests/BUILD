@@ -52,6 +52,17 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "constant_label_evaluator",
+    hdrs = ["constant_label_evaluator.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//modules/world:include",
+        "//modules/world/evaluation:base_evaluator",
+        "@rule_monitor_project//ltl:rule_monitor",
+    ],
+)
+
 
 cc_test(
     name = "opendrive_tests",
@@ -233,4 +244,18 @@ py_test(
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime:runtime"]
+)
+
+py_test(
+    name = "py_evaluator_ltl_tests",
+    srcs = ["py_evaluator_ltl_tests.py"],
+        data = [
+            "//modules/runtime/tests:xodr_data",
+            "//python:bark.so",
+        ],
+        imports = ["../../python/"],
+        deps = [
+            "//modules/runtime/commons:parameters",
+            "//modules/runtime/scenario/scenario_generation",
+        ],
 )

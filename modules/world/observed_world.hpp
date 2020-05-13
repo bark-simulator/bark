@@ -125,7 +125,7 @@ class ObservedWorld : public World {
     return std::dynamic_pointer_cast<World>(observed_world);
   }
   virtual EvaluationMap Evaluate() const;
-
+  LabelMap EvaluateLabels() const;
  private:
   AgentId ego_agent_id_;
 };

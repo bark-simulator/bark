@@ -29,7 +29,8 @@ World::World(const std::shared_ptr<World>& world)
       evaluators_(world->GetEvaluators()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
-      rtree_agents_(world->rtree_agents_) {}
+      rtree_agents_(world->rtree_agents_),
+      label_evaluators_(world->GetLabelEvaluators()){}
 
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
@@ -106,7 +107,7 @@ void World::Step(const float& delta_time) {
 }
 
 std::vector<ObservedWorld> World::Observe(
-    const std::vector<AgentId>& agent_ids) {
+    const std::vector<AgentId>& agent_ids) const {
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
@@ -298,6 +299,17 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
   }
 
   return trajectory_map;
+}
+
+void World::AddLabels(const LabelEvaluators& label_evaluators) {
+  label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(), label_evaluators.end());
+}
+const LabelEvaluators& World::GetLabelEvaluators() const {
+  return label_evaluators_;
+}
+void World::RemoveAgentById(AgentId agent_id) {
+  size_t erased_elems = agents_.erase(agent_id);
+  LOG_IF(ERROR, erased_elems == 0) << "Could not remove non-existent agent with Id " << agent_id << " !";
 }
 
 

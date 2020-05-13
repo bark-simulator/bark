@@ -39,12 +39,15 @@ void python_world(py::module m) {
     .def("DoExecution", &World::DoExecution)
     .def("Observe", &World::Observe)
     .def("AddAgent", &World::AddAgent)
+    .def("RemoveAgentById", &World::RemoveAgentById)
     .def("AddObject", &World::AddObject)
     .def("GetParams", &World::GetParams)
     .def("UpdateAgentRTree", &World::UpdateAgentRTree)
     .def("ClearEvaluators", &World::ClearEvaluators)
     .def("SetMap", &World::SetMap)
     .def("AddEvaluator", &World::AddEvaluator)
+    .def("AddLabels", &World::AddLabels)
+    .def_property_readonly("labels", &World::GetLabelEvaluators)
     .def("GetNearestAgents", &World::GetNearestAgents)
     .def_property_readonly("evaluators", &World::GetEvaluators)
     .def("Evaluate", &World::Evaluate)
@@ -81,6 +84,8 @@ void python_world(py::module m) {
     .def("PredictWithOthersIDM",
       &ObservedWorld::Predict<BehaviorIDMClassic, DynamicBehaviorModel>)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
+    .def("AddLabels", &ObservedWorld::AddLabels)
+    .def("EvaluateLabels", &ObservedWorld::EvaluateLabels)
     .def("__repr__", [](const ObservedWorld& a) {
       return "bark.world.ObservedWorld";
     });

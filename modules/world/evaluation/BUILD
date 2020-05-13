@@ -124,6 +124,22 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_ltl",
+    hdrs = [
+        "evaluator_ltl.hpp"
+    ],
+    srcs = [
+         "evaluator_ltl.cpp",
+    ],
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/world:world",
+        "@rule_monitor_project//ltl:rule_monitor"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -133,7 +149,8 @@ cc_library(
         ":evaluator_collision_ego_agent",
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
-        ":evaluator_distance_to_goal"
+        ":evaluator_distance_to_goal",
+        ":evaluator_ltl",
     ],
     visibility = ["//visibility:public"],
 )

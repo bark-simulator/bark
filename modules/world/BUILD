@@ -13,6 +13,7 @@ cc_library(
         "//modules/models/execution:execution",
 	    "//modules/models/dynamic:dynamic",
         "//modules/world/evaluation:base_evaluator",
+        "//modules/world/evaluation/labels:base_label_evaluator",
         "//modules/world/goal_definition:goal_definition"
     ],
     visibility = ["//visibility:public"],
@@ -29,7 +30,8 @@ cc_library(
         "//modules/commons:include",
         "//modules/models:include",
         "//modules/world/evaluation:include",
-        "//modules/world/goal_definition:include"
+        "//modules/world/goal_definition:include",
+        "//modules/world/evaluation/labels:include",
     ],
     visibility = ["//visibility:public"],
 )

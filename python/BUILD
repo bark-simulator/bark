@@ -13,7 +13,8 @@ cc_binary(
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen", 
+    "@com_github_eigen_eigen//:eigen",
+    "@rule_monitor_project//python/bindings:rule_monitor",
     "//modules/runtime/tests:py_param_server_test_helper",
     "//modules/geometry:geometry",
     "//modules/world/opendrive:opendrive",
@@ -22,6 +23,8 @@ cc_binary(
     "//modules/world/map:roadgraph",
     "//modules/world/goal_definition:goal_definition",
     "//modules/world/evaluation:evaluation",
+    "//modules/world/evaluation/labels:label_evaluation",
+    "//modules/world/tests:constant_label_evaluator",
     "//modules/commons/params:params",
     "//modules/commons/util:util",
     "//modules/models/execution/interpolation:interpolation",

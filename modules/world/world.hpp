@@ -15,6 +15,7 @@
 
 #include <boost/geometry/index/rtree.hpp>
 #include "modules/world/evaluation/base_evaluator.hpp"
+#include "modules/world/evaluation/labels/base_label_evaluator.hpp"
 #include "modules/world/map/roadgraph.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/objects/object.hpp"
@@ -32,6 +33,8 @@ using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
 using modules::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
+using modules::world::evaluation::LabelMap;
+using modules::world::evaluation::BaseLabelEvaluator;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -39,6 +42,7 @@ typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
     EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
 typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
+typedef std::vector<std::shared_ptr<BaseLabelEvaluator>> LabelEvaluators;
 
 using rtree_agent_model =
     boost::geometry::model::box<modules::geometry::Point2d>;
@@ -104,6 +108,8 @@ class World : public commons::BaseType {
 
   void AddAgent(const AgentPtr& agent);
 
+  void RemoveAgentById(AgentId agent_id);
+
   void AddObject(const ObjectPtr& object);
 
   void AddEvaluator(const std::string& name, const EvaluatorPtr& evaluator);
@@ -121,7 +127,7 @@ class World : public commons::BaseType {
   virtual EvaluationMap Evaluate() const;
 
   bool Valid() const;
-  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
+  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids) const;
   void Step(const float& delta_time);
 
   // TODO: use state action pair
@@ -134,10 +140,14 @@ class World : public commons::BaseType {
   void UpdateAgentRTree();
   void RemoveInvalidAgents();
 
+  void AddLabels(const LabelEvaluators& label_evaluators);
+  const LabelEvaluators& GetLabelEvaluators() const;
+
   virtual std::shared_ptr<World> Clone() const;
   std::shared_ptr<World> WorldExecutionAtTime(
       const float& execution_time) const;
-
+ protected:
+  LabelEvaluators label_evaluators_;
  private:
   world::map::MapInterfacePtr map_;
   AgentMap agents_;
