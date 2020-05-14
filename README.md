@@ -21,21 +21,6 @@ The BARK ecosystem is composed of multiple components that all share the common 
 * [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Provides a framework to integrate multiple BARK scenario sets into a database. The database module supports binary seriliazation of randomly generated scenarios to ensure exact  reproducibility of behavior benchmarks accross systems. 
 * [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
 
-## Paper
-
-If you use BARK, please cite us using the following paper:
-
-```
-@misc{bernhard2020bark,
-    title={BARK: Open Behavior Benchmarking in Multi-Agent Environments},
-    author={Julian Bernhard and Klemens Esterle and Patrick Hart and Tobias Kessler},
-    year={2020},
-    eprint={2003.02604},
-    archivePrefix={arXiv},
-    primaryClass={cs.MA}
-}
-```
-
 ## Quick Start
 
 Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
@@ -59,6 +44,21 @@ Intersection: `bazel run //examples:intersection`:
 
 To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.
 For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
+
+## Paper
+
+If you use BARK, please cite us using the following paper:
+
+```
+@misc{bernhard2020bark,
+    title={BARK: Open Behavior Benchmarking in Multi-Agent Environments},
+    author={Julian Bernhard and Klemens Esterle and Patrick Hart and Tobias Kessler},
+    year={2020},
+    eprint={2003.02604},
+    archivePrefix={arXiv},
+    primaryClass={cs.MA}
+}
+```
 
 ## License
 
