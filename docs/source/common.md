@@ -12,6 +12,10 @@ It implements all geometric functions, such as collision checks and distance cal
 
 
 ## BaseObject
+<<<<<<< HEAD
+=======
+A common base class for all BARK classes provides common functionality. Currently, it contains the global `ParameterServer` instance. In the future, this class can be extended with loggers and more bark. 
+>>>>>>> Package Restructuring
 
 All objects in BARK share a common base class, the `BaseType`.
 It provides functionalities and members that are shared and used in all classes.

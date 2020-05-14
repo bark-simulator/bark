@@ -1,0 +1,11 @@
+{
+    "NumOptimizationSteps": 20,
+    "OptimizationStepSize": 0.10000000149011612,
+    "agent1": {
+        "MaxHistoryLength": 50
+    },
+    "simulation": {
+        "step_time": 1,
+        "real_time_factor": 10
+    }
+}

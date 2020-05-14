@@ -1,0 +1,212 @@
+{
+    "Scenario": {
+        "Generation": {
+            "UniformVehicleDistribution": {
+                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "EgoGoal": [
+                    5110,
+                    5217
+                ],
+                "OthersSource": [
+                    [
+                        5111.626,
+                        5006.8305
+                    ]
+                ],
+                "OthersSink": [
+                    [
+                        5110.789,
+                        5293.1725
+                    ]
+                ],
+                "VehicleDistanceRange": [
+                    20,
+                    30
+                ],
+                "VehicleVelocityRange": [
+                    30,
+                    40
+                ],
+                "VehicleModel": {
+                    "behavior_model": "BehaviorConstantVelocity",
+                    "dynamic_model": "SingleTrackModel",
+                    "execution_model": "ExecutionModelInterpolate",
+                    "id": 0,
+                    "state": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "shape": {
+                        "polygon_points": [
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ],
+                            [
+                                3.7720000743865967,
+                                -0.4950000047683716
+                            ],
+                            [
+                                3.4260001182556152,
+                                -0.8870000243186951
+                            ],
+                            [
+                                2.9140000343322754,
+                                -0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                -0.9559999704360962
+                            ],
+                            [
+                                0.0,
+                                -0.9559999704360962
+                            ],
+                            [
+                                -0.5120000243186951,
+                                -0.8859999775886536
+                            ],
+                            [
+                                -1.0199999809265137,
+                                -0.5889999866485596
+                            ],
+                            [
+                                -1.11899995803833,
+                                0.0
+                            ],
+                            [
+                                -1.0199999809265137,
+                                0.5889999866485596
+                            ],
+                            [
+                                -0.5120000243186951,
+                                0.8859999775886536
+                            ],
+                            [
+                                0.0,
+                                0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                0.9559999704360962
+                            ],
+                            [
+                                2.9140000343322754,
+                                0.9559999704360962
+                            ],
+                            [
+                                3.4260001182556152,
+                                0.8870000243186951
+                            ],
+                            [
+                                3.7720000743865967,
+                                0.4950000047683716
+                            ],
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ]
+                        ],
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "followed_trajectory": [],
+                    "planned_trajectory": []
+                }
+            }
+        }
+    },
+    "agent": {
+        "MaxHistoryLength": 50
+    },
+    "Runtime": {
+        "RL": {
+            "StateConcatenation": {
+                "VelocityRange": [
+                    0,
+                    100
+                ],
+                "ThetaRange": [
+                    0,
+                    6.283185307179586
+                ],
+                "Normalize": true,
+                "MaxOtherAgents": 4,
+                "MaxOtherDistance": 100
+            },
+            "ActionWrapper": {
+                "MotionPrimitives": [
+                    [
+                        0,
+                        94.2
+                    ],
+                    [
+                        0,
+                        -188.4
+                    ]
+                ]
+            },
+            "StateEvaluator": {
+                "GoalReward": 0.01,
+                "CollisionReward": -1
+            }
+        }
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.9
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            },
+            "AlphaVehicle": 0.8,
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ]
+        },
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        }
+    },
+    "integration_time_delta": 0.009999999776482582
+}
