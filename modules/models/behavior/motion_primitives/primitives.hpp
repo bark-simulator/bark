@@ -33,10 +33,8 @@ using world::map::LaneCorridorPtr;
 // TODO(@esterle, @bernhard): Add documentation
 class Primitive : public modules::commons::BaseType {
  public:
-  explicit Primitive(const commons::ParamsPtr& params,
-                     const DynamicModelPtr& dynamic_model)
+  explicit Primitive(const commons::ParamsPtr& params)
       : commons::BaseType(params),
-        dynamic_model_(dynamic_model),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
@@ -45,152 +43,112 @@ class Primitive : public modules::commons::BaseType {
   virtual ~Primitive() {}
 
   virtual bool IsPreConditionSatisfied(
-    const ObservedWorldPtr& observed_world) = 0;
-
-  virtual Trajectory Plan(
-    float delta_time,
-    const ObservedWorld& observed_world) = 0;
-
+      const ObservedWorldPtr& observed_world,
+      const LaneCorridorPtr& target_corridor) = 0;
+  virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
+                          const LaneCorridorPtr& target_corridor) = 0;
+  virtual void SetTargetCorridor(const ObservedWorld& observed_world,
+                                 LaneCorridorPtr* target_corridor){};
  protected:
   float integration_time_delta_;
-  // TODO(@esterle, @bernhard): Why not use the model of the agent?
-  DynamicModelPtr dynamic_model_;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;
 
-
-// TODO(@esterle, @bernhard): Is this class required?
-// Only PrimitiveConstAcceleration is a child
-class PrimitiveLaneFollowing : public Primitive {
- public:
-  PrimitiveLaneFollowing(const commons::ParamsPtr& params,
-                         const DynamicModelPtr& dynamic_model)
-      : Primitive(params, dynamic_model) {}
-  virtual void SetTargetCorridor(const ObservedWorld& observed_world) = 0;
-
- protected:
-  LaneCorridorPtr target_corridor_;
-};
-
-
-// TODO(@esterle, @bernhard): Add documentation
-class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
+class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
   PrimitiveConstAcceleration(const commons::ParamsPtr& params,
-                             const DynamicModelPtr& dynamic_model,
-                             float acceleration, float crosstrack_error_gain)
-      : PrimitiveLaneFollowing(params, dynamic_model),
-        acceleration_(acceleration),
-        crosstrack_error_gain_(crosstrack_error_gain) {}
-  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    return true;
+                             float acceleration)
+      : Primitive(params), BehaviorIDMLaneTracking(params),
+        acceleration_(acceleration) {}
+  explicit PrimitiveConstAcceleration(const commons::ParamsPtr& params)
+      : Primitive(params), BehaviorIDMLaneTracking(params),
+        acceleration_(
+            params->GetReal("PrimitiveConstAcceleration::Acceleration",
+                            "Constant acceleration to apply", 0.0)) {}
+  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world,
+                               const LaneCorridorPtr& target_corridor) {
+    auto ego_vel = observed_world->GetEgoAgent()->GetCurrentState()(dynamic::StateDefinition::VEL_POSITION);
+    return (acceleration_ < 0.0f && ego_vel > 1.0e-5f) || (acceleration_ > 0.0f && ego_vel >= 50.0f) || acceleration_ == 0.0f;
   }
 
   // TODO(@esterle, @bernhard): Use BehaviorIDMLaneTracking
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
-    SetTargetCorridor(observed_world);
-    auto single_track =
-        std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model_);
-    if (!single_track) {
-      LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
+  Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
+                  const LaneCorridorPtr& target_corridor) {
+    SetBehaviorStatus(BehaviorStatus::VALID);
+
+    if (!target_corridor) {
+      LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+                << ": Behavior status has expired!" << std::endl;
+      SetBehaviorStatus(BehaviorStatus::EXPIRED);
+      return GetLastTrajectory();
     }
 
-    const float dt = integration_time_delta_;
-    const int num_trajectory_points =
-        static_cast<int>(std::ceil(delta_time / dt)) + 1;
+    double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
+    // interaction term off and GetTotalAcc returns const. acc.
+    IDMRelativeValues rel_values{0., 0., false};
+    std::tuple<Trajectory, Action> traj_action =
+        GenerateTrajectory(
+            observed_world, target_corridor, rel_values, dt);
 
-    Trajectory traj(num_trajectory_points,
-                    static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-    traj.row(0) = observed_world.CurrentEgoState();
-
-    float integration_time;
-    for (int i = 1; i < num_trajectory_points; ++i) {
-      if (i == num_trajectory_points - 1) {
-        // calculate the last time pt, which might not fit to dt
-        integration_time = delta_time - (i - 1) * dt;
-      } else {
-        integration_time = dt;
-      }
-
-      float angle = 0.0f;
-      if (target_corridor_) {
-        const auto& center_line = target_corridor_->GetCenterLine();
-        if (center_line.Valid()) {
-          angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
-                                         center_line, crosstrack_error_gain_);
-        }
-      }
-      Input input(2);
-      input << acceleration_, angle;
-
-      traj.row(i) = dynamic::euler_int(*single_track, traj.row(i - 1), input,
-                                       integration_time);
-    }
+    // set values
+    Trajectory traj = std::get<0>(traj_action);
+    Action action = std::get<1>(traj_action);
+    SetLastTrajectory(traj);
+    SetLastAction(action);
     return traj;
+  }
+
+  virtual void SetTargetCorridor(const ObservedWorld& observed_world,
+                                 LaneCorridorPtr* target_corridor) {
+    BARK_EXPECT_TRUE(*target_corridor);
+  }
+
+ protected:
+  std::pair<double, double> GetTotalAcc(const ObservedWorld& observed_world,
+                                   const IDMRelativeValues& rel_values,
+                                   double rel_distance,
+                                   double dt) const override {
+    return {acceleration_, 0.0f};
   }
 
  private:
   float acceleration_;
-  float crosstrack_error_gain_;
 };
 
-
 // TODO(@esterle, @bernhard): Add documentation
-class PrimitiveGapKeeping : public Primitive,
-                            BehaviorIDMLaneTracking {
+class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
  public:
-  PrimitiveGapKeeping(const commons::ParamsPtr& params,
-                      const DynamicModelPtr& dynamic_model)
-      : Primitive(params, dynamic_model),
-        BehaviorIDMLaneTracking(params) {}
-
-  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    // TODO: which lane to check? should be checked for target lane
-    // auto leading_vehicle = observed_world->GetAgentInFront();
-    // bool satisfied = (leading_vehicle.first) ? true : false;
+  explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)
+      : Primitive(params), BehaviorIDMLaneTracking(params) {}
+  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world,
+                               const LaneCorridorPtr& target_corridor) override {
     return true;
   }
-
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
+  Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
+                  const LaneCorridorPtr& target_corridor) override {
     auto traj = BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
     return traj;
   }
-};
-
-
-// TODO(@esterle, @bernhard): Add documentation
-class PrimitiveConstAccStayLane : public PrimitiveConstAcceleration {
- public:
-  PrimitiveConstAccStayLane(const commons::ParamsPtr& params,
-                            const DynamicModelPtr& dynamic_model,
-                            float acceleration, float crosstrack_error_gain)
-      : PrimitiveConstAcceleration(params, dynamic_model, acceleration,
-                                   crosstrack_error_gain) {}
-
-  virtual void SetTargetCorridor(const ObservedWorld& observed_world) {
-    target_corridor_ = observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+  void SetTargetCorridor(const ObservedWorld& observed_world,
+                         LaneCorridorPtr* target_corridor) override {
+    *target_corridor = observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());
   }
-
-  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    bool satisfied = true;
-    return satisfied;
-  }
 };
-
 
 // TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
  public:
-  PrimitiveConstAccChangeToLeft(const commons::ParamsPtr& params,
-                                const DynamicModelPtr& dynamic_model,
-                                float crosstrack_error_gain)
-      : PrimitiveConstAcceleration(params, dynamic_model, 0,
-                                   crosstrack_error_gain) {}
+  explicit PrimitiveConstAccChangeToLeft(const commons::ParamsPtr& params)
+      : PrimitiveConstAcceleration(params),
+        min_length_(params->GetReal("MinLength",
+                                    "Minimum length of lane to change to",
+                                    0.0f)) {}
 
-  virtual void SetTargetCorridor(const ObservedWorld& observed_world) {
+  void SetTargetCorridor(const ObservedWorld& observed_world,
+                                 LaneCorridorPtr* target_corridor) override {
     const Point2d ego_pos = observed_world.CurrentEgoPosition();
     auto road_corridor = observed_world.GetRoadCorridor();
     LaneCorridorPtr left_corridor;
@@ -198,46 +156,54 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
     std::tie(left_corridor, right_corridor) =
       road_corridor->GetLeftRightLaneCorridor(ego_pos);
     if (left_corridor) {
-      target_corridor_ = left_corridor;
-    } else {
-      target_corridor_ =
-        observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
-          observed_world.CurrentEgoPosition());
+      *target_corridor = left_corridor;
+    } else if (!*target_corridor) {
+      *target_corridor =
+          observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+              observed_world.CurrentEgoPosition());
     }
   }
 
-  // TODO(@esterle, @bernhard): This seems to do nothing?
-  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    // const Point2d ego_pos = observed_world->CurrentEgoPosition();
-    // //! agent may not have reached target lane yet, so we match point on
-    // target
-    // //! lane
-    // const Point2d point_on_target_line =
-    //     GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
+  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world,
+                               const LaneCorridorPtr& target_corridor) {
+    bool satisfied;
+    const Point2d ego_pos = observed_world->CurrentEgoPosition();
+    //! agent may not have reached target lane yet, so we match point on target
+    //! lane
+    const Point2d point_on_target_line =
+        GetNearestPoint(target_corridor->GetCenterLine(), ego_pos);
 
-    // auto road_corridor = observed_world->GetRoadCorridor();
-    // LaneCorridorPtr left_corridor;
-    // LaneCorridorPtr right_corridor;
-    // std::tie(left_corridor, right_corridor) =
-    //     road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
-
-    // bool satisfied = (left_corridor) ? true : false;
-    bool satisfied = true;
+    auto road_corridor = observed_world->GetRoadCorridor();
+    LaneCorridorPtr left_corridor;
+    LaneCorridorPtr right_corridor;
+    std::tie(left_corridor, right_corridor) =
+        road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+    if (left_corridor) {
+      float remaining_length =
+          left_corridor->LengthUntilEnd(point_on_target_line);
+      satisfied = remaining_length >= min_length_;
+    } else {
+      satisfied = false;
+    }
     return satisfied;
   }
+
+ private:
+  float min_length_;
 };
 
 
 // TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
  public:
-  PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params,
-                                 const DynamicModelPtr& dynamic_model,
-                                 float crosstrack_error_gain)
-      : PrimitiveConstAcceleration(params, dynamic_model, 0,
-                                   crosstrack_error_gain) {}
+  explicit PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params)
+      : PrimitiveConstAcceleration(params),
+        min_length_(params->GetReal("MinLength",
+                                    "Minimum length of lane to change to",
+                                    0.0f)) {}
 
-  virtual void SetTargetCorridor(const ObservedWorld& observed_world) {
+  void SetTargetCorridor(const ObservedWorld& observed_world,
+                                 LaneCorridorPtr* target_corridor) override {
     const Point2d ego_pos = observed_world.CurrentEgoPosition();
     auto road_corridor = observed_world.GetRoadCorridor();
     LaneCorridorPtr left_corridor;
@@ -245,33 +211,40 @@ class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
     std::tie(left_corridor, right_corridor) =
         road_corridor->GetLeftRightLaneCorridor(ego_pos);
     if (right_corridor) {
-      target_corridor_ = right_corridor;
-    } else {
-      target_corridor_ =
+      *target_corridor = right_corridor;
+    } else if (!*target_corridor) {
+      *target_corridor =
           observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
               observed_world.CurrentEgoPosition());
     }
   }
-  
-  // TODO(@esterle, @bernhard): This seems to do nothing?
-  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
-    // const Point2d ego_pos = observed_world->CurrentEgoPosition();
-    // //! agent may not have reached target lane yet, so we match point on
-    // target
-    // //! lane
-    // const Point2d point_on_target_line =
-    //     GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
 
-    // auto road_corridor = observed_world->GetRoadCorridor();
-    // LaneCorridorPtr left_corridor;
-    // LaneCorridorPtr right_corridor;
-    // std::tie(left_corridor, right_corridor) =
-    //     road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+  bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world,
+                               const LaneCorridorPtr& target_corridor) {
+    bool satisfied;
+    const Point2d ego_pos = observed_world->CurrentEgoPosition();
+    //! agent may not have reached target lane yet, so we match point on target
+    //! lane
+    const Point2d point_on_target_line =
+        GetNearestPoint(target_corridor->GetCenterLine(), ego_pos);
 
-    // bool satisfied = (right_corridor) ? true : false;
-    bool satisfied = true;
+    auto road_corridor = observed_world->GetRoadCorridor();
+    LaneCorridorPtr left_corridor;
+    LaneCorridorPtr right_corridor;
+    std::tie(left_corridor, right_corridor) =
+        road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+    if (right_corridor) {
+      float remaining_length =
+          right_corridor->LengthUntilEnd(point_on_target_line);
+      satisfied = remaining_length >= min_length_;
+    } else {
+      satisfied = false;
+    }
     return satisfied;
   }
+
+ private:
+  float min_length_;
 };
 
 }  // namespace primitives

@@ -101,23 +101,33 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
 }
 
 TEST(primitive_constant_acceleration, behavior_test) {
-  using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+  using modules::models::behavior::primitives::PrimitiveConstAcceleration;
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
-  PrimitiveConstAccStayLane primitive(params, dynamics, 0, 0.1);
+  PrimitiveConstAcceleration primitive(params, 0);
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
   auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
-  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1));
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1, nullptr));
   // auto traj = primitive.Plan(0.5, world1);
+
+  PrimitiveConstAcceleration dec_primitive(params, -5.0);
+  init_state << 0.0, 0.0, 0.0, 0.0, 0.0;
+  auto world2 = std::make_shared<DummyObservedWorld>(init_state, params);
+  EXPECT_FALSE(dec_primitive.IsPreConditionSatisfied(world2, nullptr));
+
+  PrimitiveConstAcceleration acc_primitive(params, 5.0);
+  init_state << 0.0, 0.0, 0.0, 0.0, 50.0f;
+  auto world3 = std::make_shared<DummyObservedWorld>(init_state, params);
+  EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world3, nullptr));
 }
 
 TEST(primitive_change_left, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
-  PrimitiveConstAccChangeToLeft primitive(params, dynamics, 0.1);
+  PrimitiveConstAccChangeToLeft primitive(params);
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
@@ -130,7 +140,7 @@ TEST(primitive_gap_keeping, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveGapKeeping;
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
-  PrimitiveGapKeeping primitive(params, dynamics);
+  PrimitiveGapKeeping primitive(params);
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
@@ -141,7 +151,7 @@ TEST(primitive_gap_keeping, behavior_test) {
 
 TEST(macro_actions, behavior_test) {
   using namespace modules::models::behavior::primitives;
-  using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+  using modules::models::behavior::primitives::PrimitiveConstAcceleration;
 
   auto params = std::make_shared<DefaultParams>();
   params->SetReal("integration_time_delta", 0.01);
@@ -150,20 +160,20 @@ TEST(macro_actions, behavior_test) {
   std::vector<std::shared_ptr<Primitive>> prim_vec;
   
   auto primitive =
-      std::make_shared<PrimitiveConstAccStayLane>(params, dynamics, 0, 0.1);
+      std::make_shared<PrimitiveConstAcceleration>(params, 0.0);
   prim_vec.push_back(primitive);
 
   auto primitive_left =
-      std::make_shared<PrimitiveConstAccChangeToLeft>(params, dynamics, 0.1);
+      std::make_shared<PrimitiveConstAccChangeToLeft>(params);
   prim_vec.push_back(primitive_left);
 
   auto primitive_right =
-      std::make_shared<PrimitiveConstAccChangeToRight>(params, dynamics, 0.1);
+      std::make_shared<PrimitiveConstAccChangeToRight>(params);
   prim_vec.push_back(primitive_right);
 
   BehaviorMPMacroActions behavior(dynamics, params);
-  for (auto& p : prim_vec) {
-    auto idx = behavior.AddMotionPrimitive(primitive);
+  for (const auto& p : prim_vec) {
+    auto idx = behavior.AddMotionPrimitive(p);
   }
 }
 

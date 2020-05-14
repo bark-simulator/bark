@@ -47,6 +47,7 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   }
   friend class BaseIDM;
  private:
+  // TODO: Unused member?
   int lane_corr_id_;
   double crosstrack_error_gain_;
   bool limit_steering_rate_;

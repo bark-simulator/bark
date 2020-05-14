@@ -37,7 +37,7 @@ class PyBehaviorModel : public BehaviorModel {
   }
 
   std::shared_ptr<BehaviorModel> Clone() const {
-    PYBIND11_OVERLOAD(
+    PYBIND11_OVERLOAD_PURE(
       std::shared_ptr<BehaviorModel>,
       BehaviorModel,
       Clone);
@@ -59,13 +59,15 @@ class PyPrimitive : public Primitive {
   }
 
   Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world) {
+                          const ObservedWorld& observed_world, const
+                  modules::world::LaneCorridorPtr& target_corridor) {
       PYBIND11_OVERLOAD_PURE(
       modules::models::dynamic::Trajectory,
       Primitive,
       Plan,
       delta_time,
-      observed_world);
+      observed_world,
+      target_corridor);
     }
 };
 

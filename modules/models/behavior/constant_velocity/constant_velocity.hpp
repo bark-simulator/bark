@@ -34,7 +34,7 @@ class BehaviorConstantVelocity : public BehaviorIDMClassic {
   Trajectory Plan(float delta_time,
                   const ObservedWorld& observed_world);
 
-  std::pair<double, double> GetTotalAcc(
+  virtual std::pair<double, double> GetTotalAcc(
     const world::ObservedWorld& observed_world,
     const IDMRelativeValues& rel_values,
     double rel_distance,

@@ -200,31 +200,119 @@ void python_behavior(py::module m) {
             shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
   .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
                 const modules::commons::ParamsPtr&>())
+  .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
+                const modules::commons::ParamsPtr&,
+                const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
-  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive);
+  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
+  .def(py::pickle(
+      [](const BehaviorMPMacroActions& b) {
+        std::vector<py::tuple> prims;
+        for(const auto& p : b.GetMotionPrimitives()) {
+          prims.emplace_back(PrimitiveToPython(p));
+        }
+        return py::make_tuple(
+            b.GetDynamicModel(),
+            ParamsToPython(b.GetParams()),
+            prims);
+      },
+      [](py::tuple t) {
+        if (t.size() != 3)
+          throw std::runtime_error("Invalid behavior model state!");
+        auto tuples = t[2].cast<std::vector<py::tuple>>();
+        std::vector<PrimitivePtr> prims;
+        for(const auto& tup : tuples) {
+          prims.emplace_back(PythonToPrimitive(tup));
+        }
+        return new BehaviorMPMacroActions(
+            t[0].cast<DynamicModelPtr>(),
+            PythonToParams(t[1].cast<py::tuple>()),
+            prims);
+      }));
+
+  py::class_<PrimitiveGapKeeping,
+             Primitive,
+             std::shared_ptr<PrimitiveGapKeeping>>(m, "PrimitiveGapKeeping")
+      .def(py::init<const modules::commons::ParamsPtr&,
+                    const modules::models::dynamic::DynamicModelPtr&>())
+      .def(py::pickle(
+          [](const PrimitiveGapKeeping& b) {
+            return py::make_tuple(
+                b.GetDynamicModel(),
+                ParamsToPython(b.Primitive::GetParams()));
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid behavior model state!");
+            return new PrimitiveGapKeeping(
+                PythonToParams(t[1].cast<py::tuple>()),
+                t[0].cast<DynamicModelPtr>());
+          }));
 
   py::class_<PrimitiveConstAccStayLane,
              Primitive,
              std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstAccStayLane")
     .def(py::init<const modules::commons::ParamsPtr&,
         const modules::models::dynamic::DynamicModelPtr&,
-        float, float>());
+        float, float>())
+    .def(py::init<const modules::commons::ParamsPtr&,
+                const modules::models::dynamic::DynamicModelPtr&>()).def(py::pickle(
+      [](const PrimitiveConstAccStayLane& b) {
+        return py::make_tuple(
+            b.GetDynamicModel(),
+            ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 2)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new PrimitiveConstAccStayLane(
+            PythonToParams(t[1].cast<py::tuple>()),
+            t[0].cast<DynamicModelPtr>());
+      }));
 
   py::class_<PrimitiveConstAccChangeToLeft,
              Primitive,
              std::shared_ptr<PrimitiveConstAccChangeToLeft>>(m, "PrimitiveConstAccChangeToLeft")
     .def(py::init<const modules::commons::ParamsPtr&,
         const modules::models::dynamic::DynamicModelPtr&,
-        float>());
-  
+        float>())
+    .def(py::init<const modules::commons::ParamsPtr&,
+                const modules::models::dynamic::DynamicModelPtr&>())
+      .def(py::pickle(
+          [](const PrimitiveConstAccChangeToLeft& b) {
+            return py::make_tuple(
+                b.GetDynamicModel(),
+                ParamsToPython(b.GetParams()));
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid behavior model state!");
+            return new PrimitiveConstAccChangeToLeft(
+                PythonToParams(t[1].cast<py::tuple>()),
+                t[0].cast<DynamicModelPtr>());
+          }));
+
   py::class_<PrimitiveConstAccChangeToRight,
              Primitive,
              std::shared_ptr<PrimitiveConstAccChangeToRight>>(m, "PrimitiveConstAccChangeToRight")
     .def(py::init<const modules::commons::ParamsPtr&,
         const modules::models::dynamic::DynamicModelPtr&,
-        float>());
-
-  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
+        float>())
+    .def(py::init<const modules::commons::ParamsPtr&,
+                const modules::models::dynamic::DynamicModelPtr&>())
+      .def(py::pickle(
+          [](const PrimitiveConstAccChangeToRight& b) {
+            return py::make_tuple(
+                b.GetDynamicModel(),
+                ParamsToPython(b.GetParams()));
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid behavior model state!");
+            return new PrimitiveConstAccChangeToRight(
+                PythonToParams(t[1].cast<py::tuple>()),
+                t[0].cast<DynamicModelPtr>());
+          }));
 
   py::class_<BehaviorDynamicModel,
              BehaviorModel,

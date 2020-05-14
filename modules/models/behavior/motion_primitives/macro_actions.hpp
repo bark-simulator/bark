@@ -11,17 +11,23 @@
 
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/motion_primitives/primitives.hpp"
+#include "modules/world/map/lane_corridor.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
+using world::map::LaneCorridorPtr;
+using commons::ParamsPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
   BehaviorMPMacroActions(const DynamicModelPtr& dynamic_model,
-                         const commons::ParamsPtr& params) :
-    BehaviorMotionPrimitives(dynamic_model, params) {}
+                         const ParamsPtr& params)
+      : BehaviorMotionPrimitives(dynamic_model, params) {}
+  BehaviorMPMacroActions(
+      const DynamicModelPtr& dynamic_model, const ParamsPtr& params,
+      const std::vector<primitives::PrimitivePtr>& motion_primitives);
 
   virtual ~BehaviorMPMacroActions() {}
 
@@ -29,30 +35,20 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
                           const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(
-    const ObservedWorldPtr& observed_world) const {
-    // MotionIdx count = 0;
-    // for (auto const& p : motion_primitives_) {
-    //   if (p->IsPreConditionSatisfied(observed_world)) {
-    //     count++;
-    //   }
-    // }
-    // TODO: this should be a vector!!
-    return motion_primitives_.size();
-  }
+      const ObservedWorldPtr& observed_world);
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
+  const std::vector<primitives::PrimitivePtr>& GetMotionPrimitives() const;
+  const std::vector<BehaviorMPMacroActions::MotionIdx>& GetValidPrimitives(
+      const ObservedWorldPtr& observed_world);
 
  private:
   std::vector<primitives::PrimitivePtr> motion_primitives_;
+  std::vector<MotionIdx> valid_primitives_;
+  LaneCorridorPtr target_corridor_;
 };
-
-inline std::shared_ptr<BehaviorModel> BehaviorMPMacroActions::Clone() const {
-  std::shared_ptr<BehaviorMPMacroActions> model_ptr =
-      std::make_shared<BehaviorMPMacroActions>(*this);
-  return model_ptr;
-}
 
 }  // namespace behavior
 }  // namespace models

@@ -23,21 +23,62 @@ BehaviorMPMacroActions::AddMotionPrimitive(const primitives::PrimitivePtr& primi
 Trajectory BehaviorMPMacroActions::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
-  // TODO: move this to Predicate
   const float dt = integration_time_delta_;
   const int num_trajectory_points =
       static_cast<int>(std::ceil(delta_time / dt)) + 1;
 
   Trajectory traj(num_trajectory_points,
                   static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-
-  traj = motion_primitives_.at(active_motion_)->Plan(delta_time, observed_world);
-  // traj = 
-
-  // SetLastAction(Action(DiscreteAction(active_motion_)));
+  if(!target_corridor_) {
+    target_corridor_ = observed_world.GetLaneCorridor();
+  }
+  // There must be at least one primitive that is always available!
+  if(valid_primitives_.empty()) {
+    GetNumMotionPrimitives(std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone()));
+    LOG_IF(ERROR, valid_primitives_.empty()) << "No motion primitive available! At least one primitive must be available at all times!";
+  }
+  motion_primitives_.at(valid_primitives_.at(active_motion_))->SetTargetCorridor(observed_world, &target_corridor_);
+  traj = motion_primitives_.at(valid_primitives_.at(active_motion_))
+             ->Plan(delta_time, observed_world, target_corridor_);
 
   this->SetLastTrajectory(traj);
   return traj;
+}
+const std::vector<primitives::PrimitivePtr>&
+BehaviorMPMacroActions::GetMotionPrimitives() const {
+  return motion_primitives_;
+}
+BehaviorMPMacroActions::BehaviorMPMacroActions(
+    const DynamicModelPtr& dynamic_model, const commons::ParamsPtr& params,
+    const std::vector<primitives::PrimitivePtr>& motion_primitives)
+    : BehaviorMotionPrimitives(dynamic_model, params),
+      motion_primitives_(motion_primitives) {}
+
+BehaviorMotionPrimitives::MotionIdx
+BehaviorMPMacroActions::GetNumMotionPrimitives(
+    const ObservedWorldPtr& observed_world) {
+  MotionIdx i = 0;
+  if(!target_corridor_) {
+    target_corridor_ = observed_world->GetLaneCorridor();
+  }
+  valid_primitives_.clear();
+  for (auto const& p : motion_primitives_) {
+    if (p->IsPreConditionSatisfied(observed_world, target_corridor_)) {
+      valid_primitives_.push_back(i);
+    }
+    ++i;
+  }
+  return valid_primitives_.size();
+}
+const std::vector<BehaviorMPMacroActions::MotionIdx>& BehaviorMPMacroActions::GetValidPrimitives(
+    const ObservedWorldPtr& observed_world) {
+  GetNumMotionPrimitives(observed_world);
+  return valid_primitives_;
+}
+inline std::shared_ptr<BehaviorModel> BehaviorMPMacroActions::Clone() const {
+  std::shared_ptr<BehaviorMPMacroActions> model_ptr =
+      std::make_shared<BehaviorMPMacroActions>(*this);
+  return model_ptr;
 }
 
 }  // namespace behavior
