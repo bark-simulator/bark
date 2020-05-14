@@ -1,3 +1,33 @@
+<<<<<<< HEAD
+=======
+py_test(
+  name = "od8_const_vel_one_agent",
+  srcs = ["od8_const_vel_one_agent.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/commons:model_json_conversion",
+          "//modules/runtime/viewer:pygame_viewer",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",],
+)
+
+py_binary(
+  name = "analyze_map",
+  srcs = ["analyze_map.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",],
+)
+>>>>>>> Export classes from modules
 
 py_test(
   name = "benchmark_database",

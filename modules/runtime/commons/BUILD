@@ -1,6 +1,6 @@
 py_library(
     name = "parameters",
-    srcs = ["parameters.py"],
+    srcs = ["parameters.py","__init__.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
     deps = [],
@@ -9,7 +9,7 @@ py_library(
 
 py_library(
     name = "commons",
-    srcs = ["commons.py"],
+    srcs = ["commons.py","__init__.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
     deps = [],
@@ -18,7 +18,7 @@ py_library(
 
 py_library(
     name = "xodr_parser",
-    srcs = ["xodr_parser.py"],
+    srcs = ["xodr_parser.py","__init__.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
     deps = [],
@@ -27,7 +27,7 @@ py_library(
 
 py_library(
     name = "model_json_conversion",
-    srcs = ["model_json_conversion.py"],
+    srcs = ["model_json_conversion.py","__init__.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
     deps = [],

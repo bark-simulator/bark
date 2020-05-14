@@ -1,0 +1,90 @@
+{
+    "NumOptimizationSteps": 20,
+    "OptimizationStepSize": 0.10000000149011612,
+    "agent1": {
+        "MaxHistoryLength": 50
+    },
+    "simulation": {
+        "step_time": 1,
+        "real_time_factor": 10
+    },
+    "World": {
+        "remove_agents_out_of_map": false
+    },
+    "DynamicModel": {
+        "wheel_base": 2.700000047683716,
+        "delta_max": 0.20000000298023224,
+        "lat_acc_max": 4.0
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "Other": {
+                    "Lines": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Face": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ]
+                },
+                "Controlled": {
+                    "Lines": [
+                        0.9,
+                        0,
+                        0
+                    ],
+                    "Face": [
+                        0.9,
+                        0,
+                        0
+                    ]
+                },
+                "UseColormapForOtherAgents": false
+            },
+            "Alpha": {
+                "Controlled": 0.8,
+                "Other": 1
+            },
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "DrawAgentId": false,
+            "DrawEvalGoals": true,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.7
+            ],
+            "DrawHistory": false
+        },
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0,
+                    "Linewidth": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        }
+    }
+}

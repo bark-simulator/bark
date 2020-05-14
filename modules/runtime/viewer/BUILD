@@ -19,7 +19,7 @@ filegroup(
 
 py_library(
     name = "py_viewer",
-    srcs = ["viewer.py"],
+    srcs = ["viewer.py","__init__.py"],
     data = ['//python:bark.so'],
     imports = ['../../../python/'],
     deps = ["//modules/runtime/commons:parameters",
