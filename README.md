@@ -42,8 +42,6 @@ Use `git clone https://github.com/bark-simulator/bark.git` or download the repos
 Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/master/docs/source/installation.md).
 Once you activated the virtual environment (`source dev_into.sh`), you can explore some examples of BARK.
 
-After the installation, you can explore the examples by e.g. running `source dev_into.sh && bazel run //examples:od8_const_vel_two_agent`.
-
 Highway: `bazel run //examples:highway`:
 <p align="center">
 <img src="docs/source/gifs/bark_highway.gif" alt="BARK" />
