@@ -12,6 +12,7 @@ from bark.runtime.scenario.scenario_generation.scenario_generation \
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
 from bark.runtime.commons.parameters import ParameterServer
 # PyBind imports
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/runtime/scenario/scenario_generation/interaction_dataset_scenario_generation.py
 from bark.world.map import *
 from bark.models.dynamic import *
@@ -22,6 +23,11 @@ from modules.runtime.scenario.interaction_dataset_processing.agent_track_info im
 from bark.core.core.world.map import *
 from bark.core.core.models.dynamic import *
 from bark.core.core.models.execution import *
+=======
+from bark.pybark.core.world.map import *
+from bark.pybark.core.models.dynamic import *
+from bark.pybark.core.models.execution import *
+>>>>>>> Wrapped C++ bark in pybark
 import os.path
 >>>>>>> Package Restructuring:bark/runtime/scenario/scenario_generation/interaction_dataset_scenario_generation.py
 

@@ -9,7 +9,7 @@ import numpy as np
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderControlledAgents
 
-from bark.core.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
+from bark.pybark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
 from bark.runtime.commons.parameters import ParameterServer
 
 # no one (in this road corridor) is a controlled agent

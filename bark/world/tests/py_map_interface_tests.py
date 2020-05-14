@@ -9,14 +9,14 @@ import time
 import math
 import filecmp
 import matplotlib.pyplot as plt
-from bark.core.core.world.agent import Agent
-from bark.core.core.world import World
-from bark.core.core.geometry import Point2d, Polygon2d
-from bark.core.core.geometry import Point2d
+from bark.pybark.core.world.agent import Agent
+from bark.pybark.core.world import World
+from bark.pybark.core.geometry import Point2d, Polygon2d
+from bark.pybark.core.geometry import Point2d
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.core.world.opendrive import OpenDriveMap, MakeXodrMapOneRoadTwoLanes, \
+from bark.pybark.core.world.opendrive import OpenDriveMap, MakeXodrMapOneRoadTwoLanes, \
   XodrLaneType
-from bark.core.core.world.map import MapInterface
+from bark.pybark.core.world.map import MapInterface
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 import numpy as np

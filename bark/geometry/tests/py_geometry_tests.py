@@ -14,10 +14,15 @@ import matplotlib as mpl
 if os.environ.get('DISPLAY', '') == '':
     print('no display found. Using non-interactive Agg backend')
     mpl.use('Agg')
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/geometry/tests/py_geometry_tests.py
 =======
 from bark.core.core.geometry import *
 from bark.core.core.geometry.standard_shapes import *
+=======
+from bark.pybark.core.geometry import *
+from bark.pybark.core.geometry.standard_shapes import *
+>>>>>>> Wrapped C++ bark in pybark
 import math
 import numpy as np
 >>>>>>> Package Restructuring:bark/geometry/tests/py_geometry_tests.py

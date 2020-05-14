@@ -11,7 +11,7 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 import os
 behavior_used = None
 try:
-  from bark.core.core.models.behavior import BehaviorUCTSingleAgent
+  from bark.pybark.core.models.behavior import BehaviorUCTSingleAgent
   behavior_used = BehaviorUCTSingleAgent
 except:
   print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:planner_uct --define planner_uct=true ")

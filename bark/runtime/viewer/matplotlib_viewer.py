@@ -8,9 +8,9 @@ from matplotlib.patches import Polygon
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
-from bark.core.core.viewer import *
-from bark.core.core.geometry import *
-from bark.core.core.models.dynamic import StateDefinition
+from bark.pybark.core.viewer import *
+from bark.pybark.core.geometry import *
+from bark.pybark.core.models.dynamic import StateDefinition
 
 from bark.runtime.viewer.viewer import BaseViewer
 

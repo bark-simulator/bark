@@ -5,6 +5,7 @@ from direct.task import Task
 from math import pi
 import os
 
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/runtime/viewer/panda3d_viewer.py
 from bark.viewer import Viewer
 from bark.models.dynamic import StateDefinition
@@ -13,6 +14,10 @@ from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3
 =======
 from bark.core.core.viewer import Viewer
 from bark.core.core.models.dynamic import StateDefinition
+=======
+from bark.pybark.core.viewer import Viewer
+from bark.pybark.core.models.dynamic import StateDefinition
+>>>>>>> Wrapped C++ bark in pybark
 from bark.runtime.viewer.viewer import BaseViewer
 from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath
 >>>>>>> Package Restructuring:bark/runtime/viewer/panda3d_viewer.py

@@ -9,8 +9,8 @@ import pickle
 import numpy as np
 
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.core.commons import CppParamServerTestObject
-from bark.core.core.models.behavior import BehaviorIDMClassic
+from bark.pybark.core.commons import CppParamServerTestObject
+from bark.pybark.core.models.behavior import BehaviorIDMClassic
 
 def pickle_unpickle(object):
     return pickle.loads(

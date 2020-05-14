@@ -6,7 +6,7 @@
 
 import json
 import os
-from bark.core.core.commons import Params
+from bark.pybark.core.commons import Params
 import logging
 logging.getLogger().setLevel(logging.DEBUG)
 

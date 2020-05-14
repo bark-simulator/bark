@@ -125,7 +125,7 @@ cc_test(
 py_test(
   name = "py_behavior_model_test",
   srcs = ["py_behavior_model_test.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data'],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",

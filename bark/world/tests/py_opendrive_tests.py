@@ -8,9 +8,9 @@ import unittest
 import numpy as np
 
 from scipy.special import fresnel
-from bark.core.core.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth,\
+from bark.pybark.core.world.opendrive import PlanView, XodrLaneOffset, XodrLaneWidth,\
   XodrLane, XodrRoad, FresnelCos, FresnelSin
-from bark.core.core.geometry import Point2d
+from bark.pybark.core.geometry import Point2d
 
 
 class EnvironmentTests(unittest.TestCase):

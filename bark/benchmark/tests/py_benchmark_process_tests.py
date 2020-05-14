@@ -18,9 +18,9 @@ from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
-from bark.core.core.world.evaluation import *
+from bark.pybark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
+from bark.pybark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
 # to find database files
 os.chdir("../benchmark_database/")

@@ -14,7 +14,7 @@ cc_test(
 py_test(
   name = "py_geometry_tests",
   srcs = ["py_geometry_tests.py"],
-  data = ['//bark/core:core.so'],
+  data = ['//bark/pybark:core.so'],
   imports = ['../../../python/'],
   deps = [],
 )

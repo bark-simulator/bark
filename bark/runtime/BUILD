@@ -1,7 +1,7 @@
 py_library(
     name = "runtime",
     srcs = ["runtime.py"],
-    data = ['//bark/core:core.so'],
+    data = ['//bark/pybark:core.so'],
     imports = ['../../../python'],
     deps = ["//bark/runtime/commons:parameters",
             "//bark/runtime/commons:commons",

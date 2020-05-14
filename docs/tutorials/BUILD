@@ -21,7 +21,7 @@ py_binary(
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           "//bark/runtime:runtime"],
   data = [":notebooks_folder",
-          "//bark/core:core.so",
+          "//bark/pybark:core.so",
           "//bark/runtime/tests:xodr_data",
           "@benchmark_database//data/database1:database1",
           ]
@@ -40,7 +40,7 @@ py_test(
           "//bark/benchmark:benchmark_analyzer",
           ],
   data = [":notebooks_folder",
-          "//bark/core:core.so",
+          "//bark/pybark:core.so",
           "//bark/runtime/tests:xodr_data",
           "@benchmark_database//data/database1:database1",
           ]

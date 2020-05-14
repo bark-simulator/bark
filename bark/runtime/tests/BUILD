@@ -14,7 +14,7 @@ filegroup(
 py_test(
   name = "py_importer_tests",
   srcs = ["py_importer_tests.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           ':xodr_data'],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -25,7 +25,7 @@ py_test(
 py_test(
   name = "py_scenario_generation_tests",
   srcs = ["py_scenario_generation_tests.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
             ':xodr_data'],
   imports = ['../../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -37,7 +37,7 @@ py_test(
 py_test(
   name = "py_runtime_tests",
   srcs = ["py_runtime_tests.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
             ':xodr_data'],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -58,7 +58,7 @@ cc_library(
 py_test(
   name = "py_param_server_tests",
   srcs = ["py_param_server_tests.py"],
-  data = ['//bark/core:core.so'],
+  data = ['//bark/pybark:core.so'],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters" ]
 )
@@ -66,7 +66,7 @@ py_test(
 py_test(
   name = "py_evaluation_tests",
   srcs = ["py_evaluation_tests.py"],
-  data = ['//bark/core:core.so'],
+  data = ['//bark/pybark:core.so'],
   imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime:runtime"],
@@ -75,7 +75,7 @@ py_test(
 py_test(
   name = "py_interaction_dataset_reader_test",
   srcs = ["py_interaction_dataset_reader_test.py"],
-  data = ['//bark/core:core.so', 
+  data = ['//bark/pybark:core.so', 
           ':xodr_data',
          ],
   imports = ['../python/'],
@@ -89,7 +89,7 @@ py_test(
 py_test(
   name = "py_interaction_dataset_decomposer_test",
   srcs = ["py_interaction_dataset_decomposer_test.py"],
-  data = ['//bark/core:core.so', 
+  data = ['//bark/pybark:core.so', 
           ':xodr_data',
           ':track_data',
          ],

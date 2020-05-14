@@ -10,8 +10,8 @@ from bark.runtime.scenario.scenario_generation.scenario_generation \
 from bark.runtime.scenario.scenario_generation.config_readers import *
 from bark.runtime.commons.parameters import ParameterServer
 
-from bark.core.core.geometry import *
-from bark.core.core.world.agent import Agent
+from bark.pybark.core.geometry import *
+from bark.pybark.core.world.agent import Agent
 
 import numpy as np
 import math

@@ -16,7 +16,7 @@ from configurations.highway.configuration_lib import HighwayConfiguration
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from load.benchmark_database import BenchmarkDatabase
 from bark.benchmark.benchmark_runner import BenchmarkRunner
-from bark.core.core.world.evaluation import EvaluatorGoalReached, \
+from bark.pybark.core.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.runtime import Runtime

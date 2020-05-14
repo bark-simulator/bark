@@ -7,10 +7,10 @@
 import unittest
 import filecmp
 import matplotlib.pyplot as plt
-from bark.core.core.geometry.standard_shapes import *
+from bark.pybark.core.geometry.standard_shapes import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.core.world.opendrive import XodrLaneType
-from bark.core.core.world.map import MapInterface
+from bark.pybark.core.world.opendrive import XodrLaneType
+from bark.pybark.core.world.map import MapInterface
 from bark.runtime.commons.xodr_parser import XodrParser
 
 

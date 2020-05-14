@@ -1,7 +1,7 @@
 py_test(
   name = "od8_const_vel_one_agent",
   srcs = ["od8_const_vel_one_agent.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
   #imports = ['../core/'],
@@ -17,7 +17,7 @@ py_test(
 py_binary(
   name = "analyze_map",
   srcs = ["analyze_map.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
   imports = ['../python/'],
@@ -30,7 +30,7 @@ py_binary(
 py_binary(
   name = "hello",
   srcs = ["hello.py"],
-  data = ['//bark/core:core.so' ],
+  data = ['//bark/pybark:core.so' ],
   imports = ['../core'],
   #deps = ['//bark:init_py'],
 )
@@ -38,7 +38,7 @@ py_binary(
 py_test(
   name = "planner_uct_benchmark",
   srcs = ["planner_uct_benchmark.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '@benchmark_database_release//:v2.0',
           ':params'],
   imports = ['../python/'],
@@ -52,7 +52,7 @@ py_test(
 py_test(
   name = "planner_uct",
   srcs = ["planner_uct.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
   imports = ['../python/'],
@@ -67,7 +67,7 @@ py_test(
 py_test(
   name = "od8_const_vel_two_agent",
   srcs = ["od8_const_vel_two_agent.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
   imports = ['../python/'],
@@ -81,7 +81,7 @@ py_test(
 py_test(
   name = "scenario_video_rendering",
   srcs = ["scenario_video_rendering.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params',
           ':scenarios'],
@@ -97,7 +97,7 @@ py_test(
 py_test(
   name = "scenario_dump_load",
   srcs = ["scenario_dump_load.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params',
           ':scenarios'],
@@ -113,7 +113,7 @@ py_test(
 py_test(
   name = "scenarios_from_database",
   srcs = ["scenarios_from_database.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           '@benchmark_database_release//:v2.0'],
   imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -137,12 +137,12 @@ filegroup(
 py_binary(
   name = "barkml",
   srcs = ["barkml.py"],
-  data = ['//bark/core:core.so',
+  data = ['//bark/pybark:core.so',
           "@bark_ml//tests/data:bark_data",
           '//bark/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
           "@benchmark_database//data/database1:database1",
-          "@bark_ml//bark/core:bark_ml.so",
+          "@bark_ml//bark/pybark:bark_ml.so",
           ':params',
           ':scenarios'],
   imports = ["../python/",
@@ -162,7 +162,7 @@ py_binary(
     srcs = ["interaction_dataset_runner.py"],
     data = [
         ":params",
-        "//bark/core:core.so",
+        "//bark/pybark:core.so",
     ] + 
     select({"//bark/runtime/scenario/interaction_dataset_processing:_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],

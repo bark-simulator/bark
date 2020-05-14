@@ -6,11 +6,11 @@
 
 import numpy as np
 import logging
-from bark.core.core.viewer import Viewer
-from bark.core.core.geometry import *
-from bark.core.core.models.dynamic import *
-from bark.core.core.world.opendrive import *
-from bark.core.core.world.goal_definition import *
+from bark.pybark.core.viewer import Viewer
+from bark.pybark.core.geometry import *
+from bark.pybark.core.models.dynamic import *
+from bark.pybark.core.world.opendrive import *
+from bark.pybark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 

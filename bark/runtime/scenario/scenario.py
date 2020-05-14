@@ -4,9 +4,9 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.core.core.world.agent import Agent
-from bark.core.core.world import World
-from bark.core.core.world.map import MapInterface
+from bark.pybark.core.world.agent import Agent
+from bark.pybark.core.world import World
+from bark.pybark.core.world.map import MapInterface
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.commons.xodr_parser import XodrParser
 import copy
@@ -50,7 +50,7 @@ class Scenario:
     """get initial world state of scenario to start simulation from here
     
     Returns:
-        [bark.core.core.world.World]
+        [bark.pybark.core.world.World]
     """
     return self._build_world_state()
 

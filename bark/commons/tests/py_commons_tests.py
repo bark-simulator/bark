@@ -5,7 +5,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-from bark.core.core.commons import *
+from bark.pybark.core.commons import *
 from bark.runtime.commons.parameters import ParameterServer
 
 

@@ -9,7 +9,7 @@ py_library(
             "drone_challenge.py",
             "interaction_dataset_scenario_generation.py",
             "interaction_dataset_scenario_generation_full.py"],
-    data = ['//bark/core:core.so'],
+    data = ['//bark/pybark:core.so'],
     imports = ['../../../python'],
     deps = [
         "//bark/runtime/scenario:scenario",

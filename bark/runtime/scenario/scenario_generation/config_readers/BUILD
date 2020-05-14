@@ -10,7 +10,7 @@ py_library(
      "controlled_agents_config_readers.py",
      "goal_definition_config_readers.py"
      ],
-    data = ['//bark/core:core.so'],
+    data = ['//bark/pybark:core.so'],
     imports = ['../../../python'],
     deps = ["//bark/runtime/scenario:scenario",],
     visibility = ["//visibility:public"],

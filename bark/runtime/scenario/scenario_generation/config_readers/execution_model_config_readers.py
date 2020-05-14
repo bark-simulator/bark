@@ -8,7 +8,7 @@
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderExecutionModels
 
-from bark.core.core.models.execution import *
+from bark.pybark.core.models.execution import *
 from bark.runtime.commons.parameters import ParameterServer
 
 # this config reader execution behavior models with fixed type for all agents
