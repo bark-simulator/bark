@@ -285,13 +285,13 @@ class XodrParser(object):
                 new_plan_view.AddArc(starting_point, float(geometry["hdg"]),
                                       float(geometry["length"]),
                                       float(geometry["geometry"]["curvature"]),
-                                      0.025) # TODO: s_inc
+                                      0.2) # TODO: s_inc
             if geometry["geometry"]["type"] == "spiral":
                 new_plan_view.AddSpiral(
                     starting_point, float(geometry["hdg"]),
                     float(geometry["length"]),
                     float(geometry["geometry"]["curv_start"]),
-                    float(geometry["geometry"]["curv_end"]), 0.1) # TODO: s_inc
+                    float(geometry["geometry"]["curv_end"]), 0.2) # TODO: s_inc
         
         # now use header/ offset to modify plan view
         if "offset" in header:
@@ -375,7 +375,7 @@ class XodrParser(object):
               lane_width = XodrLaneWidth(s_start_temp, s_end_temp, offset)        
 
               # TODO (@hart): make sampling flexible           
-              succ = new_lane.append(reference_line, lane_width, 0.05)
+              succ = new_lane.append(reference_line, lane_width, 0.2)
 
             new_lane.lane_type = lane["type"]
             new_lane.driving_direction = lane["driving_direction"]
