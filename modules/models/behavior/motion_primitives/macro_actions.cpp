@@ -14,6 +14,12 @@ namespace behavior {
 
 using modules::models::dynamic::StateDefinition;
 
+BehaviorMPMacroActions::BehaviorMPMacroActions(
+    const DynamicModelPtr& dynamic_model, const commons::ParamsPtr& params,
+    const std::vector<primitives::PrimitivePtr>& motion_primitives)
+    : BehaviorMotionPrimitives(dynamic_model, params),
+      motion_primitives_(motion_primitives) {}
+
 BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::AddMotionPrimitive(const primitives::PrimitivePtr& primitive) {
   motion_primitives_.push_back(primitive);
@@ -29,17 +35,15 @@ Trajectory BehaviorMPMacroActions::Plan(
 
   Trajectory traj(num_trajectory_points,
                   static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  if(!target_corridor_) {
-    target_corridor_ = observed_world.GetLaneCorridor();
-  }
+  AdjacentLaneCorridors adjacent_corridors = GetCorridors(observed_world);
   // There must be at least one primitive that is always available!
   if(valid_primitives_.empty()) {
-    GetNumMotionPrimitives(std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone()));
+    GetNumMotionPrimitives(observed_world, adjacent_corridors);
     LOG_IF(ERROR, valid_primitives_.empty()) << "No motion primitive available! At least one primitive must be available at all times!";
   }
-  motion_primitives_.at(valid_primitives_.at(active_motion_))->SetTargetCorridor(observed_world, &target_corridor_);
-  traj = motion_primitives_.at(valid_primitives_.at(active_motion_))
-             ->Plan(delta_time, observed_world, target_corridor_);
+  const auto& selected_mp = motion_primitives_.at(valid_primitives_.at(active_motion_));
+  target_corridor_ = selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
+  traj = selected_mp->Plan(delta_time, observed_world, target_corridor_);
 
   this->SetLastTrajectory(traj);
   return traj;
@@ -48,22 +52,34 @@ const std::vector<primitives::PrimitivePtr>&
 BehaviorMPMacroActions::GetMotionPrimitives() const {
   return motion_primitives_;
 }
-BehaviorMPMacroActions::BehaviorMPMacroActions(
-    const DynamicModelPtr& dynamic_model, const commons::ParamsPtr& params,
-    const std::vector<primitives::PrimitivePtr>& motion_primitives)
-    : BehaviorMotionPrimitives(dynamic_model, params),
-      motion_primitives_(motion_primitives) {}
-
 BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::GetNumMotionPrimitives(
     const ObservedWorldPtr& observed_world) {
-  MotionIdx i = 0;
+  return GetNumMotionPrimitives(*observed_world, GetCorridors(*observed_world));
+}
+AdjacentLaneCorridors BehaviorMPMacroActions::GetCorridors(
+    const ObservedWorld& observed_world) {
   if(!target_corridor_) {
-    target_corridor_ = observed_world->GetLaneCorridor();
+    target_corridor_ = observed_world.GetLaneCorridor();
   }
+  AdjacentLaneCorridors adjacent_corridors;
+  auto ego_pos = observed_world.CurrentEgoPosition();
+  auto point_on_target_line =
+      GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
+  auto road_corridor = observed_world.GetRoadCorridor();
+  std::tie(adjacent_corridors.left, adjacent_corridors.right) =
+      road_corridor->GetLeftRightLaneCorridor(point_on_target_line);
+  adjacent_corridors.current = target_corridor_;
+  return adjacent_corridors;
+}
+BehaviorMotionPrimitives::MotionIdx
+BehaviorMPMacroActions::GetNumMotionPrimitives(
+    const ObservedWorld& observed_world,
+    const AdjacentLaneCorridors& adjacent_corridors) {
+  MotionIdx i = 0;
   valid_primitives_.clear();
   for (auto const& p : motion_primitives_) {
-    if (p->IsPreConditionSatisfied(observed_world, target_corridor_)) {
+    if (p->IsPreConditionSatisfied(observed_world, adjacent_corridors)) {
       valid_primitives_.push_back(i);
     }
     ++i;

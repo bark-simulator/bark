@@ -17,8 +17,9 @@ namespace modules {
 namespace models {
 namespace behavior {
 
-using world::map::LaneCorridorPtr;
 using commons::ParamsPtr;
+using primitives::AdjacentLaneCorridors;
+using world::map::LaneCorridorPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
@@ -45,9 +46,13 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
       const ObservedWorldPtr& observed_world);
 
  private:
+  MotionIdx GetNumMotionPrimitives(
+      const ObservedWorld& observed_world,
+      const AdjacentLaneCorridors& adjacent_corridors);
   std::vector<primitives::PrimitivePtr> motion_primitives_;
   std::vector<MotionIdx> valid_primitives_;
   LaneCorridorPtr target_corridor_;
+  AdjacentLaneCorridors GetCorridors(const ObservedWorld& observed_world);
 };
 
 }  // namespace behavior
