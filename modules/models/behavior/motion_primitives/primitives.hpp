@@ -21,15 +21,15 @@ namespace behavior {
 namespace primitives {
 
 using dynamic::Trajectory;
-using modules::models::dynamic::DynamicModelPtr;
 using modules::geometry::Point2d;
 using modules::models::behavior::BehaviorIDMLaneTracking;
+using modules::models::dynamic::DynamicModelPtr;
 using modules::models::dynamic::StateDefinition;
 using world::ObservedWorld;
 using world::ObservedWorldPtr;
 using world::map::LaneCorridorPtr;
 
-struct AdjacentLaneCorridors{
+struct AdjacentLaneCorridors {
   LaneCorridorPtr current;
   LaneCorridorPtr left;
   LaneCorridorPtr right;
@@ -52,8 +52,10 @@ class Primitive : public modules::commons::BaseType {
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
   virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
-  virtual LaneCorridorPtr SelectTargetCorridor(const ObservedWorld& observed_world,
+  virtual LaneCorridorPtr SelectTargetCorridor(
+      const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
+
  protected:
   float integration_time_delta_;
 };
@@ -65,21 +67,28 @@ class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
  public:
   PrimitiveConstAcceleration(const commons::ParamsPtr& params,
                              float acceleration)
-      : Primitive(params), BehaviorIDMLaneTracking(params),
+      : Primitive(params),
+        BehaviorIDMLaneTracking(params),
         acceleration_(acceleration) {}
   explicit PrimitiveConstAcceleration(const commons::ParamsPtr& params)
-      : Primitive(params), BehaviorIDMLaneTracking(params),
+      : Primitive(params),
+        BehaviorIDMLaneTracking(params),
         acceleration_(
             params->GetReal("PrimitiveConstAcceleration::Acceleration",
                             "Constant acceleration to apply", 0.0)) {}
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
-    auto ego_vel = observed_world.GetEgoAgent()->GetCurrentState()(dynamic::StateDefinition::VEL_POSITION);
-    return (acceleration_ < 0.0f && ego_vel > 1.0e-5f) || (acceleration_ > 0.0f && ego_vel >= 50.0f) || acceleration_ == 0.0f;
+    auto single_track = std::dynamic_pointer_cast<dynamic::SingleTrackModel>(
+        observed_world.GetEgoAgent()->GetDynamicModel());
+    if (!single_track) {
+      LOG(FATAL) << "Only single track model supported! Aborting!";
+    }
+    auto ego_state = observed_world.CurrentEgoState();
+    return acceleration_ >= single_track->GetMinAcceleration(ego_state) &&
+           acceleration_ <= single_track->GetMaxAcceleration(ego_state);
   }
 
-  // TODO(@esterle, @bernhard): Use BehaviorIDMLaneTracking
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor) {
     SetBehaviorStatus(BehaviorStatus::VALID);
@@ -95,8 +104,7 @@ class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
     // interaction term off and GetTotalAcc returns const. acc.
     IDMRelativeValues rel_values{0., 0., false};
     std::tuple<Trajectory, Action> traj_action =
-        GenerateTrajectory(
-            observed_world, target_corridor, rel_values, dt);
+        GenerateTrajectory(observed_world, target_corridor, rel_values, dt);
 
     // set values
     Trajectory traj = std::get<0>(traj_action);
@@ -106,7 +114,8 @@ class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
     return traj;
   }
 
-  virtual LaneCorridorPtr SelectTargetCorridor(const ObservedWorld& observed_world,
+  virtual LaneCorridorPtr SelectTargetCorridor(
+      const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
     BARK_EXPECT_TRUE(adjacent_corridors.current);
     return adjacent_corridors.current;
@@ -114,9 +123,9 @@ class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
 
  protected:
   std::pair<double, double> GetTotalAcc(const ObservedWorld& observed_world,
-                                   const IDMRelativeValues& rel_values,
-                                   double rel_distance,
-                                   double dt) const override {
+                                        const IDMRelativeValues& rel_values,
+                                        double rel_distance,
+                                        double dt) const override {
     return {acceleration_, 0.0f};
   }
 
@@ -138,7 +147,8 @@ class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
                   const LaneCorridorPtr& target_corridor) override {
     return BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
   }
-  LaneCorridorPtr SelectTargetCorridor(const ObservedWorld& observed_world,
+  LaneCorridorPtr SelectTargetCorridor(
+      const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
     return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());
@@ -150,20 +160,19 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
  public:
   explicit PrimitiveConstAccChangeToLeft(const commons::ParamsPtr& params)
       : PrimitiveConstAcceleration(params),
-        min_length_(params->GetReal("MinLength",
-                                    "Minimum length of lane to change to",
-                                    0.0f)) {}
+        min_length_(params->GetReal(
+            "MinLength", "Minimum length of lane to change to", 0.0f)) {}
 
-  LaneCorridorPtr SelectTargetCorridor(const ObservedWorld& observed_world,
+  LaneCorridorPtr SelectTargetCorridor(
+      const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
     if (adjacent_corridors.left) {
       return adjacent_corridors.left;
     }
     LOG(WARNING) << "Called change to left, but left corridor not found!";
-    if(!adjacent_corridors.current){
-      return
-          observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
-              observed_world.CurrentEgoPosition());
+    if (!adjacent_corridors.current) {
+      return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+          observed_world.CurrentEgoPosition());
     } else {
       return adjacent_corridors.current;
     }
@@ -192,26 +201,24 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
   float min_length_;
 };
 
-
 // TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
  public:
   explicit PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params)
       : PrimitiveConstAcceleration(params),
-        min_length_(params->GetReal("MinLength",
-                                    "Minimum length of lane to change to",
-                                    0.0f)) {}
+        min_length_(params->GetReal(
+            "MinLength", "Minimum length of lane to change to", 0.0f)) {}
 
-  LaneCorridorPtr SelectTargetCorridor(const ObservedWorld& observed_world,
+  LaneCorridorPtr SelectTargetCorridor(
+      const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
     if (adjacent_corridors.right) {
       return adjacent_corridors.right;
     }
     LOG(WARNING) << "Called change to right, but right corridor not found!";
-    if(!adjacent_corridors.current){
-      return
-          observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
-              observed_world.CurrentEgoPosition());
+    if (!adjacent_corridors.current) {
+      return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+          observed_world.CurrentEgoPosition());
     } else {
       return adjacent_corridors.current;
     }
