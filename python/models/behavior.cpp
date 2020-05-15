@@ -202,7 +202,8 @@ void python_behavior(py::module m) {
   .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
                 const modules::commons::ParamsPtr&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
-  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive);
+  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives);
 
   py::class_<PrimitiveConstAccStayLane,
              Primitive,

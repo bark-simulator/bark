@@ -42,6 +42,10 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
 
+  void ClearMotionPrimitives() {
+    motion_primitives_.clear();
+  }
+
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  private:
