@@ -41,6 +41,7 @@ To debug python code, you need to add the following code in the `.vscode/launch.
 
 ```
 {
+<<<<<<< HEAD
   "name": "Python: Current File",
   "type": "python",
   "request": "launch",
@@ -48,9 +49,22 @@ To debug python code, you need to add the following code in the `.vscode/launch.
   "console": "integratedTerminal",
   "env": {
     "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/{path-to-executable-file}.runfiles/__main__/python:${workspaceFolder}/bazel-bin/examples/{path-to-executable-file}.runfiles/__main__"
+=======
+    "name": "Python: Current File",
+    "type": "python",
+    "request": "launch",
+    "program": "${file}",
+    "console": "integratedTerminal",
+    "env": {
+        "PYTHONPATH": "${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_one_agent.runfiles/__main__/python:${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_one_agent.runfiles/__main__"
+>>>>>>> automate bazel build and package build
   }
 }
 ```
+<<<<<<< HEAD
+=======
+The path `bark/examplesod8_const_vel_one_agent.runfiles` needs to be changed if another python file should be debugged. Furthermore, make sure to be in the main executable file when launching the debugger (F5).
+>>>>>>> automate bazel build and package build
 
 Make sure to be in the main executable file when launching the debugger (F5).
 
@@ -68,6 +82,7 @@ We run two Debuggers in parallel. First, check if the shared object "core.so" co
 >>>>>>> Package Restructuring
 ```
 {
+<<<<<<< HEAD
   "name": "(gdb) Attach",
   "type": "cppdbg",
   "request": "attach",
@@ -78,6 +93,18 @@ We run two Debuggers in parallel. First, check if the shared object "core.so" co
   "MIMode": "gdb",
   "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"},
 }
+=======
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/python/venv/bin/python3",
+            "cwd" : "${workspaceFolder}",
+            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_two_agent.runfiles/__main__/python",
+            "processId": "${command:pickProcess}",
+            "MIMode": "gdb",
+            "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"},
+            }
+>>>>>>> automate bazel build and package build
 ```
 
 Debugging process:

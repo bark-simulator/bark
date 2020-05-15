@@ -38,7 +38,11 @@
             "request": "attach",
             "program": "${workspaceFolder}/python/venv/bin/python3",
             "cwd" : "${workspaceFolder}",
+<<<<<<< HEAD
             "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/",
+=======
+            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/bark/examplesscenario_dump_load.runfiles/bark_project/python/",
+>>>>>>> automate bazel build and package build
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}

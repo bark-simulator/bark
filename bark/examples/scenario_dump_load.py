@@ -15,7 +15,7 @@ import time
 import os
 
 scenario_param_file ="highway_merge_configurable.json" # must be within examples params folder
-param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
+param_server = ParameterServer(filename= os.path.join("bark/examplesparams/",scenario_param_file))
 scenario_generation = ConfigurableScenarioGeneration(num_scenarios=3, params=param_server)
 
 viewer = MPViewer(

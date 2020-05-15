@@ -14,7 +14,7 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 import os
 
 scenario_param_file ="highway_merging.json" # must be within examples params folder
-param_server = ParameterServer(filename= os.path.join("examples/params/",scenario_param_file))
+param_server = ParameterServer(filename= os.path.join("bark/examplesparams/",scenario_param_file))
 scenario_generation = UniformVehicleDistribution(num_scenarios=10, random_seed=0, params=param_server)
 
 viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])
@@ -35,7 +35,7 @@ env = Runtime(0.2,
 env.reset()
 for _ in range(0, 5):
   env.step()  
-video_renderer.export_video(filename="examples/scenarios/test_video_step")
+video_renderer.export_video(filename="bark/examplesscenarios/test_video_step")
 
 # Rendering WITH intermediate steps
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time, render_intermediate_steps=10)
@@ -47,4 +47,4 @@ env.reset()
 for _ in range(0, 5):
   env.step()  
 
-video_renderer.export_video(filename="examples/scenarios/test_video_intermediate")
+video_renderer.export_video(filename="bark/examplesscenarios/test_video_intermediate")

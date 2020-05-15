@@ -24,7 +24,7 @@ evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollision
                 "max_steps": EvaluatorStepCount}
 terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
 scenario_param_file ="uct_planner.json" # must be within examples params folder
-params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
+params = ParameterServer(filename= os.path.join("bark/examplesparams/", scenario_param_file))
 behaviors_tested = {"search5s": behavior_used(params) }
                                 
 

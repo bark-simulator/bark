@@ -6,9 +6,9 @@
 import numpy as np
 import time
 import os
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.commons import ParameterServer
+from bark.runtime.viewer import MPViewer
+from bark.runtime.commons import XodrParser
 from bark.pybark.core.models.behavior import BehaviorConstantVelocity
 from bark.pybark.core.models.execution import ExecutionModelInterpolate
 from bark.pybark.core.models.dynamic import SingleTrackModel
@@ -36,7 +36,7 @@ execution_model2 = ExecutionModelInterpolate(param_server)
 dynamic_model2 = SingleTrackModel(param_server)
 
 # Map Definition
-xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")
+xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
 map_interface = MapInterface()
 map_interface.SetOpenDriveMap(xodr_parser.map)
 world.SetMap(map_interface)

@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 py_test(
   name = "od8_const_vel_one_agent",
   srcs = ["od8_const_vel_one_agent.py"],
@@ -20,20 +22,13 @@ py_binary(
   data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
-  imports = ['../python/'],
+  #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime:runtime",],
 )
 
-py_binary(
-  name = "hello",
-  srcs = ["hello.py"],
-  data = ['//bark/pybark:core.so' ],
-  imports = ['../core'],
-  #deps = ['//bark:init_py'],
-)
 
 py_test(
   name = "planner_uct_benchmark",
@@ -41,7 +36,7 @@ py_test(
   data = ['//bark/pybark:core.so',
           '@benchmark_database_release//:v2.0',
           ':params'],
-  imports = ['../python/'],
+  #imports = ['../python/'],
   deps = [
       "//bark/benchmark:benchmark_runner",
       "@benchmark_database//load:benchmark_database",
@@ -55,7 +50,7 @@ py_test(
   data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
-  imports = ['../python/'],
+  #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:video_renderer",
@@ -70,11 +65,12 @@ py_test(
   data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
           ':params'],
-  imports = ['../python/'],
+  #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:pygame_viewer",
           "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/commons:model_json_conversion",
           "//bark/runtime:runtime"],
 )
 
