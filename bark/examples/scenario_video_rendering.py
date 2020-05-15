@@ -6,7 +6,7 @@
 # ffmpeg must be installed and available on command line
 
 
-from bark.runtime.scenario.scenario_generation.uniform_vehicle_distribution import UniformVehicleDistribution
+from bark.runtime.scenario.scenario_generation import UniformVehicleDistribution
 from bark.runtime.commons import ParameterServer
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer import MPViewer

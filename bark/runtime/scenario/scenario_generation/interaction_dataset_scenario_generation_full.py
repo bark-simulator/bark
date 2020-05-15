@@ -4,12 +4,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.runtime.scenario.scenario import Scenario
-from bark.runtime.scenario.scenario_generation.scenario_generation \
-    import ScenarioGeneration
+from bark.runtime.scenario import Scenario
+from bark.runtime.scenario.scenario_generation import ScenarioGeneration
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
-from bark.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
-from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.scenario.interaction_dataset_processing import DatasetDecomposer
+from bark.runtime.commons import ParameterServer
 # PyBind imports
 from bark.pybark.core.world.map import *
 from bark.pybark.core.models.dynamic import *

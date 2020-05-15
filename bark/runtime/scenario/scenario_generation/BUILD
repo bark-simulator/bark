@@ -1,6 +1,7 @@
 py_library(
     name = "scenario_generation",
-    srcs = ["scenario_generation.py",
+    srcs = ["__init__.py",
+            "scenario_generation.py",
             "uniform_vehicle_distribution.py",
             "configurable_scenario_generation.py",
             "deterministic.py",

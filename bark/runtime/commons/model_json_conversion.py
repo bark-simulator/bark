@@ -12,7 +12,7 @@ from bark.pybark.core.models.dynamic import *
 from bark.pybark.core.models.execution import *
 from bark.pybark.core.geometry import *
 from bark.pybark.core.geometry.standard_shapes import *
-from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons import ParameterServer
 import inspect
 import re
 import sys

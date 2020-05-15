@@ -4,10 +4,9 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.runtime.scenario.scenario import Scenario
-from bark.runtime.scenario.scenario_generation.scenario_generation \
-  import ScenarioGeneration
-from bark.runtime.commons.model_json_conversion import ModelJsonConversion
+from bark.runtime.scenario import Scenario
+from bark.runtime.scenario.scenario_generation import ScenarioGeneration
+from bark.runtime.commons import ModelJsonConversion
 from bark.pybark.core.world.agent import *
 from bark.pybark.core.models.behavior import *
 from bark.pybark.core.world import *
@@ -17,8 +16,8 @@ from bark.pybark.core.models.dynamic import *
 from bark.pybark.core.models.execution import *
 from bark.pybark.core.geometry import *
 from bark.pybark.core.geometry.standard_shapes import *
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.commons import ParameterServer
+from bark.runtime.commons import XodrParser
 
 import numpy as np
 import math
