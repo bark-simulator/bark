@@ -13,6 +13,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:include",
+        "//modules/world/map:road_corridor",
         "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior:include",

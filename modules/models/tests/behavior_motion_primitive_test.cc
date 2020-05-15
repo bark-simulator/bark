@@ -17,6 +17,7 @@
 #include "modules/models/behavior/motion_primitives/primitives.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/world/observed_world.hpp"
+#include "modules/world/tests/make_test_world.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
@@ -25,6 +26,7 @@ using namespace modules::models::behavior;
 using namespace modules::models::dynamic;
 using namespace modules::world;
 using namespace modules::geometry;
+using namespace modules::world::tests;
 
 class DummyObservedWorld : public ObservedWorld {
  public:
@@ -39,6 +41,17 @@ class DummyObservedWorld : public ObservedWorld {
  private:
   State init_state_;
 };
+
+AdjacentLaneCorridors GetCorridors(const ObservedWorld& observed_world) {
+  auto target_corridor = observed_world.GetLaneCorridor();
+  AdjacentLaneCorridors adjacent_corridors;
+  auto ego_pos = observed_world.CurrentEgoPosition();
+  auto road_corridor = observed_world.GetRoadCorridor();
+  std::tie(adjacent_corridors.left, adjacent_corridors.right) =
+      road_corridor->GetLeftRightLaneCorridor(ego_pos);
+  adjacent_corridors.current = target_corridor;
+  return adjacent_corridors;
+}
 
 TEST(behavior_motion_primitives_add, behavior_test) {
   auto params = std::make_shared<DefaultParams>();
@@ -102,25 +115,28 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
 
 TEST(primitive_constant_acceleration, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAcceleration;
+  using modules::models::behavior::primitives::AdjacentLaneCorridors;
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAcceleration primitive(params, 0);
 
-  State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
-  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1, nullptr));
-  // auto traj = primitive.Plan(0.5, world1);
+  auto world1 = make_test_observed_world(0, 0.0, 5.0, 0.0);
+  AdjacentLaneCorridors corridors = GetCorridors(world1);
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1, corridors));
+//  auto traj = primitive.Plan(0.5, world1);
 
   PrimitiveConstAcceleration dec_primitive(params, -5.0);
-  init_state << 0.0, 0.0, 0.0, 0.0, 0.0;
-  auto world2 = std::make_shared<DummyObservedWorld>(init_state, params);
-  EXPECT_FALSE(dec_primitive.IsPreConditionSatisfied(world2, nullptr));
+  EXPECT_TRUE(dec_primitive.IsPreConditionSatisfied(world1, corridors));
+  auto world2 = make_test_observed_world(0, 0.0, 0.0, 0.0);
+  AdjacentLaneCorridors corridors2 = GetCorridors(world2);
+  EXPECT_FALSE(dec_primitive.IsPreConditionSatisfied(world2, corridors2));
+
 
   PrimitiveConstAcceleration acc_primitive(params, 5.0);
-  init_state << 0.0, 0.0, 0.0, 0.0, 50.0f;
-  auto world3 = std::make_shared<DummyObservedWorld>(init_state, params);
-  EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world3, nullptr));
+  EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world1, corridors));
+  auto world3 = make_test_observed_world(0, 0.0, 50.0, 0.0);
+  AdjacentLaneCorridors corridors3 = GetCorridors(world3);
+  EXPECT_FALSE(acc_primitive.IsPreConditionSatisfied(world3, corridors));
 }
 
 TEST(primitive_change_left, behavior_test) {
@@ -128,11 +144,26 @@ TEST(primitive_change_left, behavior_test) {
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAccChangeToLeft primitive(params);
+  auto world = MakeTestWorldHighway();
+  auto observed_worlds = world->Observe({0, 3});
+  auto corridors0 = GetCorridors(observed_worlds[0]);
+  EXPECT_FALSE(primitive.IsPreConditionSatisfied(observed_worlds[0], corridors0));
+  auto corridors1 = GetCorridors(observed_worlds[1]);
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(observed_worlds[1], corridors1));
+  // auto traj = primitive.Plan(0.5, world1);
+}
 
-  State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
-  // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
+TEST(primitive_change_right, behavior_test) {
+  using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+  auto params = std::make_shared<DefaultParams>();
+  DynamicModelPtr dynamics(new SingleTrackModel(params));
+  PrimitiveConstAccChangeToRight primitive(params);
+  auto world = MakeTestWorldHighway();
+  auto observed_worlds = world->Observe({0, 3});
+  auto corridors0 = GetCorridors(observed_worlds[0]);
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(observed_worlds[0], corridors0));
+  auto corridors1 = GetCorridors(observed_worlds[1]);
+  EXPECT_FALSE(primitive.IsPreConditionSatisfied(observed_worlds[1], corridors1));
   // auto traj = primitive.Plan(0.5, world1);
 }
 
@@ -144,8 +175,9 @@ TEST(primitive_gap_keeping, behavior_test) {
 
   State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
-  auto world1 = std::make_shared<DummyObservedWorld>(init_state, params);
-  // EXPECT_FALSE(primitive.IsPreConditionSatisfied(world1));
+  auto world1 = DummyObservedWorld(init_state, params);
+  AdjacentLaneCorridors corridors = {nullptr, nullptr, nullptr};
+  EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1, corridors));
   // auto traj = primitive.Plan(0.5, world1);
 }
 
