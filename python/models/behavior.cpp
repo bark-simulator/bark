@@ -201,7 +201,7 @@ void python_behavior(py::module m) {
             shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
   .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
                 const modules::commons::ParamsPtr&>())
-  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives);
 
