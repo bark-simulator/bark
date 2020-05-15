@@ -12,6 +12,11 @@ This section describes the prerequisites and installation-steps of BARK.
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
+<<<<<<< HEAD
+=======
+## Install using pip
+* pip3 install bark-simulator
+>>>>>>> update installation instructions
 
 ## Setup on Linux
 
@@ -34,6 +39,10 @@ This section describes the prerequisites and installation-steps of BARK.
 8. Modify the file `install.sh` by using `virtualenv -p python ./python/venv` instead as python is now the pyenv version.
 9. Now you can follow the same steps as when using Linux.
 
+
+## Puild Pip package
+* Install twine using python3 -m pip install --user --upgrade twine
+* Run script bash package.sh to build code, package and upload to pypi
 
 ## Frequently Asked Questions (FAQs)
 
