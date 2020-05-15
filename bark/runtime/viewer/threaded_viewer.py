@@ -6,9 +6,9 @@
 
 
 import numpy as np
-from bark.pybark.core.geometry import *
-from bark.pybark.core.viewer import *
-from bark.pybark.core.models.dynamic import *
+from bark.core.geometry import *
+from bark.core.viewer import *
+from bark.core.models.dynamic import *
 from bark.runtime.viewer.viewer import BaseViewer
 import threading
 import time

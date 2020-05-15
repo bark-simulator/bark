@@ -4,11 +4,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.pybark.core.world.agent import Agent
-from bark.pybark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
-from bark.pybark.core.models.dynamic import StateDefinition
-from bark.pybark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.pybark.core.geometry import Point2d, Polygon2d, Norm0To2PI
+from bark.core.world.agent import Agent
+from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.core.geometry import Point2d, Polygon2d, Norm0To2PI
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader

@@ -9,9 +9,9 @@ import time
 import math
 import filecmp
 import matplotlib.pyplot as plt
-from bark.pybark.core.world import World
-from bark.pybark.core.geometry import ComputeCenterLine
-from bark.pybark.core.world.map import MapInterface
+from bark.core.world import World
+from bark.core.geometry import ComputeCenterLine
+from bark.core.world.map import MapInterface
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer

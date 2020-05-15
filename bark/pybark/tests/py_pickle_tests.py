@@ -2,16 +2,16 @@ import unittest
 import pickle
 import numpy as np
 
-from bark.pybark.core.world.agent import *
-from bark.pybark.core.models.behavior import *
-from bark.pybark.core.world import *
-from bark.pybark.core.world.map import *
-from bark.pybark.core.geometry import *
-from bark.pybark.core.models.dynamic import *
-from bark.pybark.core.models.execution import *
-from bark.pybark.core.geometry import *
-from bark.pybark.core.geometry.standard_shapes import *
-from bark.pybark.core.world.goal_definition import *
+from bark.core.world.agent import *
+from bark.core.models.behavior import *
+from bark.core.world import *
+from bark.core.world.map import *
+from bark.core.geometry import *
+from bark.core.models.dynamic import *
+from bark.core.models.execution import *
+from bark.core.geometry import *
+from bark.core.geometry.standard_shapes import *
+from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 
 def pickle_unpickle(object):
@@ -139,7 +139,7 @@ class PickleTests(unittest.TestCase):
 
     def test_agent_pickle_uct_planner(self):
         try:
-            from bark.pybark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
+            from bark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
             print("Rerun test with ---define planner_uct=true")
             return

@@ -7,10 +7,10 @@
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderGoalDefinitions
 
-from bark.pybark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.runtime.commons.parameters import ParameterServer
 
-from bark.pybark.core.geometry import *
+from bark.core.geometry import *
 
 
 # helper class to support various types of goals easily generated for the 

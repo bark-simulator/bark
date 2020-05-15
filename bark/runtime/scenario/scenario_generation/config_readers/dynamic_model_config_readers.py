@@ -8,7 +8,7 @@
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderDynamicModels
 
-from bark.pybark.core.models.dynamic import *
+from bark.core.models.dynamic import *
 from bark.runtime.commons.parameters import ParameterServer
 
   # this config reader defines dynamic models with fixed type for all agents

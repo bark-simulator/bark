@@ -11,12 +11,12 @@ import matplotlib as mpl
 if os.environ.get('DISPLAY', '') == '':
   print('no display found. Using non-interactive Agg backend')
   mpl.use('Agg')
-from bark.pybark.core.world.agent import Agent
-from bark.pybark.core.models.behavior import BehaviorConstantVelocity
-from bark.pybark.core.models.dynamic import SingleTrackModel
-from bark.pybark.core.models.execution import ExecutionModelInterpolate
-from bark.pybark.core.geometry import Polygon2d, Point2d
-from bark.pybark.core.geometry.standard_shapes import CarLimousine
+from bark.core.world.agent import Agent
+from bark.core.models.behavior import BehaviorConstantVelocity
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.models.execution import ExecutionModelInterpolate
+from bark.core.geometry import Polygon2d, Point2d
+from bark.core.geometry.standard_shapes import CarLimousine
 from bark.runtime.commons.parameters import ParameterServer
 
 

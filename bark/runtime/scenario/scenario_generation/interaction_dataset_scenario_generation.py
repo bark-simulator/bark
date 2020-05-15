@@ -12,6 +12,7 @@ from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_re
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/runtime/scenario/scenario_generation/interaction_dataset_scenario_generation.py
 from bark.world.map import *
 from bark.models.dynamic import *
@@ -27,6 +28,11 @@ from bark.pybark.core.world.map import *
 from bark.pybark.core.models.dynamic import *
 from bark.pybark.core.models.execution import *
 >>>>>>> Wrapped C++ bark in pybark
+=======
+from bark.core.world.map import *
+from bark.core.models.dynamic import *
+from bark.core.models.execution import *
+>>>>>>> Set python import path to directly include bark.core
 import os.path
 >>>>>>> Package Restructuring:bark/runtime/scenario/scenario_generation/interaction_dataset_scenario_generation.py
 

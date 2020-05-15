@@ -10,9 +10,9 @@ from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_re
 from bark.runtime.scenario.interaction_dataset_processing import DatasetDecomposer
 from bark.runtime.commons import ParameterServer
 # PyBind imports
-from bark.pybark.core.world.map import *
-from bark.pybark.core.models.dynamic import *
-from bark.pybark.core.models.execution import *
+from bark.core.world.map import *
+from bark.core.models.dynamic import *
+from bark.core.models.execution import *
 
 
 class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):

@@ -4,10 +4,10 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.pybark.core.world.opendrive import *
-from bark.pybark.core.world import *
-from bark.pybark.core.geometry import *
-from bark.pybark.core.runtime import PyRuntime
+from bark.core.world.opendrive import *
+from bark.core.world import *
+from bark.core.geometry import *
+from bark.core.runtime import PyRuntime
 
 
 class Runtime(PyRuntime):

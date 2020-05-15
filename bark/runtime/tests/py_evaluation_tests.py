@@ -11,19 +11,19 @@ import unittest
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.commons.xodr_parser import XodrParser
-from bark.pybark.core.models.behavior import BehaviorConstantVelocity, \
+from bark.core.models.behavior import BehaviorConstantVelocity, \
   BehaviorMPContinuousActions
-from bark.pybark.core.models.execution import ExecutionModelInterpolate
-from bark.pybark.core.models.dynamic import SingleTrackModel, StateDefinition
-from bark.pybark.core.world import World
-from bark.pybark.core.world.goal_definition import GoalDefinitionPolygon, \
+from bark.core.models.execution import ExecutionModelInterpolate
+from bark.core.models.dynamic import SingleTrackModel, StateDefinition
+from bark.core.world import World
+from bark.core.world.goal_definition import GoalDefinitionPolygon, \
   GoalDefinitionStateLimits, GoalDefinitionSequential, \
     GoalDefinitionStateLimitsFrenet
-from bark.pybark.core.world.agent import Agent
-from bark.pybark.core.world.map import MapInterface
-from bark.pybark.core.geometry.standard_shapes import CarLimousine
-from bark.pybark.core.geometry import Point2d, Polygon2d, Line2d
-from bark.pybark.core.world.evaluation import EvaluatorGoalReached, \
+from bark.core.world.agent import Agent
+from bark.core.world.map import MapInterface
+from bark.core.geometry.standard_shapes import CarLimousine
+from bark.core.geometry import Point2d, Polygon2d, Line2d
+from bark.core.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount
 
 

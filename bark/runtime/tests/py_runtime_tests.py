@@ -11,7 +11,7 @@ from bark.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
 from bark.runtime.scenario.scenario_generation.scenario_generation \
   import ScenarioGeneration
-from bark.pybark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.matplotlib_viewer import MPViewer

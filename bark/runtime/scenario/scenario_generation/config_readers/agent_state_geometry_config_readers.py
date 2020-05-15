@@ -9,8 +9,8 @@ import numpy as np
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from bark.pybark.core.geometry.standard_shapes import *
-from bark.pybark.core.geometry import *
+from bark.core.geometry.standard_shapes import *
+from bark.core.geometry import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
 # it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 

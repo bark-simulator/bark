@@ -19,9 +19,9 @@ from bark.runtime.scenario.scenario_generation.configurable_scenario_generation 
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
-from bark.pybark.core.world.evaluation import *
+from bark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.pybark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
+from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
 # to find database files
 os.chdir("../benchmark_database/")

@@ -23,7 +23,7 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
     import InteractionDatasetScenarioGenerationFull
 from bark.runtime.commons.parameters import ParameterServer
 
-from bark.pybark.core.geometry import *
+from bark.core.geometry import *
 
 
 class ScenarioGenerationTests(unittest.TestCase):

@@ -11,6 +11,7 @@ import itertools
 import filecmp
 import matplotlib.pyplot as plt
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/world/tests/py_road_corridor_tests.py
 from bark.world import World
 from bark.geometry import *
@@ -24,9 +25,12 @@ from bark.core.core.world import World
 =======
 from bark.pybark.core.world import World
 >>>>>>> Wrapped C++ bark in pybark
+=======
+from bark.core.world import World
+>>>>>>> Set python import path to directly include bark.core
 from bark.runtime.commons.parameters import ParameterServer
-from bark.pybark.core.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
-from bark.pybark.core.world.map import MapInterface
+from bark.core.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
+from bark.core.world.map import MapInterface
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 >>>>>>> Package Restructuring:bark/world/tests/py_road_corridor_tests.py

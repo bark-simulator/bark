@@ -10,19 +10,19 @@ import time
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.commons.xodr_parser import XodrParser
-from bark.pybark.core.models.execution import ExecutionModelInterpolate
-from bark.pybark.core.models.dynamic import SingleTrackModel, StateDefinition
-from bark.pybark.core.world import World, MakeTestWorldHighway
-from bark.pybark.core.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimitsFrenet
-from bark.pybark.core.world.agent import Agent
-from bark.pybark.core.world.map import MapInterface, Roadgraph
-from bark.pybark.core.geometry.standard_shapes import CarLimousine, CarRectangle
-from bark.pybark.core.geometry import Point2d, Polygon2d, Line2d
-from bark.pybark.core.world.evaluation import EvaluatorDrivableArea
-from bark.pybark.core.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
+from bark.core.models.execution import ExecutionModelInterpolate
+from bark.core.models.dynamic import SingleTrackModel, StateDefinition
+from bark.core.world import World, MakeTestWorldHighway
+from bark.core.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimitsFrenet
+from bark.core.world.agent import Agent
+from bark.core.world.map import MapInterface, Roadgraph
+from bark.core.geometry.standard_shapes import CarLimousine, CarRectangle
+from bark.core.geometry import Point2d, Polygon2d, Line2d
+from bark.core.world.evaluation import EvaluatorDrivableArea
+from bark.core.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
     MakeXodrMapOneRoadTwoLanes, XodrLaneSection, XodrLane
 from bark.runtime.viewer.video_renderer import VideoRenderer
-from bark.pybark.core.models.behavior import * 
+from bark.core.models.behavior import * 
 import os
 
 
@@ -101,7 +101,7 @@ class SystemTests(unittest.TestCase):
     #@unittest.skip
     def test_uct_single_agent(self):
         try:
-            from bark.pybark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
+            from bark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
             print("Rerun with --define planner_uct=true")
             return

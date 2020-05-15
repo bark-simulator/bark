@@ -7,8 +7,8 @@
 from lxml import etree
 import pprint
 import logging
-from bark.pybark.core.world.opendrive import *
-from bark.pybark.core.geometry import Point2d
+from bark.core.world.opendrive import *
+from bark.core.geometry import Point2d
 logger = logging.getLogger()
 
 class XodrParser(object):

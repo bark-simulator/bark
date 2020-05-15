@@ -10,7 +10,7 @@ import logging
 import psutil
 import inspect
 
-import bark.pybark.core.world.evaluation
+import bark.core.world.evaluation
 logging.getLogger().setLevel(logging.INFO)
 
 from bark.runtime.scenario.scenario import Scenario

@@ -15,6 +15,7 @@ if os.environ.get('DISPLAY', '') == '':
     print('no display found. Using non-interactive Agg backend')
     mpl.use('Agg')
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/geometry/tests/py_geometry_tests.py
 =======
 from bark.core.core.geometry import *
@@ -23,6 +24,10 @@ from bark.core.core.geometry.standard_shapes import *
 from bark.pybark.core.geometry import *
 from bark.pybark.core.geometry.standard_shapes import *
 >>>>>>> Wrapped C++ bark in pybark
+=======
+from bark.core.geometry import *
+from bark.core.geometry.standard_shapes import *
+>>>>>>> Set python import path to directly include bark.core
 import math
 import numpy as np
 >>>>>>> Package Restructuring:bark/geometry/tests/py_geometry_tests.py

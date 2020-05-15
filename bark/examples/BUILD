@@ -5,6 +5,7 @@ py_test(
   srcs = ["od8_const_vel_one_agent.py"],
   data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
+          '//bark:movelib',
           ':params'],
   #imports = ['../core/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -48,7 +49,8 @@ py_test(
   name = "planner_uct",
   srcs = ["planner_uct.py"],
   data = ['//bark/pybark:core.so',
-          '//bark/runtime/tests:xodr_data',
+          '//bark/runtime/tests:xodr_data'
+          '//bark:movelib',
           ':params'],
   #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -64,6 +66,7 @@ py_test(
   srcs = ["od8_const_vel_two_agent.py"],
   data = ['//bark/pybark:core.so',
           '//bark/runtime/tests:xodr_data',
+          '//bark:movelib'
           ':params'],
   #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
