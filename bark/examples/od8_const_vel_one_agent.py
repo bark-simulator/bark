@@ -5,6 +5,7 @@
 
 import numpy as np
 import time
+import os
 from bark.runtime.commons import ParameterServer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons import XodrParser
@@ -19,7 +20,7 @@ from bark.pybark.core.geometry.standard_shapes import CarLimousine
 from bark.pybark.core.geometry import Point2d, Polygon2d
 
 # Parameters Definitions
-param_server = ParameterServer(filename="bark/examples/params/od8_const_vel_one_agent.json")
+param_server = ParameterServer(filename=os.path.join(os.path.dirname(__file__), "params/od8_const_vel_one_agent.json"))
 # set parameter that is accessible in Python as well as cpp
 # param_server.setReal("wheel_base", 0.8)
 
@@ -32,7 +33,7 @@ execution_model = ExecutionModelInterpolate(param_server)
 dynamic_model = SingleTrackModel(param_server)
 
 # Map Definition
-xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
+xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), "../runtime/tests/data/Crossing8Course.xodr"))
 map_interface = MapInterface()
 map_interface.SetOpenDriveMap(xodr_parser.map)
 world.SetMap(map_interface)
@@ -74,4 +75,4 @@ for _ in range(0, 10):
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 
-param_server.save("bark/examples/params/od8_const_vel_one_agent_written.json")
+param_server.save(os.path.join(os.path.dirname(__file__), "params/od8_const_vel_one_agent_written.json"))

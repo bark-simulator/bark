@@ -7,7 +7,7 @@
 from bark.pybark.core.world.opendrive import *
 from bark.pybark.core.world import *
 from bark.pybark.core.geometry import *
-from bark.runtime import PyRuntime
+from bark.pybark.core.runtime import PyRuntime
 
 
 class Runtime(PyRuntime):

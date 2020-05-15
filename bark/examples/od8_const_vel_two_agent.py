@@ -36,7 +36,7 @@ execution_model2 = ExecutionModelInterpolate(param_server)
 dynamic_model2 = SingleTrackModel(param_server)
 
 # Map Definition
-xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
+xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), "../runtime/tests/data/Crossing8Course.xodr"))
 map_interface = MapInterface()
 map_interface.SetOpenDriveMap(xodr_parser.map)
 world.SetMap(map_interface)

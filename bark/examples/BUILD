@@ -81,7 +81,7 @@ py_test(
           '//bark/runtime/tests:xodr_data',
           ':params',
           ':scenarios'],
-  imports = ['../python/'],
+  #imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:matplotlib_viewer",

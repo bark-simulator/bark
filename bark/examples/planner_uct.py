@@ -18,7 +18,7 @@ except:
   exit()
 
 scenario_param_file ="uct_planner.json" # must be within examples params folder
-param_server = ParameterServer(filename= os.path.join("bark/examplesparams/",scenario_param_file))
+param_server = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params",scenario_param_file))
 
 scenario_generation = UniformVehicleDistribution(num_scenarios=1, random_seed=0, params=param_server)
 
@@ -33,7 +33,7 @@ scenario, idx = scenario_generation.get_next_scenario()
 
 world_state = scenario.get_world_state()
 world_state.agents[scenario._eval_agent_ids[0]].behavior_model = BehaviorUCTSingleAgent(param_server)
-param_server.save("bark/examplesparams/mcts_params_written.json")
+param_server.save("bark/examples/params/mcts_params_written.json")
 
 # world_state.agents[scenario._eval_agent_ids[0]].behavior_model
 
@@ -43,4 +43,4 @@ for _ in range(0, 40): # run scenario for 100 steps
   video_renderer.drawWorld(world_state, scenario._eval_agent_ids)
   world_state.DoExecution(sim_step_time)
 
-video_renderer.export_video(filename="bark/examplesscenarios/test_video_intermediate", remove_image_dir=True)
+video_renderer.export_video(filename=os.path.join(os.path.dirname(__file__),"scenarios/test_video_intermediate"), remove_image_dir=True)

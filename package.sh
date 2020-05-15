@@ -1,7 +1,7 @@
 #!/bin/bash
 
 pkg_name='pip_package'
-pkg_version=0.0.1
+#pkg_version=0.0.1
 workspace_name='bark_project'
 
 # activate virtual environment
@@ -34,7 +34,10 @@ while IFS=' ' read -r line delim; do
 
 # python files are handled by bazel
 if [[ ${line} != *".py"* ]];then
-    echo "include $line" >> $pip_manifest
+    # remove trailing workspace directory generate in out as package path starts from .bark
+    # else to import package we would need from bark_project.bark.examples.etc
+    workspace_str_len=${#workspace_name}
+    echo "include ${line:$((workspace_str_len+1))}" >> $pip_manifest
 fi
 done <$bazel_manifest
 
@@ -44,4 +47,7 @@ echo "Moving to build directory"
 cd $build_dir/$workspace_name
 python3 setup.py clean
 python3 setup.py sdist bdist_wheel
+
+#upload to pypi
+python3 -m twine upload  dist/*
 
