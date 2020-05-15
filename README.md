@@ -60,6 +60,24 @@ If you use BARK, please cite us using the following paper:
 }
 ```
 
+<<<<<<< HEAD
+=======
+
+## Quick Start
+Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
+Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/pip_package_merged_dirs/docs/source/installation.md).
+
+After the installation, you can explore the examples by e.g. running `source dev_into.sh && bazel run //examples:od8_const_vel_two_agent`.
+
+<p align="center">
+<img src="docs/source/example_map.gif" alt="BARK" />
+</p>
+
+To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.
+For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
+
+
+>>>>>>> updated Readme link in installation instructions
 ## License
 
 BARK specific code is distributed under MIT License.

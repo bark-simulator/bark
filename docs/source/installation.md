@@ -40,7 +40,7 @@ This section describes the prerequisites and installation-steps of BARK.
 9. Now you can follow the same steps as when using Linux.
 
 
-## Puild Pip package
+## Build Pip package
 * Install twine using python3 -m pip install --user --upgrade twine
 * Run script bash package.sh to build code, package and upload to pypi
 
