@@ -3,13 +3,12 @@ cc_library(
     srcs = [
         "continuous_actions.cpp",
         "macro_actions.cpp",
-    ],
+    ] + glob(["primitives/*.cpp"]),
     hdrs = [
         "motion_primitives.hpp",
         "continuous_actions.hpp",
         "macro_actions.hpp",
-        "primitives.hpp",
-    ],
+    ] + glob(["primitives/*.hpp"]),
     deps = [
         "//modules/commons:commons",
         "//modules/world:include",
@@ -17,7 +16,8 @@ cc_library(
         "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior:include",
-        "//modules/models/behavior/motion_primitives/param_config:param_config"
+        "//modules/models/behavior/motion_primitives/param_config:param_config",
+        "//modules/models/behavior/idm:idm_lane_tracking",
     ],
     visibility = ["//visibility:public"],
 )

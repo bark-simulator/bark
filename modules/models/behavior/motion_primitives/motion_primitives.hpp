@@ -26,10 +26,8 @@ typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 // TODO(@esterle, @bernhard): Add documentation
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
-  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
-                           const commons::ParamsPtr& params)
+  BehaviorMotionPrimitives(const commons::ParamsPtr& params)
       : BehaviorModel(params),
-        dynamic_model_(dynamic_model),
         active_motion_(),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
@@ -46,7 +44,6 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   }
 
  protected:
-  DynamicModelPtr dynamic_model_;
   std::vector<Input> motion_primitives_;
   MotionIdx active_motion_;
 

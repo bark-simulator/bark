@@ -14,7 +14,11 @@
 #include "modules/geometry/polygon.hpp"
 #include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
-#include "modules/models/behavior/motion_primitives/primitives.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acceleration.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/world/observed_world.hpp"
 #include "modules/world/tests/make_test_world.hpp"
@@ -117,7 +121,6 @@ TEST(primitive_constant_acceleration, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAcceleration;
   using modules::models::behavior::primitives::AdjacentLaneCorridors;
   auto params = std::make_shared<DefaultParams>();
-  DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAcceleration primitive(params, 0);
 
   auto world1 = make_test_observed_world(0, 0.0, 5.0, 0.0);
@@ -142,7 +145,6 @@ TEST(primitive_constant_acceleration, behavior_test) {
 TEST(primitive_change_left, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
   auto params = std::make_shared<DefaultParams>();
-  DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAccChangeToLeft primitive(params);
   auto world = MakeTestWorldHighway();
   auto observed_worlds = world->Observe({0, 3});
@@ -156,7 +158,6 @@ TEST(primitive_change_left, behavior_test) {
 TEST(primitive_change_right, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
   auto params = std::make_shared<DefaultParams>();
-  DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAccChangeToRight primitive(params);
   auto world = MakeTestWorldHighway();
   auto observed_worlds = world->Observe({0, 3});
@@ -187,7 +188,6 @@ TEST(macro_actions, behavior_test) {
 
   auto params = std::make_shared<DefaultParams>();
   params->SetReal("integration_time_delta", 0.01);
-  DynamicModelPtr dynamics(new SingleTrackModel(params));
 
   std::vector<std::shared_ptr<Primitive>> prim_vec;
   
@@ -203,7 +203,7 @@ TEST(macro_actions, behavior_test) {
       std::make_shared<PrimitiveConstAccChangeToRight>(params);
   prim_vec.push_back(primitive_right);
 
-  BehaviorMPMacroActions behavior(dynamics, params);
+  BehaviorMPMacroActions behavior(params);
   for (const auto& p : prim_vec) {
     auto idx = behavior.AddMotionPrimitive(p);
   }

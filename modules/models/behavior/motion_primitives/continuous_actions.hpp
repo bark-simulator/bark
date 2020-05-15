@@ -7,7 +7,9 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 
+#include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/dynamic/dynamic_model.hpp"
 
 namespace modules {
 namespace models {
@@ -19,7 +21,7 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
  public:
   BehaviorMPContinuousActions(const DynamicModelPtr& dynamic_model,
                              const commons::ParamsPtr& params)
-      : BehaviorMotionPrimitives(dynamic_model, params), motion_primitives_() {}
+      : BehaviorMotionPrimitives(params), motion_primitives_(), dynamic_model_(dynamic_model) {}
 
   virtual ~BehaviorMPContinuousActions() {}
 
@@ -38,6 +40,7 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
 
  private:
   std::vector<Input> motion_primitives_;
+  DynamicModelPtr dynamic_model_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMPContinuousActions::Clone()

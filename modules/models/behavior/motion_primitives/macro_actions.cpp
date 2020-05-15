@@ -14,10 +14,9 @@ namespace behavior {
 
 using modules::models::dynamic::StateDefinition;
 
-BehaviorMPMacroActions::BehaviorMPMacroActions(
-    const DynamicModelPtr& dynamic_model, const commons::ParamsPtr& params,
+BehaviorMPMacroActions::BehaviorMPMacroActions(const commons::ParamsPtr& params,
     const std::vector<primitives::PrimitivePtr>& motion_primitives)
-    : BehaviorMotionPrimitives(dynamic_model, params),
+    : BehaviorMotionPrimitives(params),
       motion_primitives_(motion_primitives) {}
 
 BehaviorMotionPrimitives::MotionIdx
@@ -38,7 +37,7 @@ Trajectory BehaviorMPMacroActions::Plan(
   AdjacentLaneCorridors adjacent_corridors = GetCorridors(observed_world);
   // There must be at least one primitive that is always available!
   if(valid_primitives_.empty()) {
-    GetNumMotionPrimitives(observed_world, adjacent_corridors);
+    GetNumMotionPrimitivesByCorridors(observed_world, adjacent_corridors);
     LOG_IF(ERROR, valid_primitives_.empty()) << "No motion primitive available! At least one primitive must be available at all times!";
   }
   const auto& selected_mp = motion_primitives_.at(valid_primitives_.at(active_motion_));
@@ -55,7 +54,8 @@ BehaviorMPMacroActions::GetMotionPrimitives() const {
 BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::GetNumMotionPrimitives(
     const ObservedWorldPtr& observed_world) {
-  return GetNumMotionPrimitives(*observed_world, GetCorridors(*observed_world));
+  return GetNumMotionPrimitivesByCorridors(*observed_world,
+                                           GetCorridors(*observed_world));
 }
 AdjacentLaneCorridors BehaviorMPMacroActions::GetCorridors(
     const ObservedWorld& observed_world) {
@@ -73,7 +73,7 @@ AdjacentLaneCorridors BehaviorMPMacroActions::GetCorridors(
   return adjacent_corridors;
 }
 BehaviorMotionPrimitives::MotionIdx
-BehaviorMPMacroActions::GetNumMotionPrimitives(
+BehaviorMPMacroActions::GetNumMotionPrimitivesByCorridors(
     const ObservedWorld& observed_world,
     const AdjacentLaneCorridors& adjacent_corridors) {
   MotionIdx i = 0;

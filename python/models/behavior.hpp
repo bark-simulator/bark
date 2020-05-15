@@ -10,7 +10,7 @@
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/models/behavior/motion_primitives/primitives.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
 #include "modules/world/observed_world.hpp"
 
 
@@ -50,12 +50,15 @@ class PyPrimitive : public Primitive {
   using Primitive::Primitive;
 
   bool IsPreConditionSatisfied(
-      const ObservedWorldPtr& observed_world) {
+      const ObservedWorld& observed_world,
+      const modules::models::behavior::primitives::AdjacentLaneCorridors&
+      adjacent_corridors) {
         PYBIND11_OVERLOAD_PURE(
       bool,
       Primitive,
       IsPreConditionSatisfied,
-      observed_world);
+      observed_world,
+      adjacent_corridors);
   }
 
   Trajectory Plan(float delta_time,
@@ -68,6 +71,17 @@ class PyPrimitive : public Primitive {
       delta_time,
       observed_world,
       target_corridor);
+    }
+
+    modules::world::LaneCorridorPtr SelectTargetCorridor(
+        const ObservedWorld& observed_world,
+        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+            adjacent_corridors) {
+      PYBIND11_OVERLOAD_PURE(modules::world::LaneCorridorPtr,
+          Primitive,
+          SelectTargetCorridor,
+          observed_world,
+          adjacent_corridors);
     }
 };
 

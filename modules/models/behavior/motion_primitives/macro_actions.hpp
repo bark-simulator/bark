@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/behavior/motion_primitives/primitives.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
 #include "modules/world/map/lane_corridor.hpp"
 
 namespace modules {
@@ -23,11 +23,9 @@ using world::map::LaneCorridorPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPMacroActions(const DynamicModelPtr& dynamic_model,
-                         const ParamsPtr& params)
-      : BehaviorMotionPrimitives(dynamic_model, params) {}
-  BehaviorMPMacroActions(
-      const DynamicModelPtr& dynamic_model, const ParamsPtr& params,
+  BehaviorMPMacroActions(const ParamsPtr& params)
+      : BehaviorMotionPrimitives(params) {}
+  BehaviorMPMacroActions(const ParamsPtr& params,
       const std::vector<primitives::PrimitivePtr>& motion_primitives);
 
   virtual ~BehaviorMPMacroActions() {}
@@ -46,7 +44,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
       const ObservedWorldPtr& observed_world);
 
  private:
-  MotionIdx GetNumMotionPrimitives(
+  MotionIdx GetNumMotionPrimitivesByCorridors(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors);
   std::vector<primitives::PrimitivePtr> motion_primitives_;
