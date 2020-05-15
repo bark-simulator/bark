@@ -5,8 +5,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 from bark.runtime.scenario.scenario import Scenario
-from bark.runtime.scenario.scenario_generation.scenario_generation\
-  import ScenarioGeneration
+from bark.runtime.scenario.scenario_generation import ScenarioGeneration
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 from bark.core.world.agent import *
 from bark.core.models.behavior import *
@@ -17,8 +16,8 @@ from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.commons import ParameterServer
+from bark.runtime.commons import XodrParser
 
 import numpy as np
 import math

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name = "bark-simulator",
-    version = "0.0.3",
+    version = "0.0.6",
     description = "A tool for Behavior benchmARKing",
     long_description=long_description,
     long_description_content_type="text/markdown",

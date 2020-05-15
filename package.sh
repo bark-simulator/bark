@@ -9,6 +9,14 @@ source ./python/venv/bin/activate
 
 echo "Building package"
 bazel run //bark:$pkg_name
+
+if [ $? -eq 0 ]; then
+    echo "Build Suceeded"
+else
+    echo "Build Fail"
+    exit 0
+fi
+
 build_dir=bazel-bin/bark/$pkg_name.runfiles
 
 echo "Copying setup.py to project pirectory at $build_dir/$workspace_name"
@@ -49,5 +57,5 @@ python3 setup.py clean
 python3 setup.py sdist bdist_wheel
 
 #upload to pypi
-python3 -m twine upload  dist/*
+python3 -m twine upload --skip-existing dist/*
 
