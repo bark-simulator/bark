@@ -176,7 +176,6 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorMotionPrimitives>>(m,
     "BehaviorMotionPrimitives")
-    .def(py::init<const DynamicModelPtr&, const modules::commons::ParamsPtr&>())
     .def("ActionToBehavior", &BehaviorMotionPrimitives::ActionToBehavior)
     .def_property_readonly("num_motion_primitives", &BehaviorMotionPrimitives::GetNumMotionPrimitives);
 
