@@ -8,7 +8,7 @@ workspace_name='bark_project'
 source ./python/venv/bin/activate 
 
 echo "Building package"
-#bazel run //bark:$pkg_name
+bazel run //bark:$pkg_name
 build_dir=bazel-bin/bark/$pkg_name.runfiles
 
 echo "Copying setup.py to project pirectory at $build_dir/$workspace_name"
