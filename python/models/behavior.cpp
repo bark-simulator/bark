@@ -38,6 +38,7 @@ void python_behavior(py::module m) {
     .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
     .def("SetLastAction", &BehaviorModel::SetLastAction)
     .def("GetLastAction", &BehaviorModel::GetLastAction)
+    .def("ActionToBehavior", &BehaviorModel::ActionToBehavior)
     .def_property("last_trajectory",
                   &BehaviorModel::GetLastTrajectory,
                   &BehaviorModel::SetLastTrajectory);
