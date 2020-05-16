@@ -118,7 +118,6 @@ cc_library(
         "//bark/geometry",
         "@boost//:geometry",
         "//bark/world:world",
-
     ],
     visibility = ["//visibility:public"],
 )
@@ -144,5 +143,3 @@ cc_library(
     hdrs=glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )
-
-
