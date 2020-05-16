@@ -11,7 +11,6 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/evaluator_distance_to_goal.hpp"
 
 namespace py = pybind11;
 
@@ -71,12 +70,5 @@ void python_evaluation(py::module m) {
     .def(py::init<>())
     .def("__repr__", [](const EvaluatorStepCount &g) {
       return "bark.world.evaluation.EvaluatorStepCount";
-    });
-
-  py::class_<EvaluatorDistanceToGoal, BaseEvaluator,
-    std::shared_ptr<EvaluatorDistanceToGoal> >(m, "EvaluatorDistanceToGoal")
-    .def(py::init<const AgentId&>())
-    .def("__repr__", [](const EvaluatorDistanceToGoal &g) {
-      return "bark.world.evaluation.EvaluatorDistanceToGoal";
     });
 }
