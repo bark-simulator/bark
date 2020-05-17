@@ -82,6 +82,6 @@ for _ in range(0, 30):
 
 In order to make the experiment reproducible, use:
 ```python
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "params", "od8_const_vel_one_agent_written.json"))
+param_server.Save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "params", "od8_const_vel_one_agent_written.json"))
 ```
 

@@ -88,7 +88,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def create_single_scenario(self):
     scenario = Scenario(map_file_name=self._map_file_name,
-                        json_params=self._params.convert_to_dict())
+                        json_params=self._params.ConvertToDict())
     world = scenario.get_world_state()
     collected_sources_sinks_agent_states_geometries = []
     collected_sources_sinks_default_param_configs = []
@@ -111,7 +111,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       # collect default parameters of this config
       sink_source_default_params.append(sink_source_config)
-      sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.convert_to_dict()
+      sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.ConvertToDict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
     #2 remove overlapping agent states from different sources and sinks
@@ -138,7 +138,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigBehaviorModels", 
                               args_list, kwargs_dict)
       behavior_models = config_return
-      sink_source_default_params[idx]["ConfigBehaviorModels"] = default_params_behavior.convert_to_dict()
+      sink_source_default_params[idx]["ConfigBehaviorModels"] = default_params_behavior.ConvertToDict()
       
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       config_return, kwargs_dict_tmp, default_params_execution = \
@@ -146,7 +146,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigExecutionModels",
                               args_list, kwargs_dict)
       execution_models = config_return
-      sink_source_default_params[idx]["ConfigExecutionModels"] = default_params_execution.convert_to_dict()
+      sink_source_default_params[idx]["ConfigExecutionModels"] = default_params_execution.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
 
@@ -155,7 +155,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigDynamicModels",
                               args_list, kwargs_dict)
       dynamic_models = config_return
-      sink_source_default_params[idx]["ConfigDynamicModels"] = default_params_dynamic.convert_to_dict()
+      sink_source_default_params[idx]["ConfigDynamicModels"] = default_params_dynamic.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       #4 create goal definitions and controlled agents
@@ -165,7 +165,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               args_list, kwargs_dict)
       controlled_agent_ids = config_return
       controlled_agent_ids_all.extend(controlled_agent_ids)
-      sink_source_default_params[idx]["ConfigControlledAgents"] = default_params_controlled_agents.convert_to_dict()
+      sink_source_default_params[idx]["ConfigControlledAgents"] = default_params_controlled_agents.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       args_list = [*args_list, controlled_agent_ids]
@@ -174,7 +174,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigGoalDefinitions", 
                               args_list, kwargs_dict)
       goal_definitions = config_return
-      sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.convert_to_dict()
+      sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.ConvertToDict()
 
       #5 Build all agents for this source config
       agent_params = ParameterServer(json = sink_source_config["AgentParams"])
@@ -182,7 +182,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                       agent_geometries, behavior_models, execution_models,
                       dynamic_models, goal_definitions, controlled_agent_ids,
                       world, agent_params)
-      sink_source_default_params[idx]["AgentParams"] = agent_params.convert_to_dict()
+      sink_source_default_params[idx]["AgentParams"] = agent_params.ConvertToDict()
 
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)

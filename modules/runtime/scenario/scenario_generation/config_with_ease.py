@@ -245,7 +245,7 @@ class ConfigWithEase(ScenarioGeneration):
         Scenario -- Returns a BARK scenario
     """
     scenario = Scenario(map_file_name=self._map_file_name,
-                        json_params=self._params.convert_to_dict())
+                        json_params=self._params.ConvertToDict())
     world = scenario.get_world_state()
     map_interface = world.map
     # fill agent list of the BARK world and set agents that are controlled
