@@ -110,36 +110,36 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluation",
-    deps = [
-        ":evaluator_goal_reached",
-        ":base_evaluator",
-        ":evaluator_collision_agents",
-        ":evaluator_drivable_area",
-        ":evaluator_collision_ego_agent",
-        ":evaluator_step_count",
-        ":evaluator_behavior_expired",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_binary(
     name = "evaluator_rss",
-    srcs = [
-        "evaluator_rss.hpp",
-        "evaluator_rss.cpp"
-    ],
+    srcs = ["evaluator_rss.cpp"],
+    hdrs = ["evaluator_rss.hpp"],
+    visibility = ["//visibility:public"],
     deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
+        "//modules/commons",
         "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic",
-        "@spdlog//:spdlog",
+        "//modules/models/dynamic",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
+        "@ad_rss_lib//:ad_rss",
         "@ad_rss_lib//:ad_rss_map_integration",
         "@boost//:geometry",
+        "@spdlog",
     ],
+)
+
+cc_library(
+    name = "evaluation",
     visibility = ["//visibility:public"],
+    deps = [
+        ":base_evaluator",
+        ":evaluator_behavior_expired",
+        ":evaluator_collision_agents",
+        ":evaluator_collision_ego_agent",
+        ":evaluator_drivable_area",
+        ":evaluator_goal_reached",
+        ":evaluator_rss",
+        ":evaluator_step_count",
+    ],
 )
 
 cc_library(
