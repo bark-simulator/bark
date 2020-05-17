@@ -56,8 +56,7 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
     num_trajectory_points, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
   // this action is set externally. e.g. by RL
-  Input action = boost::get<Input>(
-    this->GetLastAction());
+  Input action = boost::get<Input>(action_);
 
   // generate a trajectory with const. action
   traj.row(0) = ego_vehicle_state;

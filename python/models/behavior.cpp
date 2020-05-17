@@ -38,6 +38,7 @@ void python_behavior(py::module m) {
     .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
     .def("SetLastAction", &BehaviorModel::SetLastAction)
     .def("GetLastAction", &BehaviorModel::GetLastAction)
+    .def("ActionToBehavior", &BehaviorModel::ActionToBehavior)
     .def_property("last_trajectory",
                   &BehaviorModel::GetLastTrajectory,
                   &BehaviorModel::SetLastTrajectory);
@@ -192,7 +193,9 @@ void python_behavior(py::module m) {
             PrimitivePtr>(m, "Primitive")
   .def(py::init<const modules::commons::ParamsPtr&>())
   .def("Plan", &Primitive::Plan)
-  .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
+  .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied)
+      .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+      .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives);
 
   py::class_<BehaviorMPMacroActions,
             BehaviorModel,

@@ -34,6 +34,12 @@ Trajectory BehaviorMPMacroActions::Plan(
 
   Trajectory traj(num_trajectory_points,
                   static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+
+  traj = motion_primitives_.at(
+    boost::get<DiscreteAction>(active_motion_))->Plan(delta_time, observed_world);
+  // traj = 
+
+  // SetLastAction(Action(DiscreteAction(active_motion_)));
   AdjacentLaneCorridors adjacent_corridors = GetCorridors(observed_world);
   // There must be at least one primitive that is always available!
   if(valid_primitives_.empty()) {

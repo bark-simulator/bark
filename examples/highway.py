@@ -73,9 +73,9 @@ sim_real_time_factor = param_server["simulation"][
   "execution in real-time or faster",
   0.5]
 
-viewer = VideoRenderer(renderer=viewer,
-                       world_step_time=sim_step_time,
-                       fig_path="/home/hart/Dokumente/2020/bark/video")
+# viewer = VideoRenderer(renderer=viewer,
+#                        world_step_time=sim_step_time,
+#                        fig_path="/home/hart/Dokumente/2020/bark/video")
 
 # gym like interface
 env = Runtime(step_time=0.2,
@@ -93,4 +93,4 @@ for episode in range(0, 1):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 
-viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
+# viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)

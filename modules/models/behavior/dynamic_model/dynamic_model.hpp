@@ -36,8 +36,13 @@ class BehaviorDynamicModel : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  virtual void ActionToBehavior(const Action& action) {
+    action_ = action;
+  }
+
  private:
   float integration_time_delta_;
+  Action action_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorDynamicModel::Clone() const {

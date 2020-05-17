@@ -33,7 +33,9 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
     const ObservedWorldPtr& observed_world) {
     return motion_primitives_.size();
   }
-  virtual Input GetAction() const { return motion_primitives_[active_motion_]; }
+  virtual Input GetAction() const {
+    return motion_primitives_[boost::get<DiscreteAction>(active_motion_)];
+  }
   MotionIdx AddMotionPrimitive(const Input& dynamic_input);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;

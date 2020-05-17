@@ -6,6 +6,7 @@
 
 #ifndef PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_HPP_
 #define PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_HPP_
+#include <memory>
 #include "python/common.hpp"
 
 #include "modules/models/behavior/behavior_model.hpp"
@@ -16,6 +17,7 @@
 
 namespace py = pybind11;
 using modules::models::behavior::BehaviorModel;
+using modules::models::behavior::Action;
 using modules::models::behavior::primitives::Primitive;
 using modules::world::ObservedWorld;
 using modules::world::ObservedWorldPtr;
@@ -41,6 +43,15 @@ class PyBehaviorModel : public BehaviorModel {
       std::shared_ptr<BehaviorModel>,
       BehaviorModel,
       Clone);
+  }
+
+  void ActionToBehavior(
+    const Action& action) {
+    PYBIND11_OVERLOAD(
+      void,
+      BehaviorModel,
+      ActionToBehavior,
+      action);
   }
 
 };
