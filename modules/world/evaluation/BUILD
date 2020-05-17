@@ -3,27 +3,25 @@ cc_library(
     hdrs = [
         "base_evaluator.hpp",
     ],
+    visibility = ["//visibility:public"],
     deps = [
+        "//modules/commons",
         "//modules/geometry",
-        "//modules/commons:commons",
         "@boost//:geometry",
     ],
-    visibility = ["//visibility:public"],
 )
-
 
 cc_library(
     name = "evaluator_goal_reached",
     hdrs = [
         "evaluator_goal_reached.hpp",
     ],
-    deps = [
-        "//modules/world:world",
-        ":base_evaluator",
-        "@boost//:geometry",
-
-    ],
     visibility = ["//visibility:public"],
+    deps = [
+        ":base_evaluator",
+        "//modules/world",
+        "@boost//:geometry",
+    ],
 )
 
 cc_library(
@@ -31,82 +29,80 @@ cc_library(
     hdrs = [
         "evaluator_behavior_expired.hpp",
     ],
-    deps = [
-        "//modules/world:world",
-        "//modules/models/behavior:behavior",
-        ":base_evaluator",
-        "@boost//:geometry",
-
-    ],
     visibility = ["//visibility:public"],
+    deps = [
+        ":base_evaluator",
+        "//modules/models/behavior",
+        "//modules/world",
+        "@boost//:geometry",
+    ],
 )
 
 cc_library(
     name = "evaluator_collision_agents",
-    hdrs = [
-        "evaluator_collision_agents.hpp"
-    ],
     srcs = [
-        "evaluator_collision_agents.cpp"
+        "evaluator_collision_agents.cpp",
     ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/geometry",
-        "//modules/commons:commons",
-        "@boost//:geometry",
-        "//modules/world:world",
-
+    hdrs = [
+        "evaluator_collision_agents.hpp",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//modules/commons",
+        "//modules/geometry",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
+        "@boost//:geometry",
+    ],
 )
 
 cc_library(
     name = "evaluator_collision_ego_agent",
-    hdrs = [
-        "evaluator_collision_ego_agent.hpp"
-    ],
     srcs = [
-        "evaluator_collision_ego_agent.cpp"
+        "evaluator_collision_ego_agent.cpp",
     ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
-        "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic",
-        "@boost//:geometry"
+    hdrs = [
+        "evaluator_collision_ego_agent.hpp",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//modules/commons",
+        "//modules/geometry",
+        "//modules/models/dynamic",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
+        "@boost//:geometry",
+    ],
 )
+
 cc_library(
     name = "evaluator_step_count",
     hdrs = [
-        "evaluator_step_count.hpp"
-    ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
-        "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic",
-        "@boost//:geometry"
+        "evaluator_step_count.hpp",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//modules/commons",
+        "//modules/geometry",
+        "//modules/models/dynamic",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
+        "@boost//:geometry",
+    ],
 )
 
 cc_library(
     name = "evaluator_drivable_area",
     hdrs = [
-        "evaluator_drivable_area.hpp"
-    ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/geometry",
-        "@boost//:geometry",
-        "//modules/world:world",
-
+        "evaluator_drivable_area.hpp",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "//modules/geometry",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
+        "@boost//:geometry",
+    ],
 )
 
 cc_library(
@@ -143,9 +139,7 @@ cc_library(
 )
 
 cc_library(
-    name="include",
-    hdrs=glob(["*.hpp"]),
+    name = "include",
+    hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )
-
-
