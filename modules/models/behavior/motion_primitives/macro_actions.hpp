@@ -33,8 +33,8 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   virtual Trajectory Plan(float delta_time,
                           const ObservedWorld& observed_world);
 
-  virtual MotionIdx GetNumMotionPrimitives(
-      const ObservedWorldPtr& observed_world);
+  MotionIdx GetNumMotionPrimitives(
+      const ObservedWorldPtr& observed_world) override;
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
 

@@ -193,9 +193,7 @@ void python_behavior(py::module m) {
             PrimitivePtr>(m, "Primitive")
   .def(py::init<const modules::commons::ParamsPtr&>())
   .def("Plan", &Primitive::Plan)
-  .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied)
-      .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
-      .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives);
+  .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
 
   py::class_<BehaviorMPMacroActions,
             BehaviorModel,
@@ -205,6 +203,8 @@ void python_behavior(py::module m) {
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
+  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives)
   .def(py::pickle(
       [](const BehaviorMPMacroActions& b) {
         std::vector<py::tuple> prims;
@@ -246,7 +246,7 @@ void python_behavior(py::module m) {
 
   py::class_<PrimitiveConstAccStayLane,
              Primitive,
-             std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstantAcceleration")
+             std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstAccStayLane")
     .def(py::init<const modules::commons::ParamsPtr&,
         float>())
     .def(py::init<const modules::commons::ParamsPtr&>())
