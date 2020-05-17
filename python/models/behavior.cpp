@@ -241,21 +241,21 @@ void python_behavior(py::module m) {
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
 
-  py::class_<PrimitiveConstAcceleration,
+  py::class_<PrimitiveConstAccStayLane,
              Primitive,
-             std::shared_ptr<PrimitiveConstAcceleration>>(m, "PrimitiveConstantAcceleration")
+             std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstantAcceleration")
     .def(py::init<const modules::commons::ParamsPtr&,
         float>())
     .def(py::init<const modules::commons::ParamsPtr&>())
                 .def(py::pickle(
-      [](const PrimitiveConstAcceleration& b) {
+      [](const PrimitiveConstAccStayLane& b) {
         return py::make_tuple(
             ParamsToPython(b.Primitive::GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
-        return new PrimitiveConstAcceleration(
+        return new PrimitiveConstAccStayLane(
             PythonToParams(t[0].cast<py::tuple>()));
       }));
 

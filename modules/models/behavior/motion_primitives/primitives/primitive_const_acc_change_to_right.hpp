@@ -6,7 +6,7 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_CHANGE_TO_RIGHT_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_CHANGE_TO_RIGHT_HPP_
 
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acceleration.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 
 namespace modules {
 namespace models {
@@ -14,7 +14,7 @@ namespace behavior {
 namespace primitives {
 
 // TODO(@esterle, @bernhard): Add documentation
-class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
+class PrimitiveConstAccChangeToRight : public PrimitiveConstAccStayLane {
  public:
   explicit PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params);
 

@@ -12,7 +12,7 @@ class PrimitiveConstAcc;
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acceleration.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
 
 namespace modules {
@@ -26,7 +26,7 @@ using modules::world::prediction::PredictionSettings;
 using modules::models::behavior::primitives::Primitive;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
-using modules::models::behavior::primitives::PrimitiveConstAcceleration;
+using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
 using modules::models::behavior::primitives::PrimitiveGapKeeping;
 using modules::models::dynamic::Input;
 using modules::models::dynamic::SingleTrackModel;
@@ -43,7 +43,7 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(const com
     std::vector<std::shared_ptr<Primitive>> prim_vec;
 
     for (auto& acc : acc_vec) {
-        auto primitive = std::make_shared<PrimitiveConstAcceleration>(
+        auto primitive = std::make_shared<PrimitiveConstAccStayLane>(
             params, acc);
         prim_vec.push_back(primitive);
     }

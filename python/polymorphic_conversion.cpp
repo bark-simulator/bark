@@ -10,24 +10,24 @@
 
 #include "polymorphic_conversion.hpp"
 
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
-#include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
-#include "modules/models/behavior/rule_based/intersection_behavior.hpp"
-#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "modules/world/goal_definition/goal_definition_polygon.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/world/goal_definition/goal_definition_sequential.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "python/models/behavior.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acceleration.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "modules/models/behavior/rule_based/intersection_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
+#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/goal_definition/goal_definition_sequential.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits.hpp"
+#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
+#include "python/models/behavior.hpp"
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
@@ -53,7 +53,7 @@ using modules::commons::SetterParams;
 using modules::models::behavior::primitives::Primitive;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
-using modules::models::behavior::primitives::PrimitiveConstAcceleration;
+using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
 using modules::models::behavior::primitives::PrimitiveGapKeeping;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -182,8 +182,8 @@ py::tuple PrimitiveToPython(const PrimitivePtr& prim) {
   std::string label_name;
   if (typeid(*prim) == typeid(PrimitiveGapKeeping)) {
     label_name = "PrimitiveGapKeeping";
-  } else if (typeid(*prim) == typeid(PrimitiveConstAcceleration)) {
-    label_name = "PrimitiveConstAcceleration";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccStayLane)) {
+    label_name = "PrimitiveConstAccStayLane";
   } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToLeft)) {
     label_name = "PrimitiveConstAccChangeToLeft";
   } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToRight)) {
@@ -199,9 +199,9 @@ PrimitivePtr PythonToPrimitive(py::tuple t) {
   if (label_name.compare("PrimitiveGapKeeping") == 0) {
     return std::make_shared<PrimitiveGapKeeping>(
         t[0].cast<PrimitiveGapKeeping>());
-  } else if (label_name.compare("PrimitiveConstAcceleration") == 0) {
-    return std::make_shared<PrimitiveConstAcceleration>(
-        t[0].cast<PrimitiveConstAcceleration>());
+  } else if (label_name.compare("PrimitiveConstAccStayLane") == 0) {
+    return std::make_shared<PrimitiveConstAccStayLane>(
+        t[0].cast<PrimitiveConstAccStayLane>());
   } else if (label_name.compare("PrimitiveConstAccChangeToLeft") == 0) {
     return std::make_shared<PrimitiveConstAccChangeToLeft>(
         t[0].cast<PrimitiveConstAccChangeToLeft>());

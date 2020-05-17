@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACCELERATION_HPP_
-#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACCELERATION_HPP_
+#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
+#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
 
 #include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
 
@@ -13,12 +13,12 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
+class PrimitiveConstAccStayLane : public Primitive, BehaviorIDMLaneTracking {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
-  PrimitiveConstAcceleration(const commons::ParamsPtr& params,
+  PrimitiveConstAccStayLane(const commons::ParamsPtr& params,
                              float acceleration);
-  explicit PrimitiveConstAcceleration(const commons::ParamsPtr& params);
+  explicit PrimitiveConstAccStayLane(const commons::ParamsPtr& params);
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
@@ -45,4 +45,4 @@ class PrimitiveConstAcceleration : public Primitive, BehaviorIDMLaneTracking {
 }  // namespace models
 }  // namespace modules
 
-#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACCELERATION_HPP_
+#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_

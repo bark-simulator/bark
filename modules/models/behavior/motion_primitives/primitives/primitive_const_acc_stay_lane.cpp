@@ -3,21 +3,21 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "primitive_const_acceleration.hpp"
-modules::models::behavior::primitives::PrimitiveConstAcceleration::
-    PrimitiveConstAcceleration(const modules::commons::ParamsPtr& params)
+#include "primitive_const_acc_stay_lane.hpp"
+modules::models::behavior::primitives::PrimitiveConstAccStayLane::
+    PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(
-          params->GetReal("PrimitiveConstAcceleration::Acceleration",
+          params->GetReal("PrimitiveConstAccStayLane::Acceleration",
                           "Constant acceleration to apply", 0.0)) {}
-modules::models::behavior::primitives::PrimitiveConstAcceleration::
-    PrimitiveConstAcceleration(const modules::commons::ParamsPtr& params,
+modules::models::behavior::primitives::PrimitiveConstAccStayLane::
+    PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params,
                                float acceleration)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(acceleration) {}
-bool modules::models::behavior::primitives::PrimitiveConstAcceleration::
+bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     IsPreConditionSatisfied(
         const modules::world::ObservedWorld& observed_world,
         const modules::models::behavior::primitives::AdjacentLaneCorridors&
@@ -32,7 +32,7 @@ bool modules::models::behavior::primitives::PrimitiveConstAcceleration::
       acceleration_ <= single_track->GetMaxAcceleration(ego_state);
 }
 modules::models::dynamic::Trajectory
-modules::models::behavior::primitives::PrimitiveConstAcceleration::Plan(
+modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
     float delta_time, const modules::world::ObservedWorld& observed_world,
     const modules::world::LaneCorridorPtr& target_corridor) {
   SetBehaviorStatus(BehaviorStatus::VALID);
@@ -58,7 +58,7 @@ modules::models::behavior::primitives::PrimitiveConstAcceleration::Plan(
   return traj;
 }
 modules::world::LaneCorridorPtr modules::models::behavior::primitives::
-    PrimitiveConstAcceleration::SelectTargetCorridor(
+    PrimitiveConstAccStayLane::SelectTargetCorridor(
         const modules::world::ObservedWorld& observed_world,
         const modules::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
@@ -66,7 +66,7 @@ modules::world::LaneCorridorPtr modules::models::behavior::primitives::
   return adjacent_corridors.current;
 }
 std::pair<double, double>
-modules::models::behavior::primitives::PrimitiveConstAcceleration::GetTotalAcc(
+modules::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
     const modules::world::ObservedWorld& observed_world,
     const modules::models::behavior::IDMRelativeValues& rel_values,
     double rel_distance, double dt) const {

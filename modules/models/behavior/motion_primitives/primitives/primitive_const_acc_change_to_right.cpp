@@ -6,7 +6,7 @@
 #include "primitive_const_acc_change_to_right.hpp"
 modules::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     PrimitiveConstAccChangeToRight(const modules::commons::ParamsPtr& params)
-    : PrimitiveConstAcceleration(params),
+    : PrimitiveConstAccStayLane(params),
       min_length_(params->GetReal(
           "MinLength", "Minimum length of lane to change to", 0.0f)) {}
 modules::world::LaneCorridorPtr modules::models::behavior::primitives::
