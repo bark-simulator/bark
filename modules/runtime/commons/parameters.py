@@ -48,11 +48,11 @@ class ParameterServer(Params):
                 self.store[new_key] = ParameterServer(log_if_default = self.log_if_default)
                 return self.store[new_key]
 
-    def FindKey((self, param_key):
+    def FindKey(self, param_key):
       delimiter = "::"
       for key, value in self.store.items():
                   if isinstance(value, ParameterServer):
-                      found_key_tmp =  value.FindKey((param_key)
+                      found_key_tmp =  value.FindKey(param_key)
                       if found_key_tmp:
                         return "{}{}{}".format(key, delimiter,
                               found_key_tmp)
@@ -198,7 +198,7 @@ class ParameterServer(Params):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
         if log_if_default:
           # first search for key, otherwise default already integrated into store
-          found_key = self.FindKey((hierarchy[-1])
+          found_key = self.FindKey(hierarchy[-1])
         value, used_default = self.get_val_iter(hierarchy.copy(), description, default_value)
         if log_if_default and used_default:
           logging.warning("Using default {} for {}".format(
