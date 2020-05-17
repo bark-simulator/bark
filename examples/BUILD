@@ -165,3 +165,25 @@ py_binary(
         "//modules/runtime:runtime",
     ],
 )
+
+py_test(
+  name = "test",
+  srcs = ["test.py"],
+  data = ['//python:bark.so',
+          '//modules/runtime/tests:xodr_data',
+          '@benchmark_database_release//:v2.0',
+          "@benchmark_database//data/database1:database1",
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:pygame_viewer",
+          "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime:runtime",
+          "//modules/benchmark:benchmark_runner",
+          "@benchmark_database//load:benchmark_database",
+          "@benchmark_database//serialization:database_serializer",
+          "//modules/benchmark:benchmark_analyzer",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          ],
+)
