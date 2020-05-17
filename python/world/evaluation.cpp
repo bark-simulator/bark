@@ -11,6 +11,7 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
+#include "modules/world/evaluation/evaluator_rss.hpp"
 
 namespace py = pybind11;
 
@@ -70,5 +71,13 @@ void python_evaluation(py::module m) {
     .def(py::init<>())
     .def("__repr__", [](const EvaluatorStepCount &g) {
       return "bark.world.evaluation.EvaluatorStepCount";
+    });
+
+  py::class_<EvaluatorRss, BaseEvaluator,
+    std::shared_ptr<EvaluatorRss>>(m, "EvaluatorRss")
+    .def(py::init<const AgentId&>())
+    .def(py::init<>())
+    .def("__repr__", [](const EvaluatorRss &g) {
+      return "bark.world.evaluation.EvaluatorRss";
     });
 }
