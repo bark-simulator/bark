@@ -33,7 +33,7 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
 
   def behavior_model(self, world):
     # agent_params = ParameterServer()
-    params = self._params.addChild("BehaviorLaneChangeRuleBased"+str(self._count))
+    params = self._params.AddChild("BehaviorLaneChangeRuleBased"+str(self._count))
     params["BehaviorIDMClassic"]["DesiredVelocity"] = \
       np.random.uniform(0., 10.)
     behavior_model = BehaviorLaneChangeRuleBased(params)

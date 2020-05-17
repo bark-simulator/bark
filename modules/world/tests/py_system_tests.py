@@ -130,7 +130,7 @@ class SystemTests(unittest.TestCase):
         # agent_2d_shape = CarLimousine()
         agent_2d_shape = CarRectangle()
         init_state = np.array([0, 3, -5.25, 0, 20])
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
 
 
         # goal_polygon = Polygon2d(
@@ -219,7 +219,7 @@ class SystemTests(unittest.TestCase):
                         velocity_range)
 
         # define two agents with the different behavior models
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
         agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
                       agent_2d_shape, agent_params, goal_definition, map_interface)
         world.AddAgent(agent)

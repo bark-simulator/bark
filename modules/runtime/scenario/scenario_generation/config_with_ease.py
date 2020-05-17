@@ -263,7 +263,7 @@ class ConfigWithEase(ScenarioGeneration):
           agent_dyn = lc_config.dynamic_model
           agent_exec = lc_config.execution_model
           agent_polygon = lc_config.shape
-          agent_params = self._params.addChild("agent")
+          agent_params = self._params.AddChild("agent")
           agent_goal = lc_config.goal(world)
           new_agent = Agent(
             agent_state, 

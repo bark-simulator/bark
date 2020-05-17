@@ -28,7 +28,7 @@ class ModelJsonConversion:
       self.convert_model(agent_json["execution_model"], param_server), 
       Polygon2d(agent_json["shape"]["center_pose"],
       np.array(agent_json["shape"]["polygon_points"])),
-      param_server.addChild("agent"),
+      param_server.AddChild("agent"),
       agent_json["goal_definition"],
       agent_json["map_interface"])
     return bark_agent
