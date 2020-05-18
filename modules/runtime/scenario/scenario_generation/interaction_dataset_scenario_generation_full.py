@@ -73,7 +73,11 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         for track_id in dict_scenario["TrackIds"]:
             track_params["track_id"] = track_id
-            if str(track_id) in self.behavior_models:
+            if track_id == dict_scenario["EgoTrackId"]:
+                # Hardcode the behavior of the ego agent for now
+                # TODO: use ParameterServer to set this
+                track_params["behavior_model"] = "BehaviorMobil"
+            elif str(track_id) in self.behavior_models:
                 track_params["behavior_model"] = self.behavior_models[str(
                     track_id)]
             else:
