@@ -30,7 +30,7 @@ bool modules::models::behavior::primitives::PrimitiveConstAccChangeToRight::
         const modules::world::ObservedWorld& observed_world,
         const modules::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
-  bool satisfied;
+  bool satisfied = false;
   if (adjacent_corridors.right) {
     const Point2d ego_pos = observed_world.CurrentEgoPosition();
     //! agent may not have reached target lane yet, so we match point on target
@@ -40,8 +40,6 @@ bool modules::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     float remaining_length =
         adjacent_corridors.right->LengthUntilEnd(point_on_target_line);
     satisfied = remaining_length >= min_length_;
-  } else {
-    satisfied = false;
   }
   return satisfied;
 }
