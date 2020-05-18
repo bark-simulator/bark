@@ -29,7 +29,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
  public:
   BehaviorMotionPrimitives(const commons::ParamsPtr& params)
       : BehaviorModel(params),
-        active_motion_(),
+        active_motion_(DiscreteAction(0)),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
