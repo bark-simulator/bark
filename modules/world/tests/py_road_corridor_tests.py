@@ -77,9 +77,9 @@ class RoadCorridorTests(unittest.TestCase):
       plt.pause(2.)
       count += 1
 
-  def test_three_way_plain(self):
-    # three_way_plain
-    xodr_parser = XodrParser("modules/runtime/tests/data/three_way_plain.xodr")
+  def test_three_way_intersection(self):
+    # threeway_intersection
+    xodr_parser = XodrParser("modules/runtime/tests/data/threeway_intersection.xodr")
 
     # World Definition
     params = ParameterServer()
@@ -109,36 +109,32 @@ class RoadCorridorTests(unittest.TestCase):
     comb = list(itertools.product(start_point, end_point_list))
     comb_all = comb_all + comb
 
-    for cnt, (start_p, end_p) in enumerate(comb_all):
+    # check few corridors
+    def GenerateRoadCorridor(map_interface, comb):
+      (start_p, end_p) = comb
       polygon = Polygon2d([0, 0, 0], [Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
       start_polygon = polygon.Translate(start_p)
       goal_polygon = polygon.Translate(end_p)
       rc = map_interface.GenerateRoadCorridor(start_p, goal_polygon)
-      if rc:
-        roads = rc.roads
-        road_ids = list(roads.keys())
-        print(road_ids, rc.road_ids)
-        
-        viewer.drawWorld(world)
-        viewer.drawRoadCorridor(rc, "blue")
-        # viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + ".png")
-        viewer.show()
-        viewer.clear()
+      return rc
+    
+    # assert road ids
+    rc = GenerateRoadCorridor(map_interface, comb_all[0])
+    self.assertEqual(rc.road_ids, [0, 11, 1])
+    self.assertEqual(len(rc.lane_corridors), 3)
+    rc = GenerateRoadCorridor(map_interface, comb_all[1])
+    self.assertEqual(rc.road_ids, [0, 5, 2])
+    self.assertEqual(len(rc.lane_corridors), 3)
+    rc = GenerateRoadCorridor(map_interface, comb_all[2])
+    self.assertEqual(rc.road_ids, [1, 10, 0])
+    self.assertEqual(len(rc.lane_corridors), 3)
+    rc = GenerateRoadCorridor(map_interface, comb_all[3])
+    self.assertEqual(rc.road_ids, [2, 6, 1])
+    self.assertEqual(len(rc.lane_corridors), 3)
+    rc = GenerateRoadCorridor(map_interface, comb_all[4])
+    self.assertEqual(rc.road_ids, [2, 4, 0])
+    self.assertEqual(len(rc.lane_corridors), 3)
 
-        for idx, lane_corridor in enumerate(rc.lane_corridors):
-          viewer.drawWorld(world)
-          viewer.drawLaneCorridor(lane_corridor, "green")
-          viewer.drawLine2d(lane_corridor.left_boundary, color="red")
-          viewer.drawLine2d(lane_corridor.right_boundary, color="green")
-          viewer.drawLine2d(lane_corridor.center_line, color="green")
-          viewer.drawPolygon2d(start_polygon, color="green", facecolor="green", alpha=1.)
-          viewer.drawPolygon2d(goal_polygon, color="red", facecolor="red", alpha=1.)
-          # viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(cnt) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
-          viewer.show()
-          viewer.clear()
-        
-        viewer.show()
-        viewer.clear()
 
 if __name__ == '__main__':
   unittest.main()

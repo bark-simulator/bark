@@ -23,7 +23,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "DR_DEU_Merging_MT_v01_shifted"
+map_name = "4way_intersection"
 output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
 
 # Map Definition
@@ -191,33 +191,33 @@ for cnt, (start_p, end_p) in enumerate(comb_all):
     viewer.clear()
 
 
-# def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
-#   map_interface.GenerateRoadCorridor(road_ids, dr)
-#   rc = map_interface.GetRoadCorridor(road_ids, dr)
-#   if rc:
-#     roads = rc.roads
-#     road_ids = list(roads.keys())
-#     print(road_ids)
+def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
+  map_interface.GenerateRoadCorridor(road_ids, dr)
+  rc = map_interface.GetRoadCorridor(road_ids, dr)
+  if rc:
+    roads = rc.roads
+    road_ids = list(roads.keys())
+    print(road_ids)
     
-#     viewer.drawWorld(world)
-#     viewer.drawRoadCorridor(rc, "blue")
-#     viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + ".png")
-#     viewer.show()
-#     viewer.clear()
+    viewer.drawWorld(world)
+    viewer.drawRoadCorridor(rc, "blue")
+    viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + ".png")
+    viewer.show()
+    viewer.clear()
 
-#     for idx, lane_corridor in enumerate(rc.lane_corridors):
-#       viewer.drawWorld(world)
-#       viewer.drawLaneCorridor(lane_corridor, "green")
-#       viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
-#       viewer.show()
-#       viewer.clear()
+    for idx, lane_corridor in enumerate(rc.lane_corridors):
+      viewer.drawWorld(world)
+      viewer.drawLaneCorridor(lane_corridor, "green")
+      viewer.saveFig(output_dir + "/" + "roadcorridor_" + str(road_ids) + "_with_driving_direction_lancecorridor" + str(idx) + ".png")
+      viewer.show()
+      viewer.clear()
     
-#     viewer.show()
-#     viewer.clear()
+    viewer.show()
+    viewer.clear()
 
-# road_ids = [1, 10, 0]
-# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
-# road_ids = [0, 11, 1]
-# DrawRoadCorridor(road_ids, XodrDrivingDirection.backward)
-# road_ids = [2, 4, 0]
-# DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+road_ids = [1, 10, 0]
+DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
+road_ids = [0, 11, 1]
+DrawRoadCorridor(road_ids, XodrDrivingDirection.backward)
+road_ids = [2, 4, 0]
+DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
