@@ -43,7 +43,7 @@ class ParamsTests(unittest.TestCase):
         self.assertTrue(child["ChildTest"]["hierarchy", "bla", True])
 
         # write parameters to json file
-        p.save("written_a_param_test.json")
+        p.Save("written_a_param_test.json")
 
 
 if __name__ == '__main__':

@@ -38,7 +38,7 @@ class EvaluationTests(unittest.TestCase):
     # Agent Definition
     agent_2d_shape = CarLimousine()
     init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
-    agent_params = param_server.addChild("agent1")
+    agent_params = param_server.AddChild("agent1")
     goal_polygon = Polygon2d([0, 0, 0],
                              [Point2d(-4,-4),
                               Point2d(-4,4),
@@ -74,7 +74,7 @@ class EvaluationTests(unittest.TestCase):
     # Agent Definition
     agent_2d_shape = CarLimousine()
     init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
-    agent_params = param_server.addChild("agent1")
+    agent_params = param_server.AddChild("agent1")
     goal_polygon = Polygon2d([0, 0, 0],
                              [Point2d(-1,-1),
                               Point2d(-1,1),
@@ -113,7 +113,7 @@ class EvaluationTests(unittest.TestCase):
     # Agent Definition
     agent_2d_shape = CarLimousine()
     init_state = np.array([0, 0, 0, 0, 0])
-    agent_params = param_server.addChild("agent1")
+    agent_params = param_server.AddChild("agent1")
     goal_frame = Polygon2d([0, 0, 0],
                              [Point2d(-1,-1),
                               Point2d(-1,1),
@@ -167,7 +167,7 @@ class EvaluationTests(unittest.TestCase):
 
     # Agent Definition
     agent_2d_shape = CarLimousine()
-    agent_params = param_server.addChild("agent1")
+    agent_params = param_server.AddChild("agent1")
 
     center_line = Line2d()
     center_line.AddPoint(Point2d(5.0, 5.0))

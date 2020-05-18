@@ -34,16 +34,26 @@ using world::objects::AgentPtr;
 
 class ObservedWorld : public World {
  public:
-  ObservedWorld(const WorldPtr& world, const AgentId& ego_agent_id)
-      : World(world), ego_agent_id_(ego_agent_id) {}
+  ObservedWorld(const WorldPtr& world, const AgentId& ego_agent_id) :
+    World(world),
+    ego_agent_id_(ego_agent_id) {}
 
   ~ObservedWorld() {}
 
   FrontRearAgents GetAgentFrontRear() const;
 
+  FrontRearAgents GetAgentFrontRear(
+    const LaneCorridorPtr& lane_corridor) const;
+
+  AgentFrenetPair GetAgentInFront(
+    const LaneCorridorPtr& lane_corridor) const;
+
   AgentFrenetPair GetAgentInFront() const;
 
   AgentFrenetPair GetAgentBehind() const;
+
+  AgentFrenetPair GetAgentBehind(
+    const LaneCorridorPtr& lane_corridor) const;
 
   virtual double GetWorldTime() const { return World::GetWorldTime(); }
 
@@ -121,7 +131,7 @@ class ObservedWorld : public World {
   virtual WorldPtr Clone() const {
     WorldPtr world_clone(World::Clone());
     std::shared_ptr<ObservedWorld> observed_world =
-        std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
+      std::make_shared<ObservedWorld>(world_clone, this->ego_agent_id_);
     return std::dynamic_pointer_cast<World>(observed_world);
   }
   virtual EvaluationMap Evaluate() const;

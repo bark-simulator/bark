@@ -8,7 +8,7 @@ import os
 from bark.viewer import Viewer
 from bark.models.dynamic import StateDefinition
 from modules.runtime.viewer.viewer import BaseViewer
-from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath
+from panda3d.core import WindowProperties, MeshDrawer, VBase4, VBase3,Vec4, Vec3, Mat4, AmbientLight, CardMaker, NodePath, PointLight, Plane
 
 class Panda3dViewer(BaseViewer, ShowBase):
     def __init__(self, params=None, **kwargs):
@@ -16,23 +16,27 @@ class Panda3dViewer(BaseViewer, ShowBase):
         super(Panda3dViewer, self).__init__(params=params)
         self.world_x_range = kwargs.pop("x_range", [-40, 40])
         self.world_y_range = kwargs.pop("y_range", [-40, 40])
-        self.follow_agent_id = kwargs.pop("follow_agent_id", -1)
+        self.follow_agent_id = kwargs.pop("follow_agent_id", True)
+        self.perspective = kwargs.pop("perspective", -3)
         self.screen_dims = kwargs.pop("screen_dims", [1024, 1024])
-        self.path = os.path.join(os.path.dirname(os.path.abspath(__file__))) # TODO(@fortiss): load into parameter at a earlier stage
+        self.path = os.path.join(os.path.dirname(os.path.abspath(__file__)))
         self.agent_model_path = kwargs.pop("model_path",
-                                           self.path + "/models/box_car")
+                                           self.path + "/models/car.obj")
+        self.texture_path = kwargs.pop("model_path",
+                                           self.path + "/models/white_texture.png")
         self.agent_scale = kwargs.pop("model_scale",
-                                      np.array([3.65, 1.8, 0.8], dtype=float))
+                                      np.array([1.,1.,1.], dtype=float))
         self.agent_orientation = \
-            kwargs.pop("model_orientation",np.array([180, 0,0],
+            kwargs.pop("model_orientation",np.array([0, 90, 90],
                        dtype=float))
         self.agent_translation = kwargs.pop("model_translation",
-                                            np.array([3.2, 0.9], dtype=float))
+                                            np.array([0., 0.], dtype=float))
         self.range_for_zoom = kwargs.pop("is_zoom_range", False)
-        self.line_thicknesses = kwargs.pop("line_thickness", { #Dict of keys cameras and values [line thickness, height] which are needed to calculate the dynamic thickness
-            -2: [0.35, 700],
+        self.line_thicknesses = kwargs.pop("line_thickness", { # Dict of keys cameras and values [line thickness, height] which are needed to calculate the dynamic thickness
+            -3: [0.03, 10],
+            -2: [0.03, 10],
             -1: [0.35, 700],
-            0: [0.1, 70]
+            0: [0.05, 70]
         })
         # Parameter for agent camera views
         # [driving direction offset, height, x-orientation,y-orientation,z-orientation offset to driving direction, LookAt?]
@@ -50,6 +54,15 @@ class Panda3dViewer(BaseViewer, ShowBase):
         WindowProperties.setDefault(self.wp)
         ShowBase.__init__(self)
 
+        # -2 : global camera with camera control, -1: transition state for enabling mouse control, 0: agent cameras
+        self.perspectives = {
+            -3: ["third", "autozoom"],
+            -2: ["bird_agent", "autozoom"],
+            -1: ["None"],
+            0: ["bird_agent", "third", "first"]
+        }
+        
+
         # Render Objects Dict
         self.agent_nodes = {}
         # Agent Poses Dict
@@ -61,29 +74,18 @@ class Panda3dViewer(BaseViewer, ShowBase):
             -self.screen_dims[0] / 2, self.screen_dims[0] / 2,
             -self.screen_dims[1] / 2, self.screen_dims[1] / 2
         ]
-        color = VBase4(self.plane_color[0], self.plane_color[1],
-                       self.plane_color[2], self.plane_alpha)
-        self.createPlane(frame=frame, color=color)
+        self.createPlane(frame=frame, color=VBase4(1, 1, 1, 1))
 
         # Set up the camera loop task
         self.camera_list = [-1]
         self.initCam()
         self.taskMgr.add(self.spinCameraTask, "SpinCameraTask")
 
-         # Set up the line generator
+        # Set up the line generator
         self.setDrawer(budget=100000)
 
-        # -2 : global camera with camera control, -1: transition state for enabling mouse control, 0: agent cameras
-        self.perspectives = {
-            -2: ["birdview", "autozoom"],
-            -1: ["None"],
-            0: ["bird_agent", "third", "first"]
-        }
-        self.perspective = self.perspectives[self.camIndex(
-            self.follow_agent_id)]
-
-        self.line_thickness = self.line_thicknesses[self.camIndex(
-            self.follow_agent_id)][0]
+        self.perspective = self.perspectives[self.camIndex(self.perspective)]
+        self.line_thickness = self.line_thicknesses[self.camIndex(self.perspective)][0]
         self.addButtons()
 
     def setDrawer(self, budget=100000):
@@ -92,13 +94,12 @@ class Panda3dViewer(BaseViewer, ShowBase):
         Keyword Arguments:
             budget {int} -- maximum triangles for rendering the mesh (default: {100000})
         """
-
         self.generator = MeshDrawer()
         self.generator.setBudget(budget)
         self.generatorNode = self.generator.getRoot()
         self.generatorNode.reparentTo(self.render)
 
-    def createPlane(self, frame=None, color=VBase4(1, 1, 1, 1)):
+    def createPlane(self, frame=None, color=VBase4(1, 1, 11, 1)):
         """ Creates a Plane/Card with the Panda3d Cardmaker() class
         Keyword Arguments:
             frame {list} -- The coordinates [x1,y1,x2,y2] of the planes/cards edges (default: {[-1, -1, 1, 1]})
@@ -110,19 +111,27 @@ class Panda3dViewer(BaseViewer, ShowBase):
         card.set_frame(frame[0], frame[1], frame[2], frame[3])
         n = NodePath()
         self.plane = n.attach_new_node(card.generate())
-        self.plane.reparentTo(self.render)
         self.plane.setHpr(0, 270, 0)
+        self.plane.reparentTo(self.render)
 
-    def setLight(self, color=VBase4(1, 1, 1, 1)):
+
+    def setLight(self, color=VBase4(.1, .1, .1, 1)):
         """Sets an ambient and omnidirectional light for rendering
         Keyword Arguments:
             color {VBase4} -- color of the ambient light (default: {VBase4(1, 1, 1, 1)})
         """
-
         alight = AmbientLight('alight')
         alight.setColor(color)
         alnp = self.render.attachNewNode(alight)
         self.render.setLight(alnp)
+
+        # TODO(@hart): position of pt-light needs to be fixed
+        plight = PointLight('plight')
+        plight.setColor((1, 1, 1, 1))
+        self.plnp = self.render.attachNewNode(plight)
+        self.plnp.setPos(0, 0, 10000)
+        self.render.setLight(self.plnp)
+
 
     def addButtons(self):
         self.cam_btn = DirectButton(
@@ -136,8 +145,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
             command=self.switchView,
             pos=Vec3(0.9, 0, 0.85))
 
-    def camIndex(self,follow_id):
-        return np.minimum(follow_id, 0)
+    def camIndex(self, follow_id):
+        return follow_id
 
     def switchCamera(self):
         # Switches between global and agent cameras
@@ -185,6 +194,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             self.setAgentCam(self.perspective[0],
                              self.agent_poses[self.follow_agent_id])
         return Task.cont
+    
     def initCam(self, poses=None, orientation=None):#TODO Calculate from map parameter before
         poses = poses or [0, 0, 700]
         orientation = orientation or [0, 270, 0]
@@ -200,7 +210,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.mat.invertInPlace()
         base.mouseInterfaceNode.setMat(self.mat)
         base.enableMouse()
-        self.follow_agent_id = -2
+        # self.follow_agent_id = -2
         self.perspective = self.perspectives[self.camIndex(
             self.follow_agent_id)].copy()
 
@@ -268,10 +278,10 @@ class Panda3dViewer(BaseViewer, ShowBase):
         incline = (self.line_thicknesses[cameras[0]][0] - self.line_thicknesses[cameras[1]][0]) / (self.line_thicknesses[cameras[0]][1]-self.line_thicknesses[cameras[1]][1])
         return np.maximum((self.line_thicknesses[cameras[1]][0] + incline * (self.camera.getZ() - self.line_thicknesses[cameras[1]][1]) ), 0.01)
 
-    def drawPolygon2d(self, polygon, color, alpha):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
         # Draws a polygon with drawLine2d
         points = polygon.ToArray()
-        self.line_thickness = self.calcLineThickness()
+        # self.line_thickness = self.calcLineThickness()
         for point in points:
             self.generator.link_segment(
                 Vec3(point[0], point[1], 2), Vec4(0, 0, 1, 1),
@@ -279,7 +289,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(color))
 
 
-    def drawLine2d(self, line2d, color=Viewer.Color.Blue, alpha=1.0, dashed=False):
+    # def drawLine2d(self, line2d, color=Viewer.Color.Blue, alpha=1.0, zorder=1, dashed=False):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
         # TODO: enable dashed line
         line2d_np = line2d.ToArray()
         for point in line2d_np:
@@ -287,8 +298,12 @@ class Panda3dViewer(BaseViewer, ShowBase):
                 Vec3(point[0], point[1], 2), Vec4(0, 0, 1, 1),
                 self.line_thickness, self.getColor(color))
         self.generator.link_segment_end(Vec4(0, 0, 1, 1), self.getColor(color))
-
-    def drawAgent(self, agent):
+    
+    def get_aspect_ratio(self):
+      # ratio is width / height
+      return 1.
+    
+    def drawAgent(self, agent, color, alpha, facecolor):
         """Draws an agent object with a model previosly set in set with self.agent_model_path
         Arguments:
             agent -- Agent object from world
@@ -302,6 +317,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             self.agent_nodes[agent.id].setScale(
                 self.agent_scale[0], self.agent_scale[1], self.agent_scale[2])
             self.agent_poses[agent.id] = np.array([0, 0, 0], dtype=float)
+
             self.camera_list.insert(len(self.camera_list), agent.id)
 
         # Set new pose of agent in world cordinates
@@ -311,13 +327,15 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.agent_poses[agent.id][2] = state[int(
             StateDefinition.THETA_POSITION)]
         transformed_polygon = agent.shape.Transform(self.agent_poses[agent.id])
-        self.drawPolygon2d(transformed_polygon, self.color_agents, 1.0)
+        # self.drawPolygon2d(transformed_polygon, self.getColor(Viewer.Color.Blue), 1.0)
 
         # Fitting of 3d-Model frame to agent positon
         angle = ((self.agent_poses[agent.id][2] * 180) / pi +
                  self.agent_orientation[0])
+                 
         self.agent_nodes[agent.id].setHpr(angle, self.agent_orientation[1],
                                           self.agent_orientation[2])
+        
         translation = self.agent_translation
         if not np.all(translation == 0):
             r = np.array([[
@@ -354,8 +372,17 @@ class Panda3dViewer(BaseViewer, ShowBase):
         else:
             return Vec4(color[0], color[1], color[2], 1)
 
-    def drawWorld(self, world, eval_agent_ids=None):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         self.generator.begin(base.cam, self.render)
-        super(Panda3dViewer, self).drawWorld(world, eval_agent_ids)
+        super(Panda3dViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
         self.generator.end()
-        self.taskMgr.Step()
+        self.taskMgr.step()
+
+    def Reset(self):
+        # for key, agent in self.agent_nodes.items():
+        #   agent.removeNode()
+        # self.agent_nodes = {}
+        # self.follow_agent_id = 
+        for an in self.agent_nodes.values():
+          an.removeNode()
+        self.agent_poses = {}

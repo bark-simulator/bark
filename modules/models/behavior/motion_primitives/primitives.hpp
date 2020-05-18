@@ -29,6 +29,8 @@ using world::ObservedWorld;
 using world::ObservedWorldPtr;
 using world::map::LaneCorridorPtr;
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class Primitive : public modules::commons::BaseType {
  public:
   explicit Primitive(const commons::ParamsPtr& params,
@@ -43,17 +45,23 @@ class Primitive : public modules::commons::BaseType {
   virtual ~Primitive() {}
 
   virtual bool IsPreConditionSatisfied(
-      const ObservedWorldPtr& observed_world) = 0;
-  virtual Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world) = 0;
+    const ObservedWorldPtr& observed_world) = 0;
+
+  virtual Trajectory Plan(
+    float delta_time,
+    const ObservedWorld& observed_world) = 0;
 
  protected:
   float integration_time_delta_;
+  // TODO(@esterle, @bernhard): Why not use the model of the agent?
   DynamicModelPtr dynamic_model_;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;
 
+
+// TODO(@esterle, @bernhard): Is this class required?
+// Only PrimitiveConstAcceleration is a child
 class PrimitiveLaneFollowing : public Primitive {
  public:
   PrimitiveLaneFollowing(const commons::ParamsPtr& params,
@@ -65,6 +73,8 @@ class PrimitiveLaneFollowing : public Primitive {
   LaneCorridorPtr target_corridor_;
 };
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
@@ -78,6 +88,7 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
     return true;
   }
 
+  // TODO(@esterle, @bernhard): Use BehaviorIDMLaneTracking
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
     SetTargetCorridor(observed_world);
     auto single_track =
@@ -125,6 +136,8 @@ class PrimitiveConstAcceleration : public PrimitiveLaneFollowing {
   float crosstrack_error_gain_;
 };
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class PrimitiveGapKeeping : public Primitive,
                             BehaviorIDMLaneTracking {
  public:
@@ -132,18 +145,22 @@ class PrimitiveGapKeeping : public Primitive,
                       const DynamicModelPtr& dynamic_model)
       : Primitive(params, dynamic_model),
         BehaviorIDMLaneTracking(params) {}
+
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // TODO: which lane to check? should be checked for target lane
     // auto leading_vehicle = observed_world->GetAgentInFront();
     // bool satisfied = (leading_vehicle.first) ? true : false;
     return true;
   }
+
   Trajectory Plan(float delta_time, const ObservedWorld& observed_world) {
     auto traj = BehaviorIDMLaneTracking::Plan(delta_time, observed_world);
     return traj;
   }
 };
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccStayLane : public PrimitiveConstAcceleration {
  public:
   PrimitiveConstAccStayLane(const commons::ParamsPtr& params,
@@ -163,6 +180,8 @@ class PrimitiveConstAccStayLane : public PrimitiveConstAcceleration {
   }
 };
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
  public:
   PrimitiveConstAccChangeToLeft(const commons::ParamsPtr& params,
@@ -177,16 +196,17 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
     LaneCorridorPtr left_corridor;
     LaneCorridorPtr right_corridor;
     std::tie(left_corridor, right_corridor) =
-        road_corridor->GetLeftRightLaneCorridor(ego_pos);
+      road_corridor->GetLeftRightLaneCorridor(ego_pos);
     if (left_corridor) {
       target_corridor_ = left_corridor;
     } else {
       target_corridor_ =
-          observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
-              observed_world.CurrentEgoPosition());
+        observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
+          observed_world.CurrentEgoPosition());
     }
   }
 
+  // TODO(@esterle, @bernhard): This seems to do nothing?
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // const Point2d ego_pos = observed_world->CurrentEgoPosition();
     // //! agent may not have reached target lane yet, so we match point on
@@ -207,6 +227,8 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAcceleration {
   }
 };
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
  public:
   PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params,
@@ -230,7 +252,8 @@ class PrimitiveConstAccChangeToRight : public PrimitiveConstAcceleration {
               observed_world.CurrentEgoPosition());
     }
   }
-
+  
+  // TODO(@esterle, @bernhard): This seems to do nothing?
   bool IsPreConditionSatisfied(const ObservedWorldPtr& observed_world) {
     // const Point2d ego_pos = observed_world->CurrentEgoPosition();
     // //! agent may not have reached target lane yet, so we match point on

@@ -159,3 +159,11 @@ modules/runtime/tests/data/DR_DEU_Merging_MT.xodr
 modules/runtime/tests/data/Osterwaldstrasse_v1.xodr
 examples/scenarios/benchmark_database_0.0.1.zip
 .bazelrc
+/examples/maps
+modules/runtime/tests/data/three_way_plain.xodr
+output.png
+modules/runtime/tests/data/three_way_plain_old.xodr
+modules/runtime/viewer/models/car.mtl
+**.blend
+**.blend1
+**.mtl

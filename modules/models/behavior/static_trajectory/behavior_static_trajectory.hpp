@@ -8,6 +8,8 @@
 #define MODULES_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
 
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -24,9 +26,12 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 using StateRowVector = Eigen::Matrix<State::Scalar, 1, Eigen::Dynamic>;
 
+
+// model for replaying static trajectories
+// can e.g. be used for dataset replay
 class BehaviorStaticTrajectory : public BehaviorModel {
  public:
-  BehaviorStaticTrajectory(const commons::ParamsPtr& params);
+  explicit BehaviorStaticTrajectory(const commons::ParamsPtr& params);
   BehaviorStaticTrajectory(const commons::ParamsPtr& params,
                            const Trajectory& static_trajectory);
   Trajectory Plan(float delta_time,
@@ -38,7 +43,7 @@ class BehaviorStaticTrajectory : public BehaviorModel {
 
  private:
   static Trajectory ReadInStaticTrajectory(
-      std::vector<std::vector<float>> list);
+    std::vector<std::vector<float>> list);
   std::pair<int, int> Interpolate(const double t,
                                   StateRowVector* interpolated) const;
   Trajectory static_trajectory_;

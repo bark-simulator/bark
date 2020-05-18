@@ -80,7 +80,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       "How to model the other agents",
       json_converter.agent_to_json(self.default_agent_model())]
     if not isinstance(self._agent_params, dict):
-        self._agent_params = self._agent_params.convert_to_dict()
+        self._agent_params = self._agent_params.ConvertToDict()
     np.random.seed(self._random_seed)
 
 
@@ -96,7 +96,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
   def create_single_scenario(self):
     scenario = Scenario(map_file_name=self._map_file_name,
-                        json_params=self._params.convert_to_dict())
+                        json_params=self._params.ConvertToDict())
     world = scenario.get_world_state()
     agent_list = []
     # OTHER AGENTS
@@ -121,7 +121,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                            self._agent_params,
                                            goal_definition))
 
-    description=self._params.convert_to_dict()
+    description=self._params.ConvertToDict()
     description["ScenarioGenerator"] = "UniformVehicleDistribution"
     
 

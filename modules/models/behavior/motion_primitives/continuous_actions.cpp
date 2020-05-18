@@ -39,8 +39,7 @@ Trajectory BehaviorMPContinuousActions::Plan(
                                      integration_time);
   }
 
-  SetLastAction(Action(DiscreteAction(active_motion_)));
-
+  SetLastAction(Action(active_motion_));
   this->SetLastTrajectory(traj);
   return traj;
 }

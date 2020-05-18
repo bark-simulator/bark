@@ -34,7 +34,7 @@ class MPViewer(BaseViewer):
             marker='x')
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
-        lineStyle_string = (0, (5, 10)) if dashed else '-'
+        lineStyle_string = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],
@@ -103,6 +103,7 @@ class MPViewer(BaseViewer):
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
+        plt.axis('off')
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
         self._set_visualization_options()
         self.show()

@@ -9,7 +9,7 @@ cc_library(
     deps = [
         "//modules/commons:commons",
         "//modules/world:world",
-        "//modules/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
+        "//modules/models/behavior/idm:idm_classic",
         "//modules/models/dynamic:dynamic"
     ],
     visibility = ["//visibility:public"],

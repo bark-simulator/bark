@@ -16,23 +16,25 @@ try:
   from bark.models.behavior import BehaviorUCTSingleAgent
   behavior_used = BehaviorUCTSingleAgent
 except:
-  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:uct_planner --define planner_uct=true ")
+  print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:benchmark_database --define planner_uct=true")
   exit()
 
 db = BenchmarkDatabase(database_root="external/benchmark_database_release")
-evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollisionEgoAgent,
-                "max_steps": EvaluatorStepCount}
-terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
+evaluators = {"success" : EvaluatorGoalReached,
+              "collision" : EvaluatorCollisionEgoAgent,
+              "max_steps": EvaluatorStepCount}
+
+terminal_when = {"collision" :lambda x: x,
+                 "max_steps": lambda x : x>2}
+
 scenario_param_file ="uct_planner.json" # must be within examples params folder
 params = ParameterServer(filename= os.path.join("examples/params/", scenario_param_file))
-behaviors_tested = {"search5s": behavior_used(params) }
-                                
+behaviors_tested = {"search5s": behavior_used(params)}
 
 benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                     evaluators=evaluators,
                                     terminal_when=terminal_when,
                                     behaviors=behaviors_tested)
 
-benchmark_runner.run(1) 
-
+benchmark_runner.run(1)
 benchmark_runner.dataframe.to_pickle("uct_planner_results.pickle")

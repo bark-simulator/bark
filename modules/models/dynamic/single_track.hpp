@@ -16,6 +16,7 @@ namespace modules {
 namespace models {
 namespace dynamic {
 
+
 class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
@@ -34,7 +35,6 @@ class SingleTrackModel : public DynamicModel {
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State& x, const Input& u) const {
-    // TODO(@fortiss): get parameters from Params
     State tmp(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
     tmp << 1,
         x(StateDefinition::VEL_POSITION) *
@@ -66,7 +66,8 @@ using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
 inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
                                      const State& state,
                                      const modules::geometry::Line& ref_line,
-                                     double gain) {
+                                     double gain,
+                                     bool limit_steering = true) {
   // Implemented after G. M. Hoffmann, C. J. Tomlin, M. Montemerlo, and S.
   // Thrun, “Autonomous Automobile Trajectory Tracking for Off-Road Driving:
   // Controller Design, Experimental Validation and Racing,” in 2007 ACC
@@ -89,14 +90,16 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double vel = state(StateDefinition::VEL_POSITION);
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
-  double delta_max = std::min(
+  if (limit_steering) {
+    double delta_max = std::min(
       model->GetSteeringAngleMax(),
       std::abs(std::atan2(
-          model->GetLatAccelerationMax() * model->GetWheelBase(), vel * vel)));
-  double clamped_delta = std::min(delta, delta_max);
-  clamped_delta = std::max(clamped_delta, -delta_max);
-
-  return clamped_delta;
+        model->GetLatAccelerationMax() * model->GetWheelBase(), vel * vel)));
+    double clamped_delta = std::min(delta, delta_max);
+    clamped_delta = std::max(clamped_delta, -delta_max);
+    return clamped_delta;
+  }
+  return delta;
 }
 
 }  // namespace dynamic

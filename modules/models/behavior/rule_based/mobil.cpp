@@ -4,11 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "modules/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>
-#include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/dynamic/integration.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 
@@ -31,103 +32,6 @@ using world::ObservedWorld;
 using world::map::LaneCorridorPtr;
 using world::objects::AgentPtr;
 
-Trajectory BehaviorMobil::Plan(float delta_time,
-                               const ObservedWorld& observed_world) {
-  SetBehaviorStatus(BehaviorStatus::VALID);
-
-  const DynamicModelPtr dynamic_model =
-      observed_world.GetEgoAgent()->GetDynamicModel();
-  auto single_track =
-      std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
-  if (!single_track) {
-    LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
-  }
-
-  VLOG(2) << "Agent: " << observed_world.GetEgoAgentId() << ", Mobil State "
-          << mobil_state_;
-  //! Determine whether to perform a lane change
-  if (mobil_state_ == MobilState::IsChanging) {
-    //! checks if lane change has been finished ...
-    FrenetPosition f_state = FrenetPosition(observed_world.CurrentEgoPosition(),
-                                            target_corridor_->GetCenterLine());
-    if (abs(f_state.lat) < 0.01) {
-      //! if very close to target line, lane change is finished ...
-      // TODO(@Klemens): Make this more generic, maybe based on integation step
-      // size?
-      mobil_state_ = MobilState::Idle;
-    }
-  } else {
-    LaneChangeDecision decision;
-    std::tie(decision, target_corridor_) =
-        CheckIfLaneChangeBeneficial(observed_world);
-    VLOG(2) << "Decision " << decision;
-    if (decision != LaneChangeDecision::KeepLane)
-      mobil_state_ = MobilState::IsChanging;
-  }
-
-  const int num_traj_time_points = 11;
-  dynamic::Trajectory traj(num_traj_time_points,
-                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  float const dt = delta_time / (num_traj_time_points - 1);
-
-  traj.row(0) = observed_world.CurrentEgoState();
-
-  // Get leading agent in target lane (lane we are changing to in case of a lane
-  // change, otherwise it's the lane the agent is currently in)
-  AgentId id_ego = observed_world.GetEgoAgentId();
-  AgentFrenetPair agent_in_front =
-      observed_world.GetAgentFrontRearForId(id_ego, target_corridor_).front;
-
-  std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
-  FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
-
-  double net_distance = .0f;
-  double vel_other = 1e6;
-  if (agent_in_front.first) {
-    net_distance =
-        CalcNetDistanceFromFrenet(ego_agent, frenet_ego, agent_in_front.first,
-                                  agent_in_front.second + frenet_ego);
-    dynamic::State other_vehicle_state =
-        agent_in_front.first->GetCurrentState();
-    vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
-  }
-
-  float vel_i;
-  double acc;
-  double traveled_ego;
-  double traveled_other;
-  for (int i = 1; i < num_traj_time_points; ++i) {
-    vel_i = traj(i - 1, StateDefinition::VEL_POSITION);
-
-    if (agent_in_front.first) {
-      acc = idm_->CalcIDMAcc(net_distance, vel_i, vel_other);
-      traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
-      traveled_other = vel_other * dt;
-      net_distance += traveled_other - traveled_ego;
-    } else {
-      Point2d pos_i(traj(i - 1, StateDefinition::X_POSITION),
-                    traj(i - 1, StateDefinition::Y_POSITION));
-      acc = CalcLongRawAccWithoutLeader(target_corridor_, pos_i, vel_i);
-      const double acc_max = idm_->GetMaxAcceleration();
-      acc = std::max(std::min(acc, acc_max), -acc_max);
-    }
-
-    double angle = CalculateSteeringAngle(single_track, traj.row(i - 1),
-                                          target_corridor_->GetCenterLine(),
-                                          crosstrack_error_gain_);
-
-    dynamic::Input input(2);
-    input << acc, angle;
-    traj.row(i) =
-        dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
-    // Do not allow negative speeds
-    traj(i, StateDefinition::VEL_POSITION) =
-        std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
-  }
-
-  SetLastTrajectory(traj);
-  return traj;
-}
 
 double BehaviorMobil::CalcNetDistanceFromFrenet(
     const std::shared_ptr<const Agent>& ego_agent,
@@ -143,18 +47,15 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
 
 double BehaviorMobil::CalcLongRawAccWithoutLeader(
     const world::LaneCorridorPtr& lane_corridor,
-    const modules::geometry::Point2d& pos, const float vel) {
+    const modules::geometry::Point2d& pos, const float vel) const {
   double acc;
   if (stop_at_lane_ending_) {
-    // Brake at end of lane corridor
-    // const double net_distance =
-    // lane_corridor->LengthUntilEnd(agent->GetCurrentPosition()) -
-    // agent->GetShape().front_dist_;
+    // TODO(@hart): change to parameter
     const double net_distance = lane_corridor->LengthUntilEnd(pos) - 15.0;
     // setting vel_other to zero
-    acc = idm_->CalcRawIDMAcc(net_distance, vel, 0.0);
+    acc = BaseIDM::CalcRawIDMAcc(net_distance, vel, 0.0);
   } else {
-    acc = idm_->GetMaxAcceleration() * idm_->CalcFreeRoadTerm(vel);
+    acc = BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
   }
   return acc;
 }
@@ -185,7 +86,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
     const double dist_c_before =
         CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_current.first,
                                   leader_current.second + frenet_ego);
-    acc_c_before = idm_->CalcRawIDMAcc(
+    acc_c_before = BaseIDM::CalcRawIDMAcc(
         dist_c_before, vel_ego,
         leader_current.first->GetCurrentState()(VEL_POSITION));
 
@@ -205,7 +106,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
     const double dist_o_before = CalcNetDistanceFromFrenet(
         follower_current.first, follower_current.second + frenet_ego, ego_agent,
         frenet_ego);
-    acc_o_before = idm_->CalcRawIDMAcc(
+    acc_o_before = BaseIDM::CalcRawIDMAcc(
         dist_o_before, follower_current.first->GetCurrentState()(VEL_POSITION),
         vel_ego);
     // ---------------------------------------------------
@@ -217,7 +118,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_o_after = CalcNetDistanceFromFrenet(
           follower_current.first, follower_current.second + frenet_ego,
           leader_current.first, leader_current.second + frenet_ego);
-      acc_o_after = idm_->CalcRawIDMAcc(
+      acc_o_after = BaseIDM::CalcRawIDMAcc(
           dist_o_after, vel_follower_current,
           leader_current.first->GetCurrentState()(VEL_POSITION));
     } else {
@@ -257,7 +158,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_c_after =
           CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_right.first,
                                     leader_right.second + frenet_ego);
-      acc_c_after = idm_->CalcRawIDMAcc(
+      acc_c_after = BaseIDM::CalcRawIDMAcc(
           dist_c_after, vel_ego,
           leader_right.first->GetCurrentState()(VEL_POSITION));
 
@@ -294,7 +195,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         const double dist_n_before = CalcNetDistanceFromFrenet(
             follower_right.first, follower_right.second + frenet_ego,
             leader_right.first, leader_right.second + frenet_ego);
-        acc_n_before = idm_->CalcRawIDMAcc(
+        acc_n_before = BaseIDM::CalcRawIDMAcc(
             dist_n_before, vel_follower_right,
             leader_right.first->GetCurrentState()(VEL_POSITION));
       } else {
@@ -313,7 +214,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           follower_right.first, follower_right.second + frenet_ego, ego_agent,
           frenet_ego);
       acc_n_after =
-          idm_->CalcRawIDMAcc(dist_n_after, vel_follower_right, vel_ego);
+          BaseIDM::CalcRawIDMAcc(dist_n_after, vel_follower_right, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
@@ -378,7 +279,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
       const double dist_c_after =
           CalcNetDistanceFromFrenet(ego_agent, frenet_ego, leader_left.first,
                                     leader_left.second + frenet_ego);
-      acc_c_after = idm_->CalcRawIDMAcc(
+      acc_c_after = BaseIDM::CalcRawIDMAcc(
           dist_c_after, vel_ego,
           leader_left.first->GetCurrentState()(VEL_POSITION));
     } else {
@@ -413,7 +314,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         const double dist_n_before = CalcNetDistanceFromFrenet(
             follower_left.first, follower_left.second + frenet_ego,
             leader_left.first, leader_left.second + frenet_ego);
-        acc_n_before = idm_->CalcRawIDMAcc(
+        acc_n_before = BaseIDM::CalcRawIDMAcc(
             dist_n_before, vel_follower_left,
             leader_left.first->GetCurrentState()(VEL_POSITION));
       } else {
@@ -432,7 +333,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           frenet_ego);
 
       acc_n_after =
-          idm_->CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
+        BaseIDM::CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }

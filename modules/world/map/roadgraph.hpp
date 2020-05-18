@@ -56,9 +56,9 @@ struct XodrLaneEdge {
                  //! implementation!
   XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
-  XodrLaneEdge(XodrLaneEdgeType edge_type_in)
-      : edge_type(edge_type_in),
-        weight(edge_type_in == LANE_SUCCESSOR_EDGE ? 1 : 10) {}
+  XodrLaneEdge(XodrLaneEdgeType edge_type_in) :
+    edge_type(edge_type_in),
+    weight(edge_type_in == LANE_SUCCESSOR_EDGE ? 1 : 10) {}
 };
 
 typedef boost::adjacency_list<vecS, vecS, bidirectionalS, XodrLaneVertex,
@@ -77,6 +77,24 @@ struct TypeDrivingAndEdgeTypeLaneSuccessor {  // both edge and vertex
         (*g)[ed].edge_type == XodrLaneEdgeType::LANE_SUCCESSOR_EDGE;
 
     bool filtered = filtered_s && filtered_t && filtered_e;
+    return filtered;
+  }
+
+  bool operator()(XodrLaneGraph::vertex_descriptor vd) const {
+    bool filtered = (*g)[vd].lane->GetLaneType() == XodrLaneType::DRIVING;
+    return filtered;
+  }
+  XodrLaneGraph* g;
+};
+
+struct TypeDriving {  // both edge and vertex
+  bool operator()(XodrLaneGraph::edge_descriptor ed) const {
+    bool filtered_s = (*g)[boost::source(ed, *g)].lane->GetLaneType() ==
+                      XodrLaneType::DRIVING;
+    bool filtered_t = (*g)[boost::target(ed, *g)].lane->GetLaneType() ==
+                      XodrLaneType::DRIVING;
+
+    bool filtered = filtered_s && filtered_t;
     return filtered;
   }
 

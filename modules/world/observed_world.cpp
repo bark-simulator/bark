@@ -16,6 +16,7 @@ using modules::geometry::Point2d;
 using modules::models::behavior::BehaviorMotionPrimitives;
 using modules::models::dynamic::State;
 using modules::world::AgentMap;
+using modules::world::map::LaneCorridorPtr;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
@@ -27,9 +28,29 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   return fr_agent;
 }
 
+FrontRearAgents ObservedWorld::GetAgentFrontRear(
+  const LaneCorridorPtr& lane_corridor) const {
+  BARK_EXPECT_TRUE(lane_corridor != nullptr);
+  AgentId id = GetEgoAgentId();
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
+  return fr_agent;
+}
+
+AgentFrenetPair ObservedWorld::GetAgentInFront(
+  const LaneCorridorPtr& lane_corridor) const {
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
+  return fr_agent.front;
+}
+
 AgentFrenetPair ObservedWorld::GetAgentInFront() const {
   FrontRearAgents fr_agent = GetAgentFrontRear();
   return fr_agent.front;
+}
+
+AgentFrenetPair ObservedWorld::GetAgentBehind(
+  const LaneCorridorPtr& lane_corridor) const {
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
+  return fr_agent.rear;
 }
 
 AgentFrenetPair ObservedWorld::GetAgentBehind() const {
