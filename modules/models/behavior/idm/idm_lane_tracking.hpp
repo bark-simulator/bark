@@ -27,10 +27,6 @@ class BehaviorIDMLaneTracking : public BaseIDM {
       "BehaviorIDMLaneTracking::CrosstrackErrorGain",
       "Tuning factor of stanley controller",
       1.0);
-    lane_corr_id_ = params->GetInt(
-      "BehaviorIDMLaneTracking::LaneCorridorID",
-      "Id of LaneCorridor.",
-      -1);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
@@ -47,8 +43,6 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   }
   friend class BaseIDM;
  private:
-  // TODO: Unused member?
-  int lane_corr_id_;
   double crosstrack_error_gain_;
   bool limit_steering_rate_;
 };
