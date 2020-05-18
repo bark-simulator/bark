@@ -69,7 +69,7 @@ AdjacentLaneCorridors BehaviorMPMacroActions::GetCorridors(
     target_corridor_ = observed_world.GetLaneCorridor();
   }
   AdjacentLaneCorridors adjacent_corridors;
-  auto ego_pos = observed_world.CurrentEgoPosition();
+  const auto& ego_pos = observed_world.CurrentEgoPosition();
   auto point_on_target_line =
       GetNearestPoint(target_corridor_->GetCenterLine(), ego_pos);
   auto road_corridor = observed_world.GetRoadCorridor();
