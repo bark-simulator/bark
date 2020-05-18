@@ -35,7 +35,9 @@ struct AdjacentLaneCorridors {
   LaneCorridorPtr right;
 };
 
-// TODO(@esterle, @bernhard): Add documentation
+/**
+ * @brief Macro action motion primitive base class
+ */
 class Primitive : public modules::commons::BaseType {
  public:
   explicit Primitive(const commons::ParamsPtr& params)
@@ -47,11 +49,21 @@ class Primitive : public modules::commons::BaseType {
 
   virtual ~Primitive() = default;
 
+  /**
+   * @brief Precondition for the motion primitve to be available
+   * @param adjacent_corridors Current target corridor and left/right corridors
+   * @return True if primitive is available
+   */
   virtual bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
   virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
+  /**
+   * @brief Select the new target corridor
+   * @param adjacent_corridors Current target corridor and left/right corridors
+   * @return The new target corridor
+   */
   virtual LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;

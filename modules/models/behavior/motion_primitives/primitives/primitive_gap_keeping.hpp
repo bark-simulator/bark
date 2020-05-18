@@ -13,7 +13,9 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-// TODO(@esterle, @bernhard): Add documentation
+/**
+ * @brief Lane tracking with IDM for longitudinal motion
+ */
 class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
  public:
   explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)

@@ -13,7 +13,9 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-// TODO(@esterle, @bernhard): Add documentation
+/**
+ * @brief Change target corridor to the right with constant acceleration
+ */
 class PrimitiveConstAccChangeToRight : public PrimitiveConstAccStayLane {
  public:
   explicit PrimitiveConstAccChangeToRight(const commons::ParamsPtr& params);

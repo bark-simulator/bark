@@ -23,16 +23,16 @@ using world::map::LaneCorridorPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPMacroActions(const ParamsPtr& params)
+  explicit BehaviorMPMacroActions(const ParamsPtr& params)
       : BehaviorMotionPrimitives(params) {}
   BehaviorMPMacroActions(
       const ParamsPtr& params,
       const std::vector<primitives::PrimitivePtr>& motion_primitives);
 
-  virtual ~BehaviorMPMacroActions() {}
+  ~BehaviorMPMacroActions() = default;
 
-  virtual Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world);
+  Trajectory Plan(float delta_time,
+                  const ObservedWorld& observed_world) override;
 
   MotionIdx GetNumMotionPrimitives(
       const ObservedWorldPtr& observed_world) override;
@@ -41,7 +41,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
 
   void ClearMotionPrimitives() { motion_primitives_.clear(); }
 
-  virtual std::shared_ptr<BehaviorModel> Clone() const;
+  std::shared_ptr<BehaviorModel> Clone() const override;
   const std::vector<primitives::PrimitivePtr>& GetMotionPrimitives() const;
   const std::vector<BehaviorMPMacroActions::MotionIdx>& GetValidPrimitives(
       const ObservedWorldPtr& observed_world);
