@@ -182,7 +182,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorMPContinuousActions,
              BehaviorMotionPrimitives,
              shared_ptr<BehaviorMPContinuousActions>>(m, "BehaviorMPContinuousActions")
-    .def(py::init<const DynamicModelPtr&, const modules::commons::ParamsPtr&>())
+    .def(py::init<const modules::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorMPContinuousActions &b) {
       return "bark.behavior.BehaviorMPContinuousActions";
     })

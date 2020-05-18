@@ -304,7 +304,7 @@ TEST(observed_world, predict) {
 
   // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(
-      new BehaviorMPContinuousActions(dyn_model, params));
+      new BehaviorMPContinuousActions(params));
   Input u1(2);
   u1 << 2, 0;
   Input u2(2);

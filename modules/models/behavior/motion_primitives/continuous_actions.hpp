@@ -15,22 +15,19 @@ namespace modules {
 namespace models {
 namespace behavior {
 
-
 // TODO(@esterle, @bernhard): Add documentationx
 class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPContinuousActions(const DynamicModelPtr& dynamic_model,
-                             const commons::ParamsPtr& params)
-      : BehaviorMotionPrimitives(params), motion_primitives_(), dynamic_model_(dynamic_model) {}
+  BehaviorMPContinuousActions(const commons::ParamsPtr& params)
+      : BehaviorMotionPrimitives(params), motion_primitives_() {}
 
   virtual ~BehaviorMPContinuousActions() {}
 
-  virtual Trajectory Plan(
-    float delta_time,
-    const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time,
+                          const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(
-    const ObservedWorldPtr& observed_world) {
+      const ObservedWorldPtr& observed_world) {
     return motion_primitives_.size();
   }
   virtual Input GetAction() const {
@@ -42,13 +39,12 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
 
  private:
   std::vector<Input> motion_primitives_;
-  DynamicModelPtr dynamic_model_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMPContinuousActions::Clone()
     const {
   std::shared_ptr<BehaviorMPContinuousActions> model_ptr =
-    std::make_shared<BehaviorMPContinuousActions>(*this);
+      std::make_shared<BehaviorMPContinuousActions>(*this);
   return model_ptr;
 }
 

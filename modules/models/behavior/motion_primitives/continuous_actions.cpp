@@ -34,7 +34,7 @@ Trajectory BehaviorMPContinuousActions::Plan(
       integration_time = dt;
     }
     Input input = GetAction();
-    traj.row(i) = dynamic::euler_int(*dynamic_model_, traj.row(i - 1),
+    traj.row(i) = dynamic::euler_int(*observed_world.GetEgoAgent()->GetDynamicModel(), traj.row(i - 1),
                                      input,
                                      integration_time);
   }
