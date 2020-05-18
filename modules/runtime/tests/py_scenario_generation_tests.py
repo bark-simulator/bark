@@ -34,7 +34,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
         scenario = scenario_loader.get_scenario(idx=0)
 
-        params.save("default_params.json")
+        params.Save("default_params.json")
 
     def test_configurable_scenario_generation_sample_behavior_types(self):
         sink_source_dict = [{
@@ -65,7 +65,7 @@ class ScenarioGenerationTests(unittest.TestCase):
             num_scenarios=2, params=params)
         scenario_generation.dump_scenario_list("test.scenario")
 
-        params.save("default_params_behavior_type_sampling.json")
+        params.Save("default_params_behavior_type_sampling.json")
 
     def test_find_overlaps_configurable_scenario_generation(self):
         shape = Polygon2d([0, 0, 0], [Point2d(-1, 0),

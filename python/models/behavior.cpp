@@ -38,6 +38,7 @@ void python_behavior(py::module m) {
     .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
     .def("SetLastAction", &BehaviorModel::SetLastAction)
     .def("GetLastAction", &BehaviorModel::GetLastAction)
+    .def("ActionToBehavior", &BehaviorModel::ActionToBehavior)
     .def_property("last_trajectory",
                   &BehaviorModel::GetLastTrajectory,
                   &BehaviorModel::SetLastTrajectory);
@@ -200,8 +201,9 @@ void python_behavior(py::module m) {
             shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
   .def(py::init<const modules::models::dynamic::DynamicModelPtr&,
                 const modules::commons::ParamsPtr&>())
+  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
-  .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive);
+  .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives);
 
   py::class_<PrimitiveConstAccStayLane,
              Primitive,

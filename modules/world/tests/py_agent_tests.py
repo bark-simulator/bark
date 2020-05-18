@@ -35,7 +35,7 @@ class AgentTests(unittest.TestCase):
     init_state = np.zeros(4)
     agent = Agent(init_state, behavior, dynamic, execution, shape,
                   params.AddChild("agent"))
-    params.save("written_agents_param_test.json")
+    params.Save("written_agents_param_test.json")
 
   def test_draw_agents(self):
     params = ParameterServer()

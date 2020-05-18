@@ -7,6 +7,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 
+#include <vector>
+
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 
@@ -30,7 +32,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
                            const commons::ParamsPtr& params)
       : BehaviorModel(params),
         dynamic_model_(dynamic_model),
-        active_motion_(),
+        active_motion_(DiscreteAction(0)),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
@@ -38,18 +40,19 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   virtual ~BehaviorMotionPrimitives() {}
 
+  // TODO(@hart): use variant
   typedef unsigned int MotionIdx;
   virtual MotionIdx GetNumMotionPrimitives(
     const ObservedWorldPtr& observed_world) const = 0;
 
-  void ActionToBehavior(const MotionIdx& motion_idx) {
+  void ActionToBehavior(const Action& motion_idx) {
     active_motion_ = motion_idx;
   }
 
  protected:
   DynamicModelPtr dynamic_model_;
   std::vector<Input> motion_primitives_;
-  MotionIdx active_motion_;
+  Action active_motion_;
 
   // Parameters
   float integration_time_delta_;
