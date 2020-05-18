@@ -24,7 +24,6 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
-
 // TODO(@esterle, @bernhard): Add documentation
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
@@ -40,7 +39,8 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   // TODO(@hart): use variant
   typedef unsigned int MotionIdx;
-  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorldPtr& observed_world) = 0;
+  virtual MotionIdx GetNumMotionPrimitives(
+      const ObservedWorldPtr& observed_world) = 0;
 
   void ActionToBehavior(const Action& motion_idx) {
     active_motion_ = motion_idx;

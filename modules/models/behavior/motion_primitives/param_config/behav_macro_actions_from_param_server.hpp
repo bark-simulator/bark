@@ -32,45 +32,41 @@ using modules::models::dynamic::Input;
 using modules::models::dynamic::SingleTrackModel;
 using modules::world::prediction::PredictionSettings;
 
+inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
+    const commons::ParamsPtr& params) {
+  BehaviorModelPtr ego_prediction_model(new BehaviorMPMacroActions(params));
 
-inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(const commons::ParamsPtr& params) {
-    BehaviorModelPtr ego_prediction_model(
-        new BehaviorMPMacroActions(params));
+  std::vector<float> acc_vec = params->GetListFloat(
+      "AccelerationInputs", "A list of acceleration ", {0, 1, 4, -1, -8});
 
-    std::vector<float> acc_vec = params->GetListFloat("AccelerationInputs",
-                            "A list of acceleration ", {0, 1, 4, -1, -8});
+  std::vector<std::shared_ptr<Primitive>> prim_vec;
 
-    std::vector<std::shared_ptr<Primitive>> prim_vec;
+  for (auto& acc : acc_vec) {
+    auto primitive = std::make_shared<PrimitiveConstAccStayLane>(params, acc);
+    prim_vec.push_back(primitive);
+  }
 
-    for (auto& acc : acc_vec) {
-        auto primitive = std::make_shared<PrimitiveConstAccStayLane>(
-            params, acc);
-        prim_vec.push_back(primitive);
-    }
+  auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(params);
+  prim_vec.push_back(primitive_left);
 
-    auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(
-        params);
-    prim_vec.push_back(primitive_left);
+  auto primitive_right =
+      std::make_shared<PrimitiveConstAccChangeToRight>(params);
+  prim_vec.push_back(primitive_right);
 
-    auto primitive_right = std::make_shared<PrimitiveConstAccChangeToRight>(
-        params);
-    prim_vec.push_back(primitive_right);
+  auto primitive_gap_keeping = std::make_shared<PrimitiveGapKeeping>(params);
+  prim_vec.push_back(primitive_gap_keeping);
 
-    auto primitive_gap_keeping = std::make_shared<PrimitiveGapKeeping>(
-        params);
-    prim_vec.push_back(primitive_gap_keeping);
-
-    for (auto& p : prim_vec) {
-        auto idx =
-            std::dynamic_pointer_cast<BehaviorMPMacroActions>(ego_prediction_model)
-                ->AddMotionPrimitive(p);
-    }
-    return std::dynamic_pointer_cast<BehaviorMotionPrimitives>(ego_prediction_model);
+  for (auto& p : prim_vec) {
+    auto idx =
+        std::dynamic_pointer_cast<BehaviorMPMacroActions>(ego_prediction_model)
+            ->AddMotionPrimitive(p);
+  }
+  return std::dynamic_pointer_cast<BehaviorMotionPrimitives>(
+      ego_prediction_model);
 }
 
+}  // namespace behavior
+}  // namespace models
+}  // namespace modules
 
-} // namespace behavior
-} // namespace models
-} // namespace modules
-
-#endif // BEHAVIOR_MACRO_ACTIONS_FROM_PARAM_SERVER_HPP_
+#endif  // BEHAVIOR_MACRO_ACTIONS_FROM_PARAM_SERVER_HPP_

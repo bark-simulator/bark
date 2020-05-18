@@ -25,7 +25,8 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
   BehaviorMPMacroActions(const ParamsPtr& params)
       : BehaviorMotionPrimitives(params) {}
-  BehaviorMPMacroActions(const ParamsPtr& params,
+  BehaviorMPMacroActions(
+      const ParamsPtr& params,
       const std::vector<primitives::PrimitivePtr>& motion_primitives);
 
   virtual ~BehaviorMPMacroActions() {}
@@ -38,9 +39,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
 
-  void ClearMotionPrimitives() {
-    motion_primitives_.clear();
-  }
+  void ClearMotionPrimitives() { motion_primitives_.clear(); }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
   const std::vector<primitives::PrimitivePtr>& GetMotionPrimitives() const;

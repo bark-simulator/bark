@@ -17,7 +17,7 @@ class PrimitiveConstAccStayLane : public Primitive, BehaviorIDMLaneTracking {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
   PrimitiveConstAccStayLane(const commons::ParamsPtr& params,
-                             float acceleration);
+                            float acceleration);
   explicit PrimitiveConstAccStayLane(const commons::ParamsPtr& params);
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,

@@ -8,12 +8,11 @@ modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
-      acceleration_(
-          params->GetReal("PrimitiveConstAccStayLane::Acceleration",
-                          "Constant acceleration to apply", 0.0)) {}
+      acceleration_(params->GetReal("PrimitiveConstAccStayLane::Acceleration",
+                                    "Constant acceleration to apply", 0.0)) {}
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params,
-                               float acceleration)
+                              float acceleration)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(acceleration) {}
@@ -29,7 +28,7 @@ bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
   }
   auto ego_state = observed_world.CurrentEgoState();
   return acceleration_ >= single_track->GetMinAcceleration(ego_state) &&
-      acceleration_ <= single_track->GetMaxAcceleration(ego_state);
+         acceleration_ <= single_track->GetMaxAcceleration(ego_state);
 }
 modules::models::dynamic::Trajectory
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(

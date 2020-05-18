@@ -35,5 +35,4 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAccStayLane {
 }  // namespace models
 }  // namespace modules
 
-
 #endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_CHANGE_TO_LEFT_HPP_
