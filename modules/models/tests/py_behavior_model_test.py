@@ -33,7 +33,7 @@ class PythonBehaviorModelWrapper(BehaviorModel):
     self._params = params
 
   def Plan(self, delta_time, world):
-    super(PythonBehaviorModelWrapper, self).SetLastAction(
+    super(PythonBehaviorModelWrapper, self).ActionToBehavior(
       np.array([2., 1.], dtype=np.float32))
     # print(super(PythonBehaviorModelWrapper, self).GetLastAction())
     trajectory = np.array([[0., 0., 0., 0., 0.],
@@ -55,7 +55,7 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
     self._dynamic_behavior_model = BehaviorDynamicModel(params)
   
   def Plan(self, delta_time, world):
-    self._dynamic_behavior_model.SetLastAction(
+    self._dynamic_behavior_model.ActionToBehavior(
       np.array([2., 1.], dtype=np.float32))
     trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
     super(PythonBehaviorModelWrapperInheritance, self).SetLastTrajectory(trajectory)

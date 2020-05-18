@@ -65,7 +65,7 @@ lane_corridors.append(
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
-                 map_file_name="modules/runtime/tests/data/three_way_plain.xodr",
+                 map_file_name="modules/runtime/tests/data/threeway_intersection.xodr",
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=lane_corridors)
