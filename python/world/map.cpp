@@ -81,6 +81,7 @@ py::class_<RoadCorridor,
   .def_property("roads", &RoadCorridor::GetRoads,
     &RoadCorridor::SetRoads)
   .def_property_readonly("lanes", &RoadCorridor::GetLanes)
+  .def_property_readonly("road_ids", &RoadCorridor::GetRoadIds)
   .def("GetRoad", &RoadCorridor::GetRoad)
   .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
   .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)

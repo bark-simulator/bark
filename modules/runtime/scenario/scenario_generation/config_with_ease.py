@@ -31,15 +31,46 @@ class LaneCorridorConfig:
      what goal and model they should have.
   """
   def __init__(self,
-               road_ids=None,
-               lane_corridor_id=0,
-               params=None):
+               params=None,
+               **kwargs):
     self._road_corridor = None
-    self._road_ids = road_ids
-    self._lane_corridor_id = lane_corridor_id
     self._params = params
     self._current_s = None
-  
+    self._lane_corridor = None
+
+    # set these params
+    self._road_ids = kwargs.pop("road_ids", None)
+    self._lane_corridor_id = kwargs.pop("lane_corridor_id", None)
+    self._s_min = kwargs.pop("s_min", 0.) 
+    self._s_max = kwargs.pop("s_max", 60.)
+    self._ds_min = kwargs.pop("ds_min", 10.)
+    self._ds_max = kwargs.pop("ds_max", 20.)
+    self._min_vel = kwargs.pop("min_vel", 8.)
+    self._max_vel = kwargs.pop("max_vel", 10.)
+    self._source_pos = kwargs.pop("source_pos", None)
+    self._sink_pos = kwargs.pop("sink_pos", None)
+    self._behavior_model = \
+      kwargs.pop("behavior_model", BehaviorIDMClassic(self._params))
+    self._controlled_behavior_model = \
+      kwargs.pop("controlled_behavior_model", None)
+    self._controlled_ids = kwargs.pop("controlled_ids", None)
+
+  def InferRoadIdsAndLaneCorr(self, world):
+    goal_polygon = Polygon2d([0, 0, 0],
+                             [Point2d(-1,0),
+                              Point2d(-1,1),
+                              Point2d(1,1),
+                              Point2d(1,0)])
+    start_point = Point2d(self._source_pos[0], self._source_pos[1])
+    end_point = Point2d(self._sink_pos[0], self._sink_pos[1])
+    goal_polygon = goal_polygon.Translate(end_point)
+    self._road_corridor = world.map.GenerateRoadCorridor(
+      start_point, goal_polygon)
+    self._road_ids = self._road_corridor.road_ids
+    print("RoadIds: ", self._road_ids)
+    self._lane_corridor = self._road_corridor.GetCurrentLaneCorridor(
+      start_point)
+    
   def state(self, world):
     """Returns a state of the agent
     
@@ -55,7 +86,7 @@ class LaneCorridorConfig:
     velocity = self.velocity()
     return np.array([0, pose[0], pose[1], pose[2], velocity])
 
-  def ds(self, s_min=5., s_max=10.):
+  def ds(self):
     """Increment for placing the agents
     
     Keyword Arguments:
@@ -65,9 +96,9 @@ class LaneCorridorConfig:
     Returns:
         float -- delta s-value
     """
-    return np.random.uniform(s_min, s_max)
+    return np.random.uniform(self._ds_min, self._ds_max)
 
-  def position(self, world, min_s=0., max_s=100.):
+  def position(self, world):
     """Using the defined LaneCorridor it finds positions for the agents
     
     Arguments:
@@ -81,31 +112,35 @@ class LaneCorridorConfig:
         tuple -- (x, y, theta)
     """
     if self._road_corridor == None:
-      world.map.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    if road_corr is None:
+      world.map.GenerateRoadCorridor(
+        self._road_ids, XodrDrivingDirection.forward)
+      self._road_corridor = world.map.GetRoadCorridor(
+        self._road_ids, XodrDrivingDirection.forward)
+    if self._road_corridor is None:
       return None
-    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    if self._lane_corridor is not None:
+      lane_corr = self._lane_corridor
+    else:
+      lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
     if lane_corr is None:
       return None
     centerline = lane_corr.center_line
     if self._current_s == None:
-      self._current_s = min_s
+      self._current_s = self._s_min
     xy_point =  GetPointAtS(centerline, self._current_s)
     angle = GetTangentAngleAtS(centerline, self._current_s)
-    if self._current_s > max_s:
+    if self._current_s > self._s_max:
       return None
     self._current_s += self.ds()
     return (xy_point.x(), xy_point.y(), angle)
 
-  def velocity(self, min_vel=10., max_vel=15.):
-    return np.random.uniform(low=min_vel, high=max_vel)
+  def velocity(self):
+    return np.random.uniform(low=self._min_vel, high=self._max_vel)
 
-  @property
-  def behavior_model(self):
+  def behavior_model(self, world):
     """Returns behavior model
     """
-    return BehaviorIDMClassic(self._params)
+    return self._behavior_model
 
   @property
   def execution_model(self):
@@ -132,9 +167,14 @@ class LaneCorridorConfig:
   def goal(self, world):
     """Returns goal def.
     """
-    # should be access safe, otherwise would not reach.
-    road_corr = world.map.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = road_corr.lane_corridors[self._lane_corridor_id]
+    # TODO: by default should be based on agent's pos
+    road_corr = world.map.GetRoadCorridor(
+      self._road_ids, XodrDrivingDirection.forward)
+    if self._lane_corridor:
+      lane_corr = self._lane_corridor
+    else:
+      lane_corr = self._road_corridor.lane_corridors[self._lane_corridor_id]
+    # TODO: check
     return GoalDefinitionStateLimitsFrenet(lane_corr.center_line,
                                            (0.2, 0.2),
                                            (0.1, 0.1),
@@ -143,6 +183,8 @@ class LaneCorridorConfig:
   def controlled_ids(self, agent_list):
     """Returns an ID-List of controlled agents
     """
+    if self._controlled_ids is None:
+      return []
     random_int = [agent_list[np.random.randint(0, len(agent_list))]]
     return random_int
 
@@ -157,14 +199,14 @@ class LaneCorridorConfig:
     """
     return self.goal(world)
 
-  @property
-  def controlled_behavior_model(self):
+  def controlled_behavior_model(self, world):
     """Behavior model for controlled agent
     
     Returns:
         BehaviorModel -- BARK behavior model
     """
-    return self.behavior_model
+    if self._controlled_behavior_model is None:
+      return self.behavior_model(world)
 
   def reset(self):
     """Resets the LaneCorridorConfig
@@ -203,7 +245,7 @@ class ConfigWithEase(ScenarioGeneration):
         Scenario -- Returns a BARK scenario
     """
     scenario = Scenario(map_file_name=self._map_file_name,
-                        json_params=self._params.convert_to_dict())
+                        json_params=self._params.ConvertToDict())
     world = scenario.get_world_state()
     map_interface = world.map
     # fill agent list of the BARK world and set agents that are controlled
@@ -212,14 +254,16 @@ class ConfigWithEase(ScenarioGeneration):
     for lc_config in self._lane_corridor_configs:
       agent_state = True
       lc_agents = []
+      if lc_config._source_pos is not None and lc_config._sink_pos is not None:
+        lc_config.InferRoadIdsAndLaneCorr(world)
       while agent_state is not None:
         agent_state = lc_config.state(world)
         if agent_state is not None:
-          agent_behavior = lc_config.behavior_model
+          agent_behavior = lc_config.behavior_model(world)
           agent_dyn = lc_config.dynamic_model
           agent_exec = lc_config.execution_model
           agent_polygon = lc_config.shape
-          agent_params = self._params.addChild("agent")
+          agent_params = self._params.AddChild("agent")
           agent_goal = lc_config.goal(world)
           new_agent = Agent(
             agent_state, 
@@ -230,12 +274,16 @@ class ConfigWithEase(ScenarioGeneration):
             agent_params,
             agent_goal,
             map_interface)
+          new_agent.road_corridor = lc_config._road_corridor
           lc_agents.append(new_agent)
+        # set the road corridor
+
       # handle controlled agents
       controlled_agent_ids = []
       for controlled_agent in lc_config.controlled_ids(lc_agents):
         controlled_agent.goal_definition = lc_config.controlled_goal(world)
-        controlled_agent.behavior_model = lc_config.controlled_behavior_model
+        controlled_agent.behavior_model = \
+          lc_config.controlled_behavior_model(world)
         controlled_agent_ids.append(controlled_agent.id)
       scenario._eval_agent_ids.extend(controlled_agent_ids)
       scenario._agent_list.extend(lc_agents)

@@ -11,6 +11,7 @@
 #include <limits>
 #include <memory>
 #include <utility>
+#include <tuple>
 
 #include "modules/commons/transformation/frenet.hpp"
 #include "modules/world/observed_world.hpp"
@@ -29,96 +30,56 @@ using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
 using modules::models::dynamic::DynamicModelPtr;
 
-//! IDM Model will assume other front vehicle as constant velocity during
-//! delta_time
-Trajectory BehaviorIDMLaneTracking::Plan(
-    float delta_time, const world::ObservedWorld& observed_world) {
-  SetBehaviorStatus(BehaviorStatus::VALID);
-  
+
+std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr,
+    const IDMRelativeValues& rel_values,
+    double dt) const {
+  // definitions
   const DynamicModelPtr dynamic_model =
-      observed_world.GetEgoAgent()->GetDynamicModel();
+    observed_world.GetEgoAgent()->GetDynamicModel();
   auto single_track =
-      std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
+    std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
   if (!single_track) {
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
-
-  std::pair<AgentPtr, FrenetPosition> leading_vehicle =
-      observed_world.GetAgentInFront();
-  std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
-
-  using dynamic::StateDefinition;
-  //! TODO(@fortiss): parameters
-  const float min_velocity = GetMinVelocity();
-  const float max_velocity = GetMaxVelocity();
-
-  const int num_traj_time_points = 11;
-  dynamic::Trajectory traj(num_traj_time_points,
-                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  float const dt = delta_time / (num_traj_time_points - 1);
-
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
-
-  // select state and get p0
-  geometry::Point2d pose = observed_world.CurrentEgoPosition();
-
-  auto lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
-    this->SetLastTrajectory(traj);
-    return traj;
-  }
-
+  double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
-
-  double net_distance = .0f;
-  double vel_other = 1e6;
-  if (leading_vehicle.first) {
-    net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
-    dynamic::State other_vehicle_state =
-        leading_vehicle.first->GetCurrentState();
-    vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
-  }
+  dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
+                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
-        ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
-            0, 0);
-
+      ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
+        0, 0);
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
-    double acc;
-    double traveled_ego;
-    double traveled_other;
 
-    for (int i = 1; i < num_traj_time_points; ++i) {
-      if (leading_vehicle.first) {
-        acc = CalcIDMAcc(net_distance, vel_i, vel_other);
-        traveled_ego = +0.5f * acc * dt * dt + vel_i * dt;
-        traveled_other = vel_other * dt;
-        net_distance += traveled_other - traveled_ego;
-      } else {
-        acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
-      }
-
+    double rel_distance = rel_values.leading_distance;
+    for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
+      std::tie(acc, rel_distance) =
+        GetTotalAcc(observed_world, rel_values, rel_distance, dt);
       BARK_EXPECT_TRUE(!std::isnan(acc));
-
-      double angle = CalculateSteeringAngle(single_track, traj.row(i - 1), line,
-                                            crosstrack_error_gain_);
+      double angle = CalculateSteeringAngle(
+        single_track, traj.row(i - 1), line, crosstrack_error_gain_,
+        limit_steering_rate_);
 
       dynamic::Input input(2);
       input << acc, angle;
       traj.row(i) =
-          dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
+        dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
       // Do not allow negative speeds
       traj(i, StateDefinition::VEL_POSITION) =
           std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
     }
-
-    SetLastAction(Action(Continuous1DAction(acc)));
   }
-  this->SetLastTrajectory(traj);
-  return traj;
+  Action action(acc);
+  return std::tuple<Trajectory, Action>(traj, action);
 }
+
+
 
 }  // namespace behavior
 }  // namespace models

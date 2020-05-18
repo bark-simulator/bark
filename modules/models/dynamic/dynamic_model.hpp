@@ -28,6 +28,7 @@ typedef enum StateDefinition : int {
   MIN_STATE_SIZE = 5,
   Z_POSITION = 6  // only placeholder, not used at the moment
 } StateDefinition;
+
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 

@@ -7,6 +7,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MACRO_ACTIONS_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MACRO_ACTIONS_HPP_
 
+#include <vector>
+
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "modules/models/behavior/motion_primitives/primitives.hpp"
 
@@ -14,11 +16,12 @@ namespace modules {
 namespace models {
 namespace behavior {
 
+
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
   BehaviorMPMacroActions(const DynamicModelPtr& dynamic_model,
-                         const commons::ParamsPtr& params)
-      : BehaviorMotionPrimitives(dynamic_model, params) {}
+                         const commons::ParamsPtr& params) :
+    BehaviorMotionPrimitives(dynamic_model, params) {}
 
   virtual ~BehaviorMPMacroActions() {}
 
@@ -26,7 +29,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
                           const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(
-      const ObservedWorldPtr& observed_world) const {
+    const ObservedWorldPtr& observed_world) const {
     // MotionIdx count = 0;
     // for (auto const& p : motion_primitives_) {
     //   if (p->IsPreConditionSatisfied(observed_world)) {
@@ -38,6 +41,10 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   }
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
+
+  void ClearMotionPrimitives() {
+    motion_primitives_.clear();
+  }
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 

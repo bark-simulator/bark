@@ -16,6 +16,7 @@ cc_library(
         "//modules/models/behavior:behavior",
         "//modules/models/dynamic:dynamic",
         "//modules/models/behavior:include",
+        "//modules/models/behavior/motion_primitives/param_config:param_config"
     ],
     visibility = ["//visibility:public"],
 )

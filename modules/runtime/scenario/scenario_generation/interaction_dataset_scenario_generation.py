@@ -56,7 +56,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
     def create_single_scenario(self):
         scenario = Scenario(map_file_name=self._map_file_name,
-                            json_params=self._params.convert_to_dict())
+                            json_params=self._params.ConvertToDict())
         world = scenario.get_world_state()
         agent_list = []
         eval_agent_ids = []

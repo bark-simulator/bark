@@ -43,7 +43,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
     json_converter = ModelJsonConversion()
     _agent_params = json_converter.agent_to_json(self.default_drone_model())
     if not isinstance(_agent_params, dict):
-        _agent_params = _agent_params.convert_to_dict()
+        _agent_params = _agent_params.ConvertToDict()
 
     self.drone_params = self._local_params["drones", "list of dictionaries with drone definitions", [{"drone_model": _agent_params}]]
     self.ego_agent_id = self._local_params["ego_agent_id","ID of the ego-agent", 0]
@@ -72,7 +72,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
 
   def create_single_scenario(self):
     scenario = Scenario(map_file_name=None,
-                        json_params=self._params.convert_to_dict())
+                        json_params=self._params.ConvertToDict())
     scenario._agent_list = []
     for agent_json in self.drone_params:
       agent_json["drone_model"]["map_interface"] = None

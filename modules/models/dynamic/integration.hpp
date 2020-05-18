@@ -21,8 +21,13 @@ inline State euler_int(const DynamicModel& model,
   return x + dt * model.StateSpaceModel(x, u);
 }
 
-inline State rk4(const DynamicModel& model, const State &x, const Input &u, float dt) {
-  return x;
+inline State rk4(
+  const DynamicModel& model, const State &x, const Input &u, float dt) {
+  State k0 = dt*model.StateSpaceModel(x, u);
+  State k1 = dt*model.StateSpaceModel(x + k0/2, u);
+  State k2 = dt*model.StateSpaceModel(x + k1/2, u);
+  State k3 = dt*model.StateSpaceModel(x + k2, u);
+  return x + 1.0/6.0*(k0 + 2*k1 + 2*k2 + k3);
 }
 
 }  // namespace dynamic

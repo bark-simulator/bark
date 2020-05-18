@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <memory>
 #include <boost/functional/hash.hpp>
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/world/map/road.hpp"

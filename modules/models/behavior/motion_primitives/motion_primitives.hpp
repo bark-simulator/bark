@@ -7,6 +7,8 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 
+#include <vector>
+
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 
@@ -22,13 +24,15 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
+
+// TODO(@esterle, @bernhard): Add documentation
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
   BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
                            const commons::ParamsPtr& params)
       : BehaviorModel(params),
         dynamic_model_(dynamic_model),
-        active_motion_(),
+        active_motion_(DiscreteAction(0)),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
@@ -36,29 +40,25 @@ class BehaviorMotionPrimitives : public BehaviorModel {
 
   virtual ~BehaviorMotionPrimitives() {}
 
+  // TODO(@hart): use variant
   typedef unsigned int MotionIdx;
-  virtual MotionIdx GetNumMotionPrimitives(const ObservedWorldPtr& observed_world) const = 0;
-  //virtual Input GetAction() const = 0;
-  void ActionToBehavior(const MotionIdx& motion_idx) {
+  virtual MotionIdx GetNumMotionPrimitives(
+    const ObservedWorldPtr& observed_world) const = 0;
+
+  void ActionToBehavior(const Action& motion_idx) {
     active_motion_ = motion_idx;
   }
-
-  // virtual std::shared_ptr<BehaviorModel> Clone() const;
 
  protected:
   DynamicModelPtr dynamic_model_;
   std::vector<Input> motion_primitives_;
-  MotionIdx active_motion_;
+  Action active_motion_;
 
   // Parameters
   float integration_time_delta_;
 };
 
-// inline std::shared_ptr<BehaviorModel> BehaviorMotionPrimitives::Clone() const {
-//   std::shared_ptr<BehaviorMotionPrimitives> model_ptr =
-//     std::make_shared<BehaviorMotionPrimitives>(*this);
-//   return model_ptr;
-// }
+typedef std::shared_ptr<BehaviorMotionPrimitives> BehaviorMotionPrimitivesPtr;
 
 }  // namespace behavior
 }  // namespace models

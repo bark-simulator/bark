@@ -24,16 +24,16 @@ class BaseViewer(Viewer):
         # agents
         self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.7,0.7,0.7)]
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
-        self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
-        self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.,.27,.58)]
+        self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (.49, .63, .83)]
         self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
-        self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
+        self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 1.]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
-        self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", False]
+        self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", True]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
-        self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (0.0,0.0,0.7)]
+        self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (.49, .63, .83)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
@@ -111,7 +111,7 @@ class BaseViewer(Viewer):
                   self.dynamic_world_x_range[1] += (diffy - diffx)/2
           else:
               center = self.center
-              self._update_world_dynamic_range(center)
+              # self._update_world_dynamic_range(center)
 
 
     def _update_world_dynamic_range(self, center):
@@ -206,9 +206,9 @@ class BaseViewer(Viewer):
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
                   agent_id in eval_agent_ids:
-                color_line = self.color_eval_agents_line
-                color_face = self.color_eval_agents_face
-                alpha = self.alpha_eval_agent
+                color_line = self.eval_goal_color
+                color_face = self.eval_goal_color
+                alpha = .5
                 self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
         num_agents = len(world.agents.items())
@@ -288,3 +288,6 @@ class BaseViewer(Viewer):
       self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
+
+    def Reset(self):
+      pass

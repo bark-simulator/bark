@@ -1,33 +1,7 @@
-py_test(
-  name = "od8_const_vel_one_agent",
-  srcs = ["od8_const_vel_one_agent.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:pygame_viewer",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",],
-)
-
-py_binary(
-  name = "analyze_map",
-  srcs = ["analyze_map.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",],
-)
 
 py_test(
-  name = "planner_uct_benchmark",
-  srcs = ["planner_uct_benchmark.py"],
+  name = "benchmark_database",
+  srcs = ["benchmark_database.py"],
   data = ['//python:bark.so',
           '@benchmark_database_release//:v2.0',
           ':params'],
@@ -40,23 +14,8 @@ py_test(
 )
 
 py_test(
-  name = "planner_uct",
-  srcs = ["planner_uct.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:video_renderer",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
-)
-
-py_test(
-  name = "od8_const_vel_two_agent",
-  srcs = ["od8_const_vel_two_agent.py"],
+  name = "highway",
+  srcs = ["highway.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
           ':params'],
@@ -65,51 +24,41 @@ py_test(
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
+          "//modules/runtime/viewer:panda3d_easy",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
           "//modules/runtime:runtime"],
 )
 
 py_test(
-  name = "scenario_video_rendering",
-  srcs = ["scenario_video_rendering.py"],
+  name = "merging",
+  srcs = ["merging.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
-          ':params',
-          ':scenarios'],
-  imports = ['../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime/viewer:video_renderer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
-)
-
-py_test(
-  name = "scenario_dump_load",
-  srcs = ["scenario_dump_load.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data',
-          ':params',
-          ':scenarios'],
+          ':params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime/commons:xodr_parser",
           "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",
-          "//modules/runtime/scenario/scenario_generation:scenario_generation"],
+          "//modules/runtime/viewer:panda3d_easy",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          "//modules/runtime:runtime"],
 )
 
-py_test(
-  name = "scenarios_from_database",
-  srcs = ["scenarios_from_database.py"],
+py_binary(
+  name = "intersection",
+  srcs = ["intersection.py"],
   data = ['//python:bark.so',
-          '@benchmark_database_release//:v2.0'],
+          '//modules/runtime/tests:xodr_data',
+          ':params'],
   imports = ['../python/'],
   deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime/commons:xodr_parser",
+          "//modules/runtime/viewer:pygame_viewer",
           "//modules/runtime/viewer:matplotlib_viewer",
-          "//modules/runtime:runtime",
-          "@benchmark_database//load:benchmark_database"],
+          "//modules/runtime/viewer:panda3d_easy",
+          "//modules/runtime/scenario/scenario_generation:scenario_generation",
+          "//modules/runtime:runtime"],
 )
 
 filegroup(
@@ -125,34 +74,12 @@ filegroup(
 
 
 py_binary(
-  name = "barkml",
-  srcs = ["barkml.py"],
-  data = ['//python:bark.so',
-          "@bark_ml//tests/data:bark_data",
-          '//modules/runtime/tests:xodr_data',
-          '@benchmark_database_release//:v2.0',
-          "@benchmark_database//data/database1:database1",
-          "@bark_ml//python:bark_ml.so",
-          ':params',
-          ':scenarios'],
-  imports = ["../python/",
-             "../external/bark_ml/python/"],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime:runtime",
-          "//modules/models/behavior/plan:py_planners",
-          "//modules/benchmark:benchmark_runner",
-          "@benchmark_database//load:benchmark_database",
-          "@benchmark_database//serialization:database_serializer",
-          "@bark_ml//configurations/highway:configuration",
-          "@bark_ml//configurations:bark_agent"],
-)
-
-py_binary(
-    name = "interaction_dataset_runner",
-    srcs = ["interaction_dataset_runner.py"],
+    name = "interaction_dataset",
+    srcs = ["interaction_dataset.py"],
     data = [
         ":params",
         "//python:bark.so",
+        "//modules/runtime/tests:xodr_data"
     ] + 
     select({"//modules/runtime/scenario/interaction_dataset_processing:_interaction_dataset_present" : ["@interaction_dataset_fortiss_internal//:maps_tracks"], "//conditions:default": []}),
     imports = ["../python/"],
@@ -162,6 +89,6 @@ py_binary(
         "//modules/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
         "//modules/runtime/viewer:matplotlib_viewer",
         "//modules/runtime/viewer:video_renderer",
-        "//modules/runtime:runtime",
+        "//modules/runtime:runtime"
     ],
 )
