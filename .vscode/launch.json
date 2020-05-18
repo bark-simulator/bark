@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/bazel-bin/modules/benchmark/tests/py_benchmark_analyzer_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/modules/benchmark/tests/py_benchmark_analyzer_tests.runfiles/bark_project"
+                "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project"
 			   }
         },
         {
@@ -38,7 +38,7 @@
             "request": "attach",
             "program": "${workspaceFolder}/python/venv/bin/python3",
             "cwd" : "${workspaceFolder}",
-            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/scenario_dump_load.runfiles/bark_project/python/",
+            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/",
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}

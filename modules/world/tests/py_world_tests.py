@@ -93,7 +93,7 @@ class WorldTests(unittest.TestCase):
         agent_2d_shape = Polygon2d(
             [1.25, 1, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1), Point2d(3, -1)])
         init_state = np.array([0, 3, -1.75, 0, 5])
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
         goal_polygon = Polygon2d(
             [1, 1, 0], [Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0)])
         goal_polygon = goal_polygon.Translate(Point2d(50, -2))
@@ -146,7 +146,7 @@ class WorldTests(unittest.TestCase):
         #agent_2d_shape = CarLimousine()
         agent_2d_shape = CarRectangle()
         init_state = np.array([0, 3, -1.75, 0, 5])
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
         goal_polygon = Polygon2d(
             [1, 1, 0], [Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0)])
         goal_polygon = goal_polygon.Translate(Point2d(50, -2))

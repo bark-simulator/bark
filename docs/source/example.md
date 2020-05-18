@@ -56,7 +56,7 @@ Furthermore, we set the previously initiated models (behavior, execution and dyn
 ```python
 agent_2d_shape = CarLimousine()
 init_state = np.array([0, -11, -8, 3.14*3.0/4.0, 50/3.6]) 
-agent_params = param_server.addChild("agent1")
+agent_params = param_server.AddChild("agent1")
 agent = Agent(init_state, behavior_model, dynamic_model, execution_model, agent_2d_shape, agent_params, 2, map_interface)
 world.AddAgent(agent)
 ```
@@ -82,6 +82,6 @@ for _ in range(0, 30):
 
 In order to make the experiment reproducible, use:
 ```python
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "params", "od8_const_vel_one_agent_written.json"))
+param_server.Save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "params", "od8_const_vel_one_agent_written.json"))
 ```
 

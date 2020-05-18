@@ -17,7 +17,7 @@ from bark.world import World
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.runtime import Runtime
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
+from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark.models.dynamic import SingleTrackModel
 
 
@@ -27,13 +27,13 @@ class PythonBehaviorModelWrapper(BehaviorModel):
   def __init__(self,
                dynamic_model = None,
                params = None):
-    # DynamicBehaviorModel.__init__(self, dynamic_model, params)
+    # BehaviorDynamicModel.__init__(self, dynamic_model, params)
     BehaviorModel.__init__(self, params)
     self._dynamic_model = dynamic_model
     self._params = params
 
   def Plan(self, delta_time, world):
-    super(PythonBehaviorModelWrapper, self).SetLastAction(
+    super(PythonBehaviorModelWrapper, self).ActionToBehavior(
       np.array([2., 1.], dtype=np.float32))
     # print(super(PythonBehaviorModelWrapper, self).GetLastAction())
     trajectory = np.array([[0., 0., 0., 0., 0.],
@@ -49,14 +49,13 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
   """Dummy Python behavior model
   """
   def __init__(self,
-               dynamic_model = None,
                params = None):
     BehaviorModel.__init__(
       self, params)
-    self._dynamic_behavior_model = DynamicBehaviorModel(dynamic_model, params)
+    self._dynamic_behavior_model = BehaviorDynamicModel(params)
   
   def Plan(self, delta_time, world):
-    self._dynamic_behavior_model.SetLastAction(
+    self._dynamic_behavior_model.ActionToBehavior(
       np.array([2., 1.], dtype=np.float32))
     trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
     super(PythonBehaviorModelWrapperInheritance, self).SetLastTrajectory(trajectory)
@@ -97,10 +96,7 @@ class PyBehaviorModelTests(unittest.TestCase):
                       use_world_bounds=True)
     scenario, idx = scenario_generation.get_next_scenario()
     world = scenario.get_world_state()
-    single_track_model = SingleTrackModel(param_server)
-
-    behavior_model = PythonBehaviorModelWrapperInheritance(
-      single_track_model, param_server)
+    behavior_model = PythonBehaviorModelWrapperInheritance(param_server)
     
     world.GetAgent(0).behavior_model = behavior_model
     world.GetAgent(0).behavior_model.SetLastAction(

@@ -21,15 +21,15 @@ World::World(const commons::ParamsPtr& params)
           "Whether agents should be removed outside the bounding box.",
           false)) {}
 
-World::World(const std::shared_ptr<World>& world)
-    : commons::BaseType(world->GetParams()),
-      map_(world->GetMap()),
-      agents_(world->GetAgents()),
-      objects_(world->GetObjects()),
-      evaluators_(world->GetEvaluators()),
-      world_time_(world->GetWorldTime()),
-      remove_agents_(world->GetRemoveAgents()),
-      rtree_agents_(world->rtree_agents_) {}
+World::World(const std::shared_ptr<World>& world) :
+  commons::BaseType(world->GetParams()),
+  map_(world->GetMap()),
+  agents_(world->GetAgents()),
+  objects_(world->GetObjects()),
+  evaluators_(world->GetEvaluators()),
+  world_time_(world->GetWorldTime()),
+  remove_agents_(world->GetRemoveAgents()),
+  rtree_agents_(world->rtree_agents_) {}
 
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);

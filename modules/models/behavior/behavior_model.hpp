@@ -8,6 +8,7 @@
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 
 #include <memory>
+#include <vector>
 #include <Eigen/Dense>
 
 #include "modules/commons/base_type.hpp"
@@ -47,11 +48,10 @@ class BehaviorModel : public modules::commons::BaseType {
     last_trajectory_(),
     last_action_() {}
 
-  BehaviorModel(const BehaviorModel &behavior_model) :
+  BehaviorModel(const BehaviorModel& behavior_model) :
     commons::BaseType(behavior_model.GetParams()),
     last_trajectory_(behavior_model.GetLastTrajectory()),
-    last_action_(behavior_model.GetLastAction()),
-    active_model_(behavior_model.GetActiveModel()) {}
+    last_action_(behavior_model.GetLastAction()) {}
 
   virtual ~BehaviorModel() {}
 
@@ -60,13 +60,17 @@ class BehaviorModel : public modules::commons::BaseType {
   void SetLastTrajectory(const dynamic::Trajectory& trajectory) {
     last_trajectory_ = trajectory;
   }
-  bool GetActiveModel() const { return active_model_; }
 
   BehaviorStatus GetBehaviorStatus() const { return behavior_status_; }
-  void SetBehaviorStatus(const BehaviorStatus status) {behavior_status_ = status; }
+
+  void SetBehaviorStatus(const BehaviorStatus status) {
+    behavior_status_ = status;
+  }
 
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
+
+  virtual void ActionToBehavior(const Action& action) {};
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {};
 
@@ -76,12 +80,11 @@ class BehaviorModel : public modules::commons::BaseType {
  private:
   dynamic::Trajectory last_trajectory_;
   Action last_action_;
-  bool active_model_;
   BehaviorStatus behavior_status_;
 };
 
-
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
+
 
 }  // namespace behavior
 }  // namespace models

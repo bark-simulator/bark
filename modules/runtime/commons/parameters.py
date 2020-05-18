@@ -19,7 +19,7 @@ class ParameterServer(Params):
             self.load(kwargs["filename"])
             self.param_filename = kwargs["filename"]
         elif "json" in kwargs:
-            self.convert_to_param(kwargs["json"])
+            self.ConvertToParam(kwargs["json"])
         else:
             self.store = dict()
         self.param_descriptions = dict()
@@ -48,11 +48,11 @@ class ParameterServer(Params):
                 self.store[new_key] = ParameterServer(log_if_default = self.log_if_default)
                 return self.store[new_key]
 
-    def find_key(self, param_key):
+    def FindKey(self, param_key):
       delimiter = "::"
       for key, value in self.store.items():
                   if isinstance(value, ParameterServer):
-                      found_key_tmp =  value.find_key(param_key)
+                      found_key_tmp =  value.FindKey(param_key)
                       if found_key_tmp:
                         return "{}{}{}".format(key, delimiter,
                               found_key_tmp)
@@ -82,24 +82,24 @@ class ParameterServer(Params):
     def load(self, fn):
         with open(fn) as file:
             dict = json.load(file)
-        self.convert_to_param(dict)
+        self.ConvertToParam(dict)
 
-    def convert_to_param(self, new_dict):
+    def ConvertToParam(self, new_dict):
         self.store = dict()
         for key, value in new_dict.items():
             if isinstance(value, dict):
                 param = ParameterServer(log_if_default = self.log_if_default)
-                self.store[key] = param.convert_to_param(value)
+                self.store[key] = param.ConvertToParam(value)
             else:
-                self.get_val_from_string(key, "", value, log_if_default=False)
+                self.GetValFromString(key, "", value, log_if_default=False)
 
         return self
 
-    def convert_to_dict(self, print_description=False):
+    def ConvertToDict(self, print_description=False):
         dict = {}
         for key, value in self.store.items():
             if isinstance(value, ParameterServer):
-                v = value.convert_to_dict(print_description)
+                v = value.ConvertToDict(print_description)
                 if len(v) == 0:
                     if print_description:
                         if key in self.param_descriptions:
@@ -121,7 +121,7 @@ class ParameterServer(Params):
 
         return dict
 
-    def save(self, filename, print_description=False):
+    def Save(self, filename, print_description=False):
         #if not os.path.exists(os.path.dirname(filename)):
             #try:
            #     os.makedirs(os.path.dirname(filename))
@@ -132,7 +132,7 @@ class ParameterServer(Params):
             print("Writing parameters to {}".format(os.path.abspath(filename)))
             outfile.write(
                 json.dumps(
-                    self.convert_to_dict(print_description=print_description),
+                    self.ConvertToDict(print_description=print_description),
                     indent=4))
 
     def get_val_iter(self, hierarchy, description, default_value):
@@ -194,11 +194,11 @@ class ParameterServer(Params):
         test = condensed_param_list
         return condensed_param_list
 
-    def get_val_from_string(self, hierarchy, description, default_value, log_if_default):
+    def GetValFromString(self, hierarchy, description, default_value, log_if_default):
         hierarchy = [x.strip() for x in hierarchy.split("::")]
         if log_if_default:
           # first search for key, otherwise default already integrated into store
-          found_key = self.find_key(hierarchy[-1])
+          found_key = self.FindKey(hierarchy[-1])
         value, used_default = self.get_val_iter(hierarchy.copy(), description, default_value)
         if log_if_default and used_default:
           logging.warning("Using default {} for {}".format(
@@ -212,21 +212,21 @@ class ParameterServer(Params):
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def GetReal(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def GetInt(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def GetListListFloat(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
     
     def GetListFloat(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def access(self, param_name):
         return self[param_name]
