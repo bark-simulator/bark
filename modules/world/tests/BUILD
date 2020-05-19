@@ -179,6 +179,17 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "label_test",
+    srcs = ["label_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        ":make_test_world",
+        "//modules/world/evaluation/labels:label_evaluation",
+        "@gtest//:gtest_main",
+    ],
+)
+
 py_test(
   name = "py_opendrive_tests",
   srcs = ["py_opendrive_tests.py"],

@@ -16,6 +16,7 @@ cc_library(
     deps = [
         ":base_label_evaluator",
         "//modules/world:include",
+        "//modules/world/map:road_corridor",
         "//modules/world/evaluation:base_evaluator",
         "@rule_monitor_project//ltl:rule_monitor",
     ],
