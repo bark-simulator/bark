@@ -50,7 +50,7 @@ std::pair<double, double> BehaviorConstantVelocity::GetTotalAcc(
   const IDMRelativeValues& rel_values,
   double rel_distance,
   double dt) const {
-  return std::pair<double, double>(0., 0.);
+  return {0., 0.};
 }
 
 }  // namespace behavior

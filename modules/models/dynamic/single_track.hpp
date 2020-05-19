@@ -16,22 +16,23 @@ namespace modules {
 namespace models {
 namespace dynamic {
 
-
 class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
       : DynamicModel(params),
-        wheel_base_(2.7),
-        steering_angle_max_(0.2),
-        lat_acceleration_max_(4.0) {
-    wheel_base_ = params->GetReal("DynamicModel::wheel_base",
-                                  "Wheel base of vehicle [m]", 2.7);
-    steering_angle_max_ = params->GetReal("DynamicModel::delta_max",
-                                          "Maximum Steering Angle [rad]", 0.2);
-    lat_acceleration_max_ =
-        params->GetReal("DynamicModel::lat_acc_max",
-                        "Maximum lateral acceleration [m/s^2]", 4.0);
-  }
+        wheel_base_(params->GetReal("DynamicModel::wheel_base",
+                                    "Wheel base of vehicle [m]", 2.7)),
+        steering_angle_max_(params->GetReal(
+            "DynamicModel::delta_max", "Maximum Steering Angle [rad]", 0.2)),
+        lat_acceleration_max_(
+            params->GetReal("DynamicModel::lat_acc_max",
+                            "Maximum lateral acceleration [m/s^2]", 4.0)),
+        lon_acceleration_max_(
+            params->GetReal("DynamicModel::lon_acceleration_max",
+                            "Maximum longitudinal acceleration", 4.0)),
+        lon_acceleration_min_(
+            params->GetReal("DynamicModel::lon_acceleration_min",
+                            "Minimum longitudinal acceleration", -8.0)) {}
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State& x, const Input& u) const {
@@ -54,11 +55,24 @@ class SingleTrackModel : public DynamicModel {
   double GetWheelBase() const { return wheel_base_; }
   double GetSteeringAngleMax() const { return steering_angle_max_; }
   double GetLatAccelerationMax() const { return lat_acceleration_max_; }
+  float GetMaxAcceleration(const State& x) const {
+    return lon_acceleration_max_;
+  }
+  float GetMinAcceleration(const State& x) const {
+    // Do not allow to drive backwards
+    if (std::abs(x(StateDefinition::VEL_POSITION)) < 1e-5) {
+      return 0.0f;
+    } else {
+      return lon_acceleration_min_;
+    }
+  }
 
  private:
   double wheel_base_;
   double steering_angle_max_;
   double lat_acceleration_max_;
+  float lon_acceleration_max_;
+  float lon_acceleration_min_;
 };
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
@@ -66,8 +80,7 @@ using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
 inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
                                      const State& state,
                                      const modules::geometry::Line& ref_line,
-                                     double gain,
-                                     bool limit_steering = true) {
+                                     double gain, bool limit_steering = true) {
   // Implemented after G. M. Hoffmann, C. J. Tomlin, M. Montemerlo, and S.
   // Thrun, “Autonomous Automobile Trajectory Tracking for Off-Road Driving:
   // Controller Design, Experimental Validation and Racing,” in 2007 ACC
@@ -91,10 +104,11 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
   if (limit_steering) {
-    double delta_max = std::min(
-      model->GetSteeringAngleMax(),
-      std::abs(std::atan2(
-        model->GetLatAccelerationMax() * model->GetWheelBase(), vel * vel)));
+    double delta_max =
+        std::min(model->GetSteeringAngleMax(),
+                 std::abs(std::atan2(
+                     model->GetLatAccelerationMax() * model->GetWheelBase(),
+                     vel * vel)));
     double clamped_delta = std::min(delta, delta_max);
     clamped_delta = std::max(clamped_delta, -delta_max);
     return clamped_delta;

@@ -7,28 +7,27 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 
+#include "modules/models/behavior/behavior_model.hpp"
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "modules/models/dynamic/dynamic_model.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
-
 // TODO(@esterle, @bernhard): Add documentationx
 class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPContinuousActions(const DynamicModelPtr& dynamic_model,
-                             const commons::ParamsPtr& params)
-      : BehaviorMotionPrimitives(dynamic_model, params), motion_primitives_() {}
+  BehaviorMPContinuousActions(const commons::ParamsPtr& params)
+      : BehaviorMotionPrimitives(params), motion_primitives_() {}
 
   virtual ~BehaviorMPContinuousActions() {}
 
-  virtual Trajectory Plan(
-    float delta_time,
-    const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time,
+                          const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(
-    const ObservedWorldPtr& observed_world) const {
+      const ObservedWorldPtr& observed_world) {
     return motion_primitives_.size();
   }
   virtual Input GetAction() const {
@@ -45,7 +44,7 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
 inline std::shared_ptr<BehaviorModel> BehaviorMPContinuousActions::Clone()
     const {
   std::shared_ptr<BehaviorMPContinuousActions> model_ptr =
-    std::make_shared<BehaviorMPContinuousActions>(*this);
+      std::make_shared<BehaviorMPContinuousActions>(*this);
   return model_ptr;
 }
 

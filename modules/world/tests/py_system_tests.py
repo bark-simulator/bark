@@ -80,10 +80,8 @@ class PythonDistanceBehavior(BehaviorModel):
       acceleration = 4.0
 
     # a motion primitive model converts it to trajectory
-    single_track_model = SingleTrackModel(self._params)
-    behavior = PrimitiveConstAccStayLane(self._params, single_track_model,
-                                        acceleration, 0.0)
-    traj = behavior.Plan(delta_time, observed_world)
+    behavior = PrimitiveConstAccStayLane(self._params, acceleration)
+    traj = behavior.Plan(delta_time, observed_world, observed_world.lane_corridor)
 
     # set internal behavior parameters
     super(PythonDistanceBehavior, self).SetLastTrajectory(traj)

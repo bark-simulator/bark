@@ -104,7 +104,7 @@ class EvaluationTests(unittest.TestCase):
     param_server = ParameterServer()
     # Model Definition
     dynamic_model = SingleTrackModel(param_server)
-    behavior_model = BehaviorMPContinuousActions(dynamic_model, param_server)
+    behavior_model = BehaviorMPContinuousActions(param_server)
     idx = behavior_model.AddMotionPrimitive(np.array([1, 0]))
     behavior_model.ActionToBehavior(idx)
     execution_model = ExecutionModelInterpolate(param_server)
