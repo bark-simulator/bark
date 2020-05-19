@@ -14,13 +14,14 @@ namespace evaluation {
 
 class EvaluatorRightOvertake : public EvaluatorLTL {
  public:
-  EvaluatorRightOvertake(AgentId agent_id)
+  explicit EvaluatorRightOvertake(AgentId agent_id)
       : EvaluatorLTL(agent_id, formula_) {}
   EvaluationReturn Evaluate(const world::World& world) override {
     auto cloned_world = world.Clone();
     cloned_world->AddLabels(labels_);
     return EvaluatorLTL::Evaluate(*cloned_world);
   }
+
  private:
   static const char formula_[];
   static const LabelEvaluators labels_;

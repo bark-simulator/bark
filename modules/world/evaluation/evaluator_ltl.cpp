@@ -39,8 +39,11 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     auto other_agents = observed_world.GetOtherAgents();
     std::vector<int> current_agents;
     // Convert agent map to vector of ids
-    std::transform(other_agents.begin(), other_agents.end(), std::back_inserter(current_agents),
-        [](const AgentMap::value_type& e) { return static_cast<int>(e.first); });
+    std::transform(other_agents.begin(), other_agents.end(),
+                   std::back_inserter(current_agents),
+                   [](const AgentMap::value_type& e) {
+                     return static_cast<int>(e.first);
+                   });
     // Create rule states for new agents
     auto new_rule_states =
         monitor_->MakeRuleState(current_agents, GetKnownAgents());

@@ -46,13 +46,11 @@ class EvaluatorLTLTests(unittest.TestCase):
         # Violation should be persistent
         self.assertEqual(res["rule"], 2)
 
-
     def test_safety_violation(self):
         evaluator = EvaluatorLTL(1, "G !label")
         self.world.AddEvaluator("rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["rule"], 1)
-
 
     def test_guarantee(self):
         evaluator = EvaluatorLTL(1, "F label")
@@ -73,13 +71,11 @@ class EvaluatorLTLTests(unittest.TestCase):
         # Should still be satisfied since the trace contained label = True
         self.assertEqual(res["rule"], 0)
 
-
     def test_guarantee_violation(self):
         evaluator = EvaluatorLTL(1, "F !label")
         self.world.AddEvaluator("rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["rule"], 1)
-
 
     def test_agent_relative_rule(self):
         self.world.AddLabels([BehindOfLabelEvaluator("behind_of")])
@@ -99,6 +95,7 @@ class EvaluatorLTLTests(unittest.TestCase):
         res = self.world.Evaluate()
         evaluator.rule_states[0].automaton.PrintToDot("/tmp/auto.dot")
         self.assertEqual(res["right_overtake"], 0)
+
 
 if __name__ == '__main__':
     unittest.main()
