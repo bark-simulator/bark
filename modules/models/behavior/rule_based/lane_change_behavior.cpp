@@ -133,6 +133,7 @@ BehaviorLaneChangeRuleBased::ChooseLaneCorridor(
       LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
                 << " is changing lanes." << std::endl;
       lane_corr = tmp_lane_corr;
+      change_decision = LaneChangeDecision::ChangeLane;
     }
   }
   return std::pair<LaneChangeDecision, LaneCorridorPtr>(
@@ -192,14 +193,9 @@ Trajectory BehaviorLaneChangeRuleBased::Plan(
   // whether to change lanes or not
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
-  SetLaneCorridor(lane_res.second);
 
-  if (!observed_world.GetLaneCorridor() && !lane_res.second) {
-    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-              << ": Behavior status has expired!" << std::endl;
-    SetBehaviorStatus(BehaviorStatus::EXPIRED);
-    return GetLastTrajectory();
-  }
+  if (lane_res.second)
+    SetLaneCorridor(lane_res.second);
 
   // we want to calc. the acc. based on the actual LaneCorridor
   IDMRelativeValues rel_values = CalcRelativeValues(

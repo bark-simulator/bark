@@ -152,15 +152,9 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   // check if a lane change would be beneficial
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
     CheckIfLaneChangeBeneficial(observed_world);
-  SetLaneCorridor(lane_res.second);
 
-  // if there is no lane_corr to be chosen
-  if (!observed_world.GetLaneCorridor() && !lane_res.second) {
-    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-              << ": Behavior status has expired!" << std::endl;
-    SetBehaviorStatus(BehaviorStatus::EXPIRED);
-    return GetLastTrajectory();
-  }
+  if (lane_res.second)
+    SetLaneCorridor(lane_res.second);
 
   // check intersecting vehicles
   std::tuple<double, AgentPtr> time_agent = CheckIntersectingVehicles(
