@@ -129,9 +129,7 @@ TEST(multiple_lane_widths, open_drive) {
 
   EXPECT_NEAR(lane_width1.s_end, length1, 0.1);
   EXPECT_NEAR(lane_width2.s_start, length1, 0.1);
-
   EXPECT_NEAR(lane_width2.s_end, length2, 0.1);
-
   EXPECT_TRUE(length1 < length2);
 }
 

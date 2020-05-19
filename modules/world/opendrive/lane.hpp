@@ -113,7 +113,7 @@ using XodrLanes = std::map<XodrLaneId, XodrLanePtr>;
 inline XodrLanePtr CreateLaneFromLaneWidth(XodrLanePosition lane_position,
                                            geometry::Line previous_line,
                                            XodrLaneWidth lane_width_current,
-                                           float s_inc = 0.5f) {
+                                           float s_inc = 0.05f) {
   std::shared_ptr<XodrLane> ret_lane(new XodrLane(lane_position));
   ret_lane->append(previous_line, lane_width_current, s_inc);
   return ret_lane;

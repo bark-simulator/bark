@@ -80,10 +80,8 @@ class PythonDistanceBehavior(BehaviorModel):
       acceleration = 4.0
 
     # a motion primitive model converts it to trajectory
-    single_track_model = SingleTrackModel(self._params)
-    behavior = PrimitiveConstAccStayLane(self._params, single_track_model,
-                                        acceleration, 0.0)
-    traj = behavior.Plan(delta_time, observed_world)
+    behavior = PrimitiveConstAccStayLane(self._params, acceleration)
+    traj = behavior.Plan(delta_time, observed_world, observed_world.lane_corridor)
 
     # set internal behavior parameters
     super(PythonDistanceBehavior, self).SetLastTrajectory(traj)
@@ -130,7 +128,7 @@ class SystemTests(unittest.TestCase):
         # agent_2d_shape = CarLimousine()
         agent_2d_shape = CarRectangle()
         init_state = np.array([0, 3, -5.25, 0, 20])
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
 
 
         # goal_polygon = Polygon2d(
@@ -219,7 +217,7 @@ class SystemTests(unittest.TestCase):
                         velocity_range)
 
         # define two agents with the different behavior models
-        agent_params = params.addChild("agent1")
+        agent_params = params.AddChild("agent1")
         agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
                       agent_2d_shape, agent_params, goal_definition, map_interface)
         world.AddAgent(agent)

@@ -26,14 +26,14 @@ os.chdir("../benchmark_database/")
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=2, num_serialize_scenarios=2)
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>5}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 

@@ -9,7 +9,7 @@ cc_library(
         "//modules/commons:commons",
         "//modules/commons/transformation:frenet",
         "//modules/models/behavior:behavior",
-        "//modules/models/behavior/motion_primitives:motion_primitives",
+#        "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/models/execution:execution",
 	    "//modules/models/dynamic:dynamic",
         "//modules/world/evaluation:base_evaluator",

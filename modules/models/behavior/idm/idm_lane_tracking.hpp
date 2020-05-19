@@ -8,29 +8,43 @@
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_LANE_TRACKING_HPP_
 
 #include <memory>
-
-#include "modules/models/behavior/idm/idm_classic.hpp"
+#include <tuple>
+#include "modules/models/behavior/idm/base_idm.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
-class BehaviorIDMLaneTracking : public BehaviorIDMClassic {
+
+// IDM that follows the centerline of a LaneCorridor
+// using the dynamic SingleTrack model
+class BehaviorIDMLaneTracking : public BaseIDM {
  public:
-  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BehaviorIDMClassic(params) {
+  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
+    BaseIDM(params),
+    limit_steering_rate_(true) {
     crosstrack_error_gain_ = params->GetReal(
-        "BehaviorIDMLaneTracking::CrosstrackErrorGain", "Tuning factor of stanley controller", 1.0);
+      "BehaviorIDMLaneTracking::CrosstrackErrorGain",
+      "Tuning factor of stanley controller",
+      1.0);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
 
-  Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+  std::tuple<Trajectory, Action> GenerateTrajectory(
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr,
+    const IDMRelativeValues& rel_values,
+    double delta_time) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
-
+  void SetLimitSteeringRate(bool limit_steering) {
+    limit_steering_rate_ = limit_steering;
+  }
+  friend class BaseIDM;
  private:
   double crosstrack_error_gain_;
+  bool limit_steering_rate_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMLaneTracking::Clone() const {

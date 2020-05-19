@@ -10,23 +10,29 @@
 
 #include "polymorphic_conversion.hpp"
 
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/behavior/mobil/mobil.hpp"
+#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "modules/models/behavior/rule_based/intersection_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/world/goal_definition/goal_definition_sequential.hpp"
-#include "modules/commons/params/setter_params.hpp"
 #include "python/models/behavior.hpp"
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
 using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
-
-
 
 
 namespace py = pybind11;
@@ -36,17 +42,34 @@ using modules::world::goal_definition::GoalDefinitionStateLimits;
 using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
+using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorConstantVelocity;
 using modules::models::behavior::BehaviorStaticTrajectory;
+using modules::models::behavior::BehaviorIntersectionRuleBased;
+using modules::models::behavior::BehaviorLaneChangeRuleBased;
+using modules::models::behavior::BehaviorMobilRuleBased;
 using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
+using modules::models::behavior::primitives::Primitive;
+using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
+using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+using modules::models::behavior::primitives::PrimitiveGapKeeping;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
   if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
     behavior_model_name = "BehaviorConstantVelocity";
+  } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
+    behavior_model_name = "BehaviorIDMLaneTracking";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
     behavior_model_name = "BehaviorIDMClassic";
+  } else if (typeid(*behavior_model) == typeid(BehaviorIntersectionRuleBased)) {
+    behavior_model_name = "BehaviorIntersectionRuleBased";
+  } else if (typeid(*behavior_model) == typeid(BehaviorLaneChangeRuleBased)) {
+    behavior_model_name = "BehaviorLaneChangeRuleBased";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMobilRuleBased)) {
+    behavior_model_name = "BehaviorMobilRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
@@ -71,12 +94,24 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   if (behavior_model_name.compare("BehaviorConstantVelocity") == 0) {
       return std::make_shared<BehaviorConstantVelocity>(
         t[0].cast<BehaviorConstantVelocity>());
+  } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
+    return std::make_shared<BehaviorIDMLaneTracking>(
+      t[0].cast<BehaviorIDMLaneTracking>());
   } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
     return std::make_shared<BehaviorIDMClassic>(
       t[0].cast<BehaviorIDMClassic>());
+  } else if (behavior_model_name.compare("BehaviorIntersectionRuleBased") == 0) {
+    return std::make_shared<BehaviorIntersectionRuleBased>(
+      t[0].cast<BehaviorIntersectionRuleBased>());
+  } else if (behavior_model_name.compare("BehaviorLaneChangeRuleBased") == 0) {
+    return std::make_shared<BehaviorLaneChangeRuleBased>(
+      t[0].cast<BehaviorLaneChangeRuleBased>());
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
       t[0].cast<BehaviorStaticTrajectory>());
+  } else if (behavior_model_name.compare("BehaviorMobilRuleBased") == 0) {
+    return std::make_shared<BehaviorMobilRuleBased>(
+      t[0].cast<BehaviorMobilRuleBased>());
   } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
     return std::make_shared<BehaviorMobil>(
       t[0].cast<BehaviorMobil>());
@@ -141,4 +176,41 @@ py::tuple ParamsToPython(const ParamsPtr& params) {
 ParamsPtr PythonToParams(py::tuple t) {
   const auto param_list = t[0].cast<modules::commons::CondensedParamList>();
   return std::make_shared<SetterParams>(true, param_list);
+}
+
+py::tuple PrimitiveToPython(const PrimitivePtr& prim) {
+  std::string label_name;
+  if (typeid(*prim) == typeid(PrimitiveGapKeeping)) {
+    label_name = "PrimitiveGapKeeping";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccStayLane)) {
+    label_name = "PrimitiveConstAccStayLane";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToLeft)) {
+    label_name = "PrimitiveConstAccChangeToLeft";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToRight)) {
+    label_name = "PrimitiveConstAccChangeToRight";
+  } else {
+    LOG(ERROR) << "Unknown Primitive type for polymorphic conversion.";
+    throw;
+  }
+  return py::make_tuple(prim, label_name);
+}
+PrimitivePtr PythonToPrimitive(py::tuple t) {
+  std::string label_name = t[1].cast<std::string>();
+  if (label_name.compare("PrimitiveGapKeeping") == 0) {
+    return std::make_shared<PrimitiveGapKeeping>(
+        t[0].cast<PrimitiveGapKeeping>());
+  } else if (label_name.compare("PrimitiveConstAccStayLane") == 0) {
+    return std::make_shared<PrimitiveConstAccStayLane>(
+        t[0].cast<PrimitiveConstAccStayLane>());
+  } else if (label_name.compare("PrimitiveConstAccChangeToLeft") == 0) {
+    return std::make_shared<PrimitiveConstAccChangeToLeft>(
+        t[0].cast<PrimitiveConstAccChangeToLeft>());
+  } else if (label_name.compare("PrimitiveConstAccChangeToRight") == 0) {
+    return std::make_shared<PrimitiveConstAccChangeToRight>(
+        t[0].cast<PrimitiveConstAccChangeToRight>());
+  } else {
+    LOG(ERROR) << "Unknown LabelType for polymorphic conversion.";
+    throw;
+  }
+  return nullptr;
 }

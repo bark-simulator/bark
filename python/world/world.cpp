@@ -23,7 +23,7 @@ using namespace modules::world::objects;
 using namespace modules::world::map;
 using namespace modules::world::opendrive;
 using modules::world::World;
-using modules::models::behavior::DynamicBehaviorModel;
+using modules::models::behavior::BehaviorDynamicModel;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorldPtr;
@@ -73,8 +73,14 @@ void python_world(py::module m) {
     .def(py::init<const WorldPtr&, const AgentId&>())
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def("Evaluate", &ObservedWorld::Evaluate)
-    .def("GetAgentInFront", &ObservedWorld::GetAgentInFront)
-    .def("GetAgentBehind", &ObservedWorld::GetAgentBehind)
+    .def("GetAgentInFront",
+      py::overload_cast<>(&ObservedWorld::GetAgentInFront, py::const_))
+    .def("GetAgentInFront",
+      py::overload_cast<const LaneCorridorPtr&>(&ObservedWorld::GetAgentInFront, py::const_))      
+    .def("GetAgentBehind",
+      py::overload_cast<>(&ObservedWorld::GetAgentBehind, py::const_))
+    .def("GetAgentBehind",
+      py::overload_cast<const LaneCorridorPtr&>(&ObservedWorld::GetAgentBehind, py::const_))
     .def_property_readonly("road_corridor", &ObservedWorld::GetRoadCorridor)
     .def_property_readonly("ego_agent", &ObservedWorld::GetEgoAgent)
     .def_property_readonly("lane_corridor", &ObservedWorld::GetLaneCorridor)
@@ -82,7 +88,7 @@ void python_world(py::module m) {
     .def_property_readonly("ego_state", &ObservedWorld::CurrentEgoState)
     .def_property_readonly("ego_position", &ObservedWorld::CurrentEgoPosition)
     .def("PredictWithOthersIDM",
-      &ObservedWorld::Predict<BehaviorIDMClassic, DynamicBehaviorModel>)
+      &ObservedWorld::Predict<BehaviorIDMClassic, BehaviorDynamicModel>)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
     .def("AddLabels", &ObservedWorld::AddLabels)
     .def("EvaluateLabels", &ObservedWorld::EvaluateLabels)

@@ -186,26 +186,65 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   float scale = 0.0f;
 
   boost::geometry::unique(previous_line.obj_);
-  previous_line.RecomputeS();
+
+  geometry::Line simplified_prev_line;
+  boost::geometry::simplify(previous_line.obj_,
+                            simplified_prev_line.obj_,
+                            s_max_delta);
+  simplified_prev_line.RecomputeS();
 
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
   int sign = id > 0 ? -1 : 1;
-  if (s_end > previous_line.Length())
-    s_end = previous_line.Length();
+  if (s_end > simplified_prev_line.Length())
+    s_end = simplified_prev_line.Length();
 
-  for (; s <= s_end;) {
-    geometry::Point2d point = GetPointAtS(previous_line, s);
-    normal = GetNormalAtS(previous_line, s);
-    scale = -sign * Polynom(
-      s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
+  // b, c, d, s_start = 0 and roughly the same length simplification
+  if (off.b == 0. &&  off.c == 0. && off.d == 0. &&
+      simplified_prev_line.obj_.size() > 1 && s == 0. &&
+      fabs((s_end-s) - simplified_prev_line.Length()) < 1.) {
+    // we can loop through all innter lane points
+    // previous_line == inner_line
+    geometry::Point2d prev_point = simplified_prev_line.obj_[0],
+                      current_point = simplified_prev_line.obj_[1];
+
+    float tangent_angle = atan2(
+      bg::get<1>(current_point) - bg::get<1>(prev_point),
+      bg::get<0>(current_point) - bg::get<0>(prev_point));
+    normal = geometry::Point2d(cos(tangent_angle+asin(1)),
+                               sin(tangent_angle+asin(1)));
+    scale = -sign * off.a;
     tmp_line.AddPoint(
-      geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
-                        bg::get<1>(point) + scale * bg::get<1>(normal)));
-    if ((s_end - s < s_inc) &&
-        (s_end - s > 0.))
-      s_inc = s_end - s;
-    s += s_inc;
+      geometry::Point2d(bg::get<0>(prev_point) + scale * bg::get<0>(normal),
+                        bg::get<1>(prev_point) + scale * bg::get<1>(normal)));
+
+
+    for (int i = 1; i < simplified_prev_line.obj_.size(); i++) {
+      prev_point = simplified_prev_line.obj_[i-1];
+      current_point = simplified_prev_line.obj_[i];
+      tangent_angle = atan2(
+        bg::get<1>(current_point) - bg::get<1>(prev_point),
+        bg::get<0>(current_point) - bg::get<0>(prev_point));
+      normal = geometry::Point2d(cos(tangent_angle+asin(1)),
+                                 sin(tangent_angle+asin(1)));
+      tmp_line.AddPoint(
+        geometry::Point2d(
+          bg::get<0>(current_point) + scale * bg::get<0>(normal),
+          bg::get<1>(current_point) + scale * bg::get<1>(normal)));
+    }
+  } else {
+    for (; s <= s_end;) {
+      geometry::Point2d point = GetPointAtS(simplified_prev_line, s);
+      normal = GetNormalAtS(simplified_prev_line, s);
+      scale = -sign * Polynom(
+        s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
+      tmp_line.AddPoint(
+        geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                          bg::get<1>(point) + scale * bg::get<1>(normal)));
+      if ((s_end - s < s_inc) && (s_end - s > 0.))
+        s_inc = s_end - s;
+      s += s_inc;
+    }
   }
 
   // SIMPLIFY line with max error

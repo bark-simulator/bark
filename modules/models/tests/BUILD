@@ -41,25 +41,9 @@ cc_test(
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/models/behavior/idm:idm_lane_tracking",
         "//modules/world:world",
-        "@gtest//:gtest_main",
-        "@com_github_eigen_eigen//:eigen",
-    ],
-)
-
-cc_test(
-    name = "behavior_longitudinal_acceleration_test",
-    srcs = [
-        "behavior_longitudinal_acceleration_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
         "//modules/world/tests:make_test_world",
-        "//modules/geometry",
-        "//modules/models/behavior/longitudinal_acceleration",
-        "//modules/models/dynamic",
-        "//modules/world",
-        "@com_github_eigen_eigen//:eigen",
         "@gtest//:gtest_main",
+        "@com_github_eigen_eigen//:eigen",
     ],
 )
 
@@ -80,20 +64,20 @@ cc_test(
     ],
 )
 
-cc_test(
-    name = "behavior_mobil_test",
-    srcs = [
-        "behavior_mobil_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [        
-        "//modules/geometry",
-        "//modules/models/behavior/mobil:mobil",
-        "//modules/models/execution/interpolation:interpolation",
-        "//modules/world/tests:make_test_xodr_map",
-        "@gtest//:gtest_main",
-    ],
-)
+# cc_test(
+#     name = "behavior_mobil_test",
+#     srcs = [
+#         "behavior_mobil_test.cc",
+#     ],
+#     copts = ["-Iexternal/gtest/include"],
+#     deps = [        
+#         "//modules/geometry",
+#         "//modules/models/behavior/rule_based:mobil",
+#         "//modules/models/execution/interpolation:interpolation",
+#         "//modules/world/tests:make_test_xodr_map",
+#         "@gtest//:gtest_main",
+#     ],
+# )
 
 py_test(
   name = "py_behavior_model_test",
