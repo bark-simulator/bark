@@ -134,10 +134,17 @@ TEST(primitive_constant_acceleration, behavior_test) {
       ->SetDynamicModel(dynamics);
   AdjacentLaneCorridors corridors = GetCorridors(world1);
   EXPECT_TRUE(primitive.IsPreConditionSatisfied(world1, corridors));
-  //  auto traj = primitive.Plan(0.5, world1);
+  auto traj1 = primitive.Plan(0.5, world1, corridors.current);
+  EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION),
+              traj1(0, StateDefinition::X_POSITION) + 5.0 * 0.5, 0.1);
 
   PrimitiveConstAccStayLane dec_primitive(params, -5.0);
   EXPECT_TRUE(dec_primitive.IsPreConditionSatisfied(world1, corridors));
+  auto traj2 = dec_primitive.Plan(0.5, world1, corridors.current);
+  EXPECT_NEAR(traj2(traj2.rows() - 1, StateDefinition::X_POSITION),
+              traj2(0, StateDefinition::X_POSITION) + 5.0 * 0.5 +
+                  -5.0 / 2.0 * 0.5 * 0.5,
+              0.1);
   auto world2 = make_test_observed_world(0, 0.0, 0.0, 0.0);
   std::const_pointer_cast<Agent>(world2.GetEgoAgent())
       ->SetDynamicModel(dynamics);
@@ -146,10 +153,11 @@ TEST(primitive_constant_acceleration, behavior_test) {
 
   PrimitiveConstAccStayLane acc_primitive(params, 4.0);
   EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world1, corridors));
-  //  auto world3 = make_test_observed_world(0, 0.0, 50.0, 0.0);
-  //  std::const_pointer_cast<Agent>(world3.GetEgoAgent())->SetDynamicModel(dynamics);
-  //  AdjacentLaneCorridors corridors3 = GetCorridors(world3);
-  //  EXPECT_FALSE(acc_primitive.IsPreConditionSatisfied(world3, corridors));
+  auto traj3 = acc_primitive.Plan(0.5, world1, corridors.current);
+  EXPECT_NEAR(
+      traj3(traj3.rows() - 1, StateDefinition::X_POSITION),
+      traj3(0, StateDefinition::X_POSITION) + 5.0 * 0.5 + 4.0 / 2.0 * 0.5 * 0.5,
+      0.1);
 }
 
 TEST(primitive_change_left, behavior_test) {
@@ -164,7 +172,9 @@ TEST(primitive_change_left, behavior_test) {
   auto corridors1 = GetCorridors(observed_worlds[1]);
   EXPECT_TRUE(
       primitive.IsPreConditionSatisfied(observed_worlds[1], corridors1));
-  // auto traj = primitive.Plan(0.5, world1);
+  auto target_corridor =
+      primitive.SelectTargetCorridor(observed_worlds[1], corridors1);
+  EXPECT_EQ(target_corridor, corridors1.left);
 }
 
 TEST(primitive_change_right, behavior_test) {
@@ -172,20 +182,19 @@ TEST(primitive_change_right, behavior_test) {
   auto params = std::make_shared<DefaultParams>();
   PrimitiveConstAccChangeToRight primitive(params);
   auto world = MakeTestWorldHighway();
-  for (const auto& a : world->GetAgents()) {
-    LOG(WARNING) << a.first << ", ";
-  }
   auto observed_worlds = world->Observe({1, 4});
   auto corridors0 = GetCorridors(observed_worlds[0]);
   EXPECT_TRUE(
       primitive.IsPreConditionSatisfied(observed_worlds[0], corridors0));
+  auto target_corridor =
+      primitive.SelectTargetCorridor(observed_worlds[0], corridors0);
+  EXPECT_EQ(target_corridor, corridors0.right);
   auto corridors1 = GetCorridors(observed_worlds[1]);
   EXPECT_FALSE(
       primitive.IsPreConditionSatisfied(observed_worlds[1], corridors1));
-  // auto traj = primitive.Plan(0.5, world1);
 }
 
-TEST(primitive_gap_keeping, behavior_test) {
+TEST(primitive_gap_keeping, precondition_test) {
   using modules::models::behavior::primitives::PrimitiveGapKeeping;
   auto params = std::make_shared<DefaultParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
