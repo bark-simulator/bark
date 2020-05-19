@@ -4,22 +4,29 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/world.hpp"
 #include <string>
+#include <csignal>
+
+#include "modules/world/world.hpp"
+#include "modules/commons/util/segfault_handler.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
 namespace world {
 
-World::World(const commons::ParamsPtr& params)
-    : commons::BaseType(params),
-      map_(),
-      agents_(),
-      world_time_(0.0),
-      remove_agents_(params->GetBool(
-          "World::remove_agents_out_of_map",
-          "Whether agents should be removed outside the bounding box.",
-          false)) {}
+World::World(const commons::ParamsPtr& params) :
+  commons::BaseType(params),
+  map_(),
+  agents_(),
+  world_time_(0.0),
+  remove_agents_(params->GetBool(
+      "World::remove_agents_out_of_map",
+      "Whether agents should be removed outside the bounding box.",
+      false)) {
+
+  //! segfault handler
+  std::signal(SIGSEGV, modules::commons::SegfaultHandler);
+}
 
 World::World(const std::shared_ptr<World>& world) :
   commons::BaseType(world->GetParams()),
@@ -29,7 +36,10 @@ World::World(const std::shared_ptr<World>& world) :
   evaluators_(world->GetEvaluators()),
   world_time_(world->GetWorldTime()),
   remove_agents_(world->GetRemoveAgents()),
-  rtree_agents_(world->rtree_agents_) {}
+  rtree_agents_(world->rtree_agents_) {
+  //! segfault handler
+  std::signal(SIGSEGV, modules::commons::SegfaultHandler);
+}
 
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
@@ -75,9 +85,11 @@ void World::DoExecution(const float& delta_time) {
   world_time_ += delta_time;
   // Execute motion
   for (auto agent : agents_) {
-    if (agent.second->GetBehaviorStatus() ==
-        models::behavior::BehaviorStatus::VALID) {
-      agent.second->Execute(world_time_);
+    if (agent.second) {
+      if (agent.second->GetBehaviorStatus() ==
+          models::behavior::BehaviorStatus::VALID) {
+        agent.second->Execute(world_time_);
+      }
     }
   }
 

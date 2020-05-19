@@ -197,6 +197,13 @@ Trajectory BehaviorLaneChangeRuleBased::Plan(
   if (lane_res.second)
     SetLaneCorridor(lane_res.second);
 
+  if (!GetLaneCorridor()) {
+    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+              << ": Behavior status has expired!" << std::endl;
+    SetBehaviorStatus(BehaviorStatus::EXPIRED);
+    return GetLastTrajectory();
+  }
+
   // we want to calc. the acc. based on the actual LaneCorridor
   IDMRelativeValues rel_values = CalcRelativeValues(
     observed_world,
