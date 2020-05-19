@@ -184,7 +184,7 @@ void python_behavior(py::module m) {
              shared_ptr<BehaviorMPContinuousActions>>(m, "BehaviorMPContinuousActions")
     .def(py::init<const modules::commons::ParamsPtr&>())
     .def("GetNumMotionPrimitives",
-         &BehaviorMPMacroActions::GetNumMotionPrimitives)
+         &BehaviorMPContinuousActions::GetNumMotionPrimitives)
     .def("__repr__", [](const BehaviorMPContinuousActions &b) {
       return "bark.behavior.BehaviorMPContinuousActions";
     })
