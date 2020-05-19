@@ -8,25 +8,14 @@
 #ifndef MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
 #define MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
 
-#include <stdio.h>
-#include <execinfo.h>
-#include <csignal>
-#include <stdlib.h>
-#include <unistd.h>
-
+#include <boost/stacktrace.hpp>
 
 namespace modules {
 namespace commons {
 
 void SegfaultHandler(int sig) {
-  void *array[35];
-  size_t size;
-  size = backtrace(array, 35);
-  fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, STDERR_FILENO);
-  exit(1);
+  std::cerr << boost::stacktrace::stacktrace() << std::endl;
 }
-
 
 }  // namespace commons
 }  // namespace modules
