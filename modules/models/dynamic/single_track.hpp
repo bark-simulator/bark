@@ -27,11 +27,12 @@ class SingleTrackModel : public DynamicModel {
         lat_acceleration_max_(
             params->GetReal("DynamicModel::lat_acc_max",
                             "Maximum lateral acceleration [m/s^2]", 4.0)),
-        max_acceleration_(params->GetReal("DynamicModel::max_acceleration",
-                                          "Static maximum acceleration", 4.0)),
-        min_acceleration_(params->GetReal("DynamicModel::min_acceleration",
-                                          "Static minimum acceleration",
-                                          -8.0)) {}
+        lon_acceleration_max_(
+            params->GetReal("DynamicModel::lon_acceleration_max",
+                            "Maximum longitudinal acceleration", 4.0)),
+        lon_acceleration_min_(
+            params->GetReal("DynamicModel::lon_acceleration_min",
+                            "Minimum longitudinal acceleration", -8.0)) {}
   virtual ~SingleTrackModel() {}
 
   State StateSpaceModel(const State& x, const Input& u) const {
@@ -54,13 +55,15 @@ class SingleTrackModel : public DynamicModel {
   double GetWheelBase() const { return wheel_base_; }
   double GetSteeringAngleMax() const { return steering_angle_max_; }
   double GetLatAccelerationMax() const { return lat_acceleration_max_; }
-  float GetMaxAcceleration(const State& x) const { return max_acceleration_; }
+  float GetMaxAcceleration(const State& x) const {
+    return lon_acceleration_max_;
+  }
   float GetMinAcceleration(const State& x) const {
     // Do not allow to drive backwards
     if (std::abs(x(StateDefinition::VEL_POSITION)) < 1e-5) {
       return 0.0f;
     } else {
-      return min_acceleration_;
+      return lon_acceleration_min_;
     }
   }
 
@@ -68,8 +71,8 @@ class SingleTrackModel : public DynamicModel {
   double wheel_base_;
   double steering_angle_max_;
   double lat_acceleration_max_;
-  float max_acceleration_;
-  float min_acceleration_;
+  float lon_acceleration_max_;
+  float lon_acceleration_min_;
 };
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
