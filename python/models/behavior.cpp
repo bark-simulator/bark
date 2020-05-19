@@ -183,6 +183,8 @@ void python_behavior(py::module m) {
              BehaviorMotionPrimitives,
              shared_ptr<BehaviorMPContinuousActions>>(m, "BehaviorMPContinuousActions")
     .def(py::init<const modules::commons::ParamsPtr&>())
+    .def("GetNumMotionPrimitives",
+         &BehaviorMPMacroActions::GetNumMotionPrimitives)
     .def("__repr__", [](const BehaviorMPContinuousActions &b) {
       return "bark.behavior.BehaviorMPContinuousActions";
     })
@@ -203,7 +205,6 @@ void python_behavior(py::module m) {
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
-  .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives)
   .def(py::pickle(
       [](const BehaviorMPMacroActions& b) {

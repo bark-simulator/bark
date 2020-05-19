@@ -4,18 +4,21 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "primitive_const_acc_stay_lane.hpp"
+
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(params->GetReal("PrimitiveConstAccStayLane::Acceleration",
                                     "Constant acceleration to apply", 0.0)) {}
+
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params,
                               float acceleration)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(acceleration) {}
+
 bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
     IsPreConditionSatisfied(
         const modules::world::ObservedWorld& observed_world,
@@ -30,6 +33,7 @@ bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
   return acceleration_ >= single_track->GetMinAcceleration(ego_state) &&
          acceleration_ <= single_track->GetMaxAcceleration(ego_state);
 }
+
 modules::models::dynamic::Trajectory
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
     float delta_time, const modules::world::ObservedWorld& observed_world,
@@ -56,6 +60,7 @@ modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
   SetLastAction(action);
   return traj;
 }
+
 modules::world::LaneCorridorPtr modules::models::behavior::primitives::
     PrimitiveConstAccStayLane::SelectTargetCorridor(
         const modules::world::ObservedWorld& observed_world,
@@ -64,6 +69,7 @@ modules::world::LaneCorridorPtr modules::models::behavior::primitives::
   BARK_EXPECT_TRUE(adjacent_corridors.current);
   return adjacent_corridors.current;
 }
+
 std::pair<double, double>
 modules::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
     const modules::world::ObservedWorld& observed_world,
