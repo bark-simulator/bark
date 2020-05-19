@@ -29,7 +29,11 @@ EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
 }
 
 EvaluationReturn EvaluatorLTL::Evaluate(const modules::world::World& world) {
-  return Evaluate(world.Observe({agent_id_})[0]);
+  if (world.GetAgent(agent_id_)) {
+    return Evaluate(world.Observe({agent_id_})[0]);
+  } else {
+    return safety_violations_;
+  }
 }
 
 EvaluationReturn EvaluatorLTL::Evaluate(
