@@ -275,6 +275,9 @@ TEST(observed_world, predict) {
   float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
                                                  velocity_difference);
+  for (const auto& agent : observed_world.GetAgents()) {
+    agent.second->SetDynamicModel(dyn_model);
+  }
 
   // predict all agents with constant velocity
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
@@ -304,7 +307,7 @@ TEST(observed_world, predict) {
 
   // predict ego agent with motion primitive model
   BehaviorModelPtr ego_prediction_model(
-      new BehaviorMPContinuousActions(dyn_model, params));
+      new BehaviorMPContinuousActions(params));
   Input u1(2);
   u1 << 2, 0;
   Input u2(2);

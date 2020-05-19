@@ -10,11 +10,15 @@
 #include "python/common.hpp"
 #include "modules/models/behavior/behavior_model.hpp"
 #include "modules/world/goal_definition/goal_definition.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
+
 
 namespace py = pybind11;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using modules::models::behavior::BehaviorModelPtr;
 using modules::commons::ParamsPtr;
+using modules::models::behavior::primitives::PrimitivePtr;
+
 
 // For pickle we need conversion functions between the genereric base types and the derived types
 
@@ -28,6 +32,9 @@ GoalDefinitionPtr PythonToGoalDefinition(py::tuple t);
 
 py::tuple ParamsToPython(const ParamsPtr& params);
 ParamsPtr PythonToParams(py::tuple t);
+
+py::tuple PrimitiveToPython(const PrimitivePtr& prim);
+PrimitivePtr PythonToPrimitive(py::tuple t);
 
 // Todo: Other polymorphic types, e.g. execution model...
 
