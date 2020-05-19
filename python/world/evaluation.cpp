@@ -12,6 +12,7 @@
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
+#include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/base_label_evaluator.hpp"
@@ -90,6 +91,14 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorLTL &g) {
         return "bark.world.evaluation.EvaluatorLTL";
       });
+
+  py::class_<EvaluatorRightOvertake, BaseEvaluator,
+      std::shared_ptr<EvaluatorRightOvertake>>(m, "EvaluatorRightOvertake")
+          .def(py::init<AgentId>())
+          .def_property_readonly("rule_states", &EvaluatorRightOvertake::GetRuleStates)
+          .def("__repr__", [](const EvaluatorRightOvertake &g) {
+            return "bark.world.evaluation.EvaluatorRightOvertake";
+          });
 
   // LABELS
 

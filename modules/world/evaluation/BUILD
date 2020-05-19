@@ -140,6 +140,17 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_right_overtake",
+    srcs = ["evaluator_right_overtake.cpp"],
+    hdrs = ["evaluator_right_overtake.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -151,6 +162,7 @@ cc_library(
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
         ":evaluator_ltl",
+        ":evaluator_right_overtake",
     ],
     visibility = ["//visibility:public"],
 )

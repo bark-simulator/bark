@@ -93,6 +93,12 @@ class EvaluatorLTLTests(unittest.TestCase):
         # Rule should still be satisfied since there is no agent to be behind of
         self.assertEqual(res["behind_rule"], 0)
 
+    def test_right_overtake(self):
+        evaluator = EvaluatorRightOvertake(0)
+        self.world.AddEvaluator("right_overtake", evaluator)
+        res = self.world.Evaluate()
+        evaluator.rule_states[0].automaton.PrintToDot("/tmp/auto.dot")
+        self.assertEqual(res["right_overtake"], 0)
 
 if __name__ == '__main__':
     unittest.main()

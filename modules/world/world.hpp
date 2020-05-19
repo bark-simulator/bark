@@ -35,6 +35,7 @@ using modules::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
 using modules::world::evaluation::LabelMap;
 using modules::world::evaluation::BaseLabelEvaluator;
+using modules::world::evaluation::LabelEvaluatorPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -42,7 +43,7 @@ typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
     EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
 typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
-typedef std::vector<std::shared_ptr<BaseLabelEvaluator>> LabelEvaluators;
+typedef std::vector<LabelEvaluatorPtr> LabelEvaluators;
 
 using rtree_agent_model =
     boost::geometry::model::box<modules::geometry::Point2d>;
