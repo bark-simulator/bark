@@ -85,9 +85,11 @@ void World::DoExecution(const float& delta_time) {
   world_time_ += delta_time;
   // Execute motion
   for (auto agent : agents_) {
-    if (agent.second->GetBehaviorStatus() ==
-        models::behavior::BehaviorStatus::VALID) {
-      agent.second->Execute(world_time_);
+    if (agent.second) {
+      if (agent.second->GetBehaviorStatus() ==
+          models::behavior::BehaviorStatus::VALID) {
+        agent.second->Execute(world_time_);
+      }
     }
   }
 
