@@ -7,9 +7,9 @@
 import unittest
 import numpy as np
 import time
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.commons import ParameterServer
+from bark.runtime.viewer import MPViewer
+from bark.runtime.commons import XodrParser
 from bark.core.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorIDMLaneTracking
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel

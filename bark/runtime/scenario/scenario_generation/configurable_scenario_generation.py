@@ -28,7 +28,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
-      "modules/runtime/tests/data/city_highway_straight.xodr",    ]
+      "bark/runtime/tests/data/city_highway_straight.xodr",    ]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
       "Description": "left_lane",

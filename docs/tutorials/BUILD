@@ -11,8 +11,7 @@ py_binary(
          "run.py",
          "config_notebook.py"
          ],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime/viewer:matplotlib_viewer",
           "@benchmark_database//load:benchmark_database",
           "@benchmark_database//serialization:database_serializer",
@@ -21,7 +20,7 @@ py_binary(
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           "//bark/runtime:runtime"],
   data = [":notebooks_folder",
-          "//bark/pybark:core.so",
+          "//bark:generate_core",
           "//bark/runtime/tests:xodr_data",
           "@benchmark_database//data/database1:database1",
           ]
@@ -30,8 +29,7 @@ py_binary(
 py_test(
   name = "notebook_tests",
   srcs = ["notebook_tests.py"],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime:runtime",
           "@benchmark_database//load:benchmark_database",
@@ -40,7 +38,7 @@ py_test(
           "//bark/benchmark:benchmark_analyzer",
           ],
   data = [":notebooks_folder",
-          "//bark/pybark:core.so",
+          "//bark:generate_core",
           "//bark/runtime/tests:xodr_data",
           "@benchmark_database//data/database1:database1",
           ]

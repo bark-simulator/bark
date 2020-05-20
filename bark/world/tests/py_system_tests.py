@@ -7,9 +7,9 @@
 import unittest
 import numpy as np
 import time
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.commons import ParameterServer
+from bark.runtime.viewer import MPViewer
+from bark.runtime.commons import XodrParser
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel, StateDefinition
 from bark.core.world import World, MakeTestWorldHighway
@@ -107,7 +107,7 @@ class SystemTests(unittest.TestCase):
             return
         # World Definition
         scenario_param_file ="macro_actions_test.json" # must be within examples params folder
-        params = ParameterServer(filename= os.path.join("modules/world/tests/params/",scenario_param_file))
+        params = ParameterServer(filename= os.path.join("bark/world/tests/params/",scenario_param_file))
 
         world = World(params)
 
@@ -182,7 +182,7 @@ class SystemTests(unittest.TestCase):
     def test_python_behavior_model(self):
         # World Definition
         scenario_param_file ="macro_actions_test.json" # must be within examples params folder
-        params = ParameterServer(filename= os.path.join("modules/world/tests/params/",scenario_param_file))
+        params = ParameterServer(filename= os.path.join("bark/world/tests/params/",scenario_param_file))
 
         world = World(params)
 

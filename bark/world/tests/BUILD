@@ -188,46 +188,40 @@ cc_test(
 py_test(
   name = "py_opendrive_tests",
   srcs = ["py_opendrive_tests.py"],
-  data = ['//bark/pybark:core.so'],
-  imports = ['../../../python/'],
+  data = ['//bark:generate_core'],
   deps = [],
 )
 
 py_test(
   name = "py_map_interface_tests",
   srcs = ["py_map_interface_tests.py"],
-  data = ['//bark/pybark:core.so',
+  data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"],
 )
 
 py_test(
   name = "py_agent_tests",
   srcs = ["py_agent_tests.py"],
-  data = ['//bark/pybark:core.so'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters"],
+  data = ['//bark:generate_core'],
+  deps = ["//bark/runtime/commons:commons"],
 )
 
 py_test(
   name = "py_world_tests",
   srcs = ["py_world_tests.py"],
-  data = ['//bark/pybark:core.so'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
+  data = ['//bark:generate_core'],
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"],
 )
 
 py_test(
   name = "py_system_tests",
   srcs = ["py_system_tests.py"],
-  data = ['//bark/pybark:core.so',
+  data = ['//bark:generate_core',
           ':params2'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime",
           "//bark/runtime/viewer:video_renderer"],
 )
@@ -235,20 +229,16 @@ py_test(
 py_test(
   name = "py_roadgraph_test",
   srcs = ["py_roadgraph_test.py"],
-  data = ['//bark/pybark:core.so',
+  data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",],
+  deps = ["//bark/runtime/commons:commons",],
 )
 
 py_test(
   name = "py_road_corridor_tests",
   srcs = ["py_road_corridor_tests.py"],
-  data = ['//bark/pybark:core.so',
+  data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"]
 )

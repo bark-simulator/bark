@@ -49,7 +49,14 @@ scenarios = \
                  lane_corridor_configs=[left_lane, right_lane])
 ```
 
+<<<<<<< HEAD
 We then define the viewer and runtime in order to run and visualize the scenarios:
+=======
+The map is specified using:
+```python
+xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
+```
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
 ```python
 viewer = MPViewer(params=param_server,

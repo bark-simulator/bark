@@ -22,8 +22,20 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
+<<<<<<< HEAD
         agent1 = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
+=======
+    params = ParameterServer()
+    params_id = params["Scenario"]["Generation"]["InteractionDataset"]
+    params_id["MapFilename", "", "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
+    params_id["TrackFilename", "", "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+    params_id["TrackIds", "", track_ids]
+    params_id["StartTs", "", 100]
+    params_id["EndTs", "", None]
+    params_id["EgoTrackId", "", -1]
+    params_id["BehaviorModel", "", {}]
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
         print(agent1)
 

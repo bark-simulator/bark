@@ -1,16 +1,10 @@
-# py_library(
-#   name = "init_py",
-#   srcs = ["__init__.py"],
-#   visibility = ["//visibility:public"],
-# )
-
 
 genrule(
-  name = "movelib",
+  name = "generate_core",
   srcs = [
-    "//bark/pybark:core.so",
+    "//bark/python_wrapper:core.so",
   ],
-  cmd = (" mv $(GENDIR)/bark/pybark/core.so  $(location core.so)") ,
+  cmd = (" mv $(GENDIR)/bark/python_wrapper/core.so  $(location core.so)") ,
   #]),
   outs = [
     "core.so",
@@ -18,21 +12,34 @@ genrule(
   visibility = ["//visibility:public"],
 )
 
+#bazel query 'filter(.tests.py, //...)'
+genrule(
+    name = "copy_tests",
+    srcs = glob(["**/**/*.py"]),
+    cmd = ("echo  $(SRCS) && mkdir -p $(GENDIR)/bark/tests  && cp -r $(SRCS) $(OUTS)"),
+    outs=["tests"],
+)
 
-# sh_binary(
-#     name = "movelib",
-#     srcs = ["movelib.sh"],
-#     data = ["//bark/pybark:core.so"],
+
+# filegroup(
+#   name="test-files",
+#   srcs = glob(
+#         ["**/tests/*.py"],
+#     ),
+    
+# )
+# genrule(
+#     name = "copy",
+#     srcs = [":test-files"],
+#     outs = ["test-files"],
+#     cmd = "cp -r $(SRCS) $(OUTS)"
 # )
 
 py_test(
   name = "pip_package",
   srcs = ["pip_package.py"],
-  data = [':movelib'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:commons",
-          "//bark/runtime/commons:xodr_parser",
-          "//bark/runtime/commons:model_json_conversion",
+  data = [':generate_core',":copy_tests"],
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime/scenario:scenario",
           "//bark/runtime/viewer:py_viewer",
           "//bark/runtime/viewer:threaded_viewer",
@@ -43,8 +50,7 @@ py_test(
           "//bark/runtime:runtime",
           "//bark/examples:od8_const_vel_one_agent",
           "//bark/examples:od8_const_vel_two_agent",
-          "//bark/examples:planner_uct",
-          ],
+          "//bark/examples:planner_uct",],
 )
 
 cc_library(

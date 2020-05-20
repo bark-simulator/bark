@@ -7,11 +7,12 @@
 
 import unittest
 import os
-from bark.runtime.scenario.scenario_generation.scenario_generation\
+from bark.runtime.scenario.scenario_generation\
     import ScenarioGeneration
 
-from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
+from bark.runtime.scenario.scenario_generation \
     import ConfigurableScenarioGeneration
+<<<<<<< HEAD
 <<<<<<< HEAD:modules/runtime/tests/py_scenario_generation_tests.py
 
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation \
@@ -20,8 +21,11 @@ from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_g
 =======
 from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
 >>>>>>> Package Restructuring:bark/runtime/tests/py_scenario_generation_tests.py
+=======
+from bark.runtime.scenario.scenario_generation \
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
     import InteractionDatasetScenarioGenerationFull
-from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
 
@@ -169,8 +173,13 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
+<<<<<<< HEAD
         map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+=======
+            map_filename = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+            track_filename = "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename

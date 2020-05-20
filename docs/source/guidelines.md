@@ -14,7 +14,7 @@ You now need to define the path to cpplint as local user.
 ```
 Cpplint: Cpplint Path
 The path to the cpplint executable. If not set, the default location will be used.
-/(YOUR LOCAL PATH FOR BARK)/bark/pybark/venv/bin/cpplint
+/(YOUR LOCAL PATH FOR BARK)/bark/python_wrapper/venv/bin/cpplint
 ```
 
 

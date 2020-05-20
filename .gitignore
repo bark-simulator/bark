@@ -142,7 +142,7 @@ venv.bak/
 
 tests/environment/hello-test\.cc
 
-modules/example_module/proto/tutorial/
+bark/example_module/proto/tutorial/
 
 python/venv
 node_modules
@@ -155,6 +155,7 @@ web/node_modules
 
 Town01_copy.xodr
 Town01.xodr
+<<<<<<< HEAD
 modules/runtime/tests/data/DR_DEU_Merging_MT.xodr
 modules/runtime/tests/data/Osterwaldstrasse_v1.xodr
 <<<<<<< HEAD
@@ -169,6 +170,10 @@ modules/runtime/viewer/models/car.mtl
 **.blend1
 **.mtl
 =======
+=======
+bark/runtime/tests/data/DR_DEU_Merging_MT.xodr
+bark/runtime/tests/data/Osterwaldstrasse_v1.xodr
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 bark/examplesscenarios/benchmark_database_0.0.1.zip
 .bazelrc
 >>>>>>> automate bazel build and package build

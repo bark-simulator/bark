@@ -45,18 +45,59 @@ def helper_plot(xodr_parser):
 
 
 class ImporterTests(unittest.TestCase):
+<<<<<<< HEAD
   def test_map_highway(self):
-    xodr_parser = XodrParser(
-      "modules/runtime/tests/data/city_highway_straight.xodr")
+=======
+  def test_map_CulDeSac(self):
+    xodr_parser = XodrParser("bark/runtime/tests/data/CulDeSac.xodr")
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
+  def test_map_city_highway_straight(self):
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
+    xodr_parser = XodrParser(
+      "bark/runtime/tests/data/city_highway_straight.xodr")
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    # helper_plot(xodr_parser)
+
+<<<<<<< HEAD
+=======
+  def test_map_city_highway_curved(self):
+    xodr_parser = XodrParser(
+      "bark/runtime/tests/data/city_highway_curved.xodr")
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    # helper_plot(xodr_parser)
+
+  def test_map_4way_intersection(self):
+    xodr_parser = XodrParser(
+      "bark/runtime/tests/data/4way_intersection.xodr")
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    # helper_plot(xodr_parser)
+
+  def test_map_urban_road(self):
+    xodr_parser = XodrParser(
+      "bark/runtime/tests/data/urban_road.xodr")
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    # helper_plot(xodr_parser)
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
   def test_map_DR_DEU_Merging_MT_v01_shifted(self):
     xodr_parser = XodrParser(
+<<<<<<< HEAD
       "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
+=======
+      "bark/runtime/tests/data/Crossing8Course.xodr")
+>>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)

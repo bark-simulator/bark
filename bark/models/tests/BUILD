@@ -125,11 +125,10 @@ cc_test(
 py_test(
   name = "py_behavior_model_test",
   srcs = ["py_behavior_model_test.py"],
-  data = ['//bark/pybark:core.so',
+  data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
+
+  deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime",
           "//bark/runtime/scenario/scenario_generation:scenario_generation"],
 )

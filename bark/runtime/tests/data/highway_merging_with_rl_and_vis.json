@@ -2,7 +2,7 @@
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoal": [
                     5110,
                     5217

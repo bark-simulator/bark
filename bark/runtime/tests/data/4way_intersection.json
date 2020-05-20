@@ -2,7 +2,7 @@
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "MapFilename": "modules/runtime/tests/data/4way_intersection.xodr",
+                "MapFilename": "bark/runtime/tests/data/4way_intersection.xodr",
                 "EgoGoal": [
                     189,
                     167

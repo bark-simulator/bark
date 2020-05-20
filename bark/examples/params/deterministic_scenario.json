@@ -2,7 +2,7 @@
   "Scenario": {
       "Generation": {
           "DeterministicScenarioGeneration": {
-              "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+              "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
               "Agents" : [
                   {
                     "VehicleModel": {

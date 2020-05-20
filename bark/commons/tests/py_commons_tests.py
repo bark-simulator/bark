@@ -34,7 +34,7 @@ class ParamsTests(unittest.TestCase):
         p["Localization"]["Number of Particles"] = 2000
         self.assertEqual(p["Localization"]["Number of Particles"], 2000)
 
-        # C++ Test in /modules/commons/Params/params_test.h
+        # C++ Test in /bark/commons/Params/params_test.h
         # write in parameters in C++ and check whether they can be accessed in python afterwards
         #ParamsTest(p)
         #self.assertEqual(p["param_cpp"], 16.5)

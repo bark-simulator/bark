@@ -35,7 +35,7 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     
     self._map_file_name = self._local_params["MapFilename",
      "Path to the open drive map", 
-     "modules/runtime/tests/data/Crossing8Course.xodr"]
+     "bark/runtime/tests/data/Crossing8Course.xodr"]
     self._json_converter = ModelJsonConversion()
 
 

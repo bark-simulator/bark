@@ -19,7 +19,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 class ScenarioGenerationTests(unittest.TestCase):
   def test_uniform_vehicle_distribution_default_params(self):
     param_server = ParameterServer(
-      filename="modules/runtime/tests/data/deterministic_scenario_test.json")
+      filename="bark/runtime/tests/data/deterministic_scenario_test.json")
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=2,
                                                           random_seed=0,
                                                           params=param_server)

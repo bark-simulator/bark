@@ -8,7 +8,7 @@ import os.path
 
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from bark.runtime.scenario.interaction_dataset_processing import agent_from_trackfile
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 <<<<<<< HEAD

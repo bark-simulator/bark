@@ -23,7 +23,7 @@ map_name = "20200403_DR_CHN_Merging_ZS_partial_v02"
 output_dir = "/tmp/" + map_name
 
 # Map Definition
-xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
+xodr_parser = XodrParser("bark/runtime/tests/data/" + map_name + ".xodr")
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)

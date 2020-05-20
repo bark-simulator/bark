@@ -35,7 +35,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
       # will soon be deprecated we introduce this hack
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
-      "modules/runtime/tests/data/city_highway_straight.xodr",    ]
+      "bark/runtime/tests/data/city_highway_straight.xodr",    ]
     self._ego_goal_end = params_temp["EgoGoalEnd",
       "The center of the ego agent's goal region polygon",
       [5117, 5200] ]

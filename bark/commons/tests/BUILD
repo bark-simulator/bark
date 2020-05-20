@@ -40,7 +40,6 @@ cc_test(
 py_test(
   name = "py_commons_tests",
   srcs = ["py_commons_tests.py"],
-  data = ['//bark/pybark:core.so'],
-  imports = ['../../python/'],
-  deps = ["//bark/runtime/commons:parameters"],
+  data = ['//bark:generate_core'],
+  deps = ["//bark/runtime/commons:commons"],
 )
