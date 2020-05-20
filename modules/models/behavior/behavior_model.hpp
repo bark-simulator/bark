@@ -1,15 +1,15 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 #define MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 
+#include <Eigen/Dense>
 #include <memory>
 #include <vector>
-#include <Eigen/Dense>
 
 #include "modules/commons/base_type.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
@@ -43,15 +43,21 @@ enum BehaviorStatus : unsigned int {
 
 class BehaviorModel : public modules::commons::BaseType {
  public:
-  explicit BehaviorModel(const commons::ParamsPtr& params) :
-    commons::BaseType(params),
-    last_trajectory_(),
-    last_action_() {}
+  explicit BehaviorModel(const commons::ParamsPtr& params,
+                         BehaviorStatus status)
+      : commons::BaseType(params),
+        last_trajectory_(),
+        last_action_(),
+        behavior_status_(status) {}
 
-  BehaviorModel(const BehaviorModel& behavior_model) :
-    commons::BaseType(behavior_model.GetParams()),
-    last_trajectory_(behavior_model.GetLastTrajectory()),
-    last_action_(behavior_model.GetLastAction()) {}
+  explicit BehaviorModel(const commons::ParamsPtr& params)
+      : BehaviorModel(params, BehaviorStatus::VALID) {}
+
+  BehaviorModel(const BehaviorModel& behavior_model)
+      : commons::BaseType(behavior_model.GetParams()),
+        last_trajectory_(behavior_model.GetLastTrajectory()),
+        last_action_(behavior_model.GetLastAction()),
+        behavior_status_(behavior_model.GetBehaviorStatus()) {}
 
   virtual ~BehaviorModel() {}
 
@@ -70,12 +76,12 @@ class BehaviorModel : public modules::commons::BaseType {
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
-  virtual void ActionToBehavior(const Action& action) {};
+  virtual void ActionToBehavior(const Action& action){};
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {};
 
-  Action GetLastAction() const {return last_action_; }
-  void SetLastAction(const Action action) {last_action_ = action;}
+  Action GetLastAction() const { return last_action_; }
+  void SetLastAction(const Action action) { last_action_ = action; }
 
  private:
   dynamic::Trajectory last_trajectory_;
@@ -84,7 +90,6 @@ class BehaviorModel : public modules::commons::BaseType {
 };
 
 typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
-
 
 }  // namespace behavior
 }  // namespace models
