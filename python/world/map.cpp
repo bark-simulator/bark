@@ -116,6 +116,7 @@ py::class_<LaneCorridor,
   .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
   .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
   .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
+  .def_property_readonly("lanes", &LaneCorridor::GetLanes)
   .def("__eq__", &LaneCorridor::operator== )
   .def("__neq__", &LaneCorridor::operator!=);
 
