@@ -87,6 +87,4 @@ for _ in range(0, 10):
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 
-param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                  "params",
-                  "od8_const_vel_one_agent_written.json"))
+#param_server.save(os.path.join(os.path.dirname(os.path.abspath(__file__)), "params", "od8_const_vel_one_agent_written.json"))

@@ -128,7 +128,7 @@ py_binary(
           '//bark/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
           "@benchmark_database//data/database1:database1",
-          "@bark_ml//bark/python_wrapper:bark_ml.so",
+          "@bark_ml//python:bark_ml.so",
           ':params',
           ':scenarios'],
   imports = ["../external/bark_ml/python/"],

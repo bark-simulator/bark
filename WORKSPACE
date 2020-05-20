@@ -41,8 +41,8 @@ benchmark_database_release()
 # ------------------- BARK-ML ----------------------
 git_repository(
   name = "bark_ml",
-  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
-  remote = "https://github.com/bark-simulator/bark-ml"
+  commit="54ecc980c21a8a65aa5d66033fb49554dcc71d8e",
+  remote = "https://github.com/mansoorcheema/bark-ml"
 )
 # --------------------------------------------------
 
