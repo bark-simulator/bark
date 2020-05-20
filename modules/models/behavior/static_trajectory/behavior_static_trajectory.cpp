@@ -16,21 +16,19 @@ namespace behavior {
 using modules::models::dynamic::StateDefinition;
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-  const commons::ParamsPtr& params) :
-    BehaviorModel(params),
-    static_trajectory_(
-      ReadInStaticTrajectory(params->GetListListFloat(
-        "static_trajectory",
-        "List of states that form a static trajectory to follow",
-        {{}}))) {}
+    const commons::ParamsPtr &params)
+    : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
+      static_trajectory_(ReadInStaticTrajectory(params->GetListListFloat(
+          "static_trajectory",
+          "List of states that form a static trajectory to follow", {{}}))) {}
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-  const commons::ParamsPtr& params, const Trajectory &static_trajectory) :
-    BehaviorModel(params), static_trajectory_(static_trajectory) {}
+    const commons::ParamsPtr &params, const Trajectory &static_trajectory)
+    : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
+      static_trajectory_(static_trajectory) {}
 
 Trajectory BehaviorStaticTrajectory::Plan(
     float delta_time, const modules::world::ObservedWorld &observed_world) {
-
   UpdateBehaviorStatus(delta_time, observed_world);
 
   const double start_time = observed_world.GetWorldTime();
@@ -59,7 +57,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
 }
 
 std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
-    const double t, StateRowVector* interpolated) const {
+    const double t, StateRowVector *interpolated) const {
   StateRowVector delta;
   double alpha;
   int idx = -1;
@@ -113,14 +111,14 @@ const Trajectory &BehaviorStaticTrajectory::get_static_trajectory() const {
 }
 
 void BehaviorStaticTrajectory::UpdateBehaviorStatus(
-  float delta_time, const modules::world::ObservedWorld &observed_world) {
+    float delta_time, const modules::world::ObservedWorld &observed_world) {
   const double start_time = observed_world.GetWorldTime();
   const double end_time = start_time + delta_time;
 
   const double start_time_static_traj =
-    (static_trajectory_.col(dynamic::TIME_POSITION)).minCoeff();
+      (static_trajectory_.col(dynamic::TIME_POSITION)).minCoeff();
   const double end_time_static_traj =
-    (static_trajectory_.col(dynamic::TIME_POSITION)).maxCoeff();
+      (static_trajectory_.col(dynamic::TIME_POSITION)).maxCoeff();
 
   if (start_time_static_traj > start_time) {
     SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
