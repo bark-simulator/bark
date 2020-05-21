@@ -142,5 +142,11 @@ LabelMap ObservedWorld::EvaluateLabels() const {
   return label_map;
 }
 
+AgentMap ObservedWorld::GetValidOtherAgents() const {
+  auto tmp_map = World::GetValidAgents();
+  tmp_map.erase(ego_agent_id_);
+  return tmp_map;
+}
+
 }  // namespace world
 }  // namespace modules

@@ -40,7 +40,7 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     const modules::world::ObservedWorld& observed_world) {
   // Only required if rule is in relation to other agents
   if (monitor_->IsAgentSpecific()) {
-    auto other_agents = observed_world.GetOtherAgents();
+    auto other_agents = observed_world.GetValidOtherAgents();
     std::vector<int> current_agents;
     // Convert agent map to vector of ids
     std::transform(other_agents.begin(), other_agents.end(),

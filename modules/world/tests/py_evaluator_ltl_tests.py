@@ -93,7 +93,7 @@ class EvaluatorLTLTests(unittest.TestCase):
         evaluator = EvaluatorRightOvertake(0)
         self.world.AddEvaluator("right_overtake", evaluator)
         res = self.world.Evaluate()
-        evaluator.rule_states[0].automaton.PrintToDot("/tmp/auto.dot")
+        self.assertEqual(len(evaluator.rule_states), 1)
         self.assertEqual(res["right_overtake"], 0)
 
 

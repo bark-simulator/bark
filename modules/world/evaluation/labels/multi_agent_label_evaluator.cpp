@@ -12,7 +12,7 @@ using modules::world::evaluation::LabelMap;
 std::vector<LabelMap::value_type>
 modules::world::evaluation::MultiAgentLabelEvaluator::Evaluate(
     const modules::world::ObservedWorld& observed_world) const {
-  const auto other_agents = observed_world.GetOtherAgents();
+  const auto other_agents = observed_world.GetValidOtherAgents();
   std::vector<LabelMap::value_type> labels;
   for (const auto& agent : other_agents) {
     bool res = this->evaluate_agent(observed_world, agent.second);

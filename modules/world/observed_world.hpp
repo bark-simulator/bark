@@ -75,6 +75,8 @@ class ObservedWorld : public World {
     return tmp_map;
   }
 
+  AgentMap GetValidOtherAgents() const;
+
   const std::shared_ptr<BehaviorModel> GetEgoBehaviorModel() const {
     return World::GetAgent(ego_agent_id_)->GetBehaviorModel();
   }
