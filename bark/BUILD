@@ -12,13 +12,13 @@ genrule(
   visibility = ["//visibility:public"],
 )
 
-#bazel query 'filter(.tests.py, //...)'
-genrule(
-    name = "copy_tests",
-    srcs = glob(["**/**/*.py"]),
-    cmd = ("echo  $(SRCS) && mkdir -p $(GENDIR)/bark/tests  && cp -r $(SRCS) $(OUTS)"),
-    outs=["tests"],
-)
+
+# genrule(
+#     name = "copy_tests",
+#     srcs = glob(["**/**/*.py"]),
+#     cmd = ("echo  $(SRCS) && mkdir -p $(GENDIR)/bark/tests  && cp -r $(SRCS) $(OUTS)"),
+#     outs=["tests"],
+# )
 
 
 # filegroup(
@@ -35,22 +35,90 @@ genrule(
 #     cmd = "cp -r $(SRCS) $(OUTS)"
 # )
 
+# obtained tests using 
+#bazel query 'filter(.tests.py, //...)'
+# py_test (
+#     name="tests",
+#     data = [':generate_core'],
+#     srcs=[
+#         "//bark/world/tests:py_world_tests",
+#         "//bark/world/tests:py_system_tests",
+#         "//bark/world/tests:py_roadgraph_test",
+#         "//bark/world/tests:py_road_corridor_tests",
+#         "//bark/world/tests:py_opendrive_tests",
+#         "//bark/world/tests:py_map_interface_tests",
+#         "//bark/world/tests:py_agent_tests",
+#         "//bark/runtime/tests:py_scenario_generation_tests",
+#         "//bark/runtime/tests:py_runtime_tests",
+#         "//bark/runtime/tests:py_param_server_tests",
+#         "//bark/runtime/tests:py_interaction_dataset_reader_test",
+#         "//bark/runtime/tests:py_interaction_dataset_decomposer_test",
+#         "//bark/runtime/tests:py_importer_tests",
+#         "//bark/runtime/tests:py_evaluation_tests",
+#         "//bark/python_wrapper/tests:py_pickle_tests",
+#         "//bark/models/tests:py_behavior_model_test",
+#         "//bark/geometry/tests:py_geometry_tests",
+#         "//bark/commons/tests:py_commons_tests",
+#         "//bark/benchmark/tests:py_benchmark_runner_tests",
+#         "//bark/benchmark/tests:py_benchmark_process_tests",
+#         "//bark/benchmark/tests:py_benchmark_analyzer_tests",
+#         "//bark/runtime/tests:py_param_server_test_helper",
+#     ],
+# )
+
 py_test(
   name = "pip_package",
   srcs = ["pip_package.py"],
-  data = [':generate_core',":copy_tests"],
-  deps = ["//bark/runtime/commons:commons",
-          "//bark/runtime/scenario:scenario",
-          "//bark/runtime/viewer:py_viewer",
-          "//bark/runtime/viewer:threaded_viewer",
-          "//bark/runtime/viewer:video_renderer",
-          "//bark/runtime/viewer:pygame_viewer",
-          "//bark/runtime/viewer:panda3d_viewer",
-          "//bark/runtime/viewer:matplotlib_viewer",
-          "//bark/runtime:runtime",
-          "//bark/examples:od8_const_vel_one_agent",
-          "//bark/examples:od8_const_vel_two_agent",
-          "//bark/examples:planner_uct",],
+  data = [":generate_core",
+           "//bark/examples:scenarios",
+            "//bark/runtime/viewer:viewer",
+           "//bark/examples:params",
+           "//bark/runtime/tests:xodr_data",
+           "//bark/runtime/viewer:model_data",
+            ],
+  deps = [#":tests",
+        #   "//bark/runtime/commons:commons",
+        #   "//bark/runtime/scenario:scenario",
+        #   "//bark/runtime/viewer:py_viewer",
+        #   "//bark/runtime/viewer:threaded_viewer",
+        #   "//bark/runtime/viewer:video_renderer",
+        #   "//bark/runtime/viewer:pygame_viewer",
+        #   "//bark/runtime/viewer:panda3d_viewer",
+        #   "//bark/runtime/viewer:matplotlib_viewer",
+        #   "//bark/runtime:runtime",
+        #   "//bark/examples:od8_const_vel_one_agent",
+        #   "//bark/examples:od8_const_vel_two_agent",
+        #   "//bark/examples:planner_uct",
+          
+        "//bark/runtime/commons:xodr_parser",
+        "//bark/runtime/commons:parameters",
+        "//bark/runtime/commons:model_json_conversion",
+        "//bark/examples:scenarios_from_database",
+        "//bark/examples:scenario_video_rendering",
+        "//bark/examples:scenario_dump_load",
+        "//bark/examples:planner_uct_benchmark",
+        "//bark/examples:interaction_dataset_runner",
+        "//bark/examples:barkml",
+        "//bark/examples:analyze_map",
+        "//bark/examples:od8_const_vel_two_agent",
+        "//bark/examples:od8_const_vel_one_agent",
+        "//bark/examples:planner_uct",
+        "//bark/runtime/viewer:threaded_viewer",
+        "//bark/runtime/scenario/scenario_generation:scenario_generation",
+        "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
+        "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
+        "//bark/runtime:runtime",
+        "//bark/runtime/viewer:video_renderer",
+        "//bark/runtime/viewer:pygame_viewer",
+        "//bark/runtime/viewer:panda3d_viewer",
+        "//bark/runtime/viewer:matplotlib_viewer",
+        "//bark/runtime/viewer:py_viewer",
+        "//bark/runtime/scenario:scenario",
+        "//bark/runtime/commons:commons",
+        
+       
+          ],
+
 )
 
 cc_library(

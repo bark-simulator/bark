@@ -36,6 +36,8 @@ setup(
     'jupyter>=1.0.0',
     'ipython>=7.13.0'
     ],
+    test_suite='nose.collector',
+    tests_require=['nose'],
     #package_data={"pysample55321": ["../main/pyhellocpp.so"]},
     include_package_data=True,
     zip_safe=False,
