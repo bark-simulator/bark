@@ -31,11 +31,7 @@ def trajectory_from_track(track, start=0, end=None):
         end = states[-1][0]
     filtered_motion_states = list(filter(lambda s: start <= s[0] <= end, states))
     n = len(filtered_motion_states)
-    if n == 0:
-      raise ValueError("No valid times inbetween {} and {}".format(start, end))
-
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
-    start_offset = filtered_motion_states[0][0]
     for i, state in enumerate(filtered_motion_states):
         traj[i, :] = bark_state_from_motion_state(state[1], start)
     return traj
