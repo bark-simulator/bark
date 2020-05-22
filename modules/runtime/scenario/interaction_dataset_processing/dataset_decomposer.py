@@ -78,7 +78,7 @@ class DatasetDecomposer:
         dict_scenario["MapFilename"] = self.map_filename
         dict_scenario["TrackFilename"] = self.track_filename
         dict_scenario["TrackIds"] = list_others_dict[id_ego]
-        dict_scenario["StartTs"] = self.track_dict[id_ego].time_stamp_ms_first
+        dict_scenario["StartTs"] = self.__find_first_timestamp_within_map__(id_ego)
         dict_scenario["EndTs"] = self.track_dict[id_ego].time_stamp_ms_last
         dict_scenario["EgoTrackId"] = id_ego
 
