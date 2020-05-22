@@ -11,14 +11,14 @@ class InteractionDatasetReaderTest(unittest.TestCase):
   #@unittest.skip
   def test_agent_from_trackfile(self):
 
-    track_ids = [1, 2, 3]
+    track_ids = [1, 2]
 
     params = ParameterServer()
     params_id = params["Scenario"]["Generation"]["InteractionDataset"]
     params_id["MapFilename", "", "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
     params_id["TrackFilename", "", "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
     params_id["TrackIds", "", track_ids]
-    params_id["StartTs", "", 100]
+    params_id["StartTs", "", 500]
     params_id["EndTs", "", None]
     params_id["EgoTrackId", "", -1]
     params_id["BehaviorModel", "", {}]
