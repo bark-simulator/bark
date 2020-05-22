@@ -58,7 +58,7 @@ class DatasetDecomposer:
         point_agent = Point2d(state[1], state[2])
         for poly_lane in self.lane_polygon_list:
           if Collide(poly_lane, point_agent):
-            time_ego_first = state[0] # use timestamp
+            time_ego_first = state[0]*1e3 # use timestamp in ms
             return time_ego_first
 
       raise ValueError("No valid time stamp in map for agent {}".format(id_ego))
