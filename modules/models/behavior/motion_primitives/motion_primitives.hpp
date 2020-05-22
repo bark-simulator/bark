@@ -24,14 +24,11 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
-
 // TODO(@esterle, @bernhard): Add documentation
 class BehaviorMotionPrimitives : public BehaviorModel {
  public:
-  BehaviorMotionPrimitives(const DynamicModelPtr& dynamic_model,
-                           const commons::ParamsPtr& params)
+  BehaviorMotionPrimitives(const commons::ParamsPtr& params)
       : BehaviorModel(params),
-        dynamic_model_(dynamic_model),
         active_motion_(DiscreteAction(0)),
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
@@ -43,14 +40,13 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   // TODO(@hart): use variant
   typedef unsigned int MotionIdx;
   virtual MotionIdx GetNumMotionPrimitives(
-    const ObservedWorldPtr& observed_world) const = 0;
+      const ObservedWorldPtr& observed_world) = 0;
 
   void ActionToBehavior(const Action& motion_idx) {
     active_motion_ = motion_idx;
   }
 
  protected:
-  DynamicModelPtr dynamic_model_;
   std::vector<Input> motion_primitives_;
   Action active_motion_;
 

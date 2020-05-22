@@ -41,6 +41,7 @@ cc_test(
         "//modules/models/behavior/motion_primitives:motion_primitives",
         "//modules/models/behavior/idm:idm_lane_tracking",
         "//modules/world:world",
+        "//modules/world/tests:make_test_world",
         "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
     ],
