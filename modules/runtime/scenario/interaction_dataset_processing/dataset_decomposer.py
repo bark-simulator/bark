@@ -16,11 +16,11 @@ from bark.geometry import Point2d, Collide
 
 class DatasetDecomposer:
     def __init__(self, map_filename, track_filename):
-      # TODO: members with underscore!
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._track_dict = dataset_reader.read_tracks(track_filename)
         self._lane_polygon_list = self.__read_lane_polygons__()
+        self._agents_first_valid_ts_ms = self.__setup_agents_first_valid_ts_ms__()
 
     def __read_lane_polygons__(self):
         params = ParameterServer()
@@ -35,9 +35,16 @@ class DatasetDecomposer:
                 world.map.GetRoadgraph().GetLanePolygonForLaneId(lane_id))
         return lane_polygon_list
 
+    def __setup_agents_first_valid_ts_ms__(self):
+        # dictionary mapping first valid timestamp to agnet id
+        agents_to_ts = {}
+        for agent_id in self._track_dict.keys():
+            agents_to_ts[agent_id] = self.__find_first_ts_on_map__(agent_id)
+        return agents_to_ts
+
     def __find_all_ids__(self, id_ego):
         list_ids = []
-        time_ego_first = self.__find_first_timestamp_within_map__(id_ego)
+        time_ego_first = self._agents_first_valid_ts_ms[id_ego]
         time_ego_last = self._track_dict[id_ego].time_stamp_ms_last
 
         for id_current in self._track_dict.keys():
@@ -47,12 +54,15 @@ class DatasetDecomposer:
             elif self._track_dict[id_current].time_stamp_ms_first > time_ego_last:
                 # other starts too late
                 pass
+            elif self._agents_first_valid_ts_ms[id_current] > time_ego_last:
+                # other enter map too late
+                pass
             else:
                 list_ids.append(id_current)
 
         return list_ids
 
-    def __find_first_timestamp_within_map__(self, id_ego):
+    def __find_first_ts_on_map__(self, id_ego):
         traj = trajectory_from_track(self._track_dict[id_ego])
         for state in traj:
             point_agent = Point2d(state[1], state[2])
@@ -79,8 +89,7 @@ class DatasetDecomposer:
         dict_scenario["MapFilename"] = self._map_filename
         dict_scenario["TrackFilename"] = self._track_filename
         dict_scenario["TrackIds"] = list_others_dict[id_ego]
-        dict_scenario["StartTs"] = self.__find_first_timestamp_within_map__(
-            id_ego)
+        dict_scenario["StartTs"] = self._agents_first_valid_ts_ms[id_ego]
         dict_scenario["EndTs"] = self._track_dict[id_ego].time_stamp_ms_last
         dict_scenario["EgoTrackId"] = id_ego
 
