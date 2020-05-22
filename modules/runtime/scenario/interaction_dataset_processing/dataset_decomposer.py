@@ -36,6 +36,8 @@ class DatasetDecomposer:
     def __find_all_ids__(self, id_ego):
         list_ids = []
         time_ego_first = self.__find_first_timestamp_within_map__(id_ego)
+        if time_ego_first != self.track_dict[id_ego].time_stamp_ms_first:
+          print("Using time_ego_first = ", str(time_ego_first), " instead of ", str(self.track_dict[id_ego].time_stamp_ms_first))
         time_ego_last = self.track_dict[id_ego].time_stamp_ms_last
 
         for id_current in self.track_dict.keys():
