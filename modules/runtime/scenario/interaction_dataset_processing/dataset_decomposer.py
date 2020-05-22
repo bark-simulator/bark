@@ -17,15 +17,15 @@ from bark.geometry import Point2d, Collide
 class DatasetDecomposer:
     def __init__(self, map_filename, track_filename):
       # TODO: members with underscore!
-        self.map_filename = map_filename
-        self.track_filename = track_filename
-        self.track_dict = dataset_reader.read_tracks(track_filename)
-        self.lane_polygon_list = self.__read_lane_polygons__()
+        self._map_filename = map_filename
+        self._track_filename = track_filename
+        self._track_dict = dataset_reader.read_tracks(track_filename)
+        self._lane_polygon_list = self.__read_lane_polygons__()
 
     def __read_lane_polygons__(self):
         params = ParameterServer()
         # we are creating a dummy scenario to get the map interface from it
-        scenario = Scenario(map_file_name=self.map_filename,
+        scenario = Scenario(map_file_name=self._map_filename,
                             json_params=params.ConvertToDict())
         world = scenario.get_world_state()
         lane_ids = world.map.GetRoadgraph().GetAllLaneids()
@@ -38,13 +38,13 @@ class DatasetDecomposer:
     def __find_all_ids__(self, id_ego):
         list_ids = []
         time_ego_first = self.__find_first_timestamp_within_map__(id_ego)
-        time_ego_last = self.track_dict[id_ego].time_stamp_ms_last
+        time_ego_last = self._track_dict[id_ego].time_stamp_ms_last
 
-        for id_current in self.track_dict.keys():
-            if self.track_dict[id_current].time_stamp_ms_last < time_ego_first:
+        for id_current in self._track_dict.keys():
+            if self._track_dict[id_current].time_stamp_ms_last < time_ego_first:
                 # other ends too early
                 pass
-            elif self.track_dict[id_current].time_stamp_ms_first > time_ego_last:
+            elif self._track_dict[id_current].time_stamp_ms_first > time_ego_last:
                 # other starts too late
                 pass
             else:
@@ -53,10 +53,10 @@ class DatasetDecomposer:
         return list_ids
 
     def __find_first_timestamp_within_map__(self, id_ego):
-        traj = trajectory_from_track(self.track_dict[id_ego])
+        traj = trajectory_from_track(self._track_dict[id_ego])
         for state in traj:
             point_agent = Point2d(state[1], state[2])
-            for poly_lane in self.lane_polygon_list:
+            for poly_lane in self._lane_polygon_list:
                 if Collide(poly_lane, point_agent):
                     time_ego_first = state[0]*1e3  # use timestamp in ms
                     return time_ego_first
@@ -68,7 +68,7 @@ class DatasetDecomposer:
             # for each agent extract ids of other agents present in the same time span
         list_track_dict = {}
 
-        for id_ego in self.track_dict.keys():
+        for id_ego in self._track_dict.keys():
             list_track_dict[id_ego] = self.__find_all_ids__(id_ego)
 
         return list_track_dict
@@ -76,12 +76,12 @@ class DatasetDecomposer:
     def __fill_dict_scenario__(self, list_others_dict, id_ego):
 
         dict_scenario = {}
-        dict_scenario["MapFilename"] = self.map_filename
-        dict_scenario["TrackFilename"] = self.track_filename
+        dict_scenario["MapFilename"] = self._map_filename
+        dict_scenario["TrackFilename"] = self._track_filename
         dict_scenario["TrackIds"] = list_others_dict[id_ego]
         dict_scenario["StartTs"] = self.__find_first_timestamp_within_map__(
             id_ego)
-        dict_scenario["EndTs"] = self.track_dict[id_ego].time_stamp_ms_last
+        dict_scenario["EndTs"] = self._track_dict[id_ego].time_stamp_ms_last
         dict_scenario["EgoTrackId"] = id_ego
 
         return dict_scenario
