@@ -10,19 +10,23 @@
 
 #include "polymorphic_conversion.hpp"
 
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/models/behavior/idm/idm_classic.hpp"
 #include "modules/models/behavior/idm/idm_lane_tracking.hpp"
-#include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
 #include "modules/models/behavior/rule_based/intersection_behavior.hpp"
+#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "modules/models/behavior/rule_based/mobil.hpp"
+#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/goal_definition/goal_definition_polygon.hpp"
+#include "modules/world/goal_definition/goal_definition_sequential.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits.hpp"
 #include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/world/goal_definition/goal_definition_sequential.hpp"
-#include "modules/commons/params/setter_params.hpp"
 #include "python/models/behavior.hpp"
 
 #ifdef PLANNER_UCT
@@ -46,6 +50,11 @@ using modules::models::behavior::BehaviorLaneChangeRuleBased;
 using modules::models::behavior::BehaviorMobilRuleBased;
 using modules::models::behavior::BehaviorMobil;
 using modules::commons::SetterParams;
+using modules::models::behavior::primitives::Primitive;
+using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
+using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+using modules::models::behavior::primitives::PrimitiveGapKeeping;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
@@ -167,4 +176,41 @@ py::tuple ParamsToPython(const ParamsPtr& params) {
 ParamsPtr PythonToParams(py::tuple t) {
   const auto param_list = t[0].cast<modules::commons::CondensedParamList>();
   return std::make_shared<SetterParams>(true, param_list);
+}
+
+py::tuple PrimitiveToPython(const PrimitivePtr& prim) {
+  std::string label_name;
+  if (typeid(*prim) == typeid(PrimitiveGapKeeping)) {
+    label_name = "PrimitiveGapKeeping";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccStayLane)) {
+    label_name = "PrimitiveConstAccStayLane";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToLeft)) {
+    label_name = "PrimitiveConstAccChangeToLeft";
+  } else if (typeid(*prim) == typeid(PrimitiveConstAccChangeToRight)) {
+    label_name = "PrimitiveConstAccChangeToRight";
+  } else {
+    LOG(ERROR) << "Unknown Primitive type for polymorphic conversion.";
+    throw;
+  }
+  return py::make_tuple(prim, label_name);
+}
+PrimitivePtr PythonToPrimitive(py::tuple t) {
+  std::string label_name = t[1].cast<std::string>();
+  if (label_name.compare("PrimitiveGapKeeping") == 0) {
+    return std::make_shared<PrimitiveGapKeeping>(
+        t[0].cast<PrimitiveGapKeeping>());
+  } else if (label_name.compare("PrimitiveConstAccStayLane") == 0) {
+    return std::make_shared<PrimitiveConstAccStayLane>(
+        t[0].cast<PrimitiveConstAccStayLane>());
+  } else if (label_name.compare("PrimitiveConstAccChangeToLeft") == 0) {
+    return std::make_shared<PrimitiveConstAccChangeToLeft>(
+        t[0].cast<PrimitiveConstAccChangeToLeft>());
+  } else if (label_name.compare("PrimitiveConstAccChangeToRight") == 0) {
+    return std::make_shared<PrimitiveConstAccChangeToRight>(
+        t[0].cast<PrimitiveConstAccChangeToRight>());
+  } else {
+    LOG(ERROR) << "Unknown LabelType for polymorphic conversion.";
+    throw;
+  }
+  return nullptr;
 }

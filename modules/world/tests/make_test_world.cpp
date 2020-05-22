@@ -145,12 +145,14 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
                             car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
+  agent1->SetAgentId(1);
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
                             car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
+  agent2->SetAgentId(2);
 
   // Construct World
   WorldPtr world(new World(params));
@@ -163,6 +165,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
                             polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
+  agent3->SetAgentId(3);
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
 
@@ -172,7 +175,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
                             polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
-
+  agent4->SetAgentId(4);
   world->AddAgent(agent4);
   world->UpdateAgentRTree();
 

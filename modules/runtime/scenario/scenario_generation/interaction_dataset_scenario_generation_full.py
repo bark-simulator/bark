@@ -51,7 +51,10 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         # for scenario_idx in range(0, num_scenarios):
         for idx_s, dict_scen in enumerate(dict_scen_list):
             if idx_s < num_scenarios:
-                scenario = self.__create_single_scenario__(dict_scen)
+                try:
+                  scenario = self.__create_single_scenario__(dict_scen)
+                except:
+                  raise ValueError("Generation of scenario failed: {}".format(dict_scen))
                 scenario_list.append(scenario)
             else:
                 break

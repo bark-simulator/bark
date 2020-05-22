@@ -31,7 +31,8 @@ enum LaneChangeDecision {
   KeepLane = 0,
   ChangeLeft = 1,
   ChangeRight = 2,
-  Undefined = 3
+  Undefined = 3,
+  ChangeLane = 4
 };
 
 enum RuleBasedState {

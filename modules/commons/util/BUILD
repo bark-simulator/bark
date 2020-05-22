@@ -3,7 +3,8 @@ cc_library(
     name="util",
     hdrs=[
         "util.hpp",
-        "operators.hpp"
+        "operators.hpp",
+        "segfault_handler.hpp"
     ],
     deps = [
         "@boost//:system",

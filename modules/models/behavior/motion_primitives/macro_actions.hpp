@@ -10,53 +10,51 @@
 #include <vector>
 
 #include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/behavior/motion_primitives/primitives.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
+#include "modules/world/map/lane_corridor.hpp"
 
 namespace modules {
 namespace models {
 namespace behavior {
 
+using commons::ParamsPtr;
+using primitives::AdjacentLaneCorridors;
+using world::map::LaneCorridorPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPMacroActions(const DynamicModelPtr& dynamic_model,
-                         const commons::ParamsPtr& params) :
-    BehaviorMotionPrimitives(dynamic_model, params) {}
+  explicit BehaviorMPMacroActions(const ParamsPtr& params)
+      : BehaviorMotionPrimitives(params) {}
+  BehaviorMPMacroActions(
+      const ParamsPtr& params,
+      const std::vector<primitives::PrimitivePtr>& motion_primitives);
 
-  virtual ~BehaviorMPMacroActions() {}
+  ~BehaviorMPMacroActions() = default;
 
-  virtual Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world);
+  Trajectory Plan(float delta_time,
+                  const ObservedWorld& observed_world) override;
 
-  virtual MotionIdx GetNumMotionPrimitives(
-    const ObservedWorldPtr& observed_world) const {
-    // MotionIdx count = 0;
-    // for (auto const& p : motion_primitives_) {
-    //   if (p->IsPreConditionSatisfied(observed_world)) {
-    //     count++;
-    //   }
-    // }
-    // TODO: this should be a vector!!
-    return motion_primitives_.size();
-  }
+  MotionIdx GetNumMotionPrimitives(
+      const ObservedWorldPtr& observed_world) override;
 
   MotionIdx AddMotionPrimitive(const primitives::PrimitivePtr& primitive);
 
-  void ClearMotionPrimitives() {
-    motion_primitives_.clear();
-  }
+  void ClearMotionPrimitives() { motion_primitives_.clear(); }
 
-  virtual std::shared_ptr<BehaviorModel> Clone() const;
+  std::shared_ptr<BehaviorModel> Clone() const override;
+  const std::vector<primitives::PrimitivePtr>& GetMotionPrimitives() const;
+  const std::vector<BehaviorMPMacroActions::MotionIdx>& GetValidPrimitives(
+      const ObservedWorldPtr& observed_world);
 
  private:
+  MotionIdx GetNumMotionPrimitivesByCorridors(
+      const ObservedWorld& observed_world,
+      const AdjacentLaneCorridors& adjacent_corridors);
   std::vector<primitives::PrimitivePtr> motion_primitives_;
+  std::vector<MotionIdx> valid_primitives_;
+  LaneCorridorPtr target_corridor_;
+  AdjacentLaneCorridors GetCorridors(const ObservedWorld& observed_world);
 };
-
-inline std::shared_ptr<BehaviorModel> BehaviorMPMacroActions::Clone() const {
-  std::shared_ptr<BehaviorMPMacroActions> model_ptr =
-      std::make_shared<BehaviorMPMacroActions>(*this);
-  return model_ptr;
-}
 
 }  // namespace behavior
 }  // namespace models
