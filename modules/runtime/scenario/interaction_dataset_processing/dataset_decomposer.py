@@ -7,20 +7,35 @@ import os
 import shutil
 
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
+from modules.runtime.scenario.scenario import Scenario
+from bark.geometry import Point2d, Collide
 
 
 class DatasetDecomposer:
     def __init__(self, map_filename, track_filename):
+      # TODO: members with underscore!
         self.map_filename = map_filename
         self.track_filename = track_filename
         self.track_dict = dataset_reader.read_tracks(track_filename)
+        self.lane_polygon_list = self.__read_lane_polygons__()
+    
+    def __read_lane_polygons__(self):
+        params = ParameterServer()
+        # we are creating a dummy scenario to get the map interface from it
+        scenario = Scenario(map_file_name=self.map_filename, json_params=params.ConvertToDict())
+        world = scenario.get_world_state()
+        lane_ids = world.map.GetRoadgraph().GetAllLaneids()
+        lane_polygon_list = []
+        for lane_id in lane_ids:
+          lane_polygon_list.append(world.map.GetRoadgraph().GetLanePolygonForLaneId(lane_id))
+        return lane_polygon_list
 
     def __find_all_ids__(self, id_ego):
         list_ids = []
-        time_ego_first = self.track_dict[id_ego].time_stamp_ms_first
+        time_ego_first = self.__find_first_timestamp_within_map__(id_ego)
         time_ego_last = self.track_dict[id_ego].time_stamp_ms_last
 
         for id_current in self.track_dict.keys():
@@ -34,6 +49,17 @@ class DatasetDecomposer:
                 list_ids.append(id_current)
 
         return list_ids
+
+    def __find_first_timestamp_within_map__(self, id_ego):
+      traj = trajectory_from_track(self.track_dict[id_ego])
+      for state in traj:
+        point_agent = Point2d(state[1], state[2])
+        for poly_lane in self.lane_polygon_list:
+          if Collide(poly_lane, point_agent):
+            time_ego_first = state[0] # use timestamp
+            return time_ego_first
+
+      raise ValueError("No valid time stamp in map for agent {}".format(id_ego))
 
     def __find_all_scenarios__(self):
         # for each agent extract ids of other agents present in the same time span
