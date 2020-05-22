@@ -44,10 +44,6 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         """
         scenario_list = []
 
-        scenario = Scenario(map_file_name=self._map_file_name, json_params=self._params.ConvertToDict())
-        world = scenario.get_world_state()
-        world.map.GetR
-        
         dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
                                                track_filename=self._track_file_name)
         dict_scen_list = dataset_decomposer.decompose()
