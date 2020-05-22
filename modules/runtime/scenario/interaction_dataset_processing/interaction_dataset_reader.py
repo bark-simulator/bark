@@ -98,8 +98,12 @@ def agent_from_trackfile(track_params, param_server, agent_id):
         behavior = behavior_from_track(track, param_server.AddChild("agent{}".format(agent_id)), start, end)
     else:
         behavior = model_converter.convert_model(behavior_model, param_server)
+    try:
+      initial_state = init_state_from_track(track, start)
+    except:
+      raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(agent_id, start))
     bark_agent = Agent(
-        init_state_from_track(track, start),
+        initial_state,
         behavior,
         model_converter.convert_model(track_params["dynamic_model"], param_server),
         model_converter.convert_model(track_params["execution_model"], param_server),
