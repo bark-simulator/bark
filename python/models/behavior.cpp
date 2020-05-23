@@ -294,6 +294,8 @@ void python_behavior(py::module m) {
             return new PrimitiveConstAccChangeToRight(
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
+  
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   py::class_<BehaviorDynamicModel,
              BehaviorModel,
