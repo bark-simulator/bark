@@ -17,7 +17,11 @@ using modules::models::dynamic::StateDefinition;
 BehaviorMPMacroActions::BehaviorMPMacroActions(
     const commons::ParamsPtr& params,
     const std::vector<primitives::PrimitivePtr>& motion_primitives)
-    : BehaviorMotionPrimitives(params), motion_primitives_(motion_primitives) {}
+    : BehaviorMotionPrimitives(params),
+      motion_primitives_(motion_primitives),
+      check_validity_in_plan_(params->AddChild("BehaviorMPMacroActions")
+                        ->GetBool("CheckValidityInPlan",
+                        "If true only primitives can be selected which are valid", true)) {}
 
 BehaviorMotionPrimitives::MotionIdx BehaviorMPMacroActions::AddMotionPrimitive(
     const primitives::PrimitivePtr& primitive) {
@@ -35,19 +39,26 @@ Trajectory BehaviorMPMacroActions::Plan(
   Trajectory traj(num_trajectory_points,
                   static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
-  // SetLastAction(Action(DiscreteAction(active_motion_)));
+  primitives::PrimitivePtr selected_mp;
   AdjacentLaneCorridors adjacent_corridors = GetCorridors(observed_world);
-  // There must be at least one primitive that is always available!
-  if (valid_primitives_.empty()) {
-    GetNumMotionPrimitivesByCorridors(observed_world, adjacent_corridors);
-    LOG_IF(ERROR, valid_primitives_.empty())
-        << "No motion primitive available! At least one primitive must be "
-           "available at all times!";
+  if(check_validity_in_plan_) {
+      // SetLastAction(Action(DiscreteAction(active_motion_)));
+
+    // There must be at least one primitive that is always available!
+    if (valid_primitives_.empty()) {
+      GetNumMotionPrimitivesByCorridors(observed_world, adjacent_corridors);
+      LOG_IF(ERROR, valid_primitives_.empty())
+          << "No motion primitive available! At least one primitive must be "
+            "available at all times!";
+    }
+    const auto& selected_mp = motion_primitives_.at(
+        valid_primitives_.at(boost::get<DiscreteAction>(active_motion_)));
+    target_corridor_ =
+        selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
+  } else {
+    selected_mp = motion_primitives_.at(boost::get<DiscreteAction>(active_motion_));
   }
-  const auto& selected_mp = motion_primitives_.at(
-      valid_primitives_.at(boost::get<DiscreteAction>(active_motion_)));
-  target_corridor_ =
-      selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
+
   traj = selected_mp->Plan(delta_time, observed_world, target_corridor_);
 
   this->SetLastTrajectory(traj);
