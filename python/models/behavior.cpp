@@ -204,6 +204,7 @@ void python_behavior(py::module m) {
   .def(py::init<const modules::commons::ParamsPtr&,
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("GetMotionPrimitives", &BehaviorMPMacroActions::GetMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
   .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives)
   .def(py::pickle(
