@@ -25,7 +25,6 @@ header_template = rule(
     implementation = _header_template_impl,
     attrs = {
         "vars": attr.string_dict(),
-        # "directory": "./"+attr.string(),
         "extension": attr.string(default=".hpp"),
         "template": attr.label(
             mandatory = True,
