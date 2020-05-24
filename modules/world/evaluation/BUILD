@@ -118,6 +118,7 @@ cc_library(
         "//modules/world/evaluation:base_evaluator",
         "@ad_rss_lib//:ad_rss",
         "@ad_rss_lib//:ad_rss_map_integration",
+        "@map_support//:ad_physics",
         "@boost//:geometry",
         "@spdlog",
     ],

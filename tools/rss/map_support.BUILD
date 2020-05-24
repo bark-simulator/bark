@@ -75,6 +75,7 @@ cc_library(
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
+        "@proj",
         ":ad_map_opendrive_reader",
         ":ad_physics",
         "@spdlog",
