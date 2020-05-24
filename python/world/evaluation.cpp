@@ -3,6 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
+#include <string>
+
 #include "evaluation.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
@@ -75,7 +77,7 @@ void python_evaluation(py::module m) {
 
   py::class_<EvaluatorRss, BaseEvaluator,
     std::shared_ptr<EvaluatorRss>>(m, "EvaluatorRss")
-    .def(py::init<const AgentId&>())
+    .def(py::init<const AgentId&, const std::string>())
     .def(py::init<>())
     .def("__repr__", [](const EvaluatorRss &g) {
       return "bark.world.evaluation.EvaluatorRss";
