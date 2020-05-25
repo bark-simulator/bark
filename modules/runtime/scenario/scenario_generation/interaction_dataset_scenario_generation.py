@@ -38,13 +38,13 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         self._track_ids = params_temp["TrackIds",
                                       "IDs of the vehicle tracks to import.",
                                       [1]]
-        self.start_time = params_temp["StartTs",
-                                      "Timestamp when to start the scenario (ms)", 0]
-        self.end_time = params_temp["EndTs",
-                                    "Timestamp when to end the scenario (ms)", None]
-        self.ego_track_id = params_temp["EgoTrackId", "TrackID of ego", -1]
-        self.behavior_models = params_temp["BehaviorModel",
-                                           "Overwrite static trajectory with prediction model", {}]
+        self._start_time = params_temp["StartTs",
+                                       "Timestamp when to start the scenario (ms)", 0]
+        self._end_time = params_temp["EndTs",
+                                     "Timestamp when to end the scenario (ms)", None]
+        self._ego_track_id = params_temp["EgoTrackId", "TrackID of ego", -1]
+        self._behavior_models = params_temp["BehaviorModel",
+                                            "Overwrite static trajectory with prediction model", {}]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -61,16 +61,16 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         return scenario_list
 
     def __fill_scenario_track_info__(self):
-        if self.ego_track_id == -1:
+        if self._ego_track_id == -1:
             raise ValueError("No ego id has been defined")
 
-        ego_track_info = AgentTrackInfo(filename=self._track_file_name, track_id=self.ego_track_id,
-                                        start_offset=self.start_time, end_offset=self.end_time)
+        ego_track_info = AgentTrackInfo(filename=self._track_file_name, track_id=self._ego_track_id,
+                                        start_offset=self._start_time, end_offset=self._end_time)
         scenario_track_info = ScenarioTrackInfo(
             map_filename=self._map_file_name, track_filename=self._track_file_name, ego_track_info=ego_track_info)
         for track_id in self._track_ids:
             new_agent = AgentTrackInfo(filename=self._track_file_name, track_id=track_id,
-                                       start_offset=self.start_time, end_offset=self.end_time)
+                                       start_offset=self._start_time, end_offset=self._end_time)
             scenario_track_info.AddTrackInfoOtherAgent(new_agent)
 
         return scenario_track_info
@@ -86,8 +86,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         track_params["map_interface"] = world.map
 
         for id_other in scenario_track_info.GetOtherTrackInfos().keys():
-            if str(id_other) in self.behavior_models:
-                track_params["behavior_model"] = self.behavior_models[str(
+            if str(id_other) in self._behavior_models:
+                track_params["behavior_model"] = self._behavior_models[str(
                     id_other)]
             else:
                 track_params["behavior_model"] = None
@@ -96,8 +96,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             agent_list.append(agent)
 
         id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        if str(id_ego) in self.behavior_models:
-            track_params["behavior_model"] = self.behavior_models[str(id_ego)]
+        if str(id_ego) in self._behavior_models:
+            track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None
         agent = agent_from_trackfile(

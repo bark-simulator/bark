@@ -1,6 +1,5 @@
 # Copyright (c) 2020 fortiss GmbH
 #
-# Based on the implementation by Luis Gressenbuch
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -34,8 +33,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._track_file_name = params_temp["TrackFilename",
                                             "Path to track file (csv)",
                                             "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
-        self.behavior_models = params_temp["BehaviorModel",
-                                           "Overwrite static trajectory with prediction model", {}]
+        self._behavior_models = params_temp["BehaviorModel",
+                                            "Overwrite static trajectory with prediction model", {}]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -73,8 +72,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         track_params["map_interface"] = world.map
 
         for id_other in scenario_track_info.GetOtherTrackInfos().keys():
-            if str(id_other) in self.behavior_models:
-                track_params["behavior_model"] = self.behavior_models[str(
+            if str(id_other) in self._behavior_models:
+                track_params["behavior_model"] = self._behavior_models[str(
                     id_other)]
             else:
                 track_params["behavior_model"] = None
@@ -83,8 +82,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             agent_list.append(agent)
 
         id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        if str(id_ego) in self.behavior_models:
-            track_params["behavior_model"] = self.behavior_models[str(id_ego)]
+        if str(id_ego) in self._behavior_models:
+            track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None
         agent = agent_from_trackfile(
