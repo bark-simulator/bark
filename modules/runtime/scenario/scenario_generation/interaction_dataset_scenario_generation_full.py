@@ -91,7 +91,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         else:
             track_params["behavior_model"] = None
         agent = agent_from_trackfile(
-            track_params, self._params, scenario_track_info.GetEgoTrackInfo())
+            track_params, self._params, scenario_track_info, id_ego)
         agent_list.append(agent)
 
         scenario._agent_list = agent_list # must contain all agents!
