@@ -24,8 +24,15 @@ class ScenarioTrackInfo:
 
         self._other_agents_track_infos = {}
 
+    def __str__(self):
+        str_out = 'start_ts={} end_ts={} ego: {}'.format(self.GetStartTs(), self.GetEndTs(), self._ego_track_info)
+        for other in self.GetOtherTrackInfos().values():
+            str_out = str_out + ', other: {}'.format(other)
+        return str_out
+
     def AddTrackInfoOtherAgent(self, track_info_other):
-        self._other_agents_track_infos[track_info_other.GetTrackId()] = track_info_other
+        self._other_agents_track_infos[track_info_other.GetTrackId(
+        )] = track_info_other
 
     def GetMapFilename(self):
         return self._map_filename

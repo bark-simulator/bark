@@ -18,12 +18,19 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
         agent1 = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
+
+        print(agent1)
+
         agent2 = AgentTrackInfo(
             track_filename, track_id=2, start_offset=500, end_offset=1000)
+
+        print(agent2)
 
         scen_info = ScenarioTrackInfo(
             map_filename, track_filename, agent1, start_ts=500, end_ts=1000)
         scen_info.AddTrackInfoOtherAgent(agent2)
+
+        print(scen_info)
 
         assert(scen_info.TimeSanityCheck() == True)
 
