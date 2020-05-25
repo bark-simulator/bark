@@ -12,6 +12,7 @@
             18,
             25
           ],
+          "EgoTrackId": 2,
           "StartTs": 100,
           "EndTs": 5000
         }

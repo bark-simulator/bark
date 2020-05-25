@@ -56,6 +56,5 @@ class InteractionDatasetReaderTest(unittest.TestCase):
             track_params, params, scenario_info, agent_track_info.GetTrackId())
 
 
-
 if __name__ == '__main__':
     unittest.main()

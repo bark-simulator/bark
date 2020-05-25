@@ -103,18 +103,6 @@ class DatasetDecomposer:
 
         return scenario_list
 
-    # def __fill_dict_scenario__(self, list_others_dict, id_ego):
-
-    #     dict_scenario = {}
-    #     dict_scenario["MapFilename"] = self._map_filename
-    #     dict_scenario["TrackFilename"] = self._track_filename
-    #     dict_scenario["TrackIds"] = list_others_dict[id_ego]
-    #     dict_scenario["StartTs"] = self._agents_first_valid_ts_ms[id_ego]
-    #     dict_scenario["EndTs"] = self._track_dict[id_ego].time_stamp_ms_last
-    #     dict_scenario["EgoTrackId"] = id_ego
-
-    #     return dict_scenario
-
     def decompose(self):
 
         scenario_list = self.__find_all_scenarios__()

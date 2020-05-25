@@ -68,12 +68,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         world = scenario.get_world_state()
         agent_list = []
         track_params = ParameterServer()
-        #track_params["filename"] = self._track_file_name
         track_params["execution_model"] = 'ExecutionModelInterpolate'
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = world.map
-        #track_params["start_offset"] = dict_scenario["StartTs"]
-        #track_params["end_offset"] = dict_scenario["EndTs"]
 
         for id_other in scenario_track_info.GetOtherTrackInfos().keys():
             if str(id_other) in self.behavior_models:
@@ -94,7 +91,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             track_params, self._params, scenario_track_info, id_ego)
         agent_list.append(agent)
 
-        scenario._agent_list = agent_list # must contain all agents!
+        scenario._agent_list = agent_list  # must contain all agents!
         scenario._eval_agent_ids = [
             scenario_track_info.GetEgoTrackInfo().GetTrackId()]
 
