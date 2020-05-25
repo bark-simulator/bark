@@ -46,13 +46,13 @@ class ScenarioTrackInfo:
         return self._other_agents_track_infos
 
     def TimeSanityCheck(self):
-        for other in self.GetOtherTrackInfos().values():
-            if self.GetStartTs() > other.GetStartOffset():
-                raise ValueError(
-                    "Other agent {} starts before scenario".format(other.GetTrackId()))
-            elif self.GetEndTs() < other.GetEndOffset():
-                raise ValueError(
-                    "Other agent {} ends after scenario".format(other.GetTrackId()))
+        # for other in self.GetOtherTrackInfos().values():
+        #     if self.GetStartTs() > other.GetStartOffset():
+        #         raise ValueError(
+        #             "Other agent {} starts before scenario".format(other.GetTrackId()))
+        #     elif self.GetEndTs() < other.GetEndOffset():
+        #         raise ValueError(
+        #             "Other agent {} ends after scenario".format(other.GetTrackId()))
 
         if self.GetStartTs() < self.GetEgoTrackInfo().GetStartOffset():
             raise ValueError("ego agent {} starts after scenario".format(
