@@ -7,8 +7,8 @@
         "TrackFilename": "../bark_project/modules/runtime/tests/data/interaction_dataset_dummy_track.csv",
         "TrackIds": [1, 2],
         "EgoTrackId": 1,
-        "StartTs": 100,
-        "EndTs": 5000
+        "StartTs": 500,
+        "EndTs": 1100
       }
     }
   },

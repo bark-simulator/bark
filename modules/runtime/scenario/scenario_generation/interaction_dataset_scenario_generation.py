@@ -76,6 +76,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         return scenario_track_info
 
     def __create_single_scenario__(self, scenario_track_info):
+        scenario_track_info.TimeSanityCheck()
+        
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
         world = scenario.get_world_state()

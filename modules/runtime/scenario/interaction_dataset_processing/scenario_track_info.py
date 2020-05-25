@@ -54,11 +54,11 @@ class ScenarioTrackInfo:
                 raise ValueError(
                     "Other agent {} ends after scenario".format(other.GetTrackId()))
 
-        if self.GetStartTs() != other.GetStartOffset():
-            raise ValueError("ego agent {} starts before scenario".format(
+        if self.GetStartTs() < self.GetEgoTrackInfo().GetStartOffset():
+            raise ValueError("ego agent {} starts after scenario".format(
                 self.GetEgoTrackInfo().GetTrackId()))
-        elif self.GetEndTs() != other.GetEndOffset():
-            raise ValueError("ego agent {} ends after scenario".format(
+        elif self.GetEndTs() > self.GetEgoTrackInfo().GetEndOffset():
+            raise ValueError("ego agent {} ends before scenario".format(
                 self.GetEgoTrackInfo().GetTrackId()))
 
         return True
