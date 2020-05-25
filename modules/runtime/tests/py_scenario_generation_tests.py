@@ -146,7 +146,21 @@ class ScenarioGenerationTests(unittest.TestCase):
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=2)
 
-    @unittest.skip
+    def test_dataset_scenario_generation_full_incomplete(self):
+        params = ParameterServer()
+
+        map_filename = "modules/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"
+        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track_incomplete.csv"
+
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+
+        scenario_generation = InteractionDatasetScenarioGenerationFull(
+            params=params, num_scenarios=3)
+        # agent 1 is not part of the map, so it should only generate 2 scenarios
+
+        assert(scenario_generation.get_num_scenarios() == 2)
+
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
@@ -163,8 +177,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
         scenario_generation = InteractionDatasetScenarioGeneration(
             params=params, num_scenarios=1)
-
-        scenario = scenario_generation.create_single_scenario()
+        assert(scenario_generation.get_num_scenarios() == 1)
 
 
 if __name__ == '__main__':

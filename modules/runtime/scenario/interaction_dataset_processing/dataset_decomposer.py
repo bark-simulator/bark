@@ -53,14 +53,14 @@ class DatasetDecomposer:
             # TODO: this could be made optional
             first_ts_on_map = self.__find_first_ts_on_map__(agent_id)
             if first_ts_on_map is None:
-              print("Agent %d not found on map" % agent_id)
-              pass
+                print("Agent %d not found on map" % agent_id)
+                pass
             else:
-              start_offset = first_ts_on_map
-              end_offset = self._track_dict[agent_id].time_stamp_ms_last
-              new_agent = AgentTrackInfo(filename=self._track_filename, track_id=agent_id,
-                                        start_offset=start_offset, end_offset=end_offset)
-              agents_track_infos[agent_id] = new_agent
+                start_offset = first_ts_on_map
+                end_offset = self._track_dict[agent_id].time_stamp_ms_last
+                new_agent = AgentTrackInfo(filename=self._track_filename, track_id=agent_id,
+                                           start_offset=start_offset, end_offset=end_offset)
+                agents_track_infos[agent_id] = new_agent
         return agents_track_infos
 
     def __get_agent_track_info__(self, agent_id):
@@ -76,7 +76,9 @@ class DatasetDecomposer:
         time_ego_last = self.__get_agent_track_info__(id_ego).GetEndOffset()
 
         for id_current in self._agents_track_infos.keys():
-            if self.__get_agent_track_info__(id_current).GetEndOffset() < time_ego_first:
+            if id_ego == id_current:
+                pass
+            elif self.__get_agent_track_info__(id_current).GetEndOffset() < time_ego_first:
                 # other ends too early
                 pass
             elif self.__get_agent_track_info__(id_current).GetStartOffset() > time_ego_last:
@@ -89,7 +91,7 @@ class DatasetDecomposer:
 
     def __find_all_scenarios__(self):
         scenario_list = []
-        for id_ego in self._track_dict.keys():
+        for id_ego in self._agents_track_infos.keys():
             ego_track_info = self.__get_agent_track_info__(id_ego)
             new_scenario = ScenarioTrackInfo(
                 map_filename=self._map_filename, track_filename=self._track_filename, ego_track_info=ego_track_info)
