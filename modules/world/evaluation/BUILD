@@ -146,7 +146,8 @@ cc_library(
         ":evaluator_collision_ego_agent",
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
-        ":evaluator_distance_to_goal"
+        ":evaluator_distance_to_goal",
+        ":evaluator_xy_position"
     ],
     visibility = ["//visibility:public"],
 )
