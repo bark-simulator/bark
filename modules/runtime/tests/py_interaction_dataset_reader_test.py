@@ -32,7 +32,8 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
-        agent_track_info = AgentTrackInfo(track_filename, track_id=1, start_offset=500, end_offset=1000)
+        agent_track_info = AgentTrackInfo(
+            track_filename, track_id=1, start_offset=500, end_offset=1000)
 
         params = ParameterServer()
         params_id = params["Scenario"]["Generation"]["InteractionDataset"]
@@ -41,16 +42,20 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         params_id["TrackFilename", "",
                   "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
         params_id["BehaviorModel", "", {}]
-        
+
         track_params = ParameterServer()
         track_params["execution_model"] = 'ExecutionModelInterpolate'
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = None  # world.map
         track_params["behavior_model"] = None
-        
-        agent = agent_from_trackfile(track_params, params, agent_track_info)
-        
-        assert(agent.TimeSanityCheck() == True)
+
+        scenario_info = ScenarioTrackInfo(
+            map_filename, track_filename, agent_track_info)
+
+        agent = agent_from_trackfile(
+            track_params, params, scenario_info, agent_track_info.GetTrackId())
+
+
 
 if __name__ == '__main__':
     unittest.main()

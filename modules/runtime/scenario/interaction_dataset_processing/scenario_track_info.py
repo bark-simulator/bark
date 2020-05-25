@@ -22,10 +22,10 @@ class ScenarioTrackInfo:
         else:
             self._end_ts = end_ts
 
-        self._other_agents_track_infos = []
+        self._other_agents_track_infos = {}
 
     def AddTrackInfoOtherAgent(self, track_info_other):
-        self._other_agents_track_infos.append(track_info_other)
+        self._other_agents_track_infos[track_info_other.GetTrackId()] = track_info_other
 
     def GetMapFilename(self):
         return self._map_filename
@@ -46,7 +46,7 @@ class ScenarioTrackInfo:
         return self._other_agents_track_infos
 
     def TimeSanityCheck(self):
-        for other in self.GetOtherTrackInfos():
+        for other in self.GetOtherTrackInfos().values():
             if self.GetStartTs() > other.GetStartOffset():
                 raise ValueError(
                     "Other agent {} starts before scenario".format(other.GetTrackId()))

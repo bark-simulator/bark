@@ -75,15 +75,14 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         #track_params["start_offset"] = dict_scenario["StartTs"]
         #track_params["end_offset"] = dict_scenario["EndTs"]
 
-        for other_agent_track_info in scenario_track_info.GetOtherTrackInfos():
-            id_other = other_agent_track_info.GetTrackId()
+        for id_other in scenario_track_info.GetOtherTrackInfos().keys():
             if str(id_other) in self.behavior_models:
                 track_params["behavior_model"] = self.behavior_models[str(
                     id_other)]
             else:
                 track_params["behavior_model"] = None
             agent = agent_from_trackfile(
-                track_params, self._params, other_agent_track_info)
+                track_params, self._params, scenario_track_info, id_other)
             agent_list.append(agent)
 
         id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()

@@ -38,6 +38,7 @@ def trajectory_from_track(track, start=0, end=None):
     n = len(filtered_motion_states)
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
     for i, state in enumerate(filtered_motion_states):
+        # TODO: rename start to be the scenario start time!
         traj[i, :] = bark_state_from_motion_state(state[1], start)
     return traj
 
@@ -87,13 +88,19 @@ def track_from_trackfile(filename, track_id):
     return track
 
 
-def agent_from_trackfile(track_params, param_server, agent_track_info):
+def agent_from_trackfile(track_params, param_server, scenario_track_info, agent_id):
+    if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
+      agent_track_info = scenario_track_info.GetEgoTrackInfo()
+    elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
+      agent_track_info = scenario_track_info.GetOtherTrackInfos()[agent_id]
+    else:
+      raise ValueError("unknown agent id {}".format(agent_id))
     fname = agent_track_info.GetFileName()  # track_params["filename"]
     track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
     agent_id = agent_track_info.GetTrackId()
     track = track_from_trackfile(fname, track_id)
-    start_time = agent_track_info.GetStartOffset()
-    end_time = agent_track_info.GetEndOffset()
+    start_time = scenario_track_info.GetStartTs()
+    end_time = scenario_track_info.GetEndTs()
 
     behavior_model = track_params["behavior_model"]
     model_converter = ModelJsonConversion()
