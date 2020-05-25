@@ -32,7 +32,6 @@ def trajectory_from_track(track, start=0, end=None):
     filtered_motion_states = list(filter(lambda s: start <= s[0] <= end, states))
     n = len(filtered_motion_states)
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
-    start_offset = filtered_motion_states[0][0]
     for i, state in enumerate(filtered_motion_states):
         traj[i, :] = bark_state_from_motion_state(state[1], start)
     return traj
@@ -99,8 +98,12 @@ def agent_from_trackfile(track_params, param_server, agent_id):
         behavior = behavior_from_track(track, param_server.AddChild("agent{}".format(agent_id)), start, end)
     else:
         behavior = model_converter.convert_model(behavior_model, param_server)
+    try:
+      initial_state = init_state_from_track(track, start)
+    except:
+      raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(agent_id, start))
     bark_agent = Agent(
-        init_state_from_track(track, start),
+        initial_state,
         behavior,
         model_converter.convert_model(track_params["dynamic_model"], param_server),
         model_converter.convert_model(track_params["execution_model"], param_server),

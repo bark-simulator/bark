@@ -204,6 +204,7 @@ void python_behavior(py::module m) {
   .def(py::init<const modules::commons::ParamsPtr&,
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("GetMotionPrimitives", &BehaviorMPMacroActions::GetMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
   .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives)
   .def(py::pickle(
@@ -294,6 +295,8 @@ void python_behavior(py::module m) {
             return new PrimitiveConstAccChangeToRight(
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
+  
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   py::class_<BehaviorDynamicModel,
              BehaviorModel,
