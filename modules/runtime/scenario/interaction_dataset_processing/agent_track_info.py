@@ -5,7 +5,7 @@
 
 
 class AgentTrackInfo:
-    def __init__(self, filename, track_id, start_offset, end_offset):
+    def __init__(self, filename, track_id, start_offset, end_offset, first_ts_on_map = None):
         self._filename = filename
         self._track_id = track_id  # TODO: rename to agent_id
         self._start_offset = start_offset  # TODO: rename to start_time

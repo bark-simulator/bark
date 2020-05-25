@@ -14,14 +14,18 @@ from com_github_interaction_dataset_interaction_dataset.python.utils import data
 from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils
 import numpy as np
 
+from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
+
 
 def bark_state_from_motion_state(state, time_offset=0):
     bark_state = np.zeros(int(StateDefinition.MIN_STATE_SIZE))
-    bark_state[int(StateDefinition.TIME_POSITION)] = (state.time_stamp_ms - time_offset) / 1000.0
+    bark_state[int(StateDefinition.TIME_POSITION)] = (
+        state.time_stamp_ms - time_offset) / 1000.0
     bark_state[int(StateDefinition.X_POSITION)] = state.x
     bark_state[int(StateDefinition.Y_POSITION)] = state.y
     bark_state[int(StateDefinition.THETA_POSITION)] = Norm0To2PI(state.psi_rad)
-    bark_state[int(StateDefinition.VEL_POSITION)] = pow(pow(state.vx, 2) + pow(state.vy, 2), 0.5)
+    bark_state[int(StateDefinition.VEL_POSITION)] = pow(
+        pow(state.vx, 2) + pow(state.vy, 2), 0.5)
     return bark_state.reshape((1, int(StateDefinition.MIN_STATE_SIZE)))
 
 
@@ -29,7 +33,8 @@ def trajectory_from_track(track, start=0, end=None):
     states = list(dict_utils.get_item_iterator(track.motion_states))
     if end is None:
         end = states[-1][0]
-    filtered_motion_states = list(filter(lambda s: start <= s[0] <= end, states))
+    filtered_motion_states = list(
+        filter(lambda s: start <= s[0] <= end, states))
     n = len(filtered_motion_states)
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
     for i, state in enumerate(filtered_motion_states):
@@ -51,7 +56,7 @@ def shape_from_track(track, wheelbase=2.7):
 def init_state_from_track(track, start):
     minimum_start = min(track.motion_states)
     if minimum_start > start:
-      start = minimum_start
+        start = minimum_start
     state = track.motion_states[start]
     return bark_state_from_motion_state(state, state.time_stamp_ms).reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
 
@@ -78,38 +83,42 @@ def behavior_from_track(track, params, start, end):
 def track_from_trackfile(filename, track_id):
     track_dictionary = dataset_reader.read_tracks(filename)
     track = track_dictionary[track_id]
+    # TODO: Filter track
     return track
 
 
-def agent_from_trackfile(track_params, param_server, agent_id):
-    fname = track_params["filename"]
-    track_id = track_params["track_id"]
+def agent_from_trackfile(track_params, param_server, agent_track_info):
+    fname = agent_track_info.GetFileName()  # track_params["filename"]
+    track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
+    agent_id = agent_track_info.GetTrackId()
     track = track_from_trackfile(fname, track_id)
-    start = track_params["start_offset", "The timestamp in ms when to start the trajectory", None]
-    end = track_params["end_offset", "The timestamp in ms when to end the trajectory", None]
+    start_time = agent_track_info.GetStartOffset()
+    end_time = agent_track_info.GetEndOffset()
+
     behavior_model = track_params["behavior_model"]
-    if start is None:
-        start = track.time_stamp_ms_first
-    if end is None:
-        end = track.time_stamp_ms_last
     model_converter = ModelJsonConversion()
     if behavior_model is None:
         # each agent need's its own param server
-        behavior = behavior_from_track(track, param_server.AddChild("agent{}".format(agent_id)), start, end)
+        behavior = behavior_from_track(track, param_server.AddChild(
+            "agent{}".format(agent_id)), start_time, end_time)
     else:
         behavior = model_converter.convert_model(behavior_model, param_server)
     try:
-      initial_state = init_state_from_track(track, start)
+        initial_state = init_state_from_track(track, start_time)
     except:
-      raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(agent_id, start))
+        raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
+            agent_id, start_time))
     bark_agent = Agent(
         initial_state,
         behavior,
-        model_converter.convert_model(track_params["dynamic_model"], param_server),
-        model_converter.convert_model(track_params["execution_model"], param_server),
-        shape_from_track(track, param_server["DynamicModel"]["wheel_base", "Distance between front and rear wheel center", 2.7]),
+        model_converter.convert_model(
+            track_params["dynamic_model"], param_server),
+        model_converter.convert_model(
+            track_params["execution_model"], param_server),
+        shape_from_track(track, param_server["DynamicModel"]["wheel_base",
+                                                             "Distance between front and rear wheel center", 2.7]),
         param_server.AddChild("agent{}".format(agent_id)),
-        goal_definition_from_track(track, end),
+        goal_definition_from_track(track, end_time),
         track_params["map_interface"])
     # set agent id from track
     bark_agent.SetAgentId(track_id)

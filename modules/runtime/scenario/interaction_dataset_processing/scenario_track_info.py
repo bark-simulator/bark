@@ -7,12 +7,21 @@ from modules.runtime.scenario.interaction_dataset_processing.agent_track_info im
 
 
 class ScenarioTrackInfo:
-    def __init__(self, map_filename, track_filename, ego_track_info, start_ts, end_ts):
+    def __init__(self, map_filename, track_filename, ego_track_info, start_ts=None, end_ts=None):
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._ego_track_info = ego_track_info
-        self._start_ts = start_ts
-        self._end_ts = end_ts
+
+        if start_ts is None:
+            self._start_ts = ego_track_info.GetStartOffset()
+        else:
+            self._start_ts = start_ts
+
+        if end_ts is None:
+            self._end_ts = ego_track_info.GetEndOffset()
+        else:
+            self._end_ts = end_ts
+
         self._other_agents_track_infos = []
 
     def AddTrackInfoOtherAgent(self, track_info_other):
