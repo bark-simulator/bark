@@ -118,7 +118,20 @@ cc_library(
         "//modules/geometry",
         "@boost//:geometry",
         "//modules/world:world",
+    ],
+    visibility = ["//visibility:public"],
+)
 
+cc_library(
+    name = "evaluator_xy_position",
+    hdrs = [
+        "evaluator_xy_position.hpp"
+    ],
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/geometry",
+        "@boost//:geometry",
+        "//modules/world:world",
     ],
     visibility = ["//visibility:public"],
 )
