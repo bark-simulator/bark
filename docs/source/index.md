@@ -1,6 +1,6 @@
 Welcome to BARK's documentation!
 ================================
-Bark is a semantic-simulation for multiple agents that are interaction aware.
+Semantic simulation for interaction-aware multi agent planning.
 
 ```eval_rst
 .. toctree::
@@ -35,7 +35,7 @@ Bark is a semantic-simulation for multiple agents that are interaction aware.
    common
 ```
 
-Indices and tables
+Indices and Tables
 ==================
 
 ```eval_rst
