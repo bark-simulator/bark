@@ -18,14 +18,13 @@ using modules::models::dynamic::StateDefinition::X_POSITION;
 using modules::models::dynamic::StateDefinition::Y_POSITION;
 
 EvaluationReturn EvaluatorXyPosition::Evaluate(const world::World& world) {
-  if (agent_id_ == std::numeric_limits<AgentId>::max()) {
-    const auto& ego_agent = world.GetEgoAgent();
-    const auto& position = ego_agent->GetCurrentPosition();
-    return position;
+  const auto& agent = world.GetAgent(agent_id_);
+  State state = agent->GetCurrentState();
+
+  if (y_) {
+    return state(Y_POSITION);
   } else {
-    const auto& agent = world.GetAgent(agent_id_);
-    const auto& position = ego_agent->GetCurrentPosition();
-    return position;
+    return state(X_POSITION);
   }
 }
 

@@ -83,7 +83,8 @@ void python_evaluation(py::module m) {
 
   py::class_<EvaluatorXyPosition, BaseEvaluator,
     std::shared_ptr<EvaluatorXyPosition> >(m, "EvaluatorXyPosition")
-    .def(py::init<const AgentId&>())
+    .def(py::init<const AgentId&, py::optional<const bool>>(), "agent_id"_a, "y"_a=false)
+    .def(py::init<>())
     .def("__repr__", [](const EvaluatorXyPosition &g) {
       return "bark.world.evaluation.EvaluatorXyPosition";
     });
