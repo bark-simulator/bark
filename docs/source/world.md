@@ -1,72 +1,80 @@
 World
 ================================
-The BARK-world models a simultaneous-move game where all agents generate a behavior given a cloned world state at a specific time. All agents are moved according to their specified behavior models for a fixed time period and the validity of the resulting world state is then checked. In principle, the `World` class is defined as 
+The world in BARK contains all objects of the simulation.
+It is modeled as a simultaneous-move game where all agents act at the same time.
+Each agent moves according to its defined behavior, execution and dynamic model.
+After all agents have been moved, the overall validity is then checked.
+
+The `World` class is defined as
 
 ```cpp
 class World {
-    public:
+ public:
 	void Step(float delta_time);
-    private:
+  ...
+ private:
 	MapInterface map_interface_;
 	AgentMap agents_;
 	ObjectMap objects_;
 	double world_time_;
-
-}
+}.
 ```
 
-The most important functions in the `World` class are listed below.
-
-```eval_rst
-  .. cpp:function:: void Step(const float& delta_time)
-```
-The `Step` function loops through all agents, creates an observed world and then calls the `BehaviorPlan` and `ExecutionPlan` function of each agent.
-
-```eval_rst
-  .. cpp:function:: inline World *World::Clone() const
-  
-  Returns a cloned world of the current world.
-```
+The [MapInterface](map_interface.md) contains the map, functionalities for routing and simplified structures for the agents to plan in.
+The `AgentMap` contains all agents of the simulation and the `ObjectMap` all static objects.
+Finally, the `World` class also contains the simulation world time `world_time_`.
 
 
-## ObservedWorld
-The `ObservedWorld` is derived from the (protected) `World`.
-It is a modified version of the original world and also has additional functionalities for the ease-of-use.
-Perturbations, such as a limitied field of view can be modeled in the observed world as well.
+## Observed World
 
-
-## Agents & Objects
-An agent is a dynamic object functioning as a container for the behavioral-, execution- and dynamic-model as described [here](agent_components.md). The agent tracks its movements in the `state_action_history_`. Each agent has a `GoalDefinition` and `RoadCorridor`.
-
-
-## MapInterface
-Provides an interface to the `OpenDriveMap` in order to speed up the search and it additionally also implements a routing functionality.
-It utilizes an `R-Tree` in order to find the nearest map objects, such as lanes.
+In each simulation step, an agent in BARK gets passed an `ObservedWorld` that is derived from the current `World`.
+The agent then plans in this derived world and returns a trajectory.
+The `ObservedWorld` provides additional interfaces and allows to model further features, such as e.g. occlusions.
+Besides providing additional functionalities, it also defines and saves the ego agent id `ego_agent_id_`.
 
 ```cpp
-class MapInterface {
+class ObservedWorld : public World {
  public:
-    ...
+  ObservedWorld(const WorldPtr& world, const AgentId& ego_agent_id) :
+    World(world),
+    ego_agent_id_(ego_agent_id) {}
+  ...
  private:
-  OpenDriveMapPtr open_drive_map_;
-  RoadgraphPtr roadgraph_;
-  rtree_lane rtree_lane_;
-  std::pair<Point2d, Point2d> bounding_box_;
-  std::map<std::size_t, RoadCorridorPtr> road_corridors_;
-}
+  AgentId ego_agent_id_;
+};
 ```
 
-### OpenDriveMap
-The `OpenDriveMap` class implements the specifications provided by the [OpenDRIVE 1.4 Format](http://www.opendrive.org/download.html). This allows an easy parsing and integration of maps available in the OpenDrive format.
-Furthermore, it is additionally used as a data-container to store the map in memory.
+## Objects and Agents
 
+In BARK objects are static and can be extended to dynamic agents.
+Objects in BARK have a position, a shape and an ObjectId.
+The agent extends this by adding a behavior, execution and dynamic model as described [here](agent_components.md).
+Additionally, the agent also has a  `GoalDefinitionPtr` and `RoadCorridorPtr`.
 
-### RoadGraph
-The roadgraph contains all map information and can be queried to obtain routing specific queries. 
+The agent class is defined as follows:
 
-### RoadCorridor
-A RoadCorridor is a collection of lanes and also further provides LaneCorridors.
-Each agent in BARK has a road corridor in which it can drive.
+```cpp
+class Agent : public Object {
+ public:
+  friend class World;
 
-### LaneCorridor
-A LaneCorridor is a continuous driving segment that consists of one more multiple lanes.
+  Agent(const State& initial_state,
+        const BehaviorModelPtr& behavior_model_ptr,
+        const DynamicModelPtr& dynamic_model_ptr,
+        const ExecutionModelPtr& execution_model,
+        const geometry::Polygon& shape,
+        const commons::ParamsPtr& params,
+        const GoalDefinitionPtr& goal_definition = GoalDefinitionPtr(),
+        const MapInterfacePtr& map_interface = MapInterfacePtr(),
+        const geometry::Model3D& model_3d = geometry::Model3D());
+  ...
+ private:
+  BehaviorModelPtr behavior_model_;
+  DynamicModelPtr dynamic_model_;
+  ExecutionModelPtr execution_model_;
+  RoadCorridorPtr road_corridor_;
+  StateActionHistory history_;
+  uint32_t max_history_length_;
+  GoalDefinitionPtr goal_definition_;
+};
+```

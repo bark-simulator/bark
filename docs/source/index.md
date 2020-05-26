@@ -30,6 +30,7 @@ Bark is a semantic-simulation for multiple agents that are interaction aware.
    
    agent_components
    world
+   map_interface
    runtime
    common
 ```
