@@ -52,6 +52,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
       const AdjacentLaneCorridors& adjacent_corridors);
   std::vector<primitives::PrimitivePtr> motion_primitives_;
   std::vector<MotionIdx> valid_primitives_;
+  bool check_validity_in_plan_;
   LaneCorridorPtr target_corridor_;
   AdjacentLaneCorridors GetCorridors(const ObservedWorld& observed_world);
 };

@@ -26,7 +26,7 @@ sim_step_time = param_server["simulation"]["step_time",
                                            0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster", 1]
-scenario = scenario_generation.create_single_scenario()
+scenario = scenario_generation.create_scenarios(param_server, 1)[0]
 
 world_state = scenario.get_world_state()
 

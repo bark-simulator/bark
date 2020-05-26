@@ -17,7 +17,7 @@ modules::world::LaneCorridorPtr modules::models::behavior::primitives::
   if (adjacent_corridors.left) {
     return adjacent_corridors.left;
   }
-  LOG(WARNING) << "Called change to left, but left corridor not found!";
+  //LOG(WARNING) << "Called change to left, but left corridor not found!";
   if (!adjacent_corridors.current) {
     return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());

@@ -8,6 +8,8 @@ import shutil
 
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
+from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
+from modules.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 from modules.runtime.scenario.scenario import Scenario
@@ -19,89 +21,91 @@ class DatasetDecomposer:
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._track_dict = dataset_reader.read_tracks(track_filename)
-        self._lane_polygon_list = self.__read_lane_polygons__()
-        self._agents_first_valid_ts_ms = self.__setup_agents_first_valid_ts_ms__()
+        self._map_interface = self.__setup_map_interface__()
+        self._agents_track_infos = self.__setup_agents_track_infos__()
 
-    def __read_lane_polygons__(self):
+    def __setup_map_interface__(self):
         params = ParameterServer()
         # we are creating a dummy scenario to get the map interface from it
         scenario = Scenario(map_file_name=self._map_filename,
                             json_params=params.ConvertToDict())
         world = scenario.get_world_state()
-        lane_ids = world.map.GetRoadgraph().GetAllLaneids()
-        lane_polygon_list = []
-        for lane_id in lane_ids:
-            lane_polygon_list.append(
-                world.map.GetRoadgraph().GetLanePolygonForLaneId(lane_id))
-        return lane_polygon_list
+        map_interface = world.map
+        return map_interface
 
-    def __setup_agents_first_valid_ts_ms__(self):
+    def __find_first_ts_on_map__(self, id_ego):
+        traj = trajectory_from_track(self._track_dict[id_ego])
+        for state in traj:
+            point_agent = Point2d(state[1], state[2])
+            lane_list = self._map_interface.find_nearest_lanes(point_agent, 3)
+            for lane in lane_list:
+                polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
+                if Collide(polygon, point_agent):
+                    time_ego_first = state[0]*1e3  # use timestamp in ms
+                    return time_ego_first
+
+        return None
+
+    def __setup_agents_track_infos__(self):
         # dictionary mapping first valid timestamp to agnet id
-        agents_to_ts = {}
+        agents_track_infos = {}
         for agent_id in self._track_dict.keys():
-            agents_to_ts[agent_id] = self.__find_first_ts_on_map__(agent_id)
-        return agents_to_ts
+            # TODO: this could be made optional
+            first_ts_on_map = self.__find_first_ts_on_map__(agent_id)
+            if first_ts_on_map is None:
+                print("Agent %d not found on map" % agent_id)
+                pass
+            else:
+                start_offset = first_ts_on_map
+                end_offset = self._track_dict[agent_id].time_stamp_ms_last
+                new_agent = AgentTrackInfo(filename=self._track_filename, track_id=agent_id,
+                                           start_offset=start_offset, end_offset=end_offset)
+                agents_track_infos[agent_id] = new_agent
+        return agents_track_infos
+
+    def __get_agent_track_info__(self, agent_id):
+        if agent_id in self._agents_track_infos.keys():
+            return self._agents_track_infos[agent_id]
+        else:
+            raise ValueError("agent {} not available".format(agent_id))
 
     def __find_all_ids__(self, id_ego):
+        # for each agent extract ids of other agents present in the same time span
         list_ids = []
-        time_ego_first = self._agents_first_valid_ts_ms[id_ego]
-        time_ego_last = self._track_dict[id_ego].time_stamp_ms_last
+        time_ego_first = self.__get_agent_track_info__(id_ego).GetStartOffset()
+        time_ego_last = self.__get_agent_track_info__(id_ego).GetEndOffset()
 
-        for id_current in self._track_dict.keys():
-            if self._track_dict[id_current].time_stamp_ms_last < time_ego_first:
+        for id_current in self._agents_track_infos.keys():
+            if id_ego == id_current:
+                pass
+            elif self.__get_agent_track_info__(id_current).GetEndOffset() < time_ego_first:
                 # other ends too early
                 pass
-            elif self._track_dict[id_current].time_stamp_ms_first > time_ego_last:
+            elif self.__get_agent_track_info__(id_current).GetStartOffset() > time_ego_last:
                 # other starts too late
-                pass
-            elif self._agents_first_valid_ts_ms[id_current] > time_ego_last:
-                # other enter map too late
                 pass
             else:
                 list_ids.append(id_current)
 
         return list_ids
 
-    def __find_first_ts_on_map__(self, id_ego):
-        traj = trajectory_from_track(self._track_dict[id_ego])
-        for state in traj:
-            point_agent = Point2d(state[1], state[2])
-            for poly_lane in self._lane_polygon_list:
-                if Collide(poly_lane, point_agent):
-                    time_ego_first = state[0]*1e3  # use timestamp in ms
-                    return time_ego_first
-
-        raise ValueError(
-            "No valid time stamp in map for agent {}".format(id_ego))
-
     def __find_all_scenarios__(self):
-            # for each agent extract ids of other agents present in the same time span
-        list_track_dict = {}
+        scenario_list = []
+        for id_ego in self._agents_track_infos.keys():
+            ego_track_info = self.__get_agent_track_info__(id_ego)
+            new_scenario = ScenarioTrackInfo(
+                map_filename=self._map_filename, track_filename=self._track_filename, ego_track_info=ego_track_info)
 
-        for id_ego in self._track_dict.keys():
-            list_track_dict[id_ego] = self.__find_all_ids__(id_ego)
+            ids_others = self.__find_all_ids__(id_ego)
+            for id_o in ids_others:
+                agent_o_track_info = self.__get_agent_track_info__(id_o)
+                new_scenario.AddTrackInfoOtherAgent(agent_o_track_info)
 
-        return list_track_dict
+            scenario_list.append(new_scenario)
 
-    def __fill_dict_scenario__(self, list_others_dict, id_ego):
-
-        dict_scenario = {}
-        dict_scenario["MapFilename"] = self._map_filename
-        dict_scenario["TrackFilename"] = self._track_filename
-        dict_scenario["TrackIds"] = list_others_dict[id_ego]
-        dict_scenario["StartTs"] = self._agents_first_valid_ts_ms[id_ego]
-        dict_scenario["EndTs"] = self._track_dict[id_ego].time_stamp_ms_last
-        dict_scenario["EgoTrackId"] = id_ego
-
-        return dict_scenario
+        return scenario_list
 
     def decompose(self):
 
-        list_track_dict = self.__find_all_scenarios__()
-
-        dict_scenario_list = []
-        for id_ego in list_track_dict:
-            dict_scenario_list.append(
-                self.__fill_dict_scenario__(list_track_dict, id_ego))
-
-        return dict_scenario_list
+        scenario_list = self.__find_all_scenarios__()
+        return scenario_list
