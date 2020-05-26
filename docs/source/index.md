@@ -28,7 +28,7 @@ Semantic simulation for interaction-aware multi agent planning.
    :maxdepth: 2
    :caption: Bark Modules:
    
-   agent_components
+   models
    world
    map_interface
    runtime

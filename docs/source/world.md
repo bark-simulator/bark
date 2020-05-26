@@ -48,7 +48,7 @@ class ObservedWorld : public World {
 
 In BARK objects are static and can be extended to dynamic agents.
 Objects in BARK have a position, a shape and an ObjectId.
-The agent extends this by adding a behavior, execution and dynamic model as described [here](agent_components.md).
+The agent extends this by adding a behavior, execution and dynamic model as described [here](models.md).
 Additionally, the agent also has a  `GoalDefinitionPtr` and `RoadCorridorPtr`.
 
 The agent class is defined as follows:
