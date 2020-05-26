@@ -1,91 +1,102 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "evaluation.hpp"
-#include "modules/world/world.hpp"
-#include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_behavior_expired.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
-#include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
-#include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/evaluator_distance_to_goal.hpp"
+#include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "modules/world/evaluation/evaluator_goal_reached.hpp"
+#include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/evaluator_xy_position.hpp"
+#include "modules/world/world.hpp"
 
 namespace py = pybind11;
 
 void python_evaluation(py::module m) {
   using namespace modules::world::evaluation;
 
-  py::class_<BaseEvaluator,
-             PyBaseEvaluator,
-             EvaluatorPtr>(m, "BaseEvaluator")
+  py::class_<BaseEvaluator, PyBaseEvaluator, EvaluatorPtr>(m, "BaseEvaluator")
       .def(py::init<>())
       .def("Evaluate",
-        py::overload_cast<const World&>(&BaseEvaluator::Evaluate))
+           py::overload_cast<const World &>(&BaseEvaluator::Evaluate))
       .def("Evaluate",
-        py::overload_cast<const ObservedWorld&>(&BaseEvaluator::Evaluate));
+           py::overload_cast<const ObservedWorld &>(&BaseEvaluator::Evaluate));
 
   py::class_<EvaluatorGoalReached, BaseEvaluator,
-      std::shared_ptr<EvaluatorGoalReached> >(m, "EvaluatorGoalReached")
+             std::shared_ptr<EvaluatorGoalReached>>(m, "EvaluatorGoalReached")
       .def(py::init<>())
-      .def(py::init<const AgentId&>())
+      .def(py::init<const AgentId &>())
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorGoalReached";
       });
 
   py::class_<EvaluatorBehaviorExpired, BaseEvaluator,
-      std::shared_ptr<EvaluatorBehaviorExpired> >(m, "EvaluatorBehaviorExpired")
-      .def(py::init<const AgentId&>())
+             std::shared_ptr<EvaluatorBehaviorExpired>>(
+      m, "EvaluatorBehaviorExpired")
+      .def(py::init<const AgentId &>())
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorBehaviorExpired &g) {
         return "bark.world.evaluation.EvaluatorBehaviorExpired";
       });
 
   py::class_<EvaluatorCollisionAgents, BaseEvaluator,
-    std::shared_ptr<EvaluatorCollisionAgents> >(m, "EvaluatorCollisionAgents")
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorCollisionAgents &g) {
-      return "bark.world.evaluation.EvaluatorCollisionAgents";
-    });
+             std::shared_ptr<EvaluatorCollisionAgents>>(
+      m, "EvaluatorCollisionAgents")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorCollisionAgents &g) {
+        return "bark.world.evaluation.EvaluatorCollisionAgents";
+      });
 
   py::class_<EvaluatorDrivableArea, BaseEvaluator,
-    std::shared_ptr<EvaluatorDrivableArea> >(m, "EvaluatorDrivableArea")
-    .def(py::init<>())
-    .def(py::init<const AgentId&>())
-    .def("__repr__", [](const EvaluatorDrivableArea &g) {
-      return "bark.world.evaluation.EvaluatorDrivableArea";
-    });
+             std::shared_ptr<EvaluatorDrivableArea>>(m, "EvaluatorDrivableArea")
+      .def(py::init<>())
+      .def(py::init<const AgentId &>())
+      .def("__repr__", [](const EvaluatorDrivableArea &g) {
+        return "bark.world.evaluation.EvaluatorDrivableArea";
+      });
 
   py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator,
-    std::shared_ptr<EvaluatorCollisionEgoAgent>>(m, "EvaluatorCollisionEgoAgent")  // NOLINT
-    .def(py::init<const AgentId&>())
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
-      return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
-    });
+             std::shared_ptr<EvaluatorCollisionEgoAgent>>(
+      m, "EvaluatorCollisionEgoAgent")  // NOLINT
+      .def(py::init<const AgentId &>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
+        return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
+      });
   py::class_<EvaluatorStepCount, BaseEvaluator,
-    std::shared_ptr<EvaluatorStepCount> >(m, "EvaluatorStepCount")
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorStepCount &g) {
-      return "bark.world.evaluation.EvaluatorStepCount";
-    });
+             std::shared_ptr<EvaluatorStepCount>>(m, "EvaluatorStepCount")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorStepCount &g) {
+        return "bark.world.evaluation.EvaluatorStepCount";
+      });
 
   py::class_<EvaluatorDistanceToGoal, BaseEvaluator,
-    std::shared_ptr<EvaluatorDistanceToGoal> >(m, "EvaluatorDistanceToGoal")
-    .def(py::init<const AgentId&>())
-    .def("__repr__", [](const EvaluatorDistanceToGoal &g) {
-      return "bark.world.evaluation.EvaluatorDistanceToGoal";
-    });
+             std::shared_ptr<EvaluatorDistanceToGoal>>(
+      m, "EvaluatorDistanceToGoal")
+      .def(py::init<const AgentId &>())
+      .def("__repr__", [](const EvaluatorDistanceToGoal &g) {
+        return "bark.world.evaluation.EvaluatorDistanceToGoal";
+      });
 
-  py::class_<EvaluatorXyPosition, BaseEvaluator,
-    std::shared_ptr<EvaluatorXyPosition> >(m, "EvaluatorXyPosition")
-    .def(py::init<const AgentId&, py::optional<const bool>>(), "agent_id"_a, "y"_a=false)
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorXyPosition &g) {
-      return "bark.world.evaluation.EvaluatorXyPosition";
-    });
+  py::class_<EvaluatorXPosition, BaseEvaluator,
+             std::shared_ptr<EvaluatorXPosition>>(m, "EvaluatorXPosition")
+      .def(py::init<const AgentId &>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorXPosition &g) {
+        return "bark.world.evaluation.EvaluatorXPosition";
+      });
+
+  py::class_<EvaluatorYPosition, BaseEvaluator,
+             std::shared_ptr<EvaluatorYPosition>>(m, "EvaluatorYPosition")
+      .def(py::init<const AgentId &>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorYPosition &g) {
+        return "bark.world.evaluation.EvaluatorYPosition";
+      });
 }

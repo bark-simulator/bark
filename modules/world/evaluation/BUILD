@@ -123,12 +123,25 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_xy_position",
+    name = "evaluator_x_position",
     hdrs = [
-        "evaluator_xy_position.hpp"
+        "evaluator_x_position.hpp"
     ],
-    srcs = [
-        "evaluator_xy_position.cpp"
+    deps = [
+        "//modules/world/evaluation:base_evaluator",
+        "//modules/world:world",
+        "//modules/geometry",
+        "//modules/commons:commons",
+        "//modules/models/dynamic:dynamic",
+        "@boost//:geometry"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "evaluator_y_position",
+    hdrs = [
+        "evaluator_y_position.hpp"
     ],
     deps = [
         "//modules/world/evaluation:base_evaluator",
