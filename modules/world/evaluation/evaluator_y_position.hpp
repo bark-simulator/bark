@@ -24,15 +24,22 @@ using modules::models::dynamic::StateDefinition::Y_POSITION;
 
 class EvaluatorYPosition : public BaseEvaluator {
  public:
-  EvaluatorYPosition()
-      : agent_id_(std::numeric_limits<AgentId>::max()) {}
-  explicit EvaluatorYPosition(const AgentId& agent_id)
-      : agent_id_(agent_id) {}
+  EvaluatorYPosition() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  explicit EvaluatorYPosition(const AgentId& agent_id) : agent_id_(agent_id) {}
   virtual ~EvaluatorYPosition() {}
   virtual EvaluationReturn Evaluate(const world::World& world) {
     const auto& agent = world.GetAgent(agent_id_);
-    State state = agent->GetCurrentState();
-    return state(Y_POSITION);
+    BARK_EXPECT_TRUE(bool(agent));
+    if (bool(agent)){
+      return EvaluatorYPosition::GetY(agent);
+    }
+    return -1;
+  }
+
+  static float GetY(
+    const std::shared_ptr<const modules::world::objects::Agent>& agent) {
+    const auto& agent_pos = agent->GetCurrentPosition();
+    return agent_pos.get<1>();
   }
 
  private:

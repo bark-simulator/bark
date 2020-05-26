@@ -12,7 +12,8 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/evaluator_xy_position.hpp"
+#include "modules/world/evaluation/evaluator_x_position.hpp"
+#include "modules/world/evaluation/evaluator_y_position.hpp"
 #include "modules/world/world.hpp"
 
 namespace py = pybind11;

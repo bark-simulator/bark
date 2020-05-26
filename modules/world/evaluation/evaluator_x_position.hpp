@@ -16,6 +16,7 @@
 
 namespace modules {
 namespace world {
+class World;
 namespace evaluation {
 using modules::geometry::Point2d;
 using modules::geometry::Polygon;
@@ -24,15 +25,22 @@ using modules::models::dynamic::StateDefinition::X_POSITION;
 
 class EvaluatorXPosition : public BaseEvaluator {
  public:
-  EvaluatorXPosition()
-      : agent_id_(std::numeric_limits<AgentId>::max()) {}
-  explicit EvaluatorXPosition(const AgentId& agent_id)
-      : agent_id_(agent_id) {}
+  EvaluatorXPosition() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  explicit EvaluatorXPosition(const AgentId& agent_id) : agent_id_(agent_id) {}
   virtual ~EvaluatorXPosition() {}
   virtual EvaluationReturn Evaluate(const world::World& world) {
     const auto& agent = world.GetAgent(agent_id_);
-    State state = agent->GetCurrentState();
-    return state(X_POSITION);
+    BARK_EXPECT_TRUE(bool(agent));
+    if (bool(agent)){
+      return EvaluatorXPosition::GetX(agent);
+    }
+    return -1;
+  }
+
+  static float GetX(
+    const std::shared_ptr<const modules::world::objects::Agent>& agent) {
+    const auto& agent_pos = agent->GetCurrentPosition();
+    return agent_pos.get<0>();
   }
 
  private:
