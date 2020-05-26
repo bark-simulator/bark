@@ -1,6 +1,6 @@
 BARK Models
 ================================
-Every agent in BARK has these three types of models:
+Every agent in BARK has these models:
 1. **Behavior Model** <br />
   Generates a trajectory the agent should follow.
 2. **Execution Model** <br />
@@ -25,6 +25,9 @@ class BehaviorModel : public modules::commons::BaseType {
 
 The behavior model has only access to the observed world as described [here](world.md).
 Avaliable behavior models in BARK:
+* BehaviorConstantVelocity
+* BehaviorIDMClassic
+* ...
 
 
 ## Execution Models

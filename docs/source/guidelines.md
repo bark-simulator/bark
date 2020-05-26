@@ -2,6 +2,7 @@ Coding Guidelines
 ================================
 We use the Google Style Guides for Python and C++ as a reference.
 
+
 ## Coding Guidelines C++ Code
 
 For C++ code, we use cpplint.
@@ -15,6 +16,7 @@ Cpplint: Cpplint Path
 The path to the cpplint executable. If not set, the default location will be used.
 /(YOUR LOCAL PATH FOR BARK)/bark/python/venv/bin/cpplint
 ```
+
 
 ## Coding Guidelines Python
 

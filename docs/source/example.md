@@ -72,6 +72,7 @@ for _ in range(0, 3):
 However, BARK also provides a `BenchmarkRunner` that runs scenarios automatically and benchmarks the performance of behavior models.
 
 Running `bazel run //examples:merging` will produce the following output:
+
 ```eval_rst
 .. image:: gifs/bark_merging.gif
    :scale: 64 %

@@ -1,10 +1,10 @@
 Behavior Models
 ================================
-A short overview over the behavior models available in BARK.
+Short overview of the behavior models available in BARK.
 
-## BehaviorConstantVelocity
+## Constant Velocity Model
 
-The constant-velocity model interpolates an agent along a set route with constant velocity.
+The `BehaviorConstantVelocity` class interpolates an agent along a set route with constant velocity.
 
 ```cpp
 class BehaviorConstantVelocity : public BehaviorModel {
@@ -15,17 +15,22 @@ class BehaviorConstantVelocity : public BehaviorModel {
   virtual ~BehaviorConstantVelocity() {}
 
   Trajectory Plan(AgentId agent_id,
-                 float delta_time,
-                 const ObservedWorld& observed_world);
+                  float delta_time,
+                  const ObservedWorld& observed_world);
 
   virtual BehaviorModel *Clone() const;
 };
 ```
 
-## IntelligentDriverModel
+## Intelligent Driver Model
 
-## Mobil
 
-## Rule-based
-### Intersection
-### Intersection
+## Mobil Model
+
+
+## Rule-based Models
+
+### Lane Change Model
+
+### Intersection Model
+

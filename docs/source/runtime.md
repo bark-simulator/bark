@@ -1,9 +1,7 @@
 Runtime
 ==================================
 
-
 The runtime module implements the actual simulation in Python.
-
 
 
 ## Viewer

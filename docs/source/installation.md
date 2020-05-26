@@ -1,7 +1,7 @@
 How to Install BARK
 ================================
+
 This section describes the prerequisites and installation-steps of BARK.
-We recommend using Ubuntu.
 
 
 ## Prerequisites
@@ -12,6 +12,7 @@ We recommend using Ubuntu.
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
+
 ## Setup on Linux
 
 1. Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
@@ -19,6 +20,7 @@ We recommend using Ubuntu.
 2. Run `source dev_into.sh`: activates the virtual environment (make sure to run this before bazel)
 3. Use `bazel test //...` to validate that BARK is working.
 4. Finally, try one of the examples provided in BARK by running `bazel run //examples:od8_const_vel_two_agent`.
+
 
 ## Setup on MacOS
 
@@ -31,9 +33,11 @@ We recommend using Ubuntu.
 7. Modify the file `install.sh` by using `virtualenv -p python ./python/venv` instead as python is now the pyenv version.
 7. Now you can follow the same steps as when using Linux.
 
+
 ## Frequently Asked Questions (FAQs)
 
 ### Python.h not found
+
 Make sure that there is a 'Python.h' file in the `python/venv` folder.
 
 ### Feel free to add your own questions here or asks us directly by submitting an issue!
