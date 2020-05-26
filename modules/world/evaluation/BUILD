@@ -165,7 +165,8 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
-        ":evaluator_xy_position"
+        ":evaluator_x_position",
+        ":evaluator_y_position",
     ],
     visibility = ["//visibility:public"],
 )
