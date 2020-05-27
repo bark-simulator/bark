@@ -76,7 +76,7 @@ class BehaviorModel : public modules::commons::BaseType {
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
-  virtual void ActionToBehavior(const Action& action){};
+  virtual void ActionToBehavior(const Action& action) {};
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {};
 
