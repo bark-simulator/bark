@@ -1,4 +1,4 @@
-BARK Models
+Models
 ================================
 
 Every agent in BARK has three models:

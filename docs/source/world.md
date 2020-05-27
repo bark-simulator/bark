@@ -1,5 +1,6 @@
 World
 ================================
+
 The world in BARK contains all objects of the simulation.
 It is modeled as a simultaneous-move game where all agents act at the same time.
 Each agent moves according to its defined behavior, execution and dynamic model.
@@ -9,14 +10,14 @@ The `World` class is defined as
 
 ```cpp
 class World {
- public:
-	void Step(float delta_time);
+  public:
+    void Step(float delta_time);
   ...
- private:
-	MapInterface map_interface_;
-	AgentMap agents_;
-	ObjectMap objects_;
-	double world_time_;
+  private:
+    MapInterface map_interface_;
+    AgentMap agents_;
+    ObjectMap objects_;
+    double world_time_;
 }.
 ```
 

@@ -18,9 +18,6 @@ Semantic simulation for interaction-aware multi agent planning.
    
    installation
    example
-   debugging
-   profiling
-   guidelines
 ```
 
 ```eval_rst
@@ -29,11 +26,23 @@ Semantic simulation for interaction-aware multi agent planning.
    :caption: Bark Modules:
    
    models
+   behavior_models
    world
    map_interface
    runtime
    common
 ```
+
+```eval_rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Other:
+   
+   debugging
+   profiling
+   guidelines
+```
+
 
 Indices and Tables
 ==================

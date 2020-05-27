@@ -9,14 +9,18 @@ All examples are found in the `/examples`-directory of BARK.
 In this example, we show the basic functionality of BARK using a merging scenario.
 It can be ran using: `bazel run //examples:merging`.
 
+```eval_rst
+.. image:: gifs/bark_merging.gif
+   :scale: 100 %
+   :align: left
+```
+
 BARK uses a `ParameterServer()` that stores all parameters of the simulation.
-We can set parameters globally by using
+We can set parameters globally:
 
 ```python
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 ```
-
-An agent also can have individual parameters by using the `AddChild` function.
 
 We define the scenario using a scenario generation module of BARK.
 In the following example, both lanes of the merging scenario are defined with a controlled agent on the right lane.
@@ -58,7 +62,7 @@ env = Runtime(step_time=0.2,
               render=True)
 ```
 
-Running three scenarios can now be done as follows:
+Running scenarios can now be easily done as follows:
 
 ```python
 # run 3 scenarios
@@ -71,19 +75,12 @@ for _ in range(0, 3):
 
 However, BARK also provides a `BenchmarkRunner` that runs scenarios automatically and benchmarks the performance of behavior models.
 
-Running `bazel run //examples:merging` will produce the following output:
-
-```eval_rst
-.. image:: gifs/bark_merging.gif
-   :scale: 64 %
-   :align: left
-```
 
 
 ## Other Examples
-The other examples can be run in a similar fashion to the merging scenario using:
+The other examples can be run in a similar fashion using:
 
-* `bazel run //examples:highway`: Runs a two lane highway example.
-* `bazel run //examples:intersection`: Runs a basic intersection.
-* `bazel run //examples:interaction_dataset`: Replays recorded data from the interaction dataset.
+* `bazel run //examples:highway`: Two lane highway example.
+* `bazel run //examples:intersection`: Three way intersection.
+* `bazel run //examples:interaction_dataset`: Dataset replay.
 * `bazel run //examples:benchmark_database`: Benchmarks behaviors using a scenario database.
