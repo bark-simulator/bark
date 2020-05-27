@@ -58,7 +58,7 @@ def init_state_from_track(track, start):
     minimum_start = min(track.motion_states)
     if minimum_start > start:
         start = minimum_start
-    state = track.motion_states[start]
+    state = track.motion_states[int(start)]
     return bark_state_from_motion_state(state, state.time_stamp_ms).reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
 
 
