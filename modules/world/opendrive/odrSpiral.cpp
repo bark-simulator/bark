@@ -268,10 +268,10 @@ void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start, 
   std::complex<double> ci(0, 1);
   std::complex<double> cs;
 
-  if (cDot == 0 && kappa_start == 0) {  // TODO(fortiss): check formula
+  if (cDot == 0 && kappa_start == 0) {  // TODO(@all): check formula
     // Straight line
     cs = c0 + ci * (theta_start * s);
-  } else if (cDot == 0 && kappa_start != 0) {  // TODO(fortiss): check formula
+  } else if (cDot == 0 && kappa_start != 0) {  // TODO(@all): check formula
     // Arc
     cs = c0 + ci * (theta_start) / kappa_start * (sin(kappa_start * s) + ci * (1 - cos(kappa_start * s)));
   } else {

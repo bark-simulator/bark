@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -76,7 +76,7 @@ class BehaviorModel : public modules::commons::BaseType {
   virtual Trajectory Plan(float delta_time,
                           const world::ObservedWorld& observed_world) = 0;
 
-  virtual void ActionToBehavior(const Action& action){};
+  virtual void ActionToBehavior(const Action& action) {};
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {};
 
