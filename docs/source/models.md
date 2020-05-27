@@ -41,7 +41,7 @@ The `Plan` function returns a behavior for an agent for a given time-horizon (cu
 Each derived class implements its own `Plan` function.
 The behavior models plan the motion using the `ObservedWorld` as described [here](world.md).
 
-Self-contained behavior models in BARK:
+Self-contained [behavior models](behavior_models.md) in BARK:
 
 * BehaviorConstantVelocity: Interpolates on a line with const. velocity.
 * BehaviorIDMClassic: Interpolates on a line and uses the basic IDM equations.
