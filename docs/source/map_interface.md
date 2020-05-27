@@ -1,8 +1,8 @@
 MapInterface
 ================================
 
-The `MapInterface` class implements all map related features for BARK.
-It stores the raw [OpenDrive](http://www.opendrive.org/download.html) map, has a `RoadGraph` for routing and provides convenient and easy-to-use classes for the agents &dash; the `RoadCorridor` and the `LaneCorridor`.
+The `MapInterface` class implements all map-related features for BARK.
+It stores the raw [OpenDrive](http://www.opendrive.org/download.html) map, has a `RoadGraph` for routing, and provides convenient and easy-to-use classes for the agents &dash; the `RoadCorridor` and the `LaneCorridor`.
 
 The `MapInterface` class is implemented as follows:
 
@@ -25,7 +25,7 @@ Additionally, the `MapInterface` also has an lane r-tree for more performant lan
 
 The `OpenDriveMap` class implements the specifications provided by the [OpenDRIVE 1.4 Format](http://www.opendrive.org/download.html).
 This allows an easy parsing and integration of maps available in the OpenDrive format.
-However, for a better usability we encapsulate this specification using a `RoadGraph`, `RoadCorridors` and `LaneCorridors`.
+However, for better usability we encapsulate this specification using a `RoadGraph`, `RoadCorridors`, and `LaneCorridors`.
 
 The basic structure of the `OpenDriveMap` map class:
 
@@ -48,13 +48,13 @@ The `RoadGraph` contains all roads and lanes and their physical location in a gr
 This enables easy routing functionality for an agent in BARK.
 The physical locations of the start and goal are sufficient in order to obtain a sequence of lanes or roads for the agent.
 
-However, in order to store this information more efficiently and to increase the usability, we additionally use `RoadCorridors` and `LaneCorridors`.
+However, in order to store this information more efficiently and to increase usability, we additionally use `RoadCorridors` and `LaneCorridors`.
 
 
 ## RoadCorridor
 
 A `RoadCorridor` is composed out of a sequential sequence of roads that an agent in BARK can follow.
-It contains all the OpenDrive information as well as further information in form of the `LaneCorridor`.
+It contains all the OpenDrive information as well as further information in the form of the `LaneCorridor`.
 The `RoadCorridor` provides an easy-to-use interface by providing functions that tell an agent the current lane and what it left or right lanes are.
 
 The basic structure of the `RoadCorridor` map class:
@@ -72,8 +72,8 @@ struct RoadCorridor {
 
 ## LaneCorridor
 
-A `LaneCorridor` are continuously, sequentially concatenated lanes.
-It provides many utility functions, such as the distance to the end of the `LaneCorridor`, the merged lane polygon, the boundaries and more.
+A `LaneCorridor` is continuously, sequentially concatenated lanes.
+It provides many utility functions, such as the distance to the end of the `LaneCorridor`, the merged lane polygon, the boundaries, and more.
 
 ```cpp
 struct LaneCorridor {

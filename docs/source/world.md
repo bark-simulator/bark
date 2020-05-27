@@ -3,7 +3,7 @@ World
 
 The world in BARK contains all objects of the simulation.
 It is modeled as a simultaneous-move game where all agents act at the same time.
-Each agent moves according to its defined behavior, execution and dynamic model.
+Each agent moves according to its defined behavior, execution, and dynamic model.
 After all agents have been moved, the overall validity is then checked.
 
 The `World` class is defined as
@@ -21,7 +21,7 @@ class World {
 }.
 ```
 
-The [MapInterface](map_interface.md) contains the map, functionalities for routing and simplified structures for the agents to plan in.
+The [MapInterface](map_interface.md) contains the map, functionalities for routing, and simplified structures for the agents to plan in.
 The `AgentMap` contains all agents of the simulation and the `ObjectMap` all static objects.
 Finally, the `World` class also contains the simulation world time `world_time_`.
 
@@ -48,8 +48,8 @@ class ObservedWorld : public World {
 ## Objects and Agents
 
 In BARK objects are static and can be extended to dynamic agents.
-Objects in BARK have a position, a shape and an ObjectId.
-The agent extends this by adding a behavior, execution and dynamic model as described [here](models.md).
+Objects in BARK have a position, a shape, and an ObjectId.
+The agent extends this by adding a behavior, execution, and dynamic model as described [here](models.md).
 Additionally, the agent also has a  `GoalDefinitionPtr` and `RoadCorridorPtr`.
 
 The agent class is defined as follows:

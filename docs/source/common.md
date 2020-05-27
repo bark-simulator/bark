@@ -6,8 +6,8 @@ Commonly used classes and functions in BARK.
 
 ## Geometry
 
-BARK provides an easy-to-use geometry library that supports points, lines and polygons for performant geometric calculations.
-By wrapping the `boost::geometry` state-of-the-art algorithms as well as a high usability is provided.
+BARK provides an easy-to-use geometry library that supports points, lines, and polygons for performant geometric calculations.
+By wrapping the `boost::geometry` state-of-the-art algorithms as well as high usability is provided.
 It implements all geometric functions, such as collision checks and distance calculations.
 
 

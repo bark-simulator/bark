@@ -1,6 +1,6 @@
 Examples
 =========================
-In order to get started with BARK, we provide several examples that show the basic functionality.
+To get started with BARK, we provide several examples that show the basic functionality.
 All examples are found in the `/examples`-directory of BARK.
 
 
@@ -80,7 +80,7 @@ However, BARK also provides a `BenchmarkRunner` that runs scenarios automaticall
 ## Other Examples
 The other examples can be run in a similar fashion using:
 
-* `bazel run //examples:highway`: Two lane highway example.
+* `bazel run //examples:highway`: Two-lane highway example.
 * `bazel run //examples:intersection`: Three way intersection.
 * `bazel run //examples:interaction_dataset`: Dataset replay.
 * `bazel run //examples:benchmark_database`: Benchmarks behaviors using a scenario database.

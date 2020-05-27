@@ -60,12 +60,19 @@ It also specifies which agents should be evaluated using `self._eval_agent_ids`.
 ## Scenario Generation
 
 A scenario generation in BARK returns a list of scenarios of the type  `Scenario`.
-These can be ran by the BARK runtime or by the `BenchmarkRunner`.
+These can be run by the BARK runtime or by the `BenchmarkRunner`.
+
+Currently available scenario generators:
+
+* `ConfigurableScenarioGeneration`: Sophisticated scenario generation providing conflict resolution.
+* `UniformVehicleDistribution`: Samples the agents uniformly and their parameters.
+* `ConfigWithEase`: Configure any scenario fast and with ease.
+* `DeterministicScenarioGeneration`: Deterministic, reproducible scenario generation.
 
 
 ## Benchmarking
 
-BARK provides a `BenchmarkRunner` and `BenchmarkAnalyzer` to automatically run and verify the performance of novel beahvior models.
+BARK provides a `BenchmarkRunner` and `BenchmarkAnalyzer` to automatically run and verify the performance of novel behavior models.
 
 
 ## Viewer
@@ -76,4 +83,4 @@ Several viewer modules are currently available:
 
 * `MPViewer`: Matplotlib viewer for scientific documentation.
 * `Panda3dViewer`: 3D-Visualization.
-* `PygameViewer`: Gym like visualization of the BARK environment.
+* `PygameViewer`: Gym-like visualization of the BARK environment.

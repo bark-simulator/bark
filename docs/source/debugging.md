@@ -9,7 +9,7 @@ First, you need to build BARK in the debug mode using
 bazel build //... --compilation_mode=dbg
 ```
 
-Additionally, you need to modify the `.vscode/launch.json` in Visual Studio Code and then launch the debugger (F5 in current file).
+Additionally, you need to modify the `.vscode/launch.json` in Visual Studio Code and then launch the debugger (F5 in the current file).
 
 ```
 {
@@ -76,7 +76,7 @@ Then, add the following launch configuration and adapt the path in the `.vscode/
 }
 ```
 
-Debuggins process:
+Debugging process:
 1. Add a breakpoint in the python file you want to debug, somewhere before an interesting code section, run the launch configuration "Python: Current File" (see before) and wait until the breakpoint is reached.
 2. Run the "(gdb) Attach" launch configuration, select the python interpreter whose path contains "/.vscode/". You will be promted to enter your user password.
 3. Set breakpoints in the C++ Files

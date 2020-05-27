@@ -4,7 +4,7 @@
 ## Step 1: Install Easy Profiler
 
 Install Qt5 (Paket qt5-default), see https://wiki.ubuntuusers.de/Qt/.
-Clone https://github.com/yse/easy_profiler and build eady profiler.
+Clone https://github.com/yse/easy_profiler and build easy profiler.
 Then install easy profiler using `make install` and add to ld_path using `ldconfig`
 
 
@@ -12,8 +12,8 @@ Then install easy profiler using `make install` and add to ld_path using `ldconf
 
 Make sure to have `build:easy_profiler --linkopt='-L/usr/local/lib/ -leasy_profiler' --copt='-DBUILD_WITH_EASY_PROFILER'`in your bazel.rc file.
 Include easy_profiler using `\#include <easy/profiler.h>`.
-In every function you want to profile, write `EASY_FUNCTION();` at the beginning.
-Defining the functions `void profiler_startup()` and void `profiler_finish()`, for example in some utitly function
+In every function, you want to profile, write `EASY_FUNCTION();` at the beginning.
+Defining the functions `void profiler_startup()` and void `profiler_finish()`, for example in some utility function
 
 ```
 void profiler_startup() {

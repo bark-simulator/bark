@@ -12,5 +12,5 @@ Changelog
 - Intersections and merging scenarios
 - BenchmarkRunner and Evaluator
 - Dataset replay agents
-- Novel and upgrated scenario generation
+- Novel and upgraded scenario generation
 - Many improvements and bug fixes

@@ -40,4 +40,4 @@ This section describes the prerequisites and installation-steps of BARK.
 
 Make sure that there is a 'Python.h' file in the `python/venv` folder.
 
-### Feel free to add your own questions here or asks us directly by submitting an issue!
+### Feel free to add your questions here or asks us directly by submitting an issue!
