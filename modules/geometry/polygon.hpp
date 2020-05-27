@@ -30,6 +30,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
             const Line_t<T>&
             line);  //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual float CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -136,6 +137,12 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     mat.row(i) << bg::get<0>(points[i]), bg::get<1>(points[i]);
   }
   return mat;
+}
+
+
+template <>
+inline float Polygon::CalculateArea() const {
+  return bg::area(obj_);
 }
 
 inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
