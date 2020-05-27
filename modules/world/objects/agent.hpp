@@ -142,7 +142,7 @@ class Agent : public Object {
   models::execution::ExecutionModelPtr execution_model_;
   modules::world::map::RoadCorridorPtr road_corridor_;
   models::behavior::StateActionHistory history_;
-  // TODO(fortiss): move max_history_length_ to parameter
+  // TODO(@all): move max_history_length_ to parameter
   uint32_t max_history_length_;
   modules::world::goal_definition::GoalDefinitionPtr goal_definition_;
 };

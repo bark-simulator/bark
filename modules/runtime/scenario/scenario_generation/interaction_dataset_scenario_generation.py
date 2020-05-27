@@ -1,8 +1,8 @@
-# Copyright (c) 2020 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# Based on the implementation by Luis Gressenbuch
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \

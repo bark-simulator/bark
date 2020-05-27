@@ -67,7 +67,7 @@ struct CostFunctor {
     }
 
     // differential values
-    // TODO(fortiss): seperate weights
+    // TODO(@all): seperate weights
     T weights_acc = T(1e1);
     T weights_delta = T(1);
     for (int i = 0; i < optimization_settings_.num_optimization_steps - 1; i++) {

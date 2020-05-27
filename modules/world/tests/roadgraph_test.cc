@@ -594,7 +594,7 @@ TEST(roadgraph, get_driving_corridor_test)
   r.AddInnerNeighbor(l00, l10);
   r.AddInnerNeighbor(l01, l11);
 
-  // TODO(@fortiss): add new assertions as this has moved to MapInterface
+  // TODO(@all): add new assertions as this has moved to MapInterface
   /*
   std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > horizon = r.ComputeXodrLaneBoundariesHorizon(l10, l11);
 

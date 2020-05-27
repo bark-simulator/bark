@@ -19,7 +19,7 @@ dynamic::Trajectory ExecutionModelInterpolate::Execute(
     const dynamic::DynamicModelPtr dynamic_model,
     const dynamic::State current_state) {
 
-  // TODO(fortiss) fix interpolation model
+  // TODO(@all) fix interpolation model
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> traj = trajectory;
   SetLastTrajectory(traj);
   return traj;
