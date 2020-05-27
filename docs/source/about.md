@@ -33,19 +33,19 @@ For more information have a look at our latest paper: [BARK: Open Behavior Bench
 ](https://arxiv.org/abs/2003.02604).
 
 
-## Approach (BARK Concept)
+## Approach
 
-BARK is a multi-agent simulation environment tailored towards the use case of autonomous systems, with a special focus on autonomous driving.
-Each agent is controlled by a behavior specification in form of a behavioral model.
+BARK is a multi-agent simulation tailored towards the use case of autonomous systems, with a special focus on autonomous driving.
+Each agent is controlled by a behavior specification in form of a behavior model.
 Behavioral models can be easily exchanged and used both for simulation of other participants and/or as behavior prediction on the behavior generation side.
-For this, BARK defines abstract interfaces for the development of own behavioral models but also delivers several state-of-the-art behavioral models based on machine-learning and classical approaches.
+For this, BARK defines abstract interfaces for the development of own behavioral models but also delivers several state-of-the-art behavior models based on machine-learning and classical approaches.
 By additionally having a set of metrics and functions that evaluate individual components, BARK acts as a comprehensive framework for the development and verification of behavior generation approaches.
 
 
 ## BARK Architecture
 
 BARK has a modular and exchangable architecture that is composed of modules.
-An overview of the most important modules in BARK:
+Core modules of BARK:
 
 ```eval_rst
 .. image:: overview.png

@@ -22,7 +22,7 @@ Semantic simulation for interaction-aware multi agent planning.
 
 ```eval_rst
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Bark Modules:
    
    models
