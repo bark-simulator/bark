@@ -103,9 +103,12 @@ struct RoadCorridor {
   }
   bool ComputeRoadPolygon() {
     Polygon merged_polygon;
+    // merge all lane polygons
     for (const auto& lane_corr : unique_lane_corridors_) {
-      merged_polygon.ConcatenatePolygons(
-        lane_corr->GetMergedPolygon());
+      const auto& lanes = lane_corr->GetLanes();
+      for (const auto& lane : lanes) {
+        merged_polygon.ConcatenatePolygons(lane.second->GetPolygon());
+      }
     }
     road_polygon_ = merged_polygon;
     return true;
