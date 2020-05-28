@@ -19,9 +19,9 @@ BehaviorMPMacroActions::BehaviorMPMacroActions(
     const std::vector<primitives::PrimitivePtr>& motion_primitives)
     : BehaviorMotionPrimitives(params),
       motion_primitives_(motion_primitives),
-      check_validity_in_plan_(params->AddChild("BehaviorMPMacroActions")
-                        ->GetBool("CheckValidityInPlan",
-                        "If true only primitives can be selected which are valid", true)) {}
+      check_validity_in_plan_(params->GetBool(
+          "BehaviorMPMacroActions::CheckValidityInPlan",
+          "If true only primitives can be selected which are valid", true)) {}
 
 BehaviorMotionPrimitives::MotionIdx BehaviorMPMacroActions::AddMotionPrimitive(
     const primitives::PrimitivePtr& primitive) {
@@ -51,7 +51,7 @@ Trajectory BehaviorMPMacroActions::Plan(
           << "No motion primitive available! At least one primitive must be "
             "available at all times!";
     }
-    const auto& selected_mp = motion_primitives_.at(
+    selected_mp = motion_primitives_.at(
         valid_primitives_.at(boost::get<DiscreteAction>(active_motion_)));
     target_corridor_ =
         selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);

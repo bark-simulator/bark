@@ -23,11 +23,11 @@ using world::map::LaneCorridorPtr;
 
 class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
  public:
-  explicit BehaviorMPMacroActions(const ParamsPtr& params)
-      : BehaviorMotionPrimitives(params) {}
   BehaviorMPMacroActions(
       const ParamsPtr& params,
       const std::vector<primitives::PrimitivePtr>& motion_primitives);
+  explicit BehaviorMPMacroActions(const ParamsPtr& params)
+      : BehaviorMPMacroActions(params, {}) {}
 
   ~BehaviorMPMacroActions() = default;
 
