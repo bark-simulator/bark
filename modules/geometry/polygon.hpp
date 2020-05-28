@@ -207,7 +207,7 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
   return bg::intersects(poly1.obj_, poly2.obj_);
 }
 
-inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
+inline bool BufferPolygon(const Polygon& polygon, const double distance,
                           Polygon* shrunk_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;

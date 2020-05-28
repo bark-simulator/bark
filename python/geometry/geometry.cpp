@@ -179,6 +179,12 @@ void python_geometry(py::module m) {
            })
       .def("ConcatenatePolygons", &Polygon::ConcatenatePolygons,
            "concatenates with another polygon")
+      .def("BufferPolygon", [](const Polygon& p,
+                               const double distance) {
+        Polygon poly_buffered;
+        BufferPolygon(p, distance, &poly_buffered);
+        return poly_buffered;
+      })
       .def("CalculateArea", &Polygon::CalculateArea, "calculates are covered")
       .def("ToArray", &Polygon::ToArray, "returns numpy array")
       .def("Valid", &Polygon::Valid, "checks if polygong is valid.")

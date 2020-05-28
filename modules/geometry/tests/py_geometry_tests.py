@@ -195,6 +195,35 @@ class GeometryTests(unittest.TestCase):
 
         self.assertTrue(a3 == a1+a2)
 
+    def test_robust_concatenate_polygons(self):
+
+        poly1 = Polygon2d()
+        poly1.AddPoint([0, 0])
+        poly1.AddPoint([0, 2])
+        poly1.AddPoint([4, 2])
+        poly1.AddPoint([4, 0])
+        poly1.AddPoint([0, 0])
+        self.assertTrue(poly1.Valid())
+        a1 = poly1.CalculateArea()
+
+        eps = 0.05
+        poly2 = Polygon2d()
+        poly2.AddPoint([4+eps, 0])
+        poly2.AddPoint([4+eps, 2])
+        poly2.AddPoint([8+eps, 2])
+        poly2.AddPoint([8+eps, 0])
+        poly2.AddPoint([4+eps, 0])
+        self.assertTrue(poly2.Valid())
+        a2 = poly2.CalculateArea()
+
+        poly1b = poly1.BufferPolygon(0.1)
+        poly1b.ConcatenatePolygons(poly2)
+        poly3 = poly1b.BufferPolygon(-0.1)
+        self.assertTrue(poly3.Valid())
+
+        a3 = poly3.CalculateArea()
+        print(poly3)
+
     def test_distances_to_center(self):
 
         shape = CarLimousine()
