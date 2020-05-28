@@ -162,6 +162,17 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_safe_lane_change",
+    srcs = ["evaluator_safe_lane_change.cpp"],
+    hdrs = ["evaluator_safe_lane_change.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -175,6 +186,7 @@ cc_library(
         ":evaluator_ltl",
         ":evaluator_right_overtake",
         ":evaluator_safe_distance",
+        ":evaluator_safe_lane_change",
     ],
     visibility = ["//visibility:public"],
 )

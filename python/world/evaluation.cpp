@@ -12,6 +12,7 @@
 #include "modules/world/evaluation/evaluator_ltl.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
+#include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
@@ -100,6 +101,7 @@ void python_evaluation(py::module m) {
           .def("__repr__", [](const EvaluatorRightOvertake &g) {
             return "bark.world.evaluation.EvaluatorRightOvertake";
           });
+
   py::class_<EvaluatorSafeDistance, BaseEvaluator,
              std::shared_ptr<EvaluatorSafeDistance>>(m, "EvaluatorSafeDistance")
       .def(py::init<AgentId>())
@@ -107,6 +109,16 @@ void python_evaluation(py::module m) {
                              &EvaluatorSafeDistance::GetRuleStates)
       .def("__repr__", [](const EvaluatorSafeDistance &g) {
         return "bark.world.evaluation.EvaluatorSafeDistance";
+      });
+
+  py::class_<EvaluatorSafeLaneChange, BaseEvaluator,
+             std::shared_ptr<EvaluatorSafeLaneChange>>(
+      m, "EvaluatorSafeLaneChange")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorSafeLaneChange::GetRuleStates)
+      .def("__repr__", [](const EvaluatorSafeLaneChange &g) {
+        return "bark.world.evaluation.EvaluatorSafeLaneChange";
       });
 
   // LABELS
