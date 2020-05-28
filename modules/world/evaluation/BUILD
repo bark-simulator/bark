@@ -151,6 +151,17 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_safe_distance",
+    srcs = ["evaluator_safe_distance.cpp"],
+    hdrs = ["evaluator_safe_distance.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -163,6 +174,7 @@ cc_library(
         ":evaluator_distance_to_goal",
         ":evaluator_ltl",
         ":evaluator_right_overtake",
+        ":evaluator_safe_distance",
     ],
     visibility = ["//visibility:public"],
 )

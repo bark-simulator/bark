@@ -4,16 +4,15 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "evaluation.hpp"
-#include "modules/world/world.hpp"
-#include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_behavior_expired.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
-#include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
-#include "modules/world/evaluation/evaluator_step_count.hpp"
+#include "modules/world/evaluation/evaluator_drivable_area.hpp"
+#include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
-#include "modules/world/tests/constant_label_evaluator.hpp"
+#include "modules/world/evaluation/evaluator_safe_distance.hpp"
+#include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/base_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_evaluator.hpp"
@@ -24,6 +23,8 @@
 #include "modules/world/evaluation/labels/left_of_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/right_of_label_evaluator.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_evaluator.hpp"
+#include "modules/world/tests/constant_label_evaluator.hpp"
+#include "modules/world/world.hpp"
 
 namespace py = pybind11;
 
@@ -99,6 +100,14 @@ void python_evaluation(py::module m) {
           .def("__repr__", [](const EvaluatorRightOvertake &g) {
             return "bark.world.evaluation.EvaluatorRightOvertake";
           });
+  py::class_<EvaluatorSafeDistance, BaseEvaluator,
+             std::shared_ptr<EvaluatorSafeDistance>>(m, "EvaluatorSafeDistance")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorSafeDistance::GetRuleStates)
+      .def("__repr__", [](const EvaluatorSafeDistance &g) {
+        return "bark.world.evaluation.EvaluatorSafeDistance";
+      });
 
   // LABELS
 
