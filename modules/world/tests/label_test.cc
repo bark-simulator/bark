@@ -5,6 +5,11 @@
 
 #include "gtest/gtest.h"
 
+#include "modules/commons/params/default_params.hpp"
+#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
@@ -12,6 +17,10 @@
 
 using namespace modules::world::evaluation;
 using namespace modules::world::tests;
+using namespace modules::models::behavior;
+using namespace modules::models::behavior::primitives;
+
+using modules::commons::DefaultParams;
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));
@@ -96,6 +105,78 @@ TEST(label_test, safe_distance) {
   auto observed_world5 = world5->Observe({ego_id})[0];
   auto labels5 = observed_world5.EvaluateLabels();
   EXPECT_TRUE(labels5[label]);
+}
+
+TEST(label_test, lane_change_right) {
+  auto evaluator = LabelFunctionPtr(new LaneChangeLabelFunction("lane_change"));
+  auto label = evaluator->GetLabel();
+  auto world = MakeTestWorldHighway();
+  world->AddLabels({evaluator});
+  auto params = std::make_shared<DefaultParams>();
+  AgentId id = 1;
+  auto beh_change_right = std::make_shared<BehaviorMPMacroActions>(params);
+  auto motion_idx = beh_change_right->AddMotionPrimitive(
+      PrimitivePtr(new PrimitiveConstAccChangeToRight(params)));
+  beh_change_right->ActionToBehavior(motion_idx);
+  auto agent_1 = world->GetAgent(id);
+  agent_1->SetBehaviorModel(beh_change_right);
+  auto current_pos = agent_1->GetCurrentPosition();
+  const auto right_lc =
+      agent_1->GetRoadCorridor()->GetLeftRightLaneCorridor(current_pos).second;
+  auto current_lc =
+      agent_1->GetRoadCorridor()->GetCurrentLaneCorridor(current_pos);
+  auto observed_world = world->Observe({id})[0];
+  auto labels = observed_world.EvaluateLabels();
+  ASSERT_FALSE(labels[label]);
+  while (right_lc != current_lc) {
+    observed_world = world->Observe({id})[0];
+    labels = observed_world.EvaluateLabels();
+    ASSERT_FALSE(labels[label]);
+    world->Step(0.5);
+    agent_1 = world->GetAgent(id);
+    current_pos = agent_1->GetCurrentPosition();
+    current_lc =
+        agent_1->GetRoadCorridor()->GetCurrentLaneCorridor(current_pos);
+  }
+  observed_world = world->Observe({id})[0];
+  labels = observed_world.EvaluateLabels();
+  EXPECT_TRUE(labels[label]);
+}
+
+TEST(label_test, lane_change_left) {
+  auto evaluator = LabelFunctionPtr(new LaneChangeLabelFunction("lane_change"));
+  auto label = evaluator->GetLabel();
+  auto world = MakeTestWorldHighway();
+  world->AddLabels({evaluator});
+  auto params = std::make_shared<DefaultParams>();
+  AgentId id = 4;
+  auto beh_change_left = std::make_shared<BehaviorMPMacroActions>(params);
+  auto motion_idx = beh_change_left->AddMotionPrimitive(
+      PrimitivePtr(new PrimitiveConstAccChangeToLeft(params)));
+  beh_change_left->ActionToBehavior(motion_idx);
+  auto agent_4 = world->GetAgent(id);
+  agent_4->SetBehaviorModel(beh_change_left);
+  auto current_pos = agent_4->GetCurrentPosition();
+  const auto left_lc =
+      agent_4->GetRoadCorridor()->GetLeftRightLaneCorridor(current_pos).first;
+  auto current_lc =
+      agent_4->GetRoadCorridor()->GetCurrentLaneCorridor(current_pos);
+  auto observed_world = world->Observe({id})[0];
+  auto labels = observed_world.EvaluateLabels();
+  ASSERT_FALSE(labels[label]);
+  while (left_lc != current_lc) {
+    observed_world = world->Observe({id})[0];
+    labels = observed_world.EvaluateLabels();
+    ASSERT_FALSE(labels[label]);
+    world->Step(0.5);
+    agent_4 = world->GetAgent(id);
+    current_pos = agent_4->GetCurrentPosition();
+    current_lc =
+        agent_4->GetRoadCorridor()->GetCurrentLaneCorridor(current_pos);
+  }
+  observed_world = world->Observe({id})[0];
+  labels = observed_world.EvaluateLabels();
+  EXPECT_TRUE(labels[label]);
 }
 
 int main(int argc, char** argv) {

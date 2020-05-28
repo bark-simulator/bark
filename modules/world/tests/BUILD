@@ -186,6 +186,7 @@ cc_test(
     deps = [
         ":make_test_world",
         "//modules/world/evaluation/labels:label_evaluation",
+        "//modules/models/behavior/motion_primitives:motion_primitives",
         "@gtest//:gtest_main",
     ],
 )
