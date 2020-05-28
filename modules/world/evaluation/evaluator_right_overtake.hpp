@@ -23,7 +23,7 @@ class EvaluatorRightOvertake : public EvaluatorLTL {
   }
 
   static const char formula_[];
-  static const LabelEvaluators labels_;
+  static const LabelFunctions labels_;
 };
 
 }  // namespace evaluation

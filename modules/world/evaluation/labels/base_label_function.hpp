@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_EVALUATOR_HPP_
-#define MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_EVALUATOR_HPP_
+#ifndef MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_FUNCTION_HPP_
+#define MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_FUNCTION_HPP_
 
 #include <memory>
 #include <string>
@@ -25,9 +25,9 @@ namespace evaluation {
 using ltl::Label;
 using LabelMap = ltl::EvaluationMap;
 
-class BaseLabelEvaluator {
+class BaseLabelFunction {
  public:
-  explicit BaseLabelEvaluator(std::string label_str)
+  explicit BaseLabelFunction(std::string label_str)
       : label_str_(std::move(label_str)) {}
   virtual std::vector<LabelMap::value_type> Evaluate(
       const world::ObservedWorld &observed_world) const = 0;
@@ -40,9 +40,9 @@ class BaseLabelEvaluator {
  private:
   std::string label_str_;
 };
-typedef std::shared_ptr<BaseLabelEvaluator> LabelEvaluatorPtr;
+typedef std::shared_ptr<BaseLabelFunction> LabelFunctionPtr;
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_EVALUATOR_HPP_
+#endif  // MODULES_WORLD_EVALUATION_LABELS_BASE_LABEL_FUNCTION_HPP_

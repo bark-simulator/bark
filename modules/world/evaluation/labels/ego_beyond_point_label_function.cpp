@@ -3,18 +3,18 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "ego_beyond_point_label_evaluator.hpp"
+#include "ego_beyond_point_label_function.hpp"
 #include <unordered_map>
 #include "modules/world/observed_world.hpp"
 
 using modules::world::evaluation::LabelMap;
 
-modules::world::evaluation::EgoBeyondPointLabelEvaluator::
-    EgoBeyondPointLabelEvaluator(const std::string& label_str,
-                                 const modules::geometry::Point2d& beyond_point)
-    : BaseLabelEvaluator(label_str), beyond_point_(beyond_point) {}
+modules::world::evaluation::EgoBeyondPointLabelFunction::
+    EgoBeyondPointLabelFunction(const std::string& label_str,
+                                const modules::geometry::Point2d& beyond_point)
+    : BaseLabelFunction(label_str), beyond_point_(beyond_point) {}
 std::vector<LabelMap::value_type>
-modules::world::evaluation::EgoBeyondPointLabelEvaluator::Evaluate(
+modules::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
     const modules::world::ObservedWorld& observed_world) const {
   const auto ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   const auto lc = observed_world.GetLaneCorridor();
@@ -26,7 +26,7 @@ modules::world::evaluation::EgoBeyondPointLabelEvaluator::Evaluate(
   return {{GetLabel(), false}};
 }
 const modules::geometry::Point2d&
-modules::world::evaluation::EgoBeyondPointLabelEvaluator::GetBeyondPoint()
+modules::world::evaluation::EgoBeyondPointLabelFunction::GetBeyondPoint()
     const {
   return beyond_point_;
 }

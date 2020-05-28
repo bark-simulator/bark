@@ -1,6 +1,6 @@
 cc_library(
     name = "base_label_evaluator",
-    hdrs = ["base_label_evaluator.hpp"],
+    hdrs = ["base_label_function.hpp"],
     visibility = ["//visibility:public"],
     deps = [
         "//modules/world:include",

@@ -3,7 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "safe_distance_label_evaluator.hpp"
+#include "safe_distance_label_function.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -12,16 +12,16 @@ namespace evaluation {
 
 using modules::models::dynamic::StateDefinition;
 
-SafeDistanceLabelEvaluator::SafeDistanceLabelEvaluator(
+SafeDistanceLabelFunction::SafeDistanceLabelFunction(
     const std::string& label_str, bool to_rear, double delta, double a_e,
     double a_o)
-    : BaseLabelEvaluator(label_str),
+    : BaseLabelFunction(label_str),
       to_rear_(to_rear),
       delta_(delta),
       a_e_(a_e),
       a_o_(a_o) {}
 
-std::vector<LabelMap::value_type> SafeDistanceLabelEvaluator::Evaluate(
+std::vector<LabelMap::value_type> SafeDistanceLabelFunction::Evaluate(
     const world::ObservedWorld& observed_world) const {
   auto ego = std::const_pointer_cast<Agent>(observed_world.GetEgoAgent());
   auto fr_agents = observed_world.GetAgentFrontRearForId(
@@ -38,7 +38,7 @@ std::vector<LabelMap::value_type> SafeDistanceLabelEvaluator::Evaluate(
   return {{GetLabel(), distance_safe}};
 }
 
-bool SafeDistanceLabelEvaluator::CheckSafeDistance(
+bool SafeDistanceLabelFunction::CheckSafeDistance(
     const AgentPtr& rear_agent, const AgentPtr& front_agent,
     const FrenetPosition& frenet_dist, const double a_r,
     const double a_f) const {
@@ -70,8 +70,8 @@ bool SafeDistanceLabelEvaluator::CheckSafeDistance(
   return distance_safe;
 }
 
-double SafeDistanceLabelEvaluator::CalcVelFrontStar(const double v_f,
-                                                    const double a_f) const {
+double SafeDistanceLabelFunction::CalcVelFrontStar(const double v_f,
+                                                   const double a_f) const {
   // see Theorem 4 in "Formalising and Monitoring Traffic Rules for Autonomous
   // Vehicles in Isabelle/HOL"
   double v_f_star;
@@ -84,20 +84,20 @@ double SafeDistanceLabelEvaluator::CalcVelFrontStar(const double v_f,
   return v_f_star;
 }
 
-double SafeDistanceLabelEvaluator::CalcSafeDistance0(const double v_r,
-                                                     const double a_r) const {
+double SafeDistanceLabelFunction::CalcSafeDistance0(const double v_r,
+                                                    const double a_r) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r);
 }
 
-double SafeDistanceLabelEvaluator::CalcSafeDistance1(const double v_r,
-                                                     const double v_f,
+double SafeDistanceLabelFunction::CalcSafeDistance1(const double v_r,
+                                                    const double v_f,
                                                      const double a_r,
                                                      const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) + pow(v_f, 2) / (2.0 * a_f);
 }
 
-double SafeDistanceLabelEvaluator::CalcSafeDistance2(const double v_r,
-                                                     const double v_f,
+double SafeDistanceLabelFunction::CalcSafeDistance2(const double v_r,
+                                                    const double v_f,
                                                      const double a_r,
                                                      const double a_f) const {
   double sqrt_numerator = v_f + a_f * delta_ - v_r;
@@ -105,8 +105,8 @@ double SafeDistanceLabelEvaluator::CalcSafeDistance2(const double v_r,
          0.5 * a_f * pow(delta_, 2) + v_r * delta_;
 }
 
-double SafeDistanceLabelEvaluator::CalcSafeDistance3(const double v_r,
-                                                     const double v_f,
+double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
+                                                    const double v_f,
                                                      const double a_r,
                                                      const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) - v_f * delta_ -

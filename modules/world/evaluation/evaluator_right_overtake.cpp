@@ -5,9 +5,9 @@
 
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 
-#include "modules/world/evaluation/labels/behind_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/front_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/right_of_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/labels/front_of_label_function.hpp"
+#include "modules/world/evaluation/labels/right_of_label_function.hpp"
 
 namespace modules {
 namespace world {
@@ -15,10 +15,10 @@ namespace evaluation {
 const char EvaluatorRightOvertake::formula_[] =
     "G !(b_v#0 & X[!](b_v#0 U r_v#0 U f_v#0))";
 
-const LabelEvaluators EvaluatorRightOvertake::labels_ = {
-    LabelEvaluatorPtr(new RightOfLabelEvaluator("r_v")),
-    LabelEvaluatorPtr(new FrontOfLabelEvaluator("f_v")),
-    LabelEvaluatorPtr(new BehindOfLabelEvaluator("b_v"))};
+const LabelFunctions EvaluatorRightOvertake::labels_ = {
+    LabelFunctionPtr(new RightOfLabelFunction("r_v")),
+    LabelFunctionPtr(new FrontOfLabelFunction("f_v")),
+    LabelFunctionPtr(new BehindOfLabelFunction("b_v"))};
 
 }  // namespace evaluation
 }  // namespace world

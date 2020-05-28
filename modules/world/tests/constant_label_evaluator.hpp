@@ -9,16 +9,16 @@
 #include <string>
 #include <vector>
 
-#include "modules/world/evaluation/labels/base_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/base_label_function.hpp"
 
 namespace modules {
 namespace world {
 namespace evaluation {
 
-class ConstantLabelEvaluator : public BaseLabelEvaluator {
+class ConstantLabelFunction : public BaseLabelFunction {
  public:
-  ConstantLabelEvaluator(const std::string& label_str)
-      : BaseLabelEvaluator(label_str), value_(true) {}
+  ConstantLabelFunction(const std::string& label_str)
+      : BaseLabelFunction(label_str), value_(true) {}
   std::vector<LabelMap::value_type> Evaluate(
       const world::ObservedWorld& observed_world) const override {
     return {{ltl::Label(GetLabelStr()), value_}};

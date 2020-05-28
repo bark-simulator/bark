@@ -37,7 +37,7 @@ World::World(const std::shared_ptr<World>& world) :
   world_time_(world->GetWorldTime()),
   remove_agents_(world->GetRemoveAgents()),
   rtree_agents_(world->rtree_agents_),
-  label_evaluators_(world->GetLabelEvaluators()){
+      label_evaluators_(world->GetLabelFunctions()) {
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
@@ -313,10 +313,10 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
   return trajectory_map;
 }
 
-void World::AddLabels(const LabelEvaluators& label_evaluators) {
+void World::AddLabels(const LabelFunctions& label_evaluators) {
   label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(), label_evaluators.end());
 }
-const LabelEvaluators& World::GetLabelEvaluators() const {
+const LabelFunctions& World::GetLabelFunctions() const {
   return label_evaluators_;
 }
 void World::RemoveAgentById(AgentId agent_id) {

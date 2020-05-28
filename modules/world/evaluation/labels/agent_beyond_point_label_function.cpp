@@ -3,14 +3,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "agent_beyond_point_label_evaluator.hpp"
+#include "agent_beyond_point_label_function.hpp"
 
 #include "modules/world/observed_world.hpp"
-modules::world::evaluation::AgentBeyondPointLabelEvaluator::
-    AgentBeyondPointLabelEvaluator(const std::string& string,
-                                   modules::geometry::Point2d beyond_point)
-    : MultiAgentLabelEvaluator(string), beyond_point_(beyond_point) {}
-bool modules::world::evaluation::AgentBeyondPointLabelEvaluator::evaluate_agent(
+modules::world::evaluation::AgentBeyondPointLabelFunction::
+    AgentBeyondPointLabelFunction(const std::string& string,
+                                  modules::geometry::Point2d beyond_point)
+    : MultiAgentLabelFunction(string), beyond_point_(beyond_point) {}
+bool modules::world::evaluation::AgentBeyondPointLabelFunction::evaluate_agent(
     const modules::world::ObservedWorld& observed_world,
     const modules::world::AgentPtr& other_agent) const {
   const auto agent_pos = other_agent->GetCurrentPosition();
@@ -24,7 +24,7 @@ bool modules::world::evaluation::AgentBeyondPointLabelEvaluator::evaluate_agent(
   return false;
 }
 const modules::geometry::Point2d&
-modules::world::evaluation::AgentBeyondPointLabelEvaluator::GetBeyondPoint()
+modules::world::evaluation::AgentBeyondPointLabelFunction::GetBeyondPoint()
     const {
   return beyond_point_;
 }

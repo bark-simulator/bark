@@ -13,16 +13,16 @@
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/labels/agent_beyond_point_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/base_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/behind_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/direct_front_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/ego_beyond_point_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/front_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/generic_ego_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/left_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/right_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/safe_distance_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
+#include "modules/world/evaluation/labels/base_label_function.hpp"
+#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/labels/direct_front_of_label_function.hpp"
+#include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
+#include "modules/world/evaluation/labels/front_of_label_function.hpp"
+#include "modules/world/evaluation/labels/generic_ego_label_function.hpp"
+#include "modules/world/evaluation/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
 #include "modules/world/world.hpp"
 
@@ -111,94 +111,95 @@ void python_evaluation(py::module m) {
 
   // LABELS
 
-  py::class_<BaseLabelEvaluator, PyBaseLabelEvaluator,
-             std::shared_ptr<BaseLabelEvaluator>>(m, "BaseLabelEvaluator")
+  py::class_<BaseLabelFunction, PyBaseLabelFunction,
+             std::shared_ptr<BaseLabelFunction>>(m, "BaseLabelFunction")
       .def(py::init<const std::string &>())
-      .def("Evaluate", &BaseLabelEvaluator::Evaluate);
+      .def("Evaluate", &BaseLabelFunction::Evaluate);
 
-  py::class_<ConstantLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<ConstantLabelEvaluator>>(m, "ConstantLabelEvaluator")
+  py::class_<ConstantLabelFunction, BaseLabelFunction,
+             std::shared_ptr<ConstantLabelFunction>>(m, "ConstantLabelFunction")
       .def(py::init<const std::string &>())
-      .def_property("value", &ConstantLabelEvaluator::GetValue, &ConstantLabelEvaluator::SetValue);
+      .def_property("value", &ConstantLabelFunction::GetValue,
+                    &ConstantLabelFunction::SetValue);
 
-  py::class_<SafeDistanceLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<SafeDistanceLabelEvaluator>>(m, "SafeDistanceLabelEvaluator")
+  py::class_<SafeDistanceLabelFunction, BaseLabelFunction,
+             std::shared_ptr<SafeDistanceLabelFunction>>(
+      m, "SafeDistanceLabelFunction")
       .def(py::init<const std::string &, bool, double, double, double>());
 
-  py::class_<RightOfLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<RightOfLabelEvaluator>>(m, "RightOfLabelEvaluator")
+  py::class_<RightOfLabelFunction, BaseLabelFunction,
+             std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")
       .def(py::init<const std::string &>());
 
-  py::class_<LeftOfLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<LeftOfLabelEvaluator>>(m, "LeftOfLabelEvaluator")
+  py::class_<LeftOfLabelFunction, BaseLabelFunction,
+             std::shared_ptr<LeftOfLabelFunction>>(m, "LeftOfLabelFunction")
       .def(py::init<const std::string &>());
 
-  py::class_<BehindOfLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<BehindOfLabelEvaluator>>(m,
-                                                      "BehindOfLabelEvaluator")
+  py::class_<BehindOfLabelFunction, BaseLabelFunction,
+             std::shared_ptr<BehindOfLabelFunction>>(m, "BehindOfLabelFunction")
       .def(py::init<const std::string &>());
 
-  py::class_<FrontOfLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<FrontOfLabelEvaluator>>(m, "FrontOfLabelEvaluator")
+  py::class_<FrontOfLabelFunction, BaseLabelFunction,
+             std::shared_ptr<FrontOfLabelFunction>>(m, "FrontOfLabelFunction")
       .def(py::init<const std::string &>());
 
-  py::class_<AgentBeyondPointLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<AgentBeyondPointLabelEvaluator>>(
-      m, "AgentBeyondPointLabelEvaluator")
+  py::class_<AgentBeyondPointLabelFunction, BaseLabelFunction,
+             std::shared_ptr<AgentBeyondPointLabelFunction>>(
+      m, "AgentBeyondPointLabelFunction")
       .def(py::init<const std::string &, const Point2d &>())
       .def(py::pickle(
-          [](const AgentBeyondPointLabelEvaluator &b) {
+          [](const AgentBeyondPointLabelFunction &b) {
             return py::make_tuple(b.GetLabelStr(), b.GetBeyondPoint());
           },
           [](py::tuple t) {
             if (t.size() != 2)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new AgentBeyondPointLabelEvaluator(t[0].cast<std::string>(),
-                                                      t[1].cast<Point2d>());
+            return new AgentBeyondPointLabelFunction(t[0].cast<std::string>(),
+                                                     t[1].cast<Point2d>());
           }));
 
-  py::class_<EgoBeyondPointLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<EgoBeyondPointLabelEvaluator>>(
-      m, "EgoBeyondPointLabelEvaluator")
+  py::class_<EgoBeyondPointLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoBeyondPointLabelFunction>>(
+      m, "EgoBeyondPointLabelFunction")
       .def(py::init<const std::string &, const Point2d &>())
       .def(py::pickle(
-          [](const EgoBeyondPointLabelEvaluator &b) {
+          [](const EgoBeyondPointLabelFunction &b) {
             return py::make_tuple(b.GetLabelStr(), b.GetBeyondPoint());
           },
           [](py::tuple t) {
             if (t.size() != 2)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new EgoBeyondPointLabelEvaluator(t[0].cast<std::string>(),
-                                                    t[1].cast<Point2d>());
+            return new EgoBeyondPointLabelFunction(t[0].cast<std::string>(),
+                                                   t[1].cast<Point2d>());
           }));
 
-  py::class_<DirectFrontOfLabelEvaluator, BaseLabelEvaluator,
-             std::shared_ptr<DirectFrontOfLabelEvaluator>>(
-      m, "DirectFrontOfLabelEvaluator")
+  py::class_<DirectFrontOfLabelFunction, BaseLabelFunction,
+             std::shared_ptr<DirectFrontOfLabelFunction>>(
+      m, "DirectFrontOfLabelFunction")
       .def(py::init<const std::string &>())
       .def(py::pickle(
-          [](const DirectFrontOfLabelEvaluator &b) {
+          [](const DirectFrontOfLabelFunction &b) {
             return py::make_tuple(b.GetLabelStr());
           },
           [](py::tuple t) {
             if (t.size() != 1)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new DirectFrontOfLabelEvaluator(t[0].cast<std::string>());
+            return new DirectFrontOfLabelFunction(t[0].cast<std::string>());
           }));
 
   py::class_<
-  GenericEgoLabelEvaluator<EvaluatorCollisionEgoAgent>, BaseLabelEvaluator,
-      std::shared_ptr<GenericEgoLabelEvaluator<EvaluatorCollisionEgoAgent>>>(
-      m, "CollisionEgoLabelEvaluator")
+      GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>, BaseLabelFunction,
+      std::shared_ptr<GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>>(
+      m, "CollisionEgoLabelFunction")
       .def(py::init<const std::string &>())
       .def(py::pickle(
-          [](const GenericEgoLabelEvaluator<EvaluatorCollisionEgoAgent> &b) {
+          [](const GenericEgoLabelFunction<EvaluatorCollisionEgoAgent> &b) {
             return py::make_tuple(b.GetLabelStr());
           },
           [](py::tuple t) {
             if (t.size() != 1)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new GenericEgoLabelEvaluator<EvaluatorCollisionEgoAgent>(
+            return new GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>(
                 t[0].cast<std::string>());
           }));
 }

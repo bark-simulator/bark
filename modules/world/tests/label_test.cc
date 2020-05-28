@@ -5,16 +5,16 @@
 
 #include "gtest/gtest.h"
 
-#include "modules/world/evaluation/labels/left_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/right_of_label_evaluator.hpp"
-#include "modules/world/evaluation/labels/safe_distance_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
 #include "modules/world/tests/make_test_world.hpp"
 
 using namespace modules::world::evaluation;
 using namespace modules::world::tests;
 
 TEST(label_test, right_of) {
-  auto evaluator = LabelEvaluatorPtr(new RightOfLabelEvaluator("r_v"));
+  auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));
   auto world = MakeTestWorldHighway();
   world->AddLabels({evaluator});
   auto observed_worlds = world->Observe({1, 4});
@@ -28,7 +28,7 @@ TEST(label_test, right_of) {
 }
 
 TEST(label_test, left_of) {
-  auto evaluator = LabelEvaluatorPtr(new LeftOfLabelEvaluator("l_v"));
+  auto evaluator = LabelFunctionPtr(new LeftOfLabelFunction("l_v"));
   auto world = MakeTestWorldHighway();
   world->AddLabels({evaluator});
   auto observed_worlds = world->Observe({1, 4});
@@ -49,8 +49,8 @@ TEST(label_test, safe_distance) {
   double a_e = -8.0;
   double a_o = -8.0;
 
-  auto evaluator = LabelEvaluatorPtr(
-      new SafeDistanceLabelEvaluator("safe_distance", false, delta, a_e, a_o));
+  auto evaluator = LabelFunctionPtr(
+      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
   auto label = evaluator->GetLabel();
   double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
 
@@ -81,8 +81,8 @@ TEST(label_test, safe_distance) {
   // Case 4
   delta = 0.5;
   dist = 4.5;
-  evaluator = LabelEvaluatorPtr(
-      new SafeDistanceLabelEvaluator("safe_distance", false, delta, a_e, a_o));
+  evaluator = LabelFunctionPtr(
+      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
   auto world4 = make_test_world(1, dist, v_0, dv);
   world4->AddLabels({evaluator});
   auto observed_world4 = world4->Observe({ego_id})[0];

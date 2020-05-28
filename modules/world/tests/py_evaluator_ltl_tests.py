@@ -19,7 +19,7 @@ class EvaluatorLTLTests(unittest.TestCase):
         scenario, idx = scenario_generation.get_next_scenario()
         self.world = scenario.get_world_state()
         self.agent_id = 1
-        self.label = ConstantLabelEvaluator("label")
+        self.label = ConstantLabelFunction("label")
         self.world.AddLabels([self.label])
 
     def test_safety(self):
@@ -78,7 +78,7 @@ class EvaluatorLTLTests(unittest.TestCase):
         self.assertEqual(res["rule"], 1)
 
     def test_agent_relative_rule(self):
-        self.world.AddLabels([BehindOfLabelEvaluator("behind_of")])
+        self.world.AddLabels([BehindOfLabelFunction("behind_of")])
         evaluator = EvaluatorLTL(0, "G behind_of#0")
         self.world.AddEvaluator("behind_rule", evaluator)
         res = self.world.Evaluate()

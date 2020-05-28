@@ -3,9 +3,9 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "left_of_label_evaluator.hpp"
+#include "left_of_label_function.hpp"
 #include "modules/world/observed_world.hpp"
-bool modules::world::evaluation::LeftOfLabelEvaluator::evaluate_agent(
+bool modules::world::evaluation::LeftOfLabelFunction::evaluate_agent(
     const modules::world::ObservedWorld& observed_world,
     const modules::world::objects::AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();

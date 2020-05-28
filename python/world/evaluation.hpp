@@ -7,9 +7,9 @@
 #ifndef PYTHON_PYTHON_BINDINGS_WORLD_EVALUATION_HPP_
 #define PYTHON_PYTHON_BINDINGS_WORLD_EVALUATION_HPP_
 
-#include "python/common.hpp"
 #include "modules/world/evaluation/base_evaluator.hpp"
-#include "modules/world/evaluation/labels/base_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/base_label_function.hpp"
+#include "python/common.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::evaluation;
@@ -28,16 +28,15 @@ class PyBaseEvaluator : public BaseEvaluator {
   }
 };
 
-class PyBaseLabelEvaluator : public BaseLabelEvaluator {
+class PyBaseLabelFunction : public BaseLabelFunction {
  public:
-  using BaseLabelEvaluator::BaseLabelEvaluator;
+  using BaseLabelFunction::BaseLabelFunction;
 
   std::vector<LabelMap::value_type> Evaluate(
       const ObservedWorld &observed_world) const override {
     PYBIND11_OVERLOAD_PURE(
-        std::vector<LabelMap::value_type>,
-        BaseLabelEvaluator,
-        Evaluate,
+        std::vector<LabelMap::value_type>, BaseLabelFunction,
+                           Evaluate,
         observed_world
     );
   }

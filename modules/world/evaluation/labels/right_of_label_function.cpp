@@ -3,13 +3,13 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "right_of_label_evaluator.hpp"
+#include "right_of_label_function.hpp"
 
 #include "modules/world/observed_world.hpp"
 
 using modules::commons::transformation::FrenetPosition;
 
-bool modules::world::evaluation::RightOfLabelEvaluator::evaluate_agent(
+bool modules::world::evaluation::RightOfLabelFunction::evaluate_agent(
     const modules::world::ObservedWorld &observed_world,
     const AgentPtr &other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();

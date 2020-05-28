@@ -33,23 +33,26 @@ def dump_rules(rules):
         rule_str = rule_str + "\n\n"
     return rule_str
 
-def make_AgentBeyondPointLabelEvaluator(params):
+
+def make_AgentBeyondPointLabelFunction(params):
     label_str = params["label_str"]
     point = params["point"]
-    return AgentBeyondPointLabelEvaluator(label_str, Point2d(point[0], point[1]))
+    return AgentBeyondPointLabelFunction(label_str, Point2d(point[0], point[1]))
 
-def make_EgoBeyondPointLabelEvaluator(params):
+
+def make_EgoBeyondPointLabelFunction(params):
     label_str = params["label_str"]
     point = params["point"]
-    return EgoBeyondPointLabelEvaluator(label_str, Point2d(point[0], point[1]))
+    return EgoBeyondPointLabelFunction(label_str, Point2d(point[0], point[1]))
 
-def make_SafeDistanceLabelEvaluator(params):
+
+def make_SafeDistanceLabelFunction(params):
     label_str = params["label_str"]
     reaction_delay = params["reaction_delay", "Delay until brakes are applied", 1.0]
     decel_ego = params["decel_ego", "Maximum brake acceleration for the ego agent", -8.0]
     decel_other = params["decel_other", "Maximum brake acceleration for the other agents", -8.0]
     to_rear = ["to_rear_agent", "Measure safe distance to rear agent", False]
-    return SafeDistanceLabelEvaluator(label_str, reaction_delay, to_rear, decel_ego, decel_other)
+    return SafeDistanceLabelFunction(label_str, reaction_delay, to_rear, decel_ego, decel_other)
 
 def _make_default_label(evaluator_name, params):
     label_str = params["label_str"]

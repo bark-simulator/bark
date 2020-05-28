@@ -3,19 +3,19 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_EVALUATOR_HPP_
-#define MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_EVALUATOR_HPP_
+#ifndef MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_FUNCTION_HPP_
+#define MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_FUNCTION_HPP_
 
-#include "modules/world/evaluation/labels/multi_agent_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/multi_agent_label_function.hpp"
 #include "modules/world/objects/object.hpp"
 
 namespace modules {
 namespace world {
 namespace evaluation {
 
-class DirectFrontOfLabelEvaluator : public MultiAgentLabelEvaluator {
+class DirectFrontOfLabelFunction : public MultiAgentLabelFunction {
  public:
-  using MultiAgentLabelEvaluator::MultiAgentLabelEvaluator;
+  using MultiAgentLabelFunction::MultiAgentLabelFunction;
   bool evaluate_agent(const world::ObservedWorld& observed_world,
                       const AgentPtr& other_agent) const override;
 };
@@ -24,4 +24,4 @@ class DirectFrontOfLabelEvaluator : public MultiAgentLabelEvaluator {
 }  // namespace world
 }  // namespace modules
 
-#endif  // MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_EVALUATOR_HPP_
+#endif  // MODULES_WORLD_EVALUATION_LABELS_DIRECT_FRONT_OF_LABEL_FUNCTION_HPP_

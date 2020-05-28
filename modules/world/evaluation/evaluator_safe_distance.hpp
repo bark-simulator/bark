@@ -23,7 +23,7 @@ class EvaluatorSafeDistance : public EvaluatorLTL {
   }
 
   static const char formula_[];
-  static const LabelEvaluators labels_;
+  static const LabelFunctions labels_;
   constexpr static double reaction_time = 1.0;
   // From "A formally verified motion planner for autonomous vehicles"
   constexpr static double decel_front = -7.84;

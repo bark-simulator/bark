@@ -12,7 +12,7 @@
 
 #include "ltl/rule_state.h"
 #include "modules/world/evaluation/base_evaluator.hpp"
-#include "modules/world/evaluation/labels/base_label_evaluator.hpp"
+#include "modules/world/evaluation/labels/base_label_function.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 
