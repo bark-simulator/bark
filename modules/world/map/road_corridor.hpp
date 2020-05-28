@@ -28,6 +28,7 @@ using modules::geometry::Line;
 using modules::geometry::Polygon;
 using modules::geometry::Point2d;
 using modules::geometry::Within;
+using modules::geometry::BufferPolygon;
 using modules::world::opendrive::XodrRoadId;
 using modules::world::opendrive::XodrDrivingDirection;
 
@@ -101,13 +102,21 @@ struct RoadCorridor {
     const std::map<LaneId, LaneCorridorPtr>& lane_corridors) {
     lane_corridors_ = lane_corridors;
   }
-  bool ComputeRoadPolygon() {
+  bool ComputeRoadPolygon(double buffer_dist = 0.2) {
     Polygon merged_polygon;
+    // merge all lane polygons
     for (const auto& lane_corr : unique_lane_corridors_) {
-      merged_polygon.ConcatenatePolygons(
-        lane_corr->GetMergedPolygon());
+      const auto& lanes = lane_corr->GetLanes();
+      for (const auto& lane : lanes) {
+        Polygon poly_buffered;
+        boost::geometry::correct(lane.second->GetPolygon().obj_);        
+        BufferPolygon(lane.second->GetPolygon(), buffer_dist, &poly_buffered);
+        merged_polygon.ConcatenatePolygons(poly_buffered);
+      }
     }
-    road_polygon_ = merged_polygon;
+    Polygon poly_buffered_merged;
+    BufferPolygon(merged_polygon, -buffer_dist, &poly_buffered_merged);
+    road_polygon_ = poly_buffered_merged;
     return true;
   }
   void SetPolygon(const Polygon& poly) { road_polygon_ = poly; }

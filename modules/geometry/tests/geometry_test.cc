@@ -827,7 +827,7 @@ TEST(optimizer, shrink_polygon) {
   polygon.AddPoint(Point2d(0, 0));
 
   Polygon shrunk_polygon;
-  ShrinkPolygon(polygon, -1, &shrunk_polygon);
+  BufferPolygon(polygon, -1, &shrunk_polygon);
 
   Polygon expected_shrunk_polygon;
   polygon.AddPoint(Point2d(1, 1));

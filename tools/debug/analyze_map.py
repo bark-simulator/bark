@@ -24,8 +24,8 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "4way_intersection"
-output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
+map_name = "threeway_intersection"
+output_dir = "/Users/hart/2019/bark/examples/maps/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -83,20 +83,20 @@ roadgraph = map_interface.GetRoadgraph()
 roadgraph.PrintGraph(output_dir + "/" + map_name)
 lane_ids = roadgraph.GetAllLaneids()
 
-for lane_id in lane_ids:
-  lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
-  # plot plan_view
-  road_id = roadgraph.GetRoadForLaneId(lane_id)
-  road = map_interface.GetOpenDriveMap().GetRoad(road_id)
-  plan_view_reference = road.plan_view.GetReferenceLine()
-  # plot polygon with center line
-  viewer.drawWorld(world)
-  color = list(np.random.choice(range(256), size=3)/256)
-  viewer.drawPolygon2d(lane_polygon, color, 1.0)
-  viewer.drawLine2d(plan_view_reference, color="red")
-  viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-  viewer.show()
-  viewer.clear()
+# for lane_id in lane_ids:
+#   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
+#   # plot plan_view
+#   road_id = roadgraph.GetRoadForLaneId(lane_id)
+#   road = map_interface.GetOpenDriveMap().GetRoad(road_id)
+#   plan_view_reference = road.plan_view.GetReferenceLine()
+#   # plot polygon with center line
+#   viewer.drawWorld(world)
+#   color = list(np.random.choice(range(256), size=3)/256)
+#   viewer.drawPolygon2d(lane_polygon, color, 1.0)
+#   viewer.drawLine2d(plan_view_reference, color="red")
+#   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
+#   viewer.show()
+#   viewer.clear()
 
 
 comb_all = []

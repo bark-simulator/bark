@@ -129,18 +129,24 @@ class RoadCorridorTests(unittest.TestCase):
         rc = GenerateRoadCorridor(map_interface, comb_all[0])
         self.assertEqual(rc.road_ids, [0, 11, 1])
         self.assertEqual(len(rc.lane_corridors), 3)
+        self.assertTrue(rc.polygon.Valid())
         rc = GenerateRoadCorridor(map_interface, comb_all[1])
         self.assertEqual(rc.road_ids, [0, 5, 2])
         self.assertEqual(len(rc.lane_corridors), 3)
+        self.assertTrue(rc.polygon.Valid())
         rc = GenerateRoadCorridor(map_interface, comb_all[2])
         self.assertEqual(rc.road_ids, [1, 10, 0])
         self.assertEqual(len(rc.lane_corridors), 3)
+        self.assertTrue(rc.polygon.Valid())
         rc = GenerateRoadCorridor(map_interface, comb_all[3])
         self.assertEqual(rc.road_ids, [2, 6, 1])
         self.assertEqual(len(rc.lane_corridors), 3)
+        self.assertTrue(rc.polygon.Valid())
         rc = GenerateRoadCorridor(map_interface, comb_all[4])
         self.assertEqual(rc.road_ids, [2, 4, 0])
         self.assertEqual(len(rc.lane_corridors), 3)
+        self.assertTrue(rc.polygon.Valid())
+
 
     def test_dr_deu_merging(self):
         # threeway_intersection
@@ -170,6 +176,7 @@ class RoadCorridorTests(unittest.TestCase):
 
         self.assertTrue(road_corridor.lane_corridors[0].polygon.Valid())
         self.assertTrue(road_corridor.lane_corridors[1].polygon.Valid())
+        self.assertTrue(road_corridor.polygon.Valid())
 
 
 if __name__ == '__main__':
