@@ -122,47 +122,25 @@ class PygameViewer(BaseViewer):
 
     def drawPoint2d(self, point2d, color, alpha=1.0):
         transformed_points = self.pointsToCameraCoordinate(point2d)
-        if 0 < alpha < 1:
-            s = self.createTransparentSurace(
-                self.screen_dims, self.background_color, alpha)
-            pg.draw.circle(s, self.getColor(color),
-                           transformed_points, 1, 0)
-        elif alpha == 1:
-            pg.draw.circle(self.screen_surface, self.getColor(color),
-                           transformed_points, 1, 0)
+        s = self.createTransparentSurace(
+            self.screen_dims, self.background_color, alpha)
+        pg.draw.circle(s, self.getColor(color),
+                       transformed_points, 1, 0)
 
     def drawLine2d(self, line2d, color="blue", alpha=1.0,
                    dashed=False, zorder=10, linewidth=1):
         transformed_lines = self.pointsToCameraCoordinate(line2d)
-        if 0 < alpha < 1:
-            s = self.createTransparentSurace(
-                self.screen_dims, self.background_color, alpha)
-
-            if dashed:
-                self.drawDashedLines(
-                    s, self.getColor(color), transformed_lines, 3)
-            else:
-                pg.draw.lines(
-                    s,
-                    self.getColor(color),
-                    False,
-                    transformed_lines,
-                    linewidth)
-        elif alpha == 1:
-            pg.draw.lines(self.screen_surface, self.getColor(
-                color), False, transformed_lines, linewidth)
+        s = self.createTransparentSurace(
+            self.screen_dims, self.background_color, alpha)
+        if dashed:
+            self.drawDashedLines(
+                s, self.getColor(color), transformed_lines, 3)
 
     def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
         transformed_points = self.pointsToCameraCoordinate(polygon)
-        if 0 < alpha < 1:
-            s = self.createTransparentSurace(
-                self.screen_dims, self.background_color, alpha)
-            pg.draw.polygon(s, self.getColor(color), transformed_points)
-        elif alpha == 1:
-            pg.draw.polygon(
-                self.screen_surface,
-                self.getColor(color),
-                transformed_points)
+        s = self.createTransparentSurace(
+            self.screen_dims, self.background_color, alpha)
+        pg.draw.polygon(s, self.getColor(color), transformed_points)
 
     def drawTrajectory(self, trajectory, color):
         if len(trajectory) < 1:
