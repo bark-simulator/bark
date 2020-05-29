@@ -68,7 +68,6 @@ class LaneCorridorConfig:
     self._road_corridor = world.map.GenerateRoadCorridor(
       start_point, goal_polygon)
     self._road_ids = self._road_corridor.road_ids
-    print("RoadIds: ", self._road_ids)
     self._lane_corridor = self._road_corridor.GetCurrentLaneCorridor(
       start_point)
     
