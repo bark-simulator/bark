@@ -221,7 +221,12 @@ class PygameViewer(BaseViewer):
         pg.event.get()  # call necessary for visbility of pygame viewer on macos
 
     def clear(self):
-        self.alpha_surf = dict()
+        # Clear each surface, could occupy lot of memory if using many
+        # different alpha values
+        if self.alpha_surf:
+            for s in self.alpha_surf.values():
+                s.fill(self.background_color)
+
         self.screen.fill(self.background_color)
         self.screen_surface.fill(self.background_color)
 
