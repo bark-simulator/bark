@@ -251,7 +251,9 @@ class ConfigWithEase(ScenarioGeneration):
     # as we always use the same world, we can create the MapIntf. once
     if self._map_interface is None:
       scenario.CreateMapInterface(self._map_file_name)
-    scenario.map_interface = self._map_interface
+    else:
+      scenario.map_interface = self._map_interface
+    self._map_interface = scenario.map_interface
     world = scenario.GetWorldState()
     map_interface = world.map
     # fill agent list of the BARK world and set agents that are controlled
