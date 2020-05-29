@@ -50,7 +50,7 @@ class DatabaseRunnerTests(unittest.TestCase):
       result = benchmark_runner.run()
       df = result.get_data_frame()
       print(df)
-      self.assertEqual(len(df.index), 20) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+      self.assertEqual(len(df.index), 10) # 2 Behaviors * 2 Serialize Scenarios * 5 scenario sets
 
     @unittest.skip
     def test_database_multiprocessing_runner(self):
