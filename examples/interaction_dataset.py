@@ -28,7 +28,7 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster", 1]
 scenario = scenario_generation.create_single_scenario()
 
-world_state = scenario.get_world_state()
+world_state = scenario.GetWorldState()
 
 sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of time steps to simulate", 50]
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)

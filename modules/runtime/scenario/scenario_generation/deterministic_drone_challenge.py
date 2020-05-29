@@ -82,7 +82,7 @@ class DeterministicDroneChallengeGeneration(ScenarioGeneration):
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
     scenario._map_interface = None
-    world = scenario.get_world_state()
+    world = scenario.GetWorldState()
     agent_list = []
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:

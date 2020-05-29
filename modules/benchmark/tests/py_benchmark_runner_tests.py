@@ -92,7 +92,7 @@ class DatabaseRunnerTests(unittest.TestCase):
             x_range=[5060, 5160],
             y_range=[5070,5150],
             use_world_bounds=True)
-      viewer.drawWorld(world=scenario_history[5].get_world_state(),
+      viewer.drawWorld(world=scenario_history[5].GetWorldState(),
                         eval_agent_ids=scenario_history[5].eval_agent_ids)
 
       viewer.show(block=True)

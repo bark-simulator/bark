@@ -28,7 +28,7 @@ class DatasetDecomposer:
         # we are creating a dummy scenario to get the map interface from it
         scenario = Scenario(map_file_name=self._map_filename,
                             json_params=params.ConvertToDict())
-        world = scenario.get_world_state()
+        world = scenario.GetWorldState()
         lane_ids = world.map.GetRoadgraph().GetAllLaneids()
         lane_polygon_list = []
         for lane_id in lane_ids:

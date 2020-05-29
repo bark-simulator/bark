@@ -63,7 +63,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
     def __create_single_scenario__(self, dict_scenario):
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
-        world = scenario.get_world_state()
+        world = scenario.GetWorldState()
         agent_list = []
         eval_agent_ids = []
         track_params = ParameterServer()
