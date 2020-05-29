@@ -166,9 +166,9 @@ py_binary(
     ],
 )
 
-py_test(
-  name = "test",
-  srcs = ["test.py"],
+py_binary(
+  name = "rss_test",
+  srcs = ["rss_test.py"],
   data = ['//python:bark.so',
           '//modules/runtime/tests:xodr_data',
           '@benchmark_database_release//:v2.0',
