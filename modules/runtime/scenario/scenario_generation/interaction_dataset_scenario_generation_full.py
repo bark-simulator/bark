@@ -67,7 +67,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
-        world = scenario.get_world_state()
+        world = scenario.GetWorldState()
         agent_list = []
         track_params = ParameterServer()
         track_params["execution_model"] = 'ExecutionModelInterpolate'

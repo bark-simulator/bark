@@ -50,7 +50,7 @@ class DatabaseRunnerTests(unittest.TestCase):
       result = benchmark_runner.run()
       df = result.get_data_frame()
       print(df)
-      self.assertEqual(len(df.index), 20) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+      self.assertEqual(len(df.index), 10) # 2 Behaviors * 2 Serialize Scenarios * 5 scenario sets
 
     @unittest.skip
     def test_database_multiprocessing_runner(self):
@@ -92,7 +92,7 @@ class DatabaseRunnerTests(unittest.TestCase):
             x_range=[5060, 5160],
             y_range=[5070,5150],
             use_world_bounds=True)
-      viewer.drawWorld(world=scenario_history[5].get_world_state(),
+      viewer.drawWorld(world=scenario_history[5].GetWorldState(),
                         eval_agent_ids=scenario_history[5].eval_agent_ids)
 
       viewer.show(block=True)

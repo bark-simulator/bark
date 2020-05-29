@@ -94,7 +94,7 @@ class BenchmarkAnalyzer:
                   steps_to_go = True
                   scenario = histories[step-1]
                   viewer = viewer_list[viewer_idx]
-                  world = scenario.get_world_state()
+                  world = scenario.GetWorldState()
                   world.time = world_time
                   if display_info and not viewer_names:
                       info_text = info_strings_collected[viewer_idx]

@@ -30,7 +30,7 @@ class Runtime(PyRuntime):
     else:
       self._scenario, self._scenario_idx = \
         self._scenario_generator.get_next_scenario()
-    self._world = self._scenario.get_world_state()
+    self._world = self._scenario.GetWorldState()
     self._reset_has_been_called = True
     self._viewer.Reset()
 

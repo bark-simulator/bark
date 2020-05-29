@@ -26,12 +26,13 @@ This section describes the prerequisites and installation-steps of BARK.
 
 1. Install pyenv: `brew install pyenv`.
 2. Install a newer version of tcl-tk: `brew upgrade tcl-tk`.
-3. Run `pyenv install python3.7-dev`.
+3. Run `pyenv install python3.7-dev` (https://stackoverflow.com/questions/60469202/unable-to-install-tkinter-with-pyenv-pythons-on-macos).
 4. Set this as your global Python version: `pyenv global 3.7-dev`.
 5. Also add this Python version to your `~/.zshrc` by adding `eval "$(pyenv init -)"`.
 6. Install an older version of the virtualenv package by running: `pip install virtualenv==16.7.8`
-7. Modify the file `install.sh` by using `virtualenv -p python ./python/venv` instead as python is now the pyenv version.
-7. Now you can follow the same steps as when using Linux.
+7. Add TkAgg as backend for matplotlib: https://stackoverflow.com/questions/21784641/installation-issue-with-matplotlib-python
+8. Modify the file `install.sh` by using `virtualenv -p python ./python/venv` instead as python is now the pyenv version.
+9. Now you can follow the same steps as when using Linux.
 
 
 ## Frequently Asked Questions (FAQs)

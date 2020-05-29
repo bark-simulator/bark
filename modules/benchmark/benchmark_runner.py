@@ -169,9 +169,9 @@ class BenchmarkRunner:
         scenario_history = []
         step = 0
         try:
-            world = scenario.get_world_state()
+            world = scenario.GetWorldState()
         except Exception as e:
-            self.logger.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
+            self.logger.error("For config-idx {}, Exception thrown in scenario.GetWorldState: {}".format(
                 benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
             return {"config_idx": benchmark_config.config_idx,

@@ -30,7 +30,7 @@ class DatasetDecomposer:
         # we are creating a dummy scenario to get the map interface from it
         scenario = Scenario(map_file_name=self._map_filename,
                             json_params=params.ConvertToDict())
-        world = scenario.get_world_state()
+        world = scenario.GetWorldState()
         map_interface = world.map
         return map_interface
 
