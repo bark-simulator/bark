@@ -61,6 +61,15 @@ cd $build_dir/$workspace_name
 python3 setup.py clean
 python3 setup.py sdist bdist_wheel
 
+python3 setup.py test
+
+if [ $? -eq 0 ]; then
+    echo "Test Passed"
+else
+    echo "Test Failed"
+    exit 0
+fi
+
 #upload to pypi
 python3 -m twine upload --skip-existing dist/*
 

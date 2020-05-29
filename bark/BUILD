@@ -66,12 +66,12 @@ py_test (
 )
 
 
-# add py_libraries and data
-#bazel query 'kind("py_library",//...)'
-#bazel query 'kind("filegroup",//...)'
+# Add py_libraries and data
+# bazel query 'kind("py_library",//...)' for deps
+# bazel query 'kind("filegroup",//...)' for data
 py_test(
   name = "pip_package",
-  srcs = ["pip_package.py"],
+  srcs = ["pip_package.py", "__init__.py"],
   data = [":generate_core",
             "//bark/world/tests:params2",
             "//bark/runtime/viewer:model_data",
@@ -81,22 +81,6 @@ py_test(
             "//bark/examples:params"
             ],
   deps = [":tests",
-        #   "//bark/runtime/commons:commons",
-        #   "//bark/runtime/scenario:scenario",
-        #   "//bark/runtime/viewer:py_viewer",
-        #   "//bark/runtime/viewer:threaded_viewer",
-        #   "//bark/runtime/viewer:video_renderer",
-        #   "//bark/runtime/viewer:pygame_viewer",
-        #   "//bark/runtime/viewer:panda3d_viewer",
-        #   "//bark/runtime/viewer:matplotlib_viewer",
-        #   "//bark/runtime:runtime",
-        #   "//bark/examples:od8_const_vel_one_agent",
-        #   "//bark/examples:od8_const_vel_two_agent",
-        #   "//bark/examples:planner_uct",
-          
-        #"//bark/runtime/commons:xodr_parser",
-        #"//bark/runtime/commons:parameters",
-        #"//bark/runtime/commons:model_json_conversion",
         "//bark/examples:scenarios_from_database",
         "//bark/examples:scenario_video_rendering",
         "//bark/examples:scenario_dump_load",
@@ -107,18 +91,7 @@ py_test(
         "//bark/examples:od8_const_vel_two_agent",
         "//bark/examples:od8_const_vel_one_agent",
         "//bark/examples:planner_uct",
-        # "//bark/runtime/viewer:threaded_viewer",
-        # "//bark/runtime/scenario/scenario_generation:scenario_generation",
-        # "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
-        # "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
-        # "//bark/runtime:runtime",
-        # "//bark/runtime/viewer:video_renderer",
-        # "//bark/runtime/viewer:pygame_viewer",
-        # "//bark/runtime/viewer:panda3d_viewer",
-        # "//bark/runtime/viewer:matplotlib_viewer",
-        # "//bark/runtime/viewer:py_viewer",
-        # "//bark/runtime/scenario:scenario",
-        # "//bark/runtime/commons:commons",
+        
         "//bark/runtime/viewer:threaded_viewer",
         "//bark/runtime/scenario/scenario_generation:scenario_generation",
         "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
@@ -138,10 +111,6 @@ py_test(
         "//bark/runtime/scenario:scenario",
         "//bark/runtime/commons:commons",
         "//bark/benchmark:benchmark_analyzer",
-        
-         "//bark/benchmark/tests:py_benchmark_runner_tests",
-         "//bark/benchmark/tests:py_benchmark_process_tests",
-         "//bark/benchmark/tests:py_benchmark_analyzer_tests",
        
           ],
 

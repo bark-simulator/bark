@@ -16,6 +16,8 @@ import os
 
 scenario_param_file ="highway_merge_configurable.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params/",scenario_param_file))
+mapfile = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/city_highway_straight.xodr")
+param_server["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = mapfile
 scenario_generation = ConfigurableScenarioGeneration(num_scenarios=3, params=param_server)
 
 viewer = MPViewer(
