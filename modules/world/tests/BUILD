@@ -15,6 +15,7 @@ cc_library(
     deps = [
         "//modules/world/map:roadgraph",
         "//modules/world/opendrive",
+        "//modules/geometry:geometry",
     ],
     visibility = ["//visibility:public"],
 )
