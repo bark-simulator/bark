@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -30,6 +30,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
             const Line_t<T>&
             line);  //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual float CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -138,6 +139,12 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
   return mat;
 }
 
+
+template <>
+inline float Polygon::CalculateArea() const {
+  return bg::area(obj_);
+}
+
 inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
@@ -200,7 +207,7 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
   return bg::intersects(poly1.obj_, poly2.obj_);
 }
 
-inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
+inline bool BufferPolygon(const Polygon& polygon, const double distance,
                           Polygon* shrunk_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;

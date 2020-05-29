@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -593,7 +594,7 @@ TEST(roadgraph, get_driving_corridor_test)
   r.AddInnerNeighbor(l00, l10);
   r.AddInnerNeighbor(l01, l11);
 
-  // TODO(@fortiss): add new assertions as this has moved to MapInterface
+  // TODO(@all): add new assertions as this has moved to MapInterface
   /*
   std::pair< std::vector<XodrLanePtr>, std::vector<XodrLanePtr> > horizon = r.ComputeXodrLaneBoundariesHorizon(l10, l11);
 
