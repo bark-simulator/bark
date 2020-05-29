@@ -68,7 +68,6 @@ class LaneCorridorConfig:
     self._road_corridor = world.map.GenerateRoadCorridor(
       start_point, goal_polygon)
     self._road_ids = self._road_corridor.road_ids
-    print("RoadIds: ", self._road_ids)
     self._lane_corridor = self._road_corridor.GetCurrentLaneCorridor(
       start_point)
     
@@ -227,6 +226,7 @@ class ConfigWithEase(ScenarioGeneration):
                lane_corridor_configs=None):
     self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
+    self._map_interface = None
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 
@@ -247,7 +247,13 @@ class ConfigWithEase(ScenarioGeneration):
     """
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
-    world = scenario.get_world_state()
+    # as we always use the same world, we can create the MapIntf. once
+    if self._map_interface is None:
+      scenario.CreateMapInterface(self._map_file_name)
+    else:
+      scenario.map_interface = self._map_interface
+    self._map_interface = scenario.map_interface
+    world = scenario.GetWorldState()
     map_interface = world.map
     # fill agent list of the BARK world and set agents that are controlled
     scenario._agent_list = []

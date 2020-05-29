@@ -208,7 +208,7 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
 }
 
 inline bool BufferPolygon(const Polygon& polygon, const double distance,
-                          Polygon* shrunk_polygon) {
+                          Polygon* buffered_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;
 
@@ -217,22 +217,23 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
   bbuf::join_miter join_strategy;
   bbuf::end_flat end_strategy;
   bbuf::point_circle point_strategy;
-
   bg::model::multi_polygon<bg::model::polygon<geometry::Point2d>>
-      shrunk_polygons;
-  bg::buffer(polygon.obj_, shrunk_polygons, distance_strategy, side_strategy,
+      buffered_polygons;
+  Polygon copied_polygon = polygon;
+  bg::correct(copied_polygon.obj_);
+  bg::buffer(copied_polygon.obj_, buffered_polygons, distance_strategy, side_strategy,
              join_strategy, end_strategy, point_strategy);
-
-  if (shrunk_polygons.size() != 1) {
+  if (buffered_polygons.size() != 1) {
     // Shrinking the polygon turns it into two disjointed polygons
     return false;
   }
-
   for (auto const& point :
-       boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon->AddPoint(point);
+       boost::make_iterator_range(bg::exterior_ring(buffered_polygons.front()))) {
+    buffered_polygon->AddPoint(point);
   }
-  assert(shrunk_polygon->Valid());
+  if (!buffered_polygon->Valid()) {
+    LOG(INFO) << "Buffered polygon is not valid.";
+  }
   return true;
 }
 
