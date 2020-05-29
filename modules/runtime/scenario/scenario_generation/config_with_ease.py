@@ -249,7 +249,7 @@ class ConfigWithEase(ScenarioGeneration):
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
     # as we always use the same world, we can create the MapIntf. once
-    if self._map_interface is not None:
+    if self._map_interface is None:
       self._map_interface = scenario.CreateMapInterface(self._map_file_name)
     scenario.map_interface = self._map_interface
     world = scenario.GetWorldState()
