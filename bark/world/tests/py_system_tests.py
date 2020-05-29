@@ -107,7 +107,7 @@ class SystemTests(unittest.TestCase):
             return
         # World Definition
         scenario_param_file ="macro_actions_test.json" # must be within examples params folder
-        params = ParameterServer(filename= os.path.join("bark/world/tests/params/",scenario_param_file))
+        params = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params/",scenario_param_file))
 
         world = World(params)
 
@@ -182,7 +182,7 @@ class SystemTests(unittest.TestCase):
     def test_python_behavior_model(self):
         # World Definition
         scenario_param_file ="macro_actions_test.json" # must be within examples params folder
-        params = ParameterServer(filename= os.path.join("bark/world/tests/params/",scenario_param_file))
+        params = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params/",scenario_param_file))
 
         world = World(params)
 

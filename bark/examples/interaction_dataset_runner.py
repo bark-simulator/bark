@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(description="Interaction dataset file in bark")
 parser.add_argument("scenario_file", metavar="scenario_name", type=str, help="name of the scenario parameter file")
 args = parser.parse_args()
 scenario_param_file = args.scenario_file  # must be within examples params folder
-param_server = ParameterServer(filename=os.path.join("bark/examplesparams/", scenario_param_file))
+param_server = ParameterServer(filename=os.path.join(os.path.dirname(__file__),"params/", scenario_param_file))
 
 scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1, random_seed=0, params=param_server)
 

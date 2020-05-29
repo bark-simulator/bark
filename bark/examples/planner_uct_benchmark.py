@@ -5,7 +5,7 @@
 
 import os
 
-from load.benchmark_database import BenchmarkDatabase
+from benchmark_database.load.benchmark_database import BenchmarkDatabase
 from bark.benchmark.benchmark_runner import BenchmarkRunner
 from bark.core.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount
@@ -24,7 +24,7 @@ evaluators = {"success" : EvaluatorGoalReached, "collision" : EvaluatorCollision
                 "max_steps": EvaluatorStepCount}
 terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
 scenario_param_file ="uct_planner.json" # must be within examples params folder
-params = ParameterServer(filename= os.path.join("bark/examplesparams/", scenario_param_file))
+params = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params/", scenario_param_file))
 behaviors_tested = {"search5s": behavior_used(params) }
                                 
 

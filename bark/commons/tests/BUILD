@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_test(
     name = "params_tests",
     srcs = [

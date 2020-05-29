@@ -102,7 +102,11 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
 class PyBehaviorModelTests(unittest.TestCase):
   def test_python_model(self):
     param_server = ParameterServer(
-      filename="bark/runtime/tests/data/deterministic_scenario.json")
+      filename= os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/deterministic_scenario.json"))
+    param_server
+    
+    mapfile = os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/city_highway_straight.xodr")
+    param_server["Scenario"]["Generation"]["DeterministicScenarioGeneration"]["MapFilename"] = mapfile
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=param_server)
@@ -121,7 +125,10 @@ class PyBehaviorModelTests(unittest.TestCase):
 
   def test_python_model_inheritance(self):
     param_server = ParameterServer(
-      filename="bark/runtime/tests/data/deterministic_scenario.json")
+      filename= os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/deterministic_scenario.json"))
+    mapfile = os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/city_highway_straight.xodr")
+    param_server["Scenario"]["Generation"]["DeterministicScenarioGeneration"]["MapFilename"] = mapfile
+    
     scenario_generation = DeterministicScenarioGeneration(num_scenarios=3,
                                                           random_seed=0,
                                                           params=param_server)

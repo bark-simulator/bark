@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 filegroup(
     name="params2",
     srcs=glob(["params/**"]),

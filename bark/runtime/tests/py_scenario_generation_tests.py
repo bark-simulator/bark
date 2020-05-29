@@ -28,11 +28,14 @@ from bark.runtime.scenario.scenario_generation \
 from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
+import os
 
 
 class ScenarioGenerationTests(unittest.TestCase):
     def test_configurable_scenario_generation_default_params(self):
         params = ParameterServer()
+        mapfile = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+        params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = mapfile
         scenario_generation = ConfigurableScenarioGeneration(
             num_scenarios=2, params=params)
         scenario_generation.dump_scenario_list("test.scenario")
@@ -73,6 +76,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         }]
         params = ParameterServer()
         params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
+        params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
         scenario_generation = ConfigurableScenarioGeneration(
             num_scenarios=2, params=params)
         scenario_generation.dump_scenario_list("test.scenario")
@@ -146,6 +150,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation_full(self):
         params = ParameterServer()
 
+<<<<<<< HEAD
         map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
@@ -157,6 +162,10 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     def test_dataset_scenario_generation_full_incomplete(self):
         params = ParameterServer()
+=======
+            map_filename =  os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
+            track_filename =  os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
+>>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
         map_filename = "modules/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track_incomplete.csv"

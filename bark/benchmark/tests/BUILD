@@ -1,3 +1,4 @@
+package(default_visibility = ["//visibility:public"])
 py_test(
   name = "py_benchmark_runner_tests",
   srcs = ["py_benchmark_runner_tests.py"],

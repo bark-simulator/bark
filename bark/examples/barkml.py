@@ -8,13 +8,13 @@ import os
 import numpy as np
 from bark.runtime.commons.parameters import ParameterServer
 
-from load.benchmark_database import BenchmarkDatabase
-from serialization.database_serializer import DatabaseSerializer
+from benchmark_database.load.benchmark_database import BenchmarkDatabase
+from benchmark_database.serialization.database_serializer import DatabaseSerializer
 from configurations.bark_agent import BARKMLBehaviorModel
 from configurations.highway.configuration_lib import HighwayConfiguration
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from load.benchmark_database import BenchmarkDatabase
+from benchmark_database.load.benchmark_database import BenchmarkDatabase
 from bark.benchmark.benchmark_runner import BenchmarkRunner
 from bark.core.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount

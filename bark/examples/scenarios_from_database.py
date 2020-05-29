@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from load.benchmark_database import BenchmarkDatabase
+from benchmark_database.load.benchmark_database import BenchmarkDatabase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.commons.parameters import ParameterServer

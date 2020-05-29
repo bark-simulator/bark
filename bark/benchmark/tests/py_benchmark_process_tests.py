@@ -10,8 +10,8 @@ import ray
 
 import matplotlib.pyplot as plt
 
-from load.benchmark_database import BenchmarkDatabase
-from serialization.database_serializer import DatabaseSerializer
+from benchmark_database.load.benchmark_database import BenchmarkDatabase
+from benchmark_database.serialization.database_serializer import DatabaseSerializer
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, BenchmarkResult
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
@@ -23,7 +23,9 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
 # to find database files
+print ('currdir:',os.getcwd())
 os.chdir("../benchmark_database/")
+print ('newdir:',os.getcwd())
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):

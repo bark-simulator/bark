@@ -35,6 +35,11 @@ bazel_manifest=$build_dir/MANIFEST
 pip_manifest=$build_dir/$workspace_name/MANIFEST.in
 
 
+#echo "Copying tests  at $build_dir/$workspace_name"
+#mkdir -p $build_dir/$workspace_name/tests
+#cp bark/*/tests/py*test*.py $build_dir/$workspace_name/tests
+
+
 echo "Copying manifest from $bazel_manifest to $pip_manifest"
 #remove existing manifest
 rm $pip_manifest

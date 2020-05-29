@@ -16,4 +16,5 @@ py_test(
   srcs = ["py_geometry_tests.py"],
   data = ['//bark:generate_core'],
   deps = [],
+  visibility = ["//visibility:public"],
 )

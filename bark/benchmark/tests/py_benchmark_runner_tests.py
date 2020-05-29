@@ -29,6 +29,7 @@ os.chdir("../benchmark_database/")
 class DatabaseRunnerTests(unittest.TestCase):
     #@unittest.skip
     def test_database_runner(self):
+<<<<<<< HEAD
       dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=5)
       cwd = os.getcwd()
       dbs.process("data/database1")
@@ -51,6 +52,30 @@ class DatabaseRunnerTests(unittest.TestCase):
       df = result.get_data_frame()
       print(df)
       self.assertEqual(len(df.index), 10) # 2 Behaviors * 2 Serialize Scenarios * 5 scenario sets
+=======
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs.process("data/database1")
+        local_release_filename = dbs.release(version="test")
+
+        db = BenchmarkDatabase(database_root=local_release_filename)
+        evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
+                      "max_steps": "EvaluatorStepCount"}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
+        params = ParameterServer() # only for evaluated agents not passed to scenario!
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+                                        
+
+        benchmark_runner = BenchmarkRunner(benchmark_database=db,
+                                           evaluators=evaluators,
+                                           terminal_when=terminal_when,
+                                           behaviors=behaviors_tested,
+                                           log_eval_avg_every=1)
+
+        result = benchmark_runner.run()
+        df = result.get_data_frame()
+        print(df)
+        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+>>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
     @unittest.skip
     def test_database_multiprocessing_runner(self):

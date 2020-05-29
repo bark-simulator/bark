@@ -13,8 +13,12 @@ from modules.runtime.commons.parameters import ParameterServer
 =======
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
 from bark.runtime.commons.parameters import ParameterServer
+<<<<<<< HEAD
 >>>>>>> Package Restructuring:bark/runtime/tests/py_interaction_dataset_reader_test.py
 
+=======
+import os
+>>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
 class InteractionDatasetReaderTest(unittest.TestCase):
 
@@ -28,8 +32,8 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 =======
     params = ParameterServer()
     params_id = params["Scenario"]["Generation"]["InteractionDataset"]
-    params_id["MapFilename", "", "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
-    params_id["TrackFilename", "", "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+    params_id["MapFilename", "", os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")]
+    params_id["TrackFilename", "", os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")]
     params_id["TrackIds", "", track_ids]
     params_id["StartTs", "", 100]
     params_id["EndTs", "", None]

@@ -6,6 +6,7 @@
 
 import unittest
 import filecmp
+import os
 import matplotlib.pyplot as plt
 from bark.core.geometry.standard_shapes import *
 from bark.runtime.commons.parameters import ParameterServer
@@ -49,16 +50,20 @@ class ImporterTests(unittest.TestCase):
   def test_map_highway(self):
 =======
   def test_map_CulDeSac(self):
-    xodr_parser = XodrParser("bark/runtime/tests/data/CulDeSac.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/CulDeSac.xodr"))
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
   def test_map_city_highway_straight(self):
+<<<<<<< HEAD
 >>>>>>> bark library -python_warpper, fix import errors, run bazel tests
     xodr_parser = XodrParser(
       "bark/runtime/tests/data/city_highway_straight.xodr")
+=======
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr"))
+>>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
@@ -67,30 +72,29 @@ class ImporterTests(unittest.TestCase):
 <<<<<<< HEAD
 =======
   def test_map_city_highway_curved(self):
-    xodr_parser = XodrParser(
-      "bark/runtime/tests/data/city_highway_curved.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),
+      "data/city_highway_curved.xodr"))
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
   def test_map_4way_intersection(self):
-    xodr_parser = XodrParser(
-      "bark/runtime/tests/data/4way_intersection.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/4way_intersection.xodr"))
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
   def test_map_urban_road(self):
-    xodr_parser = XodrParser(
-      "bark/runtime/tests/data/urban_road.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/urban_road.xodr"))
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 >>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
+<<<<<<< HEAD
   def test_map_DR_DEU_Merging_MT_v01_shifted(self):
     xodr_parser = XodrParser(
 <<<<<<< HEAD
@@ -98,6 +102,10 @@ class ImporterTests(unittest.TestCase):
 =======
       "bark/runtime/tests/data/Crossing8Course.xodr")
 >>>>>>> bark library -python_warpper, fix import errors, run bazel tests
+=======
+  def test_map_Crossing8(self):
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/Crossing8Course.xodr"))
+>>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)

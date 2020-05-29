@@ -20,13 +20,13 @@ from bark.core.world.map import MapInterface
 from bark.runtime.commons import XodrParser
 from bark.runtime.viewer import MPViewer
 import numpy as np
-
+import os
 
 class EnvironmentTests(unittest.TestCase):
 <<<<<<< HEAD
 =======
   def test_Crossing8Course(self):
-    xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/Crossing8Course.xodr"))
 
     params = ParameterServer()
     world = World(params)
@@ -69,7 +69,7 @@ class EnvironmentTests(unittest.TestCase):
     time.sleep(2)  # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
 
   def test_between_lanes(self):
-    xodr_parser = XodrParser("bark/runtime/tests/data/city_highway_straight.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/city_highway_straight.xodr"))
     np.set_printoptions(precision=8)
     params = ParameterServer()
 
@@ -108,7 +108,7 @@ class EnvironmentTests(unittest.TestCase):
 <<<<<<< HEAD
 =======
   def test_find_lane(self):
-    xodr_parser = XodrParser("bark/runtime/tests/data/urban_road.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/urban_road.xodr"))
     params = ParameterServer()
     world = World(params)
     map_interface = MapInterface()
@@ -124,7 +124,7 @@ class EnvironmentTests(unittest.TestCase):
     lane_no_lane = map_interface.FindLane(Point2d(120, 140))
     assert lane_no_lane == None
 
-    xodr_parser = XodrParser("bark/runtime/tests/data/city_highway_straight.xodr")
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/city_highway_straight.xodr"))
     np.set_printoptions(precision=8)
     params = ParameterServer()
     world = World(params)
