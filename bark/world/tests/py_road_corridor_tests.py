@@ -255,7 +255,7 @@ class RoadCorridorTests(unittest.TestCase):
       count += 1
     viewer.show(block=True)
     
-  @patch('MPViewer.show')
+  
   @unittest.skip
   def test_road_corridor_forward(self):
     xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"../../runtime/tests/data/road_corridor_test.xodr"))
