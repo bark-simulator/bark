@@ -37,7 +37,7 @@ behavior_model2 = BehaviorConstantVelocity(param_server)
 execution_model2 = ExecutionModelInterpolate(param_server)
 dynamic_model2 = SingleTrackModel(param_server)
 
-map_path="modules/runtime/tests/data/city_highway_straight.xodr"
+map_path="modules/runtime/tests/data/centered_city_highway_straight.xodr"
 
 # Map Definition
 xodr_parser = XodrParser(map_path)
@@ -62,7 +62,7 @@ agent1 = Agent(init_state,
 world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, 5, -100, 0, 5])
+init_state2 = np.array([0, 5, -50, 0, 5])
 agent_params2 = param_server.addChild("agent2")
 agent2 = Agent(init_state2,
                behavior_model2,
@@ -75,7 +75,7 @@ agent2 = Agent(init_state2,
 world.AddAgent(agent2)
 
 # viewer
-viewer = PygameViewer(params=param_server, use_world_bounds=True)
+viewer = PygameViewer(params=param_server, follow_agent_id=agent1.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
@@ -86,7 +86,8 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   1]
 e=EvaluatorRss(agent1.id,map_path)
 
-for _ in range(0, 10):
+for _ in range(0, 30):
+  viewer.clear()
   world.Step(sim_step_time)
   print(e.Evaluate(world))
   viewer.drawWorld(world)
