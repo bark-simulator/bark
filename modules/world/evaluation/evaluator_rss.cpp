@@ -65,26 +65,26 @@ namespace evaluation {
   Polygon agent_shape = agent->GetShape();
 
   match_object.enuPosition.centerPoint.x =
-      ::ad::map::point::ENUCoordinate(bg::get<0>(agent_center));
+      ::ad::map::point::ENUCoordinate(static_cast<double>(bg::get<0>(agent_center)));
   match_object.enuPosition.centerPoint.y =
-      ::ad::map::point::ENUCoordinate(bg::get<1>(agent_center));
+      ::ad::map::point::ENUCoordinate(static_cast<double>(bg::get<1>(agent_center)));
   match_object.enuPosition.centerPoint.z = ::ad::map::point::ENUCoordinate(0);
   match_object.enuPosition.heading = ::ad::map::point::createENUHeading(
-      agent_execut_traj(agent_execut_traj.rows() - 1, THETA_POSITION));
+      static_cast<double>(agent_execut_traj(agent_execut_traj.rows() - 1, THETA_POSITION)));
+  // std::cout << bg::get<0>(agent_center) << " " <<bg::get<1>(agent_center)<<std::endl;
 
   match_object.enuPosition.dimension.length =
-      Distance(agent_shape.front_dist_ + agent_shape.rear_dist_);
+      static_cast<double>(Distance(agent_shape.front_dist_ + agent_shape.rear_dist_));
   match_object.enuPosition.dimension.width =
-      Distance(agent_shape.left_dist_ + agent_shape.right_dist_);
-
-  match_object.enuPosition.dimension.height = ::ad::physics::Distance(1);
+      static_cast<double>(Distance(agent_shape.left_dist_ + agent_shape.right_dist_));
+  match_object.enuPosition.dimension.height = ::ad::physics::Distance(1.5);
   match_object.enuPosition.enuReferencePoint =
       ::ad::map::access::getENUReferencePoint();
 
   ::ad::map::match::AdMapMatching map_matching;
   match_object.mapMatchedBoundingBox = map_matching.getMapMatchedBoundingBox(
       match_object.enuPosition, match_distance, ::ad::physics::Distance(2.));
-
+  // std::cout << "Match Object: "<< match_object << std::endl;
   return match_object;
 }
 
@@ -115,19 +115,71 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
   Trajectory ego_plan_traj = ego_agent->GetBehaviorTrajectory();
   Trajectory ego_execut_traj = ego_agent->GetExecutionTrajectory();
 
-  ::ad::map::match::Object match_object =
+  ::ad::map::match::Object ego_match_object =
       GetMatchObject(ego_agent, ::ad::physics::Distance(2.0));
 
-  // ======== find the route of ego ========
+  // std::cout << "Ego match object: " <<::ad::map::point::isValid(ego_match_object.enuPosition.centerPoint, true) << std::endl;
+
+  // ======== UpdateRoute ========
+
+  // find the points on the route of ego 
   // map->FindCurrentRoad()
   // map->GetRoadgraph();
-  map::LaneId ego_current_lane_id = map->FindCurrentLane(ego_center);
+  map::LaneId ego_lane_id = map->FindCurrentLane(ego_center);
   map::RoadCorridorPtr ego_road_corridor = ego_agent->GetRoadCorridor();
-  map::LaneCorridorPtr ego_current_lane_corridor =
-      ego_road_corridor->GetLaneCorridor(ego_current_lane_id);
-  map::LanePtr ego_current_lane =
-      ego_current_lane_corridor->GetCurrentLane(ego_center);
+  map::LaneCorridorPtr ego_lane_corridor =
+      ego_road_corridor->GetLaneCorridor(ego_lane_id);
+  // map::LanePtr ego_lane =
+  //     ego_lane_corridor->GetCurrentLane(ego_center);
 
+  geometry::Line ego_lane_center_line = ego_lane_corridor->GetCenterLine();
+
+  float s_start = GetNearestS(ego_lane_center_line, ego_center);
+  float s_end = GetNearestS(ego_lane_center_line,ego_lane_center_line.obj_.at(ego_lane_center_line.obj_.size() - 1));
+
+  std::vector<::ad::map::point::ENUPoint> ego_routing_targets;
+  while(s_start<=s_end){
+    geometry::Point2d traj_point = GetPointAtS(ego_lane_center_line, s_start);
+    ego_routing_targets.push_back(::ad::map::point::createENUPoint(bg::get<0>(traj_point),bg::get<1>(traj_point),0));
+    s_start+=3;
+  }
+  
+  // create the route
+  // TODO: why generate multiple routes?
+  ::ad::physics::Distance const route_target_length(50.);
+  std::vector<::ad::map::route::FullRoute> all_new_routes;
+  for (const auto &position :
+        ego_match_object.mapMatchedBoundingBox
+            .referencePointPositions[int32_t(::ad::map::match::ObjectReferencePoints::Center)]) {
+    auto start_point = position.lanePoint.paraPoint;
+    auto projected_start_point = start_point;
+    if (!::ad::map::lane::isHeadingInLaneDirection(start_point,ego_match_object.enuPosition.heading)) {
+      std::cout<< "EgoVehicle heading in opposite lane direction" << std::endl;
+      if (::ad::map::lane::projectPositionToLaneInHeadingDirection(
+              start_point, ego_match_object.enuPosition.heading, projected_start_point)) {
+        std::cout<< "Projected to lane {}"<<" "<<  projected_start_point.laneId << std::endl;
+      }
+    }
+    std::cout<< "Route start_point: {}, projected_start_point: {}"<<" " << start_point <<" "<< projected_start_point  << std::endl;
+    auto routing_start_point = ::ad::map::route::planning::createRoutingPoint(
+        projected_start_point, ego_match_object.enuPosition.heading);
+    if (!ego_routing_targets.empty() && ::ad::map::point::isValid(ego_routing_targets)) {
+      auto new_route = ::ad::map::route::planning::planRoute(routing_start_point, ego_routing_targets,
+                                                              ::ad::map::route::RouteCreationMode::AllRoutableLanes);
+      all_new_routes.push_back(new_route);
+    } else {
+      auto new_routes = ::ad::map::route::planning::predictRoutesOnDistance(
+          routing_start_point, route_target_length, ::ad::map::route::RouteCreationMode::AllRoutableLanes);
+
+      for (const auto &new_route : new_routes) {
+        // extend route with all lanes
+        all_new_routes.push_back(new_route);
+      }
+    }
+  }
+  ::ad::map::route::FullRoute ego_route = all_new_routes[0];
+  // std::cout<<"Ego route: "<< ego_route<<std::endl;
+  
 
   // ======== CalculateEgoDynamicsOnRoute ========
 
@@ -136,9 +188,9 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
   new_dynamics.timestamp =
       ego_execut_traj(ego_execut_traj.rows() - 1, TIME_POSITION);
 
-  new_dynamics.ego_center = match_object.enuPosition.centerPoint;
+  new_dynamics.ego_center = ego_match_object.enuPosition.centerPoint;
 
-  new_dynamics.ego_heading = match_object.enuPosition.heading;
+  new_dynamics.ego_heading = ego_match_object.enuPosition.heading;
   new_dynamics.ego_speed =
       ego_execut_traj(ego_execut_traj.rows() - 1, VEL_POSITION);
 
@@ -179,17 +231,17 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
 
   ad::rss::map::RssObjectConversion object_conversion(
       ::ad::rss::world::ObjectId(0u), ::ad::rss::world::ObjectType::EgoVehicle,
-      match_object, new_dynamics.ego_speed, default_dynamics_);
+      ego_match_object, new_dynamics.ego_speed, default_dynamics_);
   object_conversion.calculateMinStoppingDistance(
       new_dynamics.min_stopping_distance);
 
-  std::cout << new_dynamics.ego_speed << " " << new_dynamics.route_speed_lat
-            << " " << new_dynamics.route_speed_lon << " "
-            << new_dynamics.route_accel_lat << " "
-            << new_dynamics.route_accel_lon << " "
-            << new_dynamics.avg_route_accel_lat << " "
-            << new_dynamics.avg_route_accel_lon << " "
-            << new_dynamics.min_stopping_distance << " " << std::endl;
+  // std::cout << new_dynamics.ego_speed << " " << new_dynamics.route_speed_lat
+  //           << " " << new_dynamics.route_speed_lon << " "
+  //           << new_dynamics.route_accel_lat << " "
+  //           << new_dynamics.route_accel_lon << " "
+  //           << new_dynamics.avg_route_accel_lat << " "
+  //           << new_dynamics.avg_route_accel_lon << " "
+  //           << new_dynamics.min_stopping_distance << " " << std::endl;
 
   ego_dynamics_on_route = new_dynamics;
 
@@ -201,10 +253,12 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
       static_cast<double>(ego_dynamics_on_route.min_stopping_distance), 100.);
 
   for (const auto &other_agent : other_agents) {
-    if (geometry::Distance(ego_center,
+    if (other_agent.second->GetAgentId()!=agent_id_){
+      if (geometry::Distance(ego_center,
                            other_agent.second->GetCurrentPosition()) <
         relevant_distance) {
       relevent_agents.push_back(other_agent.second);
+      }
     }
   }
 
@@ -216,7 +270,7 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
   //   auto checker = RssObjectChecker(*this, scene_creation, carla_ego_vehicle,
   //   carla_rss_state, green_traffic_lights); checker(vehicle);
   // }
-
+  ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
   for (const auto &relevent_agent : relevent_agents) {
     auto const other_match_object =
         GetMatchObject(relevent_agent, ::ad::physics::Distance(2.0));
@@ -225,17 +279,35 @@ EvaluationReturn EvaluatorRss::Evaluate(const world::World &world) {
 
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
-    // TODO: ego_route, green_traffic_lights
+    scene_creation.appendScenes(
+        ::ad::rss::world::ObjectId(agent_id_), ego_match_object,
+        new_dynamics.ego_speed, default_dynamics_,
+        ego_route,
+        ::ad::rss::world::ObjectId(relevent_agent->GetAgentId()),
+        ::ad::rss::world::ObjectType::OtherVehicle, other_match_object,
+        relevent_agent_speed, default_dynamics_,
+        ::ad::rss::map::RssSceneCreation::RestrictSpeedLimitMode::IncreasedSpeedLimit10,
+        green_traffic_lights);
 
-    // _scene_creation.appendScenes(
-    //     ::ad::rss::world::ObjectId(agent_id_), ego_match_object,
-    //     ego_dynamics_on_route.ego_speed, default_dynamics_,
-    //     _carla_rss_state.ego_route,
-    //     ::ad::rss::world::ObjectId(relevent_agent->GetAgentId->GetId()),
-    //     ::ad::rss::world::ObjectType::OtherVehicle, other_match_object,
-    //     relevent_agent_speed, default_dynamics_,
-    //     ::ad::rss::map::RssSceneCreation::RestrictSpeedLimitMode::IncreasedSpeedLimit10,
-    //     _green_traffic_lights);
+  }
+
+  ::ad::rss::world::WorldModel world_model=scene_creation.getWorldModel();
+
+  // ======== PerformCheck ========
+  ::ad::rss::core::RssCheck rss_check;
+  ::ad::rss::situation::SituationSnapshot situation_snapshot;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot;
+  ::ad::rss::state::ProperResponse proper_response;
+  ::ad::rss::world::AccelerationRestriction acceleration_restriction;
+
+  bool result = rss_check.calculateAccelerationRestriction(
+      world_model, situation_snapshot, rss_state_snapshot,
+      proper_response, acceleration_restriction);
+  
+  std::cout<< "acceleration restrictions: "<< result <<std::endl;
+
+  for (auto const state : rss_state_snapshot.individualResponses) {
+    std::cout <<"Dangerous: "<< ::ad::rss::state::isDangerous(state) <<std::endl;
   }
 
   return ego_safety_state;
