@@ -65,8 +65,8 @@ class Scenario:
     param_server = ParameterServer(json=self._json_params)
     world = World(param_server)
     if self._map_interface is None:
-      map_interface = self.CreateMapInterface(world, self._map_file_name)
-      world.SetMap(map_interface)
+      self.CreateMapInterface(self._map_file_name)
+      world.SetMap(self._map_interface)
     else:
       world.SetMap(self._map_interface)
     for agent in self._agent_list:
@@ -100,7 +100,7 @@ class Scenario:
 
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
-    return map_interface
+    self._map_interface = map_interface
 
 
 

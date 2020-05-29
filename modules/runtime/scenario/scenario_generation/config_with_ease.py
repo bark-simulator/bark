@@ -227,6 +227,7 @@ class ConfigWithEase(ScenarioGeneration):
                lane_corridor_configs=None):
     self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
+    self._map_interface = None
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 

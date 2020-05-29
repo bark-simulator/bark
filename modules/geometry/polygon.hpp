@@ -219,8 +219,9 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
   bbuf::point_circle point_strategy;
   bg::model::multi_polygon<bg::model::polygon<geometry::Point2d>>
       buffered_polygons;
-  bg::correct(polygon.obj_);
-  bg::buffer(polygon.obj_, buffered_polygons, distance_strategy, side_strategy,
+  Polygon copied_polygon = polygon;
+  bg::correct(copied_polygon.obj_);
+  bg::buffer(copied_polygon.obj_, buffered_polygons, distance_strategy, side_strategy,
              join_strategy, end_strategy, point_strategy);
   if (buffered_polygons.size() != 1) {
     // Shrinking the polygon turns it into two disjointed polygons
