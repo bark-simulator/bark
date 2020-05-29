@@ -115,7 +115,7 @@ struct RoadCorridor {
       }
     }
     Polygon poly_buffered_merged;
-    boost::geometry::correct(merged_polygon);
+    boost::geometry::correct(merged_polygon.obj_);
     BufferPolygon(merged_polygon, -buffer_dist, &poly_buffered_merged);
     road_polygon_ = poly_buffered_merged;
     return true;
