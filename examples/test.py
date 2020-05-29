@@ -7,7 +7,7 @@ import numpy as np
 import time
 import os
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from modules.runtime.viewer.pygame_viewer import PygameViewer
 from modules.runtime.commons.xodr_parser import XodrParser
 from bark.models.behavior import BehaviorConstantVelocity
 from bark.models.execution import ExecutionModelInterpolate
@@ -75,7 +75,7 @@ agent2 = Agent(init_state2,
 world.AddAgent(agent2)
 
 # viewer
-viewer = MPViewer(params=param_server, use_world_bounds=True)
+viewer = PygameViewer(params=param_server, use_world_bounds=True)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

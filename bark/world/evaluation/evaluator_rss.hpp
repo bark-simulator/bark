@@ -143,14 +143,15 @@ class EvaluatorRss : public BaseEvaluator {
                         const std::string& opendrive_file_path)
       : agent_id_(agent_id) {
     std::ifstream file(opendrive_file_path);
-    std::string opendrive_file_content = std::string{
+        std::string opendrive_file_content = std::string{
         std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>()};
 
+
     ::ad::map::access::cleanup();
-    ::ad::map::access::initFromOpenDriveContent(
+    std::cout<< "Initialize opendrive map: "<< ::ad::map::access::initFromOpenDriveContent(
         opendrive_file_content, 0.2,
         ::ad::map::intersection::IntersectionType::TrafficLight,
-        ::ad::map::landmark::TrafficLightType::LEFT_STRAIGHT_RED_YELLOW_GREEN);
+        ::ad::map::landmark::TrafficLightType::LEFT_STRAIGHT_RED_YELLOW_GREEN) <<std::endl;
 
     // TODO: move to a function
     default_dynamics_.alphaLon.accelMax = ::ad::physics::Acceleration(3.5);
