@@ -63,7 +63,10 @@ def bark_dependencies():
       name = "com_github_google_glog",
       commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
       remote = "https://github.com/google/glog",
-      build_file="//tools:glog.BUILD"
+      build_file_content = """
+load("//:bazel/glog.bzl", "glog_library")
+glog_library(with_gflags=0)
+    """
     )
 
     _maybe(
