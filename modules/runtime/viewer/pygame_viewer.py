@@ -32,16 +32,15 @@ class PygameViewer(BaseViewer):
 
         # NOTE: optimize to support alpha value in pygame
         # https://stackoverflow.com/questions/6339057/draw-a-transparent-rectangle-in-pygame
-        self.alpha_surf = None
-
+        self.alpha_surf = dict()
         self.background_color = (255, 255, 255)
 
         pg.font.init()
-
         try:
             self.screen = pg.display.set_mode(
                 self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)
             pg.display.set_caption("Bark")
+            self.clear()
         except pg.error:
             self.screen = None
             print("No available video device")
@@ -205,8 +204,9 @@ class PygameViewer(BaseViewer):
     def drawWorld(self, world, eval_agent_ids=None, show=True):
         super(PygameViewer, self).drawWorld(world, eval_agent_ids)
 
-        for s in self.alpha_surf.values():
-            self.screen_surface.blit(s, (0, 0))
+        if self.alpha_surf:
+            for s in self.alpha_surf.values():
+                self.screen_surface.blit(s, (0, 0))
 
         if show:
             self.show()
