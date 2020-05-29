@@ -109,12 +109,13 @@ struct RoadCorridor {
       const auto& lanes = lane_corr->GetLanes();
       for (const auto& lane : lanes) {
         Polygon poly_buffered;
-        boost::geometry::correct(lane.second->GetPolygon().obj_);        
+        boost::geometry::correct(lane.second->GetPolygon().obj_);
         BufferPolygon(lane.second->GetPolygon(), buffer_dist, &poly_buffered);
         merged_polygon.ConcatenatePolygons(poly_buffered);
       }
     }
     Polygon poly_buffered_merged;
+    boost::geometry::correct(merged_polygon);
     BufferPolygon(merged_polygon, -buffer_dist, &poly_buffered_merged);
     road_polygon_ = poly_buffered_merged;
     return true;
