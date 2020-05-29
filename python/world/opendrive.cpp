@@ -124,8 +124,6 @@ void python_opendrive(py::module m) {
     .def(py::init<float>())
     .def("AddLane", &XodrLaneSection::AddLane, "Add lane element")
     .def("GetLanes", &XodrLaneSection::GetLanes, "Get all lane elements")
-    .def("GetLeftLane", &XodrLaneSection::GetLeftLane, "Get left lane")
-    .def("GetRightLane", &XodrLaneSection::GetRightLane, "Get right lane")
     .def("GetLaneByPosition",
       &XodrLaneSection::GetLaneByPosition, "Get lane by lane position")
     .def(
