@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 
 import unittest
@@ -76,7 +77,7 @@ class PyBehaviorModelTests(unittest.TestCase):
                       follow_agent_id=False,
                       use_world_bounds=True)
     scenario, idx = scenario_generation.get_next_scenario()
-    world = scenario.get_world_state()
+    world = scenario.GetWorldState()
     single_track_model = SingleTrackModel(param_server)
     behavior_model = PythonBehaviorModelWrapper(
       single_track_model, param_server)
@@ -95,7 +96,7 @@ class PyBehaviorModelTests(unittest.TestCase):
                       follow_agent_id=False,
                       use_world_bounds=True)
     scenario, idx = scenario_generation.get_next_scenario()
-    world = scenario.get_world_state()
+    world = scenario.GetWorldState()
     behavior_model = PythonBehaviorModelWrapperInheritance(param_server)
     
     world.GetAgent(0).behavior_model = behavior_model

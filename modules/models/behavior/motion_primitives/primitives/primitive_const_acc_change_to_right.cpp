@@ -1,4 +1,5 @@
-// Copyright (c) 2020 fortiss GmbH
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -17,7 +18,7 @@ modules::world::LaneCorridorPtr modules::models::behavior::primitives::
   if (adjacent_corridors.right) {
     return adjacent_corridors.right;
   }
-  LOG(WARNING) << "Called change to right, but right corridor not found!";
+  //LOG(WARNING) << "Called change to right, but right corridor not found!";
   if (!adjacent_corridors.current) {
     return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());

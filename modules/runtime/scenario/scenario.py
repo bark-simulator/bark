@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from bark.world.agent import Agent
 from bark.world import World
@@ -10,6 +11,7 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.commons.xodr_parser import XodrParser
 import copy
 from pathlib import Path
+
 
 class Scenario:
   def __init__(self,
@@ -36,7 +38,15 @@ class Scenario:
   def eval_agent_ids(self):
     return self._eval_agent_ids
 
-  def get_world_state(self):
+  @property
+  def map_interface(self):
+    return self._map_interface
+
+  @map_interface.setter
+  def map_interface(self, map_interface):
+    self._map_interface = map_interface
+  
+  def GetWorldState(self):
     """get initial world state of scenario to start simulation from here
     
     Returns:
@@ -55,7 +65,8 @@ class Scenario:
     param_server = ParameterServer(json=self._json_params)
     world = World(param_server)
     if self._map_interface is None:
-      world = self.setup_map(world, self._map_file_name)
+      self.CreateMapInterface(self._map_file_name)
+      world.SetMap(self._map_interface)
     else:
       world.SetMap(self._map_interface)
     for agent in self._agent_list:
@@ -73,16 +84,13 @@ class Scenario:
     sdict['_map_interface'] = None
     self.__dict__.update(sdict)
 
-  def setup_map(self, world, _map_file_name):
-    if not _map_file_name:
-        return world
-
-    map_file_load_test = Path(_map_file_name)
-
+  # TODO(@hart): should be a commons function
+  def CreateMapInterface(self, map_file_name):
+    map_file_load_test = Path(map_file_name)
     if map_file_load_test.is_file():
-      xodr_parser = XodrParser(_map_file_name)
+      xodr_parser = XodrParser(map_file_name)
     else:
-      objects_found = sorted(Path().rglob(_map_file_name))
+      objects_found = sorted(Path().rglob(map_file_name))
       if len(objects_found) == 0:
         raise ValueError("No Map found")
       elif len(objects_found) > 1:
@@ -93,8 +101,6 @@ class Scenario:
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     self._map_interface = map_interface
-    world.SetMap(map_interface)
-    return world
 
 
 

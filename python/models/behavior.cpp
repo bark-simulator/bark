@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -204,6 +205,7 @@ void python_behavior(py::module m) {
   .def(py::init<const modules::commons::ParamsPtr&,
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
+  .def("GetMotionPrimitives", &BehaviorMPMacroActions::GetMotionPrimitives)
   .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
   .def("ClearMotionPrimitives", &BehaviorMPMacroActions::ClearMotionPrimitives)
   .def(py::pickle(
@@ -294,6 +296,8 @@ void python_behavior(py::module m) {
             return new PrimitiveConstAccChangeToRight(
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
+  
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   py::class_<BehaviorDynamicModel,
              BehaviorModel,

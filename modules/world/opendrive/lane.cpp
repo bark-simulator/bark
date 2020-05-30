@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -11,6 +11,26 @@ namespace world {
 namespace opendrive {
 
 XodrLaneId XodrLane::lane_count = 0;
+
+XodrLane::XodrLane() :
+  lane_id_(++lane_count),
+  lane_position_(0),
+  link_(),
+  line_(),
+  lane_type_(XodrLaneType::NONE),
+  driving_direction_(XodrDrivingDirection::FORWARD),
+  road_mark_(),
+  speed_() {}
+
+XodrLane::XodrLane(const XodrLanePosition& lane_position) :
+  lane_id_(++lane_count),
+  lane_position_(lane_position),
+  link_(),
+  line_(),
+  lane_type_(XodrLaneType::NONE),
+  driving_direction_(XodrDrivingDirection::FORWARD),
+  road_mark_(),
+  speed_() {}
 
 
 bool XodrLane::append(geometry::Line previous_line, XodrLaneWidth lane_width_current,

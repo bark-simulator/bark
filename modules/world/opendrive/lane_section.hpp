@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -12,7 +12,6 @@
 #include <string>
 #include <vector>
 
-#include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/opendrive/lane.hpp"
 
 namespace modules {
@@ -27,17 +26,6 @@ class XodrLaneSection {
   XodrLanes GetLanes() const { return lanes_; }
 
   XodrLanePtr GetLaneByPosition(XodrLanePosition pos);
-
-  XodrLanePtr GetNearestLaneOnN(double x, double y, double vx, double vy);
-  XodrLanePtr GetLaneWithOffset(const models::dynamic::State& state,
-                               double angle_offset);
-
-  XodrLanePtr GetLeftLane(const models::dynamic::State& state) {
-    return GetLaneWithOffset(state, 3.14 / 2);
-  }
-  XodrLanePtr GetRightLane(const models::dynamic::State& state) {
-    return GetLaneWithOffset(state, -3.14 / 2);
-  }
 
   //! setter functions
   void AddLane(const XodrLanePtr& l);

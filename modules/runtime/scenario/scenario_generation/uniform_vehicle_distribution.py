@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
@@ -97,7 +98,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
   def create_single_scenario(self):
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
-    world = scenario.get_world_state()
+    world = scenario.GetWorldState()
     agent_list = []
     # OTHER AGENTS
     for idx, source in enumerate(self._others_source):
