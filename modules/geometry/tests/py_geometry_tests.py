@@ -1,18 +1,19 @@
-# Copyright (c) 2019 fortiss GmbH
-# 
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
+import numpy as np
+import math
+from bark.geometry.standard_shapes import *
+from bark.geometry import *
 import unittest
 import os
 import matplotlib as mpl
 if os.environ.get('DISPLAY', '') == '':
     print('no display found. Using non-interactive Agg backend')
     mpl.use('Agg')
-from bark.geometry import *
-from bark.geometry.standard_shapes import *
-import math
-import numpy as np
 
 #from bark.visualization import MPViewer
 
@@ -37,7 +38,6 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(l.Valid())
         arr = l.ToArray()
         print(arr)
-
 
         p = Polygon2d()
         p.AddPoint([0, 0])
@@ -67,8 +67,10 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(p.Valid())
 
         bb = p.bounding_box
-        self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb[0].x(), bb[0].y()])))
-        self.assertTrue(np.array_equal(np.array([1,1]),np.array([bb[1].x(), bb[1].y()])))
+        self.assertTrue(np.array_equal(
+            np.array([0, 0]), np.array([bb[0].x(), bb[0].y()])))
+        self.assertTrue(np.array_equal(
+            np.array([1, 1]), np.array([bb[1].x(), bb[1].y()])))
 
         p = Polygon2d()
         p.AddPoint([2, 3])
@@ -79,13 +81,17 @@ class GeometryTests(unittest.TestCase):
         self.assertTrue(p.Valid())
 
         bb2 = p.bounding_box
-        self.assertTrue(np.array_equal(np.array([2,3]),np.array([bb2[0].x(), bb2[0].y()])))
-        self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb2[1].x(), bb2[1].y()])))
+        self.assertTrue(np.array_equal(
+            np.array([2, 3]), np.array([bb2[0].x(), bb2[0].y()])))
+        self.assertTrue(np.array_equal(
+            np.array([3, 4]), np.array([bb2[1].x(), bb2[1].y()])))
 
         bb_merged = MergeBoundingBoxes(bb, bb2)
 
-        self.assertTrue(np.array_equal(np.array([0,0]),np.array([bb_merged[0].x(), bb_merged[0].y()])))
-        self.assertTrue(np.array_equal(np.array([3,4]),np.array([bb_merged[1].x(), bb_merged[1].y()])))
+        self.assertTrue(np.array_equal(np.array([0, 0]), np.array(
+            [bb_merged[0].x(), bb_merged[0].y()])))
+        self.assertTrue(np.array_equal(np.array([3, 4]), np.array(
+            [bb_merged[1].x(), bb_merged[1].y()])))
 
     def test_Distance(self):
 
@@ -155,12 +161,68 @@ class GeometryTests(unittest.TestCase):
         # translate into the nirvana based on previous rotations and translations
         #viewer.drawPolygon2d(p2.Translate(Point2d(10,0)), 'g', 0.2)
         #viewer.drawPolygon2d(p2.Transform([5,5,0.4]), 'k', 0.2)
-        #viewer.show()
+        # viewer.show()
 
     def test_const_poly_from_array(self):
         arr = np.array([[0, 0], [0, 2], [4, 2], [4, 0], [0, 0]])
         poly = Polygon2d([1, 3, 1], arr)
         self.assertTrue(poly.Valid())
+
+    def test_concatenate_polygons(self):
+
+        poly1 = Polygon2d()
+        poly1.AddPoint([0, 0])
+        poly1.AddPoint([0, 2])
+        poly1.AddPoint([4, 2])
+        poly1.AddPoint([4, 0])
+        poly1.AddPoint([0, 0])
+        self.assertTrue(poly1.Valid())
+        a1 = poly1.CalculateArea()
+
+        poly2 = Polygon2d()
+        poly2.AddPoint([4, 0])
+        poly2.AddPoint([4, 2])
+        poly2.AddPoint([8, 2])
+        poly2.AddPoint([8, 0])
+        poly2.AddPoint([4, 0])
+        self.assertTrue(poly2.Valid())
+        a2 = poly2.CalculateArea()
+
+        poly1.ConcatenatePolygons(poly2)
+        self.assertTrue(poly1.Valid())
+
+        a3 = poly1.CalculateArea()
+
+        self.assertTrue(a3 == a1+a2)
+
+    def test_robust_concatenate_polygons(self):
+
+        poly1 = Polygon2d()
+        poly1.AddPoint([0, 0])
+        poly1.AddPoint([0, 2])
+        poly1.AddPoint([4, 2])
+        poly1.AddPoint([4, 0])
+        poly1.AddPoint([0, 0])
+        self.assertTrue(poly1.Valid())
+        a1 = poly1.CalculateArea()
+
+        eps = 0.05
+        poly2 = Polygon2d()
+        poly2.AddPoint([4+eps, 0])
+        poly2.AddPoint([4+eps, 2])
+        poly2.AddPoint([8+eps, 2])
+        poly2.AddPoint([8+eps, 0])
+        poly2.AddPoint([4+eps, 0])
+        self.assertTrue(poly2.Valid())
+        a2 = poly2.CalculateArea()
+
+        poly1b = poly1.BufferPolygon(0.1)
+        poly1b.ConcatenatePolygons(poly2)
+        poly3 = poly1b.BufferPolygon(-0.1)
+        self.assertTrue(poly3.Valid())
+
+        a3 = poly3.CalculateArea()
+        print(poly3)
 
     def test_distances_to_center(self):
 
@@ -170,7 +232,6 @@ class GeometryTests(unittest.TestCase):
         self.assertAlmostEqual(shape.rear_dist, 1.118999, places=4)
         self.assertAlmostEqual(shape.left_dist, 0.955999, places=4)
         self.assertAlmostEqual(shape.right_dist, 0.955999, places=4)
-
 
 
 if __name__ == '__main__':

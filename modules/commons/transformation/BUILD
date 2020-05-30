@@ -13,7 +13,6 @@ cc_library(
         "//modules/models/dynamic",
         "@boost//:geometry",
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 

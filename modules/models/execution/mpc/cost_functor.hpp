@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -66,7 +67,7 @@ struct CostFunctor {
     }
 
     // differential values
-    // TODO(fortiss): seperate weights
+    // TODO(@all): seperate weights
     T weights_acc = T(1e1);
     T weights_delta = T(1);
     for (int i = 0; i < optimization_settings_.num_optimization_steps - 1; i++) {

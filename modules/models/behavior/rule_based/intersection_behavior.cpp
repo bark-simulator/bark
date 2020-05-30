@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -58,6 +58,9 @@ std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
   AgentId intersecting_agent_id = 0;
   bool is_intersecting = false;
   for (const auto& agent : intersecting_agents) {
+    if (!observed_world.GetEgoAgent() || !agent.second)
+      return std::pair<AgentId, bool>(
+        intersecting_agent_id, false);
     const auto& road_corr = agent.second->GetRoadCorridor();
     const auto& agent_pos = agent.second->GetCurrentPosition();
     const auto& ego_state = observed_world.CurrentEgoState();
