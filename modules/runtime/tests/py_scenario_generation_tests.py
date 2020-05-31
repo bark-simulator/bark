@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 
 import unittest
@@ -11,6 +12,9 @@ from modules.runtime.scenario.scenario_generation.scenario_generation\
 
 from modules.runtime.scenario.scenario_generation.configurable_scenario_generation \
     import ConfigurableScenarioGeneration
+
+from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation \
+    import InteractionDatasetScenarioGeneration
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
     import InteractionDatasetScenarioGenerationFull
 from modules.runtime.commons.parameters import ParameterServer
@@ -131,17 +135,50 @@ class ScenarioGenerationTests(unittest.TestCase):
         self.assertEqual(collisions_03[0][0][1], 2)
         self.assertEqual(collisions_03[0][1][1], 2)
 
-        def test_dataset_scenario_generation(self):
-            params = ParameterServer()
+    def test_dataset_scenario_generation_full(self):
+        params = ParameterServer()
 
-            map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-            track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
-            params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-            params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
 
-            scenario_generation = InteractionDatasetScenarioGenerationFull(
-                params=params, num_scenarios=2)
+        scenario_generation = InteractionDatasetScenarioGenerationFull(
+            params=params, num_scenarios=2)
+
+    def test_dataset_scenario_generation_full_incomplete(self):
+        params = ParameterServer()
+
+        map_filename = "modules/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"
+        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track_incomplete.csv"
+
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+
+        scenario_generation = InteractionDatasetScenarioGenerationFull(
+            params=params, num_scenarios=3)
+        # agent 1 is not part of the map, so it should only generate 2 scenarios
+
+        assert(scenario_generation.get_num_scenarios() == 2)
+
+    def test_dataset_scenario_generation(self):
+        params = ParameterServer()
+
+        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [
+            1, 2]
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 500
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 1000
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
+
+        scenario_generation = InteractionDatasetScenarioGeneration(
+            params=params, num_scenarios=1)
+        assert(scenario_generation.get_num_scenarios() == 1)
 
 
 if __name__ == '__main__':

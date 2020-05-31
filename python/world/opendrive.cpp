@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -123,8 +124,6 @@ void python_opendrive(py::module m) {
     .def(py::init<float>())
     .def("AddLane", &XodrLaneSection::AddLane, "Add lane element")
     .def("GetLanes", &XodrLaneSection::GetLanes, "Get all lane elements")
-    .def("GetLeftLane", &XodrLaneSection::GetLeftLane, "Get left lane")
-    .def("GetRightLane", &XodrLaneSection::GetRightLane, "Get right lane")
     .def("GetLaneByPosition",
       &XodrLaneSection::GetLaneByPosition, "Get lane by lane position")
     .def(

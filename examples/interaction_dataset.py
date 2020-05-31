@@ -1,8 +1,8 @@
-# Copyright (c) 2020 fortiss GmbH
-# 
-# Based on the implementation by Luis Gressenbuch
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
+#
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation import \
     InteractionDatasetScenarioGeneration
@@ -26,9 +26,9 @@ sim_step_time = param_server["simulation"]["step_time",
                                            0.2]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster", 1]
-scenario = scenario_generation.create_single_scenario()
+scenario = scenario_generation.create_scenarios(param_server, 1)[0]
 
-world_state = scenario.get_world_state()
+world_state = scenario.GetWorldState()
 
 sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of time steps to simulate", 50]
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)

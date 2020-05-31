@@ -1,15 +1,21 @@
 Common
 ==========================================================
 
-Commonly used functions and classes in BARK.
+Commonly used classes and functions in BARK.
+
 
 ## Geometry
-BARK comes with a geometry library allowing manipulations and calculations with 2D-Point-, Line- and Polygon-objects. It wraps the `boost::geometry` implementations in order to provide higher level geometric manipulations, such as searching for the nearest point on a linestring and returning the corresponding `s`-value.
+
+BARK provides an easy-to-use geometry library that supports points, lines, and polygons for performant geometric calculations.
+By wrapping the `boost::geometry` state-of-the-art algorithms as well as high usability is provided.
+It implements all geometric functions, such as collision checks and distance calculations.
 
 
 ## BaseObject
-A common base class for all BARK classes provides common functionality. Currently, it contains the global `ParameterServer` instance. In the future, this class can be extended with loggers and more modules. 
 
+All objects in BARK share a common base class, the `BaseType`.
+It provides functionalities and members that are shared and used in all classes.
+For example, it contains the global `ParameterServer` instance that holds all parameters.
 
 ```cpp
 class BaseType {
@@ -18,15 +24,17 @@ class BaseType {
   ~BaseType() {}
 
   ParamPtr GetParams() const { return params_;}
-
+  ...
  private:
-  ParamPtr params_;  // do not own
+  ParamPtr params_;
 };
 ```
 
 
-### ParameterServer
-The ParameterServer is shared within the whole runtime. Its abstract implementation is reimplemented in Python.
+## ParameterServer
+
+The `ParameterServer` is shared with all objects in BARK.
+Its abstract implementation is reimplemented in Python.
 Child nodes can be added by using the `AddChild`-function.
 
 ```cpp

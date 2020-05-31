@@ -20,10 +20,8 @@ cc_library(
     ],
     deps = [
         "//modules/geometry",
-        "@boost//:geometry",
-        "//modules/models/dynamic:dynamic"
+        "@boost//:geometry"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
