@@ -12,8 +12,6 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/evaluator_x_position.hpp"
-#include "modules/world/evaluation/evaluator_y_position.hpp"
 #include "modules/world/world.hpp"
 
 namespace py = pybind11;
@@ -83,21 +81,5 @@ void python_evaluation(py::module m) {
       .def(py::init<const AgentId &>())
       .def("__repr__", [](const EvaluatorDistanceToGoal &g) {
         return "bark.world.evaluation.EvaluatorDistanceToGoal";
-      });
-
-  py::class_<EvaluatorXPosition, BaseEvaluator,
-             std::shared_ptr<EvaluatorXPosition>>(m, "EvaluatorXPosition")
-      .def(py::init<const AgentId &>())
-      .def(py::init<>())
-      .def("__repr__", [](const EvaluatorXPosition &g) {
-        return "bark.world.evaluation.EvaluatorXPosition";
-      });
-
-  py::class_<EvaluatorYPosition, BaseEvaluator,
-             std::shared_ptr<EvaluatorYPosition>>(m, "EvaluatorYPosition")
-      .def(py::init<const AgentId &>())
-      .def(py::init<>())
-      .def("__repr__", [](const EvaluatorYPosition &g) {
-        return "bark.world.evaluation.EvaluatorYPosition";
       });
 }

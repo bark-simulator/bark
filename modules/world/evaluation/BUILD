@@ -123,38 +123,6 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_x_position",
-    hdrs = [
-        "evaluator_x_position.hpp"
-    ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
-        "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic",
-        "@boost//:geometry"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_y_position",
-    hdrs = [
-        "evaluator_y_position.hpp"
-    ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
-        "//modules/geometry",
-        "//modules/commons:commons",
-        "//modules/models/dynamic:dynamic",
-        "@boost//:geometry"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -164,9 +132,7 @@ cc_library(
         ":evaluator_collision_ego_agent",
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
-        ":evaluator_distance_to_goal",
-        ":evaluator_x_position",
-        ":evaluator_y_position",
+        ":evaluator_distance_to_goal"
     ],
     visibility = ["//visibility:public"],
 )
