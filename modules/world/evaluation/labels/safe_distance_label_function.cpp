@@ -24,9 +24,10 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(
 std::vector<LabelMap::value_type> SafeDistanceLabelFunction::Evaluate(
     const world::ObservedWorld& observed_world) const {
   auto ego = std::const_pointer_cast<Agent>(observed_world.GetEgoAgent());
-  auto fr_agents = observed_world.GetAgentFrontRearForId(
-      ego->GetAgentId(), ego->GetRoadCorridor()->GetCurrentLaneCorridor(
-                             ego->GetCurrentPosition()));
+  auto lane_corridor =
+      ego->GetRoadCorridor()->GetNearestLaneCorridor(ego->GetCurrentPosition());
+  auto fr_agents =
+      observed_world.GetAgentFrontRearForId(ego->GetAgentId(), lane_corridor);
   bool distance_safe = true;
   if (to_rear_ && fr_agents.rear.first) {
     distance_safe = CheckSafeDistance(fr_agents.rear.first, ego,
@@ -91,15 +92,15 @@ double SafeDistanceLabelFunction::CalcSafeDistance0(const double v_r,
 
 double SafeDistanceLabelFunction::CalcSafeDistance1(const double v_r,
                                                     const double v_f,
-                                                     const double a_r,
-                                                     const double a_f) const {
+                                                    const double a_r,
+                                                    const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) + pow(v_f, 2) / (2.0 * a_f);
 }
 
 double SafeDistanceLabelFunction::CalcSafeDistance2(const double v_r,
                                                     const double v_f,
-                                                     const double a_r,
-                                                     const double a_f) const {
+                                                    const double a_r,
+                                                    const double a_f) const {
   double sqrt_numerator = v_f + a_f * delta_ - v_r;
   return pow(sqrt_numerator, 2) / (2.0 * (a_f - a_r)) - v_f * delta_ -
          0.5 * a_f * pow(delta_, 2) + v_r * delta_;
@@ -107,8 +108,8 @@ double SafeDistanceLabelFunction::CalcSafeDistance2(const double v_r,
 
 double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
                                                     const double v_f,
-                                                     const double a_r,
-                                                     const double a_f) const {
+                                                    const double a_r,
+                                                    const double a_f) const {
   return v_r * delta_ - pow(v_r, 2) / (2.0 * a_r) - v_f * delta_ -
          a_f * pow(delta_, 2) / 2.0;
 }

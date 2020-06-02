@@ -64,6 +64,7 @@ struct RoadCorridor {
     }
     return nullptr;
   }
+  LaneCorridorPtr GetNearestLaneCorridor(const Point2d& pt) const;
   std::pair<LaneCorridorPtr, LaneCorridorPtr>
   GetLeftRightLaneCorridor(const Point2d& pt) const;
 

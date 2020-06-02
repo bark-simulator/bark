@@ -96,6 +96,7 @@ cc_library(
     ],
     deps = [
         "//modules/world/opendrive",
+        "//modules/commons/transformation:frenet",
         ":road",
         ":lane",
         ":lane_corridor"

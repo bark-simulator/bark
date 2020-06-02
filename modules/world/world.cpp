@@ -14,6 +14,8 @@
 namespace modules {
 namespace world {
 
+using models::behavior::BehaviorStatus;
+
 World::World(const commons::ParamsPtr& params) :
   commons::BaseType(params),
   map_(),
@@ -46,8 +48,7 @@ AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
   AgentMap::iterator it;
   for (it = agents_valid.begin(); it != agents_valid.end();) {
-    if ((*it).second->GetBehaviorStatus() !=
-        models::behavior::BehaviorStatus::VALID) {
+    if ((*it).second->GetBehaviorStatus() != BehaviorStatus::VALID) {
       agents_valid.erase(it++);
     } else {
       ++it;
@@ -147,8 +148,6 @@ void World::UpdateAgentRTree() {
 }
 
 void World::RemoveInvalidAgents() {
-  using models::behavior::BehaviorStatus;
-
   if (remove_agents_) {
     std::vector<rtree_agent_value> query_results;
     auto bounding_box = this->BoundingBox();
@@ -199,7 +198,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
   for (auto& result_pair : query_results) {
     auto agent = GetAgent(result_pair.second);
     if (modules::geometry::Collide(
-            agent->GetPolygonFromState(agent->GetCurrentState()), polygon)) {
+            agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
+        agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
       intersecting_agents[result_pair.second] = agent;
     }
   }

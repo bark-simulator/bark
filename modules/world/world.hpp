@@ -34,7 +34,7 @@ using world::map::LaneCorridorPtr;
 using modules::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
 using modules::world::evaluation::LabelMap;
-using world::objects::ObjectPtr;
+using modules::world::evaluation::LabelFunctionPtr;
 using world::objects::ObjectPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
