@@ -21,15 +21,20 @@ from bark.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
 from bark.models.behavior import * 
 import os
 
-def make_initial_world():
+
+def make_initial_world(primitives):
     # must be within examples params folder
     params = ParameterServer()
     world = World(params)
 
-    # Define two behavior models one python one standard c++ model
+    # Define two behavior models
     behavior_model = BehaviorMPContinuousActions(params)
-    idx = behavior_model.AddMotionPrimitive(np.array([-5, 0])) # adding action
-    behavior_model.ActionToBehavior(idx) # setting action
+    primitive_mapping = {}
+    for prim in primitives:
+      idx = behavior_model.AddMotionPrimitive(np.array(prim)) # adding action
+      primitive_mapping[idx] = prim
+
+    behavior_model.ActionToBehavior(0) # setting initial action
 
     execution_model = ExecutionModelInterpolate(params)
     dynamic_model = SingleTrackModel(params)
@@ -73,5 +78,9 @@ def make_initial_world():
 
     return world
 
-def get_controlled_agent(world):
+def get_ego_agent(world):
   return world.agents[0]
+
+def apply_action_to_ego_agent(world, idx):
+  world.agents[0].behavior_model.ActionToBehavior(idx)
+  return world

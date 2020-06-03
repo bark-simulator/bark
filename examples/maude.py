@@ -4,13 +4,14 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from maud_interface import make_initial_world, get_controlled_agent
+from maude_interface import make_initial_world, get_ego_agent, apply_action_to_ego_agent
 from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 import time
 
-world = make_initial_world()
+primitives = [[0, 0], [-5, 0], [5, 0]]
+world = make_initial_world(primitives)
 
 params = ParameterServer()
 viewer = MPViewer(params=params, use_world_bounds=True)
@@ -28,8 +29,9 @@ for _ in range(0, 20):
     world.Step(sim_step_time)
     viewer.clear()
     viewer.drawWorld(world)
-    ego_agent = get_controlled_agent(world)
+    ego_agent = get_ego_agent(world)
     print(ego_agent.state)
+    world = apply_action_to_ego_agent(world, 1)
 
     viewer.drawGoalDefinition(ego_agent.goal_definition, "red", 0.5, "red")
 
