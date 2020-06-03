@@ -28,7 +28,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
             const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
-            line);  //! create a polygon from a line enclosing the polygon
+                line);  //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
   virtual float CalculateArea() const;
 
@@ -40,12 +40,9 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     std::vector<boost::geometry::model::polygon<Point2d>> merged_polygon;
     boost::geometry::correct(this->obj_);
     boost::geometry::correct(poly.obj_);
-    boost::geometry::union_(
-      this->obj_,
-      poly.obj_,
-      merged_polygon);
+    boost::geometry::union_(this->obj_, poly.obj_, merged_polygon);
     if (merged_polygon.size() > 0) {
-     Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
+      Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
     }
   }
 
@@ -139,7 +136,6 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
   return mat;
 }
 
-
 template <>
 inline float Polygon::CalculateArea() const {
   return bg::area(obj_);
@@ -221,14 +217,15 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
       buffered_polygons;
   Polygon copied_polygon = polygon;
   bg::correct(copied_polygon.obj_);
-  bg::buffer(copied_polygon.obj_, buffered_polygons, distance_strategy, side_strategy,
-             join_strategy, end_strategy, point_strategy);
+  bg::buffer(copied_polygon.obj_, buffered_polygons, distance_strategy,
+             side_strategy, join_strategy, end_strategy, point_strategy);
+  bg::correct(buffered_polygons);
   if (buffered_polygons.size() != 1) {
     // Shrinking the polygon turns it into two disjointed polygons
     return false;
   }
-  for (auto const& point :
-       boost::make_iterator_range(bg::exterior_ring(buffered_polygons.front()))) {
+  for (auto const& point : boost::make_iterator_range(
+           bg::exterior_ring(buffered_polygons.front()))) {
     buffered_polygon->AddPoint(point);
   }
   if (!buffered_polygon->Valid()) {
