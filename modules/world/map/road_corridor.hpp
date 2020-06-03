@@ -102,7 +102,7 @@ struct RoadCorridor {
     const std::map<LaneId, LaneCorridorPtr>& lane_corridors) {
     lane_corridors_ = lane_corridors;
   }
-  bool ComputeRoadPolygon(double buffer_dist = 0.2) {
+  bool ComputeRoadPolygon(double buffer_dist = 0.3) {
     Polygon merged_polygon;
     // merge all lane polygons
     for (const auto& lane_corr : unique_lane_corridors_) {
