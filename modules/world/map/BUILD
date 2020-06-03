@@ -14,7 +14,6 @@ cc_library(
         ":road_corridor",
 
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
@@ -33,7 +32,6 @@ cc_library(
         "@boost//:geometry",
         "@boost//:graph"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
@@ -49,7 +47,6 @@ cc_library(
     deps = [
         "//modules/world/opendrive"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
@@ -65,7 +62,6 @@ cc_library(
         "//modules/world/opendrive",
         ":lane"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
@@ -82,7 +78,6 @@ cc_library(
         ":road",
         ":lane"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 
@@ -101,7 +96,6 @@ cc_library(
         ":lane",
         ":lane_corridor"
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 

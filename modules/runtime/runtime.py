@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from bark.world.opendrive import *
 from bark.world import *
@@ -29,7 +30,7 @@ class Runtime(PyRuntime):
     else:
       self._scenario, self._scenario_idx = \
         self._scenario_generator.get_next_scenario()
-    self._world = self._scenario.get_world_state()
+    self._world = self._scenario.GetWorldState()
     self._reset_has_been_called = True
     self._viewer.Reset()
 

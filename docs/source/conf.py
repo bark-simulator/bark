@@ -20,13 +20,13 @@
 # -- Project information -----------------------------------------------------
 
 project = 'BARK'
-copyright = '2019, fortiss GmbH'
-author = 'fortiss GmbH'
+copyright = '2020 J. Bernhard, K. Esterle, P. Hart and T. Kessler'
+author = 'Patrick Hart, Julian Bernhard, Klemens Esterle, Tobias Kessler'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '1.0'
+release = '0.2'
 
 
 # -- General configuration ---------------------------------------------------

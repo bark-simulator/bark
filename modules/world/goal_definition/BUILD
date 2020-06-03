@@ -17,7 +17,6 @@ cc_library(
         "//modules/world:include",
         "@boost//:geometry",
     ],
-    linkstatic = 1,
     visibility = ["//visibility:public"],
 )
 

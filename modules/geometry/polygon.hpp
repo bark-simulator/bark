@@ -1,5 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
-// Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -28,8 +28,9 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
             const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
-            line);  //! create a polygon from a line enclosing the polygon
+                line);  //! create a polygon from a line enclosing the polygon
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual float CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -39,12 +40,9 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     std::vector<boost::geometry::model::polygon<Point2d>> merged_polygon;
     boost::geometry::correct(this->obj_);
     boost::geometry::correct(poly.obj_);
-    boost::geometry::union_(
-      this->obj_,
-      poly.obj_,
-      merged_polygon);
+    boost::geometry::union_(this->obj_, poly.obj_, merged_polygon);
     if (merged_polygon.size() > 0) {
-     Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
+      Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
     }
   }
 
@@ -138,6 +136,11 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
   return mat;
 }
 
+template <>
+inline float Polygon::CalculateArea() const {
+  return bg::area(obj_);
+}
+
 inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
@@ -200,8 +203,8 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
   return bg::intersects(poly1.obj_, poly2.obj_);
 }
 
-inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
-                          Polygon* shrunk_polygon) {
+inline bool BufferPolygon(const Polygon& polygon, const double distance,
+                          Polygon* buffered_polygon) {
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;
 
@@ -210,22 +213,24 @@ inline bool ShrinkPolygon(const Polygon& polygon, const double distance,
   bbuf::join_miter join_strategy;
   bbuf::end_flat end_strategy;
   bbuf::point_circle point_strategy;
-
   bg::model::multi_polygon<bg::model::polygon<geometry::Point2d>>
-      shrunk_polygons;
-  bg::buffer(polygon.obj_, shrunk_polygons, distance_strategy, side_strategy,
-             join_strategy, end_strategy, point_strategy);
-
-  if (shrunk_polygons.size() != 1) {
+      buffered_polygons;
+  Polygon copied_polygon = polygon;
+  bg::correct(copied_polygon.obj_);
+  bg::buffer(copied_polygon.obj_, buffered_polygons, distance_strategy,
+             side_strategy, join_strategy, end_strategy, point_strategy);
+  bg::correct(buffered_polygons);
+  if (buffered_polygons.size() != 1) {
     // Shrinking the polygon turns it into two disjointed polygons
     return false;
   }
-
-  for (auto const& point :
-       boost::make_iterator_range(bg::exterior_ring(shrunk_polygons.front()))) {
-    shrunk_polygon->AddPoint(point);
+  for (auto const& point : boost::make_iterator_range(
+           bg::exterior_ring(buffered_polygons.front()))) {
+    buffered_polygon->AddPoint(point);
   }
-  assert(shrunk_polygon->Valid());
+  if (!buffered_polygon->Valid()) {
+    LOG(INFO) << "Buffered polygon is not valid.";
+  }
   return true;
 }
 

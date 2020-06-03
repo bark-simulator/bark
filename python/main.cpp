@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -15,7 +16,7 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(bark, m) {
-  m.doc() = "Wrapper for fortiss-behave library";
+  m.doc() = "Wrapper for BARK library.";
   python_geometry(
     m.def_submodule("geometry", "submodule handling geometries"));
   python_commons(

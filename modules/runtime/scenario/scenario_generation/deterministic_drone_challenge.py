@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation\
@@ -81,7 +82,7 @@ class DeterministicDroneChallengeGeneration(ScenarioGeneration):
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
     scenario._map_interface = None
-    world = scenario.get_world_state()
+    world = scenario.GetWorldState()
     agent_list = []
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:

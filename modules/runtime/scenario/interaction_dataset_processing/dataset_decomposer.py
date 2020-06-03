@@ -1,7 +1,8 @@
-# Copyright (c) 2020 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import os
 import shutil
@@ -29,7 +30,7 @@ class DatasetDecomposer:
         # we are creating a dummy scenario to get the map interface from it
         scenario = Scenario(map_file_name=self._map_filename,
                             json_params=params.ConvertToDict())
-        world = scenario.get_world_state()
+        world = scenario.GetWorldState()
         map_interface = world.map
         return map_interface
 

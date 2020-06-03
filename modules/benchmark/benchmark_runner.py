@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import os
 import pickle
@@ -168,9 +169,9 @@ class BenchmarkRunner:
         scenario_history = []
         step = 0
         try:
-            world = scenario.get_world_state()
+            world = scenario.GetWorldState()
         except Exception as e:
-            self.logger.error("For config-idx {}, Exception thrown in scenario.get_world_state: {}".format(
+            self.logger.error("For config-idx {}, Exception thrown in scenario.GetWorldState: {}".format(
                 benchmark_config.config_idx, e))
             self._append_exception(benchmark_config, e)
             return {"config_idx": benchmark_config.config_idx,

@@ -1,7 +1,8 @@
-# Copyright (c) 2019 fortiss GmbH
+# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Tobias Kessler
 #
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
+# This work is licensed under the terms of the MIT license.
+# For a copy, see <https://opensource.org/licenses/MIT>.
 
 import os
 import unittest
@@ -23,8 +24,8 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "4way_intersection"
-output_dir = "/home/hart/Dokumente/2020/bark/examples/maps/" + map_name
+map_name = "DR_CHN_Merging_ZS_partial_v02"
+output_dir = "/tmp/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -82,25 +83,25 @@ roadgraph = map_interface.GetRoadgraph()
 roadgraph.PrintGraph(output_dir + "/" + map_name)
 lane_ids = roadgraph.GetAllLaneids()
 
-for lane_id in lane_ids:
-  lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
-  # plot plan_view
-  road_id = roadgraph.GetRoadForLaneId(lane_id)
-  road = map_interface.GetOpenDriveMap().GetRoad(road_id)
-  plan_view_reference = road.plan_view.GetReferenceLine()
-  # plot polygon with center line
-  viewer.drawWorld(world)
-  color = list(np.random.choice(range(256), size=3)/256)
-  viewer.drawPolygon2d(lane_polygon, color, 1.0)
-  viewer.drawLine2d(plan_view_reference, color="red")
-  viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
-  viewer.show()
-  viewer.clear()
+# for lane_id in lane_ids:
+#   lane_polygon = roadgraph.GetLanePolygonForLaneId(lane_id)
+#   # plot plan_view
+#   road_id = roadgraph.GetRoadForLaneId(lane_id)
+#   road = map_interface.GetOpenDriveMap().GetRoad(road_id)
+#   plan_view_reference = road.plan_view.GetReferenceLine()
+#   # plot polygon with center line
+#   viewer.drawWorld(world)
+#   color = list(np.random.choice(range(256), size=3)/256)
+#   viewer.drawPolygon2d(lane_polygon, color, 1.0)
+#   viewer.drawLine2d(plan_view_reference, color="red")
+#   viewer.saveFig(output_dir + "/" + "roadgraph_laneid_" + str(lane_id) + ".png")
+#   viewer.show()
+#   viewer.clear()
 
 
 comb_all = []
-start_point = [Point2d(1004, 1003),Point2d(1004, 1006)]
-end_point_list = [Point2d(886, 1008)]
+start_point = [Point2d(-115+1117, -158+1107)]
+end_point_list = [Point2d(27+1117, -158+1107)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
@@ -215,9 +216,5 @@ def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
     viewer.show()
     viewer.clear()
 
-road_ids = [1, 10, 0]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
-road_ids = [0, 11, 1]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.backward)
-road_ids = [2, 4, 0]
+road_ids = [0, 1]
 DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
