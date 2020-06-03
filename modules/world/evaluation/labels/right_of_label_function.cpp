@@ -19,7 +19,7 @@ bool modules::world::evaluation::RightOfLabelFunction::evaluate_agent(
         other_agent->GetRoadCorridor()
             ->GetLeftRightLaneCorridor(other_agent->GetCurrentPosition())
             .second;
-    return other_lc == ego_lc;
+    return other_lc && ego_lc && *other_lc == *ego_lc;
   }
   return false;
 }
