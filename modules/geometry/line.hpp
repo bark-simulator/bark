@@ -167,6 +167,10 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       return true;
     }
   }
+  bool operator==(const Line_t &rhs) const {
+    return bg::equals(this->obj_, rhs.obj_);
+  }
+  bool operator!=(const Line_t &rhs) const { return !(rhs == *this); }
 };
 
 //! for better usage simple float defines
