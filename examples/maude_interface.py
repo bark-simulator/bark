@@ -82,5 +82,4 @@ def get_ego_agent(world):
   return world.agents[0]
 
 def apply_action_to_ego_agent(world, idx):
-  world.agents[0].behavior_model.ActionToBehavior(idx)
-  return world
+  get_ego_agent(world).behavior_model.ActionToBehavior(idx)

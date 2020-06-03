@@ -10,8 +10,12 @@ from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.viewer.video_renderer import VideoRenderer
 import time
 
-primitives = [[0, 0], [-5, 0], [5, 0]]
+# list of tuples with acceleration / steering angle
+primitives = [(0, 0), (-5, 0), (5, 0)]
 world = make_initial_world(primitives)
+
+ego_agent = get_ego_agent(world)
+apply_action_to_ego_agent(world, 0) # applies action with idx 0 (keep velocity)
 
 params = ParameterServer()
 viewer = MPViewer(params=params, use_world_bounds=True)
@@ -29,10 +33,11 @@ for _ in range(0, 20):
     world.Step(sim_step_time)
     viewer.clear()
     viewer.drawWorld(world)
-    ego_agent = get_ego_agent(world)
-    print(ego_agent.state)
-    world = apply_action_to_ego_agent(world, 1)
-
     viewer.drawGoalDefinition(ego_agent.goal_definition, "red", 0.5, "red")
+
+    print(ego_agent.state)
+
+    # applies action with idx 1 (break)
+    apply_action_to_ego_agent(world, 1)
 
     time.sleep(sim_step_time/sim_real_time_factor)
