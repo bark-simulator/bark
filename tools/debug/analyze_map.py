@@ -24,8 +24,8 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "threeway_intersection"
-output_dir = "/Users/hart/2019/bark/examples/maps/" + map_name
+map_name = "DR_CHN_Merging_ZS_partial_v02"
+output_dir = "/tmp/" + map_name
 
 # Map Definition
 xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
@@ -100,8 +100,8 @@ lane_ids = roadgraph.GetAllLaneids()
 
 
 comb_all = []
-start_point = [Point2d(1004, 1003),Point2d(1004, 1006)]
-end_point_list = [Point2d(886, 1008)]
+start_point = [Point2d(-115+1117, -158+1107)]
+end_point_list = [Point2d(27+1117, -158+1107)]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 
@@ -216,9 +216,5 @@ def DrawRoadCorridor(road_ids, dr=XodrDrivingDirection.forward):
     viewer.show()
     viewer.clear()
 
-road_ids = [1, 10, 0]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)
-road_ids = [0, 11, 1]
-DrawRoadCorridor(road_ids, XodrDrivingDirection.backward)
-road_ids = [2, 4, 0]
+road_ids = [0, 1]
 DrawRoadCorridor(road_ids, XodrDrivingDirection.forward)

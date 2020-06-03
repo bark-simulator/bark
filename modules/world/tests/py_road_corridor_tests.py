@@ -178,6 +178,38 @@ class RoadCorridorTests(unittest.TestCase):
         self.assertTrue(road_corridor.lane_corridors[1].polygon.Valid())
         self.assertTrue(road_corridor.polygon.Valid())
 
+    def test_dr_chn_merging(self):
+        # threeway_intersection
+        xodr_parser = XodrParser(
+            "modules/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr")
+
+        # World Definition
+        params = ParameterServer()
+        world = World(params)
+
+        map_interface = MapInterface()
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
+
+        roads = [0, 1]
+        driving_direction = XodrDrivingDirection.forward
+        map_interface.GenerateRoadCorridor(roads, driving_direction)
+        road_corridor = map_interface.GetRoadCorridor(roads, driving_direction)
+
+        # Draw map
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+
+        viewer.drawPolygon2d(road_corridor.lane_corridors[0].polygon, color = "blue", alpha = 0.5)
+        viewer.drawPolygon2d(road_corridor.lane_corridors[1].polygon, color = "blue", alpha = 0.5)
+        viewer.drawPolygon2d(road_corridor.lane_corridors[2].polygon, color = "blue", alpha = 0.5)
+        viewer.show(block=False)
+
+        self.assertTrue(road_corridor.lane_corridors[0].polygon.Valid())
+        self.assertTrue(road_corridor.lane_corridors[1].polygon.Valid())
+        self.assertTrue(road_corridor.lane_corridors[2].polygon.Valid())
+        self.assertTrue(road_corridor.polygon.Valid())
+
 
 if __name__ == '__main__':
     unittest.main()
