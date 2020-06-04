@@ -180,7 +180,7 @@ cc_test(
     ],
 )
 
-cc_test(
+cc_binary(
     name = "label_test",
     srcs = ["label_test.cc"],
     copts = ["-Iexternal/gtest/include"],

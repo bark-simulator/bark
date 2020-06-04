@@ -9,6 +9,7 @@
 #define MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
 
 #include <boost/stacktrace.hpp>
+#include <iostream>
 
 namespace modules {
 namespace commons {

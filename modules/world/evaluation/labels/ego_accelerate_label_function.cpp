@@ -29,7 +29,7 @@ std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
   if (history.size() > 2) {
     size_t frame_length = std::min(history.size(), smooth_frame_);
     const auto dx =
-        history.back().first - (history.end() - 1 - frame_length)->first;
+        history.back().first - (history.end() - frame_length)->first;
     const float dv = dx(StateDefinition::VEL_POSITION);
     const float dt = dx(StateDefinition::TIME_POSITION);
     const float avg_accel = dv / dt;

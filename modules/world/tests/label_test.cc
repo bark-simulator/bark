@@ -9,8 +9,10 @@
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "modules/world/evaluation/labels/agent_near_label_function.hpp"
 #include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
 #include "modules/world/tests/make_test_world.hpp"
@@ -177,6 +179,41 @@ TEST(label_test, lane_change_left) {
   observed_world = world->Observe({id})[0];
   labels = observed_world.EvaluateLabels();
   EXPECT_TRUE(labels[label]);
+}
+
+TEST(label_test, rel_speed_gt) {
+  auto evaluator =
+      LabelFunctionPtr(new RelSpeedLabelFunction("rel_speed_gt", 10.0));
+  auto world = make_test_world(1, 20.0, 20.0, 15.0);
+  world->AddLabels({evaluator});
+  auto observed_worlds = world->Observe({1});
+  auto labels1 = observed_worlds[0].EvaluateLabels();
+  auto label1 = evaluator->GetLabel(2);
+  EXPECT_TRUE(labels1[label1]);
+
+  auto world2 = make_test_world(1, 20.0, 20.0, 5.0);
+  world2->AddLabels({evaluator});
+  auto observed_worlds2 = world2->Observe({1});
+  auto labels2 = observed_worlds2[0].EvaluateLabels();
+  auto label2 = evaluator->GetLabel(2);
+  EXPECT_FALSE(labels2[label2]);
+}
+
+TEST(label_test, agent_near) {
+  auto evaluator = LabelFunctionPtr(new AgentNearLabelFunction("near", 10.0));
+  auto world = make_test_world(1, 5.0, 20.0, 0.0);
+  world->AddLabels({evaluator});
+  auto observed_worlds = world->Observe({1});
+  auto labels1 = observed_worlds[0].EvaluateLabels();
+  auto label1 = evaluator->GetLabel(2);
+  EXPECT_TRUE(labels1[label1]);
+
+  auto world2 = make_test_world(1, 15.0, 20.0, 0.0);
+  world2->AddLabels({evaluator});
+  auto observed_worlds2 = world2->Observe({1});
+  auto labels2 = observed_worlds2[0].EvaluateLabels();
+  auto label2 = evaluator->GetLabel(2);
+  EXPECT_FALSE(labels2[label2]);
 }
 
 int main(int argc, char** argv) {

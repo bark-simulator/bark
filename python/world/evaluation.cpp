@@ -6,15 +6,16 @@
 
 #include "evaluation.hpp"
 #include "modules/world/evaluation/evaluator_behavior_expired.hpp"
+#include "modules/world/evaluation/evaluator_being_overtaken.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
 #include "modules/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
+#include "modules/world/evaluation/evaluator_rel_speed_overtake.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
-#include "modules/world/evaluation/evaluator_being_overtaken.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
@@ -23,6 +24,7 @@
 #include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/generic_ego_label_function.hpp"
+#include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
@@ -133,6 +135,17 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorBeingOvertaken";
       });
 
+  py::class_<EvaluatorRelSpeedOvertake, BaseEvaluator,
+                     std::shared_ptr<EvaluatorRelSpeedOvertake>>(
+              m, "EvaluatorRelSpeedOvertake")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorRelSpeedOvertake::GetRuleStates)
+      .def("__repr__",
+           [](const EvaluatorRelSpeedOvertake &g) {
+             return "bark.world.evaluation.EvaluatorBeingOvertaken";
+      });
+
   // LABELS
 
   py::class_<BaseLabelFunction, PyBaseLabelFunction,
@@ -150,6 +163,11 @@ void python_evaluation(py::module m) {
              std::shared_ptr<SafeDistanceLabelFunction>>(
       m, "SafeDistanceLabelFunction")
       .def(py::init<const std::string &, bool, double, double, double>());
+
+  py::class_<LaneChangeLabelFunction, BaseLabelFunction,
+             std::shared_ptr<LaneChangeLabelFunction>>(
+      m, "LaneChangeLabelFunction")
+      .def(py::init<const std::string &>());
 
   py::class_<RightOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")
