@@ -93,21 +93,10 @@ void Agent::AddTrajectoryStep(const StateActionPair& state_action_pair){
   }
 }
 
-void Agent::Execute(const float& world_time) {
-  //! find closest state in execution-trajectory
-  int index_world_time = 0;
-  float min_time_diff = std::numeric_limits<float>::max();
-  Trajectory last_trajectory = execution_model_->GetLastTrajectory();
-  for (int i = 0; i < last_trajectory.rows(); i++) {
-    float diff_time = fabs(last_trajectory(i, TIME_POSITION) - world_time);
-    if (diff_time < min_time_diff) {
-      index_world_time = i;
-      min_time_diff = diff_time;
-    }
-  }
+void Agent::UpdateState() {
   models::behavior::StateActionPair state_action_pair(
-      State(execution_model_->GetLastTrajectory().row(index_world_time)),
-      behavior_model_->GetLastAction());
+    execution_model_->GetLastState(),
+    behavior_model_->GetLastAction());
   history_.push_back(state_action_pair);
 
   //! remove states if queue becomes to large

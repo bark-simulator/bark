@@ -140,7 +140,7 @@ class Agent : public Object {
 
   void PlanExecution(const float &dt);
 
-  void Execute(const float& world_time);
+  void UpdateState();
 
   bool AtGoal() const;
 

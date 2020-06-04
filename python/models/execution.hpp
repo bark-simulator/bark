@@ -18,13 +18,13 @@ class PyExecutionModel : public ExecutionModel {
  public:
   using ExecutionModel::ExecutionModel;
 
-  modules::models::dynamic::Trajectory Execute(
+  modules::models::dynamic::State Execute(
       const float &delta_time,
       const modules::models::dynamic::Trajectory &trajectory,
       const modules::models::dynamic::DynamicModelPtr dynamic_model,
       const modules::models::dynamic::State current_state) override {
         PYBIND11_OVERLOAD_PURE(
-            modules::models::dynamic::Trajectory,
+            modules::models::dynamic::State,
             ExecutionModel,
             Execute,
             delta_time,

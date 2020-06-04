@@ -13,16 +13,28 @@ namespace modules {
 namespace models {
 namespace execution {
 
-dynamic::Trajectory ExecutionModelInterpolate::Execute(
-    const float& new_world_time,
-    const dynamic::Trajectory& trajectory,
-    const dynamic::DynamicModelPtr dynamic_model,
-    const dynamic::State current_state) {
+State ExecutionModelInterpolate::Execute(
+  const float& new_world_time,
+  const dynamic::Trajectory& trajectory,
+  const dynamic::DynamicModelPtr dynamic_model,
+  const dynamic::State current_state) {
 
-  // TODO(@all) fix interpolation model
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> traj = trajectory;
-  SetLastTrajectory(traj);
-  return traj;
+
+  // TODO(@hart): fix interpolation model
+  int index_world_time = 0;
+  float min_time_diff = std::numeric_limits<float>::max();
+  for (int i = 0; i < trajectory.rows(); i++) {
+    float diff_time = fabs(trajectory(i, dynamic::TIME_POSITION) - new_world_time);
+    if (diff_time < min_time_diff) {
+      index_world_time = i;
+      min_time_diff = diff_time;
+    }
+  }
+
+  SetLastTrajectory(trajectory);
+  SetLastState(State(trajectory.row(index_world_time)));
+  return State(trajectory.row(index_world_time));
 }
 
 }  // namespace execution

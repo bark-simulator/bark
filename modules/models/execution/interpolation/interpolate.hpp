@@ -16,16 +16,18 @@ namespace modules {
 namespace models {
 namespace execution {
 
+using dynamic::State;
+
 // Implement an optimal trajectory tracking based on interpolation
 class ExecutionModelInterpolate : public ExecutionModel {
  public:
   explicit ExecutionModelInterpolate(const modules::commons::ParamsPtr& params) : ExecutionModel(params) {}
   ~ExecutionModelInterpolate() {}
 
-  virtual dynamic::Trajectory Execute(const float &new_world_time,
-                                      const dynamic::Trajectory& trajectory,
-                                      const dynamic::DynamicModelPtr dynamic_model,
-                                      const dynamic::State current_state);
+  virtual State Execute(const float &new_world_time,
+                        const dynamic::Trajectory& trajectory,
+                        const dynamic::DynamicModelPtr dynamic_model,
+                        const dynamic::State current_state);
 
   virtual std::shared_ptr<ExecutionModel> Clone() const;
 };

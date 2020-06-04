@@ -54,27 +54,27 @@ void World::Step(const float& delta_time) {
 void World::DoPlanning(const float& delta_time) {
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
+  const float inc_world_time = world_time_ + delta_time;
 
   // Behavioral and execution planning
   for (auto agent : agents_) {
     //! clone current world
     ObservedWorld observed_world(current_world, agent.first);
     agent.second->PlanBehavior(delta_time, observed_world);
-    agent.second->PlanExecution(delta_time);
-    // 
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
+      agent.second->PlanExecution(inc_world_time);
   }
+
 }
 
 void World::Execute(const float& world_time) {
-  // Execute motion
   for (auto agent : agents_) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
-      agent.second->Execute(world_time);
-      // TODO: set state_action pair
+      // updates state of agent using interpolated model
+      agent.second->UpdateState();
     }
   }
-
   RemoveInvalidAgents();
 }
 

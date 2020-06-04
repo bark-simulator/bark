@@ -33,34 +33,40 @@ class ExecutionModel : public commons::BaseType {
  public:
   explicit ExecutionModel(modules::commons::ParamsPtr params) :
     BaseType(params),
-    last_trajectory_(),
+    last_state_(),
     execution_status_(ExecutionStatus::VALID) {}
 
   ExecutionModel(const ExecutionModel& execution_model) :
     BaseType(execution_model.GetParams()),
-    last_trajectory_(execution_model.GetLastTrajectory()),
+    last_state_(execution_model.GetLastState()),
     execution_status_(execution_model.GetExecutionStatus()) {}
 
   virtual ~ExecutionModel() {}
 
+  State GetLastState() const { return last_state_; }
   Trajectory GetLastTrajectory() const { return last_trajectory_; }
 
-  void SetLastTrajectory(const Trajectory& trajectory) {
-    last_trajectory_ = trajectory;
+  void SetLastState(const State& state) {
+    last_state_ = state;
+  }
+
+  void SetLastTrajectory(const Trajectory& traj) {
+    last_trajectory_ = traj;
   }
 
   ExecutionStatus GetExecutionStatus() const {
     return execution_status_;
   }
 
-  virtual Trajectory Execute(const float& new_world_time,
-                             const Trajectory& trajectory,
-                             const DynamicModelPtr dynamic_model,
-                             const State current_state) = 0;
+  virtual State Execute(const float& new_world_time,
+                        const Trajectory& trajectory,
+                        const DynamicModelPtr dynamic_model,
+                        const State current_state) = 0;
 
   virtual std::shared_ptr<ExecutionModel> Clone() const = 0;
 
  private:
+  State last_state_;
   Trajectory last_trajectory_;
   ExecutionStatus execution_status_;
 };
