@@ -24,7 +24,7 @@ bool modules::world::evaluation::FrontOfLabelFunction::evaluate_agent(
                            other_lane->GetCenterLine());
       FrenetPosition f_other(other_agent->GetCurrentPosition(),
                              other_lane->GetCenterLine());
-      return (f_other.lon <= f_ego.lon);
+      return ((f_other.lon + other_agent->GetShape().front_dist_) <= f_ego.lon);
     }
   }
   return false;
