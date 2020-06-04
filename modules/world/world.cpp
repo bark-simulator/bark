@@ -16,29 +16,28 @@ namespace world {
 
 using models::behavior::BehaviorStatus;
 
-World::World(const commons::ParamsPtr& params) :
-  commons::BaseType(params),
-  map_(),
-  agents_(),
-  world_time_(0.0),
-  remove_agents_(params->GetBool(
-      "World::remove_agents_out_of_map",
-      "Whether agents should be removed outside the bounding box.",
-      false)) {
-
+World::World(const commons::ParamsPtr& params)
+    : commons::BaseType(params),
+      map_(),
+      agents_(),
+      world_time_(0.0),
+      remove_agents_(params->GetBool(
+          "World::remove_agents_out_of_map",
+          "Whether agents should be removed outside the bounding box.",
+          false)) {
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
 
-World::World(const std::shared_ptr<World>& world) :
-  commons::BaseType(world->GetParams()),
-  map_(world->GetMap()),
-  agents_(world->GetAgents()),
-  objects_(world->GetObjects()),
-  evaluators_(world->GetEvaluators()),
-  world_time_(world->GetWorldTime()),
-  remove_agents_(world->GetRemoveAgents()),
-  rtree_agents_(world->rtree_agents_),
+World::World(const std::shared_ptr<World>& world)
+    : commons::BaseType(world->GetParams()),
+      map_(world->GetMap()),
+      agents_(world->GetAgents()),
+      objects_(world->GetObjects()),
+      evaluators_(world->GetEvaluators()),
+      world_time_(world->GetWorldTime()),
+      remove_agents_(world->GetRemoveAgents()),
+      rtree_agents_(world->rtree_agents_),
       label_evaluators_(world->GetLabelFunctions()) {
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
@@ -234,7 +233,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
 
   for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
        ++it) {
-    if (it->second->GetAgentId() == agent_id) {
+    if (it->second->GetAgentId() == agent_id ||
+        it->second->GetBehaviorStatus() != BehaviorStatus::VALID) {
       continue;
     }
 
@@ -262,9 +262,10 @@ FrontRearAgents World::GetAgentFrontRearForId(
   fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
 
   return fr_agents;
-  }
+}
 
-void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_map){
+void World::FillWorldFromCarla(const float& delta_time,
+                               const AgentStateMap& state_map) {
   // this function should be called before calling PlanSpecificAgents
   // TODO: use StateActionPair as parameter
   world_time_ += delta_time;
@@ -278,15 +279,17 @@ void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& sta
       StateActionPair pair;
       pair.first = agent_state.second;
       pair.second = modules::models::behavior::Action(
-        modules::models::behavior::DiscreteAction(0));
+          modules::models::behavior::DiscreteAction(0));
       agent->AddTrajectoryStep(pair);
     } else {
-      LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist." << std::endl;
+      LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist."
+                 << std::endl;
     }
   }
 }
 
-AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
+AgentTrajectoryMap World::PlanSpecificAgents(
+    const float& delta_time, const std::vector<int>& agent_ids) {
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
 
@@ -299,14 +302,13 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
 
     if (agent) {
       //! clone current world
-      ObservedWorld observed_world(current_world,
-                                   agent_id);
+      ObservedWorld observed_world(current_world, agent_id);
       agent->BehaviorPlan(delta_time, observed_world);
       agent->ExecutionPlan(delta_time);
 
-      trajectory_map[agent_id]=agent->GetExecutionTrajectory();
+      trajectory_map[agent_id] = agent->GetExecutionTrajectory();
     } else {
-     LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
+      LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
     }
   }
 
@@ -314,16 +316,17 @@ AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std:
 }
 
 void World::AddLabels(const LabelFunctions& label_evaluators) {
-  label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(), label_evaluators.end());
+  label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(),
+                           label_evaluators.end());
 }
 const LabelFunctions& World::GetLabelFunctions() const {
   return label_evaluators_;
 }
 void World::RemoveAgentById(AgentId agent_id) {
   size_t erased_elems = agents_.erase(agent_id);
-  LOG_IF(ERROR, erased_elems == 0) << "Could not remove non-existent agent with Id " << agent_id << " !";
+  LOG_IF(ERROR, erased_elems == 0)
+      << "Could not remove non-existent agent with Id " << agent_id << " !";
 }
-
 
 }  // namespace world
 }  // namespace modules
