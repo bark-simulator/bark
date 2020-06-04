@@ -64,9 +64,9 @@ std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
 
   int ret_idx = 0;
   bool found_closest_pt = false;
-  for (int i = trajectory.rows() - 1; 0 < i; i--) {
+  for (int i = 0; i < trajectory.rows(); i++) {
     float time_dist = fabs(trajectory(i, dynamic::TIME_POSITION) - world_time);
-    if (time_dist < min_traj_time_distance && trajectory(i, dynamic::TIME_POSITION) < world_time) {
+    if (time_dist < min_traj_time_distance) {
       min_traj_time_distance = time_dist;
       ret_idx = i;
       found_closest_pt = true;
@@ -80,8 +80,9 @@ State ExecutionModelInterpolate::Interpoalte(
   const float start_time = p0(dynamic::TIME_POSITION);
   const float end_time = p1(dynamic::TIME_POSITION);
   const float lambda = fabs((time - start_time) / (end_time - start_time));
+  assert(end_time > start_time && time > start_time);
   // LOG(INFO) << lambda << ", time:" << time << ", " << start_time << ", " << end_time << std::endl;
-  return lambda*p0  + (1 - lambda)*p1;
+  return (1-lambda)*p0  + ( lambda)*p1;
 }
 
 void ExecutionModelInterpolate::Execute(
@@ -107,7 +108,6 @@ void ExecutionModelInterpolate::Execute(
     return;
   }
 
-  // Interpolate(traj, time) <- could be linear, quadratic etc.
   std::pair<int, bool> lower_idx = FindClosestLowerTrajectoryRow(
     trajectory, new_world_time);
   
@@ -116,11 +116,12 @@ void ExecutionModelInterpolate::Execute(
     int upper_id = lower_id + 1;
     State p0 = trajectory.row(lower_id);
     State p1 = trajectory.row(upper_id);
-    // LOG(INFO) << "Interpolating" << std::endl;
+
+    std::cout << trajectory << std::endl;
     State interp_state = Interpoalte(p0, p1, new_world_time);
     SetLastState(interp_state);
-    // LOG(INFO) << "Interpoalted time: " << interp_state(dynamic::TIME_POSITION) << std::endl;
-    // TODO(@hart): check time for concurrency
+    // LOG(INFO) << interp_state(dynamic::TIME_POSITION) << " - " << new_world_time << std::endl;
+    assert(fabs(interp_state(dynamic::TIME_POSITION) - new_world_time) < 0.02);
     return;
   } else {
     SetExecutionStatus(ExecutionStatus::INVALID);

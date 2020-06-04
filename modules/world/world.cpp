@@ -71,8 +71,7 @@ void World::Execute(const float& world_time) {
   for (auto agent : agents_) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
-      // updates state of agent using interpolated model
-      // TODO(@hart): assert times of states
+      // TODO(@hart): assert time of states
       agent.second->UpdateStateAction();
     }
   }
