@@ -23,7 +23,7 @@ class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
 
   virtual ~BehaviorMPContinuousActions() {}
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(float min_dt,
                           const ObservedWorld& observed_world);
 
   virtual MotionIdx GetNumMotionPrimitives(

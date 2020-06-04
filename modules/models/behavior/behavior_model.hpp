@@ -56,7 +56,7 @@ class BehaviorModel : public modules::commons::BaseType {
   BehaviorModel(const BehaviorModel& behavior_model)
       : commons::BaseType(behavior_model.GetParams()),
         last_trajectory_(behavior_model.GetLastTrajectory()),
-        last_action_(behavior_model.GetLastAction()),
+        last_action_(behavior_model.GetAction()),
         behavior_status_(behavior_model.GetBehaviorStatus()) {}
 
   virtual ~BehaviorModel() {}
@@ -73,19 +73,26 @@ class BehaviorModel : public modules::commons::BaseType {
     behavior_status_ = status;
   }
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(float min_dt,
                           const world::ObservedWorld& observed_world) = 0;
 
-  virtual void ActionToBehavior(const Action& action) {};
 
   virtual std::shared_ptr<BehaviorModel> Clone() const {};
 
   Action GetLastAction() const { return last_action_; }
-  void SetLastAction(const Action action) { last_action_ = action; }
+  void SetLastAction(const Action& action) { last_action_ = action; }
+
+  // externally set action that can also be set from Python
+  Action GetAction() const { return action_to_behavior_; }
+  virtual void ActionToBehavior(const Action& action) {
+    action_to_behavior_ = action;
+  };
 
  private:
   dynamic::Trajectory last_trajectory_;
+  // can either be the last action or action to be executed
   Action last_action_;
+  Action action_to_behavior_;
   BehaviorStatus behavior_status_;
 };
 

@@ -36,7 +36,7 @@ class PythonBehaviorModelWrapper(BehaviorModel):
   def Plan(self, delta_time, world):
     super(PythonBehaviorModelWrapper, self).ActionToBehavior(
       np.array([2., 1.], dtype=np.float32))
-    # print(super(PythonBehaviorModelWrapper, self).GetLastAction())
+    # print(super(PythonBehaviorModelWrapper, self).GetAction())
     trajectory = np.array([[0., 0., 0., 0., 0.],
                            [0., 0., 0., 0., 0.]], dtype=np.float32)
     super(PythonBehaviorModelWrapper, self).SetLastTrajectory(trajectory)
