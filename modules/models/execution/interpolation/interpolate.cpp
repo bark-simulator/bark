@@ -40,14 +40,15 @@ std::pair<State, bool> ExecutionModelInterpolate::CheckIfTimeExactIsInTrajectory
   const float delta = 1e-3;
   float start_time = trajectory(0, TIME_POSITION);
   float end_time = trajectory(trajectory.rows() - 1, TIME_POSITION);
+  int half_traj_num = static_cast<int>(trajectory.rows()/2);
 
   // closer to the end; reverse
   if (fabs(world_time - end_time) < fabs(world_time - start_time)) {
-    for (int i = trajectory.rows() - 1; 0 < i; i--)
+    for (int i = trajectory.rows() - 1; half_traj_num - 1 < i; i--)
       if ( fabs(trajectory(i, dynamic::TIME_POSITION) - world_time) < delta)
         return {State(trajectory.row(i)), true};
   } else {
-    for (int i = 0; i < trajectory.rows(); i++)
+    for (int i = 0; i < half_traj_num + 1; i++)
       if ( fabs(trajectory(i, dynamic::TIME_POSITION) - world_time) < delta)
         return {State(trajectory.row(i)), true};
   }
@@ -58,18 +59,16 @@ std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
   const Trajectory& trajectory,
   const double& world_time) const {
   const float delta = 1e-3;
-  float start_time = trajectory(0, TIME_POSITION);
-  float end_time = trajectory(trajectory.rows() - 1, TIME_POSITION);
-  float min_traj_time_distance = std::numeric_limits<float>::max();
+  // float start_time = trajectory(0, TIME_POSITION);
+  // float end_time = trajectory(trajectory.rows() - 1, TIME_POSITION);
 
   int ret_idx = 0;
   bool found_closest_pt = false;
   for (int i = 0; i < trajectory.rows(); i++) {
-    float time_dist = fabs(trajectory(i, dynamic::TIME_POSITION) - world_time);
-    if (time_dist < min_traj_time_distance) {
-      min_traj_time_distance = time_dist;
+    if (world_time >= trajectory(i, dynamic::TIME_POSITION)) {
       ret_idx = i;
       found_closest_pt = true;
+      break;
     }
   }
   return {ret_idx, found_closest_pt};
@@ -80,8 +79,8 @@ State ExecutionModelInterpolate::Interpoalte(
   const float start_time = p0(dynamic::TIME_POSITION);
   const float end_time = p1(dynamic::TIME_POSITION);
   const float lambda = fabs((time - start_time) / (end_time - start_time));
-  assert(end_time > start_time && time > start_time);
-  // LOG(INFO) << lambda << ", time:" << time << ", " << start_time << ", " << end_time << std::endl;
+  LOG(INFO) << lambda << ", time:" << time << ", " << start_time << ", " << end_time << std::endl;
+  assert(end_time >= start_time && time >= start_time);
   return (1-lambda)*p0  + ( lambda)*p1;
 }
 
@@ -89,8 +88,8 @@ void ExecutionModelInterpolate::Execute(
   const float& new_world_time,
   const Trajectory& trajectory,
   const DynamicModelPtr dynamic_model) {
-
-  // TODO(@hart): for this model not required
+  
+  // book-keeping
   SetLastTrajectory(trajectory);
   
   // check time and size
@@ -101,6 +100,7 @@ void ExecutionModelInterpolate::Execute(
     SetExecutionStatus(ExecutionStatus::VALID);
   }
 
+  // check if we can quickly find an exact point
   std::pair<State, bool> has_exact_point =
     CheckIfTimeExactIsInTrajectory(trajectory, new_world_time);
   if (has_exact_point.second) {
@@ -108,22 +108,21 @@ void ExecutionModelInterpolate::Execute(
     return;
   }
 
+  // if not, interpolate
   std::pair<int, bool> lower_idx = FindClosestLowerTrajectoryRow(
     trajectory, new_world_time);
-  
   if (lower_idx.second == true) {
     int lower_id = lower_idx.first;
     int upper_id = lower_id + 1;
     State p0 = trajectory.row(lower_id);
     State p1 = trajectory.row(upper_id);
-
-    std::cout << trajectory << std::endl;
     State interp_state = Interpoalte(p0, p1, new_world_time);
     SetLastState(interp_state);
-    // LOG(INFO) << interp_state(dynamic::TIME_POSITION) << " - " << new_world_time << std::endl;
+    // assert that the interpolated point is near the world time
     assert(fabs(interp_state(dynamic::TIME_POSITION) - new_world_time) < 0.02);
     return;
   } else {
+    LOG(INFO) << "ExecutionStatus is invalid." << std::endl;
     SetExecutionStatus(ExecutionStatus::INVALID);
   }
 }

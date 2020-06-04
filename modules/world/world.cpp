@@ -26,7 +26,6 @@ World::World(const commons::ParamsPtr& params) :
     "World::remove_agents_out_of_map",
     "Whether agents should be removed outside the bounding box.",
     false)) {
-
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
@@ -55,24 +54,23 @@ void World::DoPlanning(const float& delta_time) {
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
   const float inc_world_time = world_time_ + delta_time;
-
-  // Behavioral and execution planning
   for (auto agent : agents_) {
-    //! clone current world
     ObservedWorld observed_world(current_world, agent.first);
     agent.second->PlanBehavior(delta_time, observed_world);
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
       agent.second->PlanExecution(inc_world_time);
   }
-
 }
 
 void World::Execute(const float& world_time) {
+  using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
-      // TODO(@hart): assert time of states
       agent.second->UpdateStateAction();
+      // make sure all agents have the same world time
+      const auto& agent_state = agent.second->GetCurrentState();
+      assert(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
     }
   }
   RemoveInvalidAgents();
@@ -114,7 +112,6 @@ void World::AddEvaluator(const std::string& name,
                          const EvaluatorPtr& evaluator) {
   evaluators_[name] = evaluator;
 }
-
 
 EvaluationMap World::Evaluate() const {
   EvaluationMap evaluation_results;

@@ -24,7 +24,6 @@ TEST(execution_model, execution_model_interpolate) {
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
 
-  State initial_state = test_trajectory.row(0);
   exec_model->Execute(0.5, test_trajectory, dyn_model);
   Trajectory followed_trajectory1 = exec_model->GetLastTrajectory();
   State next_state1 = followed_trajectory1.row(0);
@@ -38,7 +37,7 @@ TEST(execution_model, execution_model_interpolate) {
   //  EXPECT_EQ(next_state2(StateDefinition::X_POSITION),4);
 
   test_trajectory.col(StateDefinition::Y_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10);
-  initial_state = test_trajectory.row(0);
+  std::cout << test_trajectory << std::endl;
   exec_model->Execute(0.9, test_trajectory, dyn_model);
   Trajectory followed_trajectory3 = exec_model->GetLastTrajectory();
   State next_state3 = followed_trajectory3.row(0);
