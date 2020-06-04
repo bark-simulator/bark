@@ -60,8 +60,7 @@ class ExecutionModel : public commons::BaseType {
 
   virtual State Execute(const float& new_world_time,
                         const Trajectory& trajectory,
-                        const DynamicModelPtr dynamic_model,
-                        const State current_state) = 0;
+                        const DynamicModelPtr dynamic_model) = 0;
 
   virtual std::shared_ptr<ExecutionModel> Clone() const = 0;
 

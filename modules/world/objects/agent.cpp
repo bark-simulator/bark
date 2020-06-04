@@ -77,12 +77,11 @@ void Agent::PlanBehavior(const float &dt, const ObservedWorld &observed_world) {
 void Agent::PlanExecution(const float &dt) {
   execution_model_->Execute(dt,
                             behavior_model_->GetLastTrajectory(),
-                            dynamic_model_,
-                            history_.back().first);
+                            dynamic_model_);
 }
 
 void Agent::AddTrajectoryStep(const StateActionPair& state_action_pair){
-  // !add one step to the last trajectory
+  //! add one step to the last trajectory
   history_.push_back(state_action_pair);
 
   //! remove states if queue becomes to large

@@ -13,14 +13,14 @@ namespace modules {
 namespace models {
 namespace execution {
 
+
+
 State ExecutionModelInterpolate::Execute(
   const float& new_world_time,
   const dynamic::Trajectory& trajectory,
-  const dynamic::DynamicModelPtr dynamic_model,
-  const dynamic::State current_state) {
+  const dynamic::DynamicModelPtr dynamic_model) {
 
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> traj = trajectory;
-
+  
   // TODO(@hart): fix interpolation model
   int index_world_time = 0;
   float min_time_diff = std::numeric_limits<float>::max();

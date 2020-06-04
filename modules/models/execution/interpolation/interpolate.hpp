@@ -26,8 +26,7 @@ class ExecutionModelInterpolate : public ExecutionModel {
 
   virtual State Execute(const float &new_world_time,
                         const dynamic::Trajectory& trajectory,
-                        const dynamic::DynamicModelPtr dynamic_model,
-                        const dynamic::State current_state);
+                        const dynamic::DynamicModelPtr dynamic_model);
 
   virtual std::shared_ptr<ExecutionModel> Clone() const;
 };
