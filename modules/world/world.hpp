@@ -130,13 +130,12 @@ class World : public commons::BaseType {
   // void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
   // AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
 
-
   void UpdateAgentRTree();
   void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
-  // std::shared_ptr<World> WorldExecutionAtTime(
-  //     const float& execution_time) const;
+  std::shared_ptr<World> WorldExecutionAtTime(
+    const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;

@@ -140,7 +140,7 @@ class Agent : public Object {
 
   void PlanExecution(const float &dt);
 
-  void UpdateState();
+  void UpdateStateAction();
 
   bool AtGoal() const;
 
@@ -154,8 +154,8 @@ class Agent : public Object {
   models::behavior::StateActionHistory history_;
   
   // new history containers
-  StateHistory state_history_;
-  ActionHistory action_history_;
+  // StateHistory state_history_;
+  // ActionHistory action_history_;
 
   // TODO(@hart): clean history containers
   uint32_t max_history_length_;
