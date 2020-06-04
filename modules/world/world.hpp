@@ -66,7 +66,8 @@ class World : public commons::BaseType {
   void Step(const float& delta_time);
 
   // checks whether behavior and execution status is valid and updated the world
-  void Execute(const float& world_time) {}
+  void Execute(const float& world_time);
+  void DoPlanning(const float& delta_time);
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
@@ -129,8 +130,6 @@ class World : public commons::BaseType {
   // void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
   // AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
 
-  void DoPlanning(const float& delta_time);
-  void DoExecution(const float& delta_time);
 
   void UpdateAgentRTree();
   void RemoveInvalidAgents();

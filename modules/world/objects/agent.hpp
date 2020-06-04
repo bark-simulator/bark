@@ -33,6 +33,7 @@ using models::execution::ExecutionModelPtr;
 using models::execution::ExecutionStatus;
 using models::behavior::StateActionPair;
 using models::behavior::StateActionHistory;
+using models::behavior::Action;
 using models::behavior::BehaviorStatus;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::XodrLaneId;
@@ -41,6 +42,10 @@ using modules::world::map::RoadCorridorPtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using models::dynamic::StateDefinition;
+
+using StateHistory = std::vector<State>;
+using ActionHistory = std::vector<Action>;
+
 
 class Agent : public Object {
  public:
@@ -147,7 +152,12 @@ class Agent : public Object {
   models::execution::ExecutionModelPtr execution_model_;
   modules::world::map::RoadCorridorPtr road_corridor_;
   models::behavior::StateActionHistory history_;
-  // TODO(@all): move max_history_length_ to parameter
+  
+  // new history containers
+  StateHistory state_history_;
+  ActionHistory action_history_;
+
+  // TODO(@hart): clean history containers
   uint32_t max_history_length_;
   modules::world::goal_definition::GoalDefinitionPtr goal_definition_;
 };

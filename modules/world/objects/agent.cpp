@@ -34,6 +34,8 @@ behavior_model_(behavior_model_ptr),
 dynamic_model_(dynamic_model_ptr),
 execution_model_(execution_model),
 history_(),
+state_history_(),
+action_history_(),
 max_history_length_(10),
 goal_definition_(goal_definition) {
   if (params) {

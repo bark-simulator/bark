@@ -37,7 +37,7 @@ void python_world(py::module m) {
     .def(py::init<ParamsPtr>())
     .def("Step", &World::Step)
     .def("DoPlanning", &World::DoPlanning)
-    .def("DoExecution", &World::DoExecution)
+    .def("Execute", &World::Execute)
     .def("Observe", &World::Observe)
     .def("AddAgent", &World::AddAgent)
     .def("AddObject", &World::AddObject)

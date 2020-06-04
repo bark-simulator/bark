@@ -47,7 +47,7 @@ World::World(const std::shared_ptr<World>& world) :
 void World::Step(const float& delta_time) {
   const float inc_world_time = world_time_ + delta_time;
   DoPlanning(delta_time);
-  DoExecution(inc_world_time);
+  Execute(inc_world_time);
   world_time_ = inc_world_time;
 }
 
@@ -61,22 +61,22 @@ void World::DoPlanning(const float& delta_time) {
     ObservedWorld observed_world(current_world, agent.first);
     agent.second->PlanBehavior(delta_time, observed_world);
     agent.second->PlanExecution(delta_time);
+    // 
   }
 }
 
-void World::DoExecution(const float& world_time) {
+void World::Execute(const float& world_time) {
   // Execute motion
   for (auto agent : agents_) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
       agent.second->Execute(world_time);
+      // TODO: set state_action pair
     }
   }
 
-  // TODO(@hart): move the world::Execute()
   RemoveInvalidAgents();
 }
-
 
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);

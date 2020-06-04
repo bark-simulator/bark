@@ -30,10 +30,14 @@ using dynamic::Trajectory;
 typedef unsigned int DiscreteAction;
 typedef double Continuous1DAction;
 using dynamic::Input;
+using models::dynamic::State;
 typedef boost::variant<DiscreteAction, Continuous1DAction, Input> Action;
 
-typedef std::pair<models::dynamic::State, Action> StateActionPair;
+typedef std::pair<State, Action> StateActionPair;
 typedef std::vector<StateActionPair> StateActionHistory;
+
+typedef std::vector<State> StateHistory;
+typedef std::vector<Action> ActionHistory;
 
 enum BehaviorStatus : unsigned int {
   NOT_STARTED_YET = 0,
