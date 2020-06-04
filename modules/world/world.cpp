@@ -267,55 +267,6 @@ FrontRearAgents World::GetAgentFrontRearForId(
   return fr_agents;
 }
 
-// void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_map){
-//   // this function should be called before calling PlanSpecificAgents
-//   // TODO: use StateActionPair as parameter
-//   world_time_ += delta_time;
-
-//   for (const auto& agent_state : state_map) {
-//     AgentPtr agent = NULL;
-//     agent = GetAgent(agent_state.first);
-
-//     if (agent) {
-//       // TODO: read control from Carla
-//       StateActionPair pair;
-//       pair.first = agent_state.second;
-//       pair.second = modules::models::behavior::Action(
-//         modules::models::behavior::DiscreteAction(0));
-//       agent->AddTrajectoryStep(pair);
-//     } else {
-//       LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist." << std::endl;
-//     }
-//   }
-// }
-
-// AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
-//   UpdateAgentRTree();
-//   WorldPtr current_world(this->Clone());
-
-//   AgentTrajectoryMap trajectory_map;
-
-//   // Behavioral and execution planning
-//   for (const auto& agent_id : agent_ids) {
-//     AgentPtr agent = NULL;
-//     agent = GetAgent(agent_id);
-
-//     if (agent) {
-//       //! clone current world
-//       ObservedWorld observed_world(current_world,
-//                                    agent_id);
-//       agent->PlanBehavior(delta_time, observed_world);
-//       agent->PlanExecution(delta_time);
-
-//       trajectory_map[agent_id]=agent->GetExecutionTrajectory();
-//     } else {
-//      LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
-//     }
-//   }
-
-//   return trajectory_map;
-// }
-
 
 }  // namespace world
 }  // namespace modules

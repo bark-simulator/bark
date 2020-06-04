@@ -25,20 +25,40 @@ class ExecutionModelInterpolate : public ExecutionModel {
     const ParamsPtr& params) : ExecutionModel(params) {}
   ~ExecutionModelInterpolate() {}
 
+  /**
+   * @brief  Checks if the world time is within the trajectory
+   * @note   
+   * @retval boolean: true if contained
+   */
   bool CheckIfWorldTimeIsWithinTrajectory(
     const Trajectory& trajectory,
     const float& world_time) const;
 
+  /**
+   * @brief  Find exact time in trajectory
+   * @retval BARK state and whether is was found
+   */
   std::pair<State, bool> CheckIfTimeExactIsInTrajectory(
     const Trajectory& trajectory,
     const double& world_time) const;
   
+  /**
+   * @brief  Find lower time point in trajectory for world_time
+   * @retval Trajectory row-id and whether it was found
+   */
   std::pair<int, bool> FindClosestLowerTrajectoryRow(
     const Trajectory& trajectory,
     const double& world_time) const;
   
+  /**
+   * @brief  Interpolates between two states
+   * @retval State: interpolated state
+   */
   State Interpoalte(const State& p0, const State& p1, const float& time) const;
 
+  /**
+   * @brief  Interpolates on trajectory
+   */
   virtual void Execute(
     const float &new_world_time,
     const dynamic::Trajectory& trajectory,

@@ -61,13 +61,22 @@ class World : public commons::BaseType {
   explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
 
-
-  // agent::Plan() and agent::Execute()
+  /**
+   * @brief  Steps the BARK world
+   * @param  delta_time: world step time
+   */
   void Step(const float& delta_time);
 
-  // checks whether behavior and execution status is valid and updated the world
-  void Execute(const float& world_time);
+  /**
+   * @brief Calls the behavior and execution model of the agents
+   * @param  delta_time: minimum planning time
+   */
   void DoPlanning(const float& delta_time);
+
+  /**
+   * @brief  Updates the agent state
+   */
+  void Execute(const float& world_time);
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
@@ -127,10 +136,8 @@ class World : public commons::BaseType {
 
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
 
-  // void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
-  // AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
-
   void UpdateAgentRTree();
+
   void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
