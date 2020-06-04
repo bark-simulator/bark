@@ -28,6 +28,10 @@ class ExecutionModelInterpolate : public ExecutionModel {
   bool CheckIfWorldTimeIsWithinTrajectory(
     const Trajectory& trajectory,
     const float& world_time) const;
+
+  std::pair<State, bool> CheckIfTimeExactIsInTrajectory(
+    const Trajectory& trajectory,
+    const double& world_time) const;
   
   virtual void Execute(
     const float &new_world_time,
