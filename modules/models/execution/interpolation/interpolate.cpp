@@ -21,9 +21,9 @@ bool ExecutionModelInterpolate::CheckIfWorldTimeIsWithinTrajectory(
   const Trajectory& trajectory,
   const float& world_time) const {
   bool is_in_traj = true;
-  float delta = 0.;
-  if ((world_time + 1e-4) < trajectory(0, TIME_POSITION) ||
-      (world_time - 1e-4) > trajectory(trajectory.rows() - 1, TIME_POSITION)) {
+  float delta = 1e-4;
+  if ((world_time + delta) < trajectory(0, TIME_POSITION) ||
+      (world_time - delta) > trajectory(trajectory.rows() - 1, TIME_POSITION)) {
     is_in_traj = false;
     LOG(INFO) << "World time " << world_time << " out of trajectory."
               << " Trajectory start_time: " << trajectory(0, TIME_POSITION)
@@ -44,11 +44,11 @@ std::pair<State, bool> ExecutionModelInterpolate::CheckIfTimeExactIsInTrajectory
   // closer to the end; reverse
   if (fabs(world_time - end_time) < fabs(world_time - start_time)) {
     for (int i = trajectory.rows() - 1; 0 < i; i--)
-      if (trajectory(i, dynamic::TIME_POSITION) == world_time)
+      if ( fabs(trajectory(i, dynamic::TIME_POSITION) - world_time) < 1e-4)
         return {State(trajectory.row(i)), true};
   } else {
     for (int i = 0; i < trajectory.rows(); i++)
-      if (trajectory(i, dynamic::TIME_POSITION) == world_time)
+      if ( fabs(trajectory(i, dynamic::TIME_POSITION) - world_time) < 1e-4)
         return {State(trajectory.row(i)), true};
   }
   return {State(), false};
@@ -76,19 +76,19 @@ void ExecutionModelInterpolate::Execute(
   // TODO(@hart): 3. if not interpolate
   // Interpolate(traj, time) <- could be linear, quadratic etc.
 
-  int index_world_time = 0;
-  float min_time_diff = std::numeric_limits<float>::max();
-  for (int i = 0; i < trajectory.rows(); i++) {
-    float diff_time = fabs(trajectory(i, dynamic::TIME_POSITION) - new_world_time);
-    if (diff_time < min_time_diff) {
-      index_world_time = i;
-      min_time_diff = diff_time;
-    }
-  }
+  // int index_world_time = 0;
+  // float min_time_diff = std::numeric_limits<float>::max();
+  // for (int i = 0; i < trajectory.rows(); i++) {
+  //   float diff_time = fabs(trajectory(i, dynamic::TIME_POSITION) - new_world_time);
+  //   if (diff_time < min_time_diff) {
+  //     index_world_time = i;
+  //     min_time_diff = diff_time;
+  //   }
+  // }
 
   // house-keeping
   SetLastTrajectory(trajectory);
-  SetLastState(State(trajectory.row(index_world_time)));
+  // SetLastState(State(trajectory.row(index_world_time)));
 }
 
 }  // namespace execution
