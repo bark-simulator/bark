@@ -17,6 +17,7 @@
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
+#include "modules/world/evaluation/evaluator_zip_merge.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_function.hpp"
@@ -144,6 +145,14 @@ void python_evaluation(py::module m) {
       .def("__repr__",
            [](const EvaluatorRelSpeedOvertake &g) {
              return "bark.world.evaluation.EvaluatorBeingOvertaken";
+      });
+
+  py::class_<EvaluatorZipMerge, BaseEvaluator,
+             std::shared_ptr<EvaluatorZipMerge>>(m, "EvaluatorZipMerge")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states", &EvaluatorZipMerge::GetRuleStates)
+      .def("__repr__", [](const EvaluatorZipMerge &g) {
+        return "bark.world.evaluation.EvaluatorZipMerge";
       });
 
   // LABELS

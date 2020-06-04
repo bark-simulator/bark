@@ -195,6 +195,17 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_zip_merge",
+    srcs = ["evaluator_zip_merge.cpp"],
+    hdrs = ["evaluator_zip_merge.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -211,6 +222,7 @@ cc_library(
         ":evaluator_safe_lane_change",
         ":evaluator_being_overtaken",
         ":evaluator_rel_speed_overtake",
+        ":evaluator_zip_merge",
     ],
     visibility = ["//visibility:public"],
 )
