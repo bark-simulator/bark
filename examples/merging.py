@@ -47,14 +47,14 @@ left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
                                      behavior_model=BehaviorMobilRuleBased(param_server),
-                                     s_min=0.,
+                                     s_min=5.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,
                                       lane_corridor_id=1,
                                       road_ids=[0, 1],
                                       controlled_ids=True,
                                       behavior_model=BehaviorMobilRuleBased(param_server),
-                                      s_min=0.,
+                                      s_min=5.,
                                       s_max=20.)
 
 scenarios = \
@@ -93,10 +93,10 @@ env = Runtime(step_time=0.2,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 90):
+  for step in range(0, 20):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 

@@ -13,15 +13,47 @@ namespace modules {
 namespace models {
 namespace execution {
 
+using dynamic::Trajectory;
+using dynamic::DynamicModelPtr;
+using dynamic::TIME_POSITION;
 
+bool ExecutionModelInterpolate::CheckIfWorldTimeIsWithinTrajectory(
+  const Trajectory& trajectory,
+  const float& world_time) const {
+  bool is_in_traj = true;
 
-State ExecutionModelInterpolate::Execute(
+  if ((world_time + 1e-4) < trajectory(0, TIME_POSITION) ||
+      (world_time - 1e-4) > trajectory(trajectory.rows() - 1, TIME_POSITION)) {
+    is_in_traj = false;
+    LOG(INFO) << "World time " << world_time << " out of trajectory."
+              << " Trajectory start_time: " << trajectory(0, TIME_POSITION)
+              << ", end_time: " << trajectory(trajectory.rows() - 1, TIME_POSITION)
+              << "." << std::endl;
+    LOG(INFO) << trajectory << std::endl;
+  }
+  return is_in_traj;
+}
+
+void ExecutionModelInterpolate::Execute(
   const float& new_world_time,
-  const dynamic::Trajectory& trajectory,
-  const dynamic::DynamicModelPtr dynamic_model) {
+  const Trajectory& trajectory,
+  const DynamicModelPtr dynamic_model) {
 
-  
-  // TODO(@hart): fix interpolation model
+  // check time and size
+  if (!CheckIfWorldTimeIsWithinTrajectory(trajectory, new_world_time)) {
+    SetExecutionStatus(ExecutionStatus::INVALID);
+    return;
+  } else {
+    SetExecutionStatus(ExecutionStatus::VALID);
+  }
+
+  // TODO(@hart): 2. check if timepoint is exactly contained
+  // std::pair<State, bool> CheckIfTimeIsInTrajectory(traj, time)
+  // then set; done.
+
+  // TODO(@hart): 3. if not interpolate
+  // Interpolate(traj, time) <- could be linear, quadratic etc.
+
   int index_world_time = 0;
   float min_time_diff = std::numeric_limits<float>::max();
   for (int i = 0; i < trajectory.rows(); i++) {
@@ -32,9 +64,9 @@ State ExecutionModelInterpolate::Execute(
     }
   }
 
+  // house-keeping
   SetLastTrajectory(trajectory);
   SetLastState(State(trajectory.row(index_world_time)));
-  return State(trajectory.row(index_world_time));
 }
 
 }  // namespace execution

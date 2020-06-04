@@ -34,11 +34,13 @@ class ExecutionModel : public commons::BaseType {
   explicit ExecutionModel(modules::commons::ParamsPtr params) :
     BaseType(params),
     last_state_(),
+    last_trajectory_(),
     execution_status_(ExecutionStatus::VALID) {}
 
   ExecutionModel(const ExecutionModel& execution_model) :
     BaseType(execution_model.GetParams()),
     last_state_(execution_model.GetLastState()),
+    last_trajectory_(execution_model.GetLastTrajectory()),
     execution_status_(execution_model.GetExecutionStatus()) {}
 
   virtual ~ExecutionModel() {}
@@ -54,11 +56,15 @@ class ExecutionModel : public commons::BaseType {
     last_trajectory_ = traj;
   }
 
+  void SetExecutionStatus(const ExecutionStatus& execution_status) {
+    execution_status_ = execution_status;
+  }
+
   ExecutionStatus GetExecutionStatus() const {
     return execution_status_;
   }
 
-  virtual State Execute(const float& new_world_time,
+  virtual void Execute(const float& new_world_time,
                         const Trajectory& trajectory,
                         const DynamicModelPtr dynamic_model) = 0;
 

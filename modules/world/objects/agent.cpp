@@ -74,8 +74,8 @@ void Agent::PlanBehavior(const float &dt, const ObservedWorld &observed_world) {
   behavior_model_->Plan(dt, observed_world);
 }
 
-void Agent::PlanExecution(const float &dt) {
-  execution_model_->Execute(dt,
+void Agent::PlanExecution(const float& world_time) {
+  execution_model_->Execute(world_time,
                             behavior_model_->GetLastTrajectory(),
                             dynamic_model_);
 }
