@@ -33,6 +33,12 @@ class ExecutionModelInterpolate : public ExecutionModel {
     const Trajectory& trajectory,
     const double& world_time) const;
   
+  std::pair<int, bool> FindClosestLowerTrajectoryRow(
+    const Trajectory& trajectory,
+    const double& world_time) const;
+  
+  State Interpoalte(const State& p0, const State& p1, const float& time) const;
+
   virtual void Execute(
     const float &new_world_time,
     const dynamic::Trajectory& trajectory,
