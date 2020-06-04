@@ -21,7 +21,7 @@ class AgentBeyondPointLabelFunction : public MultiAgentLabelFunction {
  public:
   AgentBeyondPointLabelFunction(const std::string& string,
                                 Point2d beyond_point);
-  bool evaluate_agent(const world::ObservedWorld& observed_world,
+  bool EvaluateAgent(const world::ObservedWorld& observed_world,
                       const AgentPtr& other_agent) const override;
   const Point2d& GetBeyondPoint() const;
 

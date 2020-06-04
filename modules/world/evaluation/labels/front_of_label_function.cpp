@@ -9,7 +9,7 @@
 
 using modules::commons::transformation::FrenetPosition;
 
-bool modules::world::evaluation::FrontOfLabelFunction::evaluate_agent(
+bool modules::world::evaluation::FrontOfLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld& observed_world,
     const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();

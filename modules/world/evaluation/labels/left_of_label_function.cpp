@@ -5,7 +5,7 @@
 
 #include "left_of_label_function.hpp"
 #include "modules/world/observed_world.hpp"
-bool modules::world::evaluation::LeftOfLabelFunction::evaluate_agent(
+bool modules::world::evaluation::LeftOfLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld& observed_world,
     const modules::world::objects::AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();

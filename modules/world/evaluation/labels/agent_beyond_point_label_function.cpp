@@ -10,7 +10,7 @@ modules::world::evaluation::AgentBeyondPointLabelFunction::
     AgentBeyondPointLabelFunction(const std::string& string,
                                   modules::geometry::Point2d beyond_point)
     : MultiAgentLabelFunction(string), beyond_point_(beyond_point) {}
-bool modules::world::evaluation::AgentBeyondPointLabelFunction::evaluate_agent(
+bool modules::world::evaluation::AgentBeyondPointLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld& observed_world,
     const modules::world::AgentPtr& other_agent) const {
   const auto agent_pos = other_agent->GetCurrentPosition();

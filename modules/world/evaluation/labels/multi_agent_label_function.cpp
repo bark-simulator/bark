@@ -15,7 +15,7 @@ modules::world::evaluation::MultiAgentLabelFunction::Evaluate(
   const auto other_agents = observed_world.GetValidOtherAgents();
   std::vector<LabelMap::value_type> labels;
   for (const auto& agent : other_agents) {
-    bool res = this->evaluate_agent(observed_world, agent.second);
+    bool res = this->EvaluateAgent(observed_world, agent.second);
     labels.emplace_back(this->GetLabel(agent.first), res);
   }
   return labels;

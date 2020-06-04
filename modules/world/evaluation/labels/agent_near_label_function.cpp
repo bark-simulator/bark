@@ -16,7 +16,7 @@ modules::world::evaluation::AgentNearLabelFunction::AgentNearLabelFunction(
   assert(distance_thres_ >= 0.0);
 }
 
-bool modules::world::evaluation::AgentNearLabelFunction::evaluate_agent(
+bool modules::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld &observed_world,
     const AgentPtr &other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();

@@ -6,7 +6,7 @@
 #include "direct_front_of_label_function.hpp"
 #include "modules/world/observed_world.hpp"
 
-bool modules::world::evaluation::DirectFrontOfLabelFunction::evaluate_agent(
+bool modules::world::evaluation::DirectFrontOfLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld& observed_world,
     const modules::world::objects::AgentPtr& other_agent) const {
   bool is_in_front = false;

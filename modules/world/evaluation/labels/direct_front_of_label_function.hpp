@@ -16,7 +16,7 @@ namespace evaluation {
 class DirectFrontOfLabelFunction : public MultiAgentLabelFunction {
  public:
   using MultiAgentLabelFunction::MultiAgentLabelFunction;
-  bool evaluate_agent(const world::ObservedWorld& observed_world,
+  bool EvaluateAgent(const world::ObservedWorld& observed_world,
                       const AgentPtr& other_agent) const override;
 };
 
