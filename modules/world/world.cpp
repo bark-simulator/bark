@@ -78,7 +78,7 @@ void World::Execute(const float& world_time) {
   RemoveInvalidAgents();
 }
 
-WorldPtr World::WorldExecutionAtTime(const float& world_time) const {
+WorldPtr World::GetWorldAtTime(const float& world_time) const {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : current_world_state->GetAgents()) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)

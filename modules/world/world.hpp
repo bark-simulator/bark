@@ -134,7 +134,7 @@ class World : public commons::BaseType {
   void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
-  std::shared_ptr<World> WorldExecutionAtTime(
+  std::shared_ptr<World> GetWorldAtTime(
     const float& execution_time) const;
 
  private:
