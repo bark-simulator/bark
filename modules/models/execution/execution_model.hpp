@@ -22,15 +22,24 @@ using dynamic::DynamicModelPtr;
 using dynamic::Trajectory;
 using dynamic::State;
 
+
+enum ExecutionStatus : unsigned int {
+  VALID = 0,
+  INVALID = 1
+};
+
+
 class ExecutionModel : public commons::BaseType {
  public:
   explicit ExecutionModel(modules::commons::ParamsPtr params) :
     BaseType(params),
-    last_trajectory_() {}
+    last_trajectory_(),
+    execution_status_(ExecutionStatus::VALID) {}
 
   ExecutionModel(const ExecutionModel& execution_model) :
     BaseType(execution_model.GetParams()),
-    last_trajectory_(execution_model.GetLastTrajectory()) {}
+    last_trajectory_(execution_model.GetLastTrajectory()),
+    execution_status_(execution_model.GetExecutionStatus()) {}
 
   virtual ~ExecutionModel() {}
 
@@ -38,6 +47,10 @@ class ExecutionModel : public commons::BaseType {
 
   void SetLastTrajectory(const Trajectory& trajectory) {
     last_trajectory_ = trajectory;
+  }
+
+  ExecutionStatus GetExecutionStatus() const {
+    return execution_status_;
   }
 
   virtual Trajectory Execute(const float& new_world_time,
@@ -49,6 +62,7 @@ class ExecutionModel : public commons::BaseType {
 
  private:
   Trajectory last_trajectory_;
+  ExecutionStatus execution_status_;
 };
 
 typedef std::shared_ptr<ExecutionModel> ExecutionModelPtr;

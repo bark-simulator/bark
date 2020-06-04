@@ -44,7 +44,7 @@ using rtree_agent_model =
     boost::geometry::model::box<modules::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
-using rtree_agent =
+using RtreeAgent =
     boost::geometry::index::rtree<rtree_agent_value,
                                   boost::geometry::index::linear<16, 4> >;
 
@@ -60,6 +60,13 @@ class World : public commons::BaseType {
   explicit World(const commons::ParamsPtr& params);
   explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
+
+
+  // agent::Plan() and agent::Execute()
+  void Step(const float& delta_time);
+
+  // checks whether behavior and execution status is valid and updated the world
+  void Execute(const float& world_time) {}
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
@@ -88,9 +95,6 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(
       const modules::geometry::Polygon& polygon) const;
 
-  //! Function will yield the front and rear agent (and their frenet
-  //! coordinates) in a respective lane_corridor in relation to a given agent.
-  //! Agent specified by agent_id might be outside the lane_corridor.
   FrontRearAgents GetAgentFrontRearForId(
       const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
@@ -120,13 +124,10 @@ class World : public commons::BaseType {
 
   virtual EvaluationMap Evaluate() const;
 
-  bool Valid() const;
   std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
-  void Step(const float& delta_time);
 
-  // TODO: use state action pair
-  void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
-  AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
+  // void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
+  // AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
 
   void DoPlanning(const float& delta_time);
   void DoExecution(const float& delta_time);
@@ -135,8 +136,8 @@ class World : public commons::BaseType {
   void RemoveInvalidAgents();
 
   virtual std::shared_ptr<World> Clone() const;
-  std::shared_ptr<World> WorldExecutionAtTime(
-      const float& execution_time) const;
+  // std::shared_ptr<World> WorldExecutionAtTime(
+  //     const float& execution_time) const;
 
  private:
   world::map::MapInterfacePtr map_;
@@ -144,7 +145,7 @@ class World : public commons::BaseType {
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
-  rtree_agent rtree_agents_;
+  RtreeAgent rtree_agents_;
   bool remove_agents_;
 };
 

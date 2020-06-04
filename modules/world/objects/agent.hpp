@@ -30,6 +30,7 @@ using models::dynamic::State;
 using models::behavior::BehaviorModelPtr;
 using models::dynamic::DynamicModelPtr;
 using models::execution::ExecutionModelPtr;
+using models::execution::ExecutionStatus;
 using models::behavior::StateActionPair;
 using models::behavior::StateActionHistory;
 using models::behavior::BehaviorStatus;
@@ -98,6 +99,10 @@ class Agent : public Object {
     return behavior_model_->GetBehaviorStatus();
   }
 
+  ExecutionStatus GetExecutionStatus() const {
+    return execution_model_->GetExecutionStatus();
+  }
+
   void SetBehaviorModel(const BehaviorModelPtr &behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;
   }
@@ -126,9 +131,9 @@ class Agent : public Object {
 
   void AddTrajectoryStep(const StateActionPair& state_action_pair);
 
-  void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
+  void PlanBehavior(const float &dt, const ObservedWorld &observed_world);
 
-  void ExecutionPlan(const float &dt);
+  void PlanExecution(const float &dt);
 
   void Execute(const float& world_time);
 

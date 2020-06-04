@@ -69,12 +69,12 @@ Agent::Agent(const Agent& other_agent) :
   goal_definition_(other_agent.goal_definition_) {}
 
 
-void Agent::BehaviorPlan(const float &dt, const ObservedWorld &observed_world) {
+void Agent::PlanBehavior(const float &dt, const ObservedWorld &observed_world) {
   //! plan behavior for given horizon T using step-size dt
   behavior_model_->Plan(dt, observed_world);
 }
 
-void Agent::ExecutionPlan(const float &dt) {
+void Agent::PlanExecution(const float &dt) {
   execution_model_->Execute(dt,
                             behavior_model_->GetLastTrajectory(),
                             dynamic_model_,

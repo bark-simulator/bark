@@ -57,9 +57,9 @@ void python_world(py::module m) {
     .def("GetAgent", &World::GetAgent)
     .def_property("map", &World::GetMap, &World::SetMap)
     .def("Copy", &World::Clone)
-    .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
-    .def("FillWorldFromCarla",&World::FillWorldFromCarla)
-    .def("PlanAgents",&World::PlanSpecificAgents)
+    // .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
+    // .def("FillWorldFromCarla",&World::FillWorldFromCarla)
+    // .def("PlanAgents",&World::PlanSpecificAgents)
     .def("__repr__", [](const World& a) {
       return "bark.world.World";
     });

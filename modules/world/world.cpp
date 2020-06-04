@@ -14,6 +14,9 @@
 namespace modules {
 namespace world {
 
+using models::behavior::BehaviorStatus;
+using models::execution::ExecutionStatus;
+
 World::World(const commons::ParamsPtr& params) :
   commons::BaseType(params),
   map_(),
@@ -40,6 +43,40 @@ World::World(const std::shared_ptr<World>& world) :
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
+
+void World::Step(const float& delta_time) {
+  const float inc_world_time = world_time_ + delta_time;
+  DoPlanning(delta_time);
+  DoExecution(inc_world_time);
+  world_time_ = inc_world_time;
+}
+
+void World::DoPlanning(const float& delta_time) {
+  UpdateAgentRTree();
+  WorldPtr current_world(this->Clone());
+
+  // Behavioral and execution planning
+  for (auto agent : agents_) {
+    //! clone current world
+    ObservedWorld observed_world(current_world, agent.first);
+    agent.second->PlanBehavior(delta_time, observed_world);
+    agent.second->PlanExecution(delta_time);
+  }
+}
+
+void World::DoExecution(const float& world_time) {
+  // Execute motion
+  for (auto agent : agents_) {
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
+        agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
+      agent.second->Execute(world_time);
+    }
+  }
+
+  // TODO(@hart): move the world::Execute()
+  RemoveInvalidAgents();
+}
+
 
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
@@ -68,41 +105,14 @@ void World::AddEvaluator(const std::string& name,
   evaluators_[name] = evaluator;
 }
 
-void World::DoPlanning(const float& delta_time) {
-  UpdateAgentRTree();
-  WorldPtr current_world(this->Clone());
 
-  // Behavioral and execution planning
-  for (auto agent : agents_) {
-    //! clone current world
-    ObservedWorld observed_world(current_world, agent.first);
-    agent.second->BehaviorPlan(delta_time, observed_world);
-    agent.second->ExecutionPlan(delta_time);
-  }
-}
-
-void World::DoExecution(const float& delta_time) {
-  world_time_ += delta_time;
-  // Execute motion
-  for (auto agent : agents_) {
-    if (agent.second) {
-      if (agent.second->GetBehaviorStatus() ==
-          models::behavior::BehaviorStatus::VALID) {
-        agent.second->Execute(world_time_);
-      }
-    }
-  }
-
-  RemoveInvalidAgents();
-}
-
-WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
-  WorldPtr current_world_state(this->Clone());
-  for (auto agent : current_world_state->GetAgents()) {
-    agent.second->Execute(execution_time);
-  }
-  return current_world_state;
-}
+// WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
+//   WorldPtr current_world_state(this->Clone());
+//   for (auto agent : current_world_state->GetAgents()) {
+//     agent.second->Execute(execution_time);
+//   }
+//   return current_world_state;
+// }
 
 EvaluationMap World::Evaluate() const {
   EvaluationMap evaluation_results;
@@ -110,11 +120,6 @@ EvaluationMap World::Evaluate() const {
     evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this);
   }
   return evaluation_results;
-}
-
-void World::Step(const float& delta_time) {
-  DoPlanning(delta_time);
-  DoExecution(delta_time);
 }
 
 std::vector<ObservedWorld> World::Observe(
@@ -261,56 +266,56 @@ FrontRearAgents World::GetAgentFrontRearForId(
   fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
 
   return fr_agents;
-  }
-
-void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_map){
-  // this function should be called before calling PlanSpecificAgents
-  // TODO: use StateActionPair as parameter
-  world_time_ += delta_time;
-
-  for (const auto& agent_state : state_map) {
-    AgentPtr agent = NULL;
-    agent = GetAgent(agent_state.first);
-
-    if (agent) {
-      // TODO: read control from Carla
-      StateActionPair pair;
-      pair.first = agent_state.second;
-      pair.second = modules::models::behavior::Action(
-        modules::models::behavior::DiscreteAction(0));
-      agent->AddTrajectoryStep(pair);
-    } else {
-      LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist." << std::endl;
-    }
-  }
 }
 
-AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
-  UpdateAgentRTree();
-  WorldPtr current_world(this->Clone());
+// void World::FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_map){
+//   // this function should be called before calling PlanSpecificAgents
+//   // TODO: use StateActionPair as parameter
+//   world_time_ += delta_time;
 
-  AgentTrajectoryMap trajectory_map;
+//   for (const auto& agent_state : state_map) {
+//     AgentPtr agent = NULL;
+//     agent = GetAgent(agent_state.first);
 
-  // Behavioral and execution planning
-  for (const auto& agent_id : agent_ids) {
-    AgentPtr agent = NULL;
-    agent = GetAgent(agent_id);
+//     if (agent) {
+//       // TODO: read control from Carla
+//       StateActionPair pair;
+//       pair.first = agent_state.second;
+//       pair.second = modules::models::behavior::Action(
+//         modules::models::behavior::DiscreteAction(0));
+//       agent->AddTrajectoryStep(pair);
+//     } else {
+//       LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist." << std::endl;
+//     }
+//   }
+// }
 
-    if (agent) {
-      //! clone current world
-      ObservedWorld observed_world(current_world,
-                                   agent_id);
-      agent->BehaviorPlan(delta_time, observed_world);
-      agent->ExecutionPlan(delta_time);
+// AgentTrajectoryMap World::PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids) {
+//   UpdateAgentRTree();
+//   WorldPtr current_world(this->Clone());
 
-      trajectory_map[agent_id]=agent->GetExecutionTrajectory();
-    } else {
-     LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
-    }
-  }
+//   AgentTrajectoryMap trajectory_map;
 
-  return trajectory_map;
-}
+//   // Behavioral and execution planning
+//   for (const auto& agent_id : agent_ids) {
+//     AgentPtr agent = NULL;
+//     agent = GetAgent(agent_id);
+
+//     if (agent) {
+//       //! clone current world
+//       ObservedWorld observed_world(current_world,
+//                                    agent_id);
+//       agent->PlanBehavior(delta_time, observed_world);
+//       agent->PlanExecution(delta_time);
+
+//       trajectory_map[agent_id]=agent->GetExecutionTrajectory();
+//     } else {
+//      LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
+//     }
+//   }
+
+//   return trajectory_map;
+// }
 
 
 }  // namespace world
