@@ -45,12 +45,12 @@ World::World(const std::shared_ptr<World>& world) :
 
 void World::Step(const float& delta_time) {
   const float inc_world_time = world_time_ + delta_time;
-  DoPlanning(delta_time);
+  PlanAgents(delta_time);
   Execute(inc_world_time);
   world_time_ = inc_world_time;
 }
 
-void World::DoPlanning(const float& delta_time) {
+void World::PlanAgents(const float& delta_time) {
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
   const float inc_world_time = world_time_ + delta_time;
@@ -69,6 +69,7 @@ void World::Execute(const float& world_time) {
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
       agent.second->UpdateStateAction();
       // make sure all agents have the same world time
+      // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
       assert(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
     }
@@ -140,8 +141,8 @@ std::vector<ObservedWorld> World::Observe(
 void World::UpdateAgentRTree() {
   rtree_agents_.clear();
   for (auto& agent : agents_) {
-    auto obj =
-        agent.second->GetPolygonFromState(agent.second->GetCurrentState()).obj_;
+    auto obj =agent.second->GetPolygonFromState(
+      agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
     boost::geometry::envelope(obj, box);
     boost::geometry::correct(box);

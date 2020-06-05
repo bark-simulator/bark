@@ -14,28 +14,24 @@ namespace modules {
 namespace world {
 namespace objects {
 
-using models::dynamic::StateDefinition;
-using modules::geometry::Point2d;
-using modules::world::map::MapInterfacePtr;
-using StateDefinition::TIME_POSITION;
-using modules::commons::transformation::FrenetPosition;
 
-Agent::Agent(const State& initial_state,
-        const BehaviorModelPtr& behavior_model_ptr,
-        const DynamicModelPtr& dynamic_model_ptr,
-        const ExecutionModelPtr& execution_model,
-        const geometry::Polygon& shape,
-        const commons::ParamsPtr& params,
-        const GoalDefinitionPtr& goal_definition,
-        const MapInterfacePtr& map_interface,
-        const geometry::Model3D& model_3d) :
-Object(shape, params, model_3d),
-behavior_model_(behavior_model_ptr),
-dynamic_model_(dynamic_model_ptr),
-execution_model_(execution_model),
-history_(),
-max_history_length_(10),
-goal_definition_(goal_definition) {
+Agent::Agent(
+  const State& initial_state,
+  const BehaviorModelPtr& behavior_model_ptr,
+  const DynamicModelPtr& dynamic_model_ptr,
+  const ExecutionModelPtr& execution_model,
+  const Polygon& shape,
+  const commons::ParamsPtr& params,
+  const GoalDefinitionPtr& goal_definition,
+  const MapInterfacePtr& map_interface,
+  const Model3D& model_3d)
+  : Object(shape, params, model_3d),
+    behavior_model_(behavior_model_ptr),
+    dynamic_model_(dynamic_model_ptr),
+    execution_model_(execution_model),
+  history_(),
+  max_history_length_(10),
+  goal_definition_(goal_definition) {
   if (params) {
     max_history_length_ = params->GetInt(
     "MaxHistoryLength",
@@ -44,14 +40,17 @@ goal_definition_(goal_definition) {
   }
 
   models::behavior::StateActionPair pair;
-  pair.first = initial_state; 
+  pair.first = initial_state;
+  
+  // Initially select a DiscreteAction  of zero
   pair.second = modules::models::behavior::Action(
-    modules::models::behavior::DiscreteAction(0)); // Initially select a DiscreteAction  of zero
+    modules::models::behavior::DiscreteAction(0));
   history_.push_back(pair);
 
   if(map_interface) {
      if(!GenerateRoadCorridor(map_interface)) {
-       LOG(ERROR) << "Failed to generate road corridor for agent " << GetAgentId();
+       LOG(ERROR) << "Failed to generate road corridor for agent "
+                  << GetAgentId() << ".";
      }
   }
 
@@ -69,25 +68,14 @@ Agent::Agent(const Agent& other_agent) :
   goal_definition_(other_agent.goal_definition_) {}
 
 
-void Agent::PlanBehavior(const float &dt, const ObservedWorld &observed_world) {
-  //! plan behavior for given horizon T using step-size dt
-  behavior_model_->Plan(dt, observed_world);
+void Agent::PlanBehavior(
+  const float& min_planning_dt, const ObservedWorld& observed_world) {
+  behavior_model_->Plan(min_planning_dt, observed_world);
 }
 
 void Agent::PlanExecution(const float& world_time) {
-  execution_model_->Execute(world_time,
-                            behavior_model_->GetLastTrajectory(),
-                            dynamic_model_);
-}
-
-void Agent::AddTrajectoryStep(const StateActionPair& state_action_pair){
-  //! add one step to the last trajectory
-  history_.push_back(state_action_pair);
-
-  //! remove states if queue becomes to large
-  if (history_.size() > max_history_length_) {
-    history_.erase(history_.begin());
-  }
+  execution_model_->Execute(
+    world_time, behavior_model_->GetLastTrajectory(), dynamic_model_);
 }
 
 void Agent::UpdateStateAction() {
@@ -96,12 +84,11 @@ void Agent::UpdateStateAction() {
     behavior_model_->GetLastAction());
   history_.push_back(state_action_pair);
 
-  //! remove states if queue becomes to large
+  //! remove states if queue becomes too large
   if (history_.size() > max_history_length_) {
     history_.erase(history_.begin());
   }
 }
-
 
 bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
   if (!goal_definition_) {
@@ -117,24 +104,23 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
 }
 
 FrenetPosition Agent::CurrentFrenetPosition() const {  
-  const modules::geometry::Point2d pos = GetCurrentPosition();
+  const Point2d pos = GetCurrentPosition();
   const auto& lane_corridor = GetRoadCorridor()->GetCurrentLaneCorridor(pos);
   if(!lane_corridor) {
-    // assume vehicle is far far away on same lane (until better failure handling implemented)
+    // assume vehicle is far far away on same lane
+    // (until better failure handling implemented)
     return FrenetPosition(0.0f, std::numeric_limits<double>::max());
   }
   FrenetPosition frenet_pos(pos, lane_corridor->GetCenterLine());
   return frenet_pos;
 }
 
-geometry::Polygon Agent::GetPolygonFromState(const State& state) const {
-  using namespace modules::geometry;
-  using namespace modules::geometry::standard_shapes;
+Polygon Agent::GetPolygonFromState(const State& state) const {
   Pose agent_pose(state(StateDefinition::X_POSITION),
                   state(StateDefinition::Y_POSITION),
                   state(StateDefinition::THETA_POSITION));
-  std::shared_ptr<geometry::Polygon> polygon(
-    std::dynamic_pointer_cast<geometry::Polygon>(
+  std::shared_ptr<Polygon> polygon(
+    std::dynamic_pointer_cast<Polygon>(
       this->GetShape().Transform(agent_pose)));
   return *polygon;
 }
