@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages, Extension
+import sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
     name = "bark-simulator",
-    version = "0.0.7",
+    version = "0.0.8",
     description = "A tool for Behavior benchmARKing",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,6 +17,7 @@ setup(
     author_email = "cheema@fortiss.org",
     license = "MIT",
     packages=find_packages(),
+    #platforms=['linux_x86_64'],
     install_requires=[
     'matplotlib>=3.0.3',
     'numpy>=1.18.1',
@@ -41,7 +43,7 @@ setup(
             name='',
             sources=[]
         )
-    ],
+    ] if sys.platform != 'linux' else [],
     test_suite='nose.collector',
     tests_require=['nose'],
     #package_data={"pysample55321": ["../main/pyhellocpp.so"]},

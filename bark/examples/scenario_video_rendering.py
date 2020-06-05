@@ -15,6 +15,8 @@ import os
 
 scenario_param_file ="highway_merging.json" # must be within examples params folder
 param_server = ParameterServer(filename= os.path.join(os.path.dirname(__file__),"params",scenario_param_file))
+mapfile = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/city_highway_straight.xodr")
+param_server["Scenario"]["Generation"]["UniformVehicleDistribution"]["MapFilename"] = mapfile
 scenario_generation = UniformVehicleDistribution(num_scenarios=10, random_seed=0, params=param_server)
 
 viewer = MPViewer(params=param_server, x_range=[5060, 5160], y_range=[5070,5150])
