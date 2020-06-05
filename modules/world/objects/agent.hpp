@@ -54,15 +54,15 @@ class Agent : public Object {
  public:
   friend class World;
 
-  Agent(const State &initial_state,
-        const BehaviorModelPtr &behavior_model_ptr,
-        const DynamicModelPtr &dynamic_model_ptr,
-        const ExecutionModelPtr &execution_model,
-        const Polygon &shape,
+  Agent(const State& initial_state,
+        const BehaviorModelPtr& behavior_model_ptr,
+        const DynamicModelPtr& dynamic_model_ptr,
+        const ExecutionModelPtr& execution_model,
+        const Polygon& shape,
         const commons::ParamsPtr& params,
         const GoalDefinitionPtr& goal_definition = GoalDefinitionPtr(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
-        const Model3D &model_3d = Model3D());
+        const Model3D& model_3d = Model3D());
 
   virtual ~Agent() {}
 
