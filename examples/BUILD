@@ -92,3 +92,24 @@ py_binary(
         "//modules/runtime:runtime"
     ],
 )
+
+
+py_binary(
+  name = "maude_interface",
+  srcs = ["maude_interface.py"],
+  data = ['//python:bark.so',
+          '//modules/world/tests:params2'],
+  imports = ['../python/'],
+  deps = ["//modules/runtime/commons:parameters",
+          "//modules/runtime:runtime",
+          "//modules/runtime/viewer:video_renderer"],
+)
+
+py_binary(
+  name = "maude",
+  srcs = ["maude.py"],
+  data = ['//python:bark.so',
+          '//modules/world/tests:params2'],
+  imports = ['../python/'],
+  deps = [':maude_interface'],
+)
