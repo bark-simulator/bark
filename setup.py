@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -35,6 +35,12 @@ setup(
     'notebook>=6.0.3',
     'jupyter>=1.0.0',
     'ipython>=7.13.0'
+    ],
+    ext_modules=[
+        Extension(
+            name='',
+            sources=[]
+        )
     ],
     test_suite='nose.collector',
     tests_require=['nose'],

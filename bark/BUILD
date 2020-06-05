@@ -13,28 +13,6 @@ genrule(
 )
 
 
-# genrule(
-#     name = "copy_tests",
-#     srcs = glob(["**/**/*.py"]),
-#     cmd = ("echo  $(SRCS) && mkdir -p $(GENDIR)/bark/tests  && cp -r $(SRCS) $(OUTS)"),
-#     outs=["tests"],
-# )
-
-
-# filegroup(
-#   name="test-files",
-#   srcs = glob(
-#         ["**/tests/*.py"],
-#     ),
-    
-# )
-# genrule(
-#     name = "copy",
-#     srcs = [":test-files"],
-#     outs = ["test-files"],
-#     cmd = "cp -r $(SRCS) $(OUTS)"
-# )
-
 # obtained tests using 
 #bazel query 'filter(.tests.py, //...)'
 py_test (
