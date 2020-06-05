@@ -35,7 +35,7 @@ BehaviorDynamicModel::BehaviorDynamicModel(
 
 
 dynamic::Trajectory BehaviorDynamicModel::Plan(
-    float min_dt,
+    float min_planning_time,
     const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
   const DynamicModelPtr dynamic_model =
@@ -50,7 +50,7 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
     observed_world.GetEgoAgent()->GetCurrentState();
   double start_time = observed_world.GetWorldTime();
   float dt = integration_time_delta_;
-  int num_trajectory_points = static_cast<int>(std::ceil(min_dt / dt));
+  int num_trajectory_points = static_cast<int>(std::ceil(min_planning_time / dt));
 
   dynamic::Trajectory traj(
     num_trajectory_points, static_cast<int>(StateDefinition::MIN_STATE_SIZE));

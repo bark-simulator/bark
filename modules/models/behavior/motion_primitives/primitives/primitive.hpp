@@ -57,7 +57,7 @@ class Primitive : public modules::commons::BaseType {
   virtual bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
-  virtual Trajectory Plan(float min_dt, const ObservedWorld& observed_world,
+  virtual Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
   /**
    * @brief Select the new target corridor

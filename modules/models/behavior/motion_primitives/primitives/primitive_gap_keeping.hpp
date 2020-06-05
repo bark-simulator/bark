@@ -26,9 +26,9 @@ class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
       const AdjacentLaneCorridors& adjacent_corridors) override {
     return true;
   }
-  Trajectory Plan(float min_dt, const ObservedWorld& observed_world,
+  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor) override {
-    return BehaviorIDMLaneTracking::Plan(min_dt, observed_world);
+    return BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);
   }
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,

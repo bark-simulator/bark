@@ -39,13 +39,13 @@ class ExecutionModel : public commons::BaseType {
 
   ExecutionModel(const ExecutionModel& execution_model) :
     BaseType(execution_model.GetParams()),
-    last_state_(execution_model.GetLastState()),
+    last_state_(execution_model.GetExecutedState()),
     last_trajectory_(execution_model.GetLastTrajectory()),
     execution_status_(execution_model.GetExecutionStatus()) {}
 
   virtual ~ExecutionModel() {}
 
-  State GetLastState() const { return last_state_; }
+  State GetExecutedState() const { return last_state_; }
   Trajectory GetLastTrajectory() const { return last_trajectory_; }
 
   void SetLastState(const State& state) {

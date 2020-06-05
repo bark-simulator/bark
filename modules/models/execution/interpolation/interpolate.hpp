@@ -54,7 +54,7 @@ class ExecutionModelInterpolate : public ExecutionModel {
    * @brief  Interpolates between two states
    * @retval State: interpolated state
    */
-  State Interpoalte(const State& p0, const State& p1, const float& time) const;
+  State Interpolate(const State& p0, const State& p1, const float& time) const;
 
   /**
    * @brief  Interpolates on trajectory

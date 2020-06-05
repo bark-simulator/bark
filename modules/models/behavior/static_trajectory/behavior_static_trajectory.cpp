@@ -61,7 +61,7 @@ std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
   StateRowVector delta;
   double alpha;
   int idx = -1;
-  assert(static_trajectory_.rows() > 1);
+  BARK_EXPECT_TRUE(static_trajectory_.rows() > 1);
   for (int i = 0; i < static_trajectory_.rows() - 1; ++i) {
     float t_i = static_trajectory_(i, dynamic::TIME_POSITION);
     float t_i_succ = static_trajectory_(i + 1, dynamic::TIME_POSITION);
@@ -98,7 +98,7 @@ Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
     std::vector<std::vector<float>> list) {
   Trajectory traj(list.size(), list[0].size());
   for (int i = 0; i < traj.rows(); ++i) {
-    assert(list[i].size() == static_cast<size_t>(traj.cols()));
+    BARK_EXPECT_TRUE(list[i].size() == static_cast<size_t>(traj.cols()));
     for (int j = 0; j < traj.cols(); ++j) {
       traj(i, j) = list[i][j];
     }

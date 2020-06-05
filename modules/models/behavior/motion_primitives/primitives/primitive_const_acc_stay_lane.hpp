@@ -24,7 +24,7 @@ class PrimitiveConstAccStayLane : public Primitive, BehaviorIDMLaneTracking {
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
 
-  Trajectory Plan(float min_dt, const ObservedWorld& observed_world,
+  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor);
 
   LaneCorridorPtr SelectTargetCorridor(

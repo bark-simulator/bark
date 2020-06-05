@@ -234,7 +234,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
 
 //! IDM Model will assume const. vel. for the leading vehicle
 Trajectory BaseIDM::Plan(
-    float min_dt, const world::ObservedWorld& observed_world) {
+    float min_planning_time, const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
@@ -250,7 +250,7 @@ Trajectory BaseIDM::Plan(
     observed_world,
     lane_corr_);
 
-  double dt = min_dt / (GetNumTrajectoryTimePoints() - 1);
+  double dt = min_planning_time / (GetNumTrajectoryTimePoints() - 1);
   std::pair<double, double> acc_dist =
     GetTotalAcc(observed_world, rel_values, rel_values.leading_distance, dt);
 

@@ -34,7 +34,7 @@ class BehaviorStaticTrajectory : public BehaviorModel {
   explicit BehaviorStaticTrajectory(const commons::ParamsPtr& params);
   BehaviorStaticTrajectory(const commons::ParamsPtr& params,
                            const Trajectory& static_trajectory);
-  Trajectory Plan(float min_dt,
+  Trajectory Plan(float min_planning_time,
                   const world::ObservedWorld& observed_world) override;
   std::shared_ptr<BehaviorModel> Clone() const override;
   const Trajectory& get_static_trajectory() const;

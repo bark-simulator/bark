@@ -31,7 +31,7 @@ class BehaviorConstantVelocity : public BehaviorIDMClassic {
 
   virtual ~BehaviorConstantVelocity() {}
 
-  Trajectory Plan(float min_dt,
+  Trajectory Plan(float min_planning_time,
                   const ObservedWorld& observed_world);
 
   std::pair<double, double> GetTotalAcc(

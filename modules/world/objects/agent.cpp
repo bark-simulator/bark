@@ -80,7 +80,7 @@ void Agent::PlanExecution(const float& world_time) {
 
 void Agent::UpdateStateAction() {
   models::behavior::StateActionPair state_action_pair(
-    execution_model_->GetLastState(),
+    execution_model_->GetExecutedState(),
     behavior_model_->GetLastAction());
   history_.push_back(state_action_pair);
 

@@ -14,7 +14,7 @@ namespace models {
 namespace behavior {
 
 Trajectory BehaviorConstantVelocity::Plan(
-    float min_dt, const world::ObservedWorld& observed_world) {
+    float min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   const auto& lane_corr = observed_world.GetLaneCorridor();
@@ -25,7 +25,7 @@ Trajectory BehaviorConstantVelocity::Plan(
     return GetLastTrajectory();
   }
 
-  double dt = min_dt / (GetNumTrajectoryTimePoints() - 1);
+  double dt = min_planning_time / (GetNumTrajectoryTimePoints() - 1);
   // interaction term off and GetTotalAcc returns const. acc.
   IDMRelativeValues rel_values{0., 0., false};
   std::tuple<Trajectory, Action> traj_action =

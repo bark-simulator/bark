@@ -77,7 +77,7 @@ class BehaviorModel : public modules::commons::BaseType {
     behavior_status_ = status;
   }
 
-  virtual Trajectory Plan(float min_dt,
+  virtual Trajectory Plan(float min_planning_time,
                           const world::ObservedWorld& observed_world) = 0;
 
 

@@ -31,7 +31,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
 
   ~BehaviorMPMacroActions() = default;
 
-  Trajectory Plan(float min_dt,
+  Trajectory Plan(float min_planning_time,
                   const ObservedWorld& observed_world) override;
 
   MotionIdx GetNumMotionPrimitives(

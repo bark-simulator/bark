@@ -72,12 +72,12 @@ std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
   return {ret_idx, found_closest_pt};
 }
 
-State ExecutionModelInterpolate::Interpoalte(
+State ExecutionModelInterpolate::Interpolate(
   const State& p0, const State& p1, const float& time) const {
   const float start_time = p0(TIME_POSITION);
   const float end_time = p1(TIME_POSITION);
   const float lambda = fabs((time - start_time) / (end_time - start_time));
-  assert(end_time >= start_time && time >= start_time);
+  BARK_EXPECT_TRUE(end_time >= start_time && time >= start_time);
   return (1-lambda)*p0  + ( lambda)*p1;
 }
 
@@ -113,10 +113,10 @@ void ExecutionModelInterpolate::Execute(
     int upper_id = lower_id + 1;
     State p0 = trajectory.row(lower_id);
     State p1 = trajectory.row(upper_id);
-    State interp_state = Interpoalte(p0, p1, new_world_time);
+    State interp_state = Interpolate(p0, p1, new_world_time);
     SetLastState(interp_state);
     // assert that the interpolated point is near the world time
-    assert(fabs(interp_state(TIME_POSITION) - new_world_time) < 0.02);
+    BARK_EXPECT_TRUE(fabs(interp_state(TIME_POSITION) - new_world_time) < 0.02);
     return;
   } else {
     LOG(INFO) << "ExecutionStatus is invalid." << std::endl;

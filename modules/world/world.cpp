@@ -71,7 +71,7 @@ void World::Execute(const float& world_time) {
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
-      assert(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
+      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
     }
   }
   RemoveInvalidAgents();
