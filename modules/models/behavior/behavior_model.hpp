@@ -49,19 +49,19 @@ class BehaviorModel : public modules::commons::BaseType {
  public:
   explicit BehaviorModel(const commons::ParamsPtr& params,
                          BehaviorStatus status)
-      : commons::BaseType(params),
-        last_trajectory_(),
-        last_action_(),
-        behavior_status_(status) {}
+    : commons::BaseType(params),
+      last_trajectory_(),
+      last_action_(),
+      behavior_status_(status) {}
 
   explicit BehaviorModel(const commons::ParamsPtr& params)
-      : BehaviorModel(params, BehaviorStatus::VALID) {}
+    : BehaviorModel(params, BehaviorStatus::VALID) {}
 
   BehaviorModel(const BehaviorModel& behavior_model)
-      : commons::BaseType(behavior_model.GetParams()),
-        last_trajectory_(behavior_model.GetLastTrajectory()),
-        last_action_(behavior_model.GetAction()),
-        behavior_status_(behavior_model.GetBehaviorStatus()) {}
+    : commons::BaseType(behavior_model.GetParams()),
+      last_trajectory_(behavior_model.GetLastTrajectory()),
+      last_action_(behavior_model.GetLastAction()),
+      behavior_status_(behavior_model.GetBehaviorStatus()) {}
 
   virtual ~BehaviorModel() {}
 
