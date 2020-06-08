@@ -60,11 +60,13 @@ A script  `package.sh` is provided which handles the complete pipeline for packa
 - `python3 setup.py test` executes the tests.
 - If any test fail the script stops and exits with an Error message.
 #### Build and distribute
-After the test completes successfully, the package is built using 
+After successful completion of tests, the package is built using 
 - `python3 setup.py sdist bdist_wheel`
 > Note: The above command automatically identifies if the code is pure python package, in which case the package is available for all platforms and configurations. In our case we make use of locally compiled thus platform dependent`core.so` shared library(exposing  C++  functionality of Bark API) . 
 > But as the Library is not compiled using `setup.py` script so the script does not identify the shared library and considers the package as a standard python package. Adding an extra empty extension under `ext_modules` instructs the package building code to mark the wheel file as a platform dependent code, thus generating a wheel file for the specific build platform.
 > Therefore, when installing the package using `pip install ..`  the pip will pick the appropriate wheel to install. 
+> This approach works for non Linux distributions only as setup.py generates literal platform specific versions  for non Linux OS's while for all the Linux distros it generates a generic linux_x86_64 tag, which is rejected by PyPI repository.  For Linux, the [PyPI standard](https://packaging.python.org/specifications/platform-compatibility-tags/) requires that a standard docker image called [manylinux](https://github.com/pypa/manylinux) be used for building the wheel. 
+> The process for building pip package in the specified docker container has some complications caused by Bazel support along with C++ libraries. so the  current approach is to have version specific wheels for Mac OS and a generic wheel for Linux based systems that is build on Ubuntu 64. It shall not work with all of Linux distros but shall be compatible with most of debian based architectures.
  
 Once a wheel is built, it can be uploaded to PyPi repository. 
 - `python3 -m twine upload --skip-existing dist/*`
