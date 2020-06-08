@@ -5,6 +5,7 @@
 
 #include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 
+#include "modules/geometry/polygon.hpp"
 #include "modules/world/observed_world.hpp"
 
 namespace modules {
@@ -12,7 +13,7 @@ namespace world {
 namespace evaluation {
 
 using modules::geometry::Collide;
-using modules::models::dynamic::State;
+using modules::geometry::Polygon;
 using modules::models::dynamic::StateDefinition;
 
 std::vector<LabelMap::value_type> LaneChangeLabelFunction::Evaluate(
@@ -24,14 +25,22 @@ std::vector<LabelMap::value_type> LaneChangeLabelFunction::Evaluate(
     const State prev_state = (ego->GetStateInputHistory().end() - 2)->first;
     const geometry::LinePoint prev_pos(prev_state(StateDefinition::X_POSITION),
                                        prev_state(StateDefinition::Y_POSITION));
-    const auto current_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
-    geometry::Line line;
-    line.AddPoint(prev_pos);
-    line.AddPoint(current_pos);
-    lane_change = Collide(line, lc->GetLeftBoundary());
-    lane_change = lane_change || Collide(line, lc->GetRightBoundary());
+    const auto& prev_lc =
+        ego->GetRoadCorridor()->GetNearestLaneCorridor(prev_pos);
+    const double vehicle_area = ego->GetShape().CalculateArea();
+    const double current_overlap =
+        CalculateOverlapArea(lc, ego, ego->GetCurrentState()) / vehicle_area;
+    const double prev_overlap =
+        CalculateOverlapArea(prev_lc, ego, prev_state) / vehicle_area;
+    lane_change = (prev_overlap < 0.85 && current_overlap >= 0.85);
   }
   return {{GetLabel(), lane_change}};
+}
+double LaneChangeLabelFunction::CalculateOverlapArea(
+    const LaneCorridorPtr& lc, const std::shared_ptr<const Agent>& ego,
+    const State& state) const {
+  return IntersectionArea(ego->GetPolygonFromState(state),
+                          lc->GetMergedPolygon());
 }
 }  // namespace evaluation
 }  // namespace world

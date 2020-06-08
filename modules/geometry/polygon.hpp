@@ -203,6 +203,16 @@ inline bool Collide(const Polygon& poly1, const Polygon& poly2) {
   return bg::intersects(poly1.obj_, poly2.obj_);
 }
 
+inline double IntersectionArea(const Polygon& poly1, const Polygon& poly2) {
+  double overlap_area = 0.0;
+  std::deque<bg::model::polygon<PolygonPoint>> intersect_polygon;
+  geometry::bg::intersection(poly1.obj_, poly2.obj_, intersect_polygon);
+  for (const auto& p : intersect_polygon) {
+    overlap_area += bg::area(p);
+  }
+  return overlap_area;
+}
+
 inline bool BufferPolygon(const Polygon& polygon, const double distance,
                           Polygon* buffered_polygon) {
   namespace bg = boost::geometry;
