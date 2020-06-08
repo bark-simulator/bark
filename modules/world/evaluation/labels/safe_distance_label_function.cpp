@@ -45,7 +45,12 @@ bool SafeDistanceLabelFunction::CheckSafeDistance(
     const double a_f) const {
   double dist = std::abs(frenet_dist.lon) - front_agent->GetShape().rear_dist_ -
                 rear_agent->GetShape().front_dist_;
-  assert(dist >= 0);
+  if (dist < 0.0) {
+    LOG(ERROR) << "Vehicle distance between agent " << rear_agent->GetAgentId()
+               << " and " << front_agent->GetAgentId() << " = " << dist
+               << " < 0! Skipping!";
+    return true;
+  }
 
   double v_f = front_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
   double v_r = rear_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
