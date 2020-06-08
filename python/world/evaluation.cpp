@@ -18,7 +18,9 @@
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/evaluator_zip_merge.hpp"
+#include "modules/world/evaluation/labels/agent_at_lane_end_label_function.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
+#include "modules/world/evaluation/labels/agent_near_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_function.hpp"
 #include "modules/world/evaluation/labels/direct_front_of_label_function.hpp"
@@ -177,6 +179,16 @@ void python_evaluation(py::module m) {
              std::shared_ptr<LaneChangeLabelFunction>>(
       m, "LaneChangeLabelFunction")
       .def(py::init<const std::string &>());
+
+  py::class_<AgentNearLabelFunction, BaseLabelFunction,
+             std::shared_ptr<AgentNearLabelFunction>>(m,
+                                                      "AgentNearLabelFunction")
+      .def(py::init<const std::string &, double>());
+
+  py::class_<AgentAtLaneEndLabelFunction, BaseLabelFunction,
+             std::shared_ptr<AgentAtLaneEndLabelFunction>>(
+      m, "AgentAtLaneEndLabelFunction")
+      .def(py::init<const std::string &, double>());
 
   py::class_<RightOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")
