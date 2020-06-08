@@ -29,13 +29,13 @@ class PyBehaviorModel : public BehaviorModel {
  public:
   using BehaviorModel::BehaviorModel;
 
-  Trajectory Plan(float delta_time,
+  Trajectory Plan(float min_planning_time,
                   const ObservedWorld& observed_world) {
     PYBIND11_OVERLOAD_PURE(
       modules::models::dynamic::Trajectory,
       BehaviorModel,
       Plan,
-      delta_time,
+      min_planning_time,
       observed_world);
   }
 
@@ -73,14 +73,14 @@ class PyPrimitive : public Primitive {
       adjacent_corridors);
   }
 
-  Trajectory Plan(float delta_time,
-                          const ObservedWorld& observed_world, const
+  Trajectory Plan(float min_planning_time,
+                  const ObservedWorld& observed_world, const
                   modules::world::LaneCorridorPtr& target_corridor) {
       PYBIND11_OVERLOAD_PURE(
       modules::models::dynamic::Trajectory,
       Primitive,
       Plan,
-      delta_time,
+      min_planning_time,
       observed_world,
       target_corridor);
     }

@@ -39,7 +39,7 @@ class VideoRenderer(BaseViewer):
             world_time = world.time
             executed_world = world
             for _ in range(0,self.render_intermediate_steps):
-                executed_world = executed_world.WorldExecutionAtTime(world_time)
+                executed_world = executed_world.GetWorldAtTime(world_time)
                 self._renderWorld(executed_world, eval_agent_ids, scenario_idx)
                 world_time = world_time + self.world_step_time/self.render_intermediate_steps
 

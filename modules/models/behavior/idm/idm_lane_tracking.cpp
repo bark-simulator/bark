@@ -45,6 +45,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
   }
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
+  double start_time = observed_world.GetWorldTime();
   double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
@@ -56,6 +57,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
         0, 0);
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
+    traj(0, StateDefinition::TIME_POSITION) = start_time;
 
     double rel_distance = rel_values.leading_distance;
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
@@ -70,9 +72,12 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       input << acc, angle;
       traj.row(i) =
         dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
+      
       // Do not allow negative speeds
       traj(i, StateDefinition::VEL_POSITION) =
           std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
+      t_i = static_cast<float>(i) * dt + start_time;
+      traj(i, StateDefinition::TIME_POSITION) = t_i;
     }
   }
   Action action(acc);
