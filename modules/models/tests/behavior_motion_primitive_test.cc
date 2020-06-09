@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
@@ -64,7 +64,7 @@ AdjacentLaneCorridors GetCorridors(const ObservedWorld& observed_world) {
 }
 
 TEST(behavior_motion_primitives_add, behavior_test) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   BehaviorMPContinuousActions behavior(params);
   Input u(2);
   u << 0, 0;
@@ -125,7 +125,7 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
 TEST(primitive_constant_acceleration, behavior_test) {
   using modules::models::behavior::primitives::AdjacentLaneCorridors;
   using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAccStayLane primitive(params, 0);
 
@@ -162,7 +162,7 @@ TEST(primitive_constant_acceleration, behavior_test) {
 
 TEST(primitive_change_left, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   PrimitiveConstAccChangeToLeft primitive(params);
   auto world = MakeTestWorldHighway();
   auto observed_worlds = world->Observe({1, 4});
@@ -179,7 +179,7 @@ TEST(primitive_change_left, behavior_test) {
 
 TEST(primitive_change_right, behavior_test) {
   using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   PrimitiveConstAccChangeToRight primitive(params);
   auto world = MakeTestWorldHighway();
   auto observed_worlds = world->Observe({1, 4});
@@ -196,7 +196,7 @@ TEST(primitive_change_right, behavior_test) {
 
 TEST(primitive_gap_keeping, precondition_test) {
   using modules::models::behavior::primitives::PrimitiveGapKeeping;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveGapKeeping primitive(params);
 
@@ -212,7 +212,7 @@ TEST(macro_actions, behavior_test) {
   using namespace modules::models::behavior::primitives;
   using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   params->SetReal("integration_time_delta", 0.01);
 
   std::vector<std::shared_ptr<Primitive>> prim_vec;

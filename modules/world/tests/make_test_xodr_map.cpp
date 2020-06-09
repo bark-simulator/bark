@@ -6,7 +6,7 @@
 
 #include "modules/world/tests/make_test_xodr_map.hpp"
 #include <vector>
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
 

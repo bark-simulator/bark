@@ -6,7 +6,7 @@
 
 #include "modules/world/observed_world.hpp"
 #include "gtest/gtest.h"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/polygon.hpp"
 #include "modules/geometry/standard_shapes.hpp"
@@ -30,7 +30,7 @@ using namespace modules::models::behavior;
 using namespace modules::models::execution;
 using namespace modules::world::map;
 
-using modules::commons::DefaultParams;
+using modules::commons::SetterParams;
 using modules::commons::SetterParams;
 using modules::commons::transformation::FrenetPosition;
 using modules::geometry::Model3D;
@@ -51,7 +51,7 @@ using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
 using StateDefinition::MIN_STATE_SIZE;
 
 TEST(observed_world, agent_in_front_same_lane) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -134,7 +134,7 @@ TEST(observed_world, agent_in_front_same_lane) {
 }
 
 TEST(observed_world, agent_in_front_other_lane) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -216,7 +216,7 @@ TEST(observed_world, clone) {
   using modules::world::evaluation::EvaluatorCollisionAgents;
   using modules::world::evaluation::EvaluatorPtr;
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
