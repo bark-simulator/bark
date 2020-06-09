@@ -8,7 +8,7 @@
 #include "dynamic.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/dynamic/triple_integrator.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 
 namespace py = pybind11;
 using namespace modules::models::dynamic;
@@ -34,7 +34,7 @@ void python_dynamic(py::module m) {
         if (s != "SingleTrackModel")
           throw std::runtime_error("Invalid dynamic modelstate!");
         // param pointer must be set via python
-        return new SingleTrackModel(std::make_shared<DefaultParams>());
+        return new SingleTrackModel(std::make_shared<SetterParams>());
     }));
 
   py::class_<TripleIntegratorModel,
@@ -51,7 +51,7 @@ void python_dynamic(py::module m) {
       [](std::string s) {  // __setstate__
         if (s != "TripleIntegratorModel")
           throw std::runtime_error("Invalid dynamic modelstate!");
-        return new TripleIntegratorModel(std::make_shared<DefaultParams>());
+        return new TripleIntegratorModel(std::make_shared<SetterParams>());
     }));
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())

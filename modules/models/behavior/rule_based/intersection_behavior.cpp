@@ -17,7 +17,7 @@
 #include "modules/world/observed_world.hpp"
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/dynamic/integration.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 
 namespace modules {
@@ -25,7 +25,7 @@ namespace models {
 namespace behavior {
 
 using modules::commons::transformation::FrenetPosition;
-using modules::commons::DefaultParams;
+using modules::commons::SetterParams;
 using modules::geometry::Point2d;
 using modules::geometry::SignedAngleDiff;
 using modules::models::dynamic::State;
@@ -107,7 +107,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   LaneCorridorPtr lane_corr = GetLaneCorridor();
   AgentPtr lane_corr_intersecting_agent;
   // prediction
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   ObservedWorldPtr tmp_observed_world =

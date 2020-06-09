@@ -9,14 +9,14 @@
 #include "modules/models/dynamic/single_track.hpp"
 #include "modules/models/execution/interpolation/interpolate.hpp"
 //#include "modules/models/execution/mpc/mpc.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;
 using namespace modules::commons;
 
 TEST(execution_model, execution_model_interpolate) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   Trajectory test_trajectory(11, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) = Eigen::ArrayXf::LinSpaced(11, 0, 10); // Time 0 to 10 seconds
@@ -49,7 +49,7 @@ TEST(execution_model, execution_model_interpolate) {
 /*
 TEST(execution_model, execution_model_mpc) {
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   Trajectory test_trajectory(3, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) = Eigen::ArrayXf::LinSpaced(3, 0, 10); // Time 0 to 10 seconds

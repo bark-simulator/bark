@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
@@ -29,7 +29,7 @@ TEST(single_track_model, dynamic_test) {
   u << 0, 0;
 
   DynamicModel *m;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   SingleTrackModel single_track_model(params);
   m = &single_track_model;
 
@@ -54,7 +54,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
     return theta_dot * x(static_cast<int>(StateDefinition::VEL_POSITION));
   };
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DynamicModel *m;
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
@@ -113,7 +113,7 @@ TEST(triple_integrator_model, dynamic_test) {
   u0 << 0, 0, 0.;
 
   DynamicModel *m;
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   TripleIntegratorModel triple_int_model(params);
   m = &triple_int_model;
 

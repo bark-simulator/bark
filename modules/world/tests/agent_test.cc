@@ -10,7 +10,7 @@
 #include "modules/models/execution/interpolation/interpolate.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/geometry/polygon.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 
@@ -26,7 +26,7 @@ using namespace modules::world;
 /*
 TEST(agent, standard_agent) {
 
-    auto params = std::make_shared<DefaultParams>();
+    auto params = std::make_shared<SetterParams>();
     ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
     DynamicModelPtr dyn_model(new SingleTrackModel());
     BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -92,7 +92,7 @@ TEST(agent, standard_agent) {
 
 TEST(agent, PolygonFromState) {
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
