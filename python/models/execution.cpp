@@ -21,6 +21,8 @@ void python_execution(py::module m) {
              ExecutionModelPtr>(m, "ExecutionModel")
     .def(py::init<const ParamsPtr&>())
     .def("Execute", &ExecutionModel::Execute)
+    .def_property_readonly("last_state",
+      &ExecutionModel::GetExecutedState)
     .def_property_readonly("last_trajectory",
       &ExecutionModel::GetLastTrajectory);
 

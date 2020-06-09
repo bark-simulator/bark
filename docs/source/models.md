@@ -28,7 +28,7 @@ class BehaviorModel : public modules::commons::BaseType {
         last_action_(),
         behavior_status_(status) {}
   ...
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(float min_planning_time,
                           const ObservedWorld& observed_world) = 0;
  private:
   dynamic::Trajectory last_trajectory_;
