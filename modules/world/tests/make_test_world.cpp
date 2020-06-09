@@ -6,7 +6,7 @@
 
 #include "modules/world/tests/make_test_world.hpp"
 #include <vector>
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
 #include "modules/geometry/polygon.hpp"
@@ -52,7 +52,7 @@ WorldPtr modules::world::tests::make_test_world(
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(nullptr);
@@ -114,12 +114,12 @@ ObservedWorld modules::world::tests::make_test_observed_world(
 }
 
 WorldPtr modules::world::tests::MakeTestWorldHighway() {
-  using modules::commons::DefaultParams;
+  using modules::commons::SetterParams;
 
   using modules::geometry::standard_shapes::CarRectangle;
   using StateDefinition::MIN_STATE_SIZE;
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
@@ -137,8 +137,14 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
 
   // Setting Up Agents (one in front of another)
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  ExecutionModelPtr exec_model1(new ExecutionModelInterpolate(params));
+  ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
+  ExecutionModelPtr exec_model3(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model1(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model3(new BehaviorConstantVelocity(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
@@ -150,7 +156,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
 
   State init_state2(static_cast<int>(MIN_STATE_SIZE));
   init_state2 << 0.0, 10.0, -1.75, 0.0, 5.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
+  AgentPtr agent2(new Agent(init_state2, beh_model1, dyn_model, exec_model1,
                             car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   agent2->SetAgentId(2);
@@ -163,7 +169,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
 
   State init_state3(static_cast<int>(MIN_STATE_SIZE));
   init_state3 << 0.0, 20.0, -1.75, 0.0, 5.0;
-  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
+  AgentPtr agent3(new Agent(init_state3, beh_model2, dyn_model, exec_model2,
                             polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   agent3->SetAgentId(3);
@@ -173,7 +179,7 @@ WorldPtr modules::world::tests::MakeTestWorldHighway() {
   // Adding a fourth agent in right lane
   State init_state4(static_cast<int>(MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
-  AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
+  AgentPtr agent4(new Agent(init_state4, beh_model3, dyn_model, exec_model3,
                             polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
   agent4->SetAgentId(4);
