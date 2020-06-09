@@ -30,23 +30,24 @@ using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
+using world::map::MapInterfacePtr;
 using modules::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
-    EvaluationMap;
+  EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
 typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
 
 using rtree_agent_model =
-    boost::geometry::model::box<modules::geometry::Point2d>;
+  boost::geometry::model::box<modules::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
-using rtree_agent =
-    boost::geometry::index::rtree<rtree_agent_value,
-                                  boost::geometry::index::linear<16, 4> >;
+using AgentRTree =
+  boost::geometry::index::rtree<rtree_agent_value,
+                                boost::geometry::index::linear<16, 4> >;
 
 typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
 
@@ -60,6 +61,50 @@ class World : public commons::BaseType {
   explicit World(const commons::ParamsPtr& params);
   explicit World(const std::shared_ptr<World>& world);
   virtual ~World() {}
+
+  /**
+   * @brief  Steps the BARK world
+   * @param  delta_time: world step time
+   */
+  void Step(const float& delta_time);
+
+  /**
+   * @brief Calls the behavior and execution model of the agents
+   * @param  delta_time: minimum planning time
+   */
+  void PlanAgents(const float& delta_time);
+
+  /**
+   * @brief  Updates the agent states
+   */
+  void Execute(const float& world_time);
+
+  /**
+   * @brief Get world for a specific time
+   * @param  execution_time: world_time
+   */
+  std::shared_ptr<World> GetWorldAtTime(
+    const float& world_time) const;
+
+  /**
+   * @brief  calls all added evaluators of the world
+   */
+  virtual EvaluationMap Evaluate() const;
+
+  /**
+   * @brief  Generates and ObservedWorld for the specified agents
+   */
+  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
+
+  /**
+   * @brief  Updates the agent r-tree
+   */
+  void UpdateAgentRTree();
+
+  /**
+   * @brief  Removes invalid agents from the world
+   */
+  void RemoveInvalidAgents();
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
@@ -88,9 +133,6 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(
       const modules::geometry::Polygon& polygon) const;
 
-  //! Function will yield the front and rear agent (and their frenet
-  //! coordinates) in a respective lane_corridor in relation to a given agent.
-  //! Agent specified by agent_id might be outside the lane_corridor.
   FrontRearAgents GetAgentFrontRearForId(
       const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
 
@@ -118,33 +160,15 @@ class World : public commons::BaseType {
     ClearEvaluators();
   }
 
-  virtual EvaluationMap Evaluate() const;
-
-  bool Valid() const;
-  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
-  void Step(const float& delta_time);
-
-  // TODO: use state action pair
-  void FillWorldFromCarla(const float& delta_time, const AgentStateMap& state_action_map);
-  AgentTrajectoryMap PlanSpecificAgents(const float& delta_time, const std::vector<int>& agent_ids);
-
-  void DoPlanning(const float& delta_time);
-  void DoExecution(const float& delta_time);
-
-  void UpdateAgentRTree();
-  void RemoveInvalidAgents();
-
   virtual std::shared_ptr<World> Clone() const;
-  std::shared_ptr<World> WorldExecutionAtTime(
-      const float& execution_time) const;
 
  private:
-  world::map::MapInterfacePtr map_;
+  MapInterfacePtr map_;
   AgentMap agents_;
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   double world_time_;
-  rtree_agent rtree_agents_;
+  AgentRTree rtree_agents_;
   bool remove_agents_;
 };
 

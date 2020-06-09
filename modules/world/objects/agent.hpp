@@ -30,8 +30,10 @@ using models::dynamic::State;
 using models::behavior::BehaviorModelPtr;
 using models::dynamic::DynamicModelPtr;
 using models::execution::ExecutionModelPtr;
+using models::execution::ExecutionStatus;
 using models::behavior::StateActionPair;
 using models::behavior::StateActionHistory;
+using models::behavior::Action;
 using models::behavior::BehaviorStatus;
 using models::dynamic::Trajectory;
 using modules::world::opendrive::XodrLaneId;
@@ -40,25 +42,59 @@ using modules::world::map::RoadCorridorPtr;
 using modules::world::goal_definition::GoalDefinition;
 using modules::world::goal_definition::GoalDefinitionPtr;
 using models::dynamic::StateDefinition;
+using modules::commons::transformation::FrenetPosition;
+using StateHistory = std::vector<State>;
+using ActionHistory = std::vector<Action>;
+using modules::geometry::Pose;
+using modules::geometry::Point2d;
+using modules::geometry::Model3D;
+using modules::geometry::Polygon;
 
 class Agent : public Object {
  public:
   friend class World;
 
-  Agent(const State &initial_state,
-        const BehaviorModelPtr &behavior_model_ptr,
-        const DynamicModelPtr &dynamic_model_ptr,
-        const ExecutionModelPtr &execution_model,
-        const geometry::Polygon &shape,
+  Agent(const State& initial_state,
+        const BehaviorModelPtr& behavior_model_ptr,
+        const DynamicModelPtr& dynamic_model_ptr,
+        const ExecutionModelPtr& execution_model,
+        const Polygon& shape,
         const commons::ParamsPtr& params,
         const GoalDefinitionPtr& goal_definition = GoalDefinitionPtr(),
         const MapInterfacePtr& map_interface = MapInterfacePtr(),
-        const geometry::Model3D &model_3d = geometry::Model3D());
+        const Model3D& model_3d = Model3D());
 
   virtual ~Agent() {}
 
   Agent(const Agent& other_agent);
 
+  /**
+   * @brief  Generates the RoadCorridor for the agent using
+   *         its current position and goal
+   */
+  bool GenerateRoadCorridor(const MapInterfacePtr& map_interface);
+
+  /**
+   * @brief  Calls the behavior model of the agent
+   */
+  void PlanBehavior(const float &dt, const ObservedWorld &observed_world);
+
+  /**
+   * @brief  Calls the execution model of the agent
+   */
+  void PlanExecution(const float& world_time);
+
+  /**
+   * @brief  Updates the agent states based on the execution model
+   */
+  void UpdateStateAction();
+
+  /**
+   * @brief  Checks whether the agent has reached its goal
+   */
+  bool AtGoal() const;
+
+  //! Getter
   BehaviorModelPtr GetBehaviorModel() const { return behavior_model_; }
 
   ExecutionModelPtr GetExecutionModel() const { return execution_model_; }
@@ -79,16 +115,16 @@ class Agent : public Object {
 
   State GetCurrentState() const { return history_.back().first; }
 
-  modules::geometry::Point2d GetCurrentPosition() const {
+  Point2d GetCurrentPosition() const {
     const State& state = GetCurrentState();
-    return modules::geometry::Point2d(
+    return Point2d(
       state(StateDefinition::X_POSITION),
       state(StateDefinition::Y_POSITION));
   }
 
-  modules::commons::transformation::FrenetPosition CurrentFrenetPosition() const;
+  FrenetPosition CurrentFrenetPosition() const;
 
-  geometry::Polygon GetPolygonFromState(const State& state) const;
+  Polygon GetPolygonFromState(const State& state) const;
 
   const RoadCorridorPtr GetRoadCorridor() const {
     return road_corridor_;
@@ -98,6 +134,11 @@ class Agent : public Object {
     return behavior_model_->GetBehaviorStatus();
   }
 
+  ExecutionStatus GetExecutionStatus() const {
+    return execution_model_->GetExecutionStatus();
+  }
+
+  //! Setter
   void SetBehaviorModel(const BehaviorModelPtr &behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;
   }
@@ -118,33 +159,20 @@ class Agent : public Object {
     history_ = history;
   }
 
-  bool GenerateRoadCorridor(const MapInterfacePtr& map_interface);
-
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
   }
 
-  void AddTrajectoryStep(const StateActionPair& state_action_pair);
-
-  void BehaviorPlan(const float &dt, const ObservedWorld &observed_world);
-
-  void ExecutionPlan(const float &dt);
-
-  void Execute(const float& world_time);
-
-  bool AtGoal() const;
-
   virtual std::shared_ptr<Object> Clone() const;
 
  private:
-  models::behavior::BehaviorModelPtr behavior_model_;
-  models::dynamic::DynamicModelPtr dynamic_model_;
-  models::execution::ExecutionModelPtr execution_model_;
-  modules::world::map::RoadCorridorPtr road_corridor_;
-  models::behavior::StateActionHistory history_;
-  // TODO(@all): move max_history_length_ to parameter
+  BehaviorModelPtr behavior_model_;
+  DynamicModelPtr dynamic_model_;
+  ExecutionModelPtr execution_model_;
+  RoadCorridorPtr road_corridor_;
+  StateActionHistory history_;
   uint32_t max_history_length_;
-  modules::world::goal_definition::GoalDefinitionPtr goal_definition_;
+  GoalDefinitionPtr goal_definition_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;
