@@ -5,7 +5,6 @@ cc_library(
     hdrs = [
         "params.hpp",
         "params_test.h",
-        "default_params.hpp",
         "setter_params.hpp"
     ],
     srcs = [

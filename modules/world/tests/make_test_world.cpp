@@ -6,7 +6,7 @@
 
 #include "modules/world/tests/make_test_world.hpp"
 #include <vector>
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
 #include "modules/geometry/polygon.hpp"
@@ -52,7 +52,7 @@ WorldPtr modules::world::tests::make_test_world(
   MapInterfacePtr map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(nullptr);
@@ -114,12 +114,12 @@ ObservedWorld modules::world::tests::make_test_observed_world(
 }
 
 WorldPtr modules::world::tests::MakeTestWorldHighway() {
-  using modules::commons::DefaultParams;
+  using modules::commons::SetterParams;
 
   using modules::geometry::standard_shapes::CarRectangle;
   using StateDefinition::MIN_STATE_SIZE;
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   // Setting Up Map
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
