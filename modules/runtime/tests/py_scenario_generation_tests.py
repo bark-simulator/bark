@@ -146,6 +146,8 @@ class ScenarioGenerationTests(unittest.TestCase):
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=2)
+          
+        assert(scenario_generation.get_num_scenarios() == 2)
 
     def test_dataset_scenario_generation_full_incomplete(self):
         params = ParameterServer()
