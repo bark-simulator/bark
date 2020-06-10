@@ -17,7 +17,7 @@ class EvaluatorLTLTests(unittest.TestCase):
                                                               params=param_server)
 
         scenario, idx = scenario_generation.get_next_scenario()
-        self.world = scenario.get_world_state()
+        self.world = scenario.GetWorldState()
         self.agent_id = 1
         self.label = ConstantLabelFunction("label")
         self.world.AddLabels([self.label])
