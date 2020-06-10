@@ -4,21 +4,22 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+from bark.models.dynamic import *
+from bark.models.execution import *
+# PyBind imports
+from bark.world.map import *
+
+from modules.runtime.commons.parameters import ParameterServer
+from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
     import ScenarioGeneration
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
-from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
-from modules.runtime.commons.parameters import ParameterServer
-# PyBind imports
-from bark.world.map import *
-from bark.models.dynamic import *
-from bark.models.execution import *
 
 
 class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
-  # This class reads in a track file from the interaction dataset
-  # and generates a scenario for each agent as the eval agent.
+    # This class reads in a track file from the interaction dataset
+    # and generates a scenario for each agent as the eval agent.
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         super().__init__(params, num_scenarios, random_seed)
@@ -36,6 +37,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                             "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
+        self.excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -50,7 +52,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         # for scenario_idx in range(0, num_scenarios):
         for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-            if idx_s < num_scenarios:
+            if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self.excluded_tracks:
                 try:
                     scenario = self.__create_single_scenario__(
                         scenario_track_info)
@@ -64,7 +66,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __create_single_scenario__(self, scenario_track_info):
         scenario_track_info.TimeSanityCheck()
-        
+
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
         world = scenario.GetWorldState()
