@@ -37,7 +37,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                             "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
-        self.excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
+        self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -52,7 +52,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         # for scenario_idx in range(0, num_scenarios):
         for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-            if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self.excluded_tracks:
+            if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
                 try:
                     scenario = self.__create_single_scenario__(
                         scenario_track_info)
