@@ -32,9 +32,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
                                           "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
-        self._track_file_name = params_temp["TrackFilename",
-                                            "Path to track file (csv)",
-                                            "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+        self._track_file_name_list = params_temp["TrackFilenameList",
+                                            "List of Paths to track files (csv)",
+                                            ["modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
         self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
@@ -46,22 +46,24 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         """
         scenario_list = []
 
-        dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                               track_filename=self._track_file_name)
-        scenario_track_info_list = dataset_decomposer.decompose()
+        for track_file_name in self._track_file_name_list:
 
-        # for scenario_idx in range(0, num_scenarios):
-        for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-            if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
-                try:
-                    scenario = self.__create_single_scenario__(
-                        scenario_track_info)
-                except:
-                    raise ValueError(
-                        "Generation of scenario failed: {}".format(scenario_track_info))
-                scenario_list.append(scenario)
-            else:
-                break
+          dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
+                                                track_filename=track_file_name)
+          scenario_track_info_list = dataset_decomposer.decompose()
+
+          # for scenario_idx in range(0, num_scenarios):
+          for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
+              if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
+                  try:
+                      scenario = self.__create_single_scenario__(
+                          scenario_track_info)
+                  except:
+                      raise ValueError(
+                          "Generation of scenario failed: {}".format(scenario_track_info))
+                  scenario_list.append(scenario)
+              else:
+                  break
         return scenario_list
 
     def __create_single_scenario__(self, scenario_track_info):

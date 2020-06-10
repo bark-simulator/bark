@@ -142,7 +142,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=2)
@@ -154,7 +154,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track_incomplete.csv"
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=3)
