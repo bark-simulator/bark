@@ -9,9 +9,9 @@
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/agent_near_label_function.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_function.hpp"
-#include "modules/world/evaluation/labels/direct_front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/labels/preceding_agent_label_function.hpp"
 
 namespace modules {
 namespace world {
@@ -26,7 +26,7 @@ const LabelFunctions EvaluatorZipMerge::labels_ = {
         new AgentBeyondPointLabelFunction("merged_j", Point2d(966, 1008))),
     LabelFunctionPtr(
         new EgoBeyondPointLabelFunction("merged_i", Point2d(966, 1008))),
-    LabelFunctionPtr(new DirectFrontOfLabelFunction("j_in_direct_front")),
+    LabelFunctionPtr(new PrecedingAgentLabelFunction("j_in_direct_front")),
     LabelFunctionPtr(new LeftOfLabelFunction("i_left_of_k")),
     LabelFunctionPtr(new BehindOfLabelFunction("i_behind_of_k")),
     LabelFunctionPtr(new AgentNearLabelFunction("k_near_i", 6.0)),

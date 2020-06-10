@@ -23,12 +23,12 @@
 #include "modules/world/evaluation/labels/agent_near_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_function.hpp"
-#include "modules/world/evaluation/labels/direct_front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/generic_ego_label_function.hpp"
 #include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/labels/preceding_agent_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
@@ -236,18 +236,18 @@ void python_evaluation(py::module m) {
                                                    t[1].cast<Point2d>());
           }));
 
-  py::class_<DirectFrontOfLabelFunction, BaseLabelFunction,
-             std::shared_ptr<DirectFrontOfLabelFunction>>(
-      m, "DirectFrontOfLabelFunction")
+  py::class_<PrecedingAgentLabelFunction, BaseLabelFunction,
+             std::shared_ptr<PrecedingAgentLabelFunction>>(
+      m, "PrecedingAgentLabelFunction")
       .def(py::init<const std::string &>())
       .def(py::pickle(
-          [](const DirectFrontOfLabelFunction &b) {
+          [](const PrecedingAgentLabelFunction &b) {
             return py::make_tuple(b.GetLabelStr());
           },
           [](py::tuple t) {
             if (t.size() != 1)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new DirectFrontOfLabelFunction(t[0].cast<std::string>());
+            return new PrecedingAgentLabelFunction(t[0].cast<std::string>());
           }));
 
   py::class_<
