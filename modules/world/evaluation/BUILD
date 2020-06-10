@@ -195,9 +195,20 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_zip_merge",
-    srcs = ["evaluator_zip_merge.cpp"],
-    hdrs = ["evaluator_zip_merge.hpp"],
+    name = "evaluator_zip_merge_deu",
+    srcs = ["evaluator_zip_merge_deu.cpp"],
+    hdrs = ["evaluator_zip_merge_deu.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "evaluator_zip_merge_chn",
+    srcs = ["evaluator_zip_merge_chn.cpp"],
+    hdrs = ["evaluator_zip_merge_chn.hpp"],
     deps = [
         ":evaluator_ltl",
         "//modules/world/evaluation/labels:label_evaluation"
@@ -222,7 +233,8 @@ cc_library(
         ":evaluator_safe_lane_change",
         ":evaluator_being_overtaken",
         ":evaluator_rel_speed_overtake",
-        ":evaluator_zip_merge",
+        ":evaluator_zip_merge_deu",
+        ":evaluator_zip_merge_chn",
     ],
     visibility = ["//visibility:public"],
 )

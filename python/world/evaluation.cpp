@@ -17,7 +17,8 @@
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
-#include "modules/world/evaluation/evaluator_zip_merge.hpp"
+#include "modules/world/evaluation/evaluator_zip_merge_chn.hpp"
+#include "modules/world/evaluation/evaluator_zip_merge_deu.hpp"
 #include "modules/world/evaluation/labels/agent_at_lane_end_label_function.hpp"
 #include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/agent_near_label_function.hpp"
@@ -146,15 +147,23 @@ void python_evaluation(py::module m) {
                              &EvaluatorRelSpeedOvertake::GetRuleStates)
       .def("__repr__",
            [](const EvaluatorRelSpeedOvertake &g) {
-             return "bark.world.evaluation.EvaluatorBeingOvertaken";
+             return "bark.world.evaluation.EvaluatorRelSpeedOvertake";
       });
 
-  py::class_<EvaluatorZipMerge, BaseEvaluator,
-             std::shared_ptr<EvaluatorZipMerge>>(m, "EvaluatorZipMerge")
+  py::class_<EvaluatorZipMergeDeu, BaseEvaluator,
+             std::shared_ptr<EvaluatorZipMergeDeu>>(m, "EvaluatorZipMergeDeu")
       .def(py::init<AgentId>())
-      .def_property_readonly("rule_states", &EvaluatorZipMerge::GetRuleStates)
-      .def("__repr__", [](const EvaluatorZipMerge &g) {
-        return "bark.world.evaluation.EvaluatorZipMerge";
+      .def_property_readonly("rule_states", &EvaluatorZipMergeDeu::GetRuleStates)
+      .def("__repr__", [](const EvaluatorZipMergeDeu &g) {
+        return "bark.world.evaluation.EvaluatorZipMergeDeu";
+      });
+
+  py::class_<EvaluatorZipMergeChn, BaseEvaluator,
+             std::shared_ptr<EvaluatorZipMergeChn>>(m, "EvaluatorZipMergeChn")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states", &EvaluatorZipMergeChn::GetRuleStates)
+      .def("__repr__", [](const EvaluatorZipMergeChn &g) {
+        return "bark.world.evaluation.EvaluatorZipMergeChn";
       });
 
   // LABELS

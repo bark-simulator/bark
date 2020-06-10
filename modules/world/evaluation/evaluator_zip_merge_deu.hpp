@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_HPP_
+#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_DEU_HPP_
+#define MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_DEU_HPP_
 
 #include "modules/world/evaluation/evaluator_ltl.hpp"
 
@@ -12,9 +12,9 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-class EvaluatorZipMerge : public EvaluatorLTL {
+class EvaluatorZipMergeDeu : public EvaluatorLTL {
  public:
-  explicit EvaluatorZipMerge(AgentId agent_id)
+  explicit EvaluatorZipMergeDeu(AgentId agent_id)
       : EvaluatorLTL(agent_id, formula_) {}
   EvaluationReturn Evaluate(const world::World& world) override {
     auto cloned_world = world.Clone();
@@ -29,4 +29,4 @@ class EvaluatorZipMerge : public EvaluatorLTL {
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_HPP_
+#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_ZIP_MERGE_DEU_HPP_
