@@ -18,7 +18,7 @@ namespace world {
 namespace evaluation {
 
 using modules::commons::transformation::FrenetPosition;
-using modules::world::objects::AgentPtr;
+using modules::models::dynamic::State;
 using modules::world::map::LaneCorridorPtr;
 using modules::world::objects::Agent;
 using modules::world::objects::AgentPtr;
