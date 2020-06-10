@@ -23,13 +23,11 @@ using modules::world::objects::AgentPtr;
 class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
   EgoAccelerateLabelFunction(const std::string& label_str,
-                             const double acc_thres = 1.0,
-                             const size_t smooth_frame = 5);
+                             const double acc_thres = 0.5);
   std::vector<LabelMap::value_type> Evaluate(
       const world::ObservedWorld& observed_world) const override;
  private:
   const double acc_thres_;
-  const size_t smooth_frame_;
 };
 
 }  // namespace evaluation

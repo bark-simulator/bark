@@ -15,11 +15,9 @@ namespace evaluation {
 using modules::models::dynamic::StateDefinition;
 
 EgoAccelerateLabelFunction::EgoAccelerateLabelFunction(
-    const std::string& label_str, const double acc_thres,
-    const size_t smooth_frame)
+    const std::string& label_str, const double acc_thres)
     : BaseLabelFunction(label_str),
-      acc_thres_(acc_thres),
-      smooth_frame_(smooth_frame) {}
+      acc_thres_(acc_thres) {}
 
 std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
     const world::ObservedWorld& observed_world) const {
@@ -27,9 +25,8 @@ std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
   const auto ego = observed_world.GetEgoAgent();
   const auto& history = ego->GetStateInputHistory();
   if (history.size() > 2) {
-    size_t frame_length = std::min(history.size(), smooth_frame_);
     const auto dx =
-        history.back().first - (history.end() - frame_length)->first;
+        history.back().first - (history.end() - 2)->first;
     const float dv = dx(StateDefinition::VEL_POSITION);
     const float dt = dx(StateDefinition::TIME_POSITION);
     const float avg_accel = dv / dt;
