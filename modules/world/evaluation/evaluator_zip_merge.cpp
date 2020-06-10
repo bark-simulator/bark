@@ -17,24 +17,20 @@ namespace modules {
 namespace world {
 namespace evaluation {
 const char EvaluatorZipMerge::formula_[] =
-    "(i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1 & "
+    "(F(i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1) & "
     "j_in_direct_front#0 & !merged_i & (j_in_direct_front#0 | merged_j#0) U "
     "merged_i) -> G(merged_i & merged_j#0 -> !j_in_direct_front#0)";
-// const char EvaluatorZipMerge::formula_[] =
-//    "G !(i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1 &
-//    j_in_direct_front#0 & !merged_i & (j_in_direct_front#0 | merged_j#0) U "
-//    "merged_i)";
 
 const LabelFunctions EvaluatorZipMerge::labels_ = {
     LabelFunctionPtr(
-        new AgentBeyondPointLabelFunction("merged_j", Point2d(968, 1008))),
+        new AgentBeyondPointLabelFunction("merged_j", Point2d(966, 1008))),
     LabelFunctionPtr(
-        new EgoBeyondPointLabelFunction("merged_i", Point2d(968, 1008))),
+        new EgoBeyondPointLabelFunction("merged_i", Point2d(966, 1008))),
     LabelFunctionPtr(new DirectFrontOfLabelFunction("j_in_direct_front")),
     LabelFunctionPtr(new LeftOfLabelFunction("i_left_of_k")),
     LabelFunctionPtr(new BehindOfLabelFunction("i_behind_of_k")),
     LabelFunctionPtr(new AgentNearLabelFunction("k_near_i", 6.0)),
-    LabelFunctionPtr(new AgentAtLaneEndLabelFunction("k_near_lane_end", 40.0))};
+    LabelFunctionPtr(new AgentAtLaneEndLabelFunction("k_near_lane_end", 55.0))};
 
 }  // namespace evaluation
 }  // namespace world
