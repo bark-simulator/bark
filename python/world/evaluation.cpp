@@ -12,7 +12,8 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
-#include "modules/world/evaluation/evaluator_rel_speed_overtake.hpp"
+#include "modules/world/evaluation/evaluator_rel_speed_overtake_a.hpp"
+#include "modules/world/evaluation/evaluator_rel_speed_overtake_b.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
@@ -139,16 +140,27 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorBeingOvertaken";
       });
 
-  py::class_<EvaluatorRelSpeedOvertake, BaseEvaluator,
-                     std::shared_ptr<EvaluatorRelSpeedOvertake>>(
-              m, "EvaluatorRelSpeedOvertake")
+  py::class_<EvaluatorRelSpeedOvertakeA, BaseEvaluator,
+                     std::shared_ptr<EvaluatorRelSpeedOvertakeA>>(
+              m, "EvaluatorRelSpeedOvertakeA")
       .def(py::init<AgentId>())
       .def_property_readonly("rule_states",
-                             &EvaluatorRelSpeedOvertake::GetRuleStates)
+                             &EvaluatorRelSpeedOvertakeA::GetRuleStates)
       .def("__repr__",
-           [](const EvaluatorRelSpeedOvertake &g) {
-             return "bark.world.evaluation.EvaluatorRelSpeedOvertake";
+           [](const EvaluatorRelSpeedOvertakeA &g) {
+             return "bark.world.evaluation.EvaluatorRelSpeedOvertakeA";
       });
+
+  py::class_<EvaluatorRelSpeedOvertakeB, BaseEvaluator,
+             std::shared_ptr<EvaluatorRelSpeedOvertakeB>>(
+      m, "EvaluatorRelSpeedOvertakeB")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorRelSpeedOvertakeB::GetRuleStates)
+      .def("__repr__",
+           [](const EvaluatorRelSpeedOvertakeB &g) {
+             return "bark.world.evaluation.EvaluatorRelSpeedOvertakeB";
+           });
 
   py::class_<EvaluatorZipMergeDeu, BaseEvaluator,
              std::shared_ptr<EvaluatorZipMergeDeu>>(m, "EvaluatorZipMergeDeu")

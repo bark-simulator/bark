@@ -184,9 +184,20 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_rel_speed_overtake",
-    srcs = ["evaluator_rel_speed_overtake.cpp"],
-    hdrs = ["evaluator_rel_speed_overtake.hpp"],
+    name = "evaluator_rel_speed_overtake_a",
+    srcs = ["evaluator_rel_speed_overtake_a.cpp"],
+    hdrs = ["evaluator_rel_speed_overtake_a.hpp"],
+    deps = [
+        ":evaluator_ltl",
+        "//modules/world/evaluation/labels:label_evaluation"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "evaluator_rel_speed_overtake_b",
+    srcs = ["evaluator_rel_speed_overtake_b.cpp"],
+    hdrs = ["evaluator_rel_speed_overtake_b.hpp"],
     deps = [
         ":evaluator_ltl",
         "//modules/world/evaluation/labels:label_evaluation"
@@ -232,7 +243,8 @@ cc_library(
         ":evaluator_safe_distance",
         ":evaluator_safe_lane_change",
         ":evaluator_being_overtaken",
-        ":evaluator_rel_speed_overtake",
+        ":evaluator_rel_speed_overtake_a",
+        ":evaluator_rel_speed_overtake_b",
         ":evaluator_zip_merge_deu",
         ":evaluator_zip_merge_chn",
     ],
