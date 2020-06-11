@@ -101,7 +101,6 @@ class BenchmarkAnalyzer:
 
   def _render_histories(self, histories_collected, info_strings_collected, viewer_list,
                         viewer_names, sim_time, real_time_factor, display_info, **kwargs):
-          world_time = 0
           step_time = sim_time/real_time_factor
           steps_to_go = True
           step = 0
@@ -110,23 +109,27 @@ class BenchmarkAnalyzer:
               steps_to_go = False
               for viewer_idx in range(0, len(viewer_list)):
                   histories = histories_collected[viewer_idx]
+                  history_idx = step - 1
                   if len(histories) < step:
-                    continue
-                  steps_to_go = True
-                  scenario = histories[step-1]
+                    history_idx = len(histories) -1
+                  else:
+                    steps_to_go = True
+                  scenario = histories[history_idx]
+                  scenario._map_file_name = "src/evaluation/bark/database_configuration/database/maps/DR_DEU_Merging_MT_shifted.xodr"
                   viewer = viewer_list[viewer_idx]
                   world = scenario.GetWorldState()
-                  world.time = world_time
+                  world.time = sim_time*history_idx
                   if display_info and not viewer_names:
                       info_text = info_strings_collected[viewer_idx]
                       viewer.drawText(text=info_text, position=(0.5,1.05), **kwargs)
                   elif viewer_names:
-                      viewer.drawText(text=viewer_names[viewer_idx], position=(0.5,1.05), **kwargs)
+                      viewer.drawText(text=viewer_names[viewer_idx], position=(0.5,1.02), **kwargs)
+                      viewer.drawText(text="$t={:.1f}$".format(world.time), position=(0.05, 0.05), horizontalalignment="left", \
+                            verticalalignment="bottom", fontsize=kwargs.get("fontsize")*0.5 or 3.0)
                   viewer.drawWorld(world = world,
                               eval_agent_ids = scenario.eval_agent_ids, \
                               scenario_idx = None, debug_text=False)
                   viewer_list[viewer_idx].show()
-              world_time += sim_time
               if real_time_factor:
                   time.sleep(step_time)
               for viewer_idx in range(0, len(viewer_list)):
