@@ -15,27 +15,49 @@ class BenchmarkAnalyzer:
       self._data_frame = benchmark_result.get_data_frame()
 
   def get_scenario_ids(self, config_idx_list):
-      scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]["scen_idx"]
-      return list(scenario_idxs.values)
+      scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]
+      scen_df_copy = scenario_idxs.copy()
+      scen_df_copy = scen_df_copy.reindex(scen_df_copy.config_idx.map( \
+                    {x: i for i, x in enumerate(config_idx_list)}).sort_values().index)
+      return list(scen_df_copy.scen_idx.values)
 
   # accepts a dict with lambda functions specifying evaluation criteria which must be fullfilled
   # e.g. evaluation_criteria={"success": lambda x: x, "collision" : lambda x : not x}
   # scenario_idx_list: a list of scenario ids, return only configs with these scenario ids
   # scenarios_as_in_configs: a list of configs ids, return only configs with scenarios of configs ids in this list
   # returns a list of config indices fullfilling these criteria
-  def find_configs(self, criteria=None, scenario_idx_list=None, scenarios_as_in_configs=None):
+  def find_configs(self, criteria=None, scenario_idx_list=None, scenarios_as_in_configs=None, in_configs=None):
       df_satisfied =  self._data_frame.copy()
       if criteria:
         for eval_crit, function in criteria.items():
             df_satisfied = df_satisfied.loc[df_satisfied[eval_crit].apply(function)]
       if scenarios_as_in_configs:
-        scenario_idx_list = self.get_scenario_ids(scenarios_as_in_configs)
+            scenario_idx_list = self.get_scenario_ids(scenarios_as_in_configs)
+      if in_configs:
+            df_satisfied = df_satisfied.loc[df_satisfied["config_idx"].isin(in_configs)]
       if scenario_idx_list:
-        df_satisfied = df_satisfied.loc[df_satisfied["scen_idx"].isin(scenario_idx_list)]
+            df_satisfied = df_satisfied.loc[df_satisfied["scen_idx"].isin(scenario_idx_list)]
+            df_satisfied = df_satisfied.reindex(df_satisfied.scen_idx.map( \
+                    {x: i for i, x in enumerate(scenario_idx_list)}).sort_values().index)
 
       configs_found = list(df_satisfied["config_idx"].values)
-      configs_found.sort()
       return configs_found
+
+  def make_scenarios_congruent(self, configs_idx_lists):
+      matching_scenarios = set(self.get_scenario_ids(configs_idx_lists[0]))
+      for configs_idx_list in configs_idx_lists[1:]:
+          matching_scenarios = matching_scenarios & set(self.get_scenario_ids(configs_idx_list))
+      matching_scenarios = list(matching_scenarios)
+      congruent_config_lists = []
+      matching_scenarios.sort()
+      for config_idx_list in configs_idx_lists:
+          congruent_list = self.find_configs(scenario_idx_list=matching_scenarios, \
+                                    in_configs=config_idx_list)
+          scenarios_in_conf = self.get_scenario_ids(congruent_list)
+          assert(scenarios_in_conf == matching_scenarios)
+          congruent_config_lists.append[congruent_list]
+          scenarios_in_conf = self.get_scenario_ids(congruent_list)
+      return congruent_config_lists
 
   def visualize(self, configs_idx_list, viewer, viewer_names=None, real_time_factor=1.0, display_info=True, **kwargs):
       if not all(isinstance(elem, list) for elem in configs_idx_list):
