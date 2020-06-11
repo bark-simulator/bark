@@ -34,7 +34,7 @@ py_test(
       "//modules/benchmark:benchmark_runner",
       "//modules/benchmark:benchmark_analyzer",
       "//modules/runtime/viewer:matplotlib_viewer",
-      "//modules/runtime/commons:parameters",
+      "//modules/runtime:runtime",
       ],
 )
 

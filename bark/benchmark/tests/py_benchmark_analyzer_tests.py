@@ -4,6 +4,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+try:
+    import debug_settings
+except:
+    pass
+
 import unittest
 
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
@@ -11,12 +16,16 @@ from bark.benchmark.benchmark_runner import BenchmarkResult
 
 def dummy_benchmark_results():
     return [
+      {"config_idx": 24, "collision":False, "metric1": 0.1, "behavior": "test1", "scen_idx": 12},
       {"config_idx": 1, "collision":True, "metric1": 23.5, "behavior": "test", "scen_idx": 10},
+      {"config_idx": 500, "collision":True, "metric1": 23.5, "behavior": "test", "scen_idx": 112},
       {"config_idx": 2, "collision":False, "metric1": 1, "behavior": "test2", "scen_idx": 12},
+      {"config_idx": 41, "collision":False, "metric1": 0.2, "behavior": "test1", "scen_idx": 12},
       {"config_idx": 3, "collision":False, "metric1": 23676.5, "behavior": "test1", "scen_idx": 3},
-      {"config_idx": 121, "collision":False, "metric1": 1, "behavior": "test2", "scen_idx": 4},
+      {"config_idx": 12, "collision":False, "metric1": 0.4, "behavior": "test1", "scen_idx": 5},
+      {"config_idx": 121, "collision":False, "metric1": 3, "behavior": "test2", "scen_idx": 4},
       {"config_idx": 11, "collision":True, "metric1": 0.1, "behavior": "test", "scen_idx": 5},
-      {"config_idx": 24, "collision":False, "metric1": 0.1, "behavior": "test1", "scen_idx": 7},
+      {"config_idx": 35, "collision":False, "metric1": 0.6, "behavior": "test1", "scen_idx": 5}
     ]
 
 class BenchmarkAnalyzerTests(unittest.TestCase):
@@ -25,10 +34,10 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
         analyzer = BenchmarkAnalyzer(benchmark_result = brst)
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x})
-        self.assertEqual(configs_found, [1, 11])
+        self.assertEqual(configs_found, [1, 500, 11])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x})
-        self.assertEqual(configs_found, [2, 3, 24, 121])
+        self.assertEqual(configs_found, [24, 2, 41, 3, 12, 121, 35])
 
         configs_found = analyzer.find_configs({"metric1" : lambda x : x == 0.1})
         self.assertEqual(configs_found, [11, 24])
@@ -42,15 +51,30 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
         configs_found = analyzer.find_configs({"collision" : lambda x : x, "behavior" : lambda x : x=="test2"})
         self.assertEqual(configs_found, [])
 
-        configs_found = analyzer.find_configs(scenario_idx_list=[12, 3 , 5])
-        self.assertEqual(configs_found, [2, 3, 11])
+        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7])
+        self.assertEqual(configs_found, [121, 1, 24])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x}, scenario_idx_list=[12, 3 , 5])
         self.assertEqual(configs_found, [2, 3])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x}, scenarios_as_in_configs=[24, 11 , 121, 1])
-        self.assertEqual(configs_found, [1, 11])
+        self.assertEqual(configs_found, [11, 1])
 
+        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7])
+        self.assertEqual(configs_found, [121, 1, 24])
+
+        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7], in_configs=[1, 24])
+        self.assertEqual(configs_found, [1, 24])
+
+    def test_make_scenarios_congruent(self):
+        brst = BenchmarkResult(result_dict=dummy_benchmark_results(), benchmark_configs=None)
+        analyzer = BenchmarkAnalyzer(benchmark_result = brst)
+
+        # scenarios 5 and 12 in all lists
+        congruent_list = analyzer.make_scenarios_congruent(scenario_idx_lists = [
+          [3, 2, 500, 11], [35, 1 , 41], [24, 41, 12, 121]
+        ])
+        self.assertEqual(congruent_list[0], [11, 2])
 
 if __name__ == '__main__':
     unittest.main()
