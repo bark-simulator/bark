@@ -25,7 +25,8 @@ def dummy_benchmark_results():
       {"config_idx": 12, "collision":False, "metric1": 0.4, "behavior": "test1", "scen_idx": 5},
       {"config_idx": 121, "collision":False, "metric1": 3, "behavior": "test2", "scen_idx": 4},
       {"config_idx": 11, "collision":True, "metric1": 0.1, "behavior": "test", "scen_idx": 5},
-      {"config_idx": 35, "collision":False, "metric1": 0.6, "behavior": "test1", "scen_idx": 5}
+      {"config_idx": 35, "collision":False, "metric1": 0.6, "behavior": "test1", "scen_idx": 5},
+      {"config_idx": 42, "collision":False, "metric1": 0.4, "behavior": "test1", "scen_idx": 7},
     ]
 
 class BenchmarkAnalyzerTests(unittest.TestCase):
@@ -37,42 +38,39 @@ class BenchmarkAnalyzerTests(unittest.TestCase):
         self.assertEqual(configs_found, [1, 500, 11])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x})
-        self.assertEqual(configs_found, [24, 2, 41, 3, 12, 121, 35])
+        self.assertEqual(configs_found, [24, 2, 41, 3, 12, 121, 35, 42])
 
         configs_found = analyzer.find_configs({"metric1" : lambda x : x == 0.1})
-        self.assertEqual(configs_found, [11, 24])
+        self.assertEqual(configs_found, [24, 11])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : not x, "metric1" : lambda x : x == 0.1})
         self.assertEqual(configs_found, [24])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x, "metric1" : lambda x : x > 1})
-        self.assertEqual(configs_found, [1])
+        self.assertEqual(configs_found, [1, 500])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x, "behavior" : lambda x : x=="test2"})
         self.assertEqual(configs_found, [])
 
         configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7])
-        self.assertEqual(configs_found, [121, 1, 24])
+        self.assertEqual(configs_found, [121, 1, 42])
 
-        configs_found = analyzer.find_configs({"collision" : lambda x : not x}, scenario_idx_list=[12, 3 , 5])
-        self.assertEqual(configs_found, [2, 3])
+        configs_found = analyzer.find_configs({"collision" : lambda x : not x}, scenario_idx_list=[4, 10, 7])
+        self.assertEqual(configs_found, [121, 42])
 
         configs_found = analyzer.find_configs({"collision" : lambda x : x}, scenarios_as_in_configs=[24, 11 , 121, 1])
         self.assertEqual(configs_found, [11, 1])
 
-        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7])
-        self.assertEqual(configs_found, [121, 1, 24])
-
-        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7], in_configs=[1, 24])
-        self.assertEqual(configs_found, [1, 24])
+        configs_found = analyzer.find_configs(scenario_idx_list=[4, 10, 7], in_configs=[1, 42])
+        self.assertEqual(configs_found, [1, 42])
 
     def test_make_scenarios_congruent(self):
         brst = BenchmarkResult(result_dict=dummy_benchmark_results(), benchmark_configs=None)
         analyzer = BenchmarkAnalyzer(benchmark_result = brst)
 
         # scenarios 5 and 12 in all lists
-        congruent_list = analyzer.make_scenarios_congruent(scenario_idx_lists = [
-          [3, 2, 500, 11], [35, 1 , 41], [24, 41, 12, 121]
+        congruent_list = analyzer.make_scenarios_congruent(configs_idx_lists = [
+          [3, 2, 500, 11], [35, 1 , 41], [500, 41, 12, 121]
         ])
         self.assertEqual(congruent_list[0], [11, 2])
 

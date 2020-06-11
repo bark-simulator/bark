@@ -55,8 +55,7 @@ class BenchmarkAnalyzer:
                                     in_configs=config_idx_list)
           scenarios_in_conf = self.get_scenario_ids(congruent_list)
           assert(scenarios_in_conf == matching_scenarios)
-          congruent_config_lists.append[congruent_list]
-          scenarios_in_conf = self.get_scenario_ids(congruent_list)
+          congruent_config_lists.append(congruent_list)
       return congruent_config_lists
 
   def visualize(self, configs_idx_list, viewer, viewer_names=None, real_time_factor=1.0, display_info=True, **kwargs):
