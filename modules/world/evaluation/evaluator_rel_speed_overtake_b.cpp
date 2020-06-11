@@ -5,6 +5,7 @@
 
 #include "modules/world/evaluation/evaluator_rel_speed_overtake_b.hpp"
 
+#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
 #include "modules/world/evaluation/labels/front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
 #include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
