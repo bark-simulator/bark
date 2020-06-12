@@ -6,19 +6,7 @@
 
 #include "bark/world/tests/make_test_world.hpp"
 #include <vector>
-<<<<<<< HEAD:modules/world/tests/make_test_world.cpp
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/line.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_xodr_map.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
@@ -28,7 +16,6 @@
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
->>>>>>> Package Restructuring:bark/world/tests/make_test_world.cpp
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;

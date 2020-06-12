@@ -6,23 +6,13 @@
 
 
 #include "gtest/gtest.h"
-<<<<<<< HEAD:modules/world/tests/agent_test.cc
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/world/objects/agent.hpp"
-#include "modules/world/world.hpp"
-=======
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/world.hpp"
->>>>>>> Package Restructuring:bark/world/tests/agent_test.cc
 
 using namespace modules::models::dynamic;
 using namespace modules::geometry;

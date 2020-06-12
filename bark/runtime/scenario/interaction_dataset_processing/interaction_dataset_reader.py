@@ -15,7 +15,7 @@ from com_github_interaction_dataset_interaction_dataset.python.utils import data
 from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils
 import numpy as np
 
-from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
+from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 
 
 def bark_state_from_motion_state(state, time_offset=0):

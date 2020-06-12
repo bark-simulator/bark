@@ -5,12 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "geometry.hpp"
-<<<<<<< HEAD:python/geometry/geometry.cpp
 #include <vector>
-#include "modules/geometry/geometry.hpp"
-=======
 #include "bark/geometry/geometry.hpp"
->>>>>>> Package Restructuring:bark/core/geometry/geometry.cpp
 
 namespace py = pybind11;
 

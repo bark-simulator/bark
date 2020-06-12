@@ -7,11 +7,11 @@ cc_library(
         "//bark/world/map:roadgraph",
         "//bark/world/map:map_interface",
         "//bark/commons:commons",
+        "//bark/commons/util:util",
         "//bark/commons/transformation:frenet",
         "//bark/models/behavior:behavior",
-        "//bark/models/behavior/motion_primitives:motion_primitives",
         "//bark/models/execution:execution",
-	    "//bark/models/dynamic:dynamic",
+	      "//bark/models/dynamic:dynamic",
         "//bark/world/evaluation:base_evaluator",
         "//bark/world/goal_definition:goal_definition"
     ],
@@ -33,4 +33,3 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
 )
-

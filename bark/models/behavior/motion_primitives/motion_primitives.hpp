@@ -7,15 +7,10 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MOTION_PRIMITIVES_HPP_
 
-<<<<<<< HEAD:modules/models/behavior/motion_primitives/motion_primitives.hpp
 #include <vector>
 
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
-=======
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/motion_primitives/motion_primitives.hpp
 
 namespace modules {
 namespace models {

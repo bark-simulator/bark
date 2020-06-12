@@ -32,15 +32,15 @@ py_test(
           "//bark/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-py_test(
-  name = "py_runtime_tests",
-  srcs = ["py_runtime_tests.py"],
-  data = ['//bark:generate_core',
-            ':xodr_data'],
-  deps = ["//bark/runtime/commons:commons",
-          "//bark/runtime:runtime",
-          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
-)
+#py_test(
+#  name = "py_runtime_tests",
+#  srcs = ["py_runtime_tests.py"],
+#  data = ['//bark:generate_core',
+#            ':xodr_data'],
+#  deps = ["//bark/runtime/commons:commons",
+#          "//bark/runtime:runtime",
+#          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
+#)
 
 cc_library(
     name="py_param_server_test_helper",

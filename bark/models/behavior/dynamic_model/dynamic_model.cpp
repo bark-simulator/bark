@@ -5,17 +5,10 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include <cmath>
-<<<<<<< HEAD:modules/models/behavior/dynamic_model/dynamic_model.cpp
-#include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
-#include "modules/models/dynamic/integration.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/world/observed_world.hpp"
-=======
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/dynamic/integration.hpp"
-#include "bark/models/dynamic/triple_integrator.hpp"
+#include "bark/models/dynamic/single_track.hpp"
 #include "bark/world/observed_world.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/dynamic_model/dynamic_model.cpp
 
 namespace modules {
 namespace models {

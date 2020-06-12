@@ -8,25 +8,10 @@
 #ifndef PYTHON_POLYMORPHIC_CONVERSION_HPP_
 #define PYTHON_POLYMORPHIC_CONVERSION_HPP_
 
-<<<<<<< HEAD:bark/pybark/polymorphic_conversion.hpp
-<<<<<<< HEAD:bark/core/polymorphic_conversion.hpp
-<<<<<<< HEAD:python/polymorphic_conversion.hpp
-#include "python/common.hpp"
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/world/goal_definition/goal_definition.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
-
-=======
-#include "bark/core/common.hpp"
-=======
-#include "bark/pybark/common.hpp"
->>>>>>> Wrapped C++ bark in pybark:bark/pybark/polymorphic_conversion.hpp
-=======
 #include "bark/python_wrapper/common.hpp"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests:bark/python_wrapper/polymorphic_conversion.hpp
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
->>>>>>> Package Restructuring:bark/core/polymorphic_conversion.hpp
+#include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 
 namespace py = pybind11;
 using modules::world::goal_definition::GoalDefinitionPtr;

@@ -12,12 +12,7 @@
 #include <string>
 #include <vector>
 
-<<<<<<< HEAD:modules/world/opendrive/lane_section.hpp
-#include "modules/world/opendrive/lane.hpp"
-=======
-#include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/world/opendrive/lane.hpp"
->>>>>>> Package Restructuring:bark/world/opendrive/lane_section.hpp
 
 namespace modules {
 namespace world {

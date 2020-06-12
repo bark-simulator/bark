@@ -14,13 +14,8 @@
 
 namespace py = pybind11;
 
-<<<<<<< HEAD:python/main.cpp
-PYBIND11_MODULE(bark, m) {
-  m.doc() = "Wrapper for BARK library.";
-=======
 PYBIND11_MODULE(core, m) {
-  m.doc() = "Wrapper for fortiss-behave library";
->>>>>>> Package Restructuring:bark/core/main.cpp
+  m.doc() = "Wrapper for BARK library.";
   python_geometry(
     m.def_submodule("geometry", "submodule handling geometries"));
   python_commons(

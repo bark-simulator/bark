@@ -7,34 +7,21 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-<<<<<<< HEAD:modules/models/tests/behavior_motion_primitive_test.cc
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/line.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
-#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_world.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
-#include "bark/models/behavior/motion_primitives/primitives.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/world/observed_world.hpp"
->>>>>>> Package Restructuring:bark/models/tests/behavior_motion_primitive_test.cc
+#include "bark/world/tests/make_test_world.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;

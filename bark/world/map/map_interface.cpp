@@ -4,14 +4,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/map/map_interface.hpp"
+#include "bark/world/map/map_interface.hpp"
 #include <math.h>
 #include <memory>
-<<<<<<< HEAD:modules/world/map/map_interface.cpp
 #include <random>
-=======
-#include "bark/world/map/map_interface.hpp"
->>>>>>> Package Restructuring:bark/world/map/map_interface.cpp
 
 namespace modules {
 namespace world {

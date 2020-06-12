@@ -8,17 +8,12 @@
 #ifndef MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 #define MODULES_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
 
-<<<<<<< HEAD:modules/models/behavior/constant_velocity/constant_velocity.hpp
 #include <utility>
 #include <memory>
 
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/world/world.hpp"
-=======
-#include "bark/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
+#include "bark/models/behavior/behavior_model.hpp"
+#include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/world/world.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/constant_velocity/constant_velocity.hpp
 
 namespace modules {
 namespace models {

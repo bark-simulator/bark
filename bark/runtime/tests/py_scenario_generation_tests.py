@@ -12,18 +12,10 @@ from bark.runtime.scenario.scenario_generation\
 
 from bark.runtime.scenario.scenario_generation \
     import ConfigurableScenarioGeneration
-<<<<<<< HEAD
-<<<<<<< HEAD:modules/runtime/tests/py_scenario_generation_tests.py
 
-from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation \
+from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation \
     import InteractionDatasetScenarioGeneration
-from modules.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
-=======
 from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
->>>>>>> Package Restructuring:bark/runtime/tests/py_scenario_generation_tests.py
-=======
-from bark.runtime.scenario.scenario_generation \
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
     import InteractionDatasetScenarioGenerationFull
 from bark.runtime.commons import ParameterServer
 
@@ -150,25 +142,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation_full(self):
         params = ParameterServer()
 
-<<<<<<< HEAD
-        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
-
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
-
-        scenario_generation = InteractionDatasetScenarioGenerationFull(
-            params=params, num_scenarios=2)
-
-    def test_dataset_scenario_generation_full_incomplete(self):
-        params = ParameterServer()
-=======
-            map_filename =  os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
-            track_filename =  os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
->>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
-
-        map_filename = "modules/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track_incomplete.csv"
+        map_filename =  os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename =  os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
@@ -182,13 +157,9 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
-<<<<<<< HEAD
-        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
-=======
-            map_filename = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-            track_filename = "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
+
+        map_filename = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+        track_filename = "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename

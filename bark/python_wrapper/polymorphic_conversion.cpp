@@ -11,45 +11,25 @@
 
 #include "polymorphic_conversion.hpp"
 
-<<<<<<< HEAD:python/polymorphic_conversion.cpp
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
-#include "modules/models/behavior/rule_based/intersection_behavior.hpp"
-#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
-#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "modules/world/goal_definition/goal_definition_polygon.hpp"
-#include "modules/world/goal_definition/goal_definition_sequential.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "python/models/behavior.hpp"
-=======
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
-#include "bark/models/behavior/mobil/mobil.hpp"
+#include "bark/models/behavior/idm/idm_lane_tracking.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "bark/models/behavior/rule_based/intersection_behavior.hpp"
+#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "bark/models/behavior/rule_based/mobil.hpp"
+#include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
+#include "bark/world/goal_definition/goal_definition_sequential.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "bark/world/goal_definition/goal_definition_sequential.hpp"
-#include "bark/commons/params/setter_params.hpp"
-<<<<<<< HEAD:bark/pybark/polymorphic_conversion.cpp
-<<<<<<< HEAD:bark/core/polymorphic_conversion.cpp
-#include "bark/core/models/behavior.hpp"
->>>>>>> Package Restructuring:bark/core/polymorphic_conversion.cpp
-=======
-#include "bark/pybark/models/behavior.hpp"
->>>>>>> Wrapped C++ bark in pybark:bark/pybark/polymorphic_conversion.cpp
-=======
 #include "bark/python_wrapper/models/behavior.hpp"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests:bark/python_wrapper/polymorphic_conversion.cpp
+
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"

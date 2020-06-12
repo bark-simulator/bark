@@ -7,17 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-<<<<<<< HEAD:modules/models/tests/dynamic_test.cc
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/line.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/models/dynamic/integration.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/dynamic/triple_integrator.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
@@ -25,7 +15,6 @@
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
->>>>>>> Package Restructuring:bark/models/tests/dynamic_test.cc
 
 TEST(single_track_model, dynamic_test) {
   using namespace std;

@@ -6,15 +6,9 @@
 
 #include <string>
 #include "dynamic.hpp"
-<<<<<<< HEAD:python/models/dynamic.cpp
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/dynamic/triple_integrator.hpp"
-#include "modules/commons/params/setter_params.hpp"
-=======
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
-#include "bark/commons/params/default_params.hpp"
->>>>>>> Package Restructuring:bark/core/models/dynamic.cpp
+#include "bark/commons/params/setter_params.hpp"
 
 namespace py = pybind11;
 using namespace modules::models::dynamic;

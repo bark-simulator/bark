@@ -19,14 +19,8 @@ cc_library(
         "helpers.hpp"  
     ],
     deps = [
-<<<<<<< HEAD:modules/world/opendrive/BUILD
-        "//modules/geometry",
-        "@boost//:geometry"
-=======
         "//bark/geometry",
-        "@boost//:geometry",
-        "//bark/models/dynamic:dynamic"
->>>>>>> Package Restructuring:bark/world/opendrive/BUILD
+        "@boost//:geometry"
     ],
     visibility = ["//visibility:public"],
 )

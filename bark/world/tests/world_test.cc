@@ -6,23 +6,6 @@
 
 
 #include "gtest/gtest.h"
-<<<<<<< HEAD:modules/world/tests/world_test.cc
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/world/map/map_interface.hpp"
-#include "modules/world/map/roadgraph.hpp"
-#include "modules/world/opendrive/opendrive.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/world/objects/agent.hpp"
-#include "modules/world/world.hpp"
-#include "modules/world/evaluation/evaluator_collision_agents.hpp"
-#include "modules/world/evaluation/evaluator_drivable_area.hpp"
-#include "modules/world/evaluation/evaluator_distance_to_goal.hpp"
-#include "modules/world/tests/make_test_world.hpp"
-#include "modules/world/goal_definition/goal_definition_polygon.hpp"
-=======
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/map/map_interface.hpp"
@@ -30,13 +13,14 @@
 #include "bark/world/opendrive/opendrive.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/world.hpp"
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
+#include "bark/world/evaluation/evaluator_distance_to_goal.hpp"
 #include "bark/world/tests/make_test_world.hpp"
->>>>>>> Package Restructuring:bark/world/tests/world_test.cc
+#include "bark/world/goal_definition/goal_definition_polygon.hpp"
 
 
 using namespace modules::models::dynamic;

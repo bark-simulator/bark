@@ -6,17 +6,10 @@
 
 
 #include "gtest/gtest.h"
-<<<<<<< HEAD:modules/models/tests/execution_test.cc
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-//#include "modules/models/execution/mpc/mpc.hpp"
-#include "modules/commons/params/setter_params.hpp"
-=======
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 //#include "bark/models/execution/mpc/mpc.hpp"
-#include "bark/commons/params/default_params.hpp"
->>>>>>> Package Restructuring:bark/models/tests/execution_test.cc
+#include "bark/commons/params/setter_params.hpp"
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;

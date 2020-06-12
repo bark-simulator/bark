@@ -18,13 +18,8 @@
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/tuple/tuple.hpp>
 
-<<<<<<< HEAD:modules/geometry/line.hpp
-#include "modules/geometry/angle.hpp"
-#include "modules/geometry/commons.hpp"
-=======
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/angle.hpp"
->>>>>>> Package Restructuring:bark/geometry/line.hpp
 
 namespace modules {
 namespace geometry {

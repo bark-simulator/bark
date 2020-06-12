@@ -7,13 +7,9 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 
-<<<<<<< HEAD:modules/models/behavior/motion_primitives/continuous_actions.hpp
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
-=======
+#include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/motion_primitives/continuous_actions.hpp
+#include "bark/models/dynamic/dynamic_model.hpp"
 
 namespace modules {
 namespace models {

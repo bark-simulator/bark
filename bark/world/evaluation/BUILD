@@ -32,7 +32,7 @@ cc_library(
         "evaluator_distance_to_goal.hpp",
     ],
     deps = [
-        "//modules/world:world",
+        "//bark/world:world",
         ":base_evaluator",
         "@boost//:geometry",
 

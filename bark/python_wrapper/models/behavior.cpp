@@ -6,51 +6,21 @@
 
 
 #include "behavior.hpp"
-<<<<<<< HEAD:bark/pybark/models/behavior.cpp
-<<<<<<< HEAD:bark/core/models/behavior.cpp
-<<<<<<< HEAD:python/models/behavior.cpp
-#include "python/polymorphic_conversion.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
-#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
-#include "modules/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
-#include "modules/models/behavior/dynamic_model/dynamic_model.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/behavior/idm/idm_lane_tracking.hpp"
-#include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "modules/models/behavior/rule_based/intersection_behavior.hpp"
-#include "modules/models/behavior/rule_based/mobil_behavior.hpp"
-#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "python/models/plan/plan.hpp"
-=======
-#include "bark/core/polymorphic_conversion.hpp"
-=======
-#include "bark/pybark/polymorphic_conversion.hpp"
->>>>>>> Wrapped C++ bark in pybark:bark/pybark/models/behavior.cpp
-=======
-#include "bark/python_wrapper/polymorphic_conversion.hpp"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests:bark/python_wrapper/models/behavior.cpp
+ #include "bark/python_wrapper/polymorphic_conversion.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
-#include "bark/models/behavior/mobil/mobil.hpp"
+#include "bark/models/behavior/rule_based/mobil.hpp"
+#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
+#include "bark/models/behavior/rule_based/intersection_behavior.hpp"
+#include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-<<<<<<< HEAD:bark/pybark/models/behavior.cpp
-<<<<<<< HEAD:bark/core/models/behavior.cpp
-#include "bark/core/models/plan/plan.hpp"
->>>>>>> Package Restructuring:bark/core/models/behavior.cpp
-=======
-#include "bark/pybark/models/plan/plan.hpp"
->>>>>>> Wrapped C++ bark in pybark:bark/pybark/models/behavior.cpp
-=======
 #include "bark/python_wrapper/models/plan/plan.hpp"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests:bark/python_wrapper/models/behavior.cpp
 
 
 namespace py = pybind11;

@@ -7,16 +7,11 @@
 #ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MACRO_ACTIONS_HPP_
 #define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_MACRO_ACTIONS_HPP_
 
-<<<<<<< HEAD:modules/models/behavior/motion_primitives/macro_actions.hpp
 #include <vector>
 
-#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
-#include "modules/world/map/lane_corridor.hpp"
-=======
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "bark/models/behavior/motion_primitives/primitives.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/motion_primitives/macro_actions.hpp
+#include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
+#include "bark/world/map/lane_corridor.hpp"
 
 namespace modules {
 namespace models {

@@ -12,11 +12,8 @@ This section describes the prerequisites and installation-steps of BARK.
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
-<<<<<<< HEAD
-=======
 ## Install using pip
 * pip3 install bark-simulator
->>>>>>> update installation instructions
 
 ## Setup on Linux
 
@@ -24,7 +21,7 @@ This section describes the prerequisites and installation-steps of BARK.
 2. Run `bash install.sh`: creates a virtual environment (located in python/venv) and installs all python packages
 2. Run `source dev_into.sh`: activates the virtual environment (make sure to run this before bazel)
 3. Use `bazel test //...` to validate that BARK is working.
-4. Finally, try one of the examples provided in BARK by running `bazel run //examples:od8_const_vel_two_agent`.
+4. Finally, try one of the examples provided in BARK by running `bazel run //bark/examples:od8_const_vel_two_agent`.
 
 
 ## Setup on MacOS

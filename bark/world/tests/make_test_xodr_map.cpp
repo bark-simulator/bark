@@ -6,15 +6,9 @@
 
 #include "bark/world/tests/make_test_xodr_map.hpp"
 #include <vector>
-<<<<<<< HEAD:modules/world/tests/make_test_xodr_map.cpp
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/line.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
->>>>>>> Package Restructuring:bark/world/tests/make_test_xodr_map.cpp
 
 using modules::world::opendrive::OpenDriveMapPtr;
 

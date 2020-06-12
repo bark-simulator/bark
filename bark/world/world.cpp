@@ -4,18 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-<<<<<<< HEAD:modules/world/world.cpp
 #include <string>
 #include <csignal>
 
-#include "modules/world/world.hpp"
-#include "modules/commons/util/segfault_handler.hpp"
-#include "modules/world/observed_world.hpp"
-=======
 #include "bark/world/world.hpp"
-#include <string>
+#include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
->>>>>>> Package Restructuring:bark/world/world.cpp
 
 namespace modules {
 namespace world {

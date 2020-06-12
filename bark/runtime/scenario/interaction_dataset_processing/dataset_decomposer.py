@@ -7,24 +7,15 @@
 import os
 import shutil
 
-<<<<<<< HEAD
-<<<<<<< HEAD:modules/runtime/scenario/interaction_dataset_processing/dataset_decomposer.py
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
-from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
-from modules.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
-=======
 from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
->>>>>>> Package Restructuring:bark/runtime/scenario/interaction_dataset_processing/dataset_decomposer.py
-=======
-from bark.runtime.commons import ParameterServer
-from bark.runtime.scenario.interaction_dataset_processing import agent_from_trackfile
->>>>>>> updated python imports
+from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
+from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
+from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
+from bark.runtime.scenario.scenario import Scenario
+from bark.core.geometry import Point2d, Collide
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
-from modules.runtime.scenario.scenario import Scenario
-from bark.geometry import Point2d, Collide
+
 
 
 class DatasetDecomposer:

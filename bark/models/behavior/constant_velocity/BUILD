@@ -7,17 +7,10 @@ cc_library(
         "constant_velocity.hpp",
     ],
     deps = [
-<<<<<<< HEAD:modules/models/behavior/constant_velocity/BUILD
-        "//modules/commons:commons",
-        "//modules/world:world",
-        "//modules/models/behavior/idm:idm_classic",
-        "//modules/models/dynamic:dynamic"
-=======
         "//bark/commons:commons",
         "//bark/world:world",
-        "//bark/models/behavior/longitudinal_acceleration:longitudinal_acceleration",
+        "//bark/models/behavior/idm:idm_classic",
         "//bark/models/dynamic:dynamic"
->>>>>>> Package Restructuring:bark/models/behavior/constant_velocity/BUILD
     ],
     visibility = ["//visibility:public"],
 )

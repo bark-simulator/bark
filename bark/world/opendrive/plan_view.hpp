@@ -9,17 +9,8 @@
 #define MODULES_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
 
 #include <Eigen/Core>
-<<<<<<< HEAD:modules/world/opendrive/plan_view.hpp
-#include "modules/geometry/geometry.hpp"
-#include "modules/world/opendrive/lane.hpp"
-=======
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/geometries.hpp>
-
-#include "bark/geometry/commons.hpp"
-#include "bark/geometry/line.hpp"
+#include "bark/geometry/geometry.hpp"
 #include "bark/world/opendrive/lane.hpp"
->>>>>>> Package Restructuring:bark/world/opendrive/plan_view.hpp
 
 namespace modules {
 namespace world {

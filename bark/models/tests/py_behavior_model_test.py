@@ -12,47 +12,15 @@ from bark.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
 from bark.runtime.scenario.scenario_generation.scenario_generation \
   import ScenarioGeneration
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:modules/models/tests/py_behavior_model_test.py
-from bark.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.geometry import *
-from bark.world import World
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.runtime import Runtime
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.models.behavior import BehaviorModel, BehaviorDynamicModel
-from bark.models.dynamic import SingleTrackModel
-=======
-from bark.core.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.core.core.geometry import *
-from bark.core.core.world import World
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.runtime import Runtime
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.core.core.models.behavior import BehaviorModel, DynamicBehaviorModel
-from bark.core.core.models.dynamic import SingleTrackModel
->>>>>>> Package Restructuring:bark/models/tests/py_behavior_model_test.py
-=======
-from bark.pybark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.pybark.core.geometry import *
-from bark.pybark.core.world import World
-from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.runtime import Runtime
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.pybark.core.models.behavior import BehaviorModel, DynamicBehaviorModel
-from bark.pybark.core.models.dynamic import SingleTrackModel
->>>>>>> Wrapped C++ bark in pybark
-=======
+
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.core.geometry import *
 from bark.core.world import World
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.core.models.behavior import BehaviorModel, DynamicBehaviorModel
+from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark.core.models.dynamic import SingleTrackModel
->>>>>>> Set python import path to directly include bark.core
 
 
 class PythonBehaviorModelWrapper(BehaviorModel):

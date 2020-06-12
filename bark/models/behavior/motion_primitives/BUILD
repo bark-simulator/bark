@@ -10,22 +10,14 @@ cc_library(
         "macro_actions.hpp",
     ] + glob(["primitives/*.hpp"]),
     deps = [
-<<<<<<< HEAD:modules/models/behavior/motion_primitives/BUILD
-        "//modules/commons:commons",
-        "//modules/world:include",
-        "//modules/world/map:road_corridor",
-        "//modules/models/behavior:behavior",
-        "//modules/models/dynamic:dynamic",
-        "//modules/models/behavior:include",
-        "//modules/models/behavior/motion_primitives/param_config:param_config",
-        "//modules/models/behavior/idm:idm_lane_tracking",
-=======
         "//bark/commons:commons",
         "//bark/world:include",
+        "//bark/world/map:road_corridor",
         "//bark/models/behavior:behavior",
         "//bark/models/dynamic:dynamic",
         "//bark/models/behavior:include",
->>>>>>> Package Restructuring:bark/models/behavior/motion_primitives/BUILD
+        "//bark/models/behavior/motion_primitives/param_config:param_config",
+        "//bark/models/behavior/idm:idm_lane_tracking",
     ],
     visibility = ["//visibility:public"],
 )
@@ -35,6 +27,6 @@ cc_library(
     name="include",
     hdrs=glob(["primitives/*.hpp"]) +
          glob(["*.hpp"]),
-    deps = ["//modules/models/behavior/motion_primitives/param_config:include"],
+    deps = ["//bark/models/behavior/motion_primitives/param_config:include"],
     visibility = ["//visibility:public"],
 )

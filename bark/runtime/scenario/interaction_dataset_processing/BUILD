@@ -11,12 +11,9 @@ py_library(
     name = "interaction_dataset_processing",
     srcs = ["dataset_decomposer.py",
             "interaction_dataset_reader.py",
-<<<<<<< HEAD
             "agent_track_info.py",
             "scenario_track_info.py",
-=======
             "__init__.py"
->>>>>>> updated python imports
             ],
     data = [
         "//bark:generate_core",

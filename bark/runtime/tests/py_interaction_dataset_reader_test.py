@@ -5,41 +5,20 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-<<<<<<< HEAD:modules/runtime/tests/py_interaction_dataset_reader_test.py
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
-from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
-from modules.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
-from modules.runtime.commons.parameters import ParameterServer
-=======
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
+from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.commons.parameters import ParameterServer
-<<<<<<< HEAD
->>>>>>> Package Restructuring:bark/runtime/tests/py_interaction_dataset_reader_test.py
-
-=======
 import os
->>>>>>> add all tests as dependency to pip_packange and fixed tests for setup.py test
 
 class InteractionDatasetReaderTest(unittest.TestCase):
 
     def test_scenario_track_info(self):
-        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+        map_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/interaction_dataset_dummy_track.csv")
 
-<<<<<<< HEAD
         agent1 = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
-=======
-    params = ParameterServer()
-    params_id = params["Scenario"]["Generation"]["InteractionDataset"]
-    params_id["MapFilename", "", os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")]
-    params_id["TrackFilename", "", os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")]
-    params_id["TrackIds", "", track_ids]
-    params_id["StartTs", "", 100]
-    params_id["EndTs", "", None]
-    params_id["EgoTrackId", "", -1]
-    params_id["BehaviorModel", "", {}]
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
         print(agent1)
 
@@ -58,8 +37,8 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
     def test_agent_from_trackfile(self):
 
-        map_filename = "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"
+        map_filename = os.path.join(os.path.dirname(__file__),"../tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_dummy_track.csv")
 
         agent_track_info = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
@@ -67,9 +46,9 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         params = ParameterServer()
         params_id = params["Scenario"]["Generation"]["InteractionDataset"]
         params_id["MapFilename", "",
-                  "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
+                  os.path.join(os.path.dirname(__file__),"../tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")]
         params_id["TrackFilename", "",
-                  "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+                  os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_dummy_track.csv")]
         params_id["BehaviorModel", "", {}]
 
         track_params = ParameterServer()

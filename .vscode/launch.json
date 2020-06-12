@@ -11,11 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-<<<<<<< HEAD
                 "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project"
-=======
-                "PYTHONPATH": "${workspaceFolder}/bazel-bin/bark/benchmark/tests/py_benchmark_analyzer_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/bark/benchmark/tests/py_benchmark_analyzer_tests.runfiles/bark_project"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 			   }
         },
         {
@@ -42,11 +38,7 @@
             "request": "attach",
             "program": "${workspaceFolder}/python/venv/bin/python3",
             "cwd" : "${workspaceFolder}",
-<<<<<<< HEAD
             "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/",
-=======
-            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/bark/examplesscenario_dump_load.runfiles/bark_project/python/",
->>>>>>> automate bazel build and package build
             "processId": "${command:pickProcess}",
             "MIMode": "gdb",
             "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"}

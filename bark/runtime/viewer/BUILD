@@ -70,12 +70,11 @@ py_library(
 py_library(
     name = "panda3d_easy",
     srcs = ["panda3d_easy.py"],
-    data = ['//python:bark.so',
+    data = ['//bark:generate_core',
             ':model_data'],
-    imports = ['../../../python/'],
-    deps = ["//modules/runtime/commons:parameters",
+    deps = ["//bark/runtime/commons:parameters",
             ":py_viewer",
-            "//modules/runtime/commons:commons"],
+            "//bark/runtime/commons:commons"],
     visibility = ["//visibility:public"],
 )
 

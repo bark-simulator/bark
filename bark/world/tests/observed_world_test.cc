@@ -6,27 +6,7 @@
 
 #include "bark/world/observed_world.hpp"
 #include "gtest/gtest.h"
-<<<<<<< HEAD:modules/world/tests/observed_world_test.cc
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/geometry/standard_shapes.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/motion_primitives/continuous_actions.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/world/evaluation/evaluator_collision_agents.hpp"
-#include "modules/world/goal_definition/goal_definition.hpp"
-#include "modules/world/goal_definition/goal_definition_polygon.hpp"
-#include "modules/world/map/map_interface.hpp"
-#include "modules/world/map/roadgraph.hpp"
-#include "modules/world/objects/agent.hpp"
-#include "modules/world/opendrive/opendrive.hpp"
-#include "modules/world/tests/dummy_road_corridor.hpp"
-#include "modules/world/tests/make_test_world.hpp"
-#include "modules/world/tests/make_test_xodr_map.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
@@ -44,7 +24,6 @@
 #include "bark/world/tests/dummy_road_corridor.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
->>>>>>> Package Restructuring:bark/world/tests/observed_world_test.cc
 
 using namespace modules::models::dynamic;
 using namespace modules::models::behavior;

@@ -10,15 +10,9 @@
 #include <memory>
 #include <tuple>
 
-<<<<<<< HEAD:modules/models/behavior/idm/idm_classic.hpp
-#include "modules/commons/transformation/frenet.hpp"
-#include "modules/world/world.hpp"
-#include "modules/models/behavior/idm/base_idm.hpp"
-=======
 #include "bark/commons/transformation/frenet.hpp"
-#include "bark/models/behavior/longitudinal_acceleration/longitudinal_acceleration.hpp"
 #include "bark/world/world.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/idm/idm_classic.hpp
+#include "bark/models/behavior/idm/base_idm.hpp"
 
 namespace modules {
 namespace models {

@@ -28,16 +28,10 @@ Finally, the `World` class also contains the simulation world time `world_time_`
 
 ## Observed World
 
-<<<<<<< HEAD
 In each simulation step, an agent in BARK gets passed an `ObservedWorld` that is derived from the current `World`.
 The agent then plans in this derived world and returns a trajectory.
 The `ObservedWorld` provides additional interfaces and allows to model further features, such as e.g. occlusions.
 Besides providing additional functionalities, it also defines and saves the ego agent id `ego_agent_id_`.
-=======
-## ObservedWorld
-The `ObservedWorld` is derived from the (protected) `World`. Furthermore, it offers additional functionality in order to increase its usability in the planning bark. 
-In the future, perturbations and other effects could be modeled. For example, the ego agent only having a partial world-view.
->>>>>>> Package Restructuring
 
 ```cpp
 class ObservedWorld : public World {

@@ -6,15 +6,9 @@
 
 #include "gtest/gtest.h"
 
-<<<<<<< HEAD:modules/models/tests/behavior_static_trajectory_test.cc
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "modules/world/observed_world.hpp"
-=======
-#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/observed_world.hpp"
->>>>>>> Package Restructuring:bark/models/tests/behavior_static_trajectory_test.cc
 
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::StateRowVector;

@@ -7,8 +7,8 @@ This pip package branch builds upon updated directory structure for concise impo
 
 > The import paths are changed from following
 
-`from modules.runtime.commons.parameters import ParameterServer`
-`from bark.world import World`
+`from bark.runtime.commons.parameters import ParameterServer`
+`from bark.core.world import World`
 `from examples.*`
 
 > To be a more concise as follow
@@ -32,7 +32,7 @@ To ensure all the tests are also included in the generated out folder, a new Baz
 Tests implemented for the modules and sub-modules(as Bazel py_test targets) import required data w.r.t main Bazel WORKSPACE path not w.r.t that respective module, and as Bazel manages the paths for targets it runs so it does not pose an issue as it runs all code from main bazel out directory. In a pip package, the paths are different depending upon where the packages are installed and from where the user is executing the code, therefore the code has to be updated to import required data files by combining the absolute path of the package directory(not the user current path) with the relative target w.r.t the package. 
 > For example to load a data, previously it was implemented as
 
-`xodr_parser = XodrParser("modules/runtime/tests/data/Crossing8Course.xodr")` 
+`xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")` 
 > Now, we need to specify the path relative wrt the respective module.
 
 `xodr_parser =  XodrParser(os.path.join(os.path.dirname(__file__),"data/Crossing8Course.xodr"))`

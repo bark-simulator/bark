@@ -7,29 +7,16 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-<<<<<<< HEAD:modules/models/tests/behavior_mobil_test.cc
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/geometry/standard_shapes.hpp"
-#include "modules/models/behavior/rule_based/mobil.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/world/goal_definition/goal_definition_polygon.hpp"
-#include "modules/world/objects/agent.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_xodr_map.hpp"
-=======
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
-#include "bark/models/behavior/mobil/mobil.hpp"
+#include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
->>>>>>> Package Restructuring:bark/models/tests/behavior_mobil_test.cc
 
 using namespace modules::models::dynamic;
 using namespace modules::models::execution;

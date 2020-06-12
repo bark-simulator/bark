@@ -41,7 +41,6 @@ To debug python code, you need to add the following code in the `.vscode/launch.
 
 ```
 {
-<<<<<<< HEAD
   "name": "Python: Current File",
   "type": "python",
   "request": "launch",
@@ -49,22 +48,9 @@ To debug python code, you need to add the following code in the `.vscode/launch.
   "console": "integratedTerminal",
   "env": {
     "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/{path-to-executable-file}.runfiles/__main__/python:${workspaceFolder}/bazel-bin/examples/{path-to-executable-file}.runfiles/__main__"
-=======
-    "name": "Python: Current File",
-    "type": "python",
-    "request": "launch",
-    "program": "${file}",
-    "console": "integratedTerminal",
-    "env": {
-        "PYTHONPATH": "${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_one_agent.runfiles/__main__/python:${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_one_agent.runfiles/__main__"
->>>>>>> automate bazel build and package build
   }
 }
 ```
-<<<<<<< HEAD
-=======
-The path `bark/examplesod8_const_vel_one_agent.runfiles` needs to be changed if another python file should be debugged. Furthermore, make sure to be in the main executable file when launching the debugger (F5).
->>>>>>> automate bazel build and package build
 
 Make sure to be in the main executable file when launching the debugger (F5).
 
@@ -76,13 +62,8 @@ First, we need to build the "bark.so" in the debug mode by running `bazel build 
 You can also check if the "bark.so" contains debug symbols by running `readelf --debug-dump=decodedline bark.so`.
 Then, add the following launch configuration and adapt the path in the `.vscode/launch.json`:
 
-<<<<<<< HEAD
-=======
-We run two Debuggers in parallel. First, check if the shared object "core.so" contains debug symbols with e.g. `readelf --debug-dump=decodedline core.so` which should print out line numbers and source file name for each instruction. If not use `bazel build //path_to_python_binary --compilation_mode=dbg` to build all dependencies with debug symbols.  Then, add the following launch configuration and adapt the path in "additionalSOLibSearchPath":
->>>>>>> Package Restructuring
 ```
 {
-<<<<<<< HEAD
   "name": "(gdb) Attach",
   "type": "cppdbg",
   "request": "attach",
@@ -93,18 +74,6 @@ We run two Debuggers in parallel. First, check if the shared object "core.so" co
   "MIMode": "gdb",
   "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"},
 }
-=======
-            "name": "(gdb) Attach",
-            "type": "cppdbg",
-            "request": "attach",
-            "program": "${workspaceFolder}/python/venv/bin/python3",
-            "cwd" : "${workspaceFolder}",
-            "additionalSOLibSearchPath":"${workspaceFolder}/bazel-bin/bark/examplesod8_const_vel_two_agent.runfiles/__main__/python",
-            "processId": "${command:pickProcess}",
-            "MIMode": "gdb",
-            "sourceFileMap" : {"/proc/self/cwd/": "${workspaceFolder}"},
-            }
->>>>>>> automate bazel build and package build
 ```
 
 Debugging process:
@@ -114,18 +83,8 @@ Debugging process:
 4. The python debugger is currently stopped at a break point. Switch back from the debugger "(gdb) Attach" to the other debugger "Python: Current File" and press F5 (Continue). Now, vscode automatically jumps between the two debuggers between python and c++ code.
 
 
-<<<<<<< HEAD
 ## Memory Checking
-=======
-Use Valgrind to profile the code in order to find memory leaks. Valgrind can be installed using apt-get.
-1. Build the target with debug symbols, i.e. `bazel test //bark/world/tests:py_map_interface_tests --compilation_mode=dbg`
-<<<<<<< HEAD
-2. Profile via `valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full ./bazel-bin/modules/world/tests/map_interface_test`. There are a lot of options, check out Valgrind's documentation!
->>>>>>> Package Restructuring
-=======
-2. Profile via `valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full ./bazel-bin/bark/world/tests/map_interface_test`. There are a lot of options, check out Valgrind's documentation!
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
 Use Valgrind to profile the code in order to find memory leaks.
-1. Build the target with debug symbols, i.e. `bazel test //modules/world/tests:py_map_interface_tests --compilation_mode=dbg`
+1. Build the target with debug symbols, i.e. `bazel test //bark/world/tests:py_map_interface_tests --compilation_mode=dbg`
 2. Profile via `valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full ./bazel-bin/{path-to-executable-file}`.

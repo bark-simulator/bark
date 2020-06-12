@@ -7,7 +7,7 @@ All examples are found in the `/examples`-directory of BARK.
 ## Merging Example
 
 In this example, we show the basic functionality of BARK using a merging scenario.
-It can be ran using: `bazel run //examples:merging`.
+It can be ran using: `bazel run //bark/examples:merging`.
 
 ```eval_rst
 .. image:: gifs/bark_merging.gif
@@ -43,20 +43,13 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
-                 map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+                 map_file_name="bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=[left_lane, right_lane])
 ```
 
-<<<<<<< HEAD
 We then define the viewer and runtime in order to run and visualize the scenarios:
-=======
-The map is specified using:
-```python
-xodr_parser = XodrParser("bark/runtime/tests/data/Crossing8Course.xodr")
-```
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests
 
 ```python
 viewer = MPViewer(params=param_server,
@@ -87,7 +80,7 @@ However, BARK also provides a `BenchmarkRunner` that runs scenarios automaticall
 ## Other Examples
 The other examples can be run in a similar fashion using:
 
-* `bazel run //examples:highway`: Two-lane highway example.
-* `bazel run //examples:intersection`: Three way intersection.
-* `bazel run //examples:interaction_dataset`: Dataset replay.
-* `bazel run //examples:benchmark_database`: Benchmarks behaviors using a scenario database.
+* `bazel run //bark/examples:highway`: Two-lane highway example.
+* `bazel run //bark/examples:intersection`: Three way intersection.
+* `bazel run //bark/examples:interaction_dataset`: Dataset replay.
+* `bazel run //bark/examples:benchmark_database`: Benchmarks behaviors using a scenario database.

@@ -7,30 +7,13 @@
 
 #ifndef PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_HPP_
 #define PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_HPP_
-<<<<<<< HEAD:bark/pybark/models/behavior.hpp
-<<<<<<< HEAD:bark/core/models/behavior.hpp
-<<<<<<< HEAD:python/models/behavior.hpp
 #include <memory>
-#include "python/common.hpp"
-
-#include "modules/models/behavior/behavior_model.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive.hpp"
-#include "modules/world/observed_world.hpp"
-=======
-#include "bark/core/common.hpp"
-=======
-#include "bark/pybark/common.hpp"
->>>>>>> Wrapped C++ bark in pybark:bark/pybark/models/behavior.hpp
-=======
-#include "bark/python_wrapper/common.hpp"
->>>>>>> bark library -python_warpper, fix import errors, run bazel tests:bark/python_wrapper/models/behavior.hpp
+ #include "bark/python_wrapper/common.hpp"
 
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
-#include "bark/models/behavior/motion_primitives/primitives.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 #include "bark/world/observed_world.hpp"
->>>>>>> Package Restructuring:bark/core/models/behavior.hpp
 
 
 namespace py = pybind11;

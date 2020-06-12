@@ -8,13 +8,8 @@
 #define MODULES_MODELS_BEHAVIOR_IDM_IDM_LANE_TRACKING_HPP_
 
 #include <memory>
-<<<<<<< HEAD:modules/models/behavior/idm/idm_lane_tracking.hpp
 #include <tuple>
-#include "modules/models/behavior/idm/base_idm.hpp"
-=======
-
-#include "bark/models/behavior/idm/idm_classic.hpp"
->>>>>>> Package Restructuring:bark/models/behavior/idm/idm_lane_tracking.hpp
+#include "bark/models/behavior/idm/base_idm.hpp"
 
 namespace modules {
 namespace models {

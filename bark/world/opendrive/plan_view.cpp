@@ -7,17 +7,9 @@
 
 #include <math.h>
 #include <limits>
-<<<<<<< HEAD:modules/world/opendrive/plan_view.cpp
-#include "modules/world/opendrive/plan_view.hpp"
-#include "modules/world/opendrive/lane.hpp"
-#include "modules/world/opendrive/odrSpiral.hpp"
-=======
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/geometries.hpp>
 #include "bark/world/opendrive/plan_view.hpp"
 #include "bark/world/opendrive/lane.hpp"
 #include "bark/world/opendrive/odrSpiral.hpp"
->>>>>>> Package Restructuring:bark/world/opendrive/plan_view.cpp
 
 namespace modules {
 namespace world {

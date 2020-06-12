@@ -15,14 +15,9 @@ cc_library(
         "make_test_xodr_map.hpp"
     ],
     deps = [
-<<<<<<< HEAD:modules/world/tests/BUILD
-        "//modules/world/map:roadgraph",
-        "//modules/world/opendrive",
-        "//modules/geometry:geometry",
-=======
         "//bark/world/map:roadgraph",
         "//bark/world/opendrive",
->>>>>>> Package Restructuring:bark/world/tests/BUILD
+        "//bark/geometry:geometry",
     ],
     visibility = ["//visibility:public"],
 )
@@ -133,17 +128,6 @@ cc_test(
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
-<<<<<<< HEAD:modules/world/tests/BUILD
-        "//modules/geometry",
-        "//modules/world:world",
-        "//modules/world/map:map_interface",
-        "//modules/world/map:roadgraph",
-        "//modules/world/opendrive:opendrive",
-        "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/execution/interpolation:interpolation",
-        "//modules/world/evaluation:evaluation",
-        "//modules/models/behavior/motion_primitives:motion_primitives",
-=======
         "//bark/geometry",
         "//bark/world:world",
         "//bark/world/map:map_interface",
@@ -151,8 +135,8 @@ cc_test(
         "//bark/world/opendrive:opendrive",
         "//bark/models/behavior/constant_velocity:constant_velocity",
         "//bark/models/execution/interpolation:interpolation",
-        "//bark/world/evaluation:evaluation",        
->>>>>>> Package Restructuring:bark/world/tests/BUILD
+        "//bark/world/evaluation:evaluation",
+        "//bark/models/behavior/motion_primitives:motion_primitives",
         ":make_test_world",
         ":dummy_road_corridor",
         "@gtest//:gtest_main",

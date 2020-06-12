@@ -3,16 +3,10 @@
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-<<<<<<< HEAD:modules/world/goal_definition/goal_definition_state_limits_frenet.cpp
 #include <utility>
 #include <tuple>
-#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/world/objects/agent.hpp"
-=======
-
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "bark/world/objects/agent.hpp"
->>>>>>> Package Restructuring:bark/world/goal_definition/goal_definition_state_limits_frenet.cpp
 
 namespace modules {
 namespace world {
