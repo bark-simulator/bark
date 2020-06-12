@@ -27,7 +27,6 @@ py_test (
         "//bark/world/tests:py_map_interface_tests",
         "//bark/world/tests:py_agent_tests",
         "//bark/runtime/tests:py_scenario_generation_tests",
-        #"//bark/runtime/tests:py_runtime_tests",
         "//bark/runtime/tests:py_param_server_tests",
         "//bark/runtime/tests:py_interaction_dataset_reader_test",
         "//bark/runtime/tests:py_interaction_dataset_decomposer_test",
@@ -39,7 +38,7 @@ py_test (
         "//bark/commons/tests:py_commons_tests",
         "//bark/benchmark/tests:py_benchmark_runner_tests",
        # "//bark/benchmark/tests:py_benchmark_process_tests",
-        "//bark/benchmark/tests:py_benchmark_analyzer_tests",
+        "//bark/benchmark/tests:py_benchmark_analyzer_tests"
     ],
 )
 
@@ -51,6 +50,7 @@ py_test(
   name = "pip_package",
   srcs = ["pip_package.py", "__init__.py"],
   data = [":generate_core",
+            "//docs/tutorials:notebooks_folder",
             "//bark/world/tests:params2",
             "//bark/runtime/viewer:model_data",
             "//bark/runtime/tests:xodr_data",
@@ -64,10 +64,9 @@ py_test(
         "//bark/examples:merging",
         "//bark/examples:intersection",
         "//bark/examples:maude_interface",
-        #"//bark/examples:barkml",
         "//bark/examples:maude",
-        
         "//bark/runtime/viewer:threaded_viewer",
+        "//bark/runtime/viewer:panda3d_easy",
         "//bark/runtime/scenario/scenario_generation:scenario_generation",
         "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
         "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",

@@ -27,8 +27,8 @@ import numpy as np
 class RoadCorridorTests(unittest.TestCase):
     @unittest.skip("...")
     def test_road_corridor_forward(self):
-        xodr_parser = XodrParser(
-            "modules/runtime/tests/data/road_corridor_test.xodr")
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
+            "../../runtime/tests/data/road_corridor_test.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -88,8 +88,8 @@ class RoadCorridorTests(unittest.TestCase):
     
     def test_three_way_intersection(self):
         # threeway_intersection
-        xodr_parser = XodrParser(
-            "bark/runtime/tests/data/threeway_intersection.xodr")
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
+            "../../runtime/tests/data/threeway_intersection.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -154,8 +154,8 @@ class RoadCorridorTests(unittest.TestCase):
 
     def test_dr_deu_merging(self):
         # threeway_intersection
-        xodr_parser = XodrParser(
-            "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
+            "../../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -184,8 +184,7 @@ class RoadCorridorTests(unittest.TestCase):
 
     def test_dr_chn_merging(self):
         # threeway_intersection
-        xodr_parser = XodrParser(
-            "bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr")
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), "../../runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"))
 
         # World Definition
         params = ParameterServer()

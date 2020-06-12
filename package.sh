@@ -69,12 +69,13 @@ python3 setup.py sdist bdist_wheel
 python3 setup.py test
 
 if [ $? -eq 0 ]; then
-    echo "Test Passed"
+    echo "Tests Passed!"
 else
-    echo "Test Failed"
+    echo "Tests Failed!"
     exit 0
 fi
 
+echo "Uploading package to PyPi..."
 #upload to pypi
 python3 -m twine upload --skip-existing dist/*
 

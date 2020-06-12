@@ -6,6 +6,7 @@
 
 import numpy as np
 import time
+import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
@@ -55,7 +56,7 @@ right_lane = HighwayLaneCorridorConfig(params=param_server,
 scenarios = \
   ConfigWithEase(
     num_scenarios=5,
-    map_file_name="bark/runtime/tests/data/city_highway_straight.xodr",
+    map_file_name=os.path.join(os.path.dirname(__file__),"../runtime/tests/data/city_highway_straight.xodr"),
     random_seed=0,
     params=param_server,
     lane_corridor_configs=[left_lane, right_lane])

@@ -142,8 +142,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation_full(self):
         params = ParameterServer()
 
-        map_filename =  os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename =  os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
+        map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilename"] = track_filename
@@ -158,8 +158,8 @@ class ScenarioGenerationTests(unittest.TestCase):
         params = ParameterServer()
 
 
-        map_filename = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
-        track_filename = "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"
+        map_filename = os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
