@@ -30,7 +30,6 @@ cc_binary(
     "//bark/models/behavior/dynamic_model:dynamic_model",
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
-    "//bark/models/behavior/mobil:mobil",
     "//bark/models/behavior/rule_based:lane_change_behavior",
     "//bark/models/behavior/rule_based:intersection_behavior",
     "//bark/models/behavior/rule_based:mobil_behavior",
