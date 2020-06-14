@@ -69,6 +69,10 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     penalty = rs.GetAutomaton()->Evaluate(labels, rs);
     if (penalty != 0.0f) {
       safety_violations_++;
+      VLOG(1) << "Rule \"" << ltl_formula_str_
+                   << "\" violated in timestep "
+                   << observed_world.GetWorldTime() << " for agent ids "
+                   << rs.GetAgentIds() << " !";
     }
     // Check for violations of guarantee properties by assuming the trace
     // has ended.
