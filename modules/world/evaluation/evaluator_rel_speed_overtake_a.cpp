@@ -13,7 +13,7 @@ namespace modules {
 namespace world {
 namespace evaluation {
 const char EvaluatorRelSpeedOvertakeA::formula_[] =
-    "G ((left_of#0 & other_near#0) -> !rel_speed_gt#0)";
+    "G ((left_of#0 & other_near#0) -> rel_speed_gt#0)";
 
 const LabelFunctions EvaluatorRelSpeedOvertakeA::labels_ = {
     LabelFunctionPtr(new LeftOfLabelFunction("left_of")),
