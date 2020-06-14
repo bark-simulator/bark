@@ -13,14 +13,14 @@ class ScenarioTrackInfo:
         self._ego_track_info = ego_track_info
 
         if start_ts is None:
-            self._start_ts = round(ego_track_info.GetStartOffset(), precision)
+            self._start_ts = int(round(ego_track_info.GetStartOffset(), precision))
         else:
-            self._start_ts = round(start_ts, precision)
+            self._start_ts = int(round(start_ts, precision))
 
         if end_ts is None:
-            self._end_ts = round(ego_track_info.GetEndOffset(), precision)
+            self._end_ts = int(round(ego_track_info.GetEndOffset(), precision))
         else:
-            self._end_ts = round(end_ts, precision)
+            self._end_ts = int(round(end_ts, precision))
 
         self._other_agents_track_infos = {}
 
