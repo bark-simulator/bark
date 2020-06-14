@@ -15,6 +15,8 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
+// TRUE if relative speed between two agents is GREATER EQUAL than the
+// threshold
 class RelSpeedLabelFunction : public MultiAgentLabelFunction {
  public:
   RelSpeedLabelFunction(const std::string& string, double rel_speed_thres);

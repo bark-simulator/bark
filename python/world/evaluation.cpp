@@ -33,6 +33,7 @@
 #include "modules/world/evaluation/labels/preceding_agent_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
+#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
 #include "modules/world/world.hpp"
 
@@ -204,6 +205,11 @@ void python_evaluation(py::module m) {
   py::class_<AgentNearLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentNearLabelFunction>>(m,
                                                       "AgentNearLabelFunction")
+      .def(py::init<const std::string &, double>());
+
+  py::class_<RelSpeedLabelFunction, BaseLabelFunction,
+             std::shared_ptr<RelSpeedLabelFunction>>(m,
+                                                      "RelSpeedLabelFunction")
       .def(py::init<const std::string &, double>());
 
   py::class_<AgentAtLaneEndLabelFunction, BaseLabelFunction,
