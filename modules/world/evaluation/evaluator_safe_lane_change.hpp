@@ -31,6 +31,20 @@ class EvaluatorSafeLaneChange : public EvaluatorLTL {
   constexpr static double decel_ego = -7.84;
 };
 
+class EvaluatorSafeLaneChangeAssumption : public EvaluatorLTL {
+ public:
+  explicit EvaluatorSafeLaneChangeAssumption(AgentId agent_id)
+      : EvaluatorLTL(agent_id, formula_) {}
+  EvaluationReturn Evaluate(const world::World& world) override {
+    auto cloned_world = world.Clone();
+    cloned_world->AddLabels(labels_);
+    return EvaluatorLTL::Evaluate(*cloned_world);
+  }
+
+  static const char formula_[];
+  static const LabelFunctions labels_;
+};
+
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules

@@ -31,9 +31,9 @@
 #include "modules/world/evaluation/labels/lane_change_label_function.hpp"
 #include "modules/world/evaluation/labels/left_of_label_function.hpp"
 #include "modules/world/evaluation/labels/preceding_agent_label_function.hpp"
+#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
-#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
 #include "modules/world/world.hpp"
 
@@ -42,75 +42,79 @@ namespace py = pybind11;
 void python_evaluation(py::module m) {
   using namespace modules::world::evaluation;
 
-  py::class_<BaseEvaluator,
-             PyBaseEvaluator,
-             EvaluatorPtr>(m, "BaseEvaluator")
+  py::class_<BaseEvaluator, PyBaseEvaluator, EvaluatorPtr>(m, "BaseEvaluator")
       .def(py::init<>())
       .def("Evaluate",
-        py::overload_cast<const World&>(&BaseEvaluator::Evaluate))
+           py::overload_cast<const World &>(&BaseEvaluator::Evaluate))
       .def("Evaluate",
-        py::overload_cast<const ObservedWorld&>(&BaseEvaluator::Evaluate));
+           py::overload_cast<const ObservedWorld &>(&BaseEvaluator::Evaluate));
 
   py::class_<EvaluatorGoalReached, BaseEvaluator,
-      std::shared_ptr<EvaluatorGoalReached> >(m, "EvaluatorGoalReached")
+             std::shared_ptr<EvaluatorGoalReached>>(m, "EvaluatorGoalReached")
       .def(py::init<>())
-      .def(py::init<const AgentId&>())
+      .def(py::init<const AgentId &>())
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGoalReached &g) {
         return "bark.world.evaluation.EvaluatorGoalReached";
       });
 
   py::class_<EvaluatorBehaviorExpired, BaseEvaluator,
-      std::shared_ptr<EvaluatorBehaviorExpired> >(m, "EvaluatorBehaviorExpired")
-      .def(py::init<const AgentId&>())
+             std::shared_ptr<EvaluatorBehaviorExpired>>(
+      m, "EvaluatorBehaviorExpired")
+      .def(py::init<const AgentId &>())
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorBehaviorExpired &g) {
         return "bark.world.evaluation.EvaluatorBehaviorExpired";
       });
 
   py::class_<EvaluatorCollisionAgents, BaseEvaluator,
-    std::shared_ptr<EvaluatorCollisionAgents> >(m, "EvaluatorCollisionAgents")
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorCollisionAgents &g) {
-      return "bark.world.evaluation.EvaluatorCollisionAgents";
-    });
+             std::shared_ptr<EvaluatorCollisionAgents>>(
+      m, "EvaluatorCollisionAgents")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorCollisionAgents &g) {
+        return "bark.world.evaluation.EvaluatorCollisionAgents";
+      });
 
   py::class_<EvaluatorDrivableArea, BaseEvaluator,
-    std::shared_ptr<EvaluatorDrivableArea> >(m, "EvaluatorDrivableArea")
-    .def(py::init<>())
-    .def(py::init<const AgentId&>())
-    .def("__repr__", [](const EvaluatorDrivableArea &g) {
-      return "bark.world.evaluation.EvaluatorDrivableArea";
-    });
+             std::shared_ptr<EvaluatorDrivableArea>>(m, "EvaluatorDrivableArea")
+      .def(py::init<>())
+      .def(py::init<const AgentId &>())
+      .def("__repr__", [](const EvaluatorDrivableArea &g) {
+        return "bark.world.evaluation.EvaluatorDrivableArea";
+      });
 
   py::class_<EvaluatorCollisionEgoAgent, BaseEvaluator,
-    std::shared_ptr<EvaluatorCollisionEgoAgent>>(m, "EvaluatorCollisionEgoAgent")  // NOLINT
-    .def(py::init<const AgentId&>())
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
-      return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
-    });
+             std::shared_ptr<EvaluatorCollisionEgoAgent>>(
+      m, "EvaluatorCollisionEgoAgent")  // NOLINT
+      .def(py::init<const AgentId &>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorCollisionEgoAgent &g) {
+        return "bark.world.evaluation.EvaluatorCollisionEgoAgent";
+      });
   py::class_<EvaluatorStepCount, BaseEvaluator,
-    std::shared_ptr<EvaluatorStepCount> >(m, "EvaluatorStepCount")
-    .def(py::init<>())
-    .def("__repr__", [](const EvaluatorStepCount &g) {
-      return "bark.world.evaluation.EvaluatorStepCount";
-    });
+             std::shared_ptr<EvaluatorStepCount>>(m, "EvaluatorStepCount")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorStepCount &g) {
+        return "bark.world.evaluation.EvaluatorStepCount";
+      });
 
-  py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(m, "EvaluatorLTL")
-      .def(py::init<AgentId, const std::string&>())
+  py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
+      m, "EvaluatorLTL")
+      .def(py::init<AgentId, const std::string &>())
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
       .def("__repr__", [](const EvaluatorLTL &g) {
         return "bark.world.evaluation.EvaluatorLTL";
       });
 
   py::class_<EvaluatorRightOvertake, BaseEvaluator,
-      std::shared_ptr<EvaluatorRightOvertake>>(m, "EvaluatorRightOvertake")
-          .def(py::init<AgentId>())
-          .def_property_readonly("rule_states", &EvaluatorRightOvertake::GetRuleStates)
-          .def("__repr__", [](const EvaluatorRightOvertake &g) {
-            return "bark.world.evaluation.EvaluatorRightOvertake";
-          });
+             std::shared_ptr<EvaluatorRightOvertake>>(m,
+                                                      "EvaluatorRightOvertake")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorRightOvertake::GetRuleStates)
+      .def("__repr__", [](const EvaluatorRightOvertake &g) {
+        return "bark.world.evaluation.EvaluatorRightOvertake";
+      });
 
   py::class_<EvaluatorSafeDistance, BaseEvaluator,
              std::shared_ptr<EvaluatorSafeDistance>>(m, "EvaluatorSafeDistance")
@@ -131,6 +135,16 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorSafeLaneChange";
       });
 
+  py::class_<EvaluatorSafeLaneChangeAssumption, BaseEvaluator,
+             std::shared_ptr<EvaluatorSafeLaneChangeAssumption>>(
+      m, "EvaluatorSafeLaneChangeAssumption")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorSafeLaneChangeAssumption::GetRuleStates)
+      .def("__repr__", [](const EvaluatorSafeLaneChangeAssumption &g) {
+        return "bark.world.evaluation.EvaluatorSafeLaneChangeAssumption";
+      });
+
   py::class_<EvaluatorBeingOvertaken, BaseEvaluator,
              std::shared_ptr<EvaluatorBeingOvertaken>>(
       m, "EvaluatorBeingOvertaken")
@@ -141,15 +155,34 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorBeingOvertaken";
       });
 
+  py::class_<EvaluatorBeingOvertakenAssumption, BaseEvaluator,
+             std::shared_ptr<EvaluatorBeingOvertakenAssumption>>(
+      m, "EvaluatorBeingOvertakenAssumption")
+      .def(py::init<AgentId>())
+      .def_property_readonly("rule_states",
+                             &EvaluatorBeingOvertakenAssumption::GetRuleStates)
+      .def("__repr__", [](const EvaluatorBeingOvertakenAssumption &g) {
+        return "bark.world.evaluation.EvaluatorBeingOvertakenAssumption";
+      });
+
   py::class_<EvaluatorRelSpeedOvertakeA, BaseEvaluator,
-                     std::shared_ptr<EvaluatorRelSpeedOvertakeA>>(
-              m, "EvaluatorRelSpeedOvertakeA")
+             std::shared_ptr<EvaluatorRelSpeedOvertakeA>>(
+      m, "EvaluatorRelSpeedOvertakeA")
       .def(py::init<AgentId>())
       .def_property_readonly("rule_states",
                              &EvaluatorRelSpeedOvertakeA::GetRuleStates)
-      .def("__repr__",
-           [](const EvaluatorRelSpeedOvertakeA &g) {
-             return "bark.world.evaluation.EvaluatorRelSpeedOvertakeA";
+      .def("__repr__", [](const EvaluatorRelSpeedOvertakeA &g) {
+        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeA";
+      });
+
+  py::class_<EvaluatorRelSpeedOvertakeAAssumption, BaseEvaluator,
+             std::shared_ptr<EvaluatorRelSpeedOvertakeAAssumption>>(
+      m, "EvaluatorRelSpeedOvertakeAAssumption")
+      .def(py::init<AgentId>())
+      .def_property_readonly(
+          "rule_states", &EvaluatorRelSpeedOvertakeAAssumption::GetRuleStates)
+      .def("__repr__", [](const EvaluatorRelSpeedOvertakeAAssumption &g) {
+        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeAAssumption";
       });
 
   py::class_<EvaluatorRelSpeedOvertakeB, BaseEvaluator,
@@ -158,15 +191,15 @@ void python_evaluation(py::module m) {
       .def(py::init<AgentId>())
       .def_property_readonly("rule_states",
                              &EvaluatorRelSpeedOvertakeB::GetRuleStates)
-      .def("__repr__",
-           [](const EvaluatorRelSpeedOvertakeB &g) {
-             return "bark.world.evaluation.EvaluatorRelSpeedOvertakeB";
-           });
+      .def("__repr__", [](const EvaluatorRelSpeedOvertakeB &g) {
+        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeB";
+      });
 
   py::class_<EvaluatorZipMergeDeu, BaseEvaluator,
              std::shared_ptr<EvaluatorZipMergeDeu>>(m, "EvaluatorZipMergeDeu")
       .def(py::init<AgentId>())
-      .def_property_readonly("rule_states", &EvaluatorZipMergeDeu::GetRuleStates)
+      .def_property_readonly("rule_states",
+                             &EvaluatorZipMergeDeu::GetRuleStates)
       .def("__repr__", [](const EvaluatorZipMergeDeu &g) {
         return "bark.world.evaluation.EvaluatorZipMergeDeu";
       });
@@ -174,7 +207,8 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorZipMergeChn, BaseEvaluator,
              std::shared_ptr<EvaluatorZipMergeChn>>(m, "EvaluatorZipMergeChn")
       .def(py::init<AgentId>())
-      .def_property_readonly("rule_states", &EvaluatorZipMergeChn::GetRuleStates)
+      .def_property_readonly("rule_states",
+                             &EvaluatorZipMergeChn::GetRuleStates)
       .def("__repr__", [](const EvaluatorZipMergeChn &g) {
         return "bark.world.evaluation.EvaluatorZipMergeChn";
       });
@@ -208,8 +242,7 @@ void python_evaluation(py::module m) {
       .def(py::init<const std::string &, double>());
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,
-             std::shared_ptr<RelSpeedLabelFunction>>(m,
-                                                      "RelSpeedLabelFunction")
+             std::shared_ptr<RelSpeedLabelFunction>>(m, "RelSpeedLabelFunction")
       .def(py::init<const std::string &, double>());
 
   py::class_<AgentAtLaneEndLabelFunction, BaseLabelFunction,

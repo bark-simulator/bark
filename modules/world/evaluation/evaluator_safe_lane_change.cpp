@@ -18,6 +18,11 @@ const LabelFunctions EvaluatorSafeLaneChange::labels_ = {
         "sd_rear", true, reaction_time, decel_ego, decel_rear)),
     LabelFunctionPtr(new LaneChangeLabelFunction("lane_change"))};
 
+const char EvaluatorSafeLaneChangeAssumption::formula_[] = "G !lane_change";
+
+const LabelFunctions EvaluatorSafeLaneChangeAssumption::labels_ = {
+    LabelFunctionPtr(new LaneChangeLabelFunction("lane_change"))};
+
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
