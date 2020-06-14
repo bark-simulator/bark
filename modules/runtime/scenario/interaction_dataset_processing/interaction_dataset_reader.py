@@ -82,52 +82,58 @@ def behavior_from_track(track, params, start, end):
     return BehaviorStaticTrajectory(params, trajectory_from_track(track, start, end))
 
 
-def track_from_trackfile(filename, track_id):
-    track_dictionary = dataset_reader.read_tracks(filename)
-    track = track_dictionary[track_id]
-    # TODO: Filter track
-    return track
+class InteractionDatasetReader:
+    def __init__(self):
+        self.track_dict_cache = {}
+
+    def track_from_trackfile(self, filename, track_id):
+        print(filename)
+        if filename not in self.track_dict_cache:
+            self.track_dict_cache[filename] = dataset_reader.read_tracks(filename)
+        track = self.track_dict_cache[filename][track_id]
+        # TODO: Filter track
+        return track
 
 
-def agent_from_trackfile(track_params, param_server, scenario_track_info, agent_id):
-    if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
-      agent_track_info = scenario_track_info.GetEgoTrackInfo()
-    elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
-      agent_track_info = scenario_track_info.GetOtherTrackInfos()[agent_id]
-    else:
-      raise ValueError("unknown agent id {}".format(agent_id))
-    fname = agent_track_info.GetFileName()  # track_params["filename"]
-    track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
-    agent_id = agent_track_info.GetTrackId()
-    track = track_from_trackfile(fname, track_id)
-    start_time = scenario_track_info.GetStartTs()
-    end_time = scenario_track_info.GetEndTs()
+    def agent_from_trackfile(self, track_params, param_server, scenario_track_info, agent_id):
+        if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
+          agent_track_info = scenario_track_info.GetEgoTrackInfo()
+        elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
+          agent_track_info = scenario_track_info.GetOtherTrackInfos()[agent_id]
+        else:
+          raise ValueError("unknown agent id {}".format(agent_id))
+        fname = agent_track_info.GetFileName()  # track_params["filename"]
+        track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
+        agent_id = agent_track_info.GetTrackId()
+        track = self.track_from_trackfile(fname, track_id)
+        start_time = scenario_track_info.GetStartTs()
+        end_time = scenario_track_info.GetEndTs()
 
-    behavior_model = track_params["behavior_model"]
-    model_converter = ModelJsonConversion()
-    if behavior_model is None:
-        # each agent need's its own param server
-        behavior = behavior_from_track(track, param_server.AddChild(
-            "agent{}".format(agent_id)), start_time, end_time)
-    else:
-        behavior = model_converter.convert_model(behavior_model, param_server)
-    try:
-        initial_state = init_state_from_track(track, start_time)
-    except:
-        raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
-            agent_id, start_time))
-    bark_agent = Agent(
-        initial_state,
-        behavior,
-        model_converter.convert_model(
-            track_params["dynamic_model"], param_server),
-        model_converter.convert_model(
-            track_params["execution_model"], param_server),
-        shape_from_track(track, param_server["DynamicModel"]["wheel_base",
-                                                             "Distance between front and rear wheel center", 2.7]),
-        param_server.AddChild("agent{}".format(agent_id)),
-        goal_definition_from_track(track, end_time),
-        track_params["map_interface"])
-    # set agent id from track
-    bark_agent.SetAgentId(track_id)
-    return bark_agent
+        behavior_model = track_params["behavior_model"]
+        model_converter = ModelJsonConversion()
+        if behavior_model is None:
+            # each agent need's its own param server
+            behavior = behavior_from_track(track, param_server.AddChild(
+                "agent{}".format(agent_id)), start_time, end_time)
+        else:
+            behavior = model_converter.convert_model(behavior_model, param_server)
+        try:
+            initial_state = init_state_from_track(track, start_time)
+        except:
+            raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
+                agent_id, start_time))
+        bark_agent = Agent(
+            initial_state,
+            behavior,
+            model_converter.convert_model(
+                track_params["dynamic_model"], param_server),
+            model_converter.convert_model(
+                track_params["execution_model"], param_server),
+            shape_from_track(track, param_server["DynamicModel"]["wheel_base",
+                                                                 "Distance between front and rear wheel center", 2.7]),
+            param_server.AddChild("agent{}".format(agent_id)),
+            goal_definition_from_track(track, end_time),
+            track_params["map_interface"])
+        # set agent id from track
+        bark_agent.SetAgentId(track_id)
+        return bark_agent

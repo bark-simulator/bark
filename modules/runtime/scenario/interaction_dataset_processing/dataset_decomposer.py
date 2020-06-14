@@ -8,7 +8,7 @@ import os
 import shutil
 
 from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import trajectory_from_track
 from modules.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from modules.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 

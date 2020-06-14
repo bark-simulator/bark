@@ -4,6 +4,8 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+import logging
+
 from bark.models.dynamic import *
 from bark.models.execution import *
 # PyBind imports
@@ -11,7 +13,7 @@ from bark.world.map import *
 
 from modules.runtime.commons.parameters import ParameterServer
 from modules.runtime.scenario.interaction_dataset_processing.dataset_decomposer import DatasetDecomposer
-from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from modules.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
 from modules.runtime.scenario.scenario import Scenario
 from modules.runtime.scenario.scenario_generation.scenario_generation \
     import ScenarioGeneration
@@ -23,6 +25,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self._map_interface = None
+        self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
         self.initialize_params(params)
 
@@ -56,6 +59,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
           # for scenario_idx in range(0, num_scenarios):
           for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
               if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
+                  logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
                   try:
                       scenario = self.__create_single_scenario__(
                           scenario_track_info)
@@ -93,7 +97,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                     id_other)]
             else:
                 track_params["behavior_model"] = None
-            agent = agent_from_trackfile(
+            agent = self.interaction_ds_reader.agent_from_trackfile(
                 track_params, self._params, scenario_track_info, id_other)
             agent_list.append(agent)
 
@@ -102,7 +106,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None
-        agent = agent_from_trackfile(
+        agent = self.interaction_ds_reader.agent_from_trackfile(
             track_params, self._params, scenario_track_info, id_ego)
         agent_list.append(agent)
 
