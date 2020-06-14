@@ -22,6 +22,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
     # and generates a scenario for each agent as the eval agent.
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
+        self._map_interface = None
         super().__init__(params, num_scenarios, random_seed)
         self.initialize_params(params)
 
@@ -71,6 +72,14 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
+        # as we always use the same world, we can create the MapIntf. once
+        if self._map_interface is None:
+          scenario.CreateMapInterface(self._map_file_name)
+          print("Creating New Map Interface for Scenario!")
+        else:
+          scenario.map_interface = self._map_interface
+        self._map_interface = scenario.map_interface
+
         world = scenario.GetWorldState()
         agent_list = []
         track_params = ParameterServer()
