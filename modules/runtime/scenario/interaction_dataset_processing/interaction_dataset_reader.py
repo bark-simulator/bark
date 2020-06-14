@@ -87,7 +87,6 @@ class InteractionDatasetReader:
         self.track_dict_cache = {}
 
     def track_from_trackfile(self, filename, track_id):
-        print(filename)
         if filename not in self.track_dict_cache:
             self.track_dict_cache[filename] = dataset_reader.read_tracks(filename)
         track = self.track_dict_cache[filename][track_id]
