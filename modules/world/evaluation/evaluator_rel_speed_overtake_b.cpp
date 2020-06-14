@@ -22,7 +22,7 @@ const LabelFunctions EvaluatorRelSpeedOvertakeB::labels_ = {
     LabelFunctionPtr(new LeftOfLabelFunction("left_j")),
     LabelFunctionPtr(new FrontOfLabelFunction("in_front_j")),
     LabelFunctionPtr(new BehindOfLabelFunction("behind_j")),
-    LabelFunctionPtr(new RelSpeedLabelFunction("speed_diff_j", 10.0 / 3.6))};
+    LabelFunctionPtr(new RelSpeedLabelFunction("speed_diff_j", 20.0 / 3.6))};
 
 }  // namespace evaluation
 }  // namespace world

@@ -17,8 +17,8 @@ const char EvaluatorRelSpeedOvertakeA::formula_[] =
 
 const LabelFunctions EvaluatorRelSpeedOvertakeA::labels_ = {
     LabelFunctionPtr(new LeftOfLabelFunction("left_of")),
-    LabelFunctionPtr(new RelSpeedLabelFunction("rel_speed_gt", 10.0 / 3.6)),
-    LabelFunctionPtr(new AgentNearLabelFunction("other_near"))};
+    LabelFunctionPtr(new RelSpeedLabelFunction("rel_speed_gt", 20.0 / 3.6)),
+    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 6.0))};
 
 }  // namespace evaluation
 }  // namespace world
