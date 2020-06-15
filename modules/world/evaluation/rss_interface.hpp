@@ -91,15 +91,15 @@ class RssInterface {
       const world::World &world, const AgentId &agent_id,
       const ::ad::map::match::Object &matched_object);
 
-  AgentState calculateExecutionState(
+  AgentState CalculateExecutionState(
       const Trajectory &execution_trajectory,
       const ::ad::rss::world::RssDynamics &agent_dynamics);
 
-  ::ad::physics::Distance calculateMinStoppingDistance(
+  ::ad::physics::Distance CalculateMinStoppingDistance(
       const ::ad::physics::Speed &speed,
       const ::ad::rss::world::RssDynamics &agent_dynamics);
 
-  ::ad::rss::world::WorldModel createWorldModel(
+  ::ad::rss::world::WorldModel CreateWorldModel(
       const world::World &world, const AgentId &ego_id,
       const AgentState &ego_state,
       const ::ad::map::match::Object &ego_matched_object,
@@ -108,7 +108,7 @@ class RssInterface {
 
   bool RssCheck(::ad::rss::world::WorldModel world_model);
 
-  bool isAgentSafe(const World &world, const AgentId &ego_id);
+  bool IsAgentSafe(const World &world, const AgentId &ego_id);
 };  // namespace evaluation
 }  // namespace evaluation
 }  // namespace world
