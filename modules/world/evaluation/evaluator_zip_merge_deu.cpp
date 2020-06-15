@@ -17,9 +17,9 @@ namespace modules {
 namespace world {
 namespace evaluation {
 const char EvaluatorZipMergeDeu::formula_[] =
-    "(F(i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1) & "
+    "G (((i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1) & "
     "j_precedes_i#0 & !merged_i & (j_precedes_i#0 | merged_j#0) U "
-    "merged_i) -> G(merged_i & merged_j#0 -> !j_precedes_i#0)";
+    "merged_i) -> G(merged_i & merged_j#0 -> !j_precedes_i#0))";
 
 const LabelFunctions EvaluatorZipMergeDeu::labels_ = {
     LabelFunctionPtr(
