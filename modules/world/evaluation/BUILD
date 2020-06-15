@@ -119,6 +119,7 @@ cc_library(
         "@ad_rss_lib//:ad_rss_map_integration",
         "@boost//:geometry",
         "@map_support//:ad_physics",
+        "@spdlog",
     ],
 )
 
@@ -128,10 +129,7 @@ cc_library(
     hdrs = ["evaluator_rss.hpp"],
     visibility = ["//visibility:public"],
     deps = [
-        "rss_interface",
-        "//modules/commons",
-        "//modules/geometry",
-        "//modules/models/dynamic",
+        ":rss_interface",
         "//modules/world",
         "//modules/world/evaluation:base_evaluator",
     ],
