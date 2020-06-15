@@ -22,6 +22,12 @@ const LabelFunctions EvaluatorRightOvertake::labels_ = {
     LabelFunctionPtr(new FrontOfLabelFunction("f_v")),
     LabelFunctionPtr(new BehindOfLabelFunction("b_v"))};
 
+const char EvaluatorDense::formula_[] =
+    "G !dense";
+
+const LabelFunctions EvaluatorDense::labels_ = {
+    LabelFunctionPtr(new DenseTrafficLabelFunction("dense", 20.0, 8))};
+
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
