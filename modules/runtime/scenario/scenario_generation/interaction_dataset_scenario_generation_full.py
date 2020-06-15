@@ -113,5 +113,6 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         scenario._agent_list = agent_list  # must contain all agents!
         scenario._eval_agent_ids = [
             scenario_track_info.GetEgoTrackInfo().GetTrackId()]
+        scenario.json_params["track_file"] = scenario_track_info.GetTrackFilename()
 
         return scenario
