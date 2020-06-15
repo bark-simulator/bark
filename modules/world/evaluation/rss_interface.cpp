@@ -170,7 +170,7 @@ FullRoute RssInterface::GenerateRoute(
   return final_route;
 }
 
-AgentState RssInterface::calculateExecutionState(
+AgentState RssInterface::CalculateExecutionState(
     const Trajectory &execution_trajectory,
     const ::ad::rss::world::RssDynamics &agent_dynamics) {
   AgentState execution_state;
@@ -189,12 +189,12 @@ AgentState RssInterface::calculateExecutionState(
   execution_state.speed = Speed(
       static_cast<double>(execution_trajectory(last_state_idx, VEL_POSITION)));
   execution_state.min_stopping_distance =
-      calculateMinStoppingDistance(execution_state.speed, agent_dynamics);
+      CalculateMinStoppingDistance(execution_state.speed, agent_dynamics);
 
   return execution_state;
 }
 
-Distance RssInterface::calculateMinStoppingDistance(
+Distance RssInterface::CalculateMinStoppingDistance(
     const Speed &speed, const ::ad::rss::world::RssDynamics &agent_dynamics) {
   Distance minStoppingDistance;
   Speed MaxSpeedAfterResponseTime;
@@ -221,7 +221,7 @@ Distance RssInterface::calculateMinStoppingDistance(
   return minStoppingDistance;
 }
 
-::ad::rss::world::WorldModel RssInterface::createWorldModel(
+::ad::rss::world::WorldModel RssInterface::CreateWorldModel(
     const world::World &world, const AgentId &ego_id,
     const AgentState &ego_state,
     const ::ad::map::match::Object &ego_matched_object,
@@ -298,7 +298,7 @@ bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
   return is_agent_safe;
 }
 
-bool RssInterface::isAgentSafe(const World &world, const AgentId &agent_id) {
+bool RssInterface::IsAgentSafe(const World &world, const AgentId &agent_id) {
   AgentPtr agent = world.GetAgent(agent_id);
 
   ::ad::map::match::Object matched_object =
@@ -309,10 +309,10 @@ bool RssInterface::isAgentSafe(const World &world, const AgentId &agent_id) {
       GenerateDefaultVehicleDynamics();
   Trajectory agent_execut_traj = agent->GetExecutionTrajectory();
   AgentState agent_state =
-      calculateExecutionState(agent_execut_traj, agent_dynamics);
+      CalculateExecutionState(agent_execut_traj, agent_dynamics);
 
   ::ad::rss::world::WorldModel rss_world_model =
-      createWorldModel(world, agent_id, agent_state, matched_object,
+      CreateWorldModel(world, agent_id, agent_state, matched_object,
                        agent_dynamics, agent_route);
 
   return RssCheck(rss_world_model);
