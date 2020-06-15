@@ -125,7 +125,6 @@ cc_library(
 
 cc_library(
     name = "evaluator_rss",
-    srcs = ["evaluator_rss.cpp"],
     hdrs = ["evaluator_rss.hpp"],
     visibility = ["//visibility:public"],
     deps = [
