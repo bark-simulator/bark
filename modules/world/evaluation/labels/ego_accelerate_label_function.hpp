@@ -23,7 +23,7 @@ using modules::world::objects::AgentPtr;
 class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
   EgoAccelerateLabelFunction(const std::string& label_str,
-                             double acc_thres = 0.5);
+                             double acc_thres);
   std::vector<LabelMap::value_type> Evaluate(
       const world::ObservedWorld& observed_world) const override;
  private:

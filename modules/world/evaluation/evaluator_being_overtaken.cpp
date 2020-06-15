@@ -18,8 +18,8 @@ const char EvaluatorBeingOvertaken::formula_[] =
 const LabelFunctions EvaluatorBeingOvertaken::labels_ = {
     LabelFunctionPtr(new RightOfLabelFunction(
         "right_of")),
-    LabelFunctionPtr(new EgoAccelerateLabelFunction("accel")),
-    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 6.0))};
+    LabelFunctionPtr(new EgoAccelerateLabelFunction("accel", 0.5)),
+    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 3.0))};
 
 const char EvaluatorBeingOvertakenAssumption::formula_[] =
     "G !(right_of#0 & other_near#0)";
@@ -27,7 +27,7 @@ const char EvaluatorBeingOvertakenAssumption::formula_[] =
 const LabelFunctions EvaluatorBeingOvertakenAssumption::labels_ = {
     LabelFunctionPtr(new RightOfLabelFunction(
         "right_of")),
-    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 6.0))};
+    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 3.0))};
 
 }  // namespace evaluation
 }  // namespace world

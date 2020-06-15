@@ -30,7 +30,7 @@ std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
     const float dv = dx(StateDefinition::VEL_POSITION);
     const float dt = dx(StateDefinition::TIME_POSITION);
     const float avg_accel = dv / dt;
-    accel = std::abs(avg_accel) < acc_thres_;
+    accel = avg_accel >= acc_thres_;
   }
   return {{GetLabel(), accel}};
 }
