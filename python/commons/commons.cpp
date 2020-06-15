@@ -57,6 +57,7 @@ void python_commons(py::module m) {
       .def_readwrite("lat", &transformation::FrenetPosition::lat);
 
     m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
+    m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });
 }
 
 }  // namespace commons
