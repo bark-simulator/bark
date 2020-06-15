@@ -286,16 +286,36 @@ bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
 
   // std::map<AgentId, bool> relevent_agents_safety_check_result;
 
-  bool is_ego_safe = true;
+  bool is_agent_safe = true;
 
   if (result == true) {
     for (auto const state : rss_state_snapshot.individualResponses) {
-      is_ego_safe = is_ego_safe && !::ad::rss::state::isDangerous(state);
+      is_agent_safe = is_agent_safe && !::ad::rss::state::isDangerous(state);
     }
   } else {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   }
-  return is_ego_safe;
+  return is_agent_safe;
+}
+
+bool RssInterface::isAgentSafe(const World &world, const AgentId &agent_id) {
+  AgentPtr agent = world.GetAgent(agent_id);
+
+  ::ad::map::match::Object matched_object =
+      GetMatchObject(agent, Distance(2.0));
+  ::ad::map::route::FullRoute agent_route =
+      GenerateRoute(world, agent_id, matched_object);
+  ::ad::rss::world::RssDynamics agent_dynamics =
+      GenerateDefaultVehicleDynamics();
+  Trajectory agent_execut_traj = agent->GetExecutionTrajectory();
+  AgentState agent_state =
+      calculateExecutionState(agent_execut_traj, agent_dynamics);
+
+  ::ad::rss::world::WorldModel rss_world_model =
+      createWorldModel(world, agent_id, agent_state, matched_object,
+                       agent_dynamics, agent_route);
+
+  return RssCheck(rss_world_model);
 }
 
 }  // namespace evaluation

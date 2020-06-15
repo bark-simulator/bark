@@ -22,15 +22,17 @@ namespace evaluation {
 
 class EvaluatorRss : public BaseEvaluator {
  public:
-  EvaluatorRss() : ego_agent_id_(std::numeric_limits<AgentId>::max()) {}
+  EvaluatorRss() : agent_id_(std::numeric_limits<AgentId>::max()) {}
   explicit EvaluatorRss(const AgentId& agent_id,
                         const std::string& opendrive_file_name)
-      : ego_agent_id_(agent_id), rss_(opendrive_file_name) {}
+      : agent_id_(agent_id), rss_(opendrive_file_name) {}
   virtual ~EvaluatorRss() {}
-  virtual EvaluationReturn Evaluate(const World& world);
+  virtual EvaluationReturn Evaluate(const World& world) {
+    return rss_.isAgentSafe(world, agent_id_);
+  };
 
  private:
-  AgentId ego_agent_id_;
+  AgentId agent_id_;
   RssInterface rss_;
 };
 }  // namespace evaluation
