@@ -14,7 +14,7 @@ namespace modules {
 namespace world {
 namespace evaluation {
 const char EvaluatorRightOvertake::formula_[] =
-    "G (dense -> !(b_v#0 & X[!](b_v#0 U r_v#0 U f_v#0)))";
+    "G (!dense -> !(b_v#0 & X[!](b_v#0 U r_v#0 U f_v#0)))";
 
 const LabelFunctions EvaluatorRightOvertake::labels_ = {
     LabelFunctionPtr(new DenseTrafficLabelFunction("dense", 20.0, 8)),
