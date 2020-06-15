@@ -107,6 +107,8 @@ class RssInterface {
       const ::ad::map::route::FullRoute &ego_route);
 
   bool RssCheck(::ad::rss::world::WorldModel world_model);
+
+  bool isAgentSafe(const World &world, const AgentId &ego_id);
 };  // namespace evaluation
 }  // namespace evaluation
 }  // namespace world
