@@ -1,7 +1,11 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
+
+#ifndef MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_
+#define MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_
 
 #include <fstream>
 #include <streambuf>
@@ -13,6 +17,7 @@
 #include "modules/world/map/map_interface.hpp"
 #include "modules/world/world.hpp"
 
+#include <spdlog/spdlog.h>
 #include <ad/map/lane/Operation.hpp>
 #include <ad/map/match/AdMapMatching.hpp>
 #include <ad/map/match/Object.hpp>
@@ -37,8 +42,6 @@ using ::ad::physics::Duration;
 using ::ad::physics::Speed;
 
 struct AgentState {
-  AgentState();
-
   float timestamp;
   Speed speed;
   Distance min_stopping_distance;
@@ -65,17 +68,18 @@ namespace evaluation {
 
 class RssInterface {
  public:
-  RssInterface();
-  virtual ~RssInterface() {}
-  explicit RssInterface(std::string opendrive_file_name) {
+  RssInterface() {}
+  explicit RssInterface(const std::string &opendrive_file_name) {
+    spdlog::set_level(spdlog::level::off);
     initializeOpenDriveMap(opendrive_file_name);
   }
+  virtual ~RssInterface() {}
 
-  bool initializeOpenDriveMap(std::string opendrive_file_name);
+  bool initializeOpenDriveMap(const std::string &opendrive_file_name);
 
-  ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynmanics();
+  ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynamics();
 
-  ::ad::rss::world::RssDynamics GenerateVehicleDynmanics(
+  ::ad::rss::world::RssDynamics GenerateVehicleDynamics(
       double lon_max_accel, double lon_max_brake, double lon_min_brake,
       double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
       double lat_fluctuation_margin, double response_time);
@@ -102,8 +106,10 @@ class RssInterface {
       const ::ad::rss::world::RssDynamics &ego_dynamics,
       const ::ad::map::route::FullRoute &ego_route);
 
-  std::map<AgentId, bool> RssCheck(::ad::rss::world::WorldModel world_model);
+  bool RssCheck(::ad::rss::world::WorldModel world_model);
 };  // namespace evaluation
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
+
+#endif  // MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_

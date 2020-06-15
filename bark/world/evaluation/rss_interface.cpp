@@ -1,4 +1,5 @@
-// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick
+// Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
@@ -15,7 +16,8 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-bool RssInterface::initializeOpenDriveMap(std::string opendrive_file_name) {
+bool RssInterface::initializeOpenDriveMap(
+    const std::string &opendrive_file_name) {
   std::ifstream opendrive_file(opendrive_file_name);
   std::string opendrive_file_content =
       std::string{std::istreambuf_iterator<char>(opendrive_file),
@@ -38,7 +40,7 @@ bool RssInterface::initializeOpenDriveMap(std::string opendrive_file_name) {
   return result;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynmanics(
+::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynamics(
     double lon_max_accel, double lon_max_brake, double lon_min_brake,
     double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
     double lat_fluctuation_margin, double response_time) {
@@ -55,18 +57,8 @@ bool RssInterface::initializeOpenDriveMap(std::string opendrive_file_name) {
   return dynamics;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateDefaultVehicleDynmanics() {
-  ::ad::rss::world::RssDynamics dynamics;
-  dynamics.alphaLon.accelMax = Acceleration(3.5);
-  dynamics.alphaLon.brakeMax = Acceleration(-8.);
-  dynamics.alphaLon.brakeMin = Acceleration(-4.);
-  dynamics.alphaLon.brakeMinCorrect = Acceleration(-3.);
-  dynamics.alphaLat.accelMax = Acceleration(0.2);
-  dynamics.alphaLat.brakeMin = Acceleration(-0.8);
-  dynamics.lateralFluctuationMargin = Distance(0.1);
-  dynamics.responseTime = Duration(1.);
-
-  return dynamics;
+::ad::rss::world::RssDynamics RssInterface::GenerateDefaultVehicleDynamics() {
+  return GenerateVehicleDynamics(3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.);
 }
 
 ::ad::map::match::Object RssInterface::GetMatchObject(
@@ -265,7 +257,7 @@ Distance RssInterface::calculateMinStoppingDistance(
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
     ::ad::rss::world::RssDynamics relevent_agent_dynamics =
-        GenerateDefaultVehicleDynmanics();
+        GenerateDefaultVehicleDynamics();
 
     scene_creation.appendScenes(
         ::ad::rss::world::ObjectId(ego_id), ego_matched_object, ego_state.speed,
@@ -281,8 +273,7 @@ Distance RssInterface::calculateMinStoppingDistance(
   return scene_creation.getWorldModel();
 }
 
-std::map<AgentId, bool> RssInterface::RssCheck(
-    ::ad::rss::world::WorldModel world_model) {
+bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
   ::ad::rss::core::RssCheck rss_check;
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
   ::ad::rss::state::RssStateSnapshot rss_state_snapshot;
@@ -293,17 +284,18 @@ std::map<AgentId, bool> RssInterface::RssCheck(
       world_model, situation_snapshot, rss_state_snapshot, proper_response,
       acceleration_restriction);
 
-  std::map<AgentId, bool> relevent_agents_safety_check_result;
+  // std::map<AgentId, bool> relevent_agents_safety_check_result;
+
+  bool is_ego_safe = true;
 
   if (result == true) {
     for (auto const state : rss_state_snapshot.individualResponses) {
-      relevent_agents_safety_check_result[state.objectId] =
-          !::ad::rss::state::isDangerous(state);
+      is_ego_safe = is_ego_safe && !::ad::rss::state::isDangerous(state);
     }
   } else {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   }
-  return relevent_agents_safety_check_result;
+  return is_ego_safe;
 }
 
 }  // namespace evaluation

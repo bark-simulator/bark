@@ -77,7 +77,7 @@ void python_evaluation(py::module m) {
 
   py::class_<EvaluatorRss, BaseEvaluator,
     std::shared_ptr<EvaluatorRss>>(m, "EvaluatorRss")
-    .def(py::init<const AgentId&, const std::string>())
+    .def(py::init<const AgentId&, const std::string&>())
     .def(py::init<>())
     .def("__repr__", [](const EvaluatorRss &g) {
       return "bark.world.evaluation.EvaluatorRss";

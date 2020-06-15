@@ -113,7 +113,7 @@
     "bazel-testlogs": true,
     "third_party": false
   },
-  "python.pythonPath": "./python/venv/bin/python",
+  "python.pythonPath": "/home/tin/miniconda3/bin/python",
   "python.linting.pylintEnabled": true,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
