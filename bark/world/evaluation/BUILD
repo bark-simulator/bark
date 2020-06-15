@@ -106,21 +106,34 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_rss",
-    srcs = ["evaluator_rss.cpp"],
-    hdrs = ["evaluator_rss.hpp"],
+    name = "rss_interface",
+    srcs = ["rss_interface.cpp"],
+    hdrs = ["rss_interface.hpp"],
     visibility = ["//visibility:public"],
     deps = [
         "//modules/commons",
         "//modules/geometry",
         "//modules/models/dynamic",
         "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
         "@ad_rss_lib//:ad_rss",
         "@ad_rss_lib//:ad_rss_map_integration",
-        "@map_support//:ad_physics",
         "@boost//:geometry",
-        "@spdlog",
+        "@map_support//:ad_physics",
+    ],
+)
+
+cc_library(
+    name = "evaluator_rss",
+    srcs = ["evaluator_rss.cpp"],
+    hdrs = ["evaluator_rss.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "rss_interface",
+        "//modules/commons",
+        "//modules/geometry",
+        "//modules/models/dynamic",
+        "//modules/world",
+        "//modules/world/evaluation:base_evaluator",
     ],
 )
 
