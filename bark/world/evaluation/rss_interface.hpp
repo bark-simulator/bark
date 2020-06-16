@@ -84,15 +84,16 @@ class RssInterface {
       double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
       double lat_fluctuation_margin, double response_time);
 
-  ::ad::map::match::Object GetMatchObject(const AgentPtr &agent,
-                                          const Distance &match_distance);
+  ::ad::map::match::Object GetMatchObject(
+      const models::dynamic::State &agent_state, const Polygon &agent_shape,
+      const Distance &match_distance);
 
-  ::ad::map::route::FullRoute GenerateRoute(
-      const world::World &world, const AgentId &agent_id,
+  ::ad::map::route::FullRoute GenerateRoute(const Point2d &agent_center,
+      const map::LaneCorridorPtr &agent_lane_corridor,
       const ::ad::map::match::Object &matched_object);
 
-  AgentState CalculateExecutionState(
-      const Trajectory &execution_trajectory,
+  AgentState ConvertAgentState(
+      const models::dynamic::State &agent_state,
       const ::ad::rss::world::RssDynamics &agent_dynamics);
 
   ::ad::physics::Distance CalculateMinStoppingDistance(
@@ -100,7 +101,7 @@ class RssInterface {
       const ::ad::rss::world::RssDynamics &agent_dynamics);
 
   ::ad::rss::world::WorldModel CreateWorldModel(
-      const world::World &world, const AgentId &ego_id,
+      const AgentMap &agents, const AgentId &ego_id,
       const AgentState &ego_state,
       const ::ad::map::match::Object &ego_matched_object,
       const ::ad::rss::world::RssDynamics &ego_dynamics,
