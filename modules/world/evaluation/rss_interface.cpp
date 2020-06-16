@@ -62,47 +62,38 @@ bool RssInterface::initializeOpenDriveMap(
 }
 
 ::ad::map::match::Object RssInterface::GetMatchObject(
-    const AgentPtr &agent, const Distance &match_distance) {
-  ::ad::map::match::Object object;
+    const models::dynamic::State &agent_state, const Polygon &agent_shape,
+    const Distance &match_distance) {
+  ::ad::map::match::Object matching_object;
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
 
-  Point2d agent_center = agent->GetCurrentPosition();
-  Trajectory agent_execut_traj = agent->GetExecutionTrajectory();
-  Polygon agent_shape = agent->GetShape();
-
-  object.enuPosition.centerPoint.x =
+  matching_object.enuPosition.centerPoint.x =
       ENUCoordinate(static_cast<double>(bg::get<0>(agent_center)));
-  object.enuPosition.centerPoint.y =
+  matching_object.enuPosition.centerPoint.y =
       ENUCoordinate(static_cast<double>(bg::get<1>(agent_center)));
-  object.enuPosition.centerPoint.z = ENUCoordinate(0);
-  object.enuPosition.heading =
-      ::ad::map::point::createENUHeading(static_cast<double>(
-          agent_execut_traj(agent_execut_traj.rows() - 1, THETA_POSITION)));
+  matching_object.enuPosition.centerPoint.z = ENUCoordinate(0);
+  matching_object.enuPosition.heading = ::ad::map::point::createENUHeading(
+      static_cast<double>(agent_state(THETA_POSITION)));
 
-  object.enuPosition.dimension.length = static_cast<double>(
+  matching_object.enuPosition.dimension.length = static_cast<double>(
       Distance(agent_shape.front_dist_ + agent_shape.rear_dist_));
-  object.enuPosition.dimension.width = static_cast<double>(
+  matching_object.enuPosition.dimension.width = static_cast<double>(
       Distance(agent_shape.left_dist_ + agent_shape.right_dist_));
-  object.enuPosition.dimension.height = Distance(1.5);
-  object.enuPosition.enuReferencePoint =
+  matching_object.enuPosition.dimension.height = Distance(1.5);
+  matching_object.enuPosition.enuReferencePoint =
       ::ad::map::access::getENUReferencePoint();
 
   ::ad::map::match::AdMapMatching map_matching;
-  object.mapMatchedBoundingBox = map_matching.getMapMatchedBoundingBox(
-      object.enuPosition, match_distance, Distance(2.));
+  matching_object.mapMatchedBoundingBox = map_matching.getMapMatchedBoundingBox(
+      matching_object.enuPosition, match_distance, Distance(2.));
 
-  return object;
+  return matching_object;
 }
 
-FullRoute RssInterface::GenerateRoute(
-    const world::World &world, const AgentId &agent_id,
+FullRoute RssInterface::GenerateRoute(const Point2d &agent_center,
+    const map::LaneCorridorPtr &agent_lane_corridor,
     const ::ad::map::match::Object &matched_object) {
-  AgentPtr agent = world.GetAgent(agent_id);
-  Point2d agent_center = agent->GetCurrentPosition();
-  map::LaneId agent_lane_id = world.GetMap()->FindCurrentLane(agent_center);
-  map::RoadCorridorPtr agent_road_corridor = agent->GetRoadCorridor();
-  map::LaneCorridorPtr agent_lane_corridor =
-      agent_road_corridor->GetLaneCorridor(agent_lane_id);
-
   geometry::Line agent_lane_center_line = agent_lane_corridor->GetCenterLine();
 
   float s_start = GetNearestS(agent_lane_center_line, agent_center);
@@ -170,28 +161,22 @@ FullRoute RssInterface::GenerateRoute(
   return final_route;
 }
 
-AgentState RssInterface::CalculateExecutionState(
-    const Trajectory &execution_trajectory,
+AgentState RssInterface::ConvertAgentState(
+    const models::dynamic::State &agent_state,
     const ::ad::rss::world::RssDynamics &agent_dynamics) {
-  AgentState execution_state;
+  AgentState rss_state;
 
-  int last_state_idx = execution_trajectory.rows() - 1;
+  rss_state.timestamp = agent_state(TIME_POSITION);
+  rss_state.center = ::ad::map::point::createENUPoint(
+      static_cast<double>(agent_state(X_POSITION)),
+      static_cast<double>(agent_state(Y_POSITION)), 0.);
+  rss_state.heading = ::ad::map::point::createENUHeading(
+      static_cast<double>(agent_state(THETA_POSITION)));
+  rss_state.speed = Speed(static_cast<double>(agent_state(VEL_POSITION)));
+  rss_state.min_stopping_distance =
+      CalculateMinStoppingDistance(rss_state.speed, agent_dynamics);
 
-  execution_state.timestamp =
-      execution_trajectory(last_state_idx, TIME_POSITION);
-  execution_state.center = ::ad::map::point::createENUPoint(
-      static_cast<double>(execution_trajectory(last_state_idx, X_POSITION)),
-      static_cast<double>(execution_trajectory(last_state_idx, Y_POSITION)),
-      0.);
-  execution_state.heading =
-      ::ad::map::point::createENUHeading(static_cast<double>(
-          execution_trajectory(last_state_idx, THETA_POSITION)));
-  execution_state.speed = Speed(
-      static_cast<double>(execution_trajectory(last_state_idx, VEL_POSITION)));
-  execution_state.min_stopping_distance =
-      CalculateMinStoppingDistance(execution_state.speed, agent_dynamics);
-
-  return execution_state;
+  return rss_state;
 }
 
 Distance RssInterface::CalculateMinStoppingDistance(
@@ -222,19 +207,18 @@ Distance RssInterface::CalculateMinStoppingDistance(
 }
 
 ::ad::rss::world::WorldModel RssInterface::CreateWorldModel(
-    const world::World &world, const AgentId &ego_id,
-    const AgentState &ego_state,
+    const AgentMap &agents, const AgentId &ego_id,
+    const AgentState &ego_rss_state,
     const ::ad::map::match::Object &ego_matched_object,
     const ::ad::rss::world::RssDynamics &ego_dynamics,
     const ::ad::map::route::FullRoute &ego_route) {
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
-      static_cast<double>(ego_state.min_stopping_distance);
+      static_cast<double>(ego_rss_state.min_stopping_distance);
 
-  geometry::Point2d ego_center(ego_state.center.x, ego_state.center.y);
-  AgentMap other_agents = world.GetAgents();
+  geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
 
-  for (const auto &other_agent : other_agents) {
+  for (const auto &other_agent : agents) {
     if (other_agent.second->GetAgentId() != ego_id) {
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
@@ -244,24 +228,25 @@ Distance RssInterface::CalculateMinStoppingDistance(
     }
   }
 
-  ::ad::rss::map::RssSceneCreation scene_creation(ego_state.timestamp,
+  ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp,
                                                   ego_dynamics);
   ::ad::map::landmark::LandmarkIdSet
       green_traffic_lights;  // we don't care about traffic lights right now
 
   for (const auto &relevent_agent : relevent_agents) {
-    auto const other_matched_object =
-        GetMatchObject(relevent_agent, Distance(2.0));
     models::dynamic::State relevent_agent_state =
         relevent_agent->GetCurrentState();
+    Polygon relevent_agent_shape = relevent_agent->GetShape();
+    auto const other_matched_object = GetMatchObject(
+        relevent_agent_state, relevent_agent_shape, Distance(2.0));
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
     ::ad::rss::world::RssDynamics relevent_agent_dynamics =
         GenerateDefaultVehicleDynamics();
 
     scene_creation.appendScenes(
-        ::ad::rss::world::ObjectId(ego_id), ego_matched_object, ego_state.speed,
-        ego_dynamics, ego_route,
+        ::ad::rss::world::ObjectId(ego_id), ego_matched_object,
+        ego_rss_state.speed, ego_dynamics, ego_route,
         ::ad::rss::world::ObjectId(relevent_agent->GetAgentId()),
         ::ad::rss::world::ObjectType::OtherVehicle, other_matched_object,
         relevent_agent_speed, relevent_agent_dynamics,
@@ -300,19 +285,28 @@ bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
 
 bool RssInterface::IsAgentSafe(const World &world, const AgentId &agent_id) {
   AgentPtr agent = world.GetAgent(agent_id);
+  models::dynamic::State agent_state = agent->GetCurrentState();
 
+  Polygon agent_shape = agent->GetShape();
   ::ad::map::match::Object matched_object =
-      GetMatchObject(agent, Distance(2.0));
+      GetMatchObject(agent_state, agent_shape, Distance(2.0));
+
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+  map::RoadCorridorPtr agent_road_corridor = agent->GetRoadCorridor();
+  map::LaneId agent_lane_id = world.GetMap()->FindCurrentLane(agent_center);
+  map::LaneCorridorPtr agent_lane_corridor =
+      agent_road_corridor->GetLaneCorridor(agent_lane_id);
   ::ad::map::route::FullRoute agent_route =
-      GenerateRoute(world, agent_id, matched_object);
+      GenerateRoute(agent_center, agent_lane_corridor, matched_object);
+
   ::ad::rss::world::RssDynamics agent_dynamics =
       GenerateDefaultVehicleDynamics();
-  Trajectory agent_execut_traj = agent->GetExecutionTrajectory();
-  AgentState agent_state =
-      CalculateExecutionState(agent_execut_traj, agent_dynamics);
+  AgentState agent_rss_state = ConvertAgentState(agent_state, agent_dynamics);
 
+  AgentMap other_agents = world.GetAgents();
   ::ad::rss::world::WorldModel rss_world_model =
-      CreateWorldModel(world, agent_id, agent_state, matched_object,
+      CreateWorldModel(other_agents, agent_id, agent_rss_state, matched_object,
                        agent_dynamics, agent_route);
 
   return RssCheck(rss_world_model);
