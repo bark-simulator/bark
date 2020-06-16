@@ -47,9 +47,9 @@ world.SetMap(map_interface)
 
 # Agent Definition
 agent_2d_shape = CarLimousine()
-init_state = np.array([0, 5, -120, 0, 10])
+init_state = np.array([0, 1.8, -120, 0, 10])
 goal_polygon = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
-goal_polygon = goal_polygon.Translate(Point2d(5,120))
+goal_polygon = goal_polygon.Translate(Point2d(1.8,120))
 agent_params = param_server.addChild("agent1")
 agent1 = Agent(init_state,
                behavior_model,
@@ -62,7 +62,7 @@ agent1 = Agent(init_state,
 world.AddAgent(agent1)
 
 agent_2d_shape2 = CarLimousine()
-init_state2 = np.array([0, 5, -50, 0, 5])
+init_state2 = np.array([0, 1.8, -50, 0, 5])
 agent_params2 = param_server.addChild("agent2")
 agent2 = Agent(init_state2,
                behavior_model2,
@@ -85,6 +85,8 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 e=EvaluatorRss(agent1.id,map_path)
+world.Step(0.5)
+print("wtf",e.Evaluate(world))
 
 for _ in range(0, 30):
   viewer.clear()
