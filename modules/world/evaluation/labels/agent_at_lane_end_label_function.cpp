@@ -20,12 +20,12 @@ modules::world::evaluation::AgentAtLaneEndLabelFunction::
 bool modules::world::evaluation::AgentAtLaneEndLabelFunction::EvaluateAgent(
     const modules::world::ObservedWorld &observed_world,
     const AgentPtr &other_agent) const {
-  const auto ego_agent = observed_world.GetEgoAgent();
   if (other_agent) {
     const auto &other_pos = other_agent->GetCurrentPosition();
     const auto &lc =
         other_agent->GetRoadCorridor()->GetNearestLaneCorridor(other_pos);
-    const float dist_until_end = lc->LengthUntilEnd(other_pos);
+    const float dist_until_end =
+        lc->LengthUntilEnd(other_pos) - other_agent->GetShape().front_dist_;
     return std::abs(dist_until_end) < distance_thres_;
   }
   return false;
