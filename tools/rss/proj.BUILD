@@ -9,15 +9,24 @@ header_template(
 
 cc_library(
     name = "proj",
-    srcs = glob([
-        "src/**/*.cpp",
-        "src/**/*.c",
-    ]),
-    hdrs = glob([
-        "include/**/*.hpp",
-        "src/**/*.h",
-        "src/**/*.hpp",
-    ]) + [
+    srcs = glob(
+        [
+            "src/**/*.cpp",
+            "src/**/*.c",
+        ],
+        exclude = [
+            "src/apps/*.cpp",
+            "src/tests/*.cpp",
+        ],
+    ),
+    hdrs = glob(
+        [
+            "include/**/*.hpp",
+            "src/**/*.h",
+            "src/**/*.hpp",
+        ],
+        exclude = ["src/apps/*.h"],
+    ) + [
         "proj_config.h",
     ],
     includes = [
