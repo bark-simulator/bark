@@ -17,7 +17,6 @@ setup(
     author_email = "cheema@fortiss.org",
     license = "MIT",
     packages=find_packages(),
-    #platforms=['linux_x86_64'],
     install_requires=[
     'matplotlib>=3.0.3',
     'numpy>=1.18.1',
@@ -46,7 +45,6 @@ setup(
     ] if sys.platform != 'linux' else [],
     test_suite='nose.collector',
     tests_require=['nose'],
-    #package_data={"pysample55321": ["../main/pyhellocpp.so"]},
     include_package_data=True,
     zip_safe=False,
     python_requires='>=3.7',

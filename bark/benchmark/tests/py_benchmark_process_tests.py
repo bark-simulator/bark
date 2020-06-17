@@ -23,9 +23,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
 # to find database files
-print ('currdir:',os.getcwd())
 os.chdir("../benchmark_database/")
-print ('newdir:',os.getcwd())
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):
