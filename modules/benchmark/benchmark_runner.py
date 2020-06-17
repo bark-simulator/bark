@@ -133,10 +133,10 @@ class BenchmarkRunner:
 
     def _create_configurations(self, num_scenarios=None):
         benchmark_configs = []
-        for behavior_name, behavior_bark in self.behaviors.items():
-            # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_set_name in self.benchmark_database:
-                for scenario, scenario_idx in scenario_generator:
+        # run over all scenario generators from benchmark database
+        for scenario_generator, scenario_set_name in self.benchmark_database:
+            for scenario, scenario_idx in scenario_generator:
+                for behavior_name, behavior_bark in self.behaviors.items():
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
                     benchmark_config = \
