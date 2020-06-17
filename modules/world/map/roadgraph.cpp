@@ -470,7 +470,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
              success = AddLaneSuccessor(successor_lane->GetId(), lane_element.first);
             auto lane_pv = GetPlanViewForLaneId(lane_element.first);
             auto succ_pv = GetPlanViewForLaneId(successor_lane->GetId());
-            assert(lane_pv.second && succ_pv.second);
+            BARK_EXPECT_TRUE(lane_pv.second && succ_pv.second);
             AddRoadSuccessor(lane_pv.first, succ_pv.first);
             AddRoadSuccessor(succ_pv.first, lane_pv.first);
           }
@@ -498,7 +498,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
                success = AddLaneSuccessor(lane_element.first, predecessor_lane->GetId());
               auto lane_pv = GetPlanViewForLaneId(lane_element.first);
               auto pred_pv = GetPlanViewForLaneId(predecessor_lane->GetId());
-              assert(lane_pv.second && pred_pv.second);
+              BARK_EXPECT_TRUE(lane_pv.second && pred_pv.second);
               AddRoadSuccessor(pred_pv.first, lane_pv.first);
               AddRoadSuccessor(lane_pv.first, pred_pv.first);
             }

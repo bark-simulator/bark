@@ -7,7 +7,7 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/geometry/commons.hpp"
 #include "modules/geometry/line.hpp"
 #include "modules/geometry/polygon.hpp"
@@ -58,7 +58,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 };
 
 TEST(free_road_term, behavior_idm_classic) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
   const float max_acceleration = behavior.GetMaxAcceleration();
@@ -111,7 +111,7 @@ TEST(free_road_term, behavior_idm_classic) {
 }
 
 TEST(interaction_term, behavior_idm_classic) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
@@ -167,7 +167,7 @@ TEST(interaction_term, behavior_idm_classic) {
 }
 
 TEST(drive_free, behavior_idm_classic) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
 
@@ -194,7 +194,7 @@ TEST(drive_free, behavior_idm_classic) {
 }
 
 TEST(drive_leading_vehicle, behavior_idm_classic) {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
   const float minimum_spacing = behavior.GetMinimumSpacing();

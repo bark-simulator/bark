@@ -6,7 +6,7 @@
 
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "modules/world/observed_world.hpp"
 
@@ -18,7 +18,7 @@ using modules::models::dynamic::State;
 using modules::world::World;
 using modules::world::WorldPtr;
 using modules::world::ObservedWorld;
-using modules::commons::DefaultParams;
+using modules::commons::SetterParams;
 
 TEST(behavior_static_trajectory_plan, plan) {
   Trajectory static_traj(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -28,7 +28,7 @@ TEST(behavior_static_trajectory_plan, plan) {
   2, 2, 0, 0, 1,
   3, 3, 0, 0, 1;
   BehaviorStaticTrajectory model(nullptr, static_traj);
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   WorldPtr world_ptr = std::make_shared<World>(params);
   ObservedWorld observed_world(world_ptr, 0);
   Trajectory traj;

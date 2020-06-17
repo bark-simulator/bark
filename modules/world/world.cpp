@@ -15,6 +15,7 @@ namespace modules {
 namespace world {
 
 using models::behavior::BehaviorStatus;
+using models::execution::ExecutionStatus;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
@@ -43,6 +44,50 @@ World::World(const std::shared_ptr<World>& world)
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
 
+void World::Step(const float& delta_time) {
+  const float inc_world_time = world_time_ + delta_time;
+  PlanAgents(delta_time);
+  Execute(inc_world_time);
+  world_time_ = inc_world_time;
+}
+
+void World::PlanAgents(const float& delta_time) {
+  UpdateAgentRTree();
+  WorldPtr current_world(this->Clone());
+  const float inc_world_time = world_time_ + delta_time;
+  for (auto agent : agents_) {
+    ObservedWorld observed_world(current_world, agent.first);
+    agent.second->PlanBehavior(delta_time, observed_world);
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
+      agent.second->PlanExecution(inc_world_time);
+  }
+}
+
+void World::Execute(const float& world_time) {
+  using models::dynamic::StateDefinition::TIME_POSITION;
+  for (auto agent : agents_) {
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
+        agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
+      agent.second->UpdateStateAction();
+      // make sure all agents have the same world time
+      // otherwise the simulation is not correct
+      const auto& agent_state = agent.second->GetCurrentState();
+      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
+    }
+  }
+  RemoveInvalidAgents();
+}
+
+WorldPtr World::GetWorldAtTime(const float& world_time) const {
+  WorldPtr current_world_state(this->Clone());
+  for (auto agent : current_world_state->GetAgents()) {
+    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
+      agent.second->PlanExecution(world_time);
+    agent.second->UpdateStateAction();
+  }
+  return current_world_state;
+}
+
 AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
   AgentMap::iterator it;
@@ -69,53 +114,12 @@ void World::AddEvaluator(const std::string& name,
   evaluators_[name] = evaluator;
 }
 
-void World::DoPlanning(const float& delta_time) {
-  UpdateAgentRTree();
-  WorldPtr current_world(this->Clone());
-
-  // Behavioral and execution planning
-  for (auto agent : agents_) {
-    //! clone current world
-    ObservedWorld observed_world(current_world, agent.first);
-    agent.second->BehaviorPlan(delta_time, observed_world);
-    agent.second->ExecutionPlan(delta_time);
-  }
-}
-
-void World::DoExecution(const float& delta_time) {
-  world_time_ += delta_time;
-  // Execute motion
-  for (auto agent : agents_) {
-    if (agent.second) {
-      if (agent.second->GetBehaviorStatus() ==
-          models::behavior::BehaviorStatus::VALID) {
-        agent.second->Execute(world_time_);
-      }
-    }
-  }
-
-  RemoveInvalidAgents();
-}
-
-WorldPtr World::WorldExecutionAtTime(const float& execution_time) const {
-  WorldPtr current_world_state(this->Clone());
-  for (auto agent : current_world_state->GetAgents()) {
-    agent.second->Execute(execution_time);
-  }
-  return current_world_state;
-}
-
 EvaluationMap World::Evaluate() const {
   EvaluationMap evaluation_results;
   for (auto const& evaluator : evaluators_) {
     evaluation_results[evaluator.first] = evaluator.second->Evaluate(*this);
   }
   return evaluation_results;
-}
-
-void World::Step(const float& delta_time) {
-  DoPlanning(delta_time);
-  DoExecution(delta_time);
 }
 
 std::vector<ObservedWorld> World::Observe(
@@ -137,8 +141,8 @@ std::vector<ObservedWorld> World::Observe(
 void World::UpdateAgentRTree() {
   rtree_agents_.clear();
   for (auto& agent : agents_) {
-    auto obj =
-        agent.second->GetPolygonFromState(agent.second->GetCurrentState()).obj_;
+    auto obj =agent.second->GetPolygonFromState(
+      agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
     boost::geometry::envelope(obj, box);
     boost::geometry::correct(box);
@@ -264,57 +268,6 @@ FrontRearAgents World::GetAgentFrontRearForId(
   return fr_agents;
 }
 
-void World::FillWorldFromCarla(const float& delta_time,
-                               const AgentStateMap& state_map) {
-  // this function should be called before calling PlanSpecificAgents
-  // TODO: use StateActionPair as parameter
-  world_time_ += delta_time;
-
-  for (const auto& agent_state : state_map) {
-    AgentPtr agent = NULL;
-    agent = GetAgent(agent_state.first);
-
-    if (agent) {
-      // TODO: read control from Carla
-      StateActionPair pair;
-      pair.first = agent_state.second;
-      pair.second = modules::models::behavior::Action(
-          modules::models::behavior::DiscreteAction(0));
-      agent->AddTrajectoryStep(pair);
-    } else {
-      LOG(ERROR) << "Agent" << agent_state.first << " doesn't exist."
-                 << std::endl;
-    }
-  }
-}
-
-AgentTrajectoryMap World::PlanSpecificAgents(
-    const float& delta_time, const std::vector<int>& agent_ids) {
-  UpdateAgentRTree();
-  WorldPtr current_world(this->Clone());
-
-  AgentTrajectoryMap trajectory_map;
-
-  // Behavioral and execution planning
-  for (const auto& agent_id : agent_ids) {
-    AgentPtr agent = NULL;
-    agent = GetAgent(agent_id);
-
-    if (agent) {
-      //! clone current world
-      ObservedWorld observed_world(current_world, agent_id);
-      agent->BehaviorPlan(delta_time, observed_world);
-      agent->ExecutionPlan(delta_time);
-
-      trajectory_map[agent_id] = agent->GetExecutionTrajectory();
-    } else {
-      LOG(ERROR) << "Agent" << agent_id << " doesn't exist." << std::endl;
-    }
-  }
-
-  return trajectory_map;
-}
-
 void World::AddLabels(const LabelFunctions& label_evaluators) {
   label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(),
                            label_evaluators.end());
@@ -322,11 +275,7 @@ void World::AddLabels(const LabelFunctions& label_evaluators) {
 const LabelFunctions& World::GetLabelFunctions() const {
   return label_evaluators_;
 }
-void World::RemoveAgentById(AgentId agent_id) {
-  size_t erased_elems = agents_.erase(agent_id);
-  LOG_IF(ERROR, erased_elems == 0)
-      << "Could not remove non-existent agent with Id " << agent_id << " !";
-}
+
 
 }  // namespace world
 }  // namespace modules

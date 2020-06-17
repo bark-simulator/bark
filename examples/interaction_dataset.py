@@ -34,7 +34,7 @@ sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
 for _ in range(0, sim_time_steps):
-  world_state.DoPlanning(sim_step_time)
+  world_state.PlanAgents(sim_step_time)
   viewer.clear()
   video_renderer.drawWorld(world_state)
   world_state.DoExecution(sim_step_time)

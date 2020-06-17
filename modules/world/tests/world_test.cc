@@ -13,7 +13,7 @@
 #include "modules/world/opendrive/opendrive.hpp"
 #include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "modules/geometry/polygon.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 #include "modules/world/evaluation/evaluator_collision_agents.hpp"
@@ -42,7 +42,7 @@ using modules::world::tests::make_test_world;
 
 TEST(world, world_init)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -60,7 +60,7 @@ TEST(world, world_init)
 
 TEST(world, world_step)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -129,7 +129,7 @@ TEST(world, world_step)
 
 TEST(world, world_collision)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -158,7 +158,7 @@ TEST(world, world_collision)
 
 TEST(world, world_no_collision_agent)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -187,7 +187,7 @@ TEST(world, world_no_collision_agent)
 TEST(world, world_outside_drivable_area) {
   using modules::world::goal_definition::GoalDefinitionPolygon;
 
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
@@ -214,7 +214,7 @@ TEST(world, world_outside_drivable_area) {
 
 TEST(world, nearest_agents)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -264,7 +264,7 @@ TEST(world, nearest_agents)
 
 TEST(world, distance_to_goal)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
@@ -301,7 +301,7 @@ TEST(world, distance_to_goal)
 
 TEST(world, agents_intersection_polygon)
 {
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));

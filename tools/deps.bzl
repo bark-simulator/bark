@@ -19,8 +19,8 @@ def bark_dependencies():
     _maybe(
     http_archive,
     name = "pybind11",
-    strip_prefix = "pybind11-2.3.0",
-    urls = ["https://github.com/pybind/pybind11/archive/v2.3.0.zip"],
+    strip_prefix = "pybind11-2.5.0",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.5.0.zip"],
     build_file = "@bark_project//tools/pybind11:pybind.BUILD"
     )
 

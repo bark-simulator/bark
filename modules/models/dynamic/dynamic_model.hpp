@@ -27,7 +27,9 @@ typedef enum StateDefinition : int {
   THETA_POSITION = 3,  // unit is rad
   VEL_POSITION = 4,  // unit is meter/second
   MIN_STATE_SIZE = 5,
-  Z_POSITION = 6  // only placeholder, not used at the moment
+  Z_POSITION = 6,
+  INP_ACC = 7,  // acceleration input [m/s^2]
+  INP_DELTA = 8  // steerint-rate input [m/s]
 } StateDefinition;
 
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;

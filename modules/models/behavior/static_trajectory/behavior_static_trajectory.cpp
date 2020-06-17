@@ -100,7 +100,7 @@ Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
     std::vector<std::vector<float>> list) {
   Trajectory traj(list.size(), list[0].size());
   for (int i = 0; i < traj.rows(); ++i) {
-    assert(list[i].size() == static_cast<size_t>(traj.cols()));
+    BARK_EXPECT_TRUE(list[i].size() == static_cast<size_t>(traj.cols()));
     for (int j = 0; j < traj.cols(); ++j) {
       traj(i, j) = list[i][j];
     }

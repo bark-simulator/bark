@@ -53,11 +53,11 @@ Trajectory BehaviorMPMacroActions::Plan(
     }
     selected_mp = motion_primitives_.at(
         valid_primitives_.at(boost::get<DiscreteAction>(active_motion_)));
-    target_corridor_ =
-        selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
   } else {
     selected_mp = motion_primitives_.at(boost::get<DiscreteAction>(active_motion_));
   }
+  target_corridor_ =
+        selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
 
   traj = selected_mp->Plan(delta_time, observed_world, target_corridor_);
 

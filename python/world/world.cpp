@@ -36,8 +36,8 @@ void python_world(py::module m) {
   py::class_<World, std::shared_ptr<World>>(m, "World")
     .def(py::init<ParamsPtr>())
     .def("Step", &World::Step)
-    .def("DoPlanning", &World::DoPlanning)
-    .def("DoExecution", &World::DoExecution)
+    .def("PlanAgents", &World::PlanAgents)
+    .def("Execute", &World::Execute)
     .def("Observe", &World::Observe)
     .def("AddAgent", &World::AddAgent)
     .def("RemoveAgentById", &World::RemoveAgentById)
@@ -60,9 +60,9 @@ void python_world(py::module m) {
     .def("GetAgent", &World::GetAgent)
     .def_property("map", &World::GetMap, &World::SetMap)
     .def("Copy", &World::Clone)
-    .def("WorldExecutionAtTime", &World::WorldExecutionAtTime)
-    .def("FillWorldFromCarla",&World::FillWorldFromCarla)
-    .def("PlanAgents",&World::PlanSpecificAgents)
+    .def("GetWorldAtTime", &World::GetWorldAtTime)
+    // .def("FillWorldFromCarla",&World::FillWorldFromCarla)
+    // .def("PlanAgents",&World::PlanSpecificAgents)
     .def("__repr__", [](const World& a) {
       return "bark.world.World";
     });
