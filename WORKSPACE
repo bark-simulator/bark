@@ -18,8 +18,8 @@ boost_deps()
 # ------ Planner UCT ------------------------------
 git_repository(
   name = "planner_uct",
-  commit="b09469902c9c1358bab6aa73467578b796cf5360",
-  remote = "https://github.com/mansoorcheema/planner-mcts"
+  commit="fac5d85c96867be336a4500d45d0277abe48465c",
+  remote = "https://github.com/bark-simulator/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
@@ -28,8 +28,8 @@ planner_uct_rules_dependencies()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="fd7cfc34bce6db866f440ee71984be88f6d67246",
-  remote = "https://github.com/mansoorcheema/benchmark-database"
+  commit="ca6f2db654bb3945a7c23ab7f04268e7d68fa0c5",
+  remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
 load("@benchmark_database//util:deps.bzl", "benchmark_database_dependencies")
@@ -41,8 +41,8 @@ benchmark_database_release()
 # ------------------- BARK-ML ----------------------
 git_repository(
   name = "bark_ml",
-  commit="54ecc980c21a8a65aa5d66033fb49554dcc71d8e",
-  remote = "https://github.com/mansoorcheema/bark-ml"
+  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
+  remote = "https://github.com/bark-simulator/bark-ml"
 )
 # --------------------------------------------------
 
