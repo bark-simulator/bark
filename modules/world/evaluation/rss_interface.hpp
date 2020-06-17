@@ -77,9 +77,9 @@ class RssInterface {
 
   bool initializeOpenDriveMap(const std::string &opendrive_file_name);
 
-  ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynamics();
+  ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynamicsParameters();
 
-  ::ad::rss::world::RssDynamics GenerateVehicleDynamics(
+  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(
       double lon_max_accel, double lon_max_brake, double lon_min_brake,
       double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
       double lat_fluctuation_margin, double response_time);

@@ -40,7 +40,7 @@ bool RssInterface::initializeOpenDriveMap(
   return result;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynamics(
+::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynamicsParameters(
     double lon_max_accel, double lon_max_brake, double lon_min_brake,
     double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
     double lat_fluctuation_margin, double response_time) {
@@ -57,8 +57,8 @@ bool RssInterface::initializeOpenDriveMap(
   return dynamics;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateDefaultVehicleDynamics() {
-  return GenerateVehicleDynamics(3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.);
+::ad::rss::world::RssDynamics RssInterface::GenerateDefaultVehicleDynamicsParameters() {
+  return GenerateVehicleDynamicsParameters(3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.);
 }
 
 ::ad::map::match::Object RssInterface::GetMatchObject(
@@ -242,7 +242,7 @@ Distance RssInterface::CalculateMinStoppingDistance(
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
     ::ad::rss::world::RssDynamics relevent_agent_dynamics =
-        GenerateDefaultVehicleDynamics();
+        GenerateDefaultVehicleDynamicsParameters();
 
     scene_creation.appendScenes(
         ::ad::rss::world::ObjectId(ego_id), ego_matched_object,
@@ -301,7 +301,7 @@ bool RssInterface::IsAgentSafe(const World &world, const AgentId &agent_id) {
       GenerateRoute(agent_center, agent_lane_corridor, matched_object);
 
   ::ad::rss::world::RssDynamics agent_dynamics =
-      GenerateDefaultVehicleDynamics();
+      GenerateDefaultVehicleDynamicsParameters();
   AgentState agent_rss_state = ConvertAgentState(agent_state, agent_dynamics);
 
   AgentMap other_agents = world.GetAgents();
