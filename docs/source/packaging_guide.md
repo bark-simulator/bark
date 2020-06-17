@@ -1,3 +1,4 @@
+
 # Pip Package Guide
 
 
@@ -5,17 +6,17 @@
 
 This pip package branch builds upon updated directory structure for concise import paths. All the modules  are now sub-module of main bark module, and are imported w.r.t it.  C++ python bindings previously in python folder are now in python_wrapper folder under bark main directory and similarly components from module directory are also placed under bark directory. C++ python library is renamed `core.so` from `bark.so`.
 
-> The import paths are changed from following
+> The import paths have been updated from following
 
-`from bark.runtime.commons.parameters import ParameterServer`
-`from bark.core.world import World`
-`from examples.*`
+`from modules.runtime.commons.parameters import ParameterServer`   
+`from bark.world import World`   
+`from examples.*`   
 
-> To be a more concise as follow
+> To a more concise format as
 
-`from bark.runtime.commons import ParameterServer`
-`from bark.core.world import World`
-`from bark.examples.*`
+`from bark.runtime.commons import ParameterServer`   
+`from bark.core.world import World`   
+`from bark.examples.*` 
 
 ## Build Package source
 To have all the modules, together in a single library, a `py_binary` target  `//bark:pip_package`is created with all the `py_library`'s as its dependencies. Upon successful build of this target, all the modules are found under **bark_project** (workspace name) in the  pip_package.runfiles directory in the out folder, together with their dependencies in the external folder. The content under this bark_project directory is later combined into a wheel package.
