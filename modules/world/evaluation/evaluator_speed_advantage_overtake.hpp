@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_REL_SPEED_OVERTAKE_B_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_REL_SPEED_OVERTAKE_B_HPP_
+#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_SPEED_ADVANTAGE_OVERTAKE_HPP_
+#define MODULES_WORLD_EVALUATION_EVALUATOR_SPEED_ADVANTAGE_OVERTAKE_HPP_
 
 #include "modules/world/evaluation/evaluator_ltl.hpp"
 
@@ -12,9 +12,9 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-class EvaluatorRelSpeedOvertakeB : public EvaluatorLTL {
+class EvaluatorSpeedAdvantageOvertake : public EvaluatorLTL {
  public:
-  explicit EvaluatorRelSpeedOvertakeB(AgentId agent_id)
+  explicit EvaluatorSpeedAdvantageOvertake(AgentId agent_id)
       : EvaluatorLTL(agent_id, formula_) {}
   EvaluationReturn Evaluate(const world::World& world) override {
     auto cloned_world = world.Clone();
@@ -29,4 +29,4 @@ class EvaluatorRelSpeedOvertakeB : public EvaluatorLTL {
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_REL_SPEED_OVERTAKE_B_HPP_
+#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_SPEED_ADVANTAGE_OVERTAKE_HPP_

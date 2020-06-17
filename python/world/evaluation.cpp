@@ -12,10 +12,10 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
-#include "modules/world/evaluation/evaluator_rel_speed_overtake_b.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
 #include "modules/world/evaluation/evaluator_safe_lane_change.hpp"
+#include "modules/world/evaluation/evaluator_speed_advantage_overtake.hpp"
 #include "modules/world/evaluation/evaluator_step_count.hpp"
 #include "modules/world/evaluation/evaluator_zip_merge_chn.hpp"
 #include "modules/world/evaluation/evaluator_zip_merge_deu.hpp"
@@ -24,6 +24,7 @@
 #include "modules/world/evaluation/labels/agent_near_label_function.hpp"
 #include "modules/world/evaluation/labels/base_label_function.hpp"
 #include "modules/world/evaluation/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/labels/ego_accelerate_label_function.hpp"
 #include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
 #include "modules/world/evaluation/labels/front_of_label_function.hpp"
 #include "modules/world/evaluation/labels/generic_ego_label_function.hpp"
@@ -33,7 +34,6 @@
 #include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
 #include "modules/world/evaluation/labels/right_of_label_function.hpp"
 #include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
-#include "modules/world/evaluation/labels/ego_accelerate_label_function.hpp"
 #include "modules/world/tests/constant_label_evaluator.hpp"
 #include "modules/world/world.hpp"
 
@@ -165,14 +165,14 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorBeingOvertakenAssumption";
       });
 
-  py::class_<EvaluatorRelSpeedOvertakeB, BaseEvaluator,
-             std::shared_ptr<EvaluatorRelSpeedOvertakeB>>(
-      m, "EvaluatorRelSpeedOvertakeB")
+  py::class_<EvaluatorSpeedAdvantageOvertake, BaseEvaluator,
+             std::shared_ptr<EvaluatorSpeedAdvantageOvertake>>(
+      m, "EvaluatorSpeedAdvantageOvertake")
       .def(py::init<AgentId>())
       .def_property_readonly("rule_states",
-                             &EvaluatorRelSpeedOvertakeB::GetRuleStates)
-      .def("__repr__", [](const EvaluatorRelSpeedOvertakeB &g) {
-        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeB";
+                             &EvaluatorSpeedAdvantageOvertake::GetRuleStates)
+      .def("__repr__", [](const EvaluatorSpeedAdvantageOvertake &g) {
+        return "bark.world.evaluation.EvaluatorSpeedAdvantageOvertake";
       });
 
   py::class_<EvaluatorZipMergeDeu, BaseEvaluator,
