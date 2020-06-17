@@ -193,13 +193,14 @@ void python_evaluation(py::module m) {
         return "bark.world.evaluation.EvaluatorZipMergeChn";
       });
 
-  py::class_<EvaluatorDense, BaseEvaluator,
-             std::shared_ptr<EvaluatorDense>>(m, "EvaluatorDense")
+  py::class_<EvaluatorRightOvertakeAssumption, BaseEvaluator,
+             std::shared_ptr<EvaluatorRightOvertakeAssumption>>(
+      m, "EvaluatorRightOvertakeAssumption")
       .def(py::init<AgentId>())
       .def_property_readonly("rule_states",
-                             &EvaluatorDense::GetRuleStates)
-      .def("__repr__", [](const EvaluatorDense &g) {
-        return "bark.world.evaluation.EvaluatorDense";
+                             &EvaluatorRightOvertakeAssumption::GetRuleStates)
+      .def("__repr__", [](const EvaluatorRightOvertakeAssumption &g) {
+        return "bark.world.evaluation.EvaluatorRightOvertakeAssumption";
       });
 
   // LABELS

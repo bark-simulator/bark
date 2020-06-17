@@ -26,9 +26,9 @@ class EvaluatorRightOvertake : public EvaluatorLTL {
   static const LabelFunctions labels_;
 };
 
-class EvaluatorDense : public EvaluatorLTL {
+class EvaluatorRightOvertakeAssumption : public EvaluatorLTL {
  public:
-  explicit EvaluatorDense(AgentId agent_id)
+  explicit EvaluatorRightOvertakeAssumption(AgentId agent_id)
       : EvaluatorLTL(agent_id, formula_) {}
   EvaluationReturn Evaluate(const world::World& world) override {
     auto cloned_world = world.Clone();
