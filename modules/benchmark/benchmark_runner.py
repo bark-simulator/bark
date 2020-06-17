@@ -52,6 +52,9 @@ class BenchmarkResult:
         self.__data_frame = None
         self.__histories = histories or []
 
+    def drop_histories(self):
+        self.__histories.clear()
+
     def get_data_frame(self):
         if not isinstance(self.__data_frame, pd.DataFrame):
             self.__data_frame = pd.DataFrame(self.__result_dict)
@@ -103,9 +106,17 @@ class BenchmarkResult:
             self.__data_frame = None
         if not dump_configs:
             self.__benchmark_configs = None
-        with open(filename, 'wb') as handle:
-            pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        logging.info("Saved BenchmarkResult to {}".format(
+        try:
+            with open(filename, 'wb') as handle:
+                pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        except Exception as e:
+            logging.error('Failed to write results to {}!\nError: {}\nRetrying without history.'.format(filename, e))
+            self.drop_histories()
+            (root, ext) = os.path.splitext(filename)
+            filename = "{}_no_histories{}".format(root, ext)
+            with open(filename, 'wb') as handle:
+                pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('Saved BenchmarkResult to {}'.format(
             os.path.abspath(filename)))
 
 
@@ -151,7 +162,7 @@ class BenchmarkRunner:
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
 
-    def run(self, viewer=None, maintain_history=False):
+    def run(self, viewer=None, maintain_history=False, stage_dir=None):
         results = []
         histories = {}
         for idx, bmark_conf in enumerate(self.benchmark_configs):
@@ -164,6 +175,18 @@ class BenchmarkRunner:
             histories[bmark_conf.config_idx] = scenario_history
             if self.log_eval_avg_every and (idx + 1) % self.log_eval_avg_every == 0:
                 self._log_eval_average(results)
+                if stage_dir:
+                    stage_result = BenchmarkResult(results, self.benchmark_configs, histories=histories)
+                    try:
+                        stage_result.dump(os.path.join(stage_dir, "stage_{}_{}.pickle".format(os.getpid(), idx + 1)))
+                    except Exception as e:
+                        logging.error('Failed to save stage: {}'.format(e))
+                        if maintain_history:
+                            logging.warning('Retrying without history')
+                            stage_result.drop_histories()
+                            stage_result.dump(
+                                os.path.join(stage_dir, "stage_{}_{}_no_history.pickle".format(os.getpid(), idx + 1)))
+
         return BenchmarkResult(results, self.benchmark_configs, histories=histories)
 
     def run_benchmark_config(self, config_idx, **kwargs):
