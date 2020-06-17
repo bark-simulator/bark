@@ -12,7 +12,6 @@
 #include "modules/world/evaluation/evaluator_drivable_area.hpp"
 #include "modules/world/evaluation/evaluator_goal_reached.hpp"
 #include "modules/world/evaluation/evaluator_ltl.hpp"
-#include "modules/world/evaluation/evaluator_rel_speed_overtake_a.hpp"
 #include "modules/world/evaluation/evaluator_rel_speed_overtake_b.hpp"
 #include "modules/world/evaluation/evaluator_right_overtake.hpp"
 #include "modules/world/evaluation/evaluator_safe_distance.hpp"
@@ -164,26 +163,6 @@ void python_evaluation(py::module m) {
                              &EvaluatorBeingOvertakenAssumption::GetRuleStates)
       .def("__repr__", [](const EvaluatorBeingOvertakenAssumption &g) {
         return "bark.world.evaluation.EvaluatorBeingOvertakenAssumption";
-      });
-
-  py::class_<EvaluatorRelSpeedOvertakeA, BaseEvaluator,
-             std::shared_ptr<EvaluatorRelSpeedOvertakeA>>(
-      m, "EvaluatorRelSpeedOvertakeA")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorRelSpeedOvertakeA::GetRuleStates)
-      .def("__repr__", [](const EvaluatorRelSpeedOvertakeA &g) {
-        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeA";
-      });
-
-  py::class_<EvaluatorRelSpeedOvertakeAAssumption, BaseEvaluator,
-             std::shared_ptr<EvaluatorRelSpeedOvertakeAAssumption>>(
-      m, "EvaluatorRelSpeedOvertakeAAssumption")
-      .def(py::init<AgentId>())
-      .def_property_readonly(
-          "rule_states", &EvaluatorRelSpeedOvertakeAAssumption::GetRuleStates)
-      .def("__repr__", [](const EvaluatorRelSpeedOvertakeAAssumption &g) {
-        return "bark.world.evaluation.EvaluatorRelSpeedOvertakeAAssumption";
       });
 
   py::class_<EvaluatorRelSpeedOvertakeB, BaseEvaluator,
