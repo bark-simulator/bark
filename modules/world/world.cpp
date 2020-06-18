@@ -275,7 +275,11 @@ void World::AddLabels(const LabelFunctions& label_evaluators) {
 const LabelFunctions& World::GetLabelFunctions() const {
   return label_evaluators_;
 }
-
+void World::RemoveAgentById(AgentId agent_id) {
+  size_t erased_elems = agents_.erase(agent_id);
+  LOG_IF(ERROR, erased_elems == 0)
+      << "Could not remove non-existent agent with Id " << agent_id << " !";
+}
 
 }  // namespace world
 }  // namespace modules

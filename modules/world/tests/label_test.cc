@@ -5,7 +5,7 @@
 
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/default_params.hpp"
+#include "modules/commons/params/setter_params.hpp"
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
@@ -22,7 +22,7 @@ using namespace modules::world::tests;
 using namespace modules::models::behavior;
 using namespace modules::models::behavior::primitives;
 
-using modules::commons::DefaultParams;
+using modules::commons::SetterParams;
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));
@@ -114,7 +114,7 @@ TEST(label_test, lane_change_right) {
   auto label = evaluator->GetLabel();
   auto world = MakeTestWorldHighway();
   world->AddLabels({evaluator});
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   AgentId id = 1;
   auto beh_change_right = std::make_shared<BehaviorMPMacroActions>(params);
   auto motion_idx = beh_change_right->AddMotionPrimitive(
@@ -150,7 +150,7 @@ TEST(label_test, lane_change_left) {
   auto label = evaluator->GetLabel();
   auto world = MakeTestWorldHighway();
   world->AddLabels({evaluator});
-  auto params = std::make_shared<DefaultParams>();
+  auto params = std::make_shared<SetterParams>();
   AgentId id = 4;
   auto beh_change_left = std::make_shared<BehaviorMPMacroActions>(params);
   auto motion_idx = beh_change_left->AddMotionPrimitive(

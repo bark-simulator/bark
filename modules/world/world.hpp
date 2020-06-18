@@ -99,7 +99,8 @@ class World : public commons::BaseType {
   /**
    * @brief  Generates and ObservedWorld for the specified agents
    */
-  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
+  std::vector<ObservedWorld> Observe(
+      const std::vector<AgentId>& agent_ids) const;
 
   /**
    * @brief  Updates the agent r-tree
@@ -151,6 +152,8 @@ class World : public commons::BaseType {
 
   void AddAgent(const AgentPtr& agent);
 
+  void RemoveAgentById(AgentId agent_id);
+
   void AddObject(const ObjectPtr& object);
 
   void AddEvaluator(const std::string& name, const EvaluatorPtr& evaluator);
@@ -168,6 +171,9 @@ class World : public commons::BaseType {
   const LabelFunctions& GetLabelFunctions() const;
 
   virtual std::shared_ptr<World> Clone() const;
+
+ protected:
+  LabelFunctions label_evaluators_;
 
  private:
   MapInterfacePtr map_;
