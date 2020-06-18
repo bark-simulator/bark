@@ -4,7 +4,7 @@ genrule(
   srcs = [
     "//bark/python_wrapper:core.so",
   ],
-  cmd = (" mv $(GENDIR)/bark/python_wrapper/core.so  $(location core.so)") ,
+  cmd = (" mv $(RULEDIR)/python_wrapper/core.so  $(location core.so)") ,
   #]),
   outs = [
     "core.so",
