@@ -97,7 +97,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                     id_other)]
             else:
                 track_params["behavior_model"] = None
-            agent = self.interaction_ds_reader.agent_from_trackfile(
+            agent = self.interaction_ds_reader.AgentFromTrackfile(
                 track_params, self._params, scenario_track_info, id_other)
             agent_list.append(agent)
 
@@ -106,7 +106,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None
-        agent = self.interaction_ds_reader.agent_from_trackfile(
+        agent = self.interaction_ds_reader.AgentFromTrackfile(
             track_params, self._params, scenario_track_info, id_ego)
         agent_list.append(agent)
 

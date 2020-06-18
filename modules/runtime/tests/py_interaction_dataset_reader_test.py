@@ -60,7 +60,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         scenario_info = ScenarioTrackInfo(
             map_filename, track_filename, agent_track_info)
         ds_reader = InteractionDatasetReader()
-        agent = ds_reader.agent_from_trackfile(
+        agent = ds_reader.AgentFromTrackfile(
             track_params, params, scenario_info, agent_track_info.GetTrackId())
 
 
