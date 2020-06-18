@@ -10,14 +10,14 @@ import time
 import math
 import filecmp
 import matplotlib.pyplot as plt
-from bark.world import World
-from bark.geometry import ComputeCenterLine
-from bark.world.map import MapInterface
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.commons.xodr_parser import XodrParser
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.geometry import Point2d, Polygon2d
-from bark.world.opendrive import XodrDrivingDirection
+from bark.core.world import World
+from bark.core.geometry import ComputeCenterLine
+from bark.core.world.map import MapInterface
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.core.geometry import Point2d, Polygon2d
+from bark.core.world.opendrive import XodrDrivingDirection
 
 import numpy as np
 import itertools
@@ -28,7 +28,7 @@ map_name = "DR_CHN_Merging_ZS_partial_v02"
 output_dir = "/tmp/" + map_name
 
 # Map Definition
-xodr_parser = XodrParser("modules/runtime/tests/data/" + map_name + ".xodr")
+xodr_parser = XodrParser("bark/runtime/tests/data/" + map_name + ".xodr")
 
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
