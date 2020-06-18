@@ -22,6 +22,7 @@
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
+#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -46,6 +47,7 @@ using modules::world::goal_definition::GoalDefinitionSequential;
 using modules::models::behavior::BehaviorIDMClassic;
 using modules::models::behavior::BehaviorIDMLaneTracking;
 using modules::models::behavior::BehaviorConstantVelocity;
+using modules::models::behavior::BehaviorDynamicModel;
 using modules::models::behavior::BehaviorStaticTrajectory;
 using modules::models::behavior::BehaviorIntersectionRuleBased;
 using modules::models::behavior::BehaviorLaneChangeRuleBased;
@@ -76,6 +78,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
     behavior_model_name = "BehaviorMobil";
+  } else if (typeid(*behavior_model) == typeid(BehaviorDynamicModel)) {
+    behavior_model_name = "BehaviorDynamicModel";
   } else if (typeid(*behavior_model) == typeid(PyBehaviorModel)) {
     behavior_model_name = "PyBehaviorModel";
   }
@@ -120,6 +124,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("PyBehaviorModel") == 0) {
     return std::make_shared<PyBehaviorModel>(
       t[0].cast<PyBehaviorModel>());
+  } else if (behavior_model_name.compare("BehaviorDynamicModel") == 0) {
+    return std::make_shared<BehaviorDynamicModel>(
+      t[0].cast<BehaviorDynamicModel>());
   }
 #ifdef PLANNER_UCT
   else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
