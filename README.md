@@ -1,5 +1,5 @@
 <p align="center">
-<img src="docs/source/bark_logo.jpg" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
 ![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
@@ -27,19 +27,19 @@ Use `git clone https://github.com/bark-simulator/bark.git` or download the repos
 Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/master/docs/source/installation.md).
 Once you activated the virtual environment (`source dev_into.sh`), you can explore some examples of BARK.
 
-Highway: `bazel run //examples:highway`:
+Highway: `bazel run //bark/examples:highway`:
 <p align="center">
-<img src="docs/source/gifs/bark_highway.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_highway.gif" alt="BARK" />
 </p>
 
-Merging: `bazel run //examples:merging`:
+Merging: `bazel run //bark/examples:merging`:
 <p align="center">
-<img src="docs/source/gifs/bark_merging.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_merging.gif" alt="BARK" />
 </p>
 
-Intersection: `bazel run //examples:intersection`:
+Intersection: `bazel run //bark/examples:intersection`:
 <p align="center">
-<img src="docs/source/gifs/bark_intersection.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_intersection.gif" alt="BARK" />
 </p>
 
 To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.
