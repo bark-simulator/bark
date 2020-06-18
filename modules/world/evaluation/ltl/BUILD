@@ -6,6 +6,7 @@ cc_library(
     deps = [
         "//modules/world",
         "//modules/world/evaluation:base_evaluator",
+        "//modules/world/evaluation/ltl/labels:label_evaluation",
         "@rule_monitor_project//ltl:rule_monitor",
     ],
 )

@@ -13,9 +13,8 @@ modules::world::evaluation::EgoBeyondPointLabelFunction::
     EgoBeyondPointLabelFunction(const std::string& label_str,
                                 const modules::geometry::Point2d& beyond_point)
     : BaseLabelFunction(label_str), beyond_point_(beyond_point) {}
-std::vector<LabelMap::value_type>
-modules::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
-    const modules::world::ObservedWorld& observed_world) const {
+LabelMap modules::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
+  const modules::world::ObservedWorld& observed_world) const {
   const auto ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   const auto lc = observed_world.GetLaneCorridor();
   if (lc) {

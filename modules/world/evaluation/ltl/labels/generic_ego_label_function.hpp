@@ -25,8 +25,7 @@ class GenericEgoLabelFunction : public BaseLabelFunction {
   template <typename... Args>
   GenericEgoLabelFunction(const std::string& label_str, Args&&... args)
       : BaseLabelFunction(label_str), evaluator_(std::forward<Args>(args)...) {}
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override {
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override {
     T temp_eval(evaluator_);
     auto ego_agent = observed_world.GetEgoAgent();
     bool res = false;

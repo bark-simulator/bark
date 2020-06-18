@@ -23,8 +23,7 @@ using modules::world::objects::AgentPtr;
 class LaneChangeLabelFunction : public BaseLabelFunction {
  public:
   using BaseLabelFunction::BaseLabelFunction;
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 };
 
 }  // namespace evaluation

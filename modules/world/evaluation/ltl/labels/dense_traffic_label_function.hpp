@@ -24,8 +24,7 @@ class DenseTrafficLabelFunction : public BaseLabelFunction {
  public:
   DenseTrafficLabelFunction(const std::string& label_str, double radius,
                             size_t num_agents);
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 
  private:
   const double radius_;

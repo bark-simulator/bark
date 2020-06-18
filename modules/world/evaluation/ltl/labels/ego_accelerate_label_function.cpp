@@ -19,8 +19,8 @@ EgoAccelerateLabelFunction::EgoAccelerateLabelFunction(
     : BaseLabelFunction(label_str),
       acc_thres_(acc_thres) {}
 
-std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
-    const world::ObservedWorld& observed_world) const {
+LabelMap EgoAccelerateLabelFunction::Evaluate(
+  const world::ObservedWorld& observed_world) const {
   bool accel = false;
   const auto ego = observed_world.GetEgoAgent();
   const auto& history = ego->GetStateInputHistory();

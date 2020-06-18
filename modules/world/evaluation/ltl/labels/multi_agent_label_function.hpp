@@ -20,8 +20,7 @@ using objects::AgentPtr;
 class MultiAgentLabelFunction : public BaseLabelFunction {
  public:
   using BaseLabelFunction::BaseLabelFunction;
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
   virtual bool EvaluateAgent(const world::ObservedWorld& observed_world,
                               const AgentPtr& other_agent) const = 0;
 };

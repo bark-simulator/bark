@@ -38,8 +38,7 @@ World::World(const std::shared_ptr<World>& world)
       evaluators_(world->GetEvaluators()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
-      rtree_agents_(world->rtree_agents_),
-      label_evaluators_(world->GetLabelFunctions()) {
+      rtree_agents_(world->rtree_agents_) {
   //! segfault handler
   std::signal(SIGSEGV, modules::commons::SegfaultHandler);
 }
@@ -268,13 +267,6 @@ FrontRearAgents World::GetAgentFrontRearForId(
   return fr_agents;
 }
 
-void World::AddLabels(const LabelFunctions& label_evaluators) {
-  label_evaluators_.insert(label_evaluators_.end(), label_evaluators.begin(),
-                           label_evaluators.end());
-}
-const LabelFunctions& World::GetLabelFunctions() const {
-  return label_evaluators_;
-}
 void World::RemoveAgentById(AgentId agent_id) {
   size_t erased_elems = agents_.erase(agent_id);
   LOG_IF(ERROR, erased_elems == 0)

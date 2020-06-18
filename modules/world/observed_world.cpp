@@ -133,15 +133,6 @@ EvaluationMap ObservedWorld::Evaluate() const {
   return evaluation_results;
 }
 
-LabelMap ObservedWorld::EvaluateLabels() const {
-  LabelMap label_map;
-  for(auto const &le : label_evaluators_) {
-    auto labels = le->Evaluate(*this);
-    label_map.insert(labels.begin(), labels.end());
-  }
-  return label_map;
-}
-
 AgentMap ObservedWorld::GetValidOtherAgents() const {
   auto tmp_map = World::GetValidAgents();
   tmp_map.erase(ego_agent_id_);

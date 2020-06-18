@@ -19,8 +19,7 @@ class ConstantLabelFunction : public BaseLabelFunction {
  public:
   ConstantLabelFunction(const std::string& label_str)
       : BaseLabelFunction(label_str), value_(true) {}
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override {
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override {
     return {{ltl::Label(GetLabelStr()), value_}};
   }
   bool GetValue() const { return value_; }

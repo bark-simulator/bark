@@ -33,12 +33,9 @@ class PyBaseLabelFunction : public BaseLabelFunction {
  public:
   using BaseLabelFunction::BaseLabelFunction;
 
-  std::vector<LabelMap::value_type> Evaluate(
-      const ObservedWorld &observed_world) const override {
-    PYBIND11_OVERLOAD_PURE(
-        std::vector<LabelMap::value_type>, BaseLabelFunction,
-                           Evaluate,
-        observed_world
+  LabelMap Evaluate(const ObservedWorld& observed_world) const override {
+    PYBIND11_OVERLOAD_PURE(LabelMap, BaseLabelFunction, Evaluate,
+                           observed_world
     );
   }
 };

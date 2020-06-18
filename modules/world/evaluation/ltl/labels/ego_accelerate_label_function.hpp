@@ -24,8 +24,7 @@ class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
   EgoAccelerateLabelFunction(const std::string& label_str,
                              double acc_thres);
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
  private:
   const double acc_thres_;
 };

@@ -63,7 +63,8 @@ EvaluationReturn EvaluatorLTL::Evaluate(
   }
 
   // Obtain label values
-  auto labels = observed_world.EvaluateLabels();
+  LabelMap labels = EvaluateLabels(observed_world);
+
   unsigned int guarantee_violations = 0;
   float penalty = 0.0f;
   // Evaluate for every rule state

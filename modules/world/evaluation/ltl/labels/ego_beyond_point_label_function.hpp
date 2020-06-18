@@ -23,8 +23,7 @@ class EgoBeyondPointLabelFunction : public BaseLabelFunction {
  public:
   EgoBeyondPointLabelFunction(const std::string& label_str,
                               const Point2d& beyond_point);
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
   const Point2d& GetBeyondPoint() const;
 
  private:

@@ -21,8 +21,8 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(
       a_e_(a_e),
       a_o_(a_o) {}
 
-std::vector<LabelMap::value_type> SafeDistanceLabelFunction::Evaluate(
-    const world::ObservedWorld& observed_world) const {
+LabelMap SafeDistanceLabelFunction::Evaluate(
+  const world::ObservedWorld& observed_world) const {
   auto ego = std::const_pointer_cast<Agent>(observed_world.GetEgoAgent());
   auto lane_corridor =
       ego->GetRoadCorridor()->GetNearestLaneCorridor(ego->GetCurrentPosition());

@@ -47,10 +47,8 @@ void python_world(py::module m) {
     .def("ClearEvaluators", &World::ClearEvaluators)
     .def("SetMap", &World::SetMap)
     .def("AddEvaluator", &World::AddEvaluator)
-    .def("AddLabels", &World::AddLabels)
-      .def_property_readonly("labels", &World::GetLabelFunctions)
-      .def("GetNearestAgents", &World::GetNearestAgents)
-      .def_property_readonly("evaluators", &World::GetEvaluators)
+    .def("GetNearestAgents", &World::GetNearestAgents)
+    .def_property_readonly("evaluators", &World::GetEvaluators)
     .def("Evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::GetAgents)
     .def_property_readonly("agents_valid", &World::GetValidAgents)
@@ -91,8 +89,6 @@ void python_world(py::module m) {
     .def("PredictWithOthersIDM",
       &ObservedWorld::Predict<BehaviorIDMClassic, BehaviorDynamicModel>)
     .def_property_readonly("other_agents", &ObservedWorld::GetOtherAgents)
-    .def("AddLabels", &ObservedWorld::AddLabels)
-    .def("EvaluateLabels", &ObservedWorld::EvaluateLabels)
     .def("__repr__", [](const ObservedWorld& a) {
       return "bark.world.ObservedWorld";
     });

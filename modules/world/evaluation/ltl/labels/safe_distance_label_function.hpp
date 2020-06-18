@@ -24,8 +24,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
  public:
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
                             double delta, double a_e, double a_o);
-  std::vector<LabelMap::value_type> Evaluate(
-      const world::ObservedWorld& observed_world) const override;
+  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 
  private:
   bool CheckSafeDistance(const AgentPtr& rear_agent,

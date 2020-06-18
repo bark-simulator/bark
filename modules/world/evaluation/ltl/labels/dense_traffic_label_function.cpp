@@ -19,8 +19,8 @@ DenseTrafficLabelFunction::DenseTrafficLabelFunction(
     : BaseLabelFunction(label_str),
       radius_(std::abs(radius)),
       num_agents_(num_agents) {}
-std::vector<LabelMap::value_type> DenseTrafficLabelFunction::Evaluate(
-    const world::ObservedWorld& observed_world) const {
+LabelMap DenseTrafficLabelFunction::Evaluate(
+  const world::ObservedWorld& observed_world) const {
   size_t agent_count = 0;
   const auto& ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   // TODO(@cirrostratus1): Use rtree for performance

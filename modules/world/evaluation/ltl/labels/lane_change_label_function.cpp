@@ -15,8 +15,8 @@ using modules::geometry::Collide;
 using modules::models::dynamic::State;
 using modules::models::dynamic::StateDefinition;
 
-std::vector<LabelMap::value_type> LaneChangeLabelFunction::Evaluate(
-    const world::ObservedWorld& observed_world) const {
+LabelMap LaneChangeLabelFunction::Evaluate(
+  const world::ObservedWorld& observed_world) const {
   bool lane_change = false;
   const auto lc = observed_world.GetLaneCorridor();
   const auto ego = observed_world.GetEgoAgent();

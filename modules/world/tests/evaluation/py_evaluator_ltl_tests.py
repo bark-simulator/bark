@@ -20,10 +20,9 @@ class EvaluatorLTLTests(unittest.TestCase):
         self.world = scenario.GetWorldState()
         self.agent_id = 1
         self.label = ConstantLabelFunction("label")
-        self.world.AddLabels([self.label])
 
     def test_safety(self):
-        evaluator = EvaluatorLTL(1, "G label")
+        evaluator = EvaluatorLTL(1, "G label", [self.label])
         self.world.AddEvaluator("rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["rule"], 0)
@@ -47,13 +46,13 @@ class EvaluatorLTLTests(unittest.TestCase):
         self.assertEqual(res["rule"], 2)
 
     def test_safety_violation(self):
-        evaluator = EvaluatorLTL(1, "G !label")
+        evaluator = EvaluatorLTL(1, "G !label", [self.label])
         self.world.AddEvaluator("rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["rule"], 1)
 
     def test_guarantee(self):
-        evaluator = EvaluatorLTL(1, "F label")
+        evaluator = EvaluatorLTL(1, "F label", [self.label])
         self.world.AddEvaluator("rule", evaluator)
         self.label.value = False
         res = self.world.Evaluate()
@@ -72,14 +71,13 @@ class EvaluatorLTLTests(unittest.TestCase):
         self.assertEqual(res["rule"], 0)
 
     def test_guarantee_violation(self):
-        evaluator = EvaluatorLTL(1, "F !label")
+        evaluator = EvaluatorLTL(1, "F !label", [self.label])
         self.world.AddEvaluator("rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["rule"], 1)
 
     def test_agent_relative_rule(self):
-        self.world.AddLabels([BehindOfLabelFunction("behind_of")])
-        evaluator = EvaluatorLTL(0, "G behind_of#0")
+        evaluator = EvaluatorLTL(0, "G behind#0", [BehindOfLabelFunction("behind")])
         self.world.AddEvaluator("behind_rule", evaluator)
         res = self.world.Evaluate()
         self.assertEqual(res["behind_rule"], 0)
