@@ -25,8 +25,7 @@ std::vector<LabelMap::value_type> EgoAccelerateLabelFunction::Evaluate(
   const auto ego = observed_world.GetEgoAgent();
   const auto& history = ego->GetStateInputHistory();
   if (history.size() > 2) {
-    const auto dx =
-        history.back().first - (history.end() - 2)->first;
+    const auto dx = history.end()->first - (history.end() - 2)->first;
     const float dv = dx(StateDefinition::VEL_POSITION);
     const float dt = dx(StateDefinition::TIME_POSITION);
     const float avg_accel = dv / dt;
