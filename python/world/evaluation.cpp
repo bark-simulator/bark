@@ -100,11 +100,11 @@ void python_evaluation(py::module m) {
 
   py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
       m, "EvaluatorLTL")
-      .def(py::init<AgentId, const std::string &>())
-      .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
-      .def("__repr__", [](const EvaluatorLTL &g) {
-        return "bark.world.evaluation.EvaluatorLTL";
-      });
+    .def(py::init<AgentId, const std::string&, const LabelFunctions&>())
+    .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
+    .def("__repr__", [](const EvaluatorLTL& g) {
+      return "bark.world.evaluation.EvaluatorLTL";
+    });
 
   py::class_<EvaluatorRightOvertake, BaseEvaluator,
              std::shared_ptr<EvaluatorRightOvertake>>(m,

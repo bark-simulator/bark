@@ -18,11 +18,13 @@ namespace world {
 namespace evaluation {
 
 EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
-                           const std::string& ltl_formula_str)
+                           const std::string& ltl_formula_str,
+                           const LabelFunctions& label_functions)
     : safety_violations_(0),
       agent_id_(agent_id),
       ltl_formula_str_(ltl_formula_str),
-      monitor_(RuleMonitor::MakeRule(ltl_formula_str, -1.0, 0)) {
+      monitor_(RuleMonitor::MakeRule(ltl_formula_str, -1.0, 0)),
+      label_functions_(label_functions) {
   if (!monitor_->IsAgentSpecific()) {
     rule_states_.emplace_back(monitor_->MakeRuleState()[0]);
   }
@@ -86,6 +88,15 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     }
   }
   return static_cast<int>(safety_violations_ + guarantee_violations);
+}
+LabelMap EvaluatorLTL::EvaluateLabels(
+  const ObservedWorld& observed_world) const {
+  LabelMap labels;
+  for (auto const& le : label_functions_) {
+    auto label_map = le->Evaluate(observed_world);
+    labels.insert(label_map.begin(), label_map.end());
+  }
+  return labels;
 }
 
 /// Return agent IDs for which rule states have been previously created

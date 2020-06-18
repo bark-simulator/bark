@@ -29,7 +29,8 @@ typedef std::vector<LabelFunctionPtr> LabelFunctions;
 class EvaluatorLTL : public BaseEvaluator {
  public:
   EvaluatorLTL(modules::world::objects::AgentId agent_id,
-               const std::string& ltl_formula_str);
+               const std::string& ltl_formula_str,
+               const LabelFunctions& label_functions);
   EvaluationReturn Evaluate(const world::World& world) override;
   const std::vector<RuleState>& GetRuleStates() const;
 
@@ -46,6 +47,8 @@ class EvaluatorLTL : public BaseEvaluator {
   std::vector<RuleState> rule_states_;
   RuleMonitor::RuleMonitorSPtr monitor_;
   std::set<AgentId> known_agents_;
+  LabelFunctions label_functions_;
+  LabelMap EvaluateLabels(const ObservedWorld& observed_world) const;
 };
 }  // namespace evaluation
 }  // namespace world
