@@ -5,7 +5,7 @@ pkg_name='pip_package'
 workspace_name='bark_project'
 
 # activate virtual environment
-source ./python/venv/bin/activate 
+source ./bark/python_wrapper/venv/bin/activate 
 
 echo "Building package"
 bazel run //bark:$pkg_name
@@ -63,10 +63,10 @@ cd $build_dir/$workspace_name
 # for example macosx_10_9_x86_64. This does not direct work on linux because of lot of different potential for linux pypi rejects linux_x86_64 tag. so we when a standard wheel
 # for linux which will most likely work only on ubuntu or debian based x64 machines. to have support for all versions of linux, manylinux tag is used, which requires that the package
 # is built using a standard linux docker provided by https://github.com/pypa/manylinux
-python3 setup.py clean
-python3 setup.py sdist bdist_wheel
+python3.7 setup.py clean
+python3.7 setup.py sdist bdist_wheel
 
-python3 setup.py test
+python3.7 setup.py test
 
 if [ $? -eq 0 ]; then
     echo "Tests Passed!"
