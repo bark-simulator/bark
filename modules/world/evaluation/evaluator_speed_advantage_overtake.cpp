@@ -14,15 +14,17 @@
 namespace modules {
 namespace world {
 namespace evaluation {
+
+/// Overtake with a minimum speed advantage of 10 km/h!
 const char EvaluatorSpeedAdvantageOvertake::formula_[] =
-    "G (behind_j#0 & X(behind_j#0 U left_j#0 U in_front_j#0) -> "
-    "(speed_diff_j#0 U in_front_j#0))";
+    "G (behind#0 & X(behind#0 U left#0 U front#0) -> "
+    "(speed_diff#0 U front#0))";
 
 const LabelFunctions EvaluatorSpeedAdvantageOvertake::labels_ = {
-    LabelFunctionPtr(new LeftOfLabelFunction("left_j")),
-    LabelFunctionPtr(new FrontOfLabelFunction("in_front_j")),
-    LabelFunctionPtr(new BehindOfLabelFunction("behind_j")),
-    LabelFunctionPtr(new RelSpeedLabelFunction("speed_diff_j", 10.0 / 3.6))};
+    LabelFunctionPtr(new LeftOfLabelFunction("left")),
+    LabelFunctionPtr(new FrontOfLabelFunction("front")),
+    LabelFunctionPtr(new BehindOfLabelFunction("behind")),
+    LabelFunctionPtr(new RelSpeedLabelFunction("speed_diff", 10.0 / 3.6))};
 
 }  // namespace evaluation
 }  // namespace world

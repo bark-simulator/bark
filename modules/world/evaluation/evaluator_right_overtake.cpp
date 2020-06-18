@@ -13,8 +13,10 @@
 namespace modules {
 namespace world {
 namespace evaluation {
+
+/// Do not overtake to the right, if traffic is not dense!
 const char EvaluatorRightOvertake::formula_[] =
-    "G (!dense -> !(b_v#0 & X[!](b_v#0 U r_v#0 U f_v#0)))";
+    "G (!dense -> !(behind_j#0 & X[!](behind_j#0 U r_v#0 U front_j#0)))";
 
 const LabelFunctions EvaluatorRightOvertake::labels_ = {
     LabelFunctionPtr(new DenseTrafficLabelFunction("dense", 20.0, 8)),

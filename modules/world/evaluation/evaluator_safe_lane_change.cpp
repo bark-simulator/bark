@@ -11,6 +11,8 @@
 namespace modules {
 namespace world {
 namespace evaluation {
+
+/// Keep a safe distance to the successor vehicle when changing lanes!
 const char EvaluatorSafeLaneChange::formula_[] = "G (lane_change -> sd_rear)";
 
 const LabelFunctions EvaluatorSafeLaneChange::labels_ = {

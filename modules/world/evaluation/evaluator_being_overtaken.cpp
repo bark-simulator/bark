@@ -12,22 +12,22 @@
 namespace modules {
 namespace world {
 namespace evaluation {
+
+/// Do not accelerate while another vehicle is near and left (overtaking)!
 const char EvaluatorBeingOvertaken::formula_[] =
-    "G ((right_of#0 & other_near#0) -> !accel)";
+    "G ((right#0 & near#0) -> !accel)";
 
 const LabelFunctions EvaluatorBeingOvertaken::labels_ = {
-    LabelFunctionPtr(new RightOfLabelFunction(
-        "right_of")),
+    LabelFunctionPtr(new RightOfLabelFunction("right")),
     LabelFunctionPtr(new EgoAccelerateLabelFunction("accel", 0.5)),
-    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 3.0))};
+    LabelFunctionPtr(new AgentNearLabelFunction("near", 3.0))};
 
 const char EvaluatorBeingOvertakenAssumption::formula_[] =
-    "G !(right_of#0 & other_near#0)";
+    "G !(right#0 & near#0)";
 
 const LabelFunctions EvaluatorBeingOvertakenAssumption::labels_ = {
-    LabelFunctionPtr(new RightOfLabelFunction(
-        "right_of")),
-    LabelFunctionPtr(new AgentNearLabelFunction("other_near", 3.0))};
+    LabelFunctionPtr(new RightOfLabelFunction("right")),
+    LabelFunctionPtr(new AgentNearLabelFunction("near", 3.0))};
 
 }  // namespace evaluation
 }  // namespace world

@@ -16,21 +16,25 @@
 namespace modules {
 namespace world {
 namespace evaluation {
+
+/// Allow other vehicles on ending lanes to merge (zipper merge)
+/// This evaluator is parameterized for the DR_DEU_Merging_MT scenario of the
+/// INTERACTION dataset
 const char EvaluatorZipMergeDeu::formula_[] =
-    "G (((i_left_of_k#1 & i_behind_of_k#1 & k_near_i#1 & k_near_lane_end#1) & "
-    "j_precedes_i#0 & !merged_i & (j_precedes_i#0 | merged_j#0) U "
-    "merged_i) -> G(merged_i & merged_j#0 -> !j_precedes_i#0))";
+    "G (((left#1 & behind#1 & near#1 & near_lane_end#1) & "
+    "precedes#0 & !ego_merged & (precedes#0 | merged#0) U "
+    "ego_merged) -> G(ego_merged & merged#0 -> !precedes#0))";
 
 const LabelFunctions EvaluatorZipMergeDeu::labels_ = {
     LabelFunctionPtr(
-        new AgentBeyondPointLabelFunction("merged_j", Point2d(966, 1008))),
+        new AgentBeyondPointLabelFunction("merged", Point2d(966, 1008))),
     LabelFunctionPtr(
-        new EgoBeyondPointLabelFunction("merged_i", Point2d(966, 1008))),
-    LabelFunctionPtr(new PrecedingAgentLabelFunction("j_precedes_i")),
-    LabelFunctionPtr(new LeftOfLabelFunction("i_left_of_k")),
-    LabelFunctionPtr(new BehindOfLabelFunction("i_behind_of_k")),
-    LabelFunctionPtr(new AgentNearLabelFunction("k_near_i", 6.0)),
-    LabelFunctionPtr(new AgentAtLaneEndLabelFunction("k_near_lane_end", 55.0))};
+        new EgoBeyondPointLabelFunction("ego_merged", Point2d(966, 1008))),
+    LabelFunctionPtr(new PrecedingAgentLabelFunction("precedes")),
+    LabelFunctionPtr(new LeftOfLabelFunction("left")),
+    LabelFunctionPtr(new BehindOfLabelFunction("behind")),
+    LabelFunctionPtr(new AgentNearLabelFunction("near", 6.0)),
+    LabelFunctionPtr(new AgentAtLaneEndLabelFunction("near_lane_end", 55.0))};
 
 }  // namespace evaluation
 }  // namespace world

@@ -10,11 +10,13 @@
 namespace modules {
 namespace world {
 namespace evaluation {
-const char EvaluatorSafeDistance::formula_[] = "G safe_distance_front";
+
+/// Always keep a safe distance to the front vehicle!
+const char EvaluatorSafeDistance::formula_[] = "G sd_front";
 
 const LabelFunctions EvaluatorSafeDistance::labels_ = {
     LabelFunctionPtr(new SafeDistanceLabelFunction(
-        "safe_distance_front", false, EvaluatorSafeDistance::reaction_time,
+        "sd_front", false, EvaluatorSafeDistance::reaction_time,
         EvaluatorSafeDistance::decel_ego, EvaluatorSafeDistance::decel_front))};
 
 }  // namespace evaluation
