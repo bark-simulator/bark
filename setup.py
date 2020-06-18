@@ -6,14 +6,14 @@ with open("README.md", "r") as fh:
 
 setup(
     name = "bark-simulator",
-    version = "0.0.91",
+    version = "0.1.0",
     description = "A tool for Behavior benchmARKing",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    classifiers = ["Development Status :: 1 - Planning", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Operating System :: POSIX", "Programming Language :: Python :: 3.7"],
+    classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: Developers", "License :: OSI Approved :: MIT License", "Operating System :: POSIX", "Programming Language :: Python :: 3.7"],
     keywords = "simulator autonomous driving machine learning",
     url = "https://github.com/bark-simulator/bark",
-    author = "Fortiss",
+    author = "Fortiss GmbH",
     author_email = "cheema@fortiss.org",
     license = "MIT",
     packages=find_packages(),
