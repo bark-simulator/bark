@@ -50,7 +50,7 @@ void python_world(py::module m) {
     .def("AddLabels", &World::AddLabels)
       .def_property_readonly("labels", &World::GetLabelFunctions)
       .def("GetNearestAgents", &World::GetNearestAgents)
-    .def_property_readonly("evaluators", &World::GetEvaluators)
+      .def_property_readonly("evaluators", &World::GetEvaluators)
     .def("Evaluate", &World::Evaluate)
     .def_property_readonly("agents", &World::GetAgents)
     .def_property_readonly("agents_valid", &World::GetValidAgents)
