@@ -124,99 +124,6 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_ltl",
-    hdrs = [
-        "evaluator_ltl.hpp"
-    ],
-    srcs = [
-         "evaluator_ltl.cpp",
-    ],
-    deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
-        "@rule_monitor_project//ltl:rule_monitor"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_right_overtake",
-    srcs = ["evaluator_right_overtake.cpp"],
-    hdrs = ["evaluator_right_overtake.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_safe_distance",
-    srcs = ["evaluator_safe_distance.cpp"],
-    hdrs = ["evaluator_safe_distance.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_safe_lane_change",
-    srcs = ["evaluator_safe_lane_change.cpp"],
-    hdrs = ["evaluator_safe_lane_change.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_being_overtaken",
-    srcs = ["evaluator_being_overtaken.cpp"],
-    hdrs = ["evaluator_being_overtaken.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_speed_advantage_overtake",
-    srcs = ["evaluator_speed_advantage_overtake.cpp"],
-    hdrs = ["evaluator_speed_advantage_overtake.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_zip_merge_deu",
-    srcs = ["evaluator_zip_merge_deu.cpp"],
-    hdrs = ["evaluator_zip_merge_deu.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "evaluator_zip_merge_chn",
-    srcs = ["evaluator_zip_merge_chn.cpp"],
-    hdrs = ["evaluator_zip_merge_chn.hpp"],
-    deps = [
-        ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
-    ],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -227,14 +134,7 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
-        ":evaluator_ltl",
-        ":evaluator_right_overtake",
-        ":evaluator_safe_distance",
-        ":evaluator_safe_lane_change",
-        ":evaluator_being_overtaken",
-        ":evaluator_speed_advantage_overtake",
-        ":evaluator_zip_merge_deu",
-        ":evaluator_zip_merge_chn",
+        "//modules/world/evaluation/ltl:evaluator_ltl",
     ],
     visibility = ["//visibility:public"],
 )
