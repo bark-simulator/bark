@@ -108,7 +108,7 @@ Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
   return traj;
 }
 
-const Trajectory &BehaviorStaticTrajectory::get_static_trajectory() const {
+const Trajectory& BehaviorStaticTrajectory::GetStaticTrajectory() const {
   return static_trajectory_;
 }
 

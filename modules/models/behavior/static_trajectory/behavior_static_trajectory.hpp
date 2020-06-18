@@ -37,7 +37,7 @@ class BehaviorStaticTrajectory : public BehaviorModel {
   Trajectory Plan(float min_planning_time,
                   const world::ObservedWorld& observed_world) override;
   std::shared_ptr<BehaviorModel> Clone() const override;
-  const Trajectory& get_static_trajectory() const;
+  const Trajectory& GetStaticTrajectory() const;
   void UpdateBehaviorStatus(float delta_time,
                             const world::ObservedWorld& observed_world);
 
