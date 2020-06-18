@@ -72,7 +72,7 @@ class Scenario:
     for agent in self._agent_list:
       agent.GenerateRoadCorridor(self._map_interface)
       world.AddAgent(agent)
-      world.UpdateAgentRTree()
+    world.UpdateAgentRTree()
     return world
 
   def __getstate__(self):
