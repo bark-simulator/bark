@@ -30,6 +30,12 @@ class BenchmarkConfig:
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
 
+    def __eq__(self, other):
+        return self.config_idx == other.config_idx
+
+    def __hash__(self):
+        return self.config_idx
+
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),
                         "Behavior: {}".format(self.behavior_name),
@@ -45,6 +51,9 @@ class BenchmarkResult:
         self.__benchmark_configs = benchmark_configs
         self.__data_frame = None
         self.__histories = histories or []
+
+    def drop_histories(self):
+        self.__histories.clear()
 
     def get_data_frame(self):
         if not isinstance(self.__data_frame, pd.DataFrame):
@@ -69,9 +78,14 @@ class BenchmarkResult:
 
     @staticmethod
     def find_benchmark_config(benchmark_configs, config_idx):
-        BenchmarkResult._sort_bench_confs(benchmark_configs)
-        bench_conf = benchmark_configs[config_idx]
-        assert (bench_conf.config_idx == config_idx)
+        # BenchmarkResult._sort_bench_confs(benchmark_configs)
+        b_conf_list = list(filter(lambda x: x.config_idx == config_idx, benchmark_configs))
+        bench_conf = None
+        if len(b_conf_list) == 0:
+            logging.error("Benchmark config {} not found!".format(config_idx))
+        else:
+            bench_conf = list(b_conf_list)[0]
+            assert (bench_conf.config_idx == config_idx)
         return bench_conf
 
     @staticmethod
@@ -92,9 +106,17 @@ class BenchmarkResult:
             self.__data_frame = None
         if not dump_configs:
             self.__benchmark_configs = None
-        with open(filename, 'wb') as handle:
-            pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        logging.info("Saved BenchmarkResult to {}".format(
+        try:
+            with open(filename, 'wb') as handle:
+                pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        except Exception as e:
+            logging.error('Failed to write results to {}!\nError: {}\nRetrying without history.'.format(filename, e))
+            self.drop_histories()
+            (root, ext) = os.path.splitext(filename)
+            filename = "{}_no_histories{}".format(root, ext)
+            with open(filename, 'wb') as handle:
+                pickle.dump(self, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        logging.info('Saved BenchmarkResult to {}'.format(
             os.path.abspath(filename)))
 
 
@@ -118,14 +140,14 @@ class BenchmarkRunner:
         self.exceptions_caught = []
         self.log_eval_avg_every = log_eval_avg_every
         self.logger = logging.getLogger(logger_name or "BenchmarkRunner")
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(logging.INFO)
 
     def _create_configurations(self, num_scenarios=None):
         benchmark_configs = []
-        for behavior_name, behavior_bark in self.behaviors.items():
-            # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_set_name in self.benchmark_database:
-                for scenario, scenario_idx in scenario_generator:
+        # run over all scenario generators from benchmark database
+        for scenario_generator, scenario_set_name in self.benchmark_database:
+            for scenario, scenario_idx in scenario_generator:
+                for behavior_name, behavior_bark in self.behaviors.items():
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
                     benchmark_config = \
@@ -140,7 +162,7 @@ class BenchmarkRunner:
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
 
-    def run(self, viewer=None, maintain_history=False):
+    def run(self, viewer=None, maintain_history=False, stage_dir=None):
         results = []
         histories = {}
         for idx, bmark_conf in enumerate(self.benchmark_configs):
@@ -153,11 +175,26 @@ class BenchmarkRunner:
             histories[bmark_conf.config_idx] = scenario_history
             if self.log_eval_avg_every and (idx + 1) % self.log_eval_avg_every == 0:
                 self._log_eval_average(results)
+                if stage_dir:
+                    stage_result = BenchmarkResult(results, self.benchmark_configs, histories=histories)
+                    try:
+                        stage_result.dump(os.path.join(stage_dir, "stage_{}_{}.pickle".format(os.getpid(), idx + 1)))
+                    except Exception as e:
+                        logging.error('Failed to save stage: {}'.format(e))
+                        if maintain_history:
+                            logging.warning('Retrying without history')
+                            stage_result.drop_histories()
+                            stage_result.dump(
+                                os.path.join(stage_dir, "stage_{}_{}_no_history.pickle".format(os.getpid(), idx + 1)))
+
         return BenchmarkResult(results, self.benchmark_configs, histories=histories)
 
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
             if bmark_conf.config_idx == config_idx:
+                self.logger.info("Running config idx {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
+                    idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
+                    bmark_conf.scenario_set_name, bmark_conf.behavior_name))
                 return self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
         self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
         return
