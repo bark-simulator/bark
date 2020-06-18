@@ -4,8 +4,9 @@
 
 ## Code Structure 
 
-This guide describes the updates to bark probject as part of pip packaging work and builds upon **bark** with updated directory structure for concise import paths, along with other changes and updates required for the packaging process.  
-All the modules  are now sub-module of main bark module, and are imported w.r.t it.  C++ python bindings previously in python folder are now in python_wrapper folder under bark main directory and similarly components from module directory are also placed under bark directory. C++ python library is renamed `core.so` from `bark.so` and all modules imported from the C++ library are under bark.core.*.
+This guide describes the updates to bark probject as part of pip packaging work and builds upon bark with updated directory structure for concise import paths, along with other changes and updates required for the packaging process.  
+
+All the modules  are now sub-module of main bark module, and are imported w.r.t it.  C++ python bindings previously in python folder are now in python_wrapper folder under bark main directory and similarly components from module directory are also placed directly under bark directory. C++ python library is renamed `core.so` from `bark.so` and all modules imported from the C++ library are under bark.core.*.
 
 > The import paths have been updated from following
 
@@ -70,6 +71,5 @@ After successful completion of tests, the package is built using
 > This approach works for non Linux distributions only as setup.py generates literal platform specific versions  for non Linux OS's while for all the Linux distros it generates a generic linux_x86_64 tag, which is rejected by PyPi repository.  For Linux, the [PyPi standard](https://packaging.python.org/specifications/platform-compatibility-tags/) requires that a standard docker image called [manylinux](https://github.com/pypa/manylinux) be used for building the wheel. 
 > The process for building pip package in the specified docker container has some complications caused by Bazel support along with C++ libraries. so the  current approach is to have version specific wheels for Mac OS and a generic wheel for Linux based systems that is build on Ubuntu 64. It shall not work with all of Linux distros but shall be compatible with most of debian based architectures.
  
-Once a wheel is built, it can be uploaded to PyPi repository. 
-- `python3 -m twine upload --skip-existing dist/*`
+Once a wheel is built, it can be uploaded to PyPi repository `python3 -m twine upload --skip-existing dist/*`
 
