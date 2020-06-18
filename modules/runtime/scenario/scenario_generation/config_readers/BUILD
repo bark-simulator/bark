@@ -9,7 +9,6 @@ py_library(
      "dynamic_model_config_readers.py",
      "controlled_agents_config_readers.py",
      "goal_definition_config_readers.py",
-     "rule_generation.py",
      ],
     data = ['//python:bark.so'],
     imports = ['../../../python'],
