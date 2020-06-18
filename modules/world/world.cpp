@@ -123,7 +123,7 @@ EvaluationMap World::Evaluate() const {
 }
 
 std::vector<ObservedWorld> World::Observe(
-    const std::vector<AgentId>& agent_ids) const {
+  const std::vector<AgentId>& agent_ids) {
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {

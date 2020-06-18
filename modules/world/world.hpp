@@ -99,8 +99,7 @@ class World : public commons::BaseType {
   /**
    * @brief  Generates and ObservedWorld for the specified agents
    */
-  std::vector<ObservedWorld> Observe(
-      const std::vector<AgentId>& agent_ids) const;
+  std::vector<ObservedWorld> Observe(const std::vector<AgentId>& agent_ids);
 
   /**
    * @brief  Updates the agent r-tree

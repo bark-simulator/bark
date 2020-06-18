@@ -29,8 +29,9 @@ EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
 }
 
 EvaluationReturn EvaluatorLTL::Evaluate(const modules::world::World& world) {
+  auto cloned_world = world.Clone();
   if (world.GetAgent(agent_id_)) {
-    return Evaluate(world.Observe({agent_id_})[0]);
+    return Evaluate(cloned_world->Observe({agent_id_})[0]);
   } else {
     return static_cast<int>(safety_violations_);
   }
