@@ -5,9 +5,9 @@
 
 #include "modules/world/evaluation/ltl/evaluator_being_overtaken.hpp"
 
-#include "modules/world/evaluation/labels/agent_near_label_function.hpp"
-#include "modules/world/evaluation/labels/ego_accelerate_label_function.hpp"
-#include "modules/world/evaluation/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/agent_near_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/ego_accelerate_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/right_of_label_function.hpp"
 
 namespace modules {
 namespace world {

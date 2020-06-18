@@ -15,12 +15,7 @@ namespace evaluation {
 class EvaluatorBeingOvertaken : public EvaluatorLTL {
  public:
   explicit EvaluatorBeingOvertaken(AgentId agent_id)
-      : EvaluatorLTL(agent_id, formula_) {}
-  EvaluationReturn Evaluate(const world::World& world) override {
-    auto cloned_world = world.Clone();
-    cloned_world->AddLabels(labels_);
-    return EvaluatorLTL::Evaluate(*cloned_world);
-  }
+      : EvaluatorLTL(agent_id, formula_, labels_) {}
 
   static const char formula_[];
   static const LabelFunctions labels_;
@@ -29,12 +24,7 @@ class EvaluatorBeingOvertaken : public EvaluatorLTL {
 class EvaluatorBeingOvertakenAssumption : public EvaluatorLTL {
  public:
   explicit EvaluatorBeingOvertakenAssumption(AgentId agent_id)
-      : EvaluatorLTL(agent_id, formula_) {}
-  EvaluationReturn Evaluate(const world::World& world) override {
-    auto cloned_world = world.Clone();
-    cloned_world->AddLabels(labels_);
-    return EvaluatorLTL::Evaluate(*cloned_world);
-  }
+      : EvaluatorLTL(agent_id, formula_, labels_) {}
 
   static const char formula_[];
   static const LabelFunctions labels_;

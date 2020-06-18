@@ -5,10 +5,10 @@
 
 #include "modules/world/evaluation/ltl/evaluator_right_overtake.hpp"
 
-#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
-#include "modules/world/evaluation/labels/dense_traffic_label_function.hpp"
-#include "modules/world/evaluation/labels/front_of_label_function.hpp"
-#include "modules/world/evaluation/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/dense_traffic_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/front_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/right_of_label_function.hpp"
 
 namespace modules {
 namespace world {

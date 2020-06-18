@@ -5,7 +5,7 @@
 
 #include "modules/world/evaluation/ltl/evaluator_safe_distance.hpp"
 
-#include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
 
 namespace modules {
 namespace world {

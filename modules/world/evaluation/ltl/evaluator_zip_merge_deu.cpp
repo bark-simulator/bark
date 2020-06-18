@@ -5,13 +5,13 @@
 
 #include "modules/world/evaluation/ltl/evaluator_zip_merge_deu.hpp"
 
-#include "modules/world/evaluation/labels/agent_at_lane_end_label_function.hpp"
-#include "modules/world/evaluation/labels/agent_beyond_point_label_function.hpp"
-#include "modules/world/evaluation/labels/agent_near_label_function.hpp"
-#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
-#include "modules/world/evaluation/labels/ego_beyond_point_label_function.hpp"
-#include "modules/world/evaluation/labels/left_of_label_function.hpp"
-#include "modules/world/evaluation/labels/preceding_agent_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/agent_at_lane_end_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/agent_near_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/ego_beyond_point_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/preceding_agent_label_function.hpp"
 
 namespace modules {
 namespace world {

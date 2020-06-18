@@ -4,12 +4,11 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
+#include "modules/world/map/roadgraph.hpp"
 #include <utility>
 #include "gtest/gtest.h"
-#include "modules/world/map/roadgraph.hpp"
 #include "modules/world/opendrive/opendrive.hpp"
-#include "make_test_xodr_map.hpp"
+#include "modules/world/tests/make_test_xodr_map.hpp"
 
 TEST(roadgraph, road_creation)
 {

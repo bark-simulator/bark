@@ -5,11 +5,11 @@
 
 #include "modules/world/evaluation/ltl/evaluator_speed_advantage_overtake.hpp"
 
-#include "modules/world/evaluation/labels/behind_of_label_function.hpp"
-#include "modules/world/evaluation/labels/front_of_label_function.hpp"
-#include "modules/world/evaluation/labels/left_of_label_function.hpp"
-#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
-#include "modules/world/evaluation/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/behind_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/front_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/right_of_label_function.hpp"
 
 namespace modules {
 namespace world {

@@ -24,6 +24,8 @@ using ltl::RuleMonitor;
 using ltl::RuleState;
 using objects::AgentId;
 
+typedef std::vector<LabelFunctionPtr> LabelFunctions;
+
 class EvaluatorLTL : public BaseEvaluator {
  public:
   EvaluatorLTL(modules::world::objects::AgentId agent_id,

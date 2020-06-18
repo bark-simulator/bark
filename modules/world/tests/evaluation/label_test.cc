@@ -9,12 +9,12 @@
 #include "modules/models/behavior/motion_primitives/macro_actions.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
-#include "modules/world/evaluation/labels/agent_near_label_function.hpp"
-#include "modules/world/evaluation/labels/lane_change_label_function.hpp"
-#include "modules/world/evaluation/labels/left_of_label_function.hpp"
-#include "modules/world/evaluation/labels/rel_speed_label_function.hpp"
-#include "modules/world/evaluation/labels/right_of_label_function.hpp"
-#include "modules/world/evaluation/labels/safe_distance_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/agent_near_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/lane_change_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/left_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/right_of_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
 #include "modules/world/tests/make_test_world.hpp"
 
 using namespace modules::world::evaluation;

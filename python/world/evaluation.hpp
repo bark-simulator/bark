@@ -9,7 +9,7 @@
 #define PYTHON_PYTHON_BINDINGS_WORLD_EVALUATION_HPP_
 
 #include "modules/world/evaluation/base_evaluator.hpp"
-#include "modules/world/evaluation/labels/base_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/base_label_function.hpp"
 #include "python/common.hpp"
 
 namespace py = pybind11;

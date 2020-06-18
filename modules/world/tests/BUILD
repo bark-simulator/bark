@@ -53,62 +53,6 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
-cc_library(
-    name = "constant_label_evaluator",
-    hdrs = ["constant_label_evaluator.hpp"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//modules/world:include",
-        "//modules/world/evaluation:base_evaluator",
-        "@rule_monitor_project//ltl:rule_monitor",
-    ],
-)
-
-
-cc_test(
-    name = "opendrive_tests",
-    srcs = [
-        "opendrive_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/geometry",
-        "//modules/world/opendrive",
-        "//modules/world:world",
-        "@gtest//:gtest_main",
-    ],
-)
-
-cc_test(
-    name = "road_corridor_tests",
-    srcs = [
-        "road_corridor_tests.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/world/opendrive:opendrive",
-        "//modules/world/map:road_corridor",
-        "//modules/world/map:map_interface",
-        ":make_test_xodr_map",
-        "@gtest//:gtest_main",
-    ],
-)
-
-cc_test(
-    name = "agent_test",
-    srcs = [
-        "agent_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/geometry",
-        "//modules/world:world",
-        "//modules/models/behavior/constant_velocity:constant_velocity",
-        "//modules/models/execution/interpolation:interpolation",
-        "@gtest//:gtest_main",
-    ],
-)
-
 cc_test(
     name = "world_test",
     srcs = [
@@ -152,73 +96,6 @@ cc_test(
     ],
 )
 
-cc_test(
-    name = "roadgraph_test",
-    srcs = [
-        "roadgraph_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/world/map:roadgraph",
-        "//modules/world/opendrive",
-        ":make_test_xodr_map",
-        "@gtest//:gtest_main",
-    ],
-)
-
-cc_test(
-    name = "map_interface_test",
-    srcs = [
-        "map_interface_test.cc",
-    ],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        "//modules/world/map:map_interface",
-        "//modules/world/opendrive",
-        ":make_test_xodr_map",
-        "@gtest//:gtest_main",
-    ],
-)
-
-cc_binary(
-    name = "label_test",
-    srcs = ["label_test.cc"],
-    copts = ["-Iexternal/gtest/include"],
-    deps = [
-        ":make_test_world",
-        "//modules/world/evaluation/labels:label_evaluation",
-        "//modules/models/behavior/motion_primitives:motion_primitives",
-        "@gtest//:gtest_main",
-    ],
-)
-
-py_test(
-  name = "py_opendrive_tests",
-  srcs = ["py_opendrive_tests.py"],
-  data = ['//python:bark.so'],
-  imports = ['../../../python/'],
-  deps = [],
-)
-
-py_test(
-  name = "py_map_interface_tests",
-  srcs = ["py_map_interface_tests.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime:runtime"],
-)
-
-py_test(
-  name = "py_agent_tests",
-  srcs = ["py_agent_tests.py"],
-  data = ['//python:bark.so'],
-  imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters"],
-)
-
 py_test(
   name = "py_world_tests",
   srcs = ["py_world_tests.py"],
@@ -237,39 +114,4 @@ py_test(
   deps = ["//modules/runtime/commons:parameters",
           "//modules/runtime:runtime",
           "//modules/runtime/viewer:video_renderer"],
-)
-
-py_test(
-  name = "py_roadgraph_test",
-  srcs = ["py_roadgraph_test.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",],
-)
-
-py_test(
-  name = "py_road_corridor_tests",
-  srcs = ["py_road_corridor_tests.py"],
-  data = ['//python:bark.so',
-          '//modules/runtime/tests:xodr_data'],
-  imports = ['../../../python/'],
-  deps = ["//modules/runtime/commons:parameters",
-          "//modules/runtime/commons:xodr_parser",
-          "//modules/runtime:runtime"]
-)
-
-py_test(
-    name = "py_evaluator_ltl_tests",
-    srcs = ["py_evaluator_ltl_tests.py"],
-        data = [
-            "//modules/runtime/tests:xodr_data",
-            "//python:bark.so",
-        ],
-        imports = ["../../python/"],
-        deps = [
-            "//modules/runtime/commons:parameters",
-            "//modules/runtime/scenario/scenario_generation",
-        ],
 )

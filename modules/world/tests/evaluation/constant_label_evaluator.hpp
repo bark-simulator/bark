@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "modules/world/evaluation/labels/base_label_function.hpp"
+#include "modules/world/evaluation/ltl/labels/base_label_function.hpp"
 
 namespace modules {
 namespace world {
