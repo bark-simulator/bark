@@ -50,7 +50,8 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
     observed_world.GetEgoAgent()->GetCurrentState();
   double start_time = observed_world.GetWorldTime();
   float dt = integration_time_delta_;
-  int num_trajectory_points = static_cast<int>(std::ceil(min_planning_time / dt));
+  int num_trajectory_points =
+    static_cast<int>(std::ceil(min_planning_time / dt)) + 1;
 
   dynamic::Trajectory traj(
     num_trajectory_points, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
