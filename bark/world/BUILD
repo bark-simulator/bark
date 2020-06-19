@@ -13,6 +13,7 @@ cc_library(
         "//bark/models/execution:execution",
 	      "//bark/models/dynamic:dynamic",
         "//bark/world/evaluation:base_evaluator",
+        "//bark/world/evaluation/labels:base_label_evaluator",
         "//bark/world/goal_definition:goal_definition"
     ],
     visibility = ["//visibility:public"],
@@ -30,6 +31,7 @@ cc_library(
         "//bark/models:include",
         "//bark/world/evaluation:include",
         "//bark/world/goal_definition:include"
+        "//bark/world/evaluation/labels:include",
     ],
     visibility = ["//visibility:public"],
 )

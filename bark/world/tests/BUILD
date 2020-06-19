@@ -171,6 +171,18 @@ cc_test(
     ],
 )
 
+cc_binary(
+    name = "label_test",
+    srcs = ["label_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        ":make_test_world",
+        "//bark/world/evaluation/labels:label_evaluation",
+        "//bark/models/behavior/motion_primitives:motion_primitives",
+        "@gtest//:gtest_main",
+    ],
+)
+
 py_test(
   name = "py_opendrive_tests",
   srcs = ["py_opendrive_tests.py"],
@@ -227,4 +239,13 @@ py_test(
           '//bark/runtime/tests:xodr_data'],
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"]
+)
+
+py_test(
+    name = "py_evaluator_ltl_tests",
+    srcs = ["py_evaluator_ltl_tests.py"],
+    data = ["//bark:generate_core",
+            "//bark/runtime/tests:xodr_data"],
+    deps = ["//bark/runtime/commons:parameters",
+            "//bark/runtime/scenario/scenario_generation"],
 )
