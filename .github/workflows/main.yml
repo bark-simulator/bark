@@ -11,8 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment
-        run: virtualenv -p python3 ./python/venv  --system-site-packages
+        run: virtualenv -p python3 ./bark/python_wrapper/venv  --system-site-packages
       - name: Getting into venv
-        run: . ./python/venv/bin/activate
+        run: . ./bark/python_wrapper/venv/bin/activate
       - name: Runing bazel test
         run: bazel test //...

@@ -1,3 +1,2 @@
 #!/bin/bash
-
-source ./python/venv/bin/activate 
+source ./bark/python_wrapper/venv/bin/activate 

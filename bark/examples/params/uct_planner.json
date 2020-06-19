@@ -1,0 +1,255 @@
+{
+    "Visualization": {
+        "Map": {
+            "XodrLanes": {
+                "Boundaries": {
+                    "Color": [
+                        0.7,
+                        0.7,
+                        0.7
+                    ],
+                    "Alpha": 1.0
+                }
+            },
+            "Plane": {
+                "Color": [
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                "Alpha": 1.0
+            }
+        },
+        "Agents": {
+            "DrawEvalGoals": false,
+            "EvalGoalColor": [
+                0.0,
+                0.0,
+                0.2
+            ],
+            "ColorRoute": [
+                0.2,
+                0.2,
+                0.2
+            ],
+            "DrawRoute": false,
+            "AlphaVehicle": 0.8,
+            "Color": {
+                "Other": [
+                    0.7,
+                    0.7,
+                    0.7
+                ],
+                "Controlled": [
+                    0.9,
+                    0,
+                    0
+                ]
+            }
+        }
+    },
+    "BehaviorUCTSingleAgent": {
+        "DumpTree": false,
+        "MotionPrimitiveInputs": [
+            [
+                4.0,
+                0.0
+            ],
+            [
+                -4.0,
+                0.0
+            ],
+            [
+                0.0,
+                -0.13
+            ],
+            [
+                0.0,
+                0.13
+            ],
+            [
+                -1.0,
+                -0.13
+            ],
+            [
+                -1.0,
+                0.13
+            ],
+            [
+                1.0,
+                -0.13
+            ],
+            [
+                1.0,
+                0.13
+            ]
+        ],
+        "ReturnLowerBound": -1000.0,
+        "MaxSearchTime": 20000,
+        "MaxSearchTimeRandomHeuristic": 100.0,
+        "ReturnUpperBound": 100.0,
+        "MaxNumIterationsRandomHeuristic": 1000.0,
+        "MaxNumIterations": 50000,
+        "DiscountFactor": 0.9,
+        "RandomSeed": 1000,
+        "UCTExplorationConstant": 0.7
+    },
+    "integration_time_delta": 0.009999999776482582,
+    "Scenario": {
+        "Generation": {
+            "UniformVehicleDistribution": {
+                "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
+                "EgoGoalStart": [
+                    5111.626,
+                    5006.8305
+                ],
+                "EgoGoalEnd": [
+                    5111.626,
+                    5193.1725
+                ],
+                "EgoGoalStateLimits": [
+                    0.5,
+                    0,
+                    0
+                ],
+                "EgoRoute": [
+                    [
+                        5116,
+                        5072
+                    ],
+                    [
+                        5116,
+                        5074
+                    ]
+                ],
+                "OthersSource": [
+                    [
+                        5111.626,
+                        5006.8305
+                    ]
+                ],
+                "OthersSink": [
+                    [
+                        5111.626,
+                        5193.1725
+                    ]
+                ],
+                "VehicleDistanceRange": [
+                    10,
+                    20
+                ],
+                "OtherVehicleVelocityRange": [
+                    2,
+                    8
+                ],
+                "EgoVehicleVelocityRange": [
+                    10,
+                    12
+                ],
+                "VehicleModel": {
+                    "behavior_model": "BehaviorIDMClassic",
+                    "dynamic_model": "SingleTrackModel",
+                    "execution_model": "ExecutionModelInterpolate",
+                    "id": 0,
+                    "state": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "shape": {
+                        "polygon_points": [
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ],
+                            [
+                                3.7720000743865967,
+                                -0.4950000047683716
+                            ],
+                            [
+                                3.4260001182556152,
+                                -0.8870000243186951
+                            ],
+                            [
+                                2.9140000343322754,
+                                -0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                -0.9559999704360962
+                            ],
+                            [
+                                0.0,
+                                -0.9559999704360962
+                            ],
+                            [
+                                -0.5120000243186951,
+                                -0.8859999775886536
+                            ],
+                            [
+                                -1.0199999809265137,
+                                -0.5889999866485596
+                            ],
+                            [
+                                -1.11899995803833,
+                                0.0
+                            ],
+                            [
+                                -1.0199999809265137,
+                                0.5889999866485596
+                            ],
+                            [
+                                -0.5120000243186951,
+                                0.8859999775886536
+                            ],
+                            [
+                                0.0,
+                                0.9559999704360962
+                            ],
+                            [
+                                1.4570000171661377,
+                                0.9559999704360962
+                            ],
+                            [
+                                2.9140000343322754,
+                                0.9559999704360962
+                            ],
+                            [
+                                3.4260001182556152,
+                                0.8870000243186951
+                            ],
+                            [
+                                3.7720000743865967,
+                                0.4950000047683716
+                            ],
+                            [
+                                3.8499999046325684,
+                                0.0
+                            ]
+                        ],
+                        "center_pose": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "followed_trajectory": [],
+                    "planned_trajectory": []
+                }
+            }
+        }
+    },
+    "agent": {
+        "MaxHistoryLength": 50
+    },
+    "simulation": {
+        "step_time": 0.2,
+        "real_time_factor": 1
+    },
+    "World": {
+        "remove_agents_out_of_map":true
+    }
+}
