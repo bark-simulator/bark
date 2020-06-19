@@ -1,8 +1,21 @@
 from setuptools import setup, find_packages, Extension
-import sys
+import os,sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+    
+
+# A dummy native extension to mark module as platform specific
+ext_modules= []
+if sys.platform != 'linux':
+    try:
+        os.mkdir('build')
+    except FileExistsError:
+        # directory already exists - is already created by earlier run
+        pass
+    open('build/temp.c','w').close()
+    temp_ext = Extension('_temp', sources=['build/temp.c'])
+    ext_modules.append(temp_ext)
 
 setup(
     name = "bark-simulator",
@@ -37,12 +50,7 @@ setup(
     'jupyter>=1.0.0',
     'ipython>=7.13.0'
     ],
-    ext_modules=[
-        Extension(
-            name='',
-            sources=[]
-        )
-    ] if sys.platform != 'linux' else [],
+    ext_modules=ext_modules,
     test_suite='nose.collector',
     tests_require=['nose'],
     include_package_data=True,
