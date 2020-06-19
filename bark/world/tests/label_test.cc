@@ -5,10 +5,10 @@
 
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/models/behavior/motion_primitives/macro_actions.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
-#include "modules/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/world/evaluation/labels/agent_near_label_function.hpp"
 #include "bark/world/evaluation/labels/lane_change_label_function.hpp"
 #include "bark/world/evaluation/labels/left_of_label_function.hpp"

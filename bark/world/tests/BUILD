@@ -55,6 +55,16 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "constant_label_evaluator",
+    hdrs = ["constant_label_evaluator.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bark/world:include",
+        "//bark/world/evaluation:base_evaluator",
+        "@rule_monitor_project//ltl:rule_monitor",
+    ],
+)
 
 cc_test(
     name = "opendrive_tests",

@@ -30,7 +30,7 @@ cc_library(
         "//bark/commons:include",
         "//bark/models:include",
         "//bark/world/evaluation:include",
-        "//bark/world/goal_definition:include"
+        "//bark/world/goal_definition:include",
         "//bark/world/evaluation/labels:include",
     ],
     visibility = ["//visibility:public"],

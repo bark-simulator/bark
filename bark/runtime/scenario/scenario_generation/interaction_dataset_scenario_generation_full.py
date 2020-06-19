@@ -6,7 +6,7 @@
 
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
+from bark.runtime.scenario.interaction_dataset_processing import InteractionDatasetReader
 from bark.runtime.scenario.interaction_dataset_processing import DatasetDecomposer
 from bark.runtime.commons import ParameterServer
 # PyBind imports
@@ -14,6 +14,7 @@ from bark.core.world.map import *
 from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 
+import logging
 
 class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
     # This class reads in a track file from the interaction dataset

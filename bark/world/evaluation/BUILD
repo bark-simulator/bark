@@ -132,8 +132,8 @@ cc_library(
          "evaluator_ltl.cpp",
     ],
     deps = [
-        "//modules/world/evaluation:base_evaluator",
-        "//modules/world:world",
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
         "@rule_monitor_project//ltl:rule_monitor"
     ],
     visibility = ["//visibility:public"],
@@ -145,7 +145,7 @@ cc_library(
     hdrs = ["evaluator_right_overtake.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -156,7 +156,7 @@ cc_library(
     hdrs = ["evaluator_safe_distance.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -167,7 +167,7 @@ cc_library(
     hdrs = ["evaluator_safe_lane_change.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -178,7 +178,7 @@ cc_library(
     hdrs = ["evaluator_being_overtaken.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -189,7 +189,7 @@ cc_library(
     hdrs = ["evaluator_speed_advantage_overtake.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -200,7 +200,7 @@ cc_library(
     hdrs = ["evaluator_zip_merge_deu.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
@@ -211,7 +211,7 @@ cc_library(
     hdrs = ["evaluator_zip_merge_chn.hpp"],
     deps = [
         ":evaluator_ltl",
-        "//modules/world/evaluation/labels:label_evaluation"
+        "//bark/world/evaluation/labels:label_evaluation"
     ],
     visibility = ["//visibility:public"],
 )
