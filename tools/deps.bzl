@@ -72,7 +72,7 @@ glog_library(with_gflags=0)
     _maybe(
     native.new_local_repository,
     name = "python_linux",
-    path = "./python/venv/",
+    path = "./bark/python_wrapper/venv/",
     build_file_content = """
 cc_library(
     name = "python-lib",
