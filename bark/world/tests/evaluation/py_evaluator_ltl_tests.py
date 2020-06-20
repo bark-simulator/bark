@@ -1,7 +1,7 @@
 import unittest
 
 from bark.core.world import *
-from bark.core.world.evaluation import *
+from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark.runtime.scenario.scenario_generation.deterministic import DeterministicScenarioGeneration

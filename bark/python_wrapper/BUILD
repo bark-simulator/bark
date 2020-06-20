@@ -9,11 +9,12 @@ cc_binary(
     "world/*.cpp", "world/*.hpp",
     "models/*.cpp", "models/*.hpp",
     "viewer/*.cpp", "viewer/*.hpp",
-    "runtime.hpp"]),
+    "runtime.hpp"], exclude=["world/ltl.cpp", "world/ltl.hpp"])
+    + select({"//bark/world/evaluation/ltl:_ltl": ["world/ltl.cpp", "world/ltl.hpp"], "//conditions:default": []}),
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen", 
+    "@com_github_eigen_eigen//:eigen",
     "@rule_monitor_project//python/bindings:rule_monitor",
     "//bark/runtime/tests:py_param_server_test_helper",
     "//bark/geometry:geometry",
@@ -23,8 +24,6 @@ cc_binary(
     "//bark/world/map:roadgraph",
     "//bark/world/goal_definition:goal_definition",
     "//bark/world/evaluation:evaluation",
-    "//bark/world/evaluation/ltl/labels:label_evaluation",
-    "//bark/world/tests/evaluation:constant_label_evaluator",
     "//bark/commons/params:params",
     "//bark/commons/util:util",
     "//bark/models/execution/interpolation:interpolation",
@@ -42,8 +41,13 @@ cc_binary(
     "//bark/world:world",
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners"
-  ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []}),
-  copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []}), 
+  ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/ltl:_ltl": ["//bark/world/evaluation/ltl/labels:label_evaluation",
+                                                 "//bark/world/tests/evaluation:constant_label_evaluator",
+                                                 "//bark/world/evaluation/ltl:evaluator_ltl"],
+            "//conditions:default": []}),
+  copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/ltl:_ltl" : ["-D LTL"], "//conditions:default": []}),
   linkshared = 1,
   linkstatic = 1
 )
@@ -55,7 +59,7 @@ cc_library(
     deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen", 
+    "@com_github_eigen_eigen//:eigen",
     ]
 )
 
@@ -69,7 +73,7 @@ cc_library(
     ":common",
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen", 
+    "@com_github_eigen_eigen//:eigen",
     "//bark/models/behavior/constant_velocity:constant_velocity",
     "//bark/models/behavior/motion_primitives:motion_primitives",
     "//bark/models/behavior/dynamic_model:dynamic_model",

@@ -8,7 +8,6 @@
 #ifndef PYTHON_PYTHON_BINDINGS_WORLD_EVALUATION_HPP_
 #define PYTHON_PYTHON_BINDINGS_WORLD_EVALUATION_HPP_
 
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
 #include "bark/python_wrapper/common.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
 
@@ -26,17 +25,6 @@ class PyBaseEvaluator : public BaseEvaluator {
         BaseEvaluator,
         Evaluate,
         world);
-  }
-};
-
-class PyBaseLabelFunction : public BaseLabelFunction {
- public:
-  using BaseLabelFunction::BaseLabelFunction;
-
-  LabelMap Evaluate(const ObservedWorld& observed_world) const override {
-    PYBIND11_OVERLOAD_PURE(LabelMap, BaseLabelFunction, Evaluate,
-                           observed_world
-    );
   }
 };
 

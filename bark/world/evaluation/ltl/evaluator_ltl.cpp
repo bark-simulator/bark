@@ -9,7 +9,10 @@
 #include <string>
 #include <vector>
 
+#ifdef LTL
 #include "ltl/rule_monitor.h"
+#endif
+
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
 
@@ -17,6 +20,7 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
+#ifdef LTL
 EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
                            const std::string& ltl_formula_str,
                            const LabelFunctions& label_functions)
@@ -73,10 +77,9 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     penalty = rs.GetAutomaton()->Evaluate(labels, rs);
     if (penalty != 0.0f) {
       safety_violations_++;
-      VLOG(1) << "Rule \"" << ltl_formula_str_
-                   << "\" violated in timestep "
-                   << observed_world.GetWorldTime() << " for agent ids "
-                   << rs.GetAgentIds() << " !";
+      VLOG(1) << "Rule \"" << ltl_formula_str_ << "\" violated in timestep "
+              << observed_world.GetWorldTime() << " for agent ids "
+              << rs.GetAgentIds() << " !";
     }
     // Check for violations of guarantee properties by assuming the trace
     // has ended.
@@ -91,7 +94,7 @@ EvaluationReturn EvaluatorLTL::Evaluate(
   return static_cast<int>(safety_violations_ + guarantee_violations);
 }
 LabelMap EvaluatorLTL::EvaluateLabels(
-  const ObservedWorld& observed_world) const {
+    const ObservedWorld& observed_world) const {
   LabelMap labels;
   for (auto const& le : label_functions_) {
     auto label_map = le->Evaluate(observed_world);
@@ -137,6 +140,10 @@ void EvaluatorLTL::RemoveRuleStates(std::vector<int> current_agents) {
 const std::vector<RuleState>& EvaluatorLTL::GetRuleStates() const {
   return rule_states_;
 }
+
+#else
+EvaluatorLTL::EvaluatorLTL(){};
+#endif
 
 }  // namespace evaluation
 }  // namespace world

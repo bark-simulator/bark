@@ -10,24 +10,29 @@
 #include <string>
 #include <vector>
 
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
-#include "ltl/rule_state.h"
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/world.hpp"
+#ifdef LTL
+#include "ltl/rule_state.h"
+#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
+#endif
 
 namespace modules {
 namespace world {
 namespace evaluation {
 
+#ifdef LTL
 using ltl::RuleMonitor;
 using ltl::RuleState;
-using objects::AgentId;
-
 typedef std::vector<LabelFunctionPtr> LabelFunctions;
+#endif
+
+using objects::AgentId;
 
 class EvaluatorLTL : public BaseEvaluator {
  public:
+#ifdef LTL
   EvaluatorLTL(modules::world::objects::AgentId agent_id,
                const std::string& ltl_formula_str,
                const LabelFunctions& label_functions);
@@ -49,6 +54,9 @@ class EvaluatorLTL : public BaseEvaluator {
   std::set<AgentId> known_agents_;
   LabelFunctions label_functions_;
   LabelMap EvaluateLabels(const ObservedWorld& observed_world) const;
+#else
+  EvaluatorLTL();
+#endif
 };
 }  // namespace evaluation
 }  // namespace world

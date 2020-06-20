@@ -5,16 +5,19 @@
 
 #include "gtest/gtest.h"
 
-#include "bark/commons/params/setter_params.hpp"
-#include "bark/models/behavior/motion_primitives/macro_actions.hpp"
-#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
-#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
+#ifdef LTL
 #include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
+#endif
+
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
+#include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
 using namespace modules::world::evaluation;
@@ -23,6 +26,8 @@ using namespace modules::models::behavior;
 using namespace modules::models::behavior::primitives;
 
 using modules::commons::SetterParams;
+
+#ifdef LTL
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));
@@ -202,6 +207,8 @@ TEST(label_test, agent_near) {
   auto label2 = evaluator->GetLabel(2);
   EXPECT_FALSE(labels2[label2]);
 }
+
+#endif
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);

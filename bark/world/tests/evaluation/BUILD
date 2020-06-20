@@ -12,25 +12,39 @@ cc_library(
 cc_test(
     name = "label_test",
     srcs = ["label_test.cc"],
-    copts = ["-Iexternal/gtest/include"],
+    copts = ["-Iexternal/gtest/include"] + select({
+        "//bark/world/evaluation/ltl:_ltl": ["-D LTL"],
+        "//conditions:default": [],
+    }),
     deps = [
-        "//bark/world/tests:make_test_world",
-        "//bark/world/evaluation/ltl/labels:label_evaluation",
-        "//bark/models/behavior/motion_primitives:motion_primitives",
         "@gtest//:gtest_main",
-    ],
+        "//bark/world/tests:make_test_world",
+        "//bark/models/behavior/motion_primitives:motion_primitives",
+    ] + select({
+        "//bark/world/evaluation/ltl:_ltl": [
+            "//bark/world/evaluation/ltl/labels:label_evaluation",
+        ],
+        "//conditions:default": [],
+    }),
 )
 
 py_test(
     name = "py_evaluator_ltl_tests",
-    srcs = ["py_evaluator_ltl_tests.py"],
-        data = [
-            "//bark/runtime/tests:xodr_data",
-            "//bark/python_wrapper:core.so",
-        ],
-        imports = ["../../../python/"],
-        deps = [
-            "//bark/runtime/commons:parameters",
-            "//bark/runtime/scenario/scenario_generation",
-        ],
+    srcs = select({
+        "//bark/world/evaluation/ltl:_ltl": ["py_evaluator_ltl_tests.py"],
+        "//conditions:default": ["py_dummy_test.py"],
+    }),
+    data = [
+        "//bark/python_wrapper:core.so",
+        "//bark/runtime/tests:xodr_data",
+    ],
+    imports = ["../../../python/"],
+    main = select({
+        "//bark/world/evaluation/ltl:_ltl": "py_evaluator_ltl_tests.py",
+        "//conditions:default": "py_dummy_test.py",
+    }),
+    deps = [
+        "//bark/runtime/commons:parameters",
+        "//bark/runtime/scenario/scenario_generation",
+    ],
 )
