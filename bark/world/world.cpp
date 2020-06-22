@@ -173,6 +173,7 @@ void World::RemoveInvalidAgents() {
 }
 
 AgentMap World::GetNearestAgents(const bark::geometry::Point2d& position,
+                                 const unsigned int& num_agents) const {
   std::vector<rtree_agent_value> results_n;
 
   rtree_agents_.query(boost::geometry::index::nearest(position, num_agents),
@@ -198,7 +199,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
     auto agent = GetAgent(result_pair.second);
-    if (bark::geometry::Collide(
+    if (modules::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
         agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
       intersecting_agents[result_pair.second] = agent;
