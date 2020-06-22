@@ -4,14 +4,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_PARAMS_SETTER_PARAMS_HPP_
-#define MODULES_COMMONS_PARAMS_SETTER_PARAMS_HPP_
+#ifndef BARK_COMMONS_PARAMS_SETTER_PARAMS_HPP_
+#define BARK_COMMONS_PARAMS_SETTER_PARAMS_HPP_
 
 #include <string>
 #include <unordered_map>
 #include "bark/commons/params/params.hpp"
 #include "bark/commons/util/util.hpp"
-namespace modules {
+namespace bark {
 namespace commons {
 
 // This class is mainly useful for test definitions in C++
@@ -199,6 +199,6 @@ inline std::unordered_map<std::string, std::vector<float>>
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_COMMONS_PARAMS_SETTER_PARAMS_HPP_
+#endif  // BARK_COMMONS_PARAMS_SETTER_PARAMS_HPP_

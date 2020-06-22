@@ -12,7 +12,7 @@
 #include "bark/world/opendrive/lane_section.hpp"
 #include "bark/geometry/commons.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -34,4 +34,4 @@ XodrLanePtr XodrLaneSection::GetLaneByPosition(XodrLanePosition pos) {
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

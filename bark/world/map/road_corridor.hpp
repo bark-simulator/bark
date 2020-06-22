@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_MAP_ROAD_CORRIDOR_HPP_
-#define MODULES_WORLD_MAP_ROAD_CORRIDOR_HPP_
+#ifndef BARK_WORLD_MAP_ROAD_CORRIDOR_HPP_
+#define BARK_WORLD_MAP_ROAD_CORRIDOR_HPP_
 
 #include <map>
 #include <vector>
@@ -20,17 +20,17 @@
 #include "bark/geometry/geometry.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
-using modules::geometry::Line;
-using modules::geometry::Polygon;
-using modules::geometry::Point2d;
-using modules::geometry::Within;
-using modules::geometry::BufferPolygon;
-using modules::world::opendrive::XodrRoadId;
-using modules::world::opendrive::XodrDrivingDirection;
+using bark::geometry::Line;
+using bark::geometry::Polygon;
+using bark::geometry::Point2d;
+using bark::geometry::Within;
+using bark::geometry::BufferPolygon;
+using bark::world::opendrive::XodrRoadId;
+using bark::world::opendrive::XodrDrivingDirection;
 
 
 struct RoadCorridor {
@@ -135,6 +135,6 @@ using RoadCorridorPtr = std::shared_ptr<RoadCorridor>;
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_MAP_ROAD_CORRIDOR_HPP_
+#endif  // BARK_WORLD_MAP_ROAD_CORRIDOR_HPP_

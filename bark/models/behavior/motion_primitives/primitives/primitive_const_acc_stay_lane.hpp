@@ -4,12 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
-#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
+#define BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
 
 #include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 namespace primitives {
@@ -44,6 +44,6 @@ class PrimitiveConstAccStayLane : public Primitive, BehaviorIDMLaneTracking {
 }  // namespace primitives
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_CONST_ACC_STAY_LANE_HPP_

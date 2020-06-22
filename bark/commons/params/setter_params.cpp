@@ -6,7 +6,7 @@
 
 #include "bark/commons/params/setter_params.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 SetterParams::SetterParams(bool log_if_default,
@@ -60,4 +60,4 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark

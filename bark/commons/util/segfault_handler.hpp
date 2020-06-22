@@ -5,12 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
-#define MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
+#ifndef BARK_COMMONS_SEGFAULT_HANDLER_HPP_
+#define BARK_COMMONS_SEGFAULT_HANDLER_HPP_
 
 #include <boost/stacktrace.hpp>
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 void SegfaultHandler(int sig) {
@@ -18,7 +18,7 @@ void SegfaultHandler(int sig) {
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 
-#endif  // MODULES_COMMONS_SEGFAULT_HANDLER_HPP_
+#endif  // BARK_COMMONS_SEGFAULT_HANDLER_HPP_

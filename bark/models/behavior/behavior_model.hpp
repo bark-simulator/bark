@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
-#define MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
+#define BARK_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
 
 #include <Eigen/Dense>
 #include <memory>
@@ -14,7 +14,7 @@
 #include "bark/commons/base_type.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 class Agent;
@@ -45,7 +45,7 @@ enum BehaviorStatus : unsigned int {
   EXPIRED = 2
 };
 
-class BehaviorModel : public modules::commons::BaseType {
+class BehaviorModel : public bark::commons::BaseType {
  public:
   explicit BehaviorModel(const commons::ParamsPtr& params,
                          BehaviorStatus status)
@@ -104,6 +104,6 @@ typedef std::shared_ptr<BehaviorModel> BehaviorModelPtr;
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_BEHAVIOR_MODEL_HPP_

@@ -11,8 +11,8 @@
 #include "bark/models/execution/execution_model.hpp"
 
 namespace py = pybind11;
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
 
 class PyExecutionModel : public ExecutionModel {
  public:

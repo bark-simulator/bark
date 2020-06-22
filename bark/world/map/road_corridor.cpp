@@ -8,7 +8,7 @@
 #include <memory>
 #include "bark/world/map/road_corridor.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
@@ -39,4 +39,4 @@ RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

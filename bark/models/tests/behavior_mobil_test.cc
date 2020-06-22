@@ -18,25 +18,25 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::world::map;
-using namespace modules::models::dynamic;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
+using namespace bark::models::dynamic;
 
-using modules::geometry::Model3D;
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::geometry::Pose;
-using modules::geometry::standard_shapes::CarRectangle;
-using modules::world::ObservedWorld;
-using modules::world::World;
-using modules::world::WorldPtr;
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::world::objects::Agent;
-using modules::world::objects::AgentPtr;
-using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+using bark::geometry::Model3D;
+using bark::geometry::Point2d;
+using bark::geometry::Polygon;
+using bark::geometry::Pose;
+using bark::geometry::standard_shapes::CarRectangle;
+using bark::world::ObservedWorld;
+using bark::world::World;
+using bark::world::WorldPtr;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
+using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
 TEST(slower_preceding_agent, behavior_mobil) {
   // Setting Up Map
@@ -67,7 +67,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
                             car_polygon, params, goal_definition_ptr,
-                            map_interface, modules::geometry::Model3D()));
+                            map_interface, bark::geometry::Model3D()));
 
   // Preceding Agent
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
@@ -78,7 +78,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   init_state2 << 0.0, 15.0, -1.75, 0.0, 2.0;
   AgentPtr agent2(new Agent(init_state2, beh_model2, dyn_model2, exec_model2,
                             car_polygon, params, goal_definition_ptr,
-                            map_interface, modules::geometry::Model3D()));
+                            map_interface, bark::geometry::Model3D()));
 
   // Construct World
   WorldPtr world(new World(params));

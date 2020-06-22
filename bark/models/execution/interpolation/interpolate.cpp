@@ -9,7 +9,7 @@
 #include "bark/models/execution/interpolation/interpolate.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
 
@@ -126,4 +126,4 @@ void ExecutionModelInterpolate::Execute(
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

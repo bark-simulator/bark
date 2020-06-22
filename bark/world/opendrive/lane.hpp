@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_OPENDRIVE_LANE_HPP_
-#define MODULES_WORLD_OPENDRIVE_LANE_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_LANE_HPP_
+#define BARK_WORLD_OPENDRIVE_LANE_HPP_
 
 #include <map>
 #include <string>
@@ -14,12 +14,12 @@
 #include "bark/geometry/line.hpp"
 #include "bark/world/opendrive/commons.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
-using modules::geometry::Point2d;
-using modules::geometry::Line;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
 
 
 class XodrLane {
@@ -112,6 +112,6 @@ inline XodrLanePtr CreateLaneFromLaneWidth(XodrLanePosition lane_position,
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_LANE_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_LANE_HPP_

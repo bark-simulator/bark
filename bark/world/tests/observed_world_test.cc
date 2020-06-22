@@ -25,29 +25,29 @@
 #include "bark/world/tests/make_test_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::behavior;
-using namespace modules::models::execution;
-using namespace modules::world::map;
+using namespace bark::models::dynamic;
+using namespace bark::models::behavior;
+using namespace bark::models::execution;
+using namespace bark::world::map;
 
-using modules::commons::SetterParams;
-using modules::commons::SetterParams;
-using modules::commons::transformation::FrenetPosition;
-using modules::geometry::Model3D;
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::geometry::Pose;
-using modules::geometry::standard_shapes::CarRectangle;
-using modules::world::FrontRearAgents;
-using modules::world::ObservedWorld;
-using modules::world::ObservedWorldPtr;
-using modules::world::World;
-using modules::world::WorldPtr;
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::world::objects::Agent;
-using modules::world::objects::AgentPtr;
-using modules::world::opendrive::OpenDriveMapPtr;
-using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+using bark::commons::SetterParams;
+using bark::commons::SetterParams;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Model3D;
+using bark::geometry::Point2d;
+using bark::geometry::Polygon;
+using bark::geometry::Pose;
+using bark::geometry::standard_shapes::CarRectangle;
+using bark::world::FrontRearAgents;
+using bark::world::ObservedWorld;
+using bark::world::ObservedWorldPtr;
+using bark::world::World;
+using bark::world::WorldPtr;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
+using bark::world::opendrive::OpenDriveMapPtr;
+using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 using StateDefinition::MIN_STATE_SIZE;
 
 TEST(observed_world, agent_in_front_same_lane) {
@@ -213,8 +213,8 @@ TEST(observed_world, agent_in_front_other_lane) {
 }
 
 TEST(observed_world, clone) {
-  using modules::world::evaluation::EvaluatorCollisionAgents;
-  using modules::world::evaluation::EvaluatorPtr;
+  using bark::world::evaluation::EvaluatorCollisionAgents;
+  using bark::world::evaluation::EvaluatorPtr;
 
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
@@ -260,14 +260,14 @@ TEST(observed_world, clone) {
 }
 
 TEST(observed_world, predict) {
-  using modules::models::behavior::BehaviorMotionPrimitives;
-  using modules::models::behavior::BehaviorMPContinuousActions;
-  using modules::models::behavior::DiscreteAction;
-  using modules::models::dynamic::Input;
-  using modules::world::prediction::PredictionSettings;
-  using modules::world::tests::make_test_observed_world;
+  using bark::models::behavior::BehaviorMotionPrimitives;
+  using bark::models::behavior::BehaviorMPContinuousActions;
+  using bark::models::behavior::DiscreteAction;
+  using bark::models::dynamic::Input;
+  using bark::world::prediction::PredictionSettings;
+  using bark::world::tests::make_test_observed_world;
   using StateDefinition::VEL_POSITION;
-  namespace mg = modules::geometry;
+  namespace mg = bark::geometry;
 
   auto params = std::make_shared<SetterParams>();
   params->SetReal("integration_time_delta", 0.01);

@@ -32,7 +32,7 @@
 * @param t      tangent direction at s [rad]
 */
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -46,4 +46,4 @@ void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start, 
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

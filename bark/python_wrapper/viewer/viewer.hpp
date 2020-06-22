@@ -14,8 +14,8 @@
 
 namespace py = pybind11;
 
-using namespace modules::commons;
-using namespace modules::viewer;
+using namespace bark::commons;
+using namespace bark::viewer;
 
 class PyViewer : public Viewer {
  public:

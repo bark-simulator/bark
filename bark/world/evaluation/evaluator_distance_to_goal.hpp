@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
+#ifndef BARK_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
+#define BARK_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
 
 #include <memory>
 #include <limits>
@@ -14,7 +14,7 @@
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 class ObservedWorld;
@@ -35,10 +35,10 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
   }
 
   static float DistanceToGoal(
-    const std::shared_ptr<const modules::world::objects::Agent>& agent) {
+    const std::shared_ptr<const bark::world::objects::Agent>& agent) {
     const auto& goal_shape = agent->GetGoalDefinition()->GetShape();
     const auto& agent_pos = agent->GetCurrentPosition();
-    float dist = modules::geometry::Distance(goal_shape, agent_pos);
+    float dist = bark::geometry::Distance(goal_shape, agent_pos);
     return dist;
   }
 
@@ -55,6 +55,6 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
+#endif  // BARK_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_

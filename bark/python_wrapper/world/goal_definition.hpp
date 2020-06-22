@@ -14,22 +14,22 @@
 #include "bark/geometry/polygon.hpp"
 
 namespace py = pybind11;
-using modules::world::goal_definition::GoalDefinition;
+using bark::world::goal_definition::GoalDefinition;
 
 class PyGoalDefinition : public GoalDefinition {
  public:
   using GoalDefinition::GoalDefinition;
 
-  bool AtGoal(const modules::world::objects::Agent& agent) override {
+  bool AtGoal(const bark::world::objects::Agent& agent) override {
     PYBIND11_OVERLOAD_PURE(
         bool,
         GoalDefinition,
         AtGoal,
         agent);
   }
-  const modules::geometry::Polygon& GetShape() const override {
+  const bark::geometry::Polygon& GetShape() const override {
     PYBIND11_OVERLOAD(
-        modules::geometry::Polygon&,
+        bark::geometry::Polygon&,
         GoalDefinition,
         GetShape);
   }

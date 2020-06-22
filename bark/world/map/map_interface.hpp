@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_MAP_MAP_INTERFACE_HPP_
-#define MODULES_WORLD_MAP_MAP_INTERFACE_HPP_
+#ifndef BARK_WORLD_MAP_MAP_INTERFACE_HPP_
+#define BARK_WORLD_MAP_MAP_INTERFACE_HPP_
 
 #include <vector>
 #include <map>
@@ -19,16 +19,16 @@
 #include "bark/world/map/road_corridor.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
-using modules::world::opendrive::XodrLanePtr;
-using modules::world::opendrive::XodrLaneId;
-using modules::world::opendrive::XodrDrivingDirection;
-using modules::world::opendrive::OpenDriveMapPtr;
-using modules::geometry::Point2d;
-using modules::geometry::Line;
+using bark::world::opendrive::XodrLanePtr;
+using bark::world::opendrive::XodrLaneId;
+using bark::world::opendrive::XodrDrivingDirection;
+using bark::world::opendrive::OpenDriveMapPtr;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
 
 using rtree_lane_model = boost::geometry::model::segment<Point2d>;
 using rtree_lane_id = XodrLanePtr;
@@ -96,10 +96,10 @@ class MapInterface {
   RoadCorridorPtr GenerateRoadCorridor(const XodrRoadId& start_road_id,
     const XodrRoadId& end_road_id);
   RoadCorridorPtr GenerateRoadCorridor(
-    const modules::geometry::Point2d& start_point,
-    const modules::geometry::Polygon& goal_region);
+    const bark::geometry::Point2d& start_point,
+    const bark::geometry::Polygon& goal_region);
   bool XodrLaneIdAtPolygon(
-    const modules::geometry::Polygon&  polygon,
+    const bark::geometry::Polygon&  polygon,
     XodrLaneId& found_lane_id) const;
   RoadCorridorPtr GetRoadCorridor(const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction) {
@@ -136,6 +136,6 @@ using MapInterfacePtr = std::shared_ptr<MapInterface>;
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_MAP_MAP_INTERFACE_HPP_
+#endif  // BARK_WORLD_MAP_MAP_INTERFACE_HPP_

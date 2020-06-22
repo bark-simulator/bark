@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OPENDRIVE_JUNCTION_HPP_
-#define MODULES_WORLD_OPENDRIVE_JUNCTION_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
+#define BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
 
 #include <map>
 #include <vector>
 #include <string>
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -43,6 +43,6 @@ using JunctionPtr = std::shared_ptr<Junction>;
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_JUNCTION_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_JUNCTION_HPP_

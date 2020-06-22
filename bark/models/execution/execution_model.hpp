@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_EXECUTION_EXECUTION_MODEL_HPP_
-#define MODULES_MODELS_EXECUTION_EXECUTION_MODEL_HPP_
+#ifndef BARK_MODELS_EXECUTION_EXECUTION_MODEL_HPP_
+#define BARK_MODELS_EXECUTION_EXECUTION_MODEL_HPP_
 
 #include <Eigen/Core>
 #include <memory>
@@ -14,7 +14,7 @@
 #include "bark/commons/base_type.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
 
@@ -31,7 +31,7 @@ enum ExecutionStatus : unsigned int {
 
 class ExecutionModel : public commons::BaseType {
  public:
-  explicit ExecutionModel(modules::commons::ParamsPtr params) :
+  explicit ExecutionModel(bark::commons::ParamsPtr params) :
     BaseType(params),
     last_state_(),
     last_trajectory_(),
@@ -80,6 +80,6 @@ typedef std::shared_ptr<ExecutionModel> ExecutionModelPtr;
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_EXECUTION_EXECUTION_MODEL_HPP_
+#endif  // BARK_MODELS_EXECUTION_EXECUTION_MODEL_HPP_

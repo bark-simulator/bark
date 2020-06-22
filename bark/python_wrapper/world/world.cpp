@@ -20,16 +20,16 @@
 #include "bark/python_wrapper/world/evaluation.hpp"
 
 namespace py = pybind11;
-using namespace modules::world::objects;
-using namespace modules::world::map;
-using namespace modules::world::opendrive;
-using modules::world::World;
-using modules::models::behavior::BehaviorDynamicModel;
-using modules::models::behavior::BehaviorIDMClassic;
-using modules::world::WorldPtr;
-using modules::world::ObservedWorldPtr;
-using modules::commons::ParamsPtr;
-using modules::models::behavior::Action;
+using namespace bark::world::objects;
+using namespace bark::world::map;
+using namespace bark::world::opendrive;
+using bark::world::World;
+using bark::models::behavior::BehaviorDynamicModel;
+using bark::models::behavior::BehaviorIDMClassic;
+using bark::world::WorldPtr;
+using bark::world::ObservedWorldPtr;
+using bark::commons::ParamsPtr;
+using bark::models::behavior::Action;
 
 
 void python_world(py::module m) {
@@ -65,7 +65,7 @@ void python_world(py::module m) {
     });
 
   m.def("MakeTestWorldHighway",
-    &modules::world::tests::MakeTestWorldHighway);
+    &bark::world::tests::MakeTestWorldHighway);
 
   py::class_<ObservedWorld, World, std::shared_ptr<ObservedWorld>>(m, "ObservedWorld")
     .def(py::init<const WorldPtr&, const AgentId&>())

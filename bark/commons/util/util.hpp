@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_COMMONS_UTIL_HPP_
-#define MODULES_COMMONS_UTIL_HPP_
+#ifndef BARK_COMMONS_UTIL_HPP_
+#define BARK_COMMONS_UTIL_HPP_
 
 #include <stdexcept>    // std::logic_error
 #include <iostream>     // std::cerr
@@ -15,7 +15,7 @@
 #include "bark/commons/util/operators.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 // ASSERTION
@@ -25,17 +25,17 @@ namespace commons {
   }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 #define BARK_EXPECT_TRUE(cond) \
     do \
     { \
         if (!(cond)) \
         { \
-            modules::commons::AssertionFailedMsg(#cond,__FUNCTION__, __FILE__, __LINE__); \
+            bark::commons::AssertionFailedMsg(#cond,__FUNCTION__, __FILE__, __LINE__); \
         } \
     } while(0)
 
 
 
-#endif  // MODULES_COMMONS_UTIL_HPP_
+#endif  // BARK_COMMONS_UTIL_HPP_

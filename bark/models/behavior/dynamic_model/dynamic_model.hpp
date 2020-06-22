@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
-#define MODULES_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
+#define BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
 
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/world/world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -54,6 +54,6 @@ inline std::shared_ptr<BehaviorModel> BehaviorDynamicModel::Clone() const {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_

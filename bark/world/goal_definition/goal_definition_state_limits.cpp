@@ -7,18 +7,18 @@
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/objects/agent.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace goal_definition {
 
 
 bool GoalDefinitionStateLimits::AtGoal(
-  const modules::world::objects::Agent& agent) {
+  const bark::world::objects::Agent& agent) {
   const auto agent_state = agent.GetCurrentState();
-  auto agent_angle = modules::geometry::Norm0To2PI(
-    agent_state[modules::models::dynamic::StateDefinition::THETA_POSITION]);
-  const modules::geometry::Point2d agent_pos = agent.GetCurrentPosition();
-  return (modules::geometry::Within(agent_pos, xy_limits_) &&
+  auto agent_angle = bark::geometry::Norm0To2PI(
+    agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION]);
+  const bark::geometry::Point2d agent_pos = agent.GetCurrentPosition();
+  return (bark::geometry::Within(agent_pos, xy_limits_) &&
           agent_angle >= angle_limits_.first &&
           agent_angle <= angle_limits_.second);
 }
@@ -26,4 +26,4 @@ bool GoalDefinitionStateLimits::AtGoal(
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

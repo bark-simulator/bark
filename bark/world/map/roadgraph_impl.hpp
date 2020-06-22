@@ -4,10 +4,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_ROADGRAPH_IMPL_HPP_
-#define MODULES_WORLD_ROADGRAPH_IMPL_HPP_
+#ifndef BARK_WORLD_ROADGRAPH_IMPL_HPP_
+#define BARK_WORLD_ROADGRAPH_IMPL_HPP_
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
@@ -88,6 +88,6 @@ std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_ROADGRAPH_IMPL_HPP_
+#endif  // BARK_WORLD_ROADGRAPH_IMPL_HPP_

@@ -14,14 +14,14 @@
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/world.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::geometry;
-using namespace modules::commons;
-using namespace modules::world::opendrive;
-using namespace modules::models::behavior;
-using namespace modules::models::execution;
-using namespace modules::world::objects;
-using namespace modules::world;
+using namespace bark::models::dynamic;
+using namespace bark::geometry;
+using namespace bark::commons;
+using namespace bark::world::opendrive;
+using namespace bark::models::behavior;
+using namespace bark::models::execution;
+using namespace bark::world::objects;
+using namespace bark::world;
 
 /*
 TEST(agent, standard_agent) {
@@ -73,7 +73,7 @@ TEST(agent, standard_agent) {
     r.AddLaneSection(section_1);
     r.AddLaneSection(section_2);
 
-    modules::world::opendrive::MapPtr map(new modules::world::opendrive::Map());
+    bark::world::opendrive::MapPtr map(new bark::world::opendrive::Map());
     map->AddRoad(r);
     world->SetMap(map);
 

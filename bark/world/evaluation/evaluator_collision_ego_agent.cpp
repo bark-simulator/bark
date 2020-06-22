@@ -6,16 +6,16 @@
 
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 namespace evaluation {
 
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition::X_POSITION;
-using modules::models::dynamic::StateDefinition::Y_POSITION;
-using modules::geometry::Polygon;
-using modules::geometry::Point2d;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition::X_POSITION;
+using bark::models::dynamic::StateDefinition::Y_POSITION;
+using bark::geometry::Polygon;
+using bark::geometry::Point2d;
 EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
   const world::World &world) {
   bool colliding = false;
@@ -72,4 +72,4 @@ EvaluationReturn EvaluatorCollisionEgoAgent::Evaluate(
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

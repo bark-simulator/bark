@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_WORLD_HPP_
-#define MODULES_WORLD_WORLD_HPP_
+#ifndef BARK_WORLD_WORLD_HPP_
+#define BARK_WORLD_WORLD_HPP_
 
 #include <map>
 #include <string>
@@ -21,7 +21,7 @@
 #include "bark/world/opendrive/opendrive.hpp"
 #include "bark/commons/transformation/frenet.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 
 using world::evaluation::EvaluatorPtr;
@@ -31,18 +31,18 @@ using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
 using world::map::LaneCorridorPtr;
 using world::map::MapInterfacePtr;
-using modules::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
-typedef std::map<std::string, modules::world::evaluation::EvaluationReturn>
+typedef std::map<std::string, bark::world::evaluation::EvaluationReturn>
   EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
 typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
 
 using rtree_agent_model =
-  boost::geometry::model::box<modules::geometry::Point2d>;
+  boost::geometry::model::box<bark::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
 using AgentRTree =
@@ -127,11 +127,11 @@ class World : public commons::BaseType {
 
   bool GetRemoveAgents() const { return remove_agents_; }
 
-  AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
+  AgentMap GetNearestAgents(const bark::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
 
   AgentMap GetAgentsIntersectingPolygon(
-      const modules::geometry::Polygon& polygon) const;
+      const bark::geometry::Polygon& polygon) const;
 
   FrontRearAgents GetAgentFrontRearForId(
       const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
@@ -139,7 +139,7 @@ class World : public commons::BaseType {
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
 
-  std::pair<modules::geometry::Point2d, modules::geometry::Point2d>
+  std::pair<bark::geometry::Point2d, bark::geometry::Point2d>
   BoundingBox() const {
     return map_->BoundingBox();
   }
@@ -191,6 +191,6 @@ inline WorldPtr World::Clone() const {
 }
 
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_WORLD_HPP_
+#endif  // BARK_WORLD_WORLD_HPP_

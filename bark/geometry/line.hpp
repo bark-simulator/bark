@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_GEOMETRY_LINE_HPP_
-#define MODULES_GEOMETRY_LINE_HPP_
+#ifndef BARK_GEOMETRY_LINE_HPP_
+#define BARK_GEOMETRY_LINE_HPP_
 
 #include <algorithm>
 #include <cmath>
@@ -21,7 +21,7 @@
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/angle.hpp"
 
-namespace modules {
+namespace bark {
 namespace geometry {
 
 //! templated line class with a boost polygon as a member function
@@ -491,6 +491,6 @@ std::pair<T, T> MergeBoundingBoxes(std::pair<T, T> bb1, std::pair<T, T> bb2) {
 }
 
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_GEOMETRY_LINE_HPP_
+#endif  // BARK_GEOMETRY_LINE_HPP_

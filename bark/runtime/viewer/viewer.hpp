@@ -6,17 +6,17 @@
 
 
 
-#ifndef MODULES_VIEWER_VIEWER_HPP_
-#define MODULES_VIEWER_VIEWER_HPP_
+#ifndef BARK_VIEWER_VIEWER_HPP_
+#define BARK_VIEWER_VIEWER_HPP_
 
 #include "bark/geometry/geometry.hpp"
 
-namespace modules {
+namespace bark {
 namespace viewer {
 
-using modules::geometry::Point2d;
-using modules::geometry::Line;
-using modules::geometry::Polygon;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
+using bark::geometry::Polygon;
 
 class Viewer {
  public:
@@ -55,6 +55,6 @@ class Viewer {
 };
 
 }  // namespace viewer
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_VIEWER_VIEWER_HPP_
+#endif  // BARK_VIEWER_VIEWER_HPP_

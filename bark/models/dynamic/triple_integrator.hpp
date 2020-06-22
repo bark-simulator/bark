@@ -5,12 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_
-#define MODULES_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_
+#ifndef BARK_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_
+#define BARK_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_
 
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace dynamic {
 
@@ -20,7 +20,7 @@ namespace dynamic {
  */
 class TripleIntegratorModel : public DynamicModel {
  public:
-  explicit TripleIntegratorModel(const modules::commons::ParamsPtr params) :
+  explicit TripleIntegratorModel(const bark::commons::ParamsPtr params) :
     DynamicModel(params),
     mass_(0.2) {
       mass_ = params->GetReal("DynamicModel::mass",
@@ -84,6 +84,6 @@ class TripleIntegratorModel : public DynamicModel {
 
 }  // namespace dynamic
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_
+#endif  // BARK_MODELS_DYNAMIC_TRIPLE_INTEGRATOR_HPP_

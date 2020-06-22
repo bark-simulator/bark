@@ -4,12 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
-#define MODULES_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
+#ifndef BARK_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
+#define BARK_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
 
 #include "bark/world/evaluation/base_evaluator.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 namespace evaluation {
@@ -23,6 +23,6 @@ class EvaluatorCollisionAgents : public BaseEvaluator {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_COLLISION_AGENTS_HPP_
+#endif  // BARK_WORLD_EVALUATION_COLLISION_AGENTS_HPP_

@@ -5,19 +5,19 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
-#define MODULES_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
+#define BARK_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
 
 #include <Eigen/Core>
 #include "bark/geometry/geometry.hpp"
 #include "bark/world/opendrive/lane.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
-using modules::geometry::Point2d;
-using modules::geometry::Line;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
 
 
 class PlanView {
@@ -65,6 +65,6 @@ using PlanViewPtr = std::shared_ptr<PlanView>;
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_PLAN_VIEW_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_PLAN_VIEW_HPP_

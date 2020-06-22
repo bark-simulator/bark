@@ -24,16 +24,16 @@
 
 
 namespace py = pybind11;
-using namespace modules::models::behavior;
-using namespace modules::models::behavior::primitives;
-using modules::models::dynamic::DynamicModelPtr;
+using namespace bark::models::behavior;
+using namespace bark::models::behavior::primitives;
+using bark::models::dynamic::DynamicModelPtr;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
   py::class_<BehaviorModel,
              PyBehaviorModel,
              BehaviorModelPtr>(m, "BehaviorModel")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Plan", &BehaviorModel::Plan)
     .def("Clone", &BehaviorModel::Clone)
     .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
@@ -48,7 +48,7 @@ void python_behavior(py::module m) {
              BehaviorModel,
              shared_ptr<BehaviorConstantVelocity>>(m,
                                                    "BehaviorConstantVelocity")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorConstantVelocity &m) {
       return "bark.behavior.BehaviorConstantVelocity";
     })
@@ -66,7 +66,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorIDMClassic,
              BehaviorModel,
              shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorIDMClassic &m) {
       return "bark.behavior.BehaviorIDMClassic";
     })
@@ -84,7 +84,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorIDMLaneTracking,
              BehaviorModel,
              shared_ptr<BehaviorIDMLaneTracking>>(m, "BehaviorIDMLaneTracking")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("SetLaneCorridor", &BehaviorIDMClassic::SetLaneCorridor)
     .def("__repr__", [](const BehaviorIDMLaneTracking &m) {
       return "bark.behavior.BehaviorIDMLaneTracking";
@@ -103,7 +103,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorMobil,
              BehaviorModel,
              shared_ptr<BehaviorMobil>>(m, "BehaviorMobil")
-      .def(py::init<const modules::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&>())
       .def("__repr__", [](const BehaviorMobil &m) {
         return "bark.behavior.BehaviorMobil";
       })
@@ -122,7 +122,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorLaneChangeRuleBased,
              BehaviorModel,
              shared_ptr<BehaviorLaneChangeRuleBased>>(m, "BehaviorLaneChangeRuleBased")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorLaneChangeRuleBased &m) {
       return "bark.behavior.BehaviorLaneChangeRuleBased";
     })
@@ -140,7 +140,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorMobilRuleBased,
              BehaviorModel,
              shared_ptr<BehaviorMobilRuleBased>>(m, "BehaviorMobilRuleBased")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorMobilRuleBased &m) {
       return "bark.behavior.BehaviorMobilRuleBased";
     })
@@ -158,7 +158,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorIntersectionRuleBased,
              BehaviorModel,
              shared_ptr<BehaviorIntersectionRuleBased>>(m, "BehaviorIntersectionRuleBased")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorIntersectionRuleBased &m) {
       return "bark.behavior.BehaviorIntersectionRuleBased";
     })
@@ -183,7 +183,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorMPContinuousActions,
              BehaviorMotionPrimitives,
              shared_ptr<BehaviorMPContinuousActions>>(m, "BehaviorMPContinuousActions")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("GetNumMotionPrimitives",
          &BehaviorMPContinuousActions::GetNumMotionPrimitives)
     .def("__repr__", [](const BehaviorMPContinuousActions &b) {
@@ -194,15 +194,15 @@ void python_behavior(py::module m) {
   py::class_<Primitive,
             PyPrimitive,
             PrimitivePtr>(m, "Primitive")
-  .def(py::init<const modules::commons::ParamsPtr&>())
+  .def(py::init<const bark::commons::ParamsPtr&>())
   .def("Plan", &Primitive::Plan)
   .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
 
   py::class_<BehaviorMPMacroActions,
             BehaviorModel,
             shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
-  .def(py::init<const modules::commons::ParamsPtr&>())
-  .def(py::init<const modules::commons::ParamsPtr&,
+  .def(py::init<const bark::commons::ParamsPtr&>())
+  .def(py::init<const bark::commons::ParamsPtr&,
                 const std::vector<primitives::PrimitivePtr>&>())
   .def("GetNumMotionPrimitives", &BehaviorMPMacroActions::GetNumMotionPrimitives)
   .def("GetMotionPrimitives", &BehaviorMPMacroActions::GetMotionPrimitives)
@@ -234,7 +234,7 @@ void python_behavior(py::module m) {
   py::class_<PrimitiveGapKeeping,
              Primitive,
              std::shared_ptr<PrimitiveGapKeeping>>(m, "PrimitiveGapKeeping")
-      .def(py::init<const modules::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveGapKeeping& b) {
             return py::make_tuple(
@@ -250,9 +250,9 @@ void python_behavior(py::module m) {
   py::class_<PrimitiveConstAccStayLane,
              Primitive,
              std::shared_ptr<PrimitiveConstAccStayLane>>(m, "PrimitiveConstAccStayLane")
-    .def(py::init<const modules::commons::ParamsPtr&,
+    .def(py::init<const bark::commons::ParamsPtr&,
         float>())
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
                 .def(py::pickle(
       [](const PrimitiveConstAccStayLane& b) {
         return py::make_tuple(
@@ -268,7 +268,7 @@ void python_behavior(py::module m) {
   py::class_<PrimitiveConstAccChangeToLeft,
              Primitive,
              std::shared_ptr<PrimitiveConstAccChangeToLeft>>(m, "PrimitiveConstAccChangeToLeft")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccChangeToLeft& b) {
             return py::make_tuple(
@@ -284,7 +284,7 @@ void python_behavior(py::module m) {
   py::class_<PrimitiveConstAccChangeToRight,
              Primitive,
              std::shared_ptr<PrimitiveConstAccChangeToRight>>(m, "PrimitiveConstAccChangeToRight")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccChangeToRight& b) {
             return py::make_tuple(
@@ -302,7 +302,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorDynamicModel,
              BehaviorModel,
              shared_ptr<BehaviorDynamicModel>>(m, "BehaviorDynamicModel")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("SetLastAction", &BehaviorModel::SetLastAction)
     .def("GetAction", &BehaviorModel::GetAction)
     .def("__repr__", [](const BehaviorDynamicModel &b) {
@@ -323,8 +323,8 @@ void python_behavior(py::module m) {
   py::class_<BehaviorStaticTrajectory,
              BehaviorModel,
              shared_ptr<BehaviorStaticTrajectory>>(m, "BehaviorStaticTrajectory")
-      .def(py::init<const modules::commons::ParamsPtr&>())
-      .def(py::init<const modules::commons::ParamsPtr&, const modules::models::dynamic::Trajectory&>())
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&, const bark::models::dynamic::Trajectory&>())
       .def_property_readonly("static_trajectory", &BehaviorStaticTrajectory::get_static_trajectory)
       .def("__repr__", [](const BehaviorStaticTrajectory &b) {
         return "bark.behavior.BehaviorStaticTrajectory";
@@ -337,7 +337,7 @@ void python_behavior(py::module m) {
         if (t.size() != 2)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<modules::models::dynamic::Trajectory>());
+        return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<bark::models::dynamic::Trajectory>());
       }));
 
 

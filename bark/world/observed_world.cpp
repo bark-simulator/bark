@@ -9,14 +9,14 @@
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 
-using modules::geometry::Point2d;
-using modules::models::behavior::BehaviorMotionPrimitives;
-using modules::models::dynamic::State;
-using modules::world::AgentMap;
-using modules::world::map::LaneCorridorPtr;
+using bark::geometry::Point2d;
+using bark::models::behavior::BehaviorMotionPrimitives;
+using bark::models::dynamic::State;
+using bark::world::AgentMap;
+using bark::world::map::LaneCorridorPtr;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
@@ -135,4 +135,4 @@ EvaluationMap ObservedWorld::Evaluate() const {
 
 
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
