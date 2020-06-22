@@ -13,8 +13,10 @@
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
+#include "bark/models/behavior/motion_primitives/macro_actions.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
@@ -22,7 +24,6 @@
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
-#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -36,7 +37,6 @@
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
 using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
-
 
 namespace py = pybind11;
 
@@ -223,3 +223,49 @@ PrimitivePtr PythonToPrimitive(py::tuple t) {
   }
   return nullptr;
 }
+
+#ifdef LTL_RULES
+py::tuple LabelToPython(const LabelFunctionPtr& label) {
+  std::string label_name;
+  if (typeid(*label) == typeid(AgentBeyondPointLabelFunction)) {
+    label_name = "AgentBeyondPointLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(EgoBeyondPointLabelFunction)) {
+    label_name = "EgoBeyondPointLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(PrecedingAgentLabelFunction)) {
+    label_name = "PrecedingAgentLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) ==
+             typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
+    label_name = "CollisionEgoLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else {
+    LOG(ERROR) << "Unknown LabelType for polymorphic conversion.";
+    throw;
+  }
+  // Should never be reached
+  return py::make_tuple(label, label_name);
+}
+LabelFunctionPtr PythonToLabel(py::tuple t) {
+  std::string label_name = t[1].cast<std::string>();
+  if (label_name.compare("AgentBeyondPointLabelFunction") == 0) {
+    return std::make_shared<AgentBeyondPointLabelFunction>(
+        t[0].cast<AgentBeyondPointLabelFunction>());
+  } else if (label_name.compare("EgoBeyondPointLabelFunction") == 0) {
+    return std::make_shared<EgoBeyondPointLabelFunction>(
+        t[0].cast<EgoBeyondPointLabelFunction>());
+  } else if (label_name.compare("PrecedingAgentLabelFunction") == 0) {
+    return std::make_shared<PrecedingAgentLabelFunction>(
+        t[0].cast<PrecedingAgentLabelFunction>());
+  } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
+    return std::make_shared<
+        GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(
+        t[0].cast<GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>());
+  } else {
+    LOG(ERROR) << "Unknown LabelType for polymorphic conversion.";
+    throw;
+  }
+  return nullptr;
+}
+#endif
