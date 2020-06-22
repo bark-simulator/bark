@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_
+#define BARK_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_
 
 #include <set>
 #include <string>
@@ -18,7 +18,7 @@
 #include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
 #endif
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -33,7 +33,7 @@ using objects::AgentId;
 class EvaluatorLTL : public BaseEvaluator {
  public:
 #ifdef LTL_RULES
-  EvaluatorLTL(modules::world::objects::AgentId agent_id,
+  EvaluatorLTL(bark::world::objects::AgentId agent_id,
                const std::string& ltl_formula_str,
                const LabelFunctions& label_functions);
   EvaluationReturn Evaluate(const world::World& world) override;
@@ -60,6 +60,6 @@ class EvaluatorLTL : public BaseEvaluator {
 };
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_EVALUATOR_LTL_HPP_

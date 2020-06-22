@@ -198,7 +198,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
     auto agent = GetAgent(result_pair.second);
-    if (modules::geometry::Collide(
+    if (bark::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
         agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
       intersecting_agents[result_pair.second] = agent;

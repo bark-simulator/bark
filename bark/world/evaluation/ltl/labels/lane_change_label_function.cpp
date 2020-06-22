@@ -7,13 +7,13 @@
 
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
-using modules::geometry::Collide;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
+using bark::geometry::Collide;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition;
 
 LabelMap LaneChangeLabelFunction::Evaluate(
   const world::ObservedWorld& observed_world) const {
@@ -35,4 +35,4 @@ LabelMap LaneChangeLabelFunction::Evaluate(
 }
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

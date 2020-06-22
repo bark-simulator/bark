@@ -39,7 +39,7 @@ RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
 }
 
 LaneCorridorPtr RoadCorridor::GetNearestLaneCorridor(const Point2d& pt) const {
-  using modules::commons::transformation::FrenetPosition;
+  using bark::commons::transformation::FrenetPosition;
   auto lc = GetCurrentLaneCorridor(pt);
   if (!lc) {
     double min_lat = std::numeric_limits<double>::infinity();
