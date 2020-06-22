@@ -1,22 +1,22 @@
 config_setting(
-    name = "_ltl",
+    name = "_ltl_rules",
     define_values = {
-        "ltl": "true",
+        "ltl_rules": "true",
     },
 )
 
 cc_library(
     name = "evaluator_ltl",
     srcs = select({
-        ":_ltl": glob(["*.cpp"]),
+        ":_ltl_rules": glob(["*.cpp"]),
         "//conditions:default": ["evaluator_ltl.cpp"],
     }),
     hdrs = select({
-        ":_ltl": glob(["*.hpp"]),
+        ":_ltl_rules": glob(["*.hpp"]),
         "//conditions:default": ["evaluator_ltl.hpp"],
     }),
     copts = select({
-        ":_ltl": ["-D LTL"],
+        ":_ltl_rules": ["-D LTL_RULES"],
         "//conditions:default": [],
     }),
     visibility = ["//visibility:public"],
@@ -24,7 +24,7 @@ cc_library(
         "//bark/world",
         "//bark/world/evaluation:base_evaluator",
     ] + select({
-        ":_ltl": [
+        ":_ltl_rules": [
             "@rule_monitor_project//ltl:rule_monitor",
             "//bark/world/evaluation/ltl/labels:label_evaluation",
         ],

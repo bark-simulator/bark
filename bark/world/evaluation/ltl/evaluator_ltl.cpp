@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#ifdef LTL
+#ifdef LTL_RULES
 #include "ltl/rule_monitor.h"
 #endif
 
@@ -20,7 +20,7 @@ namespace modules {
 namespace world {
 namespace evaluation {
 
-#ifdef LTL
+#ifdef LTL_RULES
 EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
                            const std::string& ltl_formula_str,
                            const LabelFunctions& label_functions)

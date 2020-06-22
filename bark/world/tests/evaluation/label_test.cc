@@ -5,7 +5,7 @@
 
 #include "gtest/gtest.h"
 
-#ifdef LTL
+#ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
@@ -27,7 +27,7 @@ using namespace modules::models::behavior::primitives;
 
 using modules::commons::SetterParams;
 
-#ifdef LTL
+#ifdef LTL_RULES
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));

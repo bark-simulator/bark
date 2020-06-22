@@ -13,7 +13,7 @@ cc_test(
     name = "label_test",
     srcs = ["label_test.cc"],
     copts = ["-Iexternal/gtest/include"] + select({
-        "//bark/world/evaluation/ltl:_ltl": ["-D LTL"],
+        "//bark/world/evaluation/ltl:_ltl_rules": ["-D LTL_RULES"],
         "//conditions:default": [],
     }),
     deps = [
@@ -21,7 +21,7 @@ cc_test(
         "//bark/world/tests:make_test_world",
         "//bark/models/behavior/motion_primitives:motion_primitives",
     ] + select({
-        "//bark/world/evaluation/ltl:_ltl": [
+        "//bark/world/evaluation/ltl:_ltl_rules": [
             "//bark/world/evaluation/ltl/labels:label_evaluation",
         ],
         "//conditions:default": [],
@@ -31,7 +31,7 @@ cc_test(
 py_test(
     name = "py_evaluator_ltl_tests",
     srcs = select({
-        "//bark/world/evaluation/ltl:_ltl": ["py_evaluator_ltl_tests.py"],
+        "//bark/world/evaluation/ltl:_ltl_rules": ["py_evaluator_ltl_tests.py"],
         "//conditions:default": ["py_dummy_test.py"],
     }),
     data = [
@@ -40,7 +40,7 @@ py_test(
     ],
     imports = ["../../../python/"],
     main = select({
-        "//bark/world/evaluation/ltl:_ltl": "py_evaluator_ltl_tests.py",
+        "//bark/world/evaluation/ltl:_ltl_rules": "py_evaluator_ltl_tests.py",
         "//conditions:default": "py_dummy_test.py",
     }),
     deps = [

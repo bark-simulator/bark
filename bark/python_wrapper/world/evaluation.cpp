@@ -13,7 +13,7 @@
 #include "bark/world/evaluation/evaluator_step_count.hpp"
 #include "bark/world/world.hpp"
 
-#ifdef LTL
+#ifdef LTL_RULES
 #include "bark/python_wrapper/world/ltl.hpp"
 #endif
 
@@ -78,7 +78,7 @@ void python_evaluation(py::module m) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
       });
 
-#ifdef LTL
+#ifdef LTL_RULES
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
 #endif
 }
