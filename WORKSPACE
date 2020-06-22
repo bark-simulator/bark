@@ -40,8 +40,8 @@ benchmark_database_release()
 
 
 # ------------------- LTL RuleMonitor --------------
-load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
-rule_monitor_dependencies()
+# load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
+# rule_monitor_dependencies()
 # --------------------------------------------------
 
 # ------------------- BARK-ML ----------------------
