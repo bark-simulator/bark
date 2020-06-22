@@ -9,8 +9,8 @@ config_setting(
 )
 
 config_setting(
-    name = "_planner_other1",
-    define_values = {"planner_other1": "true"},
+    name = "_planner_mvmcts",
+    define_values = {"planner_mvmcts": "true"},
 )
 
 config_setting(
@@ -23,7 +23,7 @@ cc_library(
     name="planners",
     deps=
         select({":_planner_uct" : ["@planner_uct//src:planner_uct_single_agent"], "//conditions:default": []}) + 
-        select({":_planner_other1" : ["insert_dependency_other1_here"], "//conditions:default": []}) + 
+        select({":_planner_mvmcts" : ["@planner_mv_mvts//src:planner_mvmcts_multi_agent"], "//conditions:default": []}) +
         select({":_planner_other2" : ["insert_dependency_other2_here"], "//conditions:default": []}),
 )
 

@@ -42,11 +42,13 @@ cc_binary(
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_mvmcts" : ["@planner_mv_mvts//python:planner_mvmcts"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["//bark/world/evaluation/ltl/labels:label_evaluation",
                                                  "//bark/world/tests/evaluation:constant_label_evaluator",
                                                  "//bark/world/evaluation/ltl:evaluator_ltl"],
             "//conditions:default": []}),
-  copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
+  copts = select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_mvmcts" : ["-D PLANNER_MVMCTS"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
   linkshared = 1,
   linkstatic = 1
@@ -60,7 +62,8 @@ cc_library(
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
-    ]
+    ],
+    defines = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["LTL_RULES"], "//conditions:default": []}),
 )
 
 # needed to test external python wrapping of planners in their own modules
@@ -80,5 +83,6 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//bark/world/evaluation/ltl/labels:label_evaluation",
     ]
 )

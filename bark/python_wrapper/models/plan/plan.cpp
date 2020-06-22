@@ -10,9 +10,16 @@
   #include "python/python_planner_uct.hpp"
 #endif
 
+#ifdef PLANNER_MVMCTS
+#include "python/python_planner_mvmcts.hpp"
+#endif
+
 void python_behavior_plan(py::module m) {
 #ifdef PLANNER_UCT
   python_planner_uct(m);
 #endif
 
+#ifdef PLANNER_MVMCTS
+  python_planner_mvmcts(m);
+#endif
 }

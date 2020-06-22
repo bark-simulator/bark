@@ -26,16 +26,29 @@
 #include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "bark/python_wrapper/models/behavior.hpp"
+#include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/goal_definition/goal_definition_sequential.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "bark/python_wrapper/models/behavior.hpp"
 
+#ifdef LTL_RULES
+#include "bark/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/labels/ego_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/labels/generic_ego_label_function.hpp"
+#include "bark/world/evaluation/ltl/labels/preceding_agent_label_function.hpp"
+#endif
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
 using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
+#endif
+
+#ifdef PLANNER_MVMCTS
+#include "src/behavior_mcts_multi_agent.hpp"
+using modules::models::behavior::BehaviorEGreedyMultiAgent;
+using modules::models::behavior::BehaviorUCTMultiAgent;
 #endif
 
 namespace py = pybind11;
@@ -53,15 +66,26 @@ using modules::models::behavior::BehaviorIntersectionRuleBased;
 using modules::models::behavior::BehaviorLaneChangeRuleBased;
 using modules::models::behavior::BehaviorMobilRuleBased;
 using modules::models::behavior::BehaviorMobil;
+using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
 using modules::commons::SetterParams;
 using modules::models::behavior::primitives::Primitive;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
 using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
-using modules::models::behavior::primitives::PrimitiveGapKeeping;
+
+#ifdef LTL_RULES
+using modules::world::evaluation::AgentBeyondPointLabelFunction;
+using modules::world::evaluation::EgoBeyondPointLabelFunction;
+using modules::world::evaluation::GenericEgoLabelFunction;
+using modules::world::evaluation::PrecedingAgentLabelFunction;
+#endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
+  if (!behavior_model) {
+    behavior_model_name = "None";
+    return py::make_tuple(behavior_model_name, behavior_model_name);
+  }
   if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
     behavior_model_name = "BehaviorConstantVelocity";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
@@ -82,10 +106,19 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorDynamicModel";
   } else if (typeid(*behavior_model) == typeid(PyBehaviorModel)) {
     behavior_model_name = "PyBehaviorModel";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMPMacroActions)) {
+    behavior_model_name = "BehaviorMPMacroActions";
   }
 #ifdef PLANNER_UCT
   else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
     behavior_model_name = "BehaviorUCTSingleAgentMacroActions";
+  }
+#endif
+#ifdef PLANNER_MVMCTS
+  else if (typeid(*behavior_model) == typeid(BehaviorUCTMultiAgent)) {
+    behavior_model_name = "BehaviorUCTMultiAgent";
+  } else if (typeid(*behavior_model) == typeid(BehaviorEGreedyMultiAgent)) {
+    behavior_model_name = "BehaviorEGreedyMultiAgent";
   }
 #endif
   else {
@@ -127,6 +160,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorDynamicModel") == 0) {
     return std::make_shared<BehaviorDynamicModel>(
       t[0].cast<BehaviorDynamicModel>());
+  } else if (behavior_model_name.compare("BehaviorMPMacroActions") == 0) {
+    return std::make_shared<BehaviorMPMacroActions>(
+        t[0].cast<BehaviorMPMacroActions>());
   }
 #ifdef PLANNER_UCT
   else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
@@ -135,8 +171,20 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
 
   }
 #endif
-  else {
-    LOG(ERROR) << "Unknown BehaviorType for polymorphic conversion.";
+#ifdef PLANNER_MVMCTS
+  else if (behavior_model_name.compare("BehaviorUCTMultiAgent") == 0) {
+    return std::make_shared<BehaviorUCTMultiAgent>(
+        t[0].cast<BehaviorUCTMultiAgent>());
+  } else if (behavior_model_name.compare("BehaviorEGreedyMultiAgent") == 0) {
+    return std::make_shared<BehaviorEGreedyMultiAgent>(
+        t[0].cast<BehaviorEGreedyMultiAgent>());
+  }
+#endif
+  else if (behavior_model_name.compare("None") == 0) {
+    return nullptr;
+  } else {
+    LOG(ERROR) << "Unknown BehaviorType " << behavior_model_name
+               << " for polymorphic conversion.";
     throw;
   }
 }

@@ -25,6 +25,16 @@ load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
 # --------------------------------------------------
 
+# ------ Planner MV-MCTS ------------------------------
+git_repository(
+    name = "planner_mv_mvts",
+  commit="7e2286966eb26c64bd828cebc9be283f388e9021",
+  remote = "git@github.com:bark-simulator/planner-mv-mcts.git"
+)
+load("@planner_mv_mvts//util:deps.bzl", "planner_mv_mvts_dependencies")
+planner_mv_mvts_dependencies()
+# --------------------------------------------------
+
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
