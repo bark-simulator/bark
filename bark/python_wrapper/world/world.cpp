@@ -4,20 +4,20 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #include "bark/world/world.hpp"
-#include "bark/world/observed_world.hpp"
-#include "bark/world/map/roadgraph.hpp"
-#include "bark/world/tests/make_test_world.hpp"
 #include "bark/models/behavior/behavior_model.hpp"
-#include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
-#include "bark/python_wrapper/world/world.hpp"
+#include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/python_wrapper/world/agent.hpp"
+#include "bark/python_wrapper/world/evaluation.hpp"
+#include "bark/python_wrapper/world/goal_definition.hpp"
 #include "bark/python_wrapper/world/map.hpp"
 #include "bark/python_wrapper/world/opendrive.hpp"
-#include "bark/python_wrapper/world/goal_definition.hpp"
-#include "bark/python_wrapper/world/evaluation.hpp"
+#include "bark/python_wrapper/world/prediction.hpp"
+#include "bark/python_wrapper/world/world.hpp"
+#include "bark/world/map/roadgraph.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 
 namespace py = pybind11;
 using namespace modules::world::objects;
@@ -125,4 +125,6 @@ void python_world(py::module m) {
   python_map(m.def_submodule("map", "mapInterface wrapping"));
 
   python_evaluation(m.def_submodule("evaluation", "evaluators"));
+
+  python_prediction(m.def_submodule("prediction", "Prediction Settings"));
 }

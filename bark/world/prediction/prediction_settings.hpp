@@ -8,8 +8,9 @@
 #ifndef MODULES_WORLD_PREDICTION_HPP_
 #define MODULES_WORLD_PREDICTION_HPP_
 
-#include <unordered_map>
+#include <set>
 #include <typeinfo>
+#include <unordered_map>
 
 #include "bark/models/behavior/behavior_model.hpp"
 
@@ -25,17 +26,26 @@ using models::behavior::BehaviorModelPtr;
 
 
 struct PredictionSettings {
-  PredictionSettings() : ego_prediction_model_(), others_prediction_model_() {}
-  PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction);
+  PredictionSettings()
+      : ego_prediction_model_(), specific_prediction_model_() {}
+  PredictionSettings(
+      const BehaviorModelPtr& ego_prediction_model,
+      const BehaviorModelPtr& default_prediction_model = nullptr,
+      const BehaviorModelPtr& specific_prediction_model = nullptr,
+      const std::vector<AgentId>& specific_prediction_agents = {});
   virtual ~PredictionSettings() {}
 
   BehaviorModelPtr GetEgoPredictionModel() const { return ego_prediction_model_;}
-  BehaviorModelPtr GetOthersPredictionModel() const { return others_prediction_model_;}
+  BehaviorModelPtr GetOthersPredictionModel() const {
+    return specific_prediction_model_;
+  }
 
   void ApplySettings(ObservedWorld& observed_world) const;
 
   BehaviorModelPtr ego_prediction_model_;
-  BehaviorModelPtr others_prediction_model_;
+  BehaviorModelPtr specific_prediction_model_;
+  BehaviorModelPtr default_prediction_model_;
+  std::set<AgentId> specific_prediction_agents_;
 };
 
 
