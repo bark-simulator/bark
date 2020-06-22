@@ -10,7 +10,7 @@ py_library(
     name = "commons",
     srcs = ["commons.py","__init__.py","xodr_parser.py","model_json_conversion.py","parameters.py"],
     data = ['//bark:generate_core'],
-#    deps = [':xodr_parser',':model_json_conversion',':parameters'],
+    #deps = [':xodr_parser',':model_json_conversion',':parameters'],
     visibility = ["//visibility:public"],
 )
 
