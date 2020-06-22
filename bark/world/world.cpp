@@ -17,28 +17,28 @@ namespace world {
 using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
 
-World::World(const commons::ParamsPtr& params) :
-  commons::BaseType(params),
-  map_(),
-  agents_(),
-  world_time_(0.0),
-  remove_agents_(params->GetBool(
-    "World::remove_agents_out_of_map",
-    "Whether agents should be removed outside the bounding box.",
-    false)) {
+World::World(const commons::ParamsPtr& params)
+    : commons::BaseType(params),
+      map_(),
+      agents_(),
+      world_time_(0.0),
+      remove_agents_(params->GetBool(
+          "World::remove_agents_out_of_map",
+          "Whether agents should be removed outside the bounding box.",
+          false)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
 
-World::World(const std::shared_ptr<World>& world) :
-  commons::BaseType(world->GetParams()),
-  map_(world->GetMap()),
-  agents_(world->GetAgents()),
-  objects_(world->GetObjects()),
-  evaluators_(world->GetEvaluators()),
-  world_time_(world->GetWorldTime()),
-  remove_agents_(world->GetRemoveAgents()),
-  rtree_agents_(world->rtree_agents_) {
+World::World(const std::shared_ptr<World>& world)
+    : commons::BaseType(world->GetParams()),
+      map_(world->GetMap()),
+      agents_(world->GetAgents()),
+      objects_(world->GetObjects()),
+      evaluators_(world->GetEvaluators()),
+      world_time_(world->GetWorldTime()),
+      remove_agents_(world->GetRemoveAgents()),
+      rtree_agents_(world->rtree_agents_) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -91,8 +91,7 @@ AgentMap World::GetValidAgents() const {
   AgentMap agents_valid(agents_);
   AgentMap::iterator it;
   for (it = agents_valid.begin(); it != agents_valid.end();) {
-    if ((*it).second->GetBehaviorStatus() !=
-        models::behavior::BehaviorStatus::VALID) {
+    if ((*it).second->GetBehaviorStatus() != BehaviorStatus::VALID) {
       agents_valid.erase(it++);
     } else {
       ++it;
@@ -123,7 +122,7 @@ EvaluationMap World::Evaluate() const {
 }
 
 std::vector<ObservedWorld> World::Observe(
-    const std::vector<AgentId>& agent_ids) {
+  const std::vector<AgentId>& agent_ids) {
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
@@ -151,8 +150,6 @@ void World::UpdateAgentRTree() {
 }
 
 void World::RemoveInvalidAgents() {
-  using models::behavior::BehaviorStatus;
-
   if (remove_agents_) {
     std::vector<rtree_agent_value> query_results;
     auto bounding_box = this->BoundingBox();
@@ -176,7 +173,6 @@ void World::RemoveInvalidAgents() {
 }
 
 AgentMap World::GetNearestAgents(const bark::geometry::Point2d& position,
-                                 const unsigned int& num_agents) const {
   std::vector<rtree_agent_value> results_n;
 
   rtree_agents_.query(boost::geometry::index::nearest(position, num_agents),
@@ -202,8 +198,9 @@ AgentMap World::GetAgentsIntersectingPolygon(
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
     auto agent = GetAgent(result_pair.second);
-    if (bark::geometry::Collide(
-            agent->GetPolygonFromState(agent->GetCurrentState()), polygon)) {
+    if (modules::geometry::Collide(
+            agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
+        agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
       intersecting_agents[result_pair.second] = agent;
     }
   }
@@ -238,7 +235,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
 
   for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
        ++it) {
-    if (it->second->GetAgentId() == agent_id) {
+    if (it->second->GetAgentId() == agent_id ||
+        it->second->GetBehaviorStatus() != BehaviorStatus::VALID) {
       continue;
     }
 
@@ -268,6 +266,11 @@ FrontRearAgents World::GetAgentFrontRearForId(
   return fr_agents;
 }
 
+void World::RemoveAgentById(AgentId agent_id) {
+  size_t erased_elems = agents_.erase(agent_id);
+  LOG_IF(ERROR, erased_elems == 0)
+      << "Could not remove non-existent agent with Id " << agent_id << " !";
+}
 
 }  // namespace world
 }  // namespace bark

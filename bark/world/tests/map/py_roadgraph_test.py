@@ -5,10 +5,9 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-import os
 from bark.core.world.map import Roadgraph
 from bark.core.world.opendrive import XodrLane
-from bark.runtime.commons import XodrParser
+from bark.runtime.commons.xodr_parser import XodrParser
 
 
 class RoadgraphTests(unittest.TestCase):

@@ -69,6 +69,7 @@ WorldPtr bark::world::tests::make_test_world(
   AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model,
                             polygon, params, ego_goal_definition,
                             map_interface, geometry::Model3D()));
+  agent1->SetAgentId(1);
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   float rel_dist_vlength =
@@ -78,6 +79,7 @@ WorldPtr bark::world::tests::make_test_world(
   AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model,
                             polygon, params, ego_goal_definition,
                             map_interface, geometry::Model3D()));
+  agent2->SetAgentId(2);
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, pos_y, 0.0,
@@ -86,6 +88,7 @@ WorldPtr bark::world::tests::make_test_world(
                             polygon, params, ego_goal_definition,
                             map_interface,
                             geometry::Model3D()));  // NOLINT
+  agent3->SetAgentId(3);
 
   WorldPtr world(new World(params));
   world->AddAgent(agent1);

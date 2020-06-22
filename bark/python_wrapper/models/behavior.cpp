@@ -323,17 +323,19 @@ void python_behavior(py::module m) {
   py::class_<BehaviorStaticTrajectory,
              BehaviorModel,
              shared_ptr<BehaviorStaticTrajectory>>(m, "BehaviorStaticTrajectory")
-      .def(py::init<const bark::commons::ParamsPtr&>())
-      .def(py::init<const bark::commons::ParamsPtr&, const bark::models::dynamic::Trajectory&>())
-      .def_property_readonly("static_trajectory", &BehaviorStaticTrajectory::get_static_trajectory)
+      .def(py::init<const modules::commons::ParamsPtr&>())
+      .def(py::init<const modules::commons::ParamsPtr&, const modules::models::dynamic::Trajectory&>())
+      .def_property_readonly("static_trajectory",
+                             &BehaviorStaticTrajectory::GetStaticTrajectory)
       .def("__repr__", [](const BehaviorStaticTrajectory &b) {
         return "bark.behavior.BehaviorStaticTrajectory";
       })
       .def(py::pickle(
       [](const BehaviorStaticTrajectory& b) {
-        return py::make_tuple(ParamsToPython(b.GetParams()), b.get_static_trajectory());
-      },
-      [](py::tuple t) {
+            return py::make_tuple(ParamsToPython(b.GetParams()),
+                                  b.GetStaticTrajectory());
+          },
+          [](py::tuple t) {
         if (t.size() != 2)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */

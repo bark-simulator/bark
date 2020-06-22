@@ -86,7 +86,9 @@ struct LaneCorridor {
   bool operator==(const LaneCorridor other) {
     return lanes_.size() == other.lanes_.size()
         && std::equal(lanes_.begin(), lanes_.end(),
-                      other.lanes_.begin());
+                      other.lanes_.begin(), [](const std::map<float, LanePtr>::value_type& a, const std::map<float, LanePtr>::value_type& b) {
+          return a.first == b.first && *(a.second) == *(b.second);
+        });
   }
 
   bool operator!=(const LaneCorridor other) {

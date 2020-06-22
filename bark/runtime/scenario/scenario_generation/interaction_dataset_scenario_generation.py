@@ -8,7 +8,7 @@ import os.path
 
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
-from bark.runtime.scenario.interaction_dataset_processing import agent_from_trackfile
+from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 from bark.core.world.map import *
@@ -22,6 +22,7 @@ import os.path
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
+        self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
         self.initialize_params(params)
 
@@ -93,7 +94,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
                     id_other)]
             else:
                 track_params["behavior_model"] = None
-            agent = agent_from_trackfile(
+            agent = self.interaction_ds_reader.AgentFromTrackfile(
                 track_params, self._params, scenario_track_info, id_other)
             agent_list.append(agent)
 
@@ -102,7 +103,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None
-        agent = agent_from_trackfile(
+        agent = self.interaction_ds_reader.AgentFromTrackfile(
             track_params, self._params, scenario_track_info, id_ego)
         agent_list.append(agent)
 

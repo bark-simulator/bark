@@ -101,6 +101,11 @@ struct Lane : public XodrLane {
     right_lane_ = right_lane;
   }
 
+  bool operator==(const Lane& rhs) const {
+    return center_line_ == rhs.center_line_;
+  }
+  bool operator!=(const Lane& rhs) const { return !(rhs == *this); }
+
   std::weak_ptr<Lane> left_lane_;  // from_id, to_id
   std::weak_ptr<Lane> right_lane_;  // from_id, to_id
   std::shared_ptr<Lane> next_lane_;

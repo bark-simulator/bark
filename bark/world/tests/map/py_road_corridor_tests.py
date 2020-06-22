@@ -5,30 +5,27 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-from unittest.mock import patch
 import time
 import math
 import itertools
 import filecmp
-import os
 import matplotlib.pyplot as plt
-
 from bark.core.world import World
 from bark.core.geometry import *
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
 from bark.core.world.map import MapInterface
-
-from bark.runtime.commons import XodrParser
-from bark.runtime.viewer import MPViewer
+from bark.runtime.commons.xodr_parser import XodrParser
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
 import numpy as np
+import os
 
 
 class RoadCorridorTests(unittest.TestCase):
     @unittest.skip("...")
     def test_road_corridor_forward(self):
-        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
-            "../../runtime/tests/data/road_corridor_test.xodr"))
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(
+            __file__), "../../../runtime/tests/data/road_corridor_test.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -85,11 +82,11 @@ class RoadCorridorTests(unittest.TestCase):
             viewer.show(block=False)
             plt.pause(2.)
             count += 1
-    
+
     def test_three_way_intersection(self):
         # threeway_intersection
-        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
-            "../../runtime/tests/data/threeway_intersection.xodr"))
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(
+            __file__),  "../../../runtime/tests/data/threeway_intersection.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -151,11 +148,10 @@ class RoadCorridorTests(unittest.TestCase):
         self.assertEqual(len(rc.lane_corridors), 3)
         self.assertTrue(rc.polygon.Valid())
 
-
     def test_dr_deu_merging(self):
         # threeway_intersection
-        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), \
-            "../../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"))
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(
+            __file__), "../../../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -174,8 +170,10 @@ class RoadCorridorTests(unittest.TestCase):
         viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
 
-        viewer.drawPolygon2d(road_corridor.lane_corridors[0].polygon, color = "blue", alpha = 0.5)
-        viewer.drawPolygon2d(road_corridor.lane_corridors[1].polygon, color = "blue", alpha = 0.5)
+        viewer.drawPolygon2d(
+            road_corridor.lane_corridors[0].polygon, color="blue", alpha=0.5)
+        viewer.drawPolygon2d(
+            road_corridor.lane_corridors[1].polygon, color="blue", alpha=0.5)
         viewer.show(block=False)
 
         self.assertTrue(road_corridor.lane_corridors[0].polygon.Valid())
@@ -184,7 +182,8 @@ class RoadCorridorTests(unittest.TestCase):
 
     def test_dr_chn_merging(self):
         # threeway_intersection
-        xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__), "../../runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"))
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(
+            __file__), "../../../runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"))
 
         # World Definition
         params = ParameterServer()
@@ -203,9 +202,12 @@ class RoadCorridorTests(unittest.TestCase):
         viewer = MPViewer(params=params, use_world_bounds=True)
         viewer.drawWorld(world)
 
-        viewer.drawPolygon2d(road_corridor.lane_corridors[0].polygon, color = "blue", alpha = 0.5)
-        viewer.drawPolygon2d(road_corridor.lane_corridors[1].polygon, color = "blue", alpha = 0.5)
-        viewer.drawPolygon2d(road_corridor.lane_corridors[2].polygon, color = "blue", alpha = 0.5)
+        viewer.drawPolygon2d(
+            road_corridor.lane_corridors[0].polygon, color="blue", alpha=0.5)
+        viewer.drawPolygon2d(
+            road_corridor.lane_corridors[1].polygon, color="blue", alpha=0.5)
+        viewer.drawPolygon2d(
+            road_corridor.lane_corridors[2].polygon, color="blue", alpha=0.5)
         viewer.show(block=False)
 
         self.assertTrue(road_corridor.lane_corridors[0].polygon.Valid())

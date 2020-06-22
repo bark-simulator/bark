@@ -61,7 +61,9 @@ std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
   StateRowVector delta;
   double alpha;
   int idx = -1;
-  BARK_EXPECT_TRUE(static_trajectory_.rows() > 1);
+  if (static_trajectory_.rows() < 2) {
+    return {-1, -1};
+  }
   for (int i = 0; i < static_trajectory_.rows() - 1; ++i) {
     float t_i = static_trajectory_(i, dynamic::TIME_POSITION);
     float t_i_succ = static_trajectory_(i + 1, dynamic::TIME_POSITION);
@@ -106,7 +108,7 @@ Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
   return traj;
 }
 
-const Trajectory &BehaviorStaticTrajectory::get_static_trajectory() const {
+const Trajectory& BehaviorStaticTrajectory::GetStaticTrajectory() const {
   return static_trajectory_;
 }
 
@@ -123,7 +125,7 @@ void BehaviorStaticTrajectory::UpdateBehaviorStatus(
   if (start_time_static_traj > start_time) {
     SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
   } else if (end_time_static_traj <= end_time) {
-    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
+    VLOG(1) << "Agent " << observed_world.GetEgoAgentId()
               << ": Behavior status has expired!" << std::endl;
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
   } else {
