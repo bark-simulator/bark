@@ -4,8 +4,6 @@ from .interaction_dataset_reader import ShapeFromTrack
 from .interaction_dataset_reader import InitStateFromTrack
 from .interaction_dataset_reader import GoalDefinitionFromTrack
 from .interaction_dataset_reader import BehaviorFromTrack
-#from .interaction_dataset_reader import TrackFromTrackfile
-#from .interaction_dataset_reader import AgentFromTrackfile
 from .interaction_dataset_reader import InteractionDatasetReader
 from .dataset_decomposer import  DatasetDecomposer
 
@@ -16,6 +14,4 @@ __all__ = ["DatasetDecomposer",
           "ShapeFromTrack",
           "InitStateFromTrack",
           "GoalDefinitionFromTrack",
-          "BehaviorFromTrack",
-          "TrackFromTrackfile",
-          "AgentFromTrackfile"]
+          "BehaviorFromTrack"]
