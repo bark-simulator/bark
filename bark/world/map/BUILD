@@ -90,6 +90,7 @@ cc_library(
         "road_corridor.hpp"
     ],
     deps = [
+        "//bark/commons/transformation:frenet",
         "//bark/world/opendrive",
         ":road",
         ":lane",

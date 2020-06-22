@@ -7,20 +7,20 @@ from bark.runtime.scenario.interaction_dataset_processing.agent_track_info impor
 
 
 class ScenarioTrackInfo:
-    def __init__(self, map_filename, track_filename, ego_track_info, start_ts=None, end_ts=None):
+    def __init__(self, map_filename, track_filename, ego_track_info, start_ts=None, end_ts=None, precision=-2):
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._ego_track_info = ego_track_info
 
         if start_ts is None:
-            self._start_ts = ego_track_info.GetStartOffset()
+            self._start_ts = int(round(ego_track_info.GetStartOffset(), precision))
         else:
-            self._start_ts = start_ts
+            self._start_ts = int(round(start_ts, precision))
 
         if end_ts is None:
-            self._end_ts = ego_track_info.GetEndOffset()
+            self._end_ts = int(round(ego_track_info.GetEndOffset(), precision))
         else:
-            self._end_ts = end_ts
+            self._end_ts = int(round(end_ts, precision))
 
         self._other_agents_track_infos = {}
 

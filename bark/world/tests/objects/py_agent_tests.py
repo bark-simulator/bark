@@ -17,7 +17,7 @@ from bark.core.models.dynamic import SingleTrackModel
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.geometry import Polygon2d, Point2d
 from bark.core.geometry.standard_shapes import CarLimousine
-from bark.runtime.commons import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 
 class AgentTests(unittest.TestCase):

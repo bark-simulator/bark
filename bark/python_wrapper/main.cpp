@@ -10,7 +10,8 @@
 #include "models/models.hpp"
 #include "world/world.hpp"
 #include "viewer/viewer.hpp" 
-#include "runtime.hpp" 
+#include "runtime.hpp"
+#include "python/bindings/define_rule_monitor.hpp"
 
 namespace py = pybind11;
 
@@ -29,4 +30,5 @@ PYBIND11_MODULE(core, m) {
   python_viewer(m.def_submodule("viewer", "submodule containing the viewer"));
   python_runtime(
     m.def_submodule("runtime", "submodule containing the runtime"));
+  define_rule_monitor(m.def_submodule("ltl", "ltl"));
 }

@@ -65,7 +65,7 @@ const LaneCorridorPtr ObservedWorld::GetLaneCorridor() const {
     LOG(ERROR) << "No road corridor found.";
     return nullptr;
   }
-  const auto& lane_corridor = road_corridor->GetCurrentLaneCorridor(ego_pos);
+  const auto& lane_corridor = road_corridor->GetNearestLaneCorridor(ego_pos);
   if (!lane_corridor) {
     LOG(ERROR) << "No lane corridor found.";
     return nullptr;
@@ -133,6 +133,11 @@ EvaluationMap ObservedWorld::Evaluate() const {
   return evaluation_results;
 }
 
+AgentMap ObservedWorld::GetValidOtherAgents() const {
+  auto tmp_map = World::GetValidAgents();
+  tmp_map.erase(ego_agent_id_);
+  return tmp_map;
+}
 
 }  // namespace world
 }  // namespace modules

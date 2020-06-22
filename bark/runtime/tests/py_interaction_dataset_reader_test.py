@@ -5,7 +5,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile
+from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.commons.parameters import ParameterServer
@@ -59,8 +59,8 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
         scenario_info = ScenarioTrackInfo(
             map_filename, track_filename, agent_track_info)
-
-        agent = agent_from_trackfile(
+        ds_reader = InteractionDatasetReader()
+        agent = ds_reader.AgentFromTrackfile(
             track_params, params, scenario_info, agent_track_info.GetTrackId())
 
 

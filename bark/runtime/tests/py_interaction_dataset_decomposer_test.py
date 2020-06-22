@@ -18,7 +18,10 @@ class DatasetDecomposerTest(unittest.TestCase):
         dataset_decomposer = DatasetDecomposer(
             map_filename=map_filename, track_filename=track_filename)
 
-        dataset_decomposer.decompose()
+        scenario_list = dataset_decomposer.decompose()
+        for scen in scenario_list:
+          self.assertEqual(int(scen._start_ts), scen._start_ts)
+          self.assertEqual(int(scen._end_ts), scen._end_ts)
 
 
 

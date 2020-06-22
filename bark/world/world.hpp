@@ -33,6 +33,7 @@ using world::map::LaneCorridorPtr;
 using world::map::MapInterfacePtr;
 using modules::commons::transformation::FrenetPosition;
 using models::behavior::StateActionPair;
+using world::objects::ObjectPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -145,6 +146,8 @@ class World : public commons::BaseType {
   }
 
   void AddAgent(const AgentPtr& agent);
+
+  void RemoveAgentById(AgentId agent_id);
 
   void AddObject(const ObjectPtr& object);
 

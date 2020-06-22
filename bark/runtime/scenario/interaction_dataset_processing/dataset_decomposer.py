@@ -8,7 +8,7 @@ import os
 import shutil
 
 from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import agent_from_trackfile, trajectory_from_track
+from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import TrajectoryFromTrack
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.scenario.scenario import Scenario
@@ -36,7 +36,7 @@ class DatasetDecomposer:
         return map_interface
 
     def __find_first_ts_on_map__(self, id_ego):
-        traj = trajectory_from_track(self._track_dict[id_ego])
+        traj = TrajectoryFromTrack(self._track_dict[id_ego])
         for state in traj:
             point_agent = Point2d(state[1], state[2])
             lane_list = self._map_interface.find_nearest_lanes(point_agent, 3)

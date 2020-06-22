@@ -8,7 +8,7 @@ py_library(
      "execution_model_config_readers.py",
      "dynamic_model_config_readers.py",
      "controlled_agents_config_readers.py",
-     "goal_definition_config_readers.py"
+     "goal_definition_config_readers.py",
      ],
     data = ['//bark:generate_core'],
     imports = ['../../../python'],
