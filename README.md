@@ -4,6 +4,7 @@
 
 ![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![NIGHTLY Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY/badge.svg)
+![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**ARK**ing
 
