@@ -12,8 +12,7 @@
 #include <utility>
 #include <vector>
 
-#include "ltl/label.h"
-#include "ltl/rule_monitor.h"
+#include "bark/world/evaluation/ltl/label/label.h"
 #include "bark/world/objects/object.hpp"
 
 namespace modules {
@@ -22,8 +21,7 @@ namespace world {
 class ObservedWorld;
 
 namespace evaluation {
-using ltl::Label;
-using LabelMap = ltl::EvaluationMap;
+using LabelMap = EvaluationMap;
 
 class BaseLabelFunction {
  public:
