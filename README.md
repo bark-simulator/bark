@@ -2,7 +2,8 @@
 <img src="https://github.com/bark-simulator/bark/raw/master/docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
-![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
+![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
+![macOS-CI Build](https://github.com/bark-simulator/bark/workflows/macOS-CI/badge.svg)
 ![NIGHTLY Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 
