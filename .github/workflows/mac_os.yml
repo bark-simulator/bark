@@ -16,7 +16,7 @@ jobs:
       - name: Installing SDL2..
         run: brew install sdl sdl_image sdl_mixer sdl_ttf portmidi
       - name: Installing python-dev..
-        run: brew install python3-dev
+        run: brew install python3.7-dev
       - name: Installing bazelisk..
         run: |
           curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.5.0/bazelisk-darwin-amd64"
