@@ -23,6 +23,9 @@ cc_binary(
     "//bark/world/map:roadgraph",
     "//bark/world/goal_definition:goal_definition",
     "//bark/world/evaluation:evaluation",
+    "//bark/world/evaluation/ltl/label_functions:label_function",
+    "//bark/world/tests/evaluation:constant_label_evaluator",
+    "//bark/world/evaluation/ltl:evaluator_ltl",
     "//bark/commons/params:params",
     "//bark/commons/util:util",
     "//bark/models/execution/interpolation:interpolation",
@@ -41,11 +44,7 @@ cc_binary(
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
-  + select({"//bark/world/evaluation/ltl:_ltl_rules": ["//bark/world/evaluation/ltl/label_functions:label_function",
-                                                 "//bark/world/tests/evaluation:constant_label_evaluator",
-                                                 "//bark/world/evaluation/ltl:evaluator_ltl",
-                                                 "@rule_monitor_project//python/bindings:rule_monitor"],
-            "//conditions:default": []}),
+  + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
   linkshared = 1,

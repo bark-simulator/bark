@@ -134,11 +134,8 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
-
-    ]
-    + select({"//bark/world/evaluation/ltl:_ltl_rules": ["//bark/world/evaluation/ltl:evaluator_ltl"],
-              "//conditions:default": []
-    }),
+        "//bark/world/evaluation/ltl:evaluator_ltl",
+    ],
     visibility = ["//visibility:public"],
 )
 
