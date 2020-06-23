@@ -5,31 +5,19 @@ cc_library(
     deps = [
         "//bark/world:include",
         "//bark/world/evaluation:base_evaluator",
-    ] + select({
-        "//bark/world/evaluation/ltl:_ltl_rules": [
-            "@rule_monitor_project//ltl:rule_monitor",
-        ],
-        "//conditions:default": [],
-    }),
+    ],
 )
 
 cc_test(
     name = "label_test",
     srcs = ["label_test.cc"],
-    copts = ["-Iexternal/gtest/include"] + select({
-        "//bark/world/evaluation/ltl:_ltl_rules": ["-D LTL_RULES"],
-        "//conditions:default": [],
-    }),
+    copts = ["-Iexternal/gtest/include"],
     deps = [
         "@gtest//:gtest_main",
         "//bark/world/tests:make_test_world",
         "//bark/models/behavior/motion_primitives:motion_primitives",
-    ] + select({
-        "//bark/world/evaluation/ltl:_ltl_rules": [
-            "//bark/world/evaluation/ltl/label_functions:label_function",
-        ],
-        "//conditions:default": [],
-    }),
+        "//bark/world/evaluation/ltl/label_functions:label_function",
+    ],
 )
 
 py_test(

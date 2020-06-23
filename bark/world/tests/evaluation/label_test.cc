@@ -5,14 +5,12 @@
 
 #include "gtest/gtest.h"
 
-#ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
-#endif
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -26,8 +24,6 @@ using namespace modules::models::behavior;
 using namespace modules::models::behavior::primitives;
 
 using modules::commons::SetterParams;
-
-#ifdef LTL_RULES
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));
@@ -207,8 +203,6 @@ TEST(label_test, agent_near) {
   auto label2 = evaluator->GetLabel(2);
   EXPECT_FALSE(labels2[label2]);
 }
-
-#endif
 
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
