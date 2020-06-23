@@ -22,7 +22,7 @@ jobs:
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
       
       - name: Creating virtual environment..
-        run: virtualenv -p python ./bark/python_wrapper/venv
+        run: python -m pip install virtualenv && virtualenv -p python ./bark/python_wrapper/venv
        
       - name: Installing dependencies..
         run: pip install -r ./tools/installers/requirements.txt
