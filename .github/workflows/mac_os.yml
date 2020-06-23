@@ -1,0 +1,33 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    strategy:
+        python-version: [3.7.7]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      
+      - name: Install bazelisk
+        run: |
+          curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.1.0/bazelisk-linux-amd64"
+          mkdir -p "${GITHUB_WORKSPACE}/bin/"
+          mv bazelisk-linux-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
+          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
+      
+      - name: Creating virtual environment..
+        run: virtualenv -p python ./bark/python_wrapper/venv
+       
+      - name: Installing dependencies..
+        run: pip install -r ./tools/installers/requirements.txt
+      
+      - name: Getting into venv
+        run: . ./bark/python_wrapper/venv/bin/activate
+      
+      - name: Runing bazel test
+        run: "${GITHUB_WORKSPACE}/bin/bazel" test //...
