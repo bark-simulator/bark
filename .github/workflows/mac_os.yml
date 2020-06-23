@@ -1,4 +1,4 @@
-name: CI
+name: macOS-CI
 
 on: [push]
 
@@ -7,7 +7,8 @@ jobs:
 
     runs-on: macos-latest
     strategy:
-        python-version: [3.7.7]
+      matrix:
+        python-version: [3.7.4]
 
     steps:
       - uses: actions/checkout@v2
@@ -26,8 +27,9 @@ jobs:
       - name: Installing dependencies..
         run: pip install -r ./tools/installers/requirements.txt
       
-      - name: Getting into venv
+      - name: Entering venv..
         run: . ./bark/python_wrapper/venv/bin/activate
       
-      - name: Runing bazel test
-        run: "${GITHUB_WORKSPACE}/bin/bazel" test //...
+      - name: Runing bazel tests..
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test //...
