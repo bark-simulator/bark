@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "bark/world/evaluation/ltl/labels/multi_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/multi_agent_label_function.hpp"
 #include "bark/world/objects/object.hpp"
 #include "bark/world/opendrive/commons.hpp"
 

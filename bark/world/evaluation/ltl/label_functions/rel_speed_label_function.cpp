@@ -3,7 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "bark/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 
 #include "bark/world/observed_world.hpp"
 

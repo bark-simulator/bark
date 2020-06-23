@@ -15,8 +15,8 @@
 #include "bark/world/world.hpp"
 #ifdef LTL_RULES
 #include "ltl/rule_state.h"
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
 #endif
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 
 namespace modules {
 namespace world {
@@ -25,8 +25,8 @@ namespace evaluation {
 #ifdef LTL_RULES
 using ltl::RuleMonitor;
 using ltl::RuleState;
-typedef std::vector<LabelFunctionPtr> LabelFunctions;
 #endif
+typedef std::vector<LabelFunctionPtr> LabelFunctions;
 
 using objects::AgentId;
 

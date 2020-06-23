@@ -5,10 +5,10 @@
 
 #include "bark/world/evaluation/ltl/evaluator_right_overtake.hpp"
 
-#include "bark/world/evaluation/ltl/labels/behind_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/dense_traffic_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/front_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/dense_traffic_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 
 namespace modules {
 namespace world {

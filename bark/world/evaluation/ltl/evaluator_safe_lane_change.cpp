@@ -5,8 +5,8 @@
 
 #include "bark/world/evaluation/ltl/evaluator_safe_lane_change.hpp"
 
-#include "bark/world/evaluation/ltl/labels/lane_change_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
 namespace modules {
 namespace world {
