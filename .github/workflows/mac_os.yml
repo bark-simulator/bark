@@ -13,19 +13,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      
-      - name: Install bazelisk
+      - name: Installing SDL2..
+        run: brew install sdl2
+      - name: Installing bazelisk
         run: |
           curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.1.0/bazelisk-linux-amd64"
           mkdir -p "${GITHUB_WORKSPACE}/bin/"
           mv bazelisk-linux-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
           chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
+      - uses: actions/cache@v1
+        id: cache
+        with:
+          path: .cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles(./tools/installers/requirements.txt) }}
+          restore-keys: |
+            ${{ runner.os }}-test
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pip install -r ./tools/installers/requirements.txt
       
       - name: Creating virtual environment..
-        run: python -m pip install virtualenv && virtualenv -p python ./bark/python_wrapper/venv
-       
-      - name: Installing dependencies..
-        run: pip install -r ./tools/installers/requirements.txt
+        run: python -m pip install virtualenv && virtualenv -p python ./bark/python_wrapper/venv --system-site-packages
       
       - name: Entering venv..
         run: . ./bark/python_wrapper/venv/bin/activate
