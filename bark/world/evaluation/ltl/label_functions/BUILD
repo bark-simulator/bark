@@ -1,5 +1,5 @@
 cc_library(
-    name = "base_label_evaluator",
+    name = "base_label_function",
     hdrs = ["base_label_function.hpp"],
     visibility = ["//visibility:public"],
     deps = [
@@ -9,12 +9,12 @@ cc_library(
 )
 
 cc_library(
-    name = "label_evaluation",
+    name = "label_function",
     srcs = glob(["*.cpp"]),
     hdrs = glob(["*.hpp"]),
     visibility = ["//visibility:public"],
     deps = [
-        ":base_label_evaluator",
+        ":base_label_function",
         "//bark/world:include",
         "//bark/world/map:road_corridor",
         "//bark/world/evaluation:base_evaluator",

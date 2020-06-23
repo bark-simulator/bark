@@ -5,8 +5,12 @@ cc_library(
     deps = [
         "//bark/world:include",
         "//bark/world/evaluation:base_evaluator",
-        "@rule_monitor_project//ltl:rule_monitor",
-    ],
+    ] + select({
+        "//bark/world/evaluation/ltl:_ltl_rules": [
+            "@rule_monitor_project//ltl:rule_monitor",
+        ],
+        "//conditions:default": [],
+    }),
 )
 
 cc_test(
@@ -22,7 +26,7 @@ cc_test(
         "//bark/models/behavior/motion_primitives:motion_primitives",
     ] + select({
         "//bark/world/evaluation/ltl:_ltl_rules": [
-            "//bark/world/evaluation/ltl/labels:label_evaluation",
+            "//bark/world/evaluation/ltl/labels:label_function",
         ],
         "//conditions:default": [],
     }),

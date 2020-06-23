@@ -3,7 +3,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "bark/world/evaluation/ltl/labels/ego_accelerate_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
 
 #include <algorithm>
 #include "bark/world/observed_world.hpp"

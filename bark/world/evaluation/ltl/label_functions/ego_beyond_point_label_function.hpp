@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/objects/object.hpp"
 #include "bark/world/opendrive/commons.hpp"
 

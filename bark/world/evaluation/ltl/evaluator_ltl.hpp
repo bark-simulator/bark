@@ -15,7 +15,7 @@
 #include "bark/world/world.hpp"
 #ifdef LTL_RULES
 #include "ltl/rule_state.h"
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #endif
 
 namespace modules {

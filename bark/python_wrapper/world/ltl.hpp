@@ -7,7 +7,7 @@
 #ifndef BARK_PYTHON_WRAPPER_WORLD_LTL_HPP_
 #define BARK_PYTHON_WRAPPER_WORLD_LTL_HPP_
 
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/python_wrapper/common.hpp"
 
 namespace py = pybind11;

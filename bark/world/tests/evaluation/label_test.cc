@@ -6,12 +6,12 @@
 #include "gtest/gtest.h"
 
 #ifdef LTL_RULES
-#include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/lane_change_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 #endif
 
 #include "bark/commons/params/setter_params.hpp"
