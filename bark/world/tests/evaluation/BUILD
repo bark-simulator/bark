@@ -26,7 +26,7 @@ cc_test(
         "//bark/models/behavior/motion_primitives:motion_primitives",
     ] + select({
         "//bark/world/evaluation/ltl:_ltl_rules": [
-            "//bark/world/evaluation/ltl/labels:label_function",
+            "//bark/world/evaluation/ltl/label_functions:label_function",
         ],
         "//conditions:default": [],
     }),

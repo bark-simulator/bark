@@ -26,7 +26,7 @@ cc_library(
     ] + select({
         ":_ltl_rules": [
             "@rule_monitor_project//ltl:rule_monitor",
-            "//bark/world/evaluation/ltl/labels:label_function",
+            "//bark/world/evaluation/ltl/label_functions:label_function",
         ],
         "//conditions:default": [],
     }),
