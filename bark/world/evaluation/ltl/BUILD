@@ -23,10 +23,10 @@ cc_library(
     deps = [
         "//bark/world",
         "//bark/world/evaluation:base_evaluator",
+        "//bark/world/evaluation/ltl/label_functions:label_function",
     ] + select({
         ":_ltl_rules": [
             "@rule_monitor_project//ltl:rule_monitor",
-            "//bark/world/evaluation/ltl/label_functions:label_function",
         ],
         "//conditions:default": [],
     }),
