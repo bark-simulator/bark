@@ -21,8 +21,7 @@ namespace world {
 class ObservedWorld;
 
 namespace evaluation {
-using ltl::Label;
-using LabelMap = ltl::EvaluationMap;
+using LabelMap = EvaluationMap;
 
 class BaseLabelFunction {
  public:

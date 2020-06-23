@@ -3,14 +3,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef LTL_LABEL_H_
-#define LTL_LABEL_H_
+#ifndef MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
+#define MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
 
 #include <ostream>
 #include <string>
 #include <unordered_map>
 
-namespace ltl {
+namespace modules {
+namespace world {
+namespace evaluation {
 
 class Label {
  public:
@@ -60,5 +62,8 @@ class LabelHash {
 
 typedef std::unordered_map<Label, bool, LabelHash> EvaluationMap;
 
-}  // namespace ltl
-#endif  // LTL_LABEL_H_
+}  // namespace evaluation
+}  // namespace world
+}  // namespace modules
+
+#endif  // MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_

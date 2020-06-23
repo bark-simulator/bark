@@ -20,7 +20,7 @@ class ConstantLabelFunction : public BaseLabelFunction {
   ConstantLabelFunction(const std::string& label_str)
       : BaseLabelFunction(label_str), value_(true) {}
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override {
-    return {{ltl::Label(GetLabelStr()), value_}};
+    return {{Label(GetLabelStr()), value_}};
   }
   bool GetValue() const { return value_; }
   void SetValue(bool value) { value_ = value; }
