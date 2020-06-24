@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_OPENDRIVE_LANE_SECTION_HPP_
-#define MODULES_WORLD_OPENDRIVE_LANE_SECTION_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_LANE_SECTION_HPP_
+#define BARK_WORLD_OPENDRIVE_LANE_SECTION_HPP_
 
 #include <map>
 #include <memory>
@@ -14,7 +14,7 @@
 
 #include "bark/world/opendrive/lane.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -50,6 +50,6 @@ using XodrLaneSectionPtr = std::shared_ptr<XodrLaneSection>;
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_LANE_SECTION_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_LANE_SECTION_HPP_

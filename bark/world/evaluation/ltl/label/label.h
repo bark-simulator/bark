@@ -3,14 +3,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
 
 #include <ostream>
 #include <string>
 #include <unordered_map>
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -64,6 +64,6 @@ typedef std::unordered_map<Label, bool, LabelHash> EvaluationMap;
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABEL_LABEL_HPP_

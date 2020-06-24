@@ -9,15 +9,15 @@
 #include "bark/world/tests/make_test_xodr_map.hpp"
 
 TEST(query_lanes, map_interface) {
-  using modules::geometry::Point2d;
-  using modules::world::map::MapInterface;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::opendrive::XodrLanePtr;
-  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+  using bark::geometry::Point2d;
+  using bark::world::map::MapInterface;
+  using bark::world::opendrive::OpenDriveMapPtr;
+  using bark::world::opendrive::XodrLanePtr;
+  using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
-  modules::world::map::MapInterface map_interface;
+  bark::world::map::MapInterface map_interface;
   map_interface.interface_from_opendrive(open_drive_map);
 
   std::vector<XodrLanePtr> nearest_lanes;
@@ -32,15 +32,15 @@ TEST(query_lanes, map_interface) {
 }
 
 TEST(point_in_lane, map_interface) {
-  using modules::geometry::Point2d;
-  using modules::world::map::MapInterface;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::opendrive::XodrLanePtr;
-  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+  using bark::geometry::Point2d;
+  using bark::world::map::MapInterface;
+  using bark::world::opendrive::OpenDriveMapPtr;
+  using bark::world::opendrive::XodrLanePtr;
+  using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
-  modules::world::map::MapInterface map_interface;
+  bark::world::map::MapInterface map_interface;
   map_interface.interface_from_opendrive(open_drive_map);
 
   std::vector<XodrLanePtr> nearest_lanes;

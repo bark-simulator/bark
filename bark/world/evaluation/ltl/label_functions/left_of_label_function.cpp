@@ -5,9 +5,9 @@
 
 #include "left_of_label_function.hpp"
 #include "bark/world/observed_world.hpp"
-bool modules::world::evaluation::LeftOfLabelFunction::EvaluateAgent(
-    const modules::world::ObservedWorld& observed_world,
-    const modules::world::objects::AgentPtr& other_agent) const {
+bool bark::world::evaluation::LeftOfLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld& observed_world,
+    const bark::world::objects::AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   const auto ego_lc = observed_world.GetLaneCorridor();
   if (other_agent) {

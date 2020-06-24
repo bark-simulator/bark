@@ -10,9 +10,9 @@
 //#include "bark/models/execution/mpc/mpc.hpp"
 
 namespace py = pybind11;
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
 using std::shared_ptr;
 
 void python_execution(py::module m) {

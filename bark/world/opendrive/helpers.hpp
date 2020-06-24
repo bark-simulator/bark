@@ -5,13 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OPENDRIVE_HELPERS_HPP_
-#define MODULES_WORLD_OPENDRIVE_HELPERS_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_HELPERS_HPP_
+#define BARK_WORLD_OPENDRIVE_HELPERS_HPP_
 
 #include "bark/world/opendrive/lane.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -44,6 +44,6 @@ bool ConcatenateLanes(
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
 #endif

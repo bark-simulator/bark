@@ -13,7 +13,7 @@
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -38,4 +38,4 @@ const LabelFunctions EvaluatorZipMergeChn::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

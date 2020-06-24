@@ -16,12 +16,12 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
 #ifdef LTL_RULES
-EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
+EvaluatorLTL::EvaluatorLTL(bark::world::objects::AgentId agent_id,
                            const std::string& ltl_formula_str,
                            const LabelFunctions& label_functions)
     : safety_violations_(0),
@@ -34,7 +34,7 @@ EvaluatorLTL::EvaluatorLTL(modules::world::objects::AgentId agent_id,
   }
 }
 
-EvaluationReturn EvaluatorLTL::Evaluate(const modules::world::World& world) {
+EvaluationReturn EvaluatorLTL::Evaluate(const bark::world::World& world) {
   auto cloned_world = world.Clone();
   if (world.GetAgent(agent_id_)) {
     return Evaluate(cloned_world->Observe({agent_id_})[0]);
@@ -44,7 +44,7 @@ EvaluationReturn EvaluatorLTL::Evaluate(const modules::world::World& world) {
 }
 
 EvaluationReturn EvaluatorLTL::Evaluate(
-    const modules::world::ObservedWorld& observed_world) {
+    const bark::world::ObservedWorld& observed_world) {
   // Only required if rule is in relation to other agents
   if (monitor_->IsAgentSpecific()) {
     auto other_agents = observed_world.GetValidOtherAgents();
@@ -147,4 +147,4 @@ EvaluatorLTL::EvaluatorLTL(){};
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

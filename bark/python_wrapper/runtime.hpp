@@ -13,9 +13,9 @@
 
 namespace py = pybind11;
 
-using modules::runtime::Runtime;
-using modules::runtime::EvalRuntime;
-using modules::runtime::RuntimePtr;
+using bark::runtime::Runtime;
+using bark::runtime::EvalRuntime;
+using bark::runtime::RuntimePtr;
 
 class PyRuntime : public Runtime {
  public:
@@ -32,7 +32,7 @@ void python_runtime(py::module m) {
   py::class_<Runtime,
              PyRuntime,
              RuntimePtr>(m, "PyRuntime")
-    .def(py::init<const modules::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("step", py::overload_cast<>(&Runtime::Step))
     .def("step", py::overload_cast<int>(&Runtime::Step))
     .def("step", py::overload_cast<float>(&Runtime::Step))

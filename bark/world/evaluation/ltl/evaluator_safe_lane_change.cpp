@@ -8,7 +8,7 @@
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -27,4 +27,4 @@ const LabelFunctions EvaluatorSafeLaneChangeAssumption::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

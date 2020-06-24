@@ -8,7 +8,7 @@
 #include <memory>
 #include <utility>
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
@@ -651,7 +651,7 @@ std::pair<PolygonPtr, bool> Roadgraph::ComputeXodrLanePolygon(
   bool success = false;
   std::pair<XodrLanePtr, XodrLanePtr> lb = ComputeXodrLaneBoundaries(lane_id);
 
-  PolygonPtr polygon = std::make_shared<modules::geometry::Polygon>();
+  PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
   // inner
   if (lb.first && lb.second) {
     success = true;
@@ -809,4 +809,4 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightBoundary(
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

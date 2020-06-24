@@ -7,10 +7,10 @@
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/observed_world.hpp"
 
-using modules::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetPosition;
 
-bool modules::world::evaluation::BehindOfLabelFunction::EvaluateAgent(
-    const modules::world::ObservedWorld& observed_world,
+bool bark::world::evaluation::BehindOfLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld& observed_world,
     const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   const auto ego_lane = observed_world.GetLaneCorridor();

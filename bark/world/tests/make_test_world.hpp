@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
-#define MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#ifndef BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#define BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
 
 #include "bark/geometry/commons.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
@@ -13,20 +13,20 @@
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace tests {
 
-using modules::geometry::Line;
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::geometry::Pose;
-using modules::world::ObservedWorld;
-using modules::world::WorldPtr;
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::world::goal_definition::GoalDefinitionPtr;
-using modules::world::map::LaneCorridor;
-using modules::world::map::LaneCorridorPtr;
+using bark::geometry::Line;
+using bark::geometry::Point2d;
+using bark::geometry::Polygon;
+using bark::geometry::Pose;
+using bark::world::ObservedWorld;
+using bark::world::WorldPtr;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
 
 WorldPtr make_test_world(int num_other_agents, double rel_distance,
                          double ego_velocity, double velocity_difference,
@@ -43,6 +43,6 @@ WorldPtr MakeTestWorldHighway();
 
 }  // namespace tests
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#endif  // BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_

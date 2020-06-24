@@ -5,13 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
-#define MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
+#ifndef BARK_MODELS_DYNAMIC_INTEGRATION_HPP_
+#define BARK_MODELS_DYNAMIC_INTEGRATION_HPP_
 #include <Eigen/Core>
 
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace dynamic {
 
@@ -33,6 +33,6 @@ inline State rk4(
 
 }  // namespace dynamic
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_DYNAMIC_INTEGRATION_HPP_
+#endif  // BARK_MODELS_DYNAMIC_INTEGRATION_HPP_

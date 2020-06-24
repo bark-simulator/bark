@@ -11,7 +11,7 @@
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 
 using models::behavior::BehaviorStatus;
@@ -27,7 +27,7 @@ World::World(const commons::ParamsPtr& params)
           "Whether agents should be removed outside the bounding box.",
           false)) {
   //! segfault handler
-  std::signal(SIGSEGV, modules::commons::SegfaultHandler);
+  std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
 
 World::World(const std::shared_ptr<World>& world)
@@ -40,7 +40,7 @@ World::World(const std::shared_ptr<World>& world)
       remove_agents_(world->GetRemoveAgents()),
       rtree_agents_(world->rtree_agents_) {
   //! segfault handler
-  std::signal(SIGSEGV, modules::commons::SegfaultHandler);
+  std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
 
 void World::Step(const float& delta_time) {
@@ -153,7 +153,7 @@ void World::RemoveInvalidAgents() {
   if (remove_agents_) {
     std::vector<rtree_agent_value> query_results;
     auto bounding_box = this->BoundingBox();
-    boost::geometry::model::box<modules::geometry::Point2d> query_box(
+    boost::geometry::model::box<bark::geometry::Point2d> query_box(
         bounding_box.first, bounding_box.second);
 
     rtree_agents_.query(!boost::geometry::index::within(query_box),
@@ -172,7 +172,7 @@ void World::RemoveInvalidAgents() {
   UpdateAgentRTree();
 }
 
-AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
+AgentMap World::GetNearestAgents(const bark::geometry::Point2d& position,
                                  const unsigned int& num_agents) const {
   std::vector<rtree_agent_value> results_n;
 
@@ -187,10 +187,10 @@ AgentMap World::GetNearestAgents(const modules::geometry::Point2d& position,
 }
 
 AgentMap World::GetAgentsIntersectingPolygon(
-    const modules::geometry::Polygon& polygon) const {
+    const bark::geometry::Polygon& polygon) const {
   std::vector<rtree_agent_value> query_results;
   auto bounding_box = polygon.BoundingBox();
-  boost::geometry::model::box<modules::geometry::Point2d> query_box(
+  boost::geometry::model::box<bark::geometry::Point2d> query_box(
       bounding_box.first, bounding_box.second);
 
   rtree_agents_.query(boost::geometry::index::intersects(query_box),
@@ -199,7 +199,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
   AgentMap intersecting_agents;
   for (auto& result_pair : query_results) {
     auto agent = GetAgent(result_pair.second);
-    if (modules::geometry::Collide(
+    if (bark::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
         agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
       intersecting_agents[result_pair.second] = agent;
@@ -210,8 +210,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
 FrontRearAgents World::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
-  using modules::geometry::Line;
-  using modules::geometry::Polygon;
+  using bark::geometry::Line;
+  using bark::geometry::Polygon;
 
   FrontRearAgents fr_agents;
   Point2d ego_position = World::GetAgent(agent_id)->GetCurrentPosition();
@@ -274,4 +274,4 @@ void World::RemoveAgentById(AgentId agent_id) {
 }
 
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

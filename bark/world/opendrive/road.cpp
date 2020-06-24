@@ -7,11 +7,11 @@
 
 #include "bark/world/opendrive/road.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

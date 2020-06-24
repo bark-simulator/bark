@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_GEOMETRY_COMMONS_HPP_
-#define MODULES_GEOMETRY_COMMONS_HPP_
+#ifndef BARK_GEOMETRY_COMMONS_HPP_
+#define BARK_GEOMETRY_COMMONS_HPP_
 
 #include <Eigen/Core>
 #include <string>
@@ -21,7 +21,7 @@
 #include <boost/geometry/geometries/geometries.hpp>
 #include "bark/commons/util/util.hpp"
 
-namespace modules {
+namespace bark {
 namespace geometry {
 
 //! using boost geometry
@@ -233,6 +233,6 @@ inline std::string Shape<G, T>::ShapeToString() const {
 //}
 
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_GEOMETRY_COMMONS_HPP_
+#endif  // BARK_GEOMETRY_COMMONS_HPP_

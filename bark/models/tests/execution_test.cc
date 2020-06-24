@@ -11,9 +11,9 @@
 //#include "bark/models/execution/mpc/mpc.hpp"
 #include "bark/commons/params/setter_params.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
 
 TEST(execution_model, execution_model_interpolate) {
   auto params = std::make_shared<SetterParams>();

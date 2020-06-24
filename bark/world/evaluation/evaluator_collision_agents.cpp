@@ -7,13 +7,13 @@
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
 EvaluationReturn EvaluatorCollisionAgents::Evaluate(const world::World& world) {
-  modules::geometry::Polygon poly_agent1;
-  modules::geometry::Polygon poly_agent2;
+  bark::geometry::Polygon poly_agent1;
+  bark::geometry::Polygon poly_agent2;
   bool colliding = false;
 
   for (auto agent_outer : world.GetValidAgents()) {
@@ -37,4 +37,4 @@ EvaluationReturn EvaluatorCollisionAgents::Evaluate(const world::World& world) {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

@@ -10,13 +10,13 @@
 
 #include "bark/models/execution/mpc/mpc.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 
 
 
 // TODO(@all) !
-execution::ExecutionModelMpc::ExecutionModelMpc(const modules::commons::ParamsPtr params) : ExecutionModel(params) {
+execution::ExecutionModelMpc::ExecutionModelMpc(const bark::commons::ParamsPtr params) : ExecutionModel(params) {
   optimization_settings_.num_optimization_steps = params->GetInt("NumOptimizationSteps",
                                                                   "Number of optimization steps for Execution Optimimizer",
                                                                   20);
@@ -142,4 +142,4 @@ dynamic::Trajectory execution::ExecutionModelMpc::Optimize(std::vector<double *>
 }
 
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

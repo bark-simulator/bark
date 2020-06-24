@@ -17,10 +17,10 @@
 #include "bark/world/opendrive/opendrive.hpp"
 #include "bark/geometry/geometry.hpp"
 
-using namespace modules::world::map;
-using modules::world::opendrive::XodrLaneId;
-using modules::geometry::Point2d;
-using modules::geometry::Line;
+using namespace bark::world::map;
+using bark::world::opendrive::XodrLaneId;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
 
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
@@ -40,8 +40,8 @@ void python_map(py::module m) {
       py::overload_cast<const std::vector<XodrRoadId>&,
       const XodrDrivingDirection&>(&MapInterface::GenerateRoadCorridor))
     .def("GenerateRoadCorridor",
-      py::overload_cast<const modules::geometry::Point2d&,
-      const modules::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
+      py::overload_cast<const bark::geometry::Point2d&,
+      const bark::geometry::Polygon&>(&MapInterface::GenerateRoadCorridor))
     .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
     .def("GetLane", &MapInterface::GetLane)
     .def("ComputeAllPathBoundaries",

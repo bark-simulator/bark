@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
+#ifndef BARK_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
+#define BARK_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
 
 #include <limits>
 #include <vector>
@@ -13,7 +13,7 @@
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 class ObservedWorld;
@@ -28,7 +28,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
-    using modules::geometry::Polygon;
+    using bark::geometry::Polygon;
     namespace bg = boost::geometry;
 
     if (agent_id_ != std::numeric_limits<AgentId>::max()) {
@@ -58,7 +58,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 
   virtual EvaluationReturn Evaluate(
     const world::ObservedWorld& observed_world) {
-      using modules::geometry::Polygon;
+      using bark::geometry::Polygon;
       namespace bg = boost::geometry;
 
       const auto& agent = observed_world.GetEgoAgent();
@@ -77,6 +77,6 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_
+#endif  // BARK_WORLD_EVALUATION_EVALUATOR_DRIVABLE_AREA_HPP_

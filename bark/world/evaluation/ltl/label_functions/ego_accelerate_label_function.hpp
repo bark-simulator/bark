@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_
 
 #include <string>
 #include <vector>
@@ -13,12 +13,12 @@
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
-using modules::commons::transformation::FrenetPosition;
-using modules::world::objects::AgentPtr;
+using bark::commons::transformation::FrenetPosition;
+using bark::world::objects::AgentPtr;
 
 class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
@@ -31,6 +31,6 @@ class EgoAccelerateLabelFunction : public BaseLabelFunction {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_EGO_ACCELERATE_LABEL_FUNCTION_HPP_

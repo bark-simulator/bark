@@ -5,13 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_GOAL_DEFINITION_POLYGON_HPP_
-#define MODULES_WORLD_GOAL_DEFINITION_POLYGON_HPP_
+#ifndef BARK_WORLD_GOAL_DEFINITION_POLYGON_HPP_
+#define BARK_WORLD_GOAL_DEFINITION_POLYGON_HPP_
 
 #include "bark/world/goal_definition/goal_definition.hpp"
 #include "bark/geometry/polygon.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 class Agent;
@@ -22,22 +22,22 @@ namespace goal_definition {
 class GoalDefinitionPolygon : public GoalDefinition  {
  public:
   GoalDefinitionPolygon() : GoalDefinition(), goal_shape_() {}
-  explicit GoalDefinitionPolygon(const modules::geometry::Polygon& goal_shape) :
+  explicit GoalDefinitionPolygon(const bark::geometry::Polygon& goal_shape) :
     goal_shape_(goal_shape) {}
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent);
+  virtual bool AtGoal(const bark::world::objects::Agent& agent);
 
-  const modules::geometry::Polygon& GetShape() const {return goal_shape_;}
+  const bark::geometry::Polygon& GetShape() const {return goal_shape_;}
 
  private:
-  modules::geometry::Polygon goal_shape_;
+  bark::geometry::Polygon goal_shape_;
 };
 
 
 }  // namespace goal_definition
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_GOAL_DEFINITION_POLYGON_HPP_
+#endif  // BARK_WORLD_GOAL_DEFINITION_POLYGON_HPP_
 
 

@@ -15,7 +15,7 @@
 #include "bark/world/opendrive/odrSpiral.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
 
-using namespace modules::world::opendrive;
+using namespace bark::world::opendrive;
 
 void python_opendrive(py::module m) {
   py::class_<PlanView, std::shared_ptr<PlanView>>(m, "PlanView")
@@ -44,7 +44,7 @@ void python_opendrive(py::module m) {
       [](const XodrRoadLink &l) {
       std::stringstream ss;
       ss << "<bark.XodrRoadLink> XodrRoadLink: ";
-      ss << modules::world::opendrive::print(l);
+      ss << bark::world::opendrive::print(l);
       return ss.str();
     });
 
@@ -84,7 +84,7 @@ void python_opendrive(py::module m) {
       [](const XodrRoadMark &rm) {
       std::stringstream ss;
       ss << "<bark.XodrRoadMark> XodrRoadMark: ";
-      ss << modules::world::opendrive::print(rm);
+      ss << bark::world::opendrive::print(rm);
       return ss.str();
     });
 
@@ -109,7 +109,7 @@ void python_opendrive(py::module m) {
       [](const XodrLane &l) {
       std::stringstream ss;
       ss << "<bark.XodrLane> XodrLane: ";
-      ss << modules::world::opendrive::print(l);
+      ss << bark::world::opendrive::print(l);
       return ss.str();
     });
 
@@ -131,7 +131,7 @@ void python_opendrive(py::module m) {
         [](const XodrLaneSection &ls) {
         std::stringstream ss;
         ss << "<bark.XodrLaneSection> XodrLaneSection: ";
-        ss << modules::world::opendrive::print(ls);
+        ss << bark::world::opendrive::print(ls);
         return ss.str();
     });
 
@@ -154,9 +154,9 @@ void python_opendrive(py::module m) {
       .def("GetJunctions", &OpenDriveMap::GetJunctions, "Get all junctions");
 
   m.def("MakeXodrMapOneRoadTwoLanes",
-    &modules::world::tests::MakeXodrMapOneRoadTwoLanes);
+    &bark::world::tests::MakeXodrMapOneRoadTwoLanes);
   m.def("MakeXodrMapTwoRoadsOneLane",
-  &modules::world::tests::MakeXodrMapTwoRoadsOneLane);
+  &bark::world::tests::MakeXodrMapTwoRoadsOneLane);
 
   py::class_<XodrLaneLink>(m, "XodrLaneLink")
     .def(py::init<>())

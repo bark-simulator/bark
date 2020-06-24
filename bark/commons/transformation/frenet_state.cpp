@@ -6,19 +6,19 @@
 
 #include "bark/commons/transformation/frenet_state.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 namespace transformation {
 
-using modules::geometry::Line;
-using modules::geometry::Point2d;
-using modules::geometry::operator-;
-using modules::geometry::operator*;
-using modules::geometry::operator+;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
+using bark::geometry::Line;
+using bark::geometry::Point2d;
+using bark::geometry::operator-;
+using bark::geometry::operator*;
+using bark::geometry::operator+;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition;
 namespace bg = boost::geometry;
-namespace mg = modules::geometry;
+namespace mg = bark::geometry;
 
 FrenetState::FrenetState(const State& state, const Line& path) {
   // First extract nearest point, extract longitudinal coordinate
@@ -83,4 +83,4 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
 }  // namespace transformation
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark

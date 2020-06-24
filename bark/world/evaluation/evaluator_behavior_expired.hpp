@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_
+#ifndef BARK_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_
+#define BARK_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_
 
 #include <limits>
 #include <memory>
@@ -15,13 +15,13 @@
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 class ObservedWorld;
 namespace evaluation {
 
-using modules::models::behavior::BehaviorStatus;
+using bark::models::behavior::BehaviorStatus;
 
 class EvaluatorBehaviorExpired : public BaseEvaluator {
  public:
@@ -63,6 +63,6 @@ class EvaluatorBehaviorExpired : public BaseEvaluator {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_
+#endif  // BARK_WORLD_EVALUATION_EVALUATOR_BEHAVIOR_EXPIRED_HPP_

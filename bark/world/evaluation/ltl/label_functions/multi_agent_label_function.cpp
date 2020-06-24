@@ -7,10 +7,10 @@
 
 #include "bark/world/observed_world.hpp"
 
-using modules::world::evaluation::LabelMap;
+using bark::world::evaluation::LabelMap;
 
-LabelMap modules::world::evaluation::MultiAgentLabelFunction::Evaluate(
-  const modules::world::ObservedWorld& observed_world) const {
+LabelMap bark::world::evaluation::MultiAgentLabelFunction::Evaluate(
+  const bark::world::ObservedWorld& observed_world) const {
   const auto other_agents = observed_world.GetValidOtherAgents();
   LabelMap labels;
   for (const auto& agent : other_agents) {

@@ -16,22 +16,22 @@ class PrimitiveConstAcc;
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::models::dynamic::Input;
-using modules::models::dynamic::SingleTrackModel;
-using modules::world::prediction::PredictionSettings;
+using bark::models::dynamic::Input;
+using bark::models::dynamic::SingleTrackModel;
+using bark::world::prediction::PredictionSettings;
 
-using modules::models::behavior::primitives::Primitive;
-using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
-using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
-using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
-using modules::models::behavior::primitives::PrimitiveGapKeeping;
-using modules::models::dynamic::Input;
-using modules::models::dynamic::SingleTrackModel;
-using modules::world::prediction::PredictionSettings;
+using bark::models::behavior::primitives::Primitive;
+using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
+using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
+using bark::models::behavior::primitives::PrimitiveGapKeeping;
+using bark::models::dynamic::Input;
+using bark::models::dynamic::SingleTrackModel;
+using bark::world::prediction::PredictionSettings;
 
 inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
     const commons::ParamsPtr& params) {
@@ -68,6 +68,6 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
 #endif  // BEHAVIOR_MACRO_ACTIONS_FROM_PARAM_SERVER_HPP_

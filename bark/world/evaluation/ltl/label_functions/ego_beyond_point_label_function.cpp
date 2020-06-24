@@ -7,14 +7,14 @@
 #include <unordered_map>
 #include "bark/world/observed_world.hpp"
 
-using modules::world::evaluation::LabelMap;
+using bark::world::evaluation::LabelMap;
 
-modules::world::evaluation::EgoBeyondPointLabelFunction::
+bark::world::evaluation::EgoBeyondPointLabelFunction::
     EgoBeyondPointLabelFunction(const std::string& label_str,
-                                const modules::geometry::Point2d& beyond_point)
+                                const bark::geometry::Point2d& beyond_point)
     : BaseLabelFunction(label_str), beyond_point_(beyond_point) {}
-LabelMap modules::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
-  const modules::world::ObservedWorld& observed_world) const {
+LabelMap bark::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
+  const bark::world::ObservedWorld& observed_world) const {
   const auto ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   const auto lc = observed_world.GetLaneCorridor();
   if (lc) {
@@ -24,8 +24,8 @@ LabelMap modules::world::evaluation::EgoBeyondPointLabelFunction::Evaluate(
   }
   return {{GetLabel(), false}};
 }
-const modules::geometry::Point2d&
-modules::world::evaluation::EgoBeyondPointLabelFunction::GetBeyondPoint()
+const bark::geometry::Point2d&
+bark::world::evaluation::EgoBeyondPointLabelFunction::GetBeyondPoint()
     const {
   return beyond_point_;
 }

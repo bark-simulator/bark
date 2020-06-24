@@ -6,11 +6,11 @@
 #include "safe_distance_label_function.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
-using modules::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition;
 
 SafeDistanceLabelFunction::SafeDistanceLabelFunction(
     const std::string& label_str, bool to_rear, double delta, double a_e,
@@ -121,4 +121,4 @@ double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

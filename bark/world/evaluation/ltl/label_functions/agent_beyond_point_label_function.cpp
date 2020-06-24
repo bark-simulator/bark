@@ -6,13 +6,13 @@
 #include "agent_beyond_point_label_function.hpp"
 
 #include "bark/world/observed_world.hpp"
-modules::world::evaluation::AgentBeyondPointLabelFunction::
+bark::world::evaluation::AgentBeyondPointLabelFunction::
     AgentBeyondPointLabelFunction(const std::string& string,
-                                  modules::geometry::Point2d beyond_point)
+                                  bark::geometry::Point2d beyond_point)
     : MultiAgentLabelFunction(string), beyond_point_(beyond_point) {}
-bool modules::world::evaluation::AgentBeyondPointLabelFunction::EvaluateAgent(
-    const modules::world::ObservedWorld& observed_world,
-    const modules::world::AgentPtr& other_agent) const {
+bool bark::world::evaluation::AgentBeyondPointLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld& observed_world,
+    const bark::world::AgentPtr& other_agent) const {
   const auto agent_pos = other_agent->GetCurrentPosition();
   const auto lc =
       other_agent->GetRoadCorridor()->GetCurrentLaneCorridor(agent_pos);
@@ -23,8 +23,8 @@ bool modules::world::evaluation::AgentBeyondPointLabelFunction::EvaluateAgent(
   }
   return false;
 }
-const modules::geometry::Point2d&
-modules::world::evaluation::AgentBeyondPointLabelFunction::GetBeyondPoint()
+const bark::geometry::Point2d&
+bark::world::evaluation::AgentBeyondPointLabelFunction::GetBeyondPoint()
     const {
   return beyond_point_;
 }

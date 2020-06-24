@@ -8,10 +8,10 @@
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/commons/transformation/frenet_state.hpp"
 
-using namespace modules::commons::transformation;
-using namespace modules::geometry;
-using namespace modules::models::dynamic;
-using st = modules::models::dynamic::StateDefinition;
+using namespace bark::commons::transformation;
+using namespace bark::geometry;
+using namespace bark::models::dynamic;
+using st = bark::models::dynamic::StateDefinition;
 
 void test_state_two_way(const float x, const float y,
                 const float theta, const float v,

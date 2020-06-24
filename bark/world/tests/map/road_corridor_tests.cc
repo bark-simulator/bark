@@ -13,14 +13,14 @@
 #include "bark/world/tests/make_test_xodr_map.hpp"
 
 TEST(road_corridor_tests, xodr_map_one_road_two_lanes) {
-  using modules::world::map::MapInterface;
-  using modules::world::map::MapInterfacePtr;
-  using modules::world::map::RoadCorridorPtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::opendrive::XodrDrivingDirection;
-  using modules::world::opendrive::XodrRoadId;
+  using bark::world::map::MapInterface;
+  using bark::world::map::MapInterfacePtr;
+  using bark::world::map::RoadCorridorPtr;
+  using bark::world::opendrive::OpenDriveMapPtr;
+  using bark::world::opendrive::XodrDrivingDirection;
+  using bark::world::opendrive::XodrRoadId;
 
-  using modules::world::tests::MakeXodrMapOneRoadTwoLanes;
+  using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
@@ -37,14 +37,14 @@ TEST(road_corridor_tests, xodr_map_one_road_two_lanes) {
 }
 
 TEST(road_corridor_tests, xodr_map_two_roads_one_lanes) {
-  using modules::world::map::MapInterface;
-  using modules::world::map::MapInterfacePtr;
-  using modules::world::map::RoadCorridorPtr;
-  using modules::world::opendrive::OpenDriveMapPtr;
-  using modules::world::opendrive::XodrDrivingDirection;
-  using modules::world::opendrive::XodrRoadId;
+  using bark::world::map::MapInterface;
+  using bark::world::map::MapInterfacePtr;
+  using bark::world::map::RoadCorridorPtr;
+  using bark::world::opendrive::OpenDriveMapPtr;
+  using bark::world::opendrive::XodrDrivingDirection;
+  using bark::world::opendrive::XodrRoadId;
 
-  using modules::world::tests::MakeXodrMapTwoRoadsOneLane;
+  using bark::world::tests::MakeXodrMapTwoRoadsOneLane;
 
   OpenDriveMapPtr open_drive_map = MakeXodrMapTwoRoadsOneLane();
 

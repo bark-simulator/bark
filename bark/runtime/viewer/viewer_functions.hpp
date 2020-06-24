@@ -12,7 +12,7 @@
 #include "bark/geometry/geometry.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace viewer {
 
 using geometry::Point2d;
@@ -37,4 +37,4 @@ inline void drawRandomThings(Viewer * viewer) {
 }
 
 }  // namespace viewer
-}  // namespace modules
+}  // namespace bark

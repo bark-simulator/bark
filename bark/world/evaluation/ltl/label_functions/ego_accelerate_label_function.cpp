@@ -8,11 +8,11 @@
 #include <algorithm>
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
-using modules::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition;
 
 EgoAccelerateLabelFunction::EgoAccelerateLabelFunction(
     const std::string& label_str, double acc_thres)
@@ -35,4 +35,4 @@ LabelMap EgoAccelerateLabelFunction::Evaluate(
 }
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

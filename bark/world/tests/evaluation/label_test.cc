@@ -18,12 +18,12 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
-using namespace modules::world::evaluation;
-using namespace modules::world::tests;
-using namespace modules::models::behavior;
-using namespace modules::models::behavior::primitives;
+using namespace bark::world::evaluation;
+using namespace bark::world::tests;
+using namespace bark::models::behavior;
+using namespace bark::models::behavior::primitives;
 
-using modules::commons::SetterParams;
+using bark::commons::SetterParams;
 
 TEST(label_test, right_of) {
   auto evaluator = LabelFunctionPtr(new RightOfLabelFunction("r_v"));

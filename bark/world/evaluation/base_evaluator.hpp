@@ -4,14 +4,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
-#define MODULES_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
+#ifndef BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
+#define BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 
 #include <memory>
 #include <boost/variant.hpp>
 #include "bark/commons/base_type.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 class ObservedWorld;
@@ -31,6 +31,6 @@ typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif // MODULES_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
+#endif // BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_

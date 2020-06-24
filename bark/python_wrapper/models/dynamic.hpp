@@ -13,7 +13,7 @@
 
 namespace py = pybind11;
 
-using namespace modules::models::dynamic;
+using namespace bark::models::dynamic;
 
 class PyDynamicModel : public DynamicModel {
  public:

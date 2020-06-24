@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_
 
 #include <memory>
 #include <string>
@@ -15,7 +15,7 @@
 #include "bark/world/evaluation/ltl/label/label.h"
 #include "bark/world/objects/object.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 
 class ObservedWorld;
@@ -41,6 +41,6 @@ class BaseLabelFunction {
 typedef std::shared_ptr<BaseLabelFunction> LabelFunctionPtr;
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_BASE_LABEL_FUNCTION_HPP_

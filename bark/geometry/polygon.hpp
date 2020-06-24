@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_GEOMETRY_POLYGON_HPP_
-#define MODULES_GEOMETRY_POLYGON_HPP_
+#ifndef BARK_GEOMETRY_POLYGON_HPP_
+#define BARK_GEOMETRY_POLYGON_HPP_
 
 #include <memory>
 #include <vector>
@@ -15,7 +15,7 @@
 #include "commons.hpp"
 #include "bark/geometry/line.hpp"
 
-namespace modules {
+namespace bark {
 namespace geometry {
 
 //! templated polygon class with a boost polygon as a member function
@@ -235,6 +235,6 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
 }
 
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_GEOMETRY_POLYGON_HPP_
+#endif  // BARK_GEOMETRY_POLYGON_HPP_

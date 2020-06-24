@@ -10,7 +10,7 @@
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -31,4 +31,4 @@ const LabelFunctions EvaluatorRightOvertakeAssumption::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
