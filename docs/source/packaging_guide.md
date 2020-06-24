@@ -12,13 +12,11 @@ All the modules  are now sub-module of main bark module, and are imported w.r.t 
 
 `from modules.runtime.commons.parameters import ParameterServer`   
 `from bark.world import World`   
-`from examples.*`   
 
 > to a more concise format as
 
 `from bark.runtime.commons import ParameterServer`   
 `from bark.core.world import World`   
-`from bark.examples.*` 
 
 ## Build Package source
 To have all the modules, together in a single library, a `py_binary` target  `//bark:pip_package`is created with all the `py_library`'s as its dependencies. Upon successful build of this target, all the modules are found under **bark_project** (workspace name) in the  pip_package.runfiles directory in the out folder, together with their dependencies in the external folder. The content under this bark_project directory is later combined into a wheel package.
