@@ -7,17 +7,17 @@
 
 #include "bark/world/observed_world.hpp"
 
-using modules::commons::transformation::FrenetPosition;
-using modules::geometry::Distance;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Distance;
 
-modules::world::evaluation::AgentNearLabelFunction::AgentNearLabelFunction(
+bark::world::evaluation::AgentNearLabelFunction::AgentNearLabelFunction(
     const std::string &string, const double distance_thres)
     : MultiAgentLabelFunction(string), distance_thres_(distance_thres) {
   assert(distance_thres_ >= 0.0);
 }
 
-bool modules::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
-    const modules::world::ObservedWorld &observed_world,
+bool bark::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld &observed_world,
     const AgentPtr &other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   if (other_agent) {

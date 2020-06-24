@@ -11,8 +11,8 @@
 #include "bark/commons/params/setter_params.hpp"
 
 namespace py = pybind11;
-using namespace modules::models::dynamic;
-using namespace modules::commons;
+using namespace bark::models::dynamic;
+using namespace bark::commons;
 
 void python_dynamic(py::module m) {
   py::class_<DynamicModel, PyDynamicModel, DynamicModelPtr>(m, "DynamicModel")

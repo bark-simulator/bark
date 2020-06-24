@@ -12,25 +12,25 @@ namespace py = pybind11;
 
 using Eigen::Dynamic;
 using Eigen::Matrix;
-using modules::geometry::Collide;
-using modules::geometry::Distance;
-using modules::geometry::Line;
-using modules::geometry::Norm0To2PI;
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::geometry::Pose;
-using modules::geometry::SignedDistance;
+using bark::geometry::Collide;
+using bark::geometry::Distance;
+using bark::geometry::Line;
+using bark::geometry::Norm0To2PI;
+using bark::geometry::Point2d;
+using bark::geometry::Polygon;
+using bark::geometry::Pose;
+using bark::geometry::SignedDistance;
 
 void python_standard_shapes(py::module m) {
-  m.def("CarLimousine", &modules::geometry::standard_shapes::CarLimousine);
-  m.def("CarRectangle", &modules::geometry::standard_shapes::CarRectangle);
+  m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
+  m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
 }
 
 void python_geometry(py::module m) {
   py::class_<Point2d>(m, "Point2d")
       .def(py::init<float, float>())
       .def("__repr__",
-           [](const Point2d &p) { return modules::geometry::print(p); })
+           [](const Point2d &p) { return bark::geometry::print(p); })
       .def("x", [](Point2d &p) { return p.get<0>(); })
       .def("y", [](Point2d &p) { return p.get<1>(); })
       .def(py::pickle(
@@ -68,29 +68,29 @@ void python_geometry(py::module m) {
         py::overload_cast<const Polygon &, const Point2d &>(&Distance),
         "Returns euclidean distance between polygon and point2d.");
 
-  m.def("GetNearestPoint", &modules::geometry::GetNearestPoint,
+  m.def("GetNearestPoint", &bark::geometry::GetNearestPoint,
         "get the nearest point from point to a line.");
 
-  m.def("GetNearestS", &modules::geometry::GetNearestS,
+  m.def("GetNearestS", &bark::geometry::GetNearestS,
         "get the nearest s value from point to a line.");
 
-  m.def("GetPointAtS", &modules::geometry::GetPointAtS,
+  m.def("GetPointAtS", &bark::geometry::GetPointAtS,
         "get the Point2d at position s of the line");
 
-  m.def("GetTangentAngleAtS", &modules::geometry::GetTangentAngleAtS,
+  m.def("GetTangentAngleAtS", &bark::geometry::GetTangentAngleAtS,
         "get the angle at position s of the line");
 
   m.def(
-      "GetNearestPointAndS", &modules::geometry::GetNearestPointAndS,
+      "GetNearestPointAndS", &bark::geometry::GetNearestPointAndS,
       "get the point nearest to another point and its position on the line s ");
 
-  m.def("GetLineFromSInterval", &modules::geometry::GetLineFromSInterval,
+  m.def("GetLineFromSInterval", &bark::geometry::GetLineFromSInterval,
         "get line between specified interval.");
 
-  m.def("MergeBoundingBoxes", &modules::geometry::MergeBoundingBoxes<Point2d>,
+  m.def("MergeBoundingBoxes", &bark::geometry::MergeBoundingBoxes<Point2d>,
         "merge two bounding boxes consisting of pairs of min and max corners");
 
-  m.def("ComputeCenterLine", &modules::geometry::ComputeCenterLine,
+  m.def("ComputeCenterLine", &bark::geometry::ComputeCenterLine,
         "computes the center line.");
 
   m.def("Collide",
@@ -104,7 +104,7 @@ void python_geometry(py::module m) {
         py::overload_cast<const Polygon &, const Polygon &>(&Collide),
         "Returns true if polygon and polygon collide.");
 
-  m.def("Norm0To2PI", &modules::geometry::Norm0To2PI, "limit input to 0..2pi");
+  m.def("Norm0To2PI", &bark::geometry::Norm0To2PI, "limit input to 0..2pi");
 
   py::class_<Line, std::shared_ptr<Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
@@ -212,17 +212,17 @@ void python_geometry(py::module m) {
       m.def_submodule("standard_shapes",
                       "Define several standard car, pedestrians,... shapes"));
 
-  py::class_<modules::geometry::Model3D>(m, "Model3d")
+  py::class_<bark::geometry::Model3D>(m, "Model3d")
       .def(py::init<>(), "Create none 3d model")
-      .def(py::init<modules::geometry::Model3D::Type>(),
+      .def(py::init<bark::geometry::Model3D::Type>(),
            "Create 3D model with specific type")
-      .def_property_readonly("type", &modules::geometry::Model3D::GetType);
+      .def_property_readonly("type", &bark::geometry::Model3D::GetType);
 
-  py::enum_<modules::geometry::Model3D::Type>(
-      m, "modules::geometry::Model3DType", py::arithmetic())
-      .value("NONE", modules::geometry::Model3D::Type::NONE)
-      .value("ROAD", modules::geometry::Model3D::Type::ROAD)
-      .value("LIMOUSINE", modules::geometry::Model3D::Type::LIMOUSINE)
-      .value("PEDESTRIAN", modules::geometry::Model3D::Type::PEDESTRIAN)
+  py::enum_<bark::geometry::Model3D::Type>(
+      m, "bark::geometry::Model3DType", py::arithmetic())
+      .value("NONE", bark::geometry::Model3D::Type::NONE)
+      .value("ROAD", bark::geometry::Model3D::Type::ROAD)
+      .value("LIMOUSINE", bark::geometry::Model3D::Type::LIMOUSINE)
+      .value("PEDESTRIAN", bark::geometry::Model3D::Type::PEDESTRIAN)
       .export_values();
 }

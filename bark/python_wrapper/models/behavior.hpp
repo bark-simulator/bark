@@ -17,13 +17,13 @@
 
 
 namespace py = pybind11;
-using modules::models::behavior::BehaviorModel;
-using modules::models::behavior::Action;
-using modules::models::behavior::primitives::Primitive;
-using modules::world::ObservedWorld;
-using modules::world::ObservedWorldPtr;
-using modules::models::dynamic::Trajectory;
-using modules::models::dynamic::DynamicModelPtr;
+using bark::models::behavior::BehaviorModel;
+using bark::models::behavior::Action;
+using bark::models::behavior::primitives::Primitive;
+using bark::world::ObservedWorld;
+using bark::world::ObservedWorldPtr;
+using bark::models::dynamic::Trajectory;
+using bark::models::dynamic::DynamicModelPtr;
 
 class PyBehaviorModel : public BehaviorModel {
  public:
@@ -32,7 +32,7 @@ class PyBehaviorModel : public BehaviorModel {
   Trajectory Plan(float min_planning_time,
                   const ObservedWorld& observed_world) {
     PYBIND11_OVERLOAD_PURE(
-      modules::models::dynamic::Trajectory,
+      bark::models::dynamic::Trajectory,
       BehaviorModel,
       Plan,
       min_planning_time,
@@ -63,7 +63,7 @@ class PyPrimitive : public Primitive {
 
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
-      const modules::models::behavior::primitives::AdjacentLaneCorridors&
+      const bark::models::behavior::primitives::AdjacentLaneCorridors&
       adjacent_corridors) {
         PYBIND11_OVERLOAD_PURE(
       bool,
@@ -75,9 +75,9 @@ class PyPrimitive : public Primitive {
 
   Trajectory Plan(float min_planning_time,
                   const ObservedWorld& observed_world, const
-                  modules::world::LaneCorridorPtr& target_corridor) {
+                  bark::world::LaneCorridorPtr& target_corridor) {
       PYBIND11_OVERLOAD_PURE(
-      modules::models::dynamic::Trajectory,
+      bark::models::dynamic::Trajectory,
       Primitive,
       Plan,
       min_planning_time,
@@ -85,11 +85,11 @@ class PyPrimitive : public Primitive {
       target_corridor);
     }
 
-    modules::world::LaneCorridorPtr SelectTargetCorridor(
+    bark::world::LaneCorridorPtr SelectTargetCorridor(
         const ObservedWorld& observed_world,
-        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+        const bark::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
-      PYBIND11_OVERLOAD_PURE(modules::world::LaneCorridorPtr,
+      PYBIND11_OVERLOAD_PURE(bark::world::LaneCorridorPtr,
           Primitive,
           SelectTargetCorridor,
           observed_world,

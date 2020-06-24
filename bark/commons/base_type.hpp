@@ -5,13 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_COMMONS_BASE_TYPE_HPP_
-#define MODULES_COMMONS_BASE_TYPE_HPP_
+#ifndef BARK_COMMONS_BASE_TYPE_HPP_
+#define BARK_COMMONS_BASE_TYPE_HPP_
 
 #include "bark/commons/params/params.hpp"
 #include "bark/commons/util/util.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 class BaseType {
@@ -28,5 +28,5 @@ class BaseType {
 };
 
 }  // namespace commons
-}  // namespace modules
-#endif  // MODULES_COMMONS_BASE_TYPE_HPP_
+}  // namespace bark
+#endif  // BARK_COMMONS_BASE_TYPE_HPP_

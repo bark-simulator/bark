@@ -5,15 +5,15 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_PREDICTION_HPP_
-#define MODULES_WORLD_PREDICTION_HPP_
+#ifndef BARK_WORLD_PREDICTION_HPP_
+#define BARK_WORLD_PREDICTION_HPP_
 
 #include <unordered_map>
 #include <typeinfo>
 
 #include "bark/models/behavior/behavior_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class ObservedWorld;
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
@@ -42,6 +42,6 @@ struct PredictionSettings {
 
 }  // namespace prediction
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_PREDICTION_HPP_
+#endif  // BARK_WORLD_PREDICTION_HPP_

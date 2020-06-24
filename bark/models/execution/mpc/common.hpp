@@ -5,10 +5,10 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_EXECUTION_MPC_COMMON_HPP_
-#define MODULES_MODELS_EXECUTION_MPC_COMMON_HPP_
+#ifndef BARK_MODELS_EXECUTION_MPC_COMMON_HPP_
+#define BARK_MODELS_EXECUTION_MPC_COMMON_HPP_
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
 
@@ -19,6 +19,6 @@ struct OptimizationSettings {
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_EXECUTION_MPC_COMMON_HPP_
+#endif  // BARK_MODELS_EXECUTION_MPC_COMMON_HPP_

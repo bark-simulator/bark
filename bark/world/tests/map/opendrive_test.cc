@@ -17,8 +17,8 @@
 
 TEST(create_plan_view, open_drive) {
   using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   //! new plan view
   PlanView p;
@@ -37,8 +37,8 @@ TEST(create_plan_view, open_drive) {
 
 TEST(lane, open_drive) {
   using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   //! new plan view
   PlanView p;
@@ -103,8 +103,8 @@ TEST(lane, open_drive) {
 }
 
 TEST(multiple_lane_widths, open_drive) {
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   //! new plan view
   PlanView p;
@@ -135,8 +135,8 @@ TEST(multiple_lane_widths, open_drive) {
 
 TEST(road, open_drive) {
   using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   //! new plan view
   PlanViewPtr p(new PlanView());
@@ -181,8 +181,8 @@ TEST(road, open_drive) {
 
 TEST(junction, open_drive) {
   using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   Junction j("kreuz", 1);
 
@@ -202,8 +202,8 @@ TEST(junction, open_drive) {
 
 TEST(map, open_drive) {
   using namespace std;
-  using namespace modules::world::opendrive;
-  using namespace modules::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
 
   //! ROAD 1
   PlanViewPtr p(new PlanView());

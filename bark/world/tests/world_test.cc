@@ -23,22 +23,22 @@
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 
 
-using namespace modules::models::dynamic;
-using namespace modules::geometry;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::models::execution;
-using namespace modules::world::opendrive;
-using modules::world::map::MapInterface;
-using modules::world::map::MapInterfacePtr;
-using modules::world::map::RoadgraphPtr;
-using modules::world::map::Roadgraph;
-using modules::world::opendrive::XodrLaneId;
-using namespace modules::world::objects;
-using namespace modules::world;
-using namespace modules::world::evaluation;
-using namespace modules::world::goal_definition;
-using modules::world::tests::make_test_world;
+using namespace bark::models::dynamic;
+using namespace bark::geometry;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::models::execution;
+using namespace bark::world::opendrive;
+using bark::world::map::MapInterface;
+using bark::world::map::MapInterfacePtr;
+using bark::world::map::RoadgraphPtr;
+using bark::world::map::Roadgraph;
+using bark::world::opendrive::XodrLaneId;
+using namespace bark::world::objects;
+using namespace bark::world;
+using namespace bark::world::evaluation;
+using namespace bark::world::goal_definition;
+using bark::world::tests::make_test_world;
 
 TEST(world, world_init)
 {
@@ -111,7 +111,7 @@ TEST(world, world_step)
   r->AddLaneSection(section_1);
   r->AddLaneSection(section_2);
 
-  modules::world::opendrive::OpenDriveMapPtr open_drive_map(new modules::world::opendrive::OpenDriveMap());
+  bark::world::opendrive::OpenDriveMapPtr open_drive_map(new bark::world::opendrive::OpenDriveMap());
   open_drive_map->AddRoad(r);
 
   RoadgraphPtr roadgraph(new Roadgraph());
@@ -185,7 +185,7 @@ TEST(world, world_no_collision_agent)
 }
 
 TEST(world, world_outside_drivable_area) {
-  using modules::world::goal_definition::GoalDefinitionPolygon;
+  using bark::world::goal_definition::GoalDefinitionPolygon;
 
   auto params = std::make_shared<SetterParams>();
 

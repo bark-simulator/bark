@@ -4,21 +4,21 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
-#define MODULES_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
+#ifndef BARK_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
+#define BARK_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
 
 #include <algorithm>
 #include <memory>
 #include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace dynamic {
 
 class SingleTrackModel : public DynamicModel {
  public:
-  explicit SingleTrackModel(const modules::commons::ParamsPtr& params)
+  explicit SingleTrackModel(const bark::commons::ParamsPtr& params)
       : DynamicModel(params),
         wheel_base_(params->GetReal("DynamicModel::wheel_base",
                                     "Wheel base of vehicle [m]", 2.7)),
@@ -79,14 +79,14 @@ using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
 
 inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
                                      const State& state,
-                                     const modules::geometry::Line& ref_line,
+                                     const bark::geometry::Line& ref_line,
                                      double gain, bool limit_steering = true) {
   // Implemented after G. M. Hoffmann, C. J. Tomlin, M. Montemerlo, and S.
   // Thrun, “Autonomous Automobile Trajectory Tracking for Off-Road Driving:
   // Controller Design, Experimental Validation and Racing,” in 2007 ACC
   //
   // Author: Luis Gressenbuch
-  using modules::commons::transformation::FrenetState;
+  using bark::commons::transformation::FrenetState;
   using StateDefinition::THETA_POSITION;
   using StateDefinition::X_POSITION;
   using StateDefinition::Y_POSITION;
@@ -118,6 +118,6 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
 
 }  // namespace dynamic
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_DYNAMIC_SINGLE_TRACK_HPP_
+#endif  // BARK_MODELS_DYNAMIC_SINGLE_TRACK_HPP_

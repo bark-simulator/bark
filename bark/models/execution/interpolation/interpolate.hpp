@@ -6,18 +6,18 @@
 
 
 
-#ifndef MODULES_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_
-#define MODULES_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_
+#ifndef BARK_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_
+#define BARK_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_
 
 #include <Eigen/Core>
 #include "bark/models/execution/execution_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
 
 using dynamic::State;
-using modules::commons::ParamsPtr;
+using bark::commons::ParamsPtr;
 
 class ExecutionModelInterpolate : public ExecutionModel {
  public:
@@ -76,6 +76,6 @@ inline std::shared_ptr<ExecutionModel> ExecutionModelInterpolate::Clone() const 
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_
+#endif  // BARK_MODELS_EXECUTION_INTERPOLATION_INTERPOLATE_HPP_

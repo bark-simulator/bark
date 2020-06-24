@@ -3,12 +3,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_
+#define BARK_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_
 
 #include "bark/world/evaluation/ltl/evaluator_ltl.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -23,5 +23,5 @@ class EvaluatorZipMergeChn : public EvaluatorLTL {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
-#endif  // MODULES_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_
+}  // namespace bark
+#endif  // BARK_WORLD_EVALUATION_LTL_EVALUATOR_ZIP_MERGE_CHN_HPP_

@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OPENDRIVE_ROAD_HPP_
-#define MODULES_WORLD_OPENDRIVE_ROAD_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_ROAD_HPP_
+#define BARK_WORLD_OPENDRIVE_ROAD_HPP_
 
 #include <string>
 #include <memory>
@@ -17,7 +17,7 @@
 #include "bark/world/opendrive/lane_section.hpp"
 #include "bark/world/opendrive/commons.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -78,6 +78,6 @@ using XodrRoadSequence = std::vector<XodrRoadId>;
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_ROAD_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_ROAD_HPP_

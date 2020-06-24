@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_OPENDRIVE_COMMONS_HPP_
-#define MODULES_WORLD_OPENDRIVE_COMMONS_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_COMMONS_HPP_
+#define BARK_WORLD_OPENDRIVE_COMMONS_HPP_
 
 #include <inttypes.h>
 #include <string>
@@ -14,7 +14,7 @@
 #include <boost/geometry.hpp>
 #include "bark/geometry/line.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -259,6 +259,6 @@ inline geometry::Line CreateLineWithOffsetFromLine(
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_COMMONS_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_COMMONS_HPP_

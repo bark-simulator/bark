@@ -14,10 +14,10 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 
 namespace py = pybind11;
-using modules::world::goal_definition::GoalDefinitionPtr;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::commons::ParamsPtr;
-using modules::models::behavior::primitives::PrimitivePtr;
+using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::models::behavior::BehaviorModelPtr;
+using bark::commons::ParamsPtr;
+using bark::models::behavior::primitives::PrimitivePtr;
 
 
 // For pickle we need conversion functions between the genereric base types and the derived types

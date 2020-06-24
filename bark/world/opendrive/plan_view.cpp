@@ -11,7 +11,7 @@
 #include "bark/world/opendrive/lane.hpp"
 #include "bark/world/opendrive/odrSpiral.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -21,8 +21,8 @@ bool PlanView::AddLine(Point2d start_point,
                         float heading,
                         float length) {
   namespace bg = boost::geometry;
-  using modules::geometry::Point2d;
-  using modules::geometry::Line;
+  using bark::geometry::Point2d;
+  using bark::geometry::Line;
   
   //! straight line
   reference_line_.AddPoint(start_point);
@@ -106,4 +106,4 @@ bool PlanView::ApplyOffsetTransform(float x, float y, float hdg) {
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

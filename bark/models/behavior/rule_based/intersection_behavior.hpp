@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
-#define MODULES_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
+#define BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
 
 #include <memory>
 #include <map>
@@ -17,20 +17,20 @@
 #include "bark/models/behavior/idm/base_idm.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::world::Agent;
-using modules::world::AgentId;
-using modules::world::AgentPtr;
-using modules::world::FrenetPosition;
-using modules::world::map::LaneCorridorPtr;
-using modules::world::ObservedWorld;
-using modules::world::AgentMap;
-using modules::world::prediction::PredictionSettings;
-using modules::world::AgentFrenetPair;
-using modules::models::dynamic::StateDefinition::VEL_POSITION;
+using bark::world::Agent;
+using bark::world::AgentId;
+using bark::world::AgentPtr;
+using bark::world::FrenetPosition;
+using bark::world::map::LaneCorridorPtr;
+using bark::world::ObservedWorld;
+using bark::world::AgentMap;
+using bark::world::prediction::PredictionSettings;
+using bark::world::AgentFrenetPair;
+using bark::models::dynamic::StateDefinition::VEL_POSITION;
 
 
 // Behavior for intersection; prediction-based; right before left
@@ -91,8 +91,8 @@ BehaviorIntersectionRuleBased::Clone() const {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
 
 

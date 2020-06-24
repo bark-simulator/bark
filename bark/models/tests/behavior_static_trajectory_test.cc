@@ -10,15 +10,15 @@
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/observed_world.hpp"
 
-using modules::models::behavior::BehaviorStaticTrajectory;
-using modules::models::behavior::StateRowVector;
-using modules::models::dynamic::Trajectory;
-using modules::models::dynamic::StateDefinition;
-using modules::models::dynamic::State;
-using modules::world::World;
-using modules::world::WorldPtr;
-using modules::world::ObservedWorld;
-using modules::commons::SetterParams;
+using bark::models::behavior::BehaviorStaticTrajectory;
+using bark::models::behavior::StateRowVector;
+using bark::models::dynamic::Trajectory;
+using bark::models::dynamic::StateDefinition;
+using bark::models::dynamic::State;
+using bark::world::World;
+using bark::world::WorldPtr;
+using bark::world::ObservedWorld;
+using bark::commons::SetterParams;
 
 TEST(behavior_static_trajectory_plan, plan) {
   Trajectory static_traj(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));

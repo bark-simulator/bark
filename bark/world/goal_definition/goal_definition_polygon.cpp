@@ -7,14 +7,14 @@
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/objects/agent.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace goal_definition {
 
 
 bool GoalDefinitionPolygon::AtGoal(
-  const modules::world::objects::Agent& agent) {
-  return modules::geometry::Within(
+  const bark::world::objects::Agent& agent) {
+  return bark::geometry::Within(
       agent.GetPolygonFromState(agent.GetCurrentState()),
       goal_shape_);
 }
@@ -22,4 +22,4 @@ bool GoalDefinitionPolygon::AtGoal(
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

@@ -23,14 +23,14 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::models::dynamic;
-using namespace modules::world;
-using namespace modules::geometry;
-using namespace modules::world::tests;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::models::dynamic;
+using namespace bark::world;
+using namespace bark::geometry;
+using namespace bark::world::tests;
 
 class DummyObservedWorld : public ObservedWorld {
  public:
@@ -123,8 +123,8 @@ TEST(behavior_motion_primitives_plan, behavior_test) {
 }
 
 TEST(primitive_constant_acceleration, behavior_test) {
-  using modules::models::behavior::primitives::AdjacentLaneCorridors;
-  using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+  using bark::models::behavior::primitives::AdjacentLaneCorridors;
+  using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
   auto params = std::make_shared<SetterParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveConstAccStayLane primitive(params, 0);
@@ -161,7 +161,7 @@ TEST(primitive_constant_acceleration, behavior_test) {
 }
 
 TEST(primitive_change_left, behavior_test) {
-  using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
+  using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
   auto params = std::make_shared<SetterParams>();
   PrimitiveConstAccChangeToLeft primitive(params);
   auto world = MakeTestWorldHighway();
@@ -178,7 +178,7 @@ TEST(primitive_change_left, behavior_test) {
 }
 
 TEST(primitive_change_right, behavior_test) {
-  using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+  using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
   auto params = std::make_shared<SetterParams>();
   PrimitiveConstAccChangeToRight primitive(params);
   auto world = MakeTestWorldHighway();
@@ -195,7 +195,7 @@ TEST(primitive_change_right, behavior_test) {
 }
 
 TEST(primitive_gap_keeping, precondition_test) {
-  using modules::models::behavior::primitives::PrimitiveGapKeeping;
+  using bark::models::behavior::primitives::PrimitiveGapKeeping;
   auto params = std::make_shared<SetterParams>();
   DynamicModelPtr dynamics(new SingleTrackModel(params));
   PrimitiveGapKeeping primitive(params);
@@ -209,8 +209,8 @@ TEST(primitive_gap_keeping, precondition_test) {
 }
 
 TEST(macro_actions, behavior_test) {
-  using namespace modules::models::behavior::primitives;
-  using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+  using namespace bark::models::behavior::primitives;
+  using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
 
   auto params = std::make_shared<SetterParams>();
   params->SetReal("integration_time_delta", 0.01);

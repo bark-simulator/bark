@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_COMMONS_PARAMS_PARAMS_TEST_H_
-#define MODULES_COMMONS_PARAMS_PARAMS_TEST_H_
+#ifndef BARK_COMMONS_PARAMS_PARAMS_TEST_H_
+#define BARK_COMMONS_PARAMS_PARAMS_TEST_H_
 
 #include "bark/commons/params/params.hpp"
 #include <iostream>
 #include <fstream>
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 inline void DoSomeParams(const ParamsPtr params) {
@@ -28,6 +28,6 @@ inline void DoSomeParams(const ParamsPtr params) {
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_COMMONS_PARAMS_PARAMS_TEST_H_
+#endif  // BARK_COMMONS_PARAMS_PARAMS_TEST_H_

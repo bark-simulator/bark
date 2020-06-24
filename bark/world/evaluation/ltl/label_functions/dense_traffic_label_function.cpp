@@ -8,11 +8,11 @@
 #include <algorithm>
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
-using modules::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition;
 
 DenseTrafficLabelFunction::DenseTrafficLabelFunction(
     const std::string& label_str, double radius, size_t num_agents)
@@ -34,4 +34,4 @@ LabelMap DenseTrafficLabelFunction::Evaluate(
 }
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

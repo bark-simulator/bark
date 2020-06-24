@@ -8,17 +8,17 @@
 #include "bark/world/observed_world.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace prediction {
 
-using modules::models::behavior::BehaviorModelPtr;
+using bark::models::behavior::BehaviorModelPtr;
 
 PredictionSettings::PredictionSettings(const BehaviorModelPtr& ego_prediction, const BehaviorModelPtr& others_prediction) : 
   ego_prediction_model_(ego_prediction),
   others_prediction_model_(others_prediction) {}
 
-void PredictionSettings::ApplySettings(modules::world::ObservedWorld& observed_world) const {
+void PredictionSettings::ApplySettings(bark::world::ObservedWorld& observed_world) const {
   observed_world.SetEgoBehaviorModel(BehaviorModelPtr(ego_prediction_model_->Clone()));
   for (const auto &agent : observed_world.GetOtherAgents()) {
       observed_world.SetBehaviorModel(agent.first, BehaviorModelPtr(others_prediction_model_->Clone()));
@@ -28,7 +28,7 @@ void PredictionSettings::ApplySettings(modules::world::ObservedWorld& observed_w
 
 }  // namespace prediction
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
 
 

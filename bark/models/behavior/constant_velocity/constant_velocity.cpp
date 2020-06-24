@@ -9,7 +9,7 @@
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -55,4 +55,4 @@ std::pair<double, double> BehaviorConstantVelocity::GetTotalAcc(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

@@ -4,16 +4,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_
-#define MODULES_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_
+#ifndef BARK_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_
+#define BARK_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_
 
 #include "bark/world/opendrive/opendrive.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace tests {
 
-using modules::world::opendrive::OpenDriveMapPtr;
+using bark::world::opendrive::OpenDriveMapPtr;
 
 OpenDriveMapPtr MakeXodrMapOneRoadTwoLanes();
 
@@ -21,6 +21,6 @@ OpenDriveMapPtr MakeXodrMapTwoRoadsOneLane();
 
 }  // namespace tests
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_
+#endif  // BARK_WORLD_TESTS_MAKE_TEST_XODR_MAP_HPP_

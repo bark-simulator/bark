@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_GEOMETRY_GEOMETRY_HPP_
-#define MODULES_GEOMETRY_GEOMETRY_HPP_
+#ifndef BARK_GEOMETRY_GEOMETRY_HPP_
+#define BARK_GEOMETRY_GEOMETRY_HPP_
 
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/angle.hpp"
@@ -15,4 +15,4 @@
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
 
-#endif  // MODULES_GEOMETRY_GEOMETRY_HPP_
+#endif  // BARK_GEOMETRY_GEOMETRY_HPP_

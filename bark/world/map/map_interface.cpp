@@ -9,7 +9,7 @@
 #include <memory>
 #include <random>
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
@@ -87,7 +87,7 @@ bool MapInterface::IsInXodrLane(const Point2d& point, XodrLaneId id) const {
       return false;
     } else {
       // found vertex has a polygon
-      bool point_in_polygon = modules::geometry::Collide(*polygon, point);
+      bool point_in_polygon = bark::geometry::Collide(*polygon, point);
       if (point_in_polygon) {
         return true;
       } else {
@@ -201,7 +201,7 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     lane_corridor->SetLeftBoundary(simplf_left);
 
     // merged polygons
-    PolygonPtr polygon = std::make_shared<modules::geometry::Polygon>();
+    PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
     for (auto const& p : lane_corridor->GetLeftBoundary()) {
       polygon->AddPoint(p);
     }
@@ -351,8 +351,8 @@ void MapInterface::GenerateRoadCorridor(
 }
 
 RoadCorridorPtr MapInterface::GenerateRoadCorridor(
-    const modules::geometry::Point2d& start_point,
-    const modules::geometry::Polygon& goal_region) {
+    const bark::geometry::Point2d& start_point,
+    const bark::geometry::Polygon& goal_region) {
   std::vector<XodrLanePtr> lanes;
   XodrLaneId goal_lane_id;
   bool nearest_start_lane_found = FindNearestXodrLanes(start_point, 1, lanes);
@@ -398,9 +398,9 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
 }
 
 bool MapInterface::XodrLaneIdAtPolygon(
-    const modules::geometry::Polygon& polygon,
+    const bark::geometry::Polygon& polygon,
     XodrLaneId& found_lane_id) const {
-  modules::geometry::Point2d goal_center(polygon.center_(0),
+  bark::geometry::Point2d goal_center(polygon.center_(0),
                                          polygon.center_(1));
   std::vector<opendrive::XodrLanePtr> nearest_lanes;
   if (FindNearestXodrLanes(goal_center, 1, nearest_lanes)) {
@@ -421,4 +421,4 @@ RoadPtr MapInterface::GetNextRoad(
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

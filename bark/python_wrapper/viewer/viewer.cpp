@@ -9,7 +9,7 @@
 #include "bark/runtime/viewer/viewer_functions.hpp"
 
 namespace py = pybind11;
-using namespace modules::viewer;
+using namespace bark::viewer;
 
 
 void python_viewer(py::module m) {

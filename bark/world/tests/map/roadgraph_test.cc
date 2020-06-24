@@ -12,7 +12,7 @@
 
 TEST(roadgraph, road_creation)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
   
   XodrRoadId rid = 0;
@@ -45,7 +45,7 @@ TEST(roadgraph, road_creation)
 
 TEST(roadgraph, road_adjacency)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
 
@@ -93,7 +93,7 @@ TEST(roadgraph, road_adjacency)
 
 TEST(roadgraph, road_adjacency_simple)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -120,7 +120,7 @@ TEST(roadgraph, road_adjacency_simple)
 
 TEST(roadgraph, GetSuccessor_lane_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -144,7 +144,7 @@ TEST(roadgraph, GetSuccessor_lane_test)
 
 TEST(roadgraph, GetPredecessor_lane_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -169,7 +169,7 @@ TEST(roadgraph, GetPredecessor_lane_test)
 
 TEST(roadgraph, GetInnerNeighbor_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -193,7 +193,7 @@ TEST(roadgraph, GetInnerNeighbor_test)
 
 TEST(roadgraph, GetOuterNeighbor_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -215,7 +215,7 @@ TEST(roadgraph, GetOuterNeighbor_test)
 
 TEST(roadgraph, GetInnerNeighbor_test_planview)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -245,7 +245,7 @@ TEST(roadgraph, GetInnerNeighbor_test_planview)
 
 TEST(roadgraph, GetLane_planview_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -279,7 +279,7 @@ TEST(roadgraph, GetLane_planview_test)
 
 TEST(roadgraph, GetAllNeighbors_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -322,7 +322,7 @@ TEST(roadgraph, GetAllNeighbors_test)
 
 TEST(roadgraph, FindPath_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -364,7 +364,7 @@ TEST(roadgraph, FindPath_test)
 
 TEST(roadgraph, FindRoadPath_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -447,7 +447,7 @@ TEST(roadgraph, FindRoadPath_test)
 
 TEST(roadgraph, FindPath_in_unconnected_graph_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -474,7 +474,7 @@ TEST(roadgraph, FindPath_in_unconnected_graph_test)
 
 TEST(roadgraph, find_drivable_path_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -508,7 +508,7 @@ TEST(roadgraph, find_drivable_path_test)
 
 TEST(roadgraph, find_drivable_path_in_unconnected_graph_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -530,7 +530,7 @@ TEST(roadgraph, find_drivable_path_in_unconnected_graph_test)
 
 TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -552,7 +552,7 @@ TEST(roadgraph, find_drivable_path_invalid_final_vertex_test)
 
 TEST(roadgraph, FindPath_along_neighbor_edges_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrLanePtr lane_0(new XodrLane()); lane_0->SetId(10); lane_0->SetLaneType(XodrLaneType::DRIVING);
@@ -574,7 +574,7 @@ TEST(roadgraph, FindPath_along_neighbor_edges_test)
 
 TEST(roadgraph, get_driving_corridor_test)
 {
-  using namespace modules::world::map;
+  using namespace bark::world::map;
   Roadgraph r;
 
   XodrRoadId rid0 = 0;
@@ -604,9 +604,9 @@ TEST(roadgraph, get_driving_corridor_test)
 
 TEST(roadgraph, generate_roadgraph_neighbours_test)
 {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
-  using namespace modules::world::map;
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::world::map;
 
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
     //! ROAD 1
@@ -655,9 +655,9 @@ TEST(roadgraph, generate_roadgraph_neighbours_test)
 
 TEST(roadgraph, generate_roadgraph_successors_test)
 {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
-  using namespace modules::world::map;
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::world::map;
 
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
   //! ROAD 1
@@ -736,11 +736,11 @@ TEST(roadgraph, generate_roadgraph_successors_test)
 
 TEST(roadgraph, MakeXodrMapOneRoadTwoLanes_test)
 {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
-  using namespace modules::world::map;
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::world::map;
 
-  OpenDriveMapPtr open_drive_map = modules::world::tests::MakeXodrMapOneRoadTwoLanes();
+  OpenDriveMapPtr open_drive_map = bark::world::tests::MakeXodrMapOneRoadTwoLanes();
   Roadgraph rg;
   rg.Generate(open_drive_map);
  
@@ -752,11 +752,11 @@ TEST(roadgraph, MakeXodrMapOneRoadTwoLanes_test)
 
 TEST(roadgraph, MakeXodrMapTwoRoadsOneLane_test)
 {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
-  using namespace modules::world::map;
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
+  using namespace bark::world::map;
 
-  OpenDriveMapPtr open_drive_map = modules::world::tests::MakeXodrMapTwoRoadsOneLane();
+  OpenDriveMapPtr open_drive_map = bark::world::tests::MakeXodrMapTwoRoadsOneLane();
   Roadgraph rg;
   rg.Generate(open_drive_map);
  

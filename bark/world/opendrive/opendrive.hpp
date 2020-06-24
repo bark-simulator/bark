@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OPENDRIVE_OPENDRIVE_HPP_
-#define MODULES_WORLD_OPENDRIVE_OPENDRIVE_HPP_
+#ifndef BARK_WORLD_OPENDRIVE_OPENDRIVE_HPP_
+#define BARK_WORLD_OPENDRIVE_OPENDRIVE_HPP_
 
 #include <vector>
 #include <map>
@@ -15,12 +15,12 @@
 #include "bark/world/opendrive/junction.hpp"
 #include "bark/world/opendrive/lane.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
 using Junctions = std::map<uint32_t, std::shared_ptr<Junction>>;
-using modules::geometry::Point2d;
+using bark::geometry::Point2d;
 
 class OpenDriveMap {
  public:
@@ -50,7 +50,7 @@ class OpenDriveMap {
   XodrLanes GetLanes() const { return lanes_;}
 
   std::pair<Point2d, Point2d> BoundingBox() const {
-    modules::geometry::Line all_lanes_linestrings;
+    bark::geometry::Line all_lanes_linestrings;
     for (auto &road : GetRoads()) {
       for (auto &lane_section : road.second->GetLaneSections()) {
         for (auto &lane : lane_section->GetLanes()) {
@@ -72,6 +72,6 @@ using OpenDriveMapPtr = std::shared_ptr<OpenDriveMap>;
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OPENDRIVE_OPENDRIVE_HPP_
+#endif  // BARK_WORLD_OPENDRIVE_OPENDRIVE_HPP_

@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_MAP_LANE_CORRIDOR_HPP_
-#define MODULES_WORLD_MAP_LANE_CORRIDOR_HPP_
+#ifndef BARK_WORLD_MAP_LANE_CORRIDOR_HPP_
+#define BARK_WORLD_MAP_LANE_CORRIDOR_HPP_
 
 #include <map>
 #include <utility>
@@ -19,15 +19,15 @@
 #include "bark/world/map/lane.hpp"
 #include "bark/geometry/geometry.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
-using modules::geometry::Line;
-using modules::geometry::Polygon;
-using modules::geometry::Point2d;
-using modules::geometry::Within;
-using modules::world::opendrive::XodrRoadId;
+using bark::geometry::Line;
+using bark::geometry::Polygon;
+using bark::geometry::Point2d;
+using bark::geometry::Within;
+using bark::world::opendrive::XodrRoadId;
 
 
 struct LaneCorridor {
@@ -106,6 +106,6 @@ using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_MAP_LANE_CORRIDOR_HPP_
+#endif  // BARK_WORLD_MAP_LANE_CORRIDOR_HPP_

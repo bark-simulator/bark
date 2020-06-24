@@ -6,9 +6,9 @@
 #include "preceding_agent_label_function.hpp"
 #include "bark/world/observed_world.hpp"
 
-bool modules::world::evaluation::PrecedingAgentLabelFunction::EvaluateAgent(
-    const modules::world::ObservedWorld& observed_world,
-    const modules::world::objects::AgentPtr& other_agent) const {
+bool bark::world::evaluation::PrecedingAgentLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld& observed_world,
+    const bark::world::objects::AgentPtr& other_agent) const {
   bool is_in_front = false;
   auto agent_in_front = observed_world.GetAgentInFront();
   if (agent_in_front.first) {

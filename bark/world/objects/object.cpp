@@ -7,7 +7,7 @@
 
 #include "bark/world/objects/object.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 

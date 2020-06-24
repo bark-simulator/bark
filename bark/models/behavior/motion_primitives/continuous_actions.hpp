@@ -4,14 +4,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
-#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
+#define BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
 
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -50,6 +50,6 @@ inline std::shared_ptr<BehaviorModel> BehaviorMPContinuousActions::Clone()
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_CONTINUOUS_ACTIONS_HPP_

@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_ROADGRAPH_HPP_
-#define MODULES_WORLD_ROADGRAPH_HPP_
+#ifndef BARK_WORLD_ROADGRAPH_HPP_
+#define BARK_WORLD_ROADGRAPH_HPP_
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -19,14 +19,14 @@
 #include "bark/geometry/polygon.hpp"
 #include "bark/world/opendrive/opendrive.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
-using namespace modules::world::opendrive;
+using namespace bark::world::opendrive;
 using namespace boost;
 
-typedef std::shared_ptr<modules::geometry::Polygon> PolygonPtr;
+typedef std::shared_ptr<bark::geometry::Polygon> PolygonPtr;
 
 struct XodrLaneVertex {
   XodrRoadId road_id;
@@ -329,8 +329,8 @@ typedef std::shared_ptr<Roadgraph> RoadgraphPtr;
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
 #include "roadgraph_impl.hpp"
 
-#endif  // MODULES_WORLD_ROADGRAPH_HPP_
+#endif  // BARK_WORLD_ROADGRAPH_HPP_

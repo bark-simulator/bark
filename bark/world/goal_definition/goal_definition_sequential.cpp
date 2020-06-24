@@ -7,13 +7,13 @@
 #include "bark/world/goal_definition/goal_definition_sequential.hpp"
 #include "bark/world/objects/agent.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace goal_definition {
 
 
 bool GoalDefinitionSequential::AtGoal(
-  const modules::world::objects::Agent& agent) {
+  const bark::world::objects::Agent& agent) {
   BARK_EXPECT_TRUE(!sequential_goals_.empty());
   // First goal reached?
   if (last_sequential_goal_reached_ == NO_GOAL_REACHED) {
@@ -57,6 +57,6 @@ GoalDefinitionPtr GoalDefinitionSequential::GetNextGoal() const {
 
 }  // namespace goal_definition
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
 

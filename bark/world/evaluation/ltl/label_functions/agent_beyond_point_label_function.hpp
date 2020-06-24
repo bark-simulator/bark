@@ -3,8 +3,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_
-#define MODULES_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_
 
 #include <string>
 
@@ -12,7 +12,7 @@
 #include "bark/world/objects/object.hpp"
 #include "bark/world/opendrive/commons.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 using geometry::Point2d;
@@ -31,6 +31,6 @@ class AgentBeyondPointLabelFunction : public MultiAgentLabelFunction {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_AGENT_BEYOND_POINT_LABEL_FUNCTION_HPP_

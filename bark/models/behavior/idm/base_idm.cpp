@@ -16,18 +16,18 @@
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::commons::transformation::FrenetPosition;
-using modules::geometry::Point2d;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
-using modules::world::objects::Agent;
-using modules::world::objects::AgentPtr;
-using modules::world::map::LaneCorridor;
-using modules::world::map::LaneCorridorPtr;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Point2d;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
 
 
 BaseIDM::BaseIDM(
@@ -268,4 +268,4 @@ Trajectory BaseIDM::Plan(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

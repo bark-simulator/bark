@@ -4,15 +4,15 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_
+#ifndef BARK_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_
+#define BARK_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_
 
 #include <memory>
 
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 
 class World;
@@ -40,6 +40,6 @@ class EvaluatorStepCount : public BaseEvaluator {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_
+#endif  // BARK_WORLD_EVALUATION_EVALUATOR_STEP_COUNT_HPP_

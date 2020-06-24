@@ -9,7 +9,7 @@
 #include "bark/world/map/road_corridor.hpp"
 #include "bark/commons/transformation/frenet.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace map {
 
@@ -39,7 +39,7 @@ RoadCorridor::GetLeftRightLaneCorridor(const Point2d& pt) const {
 }
 
 LaneCorridorPtr RoadCorridor::GetNearestLaneCorridor(const Point2d& pt) const {
-  using modules::commons::transformation::FrenetPosition;
+  using bark::commons::transformation::FrenetPosition;
   auto lc = GetCurrentLaneCorridor(pt);
   if (!lc) {
     double min_lat = std::numeric_limits<double>::infinity();
@@ -56,4 +56,4 @@ LaneCorridorPtr RoadCorridor::GetNearestLaneCorridor(const Point2d& pt) const {
 
 }  // namespace map
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

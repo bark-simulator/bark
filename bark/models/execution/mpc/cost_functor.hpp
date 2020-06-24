@@ -5,22 +5,22 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_
-#define MODULES_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_
+#ifndef BARK_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_
+#define BARK_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_
 
 #include <iostream>
 #include <Eigen/Dense>
 #include "bark/models/execution/mpc/common.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
-using namespace modules::models::dynamic;
+using namespace bark::models::dynamic;
 
 template <typename T>
 inline Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> KinematicModel(
     T const *const *parameters,
-    modules::models::dynamic::Trajectory desired_trajectory,
+    bark::models::dynamic::Trajectory desired_trajectory,
     const OptimizationSettings &optimization_settings) {
 
   Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> traj = desired_trajectory.cast<T>();
@@ -79,7 +79,7 @@ struct CostFunctor {
     return true;
   }
 
-  bool set_desired_states(const modules::models::dynamic::Trajectory &desired_states) {
+  bool set_desired_states(const bark::models::dynamic::Trajectory &desired_states) {
     desired_discrete_states_ = desired_states;
     return true;
   }
@@ -94,13 +94,13 @@ struct CostFunctor {
     return true;
   }
 
-  modules::models::dynamic::Trajectory desired_discrete_states_;
+  bark::models::dynamic::Trajectory desired_discrete_states_;
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> weights_;
   OptimizationSettings optimization_settings_;
 };
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_
+#endif  // BARK_MODELS_EXECUTION_MPC_COST_FUNCTOR_HPP_

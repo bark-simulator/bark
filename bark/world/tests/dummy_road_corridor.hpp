@@ -4,23 +4,23 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_
-#define MODULES_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_
+#ifndef BARK_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_
+#define BARK_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_
 
 #include "bark/geometry/commons.hpp"
 #include "bark/world/map/map_interface.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace tests {
 
-using namespace modules::geometry;
-using modules::geometry::Line;
-using modules::geometry::Polygon;
-using modules::world::map::LaneCorridor;
-using modules::world::map::LaneCorridorPtr;
+using namespace bark::geometry;
+using bark::geometry::Line;
+using bark::geometry::Polygon;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
 
-class DummyRoadCorridor : public modules::world::map::RoadCorridor {
+class DummyRoadCorridor : public bark::world::map::RoadCorridor {
  public:
   DummyRoadCorridor(const Line& driving_corridor_center,
                     const Line& driving_corridor_left_boundary,
@@ -51,6 +51,6 @@ class DummyRoadCorridor : public modules::world::map::RoadCorridor {
 
 }  // namespace tests
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_
+#endif  // BARK_WORLD_TESTS_DUMMY_ROAD_CORRIDOR_HPP_

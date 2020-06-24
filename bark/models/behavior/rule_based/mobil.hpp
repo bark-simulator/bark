@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
-#define MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
+#define BARK_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
 
 #include <memory>
 #include <utility>
@@ -14,12 +14,12 @@
 #include "bark/models/behavior/idm/base_idm.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::world::Agent;
-using modules::world::FrenetPosition;
+using bark::world::Agent;
+using bark::world::FrenetPosition;
 
 // From article "MOBIL: General Lane-Changing Model for Car-Following Models"
 class BehaviorMobil : public BehaviorLaneChangeRuleBased {
@@ -67,7 +67,7 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
 
   double CalcLongRawAccWithoutLeader(
     const world::LaneCorridorPtr& lane_corridor,
-    const modules::geometry::Point2d& pos, const float vel) const;
+    const bark::geometry::Point2d& pos, const float vel) const;
 
   std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
     CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);
@@ -104,8 +104,8 @@ inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
 
 

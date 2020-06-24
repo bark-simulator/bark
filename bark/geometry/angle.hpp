@@ -5,12 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_GEOMETRY_ANGLE_HPP_
-#define MODULES_GEOMETRY_ANGLE_HPP_
+#ifndef BARK_GEOMETRY_ANGLE_HPP_
+#define BARK_GEOMETRY_ANGLE_HPP_
 
 #include <cmath>
 
-namespace modules {
+namespace bark {
 namespace geometry {
 
 const float B_PI = 3.14159265358979323846; ///< Pi
@@ -46,7 +46,7 @@ inline float SignedAngleDiff(const float& angle1, const float& angle2) {
 
 
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark
 
 
 #endif 

@@ -36,7 +36,7 @@
 namespace py = pybind11;
 
 void python_ltl(py::module m) {
-  using namespace modules::world::evaluation;
+  using namespace bark::world::evaluation;
 
   py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
       m, "EvaluatorLTL")
