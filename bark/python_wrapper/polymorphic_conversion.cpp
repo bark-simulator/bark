@@ -66,6 +66,7 @@ using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorMobil;
+using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
 using bark::commons::SetterParams;
 using bark::models::behavior::primitives::Primitive;
@@ -73,6 +74,7 @@ using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
 using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
 using bark::models::behavior::primitives::PrimitiveGapKeeping;
+using bark::world::evaluation::EvaluatorCollisionEgoAgent;
 
 #ifdef LTL_RULES
 using bark::world::evaluation::AgentBeyondPointLabelFunction;
