@@ -87,7 +87,7 @@ cc_library(
     _maybe(
     git_repository,
     name = "rule_monitor_project",
-    commit = "ae95f76cec2582cbe9ae58c92cd1c4c9cb161d60",
+    commit = "73a435b779b13ac54a3f5d22e977161b11a3a96a",
     remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
 
