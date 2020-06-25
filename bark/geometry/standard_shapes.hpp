@@ -5,12 +5,12 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_GEOMETRY_STANDARD_SHAPES_HPP_
-#define MODULES_GEOMETRY_STANDARD_SHAPES_HPP_
+#ifndef BARK_GEOMETRY_STANDARD_SHAPES_HPP_
+#define BARK_GEOMETRY_STANDARD_SHAPES_HPP_
 
 #include "bark/geometry/polygon.hpp"
 
-namespace modules {
+namespace bark {
 namespace geometry {
 namespace standard_shapes {
 
@@ -22,6 +22,6 @@ Polygon CarRectangle();
 
 }  // namespace standard_shapes
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_GEOMETRY_STANDARD_SHAPES_HPP_
+#endif  // BARK_GEOMETRY_STANDARD_SHAPES_HPP_

@@ -5,18 +5,18 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_RUNTIME_RUNTIME_HPP_
-#define MODULES_RUNTIME_RUNTIME_HPP_
+#ifndef BARK_RUNTIME_RUNTIME_HPP_
+#define BARK_RUNTIME_RUNTIME_HPP_
 
 #include <memory>
 
 #include "bark/commons/base_type.hpp"
 
-namespace modules {
+namespace bark {
 namespace runtime {
 
 
-class Runtime : public modules::commons::BaseType {
+class Runtime : public bark::commons::BaseType {
  public:
   explicit Runtime(const commons::ParamsPtr& params) : commons::BaseType(params) {}
 
@@ -54,6 +54,6 @@ inline void EvalRuntime(Runtime r,
 typedef std::shared_ptr<Runtime> RuntimePtr;
 
 }  // namespace runtime
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_RUNTIME_RUNTIME_HPP_
+#endif  // BARK_RUNTIME_RUNTIME_HPP_

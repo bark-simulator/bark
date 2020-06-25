@@ -6,24 +6,24 @@
 
 #include "primitive_const_acc_stay_lane.hpp"
 
-modules::models::behavior::primitives::PrimitiveConstAccStayLane::
-    PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params)
+bark::models::behavior::primitives::PrimitiveConstAccStayLane::
+    PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(params->GetReal("PrimitiveConstAccStayLane::Acceleration",
                                     "Constant acceleration to apply", 0.0)) {}
 
-modules::models::behavior::primitives::PrimitiveConstAccStayLane::
-    PrimitiveConstAccStayLane(const modules::commons::ParamsPtr& params,
+bark::models::behavior::primitives::PrimitiveConstAccStayLane::
+    PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params,
                               float acceleration)
     : Primitive(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(acceleration) {}
 
-bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
+bool bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     IsPreConditionSatisfied(
-        const modules::world::ObservedWorld& observed_world,
-        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+        const bark::world::ObservedWorld& observed_world,
+        const bark::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
   auto single_track = std::dynamic_pointer_cast<dynamic::SingleTrackModel>(
       observed_world.GetEgoAgent()->GetDynamicModel());
@@ -35,10 +35,10 @@ bool modules::models::behavior::primitives::PrimitiveConstAccStayLane::
          acceleration_ <= single_track->GetMaxAcceleration(ego_state);
 }
 
-modules::models::dynamic::Trajectory
-modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
-    float delta_time, const modules::world::ObservedWorld& observed_world,
-    const modules::world::LaneCorridorPtr& target_corridor) {
+bark::models::dynamic::Trajectory
+bark::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
+    float delta_time, const bark::world::ObservedWorld& observed_world,
+    const bark::world::LaneCorridorPtr& target_corridor) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   if (!target_corridor) {
@@ -62,19 +62,19 @@ modules::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
   return traj;
 }
 
-modules::world::LaneCorridorPtr modules::models::behavior::primitives::
+bark::world::LaneCorridorPtr bark::models::behavior::primitives::
     PrimitiveConstAccStayLane::SelectTargetCorridor(
-        const modules::world::ObservedWorld& observed_world,
-        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+        const bark::world::ObservedWorld& observed_world,
+        const bark::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
   BARK_EXPECT_TRUE(adjacent_corridors.current);
   return adjacent_corridors.current;
 }
 
 std::pair<double, double>
-modules::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
-    const modules::world::ObservedWorld& observed_world,
-    const modules::models::behavior::IDMRelativeValues& rel_values,
+bark::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
+    const bark::world::ObservedWorld& observed_world,
+    const bark::models::behavior::IDMRelativeValues& rel_values,
     double rel_distance, double dt) const {
   return {acceleration_, 0.0f};
 }

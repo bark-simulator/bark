@@ -4,14 +4,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_PARAMS_PARAMS_HPP_
-#define MODULES_COMMONS_PARAMS_PARAMS_HPP_
+#ifndef BARK_COMMONS_PARAMS_PARAMS_HPP_
+#define BARK_COMMONS_PARAMS_PARAMS_HPP_
 
 #include <string>
 #include <vector>
 #include "boost/variant.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 typedef std::vector<std::vector<float>> ListListFloat;
@@ -65,6 +65,6 @@ class Params {
 typedef std::shared_ptr<Params> ParamsPtr;
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_COMMONS_PARAMS_PARAMS_HPP_
+#endif  // BARK_COMMONS_PARAMS_PARAMS_HPP_

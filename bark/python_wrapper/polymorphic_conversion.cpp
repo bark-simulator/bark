@@ -13,7 +13,6 @@
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -24,14 +23,15 @@
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
+#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "bark/python_wrapper/models/behavior.hpp"
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/goal_definition/goal_definition_sequential.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
+#include "bark/python_wrapper/models/behavior.hpp"
 
 #ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
@@ -42,36 +42,36 @@
 
 #ifdef PLANNER_UCT
 #include "src/behavior_uct_single_agent_macro_actions.hpp"
-using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
+using bark::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
 
 #ifdef PLANNER_MVMCTS
 #include "src/behavior_mcts_multi_agent.hpp"
-using modules::models::behavior::BehaviorEGreedyMultiAgent;
-using modules::models::behavior::BehaviorUCTMultiAgent;
+using bark::models::behavior::BehaviorEGreedyMultiAgent;
+using bark::models::behavior::BehaviorUCTMultiAgent;
 #endif
 
 namespace py = pybind11;
 
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::world::goal_definition::GoalDefinitionStateLimits;
-using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
-using modules::world::goal_definition::GoalDefinitionSequential;
-using modules::models::behavior::BehaviorIDMClassic;
-using modules::models::behavior::BehaviorIDMLaneTracking;
-using modules::models::behavior::BehaviorConstantVelocity;
-using modules::models::behavior::BehaviorDynamicModel;
-using modules::models::behavior::BehaviorStaticTrajectory;
-using modules::models::behavior::BehaviorIntersectionRuleBased;
-using modules::models::behavior::BehaviorLaneChangeRuleBased;
-using modules::models::behavior::BehaviorMobilRuleBased;
-using modules::models::behavior::BehaviorMobil;
-using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
-using modules::commons::SetterParams;
-using modules::models::behavior::primitives::Primitive;
-using modules::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
-using modules::models::behavior::primitives::PrimitiveConstAccChangeToRight;
-using modules::models::behavior::primitives::PrimitiveConstAccStayLane;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::goal_definition::GoalDefinitionStateLimits;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
+using bark::world::goal_definition::GoalDefinitionSequential;
+using bark::models::behavior::BehaviorIDMClassic;
+using bark::models::behavior::BehaviorIDMLaneTracking;
+using bark::models::behavior::BehaviorConstantVelocity;
+using bark::models::behavior::BehaviorDynamicModel;
+using bark::models::behavior::BehaviorStaticTrajectory;
+using bark::models::behavior::BehaviorIntersectionRuleBased;
+using bark::models::behavior::BehaviorLaneChangeRuleBased;
+using bark::models::behavior::BehaviorMobilRuleBased;
+using bark::models::behavior::BehaviorMobil;
+using bark::commons::SetterParams;
+using bark::models::behavior::primitives::Primitive;
+using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
+using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
+using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
+using bark::models::behavior::primitives::PrimitiveGapKeeping;
 
 #ifdef LTL_RULES
 using modules::world::evaluation::AgentBeyondPointLabelFunction;
@@ -231,7 +231,7 @@ py::tuple ParamsToPython(const ParamsPtr& params) {
 }
 
 ParamsPtr PythonToParams(py::tuple t) {
-  const auto param_list = t[0].cast<modules::commons::CondensedParamList>();
+  const auto param_list = t[0].cast<bark::commons::CondensedParamList>();
   return std::make_shared<SetterParams>(true, param_list);
 }
 

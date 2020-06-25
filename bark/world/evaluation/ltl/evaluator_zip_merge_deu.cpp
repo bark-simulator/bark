@@ -5,15 +5,15 @@
 
 #include "bark/world/evaluation/ltl/evaluator_zip_merge_deu.hpp"
 
-#include "bark/world/evaluation/ltl/labels/agent_at_lane_end_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/behind_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/ego_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -38,4 +38,4 @@ const LabelFunctions EvaluatorZipMergeDeu::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

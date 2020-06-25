@@ -8,10 +8,10 @@
 #include <vector>
 #include "bark/geometry/standard_shapes.hpp"
 
-namespace modules {
+namespace bark {
 namespace geometry {
 
-Polygon modules::geometry::standard_shapes::CarLimousine() {
+Polygon bark::geometry::standard_shapes::CarLimousine() {
   return Polygon(Pose(0, 0, 0), std::vector<Point2d>{
     Point2d(3.85, 0),
     Point2d(3.772, -0.495),
@@ -32,7 +32,7 @@ Polygon modules::geometry::standard_shapes::CarLimousine() {
     Point2d(3.85, 0)});
 }
 
-Polygon modules::geometry::standard_shapes::CarRectangle() {
+Polygon bark::geometry::standard_shapes::CarRectangle() {
   return Polygon(Pose(1.25, 1, 0), std::vector<Point2d>{
     Point2d(-1, -1),
     Point2d(-1, 1),
@@ -41,4 +41,4 @@ Polygon modules::geometry::standard_shapes::CarRectangle() {
     Point2d(-1, -1)});
 }
 }  // namespace geometry
-}  // namespace modules
+}  // namespace bark

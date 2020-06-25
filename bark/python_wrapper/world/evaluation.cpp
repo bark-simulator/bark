@@ -20,7 +20,7 @@
 namespace py = pybind11;
 
 void python_evaluation(py::module m) {
-  using namespace modules::world::evaluation;
+  using namespace bark::world::evaluation;
 
   py::class_<BaseEvaluator, PyBaseEvaluator, EvaluatorPtr>(m, "BaseEvaluator")
       .def(py::init<>())

@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OBJECTS_OBJECT_HPP_
-#define MODULES_WORLD_OBJECTS_OBJECT_HPP_
+#ifndef BARK_WORLD_OBJECTS_OBJECT_HPP_
+#define BARK_WORLD_OBJECTS_OBJECT_HPP_
 
 #include "bark/commons/base_type.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/model_3d.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class World;
 namespace objects {
@@ -53,7 +53,7 @@ typedef std::shared_ptr<Object> ObjectPtr;
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OBJECTS_OBJECT_HPP_
+#endif  // BARK_WORLD_OBJECTS_OBJECT_HPP_
 

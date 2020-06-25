@@ -19,7 +19,7 @@ This base class defines the interface that all behavior models need to implement
 Outline of the `BehaviorModel` base-class:
 
 ```cpp
-class BehaviorModel : public modules::commons::BaseType {
+class BehaviorModel : public bark::commons::BaseType {
  public:
   explicit BehaviorModel(const commons::ParamsPtr& params,
                          BehaviorStatus status)
@@ -69,7 +69,7 @@ The class basic outline is given by:
 ```cpp
 class ExecutionModel : public commons::BaseType {
  public:
-  explicit ExecutionModel(const modules::commons::ParamsPtr params) :
+  explicit ExecutionModel(const bark::commons::ParamsPtr params) :
     BaseType(params),
     last_trajectory_() {}
 
@@ -106,7 +106,7 @@ The `DynamicModel` is given by:
 ```cpp
 class DynamicModel : public commons::BaseType {
  public:
-  explicit DynamicModel(modules::commons::ParamsPtr params) :
+  explicit DynamicModel(bark::commons::ParamsPtr params) :
     BaseType(params), input_size_(0) {}
 
   virtual ~DynamicModel() {}
@@ -134,7 +134,7 @@ The `SingleTrackModel` class overloads the `StateSpaceModel` function and is giv
 ```cpp
 class SingleTrackModel : public DynamicModel {
  public:
-  explicit SingleTrackModel(const modules::commons::ParamsPtr& params) :
+  explicit SingleTrackModel(const bark::commons::ParamsPtr& params) :
     DynamicModel(params),
       wheel_base_(params->GetReal("DynamicModel::wheel_base",
                                   "Wheel base of vehicle [m]", 2.7)),

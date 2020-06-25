@@ -17,15 +17,15 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::world::map;
-using namespace modules::models::dynamic;
-using namespace modules::world;
-using namespace modules::geometry;
-using namespace modules::world::tests;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
+using namespace bark::models::dynamic;
+using namespace bark::world;
+using namespace bark::geometry;
+using namespace bark::world::tests;
 
 class DummyBehaviorIDM : public BehaviorIDMClassic {
  public:

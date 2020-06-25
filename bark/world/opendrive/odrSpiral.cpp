@@ -49,7 +49,7 @@
 #include <math.h>
 #include "bark/world/opendrive/odrSpiral.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 #define M_PI 3.14159265358979323846 /* pi */
@@ -306,4 +306,4 @@ void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start, 
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

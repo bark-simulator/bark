@@ -6,13 +6,13 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 namespace transformation {
 
-using modules::geometry::Line;
-using modules::geometry::Point2d;
-using modules::geometry::operator-;
+using bark::geometry::Line;
+using bark::geometry::Point2d;
+using bark::geometry::operator-;
 
 FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   namespace bg = boost::geometry;
@@ -21,7 +21,7 @@ FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   
   // First extract nearest point, extract longitudinal coordinate
   std::tuple<Point2d, double, uint> nearest =
-    modules::geometry::GetNearestPointAndS(path, position);
+    bark::geometry::GetNearestPointAndS(path, position);
   lon = std::get<1>(nearest);
 
   // calculate lateral coordinate value manually
@@ -32,9 +32,9 @@ FrenetPosition::FrenetPosition(const Point2d& position, const Line& path) {
   double lat_val = sqrt(x_diff * x_diff + y_diff * y_diff);
 
   // calculate sign of lateral coordinate
-  auto tangent_angle = modules::geometry::GetTangentAngleAtS(path, lon);
+  auto tangent_angle = bark::geometry::GetTangentAngleAtS(path, lon);
   auto direction_vector = position - nearest_point;
-  double diff = modules::geometry::SignedAngleDiff(
+  double diff = bark::geometry::SignedAngleDiff(
     tangent_angle,
     atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
@@ -48,4 +48,4 @@ FrenetPosition FrenetPosition::operator+(const FrenetPosition& rhs) {
 
 }  // namespace transformation
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark

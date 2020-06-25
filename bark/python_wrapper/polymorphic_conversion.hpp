@@ -17,10 +17,10 @@
 #endif
 
 namespace py = pybind11;
-using modules::world::goal_definition::GoalDefinitionPtr;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::commons::ParamsPtr;
-using modules::models::behavior::primitives::PrimitivePtr;
+using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::models::behavior::BehaviorModelPtr;
+using bark::commons::ParamsPtr;
+using bark::models::behavior::primitives::PrimitivePtr;
 
 #ifdef LTL_RULES
 using modules::world::evaluation::LabelFunctionPtr;

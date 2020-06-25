@@ -15,7 +15,7 @@
 
 namespace py = pybind11;
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 class PyParams : public Params {
@@ -93,6 +93,6 @@ class PyParams : public Params {
 void python_commons(py::module m);
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 #endif  // PYTHON_PYTHON_BINDINGS_COMMONS_COMMONS_HPP_

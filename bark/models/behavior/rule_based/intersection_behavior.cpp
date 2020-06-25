@@ -20,29 +20,29 @@
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::commons::transformation::FrenetPosition;
-using modules::commons::SetterParams;
-using modules::geometry::Point2d;
-using modules::geometry::SignedAngleDiff;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
-using modules::models::dynamic::StateDefinition::THETA_POSITION;
-using modules::models::dynamic::StateDefinition::VEL_POSITION;
-using modules::world::objects::Agent;
-using modules::world::AgentMap;
-using modules::world::objects::AgentPtr;
-using modules::world::WorldPtr;
-using modules::world::AgentId;
-using modules::world::ObservedWorld;
-using modules::world::ObservedWorldPtr;
-using modules::models::dynamic::DynamicModelPtr;
-using modules::models::behavior::BehaviorConstantVelocity;
-using modules::world::prediction::PredictionSettings;
-using modules::geometry::Norm0To2PI;
+using bark::commons::transformation::FrenetPosition;
+using bark::commons::SetterParams;
+using bark::geometry::Point2d;
+using bark::geometry::SignedAngleDiff;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition::THETA_POSITION;
+using bark::models::dynamic::StateDefinition::VEL_POSITION;
+using bark::world::objects::Agent;
+using bark::world::AgentMap;
+using bark::world::objects::AgentPtr;
+using bark::world::WorldPtr;
+using bark::world::AgentId;
+using bark::world::ObservedWorld;
+using bark::world::ObservedWorldPtr;
+using bark::models::dynamic::DynamicModelPtr;
+using bark::models::behavior::BehaviorConstantVelocity;
+using bark::world::prediction::PredictionSettings;
+using bark::geometry::Norm0To2PI;
 
 
 /**
@@ -210,4 +210,4 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

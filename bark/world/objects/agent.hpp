@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_OBJECTS_AGENT_HPP_
-#define MODULES_WORLD_OBJECTS_AGENT_HPP_
+#ifndef BARK_WORLD_OBJECTS_AGENT_HPP_
+#define BARK_WORLD_OBJECTS_AGENT_HPP_
 
 #include "bark/commons/base_type.hpp"
 #include "bark/geometry/polygon.hpp"
@@ -20,7 +20,7 @@
 #include "bark/world/opendrive/opendrive.hpp"
 #include "bark/commons/transformation/frenet.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class ObservedWorld;
 namespace objects {
@@ -36,19 +36,19 @@ using models::behavior::StateActionHistory;
 using models::behavior::Action;
 using models::behavior::BehaviorStatus;
 using models::dynamic::Trajectory;
-using modules::world::opendrive::XodrLaneId;
-using modules::world::map::MapInterfacePtr;
-using modules::world::map::RoadCorridorPtr;
-using modules::world::goal_definition::GoalDefinition;
-using modules::world::goal_definition::GoalDefinitionPtr;
+using bark::world::opendrive::XodrLaneId;
+using bark::world::map::MapInterfacePtr;
+using bark::world::map::RoadCorridorPtr;
+using bark::world::goal_definition::GoalDefinition;
+using bark::world::goal_definition::GoalDefinitionPtr;
 using models::dynamic::StateDefinition;
-using modules::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetPosition;
 using StateHistory = std::vector<State>;
 using ActionHistory = std::vector<Action>;
-using modules::geometry::Pose;
-using modules::geometry::Point2d;
-using modules::geometry::Model3D;
-using modules::geometry::Polygon;
+using bark::geometry::Pose;
+using bark::geometry::Point2d;
+using bark::geometry::Model3D;
+using bark::geometry::Polygon;
 
 class Agent : public Object {
  public:
@@ -179,6 +179,6 @@ typedef std::shared_ptr<Agent> AgentPtr;
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_OBJECTS_AGENT_HPP_
+#endif  // BARK_WORLD_OBJECTS_AGENT_HPP_

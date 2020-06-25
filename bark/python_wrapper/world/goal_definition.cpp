@@ -15,14 +15,14 @@
 #include "bark/geometry/polygon.hpp"
 
 namespace py = pybind11;
-using modules::world::goal_definition::GoalDefinition;
-using modules::world::goal_definition::GoalDefinitionPtr;
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::world::goal_definition::GoalDefinitionStateLimits;
-using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
-using modules::world::goal_definition::GoalDefinitionSequential;
-using modules::geometry::Polygon;
-using modules::geometry::Line;
+using bark::world::goal_definition::GoalDefinition;
+using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::goal_definition::GoalDefinitionStateLimits;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
+using bark::world::goal_definition::GoalDefinitionSequential;
+using bark::geometry::Polygon;
+using bark::geometry::Line;
 
 void python_goal_definition(py::module m) {
   py::class_<GoalDefinition,
@@ -78,7 +78,7 @@ void python_goal_definition(py::module m) {
     py::class_<GoalDefinitionStateLimitsFrenet, GoalDefinition,
       std::shared_ptr<GoalDefinitionStateLimitsFrenet>>(m, "GoalDefinitionStateLimitsFrenet")
       .def(py::init<>())
-      .def(py::init<const modules::geometry::Line&,
+      .def(py::init<const bark::geometry::Line&,
                             const std::pair<float,float>,
                             const std::pair<float,float>,
                             const std::pair<float, float>>())

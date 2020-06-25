@@ -4,12 +4,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
-#define MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
+#ifndef BARK_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
+#define BARK_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
 
 #include "bark/geometry/line.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 namespace transformation {
 
@@ -17,8 +17,8 @@ struct FrenetPosition {
   FrenetPosition() : lon(0.0f), lat(0.0f) {}
   FrenetPosition(const double& longitudinal, const double& lateral)
       : lon(longitudinal), lat(lateral) {}
-  FrenetPosition(const modules::geometry::Point2d& position,
-                 const modules::geometry::Line& path);
+  FrenetPosition(const bark::geometry::Point2d& position,
+                 const bark::geometry::Line& path);
   FrenetPosition operator+(const FrenetPosition& rhs);
   double lon;
   double lat;
@@ -26,6 +26,6 @@ struct FrenetPosition {
 
 }  // namespace transformation
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_
+#endif  // BARK_COMMONS_TRANSFORMATION_FRENET_POSITION_HPP_

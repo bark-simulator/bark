@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
-#define MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
+#define BARK_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
 
 #include <memory>
 #include <tuple>
@@ -14,12 +14,12 @@
 #include "bark/world/world.hpp"
 #include "bark/models/behavior/idm/base_idm.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::world::map::LaneCorridor;
-using modules::world::map::LaneCorridorPtr;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
 
 // IDM that interpolates the vehicles using the center-line
 // of a LaneCorridor
@@ -47,6 +47,6 @@ inline std::shared_ptr<BehaviorModel> BehaviorIDMClassic::Clone() const {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_IDM_IDM_CLASSIC_HPP_

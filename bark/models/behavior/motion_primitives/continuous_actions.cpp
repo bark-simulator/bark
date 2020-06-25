@@ -8,11 +8,11 @@
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition;
 
 Trajectory BehaviorMPContinuousActions::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
@@ -52,4 +52,4 @@ BehaviorMPContinuousActions::AddMotionPrimitive(const Input& dynamic_input) {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

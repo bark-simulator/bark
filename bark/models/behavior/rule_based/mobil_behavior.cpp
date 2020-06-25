@@ -15,17 +15,17 @@
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
 using dynamic::State;
 using dynamic::StateDefinition;
-using modules::commons::transformation::FrenetPosition;
-using modules::geometry::Line;
-using modules::geometry::Point2d;
-using modules::models::dynamic::CalculateSteeringAngle;
-using modules::models::dynamic::DynamicModelPtr;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Line;
+using bark::geometry::Point2d;
+using bark::models::dynamic::CalculateSteeringAngle;
+using bark::models::dynamic::DynamicModelPtr;
 using world::Agent;
 using world::AgentFrenetPair;
 using world::AgentId;
@@ -103,4 +103,4 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

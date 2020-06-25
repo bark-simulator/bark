@@ -8,19 +8,19 @@
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 #include "bark/world/objects/agent.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace goal_definition {
 
 namespace bg = boost::geometry;
-using modules::geometry::Polygon;
-using modules::geometry::Point2d;
-using modules::geometry::Line;
-using modules::geometry::Pose;
-using modules::geometry::Norm0To2PI;
-using modules::geometry::GetPointAtS;
-using modules::geometry::GetTangentAngleAtS;
-using modules::geometry::GetNearestPointAndS;
+using bark::geometry::Polygon;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
+using bark::geometry::Pose;
+using bark::geometry::Norm0To2PI;
+using bark::geometry::GetPointAtS;
+using bark::geometry::GetTangentAngleAtS;
+using bark::geometry::GetNearestPointAndS;
 
 GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(
   const Line& center_line,
@@ -47,20 +47,20 @@ GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(
 }
 
 bool GoalDefinitionStateLimitsFrenet::AtGoal(
-  const modules::world::objects::Agent& agent) {
+  const bark::world::objects::Agent& agent) {
   const auto agent_state = agent.GetCurrentState();
   const auto agent_angle = Norm0To2PI(
-    agent_state[modules::models::dynamic::StateDefinition::THETA_POSITION]);
+    agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION]);
   const Point2d agent_pos = agent.GetCurrentPosition();
   const auto agent_velocity =
-    agent_state[modules::models::dynamic::StateDefinition::VEL_POSITION];
+    agent_state[bark::models::dynamic::StateDefinition::VEL_POSITION];
 
   if (agent_velocity < velocity_range_.first ||
       agent_velocity > velocity_range_.second) {
         return false;
   }
 
-  if (!modules::geometry::Within(agent_pos, shape_)) {
+  if (!bark::geometry::Within(agent_pos, shape_)) {
     return false;
   }
 
@@ -81,4 +81,4 @@ bool GoalDefinitionStateLimitsFrenet::AtGoal(
 
 }  // namespace goal_definition
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

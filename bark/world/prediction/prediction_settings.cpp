@@ -7,11 +7,12 @@
 #include "bark/world/prediction/prediction_settings.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+
+namespace bark {
 namespace world {
 namespace prediction {
 
-using modules::models::behavior::BehaviorModelPtr;
+using bark::models::behavior::BehaviorModelPtr;
 
 PredictionSettings::PredictionSettings(
     const BehaviorModelPtr& ego_prediction_model,
@@ -25,7 +26,7 @@ PredictionSettings::PredictionSettings(
                                   specific_prediction_agents.end()) {}
 
 void PredictionSettings::ApplySettings(
-    modules::world::ObservedWorld& observed_world) const {
+    bark::world::ObservedWorld& observed_world) const {
   observed_world.SetEgoBehaviorModel(
       BehaviorModelPtr(ego_prediction_model_->Clone()));
   if (default_prediction_model_) {
@@ -45,4 +46,4 @@ void PredictionSettings::ApplySettings(
 }
 }  // namespace prediction
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

@@ -6,7 +6,7 @@
 
 #include "bark/world/opendrive/lane.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace opendrive {
 
@@ -43,4 +43,4 @@ bool XodrLane::append(geometry::Line previous_line, XodrLaneWidth lane_width_cur
 
 }  // namespace opendrive
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

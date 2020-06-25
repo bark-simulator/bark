@@ -18,9 +18,9 @@
 
 TEST(single_track_model, dynamic_test) {
   using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::models::dynamic;
-  using namespace modules::commons;
+  using namespace bark::geometry;
+  using namespace bark::models::dynamic;
+  using namespace bark::commons;
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   x << 0, 0, 0, 0, 5;
@@ -42,9 +42,9 @@ TEST(single_track_model, dynamic_test) {
 
 TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::models::dynamic;
-  using namespace modules::commons;
+  using namespace bark::geometry;
+  using namespace bark::models::dynamic;
+  using namespace bark::commons;
 
   const float dt = 1.0;
   auto a_lat = [dt](const State &x, const State &x1) {
@@ -99,9 +99,9 @@ TEST(CalculateSteeringAngle, dynamic_test) {
 
 TEST(triple_integrator_model, dynamic_test) {
   using namespace std;
-  using namespace modules::geometry;
-  using namespace modules::models::dynamic;
-  using namespace modules::commons;
+  using namespace bark::geometry;
+  using namespace bark::models::dynamic;
+  using namespace bark::commons;
 
   State x(15);
   x << 0, 0, 0, 0, 0, 0,  // time, x, y, theta, v, min_space

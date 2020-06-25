@@ -5,13 +5,13 @@
 
 #include "bark/world/evaluation/ltl/evaluator_speed_advantage_overtake.hpp"
 
-#include "bark/world/evaluation/ltl/labels/behind_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/front_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -28,4 +28,4 @@ const LabelFunctions EvaluatorSpeedAdvantageOvertake::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

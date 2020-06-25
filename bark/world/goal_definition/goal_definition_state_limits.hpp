@@ -5,13 +5,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
-#define MODULES_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
+#ifndef BARK_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
+#define BARK_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
 
 #include "bark/world/goal_definition/goal_definition.hpp"
 #include "bark/geometry/polygon.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 class Agent;
@@ -26,18 +26,18 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
                  xy_limits_(),
                  angle_limits_() {}
   GoalDefinitionStateLimits(
-    const modules::geometry::Polygon& xy_limits,
+    const bark::geometry::Polygon& xy_limits,
     const std::pair<float,float> angle_limits) :
     xy_limits_(xy_limits),
     angle_limits_(angle_limits) {}
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent);
+  virtual bool AtGoal(const bark::world::objects::Agent& agent);
 
 
-  const modules::geometry::Polygon& GetXyLimits() const {
+  const bark::geometry::Polygon& GetXyLimits() const {
     return xy_limits_;
   }
-  const modules::geometry::Polygon& GetShape() const {
+  const bark::geometry::Polygon& GetShape() const {
     return xy_limits_;
   }
   const std::pair<float,float> GetAngleLimits() const {
@@ -45,15 +45,15 @@ class GoalDefinitionStateLimits : public GoalDefinition  {
   }
 
  private:
-  modules::geometry::Polygon xy_limits_;
+  bark::geometry::Polygon xy_limits_;
   std::pair<float,float> angle_limits_;
 };
 
 
 }  // namespace goal_definition
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
+#endif  // BARK_WORLD_GOAL_DEFINITION_STATE_LIMITS_HPP_
 
 

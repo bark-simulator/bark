@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_EXECUTION_MPC_MPC_HPP_
-#define MODULES_MODELS_EXECUTION_MPC_MPC_HPP_
+#ifndef BARK_MODELS_EXECUTION_MPC_MPC_HPP_
+#define BARK_MODELS_EXECUTION_MPC_MPC_HPP_
 
 #include <Eigen/Core>
 #include <vector>
@@ -17,7 +17,7 @@
 #include "bark/models/execution/mpc/cost_functor.hpp"
 #include "bark/models/execution/mpc/common.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace execution {
 
@@ -72,6 +72,6 @@ inline std::shared_ptr<ExecutionModel> ExecutionModelMpc::Clone() const {
 
 }  // namespace execution
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_EXECUTION_MPC_MPC_HPP_
+#endif  // BARK_MODELS_EXECUTION_MPC_MPC_HPP_

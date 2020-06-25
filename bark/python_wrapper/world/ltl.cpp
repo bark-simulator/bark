@@ -16,27 +16,27 @@
 #include "bark/world/evaluation/ltl/evaluator_speed_advantage_overtake.hpp"
 #include "bark/world/evaluation/ltl/evaluator_zip_merge_chn.hpp"
 #include "bark/world/evaluation/ltl/evaluator_zip_merge_deu.hpp"
-#include "bark/world/evaluation/ltl/labels/agent_at_lane_end_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/behind_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/ego_accelerate_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/ego_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/front_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/generic_ego_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/lane_change_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/preceding_agent_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/rel_speed_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 #include "bark/world/tests/evaluation/constant_label_evaluator.hpp"
 
 namespace py = pybind11;
 
 void python_ltl(py::module m) {
-  using namespace modules::world::evaluation;
+  using namespace bark::world::evaluation;
 
   py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
       m, "EvaluatorLTL")

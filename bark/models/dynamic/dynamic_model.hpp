@@ -5,8 +5,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
-#define MODULES_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
+#ifndef BARK_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
+#define BARK_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
 
 #include <Eigen/Core>
 #include <boost/variant.hpp>
@@ -16,7 +16,7 @@
 
 #include "bark/commons/base_type.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace dynamic {
 
@@ -40,7 +40,7 @@ using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 
 class DynamicModel : public commons::BaseType {
  public:
-  explicit DynamicModel(modules::commons::ParamsPtr params) :
+  explicit DynamicModel(bark::commons::ParamsPtr params) :
     BaseType(params), input_size_(0) {}
 
   virtual ~DynamicModel() {}
@@ -56,6 +56,6 @@ typedef std::shared_ptr<DynamicModel> DynamicModelPtr;
 
 }  // namespace dynamic
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_
+#endif  // BARK_MODELS_DYNAMIC_DYNAMIC_MODEL_HPP_

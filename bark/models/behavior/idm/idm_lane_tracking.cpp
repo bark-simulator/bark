@@ -18,17 +18,17 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/integration.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::commons::transformation::FrenetPosition;
-using modules::geometry::Point2d;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition;
-using modules::world::objects::Agent;
-using modules::world::objects::AgentPtr;
-using modules::models::dynamic::DynamicModelPtr;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Point2d;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
+using bark::models::dynamic::DynamicModelPtr;
 
 
 std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
@@ -88,4 +88,4 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

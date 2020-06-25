@@ -5,15 +5,15 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "primitive_const_acc_change_to_right.hpp"
-modules::models::behavior::primitives::PrimitiveConstAccChangeToRight::
-    PrimitiveConstAccChangeToRight(const modules::commons::ParamsPtr& params)
+bark::models::behavior::primitives::PrimitiveConstAccChangeToRight::
+    PrimitiveConstAccChangeToRight(const bark::commons::ParamsPtr& params)
     : PrimitiveConstAccStayLane(params),
       min_length_(params->GetReal(
           "MinLength", "Minimum length of lane to change to", 0.0f)) {}
-modules::world::LaneCorridorPtr modules::models::behavior::primitives::
+bark::world::LaneCorridorPtr bark::models::behavior::primitives::
     PrimitiveConstAccChangeToRight::SelectTargetCorridor(
-        const modules::world::ObservedWorld& observed_world,
-        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+        const bark::world::ObservedWorld& observed_world,
+        const bark::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
   if (adjacent_corridors.right) {
     return adjacent_corridors.right;
@@ -26,10 +26,10 @@ modules::world::LaneCorridorPtr modules::models::behavior::primitives::
     return adjacent_corridors.current;
   }
 }
-bool modules::models::behavior::primitives::PrimitiveConstAccChangeToRight::
+bool bark::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     IsPreConditionSatisfied(
-        const modules::world::ObservedWorld& observed_world,
-        const modules::models::behavior::primitives::AdjacentLaneCorridors&
+        const bark::world::ObservedWorld& observed_world,
+        const bark::models::behavior::primitives::AdjacentLaneCorridors&
             adjacent_corridors) {
   bool satisfied = false;
   if (adjacent_corridors.right) {

@@ -5,11 +5,11 @@
 
 #include "bark/world/evaluation/ltl/evaluator_being_overtaken.hpp"
 
-#include "bark/world/evaluation/ltl/labels/agent_near_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/ego_accelerate_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -31,4 +31,4 @@ const LabelFunctions EvaluatorBeingOvertakenAssumption::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

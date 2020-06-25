@@ -12,8 +12,8 @@
 #include "bark/world/evaluation/base_evaluator.hpp"
 
 namespace py = pybind11;
-using namespace modules::world::evaluation;
-using namespace modules::world;
+using namespace bark::world::evaluation;
+using namespace bark::world;
 
 class PyBaseEvaluator : public BaseEvaluator {
  public:

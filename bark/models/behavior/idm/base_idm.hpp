@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
-#define MODULES_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
+#define BARK_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
 
 #include <memory>
 #include <tuple>
@@ -16,13 +16,13 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/models/behavior/behavior_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::world::map::LaneCorridor;
-using modules::world::map::LaneCorridorPtr;
-using modules::world::ObservedWorld;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
+using bark::world::ObservedWorld;
 
 
 struct IDMRelativeValues {
@@ -129,7 +129,7 @@ class BaseIDM : public BehaviorModel {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_IDM_BASE_IDM_HPP_
 

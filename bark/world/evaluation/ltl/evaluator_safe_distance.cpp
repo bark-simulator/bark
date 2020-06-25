@@ -5,9 +5,9 @@
 
 #include "bark/world/evaluation/ltl/evaluator_safe_distance.hpp"
 
-#include "bark/world/evaluation/ltl/labels/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -21,4 +21,4 @@ const LabelFunctions EvaluatorSafeDistance::labels_ = {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

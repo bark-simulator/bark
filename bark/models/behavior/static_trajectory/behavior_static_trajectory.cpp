@@ -9,11 +9,11 @@
 #include "behavior_static_trajectory.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
-using modules::models::dynamic::StateDefinition;
+using bark::models::dynamic::StateDefinition;
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
     const commons::ParamsPtr &params)
@@ -28,7 +28,7 @@ BehaviorStaticTrajectory::BehaviorStaticTrajectory(
       static_trajectory_(static_trajectory) {}
 
 Trajectory BehaviorStaticTrajectory::Plan(
-    float delta_time, const modules::world::ObservedWorld &observed_world) {
+    float delta_time, const bark::world::ObservedWorld &observed_world) {
   UpdateBehaviorStatus(delta_time, observed_world);
 
   const double start_time = observed_world.GetWorldTime();
@@ -113,7 +113,7 @@ const Trajectory& BehaviorStaticTrajectory::GetStaticTrajectory() const {
 }
 
 void BehaviorStaticTrajectory::UpdateBehaviorStatus(
-    float delta_time, const modules::world::ObservedWorld &observed_world) {
+    float delta_time, const bark::world::ObservedWorld &observed_world) {
   const double start_time = observed_world.GetWorldTime();
   const double end_time = start_time + delta_time;
 
@@ -135,4 +135,4 @@ void BehaviorStaticTrajectory::UpdateBehaviorStatus(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
-#define MODULES_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
+#define BARK_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
 
 #include <memory>
 #include <vector>
@@ -14,7 +14,7 @@
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -51,6 +51,6 @@ class BehaviorStaticTrajectory : public BehaviorModel {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_STATIC_TRAJECTORY_BEHAVIOR_STATIC_TRAJECTORY_HPP_

@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_GOAL_DEFINITION_HPP_
-#define MODULES_WORLD_GOAL_DEFINITION_HPP_
+#ifndef BARK_WORLD_GOAL_DEFINITION_HPP_
+#define BARK_WORLD_GOAL_DEFINITION_HPP_
 
 #include <memory>
 
 #include "bark/geometry/polygon.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
   class Agent;
@@ -25,9 +25,9 @@ class GoalDefinition  {
     GoalDefinition() {}
     virtual ~GoalDefinition() {}
 
-    virtual bool AtGoal(const modules::world::objects::Agent& agent) = 0;
+    virtual bool AtGoal(const bark::world::objects::Agent& agent) = 0;
 
-    virtual const modules::geometry::Polygon& GetShape() const {}
+    virtual const bark::geometry::Polygon& GetShape() const {}
 
 };
 
@@ -35,7 +35,7 @@ typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_GOAL_DEFINITION_HPP_
+#endif  // BARK_WORLD_GOAL_DEFINITION_HPP_
 

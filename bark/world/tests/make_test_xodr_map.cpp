@@ -10,11 +10,11 @@
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 
-using modules::world::opendrive::OpenDriveMapPtr;
+using bark::world::opendrive::OpenDriveMapPtr;
 
-OpenDriveMapPtr modules::world::tests::MakeXodrMapOneRoadTwoLanes() {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
+OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
 
   OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
 
@@ -55,9 +55,9 @@ OpenDriveMapPtr modules::world::tests::MakeXodrMapOneRoadTwoLanes() {
   return open_drive_map;
 }
 
-OpenDriveMapPtr modules::world::tests::MakeXodrMapTwoRoadsOneLane() {
-  using namespace modules::geometry;
-  using namespace modules::world::opendrive;
+OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
 
   OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
 

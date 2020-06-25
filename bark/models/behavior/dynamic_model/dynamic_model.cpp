@@ -10,7 +10,7 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -78,4 +78,4 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark

@@ -13,7 +13,7 @@
 
 namespace py = pybind11;
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 void python_commons(py::module m) {
@@ -33,7 +33,7 @@ void python_commons(py::module m) {
     m.def("ParamsTest", &DoSomeParams);
 
     py::class_<CppParamServerTestObject, std::shared_ptr<CppParamServerTestObject>>(m, "CppParamServerTestObject")
-      .def(py::init<std::shared_ptr<modules::commons::Params>>())
+      .def(py::init<std::shared_ptr<bark::commons::Params>>())
       .def("GetRealValue", &CppParamServerTestObject::GetRealValue)
       .def("GetBoolValueTrue", &CppParamServerTestObject::GetBoolValueTrue)
       .def("GetBoolValueFalse", &CppParamServerTestObject::GetBoolValueFalse)
@@ -61,4 +61,4 @@ void python_commons(py::module m) {
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark

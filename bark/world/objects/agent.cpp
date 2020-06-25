@@ -10,7 +10,7 @@
 #include "bark/world/objects/object.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 
@@ -43,8 +43,8 @@ Agent::Agent(
   pair.first = initial_state;
   
   // Initially select a DiscreteAction  of zero
-  pair.second = modules::models::behavior::Action(
-    modules::models::behavior::DiscreteAction(0));
+  pair.second = bark::models::behavior::Action(
+    bark::models::behavior::DiscreteAction(0));
   history_.push_back(pair);
 
   if(map_interface) {
@@ -148,4 +148,4 @@ std::shared_ptr<Object> Agent::Clone() const {
 
 }  // namespace objects
 }  // namespace world
-}  // namespace modules
+}  // namespace bark

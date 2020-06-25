@@ -5,14 +5,14 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
-#define MODULES_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
+#ifndef BARK_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
+#define BARK_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
 
 #include <vector>
 #include "bark/world/goal_definition/goal_definition.hpp"
 #include "bark/geometry/polygon.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace objects {
 class Agent;
@@ -44,11 +44,11 @@ class GoalDefinitionSequential : public GoalDefinition  {
     return sequential_goals_;
   }
 
-  virtual const modules::geometry::Polygon& GetShape() const {
+  virtual const bark::geometry::Polygon& GetShape() const {
     return GetCurrentGoal()->GetShape();
   }
 
-  virtual bool AtGoal(const modules::world::objects::Agent& agent);
+  virtual bool AtGoal(const bark::world::objects::Agent& agent);
 
   int LastSequentialGoal() const { return last_sequential_goal_reached_; }
 
@@ -60,6 +60,6 @@ class GoalDefinitionSequential : public GoalDefinition  {
 
 }  // namespace goal_definition
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
+#endif  // BARK_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_

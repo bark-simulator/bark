@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
-#define MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
+#define BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
 
 #include <memory>
 #include "bark/commons/base_type.hpp"
@@ -15,16 +15,16 @@
 #include "bark/world/map/road_corridor.hpp"
 #include "bark/world/observed_world.hpp"
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 namespace primitives {
 
 using dynamic::Trajectory;
-using modules::geometry::Point2d;
-using modules::models::behavior::BehaviorIDMLaneTracking;
-using modules::models::dynamic::DynamicModelPtr;
-using modules::models::dynamic::StateDefinition;
+using bark::geometry::Point2d;
+using bark::models::behavior::BehaviorIDMLaneTracking;
+using bark::models::dynamic::DynamicModelPtr;
+using bark::models::dynamic::StateDefinition;
 using world::ObservedWorld;
 using world::ObservedWorldPtr;
 using world::map::LaneCorridorPtr;
@@ -38,7 +38,7 @@ struct AdjacentLaneCorridors {
 /**
  * @brief Macro action motion primitive base class
  */
-class Primitive : public modules::commons::BaseType {
+class Primitive : public bark::commons::BaseType {
  public:
   explicit Primitive(const commons::ParamsPtr& params)
       : commons::BaseType(params),
@@ -77,6 +77,6 @@ typedef std::shared_ptr<Primitive> PrimitivePtr;
 }  // namespace primitives
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_MOTION_PRIMITIVES_PRIMITIVES_PRIMITIVE_HPP_
