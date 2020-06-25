@@ -82,5 +82,6 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//bark/world/evaluation/ltl/label_functions:label_function"
     ]
 )

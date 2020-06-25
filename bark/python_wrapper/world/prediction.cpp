@@ -8,9 +8,9 @@
 #include "bark/world/prediction/prediction_settings.hpp"
 
 namespace py = pybind11;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::world::objects::AgentId;
-using modules::world::prediction::PredictionSettings;
+using bark::models::behavior::BehaviorModelPtr;
+using bark::world::objects::AgentId;
+using bark::world::prediction::PredictionSettings;
 
 void python_prediction(py::module m) {
   py::class_<PredictionSettings, std::shared_ptr<PredictionSettings>>(

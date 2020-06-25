@@ -34,10 +34,10 @@
 #include "bark/python_wrapper/models/behavior.hpp"
 
 #ifdef LTL_RULES
-#include "bark/world/evaluation/ltl/labels/agent_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/ego_beyond_point_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/generic_ego_label_function.hpp"
-#include "bark/world/evaluation/ltl/labels/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -66,6 +66,7 @@ using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorMobil;
+using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
 using bark::commons::SetterParams;
 using bark::models::behavior::primitives::Primitive;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
@@ -74,10 +75,10 @@ using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
 using bark::models::behavior::primitives::PrimitiveGapKeeping;
 
 #ifdef LTL_RULES
-using modules::world::evaluation::AgentBeyondPointLabelFunction;
-using modules::world::evaluation::EgoBeyondPointLabelFunction;
-using modules::world::evaluation::GenericEgoLabelFunction;
-using modules::world::evaluation::PrecedingAgentLabelFunction;
+using bark::world::evaluation::AgentBeyondPointLabelFunction;
+using bark::world::evaluation::EgoBeyondPointLabelFunction;
+using bark::world::evaluation::GenericEgoLabelFunction;
+using bark::world::evaluation::PrecedingAgentLabelFunction;
 #endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {

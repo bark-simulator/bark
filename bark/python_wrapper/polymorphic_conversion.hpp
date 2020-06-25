@@ -13,7 +13,7 @@
 #include "bark/world/goal_definition/goal_definition.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 #ifdef LTL_RULES
-#include "bark/world/evaluation/ltl/labels/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #endif
 
 namespace py = pybind11;
@@ -23,7 +23,7 @@ using bark::commons::ParamsPtr;
 using bark::models::behavior::primitives::PrimitivePtr;
 
 #ifdef LTL_RULES
-using modules::world::evaluation::LabelFunctionPtr;
+using bark::world::evaluation::LabelFunctionPtr;
 #endif
 
 // For pickle we need conversion functions between the genereric base types and the derived types
