@@ -9,7 +9,8 @@ py_library(
             "deterministic_drone_challenge.py",
             "drone_challenge.py",
             "interaction_dataset_scenario_generation.py",
-            "interaction_dataset_scenario_generation_full.py"],
+            "interaction_dataset_scenario_generation_full.py",
+            "interaction_dataset_scenario_generation_mobil.py"],
     data = ['//bark:generate_core'],
     deps = [
         "//bark/runtime/scenario:scenario",

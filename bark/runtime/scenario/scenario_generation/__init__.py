@@ -7,6 +7,7 @@ from .deterministic_drone_challenge import  DeterministicDroneChallengeGeneratio
 from .configurable_scenario_generation import ConfigurableScenarioGeneration
 from .interaction_dataset_scenario_generation import InteractionDatasetScenarioGeneration
 from .interaction_dataset_scenario_generation_full import InteractionDatasetScenarioGenerationFull
+from .interaction_dataset_scenario_generation_mobil import DatasetScenarioGenerationMobil
 
 
 __all__ = ["DeterministicScenarioGeneration",
@@ -17,4 +18,5 @@ __all__ = ["DeterministicScenarioGeneration",
           "DeterministicDroneChallengeGeneration",
           "ConfigurableScenarioGeneration",
           "InteractionDatasetScenarioGeneration",
-          "InteractionDatasetScenarioGenerationFull"]
+          "InteractionDatasetScenarioGenerationFull"
+          "DatasetScenarioGenerationMobil"]
