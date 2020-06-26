@@ -44,7 +44,7 @@ cc_binary(
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
-  + select({"//bark/models/behavior/plan:_planner_mvmcts" : ["@planner_mv_mvts//python:planner_mvmcts"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_mvmcts" : ["@planner_mv_mcts//python:planner_mvmcts"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts = select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_mvmcts" : ["-D PLANNER_MVMCTS"], "//conditions:default": []})
