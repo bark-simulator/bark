@@ -17,7 +17,7 @@ namespace primitives {
 /**
  * @brief Lane tracking with IDM for longitudinal motion
  */
-class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
+class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
  public:
   explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)
       : Primitive(params), BehaviorModel(params), BehaviorIDMLaneTracking(params) {

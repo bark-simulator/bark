@@ -25,7 +25,8 @@ using bark::world::FrenetPosition;
 class BehaviorMobil : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-    : BehaviorLaneChangeRuleBased(params) {
+    : BehaviorModel(params),
+      BehaviorLaneChangeRuleBased(params) {
     crosstrack_error_gain_ = params->GetReal(
       "BehaviorMobil::CrosstrackErrorGain",
       "Tuning factor of stanley controller",

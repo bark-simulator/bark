@@ -19,7 +19,7 @@ using bark::models::dynamic::StateDefinition;
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(const commons::ParamsPtr& params)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
       static_trajectory_(
-          trajectory_from_listlist_float(params->GetListListFloat(
+          ReadInStaticTrajectory(params->GetListListFloat(
               "static_trajectory",
               "List of states that form a static trajectory to follow",
               {{}}))) {

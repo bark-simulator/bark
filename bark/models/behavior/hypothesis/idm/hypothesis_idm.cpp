@@ -16,6 +16,7 @@ using bark::geometry::Point2d;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 using bark::world::objects::Agent;
+using bark::world::objects::AgentId;
 using bark::world::objects::AgentPtr;
 using bark::world::FrontRearAgents;
 using bark::commons::UniformDistribution1D;

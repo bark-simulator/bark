@@ -64,6 +64,7 @@ class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
  public:
   explicit BehaviorLaneChangeRuleBased(
     const commons::ParamsPtr& params) :
+    BehaviorModel(params), 
     BehaviorIDMLaneTracking(params) {
     min_remaining_distance_ = params->GetReal(
       "BehaviorLaneChangeRuleBased::MinRemainingLaneCorridorDistance",

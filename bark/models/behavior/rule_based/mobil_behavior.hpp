@@ -34,6 +34,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobilRuleBased(
     const commons::ParamsPtr& params) :
+    BehaviorModel(params), 
     BehaviorLaneChangeRuleBased(params) {
     a_thr_ = params->GetReal(
       "BehaviorMobilRuleBased::AThr",

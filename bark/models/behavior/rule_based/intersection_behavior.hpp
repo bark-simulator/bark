@@ -38,6 +38,7 @@ class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorIntersectionRuleBased(
     const commons::ParamsPtr& params) :
+    BehaviorModel(params), 
     BehaviorLaneChangeRuleBased(params) {
     // this is required for the IDM to get around corners
     SetLimitSteeringRate(false);

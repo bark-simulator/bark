@@ -7,7 +7,8 @@
 #include "primitive_const_acc_change_to_right.hpp"
 bark::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     PrimitiveConstAccChangeToRight(const bark::commons::ParamsPtr& params)
-    : PrimitiveConstAccStayLane(params),
+    : BehaviorModel(params),
+      PrimitiveConstAccStayLane(params),
       min_length_(params->GetReal(
           "MinLength", "Minimum length of lane to change to", 0.0f)) {}
 bark::world::LaneCorridorPtr bark::models::behavior::primitives::
