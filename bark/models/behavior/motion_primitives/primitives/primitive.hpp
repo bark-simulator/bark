@@ -45,7 +45,8 @@ class Primitive : public bark::commons::BaseType {
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
-            0.02)) {}
+            0.02)),
+        last_action_() {}
 
   virtual ~Primitive() = default;
 
@@ -68,8 +69,13 @@ class Primitive : public bark::commons::BaseType {
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
 
+  Action GetLastAction() const { return last_action_; };
+  void SetLastAction(const Action action) { last_action_ = action; };
+
  protected:
   float integration_time_delta_;
+ private:
+  Action last_action_;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;

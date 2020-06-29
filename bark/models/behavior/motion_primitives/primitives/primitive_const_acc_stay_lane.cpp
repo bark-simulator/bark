@@ -58,7 +58,8 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
   Trajectory traj = std::get<0>(traj_action);
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
-  SetLastAction(action);
+  Primitive::SetLastAction(action);
+  BehaviorModel::SetLastAction(action);
   return traj;
 }
 
