@@ -11,11 +11,11 @@
 #include <boost/random.hpp>
 #include <boost/math/distributions.hpp>
 
-#include "modules/commons/distribution/distribution.hpp"
-#include "modules/commons/params/params.hpp"
+#include "bark/commons/distribution/distribution.hpp"
+#include "bark/commons/params/params.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 class FixedValue : public Distribution {
@@ -101,6 +101,6 @@ using UniformDistribution1D = BoostDistribution1D<boost_uniform>;
 
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 #endif  // MODULES_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_

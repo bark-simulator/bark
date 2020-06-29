@@ -10,11 +10,11 @@
 #include <random>
 #include <Eigen/Eigen>
 
-#include "modules/commons/distribution/distribution.hpp"
-#include "modules/commons/params/params.hpp"
+#include "bark/commons/distribution/distribution.hpp"
+#include "bark/commons/params/params.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 // Based on https://stackoverflow.com/questions/6142576/sample-from-multivariate-normal-gaussian-distribution-in-c
@@ -78,6 +78,6 @@ inline Eigen::VectorXf MultivariateDistribution::MeanFromParams(const ParamsPtr&
 }
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 #endif  // MODULES_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_

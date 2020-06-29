@@ -10,7 +10,7 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         "@com_github_eigen_eigen//:eigen",
-        "//modules/commons:base_type",
+        "//bark/commons:base_type",
         "@boost//:random",
         "@boost//:math",
         "@boost//:multiprecision"

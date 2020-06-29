@@ -4,13 +4,13 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/commons/params/params.hpp"
-#include "modules/commons/distribution/distributions_1d.hpp"
-#include "modules/commons/distribution/multivariate_normal.hpp"
-#include "modules/commons/util/operators.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/commons/distribution/distributions_1d.hpp"
+#include "bark/commons/distribution/multivariate_normal.hpp"
+#include "bark/commons/util/operators.hpp"
 #include <string>
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 #define GET_DISTRIBUTION_IF_TYPE(type, distribution, params_ptr) \
@@ -47,4 +47,4 @@ std::string Params::Print() const {
 
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark

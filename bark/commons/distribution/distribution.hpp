@@ -11,9 +11,9 @@
 #include <Eigen/Core>
 #include <vector>
 
-#include "modules/commons/base_type.hpp"
+#include "bark/commons/base_type.hpp"
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 typedef double Probability;
@@ -35,6 +35,6 @@ class Distribution : public BaseType {
 typedef std::shared_ptr<Distribution> DistributionPtr;
 
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 #endif  // MODULES_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_

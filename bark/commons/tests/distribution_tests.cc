@@ -11,9 +11,9 @@
 #include <boost/make_shared.hpp>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/distribution/distributions_1d.hpp"
-#include "modules/commons/distribution/multivariate_normal.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/commons/distribution/distributions_1d.hpp"
+#include "bark/commons/distribution/multivariate_normal.hpp"
 
 
 // TODO(fortiss): fill our this test
