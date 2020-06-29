@@ -17,9 +17,9 @@
 #include "bark/models/dynamic/triple_integrator.hpp"
 
 using namespace std;
-using namespace modules::geometry;
-using namespace modules::models::dynamic;
-using namespace modules::commons;
+using namespace bark::geometry;
+using namespace bark::models::dynamic;
+using namespace bark::commons;
 
 TEST(single_track_model, dynamic_test) {
 

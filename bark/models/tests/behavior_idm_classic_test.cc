@@ -7,26 +7,26 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/params/default_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/line.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_world.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/commons/params/default_params.hpp"
+#include "bark/geometry/commons.hpp"
+#include "bark/geometry/line.hpp"
+#include "bark/geometry/polygon.hpp"
+#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/idm/idm_classic.hpp"
+#include "bark/models/execution/interpolation/interpolate.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::world::map;
-using namespace modules::models::dynamic;
-using namespace modules::world;
-using namespace modules::geometry;
-using namespace modules::world::tests;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
+using namespace bark::models::dynamic;
+using namespace bark::world;
+using namespace bark::geometry;
+using namespace bark::world::tests;
 
 class DummyBehaviorIDM : public BehaviorIDMClassic {
  public:

@@ -7,8 +7,8 @@
 #include <memory>
 
 #include "behavior_static_trajectory.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/commons/transformation/frenet_state.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 
 namespace bark {
 namespace models {
@@ -63,13 +63,13 @@ Trajectory BehaviorStaticTrajectory::Plan(
   return traj;
 }
 
-Action BehaviorStaticTrajectory::CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) {
+Action BehaviorStaticTrajectory::CalculateAction(float delta_time, const bark::world::ObservedWorld &observed_world, const dynamic::Trajectory& trajectory) {
   auto lane_corridor = observed_world.GetLaneCorridor();
   BARK_EXPECT_TRUE(bool(lane_corridor));
 
   auto center_line = lane_corridor->GetCenterLine();
-  modules::commons::transformation::FrenetState frenet_state_start(trajectory.row(0), center_line);
-  modules::commons::transformation::FrenetState frenet_state_end(trajectory.row(trajectory.rows() - 1), center_line);
+  bark::commons::transformation::FrenetState frenet_state_start(trajectory.row(0), center_line);
+  bark::commons::transformation::FrenetState frenet_state_end(trajectory.row(trajectory.rows() - 1), center_line);
   auto acc_lat = (frenet_state_end.vlat - frenet_state_start.vlat)/ delta_time;
   auto acc_lon = (frenet_state_end.vlon - frenet_state_start.vlon)/ delta_time;
 

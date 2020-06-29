@@ -9,10 +9,10 @@
 #include "glog/logging.h"
 #include "python/tests/logging_tests.hpp"
 #include "python/polymorphic_conversion.hpp"
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/runtime/tests/py_param_server_test_helper.hpp"
-#include "modules/commons/transformation/frenet.hpp"
-#include "modules/commons/base_type.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/runtime/tests/py_param_server_test_helper.hpp"
+#include "bark/commons/transformation/frenet.hpp"
+#include "bark/commons/base_type.hpp"
 
 namespace py = pybind11;
 

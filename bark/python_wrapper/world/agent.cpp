@@ -21,14 +21,14 @@
 
 
 namespace py = pybind11;
-using namespace modules::world::objects;
-using namespace modules::world::goal_definition;
-using namespace modules::models::dynamic;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::models::execution;
-using namespace modules::geometry;
-using modules::world::opendrive::XodrRoadId;
+using namespace bark::world::objects;
+using namespace bark::world::goal_definition;
+using namespace bark::models::dynamic;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::models::execution;
+using namespace bark::geometry;
+using bark::world::opendrive::XodrRoadId;
 
 void python_agent(py::module m) {
   py::class_<Agent, AgentPtr>(m, "Agent")
@@ -98,7 +98,7 @@ void python_agent(py::module m) {
           std::make_shared<SingleTrackModel>(t[7].cast<SingleTrackModel>()),
           std::make_shared<ExecutionModelInterpolate>(
             t[6].cast<ExecutionModelInterpolate>()),
-          t[1].cast<modules::geometry::Polygon>(),
+          t[1].cast<bark::geometry::Polygon>(),
           nullptr,
           PythonToGoalDefinition(t[9].cast<py::tuple>()));
         agent.SetAgentId(t[2].cast<AgentId>());

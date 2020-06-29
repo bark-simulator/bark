@@ -7,26 +7,26 @@
 #include "gtest/gtest.h"
 #include "boost/variant.hpp"
 
-#include "modules/commons/params/default_params.hpp"
-#include "modules/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_world.hpp"
+#include "bark/commons/params/default_params.hpp"
+#include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 
-using modules::models::behavior::BehaviorStaticTrajectory;
-using modules::models::behavior::StateRowVector;
-using modules::models::dynamic::Trajectory;
-using modules::models::dynamic::StateDefinition;
-using modules::models::dynamic::State;
-using modules::world::World;
-using modules::world::Agent;
-using modules::world::WorldPtr;
-using modules::world::ObservedWorld;
-using modules::commons::DefaultParams;
-using modules::world::goal_definition::GoalDefinitionPolygon;
-using modules::geometry::Point2d;
-using modules::geometry::Polygon;
-using modules::models::behavior::LonLatAction;
-using modules::geometry::Pose;
+using bark::models::behavior::BehaviorStaticTrajectory;
+using bark::models::behavior::StateRowVector;
+using bark::models::dynamic::Trajectory;
+using bark::models::dynamic::StateDefinition;
+using bark::models::dynamic::State;
+using bark::world::World;
+using bark::world::Agent;
+using bark::world::WorldPtr;
+using bark::world::ObservedWorld;
+using bark::commons::DefaultParams;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::geometry::Point2d;
+using bark::geometry::Polygon;
+using bark::models::behavior::LonLatAction;
+using bark::geometry::Pose;
 
 
 TEST(behavior_static_trajectory_plan, plan) {
@@ -37,7 +37,7 @@ TEST(behavior_static_trajectory_plan, plan) {
   2, 2, 0, 0, 1,
   3, 3, 0, 0, 1;
   BehaviorStaticTrajectory model(nullptr, static_traj);
-  auto observed_world = modules::world::tests::make_test_observed_world(0, 0 ,0 ,0);
+  auto observed_world = bark::world::tests::make_test_observed_world(0, 0 ,0 ,0);
   Trajectory traj;
   StateRowVector expected(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
@@ -80,7 +80,7 @@ TEST(behavior_static_trajectory_plan, calculate_action) {
   Polygon polygon(Pose(0, 0, 0), std::vector<Point2d>{Point2d(-10, 0.2), Point2d(10, 0.2), Point2d(10, -0.2), Point2d(-10, -0.2), Point2d(-10, 0.2)});
   std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -1.75)))); // < move the goal polygon into the driving corridor in front of the ego vehicle
   auto goal_def = std::make_shared<GoalDefinitionPolygon>(polygon);
-  auto observed_world = modules::world::tests::make_test_observed_world(0, 0 , 5 ,0, goal_def);
+  auto observed_world = bark::world::tests::make_test_observed_world(0, 0 , 5 ,0, goal_def);
   Trajectory traj;
   StateRowVector expected(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
