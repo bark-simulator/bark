@@ -46,9 +46,9 @@ using bark::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
 
 #ifdef PLANNER_MVMCTS
-#include "src/behavior_mcts_multi_agent.hpp"
-using bark::models::behavior::BehaviorEGreedyMultiAgent;
-using bark::models::behavior::BehaviorUCTMultiAgent;
+#include "src/behavior_mvmcts.hpp"
+using bark::models::behavior::BehaviorMvmctsEGreedy;
+using bark::models::behavior::BehaviorMvmctsUct;
 #endif
 
 namespace py = pybind11;
@@ -118,10 +118,10 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   }
 #endif
 #ifdef PLANNER_MVMCTS
-  else if (typeid(*behavior_model) == typeid(BehaviorUCTMultiAgent)) {
-    behavior_model_name = "BehaviorUCTMultiAgent";
-  } else if (typeid(*behavior_model) == typeid(BehaviorEGreedyMultiAgent)) {
-    behavior_model_name = "BehaviorEGreedyMultiAgent";
+  else if (typeid(*behavior_model) == typeid(BehaviorMvmctsUct)) {
+    behavior_model_name = "BehaviorMvmctsUct";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMvmctsEGreedy)) {
+    behavior_model_name = "BehaviorMvmctsEGreedy";
   }
 #endif
   else {
@@ -175,12 +175,11 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   }
 #endif
 #ifdef PLANNER_MVMCTS
-  else if (behavior_model_name.compare("BehaviorUCTMultiAgent") == 0) {
-    return std::make_shared<BehaviorUCTMultiAgent>(
-        t[0].cast<BehaviorUCTMultiAgent>());
-  } else if (behavior_model_name.compare("BehaviorEGreedyMultiAgent") == 0) {
-    return std::make_shared<BehaviorEGreedyMultiAgent>(
-        t[0].cast<BehaviorEGreedyMultiAgent>());
+  else if (behavior_model_name.compare("BehaviorMvmctsUct") == 0) {
+    return std::make_shared<BehaviorMvmctsUct>(t[0].cast<BehaviorMvmctsUct>());
+  } else if (behavior_model_name.compare("BehaviorMvmctsEGreedy") == 0) {
+    return std::make_shared<BehaviorMvmctsEGreedy>(
+        t[0].cast<BehaviorMvmctsEGreedy>());
   }
 #endif
   else if (behavior_model_name.compare("None") == 0) {
