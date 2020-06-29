@@ -60,7 +60,9 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
-                 map_file_name= os.path.join(os.path.dirname(__file__), "../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"),
+                 map_file_name=os.path.join(
+                   os.path.dirname(__file__),
+                   "../bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"),
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=[left_lane, right_lane])

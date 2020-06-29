@@ -157,9 +157,7 @@ Town01_copy.xodr
 Town01.xodr
 bark/runtime/tests/data/DR_DEU_Merging_MT.xodr
 bark/runtime/tests/data/Osterwaldstrasse_v1.xodr
-bark/examplesscenarios/benchmark_database_0.0.1.zip
 .bazelrc
-/examples/maps
 bark/runtime/tests/data/three_way_plain.xodr
 output.png
 bark/runtime/tests/data/three_way_plain_old.xodr
