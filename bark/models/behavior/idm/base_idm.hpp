@@ -116,7 +116,7 @@ class BaseIDM : virtual public BehaviorModel {
     lane_corr_ = lane_corr;
   }
 
- private:
+ protected:
   // Parameters
   float param_minimum_spacing_;
   float param_desired_time_head_way_;

@@ -30,7 +30,7 @@ class BehaviorHypothesisIDM : public BehaviorIDMStochastic, public BehaviorHypot
 
   virtual bark::commons::Probability GetProbability(const Action& action,
                              const world::ObservedWorld& observed_world,
-                             const AgentId& agent_id) const;
+                             const bark::world::objects::AgentId& agent_id) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
