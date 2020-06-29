@@ -61,6 +61,7 @@ Trajectory BehaviorMPMacroActions::Plan(
 
   traj = selected_mp->Plan(delta_time, observed_world, target_corridor_);
 
+  this->SetLastAction(motion_primitives_.at(boost::get<DiscreteAction>(active_motion_))->GetLastAction());
   this->SetLastTrajectory(traj);
   return traj;
 }
