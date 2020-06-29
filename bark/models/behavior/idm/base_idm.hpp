@@ -33,7 +33,7 @@ struct IDMRelativeValues {
 
 // Base class for all IDMs and the const. vel.
 // includes all longitudinal acc. functions
-class BaseIDM : public BehaviorModel {
+class BaseIDM : virtual public BehaviorModel {
  public:
   explicit BaseIDM(const commons::ParamsPtr& params);
 
@@ -63,6 +63,14 @@ class BaseIDM : public BehaviorModel {
   double CalcIDMAcc(const double net_distance,
                     const double vel_ego,
                     const double vel_other) const;
+
+  double CalcCAHAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other, const double& acc_ego,
+                       const double& acc_other) const ;
+
+  double CalcACCAcc(const double& net_distance, const double& vel_ego,
+                       const double& vel_other, const double& acc_ego,
+                       const double& acc_other) const;
 
   virtual std::pair<double, double> GetTotalAcc(
     const world::ObservedWorld& observed_world,
@@ -100,6 +108,9 @@ class BaseIDM : public BehaviorModel {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
+  const float GetCoolnessFactor() const {
+    return param_coolness_factor_;
+  }
   LaneCorridorPtr GetLaneCorridor() const { return lane_corr_; }
   void SetLaneCorridor(const LaneCorridorPtr& lane_corr) {
     lane_corr_ = lane_corr;
@@ -124,6 +135,11 @@ class BaseIDM : public BehaviorModel {
   bool brake_lane_end_;
   float brake_lane_end_enabled_distance_;
   float brake_lane_end_distance_offset_;
+
+  // constant acceleration heuristic
+  // according chapter 11. Car-Following Models based on Driving Strategies 
+  // in "Traffic Flow Dynamics" by M.Treiber and A.Kesting
+  float param_coolness_factor_; 
 };
 
 
