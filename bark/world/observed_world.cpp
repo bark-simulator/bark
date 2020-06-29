@@ -6,17 +6,17 @@
 
 #include <limits>
 
-#include "modules/models/behavior/motion_primitives/motion_primitives.hpp"
-#include "modules/world/observed_world.hpp"
+#include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
+#include "bark/world/observed_world.hpp"
 
 namespace bark {
 namespace world {
 
-using modules::geometry::Point2d;
-using modules::models::behavior::BehaviorMotionPrimitives;
-using modules::models::behavior::BehaviorMotionPrimitivesPtr;
-using modules::models::dynamic::State;
-using modules::world::AgentMap;
+using bark::geometry::Point2d;
+using bark::models::behavior::BehaviorMotionPrimitives;
+using bark::models::behavior::BehaviorMotionPrimitivesPtr;
+using bark::models::dynamic::State;
+using bark::world::AgentMap;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();

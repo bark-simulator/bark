@@ -17,16 +17,16 @@
 namespace bark {
 namespace world {
 
-using modules::geometry::Point2d;
-using modules::models::behavior::BehaviorModel;
-using modules::models::behavior::BehaviorModelPtr;
-using modules::models::behavior::DiscreteAction;
-using modules::models::behavior::Action;
-using modules::models::behavior::ActionHash;
-using modules::models::dynamic::State;
-using modules::models::dynamic::StateDefinition::X_POSITION;
-using modules::models::dynamic::StateDefinition::Y_POSITION;
-using modules::world::prediction::PredictionSettings;
+using bark::geometry::Point2d;
+using bark::models::behavior::BehaviorModel;
+using bark::models::behavior::BehaviorModelPtr;
+using bark::models::behavior::DiscreteAction;
+using bark::models::behavior::Action;
+using bark::models::behavior::ActionHash;
+using bark::models::dynamic::State;
+using bark::models::dynamic::StateDefinition::X_POSITION;
+using bark::models::dynamic::StateDefinition::Y_POSITION;
+using bark::world::prediction::PredictionSettings;
 using world::map::MapInterfacePtr;
 using world::map::RoadCorridorPtr;
 using world::objects::Agent;

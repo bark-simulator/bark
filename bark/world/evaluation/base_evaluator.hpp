@@ -9,7 +9,7 @@
 
 #include <memory>
 #include <boost/variant.hpp>
-#include "modules/commons/commons.hpp"
+#include "bark/commons/commons.hpp"
 
 namespace bark {
 namespace world {

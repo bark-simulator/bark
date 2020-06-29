@@ -7,7 +7,7 @@
 #ifndef BARK_RUNTIME_TESTS_PARAM_SERVER_TEST_HELPER_HPP_
 #define BARK_RUNTIME_TESTS_PARAM_SERVER_TEST_HELPER_HPP_
 
-#include "modules/commons/commons.hpp"
+#include "bark/commons/commons.hpp"
 
 
 class CppParamServerTestObject {

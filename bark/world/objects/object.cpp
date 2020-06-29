@@ -28,4 +28,4 @@ std::shared_ptr<Object> Object::Clone() const {
 
 }  // objects
 }  // world
-}  // modules
+}  // bark

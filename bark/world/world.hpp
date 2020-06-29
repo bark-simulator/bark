@@ -130,7 +130,7 @@ class World : public commons::BaseType {
 
   void SetRemoveAgents(const bool& remove_agents ) { remove_agents_ = remove_agents; }
 
-  AgentMap GetNearestAgents(const modules::geometry::Point2d& position,
+  AgentMap GetNearestAgents(const bark::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
 
   AgentMap GetAgentsIntersectingPolygon(

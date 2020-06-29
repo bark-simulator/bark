@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "modules/commons/commons.hpp"
+#include "bark/commons/commons.hpp"
 
 namespace bark {
 namespace runtime {

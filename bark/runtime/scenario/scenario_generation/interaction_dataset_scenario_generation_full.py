@@ -32,10 +32,10 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]
         self._map_file_name = params_temp["MapFilename",
                                           "Path to the open drive map",
-                                          "modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
+                                          "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
         self._track_file_name_list = params_temp["TrackFilenameList",
                                             "List of Paths to track files (csv)",
-                                            ["modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
+                                            ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
         self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]

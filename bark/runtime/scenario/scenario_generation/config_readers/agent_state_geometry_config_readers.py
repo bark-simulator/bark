@@ -11,7 +11,7 @@ from collections import defaultdict
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from modules.runtime.scenario.scenario_generation.interaction_dataset_reader import shape_from_track, \
+from bark.runtime.scenario.scenario_generation.interaction_dataset_reader import shape_from_track, \
     bark_state_from_motion_state, init_state_from_track, track_from_trackfile
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
@@ -103,7 +103,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+                                        "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]
     track_ids = config_param_object["TrackIds", "IDs of the vehicle tracks to import.", [1]]
     start_time = config_param_object["StartTs", "Timestamp when to start the scenario (ms)", 0]
     end_time = config_param_object["EndTs","Timestamp when to end the scenario (ms)", None]
@@ -148,7 +148,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
   current_track_file = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
-                                        "modules/runtime/tests/data/interaction_dataset_dummy_*.csv"]
+                                        "bark/runtime/tests/data/interaction_dataset_dummy_*.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
     skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
