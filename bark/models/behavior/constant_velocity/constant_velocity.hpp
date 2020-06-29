@@ -27,6 +27,7 @@ using world::ObservedWorld;
 class BehaviorConstantVelocity : public BehaviorIDMClassic {
  public:
   explicit BehaviorConstantVelocity(const commons::ParamsPtr& params) :
+    BehaviorModel(params),
     BehaviorIDMClassic(params) {}
 
   virtual ~BehaviorConstantVelocity() {}

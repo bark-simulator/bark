@@ -21,6 +21,7 @@ namespace behavior {
 class BehaviorIDMLaneTracking : public BaseIDM {
  public:
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
+    BehaviorModel(params),
     BaseIDM(params),
     limit_steering_rate_(true) {
     crosstrack_error_gain_ = params->GetReal(

@@ -215,7 +215,7 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance,
  * 
  * @return double acceleration
  */
-double BehaviorIDMClassic::CalcCAHAcc(const double& net_distance, const double& vel_ego,
+double BaseIDM::CalcCAHAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other, const double& acc_ego,
                        const double& acc_other) const {
   // implements equation 11.25 on on page 198
@@ -237,7 +237,7 @@ double BehaviorIDMClassic::CalcCAHAcc(const double& net_distance, const double& 
  * 
  * @return double Acc_acceleration
  */
-double BehaviorIDMClassic::CalcACCAcc(const double& net_distance, const double& vel_ego,
+double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
                        const double& vel_other, const double& acc_ego,
                        const double& acc_other) const {
   // implements equation 11.26 on on page 199

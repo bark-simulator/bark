@@ -85,8 +85,8 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       traj(i, StateDefinition::TIME_POSITION) = t_i;
     }
   }
-  Action action(Continuous1DAction(initial_acceleration));
-  return std::tuple<Trajectory, Action>(traj, action);
+
+  return std::tuple<Trajectory, Action>(traj, Continuous1DAction(initial_acceleration));
 }
 
 

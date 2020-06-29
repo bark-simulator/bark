@@ -26,6 +26,7 @@ using bark::world::map::LaneCorridorPtr;
 class BehaviorIDMClassic : public BaseIDM {
  public:
   explicit BehaviorIDMClassic(const commons::ParamsPtr& params) :
+    BehaviorModel(params),
     BaseIDM(params) {}
 
   virtual ~BehaviorIDMClassic() {}

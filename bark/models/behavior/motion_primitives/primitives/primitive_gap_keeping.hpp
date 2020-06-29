@@ -20,7 +20,7 @@ namespace primitives {
 class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
  public:
   explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)
-      : Primitive(params), BehaviorIDMLaneTracking(params) {
+      : Primitive(params), BehaviorModel(params), BehaviorIDMLaneTracking(params) {
         Primitive::SetLastAction(Continuous1DAction(0.0f));
       }
   bool IsPreConditionSatisfied(
