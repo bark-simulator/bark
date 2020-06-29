@@ -33,6 +33,8 @@ class BaseViewer(Viewer):
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId", "Draw id of each agent", True]
+        self.rotate_agent_id_ccw = params["Visualization"]["Agents"][
+            "CcwAgentId", "Draw id of agent counter clock wise", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (.49, .63, .83)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
@@ -48,18 +50,21 @@ class BaseViewer(Viewer):
         self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
 
-        self.center = kwargs.pop("center", np.array([0, 0]))
-
         self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
         self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
 
         self.enforce_x_length = kwargs.pop("enforce_x_length", True)
         self.enforce_y_length = kwargs.pop("enforce_y_length", False)
-        self.x_length = kwargs.pop("x_length", np.sum(np.absolute(self.world_x_range)))
-        self.y_length = kwargs.pop("y_length", np.sum(np.absolute(self.world_y_range)))
+        self.x_length = kwargs.pop("x_length", self.world_x_range[1] - self.world_x_range[0])
+        self.y_length = kwargs.pop("y_length", self.world_y_range[1] - self.world_y_range[0])
+        self.center = kwargs.pop("center", np.array(
+            [self.world_x_range[0] + 0.5 * self.x_length, self.world_y_range[0] + 0.5 * self.y_length]))
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
+
+        self.max_agent_id = 0
+        self.min_agent_id = 1000
 
     def reset():
         pass
@@ -112,7 +117,7 @@ class BaseViewer(Viewer):
                   self.dynamic_world_x_range[1] += (diffy - diffx)/2
           else:
               center = self.center
-              # self._update_world_dynamic_range(center)
+              self._update_world_dynamic_range(center)
 
 
     def _update_world_dynamic_range(self, center):
@@ -212,7 +217,8 @@ class BaseViewer(Viewer):
                 alpha = .5
                 self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
-        num_agents = len(world.agents.items())
+        self.max_agent_id = max(max(world.agents.keys()), self.max_agent_id)
+        self.min_agent_id = min(min(world.agents.keys()), self.min_agent_id)
         for i, (agent_id, agent) in enumerate(world.agents.items()):
             color = "blue"
             alpha = 1.0
@@ -223,8 +229,10 @@ class BaseViewer(Viewer):
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                  color_line = self.getColorFromMap(float(i) / float(num_agents))
-                  color_face = self.getColorFromMap(float(i) / float(num_agents))
+                    color = self.getColorFromMap(
+                        float(agent_id - self.min_agent_id) / float(self.max_agent_id - self.min_agent_id))
+                    color_line = color
+                    color_face = color
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
@@ -274,8 +282,10 @@ class BaseViewer(Viewer):
             centery = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist))* math.sin(pose[2]) + pose[1]
 
             if self.draw_agent_id:
-              self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),\
-                 coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+                base_angle = 0.0 if self.rotate_agent_id_ccw else 1.0
+                self.drawText(position=(centerx, centery), rotation=180.0 * (base_angle + pose[2] / math.pi),
+                              text="{}".format(agent.id), \
+                              coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
             self.drawPolygon2d(transformed_polygon, color, alpha, facecolor)
         else:
