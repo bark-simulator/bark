@@ -18,6 +18,14 @@ py_test(
 )
 
 py_test(
+  name = "py_benchmark_result_tests",
+  srcs = ["py_benchmark_result_tests.py"],
+  deps = [
+      "//bark/benchmark:benchmark_result"
+    ],
+)
+
+py_test(
   name = "py_benchmark_analyzer_tests",
   srcs = ["py_benchmark_analyzer_tests.py"],
   data = ["//bark:generate_core" ],
