@@ -45,7 +45,8 @@ cc_binary(
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
     "//bark/runtime:cc_runtime",
-    "//bark/python_wrapper/models/plan:planners"
+    "//bark/python_wrapper/models/plan:planners",
+    "//bark/python_wrapper/tests:logging_tests"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
