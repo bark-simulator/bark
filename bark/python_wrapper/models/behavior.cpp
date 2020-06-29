@@ -1,16 +1,17 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
-// Tobias Kessler
+// Copyright (c) 2019 fortiss GmbH, Julian Bernhard, Klemens Esterle, Patrick Hart, Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
 #include "behavior.hpp"
- #include "bark/python_wrapper/polymorphic_conversion.hpp"
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
+#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "bark/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
@@ -32,6 +33,7 @@ using std::shared_ptr;
 void python_behavior(py::module m) {
   py::class_<BehaviorModel,
              PyBehaviorModel,
+             bark::commons::BaseType,
              BehaviorModelPtr>(m, "BehaviorModel")
     .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Plan", &BehaviorModel::Plan)
@@ -65,7 +67,7 @@ void python_behavior(py::module m) {
 
   py::class_<BehaviorIDMClassic,
              BehaviorModel,
-             shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic")
+             shared_ptr<BehaviorIDMClassic>>(m, "BehaviorIDMClassic", py::multiple_inheritance())
     .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const BehaviorIDMClassic &m) {
       return "bark.behavior.BehaviorIDMClassic";
@@ -80,7 +82,7 @@ void python_behavior(py::module m) {
           throw std::runtime_error("Invalid behavior model state!");
         return new BehaviorIDMClassic(PythonToParams(t[0].cast<py::tuple>()));
       }));
-  
+
   py::class_<BehaviorIDMLaneTracking,
              BehaviorModel,
              shared_ptr<BehaviorIDMLaneTracking>>(m, "BehaviorIDMLaneTracking")
@@ -119,23 +121,23 @@ void python_behavior(py::module m) {
             return new BehaviorMobil(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
         }));
 
-  py::class_<BehaviorLaneChangeRuleBased,
-             BehaviorModel,
-             shared_ptr<BehaviorLaneChangeRuleBased>>(m, "BehaviorLaneChangeRuleBased")
-    .def(py::init<const bark::commons::ParamsPtr&>())
-    .def("__repr__", [](const BehaviorLaneChangeRuleBased &m) {
-      return "bark.behavior.BehaviorLaneChangeRuleBased";
-    })
-    .def(py::pickle(
-      [](const BehaviorLaneChangeRuleBased &b) { 
-          return py::make_tuple(ParamsToPython(b.GetParams()));
-      },
-      [](py::tuple t) { // __setstate__
-          if (t.size() != 1)
-              throw std::runtime_error("Invalid behavior model state!");
-          /* Create a new C++ instance */
-          return new BehaviorLaneChangeRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
-      }));
+    py::class_<BehaviorLaneChangeRuleBased,
+              BehaviorModel,
+              shared_ptr<BehaviorLaneChangeRuleBased>>(m, "BehaviorLaneChangeRuleBased")
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def("__repr__", [](const BehaviorLaneChangeRuleBased &m) {
+        return "bark.behavior.BehaviorLaneChangeRuleBased";
+      })
+      .def(py::pickle(
+        [](const BehaviorLaneChangeRuleBased &b) { 
+            return py::make_tuple(ParamsToPython(b.GetParams()));
+        },
+        [](py::tuple t) { // __setstate__
+            if (t.size() != 1)
+                throw std::runtime_error("Invalid behavior model state!");
+            /* Create a new C++ instance */
+            return new BehaviorLaneChangeRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
+        }));
 
   py::class_<BehaviorMobilRuleBased,
              BehaviorModel,
@@ -173,12 +175,55 @@ void python_behavior(py::module m) {
           return new BehaviorIntersectionRuleBased(PythonToParams(t[0].cast<py::tuple>())); // param pointer must be set afterwards
       }));
 
+    py::class_<BehaviorIDMStochastic,
+             BehaviorModel,
+             shared_ptr<BehaviorIDMStochastic>>(m, "BehaviorIDMStochastic", py::multiple_inheritance())
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("__repr__", [](const BehaviorIDMStochastic &m) {
+      return "bark.behavior.BehaviorIDMStochastic";
+    })
+    .def(py::pickle(
+      [](const BehaviorIDMStochastic& b) {
+        // We throw away other information such as last trajectories
+        return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new BehaviorIDMStochastic(PythonToParams(t[0].cast<py::tuple>()));
+      }));
+
+
+    py::class_<BehaviorHypothesis,
+             BehaviorModel,
+             shared_ptr<BehaviorHypothesis>>(m,
+    "BehaviorHypothesis");
+    
+      py::class_<BehaviorHypothesisIDM,
+             BehaviorHypothesis,
+             shared_ptr<BehaviorHypothesisIDM>>(m, "BehaviorHypothesisIDM", py::multiple_inheritance())
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("__repr__", [](const BehaviorHypothesisIDM &m) {
+      return "bark.behavior.BehaviorHypothesisIDM";
+    })
+    .def(py::pickle(
+      [](const BehaviorHypothesisIDM& b) {
+        // We throw away other information such as last trajectories
+        return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        return new BehaviorHypothesisIDM(PythonToParams(t[0].cast<py::tuple>()));
+      }));
+
   py::class_<BehaviorMotionPrimitives,
              BehaviorModel,
              shared_ptr<BehaviorMotionPrimitives>>(m,
     "BehaviorMotionPrimitives")
     .def("ActionToBehavior", &BehaviorMotionPrimitives::ActionToBehavior)
     .def_property_readonly("num_motion_primitives", &BehaviorMotionPrimitives::GetNumMotionPrimitives);
+
 
   py::class_<BehaviorMPContinuousActions,
              BehaviorMotionPrimitives,
@@ -342,6 +387,27 @@ void python_behavior(py::module m) {
         return new BehaviorStaticTrajectory(PythonToParams(t[0].cast<py::tuple>()), t[1].cast<bark::models::dynamic::Trajectory>());
       }));
 
+  py::class_<LonLatAction,
+             shared_ptr<LonLatAction>>(m, "LonLatAction")
+      .def(py::init<>())
+      .def_readwrite("acc_lat", &LonLatAction::acc_lat)
+      .def_readwrite("acc_lon", &LonLatAction::acc_lon)
+      .def("__repr__", [](const LonLatAction &b) {
+        return "bark.behavior.LonLatAction";
+      })
+      .def(py::pickle(
+      [](const LonLatAction& a) {
+        return py::make_tuple(a.acc_lat, a.acc_lon);
+      },
+      [](py::tuple t) {
+        if (t.size() != 2)
+          throw std::runtime_error("Invalid LonLatAction model state!");
+        /* Create a new C++ instance */
+        return new LonLatAction{t[0].cast<Continuous1DAction>(), t[1].cast<Continuous1DAction>()};
+      }));
+
+
+  m.def("BehaviorMacroActionsFromParamServer", &BehaviorMacroActionsFromParamServer);
 
   python_behavior_plan(m);
 }
