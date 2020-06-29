@@ -4,14 +4,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef PYTHON_TESTS_LOGGING_TESTS_HPP_
-#define PYTHON_TESTS_LOGGING_TESTS_HPP_
+#ifndef PYTHON_WRAPPING_TESTS_LOGGING_TESTS_HPP_
+#define PYTHON_WRAPPING_TESTS_LOGGING_TESTS_HPP_
 
 #include "glog/logging.h"
 
 namespace py = pybind11;
 
-namespace modules {
+namespace bark {
 namespace commons {
 
 void do_logging() {
@@ -31,12 +31,8 @@ void do_logging() {
 
 }
 
-
-
-
-
 }  // namespace commons
-}  // namespace modules
+}  // namespace bark
 
 
-#endif // PYTHON_TESTS_LOGGING_TESTS_HPP_
+#endif // PYTHON_WRAPPING_TESTS_LOGGING_TESTS_HPP_
