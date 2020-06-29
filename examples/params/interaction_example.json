@@ -3,8 +3,8 @@
     "Name": "DR_DEU_Merging_MT\ninteraction_dataset_dummy_track.csv",
     "Generation": {
       "InteractionDatasetScenarioGeneration": {
-        "MapFilename": "../bark_project/modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
-        "TrackFilename": "../bark_project/modules/runtime/tests/data/interaction_dataset_dummy_track.csv",
+        "MapFilename": "../bark_project/bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+        "TrackFilename": "../bark_project/bark/runtime/tests/data/interaction_dataset_dummy_track.csv",
         "TrackIds": [1, 2],
         "EgoTrackId": 1,
         "StartTs": 500,

@@ -2,7 +2,7 @@
     "Scenario": {
         "Generation": {
             "ConfigurableScenarioGeneration": {
-                "MapFilename": "modules/runtime/tests/data/three_way_plain.xodr",
+                "MapFilename": "bark/runtime/tests/data/three_way_plain.xodr",
                 "RandomSeed": 1000,
                 "SinksSources": [
                     {
