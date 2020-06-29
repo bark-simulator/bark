@@ -8,7 +8,7 @@
 #ifndef BARK_COMMONS_BASE_TYPE_HPP_
 #define BARK_COMMONS_BASE_TYPE_HPP_
 
-#include "modules/commons/util/util.hpp"
+#include "bark/commons/util/util.hpp"
 
 namespace bark {
 namespace commons {

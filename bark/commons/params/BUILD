@@ -13,8 +13,8 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//modules/commons/util:util",
-        "//modules/commons/distribution:distribution",
+        "//bark/commons/util:util",
+        "//bark/commons/distribution:distribution",
         "@boost//:geometry", # add since sometimes "boost/variant.hpp" not found
     ]
 )

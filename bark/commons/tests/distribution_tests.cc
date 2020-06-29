@@ -19,12 +19,12 @@
 // TODO(fortiss): fill our this test
 TEST(distribution_test, normal_dist_1d) {
 
-  auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
   params_ptr->SetReal("Mean", -3.0f);
   params_ptr->SetReal("StdDev", 2.0f);
   params_ptr->SetInt("RandomSeed", 1000.0f);
 
-  auto dist_normal = modules::commons::NormalDistribution1D(params_ptr);
+  auto dist_normal = bark::commons::NormalDistribution1D(params_ptr);
 
   size_t samples = 30000;
   double mean = 0.0f;
@@ -47,14 +47,14 @@ TEST(distribution_test, normal_dist_1d) {
 // TODO(fortiss): fill our this test
 TEST(distribution_test, uniform_dist_1d) {
 
-  auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
   const double lower_bound = -3.0f;
   const double upper_bound = 10.0f;
   params_ptr->SetReal("LowerBound", -3.0f);
   params_ptr->SetReal("UpperBound", 10.0f);
   params_ptr->SetInt("RandomSeed", 1000.0f);
 
-  auto dist_uniform = modules::commons::UniformDistribution1D(params_ptr);
+  auto dist_uniform = bark::commons::UniformDistribution1D(params_ptr);
 
   size_t samples = 10000;
   double mean = 0.0f;
@@ -87,14 +87,14 @@ TEST(distribution_test, uniform_dist_1d) {
 
 TEST(distribution_test, multivariate_distribution) {
   // First test zero covariances
-  auto params_ptr = std::make_shared<modules::commons::SetterParams>(true);
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
   const double lower_bound = -3.0f;
   const double upper_bound = 10.0f;
   params_ptr->SetListListFloat("Covariance", {{1.0, 0.2, 0.1}, {0.2, 3.0, -0.5}, {0.1, -0.5, 0.125553}});
   params_ptr->SetListFloat("Mean", {1.2f, 12.0f, 0.1234f});
   params_ptr->SetInt("RandomSeed", 1000.0f);
 
-  auto dist_multivariate = modules::commons::MultivariateDistribution(params_ptr);
+  auto dist_multivariate = bark::commons::MultivariateDistribution(params_ptr);
 
   size_t samples = 200000;
   std::vector<double> mean(3, 0.0f);

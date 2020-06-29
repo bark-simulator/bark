@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include "boost/variant.hpp"
-#include "modules/commons/distribution/distribution.hpp"
+#include "bark/commons/distribution/distribution.hpp"
 
 namespace bark {
 namespace commons {

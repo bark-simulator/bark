@@ -30,7 +30,7 @@ from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVeloci
 try: # bazel run
   os.chdir("../benchmark_database/")
 except: # debug
-  os.chdir("bazel-bin/modules/benchmark/tests/py_benchmark_runner_tests.runfiles/benchmark_database")
+  os.chdir("bazel-bin/bark/benchmark/tests/py_benchmark_runner_tests.runfiles/benchmark_database")
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_runner(self):

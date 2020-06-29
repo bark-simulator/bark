@@ -11,13 +11,13 @@
 #include <boost/make_shared.hpp>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/commons/distribution/distributions_1d.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/commons/distribution/distributions_1d.hpp"
 
 TEST(setter_params, param_tests) {
   std::cout << "Start test\n";
 
-  modules::commons::SetterParams params(true);
+  bark::commons::SetterParams params(true);
 
   params.SetReal("Test::2", 0.5f);
   EXPECT_EQ(params.GetReal("Test::2","", 1.0f), 0.5f);
@@ -62,13 +62,13 @@ TEST(setter_params, param_tests) {
   params.SetDistribution("Test2::25::123", "UniformDistribution1D");
 
   auto dist_uniform = params.GetDistribution("Test2::25::123","some description", "NormalDistribution1D");
-  EXPECT_TRUE(typeid(*dist_uniform)== typeid(modules::commons::UniformDistribution1D));
+  EXPECT_TRUE(typeid(*dist_uniform)== typeid(bark::commons::UniformDistribution1D));
   EXPECT_EQ(dist_uniform->GetParams()->GetReal("LowerBound", "some description", 2323.0), -10.0f);
 
   // No defaults for dist spec fiven
-  modules::commons::SetterParams params2(false);
+  bark::commons::SetterParams params2(false);
   auto dist_uniform2 = params2.GetDistribution("Test2::25::123123","some description", "NormalDistribution1D");
-  EXPECT_TRUE(typeid(*dist_uniform2)== typeid(modules::commons::NormalDistribution1D));
+  EXPECT_TRUE(typeid(*dist_uniform2)== typeid(bark::commons::NormalDistribution1D));
 }
 
 int main(int argc, char **argv) {

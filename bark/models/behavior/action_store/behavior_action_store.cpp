@@ -31,7 +31,7 @@ std::tuple<Trajectory, Action, BehaviorStatus> BehaviorActionStore::Retrieve(con
   return it->second;
 }
 
-Trajectory BehaviorActionStore::Plan(float delta_time, const modules::world::ObservedWorld& observed_world) {
+Trajectory BehaviorActionStore::Plan(float delta_time, const bark::world::ObservedWorld& observed_world) {
   const auto& tuple = Retrieve(active_behavior_);
   SetLastTrajectory(std::get<0>(tuple));
   SetLastAction(std::get<1>(tuple));

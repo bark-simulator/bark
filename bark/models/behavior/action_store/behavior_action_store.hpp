@@ -12,7 +12,7 @@
 
 #include "bark/models/behavior/behavior_model.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 class ObservedWorld;
 }  
@@ -40,7 +40,7 @@ class BehaviorActionStore : public BehaviorModel {
     active_behavior_ = action_hash;
   }
 
-  virtual Trajectory Plan(float delta_time, const modules::world::ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time, const bark::world::ObservedWorld& observed_world);
 
   private:
     std::unordered_map<ActionHash, std::tuple<Trajectory, Action, BehaviorStatus>> trajectory_store_;

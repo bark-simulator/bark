@@ -13,7 +13,7 @@ except:
     pass
 
 
-from modules.benchmark.benchmark_result import BenchmarkResult
+from bark.benchmark.benchmark_result import BenchmarkResult
 
 def random_result_data(size):
     columns = ['value1', 'value2', 'value3', 'value4']

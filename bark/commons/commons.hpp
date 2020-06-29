@@ -7,9 +7,9 @@
 #ifndef MODULES_COMMONS_COMMONS_HPP_
 #define MODULES_COMMONS_COMMONS_HPP_
 
-#include "modules/commons/base_type.hpp"
-#include "modules/commons/params/params.hpp"
-#include "modules/commons/util/util.hpp"
+#include "bark/commons/base_type.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/commons/util/util.hpp"
 
 
 
