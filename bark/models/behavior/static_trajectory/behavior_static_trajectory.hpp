@@ -40,7 +40,8 @@ class BehaviorStaticTrajectory : public BehaviorModel {
   const Trajectory& GetStaticTrajectory() const;
   void UpdateBehaviorStatus(float delta_time,
                             const world::ObservedWorld& observed_world);
-
+  static Action CalculateAction(float delta_time, const modules::world::ObservedWorld &observed_world,
+                           const dynamic::Trajectory& trajectory);
  private:
   static Trajectory ReadInStaticTrajectory(
     std::vector<std::vector<float>> list);
