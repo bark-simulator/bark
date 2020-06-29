@@ -38,6 +38,9 @@ cc_binary(
     "//bark/models/behavior/rule_based:intersection_behavior",
     "//bark/models/behavior/rule_based:mobil_behavior",
     "//bark/models/behavior/static_trajectory",
+    "//modules/models/behavior/idm/stochastic:stochastic",
+    "//modules/models/behavior/hypothesis/idm:hypothesis_idm",
+    "//modules/models/behavior/action_store:behavior_action_store",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
@@ -79,5 +82,7 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//modules/models/behavior/idm/stochastic:stochastic",
+    "//modules/models/behavior/hypothesis/idm:hypothesis_idm",
     ]
 )
