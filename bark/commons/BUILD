@@ -7,9 +7,9 @@ cc_library(
         "commons.hpp"
     ],
     deps = [
-        "//modules/commons/params:params",
-        "//modules/commons/util:util",
-        "//modules/commons/distribution:distribution"
+        "//bark/commons/params:params",
+        "//bark/commons/util:util",
+        "//bark/commons/distribution:distribution"
     ],
     visibility = ["//visibility:public"],
 )
@@ -27,9 +27,9 @@ cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
     deps= [
-        "//modules/commons/params:include",
-        "//modules/commons/util:include",
-        "//modules/commons/distribution:include",
+        "//bark/commons/params:include",
+        "//bark/commons/util:include",
+        "//bark/commons/distribution:include",
         "@boost//:system",
         "@boost//:smart_ptr",
         "@boost//:move",
