@@ -10,7 +10,7 @@
 #include <boost/functional/hash.hpp>
 #include <unordered_map>
 
-#include "modules/models/behavior/behavior_model.hpp"
+#include "bark/models/behavior/behavior_model.hpp"
 
 namespace modules {
 namespace world {
@@ -69,6 +69,6 @@ inline ActionHash ActionToHash(const Action& action) {
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
 
 #endif  // MODULES_MODELS_BEHAVIOR_ACTION_STORE_BEHAVIOR_ACTION_STORE_HPP_

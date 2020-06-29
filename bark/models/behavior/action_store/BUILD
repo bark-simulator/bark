@@ -7,8 +7,8 @@ cc_library(
         "behavior_action_store.hpp",
     ],
     deps = [
-        "//modules/models/behavior:behavior",
-        "//modules/models/dynamic:dynamic",
+        "//bark/models/behavior:behavior",
+        "//bark/models/dynamic:dynamic",
     ],
     visibility = ["//visibility:public"],
 )

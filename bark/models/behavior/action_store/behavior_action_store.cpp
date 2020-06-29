@@ -4,10 +4,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/models/behavior/action_store/behavior_action_store.hpp"
+#include "bark/models/behavior/action_store/behavior_action_store.hpp"
 
 
-namespace modules {
+namespace bark {
 namespace models {
 namespace behavior {
 
@@ -43,4 +43,4 @@ Trajectory BehaviorActionStore::Plan(float delta_time, const modules::world::Obs
 
 }  // namespace behavior
 }  // namespace models
-}  // namespace modules
+}  // namespace bark
