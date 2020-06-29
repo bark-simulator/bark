@@ -17,6 +17,8 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
     import InteractionDatasetScenarioGeneration
 from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
     import InteractionDatasetScenarioGenerationFull
+from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_mobil \
+    import DatasetScenarioGenerationMobil
 from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
@@ -26,7 +28,8 @@ import os
 class ScenarioGenerationTests(unittest.TestCase):
     def test_configurable_scenario_generation_default_params(self):
         params = ParameterServer()
-        mapfile = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+        mapfile = os.path.join(os.path.dirname(
+            __file__), "data/city_highway_straight.xodr")
         params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = mapfile
         scenario_generation = ConfigurableScenarioGeneration(
             num_scenarios=2, params=params)
@@ -68,7 +71,8 @@ class ScenarioGenerationTests(unittest.TestCase):
         }]
         params = ParameterServer()
         params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
-        params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+        params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = os.path.join(
+            os.path.dirname(__file__), "data/city_highway_straight.xodr")
         scenario_generation = ConfigurableScenarioGeneration(
             num_scenarios=2, params=params)
         scenario_generation.dump_scenario_list("test.scenario")
@@ -142,11 +146,14 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation_full(self):
         params = ParameterServer()
 
-        map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+        map_filename = os.path.join(os.path.dirname(
+            __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(
+            __file__), "data/interaction_dataset_dummy_track.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [
+            track_filename]
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=2)
@@ -156,11 +163,14 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation_full_incomplete(self):
         params = ParameterServer()
 
-        map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_CHN_Merging_ZS_partial_v02.xodr")
-        track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_incomplete.csv")
+        map_filename = os.path.join(os.path.dirname(
+            __file__), "data/DR_CHN_Merging_ZS_partial_v02.xodr")
+        track_filename = os.path.join(os.path.dirname(
+            __file__), "data/interaction_dataset_dummy_track_incomplete.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
-        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [
+            track_filename]
 
         scenario_generation = InteractionDatasetScenarioGenerationFull(
             params=params, num_scenarios=3)
@@ -171,8 +181,10 @@ class ScenarioGenerationTests(unittest.TestCase):
     def test_dataset_scenario_generation(self):
         params = ParameterServer()
 
-        map_filename = os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+        map_filename = os.path.join(os.path.dirname(
+            __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(
+            __file__), "data/interaction_dataset_dummy_track.csv")
 
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
         params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
@@ -186,6 +198,54 @@ class ScenarioGenerationTests(unittest.TestCase):
             params=params, num_scenarios=1)
         self.assertEqual(scenario_generation.get_num_scenarios(), 1)
 
+    def test_dataset_scenario_generation_overwrite_behavior_model(self):
+        params = ParameterServer()
+
+        map_filename = os.path.join(os.path.dirname(
+            __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(
+            __file__), "data/interaction_dataset_dummy_track.csv")
+
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [
+            1, 2]
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 500
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 1000
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["BehaviorModel"] = {
+            "2": "BehaviorMobilRuleBased"}
+
+        scenario_generation = InteractionDatasetScenarioGeneration(
+            params=params, num_scenarios=1)
+
+        model_str = scenario_generation.get_scenario(
+            0)._agent_list[1].behavior_model.__repr__()
+        self.assertEqual(model_str, "bark.behavior.BehaviorMobilRuleBased")
+
+    def test_dataset_scenario_generation_sample_mobil_params(self):
+        params = ParameterServer()
+
+        map_filename = os.path.join(os.path.dirname(
+            __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(
+            __file__), "data/interaction_dataset_dummy_track.csv")
+
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [
+            1, 2]
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 500
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 1000
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
+        params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["BehaviorModel"] = {
+            "2": "BehaviorMobilRuleBased"}
+
+        scenario_generation = DatasetScenarioGenerationMobil(
+            params=params, num_scenarios=1)
+        
+        model_str = scenario_generation.get_scenario(0)._agent_list[1].behavior_model.__repr__()
+        self.assertEqual(model_str, "bark.behavior.BehaviorMobilRuleBased")
 
 if __name__ == '__main__':
     unittest.main()

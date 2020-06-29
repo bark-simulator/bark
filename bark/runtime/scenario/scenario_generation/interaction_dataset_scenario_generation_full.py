@@ -82,30 +82,25 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._map_interface = scenario.map_interface
 
         world = scenario.GetWorldState()
-        agent_list = []
         track_params = ParameterServer()
         track_params["execution_model"] = 'ExecutionModelInterpolate'
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = world.map
 
-        for id_other in scenario_track_info.GetOtherTrackInfos().keys():
-            if str(id_other) in self._behavior_models:
-                track_params["behavior_model"] = self._behavior_models[str(
-                    id_other)]
+        all_track_ids = list(scenario_track_info.GetOtherTrackInfos().keys())
+        # also add ego id
+        all_track_ids.append(
+            scenario_track_info.GetEgoTrackInfo().GetTrackId())
+        
+        agent_list = []
+        for track_id in all_track_ids:
+            if str(track_id) in self._behavior_models:
+                track_params["behavior_model"] = self._behavior_models[str(track_id)]
             else:
                 track_params["behavior_model"] = None
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, id_other)
+                track_params, self._params, scenario_track_info, track_id)
             agent_list.append(agent)
-
-        id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        if str(id_ego) in self._behavior_models:
-            track_params["behavior_model"] = self._behavior_models[str(id_ego)]
-        else:
-            track_params["behavior_model"] = None
-        agent = self.interaction_ds_reader.AgentFromTrackfile(
-            track_params, self._params, scenario_track_info, id_ego)
-        agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
         scenario._eval_agent_ids = [
