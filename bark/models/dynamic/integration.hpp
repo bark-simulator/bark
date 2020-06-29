@@ -9,6 +9,7 @@
 #define BARK_MODELS_DYNAMIC_INTEGRATION_HPP_
 #include <Eigen/Core>
 
+#include "bark/geometry/angle.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
 namespace bark {
@@ -19,7 +20,10 @@ inline State euler_int(const DynamicModel& model,
                 const State &x,
                 const Input &u,
                 float dt) {
-  return x + dt * model.StateSpaceModel(x, u);
+  State new_x = x + dt * model.StateSpaceModel(x, u);
+  new_x(StateDefinition::THETA_POSITION) =
+      geometry::Norm0To2PI(new_x(StateDefinition::THETA_POSITION));
+  return new_x;
 }
 
 inline State rk4(
