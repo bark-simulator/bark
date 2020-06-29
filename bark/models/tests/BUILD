@@ -66,6 +66,23 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "behavior_hypothesis_test",
+    srcs = [
+        "behavior_hypothesis_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/models/behavior/hypothesis/idm:hypothesis_idm",
+        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/execution/interpolation:interpolation",
+        "@gtest//:gtest_main",
+        "@com_github_eigen_eigen//:eigen",
+        "//bark/world/tests:make_test_world",
+    ],
+)
+
 # cc_test(
 #     name = "behavior_mobil_test",
 #     srcs = [
@@ -90,6 +107,17 @@ py_test(
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime",
           "//bark/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
+py_test(
+  name = "py_behavior_space_test",
+  srcs = ["py_behavior_space_test.py"],
+  data = ['//bark:generate_core',
+          '//bark/models/behavior/hypothesis/behavior_space:behavior_space'],
+  imports = ['../../../python/'],
+  deps = [
+      "//bark/runtime/commons:parameters",
+         ],
 )
 
 cc_test(
