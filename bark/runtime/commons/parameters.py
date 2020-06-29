@@ -8,8 +8,6 @@ import json
 import os
 from bark.core.commons import Params
 import logging
-logging.getLogger().setLevel(logging.DEBUG)
-
 
 class ParameterServer(Params):
     def __init__(self, **kwargs):
@@ -48,6 +46,21 @@ class ParameterServer(Params):
             else:  # else it is a Params instance
                 self.store[new_key] = ParameterServer(log_if_default = self.log_if_default)
                 return self.store[new_key]
+
+    def __contains__(self, key):
+        return key in self.store
+
+    def AppendParamServer(self, p_server):
+        for key in p_server.store.keys():
+            if key in self.store:
+                val_self = self.store[key]
+                val_other = p_server.store[key]
+                if isinstance(val_self, ParameterServer) and isinstance(val_other, ParameterServer):
+                    val_self.AppendParamServer(val_other)
+                else:
+                    logging.warning("Cannot append conflicting key '{}'!".format(key))
+            else:
+                self.__setitem__(key, p_server[key])
 
     def FindKey(self, param_key):
       delimiter = "::"
@@ -112,7 +125,7 @@ class ParameterServer(Params):
                 else:
                     dict[key] = v
             else:
-                dict[key] = value
+                dict[key] = self._ItemToDict(value)
 
                 if print_description:
                     if key in self.param_descriptions:
@@ -121,6 +134,21 @@ class ParameterServer(Params):
                         dict[key] = "--"
 
         return dict
+
+    def _ItemToDict(self, item):
+        if isinstance(item, list):
+            ret = []
+            for v in item:
+                ret.append(self._ItemToDict(v))
+        elif isinstance(item, dict):
+            ret = {}
+            for (key, val) in item.items():
+                ret[key] = self._ItemToDict(val)
+        elif isinstance(item, ParameterServer):
+            ret = item.ConvertToDict()
+        else:
+            ret = item
+        return ret
 
     def Save(self, filename, print_description=False):
         #if not os.path.exists(os.path.dirname(filename)):
