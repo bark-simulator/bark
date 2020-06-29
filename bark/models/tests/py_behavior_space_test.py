@@ -15,8 +15,8 @@ import numpy as np
 from collections import defaultdict
 from operator import itemgetter
 
-from modules.runtime.commons.parameters import ParameterServer
-from modules.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
+from bark.runtime.commons.parameters import ParameterServer
+from bark.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
 from bark.models.behavior import *
 
 class PyBehaviorSpaceTests(unittest.TestCase):

@@ -35,10 +35,10 @@
 #include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 
 #ifdef PLANNER_UCT
-#include "modules/models/behavior/behavior_uct_single_agent_macro_actions.hpp"
-#include "modules/models/behavior/behavior_uct_hypothesis.hpp"
-using modules::models::behavior::BehaviorUCTSingleAgentMacroActions;
-using modules::models::behavior::BehaviorUCTHypothesis;
+#include "bark/models/behavior/behavior_uct_single_agent_macro_actions.hpp"
+#include "bark/models/behavior/behavior_uct_hypothesis.hpp"
+using bark::models::behavior::BehaviorUCTSingleAgentMacroActions;
+using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
 
 

@@ -7,8 +7,8 @@
 
 #include "commons.hpp"
 #include "glog/logging.h"
-#include "python/tests/logging_tests.hpp"
-#include "python/polymorphic_conversion.hpp"
+#include "bark/python_wrapper/tests/logging_tests.hpp"
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/runtime/tests/py_param_server_test_helper.hpp"
 #include "bark/commons/transformation/frenet.hpp"

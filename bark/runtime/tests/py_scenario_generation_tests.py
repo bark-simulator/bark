@@ -93,7 +93,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "modules/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+          "bark/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
@@ -123,7 +123,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "modules/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+          "bark/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 

@@ -8,22 +8,22 @@
 #include <Eigen/Core>
 #include "gtest/gtest.h"
 
-#include "modules/commons/params/setter_params.hpp"
-#include "modules/geometry/commons.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/tests/make_test_world.hpp"
-#include "modules/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/geometry/commons.hpp"
+#include "bark/geometry/polygon.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
+#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::world::map;
-using namespace modules::models::dynamic;
-using namespace modules::world;
-using namespace modules::geometry;
-using namespace modules::world::tests;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
+using namespace bark::models::dynamic;
+using namespace bark::world;
+using namespace bark::geometry;
+using namespace bark::world::tests;
 
 ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper, float fixed_headway,
                                  float acc_lower_bound=-5.0f, float acc_upper_bound=8.0f,
