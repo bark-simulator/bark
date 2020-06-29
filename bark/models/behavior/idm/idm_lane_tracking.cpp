@@ -51,6 +51,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
+  double initial_acceleration = 0.0f;
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
@@ -64,6 +65,10 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       std::tie(acc, rel_distance) =
         GetTotalAcc(observed_world, rel_values, rel_distance, dt);
       BARK_EXPECT_TRUE(!std::isnan(acc));
+      // Set initial acceleration to maintain action value
+      if(i == 1) {
+        initial_acceleration = acc;
+      }
       double angle = CalculateSteeringAngle(
         single_track, traj.row(i - 1), line, crosstrack_error_gain_,
         limit_steering_rate_);
@@ -80,7 +85,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       traj(i, StateDefinition::TIME_POSITION) = t_i;
     }
   }
-  Action action(acc);
+  Action action(Continuous1DAction(initial_acceleration));
   return std::tuple<Trajectory, Action>(traj, action);
 }
 
