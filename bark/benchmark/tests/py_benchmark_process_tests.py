@@ -17,7 +17,8 @@ import matplotlib.pyplot as plt
 
 from benchmark_database.load.benchmark_database import BenchmarkDatabase
 from benchmark_database.serialization.database_serializer import DatabaseSerializer
-from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, BenchmarkResult
+from bark.benchmark.benchmark_result import BenchmarkConfig, BenchmarkResult
+from bark.benchmark.benchmark_runner import BenchmarkRunner
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 
@@ -27,12 +28,14 @@ from bark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
-# to find database files
-os.chdir("../benchmark_database/")
+
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        # to find database files
+        cwd = os.getcwd()
+        os.chdir("../benchmark_database/")
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
@@ -71,6 +74,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         configs = analyzer.find_configs(criteria={"behavior": lambda x: x=="IDM", "success": lambda x : not x})
         configs_const = analyzer.find_configs(criteria={"behavior": lambda x: x=="Const", "success": lambda x : not x})
 
+        os.chdir(cwd)
         #analyzer.visualize(configs_idx_list = configs,
                          # viewer = viewer, real_time_factor=10, fontsize=12)
         plt.close(fig)

@@ -12,7 +12,7 @@ except:
 import unittest
 
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
-from bark.benchmark.benchmark_runner import BenchmarkResult
+from bark.benchmark.benchmark_result import BenchmarkResult
 
 def dummy_benchmark_results():
     return [

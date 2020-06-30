@@ -13,11 +13,12 @@ import inspect
 import os
 import sys
 
-import bark.core.world.evaluation
+from bark.core.commons import GLogInit
 logging.getLogger().setLevel(logging.INFO)
 
 from bark.runtime.scenario.scenario import Scenario
-from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkResult, BenchmarkConfig
+from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig
+from bark.benchmark.benchmark_runner import BenchmarkRunner 
 
 # implement a parallelized version of benchmark running based on ray
 
@@ -54,7 +55,7 @@ class _BenchmarkRunnerActor(BenchmarkRunner):
         self.logger.info("Logging into: {}".format(log_folder))
         vlevel = glog_init_settings.pop("vlevel", 1)
         log_stderr = glog_init_settings.pop("log_stderr", False)
-        bark.commons.GLogInit(sys.argv[0], log_folder, vlevel, log_stderr)
+        #GLogInit(sys.argv[0], log_folder, vlevel, log_stderr)
         self.actor_id = actor_id
 
     def get_checkpoint_file_name(self):

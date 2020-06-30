@@ -115,7 +115,6 @@ class BenchmarkAnalyzer:
                   else:
                     steps_to_go = True
                   scenario = histories[history_idx]
-                  scenario._map_file_name = "src/evaluation/bark/database_configuration/database/maps/DR_DEU_Merging_MT_shifted.xodr"
                   viewer = viewer_list[viewer_idx]
                   world = scenario.GetWorldState()
                   world.time = sim_time*history_idx
