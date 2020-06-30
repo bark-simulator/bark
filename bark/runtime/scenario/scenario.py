@@ -10,8 +10,19 @@ from bark.core.world.map import MapInterface
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.commons.xodr_parser import XodrParser
 import copy
+import os
 from pathlib import Path
 
+# Module variable to maintain map directory
+__MAPFILE_DIRECTORY = None
+
+def SetMapfileDirectory(dir):
+  global __MAPFILE_DIRECTORY
+  __MAPFILE_DIRECTORY = dir
+
+def GetMapfileDirectory():
+  global __MAPFILE_DIRECTORY
+  return __MAPFILE_DIRECTORY
 
 class Scenario:
   def __init__(self,
@@ -28,6 +39,12 @@ class Scenario:
 
   @property
   def map_file_name(self):
+    return self._map_file_name
+
+  @property
+  def full_map_file_name(self):
+    if GetMapfileDirectory():
+      return os.path.join(GetMapfileDirectory(), self._map_file_name)
     return self._map_file_name
   
   @property
@@ -65,7 +82,7 @@ class Scenario:
     param_server = ParameterServer(json=self._json_params)
     world = World(param_server)
     if self._map_interface is None:
-      self.CreateMapInterface(self._map_file_name)
+      self.CreateMapInterface(self.full_map_file_name)
       world.SetMap(self._map_interface)
     else:
       world.SetMap(self._map_interface)
@@ -90,6 +107,7 @@ class Scenario:
     if map_file_load_test.is_file():
       xodr_parser = XodrParser(map_file_name)
     else:
+      print("Searching for map file {}".format(map_file_name))
       objects_found = sorted(Path().rglob(map_file_name))
       if len(objects_found) == 0:
         raise ValueError("No Map found")

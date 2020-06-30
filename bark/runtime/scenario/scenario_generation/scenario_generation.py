@@ -43,10 +43,6 @@ class ScenarioGeneration:
   def get_scenario(self, idx):
     return self._scenario_list[idx].copy()
 
-  def update_map_base_dir(self, map_base_dir):
-    for scenario in self._scenario_list:
-      scenario._map_file_name = os.path.join(map_base_dir, scenario._map_file_name)
-
   def __iter__(self):
     self._current_iter_idx=0
     return self
