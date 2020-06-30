@@ -17,6 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.core.world.evaluation import *
+from bark.core.world.evaluation.ltl import *
 
 
 # contains information for a single benchmark run
