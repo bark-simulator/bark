@@ -1,5 +1,4 @@
-# Copyright (c) 2020 fortiss GmbH
-#
+# Copyright (c) 2020 Julian Bernhard
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
@@ -136,7 +135,7 @@ class BehaviorSpace:
           distribution_params["DistributionType"] = "FixedValue"
           distribution_params["FixedValue"] = [hypotheses_partition[param_idx][0]]
       model_params[hypothesis_model_type] = hypothesis_parameters.AddChild(hypothesis_model_type).clone()
-      param_server_behavior = ParameterServer(json = model_params.convert_to_dict(), log_if_default=True)
+      param_server_behavior = ParameterServer(json = model_params.ConvertToDict(), log_if_default=True)
       hypothesis_behavior, _ = \
             self._model_from_model_type(hypothesis_model_type, param_server_behavior)
       hypothesis_set.append(hypothesis_behavior)
@@ -224,7 +223,7 @@ class BehaviorSpace:
     return sampled_params
 
   def _sample_normal_dist_params(self, range, sampling_params):
-    std_range = sampling_params["Width", "What minimum and maximum width should sampled distribution have", [0.1, 0.3]]
+    std_range = sampling_params["StdRange", "What minimum and maximum standard deviation should sampled distribution have", [0.1, 0.3]]
 
     std = self.random_state.uniform(std_range[0], std_range[1])
     mean = self.random_state.uniform(range[0], range[1])

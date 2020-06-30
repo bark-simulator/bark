@@ -116,7 +116,7 @@ py_test(
           '//bark/models/behavior/hypothesis/behavior_space:behavior_space'],
   imports = ['../../../python/'],
   deps = [
-      "//bark/runtime/commons:parameters",
+      "//bark/runtime/commons:commons"
          ],
 )
 
@@ -129,6 +129,7 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/models/behavior/static_trajectory",
+        "//bark/world/tests:make_test_world",
         "@com_github_eigen_eigen//:eigen",
         "@gtest//:gtest_main",
     ],

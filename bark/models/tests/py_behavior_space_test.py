@@ -17,7 +17,7 @@ from operator import itemgetter
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
-from bark.models.behavior import *
+from bark.core.models.behavior import *
 
 class PyBehaviorSpaceTests(unittest.TestCase):
   def test_default_config_sampling(self):
@@ -26,8 +26,8 @@ class PyBehaviorSpaceTests(unittest.TestCase):
     sampled_parameters, model_type = space.sample_behavior_parameters()
     print(model_type)
     behavior = eval("{}(sampled_parameters)".format(model_type))
-    print(sampled_parameters.convert_to_dict())
-    param_server.save("behavior_space_defaults_sampling.json")
+    print(sampled_parameters.ConvertToDict())
+    param_server.Save("behavior_space_defaults_sampling.json")
 
     params_loaded = ParameterServer(filename="behavior_space_defaults_sampling.json")
 
@@ -80,7 +80,7 @@ class PyBehaviorSpaceTests(unittest.TestCase):
       self.assertAlmostEquals(params.getReal("BehaviorIDMStochastic::HeadwayDistribution::UpperBound", "", 0.0),\
                  default_range[0] + (idx+1)*1/num_hypothesis_desired, 5)
 
-    param_server.save("behavior_space_defaults_hypothesis.json")
+    param_server.Save("behavior_space_defaults_hypothesis.json")
     params_loaded = ParameterServer(filename="behavior_space_defaults_hypothesis.json")
     space = BehaviorSpace(params_loaded)
     _,_ = space.create_hypothesis_set()
