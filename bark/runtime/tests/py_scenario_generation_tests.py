@@ -93,7 +93,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "bark/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+          "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
@@ -105,7 +105,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     scenario = scenario_loader.get_scenario(idx=0)
 
-    params.save("default_params_interaction_dataset.json")
+    params.Save("default_params_interaction_dataset.json")
 
   def test_configurable_scenario_generation_interaction_merging_window(self):
     sink_source_dict = {
@@ -123,7 +123,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "bark/runtime/tests/data/DR_DEU_Merging_MT_shifted.xodr"
+          "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
@@ -139,7 +139,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     scenario_generation2 = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     self.assertEqual(len(scenario_generation2._scenario_list), 2)
 
-    params.save("default_params_interaction_dataset.json")
+    params.Save("default_params_interaction_dataset.json")
 
   def test_configurable_scenario_generation_behavior_space_sampling(self):
     sink_source_dict = {
@@ -169,12 +169,12 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     scenario = scenario_loader.get_scenario(idx=0)
 
-    params.save("default_params_sampling.json")
+    params.Save("default_params_sampling.json")
 
     peristed_param_servers = scenario_generation.get_persisted_param_servers()
     behavior_models_params = peristed_param_servers["ConfigBehaviorModels"][0]["ParameterServers"]
     for behavior_param in behavior_models_params:
-      dct = behavior_param.convert_to_dict()
+      dct = behavior_param.ConvertToDict()
       print(dct)
 
   def test_find_overlaps_configurable_scenario_generation(self):

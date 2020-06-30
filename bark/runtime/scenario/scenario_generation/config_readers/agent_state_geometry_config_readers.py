@@ -11,13 +11,13 @@ from collections import defaultdict
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from bark.runtime.scenario.scenario_generation.interaction_dataset_reader import shape_from_track, \
-    bark_state_from_motion_state, init_state_from_track, track_from_trackfile
+from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
+    BarkStateFromMotionState, InitStateFromTrack
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
-from bark.geometry.standard_shapes import *
-from bark.geometry import *
-from bark.models.dynamic import *
+from bark.core.geometry.standard_shapes import *
+from bark.core.geometry import *
+from bark.core.models.dynamic import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
 # it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 
@@ -114,15 +114,16 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
     lane_positions = []
     tracks = []
     for track_id in track_ids:
-      track = track_from_trackfile(track_file_name, track_id)
+      tracks_read = dataset_reader.read_tracks(track_file_name)
+      track = tracks_read[track_id]
       if start_time is None:
           start_time = track.time_stamp_ms_first
       if end_time is None:
           end_time = track.time_stamp_ms_last
-      numpy_state = init_state_from_track(track, start_time)
+      numpy_state = InitStateFromTrack(track, start_time)
       agent_state = numpy_state.reshape(5).tolist()
       agent_states.append(agent_state)
-      shape = shape_from_track(track, wheel_base)
+      shape = ShapeFromTrack(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
       lane_positions = self.find_lane_positions(numpy_state, road_corridor)
@@ -195,7 +196,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
       numpy_state = self.get_init_state(track, window_start)
       agent_state = numpy_state.reshape(5).tolist()
       agent_states.append(agent_state)
-      shape = shape_from_track(track, wheel_base)
+      shape = ShapeFromTrack(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
       lane_positions_single = self.find_lane_positions(road_corridor, self.get_shape_at_time_point(track, window_start, wheel_base))
@@ -267,7 +268,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     return valid_track_ids, window_start, window_end
 
   def get_init_state(self, track, start_time):
-    return init_state_from_track(track, start_time)
+    return InitStateFromTrack(track, start_time)
 
   def find_track_ids(self, track_dict, start_time, end_time):
     list_ids = []
@@ -279,7 +280,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
 
   def get_shape_at_time_point(self, track, time_point, wheel_base):
     init_state = self.get_init_state(track, time_point)
-    shape = shape_from_track(track, wheel_base)
+    shape = ShapeFromTrack(track, wheel_base)
     shape_at_timepoint = shape.Transform([init_state[int(StateDefinition.X_POSITION)], \
                                    init_state[int(StateDefinition.Y_POSITION)], \
                                    init_state[int(StateDefinition.THETA_POSITION)]])

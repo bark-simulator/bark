@@ -7,7 +7,7 @@ import numpy as np
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
 from bark.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
-from bark.runtime.scenario.scenario_generation.interaction_dataset_reader import behavior_from_track
+from bark.runtime.scenario.interaction_dataset_processing import BehaviorFromTrack
 
 from bark.core.models.behavior import *
 from bark.runtime.commons.parameters import ParameterServer
@@ -82,7 +82,7 @@ class InteractionDataBehaviors(ConfigReaderBehaviorModels):
     for idx, _ in enumerate(agent_states):
       track = tracks[idx]
       params = ParameterServer()
-      behavior = behavior_from_track(track, params, start_time, end_time)
+      behavior = BehaviorFromTrack(track, params, start_time, end_time)
       self.param_servers.append(params)
       behavior_models.append(behavior)
       behavior_model_types.append("BehaviorStaticTrajectory")
