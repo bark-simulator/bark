@@ -68,7 +68,7 @@ BaseIDM::BaseIDM(
     "BehaviorIDMClassic::BrakeForLaneEndDistanceOffset",
     "Distance offset for vehicle to stop at.",
     15);
-  num_trajectory_time_points_ = params->GetReal(
+  num_trajectory_time_points_ = params->GetInt(
     "BehaviorIDMClassic::NumTrajectoryTimePoints",
     "Number of points of the trajectory.",
     11);
