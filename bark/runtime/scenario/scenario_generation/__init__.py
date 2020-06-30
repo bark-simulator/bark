@@ -18,5 +18,5 @@ __all__ = ["DeterministicScenarioGeneration",
           "DeterministicDroneChallengeGeneration",
           "ConfigurableScenarioGeneration",
           "InteractionDatasetScenarioGeneration",
-          "InteractionDatasetScenarioGenerationFull"
+           "InteractionDatasetScenarioGenerationFull",
           "DatasetScenarioGenerationMobil"]
