@@ -82,7 +82,7 @@ class ParameterServer(Params):
         return len(self.store)
 
     def __getstate__(self):
-        return self.convert_to_dict()
+        return self.ConvertToDict()
 
     def __setstate__(self, d):
         self.__init__(json=d)
@@ -104,7 +104,7 @@ class ParameterServer(Params):
         return self
 
     def clone(self):
-      return ParameterServer(json = self.convert_to_dict())
+      return ParameterServer(json = self.ConvertToDict())
 
     def ConvertToDict(self, print_description=False):
         dict = {}
@@ -240,7 +240,7 @@ class ParameterServer(Params):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def GetString(self, param_name, description, default_value):
-        return self.get_val_from_string(param_name, description, default_value, self.log_if_default)
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def access(self, param_name):
         return self[param_name]
