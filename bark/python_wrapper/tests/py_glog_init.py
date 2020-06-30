@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 
-import bark.commons
+import bark.core.commons
 
 
 class PickleTests(unittest.TestCase):
@@ -12,15 +12,15 @@ class PickleTests(unittest.TestCase):
         if not os.path.exists(log_folder):
           os.makedirs(log_folder)
         print("Logging into: {}".format(log_folder))
-        bark.commons.GLogInit(sys.argv[0], log_folder, 1, False)
+        bark.core.commons.GLogInit(sys.argv[0], log_folder, 1, False)
 
-        bark.commons.do_logging()
+        bark.core.commons.do_logging()
 
-        bark.commons.do_logging()
+        bark.core.commons.do_logging()
 
-        bark.commons.do_logging()
+        bark.core.commons.do_logging()
 
-        bark.commons.do_logging()
+        bark.core.commons.do_logging()
 
 if __name__ == '__main__':
     unittest.main()
