@@ -7,7 +7,6 @@
 #include "gtest/gtest.h"
 #include "boost/variant.hpp"
 
-#include "bark/commons/params/default_params.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
@@ -21,7 +20,6 @@ using bark::world::World;
 using bark::world::Agent;
 using bark::world::WorldPtr;
 using bark::world::ObservedWorld;
-using bark::commons::DefaultParams;
 using bark::world::goal_definition::GoalDefinitionPolygon;
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
