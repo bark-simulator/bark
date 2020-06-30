@@ -241,7 +241,7 @@ void python_behavior(py::module m) {
                 ParamsToPython(b.Primitive::GetParams()));
           },
           [](py::tuple t) {
-            if (t.size() != 0)
+            if (t.size() != 1)
               throw std::runtime_error("Invalid behavior model state!");
             return new PrimitiveGapKeeping(
                 PythonToParams(t[0].cast<py::tuple>()));
