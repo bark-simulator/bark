@@ -8,7 +8,6 @@
 #include "gtest/gtest.h"
 
 #include "bark/commons/params/setter_params.hpp"
-#include "bark/commons/params/default_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
