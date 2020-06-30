@@ -4,84 +4,69 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include <limits>
-#include <cmath>
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
 #include "bark/world/observed_world.hpp"
+#include <cmath>
+#include <limits>
 
 namespace bark {
 namespace world {
 namespace objects {
 
-
-Agent::Agent(
-  const State& initial_state,
-  const BehaviorModelPtr& behavior_model_ptr,
-  const DynamicModelPtr& dynamic_model_ptr,
-  const ExecutionModelPtr& execution_model,
-  const Polygon& shape,
-  const commons::ParamsPtr& params,
-  const GoalDefinitionPtr& goal_definition,
-  const MapInterfacePtr& map_interface,
-  const Model3D& model_3d)
-  : Object(shape, params, model_3d),
-    behavior_model_(behavior_model_ptr),
-    dynamic_model_(dynamic_model_ptr),
-    execution_model_(execution_model),
-  history_(),
-  max_history_length_(10),
-  goal_definition_(goal_definition) {
+Agent::Agent(const State &initial_state,
+             const BehaviorModelPtr &behavior_model_ptr,
+             const DynamicModelPtr &dynamic_model_ptr,
+             const ExecutionModelPtr &execution_model, const Polygon &shape,
+             const commons::ParamsPtr &params,
+             const GoalDefinitionPtr &goal_definition,
+             const MapInterfacePtr &map_interface, const Model3D &model_3d)
+    : Object(shape, params, model_3d), behavior_model_(behavior_model_ptr),
+      dynamic_model_(dynamic_model_ptr), execution_model_(execution_model),
+      history_(), max_history_length_(10), goal_definition_(goal_definition) {
   if (params) {
     max_history_length_ = params->GetInt(
-    "MaxHistoryLength",
-    "Maximum number of state-input pairs in state-input history",
-     50);
+        "MaxHistoryLength",
+        "Maximum number of state-input pairs in state-input history", 50);
   }
 
   models::behavior::StateActionPair pair;
   pair.first = initial_state;
-  
-  // Initially select a DiscreteAction  of zero
-  pair.second = bark::models::behavior::Action(
-    bark::models::behavior::DiscreteAction(0));
+
+  // Initially select the action given in the behavior model
+  pair.second = behavior_model_ptr->GetLastAction();
   history_.push_back(pair);
 
-  if(map_interface) {
-     if(!GenerateRoadCorridor(map_interface)) {
-       LOG(ERROR) << "Failed to generate road corridor for agent "
-                  << GetAgentId() << ".";
-     }
+  if (map_interface) {
+    if (!GenerateRoadCorridor(map_interface)) {
+      LOG(ERROR) << "Failed to generate road corridor for agent "
+                 << GetAgentId() << ".";
+    }
   }
-
 }
 
+Agent::Agent(const Agent &other_agent)
+    : Object(other_agent), behavior_model_(other_agent.behavior_model_),
+      dynamic_model_(other_agent.dynamic_model_),
+      execution_model_(other_agent.execution_model_),
+      road_corridor_(other_agent.road_corridor_),
+      history_(other_agent.history_),
+      max_history_length_(other_agent.max_history_length_),
+      goal_definition_(other_agent.goal_definition_) {}
 
-Agent::Agent(const Agent& other_agent) :
-  Object(other_agent),
-  behavior_model_(other_agent.behavior_model_),
-  dynamic_model_(other_agent.dynamic_model_),
-  execution_model_(other_agent.execution_model_),
-  road_corridor_(other_agent.road_corridor_),
-  history_(other_agent.history_),
-  max_history_length_(other_agent.max_history_length_),
-  goal_definition_(other_agent.goal_definition_) {}
-
-
-void Agent::PlanBehavior(
-  const float& min_planning_dt, const ObservedWorld& observed_world) {
+void Agent::PlanBehavior(const float &min_planning_dt,
+                         const ObservedWorld &observed_world) {
   behavior_model_->Plan(min_planning_dt, observed_world);
 }
 
-void Agent::PlanExecution(const float& world_time) {
-  execution_model_->Execute(
-    world_time, behavior_model_->GetLastTrajectory(), dynamic_model_);
+void Agent::PlanExecution(const float &world_time) {
+  execution_model_->Execute(world_time, behavior_model_->GetLastTrajectory(),
+                            dynamic_model_);
 }
 
 void Agent::UpdateStateAction() {
   models::behavior::StateActionPair state_action_pair(
-    execution_model_->GetExecutedState(),
-    behavior_model_->GetLastAction());
+      execution_model_->GetExecutedState(), behavior_model_->GetLastAction());
   history_.push_back(state_action_pair);
 
   //! remove states if queue becomes too large
@@ -90,23 +75,22 @@ void Agent::UpdateStateAction() {
   }
 }
 
-bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
+bool Agent::GenerateRoadCorridor(const MapInterfacePtr &map_interface) {
   if (!goal_definition_) {
     return false;
   }
   road_corridor_ = map_interface->GenerateRoadCorridor(
-    GetCurrentPosition(),
-    goal_definition_->GetShape());
-  if(!road_corridor_) {
+      GetCurrentPosition(), goal_definition_->GetShape());
+  if (!road_corridor_) {
     return false;
   }
   return true;
 }
 
-FrenetPosition Agent::CurrentFrenetPosition() const {  
+FrenetPosition Agent::CurrentFrenetPosition() const {
   const Point2d pos = GetCurrentPosition();
-  const auto& lane_corridor = GetRoadCorridor()->GetCurrentLaneCorridor(pos);
-  if(!lane_corridor) {
+  const auto &lane_corridor = GetRoadCorridor()->GetCurrentLaneCorridor(pos);
+  if (!lane_corridor) {
     // assume vehicle is far far away on same lane
     // (until better failure handling implemented)
     return FrenetPosition(0.0f, std::numeric_limits<double>::max());
@@ -115,12 +99,11 @@ FrenetPosition Agent::CurrentFrenetPosition() const {
   return frenet_pos;
 }
 
-Polygon Agent::GetPolygonFromState(const State& state) const {
+Polygon Agent::GetPolygonFromState(const State &state) const {
   Pose agent_pose(state(StateDefinition::X_POSITION),
                   state(StateDefinition::Y_POSITION),
                   state(StateDefinition::THETA_POSITION));
-  std::shared_ptr<Polygon> polygon(
-    std::dynamic_pointer_cast<Polygon>(
+  std::shared_ptr<Polygon> polygon(std::dynamic_pointer_cast<Polygon>(
       this->GetShape().Transform(agent_pose)));
   return *polygon;
 }
@@ -129,7 +112,6 @@ bool Agent::AtGoal() const {
   BARK_EXPECT_TRUE((bool)goal_definition_);
   return goal_definition_->AtGoal(*this);
 }
-
 
 std::shared_ptr<Object> Agent::Clone() const {
   std::shared_ptr<Agent> new_agent = std::make_shared<Agent>(*this);
@@ -146,6 +128,6 @@ std::shared_ptr<Object> Agent::Clone() const {
   return std::dynamic_pointer_cast<Object>(new_agent);
 }
 
-}  // namespace objects
-}  // namespace world
-}  // namespace bark
+} // namespace objects
+} // namespace world
+} // namespace bark
