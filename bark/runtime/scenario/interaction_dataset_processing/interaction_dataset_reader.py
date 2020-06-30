@@ -4,6 +4,9 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+import logging
+import os
+
 from bark.core.world.agent import Agent
 from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.core.models.dynamic import StateDefinition
@@ -88,7 +91,11 @@ class InteractionDatasetReader:
 
     def TrackFromTrackfile(self, filename, track_id):
         if filename not in self._track_dict_cache:
-            self._track_dict_cache[filename] = dataset_reader.read_tracks(filename)
+            try:
+                self._track_dict_cache[filename] = dataset_reader.read_tracks(filename)
+            except FileNotFoundError as e:
+                logging.error("File {} not found!".format(os.path.abspath(filename)))
+                exit(1)
         track = self._track_dict_cache[filename][track_id]
         # TODO: Filter track
         return track

@@ -65,5 +65,5 @@ class DatasetScenarioGenerationMobil(InteractionDatasetScenarioGeneration):
 
         minimum_spacing = self.__sample_uniform__(self.min_dist_range)
         agent_params["BehaviorIDMClassic"]["MinimumSpacing"] = minimum_spacing
-        print("\n", agent_params.ConvertToDict())
+        # print("\n", agent_params.ConvertToDict())
         return agent_params
