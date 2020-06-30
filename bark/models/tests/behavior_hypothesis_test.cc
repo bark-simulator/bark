@@ -85,7 +85,7 @@ ParamsPtr make_params_hypothesis(float headway_lower, float headway_upper,
       "BehaviorIDMStochastic::CoolnessFactorDistribution::FixedValue", {0.0f});
 
   // IDM Hypothesis
-  params->SetInt("BehaviorHypothesisIDM::NumSamples", 100000);
+  params->SetInt("BehaviorHypothesisIDM::NumSamples", 10000);
   params->SetInt("BehaviorHypothesisIDM::NumBuckets", 1000);
   params->SetReal("BehaviorHypothesisIDM::BucketsLowerBound",
                   buckets_lower_bound);
