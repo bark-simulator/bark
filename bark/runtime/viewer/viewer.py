@@ -217,8 +217,9 @@ class BaseViewer(Viewer):
                 alpha = .5
                 self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
-        self.max_agent_id = max(max(world.agents.keys()), self.max_agent_id)
-        self.min_agent_id = min(min(world.agents.keys()), self.min_agent_id)
+        if len(world.agents.keys()) > 0:
+            self.max_agent_id = max(max(world.agents.keys()), self.max_agent_id)
+            self.min_agent_id = min(min(world.agents.keys()), self.min_agent_id)
         for i, (agent_id, agent) in enumerate(world.agents.items()):
             color = "blue"
             alpha = 1.0
