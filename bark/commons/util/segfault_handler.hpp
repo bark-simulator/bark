@@ -16,6 +16,7 @@ namespace commons {
 
 void SegfaultHandler(int sig) {
   std::cerr << boost::stacktrace::stacktrace() << std::endl;
+  throw;
 }
 
 }  // namespace commons
