@@ -90,8 +90,8 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
       }
     }
     if (tmp_lane_corr != lane_corr && tmp_lane_corr) {
-      LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-                << " is changing lanes." << std::endl;
+      VLOG(1) << "Agent " << observed_world.GetEgoAgentId()
+              << " is changing lanes." << std::endl;
       lane_corr = tmp_lane_corr;
     }
   }
