@@ -1,0 +1,22 @@
+py_library(
+    name = "scenario_generation",
+    srcs = ["__init__.py",
+            "scenario_generation.py",
+            "uniform_vehicle_distribution.py",
+            "configurable_scenario_generation.py",
+            "deterministic.py",
+            "config_with_ease.py",
+            "deterministic_drone_challenge.py",
+            "drone_challenge.py",
+            "interaction_dataset_scenario_generation.py",
+            "interaction_dataset_scenario_generation_full.py"],
+    data = ['//bark:generate_core'],
+    deps = [
+        "//bark/runtime/scenario:scenario",
+        "@com_github_interaction_dataset_interaction_dataset//:interaction-tools",
+        "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
+        "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
+        "//bark/runtime/commons:commons",
+    ],
+    visibility = ["//visibility:public"],
+)

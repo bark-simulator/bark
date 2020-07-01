@@ -142,7 +142,7 @@ venv.bak/
 
 tests/environment/hello-test\.cc
 
-modules/example_module/proto/tutorial/
+bark/example_module/proto/tutorial/
 
 python/venv
 node_modules
@@ -155,15 +155,13 @@ web/node_modules
 
 Town01_copy.xodr
 Town01.xodr
-modules/runtime/tests/data/DR_DEU_Merging_MT.xodr
-modules/runtime/tests/data/Osterwaldstrasse_v1.xodr
-examples/scenarios/benchmark_database_0.0.1.zip
+bark/runtime/tests/data/DR_DEU_Merging_MT.xodr
+bark/runtime/tests/data/Osterwaldstrasse_v1.xodr
 .bazelrc
-/examples/maps
-modules/runtime/tests/data/three_way_plain.xodr
+bark/runtime/tests/data/three_way_plain.xodr
 output.png
-modules/runtime/tests/data/three_way_plain_old.xodr
-modules/runtime/viewer/models/car.mtl
+bark/runtime/tests/data/three_way_plain_old.xodr
+bark/runtime/viewer/models/car.mtl
 **.blend
 **.blend1
 **.mtl

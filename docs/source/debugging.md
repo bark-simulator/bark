@@ -86,5 +86,5 @@ Debugging process:
 ## Memory Checking
 
 Use Valgrind to profile the code in order to find memory leaks.
-1. Build the target with debug symbols, i.e. `bazel test //modules/world/tests:py_map_interface_tests --compilation_mode=dbg`
+1. Build the target with debug symbols, i.e. `bazel test //bark/world/tests:py_map_interface_tests --compilation_mode=dbg`
 2. Profile via `valgrind --track-origins=yes --keep-stacktraces=alloc-and-free --leak-check=full ./bazel-bin/{path-to-executable-file}`.

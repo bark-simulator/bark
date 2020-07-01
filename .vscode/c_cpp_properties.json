@@ -10,7 +10,7 @@
             },
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceFolder}/modules/world/geometry",
+                "${workspaceFolder}/bark/world/geometry",
                 "${workspaceFolder}/bazel-fortiss-behave/external/**"
             ],
             "defines": [],
