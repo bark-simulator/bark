@@ -26,10 +26,6 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
     : BehaviorLaneChangeRuleBased(params) {
-    crosstrack_error_gain_ = params->GetReal(
-      "BehaviorMobil::CrosstrackErrorGain",
-      "Tuning factor of stanley controller",
-      1.0);
     politeness_ = params->GetReal(
       "BehaviorMobil::PolitenessFactor",
       "Politness factor, suggested [0.2, 0.5]",
@@ -77,7 +73,6 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
  private:
   // std::shared_ptr<BehaviorIDMClassic> idm_;
   // MobilState mobil_state_;
-  double crosstrack_error_gain_;
   world::map::LaneCorridorPtr target_corridor_;
   // Measure of altruism, defines how the model weighs an acceleration
   // improvement for the ego agent against an improvement for other agents
