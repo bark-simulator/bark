@@ -6,17 +6,18 @@
 
 import numpy as np
 import time
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.scenario.scenario_generation.config_with_ease import \
+import os
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from modules.runtime.runtime import Runtime
-from modules.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.runtime.runtime import Runtime
+from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 
-from bark.world.opendrive import *
-from bark.world.goal_definition import *
-from bark.models.behavior import *
+from bark.core.world.opendrive import *
+from bark.core.world.goal_definition import *
+from bark.core.models.behavior import *
 
 # parameters
 param_server = ParameterServer()
@@ -47,19 +48,21 @@ left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
                                      behavior_model=BehaviorMobilRuleBased(param_server),
-                                     s_min=0.,
+                                     s_min=5.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,
                                       lane_corridor_id=1,
                                       road_ids=[0, 1],
                                       controlled_ids=True,
                                       behavior_model=BehaviorMobilRuleBased(param_server),
-                                      s_min=0.,
+                                      s_min=5.,
                                       s_max=20.)
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
-                 map_file_name="modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+                 map_file_name=os.path.join(
+                   os.path.dirname(__file__),
+                   "../bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"),
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=[left_lane, right_lane])
@@ -93,10 +96,10 @@ env = Runtime(step_time=0.2,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 90):
+  for step in range(0, 20):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
 

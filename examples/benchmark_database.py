@@ -7,14 +7,14 @@
 import os
 
 from load.benchmark_database import BenchmarkDatabase
-from modules.benchmark.benchmark_runner import BenchmarkRunner
-from bark.world.evaluation import EvaluatorGoalReached, \
+from bark.benchmark.benchmark_runner import BenchmarkRunner
+from bark.core.world.evaluation import EvaluatorGoalReached, \
   EvaluatorCollisionEgoAgent, EvaluatorStepCount
-from modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 behavior_used = None
 try:
-  from bark.models.behavior import BehaviorUCTSingleAgent
+  from bark.core.models.behavior import BehaviorUCTSingleAgent
   behavior_used = BehaviorUCTSingleAgent
 except:
   print("BehaviorUCTSingleAgent not available, rerun example with `bazel run //examples:benchmark_database --define planner_uct=true")
