@@ -27,7 +27,7 @@ class DatasetScenarioGenerationMobil(InteractionDatasetScenarioGeneration):
         self.base_params_json = params_temp["BaseParams", "Initial parameters of each scenario", ParameterServer(
             log_if_default=True)].ConvertToDict()
         # Required to keep paramservers for each scenario alive.
-        self.scenario_params = []
+        self.agent_params = []
 
     def create_scenarios(self, params, num_scenarios):
         """ 
@@ -54,16 +54,12 @@ class DatasetScenarioGenerationMobil(InteractionDatasetScenarioGeneration):
         return parameter_scalar
 
     def __fill_agent_params__(self):
-        agent_params = self._params
-        # agent_params["MaxHistoryLength"] = self._params["MaxHistoryLength"]
-        # agent_params['DynamicModel'] = self._params['DynamicModel']
-        agent_params["BehaviorMobilRuleBased"] = ParameterServer(
-            log_if_default=True, json=self._params["BehaviorMobilRuleBased"].ConvertToDict())
-
+        agent_params = ParameterServer(log_if_default=True, json=self.base_params_json)
         politeness = self.__sample_uniform__(self.politeness_range)
         agent_params["BehaviorMobilRuleBased"]["Politeness"] = politeness
 
         minimum_spacing = self.__sample_uniform__(self.min_dist_range)
         agent_params["BehaviorIDMClassic"]["MinimumSpacing"] = minimum_spacing
         # print("\n", agent_params.ConvertToDict())
+        self.agent_params.append(agent_params)
         return agent_params

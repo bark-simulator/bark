@@ -24,7 +24,6 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
-        self.initialize_params(params)
 
     def initialize_params(self, params):
         super().initialize_params(params)
@@ -106,6 +105,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             agent_params = self.__fill_agent_params__()
             agent = self.interaction_ds_reader.AgentFromTrackfile(
                 track_params, agent_params, scenario_track_info, track_id)
+            agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
