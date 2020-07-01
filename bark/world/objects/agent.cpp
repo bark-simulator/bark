@@ -34,7 +34,12 @@ Agent::Agent(const State &initial_state,
   pair.first = initial_state;
 
   // Initially select the action given in the behavior model
-  pair.second = behavior_model_ptr->GetLastAction();
+  if(behavior_model_ptr) {
+    pair.second = behavior_model_ptr->GetLastAction();
+  } else {
+    pair.second = Action(DiscreteAction(0));
+  }
+  
   history_.push_back(pair);
 
   if (map_interface) {
