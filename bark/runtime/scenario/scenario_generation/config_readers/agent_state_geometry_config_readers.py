@@ -149,7 +149,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
   current_track_file = None
   def create_from_config(self, config_param_object, road_corridor):
     track_file_names = config_param_object["TrackFilenames", "Path to track file (csv)",
-                                        "bark/runtime/tests/data/interaction_dataset_dummy_*.csv"]
+                                        "bark/runtime/tests/data/*_dataset_dummy_track.csv"]
     wheel_base = config_param_object["WheelBase", "Wheelbase assumed for shape calculation", 2.7]
     window_length = config_param_object["WindowLength", "Window length for search of agents for a scenario ", 200]
     skip_time_scenarios = config_param_object["SkipTimeScenarios", "Time delta between start of previous scenario window and next init of search window", 0]
