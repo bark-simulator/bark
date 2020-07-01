@@ -1,9 +1,11 @@
 <p align="center">
-<img src="docs/source/bark_logo.jpg" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
-![CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
+![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
+![macOS-CI Build](https://github.com/bark-simulator/bark/workflows/macOS-CI/badge.svg)
 ![NIGHTLY Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY/badge.svg)
+![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**ARK**ing
 
@@ -29,17 +31,17 @@ Once you activated the virtual environment (`source dev_into.sh`), you can explo
 
 Highway: `bazel run //examples:highway`:
 <p align="center">
-<img src="docs/source/gifs/bark_highway.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_highway.gif" alt="BARK" />
 </p>
 
 Merging: `bazel run //examples:merging`:
 <p align="center">
-<img src="docs/source/gifs/bark_merging.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_merging.gif" alt="BARK" />
 </p>
 
 Intersection: `bazel run //examples:intersection`:
 <p align="center">
-<img src="docs/source/gifs/bark_intersection.gif" alt="BARK" />
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_intersection.gif" alt="BARK" />
 </p>
 
 To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.

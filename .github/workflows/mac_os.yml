@@ -1,0 +1,46 @@
+name: macOS-CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: [3.7.7]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Installing SDL2..
+        run: brew install sdl sdl_image sdl_mixer sdl_ttf portmidi
+      - name: Installing python-dev..
+        run: brew install python3.7-dev
+      - name: Installing bazelisk..
+        run: |
+          curl -LO "https://github.com/bazelbuild/bazelisk/releases/download/v1.5.0/bazelisk-darwin-amd64"
+          mkdir -p "${GITHUB_WORKSPACE}/bin/"
+          mv bazelisk-darwin-amd64 "${GITHUB_WORKSPACE}/bin/bazel"
+          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
+      - uses: actions/cache@v1
+        id: cache
+        with:
+          path: .cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('./tools/installers/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-test
+      - name: Installing dependencies..
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pip install -r ./tools/installers/requirements.txt
+      
+      - name: Creating virtual environment..
+        run: python -m pip install virtualenv==16.7.8 && virtualenv -p python ./bark/python_wrapper/venv --system-site-packages
+      
+      - name: Entering venv..
+        run: . ./bark/python_wrapper/venv/bin/activate
+      
+      - name: Running bazel tests..
+        run: |
+          "${GITHUB_WORKSPACE}/bin/bazel" test //...

@@ -28,7 +28,7 @@ planner_uct_rules_dependencies()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="a5d97f80eb7d6d0fe1d4221c9bc3694e816f1dfe",
+  commit="fd185eb87d5e9b256c86fb64bd722dc80b209462",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
@@ -36,6 +36,12 @@ load("@benchmark_database//util:deps.bzl", "benchmark_database_dependencies")
 load("@benchmark_database//load:load.bzl", "benchmark_database_release")
 benchmark_database_dependencies()
 benchmark_database_release()
+# --------------------------------------------------
+
+
+# ------------------- LTL RuleMonitor --------------
+load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
+rule_monitor_dependencies()
 # --------------------------------------------------
 
 # ------------------- BARK-ML ----------------------

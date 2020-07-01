@@ -7,15 +7,15 @@
 import numpy as np
 import time
 import os
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.panda3d_easy import Panda3dViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.scenario.scenario_generation.config_with_ease import \
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
-from bark.geometry.standard_shapes import CarLimousine
-from bark.models.behavior import *
-from modules.runtime.runtime import Runtime
+from bark.core.geometry.standard_shapes import CarLimousine
+from bark.core.models.behavior import *
+from bark.runtime.runtime import Runtime
 
 
 # Parameters Definitions
@@ -66,7 +66,8 @@ lane_corridors.append(
 
 scenarios = \
   ConfigWithEase(num_scenarios=3,
-                 map_file_name="modules/runtime/tests/data/threeway_intersection.xodr",
+                 map_file_name= os.path.join(os.path.dirname(__file__),
+                 "../bark/runtime/tests/data/threeway_intersection.xodr"),
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=lane_corridors)

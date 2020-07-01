@@ -18,7 +18,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-bin/modules/world/tests/map_interface_test",
+            "program": "${workspaceFolder}/bazel-bin/bark/world/tests/map_interface_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
