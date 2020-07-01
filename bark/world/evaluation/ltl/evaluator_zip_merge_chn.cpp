@@ -21,7 +21,7 @@ namespace evaluation {
 /// This evaluator is parameterized for the DR_CHN_Merging_ZS scenario of the
 /// INTERACTION dataset
 const char EvaluatorZipMergeChn::formula_[] =
-    "G (((left#1 & i_behind#1 & near#1 & near_lane_end#1) & "
+    "G (((left#1 & behind#1 & near#1 & near_lane_end#1) & "
     "precedes#0 & !ego_merged & (precedes#0 | merged#0) U "
     "ego_merged) -> G(ego_merged & merged#0 -> !precedes#0))";
 
