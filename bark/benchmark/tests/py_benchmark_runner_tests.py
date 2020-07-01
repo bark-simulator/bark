@@ -34,14 +34,14 @@ except: # debug
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_runner(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
                                         
@@ -50,12 +50,12 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
-                                           log_eval_avg_every=1)
+                                           log_eval_avg_every=5)
 
         result = benchmark_runner.run()
         df = result.get_data_frame()
         print(df)
-        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 1 scenario sets
+        self.assertEqual(len(df.index), 2*2*2) # 2 Behaviors * 2 Serialize Scenarios * 1 scenario sets
 
         groups = result.get_evaluation_groups()
         self.assertEqual(set(groups), set(["behavior", "scen_set"]))
@@ -68,7 +68,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
                                         
@@ -77,7 +77,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
-                                           log_eval_avg_every=1,
+                                           log_eval_avg_every=20,
                                            checkpoint_dir="checkpoints1/")
 
         # one run after 30 steps benchmark dumped
@@ -117,14 +117,14 @@ class DatabaseRunnerTests(unittest.TestCase):
         self.assertEqual(len(df.index), 37)
 
     def test_database_multiprocessing_runner(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=5)
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>5}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 
@@ -138,7 +138,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         df = result.get_data_frame()
         print(df)
-        self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
+        self.assertEqual(len(df.index), 20) # 2 Behaviors * 5 Serialize Scenarios * 2 scenario sets
 
         params2 = ParameterServer()
         viewer = MPViewer(
@@ -149,14 +149,14 @@ class DatabaseRunnerTests(unittest.TestCase):
         rst  = benchmark_runner.run_benchmark_config(10, viewer=viewer)
 
     def test_database_multiprocessing_history(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>5}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
 
@@ -166,10 +166,10 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=10)
         rst = benchmark_runner.run(maintain_history=True)
-        self.assertEqual(len(rst.get_histories()), 40)
+        self.assertEqual(len(rst.get_histories()), 2*2*2)
 
-        rst = benchmark_runner.run_benchmark_config(11, viewer=None, maintain_history=True)
-        scenario_history = rst.get_histories()[11]
+        rst = benchmark_runner.run_benchmark_config(3, viewer=None, maintain_history=True)
+        scenario_history = rst.get_histories()[3]
         print(scenario_history)
         params = ParameterServer()
         viewer = MPViewer(
@@ -177,8 +177,8 @@ class DatabaseRunnerTests(unittest.TestCase):
               x_range=[5060, 5160],
               y_range=[5070,5150],
               use_world_bounds=True)
-        viewer.drawWorld(world=scenario_history[5].GetWorldState(),
-                          eval_agent_ids=scenario_history[5].eval_agent_ids)
+        viewer.drawWorld(world=scenario_history[3].GetWorldState(),
+                          eval_agent_ids=scenario_history[3].eval_agent_ids)
 
         viewer.show(block=True)
 
@@ -190,7 +190,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount"}
-        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>10}
+        terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
                                         
@@ -199,7 +199,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
-                                           log_eval_avg_every=1,
+                                           log_eval_avg_every=10,
                                            num_cpus=4,
                                            checkpoint_dir="checkpoints2/",
                                            merge_existing=True)
