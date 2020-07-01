@@ -12,3 +12,11 @@ py_binary(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime:runtime",],
 )
+
+py_binary(
+  name = "debug_settings",
+  srcs = [
+        "debug_settings.py"
+        ],
+  visibility = ["//visibility:public"],
+)
