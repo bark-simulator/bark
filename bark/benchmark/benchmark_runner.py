@@ -53,8 +53,7 @@ class BenchmarkRunner:
         self.checkpoint_dir = checkpoint_dir or "checkpoints"
         if not os.path.exists(self.checkpoint_dir):
             os.makedirs(self.checkpoint_dir)
-        elif not merge_existing:
-            self.clear_checkpoint_dir()
+
         if merge_existing:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)

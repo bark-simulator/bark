@@ -139,10 +139,11 @@ class BenchmarkResult:
             return rst
 
     def load_histories(self, config_idx_list = None):
-        if not config_idx_list:
-            config_idx_list = self.get_data_frame()["config_idx"].tolist()
-        existing_history_config_indices = self.__histories.keys()
-        configs_idx_to_load = list(set(config_idx_list) - set(existing_history_config_indices))
+        if config_idx_list:
+            existing_history_config_indices = self.__histories.keys()
+            configs_idx_to_load = list(set(config_idx_list) - set(existing_history_config_indices))
+        else:
+            configs_idx_to_load = None # all available histories are loaded
         new_histories = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
             new_histories, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
@@ -156,10 +157,11 @@ class BenchmarkResult:
         return processed_files
 
     def load_benchmark_configs(self, config_idx_list = None):
-        if not config_idx_list:
-            config_idx_list = self.get_data_frame()["config_idx"].tolist()
-        existing_config_indices = self.get_benchmark_config_indices()
-        configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
+        if config_idx_list:
+            existing_config_indices = self.get_benchmark_config_indices()
+            configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
+        else:
+            configs_idx_to_load = None # all available configs are loaded
         new_bench_configs = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
             new_bench_configs, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
@@ -173,12 +175,7 @@ class BenchmarkResult:
         return processed_files
 
     @staticmethod
-    def _load_and_merge(zip_file_handle, filetype, config_idx_list):
-        total_file_list = [filename for filename in zip_file_handle.namelist() \
-                         if filetype in filename]
-        if len(total_file_list) < 1:
-            logging.warning("There are no files for type: {}. Have you forgotten to specify it in dump()?".format(filetype))
-        merged_iterable = None
+    def _find_files_to_load(total_file_list, filetype, config_idx_list):
         files_to_load = []
         configs_not_found = set(config_idx_list)
         for file in total_file_list:
@@ -191,7 +188,20 @@ class BenchmarkResult:
             configs_not_found -= set(found_config)
             if len(found_config) > 0:
                 files_to_load.append(file)
+        return files_to_load, configs_not_found
 
+    @staticmethod
+    def _load_and_merge(zip_file_handle, filetype, config_idx_list):
+        total_file_list = [filename for filename in zip_file_handle.namelist() \
+                        if filetype in filename]
+        configs_not_found = []
+        if len(total_file_list) < 1:  
+            logging.warning("There are no files for type: {}. Have you forgotten to specify it in dump()?".format(filetype))
+        files_to_load = total_file_list
+        if config_idx_list:
+            files_to_load, configs_not_found = BenchmarkResult._find_files_to_load(total_file_list, \
+                filetype, config_idx_list)
+        merged_iterable = None
         for file in files_to_load:
             bytes = zip_file_handle.read(file)
             iterable = pickle.loads(bytes)
