@@ -18,6 +18,11 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.core.world.evaluation import *
 
+# ltl lib is only build conditionally
+try:
+  from bark.core.world.evaluation.ltl import *
+except:
+  pass
 
 # contains information for a single benchmark run
 class BenchmarkConfig:
