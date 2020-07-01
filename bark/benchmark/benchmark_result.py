@@ -127,11 +127,16 @@ class BenchmarkResult:
         return dmp
 
     @staticmethod
-    def load(filename):
+    def load(filename, load_configs=False, load_histories=False):
         if filename.endswith(".pickle"):
             return BenchmarkResult.load_pickle(filename)
         else:
-            return BenchmarkResult.load_results(filename)
+            rst = BenchmarkResult.load_results(filename)
+            if load_configs:
+                rst.load_benchmark_configs()
+            if load_histories:
+                rst.load_histories()
+            return rst
 
     def load_histories(self, config_idx_list = None):
         if not config_idx_list:
@@ -227,10 +232,14 @@ class BenchmarkResult:
             pickle.dumps(self.get_data_frame(), protocol=pickle.HIGHEST_PROTOCOL))
 
     def _dump_histories(self, zip_file_handle, max_bytes_per_file):
+        if not self.get_histories():
+            return
         BenchmarkResult._save_and_split(zip_file_handle, "histories", \
           self.get_histories(), max_bytes_per_file  )
 
     def _dump_benchmark_configs(self, zip_file_handle, max_bytes_per_file):
+        if not self.get_benchmark_configs():
+            return
         BenchmarkResult._save_and_split(zip_file_handle, "configs", \
           self.get_benchmark_configs(), max_bytes_per_file  )
 

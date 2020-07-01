@@ -32,7 +32,7 @@ from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVeloci
 
 class DatabaseRunnerTests(unittest.TestCase):
     def test_database_run_and_analyze(self):
-        dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
+        dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=3, num_serialize_scenarios=2)
         # to find database files
         cwd = os.getcwd()
         os.chdir("../benchmark_database/")
@@ -50,7 +50,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
-                                           log_eval_avg_every=10)
+                                           log_eval_avg_every=2)
 
         result = benchmark_runner.run(maintain_history=True)
 
@@ -94,7 +94,7 @@ class DatabaseRunnerTests(unittest.TestCase):
               enforce_y_length=True,
               axis = ax2)
         analyzer.visualize(configs_idx_list = [configs[1:3], configs_const[1:3]],
-                          viewer = [viewer1, viewer2], viewer_names=["IDM", "ConstVelocity"], real_time_factor=1, fontsize=12)
+                          viewer = [viewer1, viewer2], viewer_names=["IDM", "ConstVelocity"], real_time_factor=10, fontsize=12)
 
 
 

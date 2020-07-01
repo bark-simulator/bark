@@ -52,7 +52,9 @@ class BenchmarkRunner:
 
         self.checkpoint_dir = checkpoint_dir or "checkpoints"
         if not os.path.exists(self.checkpoint_dir):
-              os.makedirs(self.checkpoint_dir)
+            os.makedirs(self.checkpoint_dir)
+        elif not merge_existing:
+            self.clear_checkpoint_dir()
         if merge_existing:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
@@ -68,6 +70,10 @@ class BenchmarkRunner:
     def get_checkpoint_file_name(self):
       return "benchmark_runner.ckpnt"
 
+    def clear_checkpoint_dir(self):
+      files = glob.glob(os.path.join(self.checkpoint_dir, "*.ckpnt"))
+      for f in files:
+          os.remove(f)
     @staticmethod
     def merge_checkpoint_benchmark_results(checkpoint_dir):
         checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.ckpnt"), recursive=True)
@@ -75,13 +81,15 @@ class BenchmarkRunner:
         # merge all checkpoints with new results
         for checkpoint_file in checkpoint_files:
           logging.info("Loading checkpoint {}".format(os.path.abspath(checkpoint_file)))
-          next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file))
+          next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file), \
+              load_configs=True, load_histories=True)
           merged_result.extend(next_result)
         # dump merged result
         if len(merged_result.get_result_dict()) > 0:
           logging.info("Dumping merged result")
           merged_result_filename = os.path.join(checkpoint_dir,"merged_results.ckpnt")
-          merged_result.dump(merged_result_filename)
+          merged_result.dump(merged_result_filename, \
+              dump_configs=True, dump_histories=True)
 
         # delete checkpoints
         for checkpoint_file in checkpoint_files:
@@ -137,7 +145,7 @@ class BenchmarkRunner:
                 intermediate_result = BenchmarkResult(results, \
                          self.configs_to_run[0:idx+1], histories=histories)
                 checkpoint_file = os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name())
-                intermediate_result.dump(checkpoint_file)
+                intermediate_result.dump(checkpoint_file, dump_configs=True, dump_histories=maintain_history)
                 self.logger.info("Saved checkpoint {}".format(checkpoint_file))
         benchmark_result = BenchmarkResult(results, self.configs_to_run, histories=histories)
         self.existing_benchmark_result.extend(benchmark_result)
