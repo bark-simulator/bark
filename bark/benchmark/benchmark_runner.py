@@ -18,11 +18,11 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.core.world.evaluation import *
 
-# ltl lib is only build conditionally
 try:
-  from bark.core.world.evaluation.ltl import *
-except:
-  pass
+    from bark.core.world.evaluation.ltl import *
+except Exception as e:
+    logging.warning("LTL evaluators not loaded: {}".format(e))
+
 
 # contains information for a single benchmark run
 class BenchmarkConfig:
@@ -285,12 +285,18 @@ class BenchmarkRunner:
         self.exceptions_caught.append((benchmark_config.config_idx, exception))
 
     def _reset_evaluators(self, world, eval_agent_ids):
-        for evaluator_name, evaluator_type in self.evaluators.items():
+        for evaluator_name, evaluator_params in self.evaluators.items():
             evaluator_bark = None
-            try:
-                evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_type))
-            except:
-                evaluator_bark = eval("{}()".format(evaluator_type))
+            if isinstance(evaluator_params, str):
+                try:
+                    evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
+                except:
+                    evaluator_bark = eval("{}()".format(evaluator_params))
+            elif isinstance(evaluator_params, dict):
+                evaluator_bark = eval(
+                    "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
+            else:
+                raise ValueError
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):
