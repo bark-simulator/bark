@@ -191,7 +191,7 @@
             }
         }
     },
-    "World" :{
-        "remove_agents_out_of_map" : true
+    "World": {
+        "remove_agents_out_of_map": true
     }
 }
