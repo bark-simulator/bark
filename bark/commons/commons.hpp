@@ -4,8 +4,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-#ifndef MODULES_COMMONS_COMMONS_HPP_
-#define MODULES_COMMONS_COMMONS_HPP_
+#ifndef BARK_COMMONS_COMMONS_HPP_
+#define BARK_COMMONS_COMMONS_HPP_
 
 #include "bark/commons/base_type.hpp"
 #include "bark/commons/params/params.hpp"
@@ -13,4 +13,4 @@
 
 
 
-#endif  // MODULES_COMMONS_BASE_TYPE_HPP_
+#endif  // BARK_COMMONS_BASE_TYPE_HPP_
