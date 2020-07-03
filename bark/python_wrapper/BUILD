@@ -24,7 +24,6 @@ cc_binary(
     "//bark/world/goal_definition:goal_definition",
     "//bark/world/evaluation:evaluation",
     "//bark/world/evaluation/ltl/label_functions:label_function",
-    "//bark/world/tests/evaluation:constant_label_evaluator",
     "//bark/world/evaluation/ltl:evaluator_ltl",
     "//bark/commons/params:params",
     "//bark/commons/util:util",
