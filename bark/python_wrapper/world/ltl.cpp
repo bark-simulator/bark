@@ -31,7 +31,7 @@
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
-#include "bark/world/tests/evaluation/constant_label_evaluator.hpp"
+#include "bark/world/evaluation/ltl/label_functions/constant_label_function.hpp"
 
 namespace py = pybind11;
 
@@ -84,8 +84,7 @@ void python_ltl(py::module m) {
       .def_property_readonly("rule_states",
                              &EvaluatorSafeLaneChangeAssumption::GetRuleStates)
       .def("__repr__", [](const EvaluatorSafeLaneChangeAssumption &g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorSafeLaneChangeAssumption";
+        return "bark.core.world.evaluation.ltl.EvaluatorSafeLaneChangeAssumption";
       });
 
   py::class_<EvaluatorBeingOvertaken, BaseEvaluator,
@@ -105,8 +104,7 @@ void python_ltl(py::module m) {
       .def_property_readonly("rule_states",
                              &EvaluatorBeingOvertakenAssumption::GetRuleStates)
       .def("__repr__", [](const EvaluatorBeingOvertakenAssumption &g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorBeingOvertakenAssumption";
+        return "bark.core.world.evaluation.ltl.EvaluatorBeingOvertakenAssumption";
       });
 
   py::class_<EvaluatorSpeedAdvantageOvertake, BaseEvaluator,
@@ -144,8 +142,7 @@ void python_ltl(py::module m) {
       .def_property_readonly("rule_states",
                              &EvaluatorRightOvertakeAssumption::GetRuleStates)
       .def("__repr__", [](const EvaluatorRightOvertakeAssumption &g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorRightOvertakeAssumption";
+        return "bark.core.world.evaluation.ltl.EvaluatorRightOvertakeAssumption";
       });
 
   // LABELS
@@ -159,7 +156,19 @@ void python_ltl(py::module m) {
              std::shared_ptr<ConstantLabelFunction>>(m, "ConstantLabelFunction")
       .def(py::init<const std::string &>())
       .def_property("value", &ConstantLabelFunction::GetValue,
-                    &ConstantLabelFunction::SetValue);
+                    &ConstantLabelFunction::SetValue)
+      .def("__repr__", [](const ConstantLabelFunction &g) {
+        return "bark.core.world.evaluation.ltl.ConstantLabelFunction";
+      })
+      .def(py::pickle(
+          [](const ConstantLabelFunction &b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new ConstantLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<SafeDistanceLabelFunction, BaseLabelFunction,
              std::shared_ptr<SafeDistanceLabelFunction>>(
