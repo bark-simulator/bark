@@ -9,6 +9,8 @@
 #ifndef BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
 #define BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
 
+#include "bark/world/opendrive/commons.hpp"
+
 #include <map>
 #include <string>
 #include <vector>
