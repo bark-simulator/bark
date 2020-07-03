@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_UTIL_OPERATORS_HPP_
-#define MODULES_COMMONS_UTIL_OPERATORS_HPP_
+#ifndef BARK_COMMONS_UTIL_OPERATORS_HPP_
+#define BARK_COMMONS_UTIL_OPERATORS_HPP_
 
 #include <ostream>
 #include <vector>
@@ -46,4 +46,4 @@ inline std::ostream& operator << <std::vector<float>>(std::ostream& os, const st
 
 
 
-#endif // MODULES_COMMONS_UTIL_OPERATORS_HPP_
+#endif // BARK_COMMONS_UTIL_OPERATORS_HPP_

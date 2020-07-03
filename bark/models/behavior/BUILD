@@ -21,7 +21,6 @@ cc_library(
         "//bark/models/behavior/rule_based:include",
         "//bark/models/behavior/motion_primitives:include",
         "//bark/models/behavior/static_trajectory:include",
-        "//bark/models/behavior/action_store:include",
         "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
