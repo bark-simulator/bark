@@ -20,7 +20,7 @@ from bark.runtime.scenario.scenario_generation.configurable_scenario_generation 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
-# from bark.core.world.evaluation.ltl import ConstantLabelFunction
+from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
@@ -29,7 +29,7 @@ os.chdir("../benchmark_database/")
 
 
 class DatabaseRunnerTests(unittest.TestCase):
-  # @unittest.skip
+  @unittest.skip
   def test_database_runner(self):
     dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=5)
     cwd = os.getcwd()
@@ -102,7 +102,7 @@ class DatabaseRunnerTests(unittest.TestCase):
     print(df)
     self.assertEqual(len(df.index), 40)  # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
-  @unittest.skip
+  #@unittest.skip
   def test_parameterized_evaluators(self):
     dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=1)
     dbs.process("data/database1")
@@ -111,15 +111,17 @@ class DatabaseRunnerTests(unittest.TestCase):
     db = BenchmarkDatabase(database_root=local_release_filename)
     evaluators = {"true": {"type": "EvaluatorLTL",
                            "params": {"ltl_formula": "G !test", "label_functions": [ConstantLabelFunction("test")]}}}
-    terminal_when = {"true": lambda x: x > 0}
+    terminal_when = {"true": lambda x: x}
     params = ParameterServer()  # only for evaluated agents not passed to scenario!
     behaviors_tested = {"Const": BehaviorConstantVelocity(params)}
 
-    benchmark_runner = BenchmarkRunner(benchmark_database=db,
+    benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                        evaluators=evaluators,
                                        terminal_when=terminal_when,
                                        behaviors=behaviors_tested,
-                                       log_eval_avg_every=1)
+                                       num_scenarios=10,
+                                       log_eval_avg_every=1,
+                                       num_cpus=2)
 
     result = benchmark_runner.run()
     df = result.get_data_frame()
