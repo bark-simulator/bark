@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
-#define MODULES_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
+#ifndef BARK_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
+#define BARK_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
 
 #include <random>
 #include <Eigen/Eigen>
@@ -80,4 +80,4 @@ inline Eigen::VectorXf MultivariateDistribution::MeanFromParams(const ParamsPtr&
 }  // namespace commons
 }  // namespace bark
 
-#endif  // MODULES_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_
+#endif  // BARK_COMMONS_DISTRIBUTION_MULTIVARIATE_NORMAL_HPP_

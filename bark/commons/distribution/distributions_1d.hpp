@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_
-#define MODULES_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_
+#ifndef BARK_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_
+#define BARK_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_
 
 #include <random>
 #include <boost/random.hpp>
@@ -103,4 +103,4 @@ using UniformDistribution1D = BoostDistribution1D<boost_uniform>;
 }  // namespace commons
 }  // namespace bark
 
-#endif  // MODULES_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_
+#endif  // BARK_COMMONS_DISTRIBUTION_DISTRIBUTIONS_1D_HPP_

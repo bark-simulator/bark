@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
-#define MODULES_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
+#ifndef BARK_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
+#define BARK_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
 
 
 #include <Eigen/Core>
@@ -37,4 +37,4 @@ typedef std::shared_ptr<Distribution> DistributionPtr;
 }  // namespace commons
 }  // namespace bark
 
-#endif  // MODULES_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
+#endif  // BARK_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
