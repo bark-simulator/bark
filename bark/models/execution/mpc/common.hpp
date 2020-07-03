@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_MODELS_EXECUTION_MPC_COMMON_HPP_
 #define BARK_MODELS_EXECUTION_MPC_COMMON_HPP_
 

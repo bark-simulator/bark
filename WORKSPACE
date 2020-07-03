@@ -18,17 +18,17 @@ boost_deps()
 # ------ Planner UCT ------------------------------
 git_repository(
   name = "planner_uct",
-  commit="fac5d85c96867be336a4500d45d0277abe48465c",
-  remote = "https://github.com/bark-simulator/planner-mcts"
+  commit="bde9ccc9750fad5764afd84987fcfe15ff97dfbe",
+  remote = "https://github.com/bark-simulator/planner_uct"
 )
-load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
-planner_uct_rules_dependencies()
+#load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
+#planner_uct_rules_dependencies()
 # --------------------------------------------------
 
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="fd185eb87d5e9b256c86fb64bd722dc80b209462",
+  commit="78a248e3a1b272c4c8df0708306cfc05cbf8aab5",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
@@ -38,6 +38,13 @@ benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
 
+# ------------------- BARK-ML ----------------------
+git_repository(
+  name = "bark_ml",
+  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+# --------------------------------------------------
 
 # ------------------- LTL RuleMonitor --------------
 load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")

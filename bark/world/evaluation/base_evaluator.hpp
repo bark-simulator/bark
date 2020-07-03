@@ -9,9 +9,9 @@
 #ifndef BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 #define BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 
-#include <memory>
 #include <boost/variant.hpp>
-#include "bark/commons/base_type.hpp"
+#include <memory>
+#include "bark/commons/commons.hpp"
 
 namespace bark {
 namespace world {
@@ -23,11 +23,13 @@ typedef boost::variant<float, bool, std::string, int> EvaluationReturn;
 
 class BaseEvaluator {
  public:
-  BaseEvaluator() { }
-  virtual ~BaseEvaluator() { }
+  BaseEvaluator() {}
+  virtual ~BaseEvaluator() {}
   virtual EvaluationReturn Evaluate(const world::World& world) { return false; }
   virtual EvaluationReturn Evaluate(
-    const world::ObservedWorld& observed_world) { return false; }
+      const world::ObservedWorld& observed_world) {
+    return false;
+  }
 };
 typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 
@@ -35,4 +37,4 @@ typedef std::shared_ptr<BaseEvaluator> EvaluatorPtr;
 }  // namespace world
 }  // namespace bark
 
-#endif // BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
+#endif  // BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_

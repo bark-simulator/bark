@@ -6,18 +6,17 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_WORLD_OPENDRIVE_ROAD_HPP_
 #define BARK_WORLD_OPENDRIVE_ROAD_HPP_
 
-#include <string>
-#include <memory>
-#include <vector>
 #include <map>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "bark/world/opendrive/plan_view.hpp"
-#include "bark/world/opendrive/lane_section.hpp"
 #include "bark/world/opendrive/commons.hpp"
+#include "bark/world/opendrive/lane_section.hpp"
+#include "bark/world/opendrive/plan_view.hpp"
 
 namespace bark {
 namespace world {
@@ -29,12 +28,12 @@ class XodrRoad {
  public:
   XodrRoad(const std::string& name, XodrRoadId id) : id_(id), name_(name) {}
 
-  explicit XodrRoad(const std::shared_ptr<XodrRoad>& road) :
-    id_(road->id_),
-    name_(road->name_),
-    link_(road->link_),
-    reference_(road->reference_),
-    lane_sections_(road->lane_sections_) {}
+  explicit XodrRoad(const std::shared_ptr<XodrRoad>& road)
+      : id_(road->id_),
+        name_(road->name_),
+        link_(road->link_),
+        reference_(road->reference_),
+        lane_sections_(road->lane_sections_) {}
 
   XodrRoad() {}
   virtual ~XodrRoad() {}
@@ -55,16 +54,13 @@ class XodrRoad {
     return lanes;
   }
 
-
   //! setter
   void SetId(XodrRoadId id) { id_ = id; }
   void SetName(const std::string& name) { name_ = name; }
   void SetPlanView(PlanViewPtr p) { reference_ = p; }
   void SetLink(XodrRoadLink l) { link_ = l; }
 
-  void AddLaneSection(XodrLaneSectionPtr l) {
-    lane_sections_.push_back(l);
-  }
+  void AddLaneSection(XodrLaneSectionPtr l) { lane_sections_.push_back(l); }
 
  private:
   XodrRoadId id_;

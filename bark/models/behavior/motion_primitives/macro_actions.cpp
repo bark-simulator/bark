@@ -43,26 +43,30 @@ Trajectory BehaviorMPMacroActions::Plan(
 
   primitives::PrimitivePtr selected_mp;
   AdjacentLaneCorridors adjacent_corridors = GetCorridors(observed_world);
-  if(check_validity_in_plan_) {
-      // SetLastAction(Action(DiscreteAction(active_motion_)));
+  if (check_validity_in_plan_) {
+    // SetLastAction(Action(DiscreteAction(active_motion_)));
 
     // There must be at least one primitive that is always available!
     if (valid_primitives_.empty()) {
       GetNumMotionPrimitivesByCorridors(observed_world, adjacent_corridors);
       LOG_IF(ERROR, valid_primitives_.empty())
           << "No motion primitive available! At least one primitive must be "
-            "available at all times!";
+             "available at all times!";
     }
     selected_mp = motion_primitives_.at(
         valid_primitives_.at(boost::get<DiscreteAction>(active_motion_)));
   } else {
-    selected_mp = motion_primitives_.at(boost::get<DiscreteAction>(active_motion_));
+    selected_mp =
+        motion_primitives_.at(boost::get<DiscreteAction>(active_motion_));
   }
   target_corridor_ =
-        selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
+      selected_mp->SelectTargetCorridor(observed_world, adjacent_corridors);
 
   traj = selected_mp->Plan(delta_time, observed_world, target_corridor_);
 
+  this->SetLastAction(
+      motion_primitives_.at(boost::get<DiscreteAction>(active_motion_))
+          ->GetLastAction());
   this->SetLastTrajectory(traj);
   return traj;
 }

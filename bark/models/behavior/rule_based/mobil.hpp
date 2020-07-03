@@ -12,8 +12,8 @@
 #include <memory>
 #include <utility>
 
-#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/idm/base_idm.hpp"
+#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
@@ -27,52 +27,50 @@ using bark::world::FrenetPosition;
 class BehaviorMobil : public BehaviorLaneChangeRuleBased {
  public:
   explicit BehaviorMobil(const commons::ParamsPtr& params)
-    : BehaviorLaneChangeRuleBased(params) {
-    crosstrack_error_gain_ = params->GetReal(
-      "BehaviorMobil::CrosstrackErrorGain",
-      "Tuning factor of stanley controller",
-      1.0);
-    politeness_ = params->GetReal(
-      "BehaviorMobil::PolitenessFactor",
-      "Politness factor, suggested [0.2, 0.5]",
-      0.35f);
+      : BehaviorModel(params), BehaviorLaneChangeRuleBased(params) {
+    crosstrack_error_gain_ =
+        params->GetReal("BehaviorMobil::CrosstrackErrorGain",
+                        "Tuning factor of stanley controller", 1.0);
+    politeness_ =
+        params->GetReal("BehaviorMobil::PolitenessFactor",
+                        "Politness factor, suggested [0.2, 0.5]", 0.35f);
     //! Acceleration bias needs to be larger than the acceleration threshold
     acceleration_threshold_ = params->GetReal(
-      "BehaviorMobil::AccelerationThreshold",
-      "Models intertia to only trigger if there is real improvement", 0.1f);
-    acceleration_bias_ = params->GetReal(
-      "BehaviorMobil::AccelerationBias",
-      "Bias to encourage keep right directive", 0.1f);
+        "BehaviorMobil::AccelerationThreshold",
+        "Models intertia to only trigger if there is real improvement", 0.1f);
+    acceleration_bias_ =
+        params->GetReal("BehaviorMobil::AccelerationBias",
+                        "Bias to encourage keep right directive", 0.1f);
     safe_deceleration_ = params->GetReal(
-      "BehaviorMobil::SafeDeceleration",
-      "Maximum deceleration for follower in target lane, positive number",
-      2.0f);
+        "BehaviorMobil::SafeDeceleration",
+        "Maximum deceleration for follower in target lane, positive number",
+        2.0f);
     asymmetric_passing_rules_ = params->GetBool(
-      "BehaviorMobil::AsymmetricPassingRules",
-      "Whether passing on the right side is forbidden", false);
+        "BehaviorMobil::AsymmetricPassingRules",
+        "Whether passing on the right side is forbidden", false);
     critical_velocity_ = params->GetReal(
-      "BehaviorMobil::CriticalVelocity",
-      "Passing on the right side is allowed below this velocity",
-      16.66f);  // 16.66 m/s = 60 km/h
-    stop_at_lane_ending_ = params->GetBool(
-      "BehaviorMobil::StopAtLaneEnding",
-      "Flag to let vehicle slow down at lane ending", true);
+        "BehaviorMobil::CriticalVelocity",
+        "Passing on the right side is allowed below this velocity",
+        16.66f);  // 16.66 m/s = 60 km/h
+    stop_at_lane_ending_ =
+        params->GetBool("BehaviorMobil::StopAtLaneEnding",
+                        "Flag to let vehicle slow down at lane ending", true);
   }
 
   virtual ~BehaviorMobil() {}
 
   double CalcNetDistanceFromFrenet(
-    const std::shared_ptr<const Agent>& ego_agent,
-    const FrenetPosition& ego_frenet,
-    const std::shared_ptr<const Agent>& leading_agent,
-    const FrenetPosition& leading_frenet) const;
+      const std::shared_ptr<const Agent>& ego_agent,
+      const FrenetPosition& ego_frenet,
+      const std::shared_ptr<const Agent>& leading_agent,
+      const FrenetPosition& leading_frenet) const;
 
   double CalcLongRawAccWithoutLeader(
-    const world::LaneCorridorPtr& lane_corridor,
-    const bark::geometry::Point2d& pos, const float vel) const;
+      const world::LaneCorridorPtr& lane_corridor,
+      const bark::geometry::Point2d& pos, const float vel) const;
 
   std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
-    CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);
+  CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
@@ -109,5 +107,3 @@ inline std::shared_ptr<BehaviorModel> BehaviorMobil::Clone() const {
 }  // namespace bark
 
 #endif  // BARK_MODELS_BEHAVIOR_RULE_BASED_MOBIL_HPP_
-
-

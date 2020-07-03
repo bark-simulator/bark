@@ -8,8 +8,9 @@
 
 #include <memory>
 
-#include "behavior_static_trajectory.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/world/observed_world.hpp"
+#include "behavior_static_trajectory.hpp"
 
 namespace bark {
 namespace models {
@@ -18,19 +19,23 @@ namespace behavior {
 using bark::models::dynamic::StateDefinition;
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-    const commons::ParamsPtr &params)
+    const commons::ParamsPtr& params)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
       static_trajectory_(ReadInStaticTrajectory(params->GetListListFloat(
           "static_trajectory",
-          "List of states that form a static trajectory to follow", {{}}))) {}
+          "List of states that form a static trajectory to follow", {{}}))) {
+  SetLastAction(LonLatAction{0.0f, 0.0f});
+}
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
-    const commons::ParamsPtr &params, const Trajectory &static_trajectory)
+    const commons::ParamsPtr& params, const Trajectory& static_trajectory)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
-      static_trajectory_(static_trajectory) {}
+      static_trajectory_(static_trajectory) {
+  SetLastAction(LonLatAction{0.0f, 0.0f});
+}
 
 Trajectory BehaviorStaticTrajectory::Plan(
-    float delta_time, const bark::world::ObservedWorld &observed_world) {
+    float delta_time, const bark::world::ObservedWorld& observed_world) {
   UpdateBehaviorStatus(delta_time, observed_world);
 
   const double start_time = observed_world.GetWorldTime();
@@ -43,6 +48,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
 
   if (idx_start < 0 || idx_end < 0) {
     auto traj = dynamic::Trajectory();
+    this->SetLastAction(LonLatAction{0.0f, 0.0f});
     this->SetLastTrajectory(traj);
     return traj;
   }
@@ -54,12 +60,30 @@ Trajectory BehaviorStaticTrajectory::Plan(
   traj.block(1, 0, num_rows, traj.cols()) =
       static_trajectory_.block(idx_start, 0, num_rows, traj.cols());
   this->SetLastTrajectory(traj);
-
+  this->SetLastAction(BehaviorStaticTrajectory::CalculateAction(
+      delta_time, observed_world, traj));
   return traj;
 }
 
+Action BehaviorStaticTrajectory::CalculateAction(
+    float delta_time, const bark::world::ObservedWorld& observed_world,
+    const dynamic::Trajectory& trajectory) {
+  auto lane_corridor = observed_world.GetLaneCorridor();
+  BARK_EXPECT_TRUE(bool(lane_corridor));
+
+  auto center_line = lane_corridor->GetCenterLine();
+  bark::commons::transformation::FrenetState frenet_state_start(
+      trajectory.row(0), center_line);
+  bark::commons::transformation::FrenetState frenet_state_end(
+      trajectory.row(trajectory.rows() - 1), center_line);
+  auto acc_lat = (frenet_state_end.vlat - frenet_state_start.vlat) / delta_time;
+  auto acc_lon = (frenet_state_end.vlon - frenet_state_start.vlon) / delta_time;
+
+  return LonLatAction{acc_lat, acc_lon};
+}
+
 std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
-    const double t, StateRowVector *interpolated) const {
+    const double t, StateRowVector* interpolated) const {
   StateRowVector delta;
   double alpha;
   int idx = -1;
@@ -115,7 +139,7 @@ const Trajectory& BehaviorStaticTrajectory::GetStaticTrajectory() const {
 }
 
 void BehaviorStaticTrajectory::UpdateBehaviorStatus(
-    float delta_time, const bark::world::ObservedWorld &observed_world) {
+    float delta_time, const bark::world::ObservedWorld& observed_world) {
   const double start_time = observed_world.GetWorldTime();
   const double end_time = start_time + delta_time;
 
@@ -128,7 +152,7 @@ void BehaviorStaticTrajectory::UpdateBehaviorStatus(
     SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
   } else if (end_time_static_traj <= end_time) {
     VLOG(1) << "Agent " << observed_world.GetEgoAgentId()
-              << ": Behavior status has expired!" << std::endl;
+            << ": Behavior status has expired!" << std::endl;
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
   } else {
     SetBehaviorStatus(BehaviorStatus::VALID);

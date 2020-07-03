@@ -1,33 +1,36 @@
 {
-  "Scenario": {
-    "Name": "DR_DEU_Merging_MT\ninteraction_dataset_dummy_track.csv",
-    "Generation": {
-      "InteractionDatasetScenarioGeneration": {
-        "MapFilename": "../bark_project/modules/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
-        "TrackFilename": "../bark_project/modules/runtime/tests/data/interaction_dataset_dummy_track.csv",
-        "TrackIds": [1, 2],
-        "EgoTrackId": 1,
-        "StartTs": 500,
-        "EndTs": 1100
-      }
+    "Scenario": {
+        "Name": "DR_DEU_Merging_MT\ninteraction_dataset_dummy_track.csv",
+        "Generation": {
+            "InteractionDatasetScenarioGeneration": {
+                "MapFilename": "../bark_project/bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
+                "TrackFilename": "../bark_project/bark/runtime/tests/data/interaction_dataset_dummy_track.csv",
+                "TrackIds": [
+                    1,
+                    2
+                ],
+                "EgoTrackId": 1,
+                "StartTs": 500,
+                "EndTs": 1100
+            }
+        }
+    },
+    "Visualization": {
+        "Agents": {
+            "Color": {
+                "UseColormapForOtherAgents": true
+            },
+            "DrawAgentId": true,
+            "DrawEvalGoals": false,
+            "DrawHistory": true
+        }
+    },
+    "simulation": {
+        "step_time": 0.2,
+        "real_time_factor": 1,
+        "simulation_time_steps": 15
+    },
+    "agent": {
+        "MaxHistoryLength": 50
     }
-  },
-  "Visualization": {
-    "Agents": {
-      "Color": {
-          "UseColormapForOtherAgents": true
-      },
-      "DrawAgentId": true,
-      "DrawEvalGoals": false,
-      "DrawHistory": true
-    }
-  },
-  "simulation": {
-    "step_time": 0.2,
-    "real_time_factor": 1,
-    "simulation_time_steps": 15
-  },
-  "agent": {
-    "MaxHistoryLength": 50
-  }
 }

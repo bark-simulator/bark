@@ -48,7 +48,7 @@ class MPViewer(BaseViewer):
             zorder=zorder,
             linewidth=linewidth)
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10):
         points = polygon.ToArray()
         polygon_draw = matplotlib.patches.Polygon(
             points,
@@ -56,7 +56,8 @@ class MPViewer(BaseViewer):
             facecolor=self.getColor(facecolor),
             edgecolor=self.getColor(color),
             alpha=alpha,
-            linewidth=linewidth)
+            linewidth=linewidth,
+            zorder=zorder)
         t_start = self.axes.transData
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
@@ -71,9 +72,11 @@ class MPViewer(BaseViewer):
                 color=self.getColor(color))
 
     def drawText(self, position, text, coordinate="axes", **kwargs):
+        verticalalignment = kwargs.pop("verticalalignment", "top")
+        horizontalalignment = kwargs.pop("horizontalalignment", "center")
         if coordinate=="axes":
-            self.axes.text(position[0], position[1], text, horizontalalignment='center',
-             verticalalignment='top', transform=self.axes.transAxes, **kwargs)
+            self.axes.text(position[0], position[1], text, horizontalalignment=horizontalalignment,
+             verticalalignment=verticalalignment, transform=self.axes.transAxes, **kwargs)
         else:
             self.axes.text(position[0], position[1], text, horizontalalignment='center',
              verticalalignment='top', **kwargs)

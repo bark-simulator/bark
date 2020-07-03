@@ -16,13 +16,16 @@ namespace world {
 
 using bark::geometry::Point2d;
 using bark::models::behavior::BehaviorMotionPrimitives;
+using bark::models::behavior::BehaviorMotionPrimitivesPtr;
 using bark::models::dynamic::State;
 using bark::world::AgentMap;
-using bark::world::map::LaneCorridorPtr;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
-  BARK_EXPECT_TRUE(lane_corridor != nullptr);
+  if (!lane_corridor) {
+    return FrontRearAgents{AgentFrenetPair(nullptr, FrenetPosition()),
+                           AgentFrenetPair(nullptr, FrenetPosition())};
+  }
 
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
@@ -31,7 +34,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
 }
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   BARK_EXPECT_TRUE(lane_corridor != nullptr);
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
@@ -39,7 +42,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear(
 }
 
 AgentFrenetPair ObservedWorld::GetAgentInFront(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
   return fr_agent.front;
 }
@@ -50,7 +53,7 @@ AgentFrenetPair ObservedWorld::GetAgentInFront() const {
 }
 
 AgentFrenetPair ObservedWorld::GetAgentBehind(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
   return fr_agent.rear;
 }
@@ -125,6 +128,42 @@ ObservedWorldPtr ObservedWorld::Predict(
   }
   next_world->Step(time_span);
   return next_world;
+}
+
+// Predict each agent with specific behavior model (Note setup required)
+ObservedWorldPtr ObservedWorld::Predict(
+    float time_span, BehaviorModelPtr ego_behavior_model,
+    const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const {
+  std::shared_ptr<ObservedWorld> next_world =
+      std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
+
+  auto ego_agent_ptr = next_world->GetEgoAgent();
+  if (ego_agent_ptr) {
+    ego_agent_ptr->SetBehaviorModel(ego_behavior_model);
+  } else {
+    LOG(WARNING)
+        << "Ego Agent not existent in observed world during prediction";
+  }
+
+  for (const auto& agent_pair : other_behaviors) {
+    auto agent_ptr = next_world->GetAgent(agent_pair.first);
+    if (!agent_ptr) {
+      LOG(WARNING) << "Agent Id" << agent_pair.first
+                   << " not existent in observed world during prediction";
+      continue;
+    }
+    agent_ptr->SetBehaviorModel(agent_pair.second);
+  }
+  next_world->Step(time_span);
+  return next_world;
+}
+
+ObservedWorldPtr ObservedWorld::ObserveForOtherAgent(
+    const AgentId& other_agent_id) const {
+  std::shared_ptr<ObservedWorld> others_world =
+      std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
+  others_world->ego_agent_id_ = other_agent_id;
+  return others_world;
 }
 
 EvaluationMap ObservedWorld::Evaluate() const {

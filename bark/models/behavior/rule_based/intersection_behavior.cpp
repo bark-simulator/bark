@@ -12,57 +12,55 @@
 #include <cmath>
 #include <limits>
 #include <memory>
-#include <utility>
 #include <tuple>
+#include <utility>
 
-#include "bark/commons/transformation/frenet.hpp"
-#include "bark/world/observed_world.hpp"
-#include "bark/models/dynamic/single_track.hpp"
-#include "bark/models/dynamic/integration.hpp"
 #include "bark/commons/params/setter_params.hpp"
+#include "bark/commons/transformation/frenet.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/dynamic/integration.hpp"
+#include "bark/models/dynamic/single_track.hpp"
+#include "bark/world/observed_world.hpp"
 
 namespace bark {
 namespace models {
 namespace behavior {
 
-using bark::commons::transformation::FrenetPosition;
 using bark::commons::SetterParams;
+using bark::commons::transformation::FrenetPosition;
+using bark::geometry::Norm0To2PI;
 using bark::geometry::Point2d;
 using bark::geometry::SignedAngleDiff;
+using bark::models::behavior::BehaviorConstantVelocity;
+using bark::models::dynamic::DynamicModelPtr;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 using bark::models::dynamic::StateDefinition::THETA_POSITION;
 using bark::models::dynamic::StateDefinition::VEL_POSITION;
-using bark::world::objects::Agent;
-using bark::world::AgentMap;
-using bark::world::objects::AgentPtr;
-using bark::world::WorldPtr;
 using bark::world::AgentId;
+using bark::world::AgentMap;
 using bark::world::ObservedWorld;
 using bark::world::ObservedWorldPtr;
-using bark::models::dynamic::DynamicModelPtr;
-using bark::models::behavior::BehaviorConstantVelocity;
+using bark::world::WorldPtr;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
 using bark::world::prediction::PredictionSettings;
-using bark::geometry::Norm0To2PI;
-
 
 /**
  * @brief Returns the first intersecting agent for the ego LaneCorr.
- * 
+ *
  * @param intersecting_agents All agents that intersect the ego LaneCorr.
  * @param observed_world ObservedWorld of the vehicle
  * @return AgentPtr Agent that intersects ego LaneCorr. at earliest time
  */
 std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
-  const AgentMap& intersecting_agents,
-  const ObservedWorld& observed_world) const {
+    const AgentMap& intersecting_agents,
+    const ObservedWorld& observed_world) const {
   AgentId intersecting_agent_id = 0;
   bool is_intersecting = false;
   for (const auto& agent : intersecting_agents) {
     if (!observed_world.GetEgoAgent() || !agent.second)
-      return std::pair<AgentId, bool>(
-        intersecting_agent_id, false);
+      return std::pair<AgentId, bool>(intersecting_agent_id, false);
     const auto& road_corr = agent.second->GetRoadCorridor();
     const auto& agent_pos = agent.second->GetCurrentPosition();
     const auto& ego_state = observed_world.CurrentEgoState();
@@ -75,15 +73,13 @@ std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
         observed_world.GetLaneCorridor() != nullptr && lane_corr != nullptr) {
       // only if s of intersecting agent is larger
       double s_ego = std::get<1>(GetNearestPointAndS(
-        observed_world.GetLaneCorridor()->GetCenterLine(), ego_pos));
-      double s_other = std::get<1>(
-        GetNearestPointAndS(observed_world.GetLaneCorridor()->GetCenterLine(),
-        agent_pos));
+          observed_world.GetLaneCorridor()->GetCenterLine(), ego_pos));
+      double s_other = std::get<1>(GetNearestPointAndS(
+          observed_world.GetLaneCorridor()->GetCenterLine(), agent_pos));
       double ego_angle = Norm0To2PI(ego_state[THETA_POSITION]);
       double other_angle = Norm0To2PI(agent_state[THETA_POSITION]);
       if (fabs(ego_angle - other_angle) > angle_diff_for_intersection_ &&
-          s_other > s_ego &&
-          s_other - s_ego < braking_distance_) {
+          s_other > s_ego && s_other - s_ego < braking_distance_) {
         intersecting_agent_id = agent.second->GetAgentId();
         is_intersecting = true;
         break;
@@ -96,15 +92,14 @@ std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
 /**
  * @brief Checks for intersecting agents on the ego
  *        LaneCorridor
- * 
- * @param observed_world ObservedWorld 
+ *
+ * @param observed_world ObservedWorld
  * @param t_inc Forward delta time for the prediction
  * @return std::tuple<double, AgentPtr> time to interception and agent
  */
 std::tuple<double, AgentPtr>
 BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
-  const ObservedWorld& observed_world,
-  double t_inc) {
+    const ObservedWorld& observed_world, double t_inc) {
   double intersection_time = 0.;
   LaneCorridorPtr lane_corr = GetLaneCorridor();
   AgentPtr lane_corr_intersecting_agent;
@@ -113,7 +108,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   ObservedWorldPtr tmp_observed_world =
-    std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone());
+      std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone());
   tmp_observed_world->SetupPrediction(prediction_settings);
 
   // predict for n seconds
@@ -121,15 +116,14 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
     ObservedWorldPtr predicted_world = tmp_observed_world->Predict(t);
     // all agents intersecting at time t
     AgentMap intersecting_agents =
-      predicted_world->GetAgentsIntersectingPolygon(
-        lane_corr->GetMergedPolygon());
+        predicted_world->GetAgentsIntersectingPolygon(
+            lane_corr->GetMergedPolygon());
     // first agent intersecting
-    std::pair<AgentId, bool> intersecting_agent_id = GetIntersectingAgent(
-        intersecting_agents,
-        *predicted_world);
+    std::pair<AgentId, bool> intersecting_agent_id =
+        GetIntersectingAgent(intersecting_agents, *predicted_world);
     if (intersecting_agent_id.second) {
       lane_corr_intersecting_agent =
-        observed_world.GetAgent(intersecting_agent_id.first);
+          observed_world.GetAgent(intersecting_agent_id.first);
       // if there is an agent that intersects at time t
       if (lane_corr_intersecting_agent) {
         intersection_time = t;
@@ -137,8 +131,8 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
       }
     }
   }
-  return std::tuple<double, AgentPtr>(
-    intersection_time, lane_corr_intersecting_agent);
+  return std::tuple<double, AgentPtr>(intersection_time,
+                                      lane_corr_intersecting_agent);
 }
 
 // see base class
@@ -156,19 +150,17 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
 
   // check if a lane change would be beneficial
   std::pair<LaneChangeDecision, LaneCorridorPtr> lane_res =
-    CheckIfLaneChangeBeneficial(observed_world);
+      CheckIfLaneChangeBeneficial(observed_world);
 
-  if (lane_res.second)
-    SetLaneCorridor(lane_res.second);
+  if (lane_res.second) SetLaneCorridor(lane_res.second);
 
   // check intersecting vehicles
-  std::tuple<double, AgentPtr> time_agent = CheckIntersectingVehicles(
-    observed_world);
+  std::tuple<double, AgentPtr> time_agent =
+      CheckIntersectingVehicles(observed_world);
 
   // calc. rel. values
-  IDMRelativeValues rel_values = CalcRelativeValues(
-    observed_world,
-    GetLaneCorridor());
+  IDMRelativeValues rel_values =
+      CalcRelativeValues(observed_world, GetLaneCorridor());
 
   // if there is an intersecting vehicle
   if (std::get<1>(time_agent)) {
@@ -182,14 +174,13 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
 
     // if there is a vehicle from the right
     if (angle_diff < 0) {
-      LOG(INFO) << "Agent" << observed_world.GetEgoAgentId()
-                << ": Agent " << std::get<1>(time_agent)->GetAgentId()
-                << " is intersecing my corridor with "
-                << angle_diff << "."<< std::endl;
+      LOG(INFO) << "Agent" << observed_world.GetEgoAgentId() << ": Agent "
+                << std::get<1>(time_agent)->GetAgentId()
+                << " is intersecing my corridor with " << angle_diff << "."
+                << std::endl;
       rel_values.leading_distance =
-        std::min(
-          other_agent_state[VEL_POSITION]*std::get<0>(time_agent),
-          rel_values.leading_distance);
+          std::min(other_agent_state[VEL_POSITION] * std::get<0>(time_agent),
+                   rel_values.leading_distance);
       // we want to break; set velocity to zero
       rel_values.leading_velocity = 0.;
       rel_values.has_leading_object = true;
@@ -199,8 +190,7 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
   // generate traj. using rel_values
   double dt = delta_time / (GetNumTrajectoryTimePoints() - 1);
   std::tuple<Trajectory, Action> traj_action =
-    GenerateTrajectory(
-      observed_world, GetLaneCorridor(), rel_values, dt);
+      GenerateTrajectory(observed_world, GetLaneCorridor(), rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);

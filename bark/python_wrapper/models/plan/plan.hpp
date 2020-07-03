@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_PLAN_HPP_
 #define PYTHON_PYTHON_BINDINGS_MODELS_BEHAVIOR_PLAN_HPP_
 #include "bark/python_wrapper/common.hpp"

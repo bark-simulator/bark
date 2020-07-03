@@ -6,25 +6,22 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
 #include "gtest/gtest.h"
 
 #include "bark/commons/util/util.hpp"
-
 
 // TODO(@all): fill our this test
 TEST(load_test, param_tests) {
   bool temp = false;
   BARK_EXPECT_TRUE(temp);
-
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

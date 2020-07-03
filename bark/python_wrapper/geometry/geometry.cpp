@@ -12,8 +12,6 @@
 
 namespace py = pybind11;
 
-using Eigen::Dynamic;
-using Eigen::Matrix;
 using bark::geometry::Collide;
 using bark::geometry::Distance;
 using bark::geometry::Line;
@@ -22,6 +20,9 @@ using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
 using bark::geometry::SignedDistance;
+using bark::geometry::Within;
+using Eigen::Dynamic;
+using Eigen::Matrix;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
@@ -32,11 +33,11 @@ void python_geometry(py::module m) {
   py::class_<Point2d>(m, "Point2d")
       .def(py::init<float, float>())
       .def("__repr__",
-           [](const Point2d &p) { return bark::geometry::print(p); })
-      .def("x", [](Point2d &p) { return p.get<0>(); })
-      .def("y", [](Point2d &p) { return p.get<1>(); })
+           [](const Point2d& p) { return bark::geometry::print(p); })
+      .def("x", [](Point2d& p) { return p.get<0>(); })
+      .def("y", [](Point2d& p) { return p.get<1>(); })
       .def(py::pickle(
-          [](const Point2d &p) {
+          [](const Point2d& p) {
             return py::make_tuple(p.get<0>(), p.get<1>());
           },
           [](py::tuple t) {
@@ -45,29 +46,29 @@ void python_geometry(py::module m) {
           }));
 
   m.def("Distance",
-        py::overload_cast<const Point2d &, const Point2d &>(&Distance),
+        py::overload_cast<const Point2d&, const Point2d&>(&Distance),
         "Returns euclidean distance between two Point2d.");
 
-  m.def("Distance", py::overload_cast<const Line &, const Point2d &>(&Distance),
+  m.def("Distance", py::overload_cast<const Line&, const Point2d&>(&Distance),
         "Returns euclidean distance between Line2d and Point2d.");
 
   m.def("SignedDistance",
-        py::overload_cast<const Line &, const Point2d &, const float &>(
+        py::overload_cast<const Line&, const Point2d&, const float&>(
             &SignedDistance),
         "Returns signed euclidean distance between Line2d and Point2d.");
 
-  m.def("Distance", py::overload_cast<const Line &, const Line &>(&Distance),
+  m.def("Distance", py::overload_cast<const Line&, const Line&>(&Distance),
         "Returns euclidean distance between Line2d and Point2d.");
 
   m.def("Distance",
-        py::overload_cast<const Polygon &, const Polygon &>(&Distance),
+        py::overload_cast<const Polygon&, const Polygon&>(&Distance),
         "Returns euclidean distance between polygon and polygon.");
 
-  m.def("Distance", py::overload_cast<const Polygon &, const Line &>(&Distance),
+  m.def("Distance", py::overload_cast<const Polygon&, const Line&>(&Distance),
         "Returns euclidean distance between polygon and line2d.");
 
   m.def("Distance",
-        py::overload_cast<const Polygon &, const Point2d &>(&Distance),
+        py::overload_cast<const Polygon&, const Point2d&>(&Distance),
         "Returns euclidean distance between polygon and point2d.");
 
   m.def("GetNearestPoint", &bark::geometry::GetNearestPoint,
@@ -95,16 +96,23 @@ void python_geometry(py::module m) {
   m.def("ComputeCenterLine", &bark::geometry::ComputeCenterLine,
         "computes the center line.");
 
-  m.def("Collide",
-        py::overload_cast<const Polygon &, const Point2d &>(&Collide),
+  m.def("Collide", py::overload_cast<const Polygon&, const Point2d&>(&Collide),
         "Returns true if polygon and point2d collide.");
 
-  m.def("Collide", py::overload_cast<const Polygon &, const Line &>(&Collide),
+  m.def("Collide", py::overload_cast<const Polygon&, const Line&>(&Collide),
         "Returns true if polygon and line collide.");
 
-  m.def("Collide",
-        py::overload_cast<const Polygon &, const Polygon &>(&Collide),
+  m.def("Collide", py::overload_cast<const Polygon&, const Polygon&>(&Collide),
         "Returns true if polygon and polygon collide.");
+
+  m.def("Within", py::overload_cast<const Point2d&, const Polygon&>(&Within),
+        "Returns true if point within polygon");
+
+  m.def("Within", py::overload_cast<const Line&, const Polygon&>(&Within),
+        "Returns true if line within polygon");
+
+  m.def("Within", py::overload_cast<const Polygon&, const Polygon&>(&Within),
+        "Returns true if polygon within polygon.");
 
   m.def("Norm0To2PI", &bark::geometry::Norm0To2PI, "limit input to 0..2pi");
 
@@ -112,7 +120,7 @@ void python_geometry(py::module m) {
       .def(py::init<>(), "Create empty line")
       .def("AddPoint", &Line::AddPoint, "add a point")
       .def("AddPoint",
-           [](Line &line, py::list list) {
+           [](Line& line, py::list list) {
              if (list.size() != 2) {
                printf("Error: List size of two required.");
                return;
@@ -121,7 +129,7 @@ void python_geometry(py::module m) {
                  Point2d(list[0].cast<float>(), list[1].cast<float>()));
            })
       .def("__repr__",
-           [](const Line &l) {
+           [](const Line& l) {
              std::stringstream ss;
              ss << "<bark.Line2d> Points: ";
              ss << l.ShapeToString();
@@ -141,10 +149,10 @@ void python_geometry(py::module m) {
       .def_property_readonly("bounding_box", &Line::BoundingBox)
       .def_readwrite("center", &Line::center_, "center point.")
       .def(py::pickle(
-          [](const Line &l) -> py::tuple {
+          [](const Line& l) -> py::tuple {
             return py::make_tuple(l.ToArray());
           },
-          [](const py::tuple &t) {
+          [](const py::tuple& t) {
             if (t.size() != 1) throw std::runtime_error("Invalid line state!");
             Line l;
             auto points = t[0].cast<Matrix<float, Dynamic, Dynamic>>();
@@ -158,13 +166,13 @@ void python_geometry(py::module m) {
       .def(py::init<>(), "Create empty polygon")
       .def(py::init<Pose, std::vector<Point2d>>(),
            "Create polygon with center point and point list")
-      .def(py::init<Pose, const Matrix<float, Dynamic, Dynamic> &>(),
+      .def(py::init<Pose, const Matrix<float, Dynamic, Dynamic>&>(),
            "Create polygon with center point and point list")
-      .def(py::init<Pose, const Line &>(),
+      .def(py::init<Pose, const Line&>(),
            "Create polygon with center point and line enclosing polygon")
       .def("AddPoint", &Polygon::AddPoint, "add a point")
       .def("AddPoint",
-           [](Polygon &polygon, py::list list) {
+           [](Polygon& polygon, py::list list) {
              if (list.size() != 2) {
                printf("Error: List size of two required.");
                return;
@@ -173,7 +181,7 @@ void python_geometry(py::module m) {
                  Point2d(list[0].cast<float>(), list[1].cast<float>()));
            })
       .def("__repr__",
-           [](const Polygon &p) {
+           [](const Polygon& p) {
              std::stringstream ss;
              ss << "<bark.Polygon2d> Points: ";
              ss << p.ShapeToString();
@@ -181,12 +189,12 @@ void python_geometry(py::module m) {
            })
       .def("ConcatenatePolygons", &Polygon::ConcatenatePolygons,
            "concatenates with another polygon")
-      .def("BufferPolygon", [](const Polygon& p,
-                               const double distance) {
-        Polygon poly_buffered;
-        BufferPolygon(p, distance, &poly_buffered);
-        return poly_buffered;
-      })
+      .def("BufferPolygon",
+           [](const Polygon& p, const double distance) {
+             Polygon poly_buffered;
+             BufferPolygon(p, distance, &poly_buffered);
+             return poly_buffered;
+           })
       .def("CalculateArea", &Polygon::CalculateArea, "calculates are covered")
       .def("ToArray", &Polygon::ToArray, "returns numpy array")
       .def("Valid", &Polygon::Valid, "checks if polygong is valid.")
@@ -200,10 +208,10 @@ void python_geometry(py::module m) {
       .def_readonly("rear_dist", &Polygon::rear_dist_, "rear distance.")
       .def_property_readonly("bounding_box", &Polygon::BoundingBox)
       .def(py::pickle(
-          [](const Polygon &p) -> py::tuple {
+          [](const Polygon& p) -> py::tuple {
             return py::make_tuple(p.ToArray(), p.center_);
           },
-          [](py::tuple &t) {
+          [](py::tuple& t) {
             if (t.size() != 2) throw std::runtime_error("Invalid point state!");
             Polygon p(t[1].cast<Pose>(),
                       t[0].cast<Matrix<float, Dynamic, Dynamic>>());
@@ -220,8 +228,8 @@ void python_geometry(py::module m) {
            "Create 3D model with specific type")
       .def_property_readonly("type", &bark::geometry::Model3D::GetType);
 
-  py::enum_<bark::geometry::Model3D::Type>(
-      m, "bark::geometry::Model3DType", py::arithmetic())
+  py::enum_<bark::geometry::Model3D::Type>(m, "bark::geometry::Model3DType",
+                                           py::arithmetic())
       .value("NONE", bark::geometry::Model3D::Type::NONE)
       .value("ROAD", bark::geometry::Model3D::Type::ROAD)
       .value("LIMOUSINE", bark::geometry::Model3D::Type::LIMOUSINE)

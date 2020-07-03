@@ -74,13 +74,20 @@ class ParameterServer(Params):
         self.store[new_key] = value
 
     def __delitem__(self, key):
-        del self.store[key]
+        if key in self.store:
+          del self.store[key]
 
     def __iter__(self):
         return iter(self.store)
 
     def __len__(self):
         return len(self.store)
+
+    def __getstate__(self):
+        return self.ConvertToDict()
+
+    def __setstate__(self, d):
+        self.__init__(json=d)
 
     def load(self, fn):
         with open(fn) as file:
@@ -97,6 +104,9 @@ class ParameterServer(Params):
                 self.GetValFromString(key, "", value, log_if_default=False)
 
         return self
+
+    def clone(self):
+      return ParameterServer(json = self.ConvertToDict())
 
     def ConvertToDict(self, print_description=False):
         dict = {}
@@ -165,7 +175,7 @@ class ParameterServer(Params):
     def GetCondensedParamList(self):
         def check_append(value):
           if isinstance(value, float) or isinstance(value, int) \
-              or isinstance(value,bool):
+              or isinstance(value,bool) or isinstance(value, str):
               return True
           # list float
           elif isinstance(value, list) and all(isinstance(el, float) for el in value):
@@ -211,7 +221,7 @@ class ParameterServer(Params):
           else:
             logging.warning("Key was nowhere found.")
         return value
-        
+
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]
@@ -231,6 +241,9 @@ class ParameterServer(Params):
     def GetListFloat(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
+    def GetString(self, param_name, description, default_value):
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
+
     def access(self, param_name):
         return self[param_name]
 
@@ -246,5 +259,24 @@ class ParameterServer(Params):
         self[param_name] = value
         return
 
-    def AddChild(self, name):
-        return self.__getitem__(name)
+    def AddChild(self, name, delete = False):
+        delim = "::"
+        rest_name = ""
+        child_name = name
+
+        found = name.find(delim)
+        if found > -1:
+          child_name = name[0:found]
+          rest_name = name[found + len(delim):]
+
+        child = None
+        if child_name in self.store and not delete:
+          child = self.store[child_name]
+        else:
+          self.store[child_name] = ParameterServer()
+          child = self.store[child_name]
+
+        if len(rest_name) == 0:
+          return child
+        else:
+          return child.AddChild(rest_name)

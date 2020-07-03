@@ -10,7 +10,6 @@
 #include "gtest/gtest.h"
 
 #include "bark/commons/params/setter_params.hpp"
-#include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
@@ -18,19 +17,19 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
-TEST(single_track_model, dynamic_test) {
-  using namespace std;
-  using namespace bark::geometry;
-  using namespace bark::models::dynamic;
-  using namespace bark::commons;
+using namespace std;
+using namespace bark::geometry;
+using namespace bark::models::dynamic;
+using namespace bark::commons;
 
+TEST(single_track_model, dynamic_test) {
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   x << 0, 0, 0, 0, 5;
 
   Input u(2);
   u << 0, 0;
 
-  DynamicModel *m;
+  DynamicModel* m;
   auto params = std::make_shared<SetterParams>();
   SingleTrackModel single_track_model(params);
   m = &single_track_model;
@@ -42,6 +41,49 @@ TEST(single_track_model, dynamic_test) {
   }
 }
 
+TEST(valid_state_test, dynamic_test) {
+  State x1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x1 << 50.0f, 0.0f, 0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_TRUE(IsValid(x1));
+
+  // nan
+  State x2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x2 << 50.0f, 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x2));
+
+  // inf
+  State x3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x3 << 50.0f, 0.0f / 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x3));
+
+  // nan and inf
+  State x4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  x4 << 50.0f, 0.0 / 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  EXPECT_FALSE(IsValid(x4));
+}
+
+TEST(valid_trajectory_test, dynamic_test) {
+  Trajectory traj1(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj1 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0, 0, 1, 3, 3, 0, 0, 1;
+  EXPECT_TRUE(IsValid(traj1));
+
+  // inf
+  Trajectory traj2(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj2 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 1 / 0.0f, 0, 1, 3, 3, 0, 0, 1;
+  EXPECT_FALSE(IsValid(traj2));
+
+  // nan
+  Trajectory traj3(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj3 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0.0 / 0.0f, 0, 1, 3, 3, 0, 0, 1;
+  EXPECT_FALSE(IsValid(traj3));
+
+  // both
+  Trajectory traj4(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  traj4 << 0, 1 / 0.0f, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0, 0, 1, 3, 3, 0, 0,
+      0.0 / 0.0f;
+  EXPECT_FALSE(IsValid(traj4));
+}
+
 TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace std;
   using namespace bark::geometry;
@@ -49,7 +91,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace bark::commons;
 
   const float dt = 1.0;
-  auto a_lat = [dt](const State &x, const State &x1) {
+  auto a_lat = [dt](const State& x, const State& x1) {
     auto theta_dot = (x1(static_cast<int>(StateDefinition::THETA_POSITION)) -
                       x(static_cast<int>(StateDefinition::THETA_POSITION))) /
                      dt;
@@ -57,7 +99,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   };
 
   auto params = std::make_shared<SetterParams>();
-  DynamicModel *m;
+  DynamicModel* m;
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
   m = single_track_model.get();
@@ -114,7 +156,7 @@ TEST(triple_integrator_model, dynamic_test) {
   Input u0(3);
   u0 << 0, 0, 0.;
 
-  DynamicModel *m;
+  DynamicModel* m;
   auto params = std::make_shared<SetterParams>();
   TripleIntegratorModel triple_int_model(params);
   m = &triple_int_model;
@@ -133,7 +175,7 @@ TEST(triple_integrator_model, dynamic_test) {
   // TODO(@hart): assert state
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

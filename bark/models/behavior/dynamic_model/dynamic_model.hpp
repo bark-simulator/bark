@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
 #define BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
 
@@ -18,12 +17,12 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-using dynamic::Trajectory;
-using dynamic::State;
 using dynamic::DynamicModelPtr;
 using dynamic::Input;
-using world::objects::AgentId;
+using dynamic::State;
+using dynamic::Trajectory;
 using world::ObservedWorld;
+using world::objects::AgentId;
 
 // model that uses last_action_ to produce trajectory
 // can e.g. be used for RL
@@ -33,15 +32,12 @@ class BehaviorDynamicModel : public BehaviorModel {
 
   virtual ~BehaviorDynamicModel() {}
 
-  virtual Trajectory Plan(
-    float delta_time,
-    const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time,
+                          const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  virtual void ActionToBehavior(const Action& action) {
-    action_ = action;
-  }
+  virtual void ActionToBehavior(const Action& action) { action_ = action; }
 
  private:
   float integration_time_delta_;
@@ -50,7 +46,7 @@ class BehaviorDynamicModel : public BehaviorModel {
 
 inline std::shared_ptr<BehaviorModel> BehaviorDynamicModel::Clone() const {
   std::shared_ptr<BehaviorDynamicModel> model_ptr =
-    std::make_shared<BehaviorDynamicModel>(*this);
+      std::make_shared<BehaviorDynamicModel>(*this);
   return model_ptr;
 }
 

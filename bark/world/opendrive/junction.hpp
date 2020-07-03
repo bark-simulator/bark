@@ -6,13 +6,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
 #define BARK_WORLD_OPENDRIVE_JUNCTION_HPP_
 
+#include "bark/world/opendrive/commons.hpp"
+
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace bark {
 namespace world {

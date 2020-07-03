@@ -6,15 +6,14 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
-#include "gtest/gtest.h"
+#include "bark/world/objects/agent.hpp"
+#include "bark/commons/params/setter_params.hpp"
+#include "bark/geometry/polygon.hpp"
+#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "bark/geometry/polygon.hpp"
-#include "bark/commons/params/setter_params.hpp"
-#include "bark/world/objects/agent.hpp"
 #include "bark/world/world.hpp"
+#include "gtest/gtest.h"
 
 using namespace bark::models::dynamic;
 using namespace bark::geometry;
@@ -32,16 +31,17 @@ TEST(agent, standard_agent) {
     ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
     DynamicModelPtr dyn_model(new SingleTrackModel());
     BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
-    Polygon polygon(Pose(1.25,1,0),std::vector<Point2d>{Point2d(0,0),Point2d(0,2),Point2d(4,2),Point2d(4,0),Point2d(0,0)});
+    Polygon
+polygon(Pose(1.25,1,0),std::vector<Point2d>{Point2d(0,0),Point2d(0,2),Point2d(4,2),Point2d(4,0),Point2d(0,0)});
 
     ASSERT_TRUE(polygon.Valid());
-    
+
     State init_state((int)StateDefinition::MIN_STATE_SIZE);
     init_state << 0.0, 0.0, 0.0, 0.0, 5.0;
 
-    AgentPtr agent(new Agent(init_state,beh_model,dyn_model,exec_model, polygon, params));
-    WorldPtr world(new World(params));
-    
+    AgentPtr agent(new Agent(init_state,beh_model,dyn_model,exec_model, polygon,
+params)); WorldPtr world(new World(params));
+
 
        //! new plan view
     PlanView p_1;
@@ -81,40 +81,46 @@ TEST(agent, standard_agent) {
 
 
     world->AddAgent(agent);
-    
+
     world->Step(1);
-    
-    
+
+
     //agent->Move(0.2, world);
 
     ASSERT_TRUE(true);
-    
+
 }
 */
 
 TEST(agent, PolygonFromState) {
-
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
 
-  Polygon shape(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
-  
+  Polygon shape(
+      Pose(1.25, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
+                           Point2d(4, 0), Point2d(0, 0)});
+
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
-  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model, shape, params));
+  AgentPtr agent1(
+      new Agent(init_state1, beh_model, dyn_model, exec_model, shape, params));
 
   Polygon poly_out = agent1->GetPolygonFromState(agent1->GetCurrentState());
-  
-  EXPECT_TRUE(Equals(shape, poly_out)); // we expect true as init_state1 is (0, 0, 0) --> transformed polygon is same
+
+  EXPECT_TRUE(
+      Equals(shape, poly_out));  // we expect true as init_state1 is (0, 0, 0)
+                                 // --> transformed polygon is same
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 5.0, 2.0, 3.14, 0.0, 0.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model, shape, params));
+  AgentPtr agent2(
+      new Agent(init_state2, beh_model, dyn_model, exec_model, shape, params));
 
   Polygon poly_out2 = agent2->GetPolygonFromState(agent2->GetCurrentState());
-  
-  EXPECT_FALSE(Equals(shape, poly_out2)); // we expect false as init_state2 is non-zero
 
+  EXPECT_FALSE(
+      Equals(shape, poly_out2));  // we expect false as init_state2 is non-zero
 }

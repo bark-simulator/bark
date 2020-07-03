@@ -1,6 +1,9 @@
 py_binary(
   name = "analyze_map",
-  srcs = ["analyze_map.py"],
+  srcs = [
+        "analyze_map.py",
+        "debug_settings.py"
+        ],
   data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data',
           '//examples:params'],
@@ -8,4 +11,12 @@ py_binary(
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime:runtime",],
+)
+
+py_binary(
+  name = "debug_settings",
+  srcs = [
+        "debug_settings.py"
+        ],
+  visibility = ["//visibility:public"],
 )

@@ -67,7 +67,16 @@ class ParamServerTests(unittest.TestCase):
 
     cpp_object = CppParamServerTestObject(params_child)
 
+  def test_pickle_param_server(self):
+    params = ParameterServer()
+    params_child = params["test_child"]
+    _  = params_child["Test1"]["Test2"]["Lala", "", False]
+    _  = params_child["Test3"]["Test2"]["Lala1", "", 23.3434]
+    _  = params_child["Test1"]["Test2"]["asdsd", "", 14]
 
-
+    params_unpickled = pickle_unpickle(params)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["Lala"], False)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test3"]["Test2"]["Lala1"], 23.3434)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["asdsd"], 14)
 if __name__ == '__main__':
   unittest.main()

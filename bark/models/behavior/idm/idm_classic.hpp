@@ -13,8 +13,8 @@
 #include <tuple>
 
 #include "bark/commons/transformation/frenet.hpp"
-#include "bark/world/world.hpp"
 #include "bark/models/behavior/idm/base_idm.hpp"
+#include "bark/world/world.hpp"
 
 namespace bark {
 namespace models {
@@ -27,16 +27,15 @@ using bark::world::map::LaneCorridorPtr;
 // of a LaneCorridor
 class BehaviorIDMClassic : public BaseIDM {
  public:
-  explicit BehaviorIDMClassic(const commons::ParamsPtr& params) :
-    BaseIDM(params) {}
+  explicit BehaviorIDMClassic(const commons::ParamsPtr& params)
+      : BehaviorModel(params), BaseIDM(params) {}
 
   virtual ~BehaviorIDMClassic() {}
 
   std::tuple<Trajectory, Action> GenerateTrajectory(
-    const world::ObservedWorld& observed_world,
-    const LaneCorridorPtr& lane_corr,
-    const IDMRelativeValues& rel_values,
-    double delta_time) const;
+      const world::ObservedWorld& observed_world,
+      const LaneCorridorPtr& lane_corr, const IDMRelativeValues& rel_values,
+      double delta_time) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 };

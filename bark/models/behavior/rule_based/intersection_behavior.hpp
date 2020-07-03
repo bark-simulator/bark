@@ -9,69 +9,61 @@
 #ifndef BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
 #define BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
 
-#include <memory>
 #include <map>
+#include <memory>
+#include <tuple>
 #include <utility>
 #include <vector>
-#include <tuple>
 
-#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/idm/base_idm.hpp"
+#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::models::dynamic::StateDefinition::VEL_POSITION;
 using bark::world::Agent;
+using bark::world::AgentFrenetPair;
 using bark::world::AgentId;
+using bark::world::AgentMap;
 using bark::world::AgentPtr;
 using bark::world::FrenetPosition;
-using bark::world::map::LaneCorridorPtr;
 using bark::world::ObservedWorld;
-using bark::world::AgentMap;
+using bark::world::map::LaneCorridorPtr;
 using bark::world::prediction::PredictionSettings;
-using bark::world::AgentFrenetPair;
-using bark::models::dynamic::StateDefinition::VEL_POSITION;
-
 
 // Behavior for intersection; prediction-based; right before left
 class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
  public:
-  explicit BehaviorIntersectionRuleBased(
-    const commons::ParamsPtr& params) :
-    BehaviorLaneChangeRuleBased(params) {
+  explicit BehaviorIntersectionRuleBased(const commons::ParamsPtr& params)
+      : BehaviorModel(params), BehaviorLaneChangeRuleBased(params) {
     // this is required for the IDM to get around corners
     SetLimitSteeringRate(false);
     // parameters
-    prediction_time_horizon_ = params->GetReal(
-      "BehaviorIntersectionRuleBased::PredictionTimeHorizon",
-      "Prediction time horizon.",
-      5.0);
-    prediction_t_inc_ = params->GetReal(
-      "BehaviorIntersectionRuleBased::PredictionTInc",
-      "Fine graining of prediction collision checking.",
-      0.5);
+    prediction_time_horizon_ =
+        params->GetReal("BehaviorIntersectionRuleBased::PredictionTimeHorizon",
+                        "Prediction time horizon.", 5.0);
+    prediction_t_inc_ =
+        params->GetReal("BehaviorIntersectionRuleBased::PredictionTInc",
+                        "Fine graining of prediction collision checking.", 0.5);
     braking_distance_ = params->GetReal(
-      "BehaviorIntersectionRuleBased::BrakingDistance",
-      "Distance at which the vehicle should start to brake.",
-      10.);
+        "BehaviorIntersectionRuleBased::BrakingDistance",
+        "Distance at which the vehicle should start to brake.", 10.);
     angle_diff_for_intersection_ = params->GetReal(
-      "BehaviorIntersectionRuleBased::AngleDiffForIntersection",
-      "Angle at which vehicles are counted as intersecting.",
-      1.4);
+        "BehaviorIntersectionRuleBased::AngleDiffForIntersection",
+        "Angle at which vehicles are counted as intersecting.", 1.4);
   }
 
-  Trajectory Plan(
-    float delta_time, const world::ObservedWorld& observed_world);
+  Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
 
   std::tuple<double, AgentPtr> CheckIntersectingVehicles(
-    const ObservedWorld& observed_world,
-    double t_inc = 0.5);
+      const ObservedWorld& observed_world, double t_inc = 0.5);
 
   std::pair<AgentId, bool> GetIntersectingAgent(
-    const AgentMap& intersecting_agents,
-    const ObservedWorld& observed_world) const;
+      const AgentMap& intersecting_agents,
+      const ObservedWorld& observed_world) const;
 
   virtual ~BehaviorIntersectionRuleBased() {}
 
@@ -84,8 +76,8 @@ class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
   double braking_distance_;
 };
 
-inline std::shared_ptr<BehaviorModel>
-BehaviorIntersectionRuleBased::Clone() const {
+inline std::shared_ptr<BehaviorModel> BehaviorIntersectionRuleBased::Clone()
+    const {
   std::shared_ptr<BehaviorIntersectionRuleBased> model_ptr =
       std::make_shared<BehaviorIntersectionRuleBased>(*this);
   return model_ptr;
@@ -96,5 +88,3 @@ BehaviorIntersectionRuleBased::Clone() const {
 }  // namespace bark
 
 #endif  // BARK_MODELS_BEHAVIOR_RULE_BASED_INTERSECTION_BEHAVIOR_HPP_
-
-

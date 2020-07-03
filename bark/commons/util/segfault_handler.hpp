@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_COMMONS_SEGFAULT_HANDLER_HPP_
 #define BARK_COMMONS_SEGFAULT_HANDLER_HPP_
 
@@ -18,10 +17,10 @@ namespace commons {
 
 void SegfaultHandler(int sig) {
   std::cerr << boost::stacktrace::stacktrace() << std::endl;
+  throw;
 }
 
 }  // namespace commons
 }  // namespace bark
-
 
 #endif  // BARK_COMMONS_SEGFAULT_HANDLER_HPP_

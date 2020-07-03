@@ -11,6 +11,7 @@
 bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params)
     : Primitive(params),
+      BehaviorModel(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(params->GetReal("PrimitiveConstAccStayLane::Acceleration",
                                     "Constant acceleration to apply", 0.0)) {}
@@ -19,6 +20,7 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params,
                               float acceleration)
     : Primitive(params),
+      BehaviorModel(params),
       BehaviorIDMLaneTracking(params),
       acceleration_(acceleration) {}
 
@@ -60,7 +62,8 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
   Trajectory traj = std::get<0>(traj_action);
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
-  SetLastAction(action);
+  Primitive::SetLastAction(action);
+  BehaviorModel::SetLastAction(action);
   return traj;
 }
 

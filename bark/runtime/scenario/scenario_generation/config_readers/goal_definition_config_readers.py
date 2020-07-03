@@ -13,14 +13,20 @@ from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark.core.geometry import *
-
+import logging
 
 # helper class to support various types of goals easily generated for the 
 # goal config readers
 class GoalGenerator:
   @staticmethod
-  def get_goal_definition(config_param_object, goal_definition, road_corridor, lane_position):
-    return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+  def get_goal_definition(config_param_object, goal_definition, road_corridor, lane_position, enforce_goal):
+    if enforce_goal:
+      return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+    else:
+      try:
+        return eval("GoalGenerator.{}(config_param_object, road_corridor, lane_position)".format(goal_definition))
+      except:
+        return eval("GoalGenerator.EndOfLane(config_param_object, road_corridor, lane_position)")
 
   @staticmethod
   def EndOfLane(config_param_object, road_corridor, lane_position):
@@ -67,22 +73,27 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
   def create_from_config(self, config_param_object, road_corridor, agent_states, controlled_agent_ids, **kwargs):
     self._controlled_agents_goal_type = config_param_object["GoalTypeControlled", "Specifies type of goals \
                           for controlled agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
+    self._enforce_controlled_goal = config_param_object["EnforceControlledGoal", "If true exception is raised if goal not available", True]
     
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
-    
+    self._enforce_others_goal = config_param_object["EnforceOthersGoal", "If true exception is raised if goal not available", True]
+
     goal_definitions = []
     agent_lane_positions = kwargs.pop("agent_lane_positions")
     for idx, _ in enumerate(agent_states):
       lane_position = agent_lane_positions[idx]
+      if isinstance(lane_position, list):
+        lane_position = lane_position[0]
       if controlled_agent_ids[idx]:
-        goal_definition = GoalGenerator.get_goal_definition(
-          config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position)
+          goal_definition = GoalGenerator.get_goal_definition(
+            config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position, self._enforce_controlled_goal)
       else:
           goal_definition = GoalGenerator.get_goal_definition(
-          config_param_object, self._other_agents_goal_type, road_corridor, lane_position)
+          config_param_object, self._other_agents_goal_type, road_corridor, lane_position, self._enforce_others_goal)
       goal_definitions.append(goal_definition)
-    
     return goal_definitions, {}, config_param_object
+
+
 
 

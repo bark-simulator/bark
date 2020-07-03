@@ -349,6 +349,7 @@ void MapInterface::GenerateRoadCorridor(
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
   road_corridor->SetRoadIds(road_ids);
+  road_corridor->SetDrivingDirection(driving_direction);
   road_corridors_[road_corridor_hash] = road_corridor;
 }
 
@@ -399,11 +400,9 @@ RoadCorridorPtr MapInterface::GenerateRoadCorridor(
   return GetRoadCorridor(road_ids, driving_direction);
 }
 
-bool MapInterface::XodrLaneIdAtPolygon(
-    const bark::geometry::Polygon& polygon,
-    XodrLaneId& found_lane_id) const {
-  bark::geometry::Point2d goal_center(polygon.center_(0),
-                                         polygon.center_(1));
+bool MapInterface::XodrLaneIdAtPolygon(const bark::geometry::Polygon& polygon,
+                                       XodrLaneId& found_lane_id) const {
+  bark::geometry::Point2d goal_center(polygon.center_(0), polygon.center_(1));
   std::vector<opendrive::XodrLanePtr> nearest_lanes;
   if (FindNearestXodrLanes(goal_center, 1, nearest_lanes)) {
     found_lane_id = nearest_lanes[0]->GetId();

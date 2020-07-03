@@ -14,7 +14,7 @@ from bark.runtime.commons.parameters import ParameterServer
 class ParamsTests(unittest.TestCase):
     def test_parameters(self):
         # initialize Params
-        p = ParameterServer()  # TODO: this has to be the ParameterServer
+        p = ParameterServer()
 
         # set new parameter
         self.assertTrue(p["LetsTest"]["hierarchy", "bla", True])

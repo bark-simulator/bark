@@ -11,7 +11,10 @@ py_library(
      "goal_definition_config_readers.py",
      ],
     data = ['//bark:generate_core'],
-    imports = ['../../../python'],
-    deps = ["//bark/runtime/scenario:scenario",],
+    imports = [],
+    deps = [
+        "//bark/runtime/scenario:scenario",
+        "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing"
+        ],
     visibility = ["//visibility:public"],
 )

@@ -9,13 +9,19 @@
 from abc import abstractmethod
 
 class ConfigReader:
-  def __init__(self, random_state):
+  def __init__(self, random_state, current_scenario_idx):
   # holds a global random state which should be used for sampling in config readers
     self.__random_state = random_state
+  # holds current scenario idx if config reader adjust settings according to scenario idx ( e.g. databased models)
+    self.__current_scenario_idx = current_scenario_idx
 
   @property
   def random_state(self):
     return self.__random_state
+
+  @property
+  def current_scenario_idx(self):
+    return self.__current_scenario_idx
 
 
 # The property-based scenario generation must implement all of this interfaces. Property readers only the respective interface

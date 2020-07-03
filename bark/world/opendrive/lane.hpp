@@ -20,28 +20,25 @@ namespace bark {
 namespace world {
 namespace opendrive {
 
-using bark::geometry::Point2d;
 using bark::geometry::Line;
-
+using bark::geometry::Point2d;
 
 class XodrLane {
  public:
   XodrLane();
   explicit XodrLane(const XodrLanePosition& lane_position);
 
-  explicit XodrLane(const std::shared_ptr<XodrLane>& lane) :
-    lane_id_(lane->lane_id_),
-    lane_position_(lane->lane_position_),
-    link_(lane->link_),
-    line_(lane->line_),
-    lane_type_(lane->lane_type_),
-    driving_direction_(lane->driving_direction_),
-    road_mark_(lane->road_mark_),
-    speed_(lane->speed_) {}
+  explicit XodrLane(const std::shared_ptr<XodrLane>& lane)
+      : lane_id_(lane->lane_id_),
+        lane_position_(lane->lane_position_),
+        link_(lane->link_),
+        line_(lane->line_),
+        lane_type_(lane->lane_type_),
+        driving_direction_(lane->driving_direction_),
+        road_mark_(lane->road_mark_),
+        speed_(lane->speed_) {}
 
-  ~XodrLane() {
-    
-  }
+  ~XodrLane() {}
 
   //! setter functions
   void SetId(const XodrLaneId lane_id) { lane_id_ = lane_id; }
@@ -50,7 +47,8 @@ class XodrLane {
   void SetSpeed(float speed) { speed_ = speed; }
   void SetLaneType(const XodrLaneType lt) { lane_type_ = lt; }
   void SetDrivingDirection(const XodrDrivingDirection& d) {
-    driving_direction_ = d;}
+    driving_direction_ = d;
+  }
   void SetRoadMark(const XodrRoadMark rm) { road_mark_ = rm; }
   void SetLanePosition(const XodrLanePosition& lane_position) {
     lane_position_ = lane_position;
@@ -67,10 +65,11 @@ class XodrLane {
   float GetSpeed() const { return speed_; }
   XodrLaneType GetLaneType() const { return lane_type_; }
   XodrDrivingDirection GetDrivingDirection() const {
-    return driving_direction_; }
+    return driving_direction_;
+  }
   XodrLaneId GetId() const { return lane_id_; }
   XodrLanePosition GetLanePosition() const { return lane_position_; }
-  
+
  private:
   XodrLaneId lane_id_;
   XodrLanePosition lane_position_;
@@ -83,8 +82,6 @@ class XodrLane {
   float speed_;
   static XodrLaneId lane_count;
 };
-
-
 
 inline std::string print(const XodrLane& l) {
   std::stringstream ss;

@@ -64,7 +64,7 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 10.0, 0.1);
 
   lane = CreateLaneFromLaneWidth(-1, p.GetReferenceLine(), lane_width,
-                                     0.05f);  // right side
+                                 0.05f);  // right side
 
   line = lane->GetLine();
 
@@ -82,7 +82,7 @@ TEST(lane, open_drive) {
   p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
 
   lane = CreateLaneFromLaneWidth(1, p2.GetReferenceLine(), lane_width,
-                                     0.05f);  // left side
+                                 0.05f);  // left side
 
   line = lane->GetLine();
 
@@ -92,7 +92,7 @@ TEST(lane, open_drive) {
   EXPECT_NEAR(bg::get<1>(line.obj_[line.obj_.size() - 1]), 1.5, 0.1);
 
   lane = CreateLaneFromLaneWidth(-1, p2.GetReferenceLine(), lane_width,
-                                     0.05f);  // right side
+                                 0.05f);  // right side
 
   line = lane->GetLine();
   EXPECT_NEAR(bg::get<0>(line.obj_[0]), 0.0, 0.1);
@@ -166,10 +166,10 @@ TEST(road, open_drive) {
   //! XodrLane
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width = {0, 1, off};
-  XodrLanePtr lane = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
-                                             lane_width, 0.05f);
-  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(),
-                                              lane_width, 0.05f);
+  XodrLanePtr lane =
+      CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width, 0.05f);
+  XodrLanePtr lane2 =
+      CreateLaneFromLaneWidth(1, p->GetReferenceLine(), lane_width, 0.05f);
 
   ls->AddLane(lane);
   ls2->AddLane(lane2);
@@ -230,13 +230,13 @@ TEST(map, open_drive) {
   XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 10.0, off};
 
-  XodrLanePtr lane = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
-                                             lane_width_1, 0.05f);
-  XodrLanePtr lane2 = CreateLaneFromLaneWidth(1, p->GetReferenceLine(),
-                                              lane_width_1, 0.05f);
+  XodrLanePtr lane =
+      CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width_1, 0.05f);
+  XodrLanePtr lane2 =
+      CreateLaneFromLaneWidth(1, p->GetReferenceLine(), lane_width_1, 0.05f);
 
-  XodrRoadMark rm{roadmark::XodrRoadMarkType::SOLID, roadmark::XodrRoadMarkColor::STANDARD,
-              0.1};
+  XodrRoadMark rm{roadmark::XodrRoadMarkType::SOLID,
+                  roadmark::XodrRoadMarkColor::STANDARD, 0.1};
 
   std::cout << print(rm) << std::endl;
   lane2->SetRoadMark(rm);
@@ -265,10 +265,10 @@ TEST(map, open_drive) {
   XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 10.0, off2};
 
-  XodrLanePtr lane3 = CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(),
-                                              lane_width_2, 0.05f);
-  XodrLanePtr lane4 = CreateLaneFromLaneWidth(1, p2->GetReferenceLine(),
-                                              lane_width_2, 0.05f);
+  XodrLanePtr lane3 =
+      CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.05f);
+  XodrLanePtr lane4 =
+      CreateLaneFromLaneWidth(1, p2->GetReferenceLine(), lane_width_2, 0.05f);
 
   ls3->AddLane(lane3);
   ls3->AddLane(lane4);
@@ -302,7 +302,7 @@ TEST(map, open_drive) {
   XodrRoadPtr ret_road = map->GetRoad(100);
   XodrLaneSectionPtr ret_ls = ret_road->GetLaneSections()[0];
   XodrLanes ret_lanes = ret_ls->GetLanes();
-  
+
   EXPECT_GT(ret_lanes.size(), 0);
 
   for (auto const& rl : ret_lanes)
