@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
-#define MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#ifndef BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#define BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
 
 #include "bark/geometry/commons.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
@@ -46,4 +46,4 @@ WorldPtr MakeTestWorldHighway();
 }  // namespace models
 }  // namespace bark
 
-#endif  // MODULES_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
+#endif  // BARK_MODELS_TESTS_MAKE_TEST_WORLD_HPP_
