@@ -9,7 +9,6 @@
 import numpy as np
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
-from bark.models.behavior.hypothesis.behavior_space.behavior_space import BehaviorSpace
 from bark.runtime.scenario.interaction_dataset_processing import BehaviorFromTrack
 
 from bark.core.models.behavior import *
