@@ -6,13 +6,12 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
 #define BARK_WORLD_GOAL_DEFINITION_SEQUENTIAL_HPP_
 
 #include <vector>
-#include "bark/world/goal_definition/goal_definition.hpp"
 #include "bark/geometry/polygon.hpp"
+#include "bark/world/goal_definition/goal_definition.hpp"
 
 namespace bark {
 namespace world {
@@ -23,17 +22,18 @@ namespace goal_definition {
 
 constexpr int NO_GOAL_REACHED = -1;
 
-class GoalDefinitionSequential : public GoalDefinition  {
+class GoalDefinitionSequential : public GoalDefinition {
  public:
-  GoalDefinitionSequential() : GoalDefinition(),
-                               sequential_goals_(),
-                               last_sequential_goal_reached_(NO_GOAL_REACHED) {}
+  GoalDefinitionSequential()
+      : GoalDefinition(),
+        sequential_goals_(),
+        last_sequential_goal_reached_(NO_GOAL_REACHED) {}
 
   GoalDefinitionSequential(
-      const std::vector<GoalDefinitionPtr>& sequential_goals) :
-    GoalDefinition(),
-    sequential_goals_(sequential_goals),
-    last_sequential_goal_reached_(NO_GOAL_REACHED) {}
+      const std::vector<GoalDefinitionPtr>& sequential_goals)
+      : GoalDefinition(),
+        sequential_goals_(sequential_goals),
+        last_sequential_goal_reached_(NO_GOAL_REACHED) {}
 
   void AddSequentialGoal(const GoalDefinitionPtr& sequential_goal) {
     sequential_goals_.push_back(sequential_goal);
@@ -58,7 +58,6 @@ class GoalDefinitionSequential : public GoalDefinition  {
   std::vector<GoalDefinitionPtr> sequential_goals_;
   int last_sequential_goal_reached_;
 };
-
 
 }  // namespace goal_definition
 }  // namespace world

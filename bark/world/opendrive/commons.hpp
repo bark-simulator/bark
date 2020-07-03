@@ -26,35 +26,32 @@ using XodrRoadId = uint32_t;
 
 struct XodrRoadLinkInfo {
   XodrRoadLinkInfo() : id_(1000000), type_("") {}
-  XodrRoadLinkInfo(const XodrRoadId &id,
-               const std::string &type) :
-    id_(id),
-    type_(type) {}
+  XodrRoadLinkInfo(const XodrRoadId& id, const std::string& type)
+      : id_(id), type_(type) {}
   XodrRoadId id_;
   std::string type_;
 };
 
 struct XodrRoadLink {
   XodrRoadLink() : predecessor_(), successor_() {}
-  XodrRoadLink(const XodrRoadLinkInfo &predecessor,
-           const XodrRoadLinkInfo &successor) :
-    predecessor_(predecessor),
-    successor_(successor) {}
+  XodrRoadLink(const XodrRoadLinkInfo& predecessor,
+               const XodrRoadLinkInfo& successor)
+      : predecessor_(predecessor), successor_(successor) {}
   XodrRoadLinkInfo predecessor_;
   XodrRoadLinkInfo successor_;
   //! getter
   XodrRoadLinkInfo GetPredecessor() const { return predecessor_; }
   XodrRoadLinkInfo GetSuccessor() const { return successor_; }
-  void SetPredecessor(const XodrRoadLinkInfo &info) { predecessor_ = info; }
-  void SetSuccessor(const XodrRoadLinkInfo &info) { successor_ = info; }
+  void SetPredecessor(const XodrRoadLinkInfo& info) { predecessor_ = info; }
+  void SetSuccessor(const XodrRoadLinkInfo& info) { successor_ = info; }
 };
 
-inline std::string print(const XodrRoadLink &l) {
+inline std::string print(const XodrRoadLink& l) {
   std::stringstream ss;
-  ss << "XodrRoadLink.predecessor: " << l.predecessor_.id_ << \
-        "of type" << l.predecessor_.type_ << "; ";
-  ss << "XodrRoadLink.successor: " << l.successor_.id_ << \
-        "of type" << l.successor_.type_ << std::endl;
+  ss << "XodrRoadLink.predecessor: " << l.predecessor_.id_ << "of type"
+     << l.predecessor_.type_ << "; ";
+  ss << "XodrRoadLink.successor: " << l.successor_.id_ << "of type"
+     << l.successor_.type_ << std::endl;
   return ss.str();
 }
 
@@ -72,7 +69,7 @@ struct XodrLaneLink {
   XodrLanePosition to_position;
 };
 
-inline std::string print(const XodrLaneLink &l) {
+inline std::string print(const XodrLaneLink& l) {
   std::stringstream ss;
   ss << "XodrLaneLink.from_position: " << l.from_position << "; ";
   ss << "XodrLaneLink.to_position: " << l.to_position << std::endl;
@@ -90,17 +87,13 @@ struct Connection {
   XodrLaneLinks lane_links_;
 };
 
-enum XodrDrivingDirection {
-  FORWARD = 0,
-  BACKWARD = 1,
-  BOTH = 2
-};
+enum XodrDrivingDirection { FORWARD = 0, BACKWARD = 1, BOTH = 2 };
 
 enum XodrLaneType {
   NONE = 0,
   DRIVING = 1,
-  //STOP = 2,
-  //SHOULDER = 3,
+  // STOP = 2,
+  // SHOULDER = 3,
   BIKING = 4,
   SIDEWALK = 5,
   BORDER = 6,
@@ -132,14 +125,13 @@ enum XodrRoadMarkType {
   SOLID = 1,
   BROKEN = 2,
   /*SOLID_SOLID = 3, // (for double solid line)
-  SOLID_BROKEN = 4, // (from inside to outside, exception: center lane – from left to right)
-  BROKEN_SOLID = 5, // (from inside to outside, exception: center lane – from left to right)
-  BROKEN_BROKEN = 6, // (from inside to outside, exception: center lane – from left to right)
-  BOTTS_DOTS = 7,
-  GRASS = 8, // (meaning a grass edge)
-  CURB = 9,
-  CUSTOM = 10, //  (if detailed description is given in child tags)
-  EDGE = 11, // (describing the limit of usable space on a road)
+  SOLID_BROKEN = 4, // (from inside to outside, exception: center lane – from
+  left to right) BROKEN_SOLID = 5, // (from inside to outside, exception: center
+  lane – from left to right) BROKEN_BROKEN = 6, // (from inside to outside,
+  exception: center lane – from left to right) BOTTS_DOTS = 7, GRASS = 8, //
+  (meaning a grass edge) CURB = 9, CUSTOM = 10, //  (if detailed description is
+  given in child tags) EDGE = 11, // (describing the limit of usable space on a
+  road)
   */
 };
 
@@ -151,7 +143,7 @@ enum XodrRoadMarkColor {
   */
   WHITE = 4,
   YELLOW = 5,
-  //ORANGE = 6,
+  // ORANGE = 6,
 };
 
 }  // namespace roadmark
@@ -162,10 +154,10 @@ struct XodrRoadMark {
   float width_;
 };
 
-inline std::string print(const XodrRoadMark &r) {
+inline std::string print(const XodrRoadMark& r) {
   std::stringstream ss;
-  ss << "XodrRoadMark: type: " << r.type_ << ", color: " << \
-        r.color_ << ", width: " << r.width_ << std::endl;
+  ss << "XodrRoadMark: type: " << r.type_ << ", color: " << r.color_
+     << ", width: " << r.width_ << std::endl;
   return ss.str();
 }
 
@@ -176,12 +168,8 @@ struct XodrLaneWidth {
 };
 
 inline geometry::Line CreateLineWithOffsetFromLine(
-  geometry::Line previous_line,
-  int id,
-  XodrLaneWidth lane_width_current_lane,
-  float s_inc = 0.2f,
-  float s_max_delta = 0.1f) {
-
+    geometry::Line previous_line, int id, XodrLaneWidth lane_width_current_lane,
+    float s_inc = 0.2f, float s_max_delta = 0.1f) {
   namespace bg = boost::geometry;
   XodrLaneOffset off = lane_width_current_lane.off;
   float s = lane_width_current_lane.s_start;
@@ -191,8 +179,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   boost::geometry::unique(previous_line.obj_);
 
   geometry::Line simplified_prev_line;
-  boost::geometry::simplify(previous_line.obj_,
-                            simplified_prev_line.obj_,
+  boost::geometry::simplify(previous_line.obj_, simplified_prev_line.obj_,
                             s_max_delta);
   simplified_prev_line.RecomputeS();
 
@@ -203,35 +190,32 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     s_end = simplified_prev_line.Length();
 
   // b, c, d, s_start = 0 and roughly the same length simplification
-  if (off.b == 0. &&  off.c == 0. && off.d == 0. &&
+  if (off.b == 0. && off.c == 0. && off.d == 0. &&
       simplified_prev_line.obj_.size() > 1 && s == 0. &&
-      fabs((s_end-s) - simplified_prev_line.Length()) < 1.) {
+      fabs((s_end - s) - simplified_prev_line.Length()) < 1.) {
     // we can loop through all innter lane points
     // previous_line == inner_line
     geometry::Point2d prev_point = simplified_prev_line.obj_[0],
                       current_point = simplified_prev_line.obj_[1];
 
-    float tangent_angle = atan2(
-      bg::get<1>(current_point) - bg::get<1>(prev_point),
-      bg::get<0>(current_point) - bg::get<0>(prev_point));
-    normal = geometry::Point2d(cos(tangent_angle+asin(1)),
-                               sin(tangent_angle+asin(1)));
+    float tangent_angle =
+        atan2(bg::get<1>(current_point) - bg::get<1>(prev_point),
+              bg::get<0>(current_point) - bg::get<0>(prev_point));
+    normal = geometry::Point2d(cos(tangent_angle + asin(1)),
+                               sin(tangent_angle + asin(1)));
     scale = -sign * off.a;
     tmp_line.AddPoint(
-      geometry::Point2d(bg::get<0>(prev_point) + scale * bg::get<0>(normal),
-                        bg::get<1>(prev_point) + scale * bg::get<1>(normal)));
-
+        geometry::Point2d(bg::get<0>(prev_point) + scale * bg::get<0>(normal),
+                          bg::get<1>(prev_point) + scale * bg::get<1>(normal)));
 
     for (int i = 1; i < simplified_prev_line.obj_.size(); i++) {
-      prev_point = simplified_prev_line.obj_[i-1];
+      prev_point = simplified_prev_line.obj_[i - 1];
       current_point = simplified_prev_line.obj_[i];
-      tangent_angle = atan2(
-        bg::get<1>(current_point) - bg::get<1>(prev_point),
-        bg::get<0>(current_point) - bg::get<0>(prev_point));
-      normal = geometry::Point2d(cos(tangent_angle+asin(1)),
-                                 sin(tangent_angle+asin(1)));
-      tmp_line.AddPoint(
-        geometry::Point2d(
+      tangent_angle = atan2(bg::get<1>(current_point) - bg::get<1>(prev_point),
+                            bg::get<0>(current_point) - bg::get<0>(prev_point));
+      normal = geometry::Point2d(cos(tangent_angle + asin(1)),
+                                 sin(tangent_angle + asin(1)));
+      tmp_line.AddPoint(geometry::Point2d(
           bg::get<0>(current_point) + scale * bg::get<0>(normal),
           bg::get<1>(current_point) + scale * bg::get<1>(normal)));
     }
@@ -239,13 +223,12 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     for (; s <= s_end;) {
       geometry::Point2d point = GetPointAtS(simplified_prev_line, s);
       normal = GetNormalAtS(simplified_prev_line, s);
-      scale = -sign * Polynom(
-        s-lane_width_current_lane.s_start, off.a, off.b, off.c, off.d);
+      scale = -sign * Polynom(s - lane_width_current_lane.s_start, off.a, off.b,
+                              off.c, off.d);
       tmp_line.AddPoint(
-        geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
-                          bg::get<1>(point) + scale * bg::get<1>(normal)));
-      if ((s_end - s < s_inc) && (s_end - s > 0.))
-        s_inc = s_end - s;
+          geometry::Point2d(bg::get<0>(point) + scale * bg::get<0>(normal),
+                            bg::get<1>(point) + scale * bg::get<1>(normal)));
+      if ((s_end - s < s_inc) && (s_end - s > 0.)) s_inc = s_end - s;
       s += s_inc;
     }
   }

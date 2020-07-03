@@ -7,8 +7,6 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/observed_world.hpp"
-#include "gtest/gtest.h"
-#include "bark/commons/params/setter_params.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
@@ -26,13 +24,13 @@
 #include "bark/world/tests/dummy_road_corridor.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
+#include "gtest/gtest.h"
 
 using namespace bark::models::dynamic;
 using namespace bark::models::behavior;
 using namespace bark::models::execution;
 using namespace bark::world::map;
 
-using bark::commons::SetterParams;
 using bark::commons::SetterParams;
 using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Model3D;
@@ -314,8 +312,14 @@ TEST(observed_world, predict) {
   u1 << 2, 0;
   Input u2(2);
   u2 << 0, 1;
-  BehaviorMotionPrimitives::MotionIdx idx1 = std::dynamic_pointer_cast<BehaviorMPContinuousActions>(ego_prediction_model)->AddMotionPrimitive(u1);  // NOLINT
-  BehaviorMotionPrimitives::MotionIdx idx2 = std::dynamic_pointer_cast<BehaviorMPContinuousActions>(ego_prediction_model)->AddMotionPrimitive(u2);  // NOLINT
+  BehaviorMotionPrimitives::MotionIdx idx1 =
+      std::dynamic_pointer_cast<BehaviorMPContinuousActions>(
+          ego_prediction_model)
+          ->AddMotionPrimitive(u1);  // NOLINT
+  BehaviorMotionPrimitives::MotionIdx idx2 =
+      std::dynamic_pointer_cast<BehaviorMPContinuousActions>(
+          ego_prediction_model)
+          ->AddMotionPrimitive(u2);  // NOLINT
 
   BehaviorModelPtr others_prediction_model(
       new BehaviorConstantVelocity(params));

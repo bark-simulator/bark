@@ -11,8 +11,8 @@
 #define BARK_COMMONS_TRANSFORMATION_FRENET_STATE_HPP_
 
 #include "bark/commons/transformation/frenet.hpp"
-#include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/geometry/line.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 
 namespace bark {
 namespace commons {

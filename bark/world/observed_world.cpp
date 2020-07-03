@@ -22,10 +22,9 @@ using bark::world::AgentMap;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
-  if(!lane_corridor) {
-    return FrontRearAgents{
-                AgentFrenetPair(nullptr, FrenetPosition()),
-                AgentFrenetPair(nullptr, FrenetPosition())};
+  if (!lane_corridor) {
+    return FrontRearAgents{AgentFrenetPair(nullptr, FrenetPosition()),
+                           AgentFrenetPair(nullptr, FrenetPosition())};
   }
 
   AgentId id = GetEgoAgentId();
@@ -35,7 +34,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
 }
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   BARK_EXPECT_TRUE(lane_corridor != nullptr);
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
@@ -43,7 +42,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear(
 }
 
 AgentFrenetPair ObservedWorld::GetAgentInFront(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
   return fr_agent.front;
 }
@@ -54,7 +53,7 @@ AgentFrenetPair ObservedWorld::GetAgentInFront() const {
 }
 
 AgentFrenetPair ObservedWorld::GetAgentBehind(
-  const LaneCorridorPtr& lane_corridor) const {
+    const LaneCorridorPtr& lane_corridor) const {
   FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
   return fr_agent.rear;
 }
@@ -132,24 +131,25 @@ ObservedWorldPtr ObservedWorld::Predict(
 }
 
 // Predict each agent with specific behavior model (Note setup required)
- ObservedWorldPtr ObservedWorld::Predict(float time_span, BehaviorModelPtr ego_behavior_model,
-         const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const
- {
+ObservedWorldPtr ObservedWorld::Predict(
+    float time_span, BehaviorModelPtr ego_behavior_model,
+    const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
 
   auto ego_agent_ptr = next_world->GetEgoAgent();
-  if(ego_agent_ptr) {
-      ego_agent_ptr->SetBehaviorModel(ego_behavior_model);
+  if (ego_agent_ptr) {
+    ego_agent_ptr->SetBehaviorModel(ego_behavior_model);
   } else {
-    LOG(WARNING) << "Ego Agent not existent in observed world during prediction";
+    LOG(WARNING)
+        << "Ego Agent not existent in observed world during prediction";
   }
-  
+
   for (const auto& agent_pair : other_behaviors) {
     auto agent_ptr = next_world->GetAgent(agent_pair.first);
     if (!agent_ptr) {
-      LOG(WARNING) << "Agent Id" << agent_pair.first 
-              <<" not existent in observed world during prediction";
+      LOG(WARNING) << "Agent Id" << agent_pair.first
+                   << " not existent in observed world during prediction";
       continue;
     }
     agent_ptr->SetBehaviorModel(agent_pair.second);
@@ -158,7 +158,8 @@ ObservedWorldPtr ObservedWorld::Predict(
   return next_world;
 }
 
-ObservedWorldPtr ObservedWorld::ObserveForOtherAgent(const AgentId& other_agent_id) const {
+ObservedWorldPtr ObservedWorld::ObserveForOtherAgent(
+    const AgentId& other_agent_id) const {
   std::shared_ptr<ObservedWorld> others_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
   others_world->ego_agent_id_ = other_agent_id;

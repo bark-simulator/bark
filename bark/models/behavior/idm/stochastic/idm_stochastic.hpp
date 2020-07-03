@@ -7,8 +7,8 @@
 #ifndef BARK_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
 #define BARK_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
 
-#include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/commons/distribution/distributions_1d.hpp"
+#include "bark/models/behavior/idm/idm_classic.hpp"
 
 namespace bark {
 namespace models {
@@ -20,19 +20,20 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
 
   virtual ~BehaviorIDMStochastic() {}
 
-  virtual Trajectory Plan(float delta_time, const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time,
+                          const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  void SampleParameters(); 
+  void SampleParameters();
 
-  protected:
-    bark::commons::DistributionPtr param_dist_headway_;
-    bark::commons::DistributionPtr param_dist_spacing_;
-    bark::commons::DistributionPtr param_dist_max_acc_;
-    bark::commons::DistributionPtr param_dist_desired_vel_;
-    bark::commons::DistributionPtr param_dist_comft_braking_;
-    bark::commons::DistributionPtr param_dist_coolness_factor_;
+ protected:
+  bark::commons::DistributionPtr param_dist_headway_;
+  bark::commons::DistributionPtr param_dist_spacing_;
+  bark::commons::DistributionPtr param_dist_max_acc_;
+  bark::commons::DistributionPtr param_dist_desired_vel_;
+  bark::commons::DistributionPtr param_dist_comft_braking_;
+  bark::commons::DistributionPtr param_dist_coolness_factor_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {

@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_COMMONS_BASE_TYPE_HPP_
 #define BARK_COMMONS_BASE_TYPE_HPP_
 
@@ -25,7 +24,7 @@ class BaseType {
   BaseType(const BaseType& base) : params_(base.params_) {}
   ~BaseType() {}
 
-  ParamsPtr GetParams() const { return params_;}
+  ParamsPtr GetParams() const { return params_; }
 
  private:
   ParamsPtr params_;  // do not own

@@ -23,10 +23,9 @@ namespace evaluation {
 
 class EvaluatorDrivableArea : public BaseEvaluator {
  public:
-  EvaluatorDrivableArea() :
-    agent_id_(std::numeric_limits<AgentId>::max()) {}
-  explicit EvaluatorDrivableArea(const AgentId& agent_id) :
-    agent_id_(agent_id) {}
+  EvaluatorDrivableArea() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  explicit EvaluatorDrivableArea(const AgentId& agent_id)
+      : agent_id_(agent_id) {}
   virtual ~EvaluatorDrivableArea() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
@@ -35,11 +34,10 @@ class EvaluatorDrivableArea : public BaseEvaluator {
 
     if (agent_id_ != std::numeric_limits<AgentId>::max()) {
       const auto& agent = world.GetAgent(agent_id_);
-      if(!agent) {
+      if (!agent) {
         return true;
       }
-      Polygon poly_agent =
-        agent->GetPolygonFromState(agent->GetCurrentState());
+      Polygon poly_agent = agent->GetPolygonFromState(agent->GetCurrentState());
       const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
       if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
         return true;
@@ -59,18 +57,17 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   }
 
   virtual EvaluationReturn Evaluate(
-    const world::ObservedWorld& observed_world) {
-      using bark::geometry::Polygon;
-      namespace bg = boost::geometry;
+      const world::ObservedWorld& observed_world) {
+    using bark::geometry::Polygon;
+    namespace bg = boost::geometry;
 
-      const auto& agent = observed_world.GetEgoAgent();
-      Polygon poly_agent =
-        agent->GetPolygonFromState(agent->GetCurrentState());
-      const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
-      if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
-        return true;
-      }
-      return false;
+    const auto& agent = observed_world.GetEgoAgent();
+    Polygon poly_agent = agent->GetPolygonFromState(agent->GetCurrentState());
+    const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
+    if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
+      return true;
+    }
+    return false;
   }
 
  private:

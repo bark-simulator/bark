@@ -24,80 +24,84 @@ class PyParams : public Params {
  public:
   using Params::Params;
 
-  int operator[](const std::string &param_name) override {
+  int operator[](const std::string& param_name) override {
     PYBIND11_OVERLOAD_PURE(int, Params, access, param_name);
   }
 
-  bool GetBool(const std::string &param_name, const std::string &description,
-               const bool &default_value) override {
+  bool GetBool(const std::string& param_name, const std::string& description,
+               const bool& default_value) override {
     PYBIND11_OVERLOAD_PURE(bool, Params, GetBool, param_name, description,
                            default_value);
   }
 
-  float GetReal(const std::string &param_name, const std::string &description,
-                const float &default_value) override {
+  float GetReal(const std::string& param_name, const std::string& description,
+                const float& default_value) override {
     PYBIND11_OVERLOAD_PURE(float, Params, GetReal, param_name, description,
                            default_value);
   }
 
-  int GetInt(const std::string &param_name, const std::string &description,
-             const int &default_value) override {
+  int GetInt(const std::string& param_name, const std::string& description,
+             const int& default_value) override {
     PYBIND11_OVERLOAD_PURE(int, Params, GetInt, param_name, description,
                            default_value);
   }
 
-  std::string GetString(const std::string &param_name, const std::string &description,
-             const std::string &default_value) override {
-    PYBIND11_OVERLOAD_PURE(std::string, Params, GetString, param_name, description,
-                           default_value);
+  std::string GetString(const std::string& param_name,
+                        const std::string& description,
+                        const std::string& default_value) override {
+    PYBIND11_OVERLOAD_PURE(std::string, Params, GetString, param_name,
+                           description, default_value);
   }
 
   std::vector<std::vector<float>> GetListListFloat(
-      const std::string &param_name, const std::string &description,
-      const std::vector<std::vector<float>> &default_value) override {
+      const std::string& param_name, const std::string& description,
+      const std::vector<std::vector<float>>& default_value) override {
     PYBIND11_OVERLOAD_PURE(std::vector<std::vector<float>>, Params,
                            GetListListFloat, param_name, description,
                            default_value);
   }
 
   std::vector<float> GetListFloat(
-      const std::string &param_name, const std::string &description,
-      const std::vector<float> &default_value) override {
+      const std::string& param_name, const std::string& description,
+      const std::vector<float>& default_value) override {
     PYBIND11_OVERLOAD_PURE(std::vector<float>, Params, GetListFloat, param_name,
                            description, default_value);
   }
 
-  void SetBool(const std::string &param_name, const bool &value) override {
+  void SetBool(const std::string& param_name, const bool& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetBool, param_name, value);
   }
 
-  void SetReal(const std::string &param_name, const float &value) override {
+  void SetReal(const std::string& param_name, const float& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetReal, param_name, value);
   }
 
-  void SetInt(const std::string &param_name, const int &value) override {
+  void SetInt(const std::string& param_name, const int& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetInt, param_name, value);
   }
 
-  void SetString(const std::string &param_name, const std::string &value) override {
+  void SetString(const std::string& param_name,
+                 const std::string& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetString, param_name, value);
   }
 
-  void SetListListFloat(const std::string &param_name,
-                        const std::vector<std::vector<float>> &value) override {
+  void SetListListFloat(const std::string& param_name,
+                        const std::vector<std::vector<float>>& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListListFloat, param_name, value);
   }
 
-  void SetListFloat(const std::string &param_name,
-                    const std::vector<float> &value) override {
+  void SetListFloat(const std::string& param_name,
+                    const std::vector<float>& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListFloat, param_name, value);
   }
 
-  void SetDistribution(const std::string &param_name, const std::string& distribution_type) override {
-    PYBIND11_OVERLOAD_PURE(void, Params, SetDistribution, param_name, distribution_type);
+  void SetDistribution(const std::string& param_name,
+                       const std::string& distribution_type) override {
+    PYBIND11_OVERLOAD_PURE(void, Params, SetDistribution, param_name,
+                           distribution_type);
   }
 
-  ParamsPtr AddChild(const std::string &name) override {
+  ParamsPtr AddChild(const std::string& name) override {
     PYBIND11_OVERLOAD_PURE(ParamsPtr, Params, AddChild, name);
   }
 

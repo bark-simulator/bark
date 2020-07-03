@@ -16,13 +16,13 @@ namespace evaluation {
 
 /// Do not overtake to the right, if traffic is not dense!
 const char EvaluatorRightOvertake::formula_[] =
-  "G (!dense -> !(behind#0 & X[!](behind#0 U right#0 U front#0)))";
+    "G (!dense -> !(behind#0 & X[!](behind#0 U right#0 U front#0)))";
 
 const LabelFunctions EvaluatorRightOvertake::labels_ = {
     LabelFunctionPtr(new DenseTrafficLabelFunction("dense", 20.0, 8)),
-  LabelFunctionPtr(new RightOfLabelFunction("right")),
-  LabelFunctionPtr(new FrontOfLabelFunction("front")),
-  LabelFunctionPtr(new BehindOfLabelFunction("behind"))};
+    LabelFunctionPtr(new RightOfLabelFunction("right")),
+    LabelFunctionPtr(new FrontOfLabelFunction("front")),
+    LabelFunctionPtr(new BehindOfLabelFunction("behind"))};
 
 const char EvaluatorRightOvertakeAssumption::formula_[] = "G !dense";
 

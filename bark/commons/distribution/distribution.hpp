@@ -7,7 +7,6 @@
 #ifndef BARK_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
 #define BARK_COMMONS_DISTRIBUTION_DISTRIBUTION_HPP_
 
-
 #include <Eigen/Core>
 #include <vector>
 
@@ -22,14 +21,14 @@ typedef unsigned int RandomSeed;
 typedef std::vector<RandomVariableSupport> RandomVariate;
 
 class Distribution : public BaseType {
-  public:
-    Distribution(const ParamsPtr& params) : BaseType(params) {}
+ public:
+  Distribution(const ParamsPtr& params) : BaseType(params) {}
 
-    virtual RandomVariate Sample() = 0;
+  virtual RandomVariate Sample() = 0;
 
-    virtual Probability Density(const RandomVariate& variate) const  = 0;
+  virtual Probability Density(const RandomVariate& variate) const = 0;
 
-    virtual Probability CDF(const RandomVariate& variate) const = 0; 
+  virtual Probability CDF(const RandomVariate& variate) const = 0;
 };
 
 typedef std::shared_ptr<Distribution> DistributionPtr;

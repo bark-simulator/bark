@@ -104,7 +104,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   BARK_EXPECT_TRUE(lane_corr != nullptr);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

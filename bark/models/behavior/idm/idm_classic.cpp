@@ -26,14 +26,14 @@ using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Point2d;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
-using bark::world::objects::Agent;
-using bark::world::objects::AgentPtr;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
 
 std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
-    const world::ObservedWorld &observed_world,
-    const LaneCorridorPtr &lane_corr, const IDMRelativeValues &rel_values,
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr, const IDMRelativeValues& rel_values,
     double dt) const {
   double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
@@ -49,7 +49,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
             0, 0);
 
-    float s_start = GetNearestS(line, pose); // checked
+    float s_start = GetNearestS(line, pose);  // checked
     double start_time = observed_world.GetWorldTime();
     float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     float s_i = s_start;
@@ -90,6 +90,6 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   return std::tuple<Trajectory, Action>(traj, action);
 }
 
-} // namespace behavior
-} // namespace models
-} // namespace bark
+}  // namespace behavior
+}  // namespace models
+}  // namespace bark

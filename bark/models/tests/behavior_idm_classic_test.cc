@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "gtest/gtest.h"
 #include <Eigen/Core>
+#include "gtest/gtest.h"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/commons.hpp"
@@ -30,11 +30,11 @@ using namespace bark::geometry;
 using namespace bark::world::tests;
 
 class DummyBehaviorIDM : public BehaviorIDMClassic {
-public:
-  DummyBehaviorIDM(const ParamsPtr &params)
+ public:
+  DummyBehaviorIDM(const ParamsPtr& params)
       : BehaviorIDMClassic(params), BehaviorModel(params) {}
-  virtual double
-  CalculateLongitudinalAcceleration(const ObservedWorld &observed_world) {
+  virtual double CalculateLongitudinalAcceleration(
+      const ObservedWorld& observed_world) {
     std::pair<AgentPtr, FrenetPosition> leading_vehicle =
         observed_world.GetAgentInFront();
     std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
@@ -69,14 +69,14 @@ TEST(free_road_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -127,14 +127,14 @@ TEST(interaction_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -200,10 +200,10 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
@@ -219,20 +219,20 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   // advance
   float ego_velocity = desired_velocity, rel_distance = 5.0,
         velocity_difference = 4;
-  float time_step = 0.02f; // Very small time steps to verify differential
-                           // integration character
+  float time_step = 0.02f;  // Very small time steps to verify differential
+                            // integration character
   int num_steps = 1000;
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -257,10 +257,10 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
@@ -282,20 +282,20 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
   float ego_velocity = desired_velocity, rel_distance = 10.0,
         velocity_difference = -2, acc_ego = 2.0f, acc_other = -5.0f;
   float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f; // Very small time steps to verify differential
-                          // integration character
+  float time_step = 0.2f;  // Very small time steps to verify differential
+                           // integration character
   int num_steps = 1000;
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -324,10 +324,10 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
@@ -349,17 +349,17 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   float ego_velocity = desired_velocity, rel_distance = 20.0,
         velocity_difference = -1, acc_ego = 2.0f, acc_other = 1.0f;
   float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f; // Very small time steps to verify differential
-                          // integration character
+  float time_step = 0.2f;  // Very small time steps to verify differential
+                           // integration character
 
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -386,10 +386,10 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f); // Required for testing
+                  1.0f);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
@@ -407,20 +407,20 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   float ego_velocity = desired_velocity, rel_distance = 5.0,
         velocity_difference = 5, acc_ego = 2.0f, acc_other = 1.0f;
   float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f; // Very small time steps to verify differential
-                          // integration character
+  float time_step = 0.2f;  // Very small time steps to verify differential
+                           // integration character
   int num_steps = 1000;
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon(Pose(1, 1, 0),
-                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2),
-                                       Point2d(2, 2), Point2d(2, 0),
-                                       Point2d(0, 0)});
+  Polygon polygon(
+      Pose(1, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
+                           Point2d(2, 0), Point2d(0, 0)});
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-          Point2d(50, -2)))); // < move the goal polygon into the driving
-                              // corridor in front of the ego vehicle
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
@@ -433,9 +433,9 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
 
   // upper case of equation 11.25
   const float b = behavior.GetComfortableBrakingAcceleration();
-  const float acc_cah_desired =
-      acc_other -
-      velocity_difference * velocity_difference * 1.0 / (2.0 * rel_distance);
+  const float acc_cah_desired = acc_other - velocity_difference *
+                                                velocity_difference * 1.0 /
+                                                (2.0 * rel_distance);
   const float acc_idm_desired =
       behavior.CalcRawIDMAcc(rel_distance, ego_velocity, other_velocity);
   const float c = 0.6;
@@ -445,7 +445,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

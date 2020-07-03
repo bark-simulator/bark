@@ -18,7 +18,7 @@ namespace evaluation {
 
 class EvaluatorCollisionAgents : public BaseEvaluator {
  public:
-  EvaluatorCollisionAgents()  {}
+  EvaluatorCollisionAgents() {}
   virtual ~EvaluatorCollisionAgents() {}
   virtual EvaluationReturn Evaluate(const world::World& world);
 };

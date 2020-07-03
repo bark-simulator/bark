@@ -26,13 +26,10 @@ void do_logging() {
 
   LOG(ERROR) << "ERROR log";
 
-
   VLOG_EVERY_N(2, 2) << "Logged with verbosity 2 every 2 calls";
-
 }
 
 }  // namespace commons
 }  // namespace bark
 
-
-#endif // PYTHON_WRAPPING_TESTS_LOGGING_TESTS_HPP_
+#endif  // PYTHON_WRAPPING_TESTS_LOGGING_TESTS_HPP_

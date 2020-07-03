@@ -2,12 +2,12 @@
  *  file:       odrSpiral.c
  * ---------------------------------------------------
  *  purpose:	free sample for computing spirals
- *              in OpenDRIVE applications 
+ *              in OpenDRIVE applications
  * ---------------------------------------------------
  *  first edit:	09.03.2010 by M. Dupuis @ VIRES GmbH
  *  last mod.:  09.03.2010 by M. Dupuis @ VIRES GmbH
  * ===================================================
- 
+
     Copyright 2010 VIRES Simulationstechnologie GmbH
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,13 +24,13 @@
  */
 
 /**
-* compute the actual "standard" spiral, starting with curvature 0
-* @param s      run-length along spiral
-* @param cDot   first derivative of curvature [1/m2]
-* @param x      resulting x-coordinate in spirals local co-ordinate system [m]
-* @param y      resulting y-coordinate in spirals local co-ordinate system [m]
-* @param t      tangent direction at s [rad]
-*/
+ * compute the actual "standard" spiral, starting with curvature 0
+ * @param s      run-length along spiral
+ * @param cDot   first derivative of curvature [1/m2]
+ * @param x      resulting x-coordinate in spirals local co-ordinate system [m]
+ * @param y      resulting y-coordinate in spirals local co-ordinate system [m]
+ * @param t      tangent direction at s [rad]
+ */
 
 namespace bark {
 namespace world {
@@ -39,10 +39,12 @@ namespace opendrive {
 double FresnelCos(double xxa);
 double FresnelSin(double xxa);
 
-void odrSpiral(double s, double cDot, double *x, double *y, double *t);
-void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start, double theta_start, double *x, double *y, double *t);
+void odrSpiral(double s, double cDot, double* x, double* y, double* t);
+void odrSpiral(double s, double x0, double y0, double cDot, double kappa_start,
+               double theta_start, double* x, double* y, double* t);
 
-// void odrSpiral( double s, double cDot, double kappa_start, double theta_start, double *x, double *y, double *t );
+// void odrSpiral( double s, double cDot, double kappa_start, double
+// theta_start, double *x, double *y, double *t );
 
 }  // namespace opendrive
 }  // namespace world

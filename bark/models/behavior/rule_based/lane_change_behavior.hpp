@@ -9,8 +9,8 @@
 #ifndef BARK_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
 #define BARK_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
 
-#include <memory>
 #include <map>
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -21,13 +21,13 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::models::dynamic::StateDefinition::VEL_POSITION;
 using bark::world::Agent;
+using bark::world::AgentFrenetPair;
 using bark::world::AgentPtr;
 using bark::world::FrenetPosition;
-using bark::world::map::LaneCorridorPtr;
 using bark::world::ObservedWorld;
-using bark::world::AgentFrenetPair;
-using bark::models::dynamic::StateDefinition::VEL_POSITION;
+using bark::world::map::LaneCorridorPtr;
 
 enum LaneChangeDecision {
   KeepLane = 0,
@@ -37,10 +37,7 @@ enum LaneChangeDecision {
   ChangeLane = 4
 };
 
-enum RuleBasedState {
-  Idle = 0,
-  IsChanging = 1
-};
+enum RuleBasedState { Idle = 0, IsChanging = 1 };
 
 // Agent and LaneCorridor specific
 struct AgentInformation {
@@ -60,70 +57,59 @@ struct LaneCorridorInformation {
   double remaining_distance;
 };
 
-
 // Behavior that changes lanes if there is more free-space
 class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
  public:
-  explicit BehaviorLaneChangeRuleBased(
-    const commons::ParamsPtr& params) :
-    BehaviorModel(params), 
-    BehaviorIDMLaneTracking(params) {
+  explicit BehaviorLaneChangeRuleBased(const commons::ParamsPtr& params)
+      : BehaviorModel(params), BehaviorIDMLaneTracking(params) {
     min_remaining_distance_ = params->GetReal(
-      "BehaviorLaneChangeRuleBased::MinRemainingLaneCorridorDistance",
-      "LaneCorridors with less remaning distance are filetered.",
-      60.0);
-    min_vehicle_rear_distance_ = params->GetReal(
-      "BehaviorLaneChangeRuleBased::MinVehicleRearDistance",
-      "Rear vehicle distance.",
-      5.0);
-    min_vehicle_front_distance_ = params->GetReal(
-      "BehaviorLaneChangeRuleBased::MinVehicleFrontDistance",
-      "Front vehicle distance.",
-      5.0);
+        "BehaviorLaneChangeRuleBased::MinRemainingLaneCorridorDistance",
+        "LaneCorridors with less remaning distance are filetered.", 60.0);
+    min_vehicle_rear_distance_ =
+        params->GetReal("BehaviorLaneChangeRuleBased::MinVehicleRearDistance",
+                        "Rear vehicle distance.", 5.0);
+    min_vehicle_front_distance_ =
+        params->GetReal("BehaviorLaneChangeRuleBased::MinVehicleFrontDistance",
+                        "Front vehicle distance.", 5.0);
     time_keeping_gap_ = params->GetReal(
-      "BehaviorLaneChangeRuleBased::TimeKeepingGap",
-      "Additional time that adds distance based on the rel. vel. to the gap.",
-      1.0);
+        "BehaviorLaneChangeRuleBased::TimeKeepingGap",
+        "Additional time that adds distance based on the rel. vel. to the gap.",
+        1.0);
   }
 
   virtual ~BehaviorLaneChangeRuleBased() {}
 
-  std::pair<LaneChangeDecision, LaneCorridorPtr>
-  CheckIfLaneChangeBeneficial(const ObservedWorld& observed_world) const;
+  std::pair<LaneChangeDecision, LaneCorridorPtr> CheckIfLaneChangeBeneficial(
+      const ObservedWorld& observed_world) const;
 
-  std::pair<AgentInformation, AgentInformation>
-  FrontRearAgents(
-    const ObservedWorld& observed_world,
-    const LaneCorridorPtr& lane_corr) const;
+  std::pair<AgentInformation, AgentInformation> FrontRearAgents(
+      const ObservedWorld& observed_world,
+      const LaneCorridorPtr& lane_corr) const;
 
-  std::vector<LaneCorridorInformation>
-    ScanLaneCorridors(const ObservedWorld& observed_world) const;
+  std::vector<LaneCorridorInformation> ScanLaneCorridors(
+      const ObservedWorld& observed_world) const;
 
   /**
    * @brief Filters std::vector<LaneCorridorInformation> using lambda funcs.
-   * 
+   *
    * @tparam Func Required for lambda function. In c++ 20 can be removed
    * @param lane_corr_infos Additional LaneCorridor information
    * @param filter Lambda function for filtering
    * @return std::vector<LaneCorridorInformation> Filtered infos
    */
-  template<typename Func>
-  std::vector<LaneCorridorInformation>
-  FilterLaneCorridors(
-    const std::vector<LaneCorridorInformation>& lane_corr_infos,
-    const Func& filter) const {
+  template <typename Func>
+  std::vector<LaneCorridorInformation> FilterLaneCorridors(
+      const std::vector<LaneCorridorInformation>& lane_corr_infos,
+      const Func& filter) const {
     std::vector<LaneCorridorInformation> filtered_lane_corrs;
-    std::copy_if(
-      lane_corr_infos.begin(),
-      lane_corr_infos.end(),
-      std::back_inserter(filtered_lane_corrs),
-      filter);
+    std::copy_if(lane_corr_infos.begin(), lane_corr_infos.end(),
+                 std::back_inserter(filtered_lane_corrs), filter);
     return filtered_lane_corrs;
   }
 
   std::pair<LaneCorridorInformation, bool> SelectLaneCorridor(
-    const std::vector<LaneCorridorInformation>& lane_corr_infos,
-    const LaneCorridorPtr& lane_corr) const {
+      const std::vector<LaneCorridorInformation>& lane_corr_infos,
+      const LaneCorridorPtr& lane_corr) const {
     LaneCorridorInformation lc_info;
     bool has_info = false;
     for (auto lci : lane_corr_infos) {
@@ -136,8 +122,8 @@ class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
   }
 
   virtual std::pair<LaneChangeDecision, LaneCorridorPtr> ChooseLaneCorridor(
-    const std::vector<LaneCorridorInformation>& lane_corr_infos,
-    const ObservedWorld& observed_world) const;
+      const std::vector<LaneCorridorInformation>& lane_corr_infos,
+      const ObservedWorld& observed_world) const;
 
   double GetVelocity(const AgentPtr& agent) const {
     const auto& state = agent->GetCurrentState();
@@ -145,13 +131,13 @@ class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
   }
 
   double GetVelocity(
-    const std::shared_ptr<const bark::world::objects::Agent> agent) const {
+      const std::shared_ptr<const bark::world::objects::Agent> agent) const {
     const auto& state = agent->GetCurrentState();
     return state[VEL_POSITION];
   }
 
-  virtual Trajectory Plan(
-    float delta_time, const ObservedWorld& observed_world);
+  virtual Trajectory Plan(float delta_time,
+                          const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
@@ -162,7 +148,8 @@ class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
   double time_keeping_gap_;
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorLaneChangeRuleBased::Clone() const {
+inline std::shared_ptr<BehaviorModel> BehaviorLaneChangeRuleBased::Clone()
+    const {
   std::shared_ptr<BehaviorLaneChangeRuleBased> model_ptr =
       std::make_shared<BehaviorLaneChangeRuleBased>(*this);
   return model_ptr;
@@ -173,5 +160,3 @@ inline std::shared_ptr<BehaviorModel> BehaviorLaneChangeRuleBased::Clone() const
 }  // namespace bark
 
 #endif  // BARK_MODELS_BEHAVIOR_RULE_BASED_LANE_CHANGE_BEHAVIOR_HPP_
-
-

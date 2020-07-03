@@ -26,12 +26,12 @@ using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Point2d;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
-using bark::world::objects::Agent;
-using bark::world::objects::AgentPtr;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+using bark::world::objects::Agent;
+using bark::world::objects::AgentPtr;
 
-BaseIDM::BaseIDM(const commons::ParamsPtr &params) : BehaviorModel(params) {
+BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
   param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing",
                                            "See Wikipedia IDM article", 2.0f);
   param_desired_time_head_way_ =
@@ -106,8 +106,8 @@ double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
 }
 
 double BaseIDM::CalcNetDistance(
-    const std::shared_ptr<const Agent> &ego_agent,
-    const std::shared_ptr<const Agent> &leading_agent) const {
+    const std::shared_ptr<const Agent>& ego_agent,
+    const std::shared_ptr<const Agent>& leading_agent) const {
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
@@ -148,9 +148,9 @@ double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
  * @return
  *   std::tuple<double, double, bool> rel_distance, rel_velocity, is_vehicle
  */
-IDMRelativeValues
-BaseIDM::CalcRelativeValues(const world::ObservedWorld &observed_world,
-                            const LaneCorridorPtr &lane_corr) const {
+IDMRelativeValues BaseIDM::CalcRelativeValues(
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr) const {
   bool interaction_term_active = false;
   double leading_distance = 0.;
   double leading_velocity = 1e6;
@@ -201,8 +201,7 @@ BaseIDM::CalcRelativeValues(const world::ObservedWorld &observed_world,
       } else if (len_until_end < brake_lane_end_enabled_distance_) {
         leading_distance = std::min(leading_distance, len_until_end);
         // lane end has 0 vel.
-        if (leading_distance == len_until_end)
-          leading_velocity = 0.;
+        if (leading_distance == len_until_end) leading_velocity = 0.;
       }
     }
   }
@@ -214,8 +213,8 @@ BaseIDM::CalcRelativeValues(const world::ObservedWorld &observed_world,
   return rel_values;
 }
 
-double BaseIDM::CalcRawIDMAcc(const double &net_distance, const double &vel_ego,
-                              const double &vel_other) const {
+double BaseIDM::CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
+                              const double& vel_other) const {
   const double free_road_term = CalcFreeRoadTerm(vel_ego);
   const double interaction_term =
       CalcInteractionTerm(net_distance, vel_ego, vel_other);
@@ -227,9 +226,9 @@ double BaseIDM::CalcRawIDMAcc(const double &net_distance, const double &vel_ego,
  *
  * @return double acceleration
  */
-double BaseIDM::CalcCAHAcc(const double &net_distance, const double &vel_ego,
-                           const double &vel_other, const double &acc_ego,
-                           const double &acc_other) const {
+double BaseIDM::CalcCAHAcc(const double& net_distance, const double& vel_ego,
+                           const double& vel_other, const double& acc_ego,
+                           const double& acc_other) const {
   // implements equation 11.25 on on page 198
   // we deviate from eq. 11.25 for the equality case to avoid a nan acceleration
   // when both the leading velocity and effective acceleration are zero
@@ -242,9 +241,8 @@ double BaseIDM::CalcCAHAcc(const double &net_distance, const double &vel_ego,
            (vel_other * vel_other - 2 * net_distance * effect_acc_other);
   } else {
     const double step_function = (vel_ego - vel_other) >= 0.0f ? 1.0f : 0.0f;
-    return effect_acc_other -
-           (vel_ego - vel_other) * (vel_ego - vel_other) * step_function /
-               (2 * net_distance);
+    return effect_acc_other - (vel_ego - vel_other) * (vel_ego - vel_other) *
+                                  step_function / (2 * net_distance);
   }
 }
 
@@ -253,9 +251,9 @@ double BaseIDM::CalcCAHAcc(const double &net_distance, const double &vel_ego,
  *
  * @return double Acc_acceleration
  */
-double BaseIDM::CalcACCAcc(const double &net_distance, const double &vel_ego,
-                           const double &vel_other, const double &acc_ego,
-                           const double &acc_other) const {
+double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
+                           const double& vel_other, const double& acc_ego,
+                           const double& acc_other) const {
   // implements equation 11.26 on on page 199
   const float c = GetCoolnessFactor();
   const float acc_lower_bound = GetAccelerationLowerBound();
@@ -290,13 +288,12 @@ double BaseIDM::CalcACCAcc(const double &net_distance, const double &vel_ego,
  *
  * @return std::pair<double, double> acceleration, total_distance
  */
-std::pair<double, double>
-BaseIDM::GetTotalAcc(const world::ObservedWorld &observed_world,
-                     const IDMRelativeValues &rel_values, double rel_distance,
-                     double dt) const {
+std::pair<double, double> BaseIDM::GetTotalAcc(
+    const world::ObservedWorld& observed_world,
+    const IDMRelativeValues& rel_values, double rel_distance, double dt) const {
   double acc, traveled_ego, traveled_other;
   double vel_front = rel_values.leading_velocity;
-  const auto &ego_vehicle_state = observed_world.CurrentEgoState();
+  const auto& ego_vehicle_state = observed_world.CurrentEgoState();
   double vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
   bool interaction_term_active = rel_values.has_leading_object;
 
@@ -319,7 +316,7 @@ BaseIDM::GetTotalAcc(const world::ObservedWorld &observed_world,
 
 //! IDM Model will assume const. vel. for the leading vehicle
 Trajectory BaseIDM::Plan(float min_planning_time,
-                         const world::ObservedWorld &observed_world) {
+                         const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 
@@ -345,6 +342,6 @@ Trajectory BaseIDM::Plan(float min_planning_time,
   return traj;
 }
 
-} // namespace behavior
-} // namespace models
-} // namespace bark
+}  // namespace behavior
+}  // namespace models
+}  // namespace bark

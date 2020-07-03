@@ -16,41 +16,40 @@
 #include <vector>
 
 #include <boost/geometry/index/rtree.hpp>
+#include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
 #include "bark/world/opendrive/opendrive.hpp"
-#include "bark/commons/transformation/frenet.hpp"
 
 namespace bark {
 namespace world {
 
+using bark::commons::transformation::FrenetPosition;
+using models::behavior::StateActionPair;
 using world::evaluation::EvaluatorPtr;
+using world::map::LaneCorridorPtr;
+using world::map::MapInterfacePtr;
 using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
-using world::objects::ObjectPtr;
-using world::map::LaneCorridorPtr;
-using world::map::MapInterfacePtr;
-using bark::commons::transformation::FrenetPosition;
-using models::behavior::StateActionPair;
 using world::objects::ObjectPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
 typedef std::map<std::string, bark::world::evaluation::EvaluationReturn>
-  EvaluationMap;
+    EvaluationMap;
 typedef std::map<AgentId, models::dynamic::State> AgentStateMap;
-typedef std::unordered_map<AgentId, models::dynamic::Trajectory> AgentTrajectoryMap;
+typedef std::unordered_map<AgentId, models::dynamic::Trajectory>
+    AgentTrajectoryMap;
 
-using rtree_agent_model =
-  boost::geometry::model::box<bark::geometry::Point2d>;
+using rtree_agent_model = boost::geometry::model::box<bark::geometry::Point2d>;
 using rtree_agent_id = AgentId;
 using rtree_agent_value = std::pair<rtree_agent_model, rtree_agent_id>;
 using AgentRTree =
-  boost::geometry::index::rtree<rtree_agent_value,
-                                boost::geometry::index::linear<16, 4> >;
+    boost::geometry::index::rtree<rtree_agent_value,
+                                  boost::geometry::index::linear<16, 4> >;
 
 typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
 
@@ -86,8 +85,7 @@ class World : public commons::BaseType {
    * @brief Get world for a specific time
    * @param  execution_time: world_time
    */
-  std::shared_ptr<World> GetWorldAtTime(
-    const float& world_time) const;
+  std::shared_ptr<World> GetWorldAtTime(const float& world_time) const;
 
   /**
    * @brief  calls all added evaluators of the world
@@ -130,7 +128,9 @@ class World : public commons::BaseType {
 
   bool GetRemoveAgents() { return remove_agents_; }
 
-  void SetRemoveAgents(const bool& remove_agents ) { remove_agents_ = remove_agents; }
+  void SetRemoveAgents(const bool& remove_agents) {
+    remove_agents_ = remove_agents;
+  }
 
   AgentMap GetNearestAgents(const bark::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
@@ -144,8 +144,8 @@ class World : public commons::BaseType {
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
 
-  std::pair<bark::geometry::Point2d, bark::geometry::Point2d>
-  BoundingBox() const {
+  std::pair<bark::geometry::Point2d, bark::geometry::Point2d> BoundingBox()
+      const {
     return map_->BoundingBox();
   }
 

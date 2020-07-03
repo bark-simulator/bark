@@ -72,8 +72,8 @@ WorldPtr bark::world::tests::make_test_world(
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, pos_x, pos_y, 0.0, ego_velocity;
   AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface, geometry::Model3D()));
+                            polygon, params, ego_goal_definition, map_interface,
+                            geometry::Model3D()));
   agent1->SetAgentId(1);
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -82,16 +82,15 @@ WorldPtr bark::world::tests::make_test_world(
   init_state2 << 0.0, pos_x + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface, geometry::Model3D()));
+                            polygon, params, ego_goal_definition, map_interface,
+                            geometry::Model3D()));
   agent2->SetAgentId(2);
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface,
+                            polygon, params, ego_goal_definition, map_interface,
                             geometry::Model3D()));  // NOLINT
   agent3->SetAgentId(3);
 

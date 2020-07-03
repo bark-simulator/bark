@@ -7,8 +7,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/map/map_interface.hpp"
-#include "gtest/gtest.h"
 #include "bark/world/tests/make_test_xodr_map.hpp"
+#include "gtest/gtest.h"
 
 TEST(query_lanes, map_interface) {
   using bark::geometry::Point2d;

@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_GEOMETRY_STANDARD_SHAPES_HPP_
 #define BARK_GEOMETRY_STANDARD_SHAPES_HPP_
 

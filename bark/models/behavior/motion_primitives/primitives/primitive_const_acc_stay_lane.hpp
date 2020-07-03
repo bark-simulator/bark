@@ -16,7 +16,8 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-class PrimitiveConstAccStayLane : public Primitive, public BehaviorIDMLaneTracking {
+class PrimitiveConstAccStayLane : public Primitive,
+                                  public BehaviorIDMLaneTracking {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
   PrimitiveConstAccStayLane(const commons::ParamsPtr& params,

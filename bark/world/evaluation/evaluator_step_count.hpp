@@ -23,8 +23,8 @@ namespace evaluation {
 
 class EvaluatorStepCount : public BaseEvaluator {
  public:
-  EvaluatorStepCount() : steps_(0) { }
-  virtual ~EvaluatorStepCount() { }
+  EvaluatorStepCount() : steps_(0) {}
+  virtual ~EvaluatorStepCount() {}
 
   EvaluationReturn Evaluate(const world::World& world) {
     this->steps_++;

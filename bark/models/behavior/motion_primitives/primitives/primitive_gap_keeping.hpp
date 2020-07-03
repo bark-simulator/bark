@@ -22,9 +22,11 @@ namespace primitives {
 class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
  public:
   explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)
-      : Primitive(params), BehaviorModel(params),                             BehaviorIDMLaneTracking(params) {
-        Primitive::SetLastAction(Continuous1DAction(0.0f));
-      }
+      : Primitive(params),
+        BehaviorModel(params),
+        BehaviorIDMLaneTracking(params) {
+    Primitive::SetLastAction(Continuous1DAction(0.0f));
+  }
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
@@ -32,12 +34,15 @@ class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
   }
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor) override {
-    auto traj = BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);
+    auto traj =
+        BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);
     Primitive::SetLastAction(BehaviorIDMLaneTracking::GetLastAction());
     return traj;
   }
 
-  Action GetLastAction() const { return BehaviorIDMLaneTracking::GetLastAction();}
+  Action GetLastAction() const {
+    return BehaviorIDMLaneTracking::GetLastAction();
+  }
 
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,

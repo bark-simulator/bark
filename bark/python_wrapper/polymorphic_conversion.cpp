@@ -6,15 +6,16 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include <typeinfo>
-#include <string>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <typeinfo>
 
 #include "polymorphic_conversion.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_left.hpp"
@@ -24,47 +25,45 @@
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
-#include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "bark/python_wrapper/models/behavior.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/goal_definition/goal_definition_sequential.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "bark/python_wrapper/models/behavior.hpp"
 
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
 #ifdef PLANNER_UCT
-#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "bark/models/behavior/behavior_uct_hypothesis.hpp"
-using bark::models::behavior::BehaviorUCTHypothesis;
+#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 using bark::models::behavior::BehaviorHypothesisIDM;
+using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
-
 
 namespace py = pybind11;
 
-using bark::world::goal_definition::GoalDefinitionPolygon;
-using bark::world::goal_definition::GoalDefinitionStateLimits;
-using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
-using bark::world::goal_definition::GoalDefinitionSequential;
-using bark::models::behavior::BehaviorIDMClassic;
-using bark::models::behavior::BehaviorIDMLaneTracking;
+using bark::commons::SetterParams;
 using bark::models::behavior::BehaviorConstantVelocity;
 using bark::models::behavior::BehaviorDynamicModel;
-using bark::models::behavior::BehaviorStaticTrajectory;
+using bark::models::behavior::BehaviorIDMClassic;
+using bark::models::behavior::BehaviorIDMLaneTracking;
+using bark::models::behavior::BehaviorIDMStochastic;
 using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
-using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorMobil;
-using bark::commons::SetterParams;
-using bark::models::behavior::BehaviorIDMStochastic;
+using bark::models::behavior::BehaviorMobilRuleBased;
+using bark::models::behavior::BehaviorStaticTrajectory;
 using bark::models::behavior::primitives::Primitive;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
 using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
 using bark::models::behavior::primitives::PrimitiveGapKeeping;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::goal_definition::GoalDefinitionSequential;
+using bark::world::goal_definition::GoalDefinitionStateLimits;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
   std::string behavior_model_name;
@@ -90,16 +89,16 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "PyBehaviorModel";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMStochastic)) {
     behavior_model_name = "BehaviorIDMStochastic";
-  } 
+  }
 #ifdef PLANNER_UCT
-  else if(typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
+  else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
     behavior_model_name = "BehaviorUCTHypothesis";
   } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
     behavior_model_name = "BehaviorHypothesisIDM";
   }
 #endif
   else {
-    LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to python: " 
+    LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to python: "
                << typeid(*behavior_model).name();
   }
   return py::make_tuple(behavior_model, behavior_model_name);
@@ -108,51 +107,50 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
 BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   std::string behavior_model_name = t[1].cast<std::string>();
   if (behavior_model_name.compare("BehaviorConstantVelocity") == 0) {
-      return std::make_shared<BehaviorConstantVelocity>(
+    return std::make_shared<BehaviorConstantVelocity>(
         t[0].cast<BehaviorConstantVelocity>());
   } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
     return std::make_shared<BehaviorIDMLaneTracking>(
-      t[0].cast<BehaviorIDMLaneTracking>());
+        t[0].cast<BehaviorIDMLaneTracking>());
   } else if (behavior_model_name.compare("BehaviorIDMClassic") == 0) {
     return std::make_shared<BehaviorIDMClassic>(
-      t[0].cast<BehaviorIDMClassic>());
-  } else if (behavior_model_name.compare("BehaviorIntersectionRuleBased") == 0) {
+        t[0].cast<BehaviorIDMClassic>());
+  } else if (behavior_model_name.compare("BehaviorIntersectionRuleBased") ==
+             0) {
     return std::make_shared<BehaviorIntersectionRuleBased>(
-      t[0].cast<BehaviorIntersectionRuleBased>());
+        t[0].cast<BehaviorIntersectionRuleBased>());
   } else if (behavior_model_name.compare("BehaviorLaneChangeRuleBased") == 0) {
     return std::make_shared<BehaviorLaneChangeRuleBased>(
-      t[0].cast<BehaviorLaneChangeRuleBased>());
+        t[0].cast<BehaviorLaneChangeRuleBased>());
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
-      t[0].cast<BehaviorStaticTrajectory>());
+        t[0].cast<BehaviorStaticTrajectory>());
   } else if (behavior_model_name.compare("BehaviorMobilRuleBased") == 0) {
     return std::make_shared<BehaviorMobilRuleBased>(
-      t[0].cast<BehaviorMobilRuleBased>());
+        t[0].cast<BehaviorMobilRuleBased>());
   } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
-    return std::make_shared<BehaviorMobil>(
-      t[0].cast<BehaviorMobil>());
+    return std::make_shared<BehaviorMobil>(t[0].cast<BehaviorMobil>());
   } else if (behavior_model_name.compare("PyBehaviorModel") == 0) {
-    return std::make_shared<PyBehaviorModel>(
-      t[0].cast<PyBehaviorModel>());
+    return std::make_shared<PyBehaviorModel>(t[0].cast<PyBehaviorModel>());
   } else if (behavior_model_name.compare("BehaviorDynamicModel") == 0) {
     return std::make_shared<BehaviorDynamicModel>(
-      t[0].cast<BehaviorDynamicModel>());
+        t[0].cast<BehaviorDynamicModel>());
   } else if (behavior_model_name.compare("BehaviorIDMStochastic") == 0) {
     return std::make_shared<BehaviorIDMStochastic>(
-      t[0].cast<BehaviorIDMStochastic>());
+        t[0].cast<BehaviorIDMStochastic>());
   }
 #ifdef PLANNER_UCT
-  else if(behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
+  else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
     return std::make_shared<BehaviorUCTHypothesis>(
-      t[0].cast<BehaviorUCTHypothesis>());
+        t[0].cast<BehaviorUCTHypothesis>());
   } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
     return std::make_shared<BehaviorHypothesisIDM>(
-      t[0].cast<BehaviorHypothesisIDM>());
+        t[0].cast<BehaviorHypothesisIDM>());
   }
 #endif
   else {
     LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to C++ : "
-     << behavior_model_name;
+               << behavior_model_name;
   }
 }
 
@@ -164,7 +162,8 @@ py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition) {
     goal_definition_name = "GoalDefinitionStateLimits";
   } else if (typeid(*goal_definition) == typeid(GoalDefinitionSequential)) {
     goal_definition_name = "GoalDefinitionSequential";
-  } else if (typeid(*goal_definition) == typeid(GoalDefinitionStateLimitsFrenet)) {
+  } else if (typeid(*goal_definition) ==
+             typeid(GoalDefinitionStateLimitsFrenet)) {
     goal_definition_name = "GoalDefinitionStateLimitsFrenet";
   } else {
     LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
@@ -176,17 +175,18 @@ py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition) {
 GoalDefinitionPtr PythonToGoalDefinition(py::tuple t) {
   std::string goal_definition_name = t[1].cast<std::string>();
   if (goal_definition_name.compare("GoalDefinitionPolygon") == 0) {
-      return std::make_shared<GoalDefinitionPolygon>(
+    return std::make_shared<GoalDefinitionPolygon>(
         t[0].cast<GoalDefinitionPolygon>());
   } else if (goal_definition_name.compare("GoalDefinitionStateLimits") == 0) {
     return std::make_shared<GoalDefinitionStateLimits>(
-      t[0].cast<GoalDefinitionStateLimits>());
+        t[0].cast<GoalDefinitionStateLimits>());
   } else if (goal_definition_name.compare("GoalDefinitionSequential") == 0) {
     return std::make_shared<GoalDefinitionSequential>(
-      t[0].cast<GoalDefinitionSequential>());
-  } else if (goal_definition_name.compare("GoalDefinitionStateLimitsFrenet") == 0) {
+        t[0].cast<GoalDefinitionSequential>());
+  } else if (goal_definition_name.compare("GoalDefinitionStateLimitsFrenet") ==
+             0) {
     return std::make_shared<GoalDefinitionStateLimitsFrenet>(
-      t[0].cast<GoalDefinitionStateLimitsFrenet>());
+        t[0].cast<GoalDefinitionStateLimitsFrenet>());
   } else {
     LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
     throw;

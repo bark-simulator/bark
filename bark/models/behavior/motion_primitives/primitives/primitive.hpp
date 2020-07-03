@@ -22,11 +22,11 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-using dynamic::Trajectory;
 using bark::geometry::Point2d;
 using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::dynamic::DynamicModelPtr;
 using bark::models::dynamic::StateDefinition;
+using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::ObservedWorldPtr;
 using world::map::LaneCorridorPtr;
@@ -60,7 +60,8 @@ class Primitive : public bark::commons::BaseType {
   virtual bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
-  virtual Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
+  virtual Trajectory Plan(float min_planning_time,
+                          const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
   /**
    * @brief Select the new target corridor
@@ -76,6 +77,7 @@ class Primitive : public bark::commons::BaseType {
 
  protected:
   float integration_time_delta_;
+
  private:
   Action last_action_;
 };

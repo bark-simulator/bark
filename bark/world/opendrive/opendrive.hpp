@@ -6,16 +6,15 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_WORLD_OPENDRIVE_OPENDRIVE_HPP_
 #define BARK_WORLD_OPENDRIVE_OPENDRIVE_HPP_
 
-#include <vector>
 #include <map>
+#include <vector>
 
-#include "bark/world/opendrive/road.hpp"
 #include "bark/world/opendrive/junction.hpp"
 #include "bark/world/opendrive/lane.hpp"
+#include "bark/world/opendrive/road.hpp"
 
 namespace bark {
 namespace world {
@@ -49,13 +48,13 @@ class OpenDriveMap {
 
   XodrRoads GetRoads() const { return roads_; }
   Junctions GetJunctions() const { return junctions_; }
-  XodrLanes GetLanes() const { return lanes_;}
+  XodrLanes GetLanes() const { return lanes_; }
 
   std::pair<Point2d, Point2d> BoundingBox() const {
     bark::geometry::Line all_lanes_linestrings;
-    for (auto &road : GetRoads()) {
-      for (auto &lane_section : road.second->GetLaneSections()) {
-        for (auto &lane : lane_section->GetLanes()) {
+    for (auto& road : GetRoads()) {
+      for (auto& lane_section : road.second->GetLaneSections()) {
+        for (auto& lane : lane_section->GetLanes()) {
           auto linestring = lane.second->GetLine();
           all_lanes_linestrings.AppendLinestring(linestring);
         }

@@ -6,7 +6,6 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_RUNTIME_RUNTIME_HPP_
 #define BARK_RUNTIME_RUNTIME_HPP_
 
@@ -17,13 +16,12 @@
 namespace bark {
 namespace runtime {
 
-
 class Runtime : public bark::commons::BaseType {
  public:
-  explicit Runtime(const commons::ParamsPtr& params) : commons::BaseType(params) {}
+  explicit Runtime(const commons::ParamsPtr& params)
+      : commons::BaseType(params) {}
 
-  Runtime(const Runtime& runtime) :
-              commons::BaseType(runtime.GetParams()) {}
+  Runtime(const Runtime& runtime) : commons::BaseType(runtime.GetParams()) {}
 
   virtual ~Runtime() {}
 
@@ -32,21 +30,17 @@ class Runtime : public bark::commons::BaseType {
   virtual void Step(float action) {}
   virtual void Step(double action) {}
   virtual void Step(Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> m) {}
-
 };
 
-inline void EvalRuntime(Runtime r,
-                        Eigen::Matrix<float,
-                                      Eigen::Dynamic,
-                                      Eigen::Dynamic> action) {
-  LOG(INFO)<< "Received valid runtime." << std::endl;
+inline void EvalRuntime(
+    Runtime r, Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> action) {
+  LOG(INFO) << "Received valid runtime." << std::endl;
   LOG(INFO) << "Stepping runtime..." << std::endl;
   r.Step(action);
   LOG(INFO) << "Runtime has been successfully stepped." << std::endl;
 }
 
-inline void EvalRuntime(Runtime r,
-                        int action) {
+inline void EvalRuntime(Runtime r, int action) {
   LOG(INFO) << "Received valid runtime." << std::endl;
   LOG(INFO) << "Stepping runtime..." << std::endl;
   r.Step(action);

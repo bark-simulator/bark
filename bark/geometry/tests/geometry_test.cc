@@ -6,11 +6,11 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "gtest/gtest.h"
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
+#include "gtest/gtest.h"
 
 TEST(polygon, base_functionality) {
   using bark::geometry::Point2d;
@@ -751,8 +751,7 @@ TEST(line, segment_intersection_tangent_1) {
   line.AddPoint(point_5);
 
   EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141,
-              0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1f);
 
   // template
   Point2d point_6(0.0, 0.0);
@@ -845,7 +844,7 @@ TEST(optimizer, shrink_polygon) {
   ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
