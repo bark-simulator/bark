@@ -9,7 +9,7 @@
 
 #include "bark/python_wrapper/models/plan/plan.hpp"
 #ifdef PLANNER_UCT
-  #include "python/python_planner_uct.hpp"
+  #include "bark/python_wrapper/python_planner_uct.hpp"
 #endif
 
 void python_behavior_plan(py::module m) {

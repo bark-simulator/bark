@@ -34,13 +34,12 @@
 #include "bark/python_wrapper/models/behavior.hpp"
 
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
-#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 
 #ifdef PLANNER_UCT
-#include "bark/models/behavior/behavior_uct_single_agent_macro_actions.hpp"
+#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 #include "bark/models/behavior/behavior_uct_hypothesis.hpp"
-using bark::models::behavior::BehaviorUCTSingleAgentMacroActions;
 using bark::models::behavior::BehaviorUCTHypothesis;
+using bark::models::behavior::BehaviorHypothesisIDM;
 #endif
 
 
@@ -61,7 +60,6 @@ using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorMobil;
 using bark::commons::SetterParams;
 using bark::models::behavior::BehaviorIDMStochastic;
-using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::primitives::Primitive;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
@@ -92,14 +90,12 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "PyBehaviorModel";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMStochastic)) {
     behavior_model_name = "BehaviorIDMStochastic";
+  } 
+#ifdef PLANNER_UCT
+  else if(typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
+    behavior_model_name = "BehaviorUCTHypothesis";
   } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
     behavior_model_name = "BehaviorHypothesisIDM";
-  }
-#ifdef PLANNER_UCT
-  else if(typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
-    behavior_model_name = "BehaviorUCTSingleAgentMacroActions";
-  } else if(typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
-    behavior_model_name = "BehaviorUCTHypothesis";
   }
 #endif
   else {
@@ -144,18 +140,14 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorIDMStochastic") == 0) {
     return std::make_shared<BehaviorIDMStochastic>(
       t[0].cast<BehaviorIDMStochastic>());
+  }
+#ifdef PLANNER_UCT
+  else if(behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
+    return std::make_shared<BehaviorUCTHypothesis>(
+      t[0].cast<BehaviorUCTHypothesis>());
   } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
     return std::make_shared<BehaviorHypothesisIDM>(
       t[0].cast<BehaviorHypothesisIDM>());
-  }
-#ifdef PLANNER_UCT
-  else if(behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
-    return std::make_shared<BehaviorUCTSingleAgentMacroActions>(
-      t[0].cast<BehaviorUCTSingleAgentMacroActions>());
-
-  } else if(behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
-    return std::make_shared<BehaviorUCTHypothesis>(
-      t[0].cast<BehaviorUCTHypothesis>());
   }
 #endif
   else {
