@@ -9,7 +9,6 @@ py_library(
             "//bark/runtime/viewer:panda3d_viewer",
             "//bark/runtime/viewer:matplotlib_viewer",
             "//bark/runtime/viewer:video_renderer",
-            "//bark/models/behavior/hypothesis/behavior_space:behavior_space",
             "//bark/runtime/scenario:scenario"],
     visibility = ["//visibility:public"],
 )
