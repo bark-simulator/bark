@@ -6,6 +6,7 @@
 
 import unittest
 import os
+import time
 import ray
 
 from load.benchmark_database import BenchmarkDatabase
@@ -24,9 +25,10 @@ from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
-# to find database files
-os.chdir("../benchmark_database/")
-
+try: # bazel run
+  os.chdir("../benchmark_database/")
+except: # debug
+  os.chdir("bazel-bin/bark/benchmark/tests/py_benchmark_runner_tests.runfiles/benchmark_database")
 
 class DatabaseRunnerTests(unittest.TestCase):
   @unittest.skip
@@ -115,13 +117,13 @@ class DatabaseRunnerTests(unittest.TestCase):
     params = ParameterServer()  # only for evaluated agents not passed to scenario!
     behaviors_tested = {"Const": BehaviorConstantVelocity(params)}
 
-    benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
+    benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                        evaluators=evaluators,
                                        terminal_when=terminal_when,
                                        behaviors=behaviors_tested,
                                        num_scenarios=10,
                                        log_eval_avg_every=1,
-                                       num_cpus=2)
+                                       num_cpus=1)
 
     result = benchmark_runner.run()
     df = result.get_data_frame()
