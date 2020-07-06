@@ -137,7 +137,10 @@ class BenchmarkRunner:
                  log_eval_avg_every=None):
 
         self.benchmark_database = benchmark_database
-        self.evaluators = evaluators or {}
+        if evaluators is not None and isinstance(evaluators, bytes):
+            self.evaluators = pickle.loads(evaluators)
+        else:
+            self.evaluators = evaluators or {}
         self.terminal_when = terminal_when or []
         self.behaviors = behaviors or {}
         self.benchmark_configs = benchmark_configs or \

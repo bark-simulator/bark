@@ -15,9 +15,6 @@ from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP, _BenchmarkRunnerActor, \
   deserialize_benchmark_config, serialize_benchmark_config
 
-from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
-  import ConfigurableScenarioGeneration
-
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
@@ -106,14 +103,14 @@ class DatabaseRunnerTests(unittest.TestCase):
 
   #@unittest.skip
   def test_parameterized_evaluators(self):
-    dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=1)
+    dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=2)
     dbs.process("data/database1")
     local_release_filename = dbs.release(version="test")
 
     db = BenchmarkDatabase(database_root=local_release_filename)
     evaluators = {"true": {"type": "EvaluatorLTL",
                            "params": {"ltl_formula": "G !test", "label_functions": [ConstantLabelFunction("test")]}}}
-    terminal_when = {"true": lambda x: x}
+    terminal_when = {"true": lambda x: x > 2}
     params = ParameterServer()  # only for evaluated agents not passed to scenario!
     behaviors_tested = {"Const": BehaviorConstantVelocity(params)}
 
