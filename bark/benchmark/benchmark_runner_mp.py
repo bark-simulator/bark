@@ -71,7 +71,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           memory_total = memory_available
 
         ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7) # we split memory between workers (30%) and objects (70%)
-        
+        serialized_evaluators = pickle.dumps(evaluators)
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
@@ -79,11 +79,11 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.benchmark_configs[i::num_cpus] for i in range(0, num_cpus)]
-        self.actors = [_BenchmarkRunnerActor.remote(evaluators=evaluators,
+        self.actors = [_BenchmarkRunnerActor.remote(evaluators=serialized_evaluators,
                                                     terminal_when=terminal_when,
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),
-                                                    log_eval_avg_every=log_eval_avg_every) for i in range(num_cpus) ]
+                                                    log_eval_avg_every=log_eval_avg_every) for i in range(num_cpus)]
 
     def run(self, viewer=None, maintain_history=False, stage_dir=None):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history, stage_dir) for actor in self.actors])
