@@ -21,6 +21,15 @@ import importlib
 import aabbtree
 from collections import defaultdict 
 
+__CONFIG_READER_MODULES = []
+
+def get_config_reader_modules():
+  return __CONFIG_READER_MODULES
+
+def add_config_reader_module(module_name):
+  module = importlib.import_module(module_name)
+  __CONFIG_READER_MODULES.append(module)
+
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
   def __init__(self, num_scenarios, params=None, random_seed=1000):
@@ -68,8 +77,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     self._sink_source_parameter_servers = defaultdict(list)
 
     self._sink_source_default_params = None
-
-    self._imported_modules = []
 
   def update_defaults_params(self):
     self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
@@ -430,14 +437,17 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
     param_config = ParameterServer(json = eval_config, log_if_default = self._params.log_if_default)
-    confgi_
     try:
       config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
     except NameError as error:
-        for module in self._imported_modules:
+        for module in get_config_reader_modules():
           try:
-            reader_type = getattr(module, 'eval_config_type')
-        config_reader = eval("reader_type(self._random_state, self._current_scenario_idx)")
+            reader_type = getattr(module, eval_config_type)
+            config_reader = eval("reader_type(self._random_state, self._current_scenario_idx)")
+          except:
+            pass
+        if not config_reader:
+          raise ValueError("Config reader type {} not found in added module paths".format(eval_config_type))
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
