@@ -1,12 +1,14 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/map/map_interface.hpp"
-#include "gtest/gtest.h"
 #include "bark/world/tests/make_test_xodr_map.hpp"
+#include "gtest/gtest.h"
 
 TEST(query_lanes, map_interface) {
   using bark::geometry::Point2d;

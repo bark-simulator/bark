@@ -10,8 +10,8 @@
 #include <utility>
 #include <vector>
 
-#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {

@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -7,8 +9,8 @@
 #ifndef BARK_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
 #define BARK_WORLD_EVALUATION_EVALUATOR_DISTANCE_TO_GOAL_HPP_
 
-#include <memory>
 #include <limits>
+#include <memory>
 
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/objects/agent.hpp"
@@ -22,10 +24,9 @@ namespace evaluation {
 
 class EvaluatorDistanceToGoal : public BaseEvaluator {
  public:
-  EvaluatorDistanceToGoal() :
-    agent_id_(std::numeric_limits<AgentId>::max()) {}
-  explicit EvaluatorDistanceToGoal(const AgentId& agent_id) :
-    agent_id_(agent_id) {}
+  EvaluatorDistanceToGoal() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  explicit EvaluatorDistanceToGoal(const AgentId& agent_id)
+      : agent_id_(agent_id) {}
   virtual ~EvaluatorDistanceToGoal() {}
 
   virtual EvaluationReturn Evaluate(const world::World& world) {
@@ -35,7 +36,7 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
   }
 
   static float DistanceToGoal(
-    const std::shared_ptr<const bark::world::objects::Agent>& agent) {
+      const std::shared_ptr<const bark::world::objects::Agent>& agent) {
     const auto& goal_shape = agent->GetGoalDefinition()->GetShape();
     const auto& agent_pos = agent->GetCurrentPosition();
     float dist = bark::geometry::Distance(goal_shape, agent_pos);
@@ -43,7 +44,7 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
   }
 
   virtual EvaluationReturn Evaluate(
-    const world::ObservedWorld& observed_world) {
+      const world::ObservedWorld& observed_world) {
     const auto& ego_agent = observed_world.GetEgoAgent();
     BARK_EXPECT_TRUE(bool(ego_agent));
     return EvaluatorDistanceToGoal::DistanceToGoal(ego_agent);

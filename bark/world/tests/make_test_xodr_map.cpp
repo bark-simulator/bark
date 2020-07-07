@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -32,8 +34,8 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
   XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 200, off};
 
-  XodrLanePtr lane1 = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
-                                                  lane_width_1, 0.5);
+  XodrLanePtr lane1 =
+      CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width_1, 0.5);
   lane1->SetLaneType(XodrLaneType::DRIVING);
   lane1->SetDrivingDirection(XodrDrivingDirection::FORWARD);
 
@@ -76,8 +78,8 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_1 = {0, 50, off};
 
-  XodrLanePtr lane10 = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(),
-                                                   lane_width_1, 0.5);
+  XodrLanePtr lane10 =
+      CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width_1, 0.5);
   lane10->SetLaneType(XodrLaneType::DRIVING);
   lane10->SetDrivingDirection(XodrDrivingDirection::FORWARD);
 
@@ -107,8 +109,8 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
 
   XodrLaneOffset off2 = {3.5f, 0.0f, 0.0f, 0.0f};
   XodrLaneWidth lane_width_2 = {0, 50, off};
-  XodrLanePtr lane11 = CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(),
-                                                   lane_width_2, 0.5);
+  XodrLanePtr lane11 =
+      CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.5);
   lane11->SetLaneType(XodrLaneType::DRIVING);
   lane11->SetDrivingDirection(XodrDrivingDirection::FORWARD);
 

@@ -66,6 +66,7 @@ cc_test(
     ],
 )
 
+
 # cc_test(
 #     name = "behavior_mobil_test",
 #     srcs = [
@@ -101,6 +102,7 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/models/behavior/static_trajectory",
+        "//bark/world/tests:make_test_world",
         "@com_github_eigen_eigen//:eigen",
         "@gtest//:gtest_main",
     ],

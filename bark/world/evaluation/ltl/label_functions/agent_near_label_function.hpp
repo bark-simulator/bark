@@ -20,7 +20,8 @@ class AgentNearLabelFunction : public MultiAgentLabelFunction {
   AgentNearLabelFunction(const std::string& string,
                          const double distance_thres);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
-                      const AgentPtr& other_agent) const override;
+                     const AgentPtr& other_agent) const override;
+
  private:
   const double distance_thres_;
 };
