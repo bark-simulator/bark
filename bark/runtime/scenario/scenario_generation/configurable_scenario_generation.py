@@ -17,6 +17,7 @@ from bark.core.world.agent import Agent
 import numpy as np
 import math
 import copy
+import importlib
 import aabbtree
 from collections import defaultdict 
 
@@ -68,7 +69,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
     self._sink_source_default_params = None
 
-    self._registered_types = {}
+    self._imported_modules = []
 
   def update_defaults_params(self):
     self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
@@ -79,6 +80,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       {"Description": description,
        "ParameterServers" : config_reader.get_param_servers()}
     )
+
+  def add_config_module_dir(self, dir):
+    module = importlib.import_module(dir)
+    self._imported_modules.append(module)
 
   def get_persisted_param_servers(self):
     return self._sink_source_parameter_servers
@@ -425,7 +430,14 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
     param_config = ParameterServer(json = eval_config, log_if_default = self._params.log_if_default)
-    config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
+    confgi_
+    try:
+      config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
+    except NameError as error:
+        for module in self._imported_modules:
+          try:
+            reader_type = getattr(module, 'eval_config_type')
+        config_reader = eval("reader_type(self._random_state, self._current_scenario_idx)")
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
