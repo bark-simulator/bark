@@ -28,7 +28,7 @@ class BaseLabelFunction {
   explicit BaseLabelFunction(std::string label_str)
       : label_str_(std::move(label_str)) {}
   virtual LabelMap Evaluate(
-    const world::ObservedWorld& observed_world) const = 0;
+      const world::ObservedWorld& observed_world) const = 0;
   const std::string& GetLabelStr() const { return label_str_; }
   Label GetLabel(const objects::AgentId agent_id) const {
     return Label(label_str_, agent_id);

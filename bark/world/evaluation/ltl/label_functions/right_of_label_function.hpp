@@ -16,7 +16,7 @@ namespace evaluation {
 class RightOfLabelFunction : public MultiAgentLabelFunction {
   using MultiAgentLabelFunction::MultiAgentLabelFunction;
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
-                      const AgentPtr& other_agent) const override;
+                     const AgentPtr& other_agent) const override;
 };
 
 }  // namespace evaluation

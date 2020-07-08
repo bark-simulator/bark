@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -16,7 +18,7 @@ namespace evaluation {
 
 class EvaluatorCollisionAgents : public BaseEvaluator {
  public:
-  EvaluatorCollisionAgents()  {}
+  EvaluatorCollisionAgents() {}
   virtual ~EvaluatorCollisionAgents() {}
   virtual EvaluationReturn Evaluate(const world::World& world);
 };

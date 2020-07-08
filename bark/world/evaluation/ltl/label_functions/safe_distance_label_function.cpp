@@ -22,7 +22,7 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(
       a_o_(a_o) {}
 
 LabelMap SafeDistanceLabelFunction::Evaluate(
-  const world::ObservedWorld& observed_world) const {
+    const world::ObservedWorld& observed_world) const {
   auto ego = std::const_pointer_cast<Agent>(observed_world.GetEgoAgent());
   auto lane_corridor =
       ego->GetRoadCorridor()->GetNearestLaneCorridor(ego->GetCurrentPosition());
@@ -47,8 +47,8 @@ bool SafeDistanceLabelFunction::CheckSafeDistance(
                 rear_agent->GetShape().front_dist_;
   if (dist < 0.0) {
     VLOG(2) << "Vehicle distance between agent " << rear_agent->GetAgentId()
-               << " and " << front_agent->GetAgentId() << " = " << dist
-               << " < 0! Skipping!";
+            << " and " << front_agent->GetAgentId() << " = " << dist
+            << " < 0! Skipping!";
     return true;
   }
 

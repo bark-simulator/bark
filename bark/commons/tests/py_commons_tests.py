@@ -1,4 +1,6 @@
-# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 # Tobias Kessler
 #
 # This work is licensed under the terms of the MIT license.
@@ -12,7 +14,7 @@ from bark.runtime.commons.parameters import ParameterServer
 class ParamsTests(unittest.TestCase):
     def test_parameters(self):
         # initialize Params
-        p = ParameterServer()  # TODO: this has to be the ParameterServer
+        p = ParameterServer()
 
         # set new parameter
         self.assertTrue(p["LetsTest"]["hierarchy", "bla", True])

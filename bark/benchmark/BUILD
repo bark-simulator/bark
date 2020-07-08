@@ -5,7 +5,14 @@ py_library(
     imports = ['../../../python'],
     deps = [
         "//bark/runtime:runtime",
+        ":benchmark_result"
         ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "benchmark_result",
+    srcs = ["benchmark_result.py"],
     visibility = ["//visibility:public"],
 )
 

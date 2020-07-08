@@ -1,39 +1,39 @@
 {
     "Scenario": {
-      "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
-      "Generation": {
-        "InteractionDatasetScenarioGeneration": {
-          "MapFilename": "../interaction_dataset_fortiss_internal/DR_CHN_Merging_ZS/map/DR_CHN_Merging_ZS_partial_v02.xodr",
-          "TrackFilename": "../interaction_dataset_fortiss_internal/DR_CHN_Merging_ZS/tracks/vehicle_tracks_000.csv",
-          "TrackIds": [
-            2,
-            7,
-            10,
-            18,
-            25
-          ],
-          "EgoTrackId": 2,
-          "StartTs": 100,
-          "EndTs": 5000
+        "Name": "DR_DEU_Merging_MT\nvehicle_tracks_013.csv",
+        "Generation": {
+            "InteractionDatasetScenarioGeneration": {
+                "MapFilename": "../interaction_dataset_fortiss_internal/DR_CHN_Merging_ZS/map/DR_CHN_Merging_ZS_partial_v02.xodr",
+                "TrackFilename": "../interaction_dataset_fortiss_internal/DR_CHN_Merging_ZS/tracks/vehicle_tracks_000.csv",
+                "TrackIds": [
+                    2,
+                    7,
+                    10,
+                    18,
+                    25
+                ],
+                "EgoTrackId": 2,
+                "StartTs": 100,
+                "EndTs": 5000
+            }
         }
-      }
     },
     "Visualization": {
-      "Agents": {
-        "Color": {
-            "UseColormapForOtherAgents": true
-        },
-        "DrawAgentId": true,
-        "DrawEvalGoals": false,
-        "DrawHistory": true
-      }
+        "Agents": {
+            "Color": {
+                "UseColormapForOtherAgents": true
+            },
+            "DrawAgentId": true,
+            "DrawEvalGoals": false,
+            "DrawHistory": true
+        }
     },
     "simulation": {
-      "step_time": 0.2,
-      "real_time_factor": 1,
-      "simulation_time_steps": 20
+        "step_time": 0.2,
+        "real_time_factor": 1,
+        "simulation_time_steps": 20
     },
     "agent": {
-      "MaxHistoryLength": 50
+        "MaxHistoryLength": 50
     }
-  }
+}

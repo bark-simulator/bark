@@ -1,4 +1,6 @@
-# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 # Tobias Kessler
 #
 # This work is licensed under the terms of the MIT license.
@@ -65,7 +67,16 @@ class ParamServerTests(unittest.TestCase):
 
     cpp_object = CppParamServerTestObject(params_child)
 
+  def test_pickle_param_server(self):
+    params = ParameterServer()
+    params_child = params["test_child"]
+    _  = params_child["Test1"]["Test2"]["Lala", "", False]
+    _  = params_child["Test3"]["Test2"]["Lala1", "", 23.3434]
+    _  = params_child["Test1"]["Test2"]["asdsd", "", 14]
 
-
+    params_unpickled = pickle_unpickle(params)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["Lala"], False)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test3"]["Test2"]["Lala1"], 23.3434)
+    self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["asdsd"], 14)
 if __name__ == '__main__':
   unittest.main()

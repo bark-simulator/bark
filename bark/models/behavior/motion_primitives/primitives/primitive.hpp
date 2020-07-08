@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -20,11 +22,11 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-using dynamic::Trajectory;
 using bark::geometry::Point2d;
 using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::dynamic::DynamicModelPtr;
 using bark::models::dynamic::StateDefinition;
+using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::ObservedWorldPtr;
 using world::map::LaneCorridorPtr;
@@ -45,7 +47,8 @@ class Primitive : public bark::commons::BaseType {
         integration_time_delta_(params->GetReal(
             "BehaviorMotionPrimitives::IntegrationTimeDelta",
             "the size of the time steps used within the euler integration loop",
-            0.02)) {}
+            0.02)),
+        last_action_() {}
 
   virtual ~Primitive() = default;
 
@@ -57,7 +60,8 @@ class Primitive : public bark::commons::BaseType {
   virtual bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
-  virtual Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
+  virtual Trajectory Plan(float min_planning_time,
+                          const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
   /**
    * @brief Select the new target corridor
@@ -68,8 +72,14 @@ class Primitive : public bark::commons::BaseType {
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
 
+  Action GetLastAction() const { return last_action_; };
+  void SetLastAction(const Action action) { last_action_ = action; };
+
  protected:
   float integration_time_delta_;
+
+ private:
+  Action last_action_;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;
