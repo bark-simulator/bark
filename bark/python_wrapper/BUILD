@@ -38,12 +38,14 @@ cc_binary(
     "//bark/models/behavior/rule_based:intersection_behavior",
     "//bark/models/behavior/rule_based:mobil_behavior",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/idm/stochastic:stochastic",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
     "//bark/runtime:cc_runtime",
-    "//bark/python_wrapper/models/plan:planners"
-  ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//python:planner_uct"], "//conditions:default": []})
+    "//bark/python_wrapper/models/plan:planners",
+    "//bark/python_wrapper/tests:logging_tests"
+  ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark/python_wrapper:planner_uct"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
@@ -62,7 +64,7 @@ cc_library(
     ]
 )
 
-# needed to test external python wrapping of planners in their own modules
+# needed to test external python wrapping of planners in their own bark
 cc_library(
     name = "behavior",
     hdrs = ["models/behavior.hpp"],
@@ -79,5 +81,6 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/idm/stochastic:stochastic",
     ]
 )

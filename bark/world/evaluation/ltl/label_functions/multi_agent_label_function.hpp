@@ -22,7 +22,7 @@ class MultiAgentLabelFunction : public BaseLabelFunction {
   using BaseLabelFunction::BaseLabelFunction;
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
   virtual bool EvaluateAgent(const world::ObservedWorld& observed_world,
-                              const AgentPtr& other_agent) const = 0;
+                             const AgentPtr& other_agent) const = 0;
 };
 
 }  // namespace evaluation

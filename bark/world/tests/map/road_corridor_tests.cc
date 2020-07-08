@@ -1,16 +1,18 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "gtest/gtest.h"
 #include "bark/world/map/lane.hpp"
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/map/road.hpp"
 #include "bark/world/map/road_corridor.hpp"
 #include "bark/world/opendrive/opendrive.hpp"
 #include "bark/world/tests/make_test_xodr_map.hpp"
+#include "gtest/gtest.h"
 
 TEST(road_corridor_tests, xodr_map_one_road_two_lanes) {
   using bark::world::map::MapInterface;

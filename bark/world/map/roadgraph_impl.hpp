@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -13,8 +15,8 @@ namespace map {
 
 template <class Predicate>
 bool Roadgraph::CheckIdInFilteredGraph(
-  const FilteredXodrLaneGraph_t<Predicate>& fg,
-  const XodrLaneId& lane_id) const {
+    const FilteredXodrLaneGraph_t<Predicate>& fg,
+    const XodrLaneId& lane_id) const {
   typename boost::graph_traits<
       FilteredXodrLaneGraph_t<Predicate>>::vertex_iterator i,
       end;
@@ -28,7 +30,7 @@ bool Roadgraph::CheckIdInFilteredGraph(
 
 template <class Predicate>
 std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
-                                             const XodrLaneId& goalid) {
+                                            const XodrLaneId& goalid) {
   std::vector<XodrLaneId> path;
 
   std::pair<vertex_t, bool> start_vertex = GetVertexByLaneId(startid);

@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -17,10 +19,14 @@ namespace primitives {
 /**
  * @brief Lane tracking with IDM for longitudinal motion
  */
-class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
+class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
  public:
   explicit PrimitiveGapKeeping(const commons::ParamsPtr& params)
-      : Primitive(params), BehaviorIDMLaneTracking(params) {}
+      : Primitive(params),
+        BehaviorModel(params),
+        BehaviorIDMLaneTracking(params) {
+    Primitive::SetLastAction(Continuous1DAction(0.0f));
+  }
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
@@ -28,8 +34,16 @@ class PrimitiveGapKeeping : public Primitive, BehaviorIDMLaneTracking {
   }
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor) override {
-    return BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);
+    auto traj =
+        BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);
+    Primitive::SetLastAction(BehaviorIDMLaneTracking::GetLastAction());
+    return traj;
   }
+
+  Action GetLastAction() const {
+    return BehaviorIDMLaneTracking::GetLastAction();
+  }
+
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {

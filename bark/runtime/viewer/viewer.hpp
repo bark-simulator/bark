@@ -1,10 +1,10 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-
-
 
 #ifndef BARK_VIEWER_VIEWER_HPP_
 #define BARK_VIEWER_VIEWER_HPP_
@@ -14,8 +14,8 @@
 namespace bark {
 namespace viewer {
 
-using bark::geometry::Point2d;
 using bark::geometry::Line;
+using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 
 class Viewer {
@@ -49,9 +49,12 @@ class Viewer {
 
   Viewer() {}
   virtual ~Viewer() {}
-  virtual void drawPoint2d(const Point2d &point2d, const Color& color, const float& alpha) = 0;
-  virtual void drawLine2d(const Line &line, const Color& color, const float& alpha) = 0;
-  virtual void drawPolygon2d(const Polygon& polygon, const Color& color, const float& alpha) = 0;
+  virtual void drawPoint2d(const Point2d& point2d, const Color& color,
+                           const float& alpha) = 0;
+  virtual void drawLine2d(const Line& line, const Color& color,
+                          const float& alpha) = 0;
+  virtual void drawPolygon2d(const Polygon& polygon, const Color& color,
+                             const float& alpha) = 0;
 };
 
 }  // namespace viewer

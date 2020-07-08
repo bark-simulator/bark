@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -11,15 +13,11 @@ namespace bark {
 namespace world {
 namespace goal_definition {
 
-
-bool GoalDefinitionPolygon::AtGoal(
-  const bark::world::objects::Agent& agent) {
+bool GoalDefinitionPolygon::AtGoal(const bark::world::objects::Agent& agent) {
   return bark::geometry::Within(
-      agent.GetPolygonFromState(agent.GetCurrentState()),
-      goal_shape_);
+      agent.GetPolygonFromState(agent.GetCurrentState()), goal_shape_);
 }
 
-
-}  // namespace objects
+}  // namespace goal_definition
 }  // namespace world
 }  // namespace bark

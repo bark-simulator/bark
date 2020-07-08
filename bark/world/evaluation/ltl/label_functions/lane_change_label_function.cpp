@@ -16,7 +16,7 @@ using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 
 LabelMap LaneChangeLabelFunction::Evaluate(
-  const world::ObservedWorld& observed_world) const {
+    const world::ObservedWorld& observed_world) const {
   bool lane_change = false;
   const auto lc = observed_world.GetLaneCorridor();
   const auto ego = observed_world.GetEgoAgent();

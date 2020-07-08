@@ -24,7 +24,6 @@ bool bark::world::evaluation::AgentBeyondPointLabelFunction::EvaluateAgent(
   return false;
 }
 const bark::geometry::Point2d&
-bark::world::evaluation::AgentBeyondPointLabelFunction::GetBeyondPoint()
-    const {
+bark::world::evaluation::AgentBeyondPointLabelFunction::GetBeyondPoint() const {
   return beyond_point_;
 }

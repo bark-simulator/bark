@@ -1,5 +1,7 @@
 
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -9,8 +11,8 @@
 #define BARK_COMMONS_TRANSFORMATION_FRENET_STATE_HPP_
 
 #include "bark/commons/transformation/frenet.hpp"
-#include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/geometry/line.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 
 namespace bark {
 namespace commons {
