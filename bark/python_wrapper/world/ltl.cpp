@@ -195,7 +195,20 @@ void python_ltl(py::module m) {
   py::class_<LaneChangeLabelFunction, BaseLabelFunction,
              std::shared_ptr<LaneChangeLabelFunction>>(
       m, "LaneChangeLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const LaneChangeLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.LaneChangeLabelFunction";
+           })
+      .def(py::pickle(
+          [](const LaneChangeLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new LaneChangeLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<DenseTrafficLabelFunction, BaseLabelFunction,
              std::shared_ptr<DenseTrafficLabelFunction>>(

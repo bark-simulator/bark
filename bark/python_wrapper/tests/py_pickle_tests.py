@@ -113,6 +113,9 @@ class PickleTests(unittest.TestCase):
         tlf = DenseTrafficLabelFunction("test", 20.0, 8)
         tlf_after = pickle_unpickle(tlf)
 
+        lclf = LaneChangeLabelFunction("test")
+        lclf_after = pickle_unpickle(lclf)
+
     def test_agent_pickle(self):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
