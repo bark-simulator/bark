@@ -110,6 +110,9 @@ class PickleTests(unittest.TestCase):
         dlf = SafeDistanceLabelFunction("test", False, 1.0, -5.0, -5.0)
         dlf_after = pickle_unpickle(clf)
 
+        tlf = DenseTrafficLabelFunction("test", 20.0, 8)
+        tlf_after = pickle_unpickle(tlf)
+
     def test_agent_pickle(self):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)

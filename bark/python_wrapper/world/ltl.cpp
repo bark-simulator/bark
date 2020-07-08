@@ -22,6 +22,7 @@
 #include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/constant_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/dense_traffic_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
@@ -195,6 +196,23 @@ void python_ltl(py::module m) {
              std::shared_ptr<LaneChangeLabelFunction>>(
       m, "LaneChangeLabelFunction")
       .def(py::init<const std::string&>());
+
+  py::class_<DenseTrafficLabelFunction, BaseLabelFunction,
+             std::shared_ptr<DenseTrafficLabelFunction>>(
+      m, "DenseTrafficLabelFunction")
+      .def(py::init<const std::string&, double, int>())
+      .def(py::pickle(
+          [](const DenseTrafficLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetRadius(),
+                                  b.GetNumAgents());
+          },
+          [](py::tuple t) {
+            if (t.size() != 3)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new DenseTrafficLabelFunction(t[0].cast<std::string>(),
+                                                 t[1].cast<double>(),
+                                                 t[2].cast<int>());
+          }));
 
   py::class_<AgentNearLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentNearLabelFunction>>(m,

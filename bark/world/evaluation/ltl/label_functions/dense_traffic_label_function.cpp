@@ -15,13 +15,13 @@ namespace evaluation {
 using bark::models::dynamic::StateDefinition;
 
 DenseTrafficLabelFunction::DenseTrafficLabelFunction(
-    const std::string& label_str, double radius, size_t num_agents)
+    const std::string& label_str, double radius, int num_agents)
     : BaseLabelFunction(label_str),
       radius_(std::abs(radius)),
       num_agents_(num_agents) {}
 LabelMap DenseTrafficLabelFunction::Evaluate(
   const world::ObservedWorld& observed_world) const {
-  size_t agent_count = 0;
+  int agent_count = 0;
   const auto& ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   // TODO(@cirrostratus1): Use rtree for performance
   for (const auto& agent : observed_world.GetOtherAgents()) {

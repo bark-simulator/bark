@@ -23,12 +23,14 @@ using bark::world::objects::AgentPtr;
 class DenseTrafficLabelFunction : public BaseLabelFunction {
  public:
   DenseTrafficLabelFunction(const std::string& label_str, double radius,
-                            size_t num_agents);
+                            int num_agents);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  double GetRadius() const { return radius_; }
+  int GetNumAgents() const { return num_agents_; }
 
  private:
-  const double radius_;
-  const size_t num_agents_;
+  double radius_;
+  int num_agents_;
 };
 
 }  // namespace evaluation
