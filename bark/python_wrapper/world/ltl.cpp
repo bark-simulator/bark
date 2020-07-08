@@ -235,19 +235,71 @@ void python_ltl(py::module m) {
 
   py::class_<RightOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const RightOfLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.RightOfLabelFunction";
+           })
+      .def(py::pickle(
+          [](const RightOfLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new RightOfLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<LeftOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<LeftOfLabelFunction>>(m, "LeftOfLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const LeftOfLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.LeftOfLabelFunction";
+           })
+      .def(py::pickle(
+          [](const LeftOfLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new LeftOfLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<BehindOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<BehindOfLabelFunction>>(m, "BehindOfLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const BehindOfLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.BehindOfLabelFunction";
+           })
+      .def(py::pickle(
+          [](const BehindOfLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new BehindOfLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<FrontOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<FrontOfLabelFunction>>(m, "FrontOfLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const FrontOfLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.FrontOfLabelFunction";
+           })
+      .def(py::pickle(
+          [](const FrontOfLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new FrontOfLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<AgentBeyondPointLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentBeyondPointLabelFunction>>(
