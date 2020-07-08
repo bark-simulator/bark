@@ -275,12 +275,40 @@ void python_ltl(py::module m) {
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,
              std::shared_ptr<RelSpeedLabelFunction>>(m, "RelSpeedLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const RelSpeedLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.RelSpeedLabelFunction";
+           })
+      .def(py::pickle(
+          [](const RelSpeedLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetRelSpeedThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new RelSpeedLabelFunction(t[0].cast<std::string>(),
+                                             t[1].cast<double>());
+          }));
 
   py::class_<AgentAtLaneEndLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentAtLaneEndLabelFunction>>(
       m, "AgentAtLaneEndLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const AgentAtLaneEndLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.AgentAtLaneEndLabelFunction";
+           })
+      .def(py::pickle(
+          [](const AgentAtLaneEndLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new AgentAtLaneEndLabelFunction(t[0].cast<std::string>(),
+                                             t[1].cast<double>());
+          }));
 
   py::class_<RightOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")

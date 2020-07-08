@@ -22,9 +22,10 @@ class RelSpeedLabelFunction : public MultiAgentLabelFunction {
   RelSpeedLabelFunction(const std::string& string, double rel_speed_thres);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
                      const AgentPtr& other_agent) const override;
+  double GetRelSpeedThres() const { return rel_speed_thres_; }
 
  private:
-  const double rel_speed_thres_;
+  double rel_speed_thres_;
 };
 
 }  // namespace evaluation
