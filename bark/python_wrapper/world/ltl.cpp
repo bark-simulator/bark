@@ -179,6 +179,10 @@ void python_ltl(py::module m) {
              std::shared_ptr<SafeDistanceLabelFunction>>(
       m, "SafeDistanceLabelFunction")
       .def(py::init<const std::string&, bool, double, double, double>())
+      .def("__repr__",
+           [](const SafeDistanceLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.SafeDistanceLabelFunction";
+           })
       .def(py::pickle(
           [](const SafeDistanceLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetToRear(), b.GetDelta(),
@@ -214,6 +218,10 @@ void python_ltl(py::module m) {
              std::shared_ptr<DenseTrafficLabelFunction>>(
       m, "DenseTrafficLabelFunction")
       .def(py::init<const std::string&, double, int>())
+      .def("__repr__",
+           [](const DenseTrafficLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.DenseTrafficLabelFunction";
+           })
       .def(py::pickle(
           [](const DenseTrafficLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetRadius(),
@@ -230,12 +238,40 @@ void python_ltl(py::module m) {
   py::class_<AgentNearLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentNearLabelFunction>>(m,
                                                       "AgentNearLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const AgentNearLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.AgentNearLabelFunction";
+           })
+      .def(py::pickle(
+          [](const AgentNearLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new AgentNearLabelFunction(t[0].cast<std::string>(),
+                                                 t[1].cast<double>());
+          }));
 
   py::class_<EgoAccelerateLabelFunction, BaseLabelFunction,
              std::shared_ptr<EgoAccelerateLabelFunction>>(
       m, "EgoAccelerateLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const EgoAccelerateLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.EgoAccelerateLabelFunction";
+           })
+      .def(py::pickle(
+          [](const EgoAccelerateLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetAccThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new EgoAccelerateLabelFunction(t[0].cast<std::string>(),
+                                                 t[1].cast<double>());
+          }));
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,
              std::shared_ptr<RelSpeedLabelFunction>>(m, "RelSpeedLabelFunction")
@@ -318,6 +354,10 @@ void python_ltl(py::module m) {
              std::shared_ptr<AgentBeyondPointLabelFunction>>(
       m, "AgentBeyondPointLabelFunction")
       .def(py::init<const std::string&, const Point2d&>())
+      .def("__repr__",
+           [](const AgentBeyondPointLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.AgentBeyondPointLabelFunction";
+           })
       .def(py::pickle(
           [](const AgentBeyondPointLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetBeyondPoint());
@@ -333,6 +373,10 @@ void python_ltl(py::module m) {
              std::shared_ptr<EgoBeyondPointLabelFunction>>(
       m, "EgoBeyondPointLabelFunction")
       .def(py::init<const std::string&, const Point2d&>())
+      .def("__repr__",
+           [](const EgoBeyondPointLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.EgoBeyondPointLabelFunction";
+           })
       .def(py::pickle(
           [](const EgoBeyondPointLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetBeyondPoint());
