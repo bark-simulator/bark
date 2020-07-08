@@ -25,6 +25,10 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
                             double delta, double a_e, double a_o);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  bool GetToRear() const { return to_rear_; }
+  double GetDelta() const { return delta_; }
+  double GetMaxDecelEgo() const { return a_e_; }
+  double GetMaxDecelOther() const { return a_o_; }
 
  private:
   bool CheckSafeDistance(const AgentPtr& rear_agent,

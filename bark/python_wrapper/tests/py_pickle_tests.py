@@ -107,6 +107,9 @@ class PickleTests(unittest.TestCase):
         clf_after = pickle_unpickle(clf)
         self.assertEqual(clf.value, clf_after.value)
 
+        dlf = SafeDistanceLabelFunction("test", False, 1.0, -5.0, -5.0)
+        dlf_after = pickle_unpickle(clf)
+
     def test_agent_pickle(self):
         params = ParameterServer()
         behavior = BehaviorConstantVelocity(params)
