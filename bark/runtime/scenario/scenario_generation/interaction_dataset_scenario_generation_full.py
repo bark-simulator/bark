@@ -41,6 +41,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
         self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
+        self._included_tracks = params_temp["IncludeTracks", "The only track IDs to be included in the scenario generation", {}]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -51,23 +52,34 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         for track_file_name in self._track_file_name_list:
 
-          dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                                track_filename=track_file_name)
-          scenario_track_info_list = dataset_decomposer.decompose()
+            dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
+                                                    track_filename=track_file_name)
+            scenario_track_info_list = dataset_decomposer.decompose()
 
-          # for scenario_idx in range(0, num_scenarios):
-          for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-              if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
-                  logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
-                  try:
-                      scenario = self.__create_single_scenario__(
-                          scenario_track_info)
-                  except:
-                      raise ValueError(
-                          "Generation of scenario failed: {}".format(scenario_track_info))
-                  scenario_list.append(scenario)
-              else:
-                  break
+            # for scenario_idx in range(0, num_scenarios):
+            for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
+                if len(scenario_list) >= num_scenarios:
+                    break
+
+                track_id = scenario_track_info.GetEgoTrackInfo().GetTrackId()
+                if track_id in self._excluded_tracks:
+                    # TODO: Update in a similar way as the included tracks (list
+                    # of tracks for each file)
+                    continue
+                if len(self._included_tracks) > 0 and \
+                    (track_file_name not in self._included_tracks or track_id not in self._included_tracks[track_file_name]):
+                    # Set of the tracks to include is non-empty, current track
+                    # is not included in the set
+                    continue
+
+                logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
+                try:
+                    scenario = self.__create_single_scenario__(
+                        scenario_track_info)
+                except:
+                    raise ValueError(
+                        "Generation of scenario failed: {}".format(scenario_track_info))
+                scenario_list.append(scenario)
         return scenario_list
 
     def __create_single_scenario__(self, scenario_track_info):
