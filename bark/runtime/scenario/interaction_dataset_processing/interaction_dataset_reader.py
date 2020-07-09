@@ -67,16 +67,19 @@ def InitStateFromTrack(track, start):
 
 
 def GoalDefinitionFromTrack(track, end):
+    goal_size = 8.0
     states = list(dict_utils.get_item_iterator(track.motion_states))
+    # Goal position is spatial position of last state
     motion_state = states[-1][1]
     bark_state = BarkStateFromMotionState(motion_state)
-    goal_polygon = Polygon2d(np.array([0.0, 0.0, 0.0]),
-                             [Point2d(-1.5, 0),
-                              Point2d(-1.5, 8),
-                              Point2d(1.5, 8),
-                              Point2d(1.5, 0)])
-    goal_polygon = goal_polygon.Translate(Point2d(bark_state[0, int(StateDefinition.X_POSITION)],
-                                                  bark_state[0, int(StateDefinition.Y_POSITION)]))
+    goal_polygon = Polygon2d(np.array([0.5 * goal_size, 0.5 * goal_size, 0.0]),
+                             [Point2d(0.0, 0.0),
+                              Point2d(goal_size, 0.0),
+                              Point2d(goal_size, goal_size),
+                              Point2d(0.0, goal_size),
+                              Point2d(0.0, 0.0)])
+    goal_polygon = goal_polygon.Translate(Point2d(bark_state[0, int(StateDefinition.X_POSITION)] - 0.5 * goal_size,
+                                                  bark_state[0, int(StateDefinition.Y_POSITION)] - 0.5 * goal_size))
     goal_definition = GoalDefinitionPolygon(goal_polygon)
     return goal_definition
 
