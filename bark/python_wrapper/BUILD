@@ -9,8 +9,7 @@ cc_binary(
     "world/*.cpp", "world/*.hpp",
     "models/*.cpp", "models/*.hpp",
     "viewer/*.cpp", "viewer/*.hpp",
-    "runtime.hpp"], exclude=["world/ltl.cpp", "world/ltl.hpp"])
-    + select({"//bark/world/evaluation/ltl:_ltl_rules": ["world/ltl.cpp", "world/ltl.hpp"], "//conditions:default": []}),
+    "runtime.hpp"]),
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",

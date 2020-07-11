@@ -32,6 +32,7 @@ namespace py = pybind11;
 void python_ltl(py::module m) {
   using namespace bark::world::evaluation;
 
+  #ifdef LTL_RULES
   py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
       m, "EvaluatorLTL")
       .def(py::init<AgentId, const std::string&, const LabelFunctions&>(),
@@ -41,6 +42,7 @@ void python_ltl(py::module m) {
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
+  #endif
   // LABELS
 
   py::class_<BaseLabelFunction, PyBaseLabelFunction,

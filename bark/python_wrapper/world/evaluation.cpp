@@ -13,9 +13,7 @@
 #include "bark/world/evaluation/evaluator_step_count.hpp"
 #include "bark/world/world.hpp"
 
-#ifdef LTL_RULES
 #include "bark/python_wrapper/world/ltl.hpp"
-#endif
 
 namespace py = pybind11;
 
@@ -78,7 +76,5 @@ void python_evaluation(py::module m) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
       });
 
-#ifdef LTL_RULES
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
-#endif
 }
