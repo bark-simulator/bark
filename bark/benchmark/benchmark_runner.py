@@ -39,6 +39,7 @@ class BenchmarkRunner:
 
         self.benchmark_database = benchmark_database
         if evaluators is not None and isinstance(evaluators, bytes):
+            # unpickle serialized evaluators
             self.evaluators = pickle.loads(evaluators)
         else:
             self.evaluators = evaluators or {}
