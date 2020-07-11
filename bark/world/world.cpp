@@ -1,15 +1,17 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include <string>
 #include <csignal>
+#include <string>
 
-#include "bark/world/world.hpp"
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/world/world.hpp"
 
 namespace bark {
 namespace world {
@@ -122,7 +124,7 @@ EvaluationMap World::Evaluate() const {
 }
 
 std::vector<ObservedWorld> World::Observe(
-  const std::vector<AgentId>& agent_ids) {
+    const std::vector<AgentId>& agent_ids) {
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
@@ -140,8 +142,8 @@ std::vector<ObservedWorld> World::Observe(
 void World::UpdateAgentRTree() {
   rtree_agents_.clear();
   for (auto& agent : agents_) {
-    auto obj =agent.second->GetPolygonFromState(
-      agent.second->GetCurrentState()).obj_;
+    auto obj =
+        agent.second->GetPolygonFromState(agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
     boost::geometry::envelope(obj, box);
     boost::geometry::correct(box);

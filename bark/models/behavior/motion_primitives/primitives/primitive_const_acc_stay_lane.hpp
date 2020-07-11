@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -14,7 +16,8 @@ namespace models {
 namespace behavior {
 namespace primitives {
 
-class PrimitiveConstAccStayLane : public Primitive, BehaviorIDMLaneTracking {
+class PrimitiveConstAccStayLane : public Primitive,
+                                  public BehaviorIDMLaneTracking {
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
   PrimitiveConstAccStayLane(const commons::ParamsPtr& params,

@@ -18,7 +18,7 @@ class LeftOfLabelFunction : public MultiAgentLabelFunction {
 
  public:
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
-                      const AgentPtr& other_agent) const override;
+                     const AgentPtr& other_agent) const override;
 };
 
 }  // namespace evaluation

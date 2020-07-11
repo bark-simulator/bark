@@ -10,7 +10,7 @@
 using bark::world::evaluation::LabelMap;
 
 LabelMap bark::world::evaluation::MultiAgentLabelFunction::Evaluate(
-  const bark::world::ObservedWorld& observed_world) const {
+    const bark::world::ObservedWorld& observed_world) const {
   const auto other_agents = observed_world.GetValidOtherAgents();
   LabelMap labels;
   for (const auto& agent : other_agents) {

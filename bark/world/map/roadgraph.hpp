@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -56,9 +58,9 @@ struct XodrLaneEdge {
                  //! implementation!
   XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
-  XodrLaneEdge(XodrLaneEdgeType edge_type_in) :
-    edge_type(edge_type_in),
-    weight(edge_type_in == LANE_SUCCESSOR_EDGE ? 1 : 10) {}
+  XodrLaneEdge(XodrLaneEdgeType edge_type_in)
+      : edge_type(edge_type_in),
+        weight(edge_type_in == LANE_SUCCESSOR_EDGE ? 1 : 10) {}
 };
 
 typedef boost::adjacency_list<vecS, vecS, bidirectionalS, XodrLaneVertex,
@@ -131,11 +133,9 @@ class Roadgraph {
 
   XodrLaneId AddLane(const XodrRoadId& road_id, const XodrLanePtr& laneptr);
 
-  bool AddInnerNeighbor(const XodrLaneId& inner_id,
-                          const XodrLaneId& outer_id);
+  bool AddInnerNeighbor(const XodrLaneId& inner_id, const XodrLaneId& outer_id);
 
-  bool AddOuterNeighbor(const XodrLaneId& inner_id,
-                          const XodrLaneId& outer_id);
+  bool AddOuterNeighbor(const XodrLaneId& inner_id, const XodrLaneId& outer_id);
 
   bool AddLaneSuccessor(const XodrLaneId& prev, const XodrLaneId& succ);
 
@@ -143,22 +143,21 @@ class Roadgraph {
 
   std::vector<XodrLaneId> GetSuccessorLanes(const XodrLaneId& lane_id) const;
 
-  std::vector<XodrLaneId> GetPredecessorLanes(
-      const XodrLaneId& lane_id) const;
+  std::vector<XodrLaneId> GetPredecessorLanes(const XodrLaneId& lane_id) const;
 
   template <class Predicate>
   bool CheckIdInFilteredGraph(const FilteredXodrLaneGraph_t<Predicate>& fg,
-                                  const XodrLaneId& lane_id) const;
+                              const XodrLaneId& lane_id) const;
 
   template <class Predicate>
   std::vector<XodrLaneId> FindPath(const XodrLaneId& startid,
-                                    const XodrLaneId& goalid);
+                                   const XodrLaneId& goalid);
 
   std::vector<XodrRoadId> FindRoadPath(const XodrRoadId& startid,
-                                         const XodrRoadId& goalid);
+                                       const XodrRoadId& goalid);
 
   std::vector<XodrLaneId> FindDrivableLanePath(const XodrLaneId& startid,
-                                                  const XodrLaneId& goalid);
+                                               const XodrLaneId& goalid);
 
   std::vector<std::vector<XodrLaneId>> FindAllPathsInSubgraph(
       const std::vector<XodrLaneEdgeType>& edge_type_subset,
@@ -171,7 +170,7 @@ class Roadgraph {
   std::pair<XodrLaneId, bool> GetPlanViewForRoadId(const XodrRoadId& id) const;
 
   std::pair<std::vector<XodrDrivingDirection>, bool>
-          GetDrivingDirectionsForRoadId(const XodrRoadId &id) const;
+  GetDrivingDirectionsForRoadId(const XodrRoadId& id) const;
 
   //! outer_lane_id can be some outer_lane_id (position 1,2,3)
   std::pair<XodrLaneId, bool> GetPlanViewForLaneId(
@@ -183,13 +182,11 @@ class Roadgraph {
   XodrRoadId GetRoadForLaneId(const XodrLaneId& lane_id);
 
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
-  std::pair<XodrLaneId, bool> GetInnerNeighbor(
-      const XodrLaneId& lane_id) const;
+  std::pair<XodrLaneId, bool> GetInnerNeighbor(const XodrLaneId& lane_id) const;
 
   //! XodrLaneId of the neighboring lane and a flag if it exists or not
   //! @note make sure to not call this function on the planview lane!
-  std::pair<XodrLaneId, bool> GetOuterNeighbor(
-      const XodrLaneId& lane_id) const;
+  std::pair<XodrLaneId, bool> GetOuterNeighbor(const XodrLaneId& lane_id) const;
 
   //! XodrLaneIds of all neighboring lanes in the same driving direction.
   //! Includes neighbors of neighbors
@@ -218,8 +215,7 @@ class Roadgraph {
 
   edge_t GetEdgeDescr(vertex_t from, vertex_t to) const;
 
-  std::pair<vertex_t, bool> GetVertexByLaneId(
-      const XodrLaneId& lane_id) const;
+  std::pair<vertex_t, bool> GetVertexByLaneId(const XodrLaneId& lane_id) const;
 
   void GenerateVertices(OpenDriveMapPtr map);
 
@@ -242,27 +238,25 @@ class Roadgraph {
   std::pair<PolygonPtr, bool> ComputeXodrLanePolygon(
       const XodrLaneId& lane_id) const;
   std::vector<std::pair<XodrLaneId, bool>> GetOuterNeighborsPlanview(
-    const XodrLaneId &lane_id) const;
+      const XodrLaneId& lane_id) const;
 
   //! Roadgraph extension
-  std::pair<XodrLaneId, bool> GetLeftLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction);
-  std::pair<XodrLaneId, bool> GetRightLane(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction);
+  std::pair<XodrLaneId, bool> GetLeftLane(
+      const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
+  std::pair<XodrLaneId, bool> GetRightLane(
+      const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
   std::pair<XodrLaneId, bool> GetNextLane(
-    const std::vector<XodrRoadId>& road_ids,
-    const XodrLaneId& lane_id);
-  std::pair<XodrLaneId, bool> GetLeftBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction);
-  std::pair<XodrLaneId, bool> GetRightBoundary(const XodrLaneId& lane_id,
-    const XodrDrivingDirection& driving_direction);
+      const std::vector<XodrRoadId>& road_ids, const XodrLaneId& lane_id);
+  std::pair<XodrLaneId, bool> GetLeftBoundary(
+      const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
+  std::pair<XodrLaneId, bool> GetRightBoundary(
+      const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
 
  private:
   XodrLaneGraph g_;
 
-  bool AddEdgeOfType(const XodrLaneId& source_id,
-                        const XodrLaneId& tarGetId,
-                        const XodrLaneEdgeType& edgetype);
+  bool AddEdgeOfType(const XodrLaneId& source_id, const XodrLaneId& tarGetId,
+                     const XodrLaneEdgeType& edgetype);
 
   std::vector<std::pair<XodrLaneId, bool>> GetNeighborFromEdgetype(
       const XodrLaneId& lane_id, const XodrLaneEdgeType edge_type) const;

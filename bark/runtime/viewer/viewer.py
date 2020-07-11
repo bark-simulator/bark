@@ -1,4 +1,6 @@
-# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 # Tobias Kessler
 #
 # This work is licensed under the terms of the MIT license.
@@ -23,12 +25,13 @@ class BaseViewer(Viewer):
         Viewer.__init__(self)
         # color parameters
         # agents
-        self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.7,0.7,0.7)]
+        self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines", "Color of other agents", (0.1,0.1,0.1)]
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face", "Color of other agents", (0.7,0.7,0.7)]
-        self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.,.27,.58)]
-        self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (.49, .63, .83)]
-        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", False]
-        self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 1.]
+        self.color_eval_agents_line = params["Visualization"]["Agents"]["Color"]["Controlled"]["Lines", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.color_eval_agents_face = params["Visualization"]["Agents"]["Color"]["Controlled"]["Face", "Color of controlled, evaluated agents", (0.9,0,0)]
+        self.use_colormap_for_other_agents = params["Visualization"]["Agents"]["Color"]["UseColormapForOtherAgents", "Flag to enable color map for other agents", True]
+        self.if_colormap_use_line_others = params["Visualization"]["Agents"]["Color"]["IfColormapUseLineColorOthers", "Flag to enable that line color can be fixed for other agents while using colormap", True]
+        self.alpha_eval_agent = params["Visualization"]["Agents"]["Alpha"]["Controlled", "Alpha of evalagents", 0.8]
         self.alpha_other_agents = params["Visualization"]["Agents"]["Alpha"]["Other", "Alpha of other agents", 1]
         self.route_color =  params["Visualization"]["Agents"]["ColorRoute", "Color of agents routes", (0.2,0.2,0.2)]
         self.draw_route = params["Visualization"]["Agents"]["DrawRoute", "Draw Route of each agent", False]
@@ -36,6 +39,8 @@ class BaseViewer(Viewer):
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals", "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor", "Color of eval agent goals", (.49, .63, .83)]
         self.draw_history = params["Visualization"]["Agents"]["DrawHistory", "Draw history with alpha trace for each agent", False]
+        self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace", "Flag to specify if face is drawn in history mode", True]
+
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color", "Color of agents except ego vehicle", (0.7,0.7,0.7)]
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
@@ -44,6 +49,8 @@ class BaseViewer(Viewer):
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth", "Linewidth of linestrings", 1.0]
 
         self.parameters = params
+        self.agent_color_map = {}
+        self.max_agents_color_map = 0
 
         self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
@@ -128,10 +135,10 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=10):
+    def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=2):
         pass
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
         pass
 
     def drawTrajectory(self, trajectory, color):
@@ -156,7 +163,7 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
 
-    def drawHistory(self, agent, color, alpha, facecolor):
+    def drawHistory(self, agent, color, alpha, facecolor, zorder):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             history = agent.history
@@ -169,9 +176,9 @@ class BaseViewer(Viewer):
                 pose[1] = state[int(StateDefinition.Y_POSITION)]
                 pose[2] = state[int(StateDefinition.THETA_POSITION)]
                 transformed_polygon = shape.Transform(pose)
-                alpha=1-0.8*(lh-idx)/4
+                alpha=1-0.8*(lh-idx)/3.4
                 alpha = 0 if alpha<0 else alpha
-                self.drawPolygon2d(transformed_polygon, color, alpha, facecolor) # fade to 0.2 after 10 steps
+                self.drawPolygon2d(transformed_polygon, color, alpha, facecolor, zorder=zorder) # fade to 0.2 after 10 steps
     
     def drawGoalDefinition(self, goal_definition, color, alpha, facecolor):
         if isinstance(goal_definition, GoalDefinitionPolygon):
@@ -207,15 +214,15 @@ class BaseViewer(Viewer):
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
                   agent_id in eval_agent_ids:
-                color_line = self.eval_goal_color
-                color_face = self.eval_goal_color
-                alpha = .5
+                color_line = self.color_eval_agents_line
+                color_face = self.color_eval_agents_face
+                alpha = self.alpha_eval_agent
                 self.drawGoalDefinition(agent.goal_definition, color_line, alpha, color_face)
 
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
-            color = "blue"
             alpha = 1.0
+
             if eval_agent_ids and agent.id in eval_agent_ids:
                 color_line = self.color_eval_agents_line
                 color_face = self.color_eval_agents_face
@@ -223,18 +230,30 @@ class BaseViewer(Viewer):
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                  color_line = self.getColorFromMap(float(i) / float(num_agents))
-                  color_face = self.getColorFromMap(float(i) / float(num_agents))
+                  if num_agents > self.max_agents_color_map:
+                      # reinit colormap
+                      self.max_agents_color_map = num_agents
+                      self.agent_color_map = {}
+                  if not agent_id in self.agent_color_map:
+                    self.agent_color_map[agent_id] = self.getColorFromMap(float(agent_id) / self.max_agents_color_map)
+                  if self.if_colormap_use_line_others:
+                    color_line = self.color_other_agents_line
+                  else:
+                    color_line = self.agent_color_map[agent_id]
+                  color_face = self.agent_color_map[agent_id]
                 else:
                   color_line = self.color_other_agents_line
                   color_face = self.color_other_agents_face
-            self.drawAgent(agent, color_line, alpha, color_face)
             if self.draw_history:
-                self.drawHistory(agent, color_line, alpha, color_face)
+              if self.draw_history_draw_face:
+                color_face_history = color_face
+              else:
+                color_face_history = (1.0, 1.0, 1,.0)
+              self.drawHistory(agent, color_line, alpha, color_face_history, zorder=5)
+            self.drawAgent(agent, color_line, alpha, color_face)
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
           self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
-      
 
     def drawMap(self, map):
         # draw the boundary of each lane
@@ -257,7 +276,7 @@ class BaseViewer(Viewer):
       # center line is type none and is drawn as broken
       if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none: 
         dashed = True
-      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=2, linewidth=self.map_linewidth)
+      self.drawLine2d(lane.line, color, self.alpha_lane_boundaries, dashed, zorder=1, linewidth=self.map_linewidth)
 
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
@@ -277,18 +296,19 @@ class BaseViewer(Viewer):
               self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),\
                  coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
-            self.drawPolygon2d(transformed_polygon, color, alpha, facecolor)
+            self.drawPolygon2d(transformed_polygon, color, alpha, facecolor, zorder=10)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawLaneCorridor(self, lane_corridor, color="blue"):
-      self.drawPolygon2d(lane_corridor.polygon, color=color, alpha=.5)
-
-    def drawRoadCorridor(self, road_corridor, color="blue"):
-      # TODO(@hart): use agent specific coloring
-      self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
-      for lane_corridor in road_corridor.lane_corridors:
-        self.drawLaneCorridor(lane_corridor)
+    def drawLaneCorridor(self, lane_corridor, color=None):
+      if color is None:
+        color = "blue"
+      self.drawPolygon2d(lane_corridor.polygon, color=color, facecolor=color, alpha=.3, zorder=2)
 
     def Reset(self):
       pass
+
+    def drawRoadCorridor(self, road_corridor, color=None):
+      if color is None:
+        color = "blue"
+      self.drawPolygon2d(road_corridor.polygon, color, facecolor=color, alpha=.2, zorder=2)

@@ -10,11 +10,20 @@ py_test(
   deps = [
       "//bark/benchmark:benchmark_runner",
       "//bark/benchmark:benchmark_runner_mp",
+      "//bark/benchmark:benchmark_result",
       "//bark/runtime/viewer:matplotlib_viewer",
       "@benchmark_database//load:benchmark_database",
       "@benchmark_database//serialization:database_serializer",
       "//bark/runtime/commons:commons",
       ],
+)
+
+py_test(
+  name = "py_benchmark_result_tests",
+  srcs = ["py_benchmark_result_tests.py"],
+  deps = [
+      "//bark/benchmark:benchmark_result"
+    ],
 )
 
 py_test(

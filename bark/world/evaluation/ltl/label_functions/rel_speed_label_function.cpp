@@ -10,12 +10,12 @@
 using bark::models::dynamic::StateDefinition;
 
 bark::world::evaluation::RelSpeedLabelFunction::RelSpeedLabelFunction(
-    const std::string &string, const double rel_speed_thres)
+    const std::string& string, const double rel_speed_thres)
     : MultiAgentLabelFunction(string), rel_speed_thres_(rel_speed_thres) {}
 
 bool bark::world::evaluation::RelSpeedLabelFunction::EvaluateAgent(
-    const bark::world::ObservedWorld &observed_world,
-    const AgentPtr &other_agent) const {
+    const bark::world::ObservedWorld& observed_world,
+    const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   if (other_agent) {
     const float rel_speed =

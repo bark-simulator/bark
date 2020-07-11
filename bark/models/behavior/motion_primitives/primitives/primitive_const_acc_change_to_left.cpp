@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -7,7 +9,8 @@
 #include "primitive_const_acc_change_to_left.hpp"
 bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft::
     PrimitiveConstAccChangeToLeft(const bark::commons::ParamsPtr& params)
-    : PrimitiveConstAccStayLane(params),
+    : BehaviorModel(params),
+      PrimitiveConstAccStayLane(params),
       min_length_(params->GetReal(
           "MinLength", "Minimum length of lane to change to", 0.0f)) {}
 bark::world::LaneCorridorPtr bark::models::behavior::primitives::
@@ -18,7 +21,7 @@ bark::world::LaneCorridorPtr bark::models::behavior::primitives::
   if (adjacent_corridors.left) {
     return adjacent_corridors.left;
   }
-  //LOG(WARNING) << "Called change to left, but left corridor not found!";
+  // LOG(WARNING) << "Called change to left, but left corridor not found!";
   if (!adjacent_corridors.current) {
     return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());

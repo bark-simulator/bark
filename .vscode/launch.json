@@ -11,14 +11,14 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "env": {
-                "PYTHONPATH": "${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/examples/analyze_map.runfiles/bark_project"
+                "PYTHONPATH": "${workspaceFolder}/bazel-bark/tools/debug"
 			   }
         },
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bazel-bin/bark/world/tests/map_interface_test",
+            "program": "${workspaceFolder}/bazel-bin/bark/models/tests/behavior_motion_primitive_test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -24,6 +24,7 @@ class ConstantLabelFunction : public BaseLabelFunction {
   }
   bool GetValue() const { return value_; }
   void SetValue(bool value) { value_ = value; }
+
  private:
   bool value_;
 };

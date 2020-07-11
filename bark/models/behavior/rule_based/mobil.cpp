@@ -1,15 +1,17 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/models/behavior/rule_based/mobil.hpp"
-#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "bark/models/behavior/idm/base_idm.hpp"
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include "bark/models/behavior/idm/base_idm.hpp"
+#include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 
@@ -17,13 +19,13 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-using dynamic::State;
-using dynamic::StateDefinition;
 using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Line;
 using bark::geometry::Point2d;
 using bark::models::dynamic::CalculateSteeringAngle;
 using bark::models::dynamic::DynamicModelPtr;
+using dynamic::State;
+using dynamic::StateDefinition;
 using StateDefinition::VEL_POSITION;
 using world::Agent;
 using world::AgentFrenetPair;
@@ -31,7 +33,6 @@ using world::AgentId;
 using world::ObservedWorld;
 using world::map::LaneCorridorPtr;
 using world::objects::AgentPtr;
-
 
 double BehaviorMobil::CalcNetDistanceFromFrenet(
     const std::shared_ptr<const Agent>& ego_agent,
@@ -333,7 +334,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           frenet_ego);
 
       acc_n_after =
-        BaseIDM::CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
+          BaseIDM::CalcRawIDMAcc(dist_n_after, vel_follower_left, vel_ego);
     } else {
       acc_n_before = 0, acc_n_after = 0;
     }
