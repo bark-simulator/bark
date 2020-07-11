@@ -79,11 +79,21 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
 
       double advantage_ego = acc_change_ego - acc_ego;
       double advantage_other = acc_behind - acc_change_behind;
+
+      // Safety Criterion: 
+      if (acc_change_behind > - b_safe_) {
+        continue;
+      } else {
+        break;
+      }
+
+      // Incentive Criterion: 
       // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr
-      if (advantage_ego > politeness_ * advantage_other + a_thr_ &&
-          advantage_ego > max_advantage) {
-        max_advantage = advantage_ego;
-        tmp_lane_corr = li.lane_corridor;
+      if (advantage_ego > politeness_ * advantage_other + a_thr_) {
+        if (advantage_ego > max_advantage) {
+          max_advantage = advantage_ego;
+          tmp_lane_corr = li.lane_corridor;
+        }
       }
     }
     if (tmp_lane_corr != lane_corr && tmp_lane_corr) {

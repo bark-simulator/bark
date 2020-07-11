@@ -40,6 +40,9 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
                         "Acceleration threshold factor. See Mobil paper.", .2);
     politeness_ = params->GetReal("BehaviorMobilRuleBased::Politeness",
                                   "Politeness factor. See Mobil paper.", .5);
+    b_safe_ = params->GetReal(
+        "BehaviorMobilRuleBased::BSafe",
+        "Maximum deceleration for follower in target lane.", 4.0);
   }
 
   virtual ~BehaviorMobilRuleBased() {}
@@ -53,6 +56,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
  private:
   double a_thr_;
   double politeness_;
+  double b_safe_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMobilRuleBased::Clone() const {
