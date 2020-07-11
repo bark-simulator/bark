@@ -101,7 +101,7 @@ class DatabaseRunnerTests(unittest.TestCase):
     print(df)
     self.assertEqual(len(df.index), 40)  # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
-  #@unittest.skip
+  @unittest.skip
   def test_parameterized_evaluators(self):
     dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=2)
     dbs.process("data/database1")
