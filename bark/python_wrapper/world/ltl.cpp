@@ -8,14 +8,7 @@
 #include "bark/python_wrapper/world/evaluation.hpp"
 
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
-#include "bark/world/evaluation/ltl/evaluator_being_overtaken.hpp"
 #include "bark/world/evaluation/ltl/evaluator_ltl.hpp"
-#include "bark/world/evaluation/ltl/evaluator_right_overtake.hpp"
-#include "bark/world/evaluation/ltl/evaluator_safe_distance.hpp"
-#include "bark/world/evaluation/ltl/evaluator_safe_lane_change.hpp"
-#include "bark/world/evaluation/ltl/evaluator_speed_advantage_overtake.hpp"
-#include "bark/world/evaluation/ltl/evaluator_zip_merge_chn.hpp"
-#include "bark/world/evaluation/ltl/evaluator_zip_merge_deu.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
@@ -48,107 +41,6 @@ void python_ltl(py::module m) {
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
-
-  py::class_<EvaluatorRightOvertake, BaseEvaluator,
-             std::shared_ptr<EvaluatorRightOvertake>>(m,
-                                                      "EvaluatorRightOvertake")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorRightOvertake::GetRuleStates)
-      .def("__repr__", [](const EvaluatorRightOvertake& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorRightOvertake";
-      });
-
-  py::class_<EvaluatorSafeDistance, BaseEvaluator,
-             std::shared_ptr<EvaluatorSafeDistance>>(m, "EvaluatorSafeDistance")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorSafeDistance::GetRuleStates)
-      .def("__repr__", [](const EvaluatorSafeDistance& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorSafeDistance";
-      });
-
-  py::class_<EvaluatorSafeLaneChange, BaseEvaluator,
-             std::shared_ptr<EvaluatorSafeLaneChange>>(
-      m, "EvaluatorSafeLaneChange")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorSafeLaneChange::GetRuleStates)
-      .def("__repr__", [](const EvaluatorSafeLaneChange& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorSafeLaneChange";
-      });
-
-  py::class_<EvaluatorSafeLaneChangeAssumption, BaseEvaluator,
-             std::shared_ptr<EvaluatorSafeLaneChangeAssumption>>(
-      m, "EvaluatorSafeLaneChangeAssumption")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorSafeLaneChangeAssumption::GetRuleStates)
-      .def("__repr__", [](const EvaluatorSafeLaneChangeAssumption& g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorSafeLaneChangeAssumption";
-      });
-
-  py::class_<EvaluatorBeingOvertaken, BaseEvaluator,
-             std::shared_ptr<EvaluatorBeingOvertaken>>(
-      m, "EvaluatorBeingOvertaken")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorBeingOvertaken::GetRuleStates)
-      .def("__repr__", [](const EvaluatorBeingOvertaken& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorBeingOvertaken";
-      });
-
-  py::class_<EvaluatorBeingOvertakenAssumption, BaseEvaluator,
-             std::shared_ptr<EvaluatorBeingOvertakenAssumption>>(
-      m, "EvaluatorBeingOvertakenAssumption")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorBeingOvertakenAssumption::GetRuleStates)
-      .def("__repr__", [](const EvaluatorBeingOvertakenAssumption& g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorBeingOvertakenAssumption";
-      });
-
-  py::class_<EvaluatorSpeedAdvantageOvertake, BaseEvaluator,
-             std::shared_ptr<EvaluatorSpeedAdvantageOvertake>>(
-      m, "EvaluatorSpeedAdvantageOvertake")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorSpeedAdvantageOvertake::GetRuleStates)
-      .def("__repr__", [](const EvaluatorSpeedAdvantageOvertake& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorSpeedAdvantageOvertake";
-      });
-
-  py::class_<EvaluatorZipMergeDeu, BaseEvaluator,
-             std::shared_ptr<EvaluatorZipMergeDeu>>(m, "EvaluatorZipMergeDeu")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorZipMergeDeu::GetRuleStates)
-      .def("__repr__", [](const EvaluatorZipMergeDeu& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorZipMergeDeu";
-      });
-
-  py::class_<EvaluatorZipMergeChn, BaseEvaluator,
-             std::shared_ptr<EvaluatorZipMergeChn>>(m, "EvaluatorZipMergeChn")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorZipMergeChn::GetRuleStates)
-      .def("__repr__", [](const EvaluatorZipMergeChn& g) {
-        return "bark.core.world.evaluation.ltl.EvaluatorZipMergeChn";
-      });
-
-  py::class_<EvaluatorRightOvertakeAssumption, BaseEvaluator,
-             std::shared_ptr<EvaluatorRightOvertakeAssumption>>(
-      m, "EvaluatorRightOvertakeAssumption")
-      .def(py::init<AgentId>())
-      .def_property_readonly("rule_states",
-                             &EvaluatorRightOvertakeAssumption::GetRuleStates)
-      .def("__repr__", [](const EvaluatorRightOvertakeAssumption& g) {
-        return "bark.core.world.evaluation.ltl."
-               "EvaluatorRightOvertakeAssumption";
-      });
-
   // LABELS
 
   py::class_<BaseLabelFunction, PyBaseLabelFunction,

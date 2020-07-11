@@ -7,14 +7,8 @@ config_setting(
 
 cc_library(
     name = "evaluator_ltl",
-    srcs = select({
-        ":_ltl_rules": glob(["*.cpp"]),
-        "//conditions:default": ["evaluator_ltl.cpp"],
-    }),
-    hdrs = select({
-        ":_ltl_rules": glob(["*.hpp"]),
-        "//conditions:default": ["evaluator_ltl.hpp"],
-    }),
+    srcs = ["evaluator_ltl.cpp"],
+    hdrs = ["evaluator_ltl.hpp"],
     copts = select({
         ":_ltl_rules": ["-D LTL_RULES"],
         "//conditions:default": [],
