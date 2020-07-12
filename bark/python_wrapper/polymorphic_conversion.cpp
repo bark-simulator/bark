@@ -36,8 +36,8 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
 #ifdef PLANNER_UCT
-#include "bark/models/behavior/behavior_uct_hypothesis.hpp"
-#include "bark/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
+#include "bark_mcts/models/behavior/behavior_uct_hypothesis.hpp"
+#include "bark_mcts/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
