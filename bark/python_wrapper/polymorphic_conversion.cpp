@@ -173,11 +173,10 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
     return std::make_shared<PyBehaviorModel>(t[0].cast<PyBehaviorModel>());
   } else if (behavior_model_name.compare("BehaviorDynamicModel") == 0) {
     return std::make_shared<BehaviorDynamicModel>(
-        t[0].cast<BehaviorDynamicModel>());
+        t[0].cast<BehaviorDynamicModel>())  ;
   } else if (behavior_model_name.compare("BehaviorIDMStochastic") == 0) {
     return std::make_shared<BehaviorIDMStochastic>(
         t[0].cast<BehaviorIDMStochastic>());
-      t[0].cast<BehaviorDynamicModel>());
   } else if (behavior_model_name.compare("BehaviorMPMacroActions") == 0) {
     return std::make_shared<BehaviorMPMacroActions>(
         t[0].cast<BehaviorMPMacroActions>());
