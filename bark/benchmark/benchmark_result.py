@@ -128,12 +128,16 @@ class BenchmarkResult:
 
     @staticmethod
     def load(filename, load_configs=False, load_histories=False):
-        rst = BenchmarkResult.load_results(filename)
-        if load_configs:
-            rst.load_benchmark_configs()
-        if load_histories:
-            rst.load_histories()
-        return rst
+        if filename.endswith("*.pickle"):
+          logging.warning("pickle files have been depricated")
+          return BenchmarkResult.load_pickle(filename)
+        else:
+          rst = BenchmarkResult.load_results(filename)
+          if load_configs:
+              rst.load_benchmark_configs()
+          if load_histories:
+              rst.load_histories()
+          return rst
 
     def load_histories(self, config_idx_list = None):
         if config_idx_list:
