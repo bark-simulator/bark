@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -21,8 +23,8 @@ namespace evaluation {
 
 class EvaluatorStepCount : public BaseEvaluator {
  public:
-  EvaluatorStepCount() : steps_(0) { }
-  virtual ~EvaluatorStepCount() { }
+  EvaluatorStepCount() : steps_(0) {}
+  virtual ~EvaluatorStepCount() {}
 
   EvaluationReturn Evaluate(const world::World& world) {
     this->steps_++;

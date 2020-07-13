@@ -1,4 +1,6 @@
-# Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+# Copyright (c) 2020 fortiss GmbH
+#
+# Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 # Tobias Kessler
 #
 # This work is licensed under the terms of the MIT license.
@@ -15,8 +17,18 @@ from bark.core.world.agent import Agent
 import numpy as np
 import math
 import copy
+import importlib
 import aabbtree
 from collections import defaultdict 
+
+__CONFIG_READER_MODULES = []
+
+def get_config_reader_modules():
+  return __CONFIG_READER_MODULES
+
+def add_config_reader_module(module_name):
+  module = importlib.import_module(module_name)
+  __CONFIG_READER_MODULES.append(module)
 
 
 class ConfigurableScenarioGeneration(ScenarioGeneration):
@@ -66,8 +78,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
     self._sink_source_default_params = None
 
-    self._registered_types = {}
-
   def update_defaults_params(self):
     self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
         self._sink_source_default_params
@@ -78,12 +88,20 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
        "ParameterServers" : config_reader.get_param_servers()}
     )
 
+  def add_config_module_dir(self, dir):
+    module = importlib.import_module(dir)
+    self._imported_modules.append(module)
+
+  def get_persisted_param_servers(self):
+    return self._sink_source_parameter_servers
+
   def create_scenarios(self, params, num_scenarios):
     """ 
         see baseclass
     """
     scenario_list = []
-    for scenario_idx in range(0, num_scenarios):
+    for idx in range(0, num_scenarios):
+      self._current_scenario_idx = idx
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
     self.update_defaults_params()
@@ -101,10 +119,11 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     road_corridors = []
     kwargs_agent_states_geometry = []
     sink_source_default_params = []
+
     for idx, sink_source_config in enumerate(self._sinks_sources):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source_config, world.map)
       road_corridors.append(road_corridor)
-      
+  
       #1) create agent states and geometries for this source
       args = [road_corridor]
       agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
@@ -180,21 +199,27 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.ConvertToDict()
 
       #5 Build all agents for this source config
+      kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       agent_params = ParameterServer(json = sink_source_config["AgentParams"])
-      sink_source_agents = self.create_source_config_agents(agent_states,
+      sink_source_agents, controlled_ids = self.create_source_config_agents(agent_states,
                       agent_geometries, behavior_models, execution_models,
                       dynamic_models, goal_definitions, controlled_agent_ids,
                       world, agent_params)
       sink_source_default_params[idx]["AgentParams"] = agent_params.ConvertToDict()
 
+      self.update_road_corridors(sink_source_agents, road_corridor)
       agent_list.extend(sink_source_agents)
       collected_sources_sinks_default_param_configs.append(sink_source_config)
 
     self._sink_source_default_params = sink_source_default_params
-    scenario._agent_list = self.update_agent_ids(agent_list)
-    scenario._eval_agent_ids = [idx for idx, value in enumerate(controlled_agent_ids_all) if value==True]
+    scenario._eval_agent_ids = controlled_ids
+    scenario._agent_list = agent_list
     
     return scenario
+
+  def update_road_corridors(self, sink_source_agents, road_corridor):
+    for idx, agent in enumerate(sink_source_agents):
+      agent.road_corridor = road_corridor
 
   def update_agent_ids(self, agent_list):
     for idx, agent in enumerate(agent_list):
@@ -222,9 +247,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_states = states_geometries[0]
       agent_geometries = states_geometries[1]
       for agent_idx, agent_state in enumerate(agent_states):
-        agent_translated_polygon = agent_geometries[agent_idx].Translate(
-                                                      Point2d(agent_state[1],
-                                                            agent_state[2]))
+        agent_translated_polygon = agent_geometries[agent_idx].Transform(
+                                                        [agent_state[1],
+                                                        agent_state[2], 
+                                                        agent_state[3]])
         tmp = agent_translated_polygon.bounding_box
         bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), (tmp[0].y(), tmp[1].y())])
         tree.add(bb, (source_sink_idx, agent_idx))
@@ -237,9 +263,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         agent_states = states_geometries[0]
         agent_geometries = states_geometries[1]
         for agent_idx, agent_state in enumerate(agent_states):
-          agent_translated_polygon = agent_geometries[agent_idx].Translate(
-                                                        Point2d(agent_state[1],
-                                                              agent_state[2]))
+          agent_translated_polygon = agent_geometries[agent_idx].Transform(
+                                                        [agent_state[1],
+                                                        agent_state[2], 
+                                                        agent_state[3]])
           tmp = agent_translated_polygon.bounding_box
           bb = aabbtree.AABB([(tmp[0].x(), tmp[1].x()), ( tmp[0].y() , tmp[1].y())])
           overlaps = tree.overlap_values(bb)
@@ -249,8 +276,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                 continue
               else:
                 raise ValueError("Something went wrong. \
-                    We have colliding agent within one source sink configuration")
-          
+                   We have colliding agent within one source sink configuration")
+
             key1 = "{}-{}".format(source_sink_idx, overlap[0])
             key2 = "{}-{}".format(overlap[0], source_sink_idx, )
             key = None
@@ -272,9 +299,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             if not found:
               agent_geometry_other = collected_sources_sinks_agent_states_geometries[overlap[0]][1][overlap[1]]
               agent_state_other = collected_sources_sinks_agent_states_geometries[overlap[0]][0][overlap[1]]
-              agent_translated_polygon_other = agent_geometry_other.Translate(
-                                              Point2d(agent_state_other[1],
-                                                    agent_state_other[2]))
+              agent_translated_polygon_other = agent_geometry_other.Transform(
+                                                        [agent_state_other[1],
+                                                        agent_state_other[2], 
+                                                        agent_state_other[3]])
               if Collide(agent_translated_polygon, agent_translated_polygon_other):
                 pairwise_collisions.append(((source_sink_idx, agent_idx), overlap))
             
@@ -300,7 +328,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
       if not probablistic_conflict_resolution:
         raise NotImplemented("Not implemented yet.")
-      
+
       for pairwise_collision in pairwise_collisions:
         source_sink_idx_1 = pairwise_collision[0][0]
         source_sink_idx_2 = pairwise_collision[1][0]
@@ -321,7 +349,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             if not agent_idx_2 in must_delete[source_sink_idx_2]:
               must_delete[source_sink_idx_2].append(agent_idx_2)
 
-    for source_sink_idx, agent_deletions in enumerate(must_delete):
+    for source_sink_idx, agent_deletions in must_delete.items():
       agent_list = collected_sources_sinks_agent_states_geometries[source_sink_idx]
       if not isinstance(agent_deletions, list):
         agent_deletions = [agent_deletions]
@@ -341,7 +369,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         key = key_reverse
         reversed = True
       else:
-        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(desc1, desc2))
+        raise ValueError("Conflict resolution scheme for {} and {} not specified.".format(description1, description2))
     conflict_res_1 = self._conflict_resolutions[key][0]
     conflict_res_2 = self._conflict_resolutions[key][1]
     if reversed:
@@ -349,19 +377,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       conflict_res_1 = conflict_res_2
       conflict_res_2 = tmp
 
-    def int_or_float(s):
-      try:
-        int(s)
-        return True, int(s)
-      except:
-        try:
-          float(s)
-          return False, float(s)
-        except:
-          raise ValueError("Could not parse conflict resolution {}".format(s))
     
-    num_conflict_res1, is_int_1 = int_or_float(conflict_res_1)
-    num_conflict_res2, is_int_2 = int_or_float(conflict_res_1)
+    is_int_1 = isinstance(conflict_res_1, int)
+    is_int_2 = isinstance(conflict_res_2, int)
 
     if is_int_1 and is_int_2:
       probablistic_conflict_resolution = False
@@ -370,7 +388,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     else:
       raise ValueError("Conflict resolution specifications must be either both integers or both floats")
 
-    return num_conflict_res1, num_conflict_res2, probablistic_conflict_resolution
+    return conflict_res_1, conflict_res_2, probablistic_conflict_resolution
 
 
   def find_src_conf_idx_from_desc(self, desc):
@@ -388,12 +406,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
   def create_source_config_agents(self, agent_states, agent_geometries, 
                         behavior_models, execution_models, dynamic_models,
-                        goal_definitions, controlled_agent_ids, world, agent_params):
+                        goal_definitions, controlled_agent_ids, world, agent_params, **kwargs):
     num_agents = len(agent_states)
     if any(len(lst) != num_agents for lst in [
       agent_geometries, behavior_models, execution_models, dynamic_models, goal_definitions, controlled_agent_ids]):
       raise ValueError("Config readers did not return equal sized of lists")
     agents = []
+    controlled_ids = []
     for idx, agent_state in enumerate(agent_states):
       bark_agent = Agent( np.array(agent_state), 
                           behavior_models[idx], 
@@ -403,16 +422,32 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                           agent_params,
                           goal_definitions[idx],
                           world.map )
-
+      if "agent_ids" in kwargs:
+        bark_agent.SetAgentId(kwargs["agent_ids"][idx])
+        if controlled_agent_ids[idx]:
+          controlled_ids.append(kwargs["agent_ids"][idx])
+      else:
+        bark_agent.SetAgentId(idx)
+        if controlled_agent_ids[idx]:
+          controlled_ids.append(idx)
       agents.append(bark_agent)
-    
-    return agents
+    return agents, controlled_ids
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
-    param_config = ParameterServer(json = eval_config)
-    config_reader = eval("{}(self._random_state)".format(eval_config_type))
+    param_config = ParameterServer(json = eval_config, log_if_default = self._params.log_if_default)
+    try:
+      config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
+    except NameError as error:
+        for module in get_config_reader_modules():
+          try:
+            reader_type = getattr(module, eval_config_type)
+            config_reader = eval("reader_type(self._random_state, self._current_scenario_idx)")
+          except:
+            pass
+        if not config_reader:
+          raise ValueError("Config reader type {} not found in added module paths".format(eval_config_type))
     config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return

@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -10,7 +12,8 @@ namespace bark {
 namespace commons {
 
 SetterParams::SetterParams(bool log_if_default,
-                           const CondensedParamList& param_list) {
+                           const CondensedParamList& param_list)
+    : log_if_default_(log_if_default) {
   for (const auto& param_pair : param_list) {
     const auto& param_name = param_pair.first;
     const auto& param_variant = param_pair.second;
@@ -33,6 +36,11 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
 
   // Add Floats
   for (const auto param : params_real_) {
+    param_list.push_back(std::make_pair(param.first, param.second));
+  }
+
+  // Add Strings
+  for (const auto param : params_string_) {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 

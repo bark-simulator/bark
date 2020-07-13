@@ -18,11 +18,11 @@ boost_deps()
 # ------ Planner UCT ------------------------------
 git_repository(
   name = "planner_uct",
-  commit="fac5d85c96867be336a4500d45d0277abe48465c",
-  remote = "https://github.com/bark-simulator/planner-mcts"
+  commit="bde9ccc9750fad5764afd84987fcfe15ff97dfbe",
+  remote = "https://github.com/bark-simulator/planner_uct"
 )
-load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
-planner_uct_rules_dependencies()
+#load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
+#planner_uct_rules_dependencies()
 # --------------------------------------------------
 
 # ------ Planner MV-MCTS ------------------------------
@@ -48,6 +48,13 @@ benchmark_database_dependencies()
 benchmark_database_release()
 # --------------------------------------------------
 
+# ------------------- BARK-ML ----------------------
+git_repository(
+  name = "bark_ml",
+  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
+  remote = "https://github.com/bark-simulator/bark-ml"
+)
+# --------------------------------------------------
 
 # ------------------- LTL RuleMonitor --------------
 load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")

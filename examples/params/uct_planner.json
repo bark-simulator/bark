@@ -250,6 +250,6 @@
         "real_time_factor": 1
     },
     "World": {
-        "remove_agents_out_of_map":true
+        "remove_agents_out_of_map": true
     }
 }

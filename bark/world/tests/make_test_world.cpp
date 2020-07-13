@@ -1,4 +1,6 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
@@ -43,7 +45,8 @@ using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
 WorldPtr bark::world::tests::make_test_world(
     int num_other_agents, double rel_distance, double ego_velocity,
-    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
+    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
+    float ego_acc, float other_acc) {
   float pos_x = 3.0;
   float pos_y = -1.75;
 
@@ -55,9 +58,11 @@ WorldPtr bark::world::tests::make_test_world(
   auto params = std::make_shared<SetterParams>();
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
-  DynamicModelPtr dyn_model(nullptr);
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  beh_model_idm->SetLastAction(Continuous1DAction(ego_acc));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  beh_model_const->SetLastAction(Continuous1DAction(other_acc));
 
   Polygon polygon(
       Pose(1.25, 1, 0),
@@ -67,8 +72,8 @@ WorldPtr bark::world::tests::make_test_world(
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, pos_x, pos_y, 0.0, ego_velocity;
   AgentPtr agent1(new Agent(init_state1, beh_model_idm, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface, geometry::Model3D()));
+                            polygon, params, ego_goal_definition, map_interface,
+                            geometry::Model3D()));
   agent1->SetAgentId(1);
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -77,24 +82,24 @@ WorldPtr bark::world::tests::make_test_world(
   init_state2 << 0.0, pos_x + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface, geometry::Model3D()));
+                            polygon, params, ego_goal_definition, map_interface,
+                            geometry::Model3D()));
   agent2->SetAgentId(2);
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model,
-                            polygon, params, ego_goal_definition,
-                            map_interface,
+                            polygon, params, ego_goal_definition, map_interface,
                             geometry::Model3D()));  // NOLINT
   agent3->SetAgentId(3);
 
   WorldPtr world(new World(params));
   world->AddAgent(agent1);
-  if (num_other_agents == 1) {
+  if (num_other_agents >= 1) {
     world->AddAgent(agent2);
-  } else if (num_other_agents == 2) {
+  }
+  if (num_other_agents >= 2) {
     world->AddAgent(agent3);
   }
   world->UpdateAgentRTree();
@@ -105,11 +110,12 @@ WorldPtr bark::world::tests::make_test_world(
 
 ObservedWorld bark::world::tests::make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,
-    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition) {
+    double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
+    float ego_acc, float other_acc) {
   // Create observed world for first agent
   WorldPtr current_world_state = make_test_world(
       num_other_agents, rel_distance, ego_velocity, velocity_difference,
-      ego_goal_definition);
+      ego_goal_definition, ego_acc, other_acc);
   ObservedWorld observed_world(
       current_world_state,
       current_world_state->GetAgents().begin()->second->GetAgentId());

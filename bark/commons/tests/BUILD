@@ -3,7 +3,7 @@ package(default_visibility = ["//visibility:public"])
 cc_test(
     name = "params_tests",
     srcs = [
-        "params_test.cc",
+        "params_tests.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
@@ -16,6 +16,18 @@ cc_test(
     name = "util_tests",
     srcs = [
         "util_tests.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/commons:commons",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "distribution_tests",
+    srcs = [
+        "distribution_tests.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [

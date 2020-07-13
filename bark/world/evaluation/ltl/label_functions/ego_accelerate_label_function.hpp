@@ -22,9 +22,9 @@ using bark::world::objects::AgentPtr;
 
 class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
-  EgoAccelerateLabelFunction(const std::string& label_str,
-                             double acc_thres);
+  EgoAccelerateLabelFunction(const std::string& label_str, double acc_thres);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+
  private:
   const double acc_thres_;
 };

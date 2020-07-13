@@ -1,16 +1,17 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-
 #ifndef BARK_WORLD_OBJECTS_OBJECT_HPP_
 #define BARK_WORLD_OBJECTS_OBJECT_HPP_
 
-#include "bark/commons/base_type.hpp"
-#include "bark/geometry/polygon.hpp"
+#include "bark/commons/commons.hpp"
 #include "bark/geometry/model_3d.hpp"
+#include "bark/geometry/polygon.hpp"
 
 namespace bark {
 namespace world {
@@ -24,11 +25,11 @@ class Object : public commons::BaseType {
   Object(const geometry::Polygon& shape, const commons::ParamsPtr& params,
          const geometry::Model3D& model_3d = geometry::Model3D());
 
-  Object(const Object& object) :
-    BaseType(object),
-    shape_(object.shape_),
-    model_3d_(object.model_3d_),
-    agent_id_(object.agent_id_) {}
+  Object(const Object& object)
+      : BaseType(object),
+        shape_(object.shape_),
+        model_3d_(object.model_3d_),
+        agent_id_(object.agent_id_) {}
 
   virtual ~Object() {}
 
@@ -37,7 +38,7 @@ class Object : public commons::BaseType {
 
   AgentId GetAgentId() const { return agent_id_; }
 
-  void SetAgentId(const AgentId& agent_id) { agent_id_ = agent_id;}
+  void SetAgentId(const AgentId& agent_id) { agent_id_ = agent_id; }
 
   virtual std::shared_ptr<Object> Clone() const;
 
@@ -56,4 +57,3 @@ typedef std::shared_ptr<Object> ObjectPtr;
 }  // namespace bark
 
 #endif  // BARK_WORLD_OBJECTS_OBJECT_HPP_
-

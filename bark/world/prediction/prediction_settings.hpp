@@ -1,9 +1,10 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-
 
 #ifndef BARK_WORLD_PREDICTION_HPP_
 #define BARK_WORLD_PREDICTION_HPP_
@@ -21,9 +22,8 @@ typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 
 namespace prediction {
 
-using world::objects::AgentId;
 using models::behavior::BehaviorModelPtr;
-
+using world::objects::AgentId;
 
 struct PredictionSettings {
   PredictionSettings()
@@ -47,8 +47,6 @@ struct PredictionSettings {
   BehaviorModelPtr default_prediction_model_;
   std::set<AgentId> specific_prediction_agents_;
 };
-
-
 
 }  // namespace prediction
 }  // namespace world

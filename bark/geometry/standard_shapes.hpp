@@ -1,9 +1,10 @@
-// Copyright (c) 2020 Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Copyright (c) 2020 fortiss GmbH
+//
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
 // Tobias Kessler
 //
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
-
 
 #ifndef BARK_GEOMETRY_STANDARD_SHAPES_HPP_
 #define BARK_GEOMETRY_STANDARD_SHAPES_HPP_
