@@ -13,6 +13,8 @@
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
+#include "bark/models/behavior/rule_based/mobil_behavior.hpp"
+#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -40,13 +42,13 @@ using bark::world::objects::Agent;
 using bark::world::objects::AgentPtr;
 using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 
-TEST(slower_preceding_agent, behavior_mobil) {
+ObservedWorld make_observed_world_three_agents(double ego_vel, ParamsPtr params) {
+
   // Setting Up Map
   auto open_drive_map = MakeXodrMapOneRoadTwoLanes();
   auto map_interface = std::make_shared<MapInterface>();
   map_interface->interface_from_opendrive(open_drive_map);
 
-  auto params = std::make_shared<SetterParams>();
   Polygon car_polygon = CarRectangle();
 
   Polygon polygon(
@@ -60,13 +62,12 @@ TEST(slower_preceding_agent, behavior_mobil) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
-  // Ego Agent
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorMobil(params));
+  BehaviorModelPtr beh_model(new BehaviorMobilRuleBased(params));
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
+  init_state1 << 0.0, 13.0, -1.75, 0.0, ego_vel;
   AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
                             car_polygon, params, goal_definition_ptr,
                             map_interface, bark::geometry::Model3D()));
@@ -74,11 +75,22 @@ TEST(slower_preceding_agent, behavior_mobil) {
   // Preceding Agent
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model2(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model2(new BehaviorMobil(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantVelocity(params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state2 << 0.0, 15.0, -1.75, 0.0, 2.0;
+  init_state2 << 0.0, 40.0, -1.75, 0.0, 5;
   AgentPtr agent2(new Agent(init_state2, beh_model2, dyn_model2, exec_model2,
+                            car_polygon, params, goal_definition_ptr,
+                            map_interface, bark::geometry::Model3D()));
+
+  // Preceding Agent
+  ExecutionModelPtr exec_model3(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model3(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model3(new BehaviorConstantVelocity(params));
+
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state3 << 0.0, 3.0, -1.75-3.5, 0.0, 5;
+  AgentPtr agent3(new Agent(init_state3, beh_model3, dyn_model3, exec_model3,
                             car_polygon, params, goal_definition_ptr,
                             map_interface, bark::geometry::Model3D()));
 
@@ -86,6 +98,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
+  world->AddAgent(agent3);
   world->UpdateAgentRTree();
 
   WorldPtr current_world_state(world->Clone());
@@ -94,13 +107,106 @@ TEST(slower_preceding_agent, behavior_mobil) {
   const BehaviorModelPtr behavior_model = agent1->GetBehaviorModel();
 
   auto behavior_mobil =
-      std::dynamic_pointer_cast<BehaviorMobil>(behavior_model);
+      std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
+  
+  return observed_world;
+}
+
+
+TEST(safety_not_met, behavior_mobil) {
+
+  auto params = std::make_shared<SetterParams>();
+
+  double ego_vel = 5.0; // set for all?
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", ego_vel);
+  params->SetReal("BehaviorMobilRuleBased::AThr", 0.2);
+  params->SetReal("BehaviorMobilRuleBased::Politeness", 0.0);
+  params->SetReal("BehaviorMobilRuleBased::BSafe", 4.0);
+
+  ObservedWorld observed_world = make_observed_world_three_agents(ego_vel, params);
+
+  const BehaviorModelPtr behavior_model = observed_world.GetEgoAgent()->GetBehaviorModel();
+  auto behavior_mobil = std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
 
   LaneChangeDecision decision;
   LaneCorridorPtr lane_corr;
   std::tie(decision, lane_corr) =
       behavior_mobil->CheckIfLaneChangeBeneficial(observed_world);
-  EXPECT_EQ(decision, LaneChangeDecision::ChangeRight);
+  EXPECT_EQ(decision, LaneChangeDecision::KeepLane);
+  BARK_EXPECT_TRUE(lane_corr != nullptr);
+}
+
+TEST(polite_incentive_met_safety_met, behavior_mobil) {
+
+  auto params = std::make_shared<SetterParams>();
+
+  double ego_vel = 5.0; // set for all?
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", ego_vel);
+  params->SetReal("BehaviorMobilRuleBased::AThr", 0.2);
+  params->SetReal("BehaviorMobilRuleBased::Politeness", 0.0);
+  params->SetReal("BehaviorMobilRuleBased::BSafe", 6.0);
+
+  ObservedWorld observed_world = make_observed_world_three_agents(ego_vel, params);
+
+  const BehaviorModelPtr behavior_model = observed_world.GetEgoAgent()->GetBehaviorModel();
+  auto behavior_mobil = std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
+
+  LaneChangeDecision decision;
+  LaneCorridorPtr lane_corr;
+  std::tie(decision, lane_corr) =
+      behavior_mobil->CheckIfLaneChangeBeneficial(observed_world);
+  EXPECT_EQ(decision, LaneChangeDecision::ChangeLane);
+  BARK_EXPECT_TRUE(lane_corr != nullptr);
+}
+
+TEST(impolite_incentive_not_met_safety_met, behavior_mobil) {
+
+  auto params = std::make_shared<SetterParams>();
+
+  double ego_vel = 5.0; // set for all?
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", ego_vel);
+  params->SetReal("BehaviorMobilRuleBased::AThr", 0.2);
+  params->SetReal("BehaviorMobilRuleBased::Politeness", 1.0);
+  params->SetReal("BehaviorMobilRuleBased::BSafe", 6.0);
+
+  ObservedWorld observed_world = make_observed_world_three_agents(ego_vel, params);
+
+  const BehaviorModelPtr behavior_model = observed_world.GetEgoAgent()->GetBehaviorModel();
+  auto behavior_mobil = std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
+
+  LaneChangeDecision decision;
+  LaneCorridorPtr lane_corr;
+  std::tie(decision, lane_corr) =
+      behavior_mobil->CheckIfLaneChangeBeneficial(observed_world);
+  EXPECT_EQ(decision, LaneChangeDecision::KeepLane);
+  BARK_EXPECT_TRUE(lane_corr != nullptr);
+}
+
+TEST(impolite_incentive_met_safety_met, behavior_mobil) {
+
+  auto params = std::make_shared<SetterParams>();
+
+  double ego_vel = 5.0; // set for all?
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", ego_vel);
+  params->SetReal("BehaviorMobilRuleBased::AThr", -5.0); // HACK
+  params->SetReal("BehaviorMobilRuleBased::Politeness", 1.0);
+  params->SetReal("BehaviorMobilRuleBased::BSafe", 6.0);
+
+  ObservedWorld observed_world = make_observed_world_three_agents(ego_vel, params);
+
+  const BehaviorModelPtr behavior_model = observed_world.GetEgoAgent()->GetBehaviorModel();
+  auto behavior_mobil = std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
+
+  LaneChangeDecision decision;
+  LaneCorridorPtr lane_corr;
+  std::tie(decision, lane_corr) =
+      behavior_mobil->CheckIfLaneChangeBeneficial(observed_world);
+  EXPECT_EQ(decision, LaneChangeDecision::ChangeLane);
   BARK_EXPECT_TRUE(lane_corr != nullptr);
 }
 
