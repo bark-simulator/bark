@@ -131,6 +131,7 @@ double BaseIDM::CalcNetDistance(
  */
 double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
                            const double vel_other) const {
+  BARK_EXPECT_TRUE(net_distance >= 0);
   const float acc_lower_bound = GetAccelerationLowerBound();
   const float acc_upper_bound = GetAccelerationUpperBound();
   // For now, linit acceleration of IDM to brake with -acc_max
@@ -154,7 +155,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   bool interaction_term_active = false;
   double leading_distance = 0.;
   double leading_velocity = 1e6;
-  double ego_acc = 0.0f;
+  double ego_acc = 0.0f; // TODO: ommit, as it is confusing
   double leading_acc = 0.0f;
   IDMRelativeValues rel_values;
 
