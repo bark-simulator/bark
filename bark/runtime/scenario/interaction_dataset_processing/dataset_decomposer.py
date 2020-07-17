@@ -47,8 +47,10 @@ class DatasetDecomposer:
             lane_list = self._map_interface.find_nearest_lanes(point_agent, 3)
             for lane in lane_list:
                 lane_polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
-                if Collide(lane_polygon, point_agent) and Within(agent_shape, lane_polygon):
-                    time_ego_first = state[0]*1e3  # use timestamp in ms
+                # if Collide(lane_polygon, point_agent) and Within(agent_shape, lane_polygon):
+                if Collide(lane_polygon, point_agent):
+                    offset_fix = 1e3 # adding some time offset
+                    time_ego_first = state[0]*1e3 + offset_fix # use timestamp in ms
                     return time_ego_first
 
         return None
