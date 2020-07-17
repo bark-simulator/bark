@@ -9,8 +9,7 @@ cc_binary(
     "world/*.cpp", "world/*.hpp",
     "models/*.cpp", "models/*.hpp",
     "viewer/*.cpp", "viewer/*.hpp",
-    "runtime.hpp"], exclude=["world/ltl.cpp", "world/ltl.hpp"])
-    + select({"//bark/world/evaluation/ltl:_ltl_rules": ["world/ltl.cpp", "world/ltl.hpp"], "//conditions:default": []}),
+    "runtime.hpp"]),
   deps = [
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
@@ -24,7 +23,6 @@ cc_binary(
     "//bark/world/goal_definition:goal_definition",
     "//bark/world/evaluation:evaluation",
     "//bark/world/evaluation/ltl/label_functions:label_function",
-    "//bark/world/tests/evaluation:constant_label_evaluator",
     "//bark/world/evaluation/ltl:evaluator_ltl",
     "//bark/commons/params:params",
     "//bark/commons/util:util",

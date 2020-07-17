@@ -18,6 +18,7 @@ from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.core.world.goal_definition import *
+from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 
 def pickle_unpickle(object):
@@ -108,6 +109,20 @@ class PickleTests(unittest.TestCase):
 
         self.assertTrue(np.array_equal(sequential_goals_after[1].xy_limits.ToArray(), \
                                         goal_definition2.xy_limits.ToArray()))
+    
+    def test_const_label_function(self):
+        clf = ConstantLabelFunction("test")
+        clf_after = pickle_unpickle(clf)
+        self.assertEqual(clf.value, clf_after.value)
+
+        dlf = SafeDistanceLabelFunction("test", False, 1.0, -5.0, -5.0)
+        dlf_after = pickle_unpickle(clf)
+
+        tlf = DenseTrafficLabelFunction("test", 20.0, 8)
+        tlf_after = pickle_unpickle(tlf)
+
+        lclf = LaneChangeLabelFunction("test")
+        lclf_after = pickle_unpickle(lclf)
 
     def test_agent_pickle(self):
         params = ParameterServer()

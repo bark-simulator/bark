@@ -8,6 +8,7 @@
 
 import unittest
 import os
+import time
 import ray
 
 try:
@@ -19,14 +20,12 @@ from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP, _BenchmarkRunnerActor, \
-        deserialize_benchmark_config, serialize_benchmark_config
-
-from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
-  import ConfigurableScenarioGeneration
+  deserialize_benchmark_config, serialize_benchmark_config
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
+from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
 
@@ -246,3 +245,5 @@ if __name__ == '__main__':
     unittest.main()
 
 
+if __name__ == '__main__':
+  unittest.main()

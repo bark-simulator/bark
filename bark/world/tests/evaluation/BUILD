@@ -1,12 +1,3 @@
-cc_library(
-    name = "constant_label_evaluator",
-    hdrs = ["constant_label_evaluator.hpp"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//bark/world:include",
-        "//bark/world/evaluation:base_evaluator",
-    ],
-)
 
 cc_test(
     name = "label_test",
