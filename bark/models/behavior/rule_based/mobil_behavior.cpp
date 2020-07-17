@@ -47,7 +47,7 @@ double BehaviorMobilRuleBased::CalcLongRawAccWithoutLeader(
     std::tie(braking_required, len_until_end) =
         BaseIDM::GetDistanceToLaneEnding(lane_corr, pos);
     if (braking_required) {
-      acc = CalcIDMAcc(len_until_end, vel, 0);
+      acc = CalcRawIDMAcc(len_until_end, vel, 0);
     } else {
       acc = acc_free;
     }
@@ -77,7 +77,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
     LaneCorridorInformation lci = std::get<0>(lci_has);
     if (lci.front.agent_info.first) {
       BARK_EXPECT_TRUE(lci.front.rel_distance >= 0);
-      acc_ego = CalcIDMAcc(lci.front.rel_distance,
+      acc_ego = CalcRawIDMAcc(lci.front.rel_distance,
                            GetVelocity(observed_world.GetEgoAgent()),
                            GetVelocity(lci.front.agent_info.first));
     } else {
@@ -101,7 +101,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
       double acc_change_ego, acc_behind, acc_change_behind;
       if (li.front.agent_info.first) {
         BARK_EXPECT_TRUE(li.front.rel_distance >= 0);
-        acc_change_ego = CalcIDMAcc(li.front.rel_distance,
+        acc_change_ego = CalcRawIDMAcc(li.front.rel_distance,
                                     GetVelocity(observed_world.GetEgoAgent()),
                                     GetVelocity(li.front.agent_info.first));
       } else {
@@ -115,7 +115,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
           double distance = li.front.rel_distance - li.rear.rel_distance;
           BARK_EXPECT_TRUE(distance >= 0);
           acc_behind =
-              CalcIDMAcc(distance, GetVelocity(li.rear.agent_info.first),
+              CalcRawIDMAcc(distance, GetVelocity(li.rear.agent_info.first),
                          GetVelocity(li.front.agent_info.first));
           VLOG(2) << "Distance rear vehicle to front before: " << distance
                   << std::endl;
@@ -133,7 +133,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
         VLOG(2) << "Distance rear vehicle to front after: "
                 << -li.rear.rel_distance << std::endl;
         BARK_EXPECT_TRUE(-li.rear.rel_distance >= 0);
-        acc_change_behind = CalcIDMAcc(
+        acc_change_behind = CalcRawIDMAcc(
             -li.rear.rel_distance, GetVelocity(li.rear.agent_info.first),
             GetVelocity(observed_world.GetEgoAgent()));
       } else {
