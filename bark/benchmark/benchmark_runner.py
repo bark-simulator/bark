@@ -38,11 +38,7 @@ class BenchmarkRunner:
                  merge_existing=False):
 
         self.benchmark_database = benchmark_database
-        if evaluators is not None and isinstance(evaluators, bytes):
-            # unpickle serialized evaluators
-            self.evaluators = pickle.loads(evaluators)
-        else:
-            self.evaluators = evaluators or {}
+        self.evaluators = evaluators or {}
         self.terminal_when = terminal_when or []
         if behaviors:
           self.behavior_configs = BehaviorConfig.configs_from_dict(behaviors)

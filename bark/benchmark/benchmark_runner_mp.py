@@ -41,7 +41,8 @@ def deserialize_scenario(sc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
+    def __init__(self, serialized_evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
+        evaluators = pickle.loads(serialized_evaluators) # unpickle
         super().__init__(evaluators=evaluators, 
                         terminal_when=terminal_when,
                         benchmark_configs=benchmark_configs,
@@ -113,7 +114,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
-        self.actors = [_BenchmarkRunnerActor.remote(evaluators=serialized_evaluators,
+        self.actors = [_BenchmarkRunnerActor.remote(serialized_evaluators=serialized_evaluators,
                                                     terminal_when=terminal_when,
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),
