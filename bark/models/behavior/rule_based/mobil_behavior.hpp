@@ -47,6 +47,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
 
   virtual ~BehaviorMobilRuleBased() {}
 
+  double CalcLongRawAccWithoutLeader(const world::LaneCorridorPtr& lane_corr, const bark::geometry::Point2d& pos, double vel) const;
   virtual std::pair<LaneChangeDecision, LaneCorridorPtr> ChooseLaneCorridor(
       const std::vector<LaneCorridorInformation>& lane_corr_infos,
       const ObservedWorld& observed_world) const;

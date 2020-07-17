@@ -36,6 +36,27 @@ using world::map::LaneCorridorPtr;
 using world::map::RoadCorridorPtr;
 using world::objects::AgentPtr;
 
+double BehaviorMobilRuleBased::CalcLongRawAccWithoutLeader(
+    const LaneCorridorPtr& lane_corr, const Point2d& pos, double vel) const {
+  double acc;
+  double acc_free =
+      BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
+  if (BaseIDM::brake_lane_end_) {
+    bool braking_required;
+    double len_until_end;
+    std::tie(braking_required, len_until_end) =
+        BaseIDM::GetDistanceToLaneEnding(lane_corr, pos);
+    if (braking_required) {
+      acc = CalcIDMAcc(len_until_end, vel, 0);
+    } else {
+      acc = acc_free;
+    }
+  } else {
+    acc = acc_free;
+  }
+  return acc;
+}
+
 /**
  * @brief Function that chooses the LaneCorridor according to the
  *        MOBIL model
@@ -49,23 +70,26 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
   auto lane_corr = observed_world.GetLaneCorridor();
   LaneChangeDecision change_decision = LaneChangeDecision::KeepLane;
 
-  double acc_ego;
+  double acc_ego = 0;
   std::pair<LaneCorridorInformation, bool> lci_has =
-      SelectLaneCorridor(lane_corr_infos, GetLaneCorridor());
-  if (std::get<1>(lci_has)) {
+      SelectLaneCorridor(lane_corr_infos, lane_corr);
+  if (lci_has.second) {
     LaneCorridorInformation lci = std::get<0>(lci_has);
     if (lci.front.agent_info.first) {
+      BARK_EXPECT_TRUE(lci.front.rel_distance >= 0);
       acc_ego = CalcIDMAcc(lci.front.rel_distance,
                            GetVelocity(observed_world.GetEgoAgent()),
                            GetVelocity(lci.front.agent_info.first));
     } else {
-      // we assume that soon ending lane corridors are filtered out anyway
-      acc_ego =
-          BaseIDM::GetMaxAcceleration() *
-          BaseIDM::CalcFreeRoadTerm(GetVelocity(observed_world.GetEgoAgent()));
+      acc_ego = CalcLongRawAccWithoutLeader(
+          lane_corr, observed_world.CurrentEgoPosition(),
+          GetVelocity(observed_world.GetEgoAgent()));
     }
   } else {
-    LOG(ERROR) << "No ego lane corridor set" << std::endl;
+    LOG(INFO) << "Target Corridor not available to MOBIL" << std::endl;
+    // Vehicle cannot stay in current corridor anymore, we thus incentivize a
+    // lane change
+    acc_ego = BaseIDM::GetAccelerationLowerBound();
   }
 
   if (lane_corr_infos.size() > 0) {
@@ -73,41 +97,42 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
     // use current lane corridor as default
     LaneCorridorPtr tmp_lane_corr = GetLaneCorridor();
     for (const auto& li : lane_corr_infos) {
-      // LOG(INFO) << li << std::endl;
+      VLOG(2) << li << std::endl;
       double acc_change_ego, acc_behind, acc_change_behind;
       if (li.front.agent_info.first) {
+        BARK_EXPECT_TRUE(li.front.rel_distance >= 0);
         acc_change_ego = CalcIDMAcc(li.front.rel_distance,
                                     GetVelocity(observed_world.GetEgoAgent()),
                                     GetVelocity(li.front.agent_info.first));
       } else {
-        // we assume that soon ending lane corridors are filtered out anyway
-        acc_change_ego = BaseIDM::GetMaxAcceleration() *
-                         BaseIDM::CalcFreeRoadTerm(
-                             GetVelocity(observed_world.GetEgoAgent()));
+        acc_change_ego = CalcLongRawAccWithoutLeader(
+            li.lane_corridor, observed_world.CurrentEgoPosition(),
+            GetVelocity(observed_world.GetEgoAgent()));
       }
       // Calculating acc of new follower before changing lane
       if (li.rear.agent_info.first) {
         if (li.front.agent_info.first) {
           double distance = li.front.rel_distance - li.rear.rel_distance;
+          BARK_EXPECT_TRUE(distance >= 0);
           acc_behind =
               CalcIDMAcc(distance, GetVelocity(li.rear.agent_info.first),
                          GetVelocity(li.front.agent_info.first));
-          // LOG(INFO) << "Distance rear vehicle to front before: " << distance
-          //           << std::endl;
+          VLOG(2) << "Distance rear vehicle to front before: " << distance
+                  << std::endl;
         } else {
-          // TODO: take care of ending lane corridor!
-          acc_behind =
-              BaseIDM::GetMaxAcceleration() *
-              BaseIDM::CalcFreeRoadTerm(GetVelocity(li.rear.agent_info.first));
+          acc_behind = CalcLongRawAccWithoutLeader(
+              li.lane_corridor, li.rear.agent_info.first->GetCurrentPosition(),
+              GetVelocity(li.rear.agent_info.first));
         }
       } else {
         acc_behind = 0;
       }
-      
+
       // Calculating acc of new follower after changing lane
       if (li.rear.agent_info.first) {
-        // LOG(INFO) << "Distance rear vehicle to front after: "
-        //           << -li.rear.rel_distance << std::endl;
+        VLOG(2) << "Distance rear vehicle to front after: "
+                << -li.rear.rel_distance << std::endl;
+        BARK_EXPECT_TRUE(-li.rear.rel_distance >= 0);
         acc_change_behind = CalcIDMAcc(
             -li.rear.rel_distance, GetVelocity(li.rear.agent_info.first),
             GetVelocity(observed_world.GetEgoAgent()));
@@ -116,25 +141,25 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
       }
 
       double advantage_ego = acc_change_ego - acc_ego;
-      // LOG(INFO) << "advantage_ego=" << advantage_ego
-      //           << " ... acc_change_ego=" << acc_change_ego
-      //           << " acc_ego=" << acc_ego << std::endl;
+      VLOG(2) << "advantage_ego=" << advantage_ego
+              << " ... acc_change_ego=" << acc_change_ego
+              << " acc_ego=" << acc_ego << std::endl;
       double advantage_other = acc_behind - acc_change_behind;
-      // LOG(INFO) << "advantage_other(aka behind)=" << advantage_other
-      //           << " ... acc_behind=" << acc_behind
-      //           << " acc_change_behind=" << acc_change_behind << std::endl;
+      VLOG(2) << "advantage_other(aka behind)=" << advantage_other
+              << " ... acc_behind=" << acc_behind
+              << " acc_change_behind=" << acc_change_behind << std::endl;
 
       // Safety Criterion:
       if (acc_change_behind <= -b_safe_) {
-        // LOG(INFO) << "Safety criterion not met." << acc_change_behind
-        //           << std::endl;
+        VLOG(2) << "Safety criterion not met." << acc_change_behind
+                << std::endl;
         continue;
       }
 
       // Incentive Criterion (only condiering new follower!)
       // acc'(ego) - acc(ego) > p [acc(behind) - acc'(behind)] + a_thr
       if (advantage_ego > politeness_ * advantage_other + a_thr_) {
-        // LOG(INFO) << "Incentive Criterion is met." << std::endl;
+        VLOG(2) << "Incentive Criterion is met." << std::endl;
         if (advantage_ego > max_advantage) {
           max_advantage = advantage_ego;
           tmp_lane_corr = li.lane_corridor;
@@ -142,8 +167,8 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
       }
     }
     if (tmp_lane_corr != lane_corr && tmp_lane_corr) {
-      // LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-      //           << " is changing lanes." << std::endl;
+      VLOG(2) << "Agent " << observed_world.GetEgoAgentId()
+              << " is changing lanes." << std::endl;
       lane_corr = tmp_lane_corr;
       change_decision = LaneChangeDecision::ChangeLane;
     }
