@@ -14,7 +14,8 @@ from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_re
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.scenario.scenario import Scenario
-from bark.core.geometry import Point2d, Collide
+from bark.core.geometry import Point2d, Collide, Within
+from bark.core.geometry.standard_shapes import CarRectangle
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
@@ -41,10 +42,12 @@ class DatasetDecomposer:
         traj = TrajectoryFromTrack(self._track_dict[id_ego])
         for state in traj:
             point_agent = Point2d(state[1], state[2])
+            car_shape = CarRectangle()
+            agent_shape = car_shape.Transform([state[1], state[2], state[3]])
             lane_list = self._map_interface.find_nearest_lanes(point_agent, 3)
             for lane in lane_list:
-                polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
-                if Collide(polygon, point_agent):
+                lane_polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
+                if Collide(lane_polygon, point_agent) and Within(agent_shape, lane_polygon):
                     time_ego_first = state[0]*1e3  # use timestamp in ms
                     return time_ego_first
 
