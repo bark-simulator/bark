@@ -1,5 +1,8 @@
 // Copyright (c) 2020 fortiss GmbH
 //
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
+//
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -15,13 +18,13 @@ namespace evaluation {
 using bark::models::dynamic::StateDefinition;
 
 DenseTrafficLabelFunction::DenseTrafficLabelFunction(
-    const std::string& label_str, double radius, size_t num_agents)
+    const std::string& label_str, double radius, int num_agents)
     : BaseLabelFunction(label_str),
       radius_(std::abs(radius)),
       num_agents_(num_agents) {}
 LabelMap DenseTrafficLabelFunction::Evaluate(
-    const world::ObservedWorld& observed_world) const {
-  size_t agent_count = 0;
+  const world::ObservedWorld& observed_world) const {
+  int agent_count = 0;
   const auto& ego_pos = observed_world.GetEgoAgent()->GetCurrentPosition();
   // TODO(@cirrostratus1): Use rtree for performance
   for (const auto& agent : observed_world.GetOtherAgents()) {
