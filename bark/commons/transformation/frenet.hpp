@@ -26,6 +26,13 @@ struct FrenetPosition {
   double lat;
 };
 
+inline std::ostream& operator<<(std::ostream& os, const FrenetPosition& frenet_position) {
+    os << "FrenetPosition = (" << frenet_position.lon
+       << " , " << frenet_position.lat
+       << ")";
+    return os;
+}
+
 }  // namespace transformation
 }  // namespace commons
 }  // namespace bark

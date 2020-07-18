@@ -36,6 +36,7 @@ using bark::world::World;
 using bark::world::WorldPtr;
 using bark::world::goal_definition::GoalDefinitionPolygon;
 using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::geometry::standard_shapes::GoalRectangle;
 using bark::world::map::MapInterface;
 using bark::world::map::MapInterfacePtr;
 using bark::world::objects::Agent;
@@ -136,10 +137,7 @@ WorldPtr bark::world::tests::MakeTestWorldHighway() {
   map_interface->interface_from_opendrive(open_drive_map);
 
   // Goal Definition
-  Polygon polygon(
-      Pose(1, 1, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
-                           Point2d(2, 0), Point2d(0, 0)});
+  Polygon polygon = GoalRectangle();
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);

@@ -29,7 +29,10 @@ py_test(
             ':xodr_data'],
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
-          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          ":test_config_reader_module",
+          "//tools/debug:debug_settings",
+          ],
 )
 
 #py_test(
@@ -91,4 +94,17 @@ py_test(
           "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           ],
+)
+
+
+py_library(
+    name = "test_config_reader_module",
+    srcs = [
+            "test_config_reader_module.py"
+            ],
+    data = ['//bark:generate_core'],
+    deps = [
+        "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
+    ],
+    visibility = ["//visibility:public"],
 )

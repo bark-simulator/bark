@@ -40,10 +40,14 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
                         "Acceleration threshold factor. See Mobil paper.", .2);
     politeness_ = params->GetReal("BehaviorMobilRuleBased::Politeness",
                                   "Politeness factor. See Mobil paper.", .5);
+    b_safe_ = params->GetReal(
+        "BehaviorMobilRuleBased::BSafe",
+        "Maximum deceleration for follower in target lane.", 4.0);
   }
 
   virtual ~BehaviorMobilRuleBased() {}
 
+  double CalcLongRawAccWithoutLeader(const world::LaneCorridorPtr& lane_corr, const bark::geometry::Point2d& pos, double vel) const;
   virtual std::pair<LaneChangeDecision, LaneCorridorPtr> ChooseLaneCorridor(
       const std::vector<LaneCorridorInformation>& lane_corr_infos,
       const ObservedWorld& observed_world) const;
@@ -53,6 +57,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
  private:
   double a_thr_;
   double politeness_;
+  double b_safe_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorMobilRuleBased::Clone() const {

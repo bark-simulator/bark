@@ -32,6 +32,7 @@ PYBIND11_MODULE(core, m) {
   python_runtime(
       m.def_submodule("runtime", "submodule containing the runtime"));
 #ifdef LTL_RULES
-  define_rule_monitor(m.def_submodule("ltl", "ltl"));
+  define_rule_monitor(
+      m.def_submodule("ltl", "submodule containing the rule monitor"));
 #endif
 }

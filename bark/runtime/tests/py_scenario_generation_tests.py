@@ -17,7 +17,7 @@ from bark.runtime.scenario.scenario_generation.scenario_generation\
   import ScenarioGeneration
 
 from bark.runtime.scenario.scenario_generation.configurable_scenario_generation \
-  import ConfigurableScenarioGeneration
+  import ConfigurableScenarioGeneration, add_config_reader_module
 
 from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation \
     import InteractionDatasetScenarioGeneration
@@ -143,6 +143,40 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(len(scenario_generation2._scenario_list), 2)
 
     params.Save("default_params_interaction_dataset.json")
+  
+  def test_configurable_scenario_generation_add_module_dir(self):
+    sink_source_dict = {
+      "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
+      "Description": "merging_deu_standard",
+      "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
+      "ConfigBehaviorModels": {"Type": "TestReaderFixedBehaviorType"},
+      "ConfigExecutionModels": {"Type": "FixedExecutionType"},
+      "ConfigDynamicModels": {"Type": "FixedDynamicType"},
+      "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
+      "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+      "AgentParams" : {}
+    }
+
+    params = ParameterServer()
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
+    add_config_reader_module("bark.runtime.tests.test_config_reader_module")
+    scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    scenario_loader = ScenarioGeneration()
+    scenario_loader.load_scenario_list("test.scenario")
+
+    self.assertEqual(len(scenario_loader._scenario_list), 2)
+    self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(scenario_generation._scenario_list[0]._agent_list))
+
+    scenario = scenario_loader.get_scenario(idx=0)
+
+    # test if window is reset
+    scenario_generation2 = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
+    self.assertEqual(len(scenario_generation2._scenario_list), 2)
+
+    params.Save("default_params_interaction_dataset.json")
+  
 
   def test_find_overlaps_configurable_scenario_generation(self):
     shape = Polygon2d([0, 0, 0], [Point2d(-1,0),
