@@ -4,8 +4,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
-#define BARK_MODELS_BEHAVIOR_BEHAVIOR_STOCHASTIC_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_IDM_STOCHASTIC_HPP_
+#define BARK_MODELS_BEHAVIOR_IDM_STOCHASTIC_HPP_
 
 #include "bark/commons/distribution/distributions_1d.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
@@ -46,4 +46,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {
 }  // namespace models
 }  // namespace bark
 
-#endif  // BARK_MODELS_BEHAVIOR_IDM_STOCHASTIC_idm_stochastic_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_IDM_STOCHASTIC_HPP_

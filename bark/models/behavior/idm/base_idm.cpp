@@ -125,12 +125,24 @@ double BaseIDM::CalcNetDistance(
   return net_distance;
 }
 
+std::pair<bool, double> BaseIDM::GetDistanceToLaneEnding(
+    const LaneCorridorPtr& lane_corr, const Point2d& pos) const {
+  const double len_until_end =
+      lane_corr->LengthUntilEnd(pos) - brake_lane_end_distance_offset_;
+  if (len_until_end < brake_lane_end_enabled_distance_) {
+    return std::pair<bool, double>(true, len_until_end);
+  } else {
+    return std::pair<bool, double>(false, 1e6);
+  }
+}
+
 /**
  * @brief Calculates the IDM's acceleration
  * @return double acceleration for the IDM/vehicle
  */
 double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
                            const double vel_other) const {
+  // BARK_EXPECT_TRUE(net_distance >= 0);
   const float acc_lower_bound = GetAccelerationLowerBound();
   const float acc_upper_bound = GetAccelerationUpperBound();
   // For now, linit acceleration of IDM to brake with -acc_max
@@ -154,7 +166,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   bool interaction_term_active = false;
   double leading_distance = 0.;
   double leading_velocity = 1e6;
-  double ego_acc = 0.0f;
+  double ego_acc = 0.0f;  // TODO: ommit, as it is confusing
   double leading_acc = 0.0f;
   IDMRelativeValues rel_values;
 
@@ -187,18 +199,18 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
 
   // 2nd part for lane_corr end
   if (brake_lane_end_) {
-    const double len_until_end =
-        lane_corr->LengthUntilEnd(observed_world.CurrentEgoPosition()) -
-        brake_lane_end_distance_offset_;
-    if (len_until_end < brake_lane_end_enabled_distance_) {
+    bool braking_required;
+    double len_until_end;
+    std::tie(braking_required, len_until_end) =
+        GetDistanceToLaneEnding(lane_corr, observed_world.CurrentEgoPosition());
+    if (braking_required) {
       interaction_term_active = true;
       // if no leading vehicle
-      if (!leading_vehicle.first &&
-          len_until_end < brake_lane_end_enabled_distance_) {
+      if (!leading_vehicle.first && braking_required) {
         leading_distance = len_until_end;
         leading_velocity = 0.;
         // if there is a leading vehicle
-      } else if (len_until_end < brake_lane_end_enabled_distance_) {
+      } else if (braking_required) {
         leading_distance = std::min(leading_distance, len_until_end);
         // lane end has 0 vel.
         if (leading_distance == len_until_end) leading_velocity = 0.;

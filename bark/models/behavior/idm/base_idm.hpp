@@ -53,6 +53,10 @@ class BaseIDM : virtual public BehaviorModel {
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
 
+  std::pair<bool, double> GetDistanceToLaneEnding(
+      const LaneCorridorPtr& lane_corr,
+      const bark::geometry::Point2d& pos) const;
+
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
       const world::ObservedWorld& observed_world,
       const LaneCorridorPtr& lane_corr, const IDMRelativeValues& rel_values,
