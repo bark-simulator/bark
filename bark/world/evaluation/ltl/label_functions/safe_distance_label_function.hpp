@@ -1,5 +1,8 @@
 // Copyright (c) 2020 fortiss GmbH
 //
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
+//
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -25,6 +28,10 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
                             double delta, double a_e, double a_o);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  bool GetToRear() const { return to_rear_; }
+  double GetDelta() const { return delta_; }
+  double GetMaxDecelEgo() const { return a_e_; }
+  double GetMaxDecelOther() const { return a_o_; }
 
  private:
   bool CheckSafeDistance(const AgentPtr& rear_agent,

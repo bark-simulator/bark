@@ -41,7 +41,8 @@ def deserialize_scenario(sc):
 # actor class running on a single core
 @ray.remote
 class _BenchmarkRunnerActor(BenchmarkRunner):
-    def __init__(self, evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
+    def __init__(self, serialized_evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
+        evaluators = pickle.loads(serialized_evaluators) # unpickle
         super().__init__(evaluators=evaluators, 
                         terminal_when=terminal_when,
                         benchmark_configs=benchmark_configs,
@@ -105,6 +106,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, \
              _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
+        serialized_evaluators = pickle.dumps(evaluators)
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
@@ -112,7 +114,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
-        self.actors = [_BenchmarkRunnerActor.remote(evaluators=evaluators,
+        self.actors = [_BenchmarkRunnerActor.remote(serialized_evaluators=serialized_evaluators,
                                                     terminal_when=terminal_when,
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),

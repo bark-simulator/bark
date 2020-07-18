@@ -1,5 +1,8 @@
 // Copyright (c) 2020 fortiss GmbH
 //
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
+//
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -24,9 +27,10 @@ class EgoAccelerateLabelFunction : public BaseLabelFunction {
  public:
   EgoAccelerateLabelFunction(const std::string& label_str, double acc_thres);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  double GetAccThres() const { return acc_thres_; }
 
  private:
-  const double acc_thres_;
+  double acc_thres_;
 };
 
 }  // namespace evaluation
