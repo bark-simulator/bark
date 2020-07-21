@@ -237,6 +237,27 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(collisions_03[0][0][1], 2)
     self.assertEqual(collisions_03[0][1][1], 2)
 
+    def test_included_tracks(self):
+      params = ParameterServer()
+      
+      map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+      track_filename_1 =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+      track_filename_2 =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_2.csv")
+
+      params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+      params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename_1,track_filename_2]
+      params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["IncludeTracks"] = {track_filename_1:2}
+
+      scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
+      scenarios = scenario_generation.create_scenarios(params,num_scenarios=2)
+
+      for scenario in scenarios:
+        track_filename = scenario.json_params["track_file"]
+        
+        # Check if the track that is used is the one in the included tracks.
+        self.assertEqual(track_filename,track_filename_1)
+        # TODO: Get the track id and assert if it is equal to 2.
+
     def test_dataset_scenario_generation_full(self):
         params = ParameterServer()
 
