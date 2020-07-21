@@ -61,7 +61,13 @@ class ParamServerTests(unittest.TestCase):
   def test_set_item_using_delimiter(self):
     params = ParameterServer()
     _ = params["test_child"]["Child2"]["ValueFloat", "Desc", 2.0]
-    params
+    params["test_child::Child2::ValueFloat"] = 3.2323
+    self.assertEqual(params["test_child"]["Child2"]["ValueFloat"], 3.2323)
+
+    child = params.AddChild("test_child5::Child5")
+    child["test_param2"] = "etesd99533sbgfgf"
+    self.assertEqual(params["test_child5"]["Child5"]["test_param2", "Desc", 0], "etesd99533sbgfgf")
+
 
   def test_key_not_found(self):
     params = ParameterServer(log_if_default=True)
