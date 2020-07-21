@@ -66,12 +66,19 @@ class ParameterServer(Params):
 
 
     def __setitem__(self, key, value):
+        store = self.store
+        new_key = key
         if isinstance(key, tuple):
             new_key = key[0]
             self.param_descriptions[new_key] = key[1]
-        else:
-            new_key = key
-        self.store[new_key] = value
+
+        if isinstance(key, str):
+          delim = "::"
+          found = key.find(delim)
+          if found > -1:
+            child_params = self.AddChild(key.rsplit(delim, 1)[0])
+            store = child_params.store
+        store[new_key] = value
 
     def __delitem__(self, key):
         if key in self.store:

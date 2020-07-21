@@ -58,6 +58,11 @@ class ParamServerTests(unittest.TestCase):
     for idx, _ in enumerate(list3):
         self.assertAlmostEqual(list3[idx], list4[idx], places=5)
 
+  def test_set_item_using_delimiter(self):
+    params = ParameterServer()
+    _ = params["test_child"]["Child2"]["ValueFloat", "Desc", 2.0]
+    params
+
   def test_key_not_found(self):
     params = ParameterServer(log_if_default=True)
     params_child = params["test_child"]
