@@ -113,7 +113,7 @@ class BenchmarkRunner:
         benchmark_configs = []
         for behavior_config in self.behavior_configs:
             # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_set_name in self.benchmark_database:
+            for scenario_generator, scenario_set_name, scenario_set_param_desc in self.benchmark_database:
                 for scenario, scenario_idx in scenario_generator:
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
@@ -123,7 +123,8 @@ class BenchmarkRunner:
                             behavior_config,
                             scenario,
                             scenario_idx,
-                            scenario_set_name
+                            scenario_set_name,
+                            scenario_set_param_desc
                         )
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs

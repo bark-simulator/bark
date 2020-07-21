@@ -28,7 +28,7 @@ git_repository(
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="78a248e3a1b272c4c8df0708306cfc05cbf8aab5",
+  commit="ff6e433ecb7878ebe59996f3994ff67483a7c297",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 

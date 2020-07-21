@@ -15,6 +15,8 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
+
+
 class BehaviorConfig:
     def __init__(self, behavior_name, behavior, param_descriptions=None):
         self.behavior_name = behavior_name
@@ -36,24 +38,28 @@ class BehaviorConfig:
 # contains information for a single benchmark run
 class BenchmarkConfig:
     def __init__(self, config_idx, behavior_config,
-                 scenario, scenario_idx, scenario_set_name):
+                 scenario, scenario_idx, scenario_set_name,
+                 scenario_set_param_desc=None):
         self.config_idx = config_idx
         self.behavior_config = behavior_config
         self.scenario = scenario
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
+        self.scenario_set_param_desc = scenario_set_param_desc or {}
 
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),
                         "Behavior: {}".format(self.behavior_config.behavior_name),
                         "ScenarioSet: {}".format(self.scenario_set_name),
-                        "ScenarioIdx: {}".format(self.scenario_idx)]
+                        "ScenarioIdx: {}".format(self.scenario_idx),
+                        "ScenarioParamDes: {}".format(self.scenario_set_param_desc)]
         return info_strings
 
     def as_dict(self):
         return {"config_idx": self.config_idx,
                 "scen_set": self.scenario_set_name,
                 "scen_idx": self.scenario_idx,
+                **self.scenario_set_param_desc,
                 **self.behavior_config.as_dict()}
 
     def get_evaluation_groups(self):
