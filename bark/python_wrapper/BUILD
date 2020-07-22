@@ -86,5 +86,6 @@ cc_library(
     "//bark/models/behavior/static_trajectory",
     "//bark/models/behavior/idm/stochastic:stochastic",
     "//bark/world/evaluation/ltl/label_functions:label_function"
-    ]
+    ],
+    copts = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
 )
