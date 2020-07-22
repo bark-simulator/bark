@@ -77,19 +77,28 @@ class ParameterServer(Params):
             new_key = key[0]
             self.param_descriptions[new_key] = key[1]
 
-        if isinstance(key, str):
-          delim = "::"
-          found = key.find(delim)
-          if found > -1:
-            child_params = self.AddChild(key.rsplit(delim, 1)[0])
-            store = child_params.store
-            new_key = key.rsplit(delim, 1)[1]
         if isinstance(value, list) and all(isinstance(el, dict) for el in value):
           value_tmp = []
           for list_el in value:
             value_tmp.append(ParameterServer(json=list_el))
           value = value_tmp
-        store[new_key] = value
+
+        if isinstance(key, str):
+          self._set_item_from_hierarchy_string(key, value)
+
+    def _set_item_from_hierarchy_string(self, key, value):
+      delim = "::"
+      found = key.find(delim)
+      if found > -1:
+        child_params = self.AddChild(key.rsplit(delim, 1)[0])
+        new_key = key.rsplit(delim, 1)[1]
+        if isinstance(child_params, list):
+          for child in child_params:
+            child.store[new_key] = value
+        else:
+          child_params.store[new_key] = value
+      else:
+        self.store[key] = value
 
     def __delitem__(self, key):
         if key in self.store:
@@ -307,4 +316,10 @@ class ParameterServer(Params):
         if len(rest_name) == 0:
           return child
         else:
-          return child.AddChild(rest_name)
+          if isinstance(child, list) and all(type(el) is ParameterServer for el in child):
+            child_list = []
+            for ch in child:
+              child_list.append(ch.AddChild(rest_name))
+            return child_list
+          else:
+            return child.AddChild(rest_name)

@@ -73,25 +73,38 @@ class ParamServerTests(unittest.TestCase):
     child["test_param2"] = "etesd99533sbgfgf"
     self.assertEqual(params["test_child5"]["Child5"]["test_param2", "Desc", 0], "etesd99533sbgfgf")
 
-  def test_set_item_list_included_in_hierarchy(self):
+  def test_set_item_param_server_list_included_in_hierarchy(self):
     params = ParameterServer()
     params["test_child"]["Child2"]["ListOfParamServers"] = [{
       "ListEl1Param1" : 1.0,
       "ListEl1Param2" : 5,
       "ListEl1Child1" : {
         "ListEl1Child1Param1" : "dfdfdfasdgdfhdfg",
-        "ListEl1Child1Param2" : 4343
+        "ListEl1Child1Param2" : 4343,
+        
+      },
+      "EqualNameParams": {
+        "EqualNameParam1": 20.03434,
+        "EqualNameParam2": 2167767545
       }
     },
     {
       "ListEl2Param1" : 2.0,
-      "ListEl2Param2" : 232
+      "ListEl2Param2" : 232,
+      "EqualNameParams": {
+        "EqualNameParam1": 20.03434,
+        "EqualNameParam2": 2123232
+      }
     }]
 
     self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["ListEl1Param2"], 5)
     self.assertTrue(isinstance(params["test_child"]["Child2"]["ListOfParamServers"][0], ParameterServer))
     self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][1]["ListEl2Param1"], 2.0)
     self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["ListEl1Child1"]["ListEl1Child1Param1"], "dfdfdfasdgdfhdfg")
+
+    params["test_child::Child2::ListOfParamServers::EqualNameParams::EqualNameParam1"] = 4545.232566
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["EqualNameParams"]["EqualNameParam1"], 4545.232566)
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][1]["EqualNameParams"]["EqualNameParam1"], 4545.232566)
 
   def test_key_not_found(self):
     params = ParameterServer(log_if_default=True)
