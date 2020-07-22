@@ -79,8 +79,9 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     self._sink_source_default_params = None
 
   def update_defaults_params(self):
-    self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
-        self._sink_source_default_params
+    pass
+    #  self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = \
+     #     self._sink_source_default_params
 
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
     self._sink_source_parameter_servers[config_type].append(
@@ -132,8 +133,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       kwargs_agent_states_geometry.append(kwargs_dict)
 
       # collect default parameters of this config
-      sink_source_default_params.append(sink_source_config)
-      sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.ConvertToDict()
+      #sink_source_default_params.append(sink_source_config)
+      #sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.ConvertToDict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
     #2 remove overlapping agent states from different sources and sinks
@@ -160,7 +161,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigBehaviorModels", 
                               args_list, kwargs_dict)
       behavior_models = config_return
-      sink_source_default_params[idx]["ConfigBehaviorModels"] = default_params_behavior.ConvertToDict()
+      #sink_source_default_params[idx]["ConfigBehaviorModels"] = default_params_behavior.ConvertToDict()
       
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       config_return, kwargs_dict_tmp, default_params_execution = \
@@ -168,7 +169,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigExecutionModels",
                               args_list, kwargs_dict)
       execution_models = config_return
-      sink_source_default_params[idx]["ConfigExecutionModels"] = default_params_execution.ConvertToDict()
+      #sink_source_default_params[idx]["ConfigExecutionModels"] = default_params_execution.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
 
@@ -177,7 +178,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigDynamicModels",
                               args_list, kwargs_dict)
       dynamic_models = config_return
-      sink_source_default_params[idx]["ConfigDynamicModels"] = default_params_dynamic.ConvertToDict()
+      #sink_source_default_params[idx]["ConfigDynamicModels"] = default_params_dynamic.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       #4 create goal definitions and controlled agents
@@ -187,7 +188,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               args_list, kwargs_dict)
       controlled_agent_ids = config_return
       controlled_agent_ids_all.extend(controlled_agent_ids)
-      sink_source_default_params[idx]["ConfigControlledAgents"] = default_params_controlled_agents.ConvertToDict()
+      #sink_source_default_params[idx]["ConfigControlledAgents"] = default_params_controlled_agents.ConvertToDict()
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
 
       args_list = [*args_list, controlled_agent_ids]
@@ -196,22 +197,22 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                               sink_source_config, "ConfigGoalDefinitions", 
                               args_list, kwargs_dict)
       goal_definitions = config_return
-      sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.ConvertToDict()
+      #sink_source_default_params[idx]["ConfigGoalDefinitions"] = default_params_goals.ConvertToDict()
 
       #5 Build all agents for this source config
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
-      agent_params = ParameterServer(json = sink_source_config["AgentParams"])
+      agent_params = sink_source_config["AgentParams"]
       sink_source_agents, controlled_ids = self.create_source_config_agents(agent_states,
                       agent_geometries, behavior_models, execution_models,
                       dynamic_models, goal_definitions, controlled_agent_ids,
                       world, agent_params)
-      sink_source_default_params[idx]["AgentParams"] = agent_params.ConvertToDict()
+      #sink_source_default_params[idx]["AgentParams"] = agent_params.ConvertToDict()
 
       self.update_road_corridors(sink_source_agents, road_corridor)
       agent_list.extend(sink_source_agents)
-      collected_sources_sinks_default_param_configs.append(sink_source_config)
+      #collected_sources_sinks_default_param_configs.append(sink_source_config)
 
-    self._sink_source_default_params = sink_source_default_params
+    #self._sink_source_default_params = sink_source_default_params
     scenario._eval_agent_ids = controlled_ids
     scenario._agent_list = agent_list
     
@@ -436,7 +437,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
-    param_config = ParameterServer(json = eval_config, log_if_default = self._params.log_if_default)
     try:
       config_reader = eval("{}(self._random_state, self._current_scenario_idx)".format(eval_config_type))
     except NameError as error:
@@ -448,7 +448,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
             pass
         if not config_reader:
           raise ValueError("Config reader type {} not found in added module paths".format(eval_config_type))
-    config_return  = config_reader.create_from_config(param_config, *args, **kwargs)
+    config_return  = config_reader.create_from_config(eval_config, *args, **kwargs)
     self.add_config_reader_parameter_servers(sink_source_config["Description"], config_type, config_reader)
     return config_return
 
