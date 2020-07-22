@@ -12,7 +12,7 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "gtest",
-    commit = "482ac6ee63429af2aa9c44f4e6427873fb68fb1f",
+    commit = "703bd9caab50b139428cea1aaff9974ebee5742e",
     remote = "https://github.com/google/googletest"
     )
 
