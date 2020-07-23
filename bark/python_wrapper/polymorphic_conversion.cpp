@@ -36,10 +36,8 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
 #ifdef PLANNER_UCT
-#include "bark_mcts/models/behavior/behavior_uct_hypothesis.hpp"
-#include "bark_mcts/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
-using bark::models::behavior::BehaviorHypothesisIDM;
-using bark::models::behavior::BehaviorUCTHypothesis;
+#include "bark_mcts/models/behavior/behavior_uct_single_agent_macro_actions.hpp"
+using bark::models::behavior::BehaviorUCTSingleAgentMacroActions;
 #endif
 
 namespace py = pybind11;
@@ -91,10 +89,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIDMStochastic";
   }
 #ifdef PLANNER_UCT
-  else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
-    behavior_model_name = "BehaviorUCTHypothesis";
-  } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
-    behavior_model_name = "BehaviorHypothesisIDM";
+  else if (typeid(*behavior_model) == typeid(BehaviorUCTSingleAgentMacroActions)) {
+    behavior_model_name = "BehaviorUCTSingleAgentMacroActions";
   }
 #endif
   else {
@@ -140,12 +136,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
         t[0].cast<BehaviorIDMStochastic>());
   }
 #ifdef PLANNER_UCT
-  else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
-    return std::make_shared<BehaviorUCTHypothesis>(
-        t[0].cast<BehaviorUCTHypothesis>());
-  } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
-    return std::make_shared<BehaviorHypothesisIDM>(
-        t[0].cast<BehaviorHypothesisIDM>());
+  else if (behavior_model_name.compare("BehaviorUCTSingleAgentMacroActions") == 0) {
+    return std::make_shared<BehaviorUCTSingleAgentMacroActions>(
+        t[0].cast<BehaviorUCTSingleAgentMacroActions>());
   }
 #endif
   else {

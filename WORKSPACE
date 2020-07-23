@@ -16,13 +16,13 @@ boost_deps()
 # -------------------------------------------------
 
 # ------ Planner UCT ------------------------------
-git_repository(
+local_repository(
   name = "planner_uct",
-  commit="bde9ccc9750fad5764afd84987fcfe15ff97dfbe",
-  remote = "https://github.com/bark-simulator/planner_uct"
+  path="/home/bernhard/development/practical/planner-mcts",
+  #remote = "https://github.com/bark-simulator/planner_uct"
 )
-#load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
-#planner_uct_rules_dependencies()
+load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
+planner_uct_rules_dependencies()
 # --------------------------------------------------
 
 # -------- Benchmark Database -----------------------
