@@ -28,7 +28,7 @@ git_repository(
 # ------ Planner MV-MCTS ------------------------------
 git_repository(
     name = "planner_mv_mcts",
-  commit="b4ffbdda9c59b4bdf90e133335403ba5eb6362f5",
+  commit="1927f3639a75f2522e3c0312bf80f112d079288f",
   remote = "git@github.com:bark-simulator/planner-mv-mcts.git"
 )
 load("@planner_mv_mcts//util:deps.bzl", "planner_mv_mcts_dependencies")
