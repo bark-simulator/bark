@@ -16,6 +16,7 @@ from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
 
 from bark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
@@ -59,15 +60,16 @@ benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                   behaviors=behaviors_tested,
                                   log_eval_avg_every=10)#log_eval_avg_every=10
 
-fig1 = plt.figure(figsize=[10, 10])
-# viewer1 = MPViewer(
-#               params=params1,
-#               use_world_bounds=True,
-#               axis = fig1.gca())
+viewer1 = MPViewer(
+                  x_range=[-75, 75],
+                  y_range=[-75, 75],
+                  follow_agent_id=True)
+video_renderer = VideoRenderer(renderer=viewer1, world_step_time=0.2)
 
 
-result = benchmark_runner.run(maintain_history=True, viewer=None)
+result = benchmark_runner.run(maintain_history=True, viewer=video_renderer)
 
+video_renderer.export_video(filename="heuristic_test_video", remove_image_dir=True)
 result.dump(os.path.join("./benchmark_results.pickle"))
 
 
