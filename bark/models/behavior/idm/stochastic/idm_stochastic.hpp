@@ -14,6 +14,8 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+typedef std::unordered_map<
+    std::string, std::pair<commons::RandomVariableValueType, commons::RandomVariableValueType>> ParameterRegions;
 class BehaviorIDMStochastic : public BehaviorIDMClassic {
  public:
   explicit BehaviorIDMStochastic(const commons::ParamsPtr& params);
@@ -26,6 +28,8 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
   void SampleParameters();
+
+  ParameterRegions GetParameterRegions() const;
 
  protected:
   bark::commons::DistributionPtr param_dist_headway_;
