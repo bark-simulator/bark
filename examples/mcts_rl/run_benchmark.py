@@ -69,7 +69,7 @@ video_renderer = VideoRenderer(renderer=viewer1, world_step_time=0.2)
 
 result = benchmark_runner.run(maintain_history=True, viewer=video_renderer)
 
-video_renderer.export_video(filename="heuristic_test_video", remove_image_dir=True)
+video_renderer.export_video(filename="./heuristic_test_video.mp4", remove_image_dir=True)
 result.dump(os.path.join("./benchmark_results.pickle"))
 
 

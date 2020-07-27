@@ -29,15 +29,15 @@
                               0
                           ],
                           "VehicleDistanceRange": [
-                              20,
-                              30
+                              8,
+                              14
                           ],
                           "OtherVehicleVelocityRange": [
                               11,
                               17
                           ],
                           "SRange": [
-                              0.1,
+                              0.0,
                               0.9
                           ]
                       },
