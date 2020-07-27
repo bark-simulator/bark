@@ -11,8 +11,10 @@ import os
 import ray
 
 try:
-    import tools.debug_settings
+    debug = True
+    import debug_settings
 except:
+    debug = False
     pass
 
 import matplotlib.pyplot as plt
@@ -37,7 +39,10 @@ class DatabaseRunnerTests(unittest.TestCase):
         dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=3, num_serialize_scenarios=2)
         # to find database files
         cwd = os.getcwd()
-        os.chdir("../benchmark_database/")
+        if not debug:
+          os.chdir("../benchmark_database/")
+        else:
+          os.chdir("bazel-bin/bark/benchmark/tests/py_benchmark_process_tests.runfiles/benchmark_database")
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
