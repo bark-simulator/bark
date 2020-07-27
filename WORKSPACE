@@ -13,13 +13,11 @@ load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
 
-# -------------------------------------------------
-
 # ------ Planner UCT ------------------------------
-local_repository(
+git_repository(
   name = "planner_uct",
-  path="/home/bernhard/development/practical/planner-mcts",
-  #remote = "https://github.com/bark-simulator/planner_uct"
+  commit="86b5000234197aedcdbf0b72fd35be6ec2b562d2",
+  remote = "https://github.com/bark-simulator/planner-mcts"
 )
 load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 planner_uct_rules_dependencies()
@@ -49,14 +47,6 @@ git_repository(
 # ------------------- LTL RuleMonitor --------------
 load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
 rule_monitor_dependencies()
-# --------------------------------------------------
-
-# ------------------- BARK-ML ----------------------
-git_repository(
-  name = "bark_ml",
-  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
-  remote = "https://github.com/bark-simulator/bark-ml"
-)
 # --------------------------------------------------
 
 # git_repository(
