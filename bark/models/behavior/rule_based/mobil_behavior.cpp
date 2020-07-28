@@ -92,7 +92,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
     acc_ego = BaseIDM::GetAccelerationLowerBound();
   }
 
-  if (lane_corr_infos.empty()) {
+  if (!lane_corr_infos.empty()) {
     double max_advantage = -1e3;  // default val meets Incentive Criterion
     // use current lane corridor as default
     LaneCorridorPtr tmp_lane_corr = GetLaneCorridor();

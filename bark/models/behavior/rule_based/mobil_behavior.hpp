@@ -43,7 +43,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
     safe_deceleration_ = params->GetReal(
         "BehaviorMobilRuleBased::SafeDeceleration",
         "Maximum deceleration for follower in target lane.", 4.0);
-    assert(safe_deceleration_ >= 0)
+    assert(safe_deceleration_ >= 0);
   }
 
   virtual ~BehaviorMobilRuleBased() {}
