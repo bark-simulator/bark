@@ -36,7 +36,7 @@ using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
 using bark::geometry::standard_shapes::CarRectangle;
-using bark::geometry::standard_shapes::GoalRectangle;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 using bark::world::ObservedWorld;
 using bark::world::World;
 using bark::world::WorldPtr;
@@ -55,7 +55,7 @@ ObservedWorld make_observed_world_mobil(double vel, ParamsPtr params) {
 
   Polygon car_polygon = CarRectangle();
 
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(100, -2))));  // < move the goal polygon into the driving
@@ -244,7 +244,7 @@ TEST(change_lane_due_to_lane_ending, behavior_mobil) {
 
   Polygon car_polygon = CarRectangle();
   
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(100, -2))));  // < move the goal polygon into the driving
@@ -303,7 +303,7 @@ TEST(no_lane_change_to_ending_lane, behavior_mobil) {
 
   Polygon car_polygon = CarRectangle();
   
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(100, -2))));  // < move the goal polygon into the driving

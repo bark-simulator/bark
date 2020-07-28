@@ -39,7 +39,7 @@ using namespace bark::world;
 using namespace bark::world::evaluation;
 using namespace bark::world::goal_definition;
 using bark::world::tests::make_test_world;
-using bark::geometry::standard_shapes::GoalRectangle;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 
 TEST(world, world_init) {
   auto params = std::make_shared<SetterParams>();
@@ -209,7 +209,7 @@ TEST(world, world_outside_drivable_area) {
 
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
 
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
