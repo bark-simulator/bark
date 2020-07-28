@@ -48,12 +48,12 @@ struct AgentInformation {
   double rel_velocity = 1e6, rel_distance = 1e6;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const AgentInformation& agent_information) {
-    os << "AgentInformation (" << agent_information.agent_info.second
-       << " is_vehicle: " << agent_information.is_vehicle
-       << " rel_velocity: " << agent_information.rel_velocity
-       << ")";
-    return os;
+inline std::ostream& operator<<(std::ostream& os,
+                                const AgentInformation& agent_information) {
+  os << "AgentInformation = (" << agent_information.agent_info.second
+     << " is_vehicle: " << agent_information.is_vehicle
+     << " rel_velocity: " << agent_information.rel_velocity << ")";
+  return os;
 }
 
 // this is LaneCorridor specific
@@ -65,12 +65,12 @@ struct LaneCorridorInformation {
   double remaining_distance;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const LaneCorridorInformation& lci) {
-    os << "LaneCorridorInformation:"
-       << " front: " << lci.front
-       << " rear: " << lci.rear
-       << " remaining_distance: " << lci.remaining_distance;
-    return os;
+inline std::ostream& operator<<(std::ostream& os,
+                                const LaneCorridorInformation& lci) {
+  os << "LaneCorridorInformation = ("
+     << " front: " << lci.front << " rear: " << lci.rear
+     << " remaining_distance: " << lci.remaining_distance << ")";
+  return os;
 }
 
 // Behavior that changes lanes if there is more free-space
