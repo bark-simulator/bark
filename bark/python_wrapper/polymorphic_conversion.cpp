@@ -55,7 +55,7 @@ using bark::models::behavior::BehaviorUCTHypothesis;
 
 #ifdef PLANNER_MVMCTS
 #include "src/behavior_mvmcts.hpp"
-using bark::models::behavior::BehaviorMvmctsEGreedy;
+using bark::models::behavior::BehaviorMvmctsGreedy;
 using bark::models::behavior::BehaviorMvmctsUct;
 #endif
 
@@ -132,8 +132,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
 #ifdef PLANNER_MVMCTS
   else if (typeid(*behavior_model) == typeid(BehaviorMvmctsUct)) {
     behavior_model_name = "BehaviorMvmctsUct";
-  } else if (typeid(*behavior_model) == typeid(BehaviorMvmctsEGreedy)) {
-    behavior_model_name = "BehaviorMvmctsEGreedy";
+  } else if (typeid(*behavior_model) == typeid(BehaviorMvmctsGreedy)) {
+    behavior_model_name = "BehaviorMvmctsGreedy";
   }
 #endif
   else {
@@ -193,9 +193,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
 #ifdef PLANNER_MVMCTS
   else if (behavior_model_name.compare("BehaviorMvmctsUct") == 0) {
     return std::make_shared<BehaviorMvmctsUct>(t[0].cast<BehaviorMvmctsUct>());
-  } else if (behavior_model_name.compare("BehaviorMvmctsEGreedy") == 0) {
-    return std::make_shared<BehaviorMvmctsEGreedy>(
-        t[0].cast<BehaviorMvmctsEGreedy>());
+  } else if (behavior_model_name.compare("BehaviorMvmctsGreedy") == 0) {
+    return std::make_shared<BehaviorMvmctsGreedy>(
+        t[0].cast<BehaviorMvmctsGreedy>());
   }
 #endif
   else if (behavior_model_name.compare("None") == 0) {
