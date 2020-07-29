@@ -26,7 +26,7 @@ planner_uct_rules_dependencies()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="78a248e3a1b272c4c8df0708306cfc05cbf8aab5",
+  commit="5b2dc0431d0a45d8b9fa4f45c6f739b417b06dcd",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
