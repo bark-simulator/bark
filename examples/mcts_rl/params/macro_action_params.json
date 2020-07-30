@@ -1,77 +1,98 @@
 {
     "BehaviorUctSingleAgent": {
-        "PredictionSettings": {
-            "TimeSpan": 0.5,
-            "EgoVehicle": {
-                "BehaviorMotionPrimitives": {
-                    "IntegrationTimeDelta": 0.019999999552965164
-                },
-                "AccelerationInputs": [
-                    0.0,
-                    1.0,
-                    4.0,
-                    -1.0,
-                    -8.0
-                ],
-                "BehaviorIDMClassic": {
-                    "MinimumSpacing": 2.0,
-                    "DesiredTimeHeadway": 1.5,
-                    "MaxAcceleration": 1.7000000476837158,
-                    "AccelerationLowerBound": -5.0,
-                    "AccelerationUpperBound": 8.0,
-                    "DesiredVelocity": 15.0,
-                    "ComfortableBrakingAcceleration": 1.6699999570846558,
-                    "MinVelocity": 0.0,
-                    "MaxVelocity": 50.0,
-                    "Exponent": 4,
-                    "BrakeForLaneEnd": false,
-                    "BrakeForLaneEndEnabledDistance": 60.0,
-                    "BrakeForLaneEndDistanceOffset": 15.0,
-                    "NumTrajectoryTimePoints": 11.0
-                },
-                "BehaviorIDMLaneTracking": {
-                    "CrosstrackErrorGain": 1.0
-                },
-                "PrimitiveConstAccStayLane": {
-                    "Acceleration": 0.0
-                },
-                "MinLength": 0.0
-            },
-            "OtherVehicles": {
-                "BehaviorIDMClassic": {
-                    "MinimumSpacing": 2.0,
-                    "DesiredTimeHeadway": 1.5,
-                    "MaxAcceleration": 1.7000000476837158,
-                    "AccelerationLowerBound": -5.0,
-                    "AccelerationUpperBound": 8.0,
-                    "DesiredVelocity": 15.0,
-                    "ComfortableBrakingAcceleration": 1.6699999570846558,
-                    "MinVelocity": 0.0,
-                    "MaxVelocity": 50.0,
-                    "Exponent": 4,
-                    "BrakeForLaneEnd": false,
-                    "BrakeForLaneEndEnabledDistance": 60.0,
-                    "BrakeForLaneEndDistanceOffset": 15.0,
-                    "NumTrajectoryTimePoints": 11.0
-                }
-            }
-        },
-        "DumpTree": false,
-        "UseRandomHeuristic": true,
+        "UseRandomHeuristic": false,
         "Mcts": {
+            "UctStatistic": {
+                "ReturnLowerBound": -10000.0,
+                "ReturnUpperBound": 10000.0,
+                "ExplorationConstant": 0.699999988079071
+            },
             "DiscountFactor": 0.8999999761581421,
             "RandomSeed": 1000,
             "MaxSearchTime": 200,
-            "MaxNumIterations": 10000000,
+            "MaxNumIterations": 20000000,
+            "MaxSearchDepth": 1000,
             "RandomHeuristic": {
                 "MaxSearchTime": 5,
-                "MaxNumIterations": 1000000
-            },
-            "UctStatistic": {
-                "ReturnLowerBound": -100000.0,
-                "ReturnUpperBound": 100000.0,
-                "ExplorationConstant": 0.699999988079071
+                "MaxNumIterations": 1000
             }
+        },
+        "DumpTree": false,
+        "PredictionSettings": {
+            "TimeSpan": 0.5
+        },
+        "UseNNHeuristic": false,
+        "Savedmodeldirectory": "/home/model/"
+    },
+    "PredictionSettings": {
+        "EgoVehicle": {
+            "DynamicModel": {
+                "wheel_base": 2.700000047683716,
+                "delta_max": 0.20000000298023224,
+                "lat_acc_max": 4.0,
+                "lon_acceleration_max": 4.0,
+                "lon_acceleration_min": -8.0
+            }
+        },
+        "OtherVehicles": {
+            "BehaviorIDMClassic": {
+                "MinimumSpacing": 2.0,
+                "DesiredTimeHeadway": 1.5,
+                "MaxAcceleration": 1.7000000476837158,
+                "AccelerationLowerBound": -5.0,
+                "AccelerationUpperBound": 8.0,
+                "DesiredVelocity": 15.0,
+                "ComfortableBrakingAcceleration": 1.6699999570846558,
+                "MinVelocity": 0.0,
+                "MaxVelocity": 50.0,
+                "Exponent": 4,
+                "BrakeForLaneEnd": false,
+                "BrakeForLaneEndEnabledDistance": 60.0,
+                "BrakeForLaneEndDistanceOffset": 15.0,
+                "NumTrajectoryTimePoints": 11,
+                "CoolnessFactor": 0.0
+            }
+        }
+    },
+    "BehaviorUctHypothesis": {
+        "EgoBehavior": {
+            "BehaviorMotionPrimitives": {
+                "IntegrationTimeDelta": 0.019999999552965164
+            },
+            "BehaviorMPMacroActions": {
+                "CheckValidityInPlan": false
+            },
+            "AccelerationInputs": [
+                0.0,
+                1.0,
+                4.0,
+                -1.0,
+                -8.0
+            ],
+            "BehaviorIDMClassic": {
+                "MinimumSpacing": 2.0,
+                "DesiredTimeHeadway": 1.5,
+                "MaxAcceleration": 1.7000000476837158,
+                "AccelerationLowerBound": -5.0,
+                "AccelerationUpperBound": 8.0,
+                "DesiredVelocity": 15.0,
+                "ComfortableBrakingAcceleration": 1.6699999570846558,
+                "MinVelocity": 0.0,
+                "MaxVelocity": 50.0,
+                "Exponent": 4,
+                "BrakeForLaneEnd": false,
+                "BrakeForLaneEndEnabledDistance": 60.0,
+                "BrakeForLaneEndDistanceOffset": 15.0,
+                "NumTrajectoryTimePoints": 11,
+                "CoolnessFactor": 0.0
+            },
+            "BehaviorIDMLaneTracking": {
+                "CrosstrackErrorGain": 1.0
+            },
+            "PrimitiveConstAccStayLane": {
+                "Acceleration": 0.0
+            },
+            "MinLength": 0.0
         }
     }
 }
