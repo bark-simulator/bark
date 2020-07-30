@@ -38,6 +38,7 @@ using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
 using bark::geometry::standard_shapes::CarRectangle;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 using bark::world::FrontRearAgents;
 using bark::world::ObservedWorld;
 using bark::world::ObservedWorldPtr;
@@ -59,10 +60,7 @@ TEST(observed_world, agent_in_front_same_lane) {
   map_interface->interface_from_opendrive(open_drive_map);
 
   // Goal Definition
-  Polygon polygon(
-      Pose(1, 1, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
-                           Point2d(2, 0), Point2d(0, 0)});
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
@@ -142,10 +140,7 @@ TEST(observed_world, agent_in_front_other_lane) {
   map_interface->interface_from_opendrive(open_drive_map);
 
   // Goal Definition
-  Polygon polygon(
-      Pose(1, 1, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
-                           Point2d(2, 0), Point2d(0, 0)});
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));
   auto goal_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
