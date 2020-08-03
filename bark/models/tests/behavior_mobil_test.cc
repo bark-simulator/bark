@@ -14,7 +14,7 @@
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/dynamic/single_track.hpp"
@@ -75,7 +75,7 @@ ObservedWorld make_observed_world_mobil(double vel, ParamsPtr params) {
   // Preceding Agent
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model2(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model2(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantAcceleration(params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 80.0, -1.75, 0.0, vel;
@@ -86,7 +86,7 @@ ObservedWorld make_observed_world_mobil(double vel, ParamsPtr params) {
   // Agent coming from behind on the right
   ExecutionModelPtr exec_model3(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model3(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model3(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model3(new BehaviorConstantAcceleration(params));
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 43.0, -1.75 - 3.5, 0.0, vel;
@@ -97,7 +97,7 @@ ObservedWorld make_observed_world_mobil(double vel, ParamsPtr params) {
   // Following Agent
   ExecutionModelPtr exec_model4(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model4(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model4(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model4(new BehaviorConstantAcceleration(params));
 
   State init_state4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state4 << 0.0, 20.0, -1.75, 0.0, vel;
@@ -108,7 +108,7 @@ ObservedWorld make_observed_world_mobil(double vel, ParamsPtr params) {
   // Agent on the right in front
   ExecutionModelPtr exec_model5(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model5(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model5(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model5(new BehaviorConstantAcceleration(params));
 
   State init_state5(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state5 << 0.0, 100.0, -1.75 - 3.5, 0.0, vel;
@@ -324,7 +324,7 @@ TEST(no_lane_change_to_ending_lane, behavior_mobil) {
   // Preceding Agent
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model2(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model2(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantAcceleration(params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 60.0, -1.75, 0.0, vel;

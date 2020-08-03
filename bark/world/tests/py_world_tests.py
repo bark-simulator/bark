@@ -12,7 +12,7 @@ import time
 from bark.runtime.commons import ParameterServer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons import XodrParser
-from bark.core.models.behavior import BehaviorConstantVelocity, BehaviorMobil, BehaviorIDMLaneTracking
+from bark.core.models.behavior import BehaviorConstantAcceleration, BehaviorMobil, BehaviorIDMLaneTracking
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world import World, MakeTestWorldHighway
@@ -34,7 +34,7 @@ class WorldTests(unittest.TestCase):
     def test_world(self):
         # create agent
         params = ParameterServer()
-        behavior = BehaviorConstantVelocity(params)
+        behavior = BehaviorConstantAcceleration(params)
         execution = ExecutionModelInterpolate(params)
         dynamic = SingleTrackModel(params)
         shape = Polygon2d([1.25, 1, 0], [
@@ -81,7 +81,7 @@ class WorldTests(unittest.TestCase):
         world = World(params)
 
         # Model Definitions
-        behavior_model = BehaviorConstantVelocity(params)
+        behavior_model = BehaviorConstantAcceleration(params)
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 

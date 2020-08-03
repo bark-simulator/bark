@@ -13,7 +13,7 @@
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/observed_world.hpp"

@@ -9,7 +9,7 @@
 #include "bark/world/objects/agent.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/world.hpp"
@@ -30,7 +30,7 @@ TEST(agent, standard_agent) {
     auto params = std::make_shared<SetterParams>();
     ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
     DynamicModelPtr dyn_model(new SingleTrackModel());
-    BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+    BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
     Polygon
 polygon(Pose(1.25,1,0),std::vector<Point2d>{Point2d(0,0),Point2d(0,2),Point2d(4,2),Point2d(4,0),Point2d(0,0)});
 
@@ -96,7 +96,7 @@ TEST(agent, PolygonFromState) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
 
   Polygon shape(
       Pose(1.25, 1, 0),

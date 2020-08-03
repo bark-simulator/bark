@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
-#define BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_
+#define BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_
 
 #include <memory>
 #include <utility>
@@ -25,12 +25,18 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 
 // behavior model that drives with a const. vel.
-class BehaviorConstantVelocity : public BehaviorIDMClassic {
+class BehaviorConstantAcceleration : public BehaviorIDMClassic {
  public:
-  explicit BehaviorConstantVelocity(const commons::ParamsPtr& params)
-      : BehaviorModel(params), BehaviorIDMClassic(params) {}
+  explicit BehaviorConstantAcceleration(const commons::ParamsPtr& params)
+      : BehaviorModel(params), BehaviorIDMClassic(params) {
+    const_acc_ =
+      params->GetReal(
+        "BehaviorConstantAcceleration::ConstAcceleration",
+        "Constant acceleration for vehicle.",
+        0.f);
+  }
 
-  virtual ~BehaviorConstantVelocity() {}
+  virtual ~BehaviorConstantAcceleration() {}
 
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world);
 
@@ -40,11 +46,14 @@ class BehaviorConstantVelocity : public BehaviorIDMClassic {
       double dt) const;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
+
+ private:
+  double const_acc_;
 };
 
-inline std::shared_ptr<BehaviorModel> BehaviorConstantVelocity::Clone() const {
-  std::shared_ptr<BehaviorConstantVelocity> model_ptr =
-      std::make_shared<BehaviorConstantVelocity>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorConstantAcceleration::Clone() const {
+  std::shared_ptr<BehaviorConstantAcceleration> model_ptr =
+      std::make_shared<BehaviorConstantAcceleration>(*this);
   return model_ptr;
 }
 
@@ -52,4 +61,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorConstantVelocity::Clone() const {
 }  // namespace models
 }  // namespace bark
 
-#endif  // BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_VELOCITY_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_

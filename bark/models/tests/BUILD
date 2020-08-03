@@ -58,7 +58,7 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/models/behavior/idm:idm_classic",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",
         "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
@@ -77,7 +77,7 @@ cc_test(
         "//bark/geometry",
         "//bark/models/behavior/rule_based:mobil",
         "//bark/models/behavior/rule_based:mobil_behavior",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/tests:make_test_xodr_map",
         "@gtest//:gtest_main",
