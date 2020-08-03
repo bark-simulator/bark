@@ -168,8 +168,8 @@
                               0.08
                           ],
                           "VelocityRange": [
-                              11,
-                              17
+                              0,
+                              20
                           ]
                       },
                       "ConfigControlledAgents": {

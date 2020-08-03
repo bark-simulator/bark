@@ -23,7 +23,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity, BehaviorUCTSingleAgentMacroActions
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
-dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=2) # increase the number of serialize scenarios to 100
+dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=20) # increase the number of serialize scenarios to 100
 dbs.process("examples/mcts_rl/database")
 local_release_filename = dbs.release(version="test")#test
 
@@ -49,7 +49,7 @@ params2["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
 params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
 params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
 # Params Random Heuristic
-params1["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=True
+params1["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
 params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
 params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
 behaviors_tested = {"RandomHeuristic": BehaviorUCTSingleAgentMacroActions(params1), "DomainHeuristic" : BehaviorUCTSingleAgentMacroActions(params2)}
@@ -67,7 +67,7 @@ viewer1 = MPViewer(
 video_renderer = VideoRenderer(renderer=viewer1, world_step_time=0.2)
 
 
-result = benchmark_runner.run(maintain_history=True, viewer=video_renderer)
+result = benchmark_runner.run(maintain_history=True, viewer=viewer1)
 
 video_renderer.export_video(filename="./heuristic_test_video.mp4", remove_image_dir=True)
 result.dump(os.path.join("./benchmark_results.pickle"))
