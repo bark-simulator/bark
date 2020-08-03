@@ -29,8 +29,8 @@
                               0
                           ],
                           "VehicleDistanceRange": [
-                              8,
-                              14
+                              15,
+                              25
                           ],
                           "OtherVehicleVelocityRange": [
                               11,
@@ -156,16 +156,16 @@
                           "GoalTypeControlled": "LaneChangeLeft",
                           "GoalTypeOthers": "EndOfLane",
                           "MaxLateralDist": [
-                              0.5,
-                              0.5
+                              0.7,
+                              0.7
                           ],
                           "LongitudinalRange": [
                               0.2,
                               1
                           ],
                           "MaxOrientationDifference": [
-                              0.08,
-                              0.08
+                              0.1,
+                              0.1
                           ],
                           "VelocityRange": [
                               0,
