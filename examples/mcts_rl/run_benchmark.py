@@ -49,7 +49,7 @@ params2["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
 params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
 params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
 # Params Random Heuristic
-params1["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
+params1["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=True
 params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
 params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
 behaviors_tested = {"RandomHeuristic": BehaviorUCTSingleAgentMacroActions(params1), "DomainHeuristic" : BehaviorUCTSingleAgentMacroActions(params2)}
