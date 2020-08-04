@@ -6,7 +6,7 @@ Overview of all behavior models available in BARK.
 ## Constant Velocity Model
 
 The most basic model available in BARK, is the constant velocity behavior model.
-The `BehaviorConstantVelocity` class interpolates an agent along a set line with a constant velocity.
+The `BehaviorConstantAcceleration` class interpolates an agent along a set line with a constant velocity.
 There are no collision checks and, thus, vehicles with different speeds can collide with each other.
 
 

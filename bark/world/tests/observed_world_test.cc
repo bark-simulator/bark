@@ -10,7 +10,7 @@
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
@@ -68,7 +68,7 @@ TEST(observed_world, agent_in_front_same_lane) {
   // Setting Up Agents (one in front of another)
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
@@ -148,7 +148,7 @@ TEST(observed_world, agent_in_front_other_lane) {
   // Setting Up Agents (one in front of another)
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));
@@ -214,7 +214,7 @@ TEST(observed_world, clone) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(
@@ -275,7 +275,7 @@ TEST(observed_world, predict) {
   }
 
   // predict all agents with constant velocity
-  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr prediction_model(new BehaviorConstantAcceleration(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   observed_world.SetupPrediction(prediction_settings);
   WorldPtr predicted_world = observed_world.Predict(1.0f);
@@ -317,7 +317,7 @@ TEST(observed_world, predict) {
           ->AddMotionPrimitive(u2);  // NOLINT
 
   BehaviorModelPtr others_prediction_model(
-      new BehaviorConstantVelocity(params));
+      new BehaviorConstantAcceleration(params));
   PredictionSettings prediction_settings2(ego_prediction_model,
                                           others_prediction_model);
   observed_world.SetupPrediction(prediction_settings2);

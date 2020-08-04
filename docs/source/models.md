@@ -43,7 +43,7 @@ The behavior models plan the motion using the `ObservedWorld` as described [here
 
 Self-contained [behavior models](behavior_models.md) in BARK:
 
-* BehaviorConstantVelocity: Interpolates on a line with const. velocity.
+* BehaviorConstantAcceleration: Interpolates on a line with const. velocity.
 * BehaviorIDMClassic: Interpolates on a line and uses the basic IDM equations.
 * BehaviorIDMLaneTracking: Follows a line using a steering function for the single-track model and the basic IDM equations.
 * BehaviorMobil: Full Mobil implementation.

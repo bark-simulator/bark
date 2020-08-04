@@ -121,7 +121,7 @@
                         },
                         "ConfigBehaviorModels": {
                             "Type": "FixedBehaviorType",
-                            "ModelType": "BehaviorConstantVelocity",
+                            "ModelType": "BehaviorConstantAcceleration",
                             "ModelParams": {
                                 "BehaviorIDMClassic": {
                                     "MaxVelocity": 30.0,

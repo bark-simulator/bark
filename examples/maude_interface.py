@@ -41,7 +41,7 @@ def make_initial_world(primitives):
     execution_model = ExecutionModelInterpolate(params)
     dynamic_model = SingleTrackModel(params)
 
-    behavior_model2 = BehaviorConstantVelocity(params)
+    behavior_model2 = BehaviorConstantAcceleration(params)
     execution_model2 = ExecutionModelInterpolate(params)
     dynamic_model2 = SingleTrackModel(params)
 

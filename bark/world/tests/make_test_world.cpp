@@ -12,7 +12,7 @@
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
@@ -62,7 +62,7 @@ WorldPtr bark::world::tests::make_test_world(
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
   beh_model_idm->SetLastAction(Continuous1DAction(ego_acc));
-  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantAcceleration(params));
   beh_model_const->SetLastAction(Continuous1DAction(other_acc));
 
   Polygon polygon(
@@ -148,10 +148,10 @@ WorldPtr bark::world::tests::MakeTestWorldHighway() {
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
   ExecutionModelPtr exec_model3(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
-  BehaviorModelPtr beh_model1(new BehaviorConstantVelocity(params));
-  BehaviorModelPtr beh_model2(new BehaviorConstantVelocity(params));
-  BehaviorModelPtr beh_model3(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  BehaviorModelPtr beh_model1(new BehaviorConstantAcceleration(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantAcceleration(params));
+  BehaviorModelPtr beh_model3(new BehaviorConstantAcceleration(params));
   Polygon car_polygon = CarRectangle();
 
   State init_state1(static_cast<int>(MIN_STATE_SIZE));

@@ -30,7 +30,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
+from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 
 
 
@@ -51,7 +51,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,

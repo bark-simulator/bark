@@ -8,14 +8,14 @@
 
 #include <tuple>
 
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
 namespace models {
 namespace behavior {
 
-Trajectory BehaviorConstantVelocity::Plan(
+Trajectory BehaviorConstantAcceleration::Plan(
     float min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
@@ -31,7 +31,7 @@ Trajectory BehaviorConstantVelocity::Plan(
   // interaction term off and GetTotalAcc returns const. acc.
   IDMRelativeValues rel_values{0., 0., false};
   std::tuple<Trajectory, Action> traj_action =
-      GenerateTrajectory(observed_world, lane_corr, rel_values, dt);
+    GenerateTrajectory(observed_world, lane_corr, rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);
@@ -46,10 +46,10 @@ Trajectory BehaviorConstantVelocity::Plan(
  *
  * @return std::pair<double, double> acceleration, total_distance
  */
-std::pair<double, double> BehaviorConstantVelocity::GetTotalAcc(
+std::pair<double, double> BehaviorConstantAcceleration::GetTotalAcc(
     const world::ObservedWorld& observed_world,
     const IDMRelativeValues& rel_values, double rel_distance, double dt) const {
-  return {0., 0.};
+  return {const_acc_, 0.};
 }
 
 }  // namespace behavior
