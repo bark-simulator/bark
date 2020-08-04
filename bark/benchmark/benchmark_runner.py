@@ -203,6 +203,7 @@ class BenchmarkRunner:
             if not terminal:
                 if viewer:
                     viewer.drawWorld(world, scenario._eval_agent_ids, scenario_idx=benchmark_config.scenario_idx)
+                    viewer.saveFig("/tmp/viewer_{}.png".format(step))
                     viewer.show(block=False)
                     time.sleep(step_time)
                     viewer.clear()

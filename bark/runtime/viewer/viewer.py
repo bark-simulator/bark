@@ -15,6 +15,7 @@ from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
+from bark.core.world.evaluation.ltl import *
 
 logger = logging.getLogger()
 
@@ -254,6 +255,35 @@ class BaseViewer(Viewer):
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
           self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
+          observed_world = world.Observe([eval_agent_ids[0]])
+        if len(observed_world) == 0:
+            return
+        observed_world = observed_world[0]
+        label_functions = [
+                LeftOfLabelFunction("left_of"),
+                # RightOfLabelFunction("right_of"),
+                BehindOfLabelFunction("behind_of"),
+                AgentNearLabelFunction("near", 6.0),
+                # EgoAccelerateLabelFunction("accel", 0.5),
+                # FrontOfLabelFunction("front_of"),
+                # RelSpeedLabelFunction("rel_speed", 10.0/3.6)
+                AgentAtLaneEndLabelFunction("lane_end", 55.0),
+                AgentBeyondPointLabelFunction("merged_j", Point2d(939.0, 1008.0)),
+                EgoBeyondPointLabelFunction("merged_i", Point2d(939.0, 1008.0)),
+                #    EgoBeyondPointLabelFunction("near_merge_i", Point2d(1052.0, 943.0)),
+                PrecedingAgentLabelFunction("j_in_direct_front")
+                #    LaneChangeLabelFunction("lane_change")
+               ]
+        labels = {}
+        for lf in label_functions:
+            labels.update(lf.Evaluate(observed_world))
+        str = ""
+        for (k, v) in labels.items():
+            # if k.agent_id in [-1, 104, 108]:
+            if v:
+                str = str + "{}_{} : {}\n".format(k.label_str, k.agent_id, v)
+        self.drawText(position=(0.7, 0.9), text=str)
+
 
     def drawMap(self, map):
         # draw the boundary of each lane
