@@ -49,6 +49,8 @@ class BaseViewer(Viewer):
         self.plane_alpha = params["Visualization"]["Map"]["Plane"]["Alpha", "Alpha of the background plane", 1.0]
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth", "Linewidth of linestrings", 1.0]
 
+        self.draw_ltl_debug_info= params["Visualization"]["Evaluation"]["DrawLTLDebugInfo", "Flag to specify if debug info to ltl evaluators shall be plotted", False]
+
         self.parameters = params
         self.agent_color_map = {}
         self.max_agents_color_map = 0
@@ -205,6 +207,17 @@ class BaseViewer(Viewer):
                     self.drawLine2d(line, color, alpha=0.9)
                 prev_center = goal_pos
 
+    def drawLabelsAsText(self, observed_world, label_functions, evaluator_type):
+        labels = {}
+        for lf in label_functions:
+            labels.update(lf.Evaluate(observed_world))
+        str = ""
+        for (k, v) in labels.items():
+            # if k.agent_id in [-1, 104, 108]:
+            if v:
+                str = str + "{} {}_{} : {}\n".format(evaluator_type, k.label_str, k.agent_id, v)
+        self.drawText(position=(0.7, 0.9), text=str)
+
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
@@ -255,35 +268,19 @@ class BaseViewer(Viewer):
         if debug_text:
           self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(scenario_idx), fontsize=14)
           self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
+        
+        if self.draw_ltl_debug_info:
           observed_world = world.Observe([eval_agent_ids[0]])
-        if len(observed_world) == 0:
-            return
-        observed_world = observed_world[0]
-        label_functions = [
-                LeftOfLabelFunction("left_of"),
-                # RightOfLabelFunction("right_of"),
-                BehindOfLabelFunction("behind_of"),
-                AgentNearLabelFunction("near", 6.0),
-                # EgoAccelerateLabelFunction("accel", 0.5),
-                # FrontOfLabelFunction("front_of"),
-                # RelSpeedLabelFunction("rel_speed", 10.0/3.6)
-                AgentAtLaneEndLabelFunction("lane_end", 55.0),
-                AgentBeyondPointLabelFunction("merged_j", Point2d(939.0, 1008.0)),
-                EgoBeyondPointLabelFunction("merged_i", Point2d(939.0, 1008.0)),
-                #    EgoBeyondPointLabelFunction("near_merge_i", Point2d(1052.0, 943.0)),
-                PrecedingAgentLabelFunction("j_in_direct_front")
-                #    LaneChangeLabelFunction("lane_change")
-               ]
-        labels = {}
-        for lf in label_functions:
-            labels.update(lf.Evaluate(observed_world))
-        str = ""
-        for (k, v) in labels.items():
-            # if k.agent_id in [-1, 104, 108]:
-            if v:
-                str = str + "{}_{} : {}\n".format(k.label_str, k.agent_id, v)
-        self.drawText(position=(0.7, 0.9), text=str)
+          if len(observed_world) == 0:
+                return
+          observed_world = observed_world[0]
+          for _, evaluator_type in enumerate(observed_world.evaluators):
+            if isinstance(observed_world.evaluators[evaluator_type], EvaluatorLTL):
+              label_functions = observed_world.evaluators[evaluator_type].label_functions
+              # we will only plot labels of first ltl evaluator
+              break
 
+          self.drawLabelsAsText(observed_world, label_functions, evaluator_type)
 
     def drawMap(self, map):
         # draw the boundary of each lane

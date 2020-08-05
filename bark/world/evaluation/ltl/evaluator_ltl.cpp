@@ -144,6 +144,10 @@ const std::vector<RuleState>& EvaluatorLTL::GetRuleStates() const {
   return rule_states_;
 }
 
+const LabelFunctions& EvaluatorLTL::GetLabelFunctions() const {
+  return label_functions_;
+}
+
 #else
 EvaluatorLTL::EvaluatorLTL(){};
 #endif
