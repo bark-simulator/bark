@@ -278,9 +278,9 @@ class BaseViewer(Viewer):
             if isinstance(observed_world.evaluators[evaluator_type], EvaluatorLTL):
               label_functions = observed_world.evaluators[evaluator_type].label_functions
               # we will only plot labels of first ltl evaluator
+              self.drawLabelsAsText(observed_world, label_functions, evaluator_type)
               break
-
-          self.drawLabelsAsText(observed_world, label_functions, evaluator_type)
+                      
 
     def drawMap(self, map):
         # draw the boundary of each lane
