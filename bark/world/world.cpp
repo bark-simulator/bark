@@ -244,7 +244,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
-    if (abs(frenet_other.lat) > 2) {
+    if (abs(frenet_other.lat) > 1.5) {
       // agent seems to be not really in same lane
       continue;
     }
