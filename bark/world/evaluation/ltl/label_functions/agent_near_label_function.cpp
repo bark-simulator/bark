@@ -29,3 +29,8 @@ bool bark::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
   }
   return false;
 }
+
+const double&
+bark::world::evaluation::AgentNearLabelFunction::GetDistanceThreshold() const {
+  return distance_thres_;
+};

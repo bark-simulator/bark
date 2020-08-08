@@ -39,6 +39,22 @@ LabelMap SafeDistanceLabelFunction::Evaluate(
   return {{GetLabel(), distance_safe}};
 }
 
+const bool& SafeDistanceLabelFunction::GetToRear() const {
+  return to_rear_;
+};
+
+const double& SafeDistanceLabelFunction::GetReactionTime() const {
+  return delta_;
+};
+
+const double& SafeDistanceLabelFunction::GetMaxDecelEgo() const {
+  return a_e_;
+};
+
+const double& SafeDistanceLabelFunction::GetMaxDecelOther() const {
+  return a_o_;
+};
+
 bool SafeDistanceLabelFunction::CheckSafeDistance(
     const AgentPtr& rear_agent, const AgentPtr& front_agent,
     const FrenetPosition& frenet_dist, const double a_r,

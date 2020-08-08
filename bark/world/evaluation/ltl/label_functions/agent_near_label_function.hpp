@@ -21,6 +21,8 @@ class AgentNearLabelFunction : public MultiAgentLabelFunction {
                          const double distance_thres);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
                      const AgentPtr& other_agent) const override;
+  const double& GetDistanceThreshold() const;
+
 
  private:
   const double distance_thres_;
