@@ -162,17 +162,49 @@ void python_ltl(py::module m) {
   py::class_<SafeDistanceLabelFunction, BaseLabelFunction,
              std::shared_ptr<SafeDistanceLabelFunction>>(
       m, "SafeDistanceLabelFunction")
-      .def(py::init<const std::string&, bool, double, double, double>());
+      .def(py::init<const std::string&, bool, double, double, double>())
+      .def(py::pickle(
+          [](const SafeDistanceLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetToRear(),
+                                  b.GetReactionTime(), b.GetMaxDecelEgo(),
+                                  b.GetMaxDecelOther());
+          },
+          [](py::tuple t) {
+            if (t.size() != 5)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new SafeDistanceLabelFunction(
+                t[0].cast<std::string>(), t[1].cast<bool>(),
+                t[2].cast<double>(), t[3].cast<double>(), t[4].cast<double>());
+          }));
 
   py::class_<LaneChangeLabelFunction, BaseLabelFunction,
              std::shared_ptr<LaneChangeLabelFunction>>(
       m, "LaneChangeLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def(py::pickle(
+          [](const LaneChangeLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new LaneChangeLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<AgentNearLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentNearLabelFunction>>(m,
                                                       "AgentNearLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def(py::pickle(
+          [](const AgentNearLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThreshold());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new AgentNearLabelFunction(t[0].cast<std::string>(),
+                                              t[1].cast<double>());
+          }));
 
   py::class_<EgoAccelerateLabelFunction, BaseLabelFunction,
              std::shared_ptr<EgoAccelerateLabelFunction>>(
