@@ -295,7 +295,16 @@ PrimitivePtr PythonToPrimitive(py::tuple t) {
 #ifdef LTL_RULES
 py::tuple LabelToPython(const LabelFunctionPtr& label) {
   std::string label_name;
-  if (typeid(*label) == typeid(AgentBeyondPointLabelFunction)) {
+  if (typeid(*label) == typeid(SafeDistanceLabelFunction)) {
+    label_name = "SafeDistanceLabelFunction";
+    return py::make_tuple(label, label_name);
+  else (typeid(*label) == typeid(LaneChangeLabelFunction)) {
+    label_name = "LaneChangeLabelFunction";
+    return py::make_tuple(label, label_name);
+  else (typeid(*label) == typeid(AgentNearLabelFunction)) {
+    label_name = "AgentNearLabelFunction";
+    return py::make_tuple(label, label_name);
+  else (typeid(*label) == typeid(AgentBeyondPointLabelFunction)) {
     label_name = "AgentBeyondPointLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(EgoBeyondPointLabelFunction)) {
@@ -303,6 +312,18 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(PrecedingAgentLabelFunction)) {
     label_name = "PrecedingAgentLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(LeftOfLabelFunction)) {
+    label_name = "LeftOfLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(RightOfLabelFunction)) {
+    label_name = "RightOfLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(FrontOfLabelFunction)) {
+    label_name = "FrontOfLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(BehindOfLabelFunction)) {
+    label_name = "BehindOfLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) ==
              typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
@@ -317,7 +338,16 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
 }
 LabelFunctionPtr PythonToLabel(py::tuple t) {
   std::string label_name = t[1].cast<std::string>();
-  if (label_name.compare("AgentBeyondPointLabelFunction") == 0) {
+  if (label_name.compare("SafeDistanceLabelFunction") == 0) {
+    return std::make_shared<SafeDistanceLabelFunction>(
+        t[0].cast<SafeDistanceLabelFunction>());
+  else if (label_name.compare("LaneChangeLabelFunction") == 0) {
+    return std::make_shared<LaneChangeLabelFunction>(
+        t[0].cast<LaneChangeLabelFunction>());
+  else if (label_name.compare("AgentNearLabelFunction") == 0) {
+    return std::make_shared<AgentNearLabelFunction>(
+        t[0].cast<AgentNearLabelFunction>());
+  else if (label_name.compare("AgentBeyondPointLabelFunction") == 0) {
     return std::make_shared<AgentBeyondPointLabelFunction>(
         t[0].cast<AgentBeyondPointLabelFunction>());
   } else if (label_name.compare("EgoBeyondPointLabelFunction") == 0) {
@@ -326,6 +356,18 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("PrecedingAgentLabelFunction") == 0) {
     return std::make_shared<PrecedingAgentLabelFunction>(
         t[0].cast<PrecedingAgentLabelFunction>());
+  } else if (label_name.compare("LeftOfLabelFunction") == 0) {
+    return std::make_shared<LeftOfLabelFunction>(
+        t[0].cast<LeftOfLabelFunction>());
+  } else if (label_name.compare("RightOfLabelFunction") == 0) {
+    return std::make_shared<RightOfLabelFunction>(
+        t[0].cast<RightOfLabelFunction>());
+  } else if (label_name.compare("FrontOfLabelFunction") == 0) {
+    return std::make_shared<FrontOfLabelFunction>(
+        t[0].cast<FrontOfLabelFunction>());
+  } else if (label_name.compare("BehindOfLabelFunction") == 0) {
+    return std::make_shared<BehindOfLabelFunction>(
+        t[0].cast<BehindOfLabelFunction>());
   } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
     return std::make_shared<
         GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(
