@@ -69,7 +69,7 @@ def InitStateFromTrack(track, start):
 
 
 def GoalDefinitionFromTrack(track, end):
-    goal_size = 8.0
+    goal_size = 12.0
     states = list(dict_utils.get_item_iterator(track.motion_states))
     # Goal position is spatial position of last state
     motion_state = states[-1][1]
