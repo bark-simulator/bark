@@ -194,7 +194,16 @@ void python_ltl(py::module m) {
 
   py::class_<LeftOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<LeftOfLabelFunction>>(m, "LeftOfLabelFunction")
-      .def(py::init<const std::string&>());
+      .def(py::init<const std::string&>())
+      .def(py::pickle(
+          [](const LeftOfLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new LeftOfLabelFunction(t[0].cast<std::string>());
+          }));
 
   py::class_<BehindOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<BehindOfLabelFunction>>(m, "BehindOfLabelFunction")
