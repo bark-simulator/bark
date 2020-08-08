@@ -21,6 +21,7 @@ class AgentAtLaneEndLabelFunction : public MultiAgentLabelFunction {
                               const double distance_thres = 50.0);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
                      const AgentPtr& other_agent) const override;
+  const double& GetDistanceThreshold() const;
 
  private:
   const double distance_thres_;

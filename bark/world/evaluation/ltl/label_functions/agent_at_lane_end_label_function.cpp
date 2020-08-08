@@ -10,14 +10,17 @@
 using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Distance;
 
-bark::world::evaluation::AgentAtLaneEndLabelFunction::
-    AgentAtLaneEndLabelFunction(const std::string& string,
-                                const double distance_thres)
+namespace bark {
+namespace world {
+namespace evaluation {
+
+AgentAtLaneEndLabelFunction::AgentAtLaneEndLabelFunction(
+    const std::string& string, const double distance_thres)
     : MultiAgentLabelFunction(string), distance_thres_(distance_thres) {
   assert(distance_thres_ >= 0.0);
 }
 
-bool bark::world::evaluation::AgentAtLaneEndLabelFunction::EvaluateAgent(
+bool AgentAtLaneEndLabelFunction::EvaluateAgent(
     const bark::world::ObservedWorld& observed_world,
     const AgentPtr& other_agent) const {
   if (other_agent) {
@@ -30,3 +33,11 @@ bool bark::world::evaluation::AgentAtLaneEndLabelFunction::EvaluateAgent(
   }
   return false;
 }
+
+const double& AgentAtLaneEndLabelFunction::GetDistanceThreshold() const {
+  return distance_thres_;
+};
+
+}  // namespace evaluation
+}  // namespace world
+}  // namespace bark

@@ -218,7 +218,17 @@ void python_ltl(py::module m) {
   py::class_<AgentAtLaneEndLabelFunction, BaseLabelFunction,
              std::shared_ptr<AgentAtLaneEndLabelFunction>>(
       m, "AgentAtLaneEndLabelFunction")
-      .def(py::init<const std::string&, double>());
+      .def(py::init<const std::string&, double>())
+      .def(py::pickle(
+          [](const AgentAtLaneEndLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThreshold());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new AgentAtLaneEndLabelFunction(t[0].cast<std::string>(),
+                                              t[1].cast<double>());
+          }));
 
   py::class_<RightOfLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightOfLabelFunction>>(m, "RightOfLabelFunction")
