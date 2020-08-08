@@ -40,10 +40,17 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
 #ifdef LTL_RULES
+#include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -85,10 +92,17 @@ using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using bark::world::evaluation::EvaluatorCollisionEgoAgent;
 
 #ifdef LTL_RULES
+using bark::world::evaluation::SafeDistanceLabelFunction;
+using bark::world::evaluation::LaneChangeLabelFunction;
+using bark::world::evaluation::AgentNearLabelFunction;
 using bark::world::evaluation::AgentBeyondPointLabelFunction;
 using bark::world::evaluation::EgoBeyondPointLabelFunction;
-using bark::world::evaluation::GenericEgoLabelFunction;
 using bark::world::evaluation::PrecedingAgentLabelFunction;
+using bark::world::evaluation::LeftOfLabelFunction;
+using bark::world::evaluation::RightOfLabelFunction;
+using bark::world::evaluation::FrontOfLabelFunction;
+using bark::world::evaluation::BehindOfLabelFunction;
+using bark::world::evaluation::GenericEgoLabelFunction;
 #endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -298,13 +312,13 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   if (typeid(*label) == typeid(SafeDistanceLabelFunction)) {
     label_name = "SafeDistanceLabelFunction";
     return py::make_tuple(label, label_name);
-  else (typeid(*label) == typeid(LaneChangeLabelFunction)) {
+  } else if (typeid(*label) == typeid(LaneChangeLabelFunction)) {
     label_name = "LaneChangeLabelFunction";
     return py::make_tuple(label, label_name);
-  else (typeid(*label) == typeid(AgentNearLabelFunction)) {
+  } else if (typeid(*label) == typeid(AgentNearLabelFunction)) {
     label_name = "AgentNearLabelFunction";
     return py::make_tuple(label, label_name);
-  else (typeid(*label) == typeid(AgentBeyondPointLabelFunction)) {
+  } else if (typeid(*label) == typeid(AgentBeyondPointLabelFunction)) {
     label_name = "AgentBeyondPointLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(EgoBeyondPointLabelFunction)) {
@@ -341,13 +355,13 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   if (label_name.compare("SafeDistanceLabelFunction") == 0) {
     return std::make_shared<SafeDistanceLabelFunction>(
         t[0].cast<SafeDistanceLabelFunction>());
-  else if (label_name.compare("LaneChangeLabelFunction") == 0) {
+  } else if (label_name.compare("LaneChangeLabelFunction") == 0) {
     return std::make_shared<LaneChangeLabelFunction>(
         t[0].cast<LaneChangeLabelFunction>());
-  else if (label_name.compare("AgentNearLabelFunction") == 0) {
+  } else if (label_name.compare("AgentNearLabelFunction") == 0) {
     return std::make_shared<AgentNearLabelFunction>(
         t[0].cast<AgentNearLabelFunction>());
-  else if (label_name.compare("AgentBeyondPointLabelFunction") == 0) {
+  } else if (label_name.compare("AgentBeyondPointLabelFunction") == 0) {
     return std::make_shared<AgentBeyondPointLabelFunction>(
         t[0].cast<AgentBeyondPointLabelFunction>());
   } else if (label_name.compare("EgoBeyondPointLabelFunction") == 0) {
