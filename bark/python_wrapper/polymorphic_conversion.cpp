@@ -47,6 +47,7 @@
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
@@ -98,6 +99,7 @@ using bark::world::evaluation::AgentNearLabelFunction;
 using bark::world::evaluation::AgentBeyondPointLabelFunction;
 using bark::world::evaluation::EgoBeyondPointLabelFunction;
 using bark::world::evaluation::PrecedingAgentLabelFunction;
+using bark::world::evaluation::AgentAtLaneEndLabelFunction;
 using bark::world::evaluation::LeftOfLabelFunction;
 using bark::world::evaluation::RightOfLabelFunction;
 using bark::world::evaluation::FrontOfLabelFunction;
@@ -327,6 +329,9 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(PrecedingAgentLabelFunction)) {
     label_name = "PrecedingAgentLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(AgentAtLaneEndLabelFunction)) {
+    label_name = "AgentAtLaneEndLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(LeftOfLabelFunction)) {
     label_name = "LeftOfLabelFunction";
     return py::make_tuple(label, label_name);
@@ -370,6 +375,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("PrecedingAgentLabelFunction") == 0) {
     return std::make_shared<PrecedingAgentLabelFunction>(
         t[0].cast<PrecedingAgentLabelFunction>());
+  } else if (label_name.compare("AgentAtLaneEndLabelFunction") == 0) {
+    return std::make_shared<AgentAtLaneEndLabelFunction>(
+        t[0].cast<AgentAtLaneEndLabelFunction>());
   } else if (label_name.compare("LeftOfLabelFunction") == 0) {
     return std::make_shared<LeftOfLabelFunction>(
         t[0].cast<LeftOfLabelFunction>());
