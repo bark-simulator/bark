@@ -45,7 +45,8 @@ class DatasetDecomposer:
             for lane in lane_list:
                 polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
                 if Collide(polygon, point_agent):
-                    time_ego_first = state[0]*1e3  # use timestamp in ms
+                    offset_fix = 500 # adding some time offset to always find lane corridor
+                    time_ego_first = state[0]*1e3 + offset_fix # use timestamp in ms
                     return time_ego_first
 
         return None
