@@ -93,7 +93,7 @@ class DroneChallengeScenarioGeneration(ScenarioGeneration):
   def default_drone_model(self):
     param_server = ParameterServer()
     dynamic_model = SingleTrackModel(param_server)
-    behavior_model = BehaviorConstantVelocity(param_server)
+    behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     drone_2d_shape = Polygon2d([0,0,0], np.array([
         [0.3,0.1],[0.3,-0.1],[0.1,-0.3],[-0.1,-0.3],[-0.3,-0.1],[-0.3,0.1],[-0.1,0.3],[0.1,0.3],[0.3,0.1]

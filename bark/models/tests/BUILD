@@ -58,7 +58,7 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/models/behavior/idm:idm_classic",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",
         "@gtest//:gtest_main",
         "@com_github_eigen_eigen//:eigen",
@@ -67,20 +67,23 @@ cc_test(
 )
 
 
-# cc_test(
-#     name = "behavior_mobil_test",
-#     srcs = [
-#         "behavior_mobil_test.cc",
-#     ],
-#     copts = ["-Iexternal/gtest/include"],
-#     deps = [        
-#         "//bark/geometry",
-#         "//bark/models/behavior/rule_based:mobil",
-#         "//bark/models/execution/interpolation:interpolation",
-#         "//bark/world/tests:make_test_xodr_map",
-#         "@gtest//:gtest_main",
-#     ],
-# )
+cc_test(
+    name = "behavior_mobil_test",
+    srcs = [
+        "behavior_mobil_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [        
+        "//bark/geometry",
+        "//bark/models/behavior/rule_based:mobil",
+        "//bark/models/behavior/rule_based:mobil_behavior",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
+        "//bark/models/execution/interpolation:interpolation",
+        "//bark/world/tests:make_test_xodr_map",
+        "@gtest//:gtest_main",
+        "@com_github_gflags_gflags//:gflags",
+    ],
+)
 
 py_test(
   name = "py_behavior_model_test",

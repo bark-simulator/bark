@@ -27,7 +27,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.world.evaluation import *
 from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
+from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 
 try: # bazel run
   os.chdir("../benchmark_database/")
@@ -46,7 +46,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
                                         
 
         benchmark_runner = BenchmarkRunner(benchmark_database=db,
@@ -73,7 +73,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
                                         
 
         benchmark_runner = BenchmarkRunner(benchmark_database=db,
@@ -129,7 +129,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
@@ -161,7 +161,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
@@ -195,7 +195,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
                                         
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,

@@ -13,7 +13,7 @@ import unittest
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.commons.xodr_parser import XodrParser
-from bark.core.models.behavior import BehaviorConstantVelocity, \
+from bark.core.models.behavior import BehaviorConstantAcceleration, \
   BehaviorMPContinuousActions
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel, StateDefinition
@@ -34,7 +34,7 @@ class EvaluationTests(unittest.TestCase):
   def test_one_agent_at_goal_polygon(self):
     param_server = ParameterServer()
     # Model Definition
-    behavior_model = BehaviorConstantVelocity(param_server)
+    behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     dynamic_model = SingleTrackModel(param_server)
 
@@ -70,7 +70,7 @@ class EvaluationTests(unittest.TestCase):
   def test_one_agent_at_goal_state_limits(self):
     param_server = ParameterServer()
     # Model Definition
-    behavior_model = BehaviorConstantVelocity(param_server)
+    behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     dynamic_model = SingleTrackModel(param_server)
 
@@ -164,7 +164,7 @@ class EvaluationTests(unittest.TestCase):
   def test_one_agent_at_goal_state_limits_frenet(self):
     param_server = ParameterServer()
     # Model Definition
-    behavior_model = BehaviorConstantVelocity(param_server)
+    behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     dynamic_model = SingleTrackModel(param_server)
 
