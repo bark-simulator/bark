@@ -129,7 +129,7 @@ std::pair<bool, double> BaseIDM::GetDistanceToLaneEnding(
     const LaneCorridorPtr& lane_corr, const Point2d& pos) const {
   const double len_until_end =
       lane_corr->LengthUntilEnd(pos) - brake_lane_end_distance_offset_;
-  if (len_until_end < brake_lane_end_enabled_distance_) {
+  if (len_until_end <= brake_lane_end_enabled_distance_) {
     return std::pair<bool, double>(true, len_until_end);
   } else {
     return std::pair<bool, double>(false, 1e6);

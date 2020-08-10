@@ -17,7 +17,7 @@
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/commons/transformation/frenet.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/world/observed_world.hpp"
@@ -31,7 +31,7 @@ using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Norm0To2PI;
 using bark::geometry::Point2d;
 using bark::geometry::SignedAngleDiff;
-using bark::models::behavior::BehaviorConstantVelocity;
+using bark::models::behavior::BehaviorConstantAcceleration;
 using bark::models::dynamic::DynamicModelPtr;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
@@ -105,7 +105,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
   AgentPtr lane_corr_intersecting_agent;
   // prediction
   auto params = std::make_shared<SetterParams>();
-  BehaviorModelPtr prediction_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr prediction_model(new BehaviorConstantAcceleration(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   ObservedWorldPtr tmp_observed_world =
       std::dynamic_pointer_cast<ObservedWorld>(observed_world.Clone());

@@ -19,7 +19,7 @@ Polygon CarLimousine();
 
 Polygon CarRectangle();
 
-Polygon GoalRectangle();
+Polygon GenerateGoalRectangle(float length, float width);
 
 // TODO(@all): add more variants and objects here
 

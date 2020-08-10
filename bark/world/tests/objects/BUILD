@@ -7,7 +7,7 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/world:world",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",
         "@gtest//:gtest_main",
     ],

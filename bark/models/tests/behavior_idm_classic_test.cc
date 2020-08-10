@@ -13,7 +13,7 @@
 #include "bark/geometry/commons.hpp"
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/observed_world.hpp"
@@ -29,7 +29,7 @@ using namespace bark::world;
 using namespace bark::geometry;
 using namespace bark::world::tests;
 
-using bark::geometry::standard_shapes::GoalRectangle;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 
 class DummyBehaviorIDM : public BehaviorIDMClassic {
  public:
@@ -71,7 +71,7 @@ TEST(free_road_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -126,7 +126,7 @@ TEST(interaction_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -221,7 +221,7 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -281,7 +281,7 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -342,7 +342,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   float time_step = 0.2f;  // Very small time steps to verify differential
                            // integration character
 
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -400,7 +400,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GoalRectangle();
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving

@@ -6,7 +6,7 @@
                 "Agents": [
                     {
                         "VehicleModel": {
-                            "behavior_model": "BehaviorConstantVelocity",
+                            "behavior_model": "BehaviorConstantAcceleration",
                             "dynamic_model": "SingleTrackModel",
                             "execution_model": "ExecutionModelInterpolate",
                             "id": 0,
@@ -129,7 +129,7 @@
                     },
                     {
                         "VehicleModel": {
-                            "behavior_model": "BehaviorConstantVelocity",
+                            "behavior_model": "BehaviorConstantAcceleration",
                             "dynamic_model": "SingleTrackModel",
                             "execution_model": "ExecutionModelInterpolate",
                             "id": 1,
