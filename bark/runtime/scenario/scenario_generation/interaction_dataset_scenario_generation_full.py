@@ -40,7 +40,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                             ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
-        self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
+        self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", {}]
         self._included_tracks = params_temp["IncludeTracks", "The only track IDs to be included in the scenario generation", {}]
 
     # TODO: remove code duplication with configurable scenario generation
@@ -56,20 +56,18 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                     track_filename=track_file_name)
             scenario_track_info_list = dataset_decomposer.decompose()
 
-            # for scenario_idx in range(0, num_scenarios):
             for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
                 if len(scenario_list) >= num_scenarios:
                     break
 
                 track_id = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-                if track_id in self._excluded_tracks:
-                    # TODO: Update in a similar way as the included tracks (list
-                    # of tracks for each file)
+
+                if track_id in self._excluded_tracks.get(track_file_name, []):
                     continue
                 if len(self._included_tracks) > 0 and \
-                    (track_file_name not in self._included_tracks or track_id not in self._included_tracks[track_file_name]):
-                    # Set of the tracks to include is non-empty, current track
-                    # is not included in the set
+                    track_id not in self._included_tracks.get(track_file_name, []):
+                    # Set of the tracks to include is non-empty, but current
+                    # track is not included in the set
                     continue
 
                 logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
