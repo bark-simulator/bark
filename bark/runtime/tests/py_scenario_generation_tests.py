@@ -246,7 +246,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
       params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
       params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename_1,track_filename_2]
-      params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["IncludeTracks"] = {track_filename_1:2}
+      params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["IncludeTracks"] = {track_filename_1: [2]}
 
       scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
       scenarios = scenario_generation.create_scenarios(params,num_scenarios=2)
