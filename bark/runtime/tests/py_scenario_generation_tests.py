@@ -272,6 +272,29 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(scenario_generation_2.get_num_scenarios(), 3)
     assert_correct_combinations(scenario_generation_2)
 
+  def test_excluded_tracks(self):
+    params = ParameterServer()
+
+    map_filename = os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+    track_filename_1 =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+    track_filename_2 =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_2.csv")
+
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename_1, track_filename_2]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["ExcludeTracks"] = {
+      track_filename_1: [2],
+      track_filename_2: [1, 3],
+    }
+
+    scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=10)
+    for scenario, _ in scenario_generation:
+      track_filename = scenario.json_params["track_file"]
+      ego_id = scenario.eval_agent_ids[0]
+
+      # Check that pair (track_filename, ego_id) is NOT in ExcludeTracks
+      self.assertNotIn((track_filename, ego_id),
+                       [(track_filename_1, 2), (track_filename_2, 1), (track_filename_2, 3)])
+
   def test_dataset_scenario_generation_full(self):
     params = ParameterServer()
 
