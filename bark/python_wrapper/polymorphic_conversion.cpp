@@ -30,6 +30,7 @@
 #include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "bark/models/behavior/not_started/behavior_not_started.hpp"
 #include "bark/python_wrapper/models/behavior.hpp"
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -81,6 +82,7 @@ using bark::models::behavior::BehaviorMobil;
 using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorStaticTrajectory;
+using bark::models::behavior::BehaviorNotStarted;
 using bark::models::behavior::primitives::Primitive;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
@@ -127,6 +129,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorMobilRuleBased";
   } else if (typeid(*behavior_model) == typeid(BehaviorStaticTrajectory)) {
     behavior_model_name = "BehaviorStaticTrajectory";
+  } else if (typeid(*behavior_model) == typeid(BehaviorNotStarted)) {
+    behavior_model_name = "BehaviorNotStarted";
   } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
     behavior_model_name = "BehaviorMobil";
   } else if (typeid(*behavior_model) == typeid(BehaviorDynamicModel)) {
@@ -180,6 +184,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorStaticTrajectory") == 0) {
     return std::make_shared<BehaviorStaticTrajectory>(
         t[0].cast<BehaviorStaticTrajectory>());
+  } else if (behavior_model_name.compare("BehaviorNotStarted") == 0) {
+    return std::make_shared<BehaviorNotStarted>(
+        t[0].cast<BehaviorNotStarted>());
   } else if (behavior_model_name.compare("BehaviorMobilRuleBased") == 0) {
     return std::make_shared<BehaviorMobilRuleBased>(
         t[0].cast<BehaviorMobilRuleBased>());

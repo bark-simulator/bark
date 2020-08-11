@@ -107,3 +107,19 @@ cc_test(
         "@gtest//:gtest_main",
     ],
 )
+
+
+cc_test(
+    name = "behavior_not_started_test",
+    srcs = [
+        "behavior_not_started_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/models/behavior/not_started",
+        "//bark/world/tests:make_test_world",
+        "@com_github_eigen_eigen//:eigen",
+        "@gtest//:gtest_main",
+    ],
+)

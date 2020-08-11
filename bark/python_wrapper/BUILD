@@ -38,6 +38,7 @@ cc_binary(
     "//bark/models/behavior/rule_based:intersection_behavior",
     "//bark/models/behavior/rule_based:mobil_behavior",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/not_started",
     "//bark/models/behavior/idm/stochastic:stochastic",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
