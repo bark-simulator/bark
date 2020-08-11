@@ -23,7 +23,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity, BehaviorUCTSingleAgentMacroActions
 from bark.runtime.viewer.video_renderer import VideoRenderer
 
-dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=20) # increase the number of serialize scenarios to 100
+dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=2, num_serialize_scenarios=100) # increase the number of serialize scenarios to 100
 dbs.process("examples/mcts_rl/database")
 local_release_filename = dbs.release(version="test")#test
 
@@ -44,15 +44,24 @@ params.Save(filename="./macro_action_params.json")
 scenario_param_file ="macro_action_params.json" # must be within examples params folder
 params1 = ParameterServer(filename= os.path.join("examples/mcts_rl/params/",scenario_param_file))
 params2 = ParameterServer(filename= os.path.join("examples/mcts_rl/params/",scenario_param_file))
+params3 = ParameterServer(filename= os.path.join("examples/mcts_rl/params/",scenario_param_file))
+# Params NN Heuristic
+params3["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
+params3["BehaviorUctSingleAgent"]["UseNNHeuristic"]=True
+params3["BehaviorUctSingleAgent"]["Savedmodeldirectory"]="/home/guoyujian/model2_cdqn_100k/model"
+params3["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -10000.0
+params3["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] =10000.0
 # Params Domain Heuristic
 params2["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=False
-params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
-params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
+params2["BehaviorUctSingleAgent"]["UseNNHeuristic"]=False
+params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -10000.0
+params2["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 10000.0
 # Params Random Heuristic
 params1["BehaviorUctSingleAgent"]["UseRandomHeuristic"]=True
-params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -1000.0
-params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 100.0
-behaviors_tested = {"RandomHeuristic": BehaviorUCTSingleAgentMacroActions(params1), "DomainHeuristic" : BehaviorUCTSingleAgentMacroActions(params2)}
+params1["BehaviorUctSingleAgent"]["UseNNHeuristic"]=False
+params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnLowerBound"] = -10000.0
+params1["BehaviorUctSingleAgent"]["Mcts"]["UctStatistic"]["ReturnUpperBound"] = 10000.0
+behaviors_tested = {"RandomHeuristic": BehaviorUCTSingleAgentMacroActions(params1),"DOMAINHeuristic": BehaviorUCTSingleAgentMacroActions(params2),"NNHeuristic": BehaviorUCTSingleAgentMacroActions(params3)}
 
 benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                   evaluators=evaluators,
