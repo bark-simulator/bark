@@ -342,6 +342,30 @@ class ScenarioGenerationTests(unittest.TestCase):
         params=params, num_scenarios=1)
     self.assertEqual(scenario_generation.get_num_scenarios(), 1)
 
+  def test_setting_behavior_of_ego_agent(self):
+    params = ParameterServer()
+
+    map_filename = os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+
+    # Set behaviour model of the ego agent
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["BehaviorModel"] = \
+      {"ego": "BehaviorMobilRuleBased"}
+
+    scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
+    for scenario, _ in scenario_generation:
+      ego_id = scenario.eval_agent_ids[0]  # Assume there is only one ego agent
+      for agent in scenario._agent_list:
+        if agent.id == ego_id:
+          behavior_model = agent.behavior_model
+          self.assertEqual(str(behavior_model).rsplit(".")[-1], "BehaviorMobilRuleBased")
+          break
+      else:
+        # No ego agent in scenario._agent_list, something is wrong
+        self.assertTrue(False)
 
 if __name__ == '__main__':
   unittest.main()
