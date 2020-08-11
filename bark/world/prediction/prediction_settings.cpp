@@ -8,6 +8,8 @@
 
 #include "bark/world/prediction/prediction_settings.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/models/behavior/not_started/behavior_not_started.hpp"
+// #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 
 namespace bark {
 namespace world {
@@ -30,16 +32,23 @@ void PredictionSettings::ApplySettings(
     bark::world::ObservedWorld& observed_world) const {
   observed_world.SetEgoBehaviorModel(
       BehaviorModelPtr(ego_prediction_model_->Clone()));
-  if (default_prediction_model_) {
+    if (default_prediction_model_) {
     for (const auto& agent : observed_world.GetOtherAgents()) {
-      if (specific_prediction_agents_.count(agent.first) == 0) {
-        observed_world.SetBehaviorModel(
-            agent.first, BehaviorModelPtr(default_prediction_model_->Clone()));
+      if (agent.second->GetBehaviorStatus() == models::behavior::BehaviorStatus::VALID) {
+        if (specific_prediction_agents_.count(agent.first) == 0) {
+            observed_world.SetBehaviorModel(
+              agent.first, BehaviorModelPtr(default_prediction_model_->Clone()));
+          // LOG(INFO) << "using " << agent.first << " as multi-agent";    
+        }
+      } else {
+        // LOG(INFO) << "using BehaviorNotStarted for " << agent.first << " (not started yet)";
+        observed_world.SetBehaviorModel(agent.first, std::make_shared<bark::models::behavior::BehaviorNotStarted>(nullptr));
       }
     }
   }
   if (specific_prediction_model_) {
     for (const auto& agent_id : specific_prediction_agents_) {
+      // LOG(INFO) << "setting specific model for " << agent_id;
       observed_world.SetBehaviorModel(
           agent_id, BehaviorModelPtr(specific_prediction_model_->Clone()));
     }
