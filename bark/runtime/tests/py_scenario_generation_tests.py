@@ -246,17 +246,31 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename_1,track_filename_2]
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["IncludeTracks"] = {track_filename_1: [2]}
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["IncludeTracks"] = {
+      track_filename_1: [2],
+      track_filename_2: [1, 3],
+    }
 
-    scenario_generation = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
-    scenarios = scenario_generation.create_scenarios(params,num_scenarios=2)
+    def assert_correct_combinations(scenario_generation):
+      for scenario, _ in scenario_generation:
+        track_filename = scenario.json_params["track_file"]
+        ego_id = scenario.eval_agent_ids[0]
 
-    for scenario in scenarios:
-      track_filename = scenario.json_params["track_file"]
+        # Check if pair (track_filename, ego_id) is in IncludeTracks
+        self.assertIn((track_filename, ego_id),
+                      [(track_filename_1, 2), (track_filename_2, 1), (track_filename_2, 3)])
 
-      # Check if the track that is used is the one in the included tracks.
-      self.assertEqual(track_filename,track_filename_1)
-      # TODO: Get the track id and assert if it is equal to 2.
+    # CASE 1: num_scenarios < number of scenarios in IncludeTracks
+    scenario_generation_1 = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=2)
+    # Only two scenarios should be generated (num_scenarios=2)
+    self.assertEqual(scenario_generation_1.get_num_scenarios(), 2)
+    assert_correct_combinations(scenario_generation_1)
+
+    # CASE 2: num_scenarios > number of scenarios in IncludeTracks
+    scenario_generation_2 = InteractionDatasetScenarioGenerationFull(params=params, num_scenarios=4)
+    # Three scenarios should be generated (all specified in IncludeTracks)
+    self.assertEqual(scenario_generation_2.get_num_scenarios(), 3)
+    assert_correct_combinations(scenario_generation_2)
 
   def test_dataset_scenario_generation_full(self):
     params = ParameterServer()
