@@ -111,10 +111,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             agent_list.append(agent)
 
         id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        # Workaround to set behaviour model of the ego agent when needed
         if "ego" in self._behavior_models:
+            # Always set this behavior to the ego agent, regardless of agent's ID
             track_params["behavior_model"] = self._behavior_models["ego"]
-            # End of the workaround
         elif str(id_ego) in self._behavior_models:
             track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
