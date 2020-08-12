@@ -1,5 +1,8 @@
 // Copyright (c) 2020 fortiss GmbH
 //
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
+//
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -24,7 +27,7 @@ LabelMap EgoAccelerateLabelFunction::Evaluate(
   const auto ego = observed_world.GetEgoAgent();
   const auto& history = ego->GetStateInputHistory();
   if (history.size() > 2) {
-    const auto dx = history.end()->first - (history.end() - 2)->first;
+    const auto dx = (history.end() - 1)->first - (history.end() - 2)->first;
     const float dv = dx(StateDefinition::VEL_POSITION);
     const float dt = dx(StateDefinition::TIME_POSITION);
     const float avg_accel = dv / dt;

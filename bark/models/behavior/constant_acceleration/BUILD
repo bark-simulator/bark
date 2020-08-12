@@ -1,10 +1,10 @@
 cc_library(
-    name = "constant_velocity",
+    name = "constant_acceleration",
     srcs = [
-        "constant_velocity.cpp",
+        "constant_acceleration.cpp",
     ],
     hdrs = [
-        "constant_velocity.hpp",
+        "constant_acceleration.hpp",
     ],
     deps = [
         "//bark/commons:commons",

@@ -21,6 +21,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig, BehaviorConfig
 from bark.core.world.evaluation import *
+from bark.core.world.evaluation.ltl import *
 
 try:
   from bark.core.world.evaluation.ltl import *
@@ -119,7 +120,7 @@ class BenchmarkRunner:
         benchmark_configs = []
         for behavior_config in self.behavior_configs:
             # run over all scenario generators from benchmark database
-            for scenario_generator, scenario_set_name in self.benchmark_database:
+            for scenario_generator, scenario_set_name, scenario_set_param_desc in self.benchmark_database:
                 for scenario, scenario_idx in scenario_generator:
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
@@ -129,7 +130,8 @@ class BenchmarkRunner:
                             behavior_config,
                             scenario,
                             scenario_idx,
-                            scenario_set_name
+                            scenario_set_name,
+                            scenario_set_param_desc
                         )
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
@@ -241,12 +243,18 @@ class BenchmarkRunner:
         self.exceptions_caught.append((benchmark_config.config_idx, exception))
 
     def _reset_evaluators(self, world, eval_agent_ids):
-        for evaluator_name, evaluator_type in self.evaluators.items():
+        for evaluator_name, evaluator_params in self.evaluators.items():
             evaluator_bark = None
-            try:
-                evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_type))
-            except:
-                evaluator_bark = eval("{}()".format(evaluator_type))
+            if isinstance(evaluator_params, str):
+                try:
+                    evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
+                except:
+                    evaluator_bark = eval("{}()".format(evaluator_params))
+            elif isinstance(evaluator_params, dict):
+                evaluator_bark = eval(
+                    "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
+            else:
+                raise ValueError
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):

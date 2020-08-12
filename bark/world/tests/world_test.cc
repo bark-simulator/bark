@@ -9,7 +9,7 @@
 #include "bark/world/world.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
@@ -39,12 +39,13 @@ using namespace bark::world;
 using namespace bark::world::evaluation;
 using namespace bark::world::goal_definition;
 using bark::world::tests::make_test_world;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 
 TEST(world, world_init) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   Polygon polygon(
       Pose(1.25, 1, 0),
       std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
@@ -65,7 +66,7 @@ TEST(world, world_step) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   Polygon polygon(
       Pose(1.25, 1, 0),
       std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
@@ -138,7 +139,7 @@ TEST(world, world_collision) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(
@@ -169,7 +170,7 @@ TEST(world, world_no_collision_agent) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(
@@ -203,15 +204,12 @@ TEST(world, world_outside_drivable_area) {
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
 
-  Polygon polygon(
-      Pose(1, 1, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(2, 2),
-                           Point2d(2, 0), Point2d(0, 0)});
+  Polygon polygon = GenerateGoalRectangle(6,3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -235,7 +233,7 @@ TEST(world, nearest_agents) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(
@@ -293,7 +291,7 @@ TEST(world, distance_to_goal) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   Polygon polygon(
       Pose(1.25, 1, 0),
       std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
@@ -337,7 +335,7 @@ TEST(world, agents_intersection_polygon) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
   EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   Polygon polygon(

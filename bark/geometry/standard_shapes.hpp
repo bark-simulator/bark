@@ -19,6 +19,8 @@ Polygon CarLimousine();
 
 Polygon CarRectangle();
 
+Polygon GenerateGoalRectangle(float length, float width);
+
 // TODO(@all): add more variants and objects here
 
 }  // namespace standard_shapes

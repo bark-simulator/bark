@@ -7,7 +7,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "behavior.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
@@ -44,23 +44,23 @@ void python_behavior(py::module m) {
       .def_property("last_trajectory", &BehaviorModel::GetLastTrajectory,
                     &BehaviorModel::SetLastTrajectory);
 
-  py::class_<BehaviorConstantVelocity, BehaviorModel,
-             shared_ptr<BehaviorConstantVelocity>>(m,
-                                                   "BehaviorConstantVelocity")
+  py::class_<BehaviorConstantAcceleration, BehaviorModel,
+             shared_ptr<BehaviorConstantAcceleration>>(m,
+                                                   "BehaviorConstantAcceleration")
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("__repr__",
-           [](const BehaviorConstantVelocity& m) {
-             return "bark.behavior.BehaviorConstantVelocity";
+           [](const BehaviorConstantAcceleration& m) {
+             return "bark.behavior.BehaviorConstantAcceleration";
            })
       .def(py::pickle(
-          [](const BehaviorConstantVelocity& b) {
+          [](const BehaviorConstantAcceleration& b) {
             return py::make_tuple(ParamsToPython(b.GetParams()));
           },
           [](py::tuple t) {
             if (t.size() != 1)
               throw std::runtime_error("Invalid behavior model state!");
             /* Create a new C++ instance */
-            return new BehaviorConstantVelocity(
+            return new BehaviorConstantAcceleration(
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
 

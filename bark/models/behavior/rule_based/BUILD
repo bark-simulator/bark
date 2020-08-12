@@ -45,7 +45,7 @@ cc_library(
     deps = [
         "//bark/commons:commons",
         "//bark/world:world",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/behavior/rule_based:lane_change_behavior",
         "//bark/models/dynamic:dynamic",
         "//bark/commons/transformation:frenet"
@@ -65,7 +65,7 @@ cc_library(
         "//bark/commons:commons",
         "//bark/world:world",
         "//bark/models/behavior/idm:base_idm",
-        "//bark/models/behavior/constant_velocity:constant_velocity",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/behavior/rule_based:lane_change_behavior",
         "//bark/models/dynamic:dynamic",
         "//bark/commons/transformation:frenet"

@@ -16,7 +16,7 @@
 #include "polymorphic_conversion.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
-#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
 #include "bark/models/behavior/dynamic_model/dynamic_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
@@ -71,7 +71,7 @@ using bark::models::behavior::BehaviorMvmctsUct;
 namespace py = pybind11;
 
 using bark::commons::SetterParams;
-using bark::models::behavior::BehaviorConstantVelocity;
+using bark::models::behavior::BehaviorConstantAcceleration;
 using bark::models::behavior::BehaviorDynamicModel;
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorIDMLaneTracking;
@@ -115,8 +115,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "None";
     return py::make_tuple(behavior_model_name, behavior_model_name);
   }
-  if (typeid(*behavior_model) == typeid(BehaviorConstantVelocity)) {
-    behavior_model_name = "BehaviorConstantVelocity";
+  if (typeid(*behavior_model) == typeid(BehaviorConstantAcceleration)) {
+    behavior_model_name = "BehaviorConstantAcceleration";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMLaneTracking)) {
     behavior_model_name = "BehaviorIDMLaneTracking";
   } else if (typeid(*behavior_model) == typeid(BehaviorIDMClassic)) {
@@ -165,9 +165,9 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
 
 BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   std::string behavior_model_name = t[1].cast<std::string>();
-  if (behavior_model_name.compare("BehaviorConstantVelocity") == 0) {
-    return std::make_shared<BehaviorConstantVelocity>(
-        t[0].cast<BehaviorConstantVelocity>());
+  if (behavior_model_name.compare("BehaviorConstantAcceleration") == 0) {
+    return std::make_shared<BehaviorConstantAcceleration>(
+        t[0].cast<BehaviorConstantAcceleration>());
   } else if (behavior_model_name.compare("BehaviorIDMLaneTracking") == 0) {
     return std::make_shared<BehaviorIDMLaneTracking>(
         t[0].cast<BehaviorIDMLaneTracking>());

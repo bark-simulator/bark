@@ -1,5 +1,8 @@
 // Copyright (c) 2020 fortiss GmbH
 //
+// Authors: Julian Bernhard, Klemens Esterle, Patrick Hart and
+// Tobias Kessler
+//
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
@@ -23,12 +26,14 @@ using bark::world::objects::AgentPtr;
 class DenseTrafficLabelFunction : public BaseLabelFunction {
  public:
   DenseTrafficLabelFunction(const std::string& label_str, double radius,
-                            size_t num_agents);
+                            int num_agents);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  double GetRadius() const { return radius_; }
+  int GetNumAgents() const { return num_agents_; }
 
  private:
-  const double radius_;
-  const size_t num_agents_;
+  double radius_;
+  int num_agents_;
 };
 
 }  // namespace evaluation

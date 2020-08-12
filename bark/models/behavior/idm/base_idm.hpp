@@ -22,6 +22,7 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::geometry::Point2d;
 using bark::world::ObservedWorld;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
@@ -52,6 +53,9 @@ class BaseIDM : virtual public BehaviorModel {
   double CalcNetDistance(
       const std::shared_ptr<const world::objects::Agent>& ego_agent,
       const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
+
+  std::pair<bool, double> GetDistanceToLaneEnding(
+      const LaneCorridorPtr& lane_corr, const Point2d& pos) const;
 
   virtual std::tuple<Trajectory, Action> GenerateTrajectory(
       const world::ObservedWorld& observed_world,
