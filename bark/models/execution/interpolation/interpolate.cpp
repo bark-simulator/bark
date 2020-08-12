@@ -82,8 +82,13 @@ State ExecutionModelInterpolate::Interpolate(const State& p0, const State& p1,
 void ExecutionModelInterpolate::Execute(const float& new_world_time,
                                         const Trajectory& trajectory,
                                         const DynamicModelPtr dynamic_model) {
+
   // book-keeping
   SetLastTrajectory(trajectory);
+
+  if(GetExecutionStatus() == ExecutionStatus::INVALID) {
+    return;
+  }
 
   // check time and size
   if (!CheckIfWorldTimeIsWithinTrajectory(trajectory, new_world_time)) {
