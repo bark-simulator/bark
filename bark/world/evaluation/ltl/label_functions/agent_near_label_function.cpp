@@ -37,10 +37,6 @@ bool AgentNearLabelFunction::EvaluateAgent(
   return false;
 }
 
-const double& AgentNearLabelFunction::GetDistanceThreshold() const {
-  return distance_thres_;
-};
-
 }  // namespace evaluation
 }  // namespace world
 }  // namespace bark

@@ -37,10 +37,6 @@ bool AgentAtLaneEndLabelFunction::EvaluateAgent(
   return false;
 }
 
-const double& AgentAtLaneEndLabelFunction::GetDistanceThreshold() const {
-  return distance_thres_;
-};
-
 }  // namespace evaluation
 }  // namespace world
 }  // namespace bark
