@@ -33,7 +33,7 @@ BehaviorDynamicModel::BehaviorDynamicModel(const commons::ParamsPtr& params)
 
 dynamic::Trajectory BehaviorDynamicModel::Plan(
     float min_planning_time, const world::ObservedWorld& observed_world) {
-  SetBehaviorStatus(BehaviorStatus::VALID);
+  UpdateBehaviorStatus(min_planning_time, observed_world.GetWorldTime());
   const DynamicModelPtr dynamic_model =
       observed_world.GetEgoAgent()->GetDynamicModel();
   auto single_track =

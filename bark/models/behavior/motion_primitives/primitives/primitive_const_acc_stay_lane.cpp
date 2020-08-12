@@ -43,7 +43,7 @@ bark::models::dynamic::Trajectory
 bark::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
     float delta_time, const bark::world::ObservedWorld& observed_world,
     const bark::world::LaneCorridorPtr& target_corridor) {
-  SetBehaviorStatus(BehaviorStatus::VALID);
+  UpdateBehaviorStatus(delta_time, observed_world.GetWorldTime());
 
   if (!target_corridor) {
     LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
