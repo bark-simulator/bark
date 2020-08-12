@@ -126,7 +126,7 @@ class InteractionDatasetReader:
             behavior = BehaviorFromTrack(track, param_server.AddChild(
                 "agent{}".format(agent_id)), start_time, end_time)
         else:
-            behavior = model_converter.convert_model(behavior_model, param_server)
+            behavior = behavior_model
         try:
             initial_state = InitStateFromTrack(track, start_time)
         except:

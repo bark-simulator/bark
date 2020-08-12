@@ -10,6 +10,7 @@ from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
 from bark.runtime.scenario.interaction_dataset_processing import InteractionDatasetReader
 from bark.runtime.scenario.interaction_dataset_processing import DatasetDecomposer
+from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 from bark.core.world.map import *
@@ -95,9 +96,11 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             scenario_track_info.GetEgoTrackInfo().GetTrackId())
         
         agent_list = []
+        model_converter = ModelJsonConversion()
         for track_id in all_track_ids:
             if str(track_id) in self._behavior_models:
-                track_params["behavior_model"] = self._behavior_models[str(track_id)]
+                behavior_model_name = self._behavior_models[str(track_id)]
+                track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, self._params)
             else:
                 track_params["behavior_model"] = None
             agent = self.interaction_ds_reader.AgentFromTrackfile(
