@@ -30,5 +30,13 @@ Polygon bark::geometry::standard_shapes::CarRectangle() {
       std::vector<Point2d>{Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1),
                            Point2d(3, -1), Point2d(-1, -1)});
 }
+
+Polygon bark::geometry::standard_shapes::GenerateGoalRectangle(float length, float width) {
+  return Polygon(
+      Pose(width/2, length/2, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, length), Point2d(width, length),
+                           Point2d(width, 0), Point2d(0, 0)});
+}
+
 }  // namespace geometry
 }  // namespace bark

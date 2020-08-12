@@ -144,5 +144,3 @@ cc_library(
     hdrs=glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )
-
-

@@ -35,7 +35,7 @@ class PythonDistanceBehavior(BehaviorModel):
     BehaviorModel.__init__(
       self, params)
     self._params = params
-    self._distance_range_constant_velocity = \
+    self._distance_range_constant_acceleration = \
             self._params["PythonDistanceBehavior::RangeConstantVelocity", \
            "Range in meters defining when controlled vehicle does not change velocity", [10, 20]]
 
@@ -74,10 +74,10 @@ class PythonDistanceBehavior(BehaviorModel):
     # we choose a very simple heuristic to select among actions 
     # decelerate, constant velocity or accelerate
     acceleration = None
-    if longitudinal_dist_margins < self._distance_range_constant_velocity[0]:
+    if longitudinal_dist_margins < self._distance_range_constant_acceleration[0]:
       acceleration = -4.0
-    elif longitudinal_dist_margins > self._distance_range_constant_velocity[0] and \
-          longitudinal_dist_margins < self._distance_range_constant_velocity[1]:
+    elif longitudinal_dist_margins > self._distance_range_constant_acceleration[0] and \
+          longitudinal_dist_margins < self._distance_range_constant_acceleration[1]:
       acceleration = 0.0
     else:
       acceleration = 4.0
@@ -118,7 +118,7 @@ class SystemTests(unittest.TestCase):
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 
-        behavior_model2 = BehaviorConstantVelocity(params)
+        behavior_model2 = BehaviorConstantAcceleration(params)
         execution_model2 = ExecutionModelInterpolate(params)
         dynamic_model2 = SingleTrackModel(params)
 
@@ -193,7 +193,7 @@ class SystemTests(unittest.TestCase):
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 
-        behavior_model2 = BehaviorConstantVelocity(params)
+        behavior_model2 = BehaviorConstantAcceleration(params)
         execution_model2 = ExecutionModelInterpolate(params)
         dynamic_model2 = SingleTrackModel(params)
         

@@ -58,7 +58,9 @@ py_test(
   name = "py_param_server_tests",
   srcs = ["py_param_server_tests.py"],
   data = ['//bark:generate_core'],
-  deps = ["//bark/runtime/commons:commons" ]
+  deps = [
+          "//bark/runtime/commons:commons",
+          "//tools/debug:debug_settings" ]
 )
 
 py_test(

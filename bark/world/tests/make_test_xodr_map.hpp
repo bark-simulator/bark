@@ -21,6 +21,8 @@ OpenDriveMapPtr MakeXodrMapOneRoadTwoLanes();
 
 OpenDriveMapPtr MakeXodrMapTwoRoadsOneLane();
 
+OpenDriveMapPtr MakeXodrMapEndingLaneInParallel();
+
 }  // namespace tests
 }  // namespace world
 }  // namespace bark

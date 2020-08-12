@@ -40,7 +40,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                             ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
-        self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
+        self._excluded_tracks = params_temp["ExcludeTracks", "Track IDs to be excluded from the scenario generation", {}]
+        self._included_tracks = params_temp["IncludeTracks", "The only track IDs to be included in the scenario generation", {}]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -51,23 +52,32 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
         for track_file_name in self._track_file_name_list:
 
-          dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                                track_filename=track_file_name)
-          scenario_track_info_list = dataset_decomposer.decompose()
+            dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
+                                                    track_filename=track_file_name)
+            scenario_track_info_list = dataset_decomposer.decompose()
 
-          # for scenario_idx in range(0, num_scenarios):
-          for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-              if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
-                  logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
-                  try:
-                      scenario = self.__create_single_scenario__(
-                          scenario_track_info)
-                  except:
-                      raise ValueError(
-                          "Generation of scenario failed: {}".format(scenario_track_info))
-                  scenario_list.append(scenario)
-              else:
-                  break
+            for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
+                if len(scenario_list) >= num_scenarios:
+                    break
+
+                track_id = scenario_track_info.GetEgoTrackInfo().GetTrackId()
+
+                if track_id in self._excluded_tracks.get(track_file_name, []):
+                    continue
+                if len(self._included_tracks) > 0 and \
+                    track_id not in self._included_tracks.get(track_file_name, []):
+                    # Set of the tracks to include is non-empty, but current
+                    # track is not included in the set
+                    continue
+
+                logging.info("Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
+                try:
+                    scenario = self.__create_single_scenario__(
+                        scenario_track_info)
+                except:
+                    raise ValueError(
+                        "Generation of scenario failed: {}".format(scenario_track_info))
+                scenario_list.append(scenario)
         return scenario_list
 
     def __create_single_scenario__(self, scenario_track_info):
@@ -101,7 +111,10 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             agent_list.append(agent)
 
         id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        if str(id_ego) in self._behavior_models:
+        if "ego" in self._behavior_models:
+            # Always set this behavior to the ego agent, regardless of agent's ID
+            track_params["behavior_model"] = self._behavior_models["ego"]
+        elif str(id_ego) in self._behavior_models:
             track_params["behavior_model"] = self._behavior_models[str(id_ego)]
         else:
             track_params["behavior_model"] = None

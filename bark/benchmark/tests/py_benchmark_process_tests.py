@@ -11,8 +11,10 @@ import os
 import ray
 
 try:
-    import tools.debug_settings
+    debug = True
+    import debug_settings
 except:
+    debug = False
     pass
 
 import matplotlib.pyplot as plt
@@ -28,7 +30,7 @@ from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantVelocity
+from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 
 
 
@@ -37,7 +39,10 @@ class DatabaseRunnerTests(unittest.TestCase):
         dbs = DatabaseSerializer(test_scenarios=2, test_world_steps=3, num_serialize_scenarios=2)
         # to find database files
         cwd = os.getcwd()
-        os.chdir("../benchmark_database/")
+        if not debug:
+          os.chdir("../benchmark_database/")
+        else:
+          os.chdir("bazel-bin/bark/benchmark/tests/py_benchmark_process_tests.runfiles/benchmark_database")
         dbs.process("data/database1")
         local_release_filename = dbs.release(version="test")
 
@@ -46,7 +51,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                       "max_steps": "EvaluatorStepCount"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
-        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantVelocity(params)}
+        behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
 
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,

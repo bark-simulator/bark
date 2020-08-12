@@ -6,6 +6,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+try:
+    import debug_settings
+except:
+    pass
+
 import unittest
 import pickle
 import numpy as np
@@ -57,6 +62,49 @@ class ParamServerTests(unittest.TestCase):
     self.assertEqual(len(list3), len(list4))
     for idx, _ in enumerate(list3):
         self.assertAlmostEqual(list3[idx], list4[idx], places=5)
+
+  def test_set_item_using_delimiter(self):
+    params = ParameterServer()
+    _ = params["test_child"]["Child2"]["ValueFloat", "Desc", 2.0]
+    params["test_child::Child2::ValueFloat"] = 3.2323
+    self.assertEqual(params["test_child"]["Child2"]["ValueFloat"], 3.2323)
+
+    child = params.AddChild("test_child5::Child5")
+    child["test_param2"] = "etesd99533sbgfgf"
+    self.assertEqual(params["test_child5"]["Child5"]["test_param2", "Desc", 0], "etesd99533sbgfgf")
+
+  def test_set_item_param_server_list_included_in_hierarchy(self):
+    params = ParameterServer()
+    params["test_child"]["Child2"]["ListOfParamServers"] = [{
+      "ListEl1Param1" : 1.0,
+      "ListEl1Param2" : 5,
+      "ListEl1Child1" : {
+        "ListEl1Child1Param1" : "dfdfdfasdgdfhdfg",
+        "ListEl1Child1Param2" : 4343,
+        
+      },
+      "EqualNameParams": {
+        "EqualNameParam1": 20.03434,
+        "EqualNameParam2": 2167767545
+      }
+    },
+    {
+      "ListEl2Param1" : 2.0,
+      "ListEl2Param2" : 232,
+      "EqualNameParams": {
+        "EqualNameParam1": 20.03434,
+        "EqualNameParam2": 2123232
+      }
+    }]
+
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["ListEl1Param2"], 5)
+    self.assertTrue(isinstance(params["test_child"]["Child2"]["ListOfParamServers"][0], ParameterServer))
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][1]["ListEl2Param1"], 2.0)
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["ListEl1Child1"]["ListEl1Child1Param1"], "dfdfdfasdgdfhdfg")
+
+    params["test_child::Child2::ListOfParamServers::EqualNameParams::EqualNameParam1"] = 4545.232566
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][0]["EqualNameParams"]["EqualNameParam1"], 4545.232566)
+    self.assertEqual(params["test_child"]["Child2"]["ListOfParamServers"][1]["EqualNameParams"]["EqualNameParam1"], 4545.232566)
 
   def test_key_not_found(self):
     params = ParameterServer(log_if_default=True)

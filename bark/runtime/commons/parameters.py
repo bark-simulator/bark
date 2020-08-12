@@ -42,6 +42,11 @@ class ParameterServer(Params):
             return self.store[new_key]
         else:
             if isinstance(key, tuple):  # if key for parameter
+                if isinstance(default_val, list) and all(type(el) is dict for el in default_val):
+                  value_tmp = []
+                  for list_el in default_val:
+                    value_tmp.append(ParameterServer(json=list_el))
+                  default_val = value_tmp
                 self.store[new_key] = default_val
                 if self.log_if_default:
                   logging.warning("Using default {} for {}".format(
@@ -66,12 +71,34 @@ class ParameterServer(Params):
 
 
     def __setitem__(self, key, value):
+        store = self.store
+        new_key = key
         if isinstance(key, tuple):
             new_key = key[0]
             self.param_descriptions[new_key] = key[1]
+
+        if isinstance(value, list) and all(isinstance(el, dict) for el in value):
+          value_tmp = []
+          for list_el in value:
+            value_tmp.append(ParameterServer(json=list_el))
+          value = value_tmp
+
+        if isinstance(key, str):
+          self._set_item_from_hierarchy_string(key, value)
+
+    def _set_item_from_hierarchy_string(self, key, value):
+      delim = "::"
+      found = key.find(delim)
+      if found > -1:
+        child_params = self.AddChild(key.rsplit(delim, 1)[0])
+        new_key = key.rsplit(delim, 1)[1]
+        if isinstance(child_params, list):
+          for child in child_params:
+            child.store[new_key] = value
         else:
-            new_key = key
-        self.store[new_key] = value
+          child_params.store[new_key] = value
+      else:
+        self.store[key] = value
 
     def __delitem__(self, key):
         if key in self.store:
@@ -94,15 +121,21 @@ class ParameterServer(Params):
             dict = json.load(file)
         self.ConvertToParam(dict)
 
-    def ConvertToParam(self, new_dict):
+    def ConvertToParam(self, params):
+        if isinstance(params, ParameterServer):
+          return
         self.store = dict()
-        for key, value in new_dict.items():
+        for key, value in params.items():
             if isinstance(value, dict):
                 param = ParameterServer(log_if_default = self.log_if_default)
                 self.store[key] = param.ConvertToParam(value)
+            elif isinstance(value, list) and all(type(el) is dict for el in value):
+                param_server_list = []
+                for v in value:
+                    param_server_list.append(ParameterServer(json=v))
+                self.store[key] = param_server_list
             else:
                 self.GetValFromString(key, "", value, log_if_default=False)
-
         return self
 
     def clone(self):
@@ -123,9 +156,13 @@ class ParameterServer(Params):
                         dict[key] = "MISSING"
                 else:
                     dict[key] = v
+            elif isinstance(value, list) and all(type(el) is ParameterServer for el in value):
+              v_tmp = []
+              for v in value:
+                v_tmp.append(v.ConvertToDict())
+              dict[key] = v_tmp
             else:
                 dict[key] = value
-
                 if print_description:
                     if key in self.param_descriptions:
                         dict[key] = self.param_descriptions[key]
@@ -279,4 +316,10 @@ class ParameterServer(Params):
         if len(rest_name) == 0:
           return child
         else:
-          return child.AddChild(rest_name)
+          if isinstance(child, list) and all(type(el) is ParameterServer for el in child):
+            child_list = []
+            for ch in child:
+              child_list.append(ch.AddChild(rest_name))
+            return child_list
+          else:
+            return child.AddChild(rest_name)

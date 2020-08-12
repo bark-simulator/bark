@@ -14,7 +14,7 @@ if os.environ.get('DISPLAY', '') == '':
   print('no display found. Using non-interactive Agg backend')
   mpl.use('Agg')
 from bark.core.world.agent import Agent
-from bark.core.models.behavior import BehaviorConstantVelocity
+from bark.core.models.behavior import BehaviorConstantAcceleration
 from bark.core.models.dynamic import SingleTrackModel
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.geometry import Polygon2d, Point2d
@@ -25,7 +25,7 @@ from bark.runtime.commons.parameters import ParameterServer
 class AgentTests(unittest.TestCase):
   def test_write_params_agent(self):
     params = ParameterServer()
-    behavior = BehaviorConstantVelocity(params)
+    behavior = BehaviorConstantAcceleration(params)
     execution = ExecutionModelInterpolate(params)
     dynamic = SingleTrackModel(params)
     shape = Polygon2d([1.25, 1, 0], [
@@ -42,7 +42,7 @@ class AgentTests(unittest.TestCase):
 
   def test_draw_agents(self):
     params = ParameterServer()
-    behavior = BehaviorConstantVelocity(params)
+    behavior = BehaviorConstantAcceleration(params)
     execution = ExecutionModelInterpolate(params)
     dynamic = SingleTrackModel(params)
     shape = Polygon2d([1.25, 1, 0], [
