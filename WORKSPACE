@@ -28,7 +28,7 @@ git_repository(
 # ------ Planner MV-MCTS ------------------------------
 git_repository(
     name = "planner_mv_mcts",
-    commit="fe41dd6ff7bb2d5b977f903922c5daf1845fc557",
+    commit="ee570f0b8e468836b0ecf6a6acdcabbb4a4b51cf",
     remote = "git@github.com:bark-simulator/planner-mv-mcts.git"
 )
 load("@planner_mv_mcts//util:deps.bzl", "planner_mv_mcts_dependencies")
@@ -38,7 +38,7 @@ planner_mv_mcts_dependencies()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="ee133d5eb9e6ddbd87d70c8ec82e9f9e7103841a",
+  commit="ff6e433ecb7878ebe59996f3994ff67483a7c297",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
