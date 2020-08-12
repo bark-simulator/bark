@@ -139,7 +139,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
 Trajectory BehaviorIntersectionRuleBased::Plan(
     float delta_time, const ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
-  SetBehaviorStatus(BehaviorStatus::VALID);
+  UpdateBehaviorStatus(delta_time, observed_world.GetWorldTime());
 
   if (!observed_world.GetLaneCorridor()) {
     LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
