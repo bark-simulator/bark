@@ -255,6 +255,10 @@ inline bool CheckSForSegmentIntersection(Line l, float s) {
   return start_it != start_it_low;
 }
 
+inline Point2d GetPointAtIdx(const Line& l, int idx) {
+  return l.obj_.at(idx);
+}
+
 inline Point2d GetPointAtS(Line l, float s) {
   const size_t& length = l.obj_.size();
   if (length <= 1) {  // this is an error Line consist of 0 or 1 element

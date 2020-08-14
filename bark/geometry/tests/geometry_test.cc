@@ -626,6 +626,31 @@ TEST(line, GetS_at_pt_1) {
   EXPECT_TRUE(Point2d(0.0, 2.5) == p5);
 }
 
+TEST(line, GetPtAtIdx) {
+  using bark::geometry::Line_t;
+  using bark::geometry::Point2d;
+  using bark::geometry::operator==;
+
+  // template
+  Point2d point_1(0.0, 1.0);
+  Point2d point_2(0.0, 2.0);
+  Point2d point_3(0.0, 3.0);
+
+  Line_t<Point2d> line;
+
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+
+  Point2d p1 = GetPointAtIdx(line, 0);
+  Point2d p2 = GetPointAtIdx(line, 1);
+  Point2d p3 = GetPointAtIdx(line, 2);
+
+  EXPECT_TRUE(point_1 == p1);
+  EXPECT_TRUE(point_2 == p2);
+  EXPECT_TRUE(point_3 == p3);
+}
+
 TEST(line, GetLineFromSInterval) {
   using bark::geometry::Line_t;
   using bark::geometry::Point2d;
