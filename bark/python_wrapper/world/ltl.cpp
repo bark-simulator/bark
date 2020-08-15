@@ -42,6 +42,7 @@ void python_ltl(py::module m) {
            py::arg("agent_id"), py::arg("ltl_formula"),
            py::arg("label_functions"))
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
+      .def_property_readonly("label_functions", &EvaluatorLTL::GetLabelFunctions)
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });

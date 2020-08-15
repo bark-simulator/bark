@@ -244,6 +244,11 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
+    float width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
+    if (std::abs(frenet_other.lat) > width / 2) {
+      // agent seems to be not really in same lane
+      continue;
+    }
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
