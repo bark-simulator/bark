@@ -16,6 +16,11 @@ namespace bark {
 namespace world {
 namespace objects {
 
+enum AgentStatus : unsigned int {
+  NOT_STARTED_YET = 0,
+  VALID = 1,
+};
+
 Agent::Agent(const State& initial_state,
              const BehaviorModelPtr& behavior_model_ptr,
              const DynamicModelPtr& dynamic_model_ptr,
@@ -29,6 +34,7 @@ Agent::Agent(const State& initial_state,
       execution_model_(execution_model),
       history_(),
       max_history_length_(10),
+      first_valid_timestamp_(0.0),
       goal_definition_(goal_definition) {
   if (params) {
     max_history_length_ = params->GetInt(
@@ -123,6 +129,11 @@ Polygon Agent::GetPolygonFromState(const State& state) const {
 bool Agent::AtGoal() const {
   BARK_EXPECT_TRUE((bool)goal_definition_);
   return goal_definition_->AtGoal(*this);
+}
+
+bool Agent::IsValidAtTime(const float& world_time) const {
+  return isgreaterequal(world_time + std::numeric_limits<float>::epsilon(),
+                        first_valid_timestamp_);
 }
 
 std::shared_ptr<Object> Agent::Clone() const {

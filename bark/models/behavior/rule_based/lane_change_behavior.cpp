@@ -174,7 +174,7 @@ BehaviorLaneChangeRuleBased::CheckIfLaneChangeBeneficial(
 Trajectory BehaviorLaneChangeRuleBased::Plan(
     float delta_time, const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
-  UpdateBehaviorStatus(delta_time, observed_world.GetWorldTime());
+  SetBehaviorStatus(BehaviorStatus::VALID);
 
   if (!observed_world.GetLaneCorridor()) {
     LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()

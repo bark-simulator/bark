@@ -124,3 +124,19 @@ TEST(agent, PolygonFromState) {
   EXPECT_FALSE(
       Equals(shape, poly_out2));  // we expect false as init_state2 is non-zero
 }
+
+TEST(agent, IsValidAtTime) {
+  Polygon shape(
+      Pose(1.25, 1, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2),
+                           Point2d(4, 0), Point2d(0, 0)});
+
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
+  AgentPtr agent1(
+      new Agent(init_state1, nullptr, nullptr, nullptr, shape, nullptr));
+  agent1->SetFirstValidTimeStamp(0.1);
+
+  EXPECT_EQ(agent1->IsValidAtTime(0.0), false);
+  EXPECT_EQ(agent1->IsValidAtTime(0.1), true);
+}

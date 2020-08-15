@@ -92,22 +92,17 @@ class BehaviorModel : public bark::commons::BaseType {
       : commons::BaseType(params),
         last_trajectory_(),
         last_action_(),
-        behavior_status_(status),
-        first_valid_timestamp_(0.0) {}
+        behavior_status_(status) {}
 
   explicit BehaviorModel(const commons::ParamsPtr& params)
-      : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET) {
-    first_valid_timestamp_ =
-        params->GetReal("BehaviorModel::FirstValidTimestamp",
-                        "first valid time stamp of behavior model", 0.0);
+      : BehaviorModel(params, BehaviorStatus::VALID) {
   }
 
   BehaviorModel(const BehaviorModel& behavior_model)
       : commons::BaseType(behavior_model.GetParams()),
         last_trajectory_(behavior_model.GetLastTrajectory()),
         last_action_(behavior_model.GetLastAction()),
-        behavior_status_(behavior_model.GetBehaviorStatus()),
-        first_valid_timestamp_(behavior_model.GetFirstValidTimestamp()) {}
+        behavior_status_(behavior_model.GetBehaviorStatus()) {}
 
   virtual ~BehaviorModel() {}
 
@@ -137,24 +132,11 @@ class BehaviorModel : public bark::commons::BaseType {
     action_to_behavior_ = action;
   };
 
-  float GetFirstValidTimestamp() const { return first_valid_timestamp_; };
-
-  void UpdateBehaviorStatus(float delta_time, double world_time) {
-    const double end_time = world_time + delta_time;
-
-    if (end_time < first_valid_timestamp_) {
-      SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
-    } else {
-      SetBehaviorStatus(BehaviorStatus::VALID);
-    }
-  }
-
  private:
   dynamic::Trajectory last_trajectory_;
   // can either be the last action or action to be executed
   Action last_action_;
   Action action_to_behavior_;
-  double first_valid_timestamp_;
   BehaviorStatus behavior_status_;
 };
 

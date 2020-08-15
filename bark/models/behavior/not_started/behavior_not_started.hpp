@@ -24,7 +24,8 @@ using dynamic::Trajectory;
 using world::ObservedWorld;
 
 // model that always has behavior status not started (to be used in search,
-// replacing BehaviorStaticTrajectory)
+// replacing BehaviorStaticTrajectory, to prevent that BehaviorStaticTrajectory
+// becomes true in forward search and thus suddenly unexpectingly shows up)
 class BehaviorNotStarted : public BehaviorModel {
  public:
   BehaviorNotStarted(const commons::ParamsPtr& params)

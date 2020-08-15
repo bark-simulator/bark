@@ -57,17 +57,19 @@ void World::PlanAgents(const float& delta_time) {
   WorldPtr current_world(this->Clone());
   const float inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
-    ObservedWorld observed_world(current_world, agent.first);
-    agent.second->PlanBehavior(delta_time, observed_world);
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
-      agent.second->PlanExecution(inc_world_time);
+    if (agent.second->IsValidAtTime(world_time_)) {
+      ObservedWorld observed_world(current_world, agent.first);
+      agent.second->PlanBehavior(delta_time, observed_world);
+      if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
+        agent.second->PlanExecution(inc_world_time);
+    }
   }
 }
 
 void World::Execute(const float& world_time) {
   using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
+    if (agent.second->IsValidAtTime(world_time_) && agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
       agent.second->UpdateStateAction();
       // make sure all agents have the same world time

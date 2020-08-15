@@ -330,7 +330,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
 Trajectory BaseIDM::Plan(float min_planning_time,
                          const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
-  UpdateBehaviorStatus(min_planning_time, observed_world.GetWorldTime());
+  SetBehaviorStatus(BehaviorStatus::VALID);
 
   lane_corr_ = observed_world.GetLaneCorridor();
   if (!lane_corr_) {

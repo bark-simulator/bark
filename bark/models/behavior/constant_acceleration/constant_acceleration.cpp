@@ -17,7 +17,7 @@ namespace behavior {
 
 Trajectory BehaviorConstantAcceleration::Plan(
     float min_planning_time, const world::ObservedWorld& observed_world) {
-  UpdateBehaviorStatus(min_planning_time, observed_world.GetWorldTime());
+  SetBehaviorStatus(BehaviorStatus::VALID);
 
   const auto& lane_corr = observed_world.GetLaneCorridor();
   if (!lane_corr) {
