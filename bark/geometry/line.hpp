@@ -255,8 +255,13 @@ inline bool CheckSForSegmentIntersection(Line l, float s) {
   return start_it != start_it_low;
 }
 
-inline Point2d GetPointAtIdx(const Line& l, int idx) {
-  return l.obj_.at(idx);
+inline Point2d GetPointAtIdx(const Line& l, const uint idx) {
+  if (idx > l.obj_.size() - 1) {
+    LOG(WARNING) << "idx is outside line";
+    return l.obj_.back();
+  } else {
+    return l.obj_.at(idx);
+  }
 }
 
 inline Point2d GetPointAtS(Line l, float s) {
