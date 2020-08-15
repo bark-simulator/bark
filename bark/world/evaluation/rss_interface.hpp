@@ -15,6 +15,7 @@
 #include "modules/geometry/polygon.hpp"
 #include "modules/models/dynamic/dynamic_model.hpp"
 #include "modules/world/map/map_interface.hpp"
+#include "modules/world/objects/agent.hpp"
 #include "modules/world/world.hpp"
 
 #include <spdlog/spdlog.h>
@@ -66,6 +67,8 @@ using objects::AgentPtr;
 
 namespace evaluation {
 
+typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
+
 class RssInterface {
  public:
   RssInterface() {}
@@ -88,7 +91,8 @@ class RssInterface {
       const models::dynamic::State &agent_state, const Polygon &agent_shape,
       const Distance &match_distance);
 
-  ::ad::map::route::FullRoute GenerateRoute(const Point2d &agent_center,
+  ::ad::map::route::FullRoute GenerateRoute(
+      const Point2d &agent_center,
       const map::LaneCorridorPtr &agent_lane_corridor,
       const ::ad::map::match::Object &matched_object);
 
@@ -107,9 +111,22 @@ class RssInterface {
       const ::ad::rss::world::RssDynamics &ego_dynamics,
       const ::ad::map::route::FullRoute &ego_route);
 
-  bool RssCheck(::ad::rss::world::WorldModel world_model);
+  ::ad::rss::state::RssStateSnapshot RssCheck(
+      ::ad::rss::world::WorldModel world_model);
 
-  bool IsAgentSafe(const World &world, const AgentId &ego_id);
+  ::ad::rss::world::WorldModel ExtractRSSWorld(const World &world,
+                                               const AgentId &agent_id);
+
+  bool ExtractSafetyEvaluation(
+      const ::ad::rss::state::RssStateSnapshot &snapshot);
+
+  PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
+      const ::ad::rss::state::RssStateSnapshot &snapshot);
+
+  bool GetSafetyReponse(const World &world, const AgentId &ego_id);
+
+  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World &world,
+                                                    const AgentId &ego_id);
 };  // namespace evaluation
 }  // namespace evaluation
 }  // namespace world

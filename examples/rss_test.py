@@ -85,13 +85,14 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1]
 e=EvaluatorRss(agent1.id,map_path)
+
+# EvaluatorRss is accuarate only after stepping bark world
 world.Step(0.5)
-print("wtf",e.Evaluate(world))
 
 for _ in range(0, 30):
   viewer.clear()
   world.Step(sim_step_time)
-  print(e.Evaluate(world))
+  print(e.Evaluate(world),e.PairwiseEvaluate(world))
   viewer.drawWorld(world)
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
