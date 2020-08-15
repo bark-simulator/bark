@@ -57,8 +57,10 @@ bool RssInterface::initializeOpenDriveMap(
   return dynamics;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateDefaultVehicleDynamicsParameters() {
-  return GenerateVehicleDynamicsParameters(3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.);
+::ad::rss::world::RssDynamics
+RssInterface::GenerateDefaultVehicleDynamicsParameters() {
+  return GenerateVehicleDynamicsParameters(3.5, -8., -4., -3., 0.2, -0.8, 0.1,
+                                           1.);
 }
 
 ::ad::map::match::Object RssInterface::GetMatchObject(
@@ -91,7 +93,8 @@ bool RssInterface::initializeOpenDriveMap(
   return matching_object;
 }
 
-FullRoute RssInterface::GenerateRoute(const Point2d &agent_center,
+FullRoute RssInterface::GenerateRoute(
+    const Point2d &agent_center,
     const map::LaneCorridorPtr &agent_lane_corridor,
     const ::ad::map::match::Object &matched_object) {
   geometry::Line agent_lane_center_line = agent_lane_corridor->GetCenterLine();
@@ -258,7 +261,8 @@ Distance RssInterface::CalculateMinStoppingDistance(
   return scene_creation.getWorldModel();
 }
 
-bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
+::ad::rss::state::RssStateSnapshot RssInterface::RssCheck(
+    ::ad::rss::world::WorldModel world_model) {
   ::ad::rss::core::RssCheck rss_check;
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
   ::ad::rss::state::RssStateSnapshot rss_state_snapshot;
@@ -271,19 +275,34 @@ bool RssInterface::RssCheck(::ad::rss::world::WorldModel world_model) {
 
   // std::map<AgentId, bool> relevent_agents_safety_check_result;
 
-  bool is_agent_safe = true;
-
-  if (result == true) {
-    for (auto const state : rss_state_snapshot.individualResponses) {
-      is_agent_safe = is_agent_safe && !::ad::rss::state::isDangerous(state);
-    }
-  } else {
+  if (!result) {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   }
-  return is_agent_safe;
+  return rss_state_snapshot;
 }
 
-bool RssInterface::IsAgentSafe(const World &world, const AgentId &agent_id) {
+bool RssInterface::ExtractSafetyEvaluation(
+    const ::ad::rss::state::RssStateSnapshot &snapshot) {
+  bool safety_response = true;
+
+  for (auto const state : snapshot.individualResponses) {
+    safety_response = safety_response && !::ad::rss::state::isDangerous(state);
+  }
+  return safety_response;
+}
+
+PairwiseEvaluationReturn RssInterface::ExtractPairwiseSafetyEvaluation(
+    const ::ad::rss::state::RssStateSnapshot &snapshot) {
+  PairwiseEvaluationReturn pairwise_safety_response;
+  for (auto const state : snapshot.individualResponses) {
+    pairwise_safety_response[static_cast<AgentId>(state.objectId)] =
+        !::ad::rss::state::isDangerous(state);
+  }
+  return pairwise_safety_response;
+}
+
+::ad::rss::world::WorldModel RssInterface::ExtractRSSWorld(
+    const World &world, const AgentId &agent_id) {
   AgentPtr agent = world.GetAgent(agent_id);
   models::dynamic::State agent_state = agent->GetCurrentState();
 
@@ -309,7 +328,24 @@ bool RssInterface::IsAgentSafe(const World &world, const AgentId &agent_id) {
       CreateWorldModel(other_agents, agent_id, agent_rss_state, matched_object,
                        agent_dynamics, agent_route);
 
-  return RssCheck(rss_world_model);
+  return rss_world_model;
+}
+
+bool RssInterface::GetSafetyReponse(const World &world, const AgentId &ego_id) {
+  ::ad::rss::world::WorldModel rss_world_model = ExtractRSSWorld(world, ego_id);
+
+  ::ad::rss::state::RssStateSnapshot snapshot = RssCheck(rss_world_model);
+
+  return ExtractSafetyEvaluation(snapshot);
+}
+
+PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
+    const World &world, const AgentId &ego_id) {
+  ::ad::rss::world::WorldModel rss_world_model = ExtractRSSWorld(world, ego_id);
+
+  ::ad::rss::state::RssStateSnapshot snapshot = RssCheck(rss_world_model);
+
+  return ExtractPairwiseSafetyEvaluation(snapshot);
 }
 
 }  // namespace evaluation
