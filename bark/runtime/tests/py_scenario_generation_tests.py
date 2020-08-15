@@ -320,7 +320,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     scenario_generation = InteractionDatasetScenarioGenerationFull(
         params=params, num_scenarios=3)
-    # agent 1 is not part of the map, so it should only generate 2 scenarios
+    # agent 1 is not within the map, so it should only generate 2 scenarios
 
     self.assertEqual(scenario_generation.get_num_scenarios(), 2)
 
