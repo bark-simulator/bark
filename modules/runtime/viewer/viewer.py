@@ -86,10 +86,7 @@ class BaseViewer(Viewer):
         if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
-            pose = np.zeros(3)
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            pose = BaseViewer.generatePoseFromState(state)
 
             center = [pose[0],  pose[1]]
             self._update_world_dynamic_range(center)
@@ -162,11 +159,7 @@ class BaseViewer(Viewer):
             lh = len(history)
             for idx, state_action in enumerate(history):
                 state = state_action[0]
-                pose = np.zeros(3)
-                # pybind creates column based vectors, initialization maybe row-based -> we consider both
-                pose[0] = state[int(StateDefinition.X_POSITION)]
-                pose[1] = state[int(StateDefinition.Y_POSITION)]
-                pose[2] = state[int(StateDefinition.THETA_POSITION)]
+                pose = BaseViewer.generatePoseFromState(state)
                 transformed_polygon = shape.Transform(pose)
                 alpha=1-0.8*(lh-idx)/4
                 alpha = 0 if alpha<0 else alpha
@@ -261,12 +254,8 @@ class BaseViewer(Viewer):
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
-            pose = np.zeros(3)
-            # pybind creates column based vectors, initialization maybe row-based -> we consider both
-            state = agent.state
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            shape = agent.shape
+            pose = BaseViewer.generatePoseFromState(agent.state)
             transformed_polygon = shape.Transform(pose)
 
             centerx = (shape.front_dist - 0.5*(shape.front_dist+shape.rear_dist)) * math.cos(pose[2]) + pose[0]
@@ -288,3 +277,12 @@ class BaseViewer(Viewer):
       self.drawPolygon2d(road_corridor.polygon, color=color, alpha=.2)
       for lane_corridor in road_corridor.lane_corridors:
         self.drawLaneCorridor(lane_corridor)
+
+    @staticmethod
+    def generatePoseFromState(state):
+      # pybind creates column based vectors, initialization maybe row-based -> we consider both
+      pose = np.zeros(3)
+      pose[0] = state[int(StateDefinition.X_POSITION)]
+      pose[1] = state[int(StateDefinition.Y_POSITION)]
+      pose[2] = state[int(StateDefinition.THETA_POSITION)]
+      return pose
