@@ -57,6 +57,8 @@ void python_agent(py::module m) {
                     &Agent::SetRoadCorridor)
       .def_property("goal_definition", &Agent::GetGoalDefinition,
                     &Agent::SetGoalDefinition)
+      .def("SetFirstValidTimestamp", &Agent::SetFirstValidTimestamp)
+      .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
       .def(py::pickle(

@@ -164,7 +164,7 @@ class Agent : public Object {
     road_corridor_ = road_corridor;
   }
 
-  void SetFirstValidTimeStamp(const float first_valid_timestamp) {
+  void SetFirstValidTimestamp(const float first_valid_timestamp) {
     first_valid_timestamp_ = first_valid_timestamp;
   }
 

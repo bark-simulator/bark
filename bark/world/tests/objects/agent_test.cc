@@ -135,7 +135,7 @@ TEST(agent, IsValidAtTime) {
   init_state1 << 0.0, 0.0, 0.0, 0.0, 0.0;
   AgentPtr agent1(
       new Agent(init_state1, nullptr, nullptr, nullptr, shape, nullptr));
-  agent1->SetFirstValidTimeStamp(0.1);
+  agent1->SetFirstValidTimestamp(0.1);
 
   EXPECT_EQ(agent1->IsValidAtTime(0.0), false);
   EXPECT_EQ(agent1->IsValidAtTime(0.1), true);

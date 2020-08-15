@@ -40,6 +40,9 @@ Agent::Agent(const State& initial_state,
     max_history_length_ = params->GetInt(
         "MaxHistoryLength",
         "Maximum number of state-input pairs in state-input history", 50);
+    first_valid_timestamp_ = params->GetReal(
+        "FirstValidTimestamp",
+        "First valid time stamp at which agent shall be simulated", 0.0);
   }
 
   models::behavior::StateActionPair pair;

@@ -107,7 +107,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 behavior_params = self.__fill_agent_params(scenario_track_info.GetEgoTrackInfo(), scenario_track_info.GetOtherTrackInfos()[track_id])
                 behavior_model_name = self._behavior_model
                 track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, behavior_params)
-                behavior_params.Save("/tmp/agent_prams_{}.json".format(track_id))
+                behavior_params.Save("./tmp/agent_prams_{}.json".format(track_id))
             else:
                 track_params["behavior_model"] = None
             agent = self.interaction_ds_reader.AgentFromTrackfile(
@@ -125,7 +125,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         agent_params = ParameterServer(log_if_default=True, json=self._base_params_json)
         start_ts = agent_track_info.GetStartOffset()
         offset = ego_track_info.GetStartOffset()
-        agent_params["BehaviorModel"]["FirstValidTimestamp"] = float(start_ts - offset) / 1000.0
+        agent_params["FirstValidTimestamp"] = float(start_ts - offset) / 1000.0
         # print("\n", agent_params.ConvertToDict())
         self._agent_params.append(agent_params)
         return agent_params

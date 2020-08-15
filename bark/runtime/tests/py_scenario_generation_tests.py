@@ -28,6 +28,7 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
 from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
+from bark.core.world.agent import Agent
 import os
 
 
@@ -267,6 +268,29 @@ class ScenarioGenerationTests(unittest.TestCase):
     # agent 1 is not part of the map, so it should only generate 2 scenarios
 
     self.assertEqual(scenario_generation.get_num_scenarios(), 2)
+  
+  def test_dataset_scenario_generation_full_late(self):
+    # test wether agent 2 coming in late is correctly identified as invalid at first world time step
+    params = ParameterServer()
+
+    map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_late.csv")
+
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+
+    scenario_generation = InteractionDatasetScenarioGenerationFull(
+        params=params, num_scenarios=1)
+
+    world_state = scenario_generation.get_scenario(0).GetWorldState()
+    agent1 = world_state.agents(0)
+    agent2 = world_state.GetAgent(1)
+    world_time = world_state.GetWorldAtTime()
+    self.assertEqual(isinstance(agent1, Agent), True)
+    self.assertEqual(agent1.IsValidAtTime(world_time), True)
+    
+    self.assertEqual(isinstance(agent2, Agent), True)
+    self.assertEqual(agent2.IsValidAtTime(world_time), False)
 
   def test_dataset_scenario_generation(self):
     params = ParameterServer()
