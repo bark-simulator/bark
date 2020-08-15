@@ -270,16 +270,7 @@ class BaseViewer(Viewer):
           self.drawText(position=(0.1, 0.95), text="Time: {:.2f}".format(world.time), fontsize=14)
         
         if self.draw_ltl_debug_info:
-          observed_world = world.Observe([eval_agent_ids[0]])
-          if len(observed_world) == 0:
-                return
-          observed_world = observed_world[0]
-          for _, evaluator_type in enumerate(observed_world.evaluators):
-            if isinstance(observed_world.evaluators[evaluator_type], EvaluatorLTL):
-              label_functions = observed_world.evaluators[evaluator_type].label_functions
-              # we will only plot labels of first ltl evaluator
-              self.drawLabelsAsText(observed_world, label_functions, evaluator_type)
-              break
+          self.drawLTLDebugInfomation(world, eval_agent_ids[0])
                       
 
     def drawMap(self, map):
@@ -339,3 +330,15 @@ class BaseViewer(Viewer):
       if color is None:
         color = "blue"
       self.drawPolygon2d(road_corridor.polygon, color, facecolor=color, alpha=.2, zorder=2)
+
+    def drawLTLDebugInfomation(self, world, agent_id):
+      observed_world = world.Observe([agent_id])
+      if len(observed_world) == 0:
+          return
+      observed_world = observed_world[0]
+      for _, evaluator_type in enumerate(observed_world.evaluators):
+        if isinstance(observed_world.evaluators[evaluator_type], EvaluatorLTL):
+          label_functions = observed_world.evaluators[evaluator_type].label_functions
+          # we will only plot labels of first ltl evaluator
+          self.drawLabelsAsText(observed_world, label_functions, evaluator_type)
+          break
