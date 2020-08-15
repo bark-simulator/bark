@@ -268,6 +268,25 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(transformed_polygon, color, alpha, facecolor)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
+    
+    def drawSafetyResponses(self, world,ego_id, safety_responses):
+      ego_agent=world.agents[ego_id]
+      shape = ego_agent.shape
+      pose = BaseViewer.generatePoseFromState(ego_agent.state)
+      transformed_polygon = shape.Transform(pose)
+      self.drawLine2d(transformed_polygon, self.color_eval_agents_line, linewidth=3)
+
+      # draw response for other agents
+      relevent_agents = [
+          agent for agent in world.agents.values() if agent.id in safety_responses]
+      for agent in relevent_agents:
+        shape = agent.shape
+        pose = BaseViewer.generatePoseFromState(agent.state)
+        transformed_polygon = shape.Transform(pose)
+
+        safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
+            1, 0.4, 0, 1)
+        self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
 
     def drawLaneCorridor(self, lane_corridor, color="blue"):
       self.drawPolygon2d(lane_corridor.polygon, color=color, alpha=.5)

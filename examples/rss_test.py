@@ -94,6 +94,7 @@ for _ in range(0, 30):
   world.Step(sim_step_time)
   print(e.Evaluate(world),e.PairwiseEvaluate(world))
   viewer.drawWorld(world)
+  viewer.drawSafetyResponses(world,agent1.id,e.PairwiseEvaluate(world))
   viewer.show(block=False)
   time.sleep(sim_step_time/sim_real_time_factor)
 
