@@ -79,6 +79,8 @@ void python_evaluation(py::module m) {
     std::shared_ptr<EvaluatorRss>>(m, "EvaluatorRss")
     .def(py::init<const AgentId&, const std::string&>())
     .def(py::init<>())
+    .def("PairwiseEvaluate",
+        py::overload_cast<const World&>(&EvaluatorRss::PairwiseEvaluate))
     .def("__repr__", [](const EvaluatorRss &g) {
       return "bark.world.evaluation.EvaluatorRss";
     });

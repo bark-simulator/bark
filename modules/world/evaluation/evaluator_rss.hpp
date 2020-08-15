@@ -28,7 +28,10 @@ class EvaluatorRss : public BaseEvaluator {
       : agent_id_(agent_id), rss_(opendrive_file_name) {}
   virtual ~EvaluatorRss() {}
   virtual EvaluationReturn Evaluate(const World& world) {
-    return rss_.IsAgentSafe(world, agent_id_);
+    return rss_.GetSafetyReponse(world, agent_id_);
+  };
+  virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world){
+    return rss_.GetPairwiseSafetyReponse(world, agent_id_);
   };
 
  private:
