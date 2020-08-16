@@ -217,7 +217,7 @@ Distance RssInterface::CalculateMinStoppingDistance(
     const ::ad::map::route::FullRoute &ego_route) {
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
-      static_cast<double>(ego_rss_state.min_stopping_distance);
+      static_cast<double>(ego_rss_state.min_stopping_distance*1.5);
 
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
 

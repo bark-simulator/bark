@@ -292,6 +292,19 @@ class BaseViewer(Viewer):
         safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
             1, 0.4, 0, 1)
         self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
+        # elif isinstance(safety_responses[agent.id], tuple):
+        #   if all(safety_responses[agent.id]):
+        #     safe_color = (0.1, 0.9, 0, 1)
+        #     self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
+        #   else:
+        #     safe_color = (1, 0.4, 0, 1)
+        #     for i,response in enumerate(safety_responses[agent.id]):
+        #       if not response:
+        #         for contour in getShapeContour(transformed_polygon, i):
+        #           self.drawLine2d(contour, safe_color, linewidth=3)
+        # else:
+        #   raise NotImplementedError(
+        #       "Type of safety response drawing not implemented.")
 
     def drawLaneCorridor(self, lane_corridor, color="blue"):
       self.drawPolygon2d(lane_corridor.polygon, color=color, alpha=.5)
@@ -309,3 +322,20 @@ def generatePoseFromState(state):
   pose[1] = state[int(StateDefinition.Y_POSITION)]
   pose[2] = state[int(StateDefinition.THETA_POSITION)]
   return pose
+
+# def getShapeContour(shape, direction):
+#   if not isinstance(shape, np.ndarray):
+#     shape = shape.ToArray()
+
+#   idx = len(shape) // 2
+#   idx_2 = idx // 2
+#   idx_4 = idx_2 // 2
+
+#   if direction == 0:  # longitude
+#     return [np.vstack((shape[-idx_2:], shape[:idx_2])),
+#             np.vstack((shape[idx - idx_2 + 1:idx], shape[idx:idx + idx_2]))]
+#   elif direction == 1:  # latitude
+#     return [shape[idx_4:idx_4 + idx_2 + 1], shape[-idx_4 - idx_2:-idx_4]]
+#   else:
+#     raise NotImplementedError()
+  
