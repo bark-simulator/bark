@@ -23,15 +23,31 @@ namespace evaluation {
 class EvaluatorRss : public BaseEvaluator {
  public:
   EvaluatorRss() : agent_id_(std::numeric_limits<AgentId>::max()) {}
-  explicit EvaluatorRss(const AgentId& agent_id,
-                        const std::string& opendrive_file_name)
-      : agent_id_(agent_id), rss_(opendrive_file_name) {}
+  
+  explicit EvaluatorRss(
+      const AgentId& agent_id, const std::string& opendrive_file_name,
+      const std::vector<float>& default_vehicle_dynamics =
+          std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
+      const std::unordered_map<AgentId, std::vector<float>>&
+          agent_vehicle_dynamics =
+              std::unordered_map<AgentId, std::vector<float>>())
+      : agent_id_(agent_id),
+        rss_(opendrive_file_name, default_vehicle_dynamics,
+             agent_vehicle_dynamics) {}
+
   virtual ~EvaluatorRss() {}
+
   virtual EvaluationReturn Evaluate(const World& world) {
     return rss_.GetSafetyReponse(world, agent_id_);
   };
-  virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world){
+
+  virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
     return rss_.GetPairwiseSafetyReponse(world, agent_id_);
+  };
+
+  virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
+      const World& world) {
+    return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
   };
 
  private:
