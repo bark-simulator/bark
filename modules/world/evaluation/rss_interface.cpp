@@ -41,9 +41,9 @@ bool RssInterface::initializeOpenDriveMap(
 }
 
 ::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynamicsParameters(
-    double lon_max_accel, double lon_max_brake, double lon_min_brake,
-    double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
-    double lat_fluctuation_margin, double response_time) {
+    float lon_max_accel, float lon_max_brake, float lon_min_brake,
+    float lon_min_brake_correct, float lat_max_accel, float lat_min_brake,
+    float lat_fluctuation_margin, float response_time) {
   ::ad::rss::world::RssDynamics dynamics;
   dynamics.alphaLon.accelMax = Acceleration(lon_max_accel);
   dynamics.alphaLon.brakeMax = Acceleration(lon_max_brake);
@@ -57,10 +57,20 @@ bool RssInterface::initializeOpenDriveMap(
   return dynamics;
 }
 
-::ad::rss::world::RssDynamics
-RssInterface::GenerateDefaultVehicleDynamicsParameters() {
-  return GenerateVehicleDynamicsParameters(3.5, -8., -4., -3., 0.2, -0.8, 0.1,
-                                           1.);
+::ad::rss::world::RssDynamics RssInterface::GenerateAgentDynamicsParameters(
+    const AgentId &agent_id) {
+  if (agents_dynamics_.find(agent_id) != agents_dynamics_.end()) {
+    return GenerateVehicleDynamicsParameters(
+        agents_dynamics_[agent_id][0], agents_dynamics_[agent_id][1],
+        agents_dynamics_[agent_id][2], agents_dynamics_[agent_id][3],
+        agents_dynamics_[agent_id][4], agents_dynamics_[agent_id][5],
+        agents_dynamics_[agent_id][6], agents_dynamics_[agent_id][7]);
+  } else {
+    return GenerateVehicleDynamicsParameters(
+        default_dynamics_[0], default_dynamics_[1], default_dynamics_[2],
+        default_dynamics_[3], default_dynamics_[4], default_dynamics_[5],
+        default_dynamics_[6], default_dynamics_[7]);
+  }
 }
 
 ::ad::map::match::Object RssInterface::GetMatchObject(
@@ -217,7 +227,7 @@ Distance RssInterface::CalculateMinStoppingDistance(
     const ::ad::map::route::FullRoute &ego_route) {
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
-      static_cast<double>(ego_rss_state.min_stopping_distance*1.5);
+      static_cast<double>(ego_rss_state.min_stopping_distance * 1.5);
 
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
 
@@ -245,7 +255,7 @@ Distance RssInterface::CalculateMinStoppingDistance(
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
     ::ad::rss::world::RssDynamics relevent_agent_dynamics =
-        GenerateDefaultVehicleDynamicsParameters();
+        GenerateAgentDynamicsParameters(relevent_agent->GetAgentId());
 
     scene_creation.appendScenes(
         ::ad::rss::world::ObjectId(ego_id), ego_matched_object,
@@ -332,7 +342,7 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
       GenerateRoute(agent_center, agent_lane_corridor, matched_object);
 
   ::ad::rss::world::RssDynamics agent_dynamics =
-      GenerateDefaultVehicleDynamicsParameters();
+      GenerateAgentDynamicsParameters(agent_id);
   AgentState agent_rss_state = ConvertAgentState(agent_state, agent_dynamics);
 
   AgentMap other_agents = world.GetAgents();

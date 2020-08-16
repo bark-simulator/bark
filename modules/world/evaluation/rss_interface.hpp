@@ -77,8 +77,8 @@ class RssInterface {
                         const std::vector<float> &default_vehicle_dynamics,
                         const std::unordered_map<AgentId, std::vector<float>>
                             &agent_vehicle_dynamics)
-      : default_vehicle_dynamics_(default_vehicle_dynamics),
-        agent_vehicle_dynamics_(agent_vehicle_dynamics) {
+      : default_dynamics_(default_vehicle_dynamics),
+        agents_dynamics_(agent_vehicle_dynamics) {
     spdlog::set_level(spdlog::level::off);
     initializeOpenDriveMap(opendrive_file_name);
   }
@@ -96,12 +96,13 @@ class RssInterface {
  private:
   bool initializeOpenDriveMap(const std::string &opendrive_file_name);
 
-  ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynamicsParameters();
+  ::ad::rss::world::RssDynamics GenerateAgentDynamicsParameters(
+      const AgentId &agent_id);
 
   ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(
-      double lon_max_accel, double lon_max_brake, double lon_min_brake,
-      double lon_min_brake_correct, double lat_max_accel, double lat_min_brake,
-      double lat_fluctuation_margin, double response_time);
+      float lon_max_accel, float lon_max_brake, float lon_min_brake,
+      float lon_min_brake_correct, float lat_max_accel, float lat_min_brake,
+      float lat_fluctuation_margin, float response_time);
 
   ::ad::map::match::Object GetMatchObject(
       const models::dynamic::State &agent_state, const Polygon &agent_shape,
@@ -143,8 +144,8 @@ class RssInterface {
   ExtractPairwiseDirectionalSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot &snapshot);
 
-  std::vector<float> default_vehicle_dynamics_;
-  std::unordered_map<AgentId, std::vector<float>> agent_vehicle_dynamics_;
+  std::vector<float> default_dynamics_;
+  std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 };
 
 }  // namespace evaluation

@@ -29,11 +29,11 @@ class EvaluatorRss : public BaseEvaluator {
       const std::vector<float>& default_vehicle_dynamics =
           std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
       const std::unordered_map<AgentId, std::vector<float>>&
-          agent_vehicle_dynamics =
+          agents_vehicle_dynamics =
               std::unordered_map<AgentId, std::vector<float>>())
       : agent_id_(agent_id),
         rss_(opendrive_file_name, default_vehicle_dynamics,
-             agent_vehicle_dynamics) {}
+             agents_vehicle_dynamics) {}
 
   virtual ~EvaluatorRss() {}
 
