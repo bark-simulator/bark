@@ -23,7 +23,7 @@ namespace evaluation {
 class EvaluatorRss : public BaseEvaluator {
  public:
   EvaluatorRss() : agent_id_(std::numeric_limits<AgentId>::max()) {}
-  
+
   explicit EvaluatorRss(
       const AgentId& agent_id, const std::string& opendrive_file_name,
       const std::vector<float>& default_vehicle_dynamics =
@@ -37,14 +37,32 @@ class EvaluatorRss : public BaseEvaluator {
 
   virtual ~EvaluatorRss() {}
 
+  // Returns a boolean indicating the safety response of the specified agent.
+  // True if for each nearby agents, at least one of the all possible RSS
+  // situations is safe, false otherwise.
   virtual EvaluationReturn Evaluate(const World& world) {
     return rss_.GetSafetyReponse(world, agent_id_);
   };
 
+  // Returns an unorder_map indicating the pairwise safety respone of the
+  // specified agent to every other nearby agents. Key is AgentId of an nearby
+  // agent, value is true if at least one of the all possible RSS situations
+  // between the specified and the nearby agent is safe, false
+  // otherwise.
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
     return rss_.GetPairwiseSafetyReponse(world, agent_id_);
   };
 
+  // Returns an unorder_map indicating the pairwise directional safety respone
+  // of the specified agent to every other nearby agents. Key is AgentId of an
+  // nearby agent, value is a pair of directional safety response:
+  //
+  // 1. longitudinal safety response
+  // 2. latitudinal safety response
+  //
+  // It is true if at least one of the all possible RSS situations in the
+  // direction between the specified and the nearby agent is safe, false
+  // otherwise, respectively.
   virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
       const World& world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
