@@ -54,7 +54,6 @@ namespace bg = boost::geometry;
 namespace modules {
 namespace world {
 
-typedef std::map<AgentId, AgentPtr> AgentMap;
 using geometry::Point2d;
 using geometry::Polygon;
 using models::dynamic::Trajectory;
@@ -68,16 +67,33 @@ using objects::AgentPtr;
 namespace evaluation {
 
 typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
+typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
+    PairwiseDirectionalEvaluationReturn;
 
 class RssInterface {
  public:
   RssInterface() {}
-  explicit RssInterface(const std::string &opendrive_file_name) {
+  explicit RssInterface(const std::string &opendrive_file_name,
+                        const std::vector<float> &default_vehicle_dynamics,
+                        const std::unordered_map<AgentId, std::vector<float>>
+                            &agent_vehicle_dynamics)
+      : default_vehicle_dynamics_(default_vehicle_dynamics),
+        agent_vehicle_dynamics_(agent_vehicle_dynamics) {
     spdlog::set_level(spdlog::level::off);
     initializeOpenDriveMap(opendrive_file_name);
   }
+
+  bool GetSafetyReponse(const World &world, const AgentId &ego_id);
+
+  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World &world,
+                                                    const AgentId &ego_id);
+
+  PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
+      const World &world, const AgentId &ego_id);
+
   virtual ~RssInterface() {}
 
+ private:
   bool initializeOpenDriveMap(const std::string &opendrive_file_name);
 
   ::ad::rss::world::RssDynamics GenerateDefaultVehicleDynamicsParameters();
@@ -123,11 +139,14 @@ class RssInterface {
   PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot &snapshot);
 
-  bool GetSafetyReponse(const World &world, const AgentId &ego_id);
+  PairwiseDirectionalEvaluationReturn
+  ExtractPairwiseDirectionalSafetyEvaluation(
+      const ::ad::rss::state::RssStateSnapshot &snapshot);
 
-  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World &world,
-                                                    const AgentId &ego_id);
-};  // namespace evaluation
+  std::vector<float> default_vehicle_dynamics_;
+  std::unordered_map<AgentId, std::vector<float>> agent_vehicle_dynamics_;
+};
+
 }  // namespace evaluation
 }  // namespace world
 }  // namespace modules
