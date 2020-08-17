@@ -92,8 +92,9 @@
     "set": "cpp",
     "cfenv": "cpp",
     "random": "cpp",
-    "dense": "cpp"
-  },
+    "dense": "cpp",
+    "locale": "cpp"
+},
   "files.exclude": {
     ".vscode": false,
     "**/__pycache__": true,

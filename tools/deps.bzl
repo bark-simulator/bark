@@ -19,8 +19,8 @@ def bark_dependencies():
     _maybe(
     http_archive,
     name = "pybind11",
-    strip_prefix = "pybind11-2.3.0",
-    urls = ["https://github.com/pybind/pybind11/archive/v2.3.0.zip"],
+    strip_prefix = "pybind11-2.5.0",
+    urls = ["https://github.com/pybind/pybind11/archive/v2.5.0.zip"],
     build_file = "@bark_project//tools/pybind11:pybind.BUILD"
     )
 
@@ -59,10 +59,14 @@ def bark_dependencies():
     )
 
     _maybe(
-      git_repository,
+      new_git_repository,
       name = "com_github_google_glog",
       commit = "195d416e3b1c8dc06980439f6acd3ebd40b6b820",
-      remote = "https://github.com/google/glog"
+      remote = "https://github.com/google/glog",
+      build_file_content = """
+load("//:bazel/glog.bzl", "glog_library")
+glog_library(with_gflags=0)
+    """
     )
 
     # -------- ad-rss-lib -----------------------
@@ -119,7 +123,7 @@ def bark_dependencies():
     _maybe(
     native.new_local_repository,
     name = "python_linux",
-    path = "./python/venv/",
+    path = "./bark/python_wrapper/venv/",
     build_file_content = """
 cc_library(
     name = "python-lib",
@@ -129,6 +133,13 @@ cc_library(
     visibility = ["//visibility:public"],
 )
     """
+    )
+
+    _maybe(
+    git_repository,
+    name = "rule_monitor_project",
+    commit = "3bf19a30c72d615af3265c22c391d9bbc6806680",
+    remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
 
 def _maybe(repo_rule, name, **kwargs):

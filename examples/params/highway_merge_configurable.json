@@ -2,7 +2,7 @@
     "Scenario": {
         "Generation": {
             "ConfigurableScenarioGeneration": {
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
                 "RandomSeed": 1000,
                 "SinksSources": [
                     {
@@ -183,7 +183,7 @@
             }
         }
     },
-    "World" :{
-        "remove_agents_out_of_map" : true
+    "World": {
+        "remove_agents_out_of_map": true
     }
 }

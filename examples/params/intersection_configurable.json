@@ -1,0 +1,281 @@
+{
+    "Scenario": {
+        "Generation": {
+            "ConfigurableScenarioGeneration": {
+                "MapFilename": "bark/runtime/tests/data/three_way_plain.xodr",
+                "RandomSeed": 1000,
+                "SinksSources": [
+                    {
+                        "SourceSink": [
+                            [
+                                -30.0,
+                                -2.0
+                            ],
+                            [
+                                -2.0,
+                                -30.0
+                            ]
+                        ],
+                        "Description": "west_south",
+                        "ConfigAgentStatesGeometries": {
+                            "Type": "UniformVehicleDistribution",
+                            "LanePositions": [
+                                1
+                            ],
+                            "VehicleDistanceRange": [
+                                2,
+                                3
+                            ],
+                            "OtherVehicleVelocityRange": [
+                                5,
+                                10
+                            ],
+                            "SRange": [
+                                0.1,
+                                0.9
+                            ]
+                        },
+                        "ConfigBehaviorModels": {
+                            "Type": "FixedBehaviorType",
+                            "ModelType": "BehaviorIDMClassic",
+                            "ModelParams": {
+                                "BehaviorIDMClassic": {
+                                    "MaxVelocity": 30.0,
+                                    "MinimumSpacing": 1.0,
+                                    "DesiredTimeHeadway": 1.2,
+                                    "MaxAcceleration": 1.7000000476837158,
+                                    "AccelerationLowerBound": -10.0,
+                                    "AccelerationUpperBound": 8.0,
+                                    "DesiredVelocity": 20.0,
+                                    "ComfortableBrakingAcceleration": 1.6699999570846558,
+                                    "MinVelocity": 0.0,
+                                    "Exponent": 4
+                                }
+                            }
+                        },
+                        "ConfigExecutionModels": {
+                            "Type": "FixedExecutionType",
+                            "ModelType": "ExecutionModelInterpolate"
+                        },
+                        "ConfigDynamicModels": {
+                            "Type": "FixedDynamicType",
+                            "ModelType": "SingleTrackModel"
+                        },
+                        "ConfigGoalDefinitions": {
+                            "Type": "FixedGoalTypes",
+                            "GoalTypeControlled": "EndOfLane",
+                            "GoalTypeOthers": "EndOfLane",
+                            "MaxLateralDist": [
+                                0.05,
+                                0.05
+                            ],
+                            "LongitudinalRange": [
+                                0.8,
+                                1
+                            ],
+                            "MaxOrientationDifference": [
+                                0.8,
+                                1
+                            ],
+                            "VelocityRange": [
+                                0.8,
+                                1
+                            ]
+                        },
+                        "ConfigControlledAgents": {
+                            "Type": "NoneControlled"
+                        },
+                        "AgentParams": {
+                            "MaxHistoryLength": 50
+                        }
+                    },
+                    {
+                        "SourceSink": [
+                            [
+                                2.0,
+                                -30.0
+                            ],
+                            [
+                                -30.0,
+                                2.0
+                            ]
+                        ],
+                        "Description": "south_west",
+                        "ConfigAgentStatesGeometries": {
+                            "Type": "UniformVehicleDistribution",
+                            "LanePositions": [
+                                0
+                            ],
+                            "VehicleDistanceRange": [
+                                2,
+                                3
+                            ],
+                            "OtherVehicleVelocityRange": [
+                                5,
+                                10
+                            ],
+                            "SRange": [
+                                0.2,
+                                0.3
+                            ]
+                        },
+                        "ConfigBehaviorModels": {
+                            "Type": "FixedBehaviorType",
+                            "ModelType": "BehaviorConstantAcceleration",
+                            "ModelParams": {
+                                "BehaviorIDMClassic": {
+                                    "MaxVelocity": 30.0,
+                                    "MinimumSpacing": 1.0,
+                                    "DesiredTimeHeadway": 1.2,
+                                    "MaxAcceleration": 1.7000000476837158,
+                                    "AccelerationLowerBound": -10.0,
+                                    "AccelerationUpperBound": 8.0,
+                                    "DesiredVelocity": 20.0,
+                                    "ComfortableBrakingAcceleration": 1.6699999570846558,
+                                    "MinVelocity": 0.0,
+                                    "Exponent": 4
+                                }
+                            }
+                        },
+                        "ConfigExecutionModels": {
+                            "Type": "FixedExecutionType",
+                            "ModelType": "ExecutionModelInterpolate"
+                        },
+                        "ConfigDynamicModels": {
+                            "Type": "FixedDynamicType",
+                            "ModelType": "SingleTrackModel"
+                        },
+                        "ConfigGoalDefinitions": {
+                            "Type": "FixedGoalTypes",
+                            "GoalTypeControlled": "EndOfLane",
+                            "GoalTypeOthers": "EndOfLane",
+                            "MaxLateralDist": [
+                                0.2,
+                                0.2
+                            ],
+                            "LongitudinalRange": [
+                                0.6,
+                                1
+                            ],
+                            "MaxOrientationDifference": [
+                                0.04,
+                                0.04
+                            ],
+                            "VelocityRange": [
+                                10,
+                                20
+                            ]
+                        },
+                        "ConfigControlledAgents": {
+                            "Type": "RandomSingleAgent"
+                        },
+                        "AgentParams": {
+                            "MaxHistoryLength": 50
+                        }
+                    },
+                    {
+                        "SourceSink": [
+                            [
+                                -30.0,
+                                -2.0
+                            ],
+                            [
+                                30.0,
+                                -2.0
+                            ]
+                        ],
+                        "Description": "west_east",
+                        "ConfigAgentStatesGeometries": {
+                            "Type": "UniformVehicleDistribution",
+                            "LanePositions": [
+                                1
+                            ],
+                            "VehicleDistanceRange": [
+                                1,
+                                2
+                            ],
+                            "OtherVehicleVelocityRange": [
+                                4,
+                                6
+                            ],
+                            "SRange": [
+                                0.1,
+                                0.9
+                            ]
+                        },
+                        "ConfigBehaviorModels": {
+                            "Type": "FixedBehaviorType",
+                            "ModelType": "BehaviorIDMClassic",
+                            "ModelParams": {
+                                "BehaviorIDMClassic": {
+                                    "MaxVelocity": 30.0,
+                                    "MinimumSpacing": 1.0,
+                                    "DesiredTimeHeadway": 1.2,
+                                    "MaxAcceleration": 1.7000000476837158,
+                                    "AccelerationLowerBound": -10.0,
+                                    "AccelerationUpperBound": 8.0,
+                                    "DesiredVelocity": 20.0,
+                                    "ComfortableBrakingAcceleration": 1.6699999570846558,
+                                    "MinVelocity": 0.0,
+                                    "Exponent": 4
+                                }
+                            }
+                        },
+                        "ConfigExecutionModels": {
+                            "Type": "FixedExecutionType",
+                            "ModelType": "ExecutionModelInterpolate"
+                        },
+                        "ConfigDynamicModels": {
+                            "Type": "FixedDynamicType",
+                            "ModelType": "SingleTrackModel"
+                        },
+                        "ConfigGoalDefinitions": {
+                            "Type": "FixedGoalTypes",
+                            "GoalTypeControlled": "EndOfLane",
+                            "GoalTypeOthers": "EndOfLane",
+                            "MaxLateralDist": [
+                                0.05,
+                                0.05
+                            ],
+                            "LongitudinalRange": [
+                                0.8,
+                                1
+                            ],
+                            "MaxOrientationDifference": [
+                                0.8,
+                                1
+                            ],
+                            "VelocityRange": [
+                                0.8,
+                                1
+                            ]
+                        },
+                        "ConfigControlledAgents": {
+                            "Type": "NoneControlled"
+                        },
+                        "AgentParams": {
+                            "MaxHistoryLength": 50
+                        }
+                    }
+                ],
+                "ConflictResolution": {
+                    "west_south/west_east": [
+                        0.45,
+                        0.55
+                    ],
+                    "south_west/west_east": [
+                        0.5,
+                        0.5
+                    ],
+                    "south_west/west_south": [
+                        1.0,
+                        0.0
+                    ]
+                }
+            }
+        }
+    },
+    "World": {
+        "remove_agents_out_of_map": true
+    }
+}

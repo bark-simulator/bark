@@ -99,7 +99,7 @@
     "Scenario": {
         "Generation": {
             "UniformVehicleDistribution": {
-                "MapFilename": "modules/runtime/tests/data/city_highway_straight.xodr",
+                "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoalStart": [
                     5111.626,
                     5006.8305
@@ -250,6 +250,6 @@
         "real_time_factor": 1
     },
     "World": {
-        "remove_agents_out_of_map":true
+        "remove_agents_out_of_map": true
     }
 }
