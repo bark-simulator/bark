@@ -138,6 +138,9 @@ class Agent : public Object {
   ExecutionStatus GetExecutionStatus() const {
     return execution_model_->GetExecutionStatus();
   }
+  float GetFirstValidTimestamp() const {
+    return first_valid_timestamp_;
+  }
 
   //! Setter
   void SetBehaviorModel(const BehaviorModelPtr& behavior_model_ptr) {

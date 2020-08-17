@@ -57,7 +57,7 @@ void python_agent(py::module m) {
                     &Agent::SetRoadCorridor)
       .def_property("goal_definition", &Agent::GetGoalDefinition,
                     &Agent::SetGoalDefinition)
-      .def("SetFirstValidTimestamp", &Agent::SetFirstValidTimestamp)
+      .def_property("first_valid_timestamp", &Agent::GetFirstValidTimestamp, &Agent::SetFirstValidTimestamp)
       .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
@@ -73,10 +73,11 @@ void python_agent(py::module m) {
                 a.GetExecutionModel(),                           // 7
                 a.GetDynamicModel(),                             // 8
                 a.GetCurrentState(),                             // 9
-                GoalDefinitionToPython(a.GetGoalDefinition()));  // 10
+                a.GetFirstValidTimestamp(),                      // 10
+                GoalDefinitionToPython(a.GetGoalDefinition()));  // 11
           },
           [](py::tuple t) {
-            if (t.size() != 10)
+            if (t.size() != 11)
               throw std::runtime_error("Invalid agent state!");
 
             using bark::models::dynamic::SingleTrackModel;
@@ -88,8 +89,9 @@ void python_agent(py::module m) {
                         std::make_shared<ExecutionModelInterpolate>(
                             t[6].cast<ExecutionModelInterpolate>()),
                         t[1].cast<bark::geometry::Polygon>(), nullptr,
-                        PythonToGoalDefinition(t[9].cast<py::tuple>()));
+                        PythonToGoalDefinition(t[10].cast<py::tuple>()));
             agent.SetAgentId(t[2].cast<AgentId>());
+            agent.SetFirstValidTimestamp(t[9].cast<float>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
             return agent;
           }));

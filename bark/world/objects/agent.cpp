@@ -73,6 +73,7 @@ Agent::Agent(const Agent& other_agent)
       road_corridor_(other_agent.road_corridor_),
       history_(other_agent.history_),
       max_history_length_(other_agent.max_history_length_),
+      first_valid_timestamp_(other_agent.first_valid_timestamp_),
       goal_definition_(other_agent.goal_definition_) {}
 
 void Agent::PlanBehavior(const float& min_planning_dt,
