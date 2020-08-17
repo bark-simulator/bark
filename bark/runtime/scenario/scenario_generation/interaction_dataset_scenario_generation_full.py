@@ -46,6 +46,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._base_params_json = params_temp[
             "BaseParams", "Initial parameters of each scenario", ParameterServer(log_if_default=True)].ConvertToDict()
         self._agent_params = []
+        self._starting_offset_ms = params_temp["StartingOffsetMs", "Starting Offset to each agent in miliseconds", 500]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -57,7 +58,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         for track_file_name in self._track_file_name_list:
 
             dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                                   track_filename=track_file_name)
+                                                   track_filename=track_file_name, starting_offset_ms = self._starting_offset_ms)
             scenario_track_info_list = dataset_decomposer.decompose()
 
             # for scenario_idx in range(0, num_scenarios):
@@ -110,8 +111,10 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 behavior_params.Save("./tmp/agent_prams_{}.json".format(track_id))
             else:
                 track_params["behavior_model"] = None
+
             agent = self.interaction_ds_reader.AgentFromTrackfile(
                 track_params, self._params, scenario_track_info, track_id)
+            agent.first_valid_timestamp = scenario_track_info.GetOffsetOfAgentMillisec(track_id)
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
@@ -123,9 +126,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __fill_agent_params(self, ego_track_info, agent_track_info):
         agent_params = ParameterServer(log_if_default=True, json=self._base_params_json)
-        start_ts = agent_track_info.GetStartOffset()
-        offset = ego_track_info.GetStartOffset()
-        agent_params["FirstValidTimestamp"] = float(start_ts - offset) / 1000.0
-        # print("\n", agent_params.ConvertToDict())
         self._agent_params.append(agent_params)
         return agent_params
+        
+        # print("\n", agent_params.ConvertToDict())

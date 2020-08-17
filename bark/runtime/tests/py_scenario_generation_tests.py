@@ -278,19 +278,24 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["StartingOffsetMs"] = 0
 
     scenario_generation = InteractionDatasetScenarioGenerationFull(
         params=params, num_scenarios=1)
 
-    world_state = scenario_generation.get_scenario(0).GetWorldState()
-    agent1 = world_state.agents(0)
-    agent2 = world_state.GetAgent(1)
-    world_time = world_state.GetWorldAtTime()
+    scenario = scenario_generation.get_scenario(0)
+    world_state = scenario.GetWorldState()
+    agent1 = world_state.GetAgent(1)
+    agent2 = world_state.GetAgent(2)
+
+    self.assertAlmostEqual(agent1.first_valid_timestamp, 0.0)
+    self.assertAlmostEqual(agent2.first_valid_timestamp, 0.3)
+    
     self.assertEqual(isinstance(agent1, Agent), True)
-    self.assertEqual(agent1.IsValidAtTime(world_time), True)
+    self.assertEqual(agent1.IsValidAtTime(world_state.time), True)
     
     self.assertEqual(isinstance(agent2, Agent), True)
-    self.assertEqual(agent2.IsValidAtTime(world_time), False)
+    self.assertEqual(agent2.IsValidAtTime(world_state.time), False)
 
   def test_dataset_scenario_generation(self):
     params = ParameterServer()
