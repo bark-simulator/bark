@@ -54,6 +54,7 @@ namespace bg = boost::geometry;
 namespace bark {
 namespace world {
 
+using geometry::Line;
 using geometry::Point2d;
 using geometry::Polygon;
 using models::dynamic::Trajectory;
