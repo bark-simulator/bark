@@ -108,7 +108,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 behavior_params = self.__fill_agent_params(scenario_track_info.GetEgoTrackInfo(), scenario_track_info.GetOtherTrackInfos()[track_id])
                 behavior_model_name = self._behavior_model
                 track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, behavior_params)
-                behavior_params.Save("./tmp/agent_prams_{}.json".format(track_id))
+                #behavior_params.Save("/tmp/agent_prams_{}.json".format(track_id))
             else:
                 track_params["behavior_model"] = None
 
