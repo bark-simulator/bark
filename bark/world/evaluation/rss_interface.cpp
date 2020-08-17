@@ -163,7 +163,7 @@ FullRoute RssInterface::GenerateRoute(
         ::ad::map::point::isValid(routing_targets)) {
       FullRoute route = ::ad::map::route::planning::planRoute(
           route_starting_point, routing_targets,
-          ::ad::map::route::RouteCreationMode::AllRoutableLanes);
+          ::ad::map::route::RouteCreationMode::AllNeighborLanes);
       routes.push_back(route);
       routes_probability.push_back(position.probability);
     } else {
@@ -172,7 +172,7 @@ FullRoute RssInterface::GenerateRoute(
       std::vector<FullRoute> possible_routes =
           ::ad::map::route::planning::predictRoutesOnDistance(
               route_starting_point, Distance(50.),
-              ::ad::map::route::RouteCreationMode::AllRoutableLanes);
+              ::ad::map::route::RouteCreationMode::AllNeighborLanes);
       for (const auto &possible_route : possible_routes) {
         routes.push_back(possible_route);
         routes_probability.push_back(0);
@@ -270,7 +270,7 @@ Distance RssInterface::CalculateMinStoppingDistance(
         relevent_agent->GetCurrentState();
     Polygon relevent_agent_shape = relevent_agent->GetShape();
     auto const other_matched_object = GetMatchObject(
-        relevent_agent_state, relevent_agent_shape, Distance(2.0));
+        relevent_agent_state, relevent_agent_shape, Distance(0.5));
     Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
 
     ::ad::rss::world::RssDynamics relevent_agent_dynamics =
@@ -353,7 +353,7 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
 
   Polygon agent_shape = agent->GetShape();
   ::ad::map::match::Object matched_object =
-      GetMatchObject(agent_state, agent_shape, Distance(2.0));
+      GetMatchObject(agent_state, agent_shape, Distance(1.));
 
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
