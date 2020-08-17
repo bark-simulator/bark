@@ -4,19 +4,19 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_
-#define MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_
+#ifndef BARK_WORLD_EVALUATION_RSS_INTERFACE_HPP_
+#define BARK_WORLD_EVALUATION_RSS_INTERFACE_HPP_
 
 #include <fstream>
 #include <streambuf>
 #include <string>
 
-#include "modules/geometry/line.hpp"
-#include "modules/geometry/polygon.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
-#include "modules/world/map/map_interface.hpp"
-#include "modules/world/objects/agent.hpp"
-#include "modules/world/world.hpp"
+#include "bark/geometry/line.hpp"
+#include "bark/geometry/polygon.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
+#include "bark/world/map/map_interface.hpp"
+#include "bark/world/objects/agent.hpp"
+#include "bark/world/world.hpp"
 
 #include <spdlog/spdlog.h>
 #include <ad/map/lane/Operation.hpp>
@@ -51,7 +51,7 @@ struct AgentState {
 };
 
 namespace bg = boost::geometry;
-namespace modules {
+namespace bark {
 namespace world {
 
 using geometry::Point2d;
@@ -201,6 +201,6 @@ class RssInterface {
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_RSS_INTERFACE_HPP_
+#endif  // BARK_WORLD_EVALUATION_RSS_INTERFACE_HPP_

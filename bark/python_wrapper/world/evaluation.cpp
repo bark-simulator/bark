@@ -13,6 +13,7 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
+#include "bark/world/evaluation/evaluator_rss.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -76,6 +77,25 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorStepCount& g) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
+      });
+
+  py::class_<EvaluatorRss, BaseEvaluator, std::shared_ptr<EvaluatorRss>>(
+      m, "EvaluatorRss")
+      .def(py::init<>())
+      .def(py::init<const AgentId&, const std::string&>())
+      .def(py::init<const AgentId&, const std::string&,
+                    const std::vector<float>&>())
+      .def(py::init<const AgentId&, const std::string&,
+                    const std::vector<float>&,
+                    const std::unordered_map<AgentId, std::vector<float>>&>())
+      .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRss::Evaluate))
+      .def("PairwiseEvaluate",
+           py::overload_cast<const World&>(&EvaluatorRss::PairwiseEvaluate))
+      .def("PairwiseDirectionalEvaluate",
+           py::overload_cast<const World&>(
+               &EvaluatorRss::PairwiseDirectionalEvaluate))
+      .def("__repr__", [](const EvaluatorRss& g) {
+        return "bark.core.world.evaluation.EvaluatorRss";
       });
 
   python_ltl(m.def_submodule("ltl", "LTL Rules"));

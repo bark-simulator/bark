@@ -122,10 +122,7 @@ class BaseViewer(Viewer):
         if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
-            pose = np.zeros(3)
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            pose = generatePoseFromState(state)
 
             center = [pose[0],  pose[1]]
             self._update_world_dynamic_range(center)
@@ -203,11 +200,7 @@ class BaseViewer(Viewer):
             lh = len(history)
             for idx, state_action in enumerate(history):
                 state = state_action[0]
-                pose = np.zeros(3)
-                # pybind creates column based vectors, initialization maybe row-based -> we consider both
-                pose[0] = state[int(StateDefinition.X_POSITION)]
-                pose[1] = state[int(StateDefinition.Y_POSITION)]
-                pose[2] = state[int(StateDefinition.THETA_POSITION)]
+                pose = generatePoseFromState(state)
                 transformed_polygon = shape.Transform(pose)
                 alpha = 1-0.8*(lh-idx)/3.4
                 alpha = 0 if alpha < 0 else alpha
@@ -341,12 +334,8 @@ class BaseViewer(Viewer):
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
-            pose = np.zeros(3)
-            # pybind creates column based vectors, initialization maybe row-based -> we consider both
             state = agent.state
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            pose = generatePoseFromState(state)
             transformed_polygon = shape.Transform(pose)
 
             centerx = (shape.front_dist - 0.5*(shape.front_dist +
@@ -362,6 +351,29 @@ class BaseViewer(Viewer):
                                alpha, facecolor, zorder=10)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
+
+    def drawSafetyResponses(self, world, ego_id, safety_responses):
+      ego_agent = world.agents[ego_id]
+      shape = ego_agent.shape
+      pose = generatePoseFromState(ego_agent.state)
+      transformed_polygon = shape.Transform(pose)
+      self.drawLine2d(
+          transformed_polygon,
+          self.color_eval_agents_line,
+          linewidth=3)
+
+      # draw response for other agents
+      relevent_agents = [
+          agent for agent in world.agents.values() if agent.id in safety_responses]
+      for agent in relevent_agents:
+        shape = agent.shape
+        pose = generatePoseFromState(agent.state)
+        transformed_polygon = shape.Transform(pose)
+
+        # if isinstance(safety_responses[agent.id], bool):
+        safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
+            1, 0.4, 0, 1)
+        self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -390,3 +402,11 @@ class BaseViewer(Viewer):
                 self.drawLabelsAsText(
                     observed_world, label_functions, evaluator_type)
                 break
+      
+def generatePoseFromState(state):
+  # pybind creates column based vectors, initialization maybe row-based -> we consider both
+  pose = np.zeros(3)
+  pose[0] = state[int(StateDefinition.X_POSITION)]
+  pose[1] = state[int(StateDefinition.Y_POSITION)]
+  pose[2] = state[int(StateDefinition.THETA_POSITION)]
+  return pose

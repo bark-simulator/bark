@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "modules/world/evaluation/rss_interface.hpp"
+#include "bark/world/evaluation/rss_interface.hpp"
 
 using ::ad::map::point::ENUCoordinate;
 using ::ad::map::route::FullRoute;
@@ -12,7 +12,7 @@ using ::ad::physics::Acceleration;
 using ::ad::physics::Distance;
 using ::ad::physics::Duration;
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -399,4 +399,4 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(const World &world,
 
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
