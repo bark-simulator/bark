@@ -4,19 +4,19 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef MODULES_WORLD_EVALUATION_EVALUATOR_RSS_HPP_
-#define MODULES_WORLD_EVALUATION_EVALUATOR_RSS_HPP_
+#ifndef BARK_WORLD_EVALUATION_EVALUATOR_RSS_HPP_
+#define BARK_WORLD_EVALUATION_EVALUATOR_RSS_HPP_
 
 #include <limits>
 #include <memory>
 #include <string>
 
-#include "modules/world/evaluation/base_evaluator.hpp"
-#include "modules/world/evaluation/rss_interface.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/world.hpp"
+#include "bark/world/evaluation/base_evaluator.hpp"
+#include "bark/world/evaluation/rss_interface.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/world.hpp"
 
-namespace modules {
+namespace bark {
 namespace world {
 namespace evaluation {
 
@@ -74,6 +74,6 @@ class EvaluatorRss : public BaseEvaluator {
 };
 }  // namespace evaluation
 }  // namespace world
-}  // namespace modules
+}  // namespace bark
 
-#endif  // MODULES_WORLD_EVALUATION_EVALUATOR_RSS_HPP_
+#endif  // BARK_WORLD_EVALUATION_EVALUATOR_RSS_HPP_

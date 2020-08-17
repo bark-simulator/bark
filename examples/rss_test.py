@@ -6,20 +6,20 @@
 import numpy as np
 import time
 import os
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
-from modules.runtime.commons.xodr_parser import XodrParser
-from bark.models.behavior import BehaviorConstantVelocity
-from bark.models.execution import ExecutionModelInterpolate
-from bark.models.dynamic import SingleTrackModel
-from bark.world import World
-from bark.world.goal_definition import GoalDefinitionPolygon
-from bark.world.agent import Agent
-from bark.world.map import MapInterface
-from bark.geometry.standard_shapes import CarLimousine
-from bark.geometry import Point2d, Polygon2d
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.commons.xodr_parser import XodrParser
+from bark.core.models.behavior import BehaviorConstantAcceleration
+from bark.core.models.execution import ExecutionModelInterpolate
+from bark.core.models.dynamic import SingleTrackModel
+from bark.core.world import World
+from bark.core.world.goal_definition import GoalDefinitionPolygon
+from bark.core.world.agent import Agent
+from bark.core.world.map import MapInterface
+from bark.core.geometry.standard_shapes import CarLimousine
+from bark.core.geometry import Point2d, Polygon2d
 
-from bark.world.evaluation import EvaluatorRss
+from bark.core.world.evaluation import EvaluatorRss
 
 
 # Parameters Definitions
@@ -29,19 +29,19 @@ param_server = ParameterServer()
 world = World(param_server)
 
 # Model Definitions
-behavior_model = BehaviorConstantVelocity(param_server)
+behavior_model = BehaviorConstantAcceleration(param_server)
 execution_model = ExecutionModelInterpolate(param_server)
 dynamic_model = SingleTrackModel(param_server)
 
-behavior_model2 = BehaviorConstantVelocity(param_server)
+behavior_model2 = BehaviorConstantAcceleration(param_server)
 execution_model2 = ExecutionModelInterpolate(param_server)
 dynamic_model2 = SingleTrackModel(param_server)
 
-behavior_model3 = BehaviorConstantVelocity(param_server)
+behavior_model3 = BehaviorConstantAcceleration(param_server)
 execution_model3 = ExecutionModelInterpolate(param_server)
 dynamic_model3 = SingleTrackModel(param_server)
 
-map_path="modules/runtime/tests/data/centered_city_highway_straight.xodr"
+map_path="bark/runtime/tests/data/centered_city_highway_straight.xodr"
 
 # Map Definition
 xodr_parser = XodrParser(map_path)
@@ -81,7 +81,7 @@ world.AddAgent(agent2)
 agent_2d_shape3 = CarLimousine()
 goal_polygon3 = Polygon2d([0, 0, 0],[Point2d(-1,-1),Point2d(-1,1),Point2d(1,1), Point2d(1,-1)])
 goal_polygon3 = goal_polygon3.Translate(Point2d(-1,120))
-init_state3 = np.array([0, -1, -120, 0, 7])
+init_state3 = np.array([0, -1.8, -120, 0, 7])
 agent_params3 = param_server.addChild("agent")
 agent3 = Agent(init_state3,
                behavior_model3,
@@ -94,7 +94,7 @@ agent3 = Agent(init_state3,
 world.AddAgent(agent3)
 
 # viewer
-viewer = PygameViewer(params=param_server, follow_agent_id=agent1.id,x_range=[-60,60],y_range=[-60,60])
+viewer = MPViewer(params=param_server, follow_agent_id=agent1.id,x_range=[-60,60],y_range=[-60,60])
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

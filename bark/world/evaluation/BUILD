@@ -3,25 +3,41 @@ cc_library(
     hdrs = [
         "base_evaluator.hpp",
     ],
-    visibility = ["//visibility:public"],
     deps = [
-        "//modules/commons",
-        "//modules/geometry",
+        "//bark/geometry",
+        "//bark/commons:commons",
         "@boost//:geometry",
     ],
+    visibility = ["//visibility:public"],
 )
+
 
 cc_library(
     name = "evaluator_goal_reached",
     hdrs = [
         "evaluator_goal_reached.hpp",
     ],
-    visibility = ["//visibility:public"],
     deps = [
+        "//bark/world:world",
         ":base_evaluator",
-        "//modules/world",
         "@boost//:geometry",
+
     ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "evaluator_distance_to_goal",
+    hdrs = [
+        "evaluator_distance_to_goal.hpp",
+    ],
+    deps = [
+        "//bark/world:world",
+        ":base_evaluator",
+        "@boost//:geometry",
+
+    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -29,80 +45,82 @@ cc_library(
     hdrs = [
         "evaluator_behavior_expired.hpp",
     ],
-    visibility = ["//visibility:public"],
     deps = [
+        "//bark/world:world",
+        "//bark/models/behavior:behavior",
         ":base_evaluator",
-        "//modules/models/behavior",
-        "//modules/world",
         "@boost//:geometry",
+
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "evaluator_collision_agents",
-    srcs = [
-        "evaluator_collision_agents.cpp",
-    ],
     hdrs = [
-        "evaluator_collision_agents.hpp",
+        "evaluator_collision_agents.hpp"
+    ],
+    srcs = [
+        "evaluator_collision_agents.cpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/geometry",
+        "//bark/commons:commons",
+        "@boost//:geometry",
+        "//bark/world:world",
+
     ],
     visibility = ["//visibility:public"],
-    deps = [
-        "//modules/commons",
-        "//modules/geometry",
-        "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
-        "@boost//:geometry",
-    ],
 )
 
 cc_library(
     name = "evaluator_collision_ego_agent",
-    srcs = [
-        "evaluator_collision_ego_agent.cpp",
-    ],
     hdrs = [
-        "evaluator_collision_ego_agent.hpp",
+        "evaluator_collision_ego_agent.hpp"
+    ],
+    srcs = [
+        "evaluator_collision_ego_agent.cpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
+        "//bark/geometry",
+        "//bark/commons:commons",
+        "//bark/models/dynamic:dynamic",
+        "@boost//:geometry"
     ],
     visibility = ["//visibility:public"],
-    deps = [
-        "//modules/commons",
-        "//modules/geometry",
-        "//modules/models/dynamic",
-        "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
-        "@boost//:geometry",
-    ],
 )
-
 cc_library(
     name = "evaluator_step_count",
     hdrs = [
-        "evaluator_step_count.hpp",
+        "evaluator_step_count.hpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
+        "//bark/geometry",
+        "//bark/commons:commons",
+        "//bark/models/dynamic:dynamic",
+        "@boost//:geometry"
     ],
     visibility = ["//visibility:public"],
-    deps = [
-        "//modules/commons",
-        "//modules/geometry",
-        "//modules/models/dynamic",
-        "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
-        "@boost//:geometry",
-    ],
 )
 
 cc_library(
     name = "evaluator_drivable_area",
     hdrs = [
-        "evaluator_drivable_area.hpp",
+        "evaluator_drivable_area.hpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/geometry",
+        "@boost//:geometry",
+        "//bark/world:world",
+
     ],
     visibility = ["//visibility:public"],
-    deps = [
-        "//modules/geometry",
-        "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
-        "@boost//:geometry",
-    ],
 )
 
 cc_library(
@@ -111,10 +129,10 @@ cc_library(
     hdrs = ["rss_interface.hpp"],
     visibility = ["//visibility:public"],
     deps = [
-        "//modules/commons",
-        "//modules/geometry",
-        "//modules/models/dynamic",
-        "//modules/world",
+        "//bark/commons",
+        "//bark/geometry",
+        "//bark/models/dynamic",
+        "//bark/world",
         "@ad_rss_lib//:ad_rss",
         "@ad_rss_lib//:ad_rss_map_integration",
         "@boost//:geometry",
@@ -129,28 +147,32 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":rss_interface",
-        "//modules/world",
-        "//modules/world/evaluation:base_evaluator",
+        "//bark/world",
+        "//bark/world/evaluation:base_evaluator",
     ],
 )
 
 cc_library(
     name = "evaluation",
-    visibility = ["//visibility:public"],
     deps = [
-        ":base_evaluator",
-        ":evaluator_behavior_expired",
-        ":evaluator_collision_agents",
-        ":evaluator_collision_ego_agent",
-        ":evaluator_drivable_area",
         ":evaluator_goal_reached",
-        ":evaluator_rss",
+        ":base_evaluator",
+        ":evaluator_collision_agents",
+        ":evaluator_drivable_area",
+        ":evaluator_collision_ego_agent",
         ":evaluator_step_count",
+        ":evaluator_behavior_expired",
+        ":evaluator_distance_to_goal",
+        ":evaluator_rss",
+        "//bark/world/evaluation/ltl:evaluator_ltl",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
-    name = "include",
-    hdrs = glob(["*.hpp"]),
+    name="include",
+    hdrs=glob(["*.hpp"]),
     visibility = ["//visibility:public"],
 )
+
+
