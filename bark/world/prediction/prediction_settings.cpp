@@ -7,8 +7,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/prediction/prediction_settings.hpp"
-#include "bark/world/observed_world.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
+#include "bark/world/observed_world.hpp"
 // #include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
 
 namespace bark {
@@ -16,6 +16,8 @@ namespace world {
 namespace prediction {
 
 using bark::models::behavior::BehaviorModelPtr;
+using bark::models::behavior::BehaviorNotStarted;
+using models::behavior::BehaviorStatus;
 
 PredictionSettings::PredictionSettings(
     const BehaviorModelPtr& ego_prediction_model,
@@ -32,17 +34,21 @@ void PredictionSettings::ApplySettings(
     bark::world::ObservedWorld& observed_world) const {
   observed_world.SetEgoBehaviorModel(
       BehaviorModelPtr(ego_prediction_model_->Clone()));
-    if (default_prediction_model_) {
+  if (default_prediction_model_) {
     for (const auto& agent : observed_world.GetOtherAgents()) {
-      if (agent.second->GetBehaviorStatus() == models::behavior::BehaviorStatus::VALID) {
+      if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
+          agent.second->IsValidAtTime(observed_world.GetWorldTime())) {
         if (specific_prediction_agents_.count(agent.first) == 0) {
-            observed_world.SetBehaviorModel(
-              agent.first, BehaviorModelPtr(default_prediction_model_->Clone()));
-          // LOG(INFO) << "using " << agent.first << " as multi-agent";    
+          observed_world.SetBehaviorModel(
+              agent.first,
+              BehaviorModelPtr(default_prediction_model_->Clone()));
+          // LOG(INFO) << "using " << agent.first << " as multi-agent";
         }
       } else {
-        // LOG(INFO) << "using BehaviorNotStarted for " << agent.first << " (not started yet)";
-        observed_world.SetBehaviorModel(agent.first, std::make_shared<bark::models::behavior::BehaviorNotStarted>(nullptr));
+        // LOG(INFO) << "using BehaviorNotStarted for " << agent.first << " (not
+        // started yet)";
+        observed_world.SetBehaviorModel(
+            agent.first, std::make_shared<BehaviorNotStarted>(nullptr));
       }
     }
   }
