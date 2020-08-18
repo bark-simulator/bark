@@ -41,6 +41,7 @@ class EvaluatorLTL : public BaseEvaluator {
                const LabelFunctions& label_functions);
   EvaluationReturn Evaluate(const world::World& world) override;
   const std::vector<RuleState>& GetRuleStates() const;
+  const LabelFunctions& GetLabelFunctions() const;
 
  private:
   EvaluationReturn Evaluate(

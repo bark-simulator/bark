@@ -18,6 +18,7 @@
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_xodr_map.hpp"
 
 using namespace bark::models::dynamic;
 using namespace bark::models::execution;
@@ -45,7 +46,8 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 
     double acc;
     if (leading_vehicle.first) {
-      double net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
+      double net_distance =
+          CalcNetDistance(observed_world, leading_vehicle.first);
       State other_vehicle_state = leading_vehicle.first->GetCurrentState();
       double vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
       acc = CalcIDMAcc(net_distance, vel_i, vel_other);
@@ -71,7 +73,7 @@ TEST(free_road_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -126,7 +128,7 @@ TEST(interaction_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -221,7 +223,7 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -281,7 +283,7 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -342,7 +344,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   float time_step = 0.2f;  // Very small time steps to verify differential
                            // integration character
 
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -400,7 +402,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -427,6 +429,60 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
       (1 - c) * acc_idm_desired +
       c * (acc_cah_desired + b * tanh((acc_idm_desired - acc_cah_desired) / b));
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
+}
+
+TEST(CalcNetDistance, behavior_idm_classic) {
+  auto params = std::make_shared<SetterParams>();
+
+  OpenDriveMapPtr open_drive_map =
+      bark::world::tests::MakeXodrMapTwoRoadsOneLane();
+
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
+
+  Polygon shape = bark::geometry::standard_shapes::CarRectangle();
+
+  Polygon polygon = GenerateGoalRectangle(6, 3);
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(90, -2))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  // agent1 is placed on road 1
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 20, -1.75, 0.0, 10.0;
+  AgentPtr agent1(new Agent(init_state1, nullptr, nullptr, nullptr, shape,
+                            params, goal_definition_ptr, map_interface,
+                            bark::geometry::Model3D()));
+
+  // agent2 is placed on road 2
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 70, -1.75, 0.0, 10.0;
+  AgentPtr agent2(new Agent(init_state2, nullptr, nullptr, nullptr, shape,
+                            params, goal_definition_ptr, map_interface,
+                            bark::geometry::Model3D()));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->UpdateAgentRTree();
+
+  world->SetMap(map_interface);
+
+  auto current_world_state = WorldPtr(world->Clone());
+  ObservedWorld observed_world(
+      current_world_state,
+      current_world_state->GetAgents().begin()->second->GetAgentId());
+
+  BehaviorIDMClassic behavior(params);
+  float distance = behavior.CalcNetDistance(observed_world, agent2);
+  float x_diff = init_state2(StateDefinition::X_POSITION) -
+                 init_state1(StateDefinition::X_POSITION);
+  float distance_expected =
+      x_diff - agent1->GetShape().front_dist_ - agent2->GetShape().rear_dist_;
+
+  EXPECT_EQ(distance, distance_expected);
 }
 
 int main(int argc, char** argv) {

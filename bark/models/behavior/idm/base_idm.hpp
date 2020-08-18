@@ -51,7 +51,7 @@ class BaseIDM : virtual public BehaviorModel {
   double CalcInteractionTerm(const double net_distance, const double vel_ego,
                              const double vel_other) const;
   double CalcNetDistance(
-      const std::shared_ptr<const world::objects::Agent>& ego_agent,
+      const world::ObservedWorld& observed_world,
       const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
 
   std::pair<bool, double> GetDistanceToLaneEnding(
