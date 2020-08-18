@@ -80,6 +80,8 @@ class BaseViewer(Viewer):
         self.use_world_bounds = kwargs.pop("use_world_bounds", False)
         self.follow_agent_id = kwargs.pop("follow_agent_id", None)
 
+        self.center = kwargs.pop("center", np.array([0, 0]))
+
         self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
         self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
 
