@@ -46,7 +46,8 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 
     double acc;
     if (leading_vehicle.first) {
-      double net_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
+      double net_distance =
+          CalcNetDistance(observed_world, leading_vehicle.first);
       State other_vehicle_state = leading_vehicle.first->GetCurrentState();
       double vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
       acc = CalcIDMAcc(net_distance, vel_i, vel_other);
@@ -72,7 +73,7 @@ TEST(free_road_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -127,7 +128,7 @@ TEST(interaction_term, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -222,7 +223,7 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -282,7 +283,7 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -343,7 +344,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   float time_step = 0.2f;  // Very small time steps to verify differential
                            // integration character
 
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -401,7 +402,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
 
   // Create an observed world with specific goal definition and the
   // corresponding mcts state
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -462,8 +463,20 @@ TEST(CalcNetDistance, behavior_idm_classic) {
                             params, goal_definition_ptr, map_interface,
                             bark::geometry::Model3D()));
 
+  WorldPtr world(new World(params));
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->UpdateAgentRTree();
+
+  world->SetMap(map_interface);
+
+  auto current_world_state = WorldPtr(world->Clone());
+  ObservedWorld observed_world(
+      current_world_state,
+      current_world_state->GetAgents().begin()->second->GetAgentId());
+
   BehaviorIDMClassic behavior(params);
-  float distance = behavior.CalcNetDistance(agent1, agent2);
+  float distance = behavior.CalcNetDistance(observed_world, agent2);
   float x_diff = init_state2(StateDefinition::X_POSITION) -
                  init_state1(StateDefinition::X_POSITION);
   float distance_expected =
