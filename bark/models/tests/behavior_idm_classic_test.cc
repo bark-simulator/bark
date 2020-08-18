@@ -18,6 +18,7 @@
 #include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_xodr_map.hpp"
 
 using namespace bark::models::dynamic;
 using namespace bark::models::execution;
@@ -427,6 +428,48 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
       (1 - c) * acc_idm_desired +
       c * (acc_cah_desired + b * tanh((acc_idm_desired - acc_cah_desired) / b));
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
+}
+
+TEST(CalcNetDistance, behavior_idm_classic) {
+  auto params = std::make_shared<SetterParams>();
+
+  OpenDriveMapPtr open_drive_map =
+      bark::world::tests::MakeXodrMapTwoRoadsOneLane();
+
+  MapInterfacePtr map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
+
+  Polygon shape = bark::geometry::standard_shapes::CarRectangle();
+
+  Polygon polygon = GenerateGoalRectangle(6, 3);
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(90, -2))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  // agent1 is placed on road 1
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 20, -1.75, 0.0, 10.0;
+  AgentPtr agent1(new Agent(init_state1, nullptr, nullptr, nullptr, shape,
+                            params, goal_definition_ptr, map_interface,
+                            bark::geometry::Model3D()));
+
+  // agent2 is placed on road 2
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 70, -1.75, 0.0, 10.0;
+  AgentPtr agent2(new Agent(init_state2, nullptr, nullptr, nullptr, shape,
+                            params, goal_definition_ptr, map_interface,
+                            bark::geometry::Model3D()));
+
+  BehaviorIDMClassic behavior(params);
+  float distance = behavior.CalcNetDistance(agent1, agent2);
+  float x_diff = init_state2(StateDefinition::X_POSITION) -
+                 init_state1(StateDefinition::X_POSITION);
+  float distance_expected =
+      x_diff - agent1->GetShape().front_dist_ - agent2->GetShape().rear_dist_;
+
+  EXPECT_EQ(distance, distance_expected);
 }
 
 int main(int argc, char** argv) {

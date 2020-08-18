@@ -117,7 +117,14 @@ double BaseIDM::CalcNetDistance(
   const State leading_state = leading_agent->GetCurrentState();
   const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
-  FrenetPosition frenet_leading = leading_agent->CurrentFrenetPosition();
+  // we need to use the lane corridor of the ego agent to be able to compare the
+  // frenet values
+  const auto& lane_corridor =
+      ego_agent->GetRoadCorridor()->GetCurrentLaneCorridor(
+          ego_agent->GetCurrentPosition());
+  FrenetPosition frenet_leading(leading_agent->GetCurrentPosition(),
+                                lane_corridor->GetCenterLine());
+
   const float vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
