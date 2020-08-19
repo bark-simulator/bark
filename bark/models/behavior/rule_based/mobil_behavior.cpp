@@ -86,10 +86,10 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
           GetVelocity(observed_world.GetEgoAgent()));
     }
   } else {
-    VLOG(4) << "Target Corridor not available to MOBIL";
-    // Vehicle cannot stay in current corridor anymore, we thus incentivize a
-    // lane change
-    acc_ego = BaseIDM::GetAccelerationLowerBound();
+    // Target Corridor has been filtered out before as a corridor to change to
+    acc_ego = CalcLongRawAccWithoutLeader(
+        lane_corr, observed_world.CurrentEgoPosition(),
+        GetVelocity(observed_world.GetEgoAgent()));
   }
 
   if (!lane_corr_infos.empty()) {
