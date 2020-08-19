@@ -57,7 +57,7 @@ struct LaneCorridor {
     uint idx = FindNearestIdx(GetCenterLine(), pt);
     // assumption: center, left and right have same # elements
     Point2d left_pt = GetPointAtIdx(GetLeftBoundary(), idx);
-    Point2d right_pt = GetPointAtIdx(GetLeftBoundary(), idx);
+    Point2d right_pt = GetPointAtIdx(GetRightBoundary(), idx);
     float width = bark::geometry::Distance(left_pt, right_pt);
     return width;
   }
