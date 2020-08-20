@@ -109,6 +109,20 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_capture_states",
+    hdrs = [
+        "evaluator_capture_states.hpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
+        "//bark/models/dynamic:dynamic",
+        "//bark/commons:commons"
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "evaluator_drivable_area",
     hdrs = [
         "evaluator_drivable_area.hpp"
@@ -134,6 +148,7 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
+        ":evaluator_capture_states",
         "//bark/world/evaluation/ltl:evaluator_ltl",
     ],
     visibility = ["//visibility:public"],
