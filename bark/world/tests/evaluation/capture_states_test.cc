@@ -25,11 +25,11 @@ TEST(capture_test, base_functionality) {
 
   auto casted_res = boost::get<std::map<std::string, State>>(
     eval_res["capture_states"]);
-  // NOTE: assert size is 2
-  // NOTE: assert state_1 and state_2
-  // NOTE: assert state lens of 5
+  EXPECT_EQ(casted_res.size(), 2);
+  EXPECT_EQ(casted_res["state_1"], world->GetAgents()[1]->GetCurrentState());
+  EXPECT_EQ(casted_res["state_2"], world->GetAgents()[2]->GetCurrentState());
   for (const auto& res : casted_res) {
-    std::cout << res.first << "\n" << res.second << std::endl;
+    std::cout << res.first << ": \n" << res.second << std::endl;
   }
 }
 
