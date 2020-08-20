@@ -12,6 +12,7 @@
 #include <boost/variant.hpp>
 #include <memory>
 #include <string>
+#include <map>
 #include "bark/commons/commons.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
