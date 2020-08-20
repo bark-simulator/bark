@@ -13,6 +13,7 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
+#include "bark/world/evaluation/evaluator_capture_states.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -77,6 +78,12 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorStepCount& g) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
       });
-
+  py::class_<EvaluatorCaptureStates, BaseEvaluator,
+             std::shared_ptr<EvaluatorCaptureStates>>(m, "EvaluatorCaptureStates")
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorCaptureStates& g) {
+        return "bark.core.world.evaluation.EvaluatorCaptureStates";
+      });
+  
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
 }
