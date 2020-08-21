@@ -162,6 +162,7 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
           max_advantage = advantage_ego;
           tmp_lane_corr = li.lane_corridor;
         }
+        VLOG(4) << "Incentive Criterion is not met.";
       }
     }
     if (tmp_lane_corr != lane_corr && tmp_lane_corr) {
