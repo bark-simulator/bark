@@ -75,6 +75,24 @@ BehaviorLaneChangeRuleBased::FrontRearAgents(
   return std::pair<AgentInformation, AgentInformation>(front_info, rear_info);
 }
 
+LaneCorridorInformation
+BehaviorLaneChangeRuleBased::FillLaneCorridorInformation(
+    const ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr) const {
+  const auto& ego_pos = observed_world.CurrentEgoPosition();  // x, y
+
+  std::pair<AgentInformation, AgentInformation> agent_lane_info =
+      FrontRearAgents(observed_world, lane_corr);
+  double remaining_distance = lane_corr->LengthUntilEnd(ego_pos);
+  // include distance to the end of the LaneCorridor
+  agent_lane_info.first.rel_distance =
+      std::min(remaining_distance, agent_lane_info.first.rel_distance);
+  LaneCorridorInformation lane_corr_info(agent_lane_info.first,
+                                         agent_lane_info.second, lane_corr,
+                                         remaining_distance);
+  return lane_corr_info;
+}
+
 /**
  * @brief Scans all LaneCorridors and composes LaneCorridorInformation
  *        that contains additional relative information
@@ -88,21 +106,10 @@ BehaviorLaneChangeRuleBased::ScanLaneCorridors(
   const auto& road_corr = observed_world.GetRoadCorridor();
 
   const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
-  const auto& ego_pos = observed_world.CurrentEgoPosition();  // x, y
   std::vector<LaneCorridorInformation> lane_corr_infos;
   for (const auto& lane_corr : lane_corrs) {
-    // all the informations we need
-    LaneCorridorInformation lane_corr_info;
-    std::pair<AgentInformation, AgentInformation> agent_lane_info =
-        FrontRearAgents(observed_world, lane_corr);
-    double remaining_distance = lane_corr->LengthUntilEnd(ego_pos);
-    // include distance to the end of the LaneCorridor
-    agent_lane_info.first.rel_distance =
-        std::min(remaining_distance, agent_lane_info.first.rel_distance);
-    lane_corr_info.front = agent_lane_info.first;
-    lane_corr_info.rear = agent_lane_info.second;
-    lane_corr_info.remaining_distance = remaining_distance;
-    lane_corr_info.lane_corridor = lane_corr;
+    LaneCorridorInformation lane_corr_info =
+        FillLaneCorridorInformation(observed_world, lane_corr);
     lane_corr_infos.push_back(lane_corr_info);
   }
   return lane_corr_infos;
