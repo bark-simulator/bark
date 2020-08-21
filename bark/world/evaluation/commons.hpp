@@ -10,6 +10,8 @@
 #define BARK_WORLD_EVALUATION_EVALUATOR_CAPTURE_STATES_HPP_
 
 #include <memory>
+#include <string>
+#include <map>
 
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/observed_world.hpp"
