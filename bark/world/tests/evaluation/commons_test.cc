@@ -8,7 +8,7 @@
 
 #include "gtest/gtest.h"
 
-#include "bark/world/evaluation/evaluator_capture_states.hpp"
+#include "bark/world/evaluation/commons.hpp"
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
