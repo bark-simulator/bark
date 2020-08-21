@@ -19,7 +19,7 @@ using bark::commons::SetterParams;
 TEST(capture_test, base_functionality) {
   auto world = make_test_world(1, 5.0, 20.0, 0.0);
   // auto observed_worlds = world->Observe({1});
-  auto eval_capture_states = std::make_shared<EvaluatorCaptureStates>();
+  auto eval_capture_states = std::make_shared<EvaluatorCaptureAgentStates>();
   world->AddEvaluator("capture_states", eval_capture_states);
   auto eval_res = world->Evaluate();
 

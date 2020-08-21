@@ -22,10 +22,10 @@ class World;
 class ObservedWorld;
 namespace evaluation {
 
-class EvaluatorCaptureStates : public BaseEvaluator {
+class EvaluatorCaptureAgentStates : public BaseEvaluator {
  public:
-  EvaluatorCaptureStates() {}
-  virtual ~EvaluatorCaptureStates() {}
+  EvaluatorCaptureAgentStates() {}
+  virtual ~EvaluatorCaptureAgentStates() {}
 
   EvaluationReturn Evaluate(const world::World& world) {
     std::map<std::string, State> states;
