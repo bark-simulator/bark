@@ -73,23 +73,23 @@ BehaviorMobilRuleBased::ChooseLaneCorridor(
   double acc_ego = 0;
   std::pair<LaneCorridorInformation, bool> lci_has =
       SelectLaneCorridor(lane_corr_infos, lane_corr);
+  LaneCorridorInformation lci_ego;
   if (lci_has.second) {
-    LaneCorridorInformation lci = std::get<0>(lci_has);
-    if (lci.front.agent_info.first) {
-      BARK_EXPECT_TRUE(lci.front.rel_distance >= 0);
-      acc_ego = CalcRawIDMAcc(lci.front.rel_distance,
-                              GetVelocity(observed_world.GetEgoAgent()),
-                              GetVelocity(lci.front.agent_info.first));
-    } else {
-      acc_ego = CalcLongRawAccWithoutLeader(
-          lane_corr, observed_world.CurrentEgoPosition(),
-          GetVelocity(observed_world.GetEgoAgent()));
-    }
+    lci_ego = std::get<0>(lci_has);
   } else {
-    LOG(INFO) << "Target Corridor not available to MOBIL";
-    // Vehicle cannot stay in current corridor anymore, we thus incentivize a
-    // lane change
-    acc_ego = BaseIDM::GetAccelerationLowerBound();
+    // the current lane corridor is not within the available corridors
+    lci_ego = FillLaneCorridorInformation(observed_world, lane_corr);
+  }
+
+  if (lci_ego.front.agent_info.first) {
+    BARK_EXPECT_TRUE(lci_ego.front.rel_distance >= 0);
+    acc_ego = CalcRawIDMAcc(lci_ego.front.rel_distance,
+                            GetVelocity(observed_world.GetEgoAgent()),
+                            GetVelocity(lci_ego.front.agent_info.first));
+  } else {
+    acc_ego = CalcLongRawAccWithoutLeader(
+        lane_corr, observed_world.CurrentEgoPosition(),
+        GetVelocity(observed_world.GetEgoAgent()));
   }
 
   if (!lane_corr_infos.empty()) {
