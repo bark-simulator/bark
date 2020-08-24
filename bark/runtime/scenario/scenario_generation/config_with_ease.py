@@ -259,6 +259,7 @@ class ConfigWithEase(ScenarioGeneration):
     # fill agent list of the BARK world and set agents that are controlled
     scenario._agent_list = []
     scenario._eval_agent_ids = []
+    agent_id = 0
     for lc_config in self._lane_corridor_configs:
       agent_state = True
       lc_agents = []
@@ -284,6 +285,8 @@ class ConfigWithEase(ScenarioGeneration):
             map_interface)
           new_agent.road_corridor = lc_config._road_corridor
           lc_agents.append(new_agent)
+          new_agent.SetAgentId(agent_id)
+        agent_id += 1
         # set the road corridor
 
       # handle controlled agents
