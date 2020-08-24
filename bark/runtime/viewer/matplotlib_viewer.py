@@ -108,8 +108,8 @@ class MPViewer(BaseViewer):
       return width, height
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
-        # self.clear()
-        plt.axis('off')
+        self.clear()
+        self.axes.set_axis_off()
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
         self._set_visualization_options()
         self.show()
@@ -130,9 +130,8 @@ class MPViewer(BaseViewer):
         # x and y limits
         self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
         self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
-
         self.axes.get_xaxis().set_visible(False)
-        self.axes.get_yaxis().set_visible(False)
+        self.axes.get_yaxis().set_visible(False) 
 
     def clear(self):
         self.axes.cla()
