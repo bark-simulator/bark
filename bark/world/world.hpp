@@ -111,7 +111,7 @@ class World : public commons::BaseType {
   double GetWorldTime() const { return world_time_; }
   void SetWorldTime(const double& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
-  AgentMap GetAgents() const { return agents_; }
+  virtual AgentMap GetAgents() const { return agents_; }
   AgentMap GetValidAgents() const;
   AgentPtr GetAgent(AgentId id) const {
     auto agent_it = agents_.find(id);

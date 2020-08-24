@@ -23,7 +23,7 @@ class ObservedWorld;
 namespace evaluation {
 
 using models::dynamic::State;
-typedef boost::variant<float, bool, std::string, int, std::map<std::string, State>> EvaluationReturn;
+typedef boost::variant<float, bool, std::string, int> EvaluationReturn;
 
 class BaseEvaluator {
  public:

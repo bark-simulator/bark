@@ -109,9 +109,9 @@ cc_library(
 )
 
 cc_library(
-    name = "evaluator_capture_states",
+    name = "commons",
     hdrs = [
-        "evaluator_capture_states.hpp"
+        "commons.hpp"
     ],
     deps = [
         "//bark/world/evaluation:base_evaluator",
@@ -148,7 +148,7 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
-        ":evaluator_capture_states",
+        ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
     ],
     visibility = ["//visibility:public"],

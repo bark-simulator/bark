@@ -33,8 +33,8 @@ py_test(
 )
 
 cc_test(
-    name = "capture_states_test",
-    srcs = ["capture_states_test.cc"],
+    name = "commons_test",
+    srcs = ["commons_test.cc"],
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "@gtest//:gtest_main",
