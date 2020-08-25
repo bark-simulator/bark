@@ -127,7 +127,7 @@ class LaneCorridorConfig:
       return None
     centerline = lane_corr.center_line
     if self._current_s == None:
-      self._current_s = self._s_min
+      self._current_s = np.random.uniform(0, self._ds_max)
     xy_point =  GetPointAtS(centerline, self._current_s)
     angle = GetTangentAngleAtS(centerline, self._current_s)
     if self._current_s > self._s_max:
