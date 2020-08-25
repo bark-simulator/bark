@@ -78,27 +78,27 @@ glog_library(with_gflags=0)
     http_archive,
     name = "ad_rss_lib",
     build_file = "@bark_project//tools/rss:rss.BUILD",
-    sha256 = "b77c658434399815f02dd12ecf83e40f8bf015ca29a8407c4361a3b3b0c28eb7",
-    strip_prefix = "ad-rss-lib-3.0.0",
-    urls = ["https://github.com/intel/ad-rss-lib/archive/v3.0.0.tar.gz"],
+    sha256 = "a804472ede894f6323fb8de1ba34f2a0d6ff92603a48709a029e3c1ec28fe0ed",
+    strip_prefix = "ad-rss-lib-4.0.1",
+    urls = ["https://github.com/intel/ad-rss-lib/archive/v4.0.1.tar.gz"],
     )
 
     _maybe(
       http_archive,
       name = "spdlog",
       build_file = "@bark_project//tools/rss:spdlog.BUILD",
-      sha256 = "b38e0bbef7faac2b82fed550a0c19b0d4e7f6737d5321d4fd8f216b80f8aee8a",
-      strip_prefix = "spdlog-1.5.0",
-      urls = ["https://github.com/gabime/spdlog/archive/v1.5.0.tar.gz"],
+      sha256 = "f0114a4d3c88be9e696762f37a7c379619443ce9d668546c61b21d41affe5b62",
+      strip_prefix = "spdlog-1.7.0",
+      urls = ["https://github.com/gabime/spdlog/archive/v1.7.0.tar.gz"],
     )
 
     _maybe(
     http_archive,
     name = "map_support",
     build_file = "@bark_project//tools/rss:map_support.BUILD",
-    sha256 = "667a16c029854c51a60ae88f8ef0c24542d7683a78c4f85ec4845c8555d72ac6",
-    strip_prefix = "map-2.0.0",
-    urls = ["https://github.com/carla-simulator/map/archive/v2.0.0.tar.gz"],
+    sha256 = "e2fd2f54ae56c054779c526a684f40a41c1758664d72899c248ac0f83afe793c",
+    strip_prefix = "map-2.1.0",
+    urls = ["https://github.com/carla-simulator/map/archive/v2.1.0.tar.gz"],
     )
 
     _maybe(
@@ -114,9 +114,9 @@ glog_library(with_gflags=0)
     http_archive,
     name = "proj",
     build_file = "@bark_project//tools/rss:proj.BUILD",
-    sha256 = "a7026d39c9c80d51565cfc4b33d22631c11e491004e19020b3ff5a0791e1779f",
-    strip_prefix = "proj-7.0.1",
-    urls = ["https://download.osgeo.org/proj/proj-7.0.1.tar.gz"],
+    sha256 = "876151e2279346f6bdbc63bd59790b48733496a957bccd5e51b640fdd26eaa8d",
+    strip_prefix = "proj-7.1.0",
+    urls = ["https://download.osgeo.org/proj/proj-7.1.0.tar.gz"],
     )
     # -------------------------------------------
 

@@ -147,9 +147,21 @@ class RssInterface {
   //
   // Detailed explanation:
   // https://ad-map-access.readthedocs.io/en/latest/ad_map_access/HLD_MapMatching/
-  ::ad::map::match::Object GetMatchObject(
+  ::ad::map::match::Object GenerateMatchObject(
       const models::dynamic::State &agent_state, const Polygon &agent_shape,
       const Distance &match_distance);
+
+  ::ad::rss::map::RssObjectData GenerateObjectData(
+      const ::ad::rss::world::ObjectId& id,
+      const ::ad::rss::world::ObjectType& type,
+      const ::ad::map::match::Object& matchObject,
+      const ::ad::physics::Speed& speed,
+      const ::ad::physics::AngularVelocity& yawRate,
+      const ::ad::physics::Angle& steeringAngle,
+      const ::ad::rss::world::RssDynamics& rssDynamics);
+
+  ::ad::physics::AngularVelocity CaculateAgentAngularVelocity(
+      const models::dynamic::Trajectory& trajectory);
 
   // Generate a RSS route from the position and lane corridor of the specified
   // BARK agent, the corresponding RSS match object. Used by
@@ -157,7 +169,7 @@ class RssInterface {
   ::ad::map::route::FullRoute GenerateRoute(
       const Point2d &agent_center,
       const map::LaneCorridorPtr &agent_lane_corridor,
-      const ::ad::map::match::Object &matched_object);
+      const ::ad::map::match::Object &match_object);
 
   AgentState ConvertAgentState(
       const models::dynamic::State &agent_state,
@@ -173,7 +185,7 @@ class RssInterface {
   ::ad::rss::world::WorldModel CreateWorldModel(
       const AgentMap &agents, const AgentId &ego_id,
       const AgentState &ego_state,
-      const ::ad::map::match::Object &ego_matched_object,
+      const ::ad::map::match::Object &ego_match_object,
       const ::ad::rss::world::RssDynamics &ego_dynamics,
       const ::ad::map::route::FullRoute &ego_route);
 
