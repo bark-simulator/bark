@@ -57,6 +57,16 @@ bool RssInterface::initializeOpenDriveMap(
 
   dynamics.responseTime = Duration(response_time);
 
+  // new parameters after ad-rss v4.0.0
+  // leave them as the default one for now
+  dynamics.unstructuredSettings.pedestrianTurningRadius = ad::physics::Distance(2.0);
+  dynamics.unstructuredSettings.driveAwayMaxAngle = ad::physics::Angle(2.4);
+  dynamics.unstructuredSettings.vehicleYawRateChange = ad::physics::AngularAcceleration(0.3);
+  dynamics.unstructuredSettings.vehicleMinRadius = ad::physics::Distance(3.5);
+  dynamics.unstructuredSettings.vehicleTrajectoryCalculationStep = ad::physics::Duration(0.2);
+
+  // sanity check
+  assert(lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct);
   return dynamics;
 }
 
@@ -76,7 +86,7 @@ bool RssInterface::initializeOpenDriveMap(
   }
 }
 
-::ad::map::match::Object RssInterface::GetMatchObject(
+::ad::map::match::Object RssInterface::GenerateMatchObject(
     const models::dynamic::State &agent_state, const Polygon &agent_shape,
     const Distance &match_distance) {
   ::ad::map::match::Object matching_object;
@@ -109,15 +119,43 @@ bool RssInterface::initializeOpenDriveMap(
   // between the vehicle boundaries, the result of map matching is heavily
   // influencing by this parameter
   matching_object.mapMatchedBoundingBox = map_matching.getMapMatchedBoundingBox(
-      matching_object.enuPosition, match_distance, Distance(1.));
+      matching_object.enuPosition, match_distance);
 
   return matching_object;
 }
 
+::ad::rss::map::RssObjectData RssInterface::GenerateObjectData(
+    const ::ad::rss::world::ObjectId& id,
+    const ::ad::rss::world::ObjectType& type,
+    const ::ad::map::match::Object& matchObject,
+    const ::ad::physics::Speed& speed,
+    const ::ad::physics::AngularVelocity& yawRate,
+    const ::ad::physics::Angle& steeringAngle,
+    const ::ad::rss::world::RssDynamics& rssDynamics) {
+  ::ad::rss::map::RssObjectData data = {id,      type,          matchObject, speed,
+                                   yawRate, steeringAngle, rssDynamics};
+  return data;
+}
+
+::ad::physics::AngularVelocity RssInterface::CaculateAgentAngularVelocity(
+      const models::dynamic::Trajectory& trajectory){
+        int n=trajectory.rows();
+        if (n<2){
+          return 0.f;
+        }
+        else{
+          ::ad::physics::AngularVelocity av =::ad::physics::AngularVelocity(
+              trajectory(n - 1, THETA_POSITION) -
+              trajectory(0, THETA_POSITION) / trajectory(n - 1, TIME_POSITION) -
+              trajectory(0, TIME_POSITION));
+          return av;
+        }
+      }
+
 FullRoute RssInterface::GenerateRoute(
     const Point2d &agent_center,
     const map::LaneCorridorPtr &agent_lane_corridor,
-    const ::ad::map::match::Object &matched_object) {
+    const ::ad::map::match::Object &match_object) {
   // the center line of lane corridor is used as the target route
   geometry::Line agent_lane_center_line = agent_lane_corridor->GetCenterLine();
 
@@ -126,13 +164,15 @@ FullRoute RssInterface::GenerateRoute(
       agent_lane_center_line,
       agent_lane_center_line.obj_.at(agent_lane_center_line.obj_.size() - 1));
 
+  float step = (s_start < s_end) ? 1 : -1;
+
   std::vector<::ad::map::point::ENUPoint> routing_targets;
   // discretize the line into points and store as routing targets
   while (s_start <= s_end) {
     geometry::Point2d traj_point = GetPointAtS(agent_lane_center_line, s_start);
     routing_targets.push_back(::ad::map::point::createENUPoint(
         bg::get<0>(traj_point), bg::get<1>(traj_point), 0));
-    s_start += 1;
+    s_start += step;
   }
 
   std::vector<FullRoute> routes;
@@ -142,22 +182,22 @@ FullRoute RssInterface::GenerateRoute(
   // matching, finds a route pass through the routing targets from the sample
   // point
   for (const auto &position :
-       matched_object.mapMatchedBoundingBox.referencePointPositions[int32_t(
+       match_object.mapMatchedBoundingBox.referencePointPositions[int32_t(
            ::ad::map::match::ObjectReferencePoints::Center)]) {
     auto starting_point = position.lanePoint.paraPoint;
     auto projected_starting_point = starting_point;
 
     if (!::ad::map::lane::isHeadingInLaneDirection(
-            starting_point, matched_object.enuPosition.heading)) {
+            starting_point, match_object.enuPosition.heading)) {
       // project the starting_point to a neighboring lane with the same heading
-      // direction as the one of the matched object
+      // direction as the one of the match object
       ::ad::map::lane::projectPositionToLaneInHeadingDirection(
-          starting_point, matched_object.enuPosition.heading,
+          starting_point, match_object.enuPosition.heading,
           projected_starting_point);
     }
 
     auto route_starting_point = ::ad::map::route::planning::createRoutingPoint(
-        projected_starting_point, matched_object.enuPosition.heading);
+        projected_starting_point, match_object.enuPosition.heading);
 
     if (!routing_targets.empty() &&
         ::ad::map::point::isValid(routing_targets)) {
@@ -171,7 +211,7 @@ FullRoute RssInterface::GenerateRoute(
       // all routes having distance less than the given value
       std::vector<FullRoute> possible_routes =
           ::ad::map::route::planning::predictRoutesOnDistance(
-              route_starting_point, Distance(50.),
+              route_starting_point, Distance(50.), // input in the constructor
               ::ad::map::route::RouteCreationMode::AllNeighborLanes);
       for (const auto &possible_route : possible_routes) {
         routes.push_back(possible_route);
@@ -216,20 +256,11 @@ AgentState RssInterface::ConvertAgentState(
 Distance RssInterface::CalculateMinStoppingDistance(
     const Speed &speed, const ::ad::rss::world::RssDynamics &agent_dynamics) {
   Distance minStoppingDistance;
-  Speed MaxSpeedAfterResponseTime;
 
-  auto result = ::ad::rss::situation::calculateSpeedAfterResponseTime(
-      ::ad::rss::situation::CoordinateSystemAxis::Longitudinal,
-      std::fabs(speed), Speed::getMax(), agent_dynamics.alphaLon.accelMax,
-      agent_dynamics.responseTime, MaxSpeedAfterResponseTime);
-
-  result = result &&
-           ::ad::rss::situation::calculateStoppingDistance(
-               MaxSpeedAfterResponseTime,
-               agent_dynamics.alphaLon.brakeMinCorrect, minStoppingDistance);
-
-  minStoppingDistance +=
-      MaxSpeedAfterResponseTime * agent_dynamics.responseTime;
+  bool result =
+      ::ad::rss::situation::calculateDistanceOffsetInAcceleratedMovement(
+          std::fabs(speed), agent_dynamics.alphaLon.accelMax,
+          agent_dynamics.responseTime, minStoppingDistance);
 
   if (result == false)
     LOG(ERROR)
@@ -242,13 +273,20 @@ Distance RssInterface::CalculateMinStoppingDistance(
 ::ad::rss::world::WorldModel RssInterface::CreateWorldModel(
     const AgentMap &agents, const AgentId &ego_id,
     const AgentState &ego_rss_state,
-    const ::ad::map::match::Object &ego_matched_object,
+    const ::ad::map::match::Object &ego_match_object,
     const ::ad::rss::world::RssDynamics &ego_dynamics,
     const ::ad::map::route::FullRoute &ego_route) {
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
       static_cast<double>(ego_rss_state.min_stopping_distance * 1.5);
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
+
+  auto ego_av = CaculateAgentAngularVelocity(
+      agents.find(ego_id)->second->GetExecutionTrajectory());
+  ::ad::rss::map::RssObjectData ego_data = GenerateObjectData(
+      ::ad::rss::world::ObjectId(ego_id),
+      ::ad::rss::world::ObjectType::EgoVehicle, ego_match_object,
+      ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading), ego_dynamics);
 
   // determine which agent is close thus relevent for safety checking
   for (const auto &other_agent : agents) {
@@ -262,30 +300,31 @@ Distance RssInterface::CalculateMinStoppingDistance(
 
   ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp,
                                                   ego_dynamics);
+
   // we don't care about traffic lights right now, but needed by appendScenes.
   ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
 
-  for (const auto &relevent_agent : relevent_agents) {
-    models::dynamic::State relevent_agent_state =
-        relevent_agent->GetCurrentState();
-    Polygon relevent_agent_shape = relevent_agent->GetShape();
-    auto const other_matched_object = GetMatchObject(
-        relevent_agent_state, relevent_agent_shape, Distance(0.5));
-    Speed relevent_agent_speed = relevent_agent_state(VEL_POSITION);
+  for (const auto &other : relevent_agents) {
+    models::dynamic::State other_state =
+        other->GetCurrentState();
+    Polygon other_shape = other->GetShape();
+    auto const other_match_object = GenerateMatchObject(
+        other_state, other_shape, Distance(2.));
+    // Speed other_speed = other_state(VEL_POSITION);
 
-    ::ad::rss::world::RssDynamics relevent_agent_dynamics =
-        GenerateAgentDynamicsParameters(relevent_agent->GetAgentId());
+    ::ad::rss::world::RssDynamics other_dynamics =
+        GenerateAgentDynamicsParameters(other->GetAgentId());
+    auto other_av=CaculateAgentAngularVelocity(other->GetExecutionTrajectory());
+
+    ::ad::rss::map::RssObjectData other_data = GenerateObjectData(
+        ::ad::rss::world::ObjectId(other->GetAgentId()),
+        ::ad::rss::world::ObjectType::OtherVehicle, other_match_object,
+        other_state(VEL_POSITION), other_av, ::ad::physics::Angle(other_state(THETA_POSITION)),
+        other_dynamics);
 
     // find all possible scenes between the ego agent and a relevent agent
-    scene_creation.appendScenes(
-        ::ad::rss::world::ObjectId(ego_id), ego_matched_object,
-        ego_rss_state.speed, ego_dynamics, ego_route,
-        ::ad::rss::world::ObjectId(relevent_agent->GetAgentId()),
-        ::ad::rss::world::ObjectType::OtherVehicle, other_matched_object,
-        relevent_agent_speed, relevent_agent_dynamics,
-        ::ad::rss::map::RssSceneCreation::RestrictSpeedLimitMode::
-            IncreasedSpeedLimit10,
-        green_traffic_lights);
+    scene_creation.appendScenes(ego_data,ego_route,other_data,::ad::rss::map::RssSceneCreation::RestrictSpeedLimitMode::
+            ExactSpeedLimit,green_traffic_lights,::ad::rss::map::RssMode::Structured);
   }
 
   return scene_creation.getWorldModel();
@@ -304,11 +343,9 @@ Distance RssInterface::CalculateMinStoppingDistance(
   // contains longitudinal and lateral response of the ego object, a list of id
   // of the dangerous objects
   ::ad::rss::state::ProperResponse proper_response;
-  ::ad::rss::world::AccelerationRestriction acceleration_restriction;
 
-  bool result = rss_check.calculateAccelerationRestriction(
-      world_model, situation_snapshot, rss_state_snapshot, proper_response,
-      acceleration_restriction);
+  bool result = rss_check.calculateProperResponse(
+      world_model, situation_snapshot, rss_state_snapshot, proper_response);
 
   if (!result) LOG(ERROR) << "Failed to perform RSS check" << std::endl;
 
@@ -352,8 +389,8 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   models::dynamic::State agent_state = agent->GetCurrentState();
 
   Polygon agent_shape = agent->GetShape();
-  ::ad::map::match::Object matched_object =
-      GetMatchObject(agent_state, agent_shape, Distance(1.));
+  ::ad::map::match::Object match_object =
+      GenerateMatchObject(agent_state, agent_shape, Distance(2.));
 
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
@@ -361,8 +398,9 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   map::LaneId agent_lane_id = world.GetMap()->FindCurrentLane(agent_center);
   map::LaneCorridorPtr agent_lane_corridor =
       agent_road_corridor->GetLaneCorridor(agent_lane_id);
+
   ::ad::map::route::FullRoute agent_route =
-      GenerateRoute(agent_center, agent_lane_corridor, matched_object);
+      GenerateRoute(agent_center, agent_lane_corridor, match_object);
 
   ::ad::rss::world::RssDynamics agent_dynamics =
       GenerateAgentDynamicsParameters(agent_id);
@@ -370,7 +408,7 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
 
   AgentMap other_agents = world.GetAgents();
   ::ad::rss::world::WorldModel rss_world_model =
-      CreateWorldModel(other_agents, agent_id, agent_rss_state, matched_object,
+      CreateWorldModel(other_agents, agent_id, agent_rss_state, match_object,
                        agent_dynamics, agent_route);
 
   return rss_world_model;
