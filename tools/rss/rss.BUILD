@@ -15,7 +15,7 @@ cc_library(
     ],
     linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
-    deps = ["@map_support//:ad_physics"],
+    deps = ["@map_support//:ad_physics", "@boost//:geometry"],
 )
 
 # cc_test(
