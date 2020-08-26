@@ -114,7 +114,7 @@ for _ in range(0, 5):
     scenario, idx = scenarios.get_next_scenario()
     world = scenario.GetWorldState()
     e = EvaluatorRss(scenario._eval_agent_ids[0], map_path, 
-                 [1.7, -1.7, 0., -1.67, 0.2, -0.8, 0.1, 1.])
+                 [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.])
     for _ in range(0, 70): 
       viewer.drawWorld(world, eval_agent_ids=scenario._eval_agent_ids, scenario_idx=idx )
       viewer.drawSafetyResponses(world,scenario._eval_agent_ids[0],e.PairwiseEvaluate(world))
