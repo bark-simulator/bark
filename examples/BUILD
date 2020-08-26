@@ -113,7 +113,7 @@ py_binary(
           ],
 )
 
-py_test(
+py_binary(
   name = "highway_rss",
   srcs = ["highway_rss.py"],
   data = ['//bark:generate_core',

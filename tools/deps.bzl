@@ -96,9 +96,9 @@ glog_library(with_gflags=0)
     http_archive,
     name = "map_support",
     build_file = "@bark_project//tools/rss:map_support.BUILD",
-    sha256 = "e2fd2f54ae56c054779c526a684f40a41c1758664d72899c248ac0f83afe793c",
-    strip_prefix = "map-2.1.0",
-    urls = ["https://github.com/carla-simulator/map/archive/v2.1.0.tar.gz"],
+    sha256 = "4613e353ced9d140e489f028a15f1afd9ba0c965feb63c36bbc950f6f30c8ee8",
+    strip_prefix = "map-2.2.0",
+    urls = ["https://github.com/carla-simulator/map/archive/v2.2.0.tar.gz"],
     )
 
     _maybe(
