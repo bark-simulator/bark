@@ -67,6 +67,7 @@ bool RssInterface::initializeOpenDriveMap(
 
   // sanity check
   assert(lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct);
+
   return dynamics;
 }
 
@@ -93,7 +94,8 @@ bool RssInterface::initializeOpenDriveMap(
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
 
-  // the calculation is done under ENU coordinate system
+  // the calculation is done under ENU coordinate system, it limits the range of
+  // input coordinate, work around should be found in the future
 
   // set matching pose
   matching_object.enuPosition.centerPoint.x =
@@ -199,14 +201,23 @@ FullRoute RssInterface::GenerateRoute(
     auto route_starting_point = ::ad::map::route::planning::createRoutingPoint(
         projected_starting_point, match_object.enuPosition.heading);
 
+    bool valid_route=false;
     if (!routing_targets.empty() &&
         ::ad::map::point::isValid(routing_targets)) {
-      FullRoute route = ::ad::map::route::planning::planRoute(
+      FullRoute route;
+
+      route = ::ad::map::route::planning::planRoute(
           route_starting_point, routing_targets,
           ::ad::map::route::RouteCreationMode::AllNeighborLanes);
-      routes.push_back(route);
-      routes_probability.push_back(position.probability);
-    } else {
+
+      if (route.roadSegments.size() > 0) {
+        valid_route = true;
+        routes.push_back(route);
+        routes_probability.push_back(position.probability);
+      }
+    }
+
+    if (valid_route==false){
       // predicts all possible routes based on the given distance, it returns
       // all routes having distance less than the given value
       std::vector<FullRoute> possible_routes =
@@ -270,15 +281,17 @@ Distance RssInterface::CalculateMinStoppingDistance(
   return minStoppingDistance;
 }
 
-::ad::rss::world::WorldModel RssInterface::CreateWorldModel(
-    const AgentMap &agents, const AgentId &ego_id,
-    const AgentState &ego_rss_state,
-    const ::ad::map::match::Object &ego_match_object,
-    const ::ad::rss::world::RssDynamics &ego_dynamics,
-    const ::ad::map::route::FullRoute &ego_route) {
+bool RssInterface::CreateWorldModel(
+    const AgentMap& agents, const AgentId& ego_id,
+    const AgentState& ego_rss_state,
+    const ::ad::map::match::Object& ego_match_object,
+    const ::ad::rss::world::RssDynamics& ego_dynamics,
+    const ::ad::map::route::FullRoute& ego_route,
+    ::ad::rss::world::WorldModel& rss_world_model) {
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
-      static_cast<double>(ego_rss_state.min_stopping_distance * 1.5);
+      static_cast<double>(ego_rss_state.min_stopping_distance) *
+      2.;  // increase searching distance for better visualization
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
 
   auto ego_av = CaculateAgentAngularVelocity(
@@ -286,7 +299,8 @@ Distance RssInterface::CalculateMinStoppingDistance(
   ::ad::rss::map::RssObjectData ego_data = GenerateObjectData(
       ::ad::rss::world::ObjectId(ego_id),
       ::ad::rss::world::ObjectType::EgoVehicle, ego_match_object,
-      ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading), ego_dynamics);
+      ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading),
+      ego_dynamics);
 
   // determine which agent is close thus relevent for safety checking
   for (const auto &other_agent : agents) {
@@ -305,8 +319,14 @@ Distance RssInterface::CalculateMinStoppingDistance(
   ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
 
   for (const auto &other : relevent_agents) {
-    models::dynamic::State other_state =
-        other->GetCurrentState();
+    models::dynamic::State other_state;
+    try {
+      other_state = other->GetCurrentState();
+    } catch (const std::exception&) {
+      // may fail during initial steps? (during the first 0.5 second)
+      return false;
+    }
+
     Polygon other_shape = other->GetShape();
     auto const other_match_object = GenerateMatchObject(
         other_state, other_shape, Distance(2.));
@@ -326,30 +346,37 @@ Distance RssInterface::CalculateMinStoppingDistance(
     scene_creation.appendScenes(ego_data,ego_route,other_data,::ad::rss::map::RssSceneCreation::RestrictSpeedLimitMode::
             ExactSpeedLimit,green_traffic_lights,::ad::rss::map::RssMode::Structured);
   }
+  rss_world_model=scene_creation.getWorldModel();
 
-  return scene_creation.getWorldModel();
+  return true;
 }
 
-::ad::rss::state::RssStateSnapshot RssInterface::RssCheck(
-    ::ad::rss::world::WorldModel world_model) {
+bool RssInterface::RssCheck(
+    const ::ad::rss::world::WorldModel& world_model,
+    ::ad::rss::state::RssStateSnapshot& rss_state_snapshot) {
   ::ad::rss::core::RssCheck rss_check;
-
   // describes the relative relation between two objects in possible situations
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
-
-  // individual situation responses calculated from SituationSnapshot
-  ::ad::rss::state::RssStateSnapshot rss_state_snapshot;
 
   // contains longitudinal and lateral response of the ego object, a list of id
   // of the dangerous objects
   ::ad::rss::state::ProperResponse proper_response;
 
+  // rss_state_snapshot: individual situation responses calculated from
+  // SituationSnapshot
   bool result = rss_check.calculateProperResponse(
       world_model, situation_snapshot, rss_state_snapshot, proper_response);
 
-  if (!result) LOG(ERROR) << "Failed to perform RSS check" << std::endl;
+  if (!result){
+    // due to limitations of Carla map library, RSS check fails when crossing
+    // road or road segment or lane, etc.
 
-  return rss_state_snapshot;
+    // TODO(chan): perform primitive rss check like in apollo in case of failure
+    LOG(ERROR) << "Failed to perform RSS check" << std::endl;
+  } 
+  
+
+  return result;
 }
 
 bool RssInterface::ExtractSafetyEvaluation(
@@ -383,10 +410,18 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   return pairwise_safety_response;
 }
 
-::ad::rss::world::WorldModel RssInterface::ExtractRSSWorld(
-    const World &world, const AgentId &agent_id) {
+bool RssInterface::ExtractRSSWorld(
+    const World& world, const AgentId& agent_id,
+    ::ad::rss::world::WorldModel& rss_world_model) {
   AgentPtr agent = world.GetAgent(agent_id);
-  models::dynamic::State agent_state = agent->GetCurrentState();
+
+  models::dynamic::State agent_state;
+  try {
+    agent_state = agent->GetCurrentState();
+  } catch (const std::exception&) {
+    // may fail during initial steps? (during the first 0.5 second)
+    return false;
+  }
 
   Polygon agent_shape = agent->GetShape();
   ::ad::map::match::Object match_object =
@@ -407,32 +442,47 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   AgentState agent_rss_state = ConvertAgentState(agent_state, agent_dynamics);
 
   AgentMap other_agents = world.GetAgents();
-  ::ad::rss::world::WorldModel rss_world_model =
-      CreateWorldModel(other_agents, agent_id, agent_rss_state, match_object,
-                       agent_dynamics, agent_route);
+  bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state, match_object,
+                   agent_dynamics, agent_route, rss_world_model);
 
-  return rss_world_model;
+  return result;
 }
 
 bool RssInterface::GetSafetyReponse(const World &world, const AgentId &ego_id) {
-  ::ad::rss::world::WorldModel rss_world_model = ExtractRSSWorld(world, ego_id);
-  ::ad::rss::state::RssStateSnapshot snapshot = RssCheck(rss_world_model);
-  return ExtractSafetyEvaluation(snapshot);
+  ::ad::rss::world::WorldModel rss_world_model;
+  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+    ::ad::rss::state::RssStateSnapshot snapshot;
+    RssCheck(rss_world_model, snapshot);
+    return ExtractSafetyEvaluation(snapshot);
+  } else {
+    // assume it is safe
+    return true;
+  }
 }
 
 PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
     const World &world, const AgentId &ego_id) {
-  ::ad::rss::world::WorldModel rss_world_model = ExtractRSSWorld(world, ego_id);
-  ::ad::rss::state::RssStateSnapshot snapshot = RssCheck(rss_world_model);
-  return ExtractPairwiseSafetyEvaluation(snapshot);
+  ::ad::rss::world::WorldModel rss_world_model;
+  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+    ::ad::rss::state::RssStateSnapshot snapshot;
+    RssCheck(rss_world_model, snapshot);
+    return ExtractPairwiseSafetyEvaluation(snapshot);
+  } else {
+    return PairwiseEvaluationReturn();
+  }
 }
 
 PairwiseDirectionalEvaluationReturn
 RssInterface::GetPairwiseDirectionalSafetyReponse(const World &world,
                                                   const AgentId &ego_id) {
-  ::ad::rss::world::WorldModel rss_world_model = ExtractRSSWorld(world, ego_id);
-  ::ad::rss::state::RssStateSnapshot snapshot = RssCheck(rss_world_model);
-  return ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
+  ::ad::rss::world::WorldModel rss_world_model;
+  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+    ::ad::rss::state::RssStateSnapshot snapshot;
+    RssCheck(rss_world_model,snapshot);
+    return ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
+  }else{
+    return PairwiseDirectionalEvaluationReturn();
+  }
 }
 
 }  // namespace evaluation
