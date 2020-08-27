@@ -91,10 +91,13 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 class RssInterface {
  public:
   RssInterface() {}
-  explicit RssInterface(const std::string &opendrive_file_name,
-                        const std::vector<float> &default_vehicle_dynamics,
-                        const std::unordered_map<AgentId, std::vector<float>>
-                            &agent_vehicle_dynamics)
+  explicit RssInterface(const std::string& opendrive_file_name,
+                        const std::vector<float>& default_vehicle_dynamics,
+                        const std::unordered_map<AgentId, std::vector<float>>&
+                            agents_vehicle_dynamics,
+                        const float& discretize_step,
+                        const float& checking_relevent_range,
+                        const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
         agents_dynamics_(agent_vehicle_dynamics) {
     spdlog::set_level(spdlog::level::off);
@@ -214,6 +217,10 @@ class RssInterface {
 
   std::vector<float> default_dynamics_;
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
+
+  float discretize_step_;
+  float route_predict_range_;
+  float checking_relevent_range_;
 };
 
 }  // namespace evaluation
