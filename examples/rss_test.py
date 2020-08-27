@@ -108,13 +108,14 @@ e = EvaluatorRss(agent1.id, map_path,
                  {1: [3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.], 
                  2: [5, -8., -4., -3., 0.2, -0.8, 0.1, 1.]})
 
-# EvaluatorRss is accuarate only after stepping bark world
-world.Step(0.5)
 
 for _ in range(0, 30):
   viewer.clear()
   world.Step(sim_step_time)
-  print(e.Evaluate(world),e.PairwiseEvaluate(world),e.PairwiseDirectionalEvaluate(world))
+  print("Overall safety response: ", e.Evaluate(world))
+  # print("Pairwise safety response: ", e.PairwiseEvaluate(world))
+  # print("Pairwise directional safety response: ",
+  #       e.PairwiseDirectionalEvaluate(world))
   viewer.drawWorld(world)
   viewer.drawSafetyResponses(world,agent1.id,e.PairwiseEvaluate(world))
   viewer.show(block=False)

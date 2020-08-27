@@ -204,9 +204,7 @@ FullRoute RssInterface::GenerateRoute(
     bool valid_route=false;
     if (!routing_targets.empty() &&
         ::ad::map::point::isValid(routing_targets)) {
-      FullRoute route;
-
-      route = ::ad::map::route::planning::planRoute(
+      FullRoute route = ::ad::map::route::planning::planRoute(
           route_starting_point, routing_targets,
           ::ad::map::route::RouteCreationMode::AllNeighborLanes);
 
@@ -214,6 +212,10 @@ FullRoute RssInterface::GenerateRoute(
         valid_route = true;
         routes.push_back(route);
         routes_probability.push_back(position.probability);
+      } else {
+        LOG(INFO) << "No route to the goal is found at x: "
+                  << bg::get<0>(agent_center)
+                  << " y: " << bg::get<1>(agent_center) << std::endl;
       }
     }
 
@@ -368,14 +370,11 @@ bool RssInterface::RssCheck(
       world_model, situation_snapshot, rss_state_snapshot, proper_response);
 
   if (!result){
-    // due to limitations of Carla map library, RSS check fails when crossing
-    // road or road segment or lane, etc.
-
-    // TODO(chan): perform primitive rss check like in apollo in case of failure
+    // Due to limitations of Carla map library, RSS check fails when crossing
+    // road or road segment and intersection.
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   } 
   
-
   return result;
 }
 
@@ -416,12 +415,7 @@ bool RssInterface::ExtractRSSWorld(
   AgentPtr agent = world.GetAgent(agent_id);
 
   models::dynamic::State agent_state;
-  try {
-    agent_state = agent->GetCurrentState();
-  } catch (const std::exception&) {
-    // may fail during initial steps? (during the first 0.5 second)
-    return false;
-  }
+  agent_state = agent->GetCurrentState();
 
   Polygon agent_shape = agent->GetShape();
   ::ad::map::match::Object match_object =

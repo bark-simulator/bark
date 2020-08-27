@@ -79,7 +79,8 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 // responses the specifed agent.
 //
 // Mostly follows the implements of Carla-RSS integration, only supports
-// performing RSS on the same road segment and non-intersection area.
+// performing RSS on the same road segment and non-intersection area
+// (looks like it works after rss v4.0.1, map v2.2.0)
 //
 // Interface for the following libraries:
 // RSS: https://github.com/intel/ad-rss-lib
