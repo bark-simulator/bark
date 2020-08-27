@@ -69,8 +69,8 @@ glog_library(with_gflags=0)
     """
     )
 
-    # -------- ad-rss-lib -----------------------
-    # Build steps:
+    # -------- Rss integration -----------------------
+    # Scripts were created follow the build steps:
     # ad-rss-lib: https://intel.github.io/ad-rss-lib/BUILDING/index.html
     # map_support: https://ad-map-access.readthedocs.io/en/latest/BUILDING/index.html
 
@@ -96,9 +96,9 @@ glog_library(with_gflags=0)
     http_archive,
     name = "map_support",
     build_file = "@bark_project//tools/rss:map_support.BUILD",
-    sha256 = "4613e353ced9d140e489f028a15f1afd9ba0c965feb63c36bbc950f6f30c8ee8",
-    strip_prefix = "map-2.2.0",
-    urls = ["https://github.com/carla-simulator/map/archive/v2.2.0.tar.gz"],
+    sha256 = "2f2ea3da842ad599c6f70b8976287eb52c994e277626f545dbf7d5c51f0595ca",
+    strip_prefix = "map-2.2.1",
+    urls = ["https://github.com/carla-simulator/map/archive/v2.2.1.tar.gz"],
     )
 
     _maybe(
