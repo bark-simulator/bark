@@ -30,10 +30,13 @@ class EvaluatorRss : public BaseEvaluator {
           std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
       const std::unordered_map<AgentId, std::vector<float>>&
           agents_vehicle_dynamics =
-              std::unordered_map<AgentId, std::vector<float>>())
+              std::unordered_map<AgentId, std::vector<float>>(),
+      const float& discretize_step=1., const float& checking_relevent_range = 1.,
+      const float& route_predict_range = 50.)
       : agent_id_(agent_id),
         rss_(opendrive_file_name, default_vehicle_dynamics,
-             agents_vehicle_dynamics) {}
+             agents_vehicle_dynamics, discretize_step, checking_relevent_range,
+             route_predict_range) {}
 
   virtual ~EvaluatorRss() {}
 

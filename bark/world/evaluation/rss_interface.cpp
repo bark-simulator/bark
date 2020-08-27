@@ -88,8 +88,7 @@ bool RssInterface::initializeOpenDriveMap(
 }
 
 ::ad::map::match::Object RssInterface::GenerateMatchObject(
-    const models::dynamic::State &agent_state, const Polygon &agent_shape,
-    const Distance &match_distance) {
+    const models::dynamic::State &agent_state, const Polygon &agent_shape) {
   ::ad::map::match::Object matching_object;
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
@@ -111,7 +110,7 @@ bool RssInterface::initializeOpenDriveMap(
       Distance(agent_shape.front_dist_ + agent_shape.rear_dist_));
   matching_object.enuPosition.dimension.width = static_cast<double>(
       Distance(agent_shape.left_dist_ + agent_shape.right_dist_));
-  matching_object.enuPosition.dimension.height = Distance(1.5);
+  matching_object.enuPosition.dimension.height = Distance(2.);
   matching_object.enuPosition.enuReferencePoint =
       ::ad::map::access::getENUReferencePoint();
 
@@ -166,7 +165,7 @@ FullRoute RssInterface::GenerateRoute(
       agent_lane_center_line,
       agent_lane_center_line.obj_.at(agent_lane_center_line.obj_.size() - 1));
 
-  float step = (s_start < s_end) ? 1 : -1;
+  float step = (s_start < s_end) ? discretize_step_ : -discretize_step_;
 
   std::vector<::ad::map::point::ENUPoint> routing_targets;
   // discretize the line into points and store as routing targets
@@ -222,9 +221,10 @@ FullRoute RssInterface::GenerateRoute(
     if (valid_route==false){
       // predicts all possible routes based on the given distance, it returns
       // all routes having distance less than the given value
+      // It should be rarely used
       std::vector<FullRoute> possible_routes =
           ::ad::map::route::planning::predictRoutesOnDistance(
-              route_starting_point, Distance(50.), // input in the constructor
+              route_starting_point, Distance(route_predict_range_),
               ::ad::map::route::RouteCreationMode::AllNeighborLanes);
       for (const auto &possible_route : possible_routes) {
         routes.push_back(possible_route);
@@ -293,8 +293,7 @@ bool RssInterface::CreateWorldModel(
   std::vector<AgentPtr> relevent_agents;
   double const relevant_distance =
       static_cast<double>(ego_rss_state.min_stopping_distance) *
-      2.;  // increase searching distance for better visualization
-  geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
+      checking_relevent_range_;  // increase searching distance for better visualization
 
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
@@ -331,8 +330,7 @@ bool RssInterface::CreateWorldModel(
 
     Polygon other_shape = other->GetShape();
     auto const other_match_object = GenerateMatchObject(
-        other_state, other_shape, Distance(2.));
-    // Speed other_speed = other_state(VEL_POSITION);
+        other_state, other_shape);
 
     ::ad::rss::world::RssDynamics other_dynamics =
         GenerateAgentDynamicsParameters(other->GetAgentId());
@@ -419,7 +417,7 @@ bool RssInterface::ExtractRSSWorld(
 
   Polygon agent_shape = agent->GetShape();
   ::ad::map::match::Object match_object =
-      GenerateMatchObject(agent_state, agent_shape, Distance(2.));
+      GenerateMatchObject(agent_state, agent_shape);
 
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));

@@ -82,12 +82,18 @@ void python_evaluation(py::module m) {
   py::class_<EvaluatorRss, BaseEvaluator, std::shared_ptr<EvaluatorRss>>(
       m, "EvaluatorRss")
       .def(py::init<>())
-      .def(py::init<const AgentId&, const std::string&>())
-      .def(py::init<const AgentId&, const std::string&,
-                    const std::vector<float>&>())
       .def(py::init<const AgentId&, const std::string&,
                     const std::vector<float>&,
-                    const std::unordered_map<AgentId, std::vector<float>>&>())
+                    const std::unordered_map<AgentId, std::vector<float>>&,
+                    const float&, const float&, const float&>(),
+           py::arg("agent_id") = 0, py::arg("opendrive_file_name") = "",
+           py::arg("default_vehicle_dynamics") =
+               std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
+           py::arg("agents_vehicle_dynamics") =
+               std::unordered_map<AgentId, std::vector<float>>(),
+           py::arg("discretize_step") = 1.,
+           py::arg("checking_relevent_range") = 1.,
+           py::arg("route_predict_range") = 50.)
       .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRss::Evaluate))
       .def("PairwiseEvaluate",
            py::overload_cast<const World&>(&EvaluatorRss::PairwiseEvaluate))
