@@ -11,6 +11,7 @@
 #include <streambuf>
 #include <string>
 #include <assert.h> 
+#include <optional>
 
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
@@ -34,6 +35,7 @@
 #include <ad/rss/state/RssStateOperation.hpp>
 #include <ad/rss/state/RssStateSnapshot.hpp>
 #include <ad/rss/world/RssDynamics.hpp>
+#include <ad/rss/world/WorldModelValidInputRange.hpp>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
 
@@ -101,7 +103,7 @@ class RssInterface {
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the all possible RSS
   // situations is safe, false otherwise.
-  bool GetSafetyReponse(const World &world, const AgentId &ego_id);
+  EvaluationReturn GetSafetyReponse(const World &world, const AgentId &ego_id);
 
   // Returns an unorder_map indicating the pairwise safety respone of the
   // specified agent to every other nearby agents. Key is AgentId of an nearby

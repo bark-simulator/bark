@@ -39,7 +39,8 @@ class EvaluatorRss : public BaseEvaluator {
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the all possible RSS
-  // situations is safe, false otherwise.
+  // situations is safe, false if unsafe, uninitialized (none in python) if no
+  // Rss check can be performed.
   virtual EvaluationReturn Evaluate(const World& world) {
     return rss_.GetSafetyReponse(world, agent_id_);
   };
@@ -49,6 +50,7 @@ class EvaluatorRss : public BaseEvaluator {
   // agent, value is true if at least one of the all possible RSS situations
   // between the specified and the nearby agent is safe, false
   // otherwise.
+  // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
     return rss_.GetPairwiseSafetyReponse(world, agent_id_);
   };
@@ -63,6 +65,7 @@ class EvaluatorRss : public BaseEvaluator {
   // It is true if at least one of the all possible RSS situations in the
   // direction between the specified and the nearby agent is safe, false
   // otherwise, respectively.
+  // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
       const World& world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
