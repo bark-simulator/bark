@@ -348,7 +348,7 @@ bool RssInterface::CreateWorldModel(
   }
   rss_world_model=scene_creation.getWorldModel();
 
-  return true;
+  return withinValidInputRange(rss_world_model);
 }
 
 bool RssInterface::RssCheck(
@@ -448,41 +448,41 @@ bool RssInterface::ExtractRSSWorld(
   return result;
 }
 
-bool RssInterface::GetSafetyReponse(const World &world, const AgentId &ego_id) {
+EvaluationReturn RssInterface::GetSafetyReponse(const World& world,
+                                                const AgentId& ego_id) {
+  std::optional<bool> response;
   ::ad::rss::world::WorldModel rss_world_model;
   if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world_model, snapshot);
-    return ExtractSafetyEvaluation(snapshot);
-  } else {
-    // assume it is safe
-    return true;
+    response = ExtractSafetyEvaluation(snapshot);
   }
+  return response;
 }
 
 PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
-    const World &world, const AgentId &ego_id) {
+    const World& world, const AgentId& ego_id) {
   ::ad::rss::world::WorldModel rss_world_model;
+  PairwiseEvaluationReturn response;
   if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world_model, snapshot);
-    return ExtractPairwiseSafetyEvaluation(snapshot);
-  } else {
-    return PairwiseEvaluationReturn();
+    response = ExtractPairwiseSafetyEvaluation(snapshot);
   }
+  return response;
 }
 
 PairwiseDirectionalEvaluationReturn
-RssInterface::GetPairwiseDirectionalSafetyReponse(const World &world,
-                                                  const AgentId &ego_id) {
+RssInterface::GetPairwiseDirectionalSafetyReponse(const World& world,
+                                                  const AgentId& ego_id) {
   ::ad::rss::world::WorldModel rss_world_model;
+  PairwiseDirectionalEvaluationReturn response;
   if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
-    RssCheck(rss_world_model,snapshot);
-    return ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
-  }else{
-    return PairwiseDirectionalEvaluationReturn();
+    RssCheck(rss_world_model, snapshot);
+    response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
   }
+  return response;
 }
 
 }  // namespace evaluation
