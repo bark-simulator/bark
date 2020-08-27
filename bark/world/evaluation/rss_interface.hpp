@@ -99,7 +99,22 @@ class RssInterface {
                         const float& checking_relevent_range,
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
-        agents_dynamics_(agent_vehicle_dynamics) {
+        agents_dynamics_(agents_vehicle_dynamics),
+        discretize_step_(discretize_step),
+        checking_relevent_range_(checking_relevent_range),
+        route_predict_range_(route_predict_range) {
+    // Sanity checks
+    assert(opendrive_file_name != "");
+    assert(checking_relevent_range_ >= 1.);
+    // lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct
+    assert(default_dynamics_.size() == 8);
+    assert(default_dynamics_[1] <= default_dynamics_[2] &&
+           default_dynamics_[2] <= default_dynamics_[3]);
+    for (const auto& d : agents_dynamics_) {
+      assert(d.second.size() == 8);
+      assert(d.second[1] <= d.second[2] && d.second[2] <= d.second[3]);
+    }
+
     spdlog::set_level(spdlog::level::off);
     initializeOpenDriveMap(opendrive_file_name);
   }
@@ -155,8 +170,7 @@ class RssInterface {
   // Detailed explanation:
   // https://ad-map-access.readthedocs.io/en/latest/ad_map_access/HLD_MapMatching/
   ::ad::map::match::Object GenerateMatchObject(
-      const models::dynamic::State &agent_state, const Polygon &agent_shape,
-      const Distance &match_distance);
+      const models::dynamic::State &agent_state, const Polygon &agent_shape);
 
   ::ad::rss::map::RssObjectData GenerateObjectData(
       const ::ad::rss::world::ObjectId& id,

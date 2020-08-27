@@ -25,7 +25,7 @@ bool RssInterface::initializeOpenDriveMap(
   ::ad::map::access::cleanup();
 
   // the 2nd argument is the value of narrowing overlapping between two lanes,
-  // it is possibly relevent if the map has intersection
+  // it is only relevent if the map has intersection
   bool result = ::ad::map::access::initFromOpenDriveContent(
       opendrive_file_content, 0.01,
       ::ad::map::intersection::IntersectionType::TrafficLight,
@@ -64,9 +64,6 @@ bool RssInterface::initializeOpenDriveMap(
   dynamics.unstructuredSettings.vehicleYawRateChange = ad::physics::AngularAcceleration(0.3);
   dynamics.unstructuredSettings.vehicleMinRadius = ad::physics::Distance(3.5);
   dynamics.unstructuredSettings.vehicleTrajectoryCalculationStep = ad::physics::Duration(0.2);
-
-  // sanity check
-  assert(lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct);
 
   return dynamics;
 }
@@ -116,11 +113,8 @@ bool RssInterface::initializeOpenDriveMap(
 
   // perform map matching
   ::ad::map::match::AdMapMatching map_matching;
-  // the last argument is the step size to be used to perform map matching in
-  // between the vehicle boundaries, the result of map matching is heavily
-  // influencing by this parameter
   matching_object.mapMatchedBoundingBox = map_matching.getMapMatchedBoundingBox(
-      matching_object.enuPosition, match_distance);
+      matching_object.enuPosition);
 
   return matching_object;
 }
@@ -212,6 +206,8 @@ FullRoute RssInterface::GenerateRoute(
         routes.push_back(route);
         routes_probability.push_back(position.probability);
       } else {
+        // Due to limitations of Carla map library, RSS check fails when crossing
+        // road or road segment and intersection.
         LOG(INFO) << "No route to the goal is found at x: "
                   << bg::get<0>(agent_center)
                   << " y: " << bg::get<1>(agent_center) << std::endl;
@@ -219,7 +215,7 @@ FullRoute RssInterface::GenerateRoute(
     }
 
     if (valid_route==false){
-      // predicts all possible routes based on the given distance, it returns
+      // Predicts all possible routes based on the given distance, it returns
       // all routes having distance less than the given value
       // It should be rarely used
       std::vector<FullRoute> possible_routes =
@@ -238,7 +234,7 @@ FullRoute RssInterface::GenerateRoute(
   if (routes.empty()) {
     LOG(ERROR) << "Could not find any route to the targets" << std::endl;
   } else {
-    // select the best route based on the probability of the starting point
+    // Select the best route based on the probability of the starting point
     // calculated by map matching
     int best_route_idx = std::distance(
         routes_probability.begin(),
@@ -268,19 +264,19 @@ AgentState RssInterface::ConvertAgentState(
 
 Distance RssInterface::CalculateMinStoppingDistance(
     const Speed &speed, const ::ad::rss::world::RssDynamics &agent_dynamics) {
-  Distance minStoppingDistance;
+  Distance min_stopping_distance;
 
   bool result =
       ::ad::rss::situation::calculateDistanceOffsetInAcceleratedMovement(
           std::fabs(speed), agent_dynamics.alphaLon.accelMax,
-          agent_dynamics.responseTime, minStoppingDistance);
+          agent_dynamics.responseTime, min_stopping_distance);
 
   if (result == false)
     LOG(ERROR)
         << "Failed to calculate maximum possible speed after response time "
         << agent_dynamics.responseTime << std::endl;
 
-  return minStoppingDistance;
+  return min_stopping_distance;
 }
 
 bool RssInterface::CreateWorldModel(
@@ -295,6 +291,7 @@ bool RssInterface::CreateWorldModel(
       static_cast<double>(ego_rss_state.min_stopping_distance) *
       checking_relevent_range_;  // increase searching distance for better visualization
 
+  geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
   ::ad::rss::map::RssObjectData ego_data = GenerateObjectData(
@@ -303,7 +300,7 @@ bool RssInterface::CreateWorldModel(
       ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading),
       ego_dynamics);
 
-  // determine which agent is close thus relevent for safety checking
+  // Determine which agent is close thus relevent for safety checking
   for (const auto &other_agent : agents) {
     if (other_agent.second->GetAgentId() != ego_id) {
       if (geometry::Distance(ego_center,
@@ -320,13 +317,7 @@ bool RssInterface::CreateWorldModel(
   ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
 
   for (const auto &other : relevent_agents) {
-    models::dynamic::State other_state;
-    try {
-      other_state = other->GetCurrentState();
-    } catch (const std::exception&) {
-      // may fail during initial steps? (during the first 0.5 second)
-      return false;
-    }
+    models::dynamic::State other_state = other->GetCurrentState();
 
     Polygon other_shape = other->GetShape();
     auto const other_match_object = GenerateMatchObject(
@@ -348,6 +339,7 @@ bool RssInterface::CreateWorldModel(
   }
   rss_world_model=scene_creation.getWorldModel();
 
+  // It is valid only after world timestep 1
   return withinValidInputRange(rss_world_model);
 }
 
@@ -368,8 +360,6 @@ bool RssInterface::RssCheck(
       world_model, situation_snapshot, rss_state_snapshot, proper_response);
 
   if (!result){
-    // Due to limitations of Carla map library, RSS check fails when crossing
-    // road or road segment and intersection.
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   } 
   
