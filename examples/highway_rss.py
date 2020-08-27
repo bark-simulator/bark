@@ -114,7 +114,7 @@ for _ in range(0, 5):
     scenario, idx = scenarios.get_next_scenario()
     world = scenario.GetWorldState()
     e = EvaluatorRss(scenario._eval_agent_ids[0], map_path, 
-                 [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.])
+                 [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],discretize_routing_step=10)
     for _ in range(0, 70): 
       print("Overall safety response: ", e.Evaluate(world))
       # print("Pairwise safety response: ", e.PairwiseEvaluate(world))

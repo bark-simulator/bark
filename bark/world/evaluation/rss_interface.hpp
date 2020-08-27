@@ -95,12 +95,12 @@ class RssInterface {
                         const std::vector<float>& default_vehicle_dynamics,
                         const std::unordered_map<AgentId, std::vector<float>>&
                             agents_vehicle_dynamics,
-                        const float& discretize_step,
+                        const float& discretize_routing_step,
                         const float& checking_relevent_range,
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
         agents_dynamics_(agents_vehicle_dynamics),
-        discretize_step_(discretize_step),
+        discretize_routing_step_(discretize_routing_step),
         checking_relevent_range_(checking_relevent_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
@@ -232,7 +232,7 @@ class RssInterface {
   std::vector<float> default_dynamics_;
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
-  float discretize_step_;
+  float discretize_routing_step_;
   float route_predict_range_;
   float checking_relevent_range_;
 };
