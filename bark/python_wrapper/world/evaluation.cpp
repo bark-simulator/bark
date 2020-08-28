@@ -14,6 +14,7 @@
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
 #include "bark/world/evaluation/evaluator_rss.hpp"
+#include "bark/world/evaluation/commons.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -103,6 +104,11 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorRss& g) {
         return "bark.core.world.evaluation.EvaluatorRss";
       });
+      
+  m.def("CaptureAgentStates", py::overload_cast<const World&>(
+    &CaptureAgentStates<World>));
+  m.def("CaptureAgentStates", py::overload_cast<const ObservedWorld&>(
+    &CaptureAgentStates<ObservedWorld>));
 
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
 }

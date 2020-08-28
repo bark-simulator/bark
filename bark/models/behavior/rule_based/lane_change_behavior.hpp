@@ -58,6 +58,15 @@ inline std::ostream& operator<<(std::ostream& os,
 
 // this is LaneCorridor specific
 struct LaneCorridorInformation {
+  explicit LaneCorridorInformation() {}
+  explicit LaneCorridorInformation(AgentInformation front,
+                                   AgentInformation rear,
+                                   LaneCorridorPtr lane_corridor,
+                                   double remaining_distance)
+      : front(front),
+        rear(rear),
+        lane_corridor(lane_corridor),
+        remaining_distance(remaining_distance) {}
   AgentInformation front;
   AgentInformation rear;
   // should be purely calcualted based using the LaneCorridor
@@ -99,6 +108,10 @@ class BehaviorLaneChangeRuleBased : public BehaviorIDMLaneTracking {
       const ObservedWorld& observed_world) const;
 
   std::pair<AgentInformation, AgentInformation> FrontRearAgents(
+      const ObservedWorld& observed_world,
+      const LaneCorridorPtr& lane_corr) const;
+
+  LaneCorridorInformation FillLaneCorridorInformation(
       const ObservedWorld& observed_world,
       const LaneCorridorPtr& lane_corr) const;
 

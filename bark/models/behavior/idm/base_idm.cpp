@@ -106,8 +106,9 @@ double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
 }
 
 double BaseIDM::CalcNetDistance(
-    const std::shared_ptr<const Agent>& ego_agent,
+    const world::ObservedWorld& observed_world,
     const std::shared_ptr<const Agent>& leading_agent) const {
+  const auto& ego_agent = observed_world.GetEgoAgent();
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
@@ -117,7 +118,12 @@ double BaseIDM::CalcNetDistance(
   const State leading_state = leading_agent->GetCurrentState();
   const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
-  FrenetPosition frenet_leading = leading_agent->CurrentFrenetPosition();
+  // we need to use the lane corridor of the ego agent to be able to compare the
+  // frenet values
+  const auto& lane_corridor = observed_world.GetLaneCorridor();
+  FrenetPosition frenet_leading(leading_agent->GetCurrentPosition(),
+                                lane_corridor->GetCenterLine());
+
   const float vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
@@ -172,11 +178,10 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
 
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
       observed_world.GetAgentInFront(lane_corr);
-  std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
   // vehicles
   if (leading_vehicle.first) {
-    leading_distance = CalcNetDistance(ego_agent, leading_vehicle.first);
+    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);

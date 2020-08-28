@@ -39,7 +39,7 @@ class BehaviorMobilRuleBased : public BehaviorLaneChangeRuleBased {
         params->GetReal("BehaviorMobilRuleBased::AThr",
                         "Acceleration threshold factor. See Mobil paper.", .2);
     politeness_ = params->GetReal("BehaviorMobilRuleBased::Politeness",
-                                  "Politeness factor. See Mobil paper.", .5);
+                                  "Politeness factor. See Mobil paper.", .2);
     safe_deceleration_ = params->GetReal(
         "BehaviorMobilRuleBased::SafeDeceleration",
         "Maximum deceleration for follower in target lane.", 4.0);

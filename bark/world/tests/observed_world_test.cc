@@ -195,6 +195,7 @@ TEST(observed_world, agent_in_front_other_lane) {
       road_corridor4->GetLeftRightLaneCorridor(ego_pos4);
   const LaneCorridorPtr& lane_corridor4 = left_right_lane_corridor.first;
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
+  EXPECT_EQ(3.5f, lane_corridor4->GetLaneWidth(ego_pos4));
 
   // in the lane corridor left of agent4, there is agent2 in front
   FrontRearAgents fr_vehicle4b =
