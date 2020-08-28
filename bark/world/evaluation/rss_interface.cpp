@@ -28,7 +28,7 @@ bool RssInterface::initializeOpenDriveMap(
   // it is only relevent if the map has intersection
   bool result = ::ad::map::access::initFromOpenDriveContent(
       opendrive_file_content, 0.01,
-      ::ad::map::intersection::IntersectionType::TrafficLight,
+      ::ad::map::intersection::IntersectionType::Unknown,
       ::ad::map::landmark::TrafficLightType::UNKNOWN);
 
   if (result == false)
