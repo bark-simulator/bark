@@ -51,6 +51,10 @@ TEST(distribution_test, uniform_dist_1d) {
 
   auto dist_uniform = bark::commons::UniformDistribution1D(params_ptr);
 
+  auto support = dist_uniform.GetSupport();
+  EXPECT_NEAR(support[0].first, -3.0f, 0.0001f);
+  EXPECT_NEAR(support[0].second, 10.0f, 0.0001f);
+
   size_t samples = 10000;
   double mean = 0.0f;
   int num_buckets = 100;

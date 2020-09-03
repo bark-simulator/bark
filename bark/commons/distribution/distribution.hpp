@@ -16,9 +16,10 @@ namespace bark {
 namespace commons {
 
 typedef double Probability;
-typedef float RandomVariableSupport;
+typedef float RandomVariableValueType;
 typedef unsigned int RandomSeed;
-typedef std::vector<RandomVariableSupport> RandomVariate;
+typedef std::vector<RandomVariableValueType> RandomVariate;
+typedef std::vector<std::pair<RandomVariableValueType, RandomVariableValueType>> RandomVariableSupport;
 
 class Distribution : public BaseType {
  public:
@@ -29,6 +30,8 @@ class Distribution : public BaseType {
   virtual Probability Density(const RandomVariate& variate) const = 0;
 
   virtual Probability CDF(const RandomVariate& variate) const = 0;
+
+  virtual RandomVariableSupport GetSupport() const = 0;
 };
 
 typedef std::shared_ptr<Distribution> DistributionPtr;

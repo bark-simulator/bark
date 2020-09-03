@@ -33,6 +33,9 @@ class FixedValue : public Distribution {
 
   virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
 
+  virtual RandomVariableSupport GetSupport() const { return RandomVariableSupport(1,
+                                                  std::make_pair(fixed_value_[0], fixed_value_[0])); };
+
  private:
   RandomVariate fixed_value_;
 };
@@ -58,13 +61,15 @@ class BoostDistribution1D : public Distribution {
     return boost::math::cdf(dist_, variate[0]);
   };
 
+  virtual RandomVariableSupport GetSupport() const;
+
   BoostDistType DistFromParams(const ParamsPtr& params) const;
 
  private:
   RandomSeed seed_;
   std::mt19937 generator_;
   BoostDistType dist_;
-  std::uniform_real_distribution<RandomVariableSupport> uniform_generator_;
+  std::uniform_real_distribution<RandomVariableValueType> uniform_generator_;
 };
 
 template <class BoostDistType>
@@ -76,15 +81,15 @@ inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
   return RandomVariate(1, sample);
 }
 
-using boost_normal = boost::math::normal_distribution<RandomVariableSupport>;
-using boost_uniform = boost::math::uniform_distribution<RandomVariableSupport>;
+using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
+using boost_uniform = boost::math::uniform_distribution<RandomVariableValueType>;
 
 template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
     const ParamsPtr& params) const {
-  const RandomVariableSupport lower_bound =
+  const RandomVariableValueType lower_bound =
       params->GetReal("LowerBound", "Lower bound of uniform distr.", 0.0f);
-  const RandomVariableSupport upper_bound =
+  const RandomVariableValueType upper_bound =
       params->GetReal("UpperBound", "Upper bound of uniform distr.", 1.0f);
   return boost_uniform(lower_bound, upper_bound);
 }
@@ -92,11 +97,22 @@ inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
 template <>
 inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(
     const ParamsPtr& params) const {
-  const RandomVariableSupport mean =
+  const RandomVariableValueType mean =
       params->GetReal("Mean", "Mean of normal distribution", 0.0f);
-  const RandomVariableSupport std = params->GetReal(
+  const RandomVariableValueType std = params->GetReal(
       "StdDev", "Standard deviation of normal distribution", 1.0f);
   return boost_normal(mean, std);
+}
+
+template <>
+inline RandomVariableSupport BoostDistribution1D<boost_uniform>::GetSupport() const {
+  return RandomVariableSupport(1, std::make_pair(dist_.lower(), dist_.upper()));
+}
+
+template <>
+inline RandomVariableSupport BoostDistribution1D<boost_normal>::GetSupport() const {
+  return RandomVariableSupport(1, std::make_pair
+      (std::numeric_limits<RandomVariableValueType>::lowest(), std::numeric_limits<RandomVariableValueType>::max()));
 }
 
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;
