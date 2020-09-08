@@ -37,6 +37,8 @@
 
 #ifdef PLANNER_UCT
 #include "bark_mcts/models/behavior/behavior_uct_hypothesis.hpp"
+#include "bark_mcts/models/behavior/behavior_uct_risk_constraint.hpp"
+#include "bark_mcts/models/behavior/behavior_uct_cooperative.hpp"
 #include "bark_mcts/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
@@ -91,7 +93,11 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIDMStochastic";
   }
 #ifdef PLANNER_UCT
-  else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
+  else if (typeid(*behavior_model) == typeid(BehaviorUCTCooperative)) {
+    behavior_model_name = "BehaviorUCTCooperative";
+  } else if (typeid(*behavior_model) == typeid(BehaviorUCTRiskConstraint)) {
+    behavior_model_name = "BehaviorUCTRiskConstraint";
+  } else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
     behavior_model_name = "BehaviorUCTHypothesis";
   } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
     behavior_model_name = "BehaviorHypothesisIDM";
@@ -140,7 +146,13 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
         t[0].cast<BehaviorIDMStochastic>());
   }
 #ifdef PLANNER_UCT
-  else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
+  else if (behavior_model_name.compare("BehaviorUCTCooperative") == 0) {
+    return std::make_shared<BehaviorUCTCooperative>(
+        t[0].cast<BehaviorUCTCooperative>());
+  } else if (behavior_model_name.compare("BehaviorUCTRiskConstraint") == 0) {
+    return std::make_shared<BehaviorUCTRiskConstraint>(
+        t[0].cast<BehaviorUCTRiskConstraint>());
+  } else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
     return std::make_shared<BehaviorUCTHypothesis>(
         t[0].cast<BehaviorUCTHypothesis>());
   } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
