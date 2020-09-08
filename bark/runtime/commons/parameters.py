@@ -139,7 +139,8 @@ class ParameterServer(Params):
         return self
 
     def clone(self):
-      return ParameterServer(json = self.ConvertToDict())
+      return ParameterServer(json = self.ConvertToDict(), \
+          log_if_default = self.log_if_default)
 
     def ConvertToDict(self, print_description=False):
         dict = {}
