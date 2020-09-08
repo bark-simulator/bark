@@ -42,6 +42,8 @@
 #include "bark_mcts/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
+using bark::models::behavior::BehaviorUCTRiskConstraint;
+using bark::models::behavior::BehaviorUCTCooperative;
 #endif
 
 namespace py = pybind11;
