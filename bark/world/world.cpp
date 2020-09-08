@@ -27,7 +27,10 @@ World::World(const commons::ParamsPtr& params)
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.",
-          false)) {
+          false)),
+      frac_lateral_offset_(params->GetReal("World::FracLateralOffset",
+          "Fraction of lateral offset for FrontRearAgent Calculation, should be larger than 0.",
+          0.5)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -40,6 +43,7 @@ World::World(const std::shared_ptr<World>& world)
       evaluators_(world->GetEvaluators()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
+      frac_lateral_offset_(world->GetFracLateralOffset()),
       rtree_agents_(world->rtree_agents_) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
@@ -245,7 +249,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
     float width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
-    if (std::abs(frenet_other.lat) > width / 2) {
+    if (std::abs(frenet_other.lat) > frac_lateral_offset_ * width) {
       // agent seems to be not really in same lane
       continue;
     }
