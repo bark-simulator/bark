@@ -314,14 +314,13 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
   double vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
   bool interaction_term_active = rel_values.has_leading_object;
 
-  if (param_coolness_factor_ > 0.0f) {
-    acc = CalcACCAcc(rel_distance, vel_i, vel_front, rel_values.ego_acc,
+  if (interaction_term_active) {
+    if (param_coolness_factor_ > 0.0) {
+      acc = CalcACCAcc(rel_distance, vel_i, vel_front, rel_values.ego_acc,
                      rel_values.leading_acc);
-    traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
-    traveled_other = vel_front * dt;
-    rel_distance += traveled_other - traveled_ego;
-  } else if (interaction_term_active) {
-    acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
+    } else {
+      acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
+    }
     traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
