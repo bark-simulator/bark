@@ -128,8 +128,8 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
       shape = ShapeFromTrack(track, wheel_base)
       agent_geometries.append(shape)
       tracks.append(track)
-      lane_positions = self.find_lane_positions(numpy_state, road_corridor)
-      lane_positions.append(lane_positions)
+      lane_positions_agent = self.find_lane_positions(numpy_state, road_corridor)
+      lane_positions.append(lane_positions_agent)
 
     assert(len(agent_states) == len(agent_geometries))
     return agent_states, agent_geometries, {"track_ids": track_ids, "tracks" : tracks, \
