@@ -42,11 +42,12 @@ param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
 param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.0
 param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 80.
-param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 1.
-param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 1.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 0.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
-param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.1
+param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
+param_server["World"]["FracLateralOffset"] = 0.8
 
 SetVerboseLevel(0)
 
@@ -103,7 +104,7 @@ env = Runtime(step_time=0.2,
               render=True)
 
 # run 3 scenarios
-for _ in range(0, 1):
+for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
   for step in range(0, 20):

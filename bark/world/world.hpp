@@ -128,6 +128,8 @@ class World : public commons::BaseType {
 
   bool GetRemoveAgents() { return remove_agents_; }
 
+  double GetFracLateralOffset() const { return frac_lateral_offset_; }
+
   void SetRemoveAgents(const bool& remove_agents) {
     remove_agents_ = remove_agents;
   }
@@ -177,6 +179,7 @@ class World : public commons::BaseType {
   double world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
+  double frac_lateral_offset_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;
