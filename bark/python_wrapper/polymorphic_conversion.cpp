@@ -42,6 +42,11 @@ using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
 
+#ifdef PLANNER_MIQP
+#include "src/behavior_miqp_agent.hpp"
+using bark::models::behavior::BehaviorMiqpAgent;
+#endif
+
 namespace py = pybind11;
 
 using bark::commons::SetterParams;
@@ -97,6 +102,11 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorHypothesisIDM";
   }
 #endif
+#ifdef PLANNER_MIQP
+  else if (typeid(*behavior_model) == typeid(BehaviorMiqpAgent)) {
+    behavior_model_name = "BehaviorMiqpAgent";
+  }
+#endif
   else {
     LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to python: "
                << typeid(*behavior_model).name();
@@ -147,6 +157,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
     return std::make_shared<BehaviorHypothesisIDM>(
         t[0].cast<BehaviorHypothesisIDM>());
   }
+#endif
+#ifdef PLANNER_MIQP
+  else if (behavior_model_name.compare("BehaviorMiqpAgent") == 0) {
+    return std::make_shared<BehaviorMiqpAgent>(
+        t[0].cast<BehaviorMiqpAgent>());
+  } 
 #endif
   else {
     LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to C++ : "

@@ -25,6 +25,16 @@ git_repository(
 #planner_uct_rules_dependencies()
 # --------------------------------------------------
 
+# ------ Planner MIQP ------------------------------
+git_repository(
+    name = "planner_miqp",
+    commit="d8194a384929458f7a1d0178a83dd566bfd68939",
+    remote = "https://git.fortiss.org/esterle/miqp_logical_constraints.git"
+)
+load("@planner_miqp//util:deps.bzl", "planner_miqp_dependencies")
+planner_miqp_dependencies()
+# --------------------------------------------------
+
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
