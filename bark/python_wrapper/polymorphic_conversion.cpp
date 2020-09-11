@@ -42,7 +42,6 @@ using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
 
-#define PLANNER_MIQP
 #ifdef PLANNER_MIQP
 #include "src/behavior_miqp_agent.hpp"
 using bark::models::behavior::BehaviorMiqpAgent;

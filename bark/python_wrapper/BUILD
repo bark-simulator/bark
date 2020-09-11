@@ -46,7 +46,8 @@ cc_binary(
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark_mcts/python_wrapper:planner_uct"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["@planner_miqp//python:planner_miqp"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
-  copts=select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
+  copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"]
+  + select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
   linkshared = 1,
@@ -82,5 +83,6 @@ cc_library(
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
     "//bark/models/behavior/idm/stochastic:stochastic",
-    ]
+    ],
+    copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"]
 )
