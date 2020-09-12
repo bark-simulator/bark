@@ -13,10 +13,14 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
-#include "bark/world/evaluation/evaluator_rss.hpp"
+#include "bark/world/evaluation/commons.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
+
+#ifdef RSS
+#include "bark/world/evaluation/rss/evaluator_rss.hpp"
+#endif
 
 namespace py = pybind11;
 
@@ -79,6 +83,7 @@ void python_evaluation(py::module m) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
       });
 
+#ifdef RSS
   py::class_<EvaluatorRss, BaseEvaluator, std::shared_ptr<EvaluatorRss>>(
       m, "EvaluatorRss")
       .def(py::init<>())
@@ -103,6 +108,12 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorRss& g) {
         return "bark.core.world.evaluation.EvaluatorRss";
       });
+  #endif
+      
+  m.def("CaptureAgentStates", py::overload_cast<const World&>(
+    &CaptureAgentStates<World>));
+  m.def("CaptureAgentStates", py::overload_cast<const ObservedWorld&>(
+    &CaptureAgentStates<ObservedWorld>));
 
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
 }

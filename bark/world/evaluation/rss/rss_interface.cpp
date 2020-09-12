@@ -4,7 +4,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "bark/world/evaluation/rss_interface.hpp"
+#include "bark/world/evaluation/rss/rss_interface.hpp"
 
 using ::ad::map::point::ENUCoordinate;
 using ::ad::map::route::FullRoute;
@@ -27,7 +27,7 @@ bool RssInterface::initializeOpenDriveMap(
   // the 2nd argument is the value of narrowing overlapping between two lanes,
   // it is only relevent if the map has intersection
   bool result = ::ad::map::access::initFromOpenDriveContent(
-      opendrive_file_content, 0.01,
+      opendrive_file_content, 0.05,
       ::ad::map::intersection::IntersectionType::Unknown,
       ::ad::map::landmark::TrafficLightType::UNKNOWN);
 
@@ -165,12 +165,16 @@ FullRoute RssInterface::GenerateRoute(
 
   std::vector<::ad::map::point::ENUPoint> routing_targets;
   // discretize the line into points and store as routing targets
+  // LOG(INFO) << "start " << s_start <<" " << s_end << std::endl;
+  // float counter =0;
   while (s_start <= s_end) {
     geometry::Point2d traj_point = GetPointAtS(agent_lane_center_line, s_start);
     routing_targets.push_back(::ad::map::point::createENUPoint(
         bg::get<0>(traj_point), bg::get<1>(traj_point), 0));
     s_start += step;
+    // counter++;
   }
+  // LOG(INFO) << "end" << std::endl;
 
   std::vector<FullRoute> routes;
   std::vector<double> routes_probability;
