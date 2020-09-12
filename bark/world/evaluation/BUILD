@@ -138,35 +138,6 @@ cc_library(
 )
 
 cc_library(
-    name = "rss_interface",
-    srcs = ["rss_interface.cpp"],
-    hdrs = ["rss_interface.hpp"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "//bark/commons",
-        "//bark/geometry",
-        "//bark/models/dynamic",
-        "//bark/world",
-        "@ad_rss_lib//:ad_rss",
-        "@ad_rss_lib//:ad_rss_map_integration",
-        "@boost//:geometry",
-        "@map_support//:ad_physics",
-        "@spdlog",
-    ],
-)
-
-cc_library(
-    name = "evaluator_rss",
-    hdrs = ["evaluator_rss.hpp"],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":rss_interface",
-        "//bark/world",
-        "//bark/world/evaluation:base_evaluator",
-    ],
-)
-
-cc_library(
     name = "evaluation",
     deps = [
         ":evaluator_goal_reached",
@@ -177,10 +148,14 @@ cc_library(
         ":evaluator_step_count",
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
-        ":evaluator_rss",
         ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
-    ],
+    ] + select({
+        "//bark/world/evaluation/rss:_rss": [
+            "//bark/world/evaluation/rss:evaluator_rss"
+        ],
+        "//conditions:default": []
+    }),
     visibility = ["//visibility:public"],
 )
 

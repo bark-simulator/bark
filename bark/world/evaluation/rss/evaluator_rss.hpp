@@ -12,9 +12,10 @@
 #include <string>
 
 #include "bark/world/evaluation/base_evaluator.hpp"
-#include "bark/world/evaluation/rss_interface.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+
+#include "bark/world/evaluation/rss/rss_interface.hpp"
 
 namespace bark {
 namespace world {
@@ -38,8 +39,6 @@ class EvaluatorRss : public BaseEvaluator {
         rss_(opendrive_file_name, default_vehicle_dynamics,
              agents_vehicle_dynamics, discretize_step, checking_relevent_range,
              route_predict_range) {}
-
-  virtual ~EvaluatorRss() {}
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the all possible RSS
@@ -75,8 +74,11 @@ class EvaluatorRss : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
   };
 
+  virtual ~EvaluatorRss() {}
+
  private:
   AgentId agent_id_;
+
   RssInterface rss_;
 };
 }  // namespace evaluation

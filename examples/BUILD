@@ -94,26 +94,6 @@ py_binary(
 )
 
 py_binary(
-  name = "rss_test",
-  srcs = ["rss_test.py"],
-  data = ['//bark:generate_core',
-          '//bark/runtime/tests:xodr_data',
-          ':params'],
-  imports = ['../python/'],
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime/commons:xodr_parser",
-          "//bark/runtime/viewer:pygame_viewer",
-          "//bark/runtime/viewer:matplotlib_viewer",
-          "//bark/runtime:runtime",
-          "//bark/benchmark:benchmark_runner",
-          "@benchmark_database//load:benchmark_database",
-          "@benchmark_database//serialization:database_serializer",
-          "//bark/benchmark:benchmark_analyzer",
-          "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          ],
-)
-
-py_binary(
   name = "highway_rss",
   srcs = ["highway_rss.py"],
   data = ['//bark:generate_core',
