@@ -69,57 +69,6 @@ glog_library(with_gflags=0)
     """
     )
 
-    # -------- Rss integration -----------------------
-    # Scripts were created follow the build steps:
-    # ad-rss-lib: https://intel.github.io/ad-rss-lib/BUILDING/index.html
-    # map_support: https://ad-map-access.readthedocs.io/en/latest/BUILDING/index.html
-
-    _maybe(
-    http_archive,
-    name = "ad_rss_lib",
-    build_file = "@bark_project//tools/rss:rss.BUILD",
-    sha256 = "a804472ede894f6323fb8de1ba34f2a0d6ff92603a48709a029e3c1ec28fe0ed",
-    strip_prefix = "ad-rss-lib-4.0.1",
-    urls = ["https://github.com/intel/ad-rss-lib/archive/v4.0.1.tar.gz"],
-    )
-
-    _maybe(
-      http_archive,
-      name = "spdlog",
-      build_file = "@bark_project//tools/rss:spdlog.BUILD",
-      sha256 = "f0114a4d3c88be9e696762f37a7c379619443ce9d668546c61b21d41affe5b62",
-      strip_prefix = "spdlog-1.7.0",
-      urls = ["https://github.com/gabime/spdlog/archive/v1.7.0.tar.gz"],
-    )
-
-    _maybe(
-    http_archive,
-    name = "map_support",
-    build_file = "@bark_project//tools/rss:map_support.BUILD",
-    sha256 = "2f2ea3da842ad599c6f70b8976287eb52c994e277626f545dbf7d5c51f0595ca",
-    strip_prefix = "map-2.2.1",
-    urls = ["https://github.com/carla-simulator/map/archive/v2.2.1.tar.gz"],
-    )
-
-    _maybe(
-    http_archive,
-    name = "pugixml",
-    build_file = "@bark_project//tools/rss:pugixml.BUILD",
-    sha256 = "55f399fbb470942410d348584dc953bcaec926415d3462f471ef350f29b5870a",
-    strip_prefix = "pugixml-1.10",
-    urls = ["https://github.com/zeux/pugixml/releases/download/v1.10/pugixml-1.10.tar.gz"],
-    )
-    
-    _maybe(
-    http_archive,
-    name = "proj",
-    build_file = "@bark_project//tools/rss:proj.BUILD",
-    sha256 = "876151e2279346f6bdbc63bd59790b48733496a957bccd5e51b640fdd26eaa8d",
-    strip_prefix = "proj-7.1.0",
-    urls = ["https://download.osgeo.org/proj/proj-7.1.0.tar.gz"],
-    )
-    # -------------------------------------------
-
     _maybe(
     native.new_local_repository,
     name = "python_linux",

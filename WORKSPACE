@@ -59,6 +59,11 @@ git_repository(
 )
 # --------------------------------------------------
 
+# ---------------------- RSS -----------------------
+load("@bark_project//tools/rss:rss.bzl", "rss_dependencies")
+rss_dependencies()
+# --------------------------------------------------
+
 # git_repository(
 #  name = "interaction_dataset_fortiss_internal",
 #  commit = "9ace5fde9260c20736b0463026e0f407b7d395ba",
