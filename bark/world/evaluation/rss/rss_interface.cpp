@@ -58,7 +58,7 @@ bool RssInterface::initializeOpenDriveMap(
   dynamics.responseTime = Duration(response_time);
 
   // new parameters after ad-rss v4.0.0
-  // leave them as the default one for now
+  // leave them as the default ones for now
   dynamics.unstructuredSettings.pedestrianTurningRadius =
       ad::physics::Distance(2.0);
   dynamics.unstructuredSettings.driveAwayMaxAngle = ad::physics::Angle(2.4);
@@ -79,12 +79,12 @@ bool RssInterface::initializeOpenDriveMap(
         agents_dynamics_[agent_id][2], agents_dynamics_[agent_id][3],
         agents_dynamics_[agent_id][4], agents_dynamics_[agent_id][5],
         agents_dynamics_[agent_id][6], agents_dynamics_[agent_id][7]);
-  } else {
-    return GenerateVehicleDynamicsParameters(
-        default_dynamics_[0], default_dynamics_[1], default_dynamics_[2],
-        default_dynamics_[3], default_dynamics_[4], default_dynamics_[5],
-        default_dynamics_[6], default_dynamics_[7]);
   }
+
+  return GenerateVehicleDynamicsParameters(
+      default_dynamics_[0], default_dynamics_[1], default_dynamics_[2],
+      default_dynamics_[3], default_dynamics_[4], default_dynamics_[5],
+      default_dynamics_[6], default_dynamics_[7]);
 }
 
 ::ad::map::match::Object RssInterface::GenerateMatchObject(
@@ -94,7 +94,7 @@ bool RssInterface::initializeOpenDriveMap(
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
 
   // the calculation is done under ENU coordinate system, it limits the range of
-  // input coordinate, work around should be found in the future
+  // input coordinate, we should find a work around in the future
 
   // set matching pose
   matching_object.enuPosition.centerPoint.x =
@@ -165,17 +165,13 @@ FullRoute RssInterface::GenerateRoute(
 
   std::vector<::ad::map::point::ENUPoint> routing_targets;
   // discretize the line into points and store as routing targets
-  // LOG(INFO) << "start " << s_start <<" " << s_end << std::endl;
-  // float counter =0;
   while (s_start <= s_end) {
     geometry::Point2d traj_point = GetPointAtS(agent_lane_center_line, s_start);
     routing_targets.push_back(::ad::map::point::createENUPoint(
         bg::get<0>(traj_point), bg::get<1>(traj_point), 0));
     s_start += step;
-    // counter++;
   }
-  // LOG(INFO) << "end" << std::endl;
-
+  
   std::vector<FullRoute> routes;
   std::vector<double> routes_probability;
 
