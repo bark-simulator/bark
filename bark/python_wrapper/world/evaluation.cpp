@@ -93,7 +93,7 @@ void python_evaluation(py::module m) {
                     const float&, const float&, const float&>(),
            py::arg("agent_id") = 0, py::arg("opendrive_file_name") = "",
            py::arg("default_vehicle_dynamics") =
-               std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
+               std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.},
            py::arg("agents_vehicle_dynamics") =
                std::unordered_map<AgentId, std::vector<float>>(),
            py::arg("discretize_routing_step") = 1.,
@@ -108,8 +108,8 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorRss& g) {
         return "bark.core.world.evaluation.EvaluatorRss";
       });
-  #endif
-      
+#endif
+
   m.def("CaptureAgentStates", py::overload_cast<const World&>(
     &CaptureAgentStates<World>));
   m.def("CaptureAgentStates", py::overload_cast<const ObservedWorld&>(
