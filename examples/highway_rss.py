@@ -18,7 +18,10 @@ from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.core.models.behavior import *
 
-from bark.core.world.evaluation import EvaluatorRss
+try:
+  from bark.core.world.evaluation import EvaluatorRss
+except:
+  raise ImportError("This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
 
 # parameters
 param_server = ParameterServer(filename="examples/params/centered_highway_merge_configurable.json")
