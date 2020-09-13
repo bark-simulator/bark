@@ -48,14 +48,6 @@ class HighwayLaneCorridorConfig(LaneCorridorConfig):
     self._count += 1
     return behavior_model
 
-  # def controlled_ids(self, agent_list):
-  #   """Returns an ID-List of controlled agents
-  #   """
-  #   if self._controlled_ids is None:
-  #     return []
-  #   random_int = [agent_list[0]]
-  #   return random_int
-
 
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = HighwayLaneCorridorConfig(params=param_server,
@@ -66,7 +58,7 @@ right_lane = HighwayLaneCorridorConfig(params=param_server,
                                        lane_corridor_id=1,
                                        controlled_ids=True)
 
-map_path="bark/runtime/tests/data/centered_city_highway_straight.xodr"
+map_path = "bark/runtime/tests/data/centered_city_highway_straight.xodr"
 
 # create 5 scenarios
 scenarios = \
@@ -100,30 +92,59 @@ env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
               render=True)
-      
+
+
+# Defining vehicles dynamics for RSS
+
+# Input format:
+# [longitudinal max acceleration, longitudinal max braking, longitudinal min acceleration,
+# longitudinal min brake correct, latitudinal max acceleration, latitudinal min braking,
+# latitudinal flucatuation_margin, agent response time]
+#
+# Detailed explanation please see:
+# https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
+
+# Default dynamics for every agent if it is not defined indivually
+default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
+
+# Indivually dynamics, each defined with the agent id
+agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
+                           2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
+
+# Example of using RSS to evaluate the safety situation of the evaluating agent.
+# The evaluating agent is defined with agent_id when initializing EvaluatorRss.
+def print_rss_safety_response(evaluator_rss, world):
+  print("Overall safety response: ", evaluator_rss.Evaluate(world))
+  print("Pairwise safety response: ",
+        evaluator_rss.PairwiseEvaluate(world))
+  print("Pairwise directional safety response: ",
+        evaluator_rss.PairwiseDirectionalEvaluate(world))
+
+# Example of visualizing rss safety reponses between evaluating agent and
+# other agents
+def draw_rss_safety_response(viewer, evaluator_rss, world, eval_agent_id):
+  viewer.drawSafetyResponses(
+      world, eval_agent_id, evaluator_rss.PairwiseEvaluate(world))
 
 
 # run 3 scenarios
-# for episode in range(0, 1):
-#   env.reset()
-#   # step each scenario 20 times
-#   for step in range(0, 70):
-#     env.step()
-#     time.sleep(sim_step_time/sim_real_time_factor)
+for episode in range(0, 1):
+  env.reset()
+  current_world = env._scenario.GetWorldState()
+  eval_agent_id = env._scenario._eval_agent_ids[0]
+  evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
+                               default_vehicle_dynamics,
+                               agents_vehicle_dynamics,
+                               discretize_routing_step=10)
+  # step each scenario 20 times
+  for step in range(0, 70):
+    env.step()
+    print_rss_safety_response(evaluator_rss, current_world)
+    draw_rss_safety_response(
+        viewer,
+        evaluator_rss,
+        current_world,
+        eval_agent_id)
+    time.sleep(sim_step_time / sim_real_time_factor)
 
 # viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
-
-for _ in range(0, 5):
-    scenario, idx = scenarios.get_next_scenario()
-    world = scenario.GetWorldState()
-    e = EvaluatorRss(scenario._eval_agent_ids[0], map_path, 
-                 [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],discretize_routing_step=10)
-    for _ in range(0, 70): 
-      print("Overall safety response: ", e.Evaluate(world))
-      # print("Pairwise safety response: ", e.PairwiseEvaluate(world))
-      # print("Pairwise directional safety response: ",
-      #       e.PairwiseDirectionalEvaluate(world))
-      viewer.drawWorld(world, eval_agent_ids=scenario._eval_agent_ids, scenario_idx=idx )
-      viewer.drawSafetyResponses(world,scenario._eval_agent_ids[0],e.PairwiseEvaluate(world))
-      world.Step(0.2)
-      viewer.clear()
