@@ -84,5 +84,5 @@ cc_library(
     "//bark/models/behavior/static_trajectory",
     "//bark/models/behavior/idm/stochastic:stochastic",
     ],
-    copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"]
+    copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT", "-DPLANNER_MIQP"]
 )
