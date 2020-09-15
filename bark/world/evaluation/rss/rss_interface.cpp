@@ -273,11 +273,6 @@ bool RssInterface::CreateWorldModel(
     ::ad::rss::world::WorldModel& rss_world_model) {
   std::vector<AgentPtr> relevent_agents;
 
-  // Increase searching distance for better visualization by mulitpling with checking_relevent_range_
-  double const relevant_distance =
-      static_cast<double>(ego_rss_state.min_stopping_distance) *
-      checking_relevent_range_;  
-
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
@@ -289,7 +284,18 @@ bool RssInterface::CreateWorldModel(
 
   // Determine which agent is close thus relevent for safety checking
   for (const auto& other_agent : agents) {
-    if (other_agent.second->GetAgentId() != ego_id) {
+    AgentId other_agent_id = other_agent.second->GetAgentId();
+    if (other_agent_id != ego_id) {
+      ::ad::rss::world::RssDynamics other_agent_dynamics =
+          GenerateAgentDynamicsParameters(other_agent_id);
+      float other_agent_speed =
+          other_agent.second->GetCurrentState()(VEL_POSITION);
+      float relevant_distance =
+          (static_cast<float>(ego_rss_state.min_stopping_distance) +
+           CalculateMinStoppingDistance(other_agent_speed,
+                                        other_agent_dynamics)) *
+          checking_relevent_range_;
+          
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
           relevant_distance)
