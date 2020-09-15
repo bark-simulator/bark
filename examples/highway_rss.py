@@ -24,7 +24,7 @@ except:
   raise ImportError("This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
 
 # parameters
-param_server = ParameterServer(filename="examples/params/centered_highway_merge_configurable.json")
+param_server = ParameterServer(filename="examples/params/highway_centered_merge_configurable.json")
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.

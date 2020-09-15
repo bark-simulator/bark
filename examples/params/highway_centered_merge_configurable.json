@@ -2,7 +2,7 @@
     "Scenario": {
         "Generation": {
             "ConfigurableScenarioGeneration": {
-                "MapFilename": "bark/runtime/tests/data/centered_city_highway_straight.xodr",
+                "MapFilename": "bark/runtime/tests/data/city_highway_straight_centered.xodr",
                 "RandomSeed": 1000,
                 "SinksSources": [
                     {
