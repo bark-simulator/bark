@@ -7,11 +7,11 @@
 #ifndef BARK_WORLD_EVALUATION_RSS_INTERFACE_HPP_
 #define BARK_WORLD_EVALUATION_RSS_INTERFACE_HPP_
 
+#include <assert.h>
 #include <fstream>
+#include <optional>
 #include <streambuf>
 #include <string>
-#include <assert.h> 
-#include <optional>
 
 #include "bark/geometry/line.hpp"
 #include "bark/geometry/polygon.hpp"
@@ -24,6 +24,7 @@
 #include <ad/map/lane/Operation.hpp>
 #include <ad/map/match/AdMapMatching.hpp>
 #include <ad/map/match/Object.hpp>
+#include <ad/map/point/CoordinateTransform.hpp>
 #include <ad/map/point/ENUOperation.hpp>
 #include <ad/map/route/FullRoute.hpp>
 #include <ad/map/route/Planning.hpp>
@@ -36,7 +37,6 @@
 #include <ad/rss/state/RssStateSnapshot.hpp>
 #include <ad/rss/world/RssDynamics.hpp>
 #include <ad/rss/world/WorldModelValidInputRange.hpp>
-#include <ad/map/point/CoordinateTransform.hpp>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -120,40 +120,40 @@ class RssInterface {
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the all possible RSS
   // situations is safe, false otherwise.
-  EvaluationReturn GetSafetyReponse(const World &world, const AgentId &ego_id);
+  EvaluationReturn GetSafetyReponse(const World& world, const AgentId& ego_id);
 
   // Returns an unorder_map indicating the pairwise safety respone of the
   // specified agent to every other nearby agents. Key is AgentId of an nearby
   // agent, value is true if at least one of the all possible RSS situations
   // between the specified and the nearby agent is safe, false
   // otherwise.
-  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World &world,
-                                                    const AgentId &ego_id);
+  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World& world,
+                                                    const AgentId& ego_id);
 
   // Returns an unorder_map indicating the pairwise directional safety respone
   // of the specified agent to every other nearby agents. Key is AgentId of an
   // nearby agent, value is a pair of directional safety response:
-  // 
+  //
   // 1. longitudinal safety response
   // 2. latitudinal safety response
-  // 
+  //
   // It is true if at least one of the all possible RSS situations in the
   // direction between the specified and the nearby agent is safe, false
   // otherwise, respectively.
   PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
-      const World &world, const AgentId &ego_id);
+      const World& world, const AgentId& ego_id);
 
   virtual ~RssInterface() {}
 
  private:
   // Load OpenDrive map into RSS, needed for GetMatchObject and GenerateRoute.
-  bool initializeOpenDriveMap(const std::string &opendrive_file_name);
+  bool initializeOpenDriveMap(const std::string& opendrive_file_name);
 
   // Generates RSS dynamics for an agent, returns the specified dynamics if the
   // dynamics is given in agent_vehicle_dynamics, else returns the
   // default_vehicle_dynamics
   ::ad::rss::world::RssDynamics GenerateAgentDynamicsParameters(
-      const AgentId &agent_id);
+      const AgentId& agent_id);
 
   // Creates RSS dynamics object contains the parameters for RSS check.
   ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(
@@ -168,7 +168,7 @@ class RssInterface {
   // Detailed explanation:
   // https://ad-map-access.readthedocs.io/en/latest/ad_map_access/HLD_MapMatching/
   ::ad::map::match::Object GenerateMatchObject(
-      const models::dynamic::State &agent_state, const Polygon &agent_shape);
+      const models::dynamic::State& agent_state, const Polygon& agent_shape);
 
   ::ad::rss::map::RssObjectData GenerateObjectData(
       const ::ad::rss::world::ObjectId& id,
@@ -186,16 +186,16 @@ class RssInterface {
   // specified BARK agent, the corresponding RSS match object. Used by
   // CreateWorldModel.
   ::ad::map::route::FullRoute GenerateRoute(
-      const Point2d &agent_center,const Point2d & agent_goal,
-      const ::ad::map::match::Object &match_object);
+      const Point2d& agent_center, const Point2d& agent_goal,
+      const ::ad::map::match::Object& match_object);
 
   AgentState ConvertAgentState(
-      const models::dynamic::State &agent_state,
-      const ::ad::rss::world::RssDynamics &agent_dynamics);
+      const models::dynamic::State& agent_state,
+      const ::ad::rss::world::RssDynamics& agent_dynamics);
 
   ::ad::physics::Distance CalculateMinStoppingDistance(
-      const ::ad::physics::Speed &speed,
-      const ::ad::rss::world::RssDynamics &agent_dynamics);
+      const ::ad::physics::Speed& speed,
+      const ::ad::rss::world::RssDynamics& agent_dynamics);
 
   // Generates a RSS world model which contains all possible RSS situation
   // between the specified agent and all other nearby agents, from informations
@@ -212,25 +212,26 @@ class RssInterface {
   bool RssCheck(const ::ad::rss::world::WorldModel& world_model,
                 ::ad::rss::state::RssStateSnapshot& rss_state_snapshot);
 
-  // Extracts RSS world from the information of BARK world, coordinates other functions.
+  // Extracts RSS world from the information of BARK world, coordinates other
+  // functions.
   bool ExtractRSSWorld(const World& world, const AgentId& agent_id,
                        ::ad::rss::world::WorldModel& rss_world_model);
 
   bool ExtractSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot &snapshot);
+      const ::ad::rss::state::RssStateSnapshot& snapshot);
 
   PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot &snapshot);
+      const ::ad::rss::state::RssStateSnapshot& snapshot);
 
   PairwiseDirectionalEvaluationReturn
   ExtractPairwiseDirectionalSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot &snapshot);
+      const ::ad::rss::state::RssStateSnapshot& snapshot);
 
   std::vector<float> default_dynamics_;
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
   // Increase searching distance for better visualization
-  float checking_relevent_range_; 
+  float checking_relevent_range_;
   float route_predict_range_;
 };
 
