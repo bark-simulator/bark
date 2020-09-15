@@ -9,9 +9,9 @@ def rss_dependencies():
     http_archive,
     name = "ad_rss_lib",
     build_file = "@bark_project//tools/rss:rss.BUILD",
-    sha256 = "a804472ede894f6323fb8de1ba34f2a0d6ff92603a48709a029e3c1ec28fe0ed",
-    strip_prefix = "ad-rss-lib-4.0.1",
-    urls = ["https://github.com/intel/ad-rss-lib/archive/v4.0.1.tar.gz"],
+    sha256 = "2f86697f5cd7729b2025bb6fa67928249137c3245fe647d115d9decf5f9e240a",
+    strip_prefix = "ad-rss-lib-4.1.0",
+    urls = ["https://github.com/intel/ad-rss-lib/archive/v4.1.0.tar.gz"],
     )
 
     _maybe(
