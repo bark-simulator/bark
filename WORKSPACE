@@ -28,7 +28,7 @@ git_repository(
 # ------ Planner MIQP ------------------------------
 git_repository(
     name = "planner_miqp",
-    commit="d8194a384929458f7a1d0178a83dd566bfd68939",
+    commit="fa8f4c34a2d198d4a6d5ced96c1dc9d432b76ecf",
     remote = "https://git.fortiss.org/esterle/miqp_logical_constraints.git"
 )
 load("@planner_miqp//util:deps.bzl", "planner_miqp_dependencies")
