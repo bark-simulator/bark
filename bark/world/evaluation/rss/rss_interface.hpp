@@ -36,8 +36,10 @@
 #include <ad/rss/state/RssStateSnapshot.hpp>
 #include <ad/rss/world/RssDynamics.hpp>
 #include <ad/rss/world/WorldModelValidInputRange.hpp>
+#include <ad/map/point/CoordinateTransform.hpp>
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
 
 using ::ad::map::point::ENUCoordinate;
 using ::ad::physics::Acceleration;
@@ -78,11 +80,9 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 // serves as the input of RSS check. Performs RSS check and returns safety
 // responses the specifed agent.
 //
-// Mostly follows the implements of Carla-RSS integration, only supports
-// performing RSS on the same road segment and non-intersection area
-// (looks like it works after rss v4.0.1, map v2.2.0)
+// Mostly follows the implements of Carla-RSS integration
 //
-// Interface for the following libraries:
+// Using libraries:
 // RSS: https://github.com/intel/ad-rss-lib
 // ad_map_access (dependency of RSS): https://github.com/carla-simulator/map
 //
@@ -95,12 +95,10 @@ class RssInterface {
                         const std::vector<float>& default_vehicle_dynamics,
                         const std::unordered_map<AgentId, std::vector<float>>&
                             agents_vehicle_dynamics,
-                        const float& discretize_routing_step,
                         const float& checking_relevent_range,
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
         agents_dynamics_(agents_vehicle_dynamics),
-        discretize_routing_step_(discretize_routing_step),
         checking_relevent_range_(checking_relevent_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
@@ -184,12 +182,11 @@ class RssInterface {
   ::ad::physics::AngularVelocity CaculateAgentAngularVelocity(
       const models::dynamic::Trajectory& trajectory);
 
-  // Generate a RSS route from the position and lane corridor of the specified
-  // BARK agent, the corresponding RSS match object. Used by
+  // Generate a RSS route from the current position and the goal of the
+  // specified BARK agent, the corresponding RSS match object. Used by
   // CreateWorldModel.
   ::ad::map::route::FullRoute GenerateRoute(
-      const Point2d &agent_center,
-      const map::LaneCorridorPtr &agent_lane_corridor,
+      const Point2d &agent_center,const Point2d & agent_goal,
       const ::ad::map::match::Object &match_object);
 
   AgentState ConvertAgentState(
@@ -232,9 +229,9 @@ class RssInterface {
   std::vector<float> default_dynamics_;
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
-  float discretize_routing_step_;
+  // Increase searching distance for better visualization
+  float checking_relevent_range_; 
   float route_predict_range_;
-  float checking_relevent_range_;
 };
 
 }  // namespace evaluation

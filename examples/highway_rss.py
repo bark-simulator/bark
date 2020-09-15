@@ -135,8 +135,8 @@ for episode in range(0, 1):
   evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
                                default_vehicle_dynamics,
                                agents_vehicle_dynamics,
-                               discretize_routing_step=10)
-  # step each scenario 20 times
+                               checking_relevent_range=2)
+  # step each scenario 70 times
   for step in range(0, 70):
     env.step()
     print_rss_safety_response(evaluator_rss, current_world)

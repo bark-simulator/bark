@@ -150,28 +150,8 @@ bool RssInterface::initializeOpenDriveMap(
 }
 
 FullRoute RssInterface::GenerateRoute(
-    const Point2d& agent_center,
-    const map::LaneCorridorPtr& agent_lane_corridor,
+    const Point2d& agent_center,const Point2d & agent_goal,
     const ::ad::map::match::Object& match_object) {
-  // the center line of lane corridor is used as the target route
-  geometry::Line agent_lane_center_line = agent_lane_corridor->GetCenterLine();
-
-  float s_start = GetNearestS(agent_lane_center_line, agent_center);
-  float s_end = GetNearestS(
-      agent_lane_center_line,
-      agent_lane_center_line.obj_.at(agent_lane_center_line.obj_.size() - 1));
-
-  float step = (s_start < s_end) ? discretize_routing_step_ : -discretize_routing_step_;
-
-  std::vector<::ad::map::point::ENUPoint> routing_targets;
-  // discretize the line into points and store as routing targets
-  while (s_start <= s_end) {
-    geometry::Point2d traj_point = GetPointAtS(agent_lane_center_line, s_start);
-    routing_targets.push_back(::ad::map::point::createENUPoint(
-        bg::get<0>(traj_point), bg::get<1>(traj_point), 0));
-    s_start += step;
-  }
-  
   std::vector<FullRoute> routes;
   std::vector<double> routes_probability;
 
@@ -181,15 +161,22 @@ FullRoute RssInterface::GenerateRoute(
   for (const auto& position :
        match_object.mapMatchedBoundingBox.referencePointPositions[int32_t(
            ::ad::map::match::ObjectReferencePoints::Center)]) {
-    auto starting_point = position.lanePoint.paraPoint;
-    auto projected_starting_point = starting_point;
+    auto rss_coordinate_transform=::ad::map::point::CoordinateTransform();
+    rss_coordinate_transform.setENUReferencePoint(::ad::map::access::getENUReferencePoint());
 
+    auto agent_ENU_goal= ::ad::map::point::createENUPoint(
+      static_cast<double>(bg::get<0>(agent_goal)),
+      static_cast<double>(bg::get<1>(agent_goal)), 0.);
+    auto agent_geo_goal=rss_coordinate_transform.ENU2Geo(agent_ENU_goal);
+
+    auto agent_parapoint = position.lanePoint.paraPoint;
+    auto projected_starting_point = agent_parapoint;
     if (!::ad::map::lane::isHeadingInLaneDirection(
-            starting_point, match_object.enuPosition.heading)) {
-      // project the starting_point to a neighboring lane with the same heading
+            agent_parapoint, match_object.enuPosition.heading)) {
+      // project the agent_parapoint to a neighboring lane with the same heading
       // direction as the one of the match object
       ::ad::map::lane::projectPositionToLaneInHeadingDirection(
-          starting_point, match_object.enuPosition.heading,
+          agent_parapoint, match_object.enuPosition.heading,
           projected_starting_point);
     }
 
@@ -197,23 +184,19 @@ FullRoute RssInterface::GenerateRoute(
         projected_starting_point, match_object.enuPosition.heading);
 
     bool valid_route = false;
-    if (!routing_targets.empty() &&
-        ::ad::map::point::isValid(routing_targets)) {
-      FullRoute route = ::ad::map::route::planning::planRoute(
-          route_starting_point, routing_targets,
-          ::ad::map::route::RouteCreationMode::AllNeighborLanes);
+    FullRoute route = ::ad::map::route::planning::planRoute(
+        route_starting_point, agent_geo_goal,
+        ::ad::map::route::RouteCreationMode::AllRoutableLanes);
 
-      if (route.roadSegments.size() > 0) {
-        valid_route = true;
-        routes.push_back(route);
-        routes_probability.push_back(position.probability);
-      } else {
-        // Due to limitations of Carla map library, RSS check fails when
-        // crossing road or road segment and intersection.
-        LOG(WARNING) << "No route to the goal is found at x: "
-                  << bg::get<0>(agent_center)
-                  << " y: " << bg::get<1>(agent_center) << std::endl;
-      }
+    if (route.roadSegments.size() > 0) {
+      valid_route = true;
+      routes.push_back(route);
+      routes_probability.push_back(position.probability);
+    } else {
+      // If no route is found, the RSS check may not be accurate anymore
+      LOG(WARNING) << "No route to the goal is found at x: "
+                   << bg::get<0>(agent_center)
+                   << " y: " << bg::get<1>(agent_center) << std::endl;
     }
 
     if (valid_route == false) {
@@ -410,31 +393,26 @@ bool RssInterface::ExtractRSSWorld(
     ::ad::rss::world::WorldModel& rss_world_model) {
   AgentPtr agent = world.GetAgent(agent_id);
 
+  Point2d agent_goal;
+  bg::centroid(agent->GetGoalDefinition()->GetShape().obj_,agent_goal);
   models::dynamic::State agent_state;
   agent_state = agent->GetCurrentState();
-
   Polygon agent_shape = agent->GetShape();
-  ::ad::map::match::Object match_object =
-      GenerateMatchObject(agent_state, agent_shape);
-
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
-  map::RoadCorridorPtr agent_road_corridor = agent->GetRoadCorridor();
-  map::LaneId agent_lane_id = world.GetMap()->FindCurrentLane(agent_center);
-  map::LaneCorridorPtr agent_lane_corridor =
-      agent_road_corridor->GetLaneCorridor(agent_lane_id);
 
-  ::ad::map::route::FullRoute agent_route =
-      GenerateRoute(agent_center, agent_lane_corridor, match_object);
-
-  ::ad::rss::world::RssDynamics agent_dynamics =
+  ::ad::map::match::Object agent_match_object =
+      GenerateMatchObject(agent_state, agent_shape);
+  ::ad::map::route::FullRoute agent_rss_route =
+      GenerateRoute(agent_center, agent_goal, agent_match_object);
+  ::ad::rss::world::RssDynamics agent_rss_dynamics =
       GenerateAgentDynamicsParameters(agent_id);
-  AgentState agent_rss_state = ConvertAgentState(agent_state, agent_dynamics);
+  AgentState agent_rss_state = ConvertAgentState(agent_state, agent_rss_dynamics);
 
   AgentMap other_agents = world.GetAgents();
   bool result =
-      CreateWorldModel(other_agents, agent_id, agent_rss_state, match_object,
-                       agent_dynamics, agent_route, rss_world_model);
+      CreateWorldModel(other_agents, agent_id, agent_rss_state, agent_match_object,
+                       agent_rss_dynamics, agent_rss_route, rss_world_model);
 
   return result;
 }
