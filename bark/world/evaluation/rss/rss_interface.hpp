@@ -113,8 +113,11 @@ class RssInterface {
       assert(d.second[1] <= d.second[2] && d.second[2] <= d.second[3]);
     }
 
+    // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);
     initializeOpenDriveMap(opendrive_file_name);
+    rss_coordinate_transform_.setENUReferencePoint(
+        ::ad::map::access::getENUReferencePoint());
   }
 
   // Returns a boolean indicating the safety response of the specified agent.
@@ -233,6 +236,8 @@ class RssInterface {
   // Increase searching distance for better visualization
   float checking_relevent_range_;
   float route_predict_range_;
+  ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
+      ::ad::map::point::CoordinateTransform();
 };
 
 }  // namespace evaluation
