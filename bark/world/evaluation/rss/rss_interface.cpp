@@ -161,14 +161,10 @@ FullRoute RssInterface::GenerateRoute(
   for (const auto& position :
        match_object.mapMatchedBoundingBox.referencePointPositions[int32_t(
            ::ad::map::match::ObjectReferencePoints::Center)]) {
-    auto rss_coordinate_transform = ::ad::map::point::CoordinateTransform();
-    rss_coordinate_transform.setENUReferencePoint(
-        ::ad::map::access::getENUReferencePoint());
-
     auto agent_ENU_goal = ::ad::map::point::createENUPoint(
         static_cast<double>(bg::get<0>(agent_goal)),
         static_cast<double>(bg::get<1>(agent_goal)), 0.);
-    auto agent_geo_goal = rss_coordinate_transform.ENU2Geo(agent_ENU_goal);
+    auto agent_geo_goal = rss_coordinate_transform_.ENU2Geo(agent_ENU_goal);
 
     auto agent_parapoint = position.lanePoint.paraPoint;
     auto projected_starting_point = agent_parapoint;
@@ -304,7 +300,8 @@ bool RssInterface::CreateWorldModel(
     }
   }
 
-  ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp,
+  // +1 is a work around because RSS defines the world is only valid after world_time >=1
+  ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp+1,
                                                   ego_dynamics);
 
   // It is not relevent, but needed by appendScenes.
