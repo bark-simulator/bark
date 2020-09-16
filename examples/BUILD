@@ -110,6 +110,20 @@ py_binary(
 )
 
 py_binary(
+  name = "merging_rss",
+  srcs = ["merging_rss.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data',
+          ':params'],
+  
+  deps = ["//bark/runtime/commons:parameters",
+          "//bark/runtime/commons:xodr_parser",
+          "//bark/runtime/viewer:pygame_viewer",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/viewer:panda3d_easy",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "//bark/runtime:runtime"],
+)
   name = "maude_interface",
   srcs = ["maude_interface.py"],
   data = ['//bark:generate_core',
