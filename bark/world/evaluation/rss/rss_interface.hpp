@@ -50,7 +50,7 @@ using ::ad::physics::Speed;
 struct AgentState {
   float timestamp;
   Speed speed;
-  Distance min_stopping_distance;
+  Distance max_stopping_distance;
   ::ad::map::point::ENUPoint center;
   ::ad::map::point::ENUHeading heading;
 };
@@ -196,7 +196,7 @@ class RssInterface {
       const models::dynamic::State& agent_state,
       const ::ad::rss::world::RssDynamics& agent_dynamics);
 
-  ::ad::physics::Distance CalculateMinStoppingDistance(
+  ::ad::physics::Distance CalculateMaxStoppingDistance(
       const ::ad::physics::Speed& speed,
       const ::ad::rss::world::RssDynamics& agent_dynamics);
 

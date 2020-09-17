@@ -238,27 +238,38 @@ AgentState RssInterface::ConvertAgentState(
   rss_state.heading = ::ad::map::point::createENUHeading(
       static_cast<double>(agent_state(THETA_POSITION)));
   rss_state.speed = Speed(static_cast<double>(agent_state(VEL_POSITION)));
-  rss_state.min_stopping_distance =
-      CalculateMinStoppingDistance(rss_state.speed, agent_dynamics);
+
+  rss_state.max_stopping_distance =
+      CalculateMaxStoppingDistance(rss_state.speed, agent_dynamics);
 
   return rss_state;
 }
 
-Distance RssInterface::CalculateMinStoppingDistance(
+Distance RssInterface::CalculateMaxStoppingDistance(
     const Speed& speed, const ::ad::rss::world::RssDynamics& agent_dynamics) {
-  Distance min_stopping_distance;
+  // Estimate the upper bound of the unsafe distance according to the Rss paper.
+  // The calculated value is always higher than the correct upper bound.
 
-  bool result =
-      ::ad::rss::situation::calculateDistanceOffsetInAcceleratedMovement(
-          std::fabs(speed), agent_dynamics.alphaLon.accelMax,
-          agent_dynamics.responseTime, min_stopping_distance);
+  Distance braking_distance_after_responsing, traveled_distance_when_responsing;
+  Speed speed_when_responsing;
+  Acceleration max_accel = std::max(agent_dynamics.alphaLon.accelMax,
+                                    agent_dynamics.alphaLat.accelMax);
+  Acceleration min_brake = std::min(agent_dynamics.alphaLon.brakeMin,
+                                    agent_dynamics.alphaLon.brakeMax);
+
+  // Assume every agent has no maximum speed limit
+  bool result = ::ad::rss::situation::calculateAcceleratedLimitedMovement(
+      std::fabs(speed), Speed::getMax(), max_accel, agent_dynamics.responseTime,
+      speed_when_responsing, traveled_distance_when_responsing);
+
+  result = result && ::ad::rss::situation::calculateStoppingDistance(
+                         std::fabs(speed_when_responsing), min_brake,
+                         braking_distance_after_responsing);
 
   if (result == false)
-    LOG(ERROR)
-        << "Failed to calculate maximum possible speed after response time "
-        << agent_dynamics.responseTime << std::endl;
+    LOG(ERROR) << "Failed to calculate maximum stopping distance" << std::endl;
 
-  return min_stopping_distance;
+  return traveled_distance_when_responsing + braking_distance_after_responsing;
 }
 
 bool RssInterface::CreateWorldModel(
@@ -268,8 +279,7 @@ bool RssInterface::CreateWorldModel(
     const ::ad::rss::world::RssDynamics& ego_dynamics,
     const ::ad::map::route::FullRoute& ego_route,
     ::ad::rss::world::WorldModel& rss_world_model) {
-  std::vector<AgentPtr> relevent_agents;
-
+  
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
@@ -278,8 +288,9 @@ bool RssInterface::CreateWorldModel(
       ::ad::rss::world::ObjectType::EgoVehicle, ego_match_object,
       ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading),
       ego_dynamics);
-
+  
   // Determine which agent is close thus enough relevent for safety checking
+  std::vector<AgentPtr> relevent_agents;
   for (const auto& other_agent : agents) {
     AgentId other_agent_id = other_agent.second->GetAgentId();
     if (other_agent_id != ego_id) {
@@ -288,8 +299,8 @@ bool RssInterface::CreateWorldModel(
       float other_agent_speed =
           other_agent.second->GetCurrentState()(VEL_POSITION);
       float relevant_distance =
-          (static_cast<float>(ego_rss_state.min_stopping_distance) +
-           CalculateMinStoppingDistance(other_agent_speed,
+          (static_cast<float>(ego_rss_state.max_stopping_distance) +
+           CalculateMaxStoppingDistance(other_agent_speed,
                                         other_agent_dynamics)) *
           checking_relevent_range_;
 
