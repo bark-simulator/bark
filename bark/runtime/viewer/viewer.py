@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
+from bark.core.world.evaluation import EvaluatorRss
 
 logger = logging.getLogger()
 
@@ -72,6 +73,9 @@ class BaseViewer(Viewer):
 
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
+                                                                        
+        self.draw_rss_debug_info = params["Visualization"]["Evaluation"]["DrawRssDebugInfo",
+                                                                         "Flag to specify if debug info to rss evaluators shall be plotted", False]
 
         self.parameters = params
         self.agent_color_map = {}
@@ -307,6 +311,9 @@ class BaseViewer(Viewer):
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
 
+        if self.draw_rss_debug_info:
+            self.drawRssDebugInfomation(world, eval_agent_ids[0])
+
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -402,6 +409,34 @@ class BaseViewer(Viewer):
                 self.drawLabelsAsText(
                     observed_world, label_functions, evaluator_type)
                 break
+
+    def drawRssDebugInfomation(self, world, agent_id):
+        for evaluator in world.evaluators:
+          if isinstance(world.evaluators[evaluator], EvaluatorRss):
+            rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
+                world)
+
+            def char_func(value):
+                if value == True:
+                    return "T"
+                elif value == False:
+                    return "F"
+                else:
+                    return "UNKNOWN"
+
+            overall_safety = True
+            if rss_responses:
+                self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
+                for i, (id, responses) in enumerate(rss_responses.items()):
+                    overall_safety = overall_safety and any(responses)
+                    str = "{}:    {}     {}".format(
+                        id, *list(map(char_func, responses)))
+                    self.drawText(position=(0.82, 0.88-0.03*i), text=str)
+
+            self.drawText(position=(0.84, 0.96), text="ego id {} safety: {}".format(
+                agent_id, char_func(overall_safety)))
+            break
+
       
 def generatePoseFromState(state):
   # pybind creates column based vectors, initialization maybe row-based -> we consider both

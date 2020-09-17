@@ -53,6 +53,7 @@ param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 0.8
+param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"]=True
 
 SetVerboseLevel(0)
 
@@ -129,10 +130,10 @@ agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
 # The evaluating agent is defined with agent_id when initializing EvaluatorRss.
 def print_rss_safety_response(evaluator_rss, world):
   print("Overall safety response: ", evaluator_rss.Evaluate(world))
-  print("Pairwise safety response: ",
-        evaluator_rss.PairwiseEvaluate(world))
-  print("Pairwise directional safety response: ",
-        evaluator_rss.PairwiseDirectionalEvaluate(world))
+  # print("Pairwise safety response: ",
+  #       evaluator_rss.PairwiseEvaluate(world))
+  # print("Pairwise directional safety response: ",
+  #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 # Example of visualizing rss safety reponses between evaluating agent and
 # other agents
@@ -144,12 +145,14 @@ def draw_rss_safety_response(viewer, evaluator_rss, world, eval_agent_id):
 # run 3 scenarios
 for episode in range(0, 3):
   env.reset()
-  current_world = env._scenario.GetWorldState()
+  current_world = env._world
   eval_agent_id = env._scenario._eval_agent_ids[0]
   evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
                                default_vehicle_dynamics,
                                agents_vehicle_dynamics,
-                               checking_relevent_range=2)
+                               checking_relevent_range=1)
+  current_world.AddEvaluator("rss", evaluator_rss)
+
   # step each scenario 70 times
   for step in range(0, 70):
     env.step()
