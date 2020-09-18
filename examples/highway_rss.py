@@ -13,41 +13,46 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
-  LaneCorridorConfig, ConfigWithEase
+    LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.core.models.behavior import *
 
 try:
-  from bark.core.world.evaluation import EvaluatorRss
+    from bark.core.world.evaluation import EvaluatorRss
 except:
-  raise ImportError("This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
+    raise ImportError(
+        "This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
 
 # parameters
-param_server = ParameterServer(filename="examples/params/highway_centered_merge_configurable.json")
+param_server = ParameterServer(
+    filename="examples/params/highway_centered_merge_configurable.json")
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
-param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"]=True
+
+param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
+param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 
 # custom lane configuration that sets a different behavior model
 # and sets the desired speed for the behavior
 class HighwayLaneCorridorConfig(LaneCorridorConfig):
-  def __init__(self, params=None, **kwargs):
-    super().__init__(params=params, **kwargs)
-    self._count = 0
-  
-  def velocity(self):
-    return np.random.uniform(2., 10.)
+    def __init__(self, params=None, **kwargs):
+        super().__init__(params=params, **kwargs)
+        self._count = 0
 
-  def behavior_model(self, world):
-    # agent_params = ParameterServer()
-    params = self._params.AddChild("BehaviorLaneChangeRuleBased"+str(self._count))
-    params["BehaviorIDMClassic"]["DesiredVelocity"] = \
-      np.random.uniform(5., 10.)
-    behavior_model = BehaviorLaneChangeRuleBased(params)
-    self._count += 1
-    return behavior_model
+    def velocity(self):
+        return np.random.uniform(2., 10.)
+
+    def behavior_model(self, world):
+        # agent_params = ParameterServer()
+        params = self._params.AddChild(
+            "BehaviorLaneChangeRuleBased"+str(self._count))
+        params["BehaviorIDMClassic"]["DesiredVelocity"] = \
+            np.random.uniform(5., 10.)
+        behavior_model = BehaviorLaneChangeRuleBased(params)
+        self._count += 1
+        return behavior_model
 
 
 # configure both lanes of the highway. the right lane has one controlled agent
@@ -63,12 +68,12 @@ map_path = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
 
 # create 5 scenarios
 scenarios = \
-  ConfigWithEase(
-    num_scenarios=5,
-    map_file_name=map_path,
-    random_seed=0,
-    params=param_server,
-    lane_corridor_configs=[left_lane, right_lane])
+    ConfigWithEase(
+        num_scenarios=5,
+        map_file_name=map_path,
+        random_seed=0,
+        params=param_server,
+        lane_corridor_configs=[left_lane, right_lane])
 
 # viewer
 viewer = MPViewer(params=param_server,
@@ -77,12 +82,12 @@ viewer = MPViewer(params=param_server,
                   follow_agent_id=True)
 
 sim_step_time = param_server["simulation"]["step_time",
-                                          "Step-time used in simulation",
-                                          0.05]
+                                           "Step-time used in simulation",
+                                           0.05]
 sim_real_time_factor = param_server["simulation"][
-  "real_time_factor",
-  "execution in real-time or faster",
-  0.5]
+    "real_time_factor",
+    "execution in real-time or faster",
+    0.5]
 
 # viewer = VideoRenderer(renderer=viewer,
 #                        world_step_time=sim_step_time,
@@ -115,18 +120,12 @@ agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
 # Example of using RSS to evaluate the safety situation of the evaluating agent.
 # The evaluating agent is defined with agent_id when initializing EvaluatorRss.
 def print_rss_safety_response(evaluator_rss, world):
-  # Evaluating with RSS is quite computionally expensive
-  print("Overall safety response: ", evaluator_rss.Evaluate(world))
-  # print("Pairwise safety response: ",
-  #       evaluator_rss.PairwiseEvaluate(world))
-  # print("Pairwise directional safety response: ",
-  #       evaluator_rss.PairwiseDirectionalEvaluate(world))
-
-# Example of visualizing rss safety reponses between evaluating agent and
-# other agents
-def draw_rss_safety_response(viewer, evaluator_rss, world, eval_agent_id):
-  viewer.drawRssSafetyResponses(
-      world, eval_agent_id, evaluator_rss.PairwiseEvaluate(world))
+    # Evaluating with RSS is quite computionally expensive
+    print("Overall safety response: ", evaluator_rss.Evaluate(world))
+    # print("Pairwise safety response: ",
+    #       evaluator_rss.PairwiseEvaluate(world))
+    # print("Pairwise directional safety response: ",
+    #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
 # run 3 scenarios
@@ -140,8 +139,8 @@ for episode in range(0, 3):
                                checking_relevent_range=1)
   current_world.AddEvaluator("rss", evaluator_rss)
   
-  # step each scenario 70 times
-  for step in range(0, 70):
+  # step each scenario 40 times
+  for step in range(0, 40):
     env.step(show = False)
     print_rss_safety_response(evaluator_rss, current_world)
     draw_rss_safety_response(

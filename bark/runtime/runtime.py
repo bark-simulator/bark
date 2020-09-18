@@ -36,21 +36,19 @@ class Runtime(PyRuntime):
     self._reset_has_been_called = True
     self._viewer.Reset()
 
-  def step(self, show=True):
+  def step(self):
     assert(self._reset_has_been_called==True)
     self._world.Step(self._step_time)
     if self._render:
-      self.render(show)
+      self.render()
 
-  def render(self, show=True):
-    self._viewer.clear()
+  def render(self):
+    # self._viewer.clear()
     self._viewer.drawWorld(
       self._world,
       self._scenario._eval_agent_ids,
       scenario_idx=self._scenario_idx)
-    if show:
-      self._viewer.show()
-    # self._viewer.clear()
+    self._viewer.clear()
 
   def run(self, steps):
     for step_count in range(steps):

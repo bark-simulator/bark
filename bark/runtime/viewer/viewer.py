@@ -76,6 +76,9 @@ class BaseViewer(Viewer):
         self.draw_rss_debug_info = params["Visualization"]["Evaluation"]["DrawRssDebugInfo",
                                                                          "Flag to specify if debug info to rss evaluators shall be plotted", False]
 
+        self.draw_rss_safety_responses = params["Visualization"]["Evaluation"]["DrawRssSafetyResponses",
+                                                                               "Flag to specify if visualizating rss safety responses.", False]
+
         self.parameters = params
         self.agent_color_map = {}
         self.max_agents_color_map = 0
@@ -310,9 +313,12 @@ class BaseViewer(Viewer):
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
 
-        if self.draw_rss_debug_info:
-            self.drawRssDebugInfomation(world, eval_agent_ids[0])
-
+        if self.draw_rss_debug_info or self.draw_rss_safety_responses:
+            if self.draw_rss_debug_info:
+                self.drawRssDebugInfomation(world, eval_agent_ids[0])
+            if self.draw_rss_safety_responses:
+                self.drawRssSafetyResponses(world, eval_agent_ids[0])
+        
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -358,27 +364,33 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawRssSafetyResponses(self, world, ego_id, safety_responses):
+    def drawRssSafetyResponses(self, world, ego_id):
+        from bark.core.world.evaluation import EvaluatorRss
+        for evaluator in world.evaluators:
+            if isinstance(world.evaluators[evaluator], EvaluatorRss):
+                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
+                    world)
+                break
+
         ego_agent = world.agents[ego_id]
         shape = ego_agent.shape
         pose = generatePoseFromState(ego_agent.state)
         transformed_polygon = shape.AffineTransform(1.5, pose)
         self.drawPolygon2d(
             transformed_polygon,
-            self.color_eval_agents_line, 1, self.color_other_agents_face, linewidth=1.5, zorder=9)
+            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
 
         # draw response for other agents
         relevent_agents = [
-            agent for agent in world.agents.values() if agent.id in safety_responses]
+            agent for agent in world.agents.values() if agent.id in rss_responses]
         for agent in relevent_agents:
             shape = agent.shape
             pose = generatePoseFromState(agent.state)
             transformed_polygon = shape.AffineTransform(1.5, pose)
 
-            safe_color = "LightGreen" if safety_responses[agent.id] else "Red"
-            self.drawPolygon2d(transformed_polygon, safe_color,
-                               1, safe_color, zorder=9)
-        self.show()
+            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
+            self.drawPolygon2d(transformed_polygon, response_color,
+                               0.6, response_color, zorder=9)
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -409,32 +421,33 @@ class BaseViewer(Viewer):
                 break
 
     def drawRssDebugInfomation(self, world, agent_id):
-        from bark.core.world.evaluation import EvaluatorRss 
+        from bark.core.world.evaluation import EvaluatorRss
         for evaluator in world.evaluators:
           if isinstance(world.evaluators[evaluator], EvaluatorRss):
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
                 world)
-
-            def char_func(value):
-                if value == True:
-                    return "T"
-                elif value == False:
-                    return "F"
-                else:
-                    return "UNKNOWN"
-
-            overall_safety = True
-            if rss_responses:
-                self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
-                for i, (id, responses) in enumerate(rss_responses.items()):
-                    overall_safety = overall_safety and any(responses)
-                    str = "{}:    {}     {}".format(
-                        id, *list(map(char_func, responses)))
-                    self.drawText(position=(0.82, 0.88-0.03*i), text=str)
-
-            self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
-                agent_id, char_func(overall_safety)))
             break
+
+        def char_func(value):
+            if value == True:
+                return "T"
+            elif value == False:
+                return "F"
+            else:
+                return "UNKNOWN"
+
+        overall_safety = True
+        if rss_responses:
+            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
+            for i, (id, responses) in enumerate(rss_responses.items()):
+                overall_safety = overall_safety and any(responses)
+                str = "{}:    {}     {}".format(
+                    id, *list(map(char_func, responses)))
+                self.drawText(position=(0.82, 0.88-0.03*i), text=str)
+
+        self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
+            agent_id, char_func(overall_safety)))
+            
 
       
 def generatePoseFromState(state):
