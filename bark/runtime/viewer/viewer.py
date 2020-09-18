@@ -363,10 +363,10 @@ class BaseViewer(Viewer):
       ego_agent = world.agents[ego_id]
       shape = ego_agent.shape
       pose = generatePoseFromState(ego_agent.state)
-      transformed_polygon = shape.AffineTransform(1.5,pose)
+      transformed_polygon = shape.AffineTransform(1.5, pose)
       self.drawPolygon2d(
           transformed_polygon,
-          self.color_eval_agents_line)
+          self.color_eval_agents_line, 1, self.color_other_agents_face, linewidth=1.5, zorder=9)
 
       # draw response for other agents
       relevent_agents = [
@@ -374,11 +374,12 @@ class BaseViewer(Viewer):
       for agent in relevent_agents:
         shape = agent.shape
         pose = generatePoseFromState(agent.state)
-        transformed_polygon = shape.AffineTransform(1.5,pose)
+        transformed_polygon = shape.AffineTransform(1.5, pose)
 
-        safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
-            1, 0.4, 0, 1)
-        self.drawPolygon2d(transformed_polygon, safe_color)
+        safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else "red"
+        self.drawPolygon2d(transformed_polygon, safe_color,
+                           1, safe_color, zorder=9.9)
+      self.show()
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -431,7 +432,7 @@ class BaseViewer(Viewer):
                         id, *list(map(char_func, responses)))
                     self.drawText(position=(0.82, 0.88-0.03*i), text=str)
 
-            self.drawText(position=(0.74, 0.96), text="ego id {} safety: {}".format(
+            self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
                 agent_id, char_func(overall_safety)))
             break
 

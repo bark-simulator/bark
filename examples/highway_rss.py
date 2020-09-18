@@ -125,7 +125,7 @@ def print_rss_safety_response(evaluator_rss, world):
 # Example of visualizing rss safety reponses between evaluating agent and
 # other agents
 def draw_rss_safety_response(viewer, evaluator_rss, world, eval_agent_id):
-  viewer.drawSafetyResponses(
+  viewer.drawRssSafetyResponses(
       world, eval_agent_id, evaluator_rss.PairwiseEvaluate(world))
 
 
@@ -142,7 +142,7 @@ for episode in range(0, 3):
   
   # step each scenario 70 times
   for step in range(0, 70):
-    env.step()
+    env.step(show = False)
     print_rss_safety_response(evaluator_rss, current_world)
     draw_rss_safety_response(
         viewer,
