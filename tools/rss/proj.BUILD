@@ -35,7 +35,6 @@ cc_library(
         "src",
     ],
     linkopts = [
-        "-pthread",
         "-lsqlite3",
     ],
     visibility = ["//visibility:public"],

@@ -6,6 +6,5 @@ cc_library(
         "src/pugixml.hpp",
     ],
     includes = ["src"],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
 )
