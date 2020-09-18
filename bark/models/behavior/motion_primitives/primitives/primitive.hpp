@@ -72,6 +72,8 @@ class Primitive : public bark::commons::BaseType {
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
 
+  virtual std::string GetName() const = 0;
+
   Action GetLastAction() const { return last_action_; };
   void SetLastAction(const Action action) { last_action_ = action; };
 
