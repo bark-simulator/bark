@@ -40,6 +40,8 @@ class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
     return traj;
   }
 
+  std::string GetName() const override { return "PrimitiveGapKeeping"; }
+
   Action GetLastAction() const {
     return BehaviorIDMLaneTracking::GetLastAction();
   }
