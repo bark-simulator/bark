@@ -115,6 +115,7 @@ agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
 # Example of using RSS to evaluate the safety situation of the evaluating agent.
 # The evaluating agent is defined with agent_id when initializing EvaluatorRss.
 def print_rss_safety_response(evaluator_rss, world):
+  # Evaluating with RSS is quite computionally expensive
   print("Overall safety response: ", evaluator_rss.Evaluate(world))
   # print("Pairwise safety response: ",
   #       evaluator_rss.PairwiseEvaluate(world))
