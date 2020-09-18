@@ -149,9 +149,11 @@ bool RssInterface::initializeOpenDriveMap(
   }
 }
 
-FullRoute RssInterface::GenerateRoute(
-    const Point2d& agent_center, const Point2d& agent_goal,
-    const ::ad::map::match::Object& match_object) {
+bool RssInterface::GenerateRoute(const Point2d& agent_center,
+                                 const Point2d& agent_goal,
+                                 const ::ad::map::match::Object& match_object,
+                                 FullRoute& route) {
+  bool is_valid_route_found = false;
   std::vector<FullRoute> routes;
   std::vector<double> routes_probability;
 
@@ -180,23 +182,24 @@ FullRoute RssInterface::GenerateRoute(
     auto route_starting_point = ::ad::map::route::planning::createRoutingPoint(
         projected_starting_point, match_object.enuPosition.heading);
 
-    bool valid_route = false;
     FullRoute route = ::ad::map::route::planning::planRoute(
         route_starting_point, agent_geo_goal,
         ::ad::map::route::RouteCreationMode::AllRoutableLanes);
 
     if (route.roadSegments.size() > 0) {
-      valid_route = true;
+      is_valid_route_found = true;
       routes.push_back(route);
       routes_probability.push_back(position.probability);
     } else {
       // If no route is found, the RSS check may not be accurate anymore
-      LOG(WARNING) << "No route to the goal is found at x: "
+      LOG(WARNING) << "No route to the goal is found:\nCurrent location x : "
                    << bg::get<0>(agent_center)
-                   << " y: " << bg::get<1>(agent_center) << std::endl;
+                   << " y: " << bg::get<1>(agent_center)
+                   << "\nGoal: x: " << bg::get<0>(agent_goal)
+                   << " y: " << bg::get<1>(agent_goal) << std::endl;
     }
 
-    if (valid_route == false) {
+    if (is_valid_route_found == false) {
       // Guess all possible routes based on a given distance, it returns
       // all routes having distance less than the given value
       // (This case should't happen)
@@ -211,8 +214,6 @@ FullRoute RssInterface::GenerateRoute(
     }
   }
 
-  FullRoute final_route;
-
   if (routes.empty()) {
     LOG(WARNING) << "Could not find any route to the targets" << std::endl;
   } else {
@@ -221,9 +222,9 @@ FullRoute RssInterface::GenerateRoute(
     int best_route_idx = std::distance(
         routes_probability.begin(),
         std::max_element(routes_probability.begin(), routes_probability.end()));
-    final_route = routes[best_route_idx];
+    route = routes[best_route_idx];
   }
-  return final_route;
+  return is_valid_route_found;
 }
 
 AgentState RssInterface::ConvertAgentState(
@@ -278,8 +279,7 @@ bool RssInterface::CreateWorldModel(
     const ::ad::map::match::Object& ego_match_object,
     const ::ad::rss::world::RssDynamics& ego_dynamics,
     const ::ad::map::route::FullRoute& ego_route,
-    ::ad::rss::world::WorldModel& rss_world_model) {
-  
+    ::ad::rss::world::WorldModel& rss_world) {
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
@@ -288,7 +288,7 @@ bool RssInterface::CreateWorldModel(
       ::ad::rss::world::ObjectType::EgoVehicle, ego_match_object,
       ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading),
       ego_dynamics);
-  
+
   // Determine which agent is close thus enough relevent for safety checking
   std::vector<AgentPtr> relevent_agents;
   for (const auto& other_agent : agents) {
@@ -311,8 +311,9 @@ bool RssInterface::CreateWorldModel(
     }
   }
 
-  // +1 is a work around because RSS defines the world is only valid after world_time >=1
-  ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp+1,
+  // +1 is a work around because RSS defines the world is only valid after
+  // world_time >=1
+  ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp + 1,
                                                   ego_dynamics);
 
   // It is not relevent, but needed by appendScenes.
@@ -343,10 +344,10 @@ bool RssInterface::CreateWorldModel(
                                 green_traffic_lights,
                                 ::ad::rss::map::RssMode::Structured);
   }
-  rss_world_model = scene_creation.getWorldModel();
+  rss_world = scene_creation.getWorldModel();
 
   // It is valid only after world timestep 1
-  return withinValidInputRange(rss_world_model);
+  return withinValidInputRange(rss_world);
 }
 
 bool RssInterface::RssCheck(
@@ -403,9 +404,8 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   return pairwise_safety_response;
 }
 
-bool RssInterface::ExtractRSSWorld(
-    const World& world, const AgentId& agent_id,
-    ::ad::rss::world::WorldModel& rss_world_model) {
+bool RssInterface::ExtractRSSWorld(const World& world, const AgentId& agent_id,
+                                   ::ad::rss::world::WorldModel& rss_world) {
   AgentPtr agent = world.GetAgent(agent_id);
 
   Point2d agent_goal;
@@ -418,8 +418,8 @@ bool RssInterface::ExtractRSSWorld(
 
   ::ad::map::match::Object agent_match_object =
       GenerateMatchObject(agent_state, agent_shape);
-  ::ad::map::route::FullRoute agent_rss_route =
-      GenerateRoute(agent_center, agent_goal, agent_match_object);
+  ::ad::map::route::FullRoute agent_rss_route;
+  GenerateRoute(agent_center, agent_goal, agent_match_object, agent_rss_route);
   ::ad::rss::world::RssDynamics agent_rss_dynamics =
       GenerateAgentDynamicsParameters(agent_id);
   AgentState agent_rss_state =
@@ -428,7 +428,7 @@ bool RssInterface::ExtractRSSWorld(
   AgentMap other_agents = world.GetAgents();
   bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state,
                                  agent_match_object, agent_rss_dynamics,
-                                 agent_rss_route, rss_world_model);
+                                 agent_rss_route, rss_world);
 
   return result;
 }
@@ -436,10 +436,10 @@ bool RssInterface::ExtractRSSWorld(
 EvaluationReturn RssInterface::GetSafetyReponse(const World& world,
                                                 const AgentId& ego_id) {
   std::optional<bool> response;
-  ::ad::rss::world::WorldModel rss_world_model;
-  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+  ::ad::rss::world::WorldModel rss_world;
+  if (ExtractRSSWorld(world, ego_id, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
-    RssCheck(rss_world_model, snapshot);
+    RssCheck(rss_world, snapshot);
     response = ExtractSafetyEvaluation(snapshot);
   }
   return response;
@@ -447,11 +447,11 @@ EvaluationReturn RssInterface::GetSafetyReponse(const World& world,
 
 PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
     const World& world, const AgentId& ego_id) {
-  ::ad::rss::world::WorldModel rss_world_model;
+  ::ad::rss::world::WorldModel rss_world;
   PairwiseEvaluationReturn response;
-  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+  if (ExtractRSSWorld(world, ego_id, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
-    RssCheck(rss_world_model, snapshot);
+    RssCheck(rss_world, snapshot);
     response = ExtractPairwiseSafetyEvaluation(snapshot);
   }
   return response;
@@ -460,11 +460,11 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
 PairwiseDirectionalEvaluationReturn
 RssInterface::GetPairwiseDirectionalSafetyReponse(const World& world,
                                                   const AgentId& ego_id) {
-  ::ad::rss::world::WorldModel rss_world_model;
+  ::ad::rss::world::WorldModel rss_world;
   PairwiseDirectionalEvaluationReturn response;
-  if (ExtractRSSWorld(world, ego_id, rss_world_model)) {
+  if (ExtractRSSWorld(world, ego_id, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
-    RssCheck(rss_world_model, snapshot);
+    RssCheck(rss_world, snapshot);
     response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
   }
   return response;

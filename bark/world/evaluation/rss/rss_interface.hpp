@@ -148,7 +148,6 @@ class RssInterface {
 
   virtual ~RssInterface() {}
 
- private:
   // Load OpenDrive map into RSS, needed for GetMatchObject and GenerateRoute.
   bool initializeOpenDriveMap(const std::string& opendrive_file_name);
 
@@ -188,9 +187,9 @@ class RssInterface {
   // Generate a RSS route from the current position and the goal of the
   // specified BARK agent, the corresponding RSS match object. Used by
   // CreateWorldModel.
-  ::ad::map::route::FullRoute GenerateRoute(
-      const Point2d& agent_center, const Point2d& agent_goal,
-      const ::ad::map::match::Object& match_object);
+  bool GenerateRoute(const Point2d& agent_center, const Point2d& agent_goal,
+                     const ::ad::map::match::Object& match_object,
+                     ::ad::map::route::FullRoute& route);
 
   AgentState ConvertAgentState(
       const models::dynamic::State& agent_state,
@@ -208,7 +207,7 @@ class RssInterface {
                         const ::ad::map::match::Object& ego_match_object,
                         const ::ad::rss::world::RssDynamics& ego_dynamics,
                         const ::ad::map::route::FullRoute& ego_route,
-                        ::ad::rss::world::WorldModel& rss_world_model);
+                        ::ad::rss::world::WorldModel& rss_world);
 
   // Placeholder for performing RSS check. Inputs RSS world and returns RSS
   // snapshot which contains the result of RSS check.
@@ -218,7 +217,7 @@ class RssInterface {
   // Extracts RSS world from the information of BARK world, coordinates other
   // functions.
   bool ExtractRSSWorld(const World& world, const AgentId& agent_id,
-                       ::ad::rss::world::WorldModel& rss_world_model);
+                       ::ad::rss::world::WorldModel& rss_world);
 
   bool ExtractSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
@@ -230,6 +229,7 @@ class RssInterface {
   ExtractPairwiseDirectionalSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
+ private:
   std::vector<float> default_dynamics_;
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
