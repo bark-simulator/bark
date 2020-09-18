@@ -13,7 +13,6 @@ cc_library(
         "ad_rss/generated/include",
         "ad_rss/impl/include",
     ],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = ["@map_support//:ad_physics", "@boost//:geometry"],
 )
@@ -46,7 +45,6 @@ cc_library(
         "ad_rss_map_integration/generated/include",
         "ad_rss_map_integration/impl/include",
     ],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
         ":ad_rss",

@@ -12,7 +12,6 @@ cc_library(
         "ad_physics/generated/include",
         "ad_physics/impl/include",
     ],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = ["@spdlog"],
 )
@@ -31,7 +30,6 @@ cc_library(
     srcs = glob(["ad_map_opendrive_reader/src/**/*.cpp"]),
     hdrs = glob(["ad_map_opendrive_reader/include/**/*.h*"]),
     includes = ["ad_map_opendrive_reader/include"],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
         "@proj",
@@ -53,7 +51,6 @@ cc_library(
         "ad_map_access_test_support/generated/include",
         "ad_map_access_test_support/impl/include",
     ],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
 )
 
@@ -72,7 +69,6 @@ cc_library(
         "ad_map_access/generated/include",
         "ad_map_access/impl/include",
     ],
-    linkopts = ["-pthread"],
     visibility = ["//visibility:public"],
     deps = [
         "@proj",
