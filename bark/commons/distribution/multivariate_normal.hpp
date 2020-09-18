@@ -42,8 +42,9 @@ class MultivariateDistribution : public Distribution {
   virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
 
   virtual RandomVariableSupport GetSupport() const {
-    std::pair<RandomVariableValueType, RandomVariableValueType> 
-      support_1d{std::numeric_limits<RandomVariableValueType>::lowest(), std::numeric_limits<RandomVariableValueType>::max()};
+    std::pair<RandomVariableValueType, RandomVariableValueType> support_1d{
+        std::numeric_limits<RandomVariableValueType>::lowest(),
+        std::numeric_limits<RandomVariableValueType>::max()};
     return RandomVariableSupport(mean_.size(), support_1d);
   }
 
