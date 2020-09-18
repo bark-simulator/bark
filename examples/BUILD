@@ -99,7 +99,7 @@ py_binary(
   data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data',
           ':params'],
-  
+  imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:pygame_viewer",
@@ -115,7 +115,7 @@ py_binary(
   data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data',
           ':params'],
-  
+  imports = ['../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:pygame_viewer",
@@ -124,6 +124,8 @@ py_binary(
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           "//bark/runtime:runtime"],
 )
+
+py_binary(
   name = "maude_interface",
   srcs = ["maude_interface.py"],
   data = ['//bark:generate_core',

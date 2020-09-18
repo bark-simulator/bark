@@ -53,7 +53,9 @@ param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 0.8
+
 param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"]=True
+param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 
 SetVerboseLevel(0)
 
@@ -136,13 +138,6 @@ def print_rss_safety_response(evaluator_rss, world):
   # print("Pairwise directional safety response: ",
   #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
-# Example of visualizing rss safety reponses between evaluating agent and
-# other agents
-def draw_rss_safety_response(viewer, evaluator_rss, world, eval_agent_id):
-  viewer.drawRssSafetyResponses(
-      world, eval_agent_id, evaluator_rss.PairwiseEvaluate(world))
-
-
 # run 3 scenarios
 for episode in range(0, 3):
   env.reset()
@@ -154,15 +149,10 @@ for episode in range(0, 3):
                                checking_relevent_range=1)
   current_world.AddEvaluator("rss", evaluator_rss)
 
-  # step each scenario 70 times
-  for step in range(0, 70):
-    env.step(show = False)
+  # step each scenario 40 times
+  for step in range(0, 40):
+    env.step()
     print_rss_safety_response(evaluator_rss, current_world)
-    draw_rss_safety_response(
-        viewer,
-        evaluator_rss,
-        current_world,
-        eval_agent_id)
     time.sleep(sim_step_time / sim_real_time_factor)
 
 # viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
