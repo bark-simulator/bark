@@ -62,3 +62,27 @@ cc_test(
         "@gtest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "rss_interface_test",
+    srcs = ["rss_interface_test.cc"],
+    copts = ["-Iexternal/gtest/include"] + select({
+        "//bark/world/evaluation/rss:_rss": ["-D RSS"],
+        "//conditions:default": [],
+    }),
+    data = ["//bark/runtime/tests:xodr_data"],
+    deps = [
+        "//bark/models/behavior/motion_primitives",
+        "//bark/geometry:geometry",
+        "//bark/models/dynamic:dynamic",
+        "//bark/models/execution/interpolation:interpolation",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
+        "//bark/commons/params:params",
+        "//bark/world:world",
+        "//bark/world/goal_definition:goal_definition",
+        "@gtest//:gtest_main",
+    ] + select({
+        "//bark/world/evaluation/rss:_rss": ["//bark/world/evaluation/rss:_rss_interface"],
+        "//conditions:default": [],
+    }),
+)
