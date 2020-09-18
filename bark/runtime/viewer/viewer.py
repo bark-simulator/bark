@@ -359,15 +359,14 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawSafetyResponses(self, world, ego_id, safety_responses):
+    def drawRssSafetyResponses(self, world, ego_id, safety_responses):
       ego_agent = world.agents[ego_id]
       shape = ego_agent.shape
       pose = generatePoseFromState(ego_agent.state)
-      transformed_polygon = shape.Transform(pose)
-      self.drawLine2d(
+      transformed_polygon = shape.AffineTransform(1.5,pose)
+      self.drawPolygon2d(
           transformed_polygon,
-          self.color_eval_agents_line,
-          linewidth=3)
+          self.color_eval_agents_line)
 
       # draw response for other agents
       relevent_agents = [
@@ -375,12 +374,11 @@ class BaseViewer(Viewer):
       for agent in relevent_agents:
         shape = agent.shape
         pose = generatePoseFromState(agent.state)
-        transformed_polygon = shape.Transform(pose)
+        transformed_polygon = shape.AffineTransform(1.5,pose)
 
-        # if isinstance(safety_responses[agent.id], bool):
         safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else (
             1, 0.4, 0, 1)
-        self.drawLine2d(transformed_polygon, safe_color, linewidth=3)
+        self.drawPolygon2d(transformed_polygon, safe_color)
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -433,7 +431,7 @@ class BaseViewer(Viewer):
                         id, *list(map(char_func, responses)))
                     self.drawText(position=(0.82, 0.88-0.03*i), text=str)
 
-            self.drawText(position=(0.84, 0.96), text="ego id {} safety: {}".format(
+            self.drawText(position=(0.74, 0.96), text="ego id {} safety: {}".format(
                 agent_id, char_func(overall_safety)))
             break
 
