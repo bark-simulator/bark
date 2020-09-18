@@ -101,11 +101,11 @@ class RssInterface {
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
         agents_dynamics_(agents_vehicle_dynamics),
-        checking_relevent_range_(checking_relevent_range),
+        checking_relevant_range_(checking_relevent_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
     assert(opendrive_file_name != "");
-    assert(checking_relevent_range_ >= 1.);
+    assert(checking_relevant_range_ >= 1.);
     // lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct
     assert(default_dynamics_.size() == 8);
     assert(default_dynamics_[1] <= default_dynamics_[2] &&
@@ -117,7 +117,7 @@ class RssInterface {
 
     // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);
-    initializeOpenDriveMap(opendrive_file_name);
+    InitializeOpenDriveMap(opendrive_file_name);
     rss_coordinate_transform_.setENUReferencePoint(
         ::ad::map::access::getENUReferencePoint());
   }
@@ -151,7 +151,7 @@ class RssInterface {
   virtual ~RssInterface() {}
 
   // Load OpenDrive map into RSS, needed for GetMatchObject and GenerateRoute.
-  bool initializeOpenDriveMap(const std::string& opendrive_file_name);
+  bool InitializeOpenDriveMap(const std::string& opendrive_file_name);
 
   // Generates RSS dynamics for an agent, returns the specified dynamics if the
   // dynamics is given in agent_vehicle_dynamics, else returns the
@@ -173,15 +173,6 @@ class RssInterface {
   // https://ad-map-access.readthedocs.io/en/latest/ad_map_access/HLD_MapMatching/
   ::ad::map::match::Object GenerateMatchObject(
       const models::dynamic::State& agent_state, const Polygon& agent_shape);
-
-  ::ad::rss::map::RssObjectData GenerateObjectData(
-      const ::ad::rss::world::ObjectId& id,
-      const ::ad::rss::world::ObjectType& type,
-      const ::ad::map::match::Object& matchObject,
-      const ::ad::physics::Speed& speed,
-      const ::ad::physics::AngularVelocity& yawRate,
-      const ::ad::physics::Angle& steeringAngle,
-      const ::ad::rss::world::RssDynamics& rssDynamics);
 
   ::ad::physics::AngularVelocity CaculateAgentAngularVelocity(
       const models::dynamic::Trajectory& trajectory);
@@ -236,7 +227,7 @@ class RssInterface {
   std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
   // Increase searching distance for better visualization
-  float checking_relevent_range_;
+  float checking_relevant_range_;
   float route_predict_range_;
   ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
       ::ad::map::point::CoordinateTransform();

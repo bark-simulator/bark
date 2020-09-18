@@ -18,7 +18,7 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-bool RssInterface::initializeOpenDriveMap(
+bool RssInterface::InitializeOpenDriveMap(
     const std::string& opendrive_file_name) {
   std::ifstream opendrive_file(opendrive_file_name);
   std::string opendrive_file_content =
@@ -122,19 +122,6 @@ bool RssInterface::initializeOpenDriveMap(
       map_matching.getMapMatchedBoundingBox(matching_object.enuPosition);
 
   return matching_object;
-}
-
-::ad::rss::map::RssObjectData RssInterface::GenerateObjectData(
-    const ::ad::rss::world::ObjectId& id,
-    const ::ad::rss::world::ObjectType& type,
-    const ::ad::map::match::Object& matchObject,
-    const ::ad::physics::Speed& speed,
-    const ::ad::physics::AngularVelocity& yawRate,
-    const ::ad::physics::Angle& steeringAngle,
-    const ::ad::rss::world::RssDynamics& rssDynamics) {
-  ::ad::rss::map::RssObjectData data = {
-      id, type, matchObject, speed, yawRate, steeringAngle, rssDynamics};
-  return data;
 }
 
 ::ad::physics::AngularVelocity RssInterface::CaculateAgentAngularVelocity(
@@ -253,8 +240,10 @@ Distance RssInterface::CalculateMaxStoppingDistance(
   // Estimate the upper bound of the unsafe distance according to the Rss paper.
   // The calculated value is always higher than the correct upper bound.
 
-  Distance braking_distance_after_responsing, traveled_distance_when_responsing;
+  Distance braking_distance_after_responsing = 50,
+           traveled_distance_when_responsing = 50;
   Speed speed_when_responsing;
+
   Acceleration max_accel = std::max(agent_dynamics.alphaLon.accelMax,
                                     agent_dynamics.alphaLat.accelMax);
   Acceleration min_brake = std::min(agent_dynamics.alphaLon.brakeMin,
@@ -285,11 +274,14 @@ bool RssInterface::CreateWorldModel(
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
   auto ego_av = CaculateAgentAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
-  ::ad::rss::map::RssObjectData ego_data = GenerateObjectData(
+  ::ad::rss::map::RssObjectData ego_data = {
       ::ad::rss::world::ObjectId(ego_id),
-      ::ad::rss::world::ObjectType::EgoVehicle, ego_match_object,
-      ego_rss_state.speed, ego_av, ::ad::physics::Angle(ego_rss_state.heading),
-      ego_dynamics);
+      ::ad::rss::world::ObjectType::EgoVehicle,
+      ego_match_object,
+      ego_rss_state.speed,
+      ego_av,
+      ::ad::physics::Angle(ego_rss_state.heading),
+      ego_dynamics};
 
   // Determine which agent is close thus enough relevent for safety checking
   std::vector<AgentPtr> relevent_agents;
@@ -304,7 +296,7 @@ bool RssInterface::CreateWorldModel(
           (static_cast<float>(ego_rss_state.max_stopping_distance) +
            CalculateMaxStoppingDistance(other_agent_speed,
                                         other_agent_dynamics)) *
-          checking_relevent_range_;
+          checking_relevant_range_;
 
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
@@ -333,11 +325,14 @@ bool RssInterface::CreateWorldModel(
     auto other_av =
         CaculateAgentAngularVelocity(other->GetExecutionTrajectory());
 
-    ::ad::rss::map::RssObjectData other_data = GenerateObjectData(
+    ::ad::rss::map::RssObjectData other_data = {
         ::ad::rss::world::ObjectId(other->GetAgentId()),
-        ::ad::rss::world::ObjectType::OtherVehicle, other_match_object,
-        other_state(VEL_POSITION), other_av,
-        ::ad::physics::Angle(other_state(THETA_POSITION)), other_dynamics);
+        ::ad::rss::world::ObjectType::OtherVehicle,
+        other_match_object,
+        other_state(VEL_POSITION),
+        other_av,
+        ::ad::physics::Angle(other_state(THETA_POSITION)),
+        other_dynamics};
 
     // Find all possible scenes between the ego agent and a relevent agent
     scene_creation.appendScenes(ego_data, ego_route, other_data,
@@ -349,7 +344,8 @@ bool RssInterface::CreateWorldModel(
   rss_world = scene_creation.getWorldModel();
 
   // It is valid only after world timestep 1
-  return withinValidInputRange(rss_world);
+  bool result = withinValidInputRange(rss_world);
+  return result;
 }
 
 bool RssInterface::RssCheck(

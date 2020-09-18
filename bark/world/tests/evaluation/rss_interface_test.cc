@@ -48,11 +48,11 @@ using bark::world::goal_definition::GoalDefinitionPolygon;
 TEST(rss_interface, test_maps_compatibility) {
   // not all map can be loaded into rss
   RssInterface rss;
-  ASSERT_TRUE(rss.initializeOpenDriveMap(
+  ASSERT_TRUE(rss.InitializeOpenDriveMap(
       "bark/runtime/tests/data/city_highway_straight_centered.xodr"));
-  ASSERT_TRUE(rss.initializeOpenDriveMap(
+  ASSERT_TRUE(rss.InitializeOpenDriveMap(
       "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"));
-  ASSERT_TRUE(rss.initializeOpenDriveMap(
+  ASSERT_TRUE(rss.InitializeOpenDriveMap(
       "bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr"));
 }
 

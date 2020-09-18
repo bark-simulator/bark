@@ -16,7 +16,6 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
-from bark.core.world.evaluation import EvaluatorRss
 
 logger = logging.getLogger()
 
@@ -360,26 +359,26 @@ class BaseViewer(Viewer):
             raise NotImplementedError("Shape drawing not implemented.")
 
     def drawRssSafetyResponses(self, world, ego_id, safety_responses):
-      ego_agent = world.agents[ego_id]
-      shape = ego_agent.shape
-      pose = generatePoseFromState(ego_agent.state)
-      transformed_polygon = shape.AffineTransform(1.5, pose)
-      self.drawPolygon2d(
-          transformed_polygon,
-          self.color_eval_agents_line, 1, self.color_other_agents_face, linewidth=1.5, zorder=9)
-
-      # draw response for other agents
-      relevent_agents = [
-          agent for agent in world.agents.values() if agent.id in safety_responses]
-      for agent in relevent_agents:
-        shape = agent.shape
-        pose = generatePoseFromState(agent.state)
+        ego_agent = world.agents[ego_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
         transformed_polygon = shape.AffineTransform(1.5, pose)
+        self.drawPolygon2d(
+            transformed_polygon,
+            self.color_eval_agents_line, 1, self.color_other_agents_face, linewidth=1.5, zorder=9)
 
-        safe_color = (0.1, 0.9, 0, 1) if safety_responses[agent.id] else "red"
-        self.drawPolygon2d(transformed_polygon, safe_color,
-                           1, safe_color, zorder=9.9)
-      self.show()
+        # draw response for other agents
+        relevent_agents = [
+            agent for agent in world.agents.values() if agent.id in safety_responses]
+        for agent in relevent_agents:
+            shape = agent.shape
+            pose = generatePoseFromState(agent.state)
+            transformed_polygon = shape.AffineTransform(1.5, pose)
+
+            safe_color = "LightGreen" if safety_responses[agent.id] else "Red"
+            self.drawPolygon2d(transformed_polygon, safe_color,
+                               1, safe_color, zorder=9)
+        self.show()
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -410,6 +409,7 @@ class BaseViewer(Viewer):
                 break
 
     def drawRssDebugInfomation(self, world, agent_id):
+        from bark.core.world.evaluation import EvaluatorRss 
         for evaluator in world.evaluators:
           if isinstance(world.evaluators[evaluator], EvaluatorRss):
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
