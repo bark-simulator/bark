@@ -13,7 +13,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
-  LaneCorridorConfig, ConfigWithEase
+    LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 
@@ -23,25 +23,29 @@ from bark.core.models.behavior import *
 from bark.core.commons import SetVerboseLevel
 
 try:
-  from bark.core.world.evaluation import EvaluatorRss
+    from bark.core.world.evaluation import EvaluatorRss
 except:
-  raise ImportError("This example requires building RSS, please run with \"bazel run //examples:merging_rss --define rss=true\"")
+    raise ImportError(
+        "This example requires building RSS, please run with \"bazel run //examples:merging_rss --define rss=true\"")
 
 # parameters
 param_server = ParameterServer()
 
 # scenario
+
+
 class CustomLaneCorridorConfig(LaneCorridorConfig):
-  def __init__(self,
-               params=None,
-               **kwargs):
-    super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
-  
-  def goal(self, world):
-    road_corr = world.map.GetRoadCorridor(
-      self._road_ids, XodrDrivingDirection.forward)
-    lane_corr = self._road_corridor.lane_corridors[0]
-    return GoalDefinitionPolygon(lane_corr.polygon)
+    def __init__(self,
+                 params=None,
+                 **kwargs):
+        super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
+
+    def goal(self, world):
+        road_corr = world.map.GetRoadCorridor(
+            self._road_ids, XodrDrivingDirection.forward)
+        lane_corr = self._road_corridor.lane_corridors[0]
+        return GoalDefinitionPolygon(lane_corr.polygon)
+
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
 param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
@@ -54,7 +58,7 @@ param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 0.8
 
-param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"]=True
+param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 
 SetVerboseLevel(0)
@@ -63,25 +67,27 @@ SetVerboseLevel(0)
 left_lane = CustomLaneCorridorConfig(params=param_server,
                                      lane_corridor_id=0,
                                      road_ids=[0, 1],
-                                     behavior_model=BehaviorMobilRuleBased(param_server),
+                                     behavior_model=BehaviorMobilRuleBased(
+                                         param_server),
                                      s_min=5.,
                                      s_max=50.)
 right_lane = CustomLaneCorridorConfig(params=param_server,
                                       lane_corridor_id=1,
                                       road_ids=[0, 1],
                                       controlled_ids=True,
-                                      behavior_model=BehaviorMobilRuleBased(param_server),
+                                      behavior_model=BehaviorMobilRuleBased(
+                                          param_server),
                                       s_min=5.,
                                       s_max=20.)
 
 map_path = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
 
 scenarios = \
-  ConfigWithEase(num_scenarios=3,
-                 map_file_name=map_path,
-                 random_seed=0,
-                 params=param_server,
-                 lane_corridor_configs=[left_lane, right_lane])
+    ConfigWithEase(num_scenarios=3,
+                   map_file_name=map_path,
+                   random_seed=0,
+                   params=param_server,
+                   lane_corridor_configs=[left_lane, right_lane])
 
 # viewer
 viewer = MPViewer(params=param_server,

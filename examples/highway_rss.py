@@ -156,5 +156,4 @@ for episode in range(0, 100):
         print_rss_safety_response(evaluator_rss, current_world)
         time.sleep(sim_step_time / sim_real_time_factor)
 
-# video_exporter = VideoRenderer(renderer=viewer, world_step_time=1)
-# video_exporter.export_video(filename="/home/tin", remove_image_dir=False)
+# viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
