@@ -91,13 +91,13 @@ void python_evaluation(py::module m) {
                     const std::vector<float>&,
                     const std::unordered_map<AgentId, std::vector<float>>&,
                     const float&, const float&>(),
-           py::arg("agent_id") = 0, py::arg("opendrive_file_name") = "",
-           py::arg("default_vehicle_dynamics") =
-               std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.},
+           py::arg("agent_id"), py::arg("opendrive_file_name"),
+           py::arg("default_vehicle_dynamics"),
            py::arg("agents_vehicle_dynamics") =
                std::unordered_map<AgentId, std::vector<float>>(),
            py::arg("checking_relevent_range") = 1.,
            py::arg("route_predict_range") = 50.)
+      .def(py::init<const AgentId&,const bark::commons::ParamsPtr>())
       .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRss::Evaluate))
       .def("PairwiseEvaluate",
            py::overload_cast<const World&>(&EvaluatorRss::PairwiseEvaluate))

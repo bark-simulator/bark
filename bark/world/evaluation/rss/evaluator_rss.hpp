@@ -29,8 +29,7 @@ class EvaluatorRss : public BaseEvaluator {
 
   explicit EvaluatorRss(
       const AgentId& agent_id, const std::string& opendrive_file_name,
-      const std::vector<float>& default_vehicle_dynamics =
-          std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
+      const std::vector<float>& default_vehicle_dynamics,
       const std::unordered_map<AgentId, std::vector<float>>&
           agents_vehicle_dynamics =
               std::unordered_map<AgentId, std::vector<float>>(),
@@ -40,6 +39,30 @@ class EvaluatorRss : public BaseEvaluator {
         rss_(opendrive_file_name, default_vehicle_dynamics,
              agents_vehicle_dynamics, checking_relevent_range,
              route_predict_range) {}
+
+  explicit EvaluatorRss(const AgentId& agent_id,
+                        const commons::ParamsPtr& params)
+      : agent_id_(agent_id),
+        rss_(params->GetString("EvalutaorRss::MapFilename",
+                               "Map path for loading into Rss", ""),
+             params->GetListFloat(
+                 "EvalutaorRss::DefaultVehicleDynamics",
+                 "The default values of the vehicle dynamics using in Rss",
+                 std::vector<float>()),
+             params->GetMapAgentIdListFloat(
+                 "EvalutaorRss::SpecificAgentVehicleDynamics",
+                 "The values of the vehicle dynamics of a specific value",
+                 std::unordered_map<AgentId, std::vector<float>>()),
+             params->GetReal("EvalutaorRss::CheckingRelevantRange",
+                             "Controlling the searching distance between the "
+                             "evaluating agent "
+                             "and other agents to perform RSS check",
+                             1),
+             params->GetReal("EvalutaorRss::RoutePredictRange",
+                             "Describle the distance for returning all routes "
+                             "having less than the distance, will be used when "
+                             "a route to the goal cannnot be found",
+                             50)) {}
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the all possible RSS
