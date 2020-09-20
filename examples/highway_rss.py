@@ -117,9 +117,10 @@ default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
 agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
                            2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
 
-# Example of using RSS to evaluate the safety situation of the evaluating agent.
-# The evaluating agent is defined with agent_id when initializing EvaluatorRss.
+
 def print_rss_safety_response(evaluator_rss, world):
+    # Example of using RSS to evaluate the safety situation of the evaluating agent.
+    # The evaluating agent is defined with agent_id when initializing EvaluatorRss.
     # Evaluating with RSS is quite computionally expensive
     print("Overall safety response: ", evaluator_rss.Evaluate(world))
     # print("Pairwise safety response: ",
@@ -128,26 +129,32 @@ def print_rss_safety_response(evaluator_rss, world):
     #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
-# run 3 scenarios
-for episode in range(0, 3):
-  env.reset()
-  current_world = env._world
-  eval_agent_id = env._scenario._eval_agent_ids[0]
-  evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
-                               default_vehicle_dynamics,
-                               agents_vehicle_dynamics,
-                               checking_relevent_range=1)
-  current_world.AddEvaluator("rss", evaluator_rss)
-  
-  # step each scenario 40 times
-  for step in range(0, 40):
-    env.step(show = False)
-    print_rss_safety_response(evaluator_rss, current_world)
-    draw_rss_safety_response(
-        viewer,
-        evaluator_rss,
-        current_world,
-        eval_agent_id)
-    time.sleep(sim_step_time / sim_real_time_factor)
+param_server["EvalutaorRss"]["MapFilename"] = map_path
+param_server["EvalutaorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
+param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
+param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
 
-# viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
+
+# run 3 scenarios
+for episode in range(0, 100):
+    env.reset()
+    current_world = env._world
+    eval_agent_id = env._scenario._eval_agent_ids[0]
+
+    # There are two ways to upset EvaluatorRss
+    # evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
+    #                              default_vehicle_dynamics,
+    #                              agents_vehicle_dynamics,
+    #                              checking_relevent_range=1)
+    evaluator_rss = EvaluatorRss(eval_agent_id, param_server)
+
+    current_world.AddEvaluator("rss", evaluator_rss)
+
+    # step each scenario 40 times
+    for step in range(0, 40):
+        env.step()
+        print_rss_safety_response(evaluator_rss, current_world)
+        time.sleep(sim_step_time / sim_real_time_factor)
+
+# video_exporter = VideoRenderer(renderer=viewer, world_step_time=1)
+# video_exporter.export_video(filename="/home/tin", remove_image_dir=False)
