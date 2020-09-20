@@ -88,7 +88,7 @@ TEST(rss_interface, test_rss_check) {
       std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
 
   ::ad::rss::world::WorldModel rss_world;
-  ASSERT_TRUE(rss.ExtractRSSWorld(*world, agent->GetAgentId(), rss_world));
+  ASSERT_TRUE(rss.GenerateRSSWorld(*world, agent->GetAgentId(), rss_world));
 
   ::ad::rss::state::RssStateSnapshot snapshot;
   ASSERT_TRUE(rss.RssCheck(rss_world, snapshot));

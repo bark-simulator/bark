@@ -11,6 +11,7 @@ cc_library(
         "@ad_rss_lib//:ad_rss",
         "@ad_rss_lib//:ad_rss_map_integration",
         "@boost//:geometry",
+        "@boost//:filesystem",
         "@map_support//:ad_physics",
         "@spdlog",
     ],

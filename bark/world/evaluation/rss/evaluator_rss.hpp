@@ -102,7 +102,6 @@ class EvaluatorRss : public BaseEvaluator {
 
  private:
   AgentId agent_id_;
-
   RssInterface rss_;
 };
 }  // namespace evaluation
