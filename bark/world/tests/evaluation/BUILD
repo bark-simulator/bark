@@ -79,7 +79,11 @@ cc_test(
         "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/commons/params:params",
         "//bark/world:world",
+        "//bark/world/map:map_interface",
+        "//bark/world/map:roadgraph",
+        "//bark/world/opendrive:opendrive",
         "//bark/world/goal_definition:goal_definition",
+        "//bark/world/tests:make_test_world",
         "@gtest//:gtest_main",
     ] + select({
         "//bark/world/evaluation/rss:_rss": ["//bark/world/evaluation/rss:_rss_interface"],
