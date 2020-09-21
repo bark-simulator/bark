@@ -258,7 +258,8 @@ class EvaluatorRSSTests(unittest.TestCase):
                                  self.defaults["default_vehicle_dynamics"])
     world.Step(1)
     responses = evaluator_rss.PairwiseEvaluate(world)
-    self.assertEqual(1, len(responses))
+    
+    self.assertEqual(1, len(responses)) # Test GetRelevantAgents
     self.assertTrue(responses[other_1.id])
     self.assertFalse(other_2.id in responses)
 

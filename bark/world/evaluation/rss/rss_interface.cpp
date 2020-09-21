@@ -264,6 +264,32 @@ Distance RssInterface::CalculateMaxStoppingDistance(
   return traveled_distance_when_responsing + braking_distance_after_responsing;
 }
 
+bool RssInterface::GetRelevantAgents(const AgentMap& agents,
+                                     const Point2d& ego_center,
+                                     const AgentId& ego_id,
+                                     const Distance& ego_max_stopping_distance,
+                                     std::vector<AgentPtr>& relevent_agents) {
+  for (const auto& other_agent : agents) {
+    AgentId other_agent_id = other_agent.second->GetAgentId();
+    if (other_agent_id != ego_id) {
+      ::ad::rss::world::RssDynamics other_agent_dynamics =
+          GenerateAgentDynamicsParameters(other_agent_id);
+      float other_agent_speed =
+          other_agent.second->GetCurrentState()(VEL_POSITION);
+      float relevant_distance = (static_cast<float>(ego_max_stopping_distance) +
+                                 CalculateMaxStoppingDistance(
+                                     other_agent_speed, other_agent_dynamics)) *
+                                checking_relevant_range_;
+
+      if (geometry::Distance(ego_center,
+                             other_agent.second->GetCurrentPosition()) <
+          relevant_distance)
+        relevent_agents.push_back(other_agent.second);
+    }
+  }
+  return true;
+}
+
 bool RssInterface::CreateWorldModel(
     const AgentMap& agents, const AgentId& ego_id,
     const AgentState& ego_rss_state,
@@ -283,27 +309,9 @@ bool RssInterface::CreateWorldModel(
       ::ad::physics::Angle(ego_rss_state.heading),
       ego_dynamics};
 
-  // Determine which agent is close thus enough relevent for safety checking
   std::vector<AgentPtr> relevent_agents;
-  for (const auto& other_agent : agents) {
-    AgentId other_agent_id = other_agent.second->GetAgentId();
-    if (other_agent_id != ego_id) {
-      ::ad::rss::world::RssDynamics other_agent_dynamics =
-          GenerateAgentDynamicsParameters(other_agent_id);
-      float other_agent_speed =
-          other_agent.second->GetCurrentState()(VEL_POSITION);
-      float relevant_distance =
-          (static_cast<float>(ego_rss_state.max_stopping_distance) +
-           CalculateMaxStoppingDistance(other_agent_speed,
-                                        other_agent_dynamics)) *
-          checking_relevant_range_;
-
-      if (geometry::Distance(ego_center,
-                             other_agent.second->GetCurrentPosition()) <
-          relevant_distance)
-        relevent_agents.push_back(other_agent.second);
-    }
-  }
+  GetRelevantAgents(agents, ego_center, ego_id,
+                    ego_rss_state.max_stopping_distance, relevent_agents);
 
   // +1 is a work around because RSS defines the world is only valid after
   // world_time >=1
@@ -352,11 +360,12 @@ bool RssInterface::RssCheck(
     const ::ad::rss::world::WorldModel& world_model,
     ::ad::rss::state::RssStateSnapshot& rss_state_snapshot) {
   ::ad::rss::core::RssCheck rss_check;
-  // Describes the relative relation between two objects in possible situations
+  // Describes the relative relation between two objects in possible
+  // situations
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
 
-  // Contains longitudinal and lateral response of the ego object, a list of id
-  // of the dangerous objects
+  // Contains longitudinal and lateral response of the ego object, a list of
+  // id of the dangerous objects
   ::ad::rss::state::ProperResponse proper_response;
 
   // rss_state_snapshot: individual situation responses calculated from
@@ -403,7 +412,7 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
 }
 
 bool RssInterface::GenerateRSSWorld(const World& world, const AgentId& agent_id,
-                                   ::ad::rss::world::WorldModel& rss_world) {
+                                    ::ad::rss::world::WorldModel& rss_world) {
   AgentPtr agent = world.GetAgent(agent_id);
 
   Point2d agent_goal;
