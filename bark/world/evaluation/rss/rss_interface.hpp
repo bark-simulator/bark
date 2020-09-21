@@ -121,12 +121,13 @@ class RssInterface {
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the two directional RSS
-  // situations (longtitude and latitude) is safe, false otherwise.
+  // situations (longitude and lateral) is safe, false if unsafe, uninitialized
+  // (none in python) if rss check can not be performed (only in rare cases).
   // A directional RSS situation considers only the safety in that direction.
   //
   // For example, if the ego agent is following another agent in the same lane
-  // at a safe distance, the longtitudinal RSS situtation is safe but the
-  // latitudinal one is unsafety.
+  // at a safe distance, the longitudinal RSS situtation is safe but the
+  // lateral one is unsafety.
   EvaluationReturn GetSafetyReponse(const World& world, const AgentId& ego_id);
 
   // Returns an unorder_map indicating the pairwise safety respone of the
@@ -134,6 +135,7 @@ class RssInterface {
   // agent, value ofis true if at least one of the two directional RSS
   // situations between the specified and the nearby agent is safe, false
   // otherwise.
+  // Return empty map if no agent is nearby or no Rss check can be performed.
   PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World& world,
                                                     const AgentId& ego_id);
 
@@ -142,11 +144,12 @@ class RssInterface {
   // nearby agent, value is a pair of directional safety response:
   //
   // 1. longitudinal safety response
-  // 2. latitudinal safety response
+  // 2. lateral safety response
   //
   // It is true if at least one of the two directional RSS situations between
   // the specified and the nearby agent is safe, false otherwise, respectively
   // in each direction.
+  // Return empty map if no agent is nearby or no Rss check can be performed.
   PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
       const World& world, const AgentId& ego_id);
 
@@ -237,8 +240,8 @@ class RssInterface {
 
   // Input format:
   // [longitudinal max acceleration, longitudinal max braking, longitudinal min
-  // acceleration, longitudinal min brake correct, latitudinal max acceleration,
-  // latitudinal min braking, latitudinal flucatuation_margin, agent response
+  // acceleration, longitudinal min brake correct, lateral max acceleration,
+  // lateral min braking, lateral flucatuation_margin, agent response
   // time]
 
   // Detailed explanation please see:

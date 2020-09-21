@@ -121,8 +121,8 @@ env = Runtime(step_time=0.2,
 
 # Input format:
 # [longitudinal max acceleration, longitudinal max braking, longitudinal min acceleration,
-# longitudinal min brake correct, latitudinal max acceleration, latitudinal min braking,
-# latitudinal flucatuation_margin, agent response time]
+# longitudinal min brake correct, lateral max acceleration, lateral min braking,
+# lateral flucatuation_margin, agent response time]
 #
 # Detailed explanation please see:
 # https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion

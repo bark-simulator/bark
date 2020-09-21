@@ -375,7 +375,7 @@ class BaseViewer(Viewer):
         ego_agent = world.agents[ego_id]
         shape = ego_agent.shape
         pose = generatePoseFromState(ego_agent.state)
-        transformed_polygon = shape.AffineTransform(1.5, pose)
+        transformed_polygon = shape.ScalingTransform(1.5, pose)
         self.drawPolygon2d(
             transformed_polygon,
             self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
@@ -386,7 +386,7 @@ class BaseViewer(Viewer):
         for agent in relevent_agents:
             shape = agent.shape
             pose = generatePoseFromState(agent.state)
-            transformed_polygon = shape.AffineTransform(1.5, pose)
+            transformed_polygon = shape.ScalingTransform(1.5, pose)
 
             response_color = "LightGreen" if rss_responses[agent.id] else "Red"
             self.drawPolygon2d(transformed_polygon, response_color,
