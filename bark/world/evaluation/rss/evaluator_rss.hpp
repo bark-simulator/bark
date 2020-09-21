@@ -65,17 +65,22 @@ class EvaluatorRss : public BaseEvaluator {
                              50)) {}
 
   // Returns a boolean indicating the safety response of the specified agent.
-  // True if for each nearby agents, at least one of the all possible RSS
-  // situations is safe, false if unsafe, uninitialized (none in python) if no
-  // Rss check can be performed.
+  // True if for each nearby agents, at least one of the two directional RSS
+  // situations (longitude and lateral) is safe, false if unsafe, uninitialized
+  // (none in python) if rss check can not be performed (only in rare cases).
+  // A directional RSS situation considers only the safety in that direction.
+  //
+  // For example, if the ego agent is following another agent in the same lane
+  // at a safe distance, the longitudinal RSS situtation is safe but the
+  // lateral one is unsafety.
   virtual EvaluationReturn Evaluate(const World& world) {
     return rss_.GetSafetyReponse(world, agent_id_);
   };
 
   // Returns an unorder_map indicating the pairwise safety respone of the
   // specified agent to every other nearby agents. Key is AgentId of an nearby
-  // agent, value is true if at least one of the all possible RSS situations
-  // between the specified and the nearby agent is safe, false
+  // agent, value is true if at least one of the two directional RSS
+  // situations between the specified and the nearby agent is safe, false
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
@@ -87,11 +92,11 @@ class EvaluatorRss : public BaseEvaluator {
   // nearby agent, value is a pair of directional safety response:
   //
   // 1. longitudinal safety response
-  // 2. latitudinal safety response
+  // 2. lateral safety response
   //
-  // It is true if at least one of the all possible RSS situations in the
-  // direction between the specified and the nearby agent is safe, false
-  // otherwise, respectively.
+  // It is true if at least one of the two directional RSS situations between
+  // the specified and the nearby agent is safe, false otherwise, respectively
+  // in each direction.
   // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
       const World& world) {

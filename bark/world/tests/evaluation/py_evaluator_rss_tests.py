@@ -102,7 +102,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     self.assertEqual(
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])
 
-  def test_latitudinal_same_direction(self):
+  def test_lateral_same_direction(self):
     map = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
@@ -150,7 +150,7 @@ class EvaluatorRSSTests(unittest.TestCase):
       self.assertEqual(
           True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
-  def test_latitudinal_merging(self):
+  def test_lateral_merging(self):
     map = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()

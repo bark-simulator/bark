@@ -204,7 +204,9 @@ bool RssInterface::GenerateRoute(const Point2d& agent_center,
   }
 
   if (routes.empty()) {
-    LOG(WARNING) << "Could not find any route to the targets" << std::endl;
+    LOG(WARNING) << "Could not find any route from the agent current position "
+                    "to the goal"
+                 << std::endl;
   } else {
     // Select the best route based on the probability of the starting point
     // calculated by map matching
