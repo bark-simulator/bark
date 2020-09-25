@@ -13,9 +13,8 @@ jobs:
       - name: Setting up virtual environment
         run: virtualenv --python=/opt/python/cp37-cp37m/bin/python ./bark/python_wrapper/venv
       - name: Getting into venv
-        run: . ./bark/python_wrapper/venv/bin/activate
-        run: ls ./bark/python_wrapper/venv/
+        run: . ./bark/python_wrapper/venv/bin/activate && ls ./bark/python_wrapper/venv/
       - name: Installing Requirements
-        run: pip3 install -r ./tools/installers/requirements.txt
+        run: echo $PATH && pip3 install -r ./tools/installers/requirements.txt
       - name: Building ManyLinux
         run: bash package.sh manylinux
