@@ -15,7 +15,7 @@ jobs:
       - name: Getting into venv
         run: . ./bark/python_wrapper/venv/bin/activate
       - name: Installing Requirements
-        run: pip3 install -r ./tools/installers/requirements.txt
+        run: ./bark/python_wrapper/venv/bin/pip3 install -r ./tools/installers/requirements.txt
       - name: Building ManyLinux
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
