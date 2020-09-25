@@ -139,7 +139,8 @@ class ParameterServer(Params):
         return self
 
     def clone(self):
-      return ParameterServer(json = self.ConvertToDict())
+      return ParameterServer(json = self.ConvertToDict(), \
+          log_if_default = self.log_if_default)
 
     def ConvertToDict(self, print_description=False):
         dict = {}
@@ -310,7 +311,7 @@ class ParameterServer(Params):
         if child_name in self.store and not delete:
           child = self.store[child_name]
         else:
-          self.store[child_name] = ParameterServer()
+          self.store[child_name] = ParameterServer(log_if_default=self.log_if_default)
           child = self.store[child_name]
 
         if len(rest_name) == 0:
