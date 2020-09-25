@@ -52,7 +52,6 @@ void python_commons(py::module m) {
       .def("GetListListFloatValue",
            &CppParamServerTestObject::GetListListFloatValue)
       .def("GetListFloatValue", &CppParamServerTestObject::GetListFloatValue)
-      .def("GetListFloatValue", &CppParamServerTestObject::GetListFloatValue)
       .def("GetParams", &CppParamServerTestObject::GetParams)
       .def(py::pickle(
           [](const CppParamServerTestObject& p) -> py::tuple {
