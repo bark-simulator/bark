@@ -51,7 +51,9 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/ba
 RUN bazel
 
 # Install virtual env for bark
-RUN /opt/python/cp37-cp37m/bin/pip3 install virtualenv
+ENV PATH /opt/python/cp37-cp37m/bin:$PATH
+RUN pip3 install --upgrade pip
+RUN pip3 install virtualenv
 
 # renewe bash
 CMD [ "/bin/bash" ]
