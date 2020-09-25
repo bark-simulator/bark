@@ -50,8 +50,10 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/ba
 
 RUN bazel
 
-# Install virtual env for bark
-ENV PATH /opt/python/cp37-cp37m/bin:$PATH
+
+# Install virtual env for bark using default python. switch to 
+# target when container is running.
+ENV PATH=/opt/rh/rh-python36/root/usr/bin:$PATH
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
 
