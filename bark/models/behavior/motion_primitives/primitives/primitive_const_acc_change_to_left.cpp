@@ -47,3 +47,9 @@ bool bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft::
   }
   return satisfied;
 }
+
+std::string bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft::GetName() const {
+  std::stringstream ss;
+  ss << "PrimitiveConstAccChangeToLeft: a=" << acceleration_;
+  return ss.str();
+ }

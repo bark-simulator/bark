@@ -62,6 +62,10 @@ class PyPrimitive : public Primitive {
     PYBIND11_OVERLOAD_PURE(bark::models::dynamic::Trajectory, Primitive, Plan,
                            min_planning_time, observed_world, target_corridor);
   }
+  
+  std::string GetName() const {
+    PYBIND11_OVERLOAD_PURE(std::string, Primitive, GetName);
+  }
 
   bark::world::LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
