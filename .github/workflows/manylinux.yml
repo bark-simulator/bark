@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment
-        run: /opt/rh/rh-python36/root/usr/bin/virtualenv --python=/opt/python/cp37-cp37m/bin/python .bark/bark/python_wrapper/venv
+        run: /opt/python/cp37-cp37m/bin/virtualenv -p python3 ./bark/python_wrapper/venv --system-site-packages
       - name: Getting into venv
-        run: source ./bark/bark/python_wrapper/venv/bin/activate
+        run: source ./bark/python_wrapper/venv/bin/activate
       - name: Installing Requirements
-        run: pip install -r ./bark/tools/installers/requirements.txt
-      - name: Building Mnaylinux
-        run: bash ./bark/package.sh manylinux
+        run: pip install -r ./tools/installers/requirements.txt
+      - name: Building ManyLinux
+        run: bash package.sh manylinux
