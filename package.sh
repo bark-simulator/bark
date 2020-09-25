@@ -85,7 +85,7 @@ if [[ $# -gt 0 ]] ; then
     fi
 fi
 
-#echo "Uploading package to PyPi..."
+echo "Uploading package to PyPi..."
 # upload to pypi
-#python3.7 -m twine upload --skip-existing $wheeldir/*
+python3.7 -m twine upload --skip-existing $wheeldir/*
 
