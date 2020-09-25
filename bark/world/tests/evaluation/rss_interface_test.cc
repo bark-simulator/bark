@@ -62,7 +62,7 @@ TEST(rss_interface, test_maps_compatibility) {
   // not all map can be loaded into rss
   RssInterface rss;
   ASSERT_TRUE(rss.InitializeOpenDriveMap(
-      "bark/runtime/tests/data/city_highway_straight_centered.xodr"));
+      "bark/runtime/tests/data/city_highway_straight.xodr"));
   ASSERT_TRUE(rss.InitializeOpenDriveMap(
       "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"));
   ASSERT_TRUE(rss.InitializeOpenDriveMap(
@@ -164,7 +164,7 @@ TEST(rss_interface, test_rss_check) {
   world->Step(0.2f);
 
   RssInterface rss(
-      "bark/runtime/tests/data/city_highway_straight_centered.xodr",
+      "bark/runtime/tests/data/city_highway_straight.xodr",
       std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
       std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
 

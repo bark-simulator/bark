@@ -56,7 +56,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     return map_interface
 
   def test_longitude_ego_follow_other(self):
-    map = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
+    map = "bark/runtime/tests/data/city_highway_straight.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -103,7 +103,7 @@ class EvaluatorRSSTests(unittest.TestCase):
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])
 
   def test_lateral_same_direction(self):
-    map = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
+    map = "bark/runtime/tests/data/city_highway_straight.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -197,7 +197,7 @@ class EvaluatorRSSTests(unittest.TestCase):
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
   def test_relevent_agents(self):
-    map = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
+    map = "bark/runtime/tests/data/city_highway_straight.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)

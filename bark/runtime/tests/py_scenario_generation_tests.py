@@ -51,7 +51,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
   def test_configurable_scenario_generation_sample_behavior_types(self):
     sink_source_dict = [{
-        "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725]],
+        "SourceSink": [[-1.057, -172.1695],  [-1.894, 14.1725]],
         "Description": "left_lane",
         "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
         "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType": "BehaviorIDMClassic", "ModelParams":  {"BehaviorIDMClassic::MaxVelocity": 60.0}},
@@ -62,7 +62,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         "AgentParams": {}
     },
         {
-        "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725]],
+        "SourceSink": [[-1.057, -172.1695],  [-1.894, 14.1725]],
         "Description": "right_lane",
         "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
         "ConfigBehaviorModels": {"Type": "SampleBehaviorType"},

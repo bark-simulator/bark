@@ -26,7 +26,7 @@ except:
 
 # parameters
 param_server = ParameterServer(
-    filename="examples/params/highway_centered_merge_configurable.json")
+    filename="examples/params/highway_merge_configurable.json")
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
@@ -64,7 +64,7 @@ right_lane = HighwayLaneCorridorConfig(params=param_server,
                                        lane_corridor_id=1,
                                        controlled_ids=True)
 
-map_path = "bark/runtime/tests/data/city_highway_straight_centered.xodr"
+map_path = "bark/runtime/tests/data/city_highway_straight.xodr"
 
 # create 5 scenarios
 scenarios = \

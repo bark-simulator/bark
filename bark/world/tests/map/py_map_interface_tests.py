@@ -62,19 +62,19 @@ class EnvironmentTests(unittest.TestCase):
         world.SetMap(map_interface)
 
         # Simple test
-        point_close = Point2d(5114.68262, 5086.44971)
+        point_close = Point2d(2, -92.55029)
         lane_sw = map_interface.FindLane(point_close)
         self.assertIsNotNone(
             lane_sw, "This point is still in the left lane! XodrLane boundary is 5114.683")
 
         switched_lane = False
-        lng_coord = 5086.44971
-        i = 5114.5
+        lng_coord = -92.55029
+        i = 1.817
         lane_sw = map_interface.FindLane(Point2d(i, lng_coord))
         assert lane_sw != None
         prev = lane_sw.lane_id
         prev_i = i
-        while (i < 5117.5):
+        while (i < 4.817):
             lane_sw = map_interface.FindLane(Point2d(i, lng_coord))
             self.assertIsNotNone(
                 lane_sw, "Should always be on at least one lane! Currently at ({}, {})".format(i, lng_coord))
