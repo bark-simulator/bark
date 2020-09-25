@@ -26,7 +26,7 @@ class MPViewer(BaseViewer):
         else:
           self.axes = plt.subplots()[1]
           # removes whitespace
-          plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
+          # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -107,11 +107,12 @@ class MPViewer(BaseViewer):
       height *= fig.dpi
       return width, height
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
         self.clear()
-        self.axes.set_axis_off()
+        if not axes_visible:
+            self.axes.set_axis_off()
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
-        self._set_visualization_options()
+        self._set_visualization_options(axes_visible)
         self.show()
         if filename:
             self.axes.get_figure().savefig(filename)
@@ -126,12 +127,12 @@ class MPViewer(BaseViewer):
         else:
             plt.pause(0.001)
 
-    def _set_visualization_options(self):
+    def _set_visualization_options(self, axes_visible):
         # x and y limits
         self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
         self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
-        self.axes.get_xaxis().set_visible(False)
-        self.axes.get_yaxis().set_visible(False) 
+        self.axes.get_xaxis().set_visible(axes_visible)
+        self.axes.get_yaxis().set_visible(axes_visible) 
 
     def clear(self):
         self.axes.cla()
