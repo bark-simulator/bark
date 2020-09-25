@@ -64,7 +64,7 @@ class MPViewer(BaseViewer):
         center = polygon.center
         self.axes.plot(center[0], center[1], color=self.getColor(color))
 
-    def drawTrajectory(self, trajectory, color):
+    def drawTrajectory(self, trajectory, color='black'):
         if len(trajectory) > 0:
             self.axes.plot(
                 trajectory[:, int(StateDefinition.X_POSITION)],
@@ -80,6 +80,11 @@ class MPViewer(BaseViewer):
         else:
             self.axes.text(position[0], position[1], text, horizontalalignment='center',
              verticalalignment='top', **kwargs)
+
+
+    def drawCircle(self, position, radius):
+        circle = plt.Circle(position, radius, color='r')
+        self.axes.add_artist(circle)
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):

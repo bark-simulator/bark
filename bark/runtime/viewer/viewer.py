@@ -183,6 +183,13 @@ class BaseViewer(Viewer):
     def drawText(self, position, text, **kwargs):
         pass
 
+    def drawCircles(self, position_list, radius):
+        for pos in position_list:
+          self.drawCircle(pos, radius)
+
+    def drawCircle(self, position, radius):
+        pass
+
     def getColor(self, color):
         pass
 
