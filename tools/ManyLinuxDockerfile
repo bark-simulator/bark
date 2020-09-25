@@ -50,13 +50,12 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/ba
 
 RUN bazel
 
-
 # Install virtual env for bark using default python. switch to 
 # target when container is running.
 ENV PATH=/opt/rh/rh-python36/root/usr/bin:$PATH
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
 
-# renewe bash
+# Setup Bark as work dir
 CMD [ "/bin/bash" ]
 WORKDIR /bark
