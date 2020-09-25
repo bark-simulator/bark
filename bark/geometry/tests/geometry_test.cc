@@ -869,6 +869,33 @@ TEST(optimizer, shrink_polygon) {
   ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
+TEST(buffer, inflate) {
+  using bark::geometry::Point2d;
+  using bark::geometry::Polygon;
+  using bark::geometry::Pose;
+
+  Polygon in = Polygon(
+      Pose(1.25, 0, 0),
+      std::vector<Point2d>{Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1),
+                           Point2d(3, -1), Point2d(-1, -1)});
+
+  Polygon out;
+  bool suc = BufferPolygon(in, 3, &out);
+
+  Polygon exp = Polygon(
+      Pose(1.25, 0, 0),
+      std::vector<Point2d>{Point2d(-4, -4), Point2d(-4, 4), Point2d(6, 4),
+                           Point2d(6, -4), Point2d(-4, -4)});
+
+  EXPECT_TRUE(Equals(out, exp)) << out.ShapeToString();
+  EXPECT_TRUE(suc);
+
+  Polygon s;
+  boost::geometry::simplify(out.obj_, s.obj_, 0.1);
+
+  EXPECT_TRUE(Equals(out, s)) << s.ToArray();
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
