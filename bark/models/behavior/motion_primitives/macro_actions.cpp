@@ -77,8 +77,7 @@ BehaviorMPMacroActions::GetMotionPrimitives() const {
 BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::GetNumMotionPrimitives(
     const ObservedWorldPtr& observed_world) {
-  return GetNumMotionPrimitivesByCorridors(*observed_world,
-                                           GetCorridors(*observed_world));
+  return motion_primitives_.size();
 }
 AdjacentLaneCorridors BehaviorMPMacroActions::GetCorridors(
     const ObservedWorld& observed_world) {
