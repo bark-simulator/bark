@@ -38,7 +38,7 @@ planner_rules_mcts_dependencies()
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="ff6e433ecb7878ebe59996f3994ff67483a7c297",
+  commit="6a78c95485562adce12d6be85208b3e761e2723e",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
