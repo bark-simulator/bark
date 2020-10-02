@@ -56,22 +56,15 @@ cd $build_dir/$workspace_name
 python3.7 setup.py clean
 python3.7 setup.py sdist bdist_wheel
 
-#python3.7 setup.py test
-
-#if [ $? -eq 0 ]; then
-#    echo "Tests Passed!"
-#else
-#    echo "Tests Failed!"
-#    exit 0
-#fi
 
 # check if manylinux argument passed. if so build
 # a manylinux wheel. https://github.com/pypa/manylinux
 wheeldir='dist'
-# alternate: use platform instead of passing variable
+# alternate: use platform instead of argument
 #plat=$(python -c "import distutils.util; print(distutils.util.get_platform())")
 if [[ $# -gt 0 ]] ; then
     if [[ $1 -eq 'manylinux' ]] ; then
+        _CURR_DIR = $(pwd)
         wheeldir='wheelhouse'
         for whl in dist/*.whl; do
             if ! auditwheel show "$whl"; then
@@ -79,10 +72,26 @@ if [[ $# -gt 0 ]] ; then
             else
                 auditwheel repair "$whl"
             fi
-            # install the wheel
-            /opt/python/cp37-cp37m/bin/pip install $whl
+            
+            # install the package outside virtual environment
+            /opt/python/cp37-cp37m/bin/pip3 install bark-simulator  --no-index --find-links $wheeldir
+            /opt/python/cp37-cp37m/bin/pip3 install nose
+            
+            # run nose tests outside the virtual env to verify the installed package
+            echo "Running tests..."
+            cd /home
+            /opt/python/cp37-cp37m/bin/nosetests bark
+            cd $_CURR_DIR
         done
     fi
+fi
+
+# verify tests pass else stop and don't upload the wheel to pypi
+if [ $? -eq 0 ]; then
+    echo "Installation and tests passed!"
+else
+    echo "Installation/tests  Failed!"
+    exit -1
 fi
 
 echo "Uploading package to PyPi..."
