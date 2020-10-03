@@ -25,14 +25,14 @@ git_repository(
 #planner_uct_rules_dependencies()
 # --------------------------------------------------
 
-# ------ Planner MV-MCTS ------------------------------
+# ------ Planner Rules-MCTS ------------------------------
 git_repository(
-    name = "planner_mv_mcts",
+    name = "planner_rules_mcts",
     commit="ee570f0b8e468836b0ecf6a6acdcabbb4a4b51cf",
     remote = "git@github.com:bark-simulator/planner-mv-mcts.git"
 )
-load("@planner_mv_mcts//util:deps.bzl", "planner_mv_mcts_dependencies")
-planner_mv_mcts_dependencies()
+load("@planner_rules_mcts//util:deps.bzl", "planner_rules_mcts_dependencies")
+planner_rules_mcts_dependencies()
 # --------------------------------------------------
 
 # -------- Benchmark Database -----------------------

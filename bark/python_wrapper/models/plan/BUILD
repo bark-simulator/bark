@@ -13,7 +13,7 @@ cc_library(
     deps= ["//bark/python_wrapper:common",
            "@boost//:geometry"] + 
         select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark_mcts/python_wrapper:planner_uct"], "//conditions:default": []}) +
-        select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["@planner_mv_mcts//python:planner_rules_mcts"], "//conditions:default": []}) +
+        select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["@planner_rules_mcts//python:planner_rules_mcts"], "//conditions:default": []}) +
         select({"//bark/models/behavior/plan:_planner_other2" : ["insert_dependency_other2_here"], "//conditions:default": []}),
     copts=
         select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []}) + 
