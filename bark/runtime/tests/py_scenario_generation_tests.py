@@ -23,8 +23,6 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
     import InteractionDatasetScenarioGeneration
 from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_full \
     import InteractionDatasetScenarioGenerationFull
-from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_generation_mobil \
-    import DatasetScenarioGenerationMobil
 from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
@@ -334,31 +332,6 @@ class ScenarioGenerationTests(unittest.TestCase):
         "2": "BehaviorMobilRuleBased"}
 
     scenario_generation = InteractionDatasetScenarioGeneration(
-        params=params, num_scenarios=1)
-
-    model_str = scenario_generation.get_scenario(
-        0)._agent_list[1].behavior_model.__repr__()
-    self.assertEqual(model_str, "bark.behavior.BehaviorMobilRuleBased")
-
-  def test_dataset_scenario_generation_sample_mobil_params(self):
-    params = ParameterServer()
-
-    map_filename = os.path.join(os.path.dirname(
-        __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-    track_filename = os.path.join(os.path.dirname(
-        __file__), "data/interaction_dataset_dummy_track.csv")
-
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackIds"] = [
-        1, 2]
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["StartTs"] = 500
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EndTs"] = 1000
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["EgoTrackId"] = 1
-    params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["BehaviorModel"] = {
-        "2": "BehaviorMobilRuleBased"}
-
-    scenario_generation = DatasetScenarioGenerationMobil(
         params=params, num_scenarios=1)
 
     model_str = scenario_generation.get_scenario(0)._agent_list[1].behavior_model.__repr__()
