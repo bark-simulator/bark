@@ -11,8 +11,8 @@
 #include "bark_mcts/python_wrapper/python_planner_uct.hpp"
 #endif
 
-#ifdef PLANNER_MVMCTS
-#include "python/python_planner_mvmcts.hpp"
+#ifdef PLANNER_RULES_MCTS
+#include "python/python_planner_rules_mcts.hpp"
 #endif
 
 void python_behavior_plan(py::module m) {
@@ -20,7 +20,7 @@ void python_behavior_plan(py::module m) {
   python_planner_uct(m);
 #endif
 
-#ifdef PLANNER_MVMCTS
-  python_planner_mvmcts(m);
+#ifdef PLANNER_RULES_MCTS
+  python_planner_rules_mcts(m);
 #endif
 }

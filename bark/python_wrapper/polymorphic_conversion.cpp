@@ -62,10 +62,10 @@ using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
 
-#ifdef PLANNER_MVMCTS
-#include "src/behavior_mvmcts.hpp"
-using bark::models::behavior::BehaviorMvmctsGreedy;
-using bark::models::behavior::BehaviorMvmctsUct;
+#ifdef PLANNER_RULES_MCTS
+#include "src/behavior_rules_mcts.hpp"
+using bark::models::behavior::BehaviorRulesMctsGreedy;
+using bark::models::behavior::BehaviorRulesMctsUct;
 #endif
 
 namespace py = pybind11;
@@ -149,11 +149,11 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorHypothesisIDM";
   }
 #endif
-#ifdef PLANNER_MVMCTS
-  else if (typeid(*behavior_model) == typeid(BehaviorMvmctsUct)) {
-    behavior_model_name = "BehaviorMvmctsUct";
-  } else if (typeid(*behavior_model) == typeid(BehaviorMvmctsGreedy)) {
-    behavior_model_name = "BehaviorMvmctsGreedy";
+#ifdef PLANNER_RULES_MCTS
+  else if (typeid(*behavior_model) == typeid(BehaviorRulesMctsUct)) {
+    behavior_model_name = "BehaviorRulesMctsUct";
+  } else if (typeid(*behavior_model) == typeid(BehaviorRulesMctsGreedy)) {
+    behavior_model_name = "BehaviorRulesMctsGreedy";
   }
 #endif
   else {
@@ -213,12 +213,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
         t[0].cast<BehaviorHypothesisIDM>());
   }
 #endif
-#ifdef PLANNER_MVMCTS
-  else if (behavior_model_name.compare("BehaviorMvmctsUct") == 0) {
-    return std::make_shared<BehaviorMvmctsUct>(t[0].cast<BehaviorMvmctsUct>());
-  } else if (behavior_model_name.compare("BehaviorMvmctsGreedy") == 0) {
-    return std::make_shared<BehaviorMvmctsGreedy>(
-        t[0].cast<BehaviorMvmctsGreedy>());
+#ifdef PLANNER_RULES_MCTS
+  else if (behavior_model_name.compare("BehaviorRulesMctsUct") == 0) {
+    return std::make_shared<BehaviorRulesMctsUct>(t[0].cast<BehaviorRulesMctsUct>());
+  } else if (behavior_model_name.compare("BehaviorRulesMctsGreedy") == 0) {
+    return std::make_shared<BehaviorRulesMctsGreedy>(
+        t[0].cast<BehaviorRulesMctsGreedy>());
   }
 #endif
   else if (behavior_model_name.compare("None") == 0) {
