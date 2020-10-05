@@ -11,6 +11,7 @@ import os.path
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
+from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 from bark.core.world.map import *
@@ -98,16 +99,18 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             scenario_track_info.GetEgoTrackInfo().GetTrackId())
 
         agent_list = []
+        model_converter = ModelJsonConversion()
         for track_id in all_track_ids:
             if str(track_id) in self._behavior_models:
-                track_params["behavior_model"] = self._behavior_models[str(
-                    track_id)]
+                behavior_params = self.__fill_agent_params__()
+                behavior_model_name = self._behavior_models[str(track_id)]
+                track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, behavior_params)
             else:
                 track_params["behavior_model"] = None
-            agent_params = self.__fill_agent_params__()
+
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, agent_params, scenario_track_info, track_id)
-            agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
+                track_params, self._params, scenario_track_info, track_id)
+            # agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
