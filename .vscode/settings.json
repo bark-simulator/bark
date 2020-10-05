@@ -113,7 +113,7 @@
     "bazel-testlogs": true,
     "third_party": false
   },
-  "python.pythonPath": "/home/esterle/anaconda3/envs/bark_python_env/bin/python",
+  "python.pythonPath": "./python/venv/bin/python",
   "python.linting.pylintEnabled": true,
   "editor.insertSpaces": true,
   "editor.detectIndentation": false,
