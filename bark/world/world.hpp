@@ -111,7 +111,7 @@ class World : public commons::BaseType {
   float GetWorldTime() const { return world_time_; }
   void SetWorldTime(const float& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
-  AgentMap GetAgents() const { return agents_; }
+  virtual AgentMap GetAgents() const { return agents_; }
   AgentMap GetValidAgents() const;
   AgentPtr GetAgent(AgentId id) const {
     auto agent_it = agents_.find(id);
@@ -127,6 +127,8 @@ class World : public commons::BaseType {
   }
 
   bool GetRemoveAgents() { return remove_agents_; }
+
+  double GetFracLateralOffset() const { return frac_lateral_offset_; }
 
   void SetRemoveAgents(const bool& remove_agents) {
     remove_agents_ = remove_agents;
@@ -177,6 +179,7 @@ class World : public commons::BaseType {
   float world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
+  double frac_lateral_offset_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

@@ -83,3 +83,9 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
     double rel_distance, double dt) const {
   return {acceleration_, 0.0f};
 }
+
+std::string bark::models::behavior::primitives::PrimitiveConstAccStayLane::GetName() const {
+  std::stringstream ss;
+  ss << "PrimitiveConstAccStayLane: a=" << acceleration_;
+  return ss.str();
+ }

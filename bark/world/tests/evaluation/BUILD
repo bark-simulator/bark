@@ -31,3 +31,14 @@ py_test(
         "//bark/runtime/scenario/scenario_generation",
     ],
 )
+
+cc_test(
+    name = "commons_test",
+    srcs = ["commons_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "@gtest//:gtest_main",
+        "//bark/world/tests:make_test_world",
+        "//bark/world/evaluation:evaluation",
+    ],
+)

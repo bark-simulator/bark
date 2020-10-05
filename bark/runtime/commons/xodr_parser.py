@@ -301,7 +301,7 @@ class XodrParser(object):
           off_x = header["offset"]["x"]
           off_y = header["offset"]["y"]
           off_hdg = header["offset"]["hdg"]
-          logger.info("Transforming PlanView with given offset", header["offset"])
+          logger.debug("Transforming PlanView with given offset", header["offset"])
           new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
@@ -352,7 +352,7 @@ class XodrParser(object):
             except:
                 pass
         else:
-            logger.info("No XodrLaneLink")
+            logger.debug("No XodrLaneLink")
             
         return new_link
 

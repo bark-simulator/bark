@@ -52,6 +52,17 @@ void BehaviorIDMStochastic::SampleParameters() {
   param_coolness_factor_ = param_dist_coolness_factor_->Sample()[0];
 }
 
+ParameterRegions BehaviorIDMStochastic::GetParameterRegions() const {
+  ParameterRegions parameter_regions;
+  parameter_regions["BehaviorIDMStochastic::DesiredTimeHeadway"] = param_dist_headway_->GetSupport()[0];
+  parameter_regions["BehaviorIDMStochastic::MinimumSpacing"] = param_dist_spacing_->GetSupport()[0];
+  parameter_regions["BehaviorIDMStochastic::MaxAcceleration"] = param_dist_max_acc_->GetSupport()[0];
+  parameter_regions["BehaviorIDMStochastic::DesiredVelocity"] = param_dist_desired_vel_->GetSupport()[0];
+  parameter_regions["BehaviorIDMStochastic::ComfortableBraking"] = param_dist_comft_braking_->GetSupport()[0];
+  parameter_regions["BehaviorIDMStochastic::CoolnessFactor"] = param_dist_coolness_factor_->GetSupport()[0];
+  return parameter_regions;
+}
+
 Trajectory BehaviorIDMStochastic::Plan(float delta_time,
                                        const ObservedWorld& observed_world) {
   SampleParameters();

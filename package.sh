@@ -1,7 +1,6 @@
 #!/bin/bash
 
 pkg_name='pip_package'
-#pkg_version=0.0.1
 workspace_name='bark_project'
 
 # activate virtual environment
@@ -11,9 +10,9 @@ echo "Building package"
 bazel run //bark:$pkg_name
 
 if [ $? -eq 0 ]; then
-    echo "Build Suceeded"
+    echo "Build Suceeded!"
 else
-    echo "Build Fail"
+    echo "Build Failed!"
     exit 0
 fi
 
@@ -27,18 +26,12 @@ echo "Copying README.md to project directory at $build_dir/$workspace_name"
 #copy READEME.md file to build directory
 cp README.md $build_dir/$workspace_name
 
-#copy LICENSE file to build directory
+echo "Copying LICENSE to project directory at $build_dir/$workspace_name"
 cp LICENSE $build_dir/$workspace_name
 
 #read bazel generated manifest to generate manifest for pip package
 bazel_manifest=$build_dir/MANIFEST
 pip_manifest=$build_dir/$workspace_name/MANIFEST.in
-
-
-#echo "Copying tests  at $build_dir/$workspace_name"
-#mkdir -p $build_dir/$workspace_name/tests
-#cp bark/*/tests/py*test*.py $build_dir/$workspace_name/tests
-
 
 echo "Copying manifest from $bazel_manifest to $pip_manifest"
 #remove existing manifest
@@ -58,24 +51,41 @@ done <$bazel_manifest
 echo "Moving to build directory"
 #move to the directory
 cd $build_dir/$workspace_name
-# Note:
-#plat='any' # for macos update with output of python -c "import distutils.util; print(distutils.util.get_platform())" with all hyphens - and periods . replaced with underscore _
-# for example macosx_10_9_x86_64. This does not direct work on linux because of lot of different potential for linux pypi rejects linux_x86_64 tag. so we when a standard wheel
-# for linux which will most likely work only on ubuntu or debian based x64 machines. to have support for all versions of linux, manylinux tag is used, which requires that the package
-# is built using a standard linux docker provided by https://github.com/pypa/manylinux
+
+# build the wheel
 python3.7 setup.py clean
 python3.7 setup.py sdist bdist_wheel
 
-python3.7 setup.py test
+#python3.7 setup.py test
 
-if [ $? -eq 0 ]; then
-    echo "Tests Passed!"
-else
-    echo "Tests Failed!"
-    exit 0
+#if [ $? -eq 0 ]; then
+#    echo "Tests Passed!"
+#else
+#    echo "Tests Failed!"
+#    exit 0
+#fi
+
+# check if manylinux argument passed. if so build
+# a manylinux wheel. https://github.com/pypa/manylinux
+wheeldir='dist'
+# alternate: use platform instead of passing variable
+#plat=$(python -c "import distutils.util; print(distutils.util.get_platform())")
+if [[ $# -gt 0 ]] ; then
+    if [[ $1 -eq 'manylinux' ]] ; then
+        wheeldir='wheelhouse'
+        for whl in dist/*.whl; do
+            if ! auditwheel show "$whl"; then
+                echo "Skipping non-platform wheel $whl"
+            else
+                auditwheel repair "$whl"
+            fi
+            # install the wheel
+            /opt/python/cp37-cp37m/bin/pip install $whl
+        done
+    fi
 fi
 
 echo "Uploading package to PyPi..."
-#upload to pypi
-python3 -m twine upload --skip-existing dist/*
+# upload to pypi
+python3.7 -m twine upload --skip-existing $wheeldir/*
 

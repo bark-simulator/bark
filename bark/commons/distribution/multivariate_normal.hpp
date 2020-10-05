@@ -41,13 +41,19 @@ class MultivariateDistribution : public Distribution {
 
   virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
 
+  virtual RandomVariableSupport GetSupport() const {
+    std::pair<RandomVariableValueType, RandomVariableValueType> 
+      support_1d{std::numeric_limits<RandomVariableValueType>::lowest(), std::numeric_limits<RandomVariableValueType>::max()};
+    return RandomVariableSupport(mean_.size(), support_1d);
+  }
+
   Eigen::MatrixXf CovarFromParams(const ParamsPtr& params) const;
   Eigen::VectorXf MeanFromParams(const ParamsPtr& params) const;
 
  private:
   RandomSeed seed_;
   std::mt19937 generator_;
-  std::normal_distribution<RandomVariableSupport> dist_;
+  std::normal_distribution<RandomVariableValueType> dist_;
   Eigen::VectorXf mean_;
   Eigen::MatrixXf transform_;
 };

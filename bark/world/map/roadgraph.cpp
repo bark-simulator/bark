@@ -432,7 +432,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
         successor_lane_section = successor_road->GetLaneSections().front();
       }
     } else {
-      LOG(INFO) << "XodrRoad has no successor road. \n";
+      VLOG(3) << "XodrRoad has no successor road. \n";
     }
 
     if (road_element.second->GetLink().GetPredecessor().type_ ==
@@ -443,7 +443,7 @@ void Roadgraph::GeneratePreAndSuccessors(OpenDriveMapPtr map) {
         predecessor_lane_section = predecessor_road->GetLaneSections().back();
       }
     } else {
-      LOG(INFO) << "XodrRoad has no predeseccor road. \n";
+      VLOG(3) << "XodrRoad has no predeseccor road. \n";
     }
 
     // TODO(@hart): there could be mult. lane_sections

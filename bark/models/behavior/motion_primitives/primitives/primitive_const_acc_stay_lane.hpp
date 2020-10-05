@@ -30,6 +30,8 @@ class PrimitiveConstAccStayLane : public Primitive,
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor);
 
+  std::string GetName() const override;
+
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
@@ -39,8 +41,6 @@ class PrimitiveConstAccStayLane : public Primitive,
                                         const IDMRelativeValues& rel_values,
                                         double rel_distance,
                                         double dt) const override;
-
- private:
   float acceleration_;
 };
 

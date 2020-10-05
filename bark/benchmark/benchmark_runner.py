@@ -13,6 +13,7 @@ import logging
 import copy
 import time
 import glob
+import numpy as np
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -277,6 +278,10 @@ class BenchmarkRunner:
     def _log_eval_average(self, result_dct_list, configs):
         bresult = BenchmarkResult(result_dct_list, configs)
         df = bresult.get_data_frame()
+        for eval_group in bresult.get_evaluation_groups():
+          if eval_group not in df.columns:
+            df[eval_group] = np.nan
+        df.fillna(-1, inplace=True)
         grouped = df.apply(pd.to_numeric, errors='ignore').groupby(bresult.get_evaluation_groups()).mean()[
             self._evaluation_criteria()]
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
