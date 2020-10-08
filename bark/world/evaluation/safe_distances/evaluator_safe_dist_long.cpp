@@ -15,10 +15,10 @@ namespace evaluation {
 
 EvaluatorSafeDistLong::EvaluatorSafeDistLong(const bark::commons::ParamsPtr& params) :
     safe_dist_label_function("safe_dist_longitudinal", 
-        params->GetBool("SafeDistLong::ToRear", "Include rear agent", true),
-        params->GetReal("SafeDistLong::ReactionTime", "Reaction time", 100.0f),
-        params->GetReal("SafeDistLong::MaxEgoDecceleration", "Maximum ego decceleration", 5.0f),
-        params->GetReal("SafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f)) {}
+        params->GetBool("EvaluatorSafeDistLong::ToRear", "Include rear agent", true),
+        params->GetReal("EvaluatorSafeDistLong::ReactionTime", "Reaction time", 100.0f),
+        params->GetReal("EvaluatorSafeDistLong::MaxEgoDecceleration", "Maximum ego decceleration", 5.0f),
+        params->GetReal("EvaluatorSafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f)) {}
 
 EvaluationReturn EvaluatorSafeDistLong::Evaluate(
     const world::ObservedWorld& observed_world) {
