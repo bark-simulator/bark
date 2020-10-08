@@ -9,18 +9,41 @@
 from lxml import etree
 import pprint
 import logging
+import pyproj
 from bark.core.world.opendrive import *
 from bark.core.geometry import Point2d
 logger = logging.getLogger()
 
+class GeoCoordinateConversion(object):
+    def __init__(self):
+        self.do_projection = False
+        self.source_projection = None
+        self.targe_projection = pyproj.Proj(proj="utm", zone="32", ellps="WGS84", datum="WGS84")
+
+    def set_activate_source_projection(self, source_projection):
+        self.source_projection = pyproj.Proj(source_projection)
+        self.do_projection = True
+
+    def project(self, x, y):
+        if self.do_projection:
+            xproj, yproj =  pyproj.transform(self.source_projection, self.targe_projection, x, y)
+            xproj = xproj - 693229
+            yproj = yproj - 5337898
+            print("proj from x, y = " + str(x) + ", " + str(y) + " to " + str(xproj) + ", " + str(yproj))
+            return xproj, yproj
+        else:
+            return x, y
+
+
 class XodrParser(object):
     def __init__(self, file_name):
+        self.geo_projection = GeoCoordinateConversion()
         self.xodr = self.load_xodr(file_name)
         self.python_map = {}
         self.parse_xml(self.xodr)
         self.map = OpenDriveMap()
         self.convert_to_map(self.python_map)
-
+        
     def load_file(self, file_name):
         return open(file_name, 'r')
 
@@ -147,6 +170,8 @@ class XodrParser(object):
         new_header["west"] = header.get("west")
         if header.find("offset") is not None:
           new_header["offset"] = self.parse_offset(header)
+        if header.find("geoReference") is not None:
+          self.geo_projection.set_activate_source_projection(header.find("geoReference").text)
         self.python_map["header"] = new_header
 
     def parse_lane_sections_from_road(self, lane_sections, road):
@@ -171,8 +196,9 @@ class XodrParser(object):
         for geometry in geometries:
             new_geometry = {}
             new_geometry["s"] = geometry.get("s")
-            new_geometry["x"] = geometry.get("x")
-            new_geometry["y"] = geometry.get("y")
+            x, y = self.geo_projection.project(geometry.get("x"), geometry.get("y"))
+            new_geometry["x"] = x
+            new_geometry["y"] = y
             new_geometry["hdg"] = geometry.get("hdg")
             new_geometry["length"] = geometry.get("length")
             if geometry.find("line") is not None:
