@@ -13,6 +13,7 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_safe_dist_long.hpp"
 #include "bark/world/evaluation/commons.hpp"
 #include "bark/world/world.hpp"
 
@@ -77,6 +78,13 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorStepCount& g) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
+      });
+
+  py::class_<EvaluatorSafeDistLong, BaseEvaluator,
+              std::shared_ptr<EvaluatorSafeDistLong>>(m, "EvaluatorSafeDistLong")
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def("__repr__", [](const EvaluatorSafeDistLong& g) {
+        return "bark.core.world.evaluation.EvaluatorSafeDistLong";
       });
 
   m.def("CaptureAgentStates", py::overload_cast<const World&>(

@@ -246,8 +246,12 @@ class BenchmarkRunner:
                 except:
                     evaluator_bark = eval("{}()".format(evaluator_params))
             elif isinstance(evaluator_params, dict):
-                evaluator_bark = eval(
+                try:
+                  evaluator_bark = eval(
                     "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
+                except:
+                  evaluator_bark = eval(
+                    "{}(evaluator_params['params'])".format(evaluator_params["type"]))
             else:
                 raise ValueError
             world.AddEvaluator(evaluator_name, evaluator_bark)
