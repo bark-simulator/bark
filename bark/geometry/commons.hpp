@@ -108,6 +108,9 @@ struct Shape {
   // return object transform
   std::shared_ptr<Shape<G, T>> Transform(const Pose& pose) const;
 
+  // Scales in x- and y-direction separately
+  std::shared_ptr<Shape<G, T>> Scale(const double& x_dir, const double& y_) const;
+
   virtual bool Valid() const;
 
   virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray()
@@ -211,6 +214,45 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Transform(
   shape_transformed->center_[0] += pose[0];
   shape_transformed->center_[1] += pose[1];
   shape_transformed->center_[2] += pose[2];
+  return shape_transformed;
+}
+
+template <typename G, typename T>
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Scale(const double& x_dir, const double& y_dir) const {
+  namespace trans = boost::geometry::strategy::transform;
+  // move shape relative to coordinate center
+  trans::translate_transformer<double, 2, 2> translate_rel_to_center(
+      -center_[0], -center_[1]);
+  G obj_rel_translated;
+  boost::geometry::transform(obj_, obj_rel_translated, translate_rel_to_center);
+
+  // rotate so that orientation is aligned with x-axis
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(
+      center_[2]);
+  G obj_rotated;
+  boost::geometry::transform(obj_rel_translated, obj_rotated, rotate);
+
+  // Do longitudinal and lateral scaling
+  const auto x_m_scale = x_dir == 0.0 ? 1.0 : x_dir;
+  const auto y_m_scale = y_dir == 0.0 ? 1.0 : y_dir;
+  trans::matrix_transformer<double, 2, 2> scale_transform(x_m_scale, 0.0, 0.0, 0.0, y_m_scale, 0.0, 0.0, 0.0, 0.0);
+  G obj_scaled;
+  boost::geometry::transform(obj_rotated, obj_scaled, scale_transform);
+
+  // rotate back according to center specification
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> back_rotate(
+      -center_[2]);
+  G obj_back_rotated;
+  boost::geometry::transform(obj_scaled, obj_back_rotated, back_rotate);
+
+  // move object according to center specification
+  trans::translate_transformer<double, 2, 2> translate_backwards(
+      center_[0], center_[1]);
+  G obj_transformed;
+  boost::geometry::transform(obj_back_rotated, obj_transformed, translate_backwards);
+
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
+  shape_transformed->obj_ = obj_transformed;
   return shape_transformed;
 }
 

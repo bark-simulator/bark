@@ -140,6 +140,7 @@ void python_geometry(py::module m) {
       .def("Rotate", &Line::Rotate, "rotates object around center point.")
       .def("Translate", &Line::Translate, "translates object.")
       .def("Transform", &Line::Transform, "translates and rotates object.")
+      .def("Scale", &Line::Scale, "scales object.")
       .def("Length", &Line::Length, "calculates length of line.")
       .def("Reverse", &Line::Reverse, "reverse linestring in place")
       .def("AppendLinestring", &Line::AppendLinestring,
@@ -201,6 +202,7 @@ void python_geometry(py::module m) {
       .def("Rotate", &Polygon::Rotate, "rotates object around center point.")
       .def("Translate", &Polygon::Translate, "translates center point.")
       .def("Transform", &Polygon::Transform, "translates and rotates object.")
+      .def("Scale", &Polygon::Scale, "scales object.")
       .def_readonly("center", &Polygon::center_, "center point.")
       .def_readonly("right_dist", &Polygon::right_dist_, "right distance.")
       .def_readonly("left_dist", &Polygon::left_dist_, "left distance.")
