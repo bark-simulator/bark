@@ -36,8 +36,11 @@ EvaluationReturn EvaluatorStaticSafeDist::Evaluate(
   State ego_state = ego_agent->GetCurrentState();
   Point2d ego_position(ego_state(X_POSITION), ego_state(Y_POSITION));
   AgentMap nearby_agents = observed_world.GetNearestAgents(ego_position, num_agents);
+
+  // Evaluation assumes that - at zero orientation - shape of ego agent is oriented such that lateral 
+  // coordinate is y and longitudinal coordinate is x
   const auto ego_scaled_shape = std::dynamic_pointer_cast<Polygon>(
-          ego_agent->GetShape().Scale(lateral_safety_dist_, longitudinal_safety_dist_));
+          ego_agent->GetShape().Scale(longitudinal_safety_dist_, lateral_safety_dist_));
 
   for (const auto& agent : nearby_agents) {
     if (observed_world.GetEgoAgentId() != agent.second->GetAgentId()) {
