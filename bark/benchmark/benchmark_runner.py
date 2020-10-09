@@ -36,7 +36,8 @@ class BenchmarkRunner:
                  logger_name=None,
                  log_eval_avg_every=None,
                  checkpoint_dir=None,
-                 merge_existing=False):
+                 merge_existing=False,
+                 deepcopy=True):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
@@ -53,7 +54,7 @@ class BenchmarkRunner:
         self.logger.info("Total number of {} configs to run".format(len(self.benchmark_configs)))
         self.existing_benchmark_result = BenchmarkResult()
         self.configs_to_run = self.benchmark_configs
-
+        self._deepcopy = deepcopy
         self.checkpoint_dir = checkpoint_dir or "checkpoints"
         if not os.path.exists(self.checkpoint_dir):
             os.makedirs(self.checkpoint_dir)
@@ -134,11 +135,12 @@ class BenchmarkRunner:
     def run(self, viewer=None, maintain_history=False, checkpoint_every=None):
         results = []
         histories = {}
-        for idx, bmark_conf in enumerate(self.configs_to_run ):
+        for idx, bmark_conf in enumerate(self.configs_to_run):
             self.logger.info("Running config idx {} being {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
                 bmark_conf.config_idx, idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
                 bmark_conf.scenario_set_name, bmark_conf.behavior_config.behavior_name))
-            result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer,
+            bmark_conf = copy.deepcopy(bmark_conf) if self._deepcopy else bmark_conf
+            result_dict, scenario_history = self._run_benchmark_config(bmark_conf, viewer,
                                                                        maintain_history)
             results.append(result_dict)
             histories[bmark_conf.config_idx] = scenario_history
@@ -158,7 +160,8 @@ class BenchmarkRunner:
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
             if bmark_conf.config_idx == config_idx:
-                result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+                bmark_conf = copy.deepcopy(bmark_conf) if self._deepcopy else bmark_conf
+                result_dict, scenario_history = self._run_benchmark_config(bmark_conf, **kwargs)
                 return BenchmarkResult(result_dict, [bmark_conf], histories={config_idx : scenario_history})
         self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
         return
