@@ -192,7 +192,7 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     }
 
     // TODO(@hart): use parameter
-    const double max_dist = 0.2;
+    const double max_dist = 0.4;
     Line simplf_center = Simplify(lane_corridor->GetCenterLine(), max_dist);
     lane_corridor->SetCenterLine(simplf_center);
 
@@ -202,8 +202,20 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     Line simplf_left = Simplify(lane_corridor->GetLeftBoundary(), max_dist);
     lane_corridor->SetLeftBoundary(simplf_left);
 
+
+    // TODO hier ist der self intersection bug: magic number 0.5 durch sampling distance ersetzen!!!
+
     // merged polygons
     PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
+
+    // Line left, right;
+    // const float overlap_simplification = 0.4;
+    // boost::geometry::simplify(lane_corridor->GetLeftBoundary().obj_, left.obj_, overlap_simplification);
+    // boost::geometry::simplify(lane_corridor->GetRightBoundary().obj_, right.obj_, overlap_simplification);
+
+    // std::cout << "right : " << right.size() << ", " << lane_corridor->GetRightBoundary().size() << std::endl;
+    // std::cout << "left : " << left.size() << ", " << lane_corridor->GetLeftBoundary().size() << std::endl;
+
     for (auto const& p : lane_corridor->GetLeftBoundary()) {
       polygon->AddPoint(p);
     }
@@ -215,6 +227,10 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     // Polygons need to be closed!
     polygon->AddPoint(*(lane_corridor->GetLeftBoundary().begin()));
     boost::geometry::correct(polygon->obj_);
+
+    std::cout << "lane corridor valid?" << std::endl;
+    polygon->Valid();
+
     lane_corridor->SetMergedPolygon(*polygon);
   }
 }
