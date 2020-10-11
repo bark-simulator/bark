@@ -22,7 +22,6 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig, BehaviorConfig
 from bark.core.world.evaluation import *
-from bark.core.world.evaluation.ltl import *
 
 try:
   from bark.core.world.evaluation.ltl import *
