@@ -46,7 +46,8 @@ class DatasetDecomposer:
             for lane in lane_list:
                 polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
                 if Collide(polygon, point_agent):
-                    time_ego_first = state[0]*1e3 + self._starting_offset_ms # use timestamp in ms
+                    timestamp_scaling = 1e3 # scale timestamp from s (BARK) to ms (dataset)
+                    time_ego_first = state[0]*timestamp_scaling + self._starting_offset_ms 
                     return time_ego_first
 
         return None

@@ -19,4 +19,4 @@ __all__ = ["DeterministicScenarioGeneration",
           "ConfigurableScenarioGeneration",
           "add_config_reader_module",
           "InteractionDatasetScenarioGeneration",
-           "InteractionDatasetScenarioGenerationFull"]
+          "InteractionDatasetScenarioGenerationFull"]

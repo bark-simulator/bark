@@ -104,7 +104,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             if str(track_id) in self._behavior_models:
                 behavior_params = self.__fill_agent_params__()
                 behavior_model_name = self._behavior_models[str(track_id)]
-                track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, behavior_params)
+                track_params["behavior_model"] = model_converter.convert_model(
+                    behavior_model_name, behavior_params)
             else:
                 track_params["behavior_model"] = None
 

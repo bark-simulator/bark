@@ -40,13 +40,14 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                  "List of Paths to track files (csv)",
                                                  ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_model = params_temp["BehaviorModel",
-                                            "Overwrite static trajectory with behavior model", None]
+                                           "Overwrite static trajectory with behavior model", None]
         self._excluded_tracks = params_temp[
             "ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
         self._base_params_json = params_temp[
             "BaseParams", "Initial parameters of each scenario", ParameterServer(log_if_default=True)].ConvertToDict()
         self._agent_params = []
-        self._starting_offset_ms = params_temp["StartingOffsetMs", "Starting Offset to each agent in miliseconds", 500]
+        self._starting_offset_ms = params_temp["StartingOffsetMs",
+                                               "Starting Offset to each agent in miliseconds", 500]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -58,7 +59,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         for track_file_name in self._track_file_name_list:
 
             dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                                   track_filename=track_file_name, starting_offset_ms = self._starting_offset_ms)
+                                                   track_filename=track_file_name, starting_offset_ms=self._starting_offset_ms)
             scenario_track_info_list = dataset_decomposer.decompose()
 
             # for scenario_idx in range(0, num_scenarios):
@@ -105,28 +106,33 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         model_converter = ModelJsonConversion()
         for track_id in all_track_ids:
             if self._behavior_model and track_id != ego_track_id:
-                behavior_params = self.__fill_agent_params(scenario_track_info.GetEgoTrackInfo(), scenario_track_info.GetOtherTrackInfos()[track_id])
+                behavior_params = self.__fill_agent_params(scenario_track_info.GetEgoTrackInfo(
+                ), scenario_track_info.GetOtherTrackInfos()[track_id])
                 behavior_model_name = self._behavior_model
-                track_params["behavior_model"] = model_converter.convert_model(behavior_model_name, behavior_params)
-                #behavior_params.Save("/tmp/agent_prams_{}.json".format(track_id))
+                track_params["behavior_model"] = model_converter.convert_model(
+                    behavior_model_name, behavior_params)
+                # behavior_params.Save("/tmp/agent_prams_{}.json".format(track_id))
             else:
                 track_params["behavior_model"] = None
 
             agent = self.interaction_ds_reader.AgentFromTrackfile(
                 track_params, self._params, scenario_track_info, track_id)
-            agent.first_valid_timestamp = scenario_track_info.GetOffsetOfAgentMillisec(track_id)
+            agent.first_valid_timestamp = scenario_track_info.GetOffsetOfAgentMillisec(
+                track_id)
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
         scenario._eval_agent_ids = [
             scenario_track_info.GetEgoTrackInfo().GetTrackId()]
-        scenario.json_params["track_file"] = scenario_track_info.GetTrackFilename()
+        scenario.json_params["track_file"] = scenario_track_info.GetTrackFilename(
+        )
 
         return scenario
 
     def __fill_agent_params(self, ego_track_info, agent_track_info):
-        agent_params = ParameterServer(log_if_default=True, json=self._base_params_json)
+        agent_params = ParameterServer(
+            log_if_default=True, json=self._base_params_json)
         self._agent_params.append(agent_params)
         return agent_params
-        
+
         # print("\n", agent_params.ConvertToDict())
