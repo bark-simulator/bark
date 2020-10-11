@@ -130,6 +130,12 @@ bool Agent::AtGoal() const {
   return goal_definition_->AtGoal(*this);
 }
 
+/**
+ * @brief checks validity of agent. feature is required with simulating datasets in closed loop.
+ * 
+ * @param world_time ... current world time
+ * @return true if agent is valid
+ */
 bool Agent::IsValidAtTime(const float& world_time) const {
   return isgreaterequal(world_time + std::numeric_limits<float>::epsilon(),
                         first_valid_timestamp_);
