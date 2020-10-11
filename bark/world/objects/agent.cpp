@@ -16,11 +16,6 @@ namespace bark {
 namespace world {
 namespace objects {
 
-enum AgentStatus : unsigned int {
-  NOT_STARTED_YET = 0,
-  VALID = 1,
-};
-
 Agent::Agent(const State& initial_state,
              const BehaviorModelPtr& behavior_model_ptr,
              const DynamicModelPtr& dynamic_model_ptr,
