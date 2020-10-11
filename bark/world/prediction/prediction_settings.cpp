@@ -31,29 +31,22 @@ PredictionSettings::PredictionSettings(
 
 void PredictionSettings::ApplySettings(
     bark::world::ObservedWorld& observed_world) const {
-  // TODO: Clean up HACK to keep Behavior Status
-  // auto ego_behavior_model_ptr =
-  //     BehaviorModelPtr(ego_prediction_model_->Clone());
-  // ego_behavior_model_ptr->SetBehaviorStatus(
-  //     observed_world.GetEgoBehaviorModel()->GetBehaviorStatus());
-  // observed_world.SetEgoBehaviorModel(ego_behavior_model_ptr);
-  observed_world.SetEgoBehaviorModel(BehaviorModelPtr(ego_prediction_model_->Clone()));
+  observed_world.SetEgoBehaviorModel(
+      BehaviorModelPtr(ego_prediction_model_->Clone()));
 
   if (default_prediction_model_) {
     for (const auto& agent : observed_world.GetOtherAgents()) {
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
           agent.second->IsValidAtTime(observed_world.GetWorldTime())) {
+        // make sure this agent shall not be controlled by
+        // specific_prediction_model
         if (specific_prediction_agents_.count(agent.first) == 0) {
-          // auto other_behavior_model_ptr =
-          //     BehaviorModelPtr(default_prediction_model_->Clone());
-          // other_behavior_model_ptr->SetBehaviorStatus(
-          //     default_prediction_model_->GetBehaviorStatus());
-          // observed_world.SetBehaviorModel(agent.first,
-          //                                 other_behavior_model_ptr);
-          observed_world.SetBehaviorModel(agent.first,
-                                          BehaviorModelPtr(default_prediction_model_->Clone()));
+          observed_world.SetBehaviorModel(
+              agent.first,
+              BehaviorModelPtr(default_prediction_model_->Clone()));
         }
       } else {
+        // no model available, use BehaviorNotStarted
         observed_world.SetBehaviorModel(
             agent.first, std::make_shared<BehaviorNotStarted>(nullptr));
       }
@@ -61,12 +54,8 @@ void PredictionSettings::ApplySettings(
   }
   if (specific_prediction_model_) {
     for (const auto& agent_id : specific_prediction_agents_) {
-      // auto other_behavior_model_ptr =
-      //     BehaviorModelPtr(specific_prediction_model_->Clone());
-      // other_behavior_model_ptr->SetBehaviorStatus(
-      //     default_prediction_model_->GetBehaviorStatus());
-      // observed_world.SetBehaviorModel(agent_id, other_behavior_model_ptr);
-      observed_world.SetBehaviorModel(agent_id, BehaviorModelPtr(specific_prediction_model_->Clone()));
+      observed_world.SetBehaviorModel(
+          agent_id, BehaviorModelPtr(specific_prediction_model_->Clone()));
     }
   }
 }
