@@ -14,6 +14,7 @@
 #include "bark/world/tests/make_test_world.hpp"
 
 using bark::models::behavior::BehaviorNotStarted;
+using bark::models::behavior::BehaviorModelPtr;
 using bark::models::behavior::BehaviorStatus;
 using bark::world::Agent;
 using bark::world::ObservedWorld;
@@ -28,6 +29,13 @@ TEST(behavior_static_trajectory_plan, plan) {
   // Return all
   auto traj = model.Plan(3, observed_world);
   ASSERT_EQ(model.GetBehaviorStatus(), BehaviorStatus::NOT_STARTED_YET);
+}
+
+TEST(behavior_static_trajectory_plan, clone) {
+  BehaviorModelPtr beh_model(new BehaviorNotStarted(nullptr));
+  
+  auto cloned_model = BehaviorModelPtr(beh_model->Clone());
+  ASSERT_EQ(BehaviorStatus::NOT_STARTED_YET, cloned_model->GetBehaviorStatus());
 }
 
 int main(int argc, char** argv) {

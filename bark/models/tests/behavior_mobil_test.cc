@@ -419,6 +419,16 @@ TEST(slower_preceding_agent, behavior_mobil) {
   BARK_EXPECT_TRUE(lane_corr != nullptr);
 }
 
+TEST(behavior_mobil, clone) {
+  auto params = std::make_shared<SetterParams>();
+  BehaviorModelPtr beh_model(new BehaviorMobil(params));
+  ASSERT_EQ(BehaviorStatus::VALID, beh_model->GetBehaviorStatus());
+  beh_model->SetBehaviorStatus(BehaviorStatus::EXPIRED);
+
+  auto cloned_model = BehaviorModelPtr(beh_model->Clone());
+  ASSERT_EQ(BehaviorStatus::EXPIRED, cloned_model->GetBehaviorStatus());
+}
+
 int main(int argc, char** argv) {
   // FLAGS_v=2;
   ::testing::InitGoogleTest(&argc, argv);
