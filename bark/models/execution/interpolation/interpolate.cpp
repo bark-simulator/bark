@@ -87,6 +87,7 @@ void ExecutionModelInterpolate::Execute(const float& new_world_time,
   SetLastTrajectory(trajectory);
 
   if(GetExecutionStatus() == ExecutionStatus::INVALID) {
+    LOG(INFO) << "ExecutionStatus was and still is invalid." << std::endl;
     return;
   }
 
