@@ -35,11 +35,12 @@ using world::objects::AgentId;
 struct PredictionSettings {
   PredictionSettings()
       : ego_prediction_model_(), specific_prediction_model_() {}
-  PredictionSettings(
-      const BehaviorModelPtr& ego_prediction_model,
-      const BehaviorModelPtr& default_prediction_model = nullptr,
-      const BehaviorModelPtr& specific_prediction_model = nullptr,
-      const std::vector<AgentId>& specific_prediction_agents = {});
+  PredictionSettings(const BehaviorModelPtr& ego_prediction_model,
+                     const BehaviorModelPtr& default_prediction_model);
+  PredictionSettings(const BehaviorModelPtr& ego_prediction_model,
+                     const BehaviorModelPtr& default_prediction_model,
+                     const BehaviorModelPtr& specific_prediction_model,
+                     const std::vector<AgentId>& specific_prediction_agents);
   virtual ~PredictionSettings() {}
 
   BehaviorModelPtr GetEgoPredictionModel() const {

@@ -29,6 +29,12 @@ PredictionSettings::PredictionSettings(
       specific_prediction_agents_(specific_prediction_agents.begin(),
                                   specific_prediction_agents.end()) {}
 
+PredictionSettings::PredictionSettings(
+    const BehaviorModelPtr& ego_prediction_model,
+    const BehaviorModelPtr& default_prediction_model)
+    : PredictionSettings(ego_prediction_model, default_prediction_model,
+                         nullptr, {}) {}
+
 void PredictionSettings::ApplySettings(
     bark::world::ObservedWorld& observed_world) const {
   observed_world.SetEgoBehaviorModel(
