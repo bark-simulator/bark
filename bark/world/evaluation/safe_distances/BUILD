@@ -1,7 +1,7 @@
 cc_library(
     name = "safe_distances",
-    srcs = ["evaluator_safe_dist_long.cpp" , "evaluator_static_safe_dist.cpp" ],
-    hdrs = ["evaluator_safe_dist_long.hpp", "evaluator_static_safe_dist.hpp" ],
+    srcs = ["evaluator_dynamic_safe_dist_long.cpp" , "evaluator_static_safe_dist.cpp" ],
+    hdrs = ["evaluator_dynamic_safe_dist_long.hpp", "evaluator_static_safe_dist.hpp" ],
     visibility = ["//visibility:public"],
     deps = [
         "//bark/world",

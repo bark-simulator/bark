@@ -17,9 +17,9 @@ namespace world {
 class World;
 namespace evaluation {
 
-class EvaluatorSafeDistLong : public BaseEvaluator {
+class EvaluatorDynamicSafeDistLong : public BaseEvaluator {
  public:
-  EvaluatorSafeDistLong(const bark::commons::ParamsPtr& params);
+  EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params);
   EvaluationReturn Evaluate(const world::ObservedWorld& observed_world) override;
  private:
   SafeDistanceLabelFunction safe_dist_label_function;
