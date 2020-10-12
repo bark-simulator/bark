@@ -109,7 +109,7 @@ struct Shape {
   std::shared_ptr<Shape<G, T>> Transform(const Pose& pose) const;
 
   // Scales in x- and y-direction separately
-  std::shared_ptr<Shape<G, T>> Scale(const double& x_dir, const double& y_) const;
+  virtual std::shared_ptr<Shape<G, T>> Scale(const double& x_dir, const double& y_) const;
 
   virtual bool Valid() const;
 
@@ -119,6 +119,14 @@ struct Shape {
   bool AddPoint(const T& p) {
     bg::append(obj_, p);
     return true;
+  }
+
+  std::vector<T> GetPoints() const {
+      std::vector<T> points;
+      std::copy(Shape<G, T>::obj_.begin(),
+          Shape<G, T>::obj_.end(),
+          std::back_inserter(points));
+        return points;
   }
 
   std::pair<T, T> BoundingBox() const {

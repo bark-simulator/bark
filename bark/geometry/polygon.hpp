@@ -38,6 +38,8 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 
   void UpdateDistancesToCenter();
 
+  virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Scale(const double& x_dir, const double& y_dir) const override;
+
   void ConcatenatePolygons(Polygon_t<T> poly) {
     std::vector<boost::geometry::model::polygon<Point2d>> merged_polygon;
     boost::geometry::correct(this->obj_);
@@ -121,6 +123,13 @@ inline std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Clone()
   std::shared_ptr<Polygon_t<T>> new_poly =
       std::make_shared<Polygon_t<T>>(*this);
   return new_poly;
+}
+
+template <typename T>
+std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Scale(const double& x_dir, const double& y_dir) const {
+  auto scaled = Shape<bg::model::polygon<T>, T>::Scale(x_dir, y_dir);
+  std::dynamic_pointer_cast<Polygon_t<T>>(scaled)->UpdateDistancesToCenter();
+  return scaled;
 }
 
 //! for better usage simple float defines
