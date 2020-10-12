@@ -54,8 +54,11 @@ def ShapeFromTrack(track, wheelbase=2.7):
     length = track.length
     width = track.width
     pose = [0.0, 0.0, 0.0]
-    points = [[length / 2.0 + offset, -width / 2.0], [length / 2.0 + offset, width / 2.0], [-length / 2.0 + offset, width / 2.0],
-              [-length / 2.0 + offset, -width / 2.0], [length / 2.0 + offset, -width / 2.0]]
+    p1 = [length / 2.0 + offset, -width / 2.0]
+    p2 = [length / 2.0 + offset, width / 2.0]
+    p3 = [-length / 2.0 + offset, width / 2.0]
+    p4 = [-length / 2.0 + offset, -width / 2.0]
+    points = [p1, p2, p3, p4, p1]
     poly = Polygon2d(pose, points)
     return poly
 
@@ -65,7 +68,8 @@ def InitStateFromTrack(track, start):
     if minimum_start > start:
         start = minimum_start
     state = track.motion_states[int(start)]
-    return BarkStateFromMotionState(state, state.time_stamp_ms).reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
+    bark_state = BarkStateFromMotionState(state, state.time_stamp_ms)
+    return bark_state.reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
 
 
 def GoalDefinitionFromTrack(track, end):
@@ -80,8 +84,9 @@ def GoalDefinitionFromTrack(track, end):
                               Point2d(goal_size, goal_size),
                               Point2d(0.0, goal_size),
                               Point2d(0.0, 0.0)])
-    goal_polygon = goal_polygon.Translate(Point2d(bark_state[0, int(StateDefinition.X_POSITION)] - 0.5 * goal_size,
-                                                  bark_state[0, int(StateDefinition.Y_POSITION)] - 0.5 * goal_size))
+    goal_point = Point2d(bark_state[0, int(StateDefinition.X_POSITION)] - 0.5 *
+                         goal_size, bark_state[0, int(StateDefinition.Y_POSITION)] - 0.5 * goal_size)
+    goal_polygon = goal_polygon.Translate(goal_point)
     goal_definition = GoalDefinitionPolygon(goal_polygon)
     return goal_definition
 
