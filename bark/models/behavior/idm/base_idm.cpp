@@ -325,7 +325,10 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
-    acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+    const float acc_lower_bound = GetAccelerationLowerBound();
+    const float acc_upper_bound = GetAccelerationUpperBound();
+    acc = std::max(std::min(GetMaxAcceleration() * CalcFreeRoadTerm(vel_i),
+                   double(acc_upper_bound)), double(acc_lower_bound));
   }
   return std::pair<double, double>(acc, rel_distance);
 }
