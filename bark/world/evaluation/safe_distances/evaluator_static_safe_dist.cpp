@@ -20,9 +20,9 @@ using bark::models::dynamic::StateDefinition::X_POSITION;
 using bark::models::dynamic::StateDefinition::Y_POSITION;
 
 EvaluatorStaticSafeDist::EvaluatorStaticSafeDist(const bark::commons::ParamsPtr& params) :
-   lateral_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LateralSafetyDist",
+   lateral_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LateralSafeDist",
         "Minimum required lateral distance", 0.5f)),
-   longitudinal_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LongitudinalSafetyDist",
+   longitudinal_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist",
          "Minimum required longitudinal distance", 0.5f)) {}
 
 EvaluationReturn EvaluatorStaticSafeDist::Evaluate(
