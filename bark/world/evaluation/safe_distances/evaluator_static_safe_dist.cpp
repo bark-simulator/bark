@@ -15,9 +15,9 @@ namespace evaluation {
 
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
+using bark::geometry::Pose;
 using bark::models::dynamic::State;
-using bark::models::dynamic::StateDefinition::X_POSITION;
-using bark::models::dynamic::StateDefinition::Y_POSITION;
+using bark::models::dynamic::StateDefinition;
 
 EvaluatorStaticSafeDist::EvaluatorStaticSafeDist(const bark::commons::ParamsPtr& params) :
    lateral_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LateralSafeDist",
@@ -38,8 +38,11 @@ bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& obse
 
   // Evaluation assumes that - at zero orientation - shape of ego agent is oriented such that lateral 
   // coordinate is y and longitudinal coordinate is x
+  Pose agent_pose(ego_state(StateDefinition::X_POSITION),
+                  ego_state(StateDefinition::Y_POSITION),
+                  ego_state(StateDefinition::THETA_POSITION));
   const auto ego_scaled_shape = std::dynamic_pointer_cast<Polygon>(
-          ego_agent->GetShape().Scale(longitudinal_safety_dist_, lateral_safety_dist_));
+          ego_agent->GetShape().Scale(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(agent_pose));
 
   for (const auto& agent : nearby_agents) {
     if (observed_world.GetEgoAgentId() != agent.second->GetAgentId()) {
