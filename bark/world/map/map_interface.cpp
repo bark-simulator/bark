@@ -192,6 +192,10 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     }
 
     // TODO(@hart): use parameter
+    // \note \kessler: setting max_dist too small can yield self-intersecting
+    // road polygons. why? in curves on the inner radius due to sampling
+    // inaccuracy the boundaries of two segments can overlap. The code below just copies each point to the lane polygon without checking this.
+    
     const double max_dist = 0.4;
     Line simplf_center = Simplify(lane_corridor->GetCenterLine(), max_dist);
     lane_corridor->SetCenterLine(simplf_center);
@@ -202,20 +206,13 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     Line simplf_left = Simplify(lane_corridor->GetLeftBoundary(), max_dist);
     lane_corridor->SetLeftBoundary(simplf_left);
 
-
-    // TODO hier ist der self intersection bug: magic number 0.5 durch sampling distance ersetzen!!!
+    // TODO hier ist der self intersection bug: magic number 0.5 durch sampling
+    // distance ersetzen!!!
 
     // merged polygons
     PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
 
-    // Line left, right;
-    // const float overlap_simplification = 0.4;
-    // boost::geometry::simplify(lane_corridor->GetLeftBoundary().obj_, left.obj_, overlap_simplification);
-    // boost::geometry::simplify(lane_corridor->GetRightBoundary().obj_, right.obj_, overlap_simplification);
-
-    // std::cout << "right : " << right.size() << ", " << lane_corridor->GetRightBoundary().size() << std::endl;
-    // std::cout << "left : " << left.size() << ", " << lane_corridor->GetLeftBoundary().size() << std::endl;
-
+    // \todo (\kessler): before adding a point, check if this produces a self-intersection.
     for (auto const& p : lane_corridor->GetLeftBoundary()) {
       polygon->AddPoint(p);
     }
@@ -229,7 +226,9 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     boost::geometry::correct(polygon->obj_);
 
     std::cout << "lane corridor valid?" << std::endl;
-    polygon->Valid();
+    if (!polygon->Valid()) {
+      LOG(ERROR) << "Producing a non-valid lane corridor for lane id = " << lane.first;
+    }
 
     lane_corridor->SetMergedPolygon(*polygon);
   }
