@@ -9,7 +9,7 @@
 #ifndef BARK_WORLD_EVALUATION_SAFE_DISTANCES_EVALUATOR_SAFE_DIST_LONG_
 #define BARK_WORLD_EVALUATION_SAFE_DISTANCES_EVALUATOR_SAFE_DIST_LONG_
 
-#include "bark/world/evaluation/base_evaluator.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_safe_dist_base.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
 namespace bark {
@@ -17,10 +17,10 @@ namespace world {
 class World;
 namespace evaluation {
 
-class EvaluatorDynamicSafeDistLong : public BaseEvaluator {
+class EvaluatorDynamicSafeDistLong : public EvaluatorSafeDistBase {
  public:
   EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params);
-  EvaluationReturn Evaluate(const world::ObservedWorld& observed_world) override;
+  bool CheckSafeDistance(const world::ObservedWorld& observed_world) const override;
  private:
   SafeDistanceLabelFunction safe_dist_label_function;
 };
