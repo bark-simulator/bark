@@ -22,7 +22,12 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig, BehaviorConfig
 from bark.core.world.evaluation import *
-from bark.core.world.evaluation.ltl import *
+
+try:
+  from bark.core.world.evaluation.ltl import *
+except Exception as e:
+  logging.warning("LTL evaluators not loaded: {}".format(e))
+
 
 class BenchmarkRunner:
     def __init__(self,
@@ -63,7 +68,7 @@ class BenchmarkRunner:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
             self.logger.info("Merged {} processed configs in folder {}". \
-                format(len(self.existing_benchmark_result.get_benchmark_configs()), checkpoint_dir)) 
+                format(len(self.existing_benchmark_result.get_benchmark_configs()), checkpoint_dir))
             self.configs_to_run = self.get_configs_to_run(self.benchmark_configs, \
                                                             self.existing_benchmark_result)
             self.logger.info("Remaining  number of {} configs to run".format(len(self.configs_to_run)))

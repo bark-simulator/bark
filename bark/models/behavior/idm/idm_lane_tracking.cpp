@@ -57,7 +57,6 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
             0, 0);
-    float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
     traj(0, StateDefinition::TIME_POSITION) = start_time;
 
     double rel_distance = rel_values.leading_distance;

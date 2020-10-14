@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_
-#define BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_CONSTANT_ACCELERATION_CONSTANT_ACCELERATION_HPP_
+#define BARK_MODELS_BEHAVIOR_CONSTANT_ACCELERATION_CONSTANT_ACCELERATION_HPP_
 
 #include <memory>
 #include <utility>
@@ -61,4 +61,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorConstantAcceleration::Clone() cons
 }  // namespace models
 }  // namespace bark
 
-#endif  // BARK_MODELS_BEHAVIOR_CONSTANT_VELOCITY_CONSTANT_ACCELERATION_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_CONSTANT_ACCELERATION_CONSTANT_ACCELERATION_HPP_

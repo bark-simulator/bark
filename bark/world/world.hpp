@@ -108,8 +108,8 @@ class World : public commons::BaseType {
   void RemoveInvalidAgents();
 
   //! Getter
-  double GetWorldTime() const { return world_time_; }
-  void SetWorldTime(const double& world_time) { world_time_ = world_time; }
+  float GetWorldTime() const { return world_time_; }
+  void SetWorldTime(const float& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
   virtual AgentMap GetAgents() const { return agents_; }
   AgentMap GetValidAgents() const;
@@ -176,7 +176,7 @@ class World : public commons::BaseType {
   AgentMap agents_;
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
-  double world_time_;
+  float world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
   double frac_lateral_offset_;
