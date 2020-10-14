@@ -11,12 +11,13 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.examples.paths import Data
 import os
 import argparse
 
 
 # set you json config that contains a map and matching tracks.
-param_server = ParameterServer(filename=os.path.join(os.path.join(os.path.dirname(__file__),"params/interaction_example.json")))
+param_server = ParameterServer(filename=Data.params_data("interaction_example"))
 scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1,
                                                            random_seed=0,
                                                            params=param_server)

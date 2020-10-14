@@ -38,12 +38,7 @@ py_test (
         "//bark/commons/tests:py_commons_tests",
         #"//bark/benchmark/tests:py_benchmark_runner_tests",
        # "//bark/benchmark/tests:py_benchmark_process_tests",
-        "//bark/benchmark/tests:py_benchmark_analyzer_tests",
-        "//bark/examples:highway",
-        "//bark/examples:merging",
-        "//bark/examples:intersection",
-        "//bark/examples:maude_interface",
-        "//bark/examples:maude"
+        "//bark/benchmark/tests:py_benchmark_analyzer_tests"
     ],
 )
 
@@ -82,7 +77,11 @@ py_test(
         "//bark/runtime/scenario:scenario",
         "//bark/runtime/commons:commons",
         "//bark/benchmark:benchmark_analyzer",
-       
+        "//bark/examples:highway",
+        "//bark/examples:merging",
+        "//bark/examples:intersection",
+        "//bark/examples:maude_interface",
+        "//bark/examples:maude"
           ],
 
 )
