@@ -83,14 +83,14 @@ void python_evaluation(py::module m) {
 
   py::class_<EvaluatorDynamicSafeDistLong, BaseEvaluator,
               std::shared_ptr<EvaluatorDynamicSafeDistLong>>(m, "EvaluatorDynamicSafeDistLong")
-      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
       .def("__repr__", [](const EvaluatorDynamicSafeDistLong& g) {
         return "bark.core.world.evaluation.EvaluatorDynamicSafeDistLong";
       });
 
   py::class_<EvaluatorStaticSafeDist, BaseEvaluator,
               std::shared_ptr<EvaluatorStaticSafeDist>>(m, "EvaluatorStaticSafeDist")
-      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
       .def("__repr__", [](const EvaluatorStaticSafeDist& g) {
         return "bark.core.world.evaluation.EvaluatorStaticSafeDist";
       });

@@ -19,7 +19,7 @@ namespace evaluation {
 
 class EvaluatorDynamicSafeDistLong : public EvaluatorSafeDistBase {
  public:
-  EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params);
+  EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params, const AgentId& agent_id);
   bool CheckSafeDistance(const world::ObservedWorld& observed_world) const override;
  private:
   SafeDistanceLabelFunction safe_dist_label_function;
