@@ -42,7 +42,7 @@ class MPViewer(BaseViewer):
         self.axes.plot(
             line2d_np[:, 0],
             line2d_np[:, 1], 
-            lineStyle=lineStyle_string,
+            linestyle=lineStyle_string,
             color=self.getColor(color),
             alpha=alpha,
             zorder=zorder,
