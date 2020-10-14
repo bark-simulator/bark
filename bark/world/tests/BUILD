@@ -68,6 +68,7 @@ cc_test(
         "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/evaluation:evaluation",
+        "//bark/world/evaluation/safe_distances:safe_distances",
         ":make_test_world",
         ":dummy_road_corridor",
         "@gtest//:gtest_main",

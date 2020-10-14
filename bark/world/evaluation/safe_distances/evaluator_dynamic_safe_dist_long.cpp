@@ -13,7 +13,8 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-EvaluatorDynamicSafeDistLong::EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params) :
+EvaluatorDynamicSafeDistLong::EvaluatorDynamicSafeDistLong(const bark::commons::ParamsPtr& params, const AgentId& agent_id) :
+    EvaluatorSafeDistBase(agent_id),
     safe_dist_label_function("safe_dist_longitudinal", 
         params->GetBool("EvaluatorDynamicSafeDistLong::ToRear", "Include rear agent", true),
         params->GetReal("EvaluatorDynamicSafeDistLong::ReactionTime", "Reaction time", 100.0f),

@@ -19,7 +19,8 @@ using bark::geometry::Pose;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 
-EvaluatorStaticSafeDist::EvaluatorStaticSafeDist(const bark::commons::ParamsPtr& params) :
+EvaluatorStaticSafeDist::EvaluatorStaticSafeDist(const bark::commons::ParamsPtr& params, const AgentId& agent_id) :
+   EvaluatorSafeDistBase(agent_id),
    lateral_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LateralSafeDist",
         "Minimum required lateral distance", 0.5f)),
    longitudinal_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist",
