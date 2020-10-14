@@ -19,7 +19,7 @@ import math
 import copy
 import importlib
 import aabbtree
-from collections import defaultdict 
+from collections import defaultdict
 
 __CONFIG_READER_MODULES = []
 
@@ -67,7 +67,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     ]
     ]
 
-    print (self._map_file_name)
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
               sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
     self._random_state = np.random.RandomState(self._random_seed)

@@ -69,7 +69,7 @@ lane_corridors.append(
 scenarios = \
   ConfigWithEase(num_scenarios=3,
                  map_file_name= os.path.join(os.path.dirname(__file__),
-                 "../bark/runtime/tests/data/threeway_intersection.xodr"),
+                 "../runtime/tests/data/threeway_intersection.xodr"),
                  random_seed=0,
                  params=param_server,
                  lane_corridor_configs=lane_corridors)

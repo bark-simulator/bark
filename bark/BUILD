@@ -36,9 +36,14 @@ py_test (
         "//bark/models/tests:py_behavior_model_test",
         "//bark/geometry/tests:py_geometry_tests",
         "//bark/commons/tests:py_commons_tests",
-        "//bark/benchmark/tests:py_benchmark_runner_tests",
+        #"//bark/benchmark/tests:py_benchmark_runner_tests",
        # "//bark/benchmark/tests:py_benchmark_process_tests",
-        "//bark/benchmark/tests:py_benchmark_analyzer_tests"
+        "//bark/benchmark/tests:py_benchmark_analyzer_tests",
+        "//bark/examples:highway",
+        "//bark/examples:merging",
+        "//bark/examples:intersection",
+        "//bark/examples:maude_interface",
+        "//bark/examples:maude"
     ],
 )
 
@@ -66,8 +71,8 @@ py_test(
         "//bark/runtime/commons:parameters",
         "//bark/runtime/commons:model_json_conversion",
         "//bark/models/behavior/plan:py_planners",
-        #"//bark/benchmark:benchmark_runner_mp",
-        #"//bark/benchmark:benchmark_runner",
+        "//bark/benchmark:benchmark_runner_mp",
+        "//bark/benchmark:benchmark_runner",
         "//bark/runtime:runtime",
         "//bark/runtime/viewer:video_renderer",
         "//bark/runtime/viewer:pygame_viewer",

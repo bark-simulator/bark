@@ -9,6 +9,7 @@
 import unittest
 import os
 import time
+import ray
 
 try:
     import debug_settings
@@ -220,7 +221,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         configs_to_run = BenchmarkRunner.get_configs_to_run(benchmark_runner.configs_to_run, merged_result)
         self.assertEqual(len(configs_to_run), 4)
-        
+        ray.shutdown()
         benchmark_runner2 = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,

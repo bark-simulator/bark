@@ -60,7 +60,7 @@ scenarios = \
     num_scenarios=5,
     map_file_name=os.path.join(
       os.path.dirname(__file__),
-      "../bark/runtime/tests/data/city_highway_straight.xodr"),
+      "../runtime/tests/data/city_highway_straight.xodr"),
     random_seed=0,
     params=param_server,
     lane_corridor_configs=[left_lane, right_lane])
