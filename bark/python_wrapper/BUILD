@@ -63,7 +63,7 @@ cc_library(
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
     ],
-    defines = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
+    defines = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["LTL_RULES"], "//conditions:default": []}),
 )
 
 # needed to test external python wrapping of planners in their own bark
