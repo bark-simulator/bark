@@ -34,7 +34,8 @@ Trajectory BehaviorSafety::Plan(
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
     dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
   
-  // TODO: set velocity to zero and also set the target LaneCorridor
+  // TODO: set the target LaneCorridor? currently it is always the current one
+  GetParams()->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.);
 
   idm_lane_tracking_behavior->Plan(min_planning_time, observed_world);
   auto last_action = idm_lane_tracking_behavior->GetLastAction();
