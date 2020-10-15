@@ -28,7 +28,7 @@ git_repository(
 # ------ Planner Rules-MCTS ------------------------------
 git_repository(
   name = "planner_rules_mcts",
-  commit="6b75dde7b25fc4b1c05f0941a83cfc78baa87f8a",
+  commit="23daa6085661560a1ca9734629acda10d094429b",
   remote = "https://github.com/bark-simulator/planner-rules-mcts"
 )
 load("@planner_rules_mcts//util:deps.bzl", "planner_rules_mcts_dependencies")
