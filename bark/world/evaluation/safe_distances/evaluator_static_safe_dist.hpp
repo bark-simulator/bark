@@ -19,7 +19,7 @@ namespace evaluation {
 class EvaluatorStaticSafeDist : public EvaluatorSafeDistBase {
  public:
   EvaluatorStaticSafeDist(const bark::commons::ParamsPtr& params, const AgentId& agent_id);
-  bool CheckSafeDistance(const world::ObservedWorld& observed_world) const override;
+  bool CheckSafeDistance(const world::ObservedWorld& observed_world) override;
  private:
   float lateral_safety_dist_;
   float longitudinal_safety_dist_;

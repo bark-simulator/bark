@@ -26,7 +26,7 @@ EvaluatorStaticSafeDist::EvaluatorStaticSafeDist(const bark::commons::ParamsPtr&
    longitudinal_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist",
          "Minimum required longitudinal distance", 0.5f)) {}
 
-bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& observed_world) const {
+bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& observed_world) {
   bool colliding = false;
   int num_agents = 4;
   auto ego_agent = observed_world.GetEgoAgent();
