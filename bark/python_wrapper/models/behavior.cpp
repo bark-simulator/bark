@@ -411,17 +411,17 @@ void python_behavior(py::module m) {
           PythonToParams(t[0].cast<py::tuple>()));
       }));
 
-  py::class_<BehaviorRSS, BehaviorModel,
-             shared_ptr<BehaviorRSS>>(m, "BehaviorRSS")
+  py::class_<BehaviorRSSConformant, BehaviorModel,
+             shared_ptr<BehaviorRSSConformant>>(m, "BehaviorRSSConformant")
     .def(py::init<const bark::commons::ParamsPtr&>())
-    .def("SetNominalBehaviorModel", &BehaviorRSS::SetNominalBehaviorModel)
-    .def("SetSafetyBehaviorModel", &BehaviorRSS::SetSafetyBehaviorModel)
+    .def("SetNominalBehaviorModel", &BehaviorRSSConformant::SetNominalBehaviorModel)
+    .def("SetSafetyBehaviorModel", &BehaviorRSSConformant::SetSafetyBehaviorModel)
     .def("__repr__",
-      [](const BehaviorRSS& b) {
-        return "bark.behavior.BehaviorRSS";
+      [](const BehaviorRSSConformant& b) {
+        return "bark.behavior.BehaviorRSSConformant";
       })
     .def(py::pickle(
-      [](const BehaviorRSS& b) {
+      [](const BehaviorRSSConformant& b) {
         return py::make_tuple(
           ParamsToPython(b.GetParams()));
       },
@@ -429,7 +429,7 @@ void python_behavior(py::module m) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorRSS(
+        return new BehaviorRSSConformant(
           PythonToParams(t[0].cast<py::tuple>()));
       }));
   

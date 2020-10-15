@@ -31,6 +31,8 @@
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
+#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
+#include "bark/models/behavior/rss_behavior/rss_behavior.hpp"
 #include "bark/python_wrapper/models/behavior.hpp"
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -83,6 +85,8 @@ using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorStaticTrajectory;
 using bark::models::behavior::BehaviorNotStarted;
+using bark::models::behavior::BehaviorRSSConformant;
+using bark::models::behavior::BehaviorSafety;
 using bark::models::behavior::primitives::Primitive;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToLeft;
 using bark::models::behavior::primitives::PrimitiveConstAccChangeToRight;
@@ -141,6 +145,10 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIDMStochastic";
   } else if (typeid(*behavior_model) == typeid(BehaviorMPMacroActions)) {
     behavior_model_name = "BehaviorMPMacroActions";
+  } else if (typeid(*behavior_model) == typeid(BehaviorSafety)) {
+    behavior_model_name = "BehaviorSafety";
+  } else if (typeid(*behavior_model) == typeid(BehaviorRSSConformant)) {
+    behavior_model_name = "BehaviorRSSConformant";
   }
 #ifdef PLANNER_UCT
   else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
@@ -203,6 +211,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorMPMacroActions") == 0) {
     return std::make_shared<BehaviorMPMacroActions>(
         t[0].cast<BehaviorMPMacroActions>());
+  } else if (behavior_model_name.compare("BehaviorSafety") == 0) {
+    return std::make_shared<BehaviorSafety>(
+        t[0].cast<BehaviorSafety>());
+  } else if (behavior_model_name.compare("BehaviorRSSConformant") == 0) {
+    return std::make_shared<BehaviorRSSConformant>(
+        t[0].cast<BehaviorRSSConformant>());
   }
 #ifdef PLANNER_UCT
   else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
