@@ -54,13 +54,12 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 If you use BARK, please cite us using the following paper:
 
 ```
-@misc{bernhard2020bark,
-    title={BARK: Open Behavior Benchmarking in Multi-Agent Environments},
-    author={Julian Bernhard and Klemens Esterle and Patrick Hart and Tobias Kessler},
-    year={2020},
-    eprint={2003.02604},
-    archivePrefix={arXiv},
-    primaryClass={cs.MA}
+@inproceedings{Bernhard2020,
+    title = {BARK: Open Behavior Benchmarking in Multi-Agent Environments},
+    author = {Bernhard, Julian and Esterle, Klemens and Hart, Patrick and Kessler, Tobias},
+    booktitle = {2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+    url = {https://arxiv.org/pdf/2003.02604.pdf},
+    year = {2020}
 }
 ```
 
