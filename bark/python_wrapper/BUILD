@@ -38,6 +38,8 @@ cc_binary(
     "//bark/models/behavior/static_trajectory",
     "//bark/models/behavior/not_started",
     "//bark/models/behavior/idm/stochastic:stochastic",
+    "//bark/models/behavior/safety_behavior:safety_behavior",
+    "//bark/models/behavior/rss_behavior:rss_behavior",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",

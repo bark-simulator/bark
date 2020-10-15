@@ -22,6 +22,8 @@
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
+#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
+#include "bark/models/behavior/rss_behavior/rss_behavior.hpp"
 #include "bark/python_wrapper/models/plan/plan.hpp"
 #include "bark/python_wrapper/polymorphic_conversion.hpp"
 
@@ -387,7 +389,50 @@ void python_behavior(py::module m) {
             return new BehaviorNotStarted(
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
+  
+  py::class_<BehaviorSafety, BehaviorModel,
+             shared_ptr<BehaviorSafety>>(m, "BehaviorSafety")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("SetBehaviorModel", &BehaviorSafety::SetBehaviorModel)
+    .def("__repr__",
+      [](const BehaviorSafety& b) {
+        return "bark.behavior.BehaviorSafety";
+      })
+    .def(py::pickle(
+      [](const BehaviorSafety& b) {
+        return py::make_tuple(
+          ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        /* Create a new C++ instance */
+        return new BehaviorSafety(
+          PythonToParams(t[0].cast<py::tuple>()));
+      }));
 
+  py::class_<BehaviorRSS, BehaviorModel,
+             shared_ptr<BehaviorRSS>>(m, "BehaviorRSS")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("SetNominalBehaviorModel", &BehaviorRSS::SetNominalBehaviorModel)
+    .def("SetSafetyBehaviorModel", &BehaviorRSS::SetSafetyBehaviorModel)
+    .def("__repr__",
+      [](const BehaviorRSS& b) {
+        return "bark.behavior.BehaviorRSS";
+      })
+    .def(py::pickle(
+      [](const BehaviorRSS& b) {
+        return py::make_tuple(
+          ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid behavior model state!");
+        /* Create a new C++ instance */
+        return new BehaviorRSS(
+          PythonToParams(t[0].cast<py::tuple>()));
+      }));
+  
   py::class_<LonLatAction, shared_ptr<LonLatAction>>(m, "LonLatAction")
       .def(py::init<>())
       .def_readwrite("acc_lat", &LonLatAction::acc_lat)
