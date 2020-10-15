@@ -7,6 +7,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include <tuple>
+#include <memory>
 
 #include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
@@ -29,7 +30,7 @@ Trajectory BehaviorSafety::Plan(
   }
 
   // for now we support only the BehaviorIDMLaneTracking
-  BARK_EXPECT_TRUE(dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_));
+  BARK_EXPECT_TRUE(std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_));
 
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
     dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
