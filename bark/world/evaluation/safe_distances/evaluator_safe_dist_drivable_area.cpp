@@ -22,9 +22,9 @@ using bark::models::dynamic::StateDefinition;
 EvaluatorSafeDistDrivableArea::EvaluatorSafeDistDrivableArea(const bark::commons::ParamsPtr& params, const AgentId& agent_id) :
    EvaluatorDrivableArea(agent_id), 
    EvaluatorSafeDistBase(agent_id),
-   lateral_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LateralSafeDist",
+   lateral_safety_dist_(params->GetReal("EvaluatorSafeDistDrivableArea::LateralSafeDist",
         "Minimum required lateral distance", 0.5f)),
-   longitudinal_safety_dist_(params->GetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist",
+   longitudinal_safety_dist_(params->GetReal("EvaluatorSafeDistDrivableArea::LongitudinalSafeDist",
          "Minimum required longitudinal distance", 0.5f)) {}
         
 bool EvaluatorSafeDistDrivableArea::CheckSafeDistance(const world::ObservedWorld& observed_world) {

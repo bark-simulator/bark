@@ -43,7 +43,7 @@ class EvaluatorSafeDistDrivableArea : public EvaluatorDrivableArea, public Evalu
   float longitudinal_safety_dist_;
 
  private:
-  Polygon GetCollisionShape(const AgentPtr& checked_agent) const;
+  Polygon GetCollisionShape(const AgentPtr& checked_agent) const override;
 };
 
 }  // namespace evaluation

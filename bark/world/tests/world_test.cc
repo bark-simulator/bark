@@ -17,6 +17,8 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist_long.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_safe_dist_drivable_area.hpp"
+
 
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/map/map_interface.hpp"
@@ -295,7 +297,6 @@ TEST(evaluator, outside_drivable_area) {
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
-  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
 
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
 
@@ -317,6 +318,38 @@ TEST(evaluator, outside_drivable_area) {
   auto eval_res = world->Evaluate()["drivable_area"];
 
   ASSERT_FALSE(boost::get<bool>(eval_res));
+}
+
+TEST(evaluator, safe_dist_drivable_area) {
+  using bark::world::goal_definition::GoalDefinitionPolygon;
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("EvaluatorSafeDistDrivableArea::LateralSafeDist", 3.0f);
+  params->SetReal("EvaluatorSafeDistDrivableArea::LongitudinalSafeDist", 1.4f);
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+
+  Polygon polygon = GenerateGoalRectangle(6,3);
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+
+  // TODO: pass goal polygon to make_world_test
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
+
+  const auto evaluator_safe_dist_drivable_area = std::make_shared<EvaluatorSafeDistDrivableArea>(params, 
+                                                world->GetAgents().begin()->first);
+  world->AddEvaluator("drivable_area", evaluator_safe_dist_drivable_area);
+  auto eval_res = world->Evaluate()["drivable_area"];
+
+  EXPECT_EQ(boost::get<int>(eval_res), 1);
 }
 
 TEST(world, nearest_agents) {
