@@ -13,7 +13,7 @@
 #include <utility>
 
 #include "bark/models/behavior/behavior_model.hpp"
-#include "bark/models/behavior/idm/idm_classic.hpp"
+#include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -23,11 +23,13 @@ namespace behavior {
 using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::objects::AgentId;
+using bark::models::behavior::BehaviorIDMLaneTracking;
 
 class BehaviorSafety : public BehaviorModel {
  public:
-  explicit BehaviorSafety(const commons::ParamsPtr& params)
-    : BehaviorModel(params) {}
+  explicit BehaviorSafety(const commons::ParamsPtr& params) :
+    BehaviorModel(params),
+    behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(params)) {}
 
   virtual ~BehaviorSafety() {}
 

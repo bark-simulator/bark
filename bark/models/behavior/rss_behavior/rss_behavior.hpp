@@ -14,6 +14,7 @@
 
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
+#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -24,6 +25,9 @@ using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
+using bark::models::behavior::BehaviorIDMClassic;
+using bark::models::behavior::BehaviorSafety;
+
 
 enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
@@ -31,6 +35,10 @@ class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params) :
     BehaviorModel(params),
+    nominal_behavior_model_(std::make_shared<BehaviorIDMClassic>(params)),
+    safety_behavior_model_(std::make_shared<BehaviorSafety>(params)),
+    // TODO: needs to be the RSS evaluator
+    // rss_evaluator_(std::make_shared<BaseEvaluator>(params)),
     rss_behavior_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
     world_time_of_last_rss_violation_(-1) {}
 
