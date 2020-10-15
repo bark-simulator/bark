@@ -126,3 +126,20 @@ cc_test(
         "@gtest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "behavior_rss_test",
+    srcs = [
+        "behavior_rss_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [        
+        "//bark/geometry",
+        "//bark/models/behavior/safe_behavior:safe_behavior",
+        "//bark/models/behavior/rss_behavior:rss_behavior",
+        "//bark/models/execution/interpolation:interpolation",
+        "//bark/world/tests:make_test_xodr_map",
+        "@gtest//:gtest_main",
+        "@com_github_gflags_gflags//:gflags",
+    ],
+)
