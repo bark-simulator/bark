@@ -17,7 +17,7 @@ namespace world {
 class World;
 namespace evaluation {
 
-class EvaluatorSafeDistBase : public BaseEvaluator {
+class EvaluatorSafeDistBase : virtual public BaseEvaluator {
  public:
   EvaluatorSafeDistBase(const AgentId& agent_id) : violation_count_(0), agent_id_(agent_id) {};
   EvaluationReturn Evaluate(const world::World& world) override {
@@ -31,7 +31,7 @@ class EvaluatorSafeDistBase : public BaseEvaluator {
     return EvaluationReturn(violation_count_);
   };
 
-  virtual bool CheckSafeDistance(const world::ObservedWorld& observed_world) const = 0;
+  virtual bool CheckSafeDistance(const world::ObservedWorld& observed_world) = 0;
  private:
   int violation_count_;
   const AgentId agent_id_;

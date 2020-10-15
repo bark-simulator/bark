@@ -22,7 +22,7 @@ EvaluatorDynamicSafeDistLong::EvaluatorDynamicSafeDistLong(const bark::commons::
         params->GetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f)) {}
 
 bool EvaluatorDynamicSafeDistLong::CheckSafeDistance(
-    const world::ObservedWorld& observed_world) const {
+    const world::ObservedWorld& observed_world) {
   return safe_dist_label_function.Evaluate(observed_world).begin()->second;
 }
 
