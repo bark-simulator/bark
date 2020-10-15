@@ -135,9 +135,11 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [        
         "//bark/geometry",
-        "//bark/models/behavior/safe_behavior:safe_behavior",
-        "//bark/models/behavior/rss_behavior:rss_behavior",
+        "//bark/models/behavior/safety_behavior:safety_behavior",
+        # "//bark/models/behavior/rss_behavior:rss_behavior",
         "//bark/models/execution/interpolation:interpolation",
+        "//bark/world/tests:make_test_world",
+        "//bark/models/behavior/idm:idm_lane_tracking",
         "//bark/world/tests:make_test_xodr_map",
         "@gtest//:gtest_main",
         "@com_github_gflags_gflags//:gflags",

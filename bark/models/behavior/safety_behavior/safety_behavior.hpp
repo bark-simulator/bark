@@ -25,7 +25,7 @@ using world::ObservedWorld;
 using world::objects::AgentId;
 
 class BehaviorSafety : public BehaviorModel {
- public:safety_behavior
+ public:
   explicit BehaviorSafety(const commons::ParamsPtr& params)
     : BehaviorModel(params) {}
 

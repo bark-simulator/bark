@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-#include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
+#include "bark/models/behavior/rss_behavior/rss_behavior.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
