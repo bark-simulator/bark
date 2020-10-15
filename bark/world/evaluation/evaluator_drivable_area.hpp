@@ -37,7 +37,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       if (!agent) {
         return true;
       }
-      Polygon poly_agent = agent->GetPolygonFromState(agent->GetCurrentState());
+      Polygon poly_agent = GetCollisionShape(agent);
       const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
       if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
         return true;
@@ -71,6 +71,9 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   }
 
  private:
+  bark::geometry::Polygon GetCollisionShape(const AgentPtr& checked_agent) {
+    return checked_agent->GetPolygonFromState(checked_agent->GetCurrentState());
+  };
   AgentId agent_id_;
 };
 

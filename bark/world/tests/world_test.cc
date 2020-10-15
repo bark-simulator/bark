@@ -200,7 +200,7 @@ TEST(evaluator, static_safe_dist) {
   EvaluatorPtr safe_dist_checker(new EvaluatorStaticSafeDist(params, agent1->GetAgentId()));
   world->AddEvaluator("safe_dist_agents", safe_dist_checker);
 
-  EXPECT_TRUEboost::get<int>(world->Evaluate()["safe_dist_agents"]));
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 0);
 
   // safe dist gives polygon widths of 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -252,18 +252,7 @@ TEST(evaluator, dynamic_safe_dist) {
   world->AddEvaluator("safe_dist_agents", safe_dist_checker);
 
   // No other agent available -> safe = true
-  EXPECT_TRUE(boost::get<int>(world->Evaluate()["safe_dist_agents"]));
-
-  // safe dist gives polygon widths of 
-    State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state2 << 0.0, 1.41, 0.0, 0.0, 2.0;
-  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
-                            polygon, params, goal_definition_ptr, world->GetMap()));
-  world->AddAgent(agent2);
-  world->UpdateAgentRTree();
-
-  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 1);
-  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 2);
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 0);
 }
 
 TEST(evaluator, no_collision_agent) {
