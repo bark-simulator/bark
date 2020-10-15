@@ -9,6 +9,7 @@
 import os
 from pathlib import Path
 
+
 class Data:
   #xodr data
   _xodr_data = {}
@@ -23,38 +24,37 @@ class Data:
   def xodr_data(name):
     if Data._xodr_data:
       return Data._xodr_data[name]
-    
-    data_dir = os.path.join( os.path.dirname(__file__), "../runtime/tests/data")
+
+    data_dir = os.path.join(os.path.dirname(__file__), "../runtime/tests/data")
     files = [f for f in os.listdir(data_dir) if f.endswith(".xodr")]
 
     for file in files:
       Data._xodr_data[Path(file).stem] = os.path.join(data_dir, file)
-    
+
     return Data._xodr_data[name]
-    
 
   @staticmethod
   def track_data(name):
     if Data._track_data:
       return Data._track_data[name]
-    
-    data_dir = os.path.join( os.path.dirname(__file__), "../runtime/tests/data")
+
+    data_dir = os.path.join(os.path.dirname(__file__), "../runtime/tests/data")
     files = [f for f in os.listdir(data_dir) if f.endswith(".csv")]
 
     for file in files:
       Data._track_data[Path(file).stem] = os.path.join(data_dir, file)
-    
+
     return Data._track_data[name]
-  
+
   @staticmethod
   def params_data(name):
     if Data._params_data:
       return Data._params_data[name]
-    
-    data_dir = os.path.join( os.path.dirname(__file__), "params")
+
+    data_dir = os.path.join(os.path.dirname(__file__), "params")
     files = [f for f in os.listdir(data_dir) if f.endswith(".json")]
 
     for file in files:
       Data._params_data[Path(file).stem] = os.path.join(data_dir, file)
-    
+
     return Data._params_data[name]
