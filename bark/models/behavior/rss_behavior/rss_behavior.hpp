@@ -25,7 +25,7 @@ using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
 
-enum class BehaviorRSSConformantStatus {SAFE_BEHAVIOR, NOMINAL_BEHAVIOR};
+enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
 class BehaviorRSSConformant : public BehaviorModel {
  public:
