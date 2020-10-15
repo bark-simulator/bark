@@ -27,21 +27,27 @@ Trajectory RSSBehavior::Plan(
     return GetLastTrajectory();
   }
 
+  // TODO: add evaluator that sets RSSBehaviorStatus
+
   if (rss_behavior_status_ == RSSBehaviorStatus::NORMAL_BEHAVIOR) {
     // execute normal
     sub_behavior_model_->Plan(min_planning_time, observed_world);
+    auto last_action = sub_behavior_model_->GetLastAction();
+    auto last_traj = sub_behavior_model_->GetLastTrajectory();
+    // set values
+    SetLastTrajectory(traj);
+    SetLastAction(action);
+    return traj;
+
   } else {
     safety_behavior_model_->Plan(min_planning_time, observed_world);
+    auto last_action = safety_behavior_model_->GetLastAction();
+    auto last_traj = safety_behavior_model_->GetLastTrajectory();
+    // set values
+    SetLastTrajectory(traj);
+    SetLastAction(action);
+    return traj;
   }
-
-  // TODO: set action and traj
-
-  // set values
-  Trajectory traj = std::get<0>(traj_action);
-  Action action = std::get<1>(traj_action);
-  SetLastTrajectory(traj);
-  SetLastAction(action);
-  return traj;
 }
 
 

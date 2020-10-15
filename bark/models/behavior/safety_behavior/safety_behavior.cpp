@@ -26,23 +26,22 @@ Trajectory BehaviorSafety::Plan(
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
-  // double dt = min_planning_time / (GetNumTrajectoryTimePoints() - 1);
-  // // interaction term off and GetTotalAcc returns const. acc.
-  // IDMRelativeValues rel_values{0., 0., false};
-  // std::tuple<Trajectory, Action> traj_action =
-  //   GenerateTrajectory(observed_world, lane_corr, rel_values, dt);
 
 
-  sub_behavior_model_->Plan(min_planning_time, observed_world);
+  if (dynamic_pointer_cast<BehaviorIDMLaneTracking>(sub_behavior_model_)) {
+    std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
+      dynamic_pointer_cast<BehaviorIDMLaneTracking>(sub_behavior_model_);
+    
+    idm_lane_tracking_behavior->Plan(min_planning_time, observed_world);
+    auto last_action = idm_lane_tracking_behavior->GetLastAction();
+    auto last_traj = idm_lane_tracking_behavior->GetLastTrajectory();
+    
+    // set values
+    SetLastTrajectory(traj);
+    SetLastAction(action);
+    return traj;
+  }
 
-  // TODO: set action and traj
-
-  // set values
-  Trajectory traj = std::get<0>(traj_action);
-  Action action = std::get<1>(traj_action);
-  SetLastTrajectory(traj);
-  SetLastAction(action);
-  return traj;
 }
 
 
