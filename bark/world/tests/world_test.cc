@@ -15,6 +15,9 @@
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/evaluation/evaluator_distance_to_goal.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist_long.hpp"
+
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/map/roadgraph.hpp"
@@ -135,7 +138,7 @@ TEST(world, world_step) {
   }*/
 }
 
-TEST(world, world_collision) {
+TEST(evaluator, collision) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
@@ -163,10 +166,107 @@ TEST(world, world_collision) {
 
   world->AddEvaluator("collision_agents", col_checker);
 
-  ASSERT_TRUE(world->Evaluate()["collision_agents"].which());
+  ASSERT_TRUE(boost::get<bool>(world->Evaluate()["collision_agents"]));
 }
 
-TEST(world, world_no_collision_agent) {
+TEST(evaluator, static_safe_dist) {
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("EvaluatorStaticSafeDist::LateralSafeDist", 1.4f);
+  params->SetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist", 1.4f);
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+
+  Polygon polygon(
+      Pose(0.0, 0.0, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 1), Point2d(1, 1),
+                           Point2d(1, 0), Point2d(0, 0)});
+
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
+                            polygon, params));
+
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 1.41, 0.0, 0.0, 5.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
+                            polygon, params));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->UpdateAgentRTree();
+
+  EvaluatorPtr safe_dist_checker(new EvaluatorStaticSafeDist(params, agent1->GetAgentId()));
+  world->AddEvaluator("safe_dist_agents", safe_dist_checker);
+
+  EXPECT_TRUEboost::get<int>(world->Evaluate()["safe_dist_agents"]));
+
+  // safe dist gives polygon widths of 
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state3 << 0.0, 1.4, 0.0, 0.0, 5.0;
+  AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
+                            polygon, params));
+  world->AddAgent(agent3);
+  world->UpdateAgentRTree();
+
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 1);
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 2);
+}
+
+
+TEST(evaluator, dynamic_safe_dist) {
+  auto params = std::make_shared<SetterParams>();
+  params->SetBool("EvaluatorDynamicSafeDistLong::ToRear", true);
+  params->SetReal("EvaluatorDynamicSafeDistLong::ReactionTime", 1.0f);
+  params->SetReal("EvaluatorDynamicSafeDistLong::MaxEgoDecceleration", 5.0f);
+  params->SetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", 5.0f);
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+
+  Polygon polygon(
+      Pose(0.0, 0.0, 0),
+      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 1), Point2d(1, 1),
+                           Point2d(1, 0), Point2d(0, 0)});
+
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
+                            polygon, params));
+
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
+  world->UpdateAgentRTree();
+
+  EvaluatorPtr safe_dist_checker(new EvaluatorDynamicSafeDistLong(params, world->GetAgents().begin()->first));
+  world->AddEvaluator("safe_dist_agents", safe_dist_checker);
+
+  // No other agent available -> safe = true
+  EXPECT_TRUE(boost::get<int>(world->Evaluate()["safe_dist_agents"]));
+
+  // safe dist gives polygon widths of 
+    State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state2 << 0.0, 1.41, 0.0, 0.0, 2.0;
+  AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
+                            polygon, params, goal_definition_ptr, world->GetMap()));
+  world->AddAgent(agent2);
+  world->UpdateAgentRTree();
+
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 1);
+  EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 2);
+}
+
+TEST(evaluator, no_collision_agent) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
@@ -191,13 +291,14 @@ TEST(world, world_no_collision_agent) {
   WorldPtr world(new World(params));
   world->AddAgent(agent1);
   world->AddAgent(agent2);
+  world->UpdateAgentRTree();
 
   world->AddEvaluator("collision_agents", col_checker);
 
-  ASSERT_TRUE(world->Evaluate()["collision_agents"].which());
+  ASSERT_FALSE(boost::get<bool>(world->Evaluate()["collision_agents"]));
 }
 
-TEST(world, world_outside_drivable_area) {
+TEST(evaluator, outside_drivable_area) {
   using bark::world::goal_definition::GoalDefinitionPolygon;
 
   auto params = std::make_shared<SetterParams>();
@@ -287,7 +388,7 @@ TEST(world, nearest_agents) {
   */
 }
 
-TEST(world, distance_to_goal) {
+TEST(evaluator, distance_to_goal) {
   auto params = std::make_shared<SetterParams>();
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
