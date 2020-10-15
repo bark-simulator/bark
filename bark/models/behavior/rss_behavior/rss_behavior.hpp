@@ -39,6 +39,14 @@ class RSSBehavior : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  void SetBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+    behavior_model_ = model;
+  } 
+
+  void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+    safety_behavior_model_ = model;
+  }
+
  private:
   std::shared_ptr<BehaviorModel> behavior_model_;
   std::shared_ptr<BehaviorModel> safety_behavior_model_;

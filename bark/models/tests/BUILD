@@ -140,6 +140,7 @@ cc_test(
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/tests:make_test_world",
         "//bark/models/behavior/idm:idm_lane_tracking",
+        "//bark/models/behavior/idm:idm_classic",
         "//bark/world/tests:make_test_xodr_map",
         "@gtest//:gtest_main",
         "@com_github_gflags_gflags//:gflags",

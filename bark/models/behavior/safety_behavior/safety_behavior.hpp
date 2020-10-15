@@ -35,8 +35,12 @@ class BehaviorSafety : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  void SetBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+    behavior_model_ = model;
+  } 
+
  private:
-  std::shared_ptr<BehaviorModel> sub_behavior_model_;
+  std::shared_ptr<BehaviorModel> behavior_model_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSafety::Clone() const {

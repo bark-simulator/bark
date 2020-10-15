@@ -29,10 +29,10 @@ Trajectory BehaviorSafety::Plan(
   }
 
   // for now we support only the BehaviorIDMLaneTracking
-  BARK_EXPECT_TRUE(dynamic_pointer_cast<BehaviorIDMLaneTracking>(sub_behavior_model_));
+  BARK_EXPECT_TRUE(dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_));
 
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
-    dynamic_pointer_cast<BehaviorIDMLaneTracking>(sub_behavior_model_);
+    dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
   
   // TODO: set velocity to zero and also set the target LaneCorridor
 
