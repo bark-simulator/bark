@@ -33,7 +33,7 @@ Trajectory BehaviorSafety::Plan(
   BARK_EXPECT_TRUE(std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_));
 
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
-    dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
+    std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
   
   // TODO: set the target LaneCorridor? currently it is always the current one
   GetParams()->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.);
