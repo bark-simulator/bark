@@ -28,6 +28,12 @@ Trajectory RSSBehavior::Plan(
   }
 
   // TODO: add evaluator that sets RSSBehaviorStatus
+  // auto eval_res = rss_evaluator_.Evaluate(observed_world);
+  // if (eval_res) {
+  //   rss_behavior_status_ = RSSBehaviorStatus::NORMAL_BEHAVIOR;
+  // } else {
+  //   rss_behavior_status_ = RSSBehaviorStatus::SAFE_BEHAVIOR;
+  // }
 
   if (rss_behavior_status_ == RSSBehaviorStatus::NORMAL_BEHAVIOR) {
     // execute normal
