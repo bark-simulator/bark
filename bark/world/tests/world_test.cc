@@ -323,7 +323,7 @@ TEST(evaluator, outside_drivable_area) {
 TEST(evaluator, safe_dist_drivable_area) {
   using bark::world::goal_definition::GoalDefinitionPolygon;
   auto params = std::make_shared<SetterParams>();
-  params->SetReal("EvaluatorSafeDistDrivableArea::LateralSafeDist", 3.0f);
+  params->SetReal("EvaluatorSafeDistDrivableArea::LateralSafeDist", 4.0f);
   params->SetReal("EvaluatorSafeDistDrivableArea::LongitudinalSafeDist", 1.4f);
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
