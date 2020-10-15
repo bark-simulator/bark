@@ -20,7 +20,7 @@
 using bark::models::behavior::BehaviorSafety;
 using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::behavior::BehaviorIDMClassic;
-using bark::models::behavior::RSSBehavior;
+using bark::models::behavior::BehaviorRSSConformant;
 using bark::models::behavior::BehaviorModelPtr;
 using bark::models::behavior::BehaviorStatus;
 using bark::world::Agent;
@@ -46,9 +46,9 @@ TEST(rss_behavior, init) {
   safety_behavior.SetBehaviorModel(behavior_lane_tracking);
 
   // rss behavior
-  auto rss_behavior = RSSBehavior(params);
+  auto rss_behavior = BehaviorRSSConformant(params);
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
-  rss_behavior.SetBehaviorModel(behavior_idm_classic);
+  rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
   rss_behavior.SetSafetyBehaviorModel(behavior_lane_tracking);
 }
 

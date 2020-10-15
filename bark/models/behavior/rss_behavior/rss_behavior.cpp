@@ -15,7 +15,7 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-Trajectory RSSBehavior::Plan(
+Trajectory BehaviorRSSConformant::Plan(
     float min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
@@ -27,19 +27,20 @@ Trajectory RSSBehavior::Plan(
     return GetLastTrajectory();
   }
 
-  // TODO: add evaluator that sets RSSBehaviorStatus
+  // TODO: add evaluator that sets BehaviorRSSConformantStatus
   // auto eval_res = rss_evaluator_.Evaluate(observed_world);
   // if (eval_res) {
-  //   rss_behavior_status_ = RSSBehaviorStatus::NORMAL_BEHAVIOR;
+  //   rss_behavior_status_ = BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR;
   // } else {
-  //   rss_behavior_status_ = RSSBehaviorStatus::SAFE_BEHAVIOR;
+  //   rss_behavior_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
+  //   world_time_of_last_rss_violation_ = observed_world.GetWorldTime();
   // }
 
-  if (rss_behavior_status_ == RSSBehaviorStatus::NORMAL_BEHAVIOR) {
+  if (rss_behavior_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR) {
     // execute normal
-    behavior_model_->Plan(min_planning_time, observed_world);
-    auto last_action = behavior_model_->GetLastAction();
-    auto last_traj = behavior_model_->GetLastTrajectory();
+    nominal_behavior_model_->Plan(min_planning_time, observed_world);
+    auto last_action = nominal_behavior_model_->GetLastAction();
+    auto last_traj = nominal_behavior_model_->GetLastTrajectory();
     // set values
     SetLastTrajectory(last_traj);
     SetLastAction(last_action);

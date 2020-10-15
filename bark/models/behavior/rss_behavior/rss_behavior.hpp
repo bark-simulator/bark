@@ -25,22 +25,23 @@ using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
 
-enum class RSSBehaviorStatus {SAFE_BEHAVIOR, NORMAL_BEHAVIOR};
+enum class BehaviorRSSConformantStatus {SAFE_BEHAVIOR, NOMINAL_BEHAVIOR};
 
-class RSSBehavior : public BehaviorModel {
+class BehaviorRSSConformant : public BehaviorModel {
  public:
-  explicit RSSBehavior(const commons::ParamsPtr& params) :
+  explicit BehaviorRSSConformant(const commons::ParamsPtr& params) :
     BehaviorModel(params),
-    rss_behavior_status_(RSSBehaviorStatus::NORMAL_BEHAVIOR) {}
+    rss_behavior_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
+    world_time_of_last_rss_violation_(-1) {}
 
-  virtual ~RSSBehavior() {}
+  virtual ~BehaviorRSSConformant() {}
 
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  void SetBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
-    behavior_model_ = model;
+  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+    nominal_behavior_model_ = model;
   } 
 
   void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
@@ -48,16 +49,17 @@ class RSSBehavior : public BehaviorModel {
   }
 
  private:
-  std::shared_ptr<BehaviorModel> behavior_model_;
+  std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorModel> safety_behavior_model_;
   // TODO: needs to be the RSS evaluator
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
-  RSSBehaviorStatus rss_behavior_status_;
+  BehaviorRSSConformantStatus rss_behavior_status_;
+  float world_time_of_last_rss_violation_;
 };
 
-inline std::shared_ptr<BehaviorModel> RSSBehavior::Clone() const {
-  std::shared_ptr<RSSBehavior> model_ptr =
-      std::make_shared<RSSBehavior>(*this);
+inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {
+  std::shared_ptr<BehaviorRSSConformant> model_ptr =
+      std::make_shared<BehaviorRSSConformant>(*this);
   return model_ptr;
 }
 
