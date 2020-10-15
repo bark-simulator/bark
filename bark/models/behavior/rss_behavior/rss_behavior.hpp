@@ -22,9 +22,10 @@ namespace behavior {
 
 using dynamic::Trajectory;
 using world::ObservedWorld;
+using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
 
-enum class RSSBehaviorStatus { SAFE_BEHAVIOR, NORMAL_BEHAVIOR};
+enum class RSSBehaviorStatus {SAFE_BEHAVIOR, NORMAL_BEHAVIOR};
 
 class RSSBehavior : public BehaviorModel {
  public:
@@ -40,7 +41,8 @@ class RSSBehavior : public BehaviorModel {
 
  private:
   std::shared_ptr<BehaviorModel> behavior_model_;
-  std::shared_ptr<BehaviorModel> safe_behavior_model_;
+  std::shared_ptr<BehaviorModel> safety_behavior_model_;
+  // TODO: needs to be the RSS evaluator
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   RSSBehaviorStatus rss_behavior_status_;
 };

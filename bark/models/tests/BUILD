@@ -136,7 +136,7 @@ cc_test(
     deps = [        
         "//bark/geometry",
         "//bark/models/behavior/safety_behavior:safety_behavior",
-        # "//bark/models/behavior/rss_behavior:rss_behavior",
+        "//bark/models/behavior/rss_behavior:rss_behavior",
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/tests:make_test_world",
         "//bark/models/behavior/idm:idm_lane_tracking",

@@ -31,22 +31,22 @@ Trajectory RSSBehavior::Plan(
 
   if (rss_behavior_status_ == RSSBehaviorStatus::NORMAL_BEHAVIOR) {
     // execute normal
-    sub_behavior_model_->Plan(min_planning_time, observed_world);
-    auto last_action = sub_behavior_model_->GetLastAction();
-    auto last_traj = sub_behavior_model_->GetLastTrajectory();
+    behavior_model_->Plan(min_planning_time, observed_world);
+    auto last_action = behavior_model_->GetLastAction();
+    auto last_traj = behavior_model_->GetLastTrajectory();
     // set values
-    SetLastTrajectory(traj);
-    SetLastAction(action);
-    return traj;
+    SetLastTrajectory(last_traj);
+    SetLastAction(last_action);
+    return last_traj;
 
   } else {
     safety_behavior_model_->Plan(min_planning_time, observed_world);
     auto last_action = safety_behavior_model_->GetLastAction();
     auto last_traj = safety_behavior_model_->GetLastTrajectory();
     // set values
-    SetLastTrajectory(traj);
-    SetLastAction(action);
-    return traj;
+    SetLastTrajectory(last_traj);
+    SetLastAction(last_action);
+    return last_traj;
   }
 }
 
