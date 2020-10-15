@@ -55,7 +55,7 @@ bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& obse
       }
     }
   }
-  return colliding;
+  return !colliding;
 }
 
 

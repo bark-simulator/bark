@@ -27,7 +27,7 @@ class EvaluatorSafeDistBase : public BaseEvaluator {
   }
   EvaluationReturn Evaluate(const world::ObservedWorld& observed_world) override {
     const auto safe_dist_check = CheckSafeDistance(observed_world);
-    violation_count_ += safe_dist_check ? 1 : 0;
+    violation_count_ += safe_dist_check ? 0 : 1;
     return EvaluationReturn(violation_count_);
   };
 
