@@ -22,7 +22,7 @@ Trajectory BehaviorRSSConformant::Plan(
   const auto& lane_corr = observed_world.GetLaneCorridor();
   if (!initial_lane_corr_) {
     initial_lane_corr_ = lane_corr;
-    safety_behavior_model_->SetLaneCorridor(lane_corr);
+    safety_behavior_model_->SetInitialLaneCorridor(lane_corr);
   }
 
   if (!lane_corr) {

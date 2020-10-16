@@ -54,13 +54,13 @@ class BehaviorRSSConformant : public BehaviorModel {
     nominal_behavior_model_ = model;
   } 
 
-  void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+  void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorSafety>& model){
     safety_behavior_model_ = model;
   }
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
-  std::shared_ptr<BehaviorModel> safety_behavior_model_;
+  std::shared_ptr<BehaviorSafety> safety_behavior_model_;
   // TODO: needs to be the RSS evaluator
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   BehaviorRSSConformantStatus rss_behavior_status_;

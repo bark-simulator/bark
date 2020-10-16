@@ -29,7 +29,7 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     BehaviorModel(params),
     BaseIDM(params),
     limit_steering_rate_(true),
-    external_lane_corr_(false) {
+    constant_lane_corr_(nullptr) {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);

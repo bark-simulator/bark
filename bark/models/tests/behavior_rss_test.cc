@@ -42,14 +42,14 @@ TEST(rss_behavior, init) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(params);
-  auto safety_behavior = BehaviorSafety(params);
-  safety_behavior.SetBehaviorModel(behavior_lane_tracking);
+  std::shared_ptr<BehaviorSafety> safety_behavior = std::make_shared<BehaviorSafety>(params);
+  safety_behavior->SetBehaviorModel(behavior_lane_tracking);
 
   // rss behavior
   auto rss_behavior = BehaviorRSSConformant(params);
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
   rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
-  rss_behavior.SetSafetyBehaviorModel(behavior_lane_tracking);
+  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
 }
 
 int main(int argc, char** argv) {
