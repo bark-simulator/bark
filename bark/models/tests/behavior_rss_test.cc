@@ -42,7 +42,8 @@ TEST(rss_behavior, init) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(params);
-  std::shared_ptr<BehaviorSafety> safety_behavior = std::make_shared<BehaviorSafety>(params);
+  std::shared_ptr<BehaviorSafety> safety_behavior =
+    std::make_shared<BehaviorSafety>(params);
   safety_behavior->SetBehaviorModel(behavior_lane_tracking);
 
   // rss behavior
@@ -50,6 +51,18 @@ TEST(rss_behavior, init) {
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
   rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
   rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+
+  auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
+  auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
+
+  // check whether it works to set the velocity
+  // NOTE: this will only work once the Plan() function of the BehaviorRSS has been called
+  // EXPECT_EQ(
+  //   safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 0.);
+
+  // TODO: add lane corridor assertion
+
+  // TODO: how do we test the full model
 }
 
 int main(int argc, char** argv) {

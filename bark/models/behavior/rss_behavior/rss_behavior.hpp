@@ -50,10 +50,16 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
+  // setter and getter
+  std::shared_ptr<BehaviorModel> GetNominalBehaviorModel() const {
+    return nominal_behavior_model_;
+  }
   void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
     nominal_behavior_model_ = model;
   } 
-
+  std::shared_ptr<BehaviorSafety> GetBehaviorSafetyModel() const {
+    return safety_behavior_model_;
+  }
   void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorSafety>& model){
     safety_behavior_model_ = model;
   }

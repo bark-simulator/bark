@@ -52,6 +52,10 @@ class BehaviorSafety : public BehaviorModel {
     initial_lane_corr_ = lc;
   }
 
+  ParamsPtr GetBehaviorSafetyParams() const {
+    return safety_behavior_params_;
+  }
+
  private:
   std::shared_ptr<BehaviorModel> behavior_model_;
   LaneCorridorPtr initial_lane_corr_;
