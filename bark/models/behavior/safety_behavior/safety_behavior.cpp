@@ -27,8 +27,7 @@ Trajectory BehaviorSafety::Plan(
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
     std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
   
-  // TODO: do not pass this via parameters
-  GetParams()->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.);
+  safety_behavior_params_->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.);
   idm_lane_tracking_behavior->SetConstantLaneCorridor(initial_lane_corr_);
 
   idm_lane_tracking_behavior->Plan(min_planning_time, observed_world);
