@@ -21,22 +21,15 @@ Trajectory BehaviorSafety::Plan(
     float min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
-  const auto& lane_corr = observed_world.GetLaneCorridor();
-  if (!lane_corr) {
-    LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
-              << ": Behavior status has expired!" << std::endl;
-    SetBehaviorStatus(BehaviorStatus::EXPIRED);
-    return GetLastTrajectory();
-  }
-
   // for now we support only the BehaviorIDMLaneTracking
   BARK_EXPECT_TRUE(std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_));
 
   std::shared_ptr<BehaviorIDMLaneTracking> idm_lane_tracking_behavior =
     std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(behavior_model_);
   
-  // TODO: set the target LaneCorridor? currently it is always the current one
+  // TODO: do not pass this via parameters
   GetParams()->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.);
+  idm_lane_tracking_behavior->SetConstantLaneCorridor(initial_lane_corr_);
 
   idm_lane_tracking_behavior->Plan(min_planning_time, observed_world);
   auto last_action = idm_lane_tracking_behavior->GetLastAction();
