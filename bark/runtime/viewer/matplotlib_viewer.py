@@ -64,12 +64,20 @@ class MPViewer(BaseViewer):
         center = polygon.center
         self.axes.plot(center[0], center[1], color=self.getColor(color))
 
-    def drawTrajectory(self, trajectory, color='black'):
+    def drawTrajectory(self, trajectory, color='black', **kwargs):
+        line_width = kwargs.pop("linewidth", 2)
+        line_style = kwargs.pop("linestyle", "-")
+        marker = kwargs.pop("marker", None)
+        marker_size = kwargs.pop("markersize", 12)
         if len(trajectory) > 0:
             self.axes.plot(
                 trajectory[:, int(StateDefinition.X_POSITION)],
                 trajectory[:, int(StateDefinition.Y_POSITION)],
-                color=self.getColor(color))
+                color=self.getColor(color),
+                linewidth=line_width,
+                linestyle=line_style,
+                marker=marker,
+                markersize = marker_size)
 
     def drawText(self, position, text, coordinate="axes", **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")
