@@ -24,12 +24,16 @@ using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::objects::AgentId;
 using bark::models::behavior::BehaviorIDMLaneTracking;
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
+
 
 class BehaviorSafety : public BehaviorModel {
  public:
   explicit BehaviorSafety(const commons::ParamsPtr& params) :
     BehaviorModel(params),
-    behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(params)) {}
+    behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(params)),
+    initial_lane_corr_(nullptr) {}
 
   virtual ~BehaviorSafety() {}
 
@@ -41,8 +45,13 @@ class BehaviorSafety : public BehaviorModel {
     behavior_model_ = model;
   } 
 
+  void SetInitialLaneCorridor(const LaneCorridorPtr& lc){
+    initial_lane_corr_ = lc;
+  }
+
  private:
   std::shared_ptr<BehaviorModel> behavior_model_;
+  LaneCorridorPtr initial_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSafety::Clone() const {

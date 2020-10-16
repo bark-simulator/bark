@@ -20,6 +20,9 @@ Trajectory BehaviorRSSConformant::Plan(
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   const auto& lane_corr = observed_world.GetLaneCorridor();
+  if (!initial_lane_corr_)
+    initial_lane_corr_ = lane_corr;
+
   if (!lane_corr) {
     LOG(INFO) << "Agent " << observed_world.GetEgoAgentId()
               << ": Behavior status has expired!" << std::endl;

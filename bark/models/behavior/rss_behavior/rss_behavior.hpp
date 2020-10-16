@@ -27,7 +27,8 @@ using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
-
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
 
 enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
@@ -40,7 +41,8 @@ class BehaviorRSSConformant : public BehaviorModel {
     // TODO: needs to be the RSS evaluator
     // rss_evaluator_(std::make_shared<BaseEvaluator>(params)),
     rss_behavior_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
-    world_time_of_last_rss_violation_(-1) {}
+    world_time_of_last_rss_violation_(-1),
+    initial_lane_corr_(nullptr) {}
 
   virtual ~BehaviorRSSConformant() {}
 
@@ -63,6 +65,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   BehaviorRSSConformantStatus rss_behavior_status_;
   float world_time_of_last_rss_violation_;
+  LaneCorridorPtr initial_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {
