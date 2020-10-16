@@ -25,6 +25,7 @@ py_binary(
           "//bark/runtime/tests:xodr_data",
           "//examples:params",
           "@benchmark_database//data/database1:database1",
+          "@benchmark_database//data/tutorial_database:tutorial_database",
           ]
 )
 
