@@ -32,10 +32,11 @@ class BehaviorSafety : public BehaviorModel {
  public:
   explicit BehaviorSafety(const ParamsPtr& params) :
     BehaviorModel(params),
-    safety_behavior_params_(params->AddChild("BehaviorSafety")),
-    behavior_model_(
-      std::make_shared<BehaviorIDMLaneTracking>(safety_behavior_params_)),
-    initial_lane_corr_(nullptr) {}
+    initial_lane_corr_(nullptr) {
+      safety_behavior_params_ = params->AddChild("BehaviorSafety");
+      behavior_model_ = std::make_shared<BehaviorIDMLaneTracking>(
+        safety_behavior_params_);
+    }
 
   virtual ~BehaviorSafety() {}
 
