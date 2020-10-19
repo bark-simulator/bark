@@ -92,11 +92,11 @@ TEST(rss_behavior, init) {
 }
 
 
-// void FwSim(
-//   int steps, const WorldPtr& world,
-//   const std::shared_ptr<BaseEvaluator>& eval) {
-  
-// }
+void FwSim(int steps, const WorldPtr& world, double dt = 0.2) {
+  for (int i=0; i < steps; i++) {
+    world->Step(dt);
+  }
+}
 
 TEST(rss_behavior, rss_behavior_system_test) {
   // Test-strategy: both time the ego agent is controlled by the
@@ -134,15 +134,22 @@ TEST(rss_behavior, rss_behavior_system_test) {
 
   // set behavior model
   ego_agent->SetBehaviorModel(rss_behavior);
-  std::shared_ptr<BaseEvaluator> rss_eval =
-    std::make_shared<DummyRSSEvaluator>(4);
-  rss_behavior->SetEvaluator(rss_eval);
 
-  // world step works
-  world->Step(0.2);
+  // set nominal evaluator
+  std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
+    std::make_shared<DummyRSSEvaluator>(1000);
+  rss_behavior->SetEvaluator(rss_eval_do_not_trigger);
+  auto world_nominal = world;
+  FwSim(20, world_nominal);
+  // TODO: assert lane corridor
 
-  // two simulation loops
-  // triggers one time it doesn't
+  // rss behavior with triggerd evaluator
+  std::shared_ptr<BaseEvaluator> rss_eval_trigger =
+    std::make_shared<DummyRSSEvaluator>(5);
+  rss_behavior->SetEvaluator(rss_eval_trigger);
+  auto world_rss_triggered = world->Clone();
+  FwSim(20, world_rss_triggered);
+  // TODO: assert lane corridor
 
   
 }
