@@ -15,6 +15,7 @@
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
 using bark::models::behavior::BehaviorSafety;
@@ -24,11 +25,31 @@ using bark::models::behavior::BehaviorRSSConformant;
 using bark::models::behavior::BehaviorModelPtr;
 using bark::models::behavior::BehaviorStatus;
 using bark::world::Agent;
+using bark::world::evaluation::EvaluationReturn;
+using bark::world::evaluation::BaseEvaluator;
 using bark::world::ObservedWorld;
 using bark::world::World;
 using bark::world::WorldPtr;
 using bark::commons::SetterParams;
 
+
+class DummyRSSEvaluator {
+ public:
+  DummyRSSEvaluator(int step_trigger) :
+    step_count_(0), step_trigger_(step_trigger) {}
+  virtual EvaluationReturn Evaluate(const world::World& world) {
+    step_count_++;
+    return (step_count_ > step_trigger_);
+  }
+  virtual EvaluationReturn Evaluate(
+      const world::ObservedWorld& observed_world) {
+    step_count_++;
+    return (step_count_ > step_trigger_);
+  }
+ private:
+ int step_count_;
+ int step_trigger_;
+};
 
 TEST(safe_behavior, init) {
   auto params = std::make_shared<SetterParams>();
