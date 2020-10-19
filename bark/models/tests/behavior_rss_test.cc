@@ -135,7 +135,7 @@ TEST(rss_behavior, rss_behavior_system_test) {
   FwSim(20, world_nominal);
   // if we perform the lane change we switch lanes to y=-7.5
   ASSERT_TRUE(ego_agent->GetCurrentState()[2] < -3.5); 
-  // std::cout << ego_agent->GetCurrentState() << std::endl;
+  std::cout << ego_agent->GetCurrentState() << std::endl;
 
 
   // simulate triggered
@@ -157,8 +157,10 @@ TEST(rss_behavior, rss_behavior_system_test) {
   // assert the velocity has been set to zero
   auto behavior_safety_model = rss_triggered_behavior->GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
+  EXPECT_NEAR(
+    safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 1, 0.1);
   
-  // std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
+  std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
   // assert that the velocity of the triggered agent is lower
   ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] < ego_agent->GetCurrentState()[4]);
 

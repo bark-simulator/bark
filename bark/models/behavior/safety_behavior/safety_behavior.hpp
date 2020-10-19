@@ -34,7 +34,9 @@ class BehaviorSafety : public BehaviorModel {
     BehaviorModel(params),
     initial_lane_corr_(nullptr) {
       safety_behavior_params_ = params->AddChild("BehaviorSafety");
-      safety_behavior_params_->SetReal("BehaviorIDMClassic::DesiredVelocity", 0.001);
+      safety_behavior_params_->SetReal("BehaviorIDMClassic::DesiredVelocity", 1.);
+      // safety_behavior_params_->SetReal(
+      //   "BehaviorIDMClassic::AccelerationLowerBound", -0.5);
       behavior_model_ = std::make_shared<BehaviorIDMLaneTracking>(
         safety_behavior_params_);
   }
