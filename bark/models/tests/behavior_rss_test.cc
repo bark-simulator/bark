@@ -31,6 +31,7 @@ using bark::world::ObservedWorld;
 using bark::world::World;
 using bark::world::WorldPtr;
 using bark::commons::SetterParams;
+using bark::world::tests::make_test_world;
 
 
 class DummyRSSEvaluator : public BaseEvaluator {
@@ -39,12 +40,12 @@ class DummyRSSEvaluator : public BaseEvaluator {
     step_count_(0), step_trigger_(step_trigger) {}
   virtual EvaluationReturn Evaluate(const World& world) {
     step_count_++;
-    return (step_count_ > step_trigger_);
+    return (step_count_ >= step_trigger_);
   }
   virtual EvaluationReturn Evaluate(
     const ObservedWorld& observed_world) {
     step_count_++;
-    return (step_count_ > step_trigger_);
+    return (step_count_ >= step_trigger_);
   }
 
  private:
@@ -95,6 +96,42 @@ TEST(rss_behavior, rss_behavior_system_test) {
   // BehaviorIDMLaneTracking and attempts to change from the right to the
   // left lane (by setting the target corridor). One time the dummy rss
   // evaluator intervenes and the lane-change is aborted.
+  auto params = std::make_shared<SetterParams>();
+
+  // First case, we start with the desired velocity. After num steps, we should
+  // advance
+  float ego_velocity, rel_distance = 7.0, velocity_difference = 0.0;
+  float time_step = 0.2f;
+
+  // should place an agent on the right lane (+3.5)
+  WorldPtr world =
+    make_test_world(0, rel_distance, ego_velocity, velocity_difference);
+
+  // nominal BehaviorIDMLaneTracking
+  auto nominal_behavior_lane_tracking =
+    std::make_shared<BehaviorIDMLaneTracking>(params);
+
+  // safety behavior
+  std::shared_ptr<BehaviorSafety> safety_behavior =
+    std::make_shared<BehaviorSafety>(params);
+  
+  // rss behavior
+  auto rss_behavior = BehaviorRSSConformant(params);
+  rss_behavior.SetNominalBehaviorModel(nominal_behavior_lane_tracking);
+  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+
+
+  // TODO: create function with passable evaluator; one time it
+  // triggers one time it doesn't
+
+  // set (dummy) RSS evaluator
+  // std::shared_ptr<BaseEvaluator> rss_eval =
+  //   std::make_shared<DummyRSSEvaluator>(4);
+  // rss_behavior.SetEvaluator(rss_eval);
+
+  // get agent with id=0 and assign behavior model
+  world->GetAgents()[0];
+
   
 }
 
