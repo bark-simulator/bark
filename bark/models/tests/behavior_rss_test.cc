@@ -91,6 +91,13 @@ TEST(rss_behavior, init) {
   //   safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 0.);
 }
 
+
+// void FwSim(
+//   int steps, const WorldPtr& world,
+//   const std::shared_ptr<BaseEvaluator>& eval) {
+  
+// }
+
 TEST(rss_behavior, rss_behavior_system_test) {
   // Test-strategy: both time the ego agent is controlled by the
   // BehaviorIDMLaneTracking and attempts to change from the right to the
@@ -106,31 +113,36 @@ TEST(rss_behavior, rss_behavior_system_test) {
   // should place an agent on the right lane (+3.5)
   WorldPtr world =
     make_test_world(0, rel_distance, ego_velocity, velocity_difference);
+  auto ego_agent = world->GetAgents().begin()->second;
 
-  // nominal BehaviorIDMLaneTracking
+  // nominal BehaviorIDMLaneTracking (changes to the left)
   auto nominal_behavior_lane_tracking =
     std::make_shared<BehaviorIDMLaneTracking>(params);
+  auto road_corridor = ego_agent->GetRoadCorridor();
+  auto lane_corridors = road_corridor->GetUniqueLaneCorridors();
+  nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[0]);
 
   // safety behavior
   std::shared_ptr<BehaviorSafety> safety_behavior =
     std::make_shared<BehaviorSafety>(params);
   
   // rss behavior
-  auto rss_behavior = BehaviorRSSConformant(params);
-  rss_behavior.SetNominalBehaviorModel(nominal_behavior_lane_tracking);
-  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+  std::shared_ptr<BehaviorRSSConformant> rss_behavior =
+    std::make_shared<BehaviorRSSConformant>(params);
+  rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
+  rss_behavior->SetSafetyBehaviorModel(safety_behavior);
 
+  // set behavior model
+  ego_agent->SetBehaviorModel(rss_behavior);
+  std::shared_ptr<BaseEvaluator> rss_eval =
+    std::make_shared<DummyRSSEvaluator>(4);
+  rss_behavior->SetEvaluator(rss_eval);
 
-  // TODO: create function with passable evaluator; one time it
+  // world step works
+  world->Step(0.2);
+
+  // two simulation loops
   // triggers one time it doesn't
-
-  // set (dummy) RSS evaluator
-  // std::shared_ptr<BaseEvaluator> rss_eval =
-  //   std::make_shared<DummyRSSEvaluator>(4);
-  // rss_behavior.SetEvaluator(rss_eval);
-
-  // get agent with id=0 and assign behavior model
-  world->GetAgents()[0];
 
   
 }
