@@ -110,7 +110,7 @@ TEST(rss_behavior, rss_behavior_system_test) {
   float ego_velocity, rel_distance = 7.0, velocity_difference = 0.0;
   float time_step = 0.2f;
 
-  // should place an agent on the right lane (+3.5)
+  // should place an agent on the left lane (-1.75)
   WorldPtr world =
     make_test_world(0, rel_distance, ego_velocity, velocity_difference);
   auto ego_agent = world->GetAgents().begin()->second;
@@ -120,7 +120,12 @@ TEST(rss_behavior, rss_behavior_system_test) {
     std::make_shared<BehaviorIDMLaneTracking>(params);
   auto road_corridor = ego_agent->GetRoadCorridor();
   auto lane_corridors = road_corridor->GetUniqueLaneCorridors();
-  nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[0]);
+  std::cout << "lane corrs:" << std::endl;
+  for (const auto& lc : lane_corridors ) {
+    std::cout << lc << std::endl;
+  }
+  std::cout << "---" << std::endl;
+  nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[1]);
   
   // rss behavior
   std::shared_ptr<BehaviorRSSConformant> rss_behavior =
@@ -145,10 +150,13 @@ TEST(rss_behavior, rss_behavior_system_test) {
   std::shared_ptr<BaseEvaluator> rss_eval_trigger =
     std::make_shared<DummyRSSEvaluator>(5);
   auto triggered_behavior_model = ego_agent_triggered->GetBehaviorModel();
-  auto rss_triggered_behavior =
-    std::dynamic_pointer_cast<BehaviorRSSConformant>(triggered_behavior_model);
+  // rss behavior triggered
+  std::shared_ptr<BehaviorRSSConformant> rss_triggered_behavior =
+    std::make_shared<BehaviorRSSConformant>(params);
+  rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
   rss_triggered_behavior->SetEvaluator(rss_eval_trigger);
   ego_agent_triggered->SetBehaviorModel(rss_triggered_behavior);
+  
   FwSim(20, world_rss_triggered);
   // TODO: assert lane corridor
   std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
