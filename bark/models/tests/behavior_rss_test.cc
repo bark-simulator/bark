@@ -149,8 +149,11 @@ TEST(rss_behavior, rss_behavior_system_test) {
   auto ego_agent_triggered = world_rss_triggered->GetAgents().begin()->second;
   std::shared_ptr<BaseEvaluator> rss_eval_trigger =
     std::make_shared<DummyRSSEvaluator>(5);
-  rss_behavior->SetEvaluator(rss_eval_trigger);
-  ego_agent_triggered->SetBehaviorModel(rss_behavior);
+  auto triggered_behavior_model = ego_agent_triggered->GetBehaviorModel();
+  auto rss_triggered_behavior =
+    std::dynamic_pointer_cast<BehaviorRSSConformant>(triggered_behavior_model);
+  rss_triggered_behavior->SetEvaluator(rss_eval_trigger);
+  ego_agent_triggered->SetBehaviorModel(rss_triggered_behavior);
   FwSim(20, world_rss_triggered);
   // TODO: assert lane corridor
   std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
