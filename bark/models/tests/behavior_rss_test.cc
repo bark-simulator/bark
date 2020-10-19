@@ -84,11 +84,6 @@ TEST(rss_behavior, init) {
 
   auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
-
-  // check whether it works to set the velocity
-  // NOTE: this will only work once the Plan() function of the BehaviorRSS has been called
-  // EXPECT_EQ(
-  //   safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 0.);
 }
 
 
@@ -120,11 +115,6 @@ TEST(rss_behavior, rss_behavior_system_test) {
     std::make_shared<BehaviorIDMLaneTracking>(params);
   auto road_corridor = ego_agent->GetRoadCorridor();
   auto lane_corridors = road_corridor->GetUniqueLaneCorridors();
-  // std::cout << "lane corrs:" << std::endl;
-  // for (const auto& lc : lane_corridors ) {
-  //   std::cout << lc << std::endl;
-  // }
-  // std::cout << "---" << std::endl;
   auto initial_lane_corr = lane_corridors[0];
   nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[1]);
   
@@ -145,6 +135,7 @@ TEST(rss_behavior, rss_behavior_system_test) {
   FwSim(20, world_nominal);
   // if we perform the lane change we switch lanes to y=-7.5
   ASSERT_TRUE(ego_agent->GetCurrentState()[2] < -3.5); 
+  // std::cout << ego_agent->GetCurrentState() << std::endl;
 
 
   // simulate triggered
@@ -162,6 +153,15 @@ TEST(rss_behavior, rss_behavior_system_test) {
   FwSim(20, world_rss_triggered);
   // if we do not perform the lane change we stay on the lane y=-1.75
   ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[2] > -3.5); 
+  
+  // assert the velocity has been set to zero
+  auto behavior_safety_model = rss_triggered_behavior->GetBehaviorSafetyModel();
+  auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
+  
+  // std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
+  // assert that the velocity of the triggered agent is lower
+  ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] < ego_agent->GetCurrentState()[4]);
+
 }
 
 int main(int argc, char** argv) {
