@@ -35,10 +35,11 @@ Trajectory BehaviorRSSConformant::Plan(
   // TODO: cast and assert that it is the RSS evaluator
   auto eval_res = boost::get<bool>(rss_evaluator_->Evaluate(observed_world));
   if (eval_res) {
-    rss_behavior_status_ = BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR;
-  } else {
+    LOG(INFO) << "RSS is violated." << std::endl;
     rss_behavior_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
     world_time_of_last_rss_violation_ = observed_world.GetWorldTime();
+  } else {
+    rss_behavior_status_ = BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR;
   }
 
   if (rss_behavior_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR) {

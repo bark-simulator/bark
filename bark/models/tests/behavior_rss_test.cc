@@ -134,24 +134,27 @@ TEST(rss_behavior, rss_behavior_system_test) {
 
   // set behavior model
   ego_agent->SetBehaviorModel(rss_behavior);
-
-  // set nominal evaluator
   std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
     std::make_shared<DummyRSSEvaluator>(1000);
   rss_behavior->SetEvaluator(rss_eval_do_not_trigger);
   auto world_nominal = world;
+  auto world_rss_triggered = world->Clone();
+
+  // simulate nominal
   FwSim(20, world_nominal);
   // TODO: assert lane corridor
+  std::cout << ego_agent->GetCurrentState() << std::endl;
 
-  // rss behavior with triggerd evaluator
+  // simulate triggered
+  auto ego_agent_triggered = world_rss_triggered->GetAgents().begin()->second;
   std::shared_ptr<BaseEvaluator> rss_eval_trigger =
     std::make_shared<DummyRSSEvaluator>(5);
   rss_behavior->SetEvaluator(rss_eval_trigger);
-  auto world_rss_triggered = world->Clone();
+  ego_agent_triggered->SetBehaviorModel(rss_behavior);
   FwSim(20, world_rss_triggered);
   // TODO: assert lane corridor
+  std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
 
-  
 }
 
 int main(int argc, char** argv) {
