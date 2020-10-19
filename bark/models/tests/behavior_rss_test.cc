@@ -33,22 +33,23 @@ using bark::world::WorldPtr;
 using bark::commons::SetterParams;
 
 
-class DummyRSSEvaluator {
+class DummyRSSEvaluator : public BaseEvaluator {
  public:
   DummyRSSEvaluator(int step_trigger) :
     step_count_(0), step_trigger_(step_trigger) {}
-  virtual EvaluationReturn Evaluate(const world::World& world) {
+  virtual EvaluationReturn Evaluate(const World& world) {
     step_count_++;
     return (step_count_ > step_trigger_);
   }
   virtual EvaluationReturn Evaluate(
-      const world::ObservedWorld& observed_world) {
+    const ObservedWorld& observed_world) {
     step_count_++;
     return (step_count_ > step_trigger_);
   }
+
  private:
- int step_count_;
- int step_trigger_;
+  int step_count_;
+  int step_trigger_;
 };
 
 TEST(safe_behavior, init) {
@@ -62,7 +63,8 @@ TEST(safe_behavior, init) {
 TEST(rss_behavior, init) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
-  auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(params);
+  auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(
+    params);
   std::shared_ptr<BehaviorSafety> safety_behavior =
     std::make_shared<BehaviorSafety>(params);
   safety_behavior->SetBehaviorModel(behavior_lane_tracking);
@@ -72,6 +74,11 @@ TEST(rss_behavior, init) {
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
   rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
   rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+
+  // set (dummy) RSS evaluator
+  std::shared_ptr<BaseEvaluator> rss_eval =
+    std::make_shared<DummyRSSEvaluator>(4);
+  rss_behavior.SetEvaluator(rss_eval);
 
   auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
