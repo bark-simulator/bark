@@ -52,6 +52,7 @@ class DummyRSSEvaluator : public BaseEvaluator {
   int step_trigger_;
 };
 
+
 TEST(safe_behavior, init) {
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(params);
@@ -87,10 +88,14 @@ TEST(rss_behavior, init) {
   // NOTE: this will only work once the Plan() function of the BehaviorRSS has been called
   // EXPECT_EQ(
   //   safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 0.);
+}
 
-  // TODO: add lane corridor assertion
-
-  // TODO: how do we test the full model
+TEST(rss_behavior, rss_behavior_system_test) {
+  // Test-strategy: both time the ego agent is controlled by the
+  // BehaviorIDMLaneTracking and attempts to change from the right to the
+  // left lane (by setting the target corridor). One time the dummy rss
+  // evaluator intervenes and the lane-change is aborted.
+  
 }
 
 int main(int argc, char** argv) {
