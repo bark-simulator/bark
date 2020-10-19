@@ -121,16 +121,11 @@ TEST(rss_behavior, rss_behavior_system_test) {
   auto road_corridor = ego_agent->GetRoadCorridor();
   auto lane_corridors = road_corridor->GetUniqueLaneCorridors();
   nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[0]);
-
-  // safety behavior
-  std::shared_ptr<BehaviorSafety> safety_behavior =
-    std::make_shared<BehaviorSafety>(params);
   
   // rss behavior
   std::shared_ptr<BehaviorRSSConformant> rss_behavior =
     std::make_shared<BehaviorRSSConformant>(params);
   rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
-  rss_behavior->SetSafetyBehaviorModel(safety_behavior);
 
   // set behavior model
   ego_agent->SetBehaviorModel(rss_behavior);
