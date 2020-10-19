@@ -49,7 +49,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   double t_i = 0., acc = 0.;
   geometry::Line line;
   if (constant_lane_corr_ != nullptr) {
-    std::cout << "using const. lane corr: " << constant_lane_corr_ << std::endl;
+    // std::cout << "using const. lane corr: " << constant_lane_corr_ << std::endl;
     line = constant_lane_corr_->GetCenterLine();
   } else {
     line = lane_corr->GetCenterLine();
