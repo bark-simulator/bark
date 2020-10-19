@@ -120,11 +120,12 @@ TEST(rss_behavior, rss_behavior_system_test) {
     std::make_shared<BehaviorIDMLaneTracking>(params);
   auto road_corridor = ego_agent->GetRoadCorridor();
   auto lane_corridors = road_corridor->GetUniqueLaneCorridors();
-  std::cout << "lane corrs:" << std::endl;
-  for (const auto& lc : lane_corridors ) {
-    std::cout << lc << std::endl;
-  }
-  std::cout << "---" << std::endl;
+  // std::cout << "lane corrs:" << std::endl;
+  // for (const auto& lc : lane_corridors ) {
+  //   std::cout << lc << std::endl;
+  // }
+  // std::cout << "---" << std::endl;
+  auto initial_lane_corr = lane_corridors[0];
   nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[1]);
   
   // rss behavior
@@ -142,8 +143,9 @@ TEST(rss_behavior, rss_behavior_system_test) {
 
   // simulate nominal
   FwSim(20, world_nominal);
-  // TODO: assert lane corridor
-  std::cout << ego_agent->GetCurrentState() << std::endl;
+  // if we perform the lane change we switch lanes to y=-7.5
+  ASSERT_TRUE(ego_agent->GetCurrentState()[2] < -3.5); 
+
 
   // simulate triggered
   auto ego_agent_triggered = world_rss_triggered->GetAgents().begin()->second;
@@ -156,11 +158,10 @@ TEST(rss_behavior, rss_behavior_system_test) {
   rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
   rss_triggered_behavior->SetEvaluator(rss_eval_trigger);
   ego_agent_triggered->SetBehaviorModel(rss_triggered_behavior);
-  
-  FwSim(20, world_rss_triggered);
-  // TODO: assert lane corridor
-  std::cout << ego_agent_triggered->GetCurrentState() << std::endl;
 
+  FwSim(20, world_rss_triggered);
+  // if we do not perform the lane change we stay on the lane y=-1.75
+  ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[2] > -3.5); 
 }
 
 int main(int argc, char** argv) {
