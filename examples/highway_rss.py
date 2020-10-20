@@ -30,6 +30,7 @@ param_server = ParameterServer(
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
+param_server["World"]["FracLateralOffset"] = 2.0
 
 param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
@@ -89,9 +90,9 @@ sim_real_time_factor = param_server["simulation"][
     "execution in real-time or faster",
     0.5]
 
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/home/hart/Dokumente/2020/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time,
+                       fig_path="/tmp/video")
 
 # gym like interface
 env = Runtime(step_time=0.2,
@@ -136,7 +137,7 @@ param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
 
 
 # run 3 scenarios
-for episode in range(0, 100):
+for episode in range(0, 3):
     env.reset()
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
@@ -156,4 +157,4 @@ for episode in range(0, 100):
         print_rss_safety_response(evaluator_rss, current_world)
         time.sleep(sim_step_time / sim_real_time_factor)
 
-# viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
+# viewer.export_video(filename="/tmp/highway_rss", remove_image_dir=False)

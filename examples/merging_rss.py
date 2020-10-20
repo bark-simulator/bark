@@ -56,10 +56,11 @@ param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
-param_server["World"]["FracLateralOffset"] = 0.8
+param_server["World"]["FracLateralOffset"] = 2.0
 
 param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
 
 SetVerboseLevel(0)
 
@@ -91,9 +92,9 @@ scenarios = \
 
 # viewer
 viewer = MPViewer(params=param_server,
-                  x_range=[-35, 35],
-                  y_range=[-35, 35],
-                  follow_agent_id=True)
+                  # x_range=[-35, 35],
+                  # y_range=[-35, 35],
+                  follow_agent_id=False)
 # viewer = Panda3dViewer(params=param_server,
 #                        x_range=[-40, 40],
 #                        y_range=[-40, 40],
@@ -108,9 +109,9 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/Users/hart/2019/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time,
+                       fig_path="/tmp/video")
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -153,8 +154,8 @@ param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dy
 param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
 
 
-# run 3 scenarios
-for episode in range(0, 100):
+# run n scenarios
+for episode in range(0, 10):
     env.reset()
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
@@ -174,4 +175,4 @@ for episode in range(0, 100):
         print_rss_safety_response(evaluator_rss, current_world)
         time.sleep(sim_step_time / sim_real_time_factor)
 
-# viewer.export_video(filename="/home/hart/Dokumente/2020/bark/video/video", remove_image_dir=False)
+viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)
