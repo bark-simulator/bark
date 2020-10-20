@@ -93,12 +93,25 @@ void Agent::UpdateStateAction() {
 }
 
 bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
-  if (!goal_definition_) {
+   if (goal_definition_ && road_corridor_road_ids_.empty()) {
+    road_corridor_ = map_interface->GenerateRoadCorridor(
+    GetCurrentPosition(),
+    goal_definition_->GetShape());
+    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
+  } else if(!road_corridor_road_ids_.empty()) {
+    LOG(INFO) << "Road corridor from ids" << road_corridor_road_ids_;
+    map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
+                                  road_corridor_driving_direction_);
+    road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
+                                              road_corridor_driving_direction_);
+  } else {
+    LOG(INFO) << "Agent has map interface but no information to generate road corridor.";
     return false;
   }
-  road_corridor_ = map_interface->GenerateRoadCorridor(
-      GetCurrentPosition(), goal_definition_->GetShape());
-  if (!road_corridor_) {
+
+  if(!road_corridor_) {
+    LOG(INFO) << "No corridor for agent found.";
     return false;
   }
   return true;

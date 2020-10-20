@@ -74,10 +74,12 @@ void python_agent(py::module m) {
                 a.GetDynamicModel(),                             // 8
                 a.GetCurrentState(),                             // 9
                 a.GetFirstValidTimestamp(),                      // 10
-                GoalDefinitionToPython(a.GetGoalDefinition()));  // 11
+                GoalDefinitionToPython(a.GetGoalDefinition()),  // 11
+                a.GetRoadCorridorRoadIds(),                     // 12
+                a.GetRoadCorridorDrivingDirection());           // 13
           },
           [](py::tuple t) {
-            if (t.size() != 11)
+            if (t.size() != 13)
               throw std::runtime_error("Invalid agent state!");
 
             using bark::models::dynamic::SingleTrackModel;
@@ -93,6 +95,8 @@ void python_agent(py::module m) {
             agent.SetAgentId(t[2].cast<AgentId>());
             agent.SetFirstValidTimestamp(t[9].cast<float>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+            agent.SetRoadCorridorRoadIds(t[11].cast<std::vector<bark::world::map::XodrRoadId>>());
+            agent.SetRoadCorridorDrivingDirection(t[12].cast<bark::world::map::XodrDrivingDirection>());
             return agent;
           }));
 
