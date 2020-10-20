@@ -17,4 +17,4 @@ jobs:
       - name: Getting into venv
         run: . ./bark/python_wrapper/venv/bin/activate
       - name: Runing bazel test
-        run: bazel test //... --define ltl=true
+        run: bazel test //... --define ltl_rules=true

@@ -29,11 +29,15 @@ Agent::Agent(const State& initial_state,
       execution_model_(execution_model),
       history_(),
       max_history_length_(10),
+      first_valid_timestamp_(0.0),
       goal_definition_(goal_definition) {
   if (params) {
     max_history_length_ = params->GetInt(
         "MaxHistoryLength",
         "Maximum number of state-input pairs in state-input history", 50);
+    first_valid_timestamp_ = params->GetReal(
+        "FirstValidTimestamp",
+        "First valid time stamp at which agent shall be simulated", 0.0);
   }
 
   models::behavior::StateActionPair pair;
@@ -64,7 +68,10 @@ Agent::Agent(const Agent& other_agent)
       road_corridor_(other_agent.road_corridor_),
       history_(other_agent.history_),
       max_history_length_(other_agent.max_history_length_),
-      goal_definition_(other_agent.goal_definition_) {}
+      first_valid_timestamp_(other_agent.first_valid_timestamp_),
+      goal_definition_(other_agent.goal_definition_),
+      road_corridor_road_ids_(other_agent.road_corridor_road_ids_),
+      road_corridor_driving_direction_(other_agent.road_corridor_driving_direction_) {}
 
 void Agent::PlanBehavior(const float& min_planning_dt,
                          const ObservedWorld& observed_world) {
@@ -88,12 +95,25 @@ void Agent::UpdateStateAction() {
 }
 
 bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
-  if (!goal_definition_) {
+   if (goal_definition_ && road_corridor_road_ids_.empty()) {
+    road_corridor_ = map_interface->GenerateRoadCorridor(
+    GetCurrentPosition(),
+    goal_definition_->GetShape());
+    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
+  } else if(!road_corridor_road_ids_.empty()) {
+    LOG(INFO) << "Road corridor from ids" << road_corridor_road_ids_;
+    map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
+                                  road_corridor_driving_direction_);
+    road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
+                                              road_corridor_driving_direction_);
+  } else {
+    LOG(INFO) << "Agent has map interface but no information to generate road corridor.";
     return false;
   }
-  road_corridor_ = map_interface->GenerateRoadCorridor(
-      GetCurrentPosition(), goal_definition_->GetShape());
-  if (!road_corridor_) {
+
+  if(!road_corridor_) {
+    LOG(INFO) << "No corridor for agent found.";
     return false;
   }
   return true;
@@ -123,6 +143,17 @@ Polygon Agent::GetPolygonFromState(const State& state) const {
 bool Agent::AtGoal() const {
   BARK_EXPECT_TRUE((bool)goal_definition_);
   return goal_definition_->AtGoal(*this);
+}
+
+/**
+ * @brief checks validity of agent. feature is required with simulating datasets in closed loop.
+ * 
+ * @param world_time ... current world time
+ * @return true if agent is valid
+ */
+bool Agent::IsValidAtTime(const float& world_time) const {
+  return isgreaterequal(world_time + std::numeric_limits<float>::epsilon(),
+                        first_valid_timestamp_);
 }
 
 std::shared_ptr<Object> Agent::Clone() const {

@@ -55,8 +55,12 @@ void python_agent(py::module m) {
       .def_property_readonly("state", &Agent::GetCurrentState)
       .def_property("road_corridor", &Agent::GetRoadCorridor,
                     &Agent::SetRoadCorridor)
+      .def_property_readonly("road_corridor_road_ids", &Agent::GetRoadCorridorRoadIds)
+      .def_property_readonly("road_corridor_driving_direction", &Agent::GetRoadCorridorDrivingDirection)
       .def_property("goal_definition", &Agent::GetGoalDefinition,
                     &Agent::SetGoalDefinition)
+      .def_property("first_valid_timestamp", &Agent::GetFirstValidTimestamp, &Agent::SetFirstValidTimestamp)
+      .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
       .def(py::pickle(
@@ -71,10 +75,13 @@ void python_agent(py::module m) {
                 a.GetExecutionModel(),                           // 7
                 a.GetDynamicModel(),                             // 8
                 a.GetCurrentState(),                             // 9
-                GoalDefinitionToPython(a.GetGoalDefinition()));  // 10
+                a.GetFirstValidTimestamp(),                      // 10
+                GoalDefinitionToPython(a.GetGoalDefinition()),  // 11
+                a.GetRoadCorridorRoadIds(),                     // 12
+                a.GetRoadCorridorDrivingDirection());           // 13
           },
           [](py::tuple t) {
-            if (t.size() != 10)
+            if (t.size() != 13)
               throw std::runtime_error("Invalid agent state!");
 
             using bark::models::dynamic::SingleTrackModel;
@@ -86,9 +93,12 @@ void python_agent(py::module m) {
                         std::make_shared<ExecutionModelInterpolate>(
                             t[6].cast<ExecutionModelInterpolate>()),
                         t[1].cast<bark::geometry::Polygon>(), nullptr,
-                        PythonToGoalDefinition(t[9].cast<py::tuple>()));
+                        PythonToGoalDefinition(t[10].cast<py::tuple>()));
             agent.SetAgentId(t[2].cast<AgentId>());
+            agent.SetFirstValidTimestamp(t[9].cast<float>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+            agent.SetRoadCorridorRoadIds(t[11].cast<std::vector<bark::world::map::XodrRoadId>>());
+            agent.SetRoadCorridorDrivingDirection(t[12].cast<bark::world::map::XodrDrivingDirection>());
             return agent;
           }));
 
