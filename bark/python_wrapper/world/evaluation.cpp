@@ -125,7 +125,6 @@ void python_evaluation(py::module m) {
       });
 #endif
 
-
   m.def("CaptureAgentStates", py::overload_cast<const World&>(
     &CaptureAgentStates<World>));
   m.def("CaptureAgentStates", py::overload_cast<const ObservedWorld&>(
