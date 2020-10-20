@@ -264,6 +264,42 @@ inline Point2d GetPointAtIdx(const Line& l, const uint idx) {
   }
 }
 
+inline Eigen::VectorXf Gradient(Eigen::VectorXf vec) {
+  // calculating central difference
+  Eigen::VectorXf g(vec.size());
+  for (int i=1; i<vec.size()-1; i++) {
+    g(i)=(vec(i+1)-vec(i-1))/2;
+  }
+  // TODO: find better solution for first and last point
+  g(0)=g(1);
+  g(vec.size()-1)=g(vec.size()-2);
+  return g;
+}
+
+
+inline Eigen::VectorXf GetCurvature(Line l)  {
+
+  Eigen::MatrixXf larray = l.ToArray();
+  Eigen::VectorXf dx = Gradient(larray.col(0));
+  Eigen::VectorXf ddx = Gradient(dx);
+  Eigen::VectorXf dy = Gradient(larray.col(1));
+  Eigen::VectorXf ddy = Gradient(dy);
+
+  // elementwise, as pow(vector, scalar) does not work
+  Eigen::VectorXf curvature(larray.rows());
+  for (int i=0; i<curvature.size(); i++) {
+    float n = dx(i) * ddy(i) - ddx(i) * dy(i);
+    float r = pow( dx(i), 2) + pow( dy(i), 2);
+    float d = pow( r, 1.5);
+    if (d == 0) {
+      curvature(i) = 0;
+    } else {
+      curvature(i) = n/d;
+    }
+  }
+  return curvature;
+}
+
 inline Point2d GetPointAtS(Line l, float s) {
   const size_t& length = l.obj_.size();
   if (length <= 1) {  // this is an error Line consist of 0 or 1 element
