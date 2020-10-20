@@ -19,6 +19,7 @@
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
+#include "bark/python_wrapper/world/prediction.hpp"
 
 namespace py = pybind11;
 using namespace bark::world::objects;
@@ -121,4 +122,6 @@ void python_world(py::module m) {
   python_map(m.def_submodule("map", "mapInterface wrapping"));
 
   python_evaluation(m.def_submodule("evaluation", "evaluators"));
+
+  python_prediction(m.def_submodule("prediction", "Prediction Settings"));
 }

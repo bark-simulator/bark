@@ -11,8 +11,16 @@
 #include "bark_mcts/python_wrapper/python_planner_uct.hpp"
 #endif
 
+#ifdef PLANNER_RULES_MCTS
+#include "python/python_planner_rules_mcts.hpp"
+#endif
+
 void python_behavior_plan(py::module m) {
 #ifdef PLANNER_UCT
   python_planner_uct(m);
+#endif
+
+#ifdef PLANNER_RULES_MCTS
+  python_planner_rules_mcts(m);
 #endif
 }

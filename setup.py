@@ -7,15 +7,14 @@ with open("README.md", "r") as fh:
 
 # A dummy native extension to mark module as platform specific
 ext_modules= []
-if sys.platform != 'linux':
-    try:
-        os.mkdir('build')
-    except FileExistsError:
-        # directory already exists - is already created by earlier run
-        pass
-    open('build/temp.c','w').close()
-    temp_ext = Extension('_temp', sources=['build/temp.c'])
-    ext_modules.append(temp_ext)
+try:
+    os.mkdir('build')
+except FileExistsError:
+    # directory already exists - is already created by earlier run
+    pass
+open('build/temp.c','w').close()
+temp_ext = Extension('_temp', sources=['build/temp.c'])
+ext_modules.append(temp_ext)
 
 setup(
     name = "bark-simulator",

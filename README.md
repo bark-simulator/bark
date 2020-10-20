@@ -4,9 +4,9 @@
 
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![macOS-CI Build](https://github.com/bark-simulator/bark/workflows/macOS-CI/badge.svg)
-![NIGHTLY Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 ![NIGHTLY RSS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RSS/badge.svg)
+![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**ARK**ing
 
@@ -20,8 +20,10 @@ The BARK ecosystem is composed of multiple components that all share the common 
 
 * [BARK-ML](https://github.com/bark-simulator/bark-ml/): Machine learning library for decision-making in autonomous driving.
 * [BARK-MCTS](https://github.com/bark-simulator/planner-mcts): Integrates a template-based C++ Monte Carlo Tree Search Library into BARK to support development of both single- and multi-agent search methods.
+* [BARK-Rules-MCTS](https://github.com/bark-simulator/planner-rules-mcts): Integrates traffic rules within Monte Carlo Tree Search with lexicographic ordering.
 
 * [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Provides a framework to integrate multiple BARK scenario sets into a database. The database module supports binary seriliazation of randomly generated scenarios to ensure exact  reproducibility of behavior benchmarks accross systems. 
+* [BARK-Rule-Monitoring](https://github.com/bark-simulator/rule-monitoring): Provides runtime verification of LTL Rules on simulated BARK traces.
 * [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
 
 ## Quick Start
@@ -53,13 +55,12 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 If you use BARK, please cite us using the following paper:
 
 ```
-@misc{bernhard2020bark,
-    title={BARK: Open Behavior Benchmarking in Multi-Agent Environments},
-    author={Julian Bernhard and Klemens Esterle and Patrick Hart and Tobias Kessler},
-    year={2020},
-    eprint={2003.02604},
-    archivePrefix={arXiv},
-    primaryClass={cs.MA}
+@inproceedings{Bernhard2020,
+    title = {BARK: Open Behavior Benchmarking in Multi-Agent Environments},
+    author = {Bernhard, Julian and Esterle, Klemens and Hart, Patrick and Kessler, Tobias},
+    booktitle = {2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+    url = {https://arxiv.org/pdf/2003.02604.pdf},
+    year = {2020}
 }
 ```
 

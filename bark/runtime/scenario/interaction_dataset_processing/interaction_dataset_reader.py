@@ -6,6 +6,9 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+import logging
+import os
+
 from bark.core.world.agent import Agent
 from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.core.models.dynamic import StateDefinition
@@ -51,8 +54,11 @@ def ShapeFromTrack(track, wheelbase=2.7):
     length = track.length
     width = track.width
     pose = [0.0, 0.0, 0.0]
-    points = [[length / 2.0 + offset, -width / 2.0], [length / 2.0 + offset, width / 2.0], [-length / 2.0 + offset, width / 2.0],
-              [-length / 2.0 + offset, -width / 2.0], [length / 2.0 + offset, -width / 2.0]]
+    p1 = [length / 2.0 + offset, -width / 2.0]
+    p2 = [length / 2.0 + offset, width / 2.0]
+    p3 = [-length / 2.0 + offset, width / 2.0]
+    p4 = [-length / 2.0 + offset, -width / 2.0]
+    points = [p1, p2, p3, p4, p1]
     poly = Polygon2d(pose, points)
     return poly
 
@@ -62,20 +68,25 @@ def InitStateFromTrack(track, start):
     if minimum_start > start:
         start = minimum_start
     state = track.motion_states[int(start)]
-    return BarkStateFromMotionState(state, state.time_stamp_ms).reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
+    bark_state = BarkStateFromMotionState(state, state.time_stamp_ms)
+    return bark_state.reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
 
 
 def GoalDefinitionFromTrack(track, end):
+    goal_size = 12.0
     states = list(dict_utils.get_item_iterator(track.motion_states))
+    # Goal position is spatial position of last state
     motion_state = states[-1][1]
     bark_state = BarkStateFromMotionState(motion_state)
-    goal_polygon = Polygon2d(np.array([0.0, 0.0, 0.0]),
-                             [Point2d(-1.5, 0),
-                              Point2d(-1.5, 8),
-                              Point2d(1.5, 8),
-                              Point2d(1.5, 0)])
-    goal_polygon = goal_polygon.Translate(Point2d(bark_state[0, int(StateDefinition.X_POSITION)],
-                                                  bark_state[0, int(StateDefinition.Y_POSITION)]))
+    goal_polygon = Polygon2d(np.array([0.5 * goal_size, 0.5 * goal_size, 0.0]),
+                             [Point2d(0.0, 0.0),
+                              Point2d(goal_size, 0.0),
+                              Point2d(goal_size, goal_size),
+                              Point2d(0.0, goal_size),
+                              Point2d(0.0, 0.0)])
+    goal_point = Point2d(bark_state[0, int(StateDefinition.X_POSITION)] - 0.5 *
+                         goal_size, bark_state[0, int(StateDefinition.Y_POSITION)] - 0.5 * goal_size)
+    goal_polygon = goal_polygon.Translate(goal_point)
     goal_definition = GoalDefinitionPolygon(goal_polygon)
     return goal_definition
 
@@ -90,18 +101,25 @@ class InteractionDatasetReader:
 
     def TrackFromTrackfile(self, filename, track_id):
         if filename not in self._track_dict_cache:
-            self._track_dict_cache[filename] = dataset_reader.read_tracks(filename)
+            try:
+                self._track_dict_cache[filename] = dataset_reader.read_tracks(
+                    filename)
+            except FileNotFoundError as e:
+                logging.error("File {} not found!".format(
+                    os.path.abspath(filename)))
+                exit(1)
         track = self._track_dict_cache[filename][track_id]
         # TODO: Filter track
         return track
 
     def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id):
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
-          agent_track_info = scenario_track_info.GetEgoTrackInfo()
+            agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
-          agent_track_info = scenario_track_info.GetOtherTrackInfos()[agent_id]
+            agent_track_info = scenario_track_info.GetOtherTrackInfos()[
+                agent_id]
         else:
-          raise ValueError("unknown agent id {}".format(agent_id))
+            raise ValueError("unknown agent id {}".format(agent_id))
         fname = agent_track_info.GetFileName()  # track_params["filename"]
         track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
         agent_id = agent_track_info.GetTrackId()
@@ -116,21 +134,38 @@ class InteractionDatasetReader:
             behavior = BehaviorFromTrack(track, param_server.AddChild(
                 "agent{}".format(agent_id)), start_time, end_time)
         else:
-            behavior = model_converter.convert_model(behavior_model, param_server)
+            behavior = behavior_model
+
         try:
             initial_state = InitStateFromTrack(track, start_time)
         except:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
                 agent_id, start_time))
+
+        try:
+            dynamic_model = model_converter.convert_model(
+                track_params["dynamic_model"], param_server)
+        except:
+            raise ValueError("Could not create dynamic_model")
+
+        try:
+            execution_model = model_converter.convert_model(
+                track_params["execution_model"], param_server)
+        except:
+            raise ValueError("Could not retrieve execution_model")
+
+        try:
+            vehicle_shape = ShapeFromTrack(
+                track, param_server["DynamicModel"]["wheel_base", "Wheel base", 2.7])
+        except:
+            raise ValueError("Could not create vehicle_shape")
+
         bark_agent = Agent(
             initial_state,
             behavior,
-            model_converter.convert_model(
-                track_params["dynamic_model"], param_server),
-            model_converter.convert_model(
-                track_params["execution_model"], param_server),
-            ShapeFromTrack(track, param_server["DynamicModel"]["wheel_base",
-                                                                 "Distance between front and rear wheel center", 2.7]),
+            dynamic_model,
+            execution_model,
+            vehicle_shape,
             param_server.AddChild("agent{}".format(agent_id)),
             GoalDefinitionFromTrack(track, end_time),
             track_params["map_interface"])
