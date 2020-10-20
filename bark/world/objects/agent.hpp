@@ -165,6 +165,8 @@ class Agent : public Object {
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
+    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
   }
 
   void SetFirstValidTimestamp(const float first_valid_timestamp) {

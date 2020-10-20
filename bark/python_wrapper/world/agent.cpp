@@ -55,6 +55,8 @@ void python_agent(py::module m) {
       .def_property_readonly("state", &Agent::GetCurrentState)
       .def_property("road_corridor", &Agent::GetRoadCorridor,
                     &Agent::SetRoadCorridor)
+      .def_property_readonly("road_corridor_road_ids", &Agent::GetRoadCorridorRoadIds)
+      .def_property_readonly("road_corridor_driving_direction", &Agent::GetRoadCorridorDrivingDirection)
       .def_property("goal_definition", &Agent::GetGoalDefinition,
                     &Agent::SetGoalDefinition)
       .def_property("first_valid_timestamp", &Agent::GetFirstValidTimestamp, &Agent::SetFirstValidTimestamp)
