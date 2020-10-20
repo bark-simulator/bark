@@ -11,6 +11,13 @@ def bark_dependencies():
 
     _maybe(
     git_repository,
+    name = "com_github_rules_rss",
+    commit = "f28d98d75010204db6a96ab1949f8346ba7e3237",
+    remote = "https://github.com/bark-simulator/rules_rss"
+    )
+
+    _maybe(
+    git_repository,
     name = "gtest",
     commit = "482ac6ee63429af2aa9c44f4e6427873fb68fb1f",
     remote = "https://github.com/google/googletest"

@@ -1,20 +1,26 @@
 cc_library(
     name = "_rss_interface",
-    srcs = ["rss_interface.cpp"],
-    hdrs = ["rss_interface.hpp"],
+    srcs = select({
+        "//bark/world/evaluation/rss:_rss": ["rss_interface.cpp"],
+        "//conditions:default": [],
+    }),
+    hdrs = select({
+        "//bark/world/evaluation/rss:_rss": ["rss_interface.hpp"],
+        "//conditions:default": [],
+    }),
     visibility = ["//visibility:public"],
     deps = [
         "//bark/commons",
         "//bark/geometry",
         "//bark/models/dynamic",
         "//bark/world",
-        "@ad_rss_lib//:ad_rss",
-        "@ad_rss_lib//:ad_rss_map_integration",
         "@boost//:geometry",
         "@boost//:filesystem",
-        "@map_support//:ad_physics",
-        "@spdlog",
-    ],
+    ] + select({"//bark/world/evaluation/rss:_rss" : ["@ad_rss_lib//:ad_rss", "@ad_rss_lib//:ad_rss_map_integration", "@map_support//:ad_physics","@spdlog" ], "//conditions:default": []}),
+    copts = select({
+        "//bark/world/evaluation/rss:_rss": ["-D RSS"],
+        "//conditions:default": [],
+    }),
 )
 
 cc_library(

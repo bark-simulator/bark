@@ -60,7 +60,7 @@ git_repository(
 # --------------------------------------------------
 
 # ---------------------- RSS -----------------------
-load("@bark_project//tools/rss:rss.bzl", "rss_dependencies")
+load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
 rss_dependencies()
 # --------------------------------------------------
 

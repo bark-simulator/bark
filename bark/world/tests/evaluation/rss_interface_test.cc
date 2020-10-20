@@ -212,7 +212,7 @@ TEST(rss_interface, test_rss_planning_route) {
                    std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
 
   Point2d agent_goal;
-  bg::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
+  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
   State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();

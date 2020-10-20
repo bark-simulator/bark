@@ -17,7 +17,9 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
 
+#ifdef RSS
 #include "bark/world/evaluation/rss/rss_interface.hpp"
+#endif
 
 namespace bark {
 namespace world {
@@ -26,7 +28,7 @@ namespace evaluation {
 class EvaluatorRss : public BaseEvaluator {
  public:
   EvaluatorRss() : agent_id_(std::numeric_limits<AgentId>::max()) {}
-
+  #ifdef RSS
   explicit EvaluatorRss(
       const AgentId& agent_id, const std::string& opendrive_file_name,
       const std::vector<float>& default_vehicle_dynamics,
@@ -102,12 +104,12 @@ class EvaluatorRss : public BaseEvaluator {
       const World& world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
   };
-
   virtual ~EvaluatorRss() {}
 
  private:
   AgentId agent_id_;
   RssInterface rss_;
+  #endif
 };
 }  // namespace evaluation
 }  // namespace world
