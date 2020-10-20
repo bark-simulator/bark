@@ -307,6 +307,9 @@ class ParameterServer(Params):
     def GetListFloat(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
+    def GetMapAgentIdListFloat(self, param_name, description, default_value):
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
+
     def GetString(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
