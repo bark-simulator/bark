@@ -99,6 +99,10 @@ struct Shape {
   virtual std::shared_ptr<Shape> Clone() const = 0;
   virtual std::string ShapeToString() const;
 
+  // translates, scales, and rotates object
+  std::shared_ptr<Shape<G, T>> ScalingTransform(const float& scaling_factor,
+                                                const Pose& pose) const;
+
   // rotates object
   std::shared_ptr<Shape<G, T>> Rotate(const float& a) const;
 
@@ -176,6 +180,40 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const float& a) const {
   std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
   shape_transformed->obj_ = obj_transformed;
   shape_transformed->center_[2] += a;
+  return shape_transformed;
+}
+
+template <typename G, typename T>
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::ScalingTransform(
+    const float& scaling_factor, const Pose& pose) const {
+  namespace trans = boost::geometry::strategy::transform;
+  // move shape relative to coordinate center
+  trans::translate_transformer<double, 2, 2> translate_rel_to_center(
+      -center_[0], -center_[1]);
+  G obj_rel_translated;
+  boost::geometry::transform(obj_, obj_rel_translated, translate_rel_to_center);
+
+  trans::scale_transformer<double, 2, 2> scale(scaling_factor);
+  G obj_scaled;
+  boost::geometry::transform(obj_rel_translated, obj_scaled, scale);
+
+  // rotate (counterclockwise)
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(
+      -pose[2]);
+  G obj_rotated;
+  boost::geometry::transform(obj_scaled, obj_rotated, rotate);
+
+  // move object backwards plus translation component
+  trans::translate_transformer<double, 2, 2> translate_backwards(
+      center_[0] + pose[0], center_[1] + pose[1]);
+  G obj_transformed;
+  boost::geometry::transform(obj_rotated, obj_transformed, translate_backwards);
+
+  std::shared_ptr<Shape<G, T>> shape_transformed = this->Clone();
+  shape_transformed->obj_ = obj_transformed;
+  shape_transformed->center_[0] += pose[0];
+  shape_transformed->center_[1] += pose[1];
+  shape_transformed->center_[2] += pose[2];
   return shape_transformed;
 }
 

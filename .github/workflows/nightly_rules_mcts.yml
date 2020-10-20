@@ -1,4 +1,4 @@
-name: NIGHTLY
+name: NIGHTLY_RULES_MCTS
 
 on:
   schedule:
@@ -17,4 +17,4 @@ jobs:
       - name: Getting into venv
         run: . ./bark/python_wrapper/venv/bin/activate
       - name: Runing bazel test
-        run: bazel test //... --define planner_uct=true
+        run: bazel test //... --define planner_rules_mcts=true --define ltl_rules=true

@@ -10,11 +10,9 @@
 #define BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 
 #include <boost/variant.hpp>
+#include <optional>
 #include <memory>
-#include <string>
-#include <map>
 #include "bark/commons/commons.hpp"
-#include "bark/models/dynamic/dynamic_model.hpp"
 
 namespace bark {
 namespace world {
@@ -22,8 +20,7 @@ class World;
 class ObservedWorld;
 namespace evaluation {
 
-using models::dynamic::State;
-typedef boost::variant<float, bool, std::string, int> EvaluationReturn;
+typedef boost::variant<float, bool, std::optional<bool>, std::string, int> EvaluationReturn;
 
 class BaseEvaluator {
  public:

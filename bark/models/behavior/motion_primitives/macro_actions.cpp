@@ -23,7 +23,7 @@ BehaviorMPMacroActions::BehaviorMPMacroActions(
       motion_primitives_(motion_primitives),
       check_validity_in_plan_(params->GetBool(
           "BehaviorMPMacroActions::CheckValidityInPlan",
-          "If true only primitives can be selected which are valid", true)) {}
+          "If true only primitives can be selected which are valid", false)) {}
 
 BehaviorMotionPrimitives::MotionIdx BehaviorMPMacroActions::AddMotionPrimitive(
     const primitives::PrimitivePtr& primitive) {
@@ -98,15 +98,20 @@ BehaviorMotionPrimitives::MotionIdx
 BehaviorMPMacroActions::GetNumMotionPrimitivesByCorridors(
     const ObservedWorld& observed_world,
     const AdjacentLaneCorridors& adjacent_corridors) {
-  MotionIdx i = 0;
-  valid_primitives_.clear();
-  for (auto const& p : motion_primitives_) {
-    if (p->IsPreConditionSatisfied(observed_world, adjacent_corridors)) {
-      valid_primitives_.push_back(i);
+  if (check_validity_in_plan_) {
+    MotionIdx i = 0;
+    valid_primitives_.clear();
+    for (auto const& p : motion_primitives_) {
+      if (p->IsPreConditionSatisfied(observed_world, adjacent_corridors)) {
+        valid_primitives_.push_back(i);
+      }
+      ++i;
     }
-    ++i;
+    return valid_primitives_.size();
   }
-  return valid_primitives_.size();
+  else {
+    return motion_primitives_.size();
+  }
 }
 const std::vector<BehaviorMPMacroActions::MotionIdx>&
 BehaviorMPMacroActions::GetValidPrimitives(

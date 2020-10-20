@@ -72,6 +72,12 @@ class BaseViewer(Viewer):
 
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
+                                                                        
+        self.draw_rss_debug_info = params["Visualization"]["Evaluation"]["DrawRssDebugInfo",
+                                                                         "Flag to specify if debug info to rss evaluators shall be plotted", False]
+
+        self.draw_rss_safety_responses = params["Visualization"]["Evaluation"]["DrawRssSafetyResponses",
+                                                                               "Flag to specify if visualizating rss safety responses.", False]
 
         self.parameters = params
         self.agent_color_map = {}
@@ -122,10 +128,7 @@ class BaseViewer(Viewer):
         if draw_eval_agent_id != None:
             follow_agent = world.agents[draw_eval_agent_id]
             state = follow_agent.state
-            pose = np.zeros(3)
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            pose = generatePoseFromState(state)
 
             center = [pose[0],  pose[1]]
             self._update_world_dynamic_range(center)
@@ -203,11 +206,7 @@ class BaseViewer(Viewer):
             lh = len(history)
             for idx, state_action in enumerate(history):
                 state = state_action[0]
-                pose = np.zeros(3)
-                # pybind creates column based vectors, initialization maybe row-based -> we consider both
-                pose[0] = state[int(StateDefinition.X_POSITION)]
-                pose[1] = state[int(StateDefinition.Y_POSITION)]
-                pose[2] = state[int(StateDefinition.THETA_POSITION)]
+                pose = generatePoseFromState(state)
                 transformed_polygon = shape.Transform(pose)
                 alpha = 1-0.8*(lh-idx)/3.4
                 alpha = 0 if alpha < 0 else alpha
@@ -314,6 +313,12 @@ class BaseViewer(Viewer):
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
 
+        if self.draw_rss_debug_info or self.draw_rss_safety_responses:
+            if self.draw_rss_debug_info:
+                self.drawRssDebugInfomation(world, eval_agent_ids[0])
+            if self.draw_rss_safety_responses:
+                self.drawRssSafetyResponses(world, eval_agent_ids[0])
+        
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -341,12 +346,8 @@ class BaseViewer(Viewer):
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
-            pose = np.zeros(3)
-            # pybind creates column based vectors, initialization maybe row-based -> we consider both
             state = agent.state
-            pose[0] = state[int(StateDefinition.X_POSITION)]
-            pose[1] = state[int(StateDefinition.Y_POSITION)]
-            pose[2] = state[int(StateDefinition.THETA_POSITION)]
+            pose = generatePoseFromState(state)
             transformed_polygon = shape.Transform(pose)
 
             centerx = (shape.front_dist - 0.5*(shape.front_dist +
@@ -362,6 +363,34 @@ class BaseViewer(Viewer):
                                alpha, facecolor, zorder=10)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
+
+    def drawRssSafetyResponses(self, world, ego_id):
+        from bark.core.world.evaluation import EvaluatorRss
+        for evaluator in world.evaluators:
+            if isinstance(world.evaluators[evaluator], EvaluatorRss):
+                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
+                    world)
+                break
+
+        ego_agent = world.agents[ego_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
+        transformed_polygon = shape.ScalingTransform(1.5, pose)
+        self.drawPolygon2d(
+            transformed_polygon,
+            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
+
+        # draw response for other agents
+        relevent_agents = [
+            agent for agent in world.agents.values() if agent.id in rss_responses]
+        for agent in relevent_agents:
+            shape = agent.shape
+            pose = generatePoseFromState(agent.state)
+            transformed_polygon = shape.ScalingTransform(1.5, pose)
+
+            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
+            self.drawPolygon2d(transformed_polygon, response_color,
+                               0.6, response_color, zorder=9)
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -390,3 +419,41 @@ class BaseViewer(Viewer):
                 self.drawLabelsAsText(
                     observed_world, label_functions, evaluator_type)
                 break
+
+    def drawRssDebugInfomation(self, world, agent_id):
+        from bark.core.world.evaluation import EvaluatorRss
+        for evaluator in world.evaluators:
+          if isinstance(world.evaluators[evaluator], EvaluatorRss):
+            rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
+                world)
+            break
+
+        def char_func(value):
+            if value == True:
+                return "T"
+            elif value == False:
+                return "F"
+            else:
+                return "UNKNOWN"
+
+        overall_safety = True
+        if rss_responses:
+            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
+            for i, (id, responses) in enumerate(rss_responses.items()):
+                overall_safety = overall_safety and any(responses)
+                str = "{}:    {}     {}".format(
+                    id, *list(map(char_func, responses)))
+                self.drawText(position=(0.82, 0.88-0.03*i), text=str)
+
+        self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
+            agent_id, char_func(overall_safety)))
+            
+
+      
+def generatePoseFromState(state):
+  # pybind creates column based vectors, initialization maybe row-based -> we consider both
+  pose = np.zeros(3)
+  pose[0] = state[int(StateDefinition.X_POSITION)]
+  pose[1] = state[int(StateDefinition.Y_POSITION)]
+  pose[2] = state[int(StateDefinition.THETA_POSITION)]
+  return pose

@@ -95,7 +95,8 @@ class BehaviorModel : public bark::commons::BaseType {
         behavior_status_(status) {}
 
   explicit BehaviorModel(const commons::ParamsPtr& params)
-      : BehaviorModel(params, BehaviorStatus::VALID) {}
+      : BehaviorModel(params, BehaviorStatus::VALID) {
+  }
 
   BehaviorModel(const BehaviorModel& behavior_model)
       : commons::BaseType(behavior_model.GetParams()),

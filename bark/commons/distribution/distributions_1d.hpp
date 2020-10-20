@@ -33,8 +33,10 @@ class FixedValue : public Distribution {
 
   virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
 
-  virtual RandomVariableSupport GetSupport() const { return RandomVariableSupport(1,
-                                                  std::make_pair(fixed_value_[0], fixed_value_[0])); };
+  virtual RandomVariableSupport GetSupport() const {
+    return RandomVariableSupport(
+        1, std::make_pair(fixed_value_[0], fixed_value_[0]));
+  };
 
  private:
   RandomVariate fixed_value_;
@@ -82,7 +84,8 @@ inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
 }
 
 using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
-using boost_uniform = boost::math::uniform_distribution<RandomVariableValueType>;
+using boost_uniform =
+    boost::math::uniform_distribution<RandomVariableValueType>;
 
 template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
@@ -105,14 +108,17 @@ inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(
 }
 
 template <>
-inline RandomVariableSupport BoostDistribution1D<boost_uniform>::GetSupport() const {
+inline RandomVariableSupport BoostDistribution1D<boost_uniform>::GetSupport()
+    const {
   return RandomVariableSupport(1, std::make_pair(dist_.lower(), dist_.upper()));
 }
 
 template <>
-inline RandomVariableSupport BoostDistribution1D<boost_normal>::GetSupport() const {
-  return RandomVariableSupport(1, std::make_pair
-      (std::numeric_limits<RandomVariableValueType>::lowest(), std::numeric_limits<RandomVariableValueType>::max()));
+inline RandomVariableSupport BoostDistribution1D<boost_normal>::GetSupport()
+    const {
+  return RandomVariableSupport(
+      1, std::make_pair(std::numeric_limits<RandomVariableValueType>::lowest(),
+                        std::numeric_limits<RandomVariableValueType>::max()));
 }
 
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;

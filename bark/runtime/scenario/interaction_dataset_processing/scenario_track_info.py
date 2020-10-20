@@ -52,6 +52,14 @@ class ScenarioTrackInfo:
     def GetOtherTrackInfos(self):
         return self._other_agents_track_infos
 
+    def GetOffsetOfAgentMillisec(self, agent_id):
+        if (agent_id == self._ego_track_info.GetTrackId()):
+          return 0.0
+        else:
+          start_ts = self._other_agents_track_infos[agent_id].GetStartOffset()
+          timestamp_offset = float(start_ts - self.GetStartTs()) / 1000.0
+          return timestamp_offset
+
     def TimeSanityCheck(self):
         # for other in self.GetOtherTrackInfos().values():
         #     if self.GetStartTs() > other.GetStartOffset():
