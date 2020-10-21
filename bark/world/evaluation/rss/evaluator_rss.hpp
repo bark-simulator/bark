@@ -107,9 +107,9 @@ class EvaluatorRSS : public BaseEvaluator {
   virtual ~EvaluatorRSS() {}
 
  private:
-  AgentId agent_id_;
   RssInterface rss_;
   #endif
+  AgentId agent_id_;
 };
 }  // namespace evaluation
 }  // namespace world
