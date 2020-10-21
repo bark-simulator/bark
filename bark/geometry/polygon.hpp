@@ -27,11 +27,11 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
   Polygon_t(const Pose& center,
-            const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
+            const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
                 line);  //! create a polygon from a line enclosing the polygon
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
   virtual float CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
@@ -76,7 +76,7 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const std::vector<T> points)
 template <typename T>
 inline Polygon_t<T>::Polygon_t(
     const Pose& center,
-    const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points)
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points)
     : Shape<bg::model::polygon<T>, T>(center, points, 0),
       rear_dist_(0.0f),
       front_dist_(0.0f),
@@ -128,10 +128,10 @@ using PolygonPoint = Point2d;  // for internal stores of collision checkers
 using Polygon = Polygon_t<PolygonPoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     const {
   std::vector<Point2d> points = obj_.outer();
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
   for (std::vector<Point2d>::size_type i = 0; i < points.size(); ++i) {
     mat.row(i) << bg::get<0>(points[i]), bg::get<1>(points[i]);
   }

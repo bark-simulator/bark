@@ -31,7 +31,7 @@ namespace bg = boost::geometry;
 //! points
 template <typename T>
 using Point2d_t = bg::model::point<T, 2, bg::cs::cartesian>;
-using Point2d = Point2d_t<float>;
+using Point2d = Point2d_t<double>;
 
 //! Point operators
 inline bool operator==(const Point2d& lhs, const Point2d& rhs) {
@@ -86,7 +86,7 @@ struct Shape {
   }
 
   Shape(const Pose& center,
-        const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points,
+        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points,
         int32_t id)
       : obj_(), id_(id), center_(center) {
     auto row_num = points.rows();
@@ -110,7 +110,7 @@ struct Shape {
 
   virtual bool Valid() const;
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray()
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray()
       const = 0;
 
   bool AddPoint(const T& p) {
@@ -217,7 +217,7 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Transform(
 template <typename G, typename T>
 inline std::string Shape<G, T>::ShapeToString() const {
   std::stringstream ss;
-  Eigen::IOFormat OctaveFmt(Eigen::StreamPrecision, 0, ", ", ";\n", "", "", "[",
+  Eigen::IOFormat OctaveFmt(Eigen::FullPrecision, 0, ", ", ";\n", "", "", "[",
                             "]");
   ss << ToArray().format(OctaveFmt);
   return ss.str();

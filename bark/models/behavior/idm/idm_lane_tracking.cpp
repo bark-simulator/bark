@@ -80,8 +80,8 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
       // Do not allow negative speeds
       traj(i, StateDefinition::VEL_POSITION) =
-          std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
-      t_i = static_cast<float>(i) * dt + start_time;
+          std::max(traj(i, StateDefinition::VEL_POSITION), 0.0);
+      t_i = static_cast<double>(i) * dt + start_time;
       traj(i, StateDefinition::TIME_POSITION) = t_i;
     }
   }

@@ -155,7 +155,7 @@ void python_geometry(py::module m) {
           [](const py::tuple& t) {
             if (t.size() != 1) throw std::runtime_error("Invalid line state!");
             Line l;
-            auto points = t[0].cast<Matrix<float, Dynamic, Dynamic>>();
+            auto points = t[0].cast<Matrix<double, Dynamic, Dynamic>>();
             for (int i = 0; i < points.rows(); ++i) {
               l.AddPoint(Point2d(points(i, 0), points(i, 1)));
             }
@@ -166,7 +166,7 @@ void python_geometry(py::module m) {
       .def(py::init<>(), "Create empty polygon")
       .def(py::init<Pose, std::vector<Point2d>>(),
            "Create polygon with center point and point list")
-      .def(py::init<Pose, const Matrix<float, Dynamic, Dynamic>&>(),
+      .def(py::init<Pose, const Matrix<double, Dynamic, Dynamic>&>(),
            "Create polygon with center point and point list")
       .def(py::init<Pose, const Line&>(),
            "Create polygon with center point and line enclosing polygon")
@@ -214,7 +214,7 @@ void python_geometry(py::module m) {
           [](py::tuple& t) {
             if (t.size() != 2) throw std::runtime_error("Invalid point state!");
             Polygon p(t[1].cast<Pose>(),
-                      t[0].cast<Matrix<float, Dynamic, Dynamic>>());
+                      t[0].cast<Matrix<double, Dynamic, Dynamic>>());
             return p;
           }));
 

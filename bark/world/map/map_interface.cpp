@@ -225,7 +225,6 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     polygon->AddPoint(*(lane_corridor->GetLeftBoundary().begin()));
     boost::geometry::correct(polygon->obj_);
 
-    std::cout << "lane corridor valid?" << std::endl;
     if (!polygon->Valid()) {
       LOG(ERROR) << "Producing a non-valid lane corridor for lane id = " << lane.first;
     }

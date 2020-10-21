@@ -850,12 +850,12 @@ TEST(line, gradient) {
   line.AddPoint(Point2d(0.8, 0.9511));
   line.AddPoint(Point2d(1.0, 1.0000));
 
-  Eigen::VectorXf gradX = bark::geometry::Gradient(line.ToArray().col(0));
-  Eigen::VectorXf gradY = bark::geometry::Gradient(line.ToArray().col(1));
+  Eigen::VectorXd gradX = bark::geometry::Gradient(line.ToArray().col(0));
+  Eigen::VectorXd gradY = bark::geometry::Gradient(line.ToArray().col(1));
 
-  Eigen::VectorXf gradX_expect(6);
+  Eigen::VectorXd gradX_expect(6);
   gradX_expect << 0.2, 0.2, 0.2, 0.2, 0.2, 0.2;
-  Eigen::VectorXf gradY_expect(6);
+  Eigen::VectorXd gradY_expect(6);
   gradY_expect << 0.3090, 0.2939, 0.2500, 0.1816, 0.0955, 0.0489;
 
   // do not compare first and last values
@@ -887,9 +887,9 @@ TEST(line, curvature) {
   line.AddPoint(Point2d(0.8, 0.9511));
   line.AddPoint(Point2d(1.0, 1.0000));
 
-  Eigen::VectorXf c = bark::geometry::GetCurvature(line);
+  Eigen::VectorXd c = bark::geometry::GetCurvature(line);
 
-  Eigen::VectorXf c_expect(7);
+  Eigen::VectorXd c_expect(7);
   c_expect << -0.0607, -0.0812, -0.2450, -1.1622, -1.0009, -0.8902, -1.0665;
 
   // do not compare first and last values, as gradient calculation is not

@@ -34,7 +34,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       : Shape<bg::model::linestring<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0) {
   }
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
 
@@ -183,9 +183,9 @@ using LinePoint = Point2d;
 using Line = Line_t<LinePoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray()
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray()
     const {
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(obj_.size(), 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(obj_.size(), 2);
   for (uint32_t i = 0; i < obj_.size(); i++) {
     mat.row(i) << bg::get<0>(obj_[i]), bg::get<1>(obj_[i]);
   }
@@ -264,9 +264,9 @@ inline Point2d GetPointAtIdx(const Line& l, const uint idx) {
   }
 }
 
-inline Eigen::VectorXf Gradient(Eigen::VectorXf vec) {
+inline Eigen::VectorXd Gradient(Eigen::VectorXd vec) {
   // calculating central difference
-  Eigen::VectorXf g(vec.size());
+  Eigen::VectorXd g(vec.size());
   for (int i=1; i<vec.size()-1; i++) {
     g(i)=(vec(i+1)-vec(i-1))/2;
   }
@@ -277,16 +277,16 @@ inline Eigen::VectorXf Gradient(Eigen::VectorXf vec) {
 }
 
 
-inline Eigen::VectorXf GetCurvature(Line l)  {
+inline Eigen::VectorXd GetCurvature(Line l)  {
 
-  Eigen::MatrixXf larray = l.ToArray();
-  Eigen::VectorXf dx = Gradient(larray.col(0));
-  Eigen::VectorXf ddx = Gradient(dx);
-  Eigen::VectorXf dy = Gradient(larray.col(1));
-  Eigen::VectorXf ddy = Gradient(dy);
+  Eigen::MatrixXd larray = l.ToArray();
+  Eigen::VectorXd dx = Gradient(larray.col(0));
+  Eigen::VectorXd ddx = Gradient(dx);
+  Eigen::VectorXd dy = Gradient(larray.col(1));
+  Eigen::VectorXd ddy = Gradient(dy);
 
   // elementwise, as pow(vector, scalar) does not work
-  Eigen::VectorXf curvature(larray.rows());
+  Eigen::VectorXd curvature(larray.rows());
   for (int i=0; i<curvature.size(); i++) {
     float n = dx(i) * ddy(i) - ddx(i) * dy(i);
     float r = pow( dx(i), 2) + pow( dy(i), 2);
