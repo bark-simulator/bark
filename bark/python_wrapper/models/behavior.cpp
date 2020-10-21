@@ -405,7 +405,7 @@ void python_behavior(py::module m) {
           ParamsToPython(b.GetBehaviorModel()->GetParams()));
       },
       [](py::tuple t) {
-        if (t.size() != 1)
+        if (t.size() != 2)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bs = new BehaviorSafety(
@@ -433,7 +433,7 @@ void python_behavior(py::module m) {
           ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
       },
       [](py::tuple t) {
-        if (t.size() != 1)
+        if (t.size() != 3)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(

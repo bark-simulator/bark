@@ -45,8 +45,7 @@ class BehaviorSafety : public BehaviorModel {
     BehaviorModel(bs->GetBehaviorModel()->GetParams()),
     behavior_model_(bs->GetBehaviorModel()),
     initial_lane_corr_(bs->GetInitialLaneCorridor()),
-    safety_behavior_params_(bs->GetBehaviorSafetyParams())
-    {}
+    behavior_safety_params_(bs->GetBehaviorSafetyParams()) {}
 
   virtual ~BehaviorSafety() {}
 
