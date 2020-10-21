@@ -186,7 +186,7 @@ TEST(rss_behavior, real_rss_evaluator) {
 
   // set real RSS evaluator
   // note: if the RSS should be fully built the flag --define rss=true has to be sets
-  auto eval_rss = EvaluatorRSS();
+  auto eval_rss = std::make_shared<EvaluatorRSS>();
   rss_behavior.SetEvaluator(eval_rss);
 
   auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
