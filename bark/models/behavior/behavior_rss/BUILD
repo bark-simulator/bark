@@ -1,15 +1,15 @@
 cc_library(
-    name = "rss_behavior",
+    name = "behavior_rss",
     srcs = [
-        "rss_behavior.cpp",
+        "behavior_rss.cpp",
     ],
     hdrs = [
-        "rss_behavior.hpp",
+        "behavior_rss.hpp",
     ],
     deps = [
         "//bark/commons:commons",
         "//bark/world:world",
-        "//bark/models/behavior/safety_behavior:safety_behavior",
+        "//bark/models/behavior/behavior_safety:behavior_safety",
         "//bark/models/dynamic:dynamic",
         "//bark/world/evaluation/rss:evaluator_rss",
         "//bark/world/evaluation:evaluation"

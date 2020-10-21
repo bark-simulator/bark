@@ -135,8 +135,8 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [        
         "//bark/geometry",
-        "//bark/models/behavior/safety_behavior:safety_behavior",
-        "//bark/models/behavior/rss_behavior:rss_behavior",
+        "//bark/models/behavior/behavior_safety:behavior_safety",
+        "//bark/models/behavior/behavior_rss:behavior_rss",
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/tests:make_test_world",
         "//bark/world/evaluation/rss:evaluator_rss",

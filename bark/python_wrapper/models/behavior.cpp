@@ -22,8 +22,8 @@
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
-#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
-#include "bark/models/behavior/rss_behavior/rss_behavior.hpp"
+#include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
+#include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/python_wrapper/models/plan/plan.hpp"
 #include "bark/python_wrapper/polymorphic_conversion.hpp"
 

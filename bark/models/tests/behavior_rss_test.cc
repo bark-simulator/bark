@@ -10,8 +10,8 @@
 #include "gtest/gtest.h"
 
 #include "bark/commons/params/setter_params.hpp"
-#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
-#include "bark/models/behavior/rss_behavior/rss_behavior.hpp"
+#include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
+#include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/world/observed_world.hpp"
@@ -59,32 +59,32 @@ class DummyRSSEvaluator : public BaseEvaluator {
 TEST(safe_behavior, init) {
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(params);
-  auto safety_behavior = BehaviorSafety(params);
-  safety_behavior.SetBehaviorModel(behavior_lane_tracking);
+  auto behavior_safety = BehaviorSafety(params);
+  behavior_safety.SetBehaviorModel(behavior_lane_tracking);
 }
 
 
-TEST(rss_behavior, init) {
+TEST(behavior_rss, init) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(
     params);
-  std::shared_ptr<BehaviorSafety> safety_behavior =
+  std::shared_ptr<BehaviorSafety> behavior_safety =
     std::make_shared<BehaviorSafety>(params);
-  safety_behavior->SetBehaviorModel(behavior_lane_tracking);
+  behavior_safety->SetBehaviorModel(behavior_lane_tracking);
 
   // rss behavior
-  auto rss_behavior = BehaviorRSSConformant(params);
+  auto behavior_rss = BehaviorRSSConformant(params);
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
-  rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
-  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+  behavior_rss.SetNominalBehaviorModel(behavior_idm_classic);
+  behavior_rss.SetSafetyBehaviorModel(behavior_safety);
 
   // set (dummy) RSS evaluator
   std::shared_ptr<BaseEvaluator> rss_eval =
     std::make_shared<DummyRSSEvaluator>(4);
-  rss_behavior.SetEvaluator(rss_eval);
+  behavior_rss.SetEvaluator(rss_eval);
 
-  auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
+  auto behavior_safety_model = behavior_rss.GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
 }
 
@@ -95,7 +95,7 @@ void FwSim(int steps, const WorldPtr& world, double dt = 0.2) {
   }
 }
 
-TEST(rss_behavior, rss_behavior_system_test) {
+TEST(behavior_rss, behavior_rss_system_test) {
   // Test-strategy: both time the ego agent is controlled by the
   // BehaviorIDMLaneTracking and attempts to change from the right to the
   // left lane (by setting the target corridor). One time the dummy rss
@@ -121,15 +121,15 @@ TEST(rss_behavior, rss_behavior_system_test) {
   nominal_behavior_lane_tracking->SetConstantLaneCorridor(lane_corridors[1]);
   
   // rss behavior
-  std::shared_ptr<BehaviorRSSConformant> rss_behavior =
+  std::shared_ptr<BehaviorRSSConformant> behavior_rss =
     std::make_shared<BehaviorRSSConformant>(params);
-  rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
+  behavior_rss->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
 
   // set behavior model
-  ego_agent->SetBehaviorModel(rss_behavior);
+  ego_agent->SetBehaviorModel(behavior_rss);
   std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
     std::make_shared<DummyRSSEvaluator>(1000);
-  rss_behavior->SetEvaluator(rss_eval_do_not_trigger);
+  behavior_rss->SetEvaluator(rss_eval_do_not_trigger);
   auto world_nominal = world;
   auto world_rss_triggered = world->Clone();
 
@@ -148,7 +148,7 @@ TEST(rss_behavior, rss_behavior_system_test) {
   // rss behavior triggered
   std::shared_ptr<BehaviorRSSConformant> rss_triggered_behavior =
     std::make_shared<BehaviorRSSConformant>(params);
-  rss_behavior->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
+  behavior_rss->SetNominalBehaviorModel(nominal_behavior_lane_tracking);
   rss_triggered_behavior->SetEvaluator(rss_eval_trigger);
   ego_agent_triggered->SetBehaviorModel(rss_triggered_behavior);
 
@@ -169,27 +169,27 @@ TEST(rss_behavior, rss_behavior_system_test) {
 }
 
 
-TEST(rss_behavior, real_rss_evaluator) {
+TEST(behavior_rss, real_rss_evaluator) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(
     params);
-  std::shared_ptr<BehaviorSafety> safety_behavior =
+  std::shared_ptr<BehaviorSafety> behavior_safety =
     std::make_shared<BehaviorSafety>(params);
-  safety_behavior->SetBehaviorModel(behavior_lane_tracking);
+  behavior_safety->SetBehaviorModel(behavior_lane_tracking);
 
   // rss behavior
-  auto rss_behavior = BehaviorRSSConformant(params);
+  auto behavior_rss = BehaviorRSSConformant(params);
   auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
-  rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
-  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+  behavior_rss.SetNominalBehaviorModel(behavior_idm_classic);
+  behavior_rss.SetSafetyBehaviorModel(behavior_safety);
 
   // set real RSS evaluator
   // note: if the RSS should be fully built the flag --define rss=true has to be sets
   auto eval_rss = std::make_shared<EvaluatorRSS>();
-  rss_behavior.SetEvaluator(eval_rss);
+  behavior_rss.SetEvaluator(eval_rss);
 
-  auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
+  auto behavior_safety_model = behavior_rss.GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
 }
 

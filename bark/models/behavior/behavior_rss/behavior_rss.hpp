@@ -6,15 +6,15 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_RSS_BEHAVIOR_HPP_
-#define BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_RSS_BEHAVIOR_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_BEHAVIOR_RSS_HPP_
+#define BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_BEHAVIOR_RSS_HPP_
 
 #include <memory>
 #include <utility>
 
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
-#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
+#include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #include "bark/world/world.hpp"
 
@@ -39,9 +39,9 @@ class BehaviorRSSConformant : public BehaviorModel {
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params) :
     BehaviorModel(params),
     nominal_behavior_model_(std::make_shared<BehaviorIDMClassic>(params)),
-    safety_behavior_model_(std::make_shared<BehaviorSafety>(params)),
+    behavior_safety_model_(std::make_shared<BehaviorSafety>(params)),
     rss_evaluator_(std::make_shared<EvaluatorRSS>()),
-    rss_behavior_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
+    behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
     world_time_of_last_rss_violation_(-1),
     initial_lane_corr_(nullptr) {}
 
@@ -59,10 +59,10 @@ class BehaviorRSSConformant : public BehaviorModel {
     nominal_behavior_model_ = model;
   } 
   std::shared_ptr<BehaviorSafety> GetBehaviorSafetyModel() const {
-    return safety_behavior_model_;
+    return behavior_safety_model_;
   }
   void SetSafetyBehaviorModel(const std::shared_ptr<BehaviorSafety>& model){
-    safety_behavior_model_ = model;
+    behavior_safety_model_ = model;
   }
 
   void SetEvaluator(const std::shared_ptr<BaseEvaluator>& evaluator){
@@ -71,9 +71,9 @@ class BehaviorRSSConformant : public BehaviorModel {
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
-  std::shared_ptr<BehaviorSafety> safety_behavior_model_;
+  std::shared_ptr<BehaviorSafety> behavior_safety_model_;
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
-  BehaviorRSSConformantStatus rss_behavior_status_;
+  BehaviorRSSConformantStatus behavior_rss_status_;
   float world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
 };
@@ -88,4 +88,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {
 }  // namespace models
 }  // namespace bark
 
-#endif  // BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_RSS_BEHAVIOR_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_RSS_BEHAVIOR_BEHAVIOR_RSS_HPP_

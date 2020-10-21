@@ -9,7 +9,7 @@
 #include <tuple>
 #include <memory>
 
-#include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
+#include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
 #include "bark/world/observed_world.hpp"
 

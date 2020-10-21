@@ -1,10 +1,10 @@
 cc_library(
-    name = "safety_behavior",
+    name = "behavior_safety",
     srcs = [
-        "safety_behavior.cpp",
+        "behavior_safety.cpp",
     ],
     hdrs = [
-        "safety_behavior.hpp",
+        "behavior_safety.hpp",
     ],
     deps = [
         "//bark/commons:commons",
