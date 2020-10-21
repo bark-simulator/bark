@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "bark/commons/distribution/distribution.hpp"
 #include "boost/variant.hpp"
 
