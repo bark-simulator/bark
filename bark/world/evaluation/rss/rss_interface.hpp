@@ -20,7 +20,7 @@
 #include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/objects/agent.hpp"
-#include "bark/world/world.hpp"
+#include "bark/world/observed_world.hpp"
 
 #include <spdlog/spdlog.h>
 #include <ad/map/lane/Operation.hpp>
@@ -128,7 +128,7 @@ class RssInterface {
   // For example, if the ego agent is following another agent in the same lane
   // at a safe distance, the longitudinal RSS situtation is safe but the
   // lateral one is unsafety.
-  EvaluationReturn GetSafetyReponse(const World& world, const AgentId& ego_id);
+  EvaluationReturn GetSafetyReponse(const ObservedWorld& observed_world);
 
   // Returns an unorder_map indicating the pairwise safety respone of the
   // specified agent to every other nearby agents. Key is AgentId of an nearby
@@ -136,8 +136,7 @@ class RssInterface {
   // situations between the specified and the nearby agent is safe, false
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
-  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const World& world,
-                                                    const AgentId& ego_id);
+  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const ObservedWorld& observed_world);
 
   // Returns an unorder_map indicating the pairwise directional safety respone
   // of the specified agent to every other nearby agents. Key is AgentId of an
@@ -151,7 +150,7 @@ class RssInterface {
   // in each direction.
   // Return empty map if no agent is nearby or no Rss check can be performed.
   PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
-      const World& world, const AgentId& ego_id);
+      const ObservedWorld& observed_world);
 
   virtual ~RssInterface() {}
 
@@ -221,7 +220,7 @@ class RssInterface {
 
   // Generates RSS world from the information of BARK world, coordinates other
   // functions.
-  bool GenerateRSSWorld(const World& world, const AgentId& agent_id,
+  bool GenerateRSSWorld(const ObservedWorld& observed_world,
                         ::ad::rss::world::WorldModel& rss_world);
 
   bool ExtractSafetyEvaluation(
