@@ -41,6 +41,13 @@ class BehaviorSafety : public BehaviorModel {
         safety_behavior_params_);
   }
 
+  explicit BehaviorSafety(const std::shared_ptr<BehaviorSafety>& bs) :
+    BehaviorModel(bs->GetBehaviorModel()->GetParams()),
+    behavior_model_(bs->GetBehaviorModel()),
+    initial_lane_corr_(bs->GetInitialLaneCorridor()),
+    safety_behavior_params_(bs->GetBehaviorSafetyParams())
+    {}
+
   virtual ~BehaviorSafety() {}
 
   Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world);
@@ -59,6 +66,10 @@ class BehaviorSafety : public BehaviorModel {
     initial_lane_corr_ = lc;
   }
 
+  LaneCorridorPtr GetInitialLaneCorridor() const {
+    return initial_lane_corr_;
+  }
+
   ParamsPtr GetBehaviorSafetyParams() const {
     return safety_behavior_params_;
   }
@@ -70,9 +81,8 @@ class BehaviorSafety : public BehaviorModel {
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSafety::Clone() const {
-  std::shared_ptr<BehaviorSafety> model_ptr =
-      std::make_shared<BehaviorSafety>(*this);
-  return model_ptr;
+  std::shared_ptr<BehaviorSafety> new_bs = std::make_shared<BehaviorSafety>(*this);
+  return new_bs;
 }
 
 }  // namespace behavior
