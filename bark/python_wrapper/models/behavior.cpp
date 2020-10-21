@@ -401,14 +401,19 @@ void python_behavior(py::module m) {
     .def(py::pickle(
       [](const BehaviorSafety& b) {
         return py::make_tuple(
-          ParamsToPython(b.GetParams()));
+          ParamsToPython(b.GetParams()),
+          ParamsToPython(b.GetBehaviorModel()->GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorSafety(
+        auto bs = new BehaviorSafety(
           PythonToParams(t[0].cast<py::tuple>()));
+        auto bm = std::make_shared<BehaviorIDMLaneTracking>(
+          PythonToParams(t[1].cast<py::tuple>()));
+        bs->SetBehaviorModel(bm);
+        return bs;
       }));
 
   py::class_<BehaviorRSSConformant, BehaviorModel,
@@ -423,14 +428,23 @@ void python_behavior(py::module m) {
     .def(py::pickle(
       [](const BehaviorRSSConformant& b) {
         return py::make_tuple(
-          ParamsToPython(b.GetParams()));
+          ParamsToPython(b.GetParams()), 
+          ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
+          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
       },
       [](py::tuple t) {
         if (t.size() != 1)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
-        return new BehaviorRSSConformant(
+        auto bm = new BehaviorRSSConformant(
           PythonToParams(t[0].cast<py::tuple>()));
+        auto nb = std::make_shared<BehaviorIDMClassic>(
+          PythonToParams(t[1].cast<py::tuple>()));
+        auto sb = std::make_shared<BehaviorSafety>(
+          PythonToParams(t[2].cast<py::tuple>()));
+        bm->SetNominalBehaviorModel(nb);
+        bm->SetSafetyBehaviorModel(sb);
+        return bm;
       }));
   
   py::class_<LonLatAction, shared_ptr<LonLatAction>>(m, "LonLatAction")

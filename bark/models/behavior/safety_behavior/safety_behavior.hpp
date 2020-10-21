@@ -51,6 +51,10 @@ class BehaviorSafety : public BehaviorModel {
     behavior_model_ = model;
   } 
 
+  std::shared_ptr<BehaviorModel> GetBehaviorModel() const {
+    return behavior_model_;
+  }
+
   void SetInitialLaneCorridor(const LaneCorridorPtr& lc){
     initial_lane_corr_ = lc;
   }
