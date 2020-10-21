@@ -15,6 +15,7 @@ cc_library(
     deps = [
 	    "@com_github_eigen_eigen//:eigen",
         "@boost//:geometry",
+        "@com_github_spline//:spline",
         "//bark/commons:commons",
     ],
     visibility = ["//visibility:public"],
