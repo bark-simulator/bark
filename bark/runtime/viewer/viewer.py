@@ -258,7 +258,7 @@ class BaseViewer(Viewer):
         # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.GetOpenDriveMap())
+            self.drawMap(world.map)
 
         # draw agent goals
         for agent_id, agent in world.agents.items():
@@ -319,10 +319,23 @@ class BaseViewer(Viewer):
             if self.draw_rss_safety_responses:
                 self.drawRssSafetyResponses(world, eval_agent_ids[0])
         
-    def drawMap(self, map):
+    def drawMap(self, map_interface):
         # draw the boundary of each lane
-        for _, road in map.GetRoads().items():
+        road_graph = map_interface.GetRoadgraph()
+        for lane_id in road_graph.GetAllLaneids():
+            self.drawLanePolygon(map_interface.GetLane(lane_id), map_interface, self.color_lane_boundaries)
+
+        for _, road in map_interface.GetOpenDriveMap().GetRoads().items():
             self.drawXodrRoad(road, self.color_lane_boundaries)
+
+    def drawLanePolygon(self, lane, map_interface, color=None):
+        if color is None:
+            self.color_lane_boundaries
+
+        if not lane.lane_type == XodrLaneType.driving:
+          polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
+          self.drawPolygon2d(polygon, "k",
+                                0.5, "k", zorder=10)
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
