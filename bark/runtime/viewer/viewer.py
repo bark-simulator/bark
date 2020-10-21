@@ -365,9 +365,9 @@ class BaseViewer(Viewer):
             raise NotImplementedError("Shape drawing not implemented.")
 
     def drawRssSafetyResponses(self, world, ego_id):
-        from bark.core.world.evaluation import EvaluatorRss
+        from bark.core.world.evaluation import EvaluatorRSS
         for evaluator in world.evaluators:
-            if isinstance(world.evaluators[evaluator], EvaluatorRss):
+            if isinstance(world.evaluators[evaluator], EvaluatorRSS):
                 rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
                     world)
                 break
@@ -421,9 +421,9 @@ class BaseViewer(Viewer):
                 break
 
     def drawRssDebugInfomation(self, world, agent_id):
-        from bark.core.world.evaluation import EvaluatorRss
+        from bark.core.world.evaluation import EvaluatorRSS
         for evaluator in world.evaluators:
-          if isinstance(world.evaluators[evaluator], EvaluatorRss):
+          if isinstance(world.evaluators[evaluator], EvaluatorRSS):
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
                 world)
             break

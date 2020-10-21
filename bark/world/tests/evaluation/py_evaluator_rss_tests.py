@@ -22,7 +22,7 @@ from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
-from bark.core.world.evaluation import EvaluatorRss
+from bark.core.world.evaluation import EvaluatorRSS
 
 # General tests of the whole rss_interface
 class EvaluatorRSSTests(unittest.TestCase):
@@ -92,7 +92,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRss(ego.id, map,
+    evaluator_rss = EvaluatorRSS(ego.id, map,
                                   self.defaults["default_vehicle_dynamics"],
                                   checking_relevent_range=1.5)
     world.Step(0.01)
@@ -142,7 +142,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRss(ego.id, map,
+    evaluator_rss = EvaluatorRSS(ego.id, map,
                                   self.defaults["default_vehicle_dynamics"])
 
     for _ in range(7):
@@ -186,7 +186,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRss(ego.id, map,
+    evaluator_rss = EvaluatorRSS(ego.id, map,
                                   self.defaults["default_vehicle_dynamics"])
     world.Step(1)
     self.assertEqual(
@@ -254,7 +254,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(other_1)
     world.AddAgent(other_2)
 
-    evaluator_rss = EvaluatorRss(ego.id, map,
+    evaluator_rss = EvaluatorRSS(ego.id, map,
                                  self.defaults["default_vehicle_dynamics"])
     world.Step(1)
     responses = evaluator_rss.PairwiseEvaluate(world)

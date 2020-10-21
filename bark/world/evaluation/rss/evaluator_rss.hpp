@@ -25,11 +25,11 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-class EvaluatorRss : public BaseEvaluator {
+class EvaluatorRSS : public BaseEvaluator {
  public:
-  EvaluatorRss() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  EvaluatorRSS() : agent_id_(std::numeric_limits<AgentId>::max()) {}
   #ifdef RSS
-  explicit EvaluatorRss(
+  explicit EvaluatorRSS(
       const AgentId& agent_id, const std::string& opendrive_file_name,
       const std::vector<float>& default_vehicle_dynamics,
       const std::unordered_map<AgentId, std::vector<float>>&
@@ -42,7 +42,7 @@ class EvaluatorRss : public BaseEvaluator {
              agents_vehicle_dynamics, checking_relevent_range,
              route_predict_range) {}
 
-  explicit EvaluatorRss(const AgentId& agent_id,
+  explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
         rss_(params->GetString("EvalutaorRss::MapFilename",
@@ -104,7 +104,7 @@ class EvaluatorRss : public BaseEvaluator {
       const World& world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
   };
-  virtual ~EvaluatorRss() {}
+  virtual ~EvaluatorRSS() {}
 
  private:
   AgentId agent_id_;

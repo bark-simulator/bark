@@ -84,8 +84,8 @@ void python_evaluation(py::module m) {
       });
 
 #ifdef RSS
-  py::class_<EvaluatorRss, BaseEvaluator, std::shared_ptr<EvaluatorRss>>(
-      m, "EvaluatorRss")
+  py::class_<EvaluatorRSS, BaseEvaluator, std::shared_ptr<EvaluatorRSS>>(
+      m, "EvaluatorRSS")
       .def(py::init<>())
       .def(py::init<const AgentId&, const std::string&,
                     const std::vector<float>&,
@@ -98,14 +98,14 @@ void python_evaluation(py::module m) {
            py::arg("checking_relevent_range") = 1.,
            py::arg("route_predict_range") = 50.)
       .def(py::init<const AgentId&,const bark::commons::ParamsPtr>())
-      .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRss::Evaluate))
+      .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRSS::Evaluate))
       .def("PairwiseEvaluate",
-           py::overload_cast<const World&>(&EvaluatorRss::PairwiseEvaluate))
+           py::overload_cast<const World&>(&EvaluatorRSS::PairwiseEvaluate))
       .def("PairwiseDirectionalEvaluate",
            py::overload_cast<const World&>(
-               &EvaluatorRss::PairwiseDirectionalEvaluate))
-      .def("__repr__", [](const EvaluatorRss& g) {
-        return "bark.core.world.evaluation.EvaluatorRss";
+               &EvaluatorRSS::PairwiseDirectionalEvaluate))
+      .def("__repr__", [](const EvaluatorRSS& g) {
+        return "bark.core.world.evaluation.EvaluatorRSS";
       });
 #endif
 

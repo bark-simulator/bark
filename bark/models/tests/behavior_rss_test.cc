@@ -16,6 +16,7 @@
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
+#include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #include "bark/world/tests/make_test_world.hpp"
 
 using bark::models::behavior::BehaviorSafety;
@@ -27,6 +28,7 @@ using bark::models::behavior::BehaviorStatus;
 using bark::world::Agent;
 using bark::world::evaluation::EvaluationReturn;
 using bark::world::evaluation::BaseEvaluator;
+using bark::world::evaluation::EvaluatorRSS;
 using bark::world::ObservedWorld;
 using bark::world::World;
 using bark::world::WorldPtr;
@@ -164,6 +166,29 @@ TEST(rss_behavior, rss_behavior_system_test) {
   // assert that the velocity of the triggered agent is lower
   ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] < ego_agent->GetCurrentState()[4]);
 
+}
+
+
+TEST(rss_behavior, init) {
+  // safety behavior
+  auto params = std::make_shared<SetterParams>();
+  auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(
+    params);
+  std::shared_ptr<BehaviorSafety> safety_behavior =
+    std::make_shared<BehaviorSafety>(params);
+  safety_behavior->SetBehaviorModel(behavior_lane_tracking);
+
+  // rss behavior
+  auto rss_behavior = BehaviorRSSConformant(params);
+  auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
+  rss_behavior.SetNominalBehaviorModel(behavior_idm_classic);
+  rss_behavior.SetSafetyBehaviorModel(safety_behavior);
+
+  // set real RSS evaluator
+  auto eval_rss = EvaluatorRSS()
+
+  auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
+  auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
 }
 
 int main(int argc, char** argv) {
