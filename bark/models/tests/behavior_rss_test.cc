@@ -169,7 +169,7 @@ TEST(rss_behavior, rss_behavior_system_test) {
 }
 
 
-TEST(rss_behavior, init) {
+TEST(rss_behavior, real_rss_evaluator) {
   // safety behavior
   auto params = std::make_shared<SetterParams>();
   auto behavior_lane_tracking = std::make_shared<BehaviorIDMLaneTracking>(
@@ -185,7 +185,9 @@ TEST(rss_behavior, init) {
   rss_behavior.SetSafetyBehaviorModel(safety_behavior);
 
   // set real RSS evaluator
-  auto eval_rss = EvaluatorRSS()
+  // note: if the RSS should be fully built the flag --define rss=true has to be sets
+  auto eval_rss = EvaluatorRSS();
+  rss_behavior.SetEvaluator(eval_rss);
 
   auto behavior_safety_model = rss_behavior.GetBehaviorSafetyModel();
   auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();

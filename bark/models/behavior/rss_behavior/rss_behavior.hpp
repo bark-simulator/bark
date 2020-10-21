@@ -15,6 +15,7 @@
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/safety_behavior/safety_behavior.hpp"
+#include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -29,6 +30,7 @@ using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+using bark::world::evaluation::EvaluatorRSS;
 
 enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
@@ -38,8 +40,7 @@ class BehaviorRSSConformant : public BehaviorModel {
     BehaviorModel(params),
     nominal_behavior_model_(std::make_shared<BehaviorIDMClassic>(params)),
     safety_behavior_model_(std::make_shared<BehaviorSafety>(params)),
-    // TODO: needs to be the RSS evaluator
-    // rss_evaluator_(std::make_shared<BaseEvaluator>(params)),
+    rss_evaluator_(std::make_shared<EvaluatorRSS>()),
     rss_behavior_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
     world_time_of_last_rss_violation_(-1),
     initial_lane_corr_(nullptr) {}
@@ -64,15 +65,14 @@ class BehaviorRSSConformant : public BehaviorModel {
     safety_behavior_model_ = model;
   }
 
-  void SetEvaluator(const std::shared_ptr<BaseEvaluator>& evaluator){
+  void SetEvaluator(const std::shared_ptr<EvaluatorRSS>& evaluator){
     rss_evaluator_ = evaluator;
   }
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorSafety> safety_behavior_model_;
-  // TODO: needs to be the RSS evaluator
-  std::shared_ptr<BaseEvaluator> rss_evaluator_;
+  std::shared_ptr<EvaluatorRSS> rss_evaluator_;
   BehaviorRSSConformantStatus rss_behavior_status_;
   float world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;

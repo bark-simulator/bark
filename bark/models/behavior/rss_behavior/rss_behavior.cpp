@@ -32,7 +32,6 @@ Trajectory BehaviorRSSConformant::Plan(
     return GetLastTrajectory();
   }
 
-  // TODO: cast and assert that it is the RSS evaluator
   auto eval_res = boost::get<bool>(rss_evaluator_->Evaluate(observed_world));
   if (eval_res) {
     LOG(INFO) << "RSS is violated." << std::endl;

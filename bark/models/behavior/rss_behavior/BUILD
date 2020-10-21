@@ -11,6 +11,7 @@ cc_library(
         "//bark/world:world",
         "//bark/models/behavior/safety_behavior:safety_behavior",
         "//bark/models/dynamic:dynamic",
+        "//bark/world/evaluation/rss:evaluator_rss",
         "//bark/world/evaluation:evaluation"
     ],
     visibility = ["//visibility:public"],

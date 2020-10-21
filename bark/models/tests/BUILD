@@ -139,6 +139,7 @@ cc_test(
         "//bark/models/behavior/rss_behavior:rss_behavior",
         "//bark/models/execution/interpolation:interpolation",
         "//bark/world/tests:make_test_world",
+        "//bark/world/evaluation/rss:evaluator_rss",
         "//bark/models/behavior/idm:idm_lane_tracking",
         "//bark/models/behavior/idm:idm_classic",
         "//bark/world/tests:make_test_xodr_map",
