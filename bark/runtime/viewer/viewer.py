@@ -331,11 +331,14 @@ class BaseViewer(Viewer):
     def drawLanePolygon(self, lane, map_interface, color=None):
         if color is None:
             self.color_lane_boundaries
-
+        
+        polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
         if not lane.lane_type == XodrLaneType.driving:
-          polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
-          self.drawPolygon2d(polygon, "k",
-                                0.5, "k", zorder=10)
+          self.drawPolygon2d(polygon, (0.5, 0.5, 0.5),
+                                1.0, (0.5, 0.5, 0.5), zorder=1)
+        else:
+          self.drawPolygon2d(polygon, (0.9, 0.9, 0.9),
+                                1.0, (0.9, 0.9, 0.9), zorder=1)
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
