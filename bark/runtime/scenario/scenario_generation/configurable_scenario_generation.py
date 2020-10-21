@@ -214,7 +214,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
 
     #self._sink_source_default_params = sink_source_default_params
     scenario._eval_agent_ids = controlled_ids
-    scenario._agent_list = agent_list
+    scenario._agent_list = self.update_agent_ids(agent_list)
     
     return scenario
 
