@@ -51,7 +51,8 @@ cc_binary(
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts = select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["-D PLANNER_RULES_MCTS"], "//conditions:default": []})
-  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
+  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []}),
   linkshared = 1,
   linkstatic = 1
 )

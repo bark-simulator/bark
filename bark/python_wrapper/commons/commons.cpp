@@ -30,10 +30,12 @@ void python_commons(py::module m) {
       .def("getInt", &Params::GetInt)
       .def("getListFloat", &Params::GetListFloat)
       .def("getListListFloat", &Params::GetListListFloat)
+      .def("getMapAgentIdListFloat", &Params::GetMapAgentIdListFloat)
       .def("getString", &Params::GetString)
       .def("setBool", &Params::SetBool)
       .def("setReal", &Params::SetReal)
       .def("setString", &Params::SetString)
+      .def("setMapAgentIdListFloat", &Params::SetMapAgentIdListFloat)
       .def("getCondensedParamList", &Params::GetCondensedParamList)
       .def("setInt", &Params::SetInt);
 
