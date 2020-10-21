@@ -28,7 +28,7 @@ namespace evaluation {
 class EvaluatorRSS : public BaseEvaluator {
  public:
   EvaluatorRSS() : agent_id_(std::numeric_limits<AgentId>::max()) {}
-  #ifdef RSS
+#ifdef RSS
   explicit EvaluatorRSS(
       const AgentId& agent_id, const std::string& opendrive_file_name,
       const std::vector<float>& default_vehicle_dynamics,
@@ -76,7 +76,13 @@ class EvaluatorRSS : public BaseEvaluator {
   // at a safe distance, the longitudinal RSS situtation is safe but the
   // lateral one is unsafety.
   virtual EvaluationReturn Evaluate(const World& world) {
-    return rss_.GetSafetyReponse(world, agent_id_);
+    WorldPtr cloned_world = world.Clone();
+    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
+    return rss_.GetSafetyReponse(observed_world);
+  };
+
+  virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
+    return rss_.GetSafetyReponse(observed_world);
   };
 
   // Returns an unorder_map indicating the pairwise safety respone of the
@@ -86,7 +92,14 @@ class EvaluatorRSS : public BaseEvaluator {
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
-    return rss_.GetPairwiseSafetyReponse(world, agent_id_);
+    WorldPtr cloned_world = world.Clone();
+    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
+    return rss_.GetPairwiseSafetyReponse(observed_world);
+  };
+
+  virtual PairwiseEvaluationReturn PairwiseEvaluate(
+      const ObservedWorld& observed_world) {
+    return rss_.GetPairwiseSafetyReponse(observed_world);
   };
 
   // Returns an unorder_map indicating the pairwise directional safety respone
@@ -102,13 +115,21 @@ class EvaluatorRSS : public BaseEvaluator {
   // Return empty map if no agent is nearby or no Rss check can be performed.
   virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
       const World& world) {
-    return rss_.GetPairwiseDirectionalSafetyReponse(world, agent_id_);
+    WorldPtr cloned_world = world.Clone();
+    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
+    return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
+
+  virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
+      const ObservedWorld& observed_world) {
+    return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
+  };
+
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
-  #endif
+#endif
   AgentId agent_id_;
 };
 }  // namespace evaluation
