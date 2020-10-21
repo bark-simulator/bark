@@ -334,11 +334,11 @@ class BaseViewer(Viewer):
         
         polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
         if not lane.lane_type == XodrLaneType.driving:
-          self.drawPolygon2d(polygon, (0.5, 0.5, 0.5),
-                                1.0, (0.5, 0.5, 0.5), zorder=1)
+          self.drawPolygon2d(polygon, ( 0.5, 0.5 , 0.5),
+                                1.0, ( 0.5, 0.5 , 0.5), zorder=1)
         else:
-          self.drawPolygon2d(polygon, (0.9, 0.9, 0.9),
-                                1.0, (0.9, 0.9, 0.9), zorder=1)
+          self.drawPolygon2d(polygon, (0.7, 0.7, 0.7),
+                                1.0, (0.7, 0.7, 0.7), zorder=1, hatch="/")
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
@@ -353,11 +353,15 @@ class BaseViewer(Viewer):
             self.color_lane_boundaries
 
         dashed = False
+        color = ( 0.5, 0.5 , 0.5)
         # center line is type none and is drawn as broken
-        if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none:
+        if lane.road_mark.type == XodrRoadMarkType.broken:
             dashed = True
-        self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
-                        dashed, zorder=1, linewidth=self.map_linewidth)
+            color = (1, 1 ,1)
+ 
+        if not lane.road_mark.type == XodrRoadMarkType.none:
+          self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
+                          dashed, zorder=1, linewidth=1)
 
     def drawAgent(self, agent, color, alpha, facecolor):
         shape = agent.shape
