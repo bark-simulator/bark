@@ -25,10 +25,20 @@ git_repository(
 #planner_uct_rules_dependencies()
 # --------------------------------------------------
 
+# ------ Planner Rules-MCTS ------------------------------
+git_repository(
+  name = "planner_rules_mcts",
+  commit="23daa6085661560a1ca9734629acda10d094429b",
+  remote = "https://github.com/bark-simulator/planner-rules-mcts"
+)
+load("@planner_rules_mcts//util:deps.bzl", "planner_rules_mcts_dependencies")
+planner_rules_mcts_dependencies()
+# --------------------------------------------------
+
 # -------- Benchmark Database -----------------------
 git_repository(
   name = "benchmark_database",
-  commit="ff6e433ecb7878ebe59996f3994ff67483a7c297",
+  commit="bdf028c3b11636d5ea327fe30e5bb7091aefbc8a",
   remote = "https://github.com/bark-simulator/benchmark-database"
 )
 
@@ -57,6 +67,11 @@ git_repository(
   commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
   remote = "https://github.com/bark-simulator/bark-ml"
 )
+# --------------------------------------------------
+
+# ---------------------- RSS -----------------------
+load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
+rss_dependencies()
 # --------------------------------------------------
 
 # git_repository(

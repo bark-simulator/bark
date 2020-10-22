@@ -93,6 +93,37 @@ py_binary(
     ],
 )
 
+py_binary(
+  name = "highway_rss",
+  srcs = ["highway_rss.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//bark/runtime/commons:parameters",
+          "//bark/runtime/commons:xodr_parser",
+          "//bark/runtime/viewer:pygame_viewer",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/viewer:panda3d_easy",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "//bark/runtime:runtime"],
+)
+
+py_binary(
+  name = "merging_rss",
+  srcs = ["merging_rss.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data',
+          ':params'],
+  imports = ['../python/'],
+  deps = ["//bark/runtime/commons:parameters",
+          "//bark/runtime/commons:xodr_parser",
+          "//bark/runtime/viewer:pygame_viewer",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/viewer:panda3d_easy",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "//bark/runtime:runtime"],
+)
 
 py_binary(
   name = "maude_interface",

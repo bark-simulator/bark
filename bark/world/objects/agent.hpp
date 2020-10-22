@@ -93,6 +93,11 @@ class Agent : public Object {
    */
   bool AtGoal() const;
 
+  /**
+   * @brief  Checks is valid at the given world time
+   */
+  bool IsValidAtTime(const float& world_time) const;
+
   //! Getter
   BehaviorModelPtr GetBehaviorModel() const { return behavior_model_; }
 
@@ -133,6 +138,9 @@ class Agent : public Object {
   ExecutionStatus GetExecutionStatus() const {
     return execution_model_->GetExecutionStatus();
   }
+  float GetFirstValidTimestamp() const {
+    return first_valid_timestamp_;
+  }
 
   //! Setter
   void SetBehaviorModel(const BehaviorModelPtr& behavior_model_ptr) {
@@ -159,6 +167,10 @@ class Agent : public Object {
     road_corridor_ = road_corridor;
   }
 
+  void SetFirstValidTimestamp(const float first_valid_timestamp) {
+    first_valid_timestamp_ = first_valid_timestamp;
+  }
+
   virtual std::shared_ptr<Object> Clone() const;
 
  private:
@@ -169,6 +181,7 @@ class Agent : public Object {
   StateActionHistory history_;
   uint32_t max_history_length_;
   GoalDefinitionPtr goal_definition_;
+  float first_valid_timestamp_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;
