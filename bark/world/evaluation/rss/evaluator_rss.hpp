@@ -27,7 +27,7 @@ namespace evaluation {
 
 class EvaluatorRSS : public BaseEvaluator {
  public:
-  EvaluatorRSS() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  EvaluatorRSS() {}
 #ifdef RSS
   explicit EvaluatorRSS(
       const AgentId& agent_id, const std::string& opendrive_file_name,
@@ -49,7 +49,7 @@ class EvaluatorRSS : public BaseEvaluator {
                                "Map path for loading into Rss", ""),
              params->GetListFloat(
                  "EvaluatorRss::DefaultVehicleDynamics",
-                 "The default values of the vehicle dynamics using in Rss",
+                 "The default values of the vehicle dynamics in Rss",
                  std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1,
                                     1.0}),
              params->GetMapAgentIdListFloat(
@@ -133,8 +133,8 @@ class EvaluatorRSS : public BaseEvaluator {
 
  private:
   RssInterface rss_;
-#endif
   AgentId agent_id_;
+#endif
 };
 }  // namespace evaluation
 }  // namespace world
