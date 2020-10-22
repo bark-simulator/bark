@@ -13,7 +13,7 @@ cc_library(
         "//bark/commons",
         "//bark/geometry",
         "//bark/models/dynamic",
-        "//bark/world",
+        "//bark/world:world",
         "@boost//:geometry",
         "@boost//:filesystem",
     ] + select({"//bark/world/evaluation/rss:_rss" : ["@ad_rss_lib//:ad_rss", "@ad_rss_lib//:ad_rss_map_integration", "@map_support//:ad_physics","@spdlog" ], "//conditions:default": []}),
@@ -28,7 +28,7 @@ cc_library(
     hdrs = ["evaluator_rss.hpp"],
     visibility = ["//visibility:public"],
     deps = [
-        "//bark/world",
+        "//bark/world:world",
         "//bark/world/evaluation:base_evaluator",
         ":_rss_interface",
     ]

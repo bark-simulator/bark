@@ -17,12 +17,19 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::world::map::LaneCorridor;
+using bark::world::map::LaneCorridorPtr;
+
+
 // IDM that follows the centerline of a LaneCorridor
 // using the dynamic SingleTrack model
 class BehaviorIDMLaneTracking : public BaseIDM {
  public:
-  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BehaviorModel(params), BaseIDM(params), limit_steering_rate_(true) {
+  explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
+    BehaviorModel(params),
+    BaseIDM(params),
+    limit_steering_rate_(true),
+    constant_lane_corr_(nullptr) {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);
@@ -39,11 +46,17 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   void SetLimitSteeringRate(bool limit_steering) {
     limit_steering_rate_ = limit_steering;
   }
+
+  void SetConstantLaneCorridor(const LaneCorridorPtr& lc) {
+    constant_lane_corr_ = lc;
+  }
+
   friend class BaseIDM;
 
  private:
   double crosstrack_error_gain_;
   bool limit_steering_rate_;
+  LaneCorridorPtr constant_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMLaneTracking::Clone() const {

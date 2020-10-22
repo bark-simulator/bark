@@ -19,7 +19,7 @@ from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.core.models.behavior import *
 
 try:
-    from bark.core.world.evaluation import EvaluatorRss
+    from bark.core.world.evaluation import EvaluatorRSS
 except:
     raise ImportError(
         "This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
@@ -121,7 +121,7 @@ agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
 
 def print_rss_safety_response(evaluator_rss, world):
     # Example of using RSS to evaluate the safety situation of the evaluating agent.
-    # The evaluating agent is defined with agent_id when initializing EvaluatorRss.
+    # The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
     # Evaluating with RSS is quite computionally expensive
     print("Overall safety response: ", evaluator_rss.Evaluate(world))
     # print("Pairwise safety response: ",
@@ -142,12 +142,12 @@ for episode in range(0, 3):
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
 
-    # There are two ways to upset EvaluatorRss
-    # evaluator_rss = EvaluatorRss(eval_agent_id, map_path,
+    # There are two ways to upset EvaluatorRSS
+    # evaluator_rss = EvaluatorRSS(eval_agent_id, map_path,
     #                              default_vehicle_dynamics,
     #                              agents_vehicle_dynamics,
     #                              checking_relevent_range=1)
-    evaluator_rss = EvaluatorRss(eval_agent_id, param_server)
+    evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
 
     current_world.AddEvaluator("rss", evaluator_rss)
 

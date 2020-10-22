@@ -47,7 +47,13 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   double start_time = observed_world.GetWorldTime();
   double t_i = 0., acc = 0.;
-  geometry::Line line = lane_corr->GetCenterLine();
+  geometry::Line line;
+  if (constant_lane_corr_ != nullptr) {
+    // std::cout << "using const. lane corr: " << constant_lane_corr_ << std::endl;
+    line = constant_lane_corr_->GetCenterLine();
+  } else {
+    line = lane_corr->GetCenterLine();
+  }
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
