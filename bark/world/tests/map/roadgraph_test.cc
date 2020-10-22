@@ -652,7 +652,7 @@ TEST(roadgraph, generate_roadgraph_neighbours_test) {
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -704,7 +704,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -731,7 +731,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
 
   //! ROAD 2
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(10.0f, 0.0f), 0.0f, 20.0f);
+  p2->AddLine(Point2d(10.0f, 0.0f), 0.0f, 20.0f, 20.0f);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));

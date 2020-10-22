@@ -26,7 +26,7 @@ TEST(create_plan_view, open_drive) {
   PlanView p;
 
   //! add line
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5, 10.0f, 10.0f);
 
   //! add arc
   p.AddArc(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 0.1f);
@@ -47,7 +47,7 @@ TEST(lane, open_drive) {
   XodrLaneOffset off = {1.5f, 0.0f, 0.0f, 0.0f};
 
   //! vertical
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
   XodrLaneWidth lane_width = {0, 10.0, off};
 
   XodrLanePtr lane = CreateLaneFromLaneWidth(1, p.GetReferenceLine(),
@@ -79,7 +79,7 @@ TEST(lane, open_drive) {
   PlanView p2;
 
   //! horizontal
-  p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   lane = CreateLaneFromLaneWidth(1, p2.GetReferenceLine(), lane_width,
                                  0.05f);  // left side
@@ -116,7 +116,7 @@ TEST(multiple_lane_widths, open_drive) {
   XodrLaneWidth lane_width1 = {0, 4.0, off1};
   XodrLaneWidth lane_width2 = {4.0, 10.0, off2};
   //! vertical
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
 
   XodrLanePtr lane = std::make_shared<XodrLane>(1);
   bool succ = lane->append(p.GetReferenceLine(), lane_width1, 0.05f);
@@ -142,7 +142,7 @@ TEST(road, open_drive) {
 
   //! new plan view
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
 
   XodrRoadLinkInfo pre;
   pre.id_ = 2;
@@ -209,7 +209,7 @@ TEST(map, open_drive) {
 
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrRoad-Link
 
@@ -253,7 +253,7 @@ TEST(map, open_drive) {
 
   //! ROAD 2
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p2->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrRoad-Link
   XodrRoadLink l2 = {};  // can either link to another road or to a junction
