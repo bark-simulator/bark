@@ -50,7 +50,8 @@ class EvaluatorRSS : public BaseEvaluator {
              params->GetListFloat(
                  "EvalutaorRss::DefaultVehicleDynamics",
                  "The default values of the vehicle dynamics using in Rss",
-                 std::vector<float>()),
+                 std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1,
+                                    1.0}),
              params->GetMapAgentIdListFloat(
                  "EvalutaorRss::SpecificAgentVehicleDynamics",
                  "The values of the vehicle dynamics of a specific value",
@@ -65,6 +66,9 @@ class EvaluatorRSS : public BaseEvaluator {
                              "having less than the distance, will be used when "
                              "a route to the goal cannnot be found",
                              50)) {}
+
+  explicit EvaluatorRSS(const commons::ParamsPtr& params)
+      : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the two directional RSS
