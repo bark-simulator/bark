@@ -37,12 +37,12 @@ class MPViewer(BaseViewer):
             marker='x')
 
     def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
-        linestyle_string = (0, (5, 10)) if dashed else 'solid'
+        linestyle = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],
-            line2d_np[:, 1], 
-            linestyle=linestyle_string,
+            line2d_np[:, 1],
+            linestyle=linestyle,
             color=self.getColor(color),
             alpha=alpha,
             zorder=zorder,
@@ -131,11 +131,11 @@ class MPViewer(BaseViewer):
         self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
         self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
         self.axes.get_xaxis().set_visible(False)
-        self.axes.get_yaxis().set_visible(False) 
+        self.axes.get_yaxis().set_visible(False)
 
     def clear(self):
         self.axes.cla()
-      
-    
+
+
     def getColorFromMap(self, float_color):
         return cm.Accent(float_color)
