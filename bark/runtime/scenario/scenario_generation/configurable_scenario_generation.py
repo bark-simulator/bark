@@ -202,7 +202,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #5 Build all agents for this source config
       kwargs_dict = {**kwargs_dict, **kwargs_dict_tmp}
       agent_params = sink_source_config["AgentParams"]
-      sink_source_agents, controlled_ids = self.create_source_config_agents(agent_states,
+      sink_source_agents = self.create_source_config_agents(agent_states,
                       agent_geometries, behavior_models, execution_models,
                       dynamic_models, goal_definitions, controlled_agent_ids,
                       world, agent_params)
@@ -213,7 +213,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #collected_sources_sinks_default_param_configs.append(sink_source_config)
 
     #self._sink_source_default_params = sink_source_default_params
-    scenario._eval_agent_ids = controlled_ids
+    scenario._eval_agent_ids = [i for i, val in enumerate(controlled_agent_ids_all) if val] 
     scenario._agent_list = self.update_agent_ids(agent_list)
     
     return scenario
@@ -413,7 +413,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       agent_geometries, behavior_models, execution_models, dynamic_models, goal_definitions, controlled_agent_ids]):
       raise ValueError("Config readers did not return equal sized of lists")
     agents = []
-    controlled_ids = []
     for idx, agent_state in enumerate(agent_states):
       bark_agent = Agent( np.array(agent_state), 
                           behavior_models[idx], 
@@ -425,14 +424,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                           world.map )
       if "agent_ids" in kwargs:
         bark_agent.SetAgentId(kwargs["agent_ids"][idx])
-        if controlled_agent_ids[idx]:
-          controlled_ids.append(kwargs["agent_ids"][idx])
       else:
-        bark_agent.SetAgentId(idx)
-        if controlled_agent_ids[idx]:
-          controlled_ids.append(idx)
+        bark_agent.SetAgentId(idx)     
       agents.append(bark_agent)
-    return agents, controlled_ids
+    return agents
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
     eval_config = sink_source_config[config_type]
