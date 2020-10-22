@@ -45,23 +45,23 @@ class EvaluatorRSS : public BaseEvaluator {
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(params->GetString("EvalutaorRss::MapFilename",
+        rss_(params->GetString("EvaluatorRss::MapFilename",
                                "Map path for loading into Rss", ""),
              params->GetListFloat(
-                 "EvalutaorRss::DefaultVehicleDynamics",
+                 "EvaluatorRss::DefaultVehicleDynamics",
                  "The default values of the vehicle dynamics using in Rss",
                  std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1,
                                     1.0}),
              params->GetMapAgentIdListFloat(
-                 "EvalutaorRss::SpecificAgentVehicleDynamics",
+                 "EvaluatorRss::SpecificAgentVehicleDynamics",
                  "The values of the vehicle dynamics of a specific value",
                  std::unordered_map<AgentId, std::vector<float>>()),
-             params->GetReal("EvalutaorRss::CheckingRelevantRange",
+             params->GetReal("EvaluatorRss::CheckingRelevantRange",
                              "Controlling the searching distance between the "
                              "evaluating agent "
                              "and other agents to perform RSS check",
                              1),
-             params->GetReal("EvalutaorRss::RoutePredictRange",
+             params->GetReal("EvaluatorRss::RoutePredictRange",
                              "Describle the distance for returning all routes "
                              "having less than the distance, will be used when "
                              "a route to the goal cannnot be found",

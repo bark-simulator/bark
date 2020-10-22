@@ -237,7 +237,7 @@ TEST(world, rss_evaluator) {
   using bark::world::goal_definition::GoalDefinitionPolygon;
 
   auto params = std::make_shared<SetterParams>();
-  params->SetString("EvalutaorRss::MapFilename", "bark/runtime/tests/data/city_highway_straight.xodr");
+  params->SetString("EvaluatorRss::MapFilename", "bark/runtime/tests/data/city_highway_straight.xodr");
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));

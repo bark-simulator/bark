@@ -148,10 +148,10 @@ def print_rss_safety_response(evaluator_rss, world):
     #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
-param_server["EvalutaorRss"]["MapFilename"] = map_path
-param_server["EvalutaorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
-param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
+param_server["EvaluatorRss"]["MapFilename"] = map_path
+param_server["EvaluatorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
+param_server["EvaluatorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
+param_server["EvaluatorRss"]["CheckingRelevantRange"] = 1
 
 
 # run n scenarios
