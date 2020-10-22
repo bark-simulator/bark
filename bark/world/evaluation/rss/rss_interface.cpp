@@ -413,9 +413,10 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   return is_pairwise_directionally_safe;
 }
 
-bool RssInterface::GenerateRSSWorld(const World& world, const AgentId& agent_id,
+bool RssInterface::GenerateRSSWorld(const ObservedWorld& observed_world,
                                     ::ad::rss::world::WorldModel& rss_world) {
-  AgentPtr agent = world.GetAgent(agent_id);
+  AgentPtr agent = observed_world.GetEgoAgent();
+  AgentId agent_id = observed_world.GetEgoAgentId();
 
   Point2d agent_goal;
   bg::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
@@ -434,7 +435,7 @@ bool RssInterface::GenerateRSSWorld(const World& world, const AgentId& agent_id,
   AgentState agent_rss_state =
       ConvertAgentState(agent_state, agent_rss_dynamics);
 
-  AgentMap other_agents = world.GetAgents();
+  AgentMap other_agents = observed_world.GetAgents();  // GetOtherAgents();
   bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state,
                                  agent_match_object, agent_rss_dynamics,
                                  agent_rss_route, rss_world);
@@ -442,11 +443,11 @@ bool RssInterface::GenerateRSSWorld(const World& world, const AgentId& agent_id,
   return result;
 }
 
-EvaluationReturn RssInterface::GetSafetyReponse(const World& world,
-                                                const AgentId& ego_id) {
+EvaluationReturn RssInterface::GetSafetyReponse(
+    const ObservedWorld& observed_world) {
   std::optional<bool> response;
   ::ad::rss::world::WorldModel rss_world;
-  if (GenerateRSSWorld(world, ego_id, rss_world)) {
+  if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractSafetyEvaluation(snapshot);
@@ -455,10 +456,10 @@ EvaluationReturn RssInterface::GetSafetyReponse(const World& world,
 }
 
 PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
-    const World& world, const AgentId& ego_id) {
+    const ObservedWorld& observed_world) {
   ::ad::rss::world::WorldModel rss_world;
   PairwiseEvaluationReturn response;
-  if (GenerateRSSWorld(world, ego_id, rss_world)) {
+  if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractPairwiseSafetyEvaluation(snapshot);
@@ -467,11 +468,11 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
 }
 
 PairwiseDirectionalEvaluationReturn
-RssInterface::GetPairwiseDirectionalSafetyReponse(const World& world,
-                                                  const AgentId& ego_id) {
+RssInterface::GetPairwiseDirectionalSafetyReponse(
+    const ObservedWorld& observed_world) {
   ::ad::rss::world::WorldModel rss_world;
   PairwiseDirectionalEvaluationReturn response;
-  if (GenerateRSSWorld(world, ego_id, rss_world)) {
+  if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
