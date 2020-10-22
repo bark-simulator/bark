@@ -28,6 +28,7 @@ cc_library(
     deps = [
 	    "@com_github_eigen_eigen//:eigen",
         "@boost//:geometry",
+        "@com_github_spline//:spline",
     ],
     visibility = ["//visibility:public"],
 )
