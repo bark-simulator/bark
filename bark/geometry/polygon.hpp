@@ -48,6 +48,14 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     }
   }
 
+  void SetPrecision(int precision) {
+    const double scale = pow(10, precision);
+    for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end(); ++it) {
+      boost::geometry::set<0>(*it, round(boost::geometry::get<0>(*it) * scale) / scale);
+      boost::geometry::set<1>(*it, round(boost::geometry::get<1>(*it) * scale) / scale);
+    }
+  }
+
   float rear_dist_;
   float front_dist_;
   float left_dist_;
