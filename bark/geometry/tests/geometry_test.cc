@@ -953,7 +953,7 @@ TEST(line, line_subsampling) {
   line.AddPoint(point_4);
 
   double ds = 1.0;
-  Line lss = bark::geometry::SubsampleLine(line, ds);
+  Line lss = bark::geometry::SmoothLine(line, ds);
 
   EXPECT_EQ(lss.size(), 11);
   EXPECT_TRUE(lss.Length()>line.Length());
