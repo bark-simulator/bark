@@ -217,13 +217,13 @@ class BaseViewer(Viewer):
     def drawGoalDefinition(self, goal_definition, color, alpha, facecolor):
         if isinstance(goal_definition, GoalDefinitionPolygon):
             self.drawPolygon2d(goal_definition.goal_shape,
-                               color, alpha, facecolor, zorder=0)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionStateLimits):
             self.drawPolygon2d(goal_definition.xy_limits,
-                               color, alpha, facecolor, zorder=0)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionStateLimitsFrenet):
             self.drawPolygon2d(goal_definition.goal_shape,
-                               color, alpha, facecolor, zorder=0)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionSequential):
             prev_center = np.array([])
             for idx, goal_def in enumerate(goal_definition.sequential_goals):
