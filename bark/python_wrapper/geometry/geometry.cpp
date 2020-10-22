@@ -137,6 +137,8 @@ void python_geometry(py::module m) {
            })
       .def("ToArray", &Line::ToArray, "returns numpy array.")
       .def("Valid", &Line::Valid, "checks if line is valid.")
+      .def("ScalingTransform", &Line::ScalingTransform,
+           "scales object around center point then translates and rotates it.")
       .def("Rotate", &Line::Rotate, "rotates object around center point.")
       .def("Translate", &Line::Translate, "translates object.")
       .def("Transform", &Line::Transform, "translates and rotates object.")
@@ -198,6 +200,8 @@ void python_geometry(py::module m) {
       .def("CalculateArea", &Polygon::CalculateArea, "calculates are covered")
       .def("ToArray", &Polygon::ToArray, "returns numpy array")
       .def("Valid", &Polygon::Valid, "checks if polygong is valid.")
+      .def("ScalingTransform", &Polygon::ScalingTransform,
+           "scales object around center point and then translate it.")
       .def("Rotate", &Polygon::Rotate, "rotates object around center point.")
       .def("Translate", &Polygon::Translate, "translates center point.")
       .def("Transform", &Polygon::Transform, "translates and rotates object.")

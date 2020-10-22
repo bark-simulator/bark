@@ -183,6 +183,15 @@ class PickleTests(unittest.TestCase):
                                 BehaviorUCTSingleAgentMacroActions))
 
 
+    def test_behavior_safety(self):
+      from bark.core.models.behavior import BehaviorSafety
+      params = ParameterServer()
+      pickle_unpickle(BehaviorSafety(params))
+
+    def test_behavior_rss(self):
+      from bark.core.models.behavior import BehaviorRSSConformant
+      params = ParameterServer()
+      pickle_unpickle(BehaviorRSSConformant(params))
 
 if __name__ == '__main__':
     unittest.main()

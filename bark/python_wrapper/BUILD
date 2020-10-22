@@ -38,6 +38,8 @@ cc_binary(
     "//bark/models/behavior/static_trajectory",
     "//bark/models/behavior/not_started",
     "//bark/models/behavior/idm/stochastic:stochastic",
+    "//bark/models/behavior/behavior_safety:behavior_safety",
+    "//bark/models/behavior/behavior_rss:behavior_rss",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
@@ -49,7 +51,8 @@ cc_binary(
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
   copts = select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["-D PLANNER_RULES_MCTS"], "//conditions:default": []})
-  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
+  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []}),
   linkshared = 1,
   linkstatic = 1
 )
@@ -83,6 +86,8 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/behavior_safety:behavior_safety",
+    "//bark/models/behavior/behavior_rss:behavior_rss",
     "//bark/models/behavior/idm/stochastic:stochastic",
     "//bark/world/evaluation/ltl/label_functions:label_function"
     ],

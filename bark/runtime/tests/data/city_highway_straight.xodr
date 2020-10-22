@@ -1,13 +1,17 @@
 <?xml version="1.0" standalone="yes"?>
 <OpenDRIVE>
-    <header revMajor="1" revMinor="4" name="" version="1.00" date="Thu Jun  6 10:01:32 2019" north="0.0000000000000000e+00" south="0.0000000000000000e+00" east="0.0000000000000000e+00" west="0.0000000000000000e+00">
+    <header revMajor="1" revMinor="4" name="" version="1" date="2019-04-06T10:38:28" north="2.8349990809409476e+1" south="-3.5690998535156251e+2" east="4.2268105762411665e+2" west="-2.8359911988457576e+1" vendor="VectorZero">
+        <geoReference><![CDATA[+lat_0=4.9000000000000000e+1 +lon_0=8.0000000000000000e+0]]></geoReference>
+        <userData>
+            <vectorScene program="RoadRunner" version="2019.0.0 (build 739aef7bb)"/>
+        </userData>
     </header>
     <road name="" length="2.5000000000000000e+02" id="16" junction="-1">
         <link>
         </link>
         <type s="0.0000000000000000e+00" type="town"/>
         <planView>
-            <geometry s="0.0000000000000000e+00" x="5.1126832348793750e+03" y="5.0549844643744773e+03" hdg="1.5707963267948966e+00" length="2.5000000000000000e+02">
+            <geometry s="0.0000000000000000e+00" x="0" y="-125" hdg="1.5707963267948966e+00" length="2.5000000000000000e+02">
                 <line/>
             </geometry>
         </planView>
