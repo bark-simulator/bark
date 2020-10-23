@@ -174,12 +174,18 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     for (;;) {
       next_lane = next_lane->GetNextLane();
       if (next_lane == nullptr) break;
-      lane_corridor->GetCenterLine().ConcatenateLinestring(
-          next_lane->GetCenterLine());
-      lane_corridor->GetLeftBoundary().ConcatenateLinestring(
-          next_lane->GetLeftBoundary().line_);
-      lane_corridor->GetRightBoundary().ConcatenateLinestring(
+      Line new_center = bark::geometry::ConcatenateLinestring(
+          lane_corridor->GetCenterLine(), next_lane->GetCenterLine());
+      lane_corridor->SetCenterLine(new_center);
+      
+      Line new_left = bark::geometry::ConcatenateLinestring(
+          lane_corridor->GetLeftBoundary(), next_lane->GetLeftBoundary().line_);
+      lane_corridor->SetLeftBoundary(new_left);
+
+      Line new_right = bark::geometry::ConcatenateLinestring(
+          lane_corridor->GetRightBoundary(),
           next_lane->GetRightBoundary().line_);
+      lane_corridor->SetRightBoundary(new_right);
       // std::cout << "New Poly" << std::endl;
       // std::cout << next_lane->GetPolygon().ToArray() << std::endl;
       // lane_corridor->GetMergedPolygon().ConcatenatePolygons(
@@ -194,8 +200,9 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     // TODO(@hart): use parameter
     // \note \kessler: setting max_dist too small can yield self-intersecting
     // road polygons. why? in curves on the inner radius due to sampling
-    // inaccuracy the boundaries of two segments can overlap. The code below just copies each point to the lane polygon without checking this.
-    
+    // inaccuracy the boundaries of two segments can overlap. The code below
+    // just copies each point to the lane polygon without checking this.
+
     const double max_dist = 0.4;
     Line simplf_center = Simplify(lane_corridor->GetCenterLine(), max_dist);
     lane_corridor->SetCenterLine(simplf_center);
@@ -212,7 +219,8 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
     // merged polygons
     PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
 
-    // \todo (\kessler): before adding a point, check if this produces a self-intersection.
+    // \todo (\kessler): before adding a point, check if this produces a
+    // self-intersection.
     for (auto const& p : lane_corridor->GetLeftBoundary()) {
       polygon->AddPoint(p);
     }
@@ -227,7 +235,8 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
 
     std::cout << "lane corridor valid?" << std::endl;
     if (!polygon->Valid()) {
-      LOG(ERROR) << "Producing a non-valid lane corridor for lane id = " << lane.first;
+      LOG(ERROR) << "Producing a non-valid lane corridor for lane id = "
+                 << lane.first;
     }
 
     lane_corridor->SetMergedPolygon(*polygon);

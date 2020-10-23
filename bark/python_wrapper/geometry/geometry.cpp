@@ -147,8 +147,6 @@ void python_geometry(py::module m) {
       .def("Reverse", &Line::Reverse, "reverse linestring in place")
       .def("AppendLinestring", &Line::AppendLinestring,
            "append linestrings in place")
-      .def("concatenate_linestring", &Line::ConcatenateLinestring,
-           "concatenate linestrings in place")
       .def_property_readonly("bounding_box", &Line::BoundingBox)
       .def_readwrite("center", &Line::center_, "center point.")
       .def(py::pickle(
