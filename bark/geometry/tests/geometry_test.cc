@@ -19,18 +19,18 @@ TEST(polygon, base_functionality) {
   using bark::geometry::Polygon_t;
 
   // template version; point <--> polygon
-  Point2d_t<float> point_1(0.0, 0.0);
-  Point2d_t<float> point_2(4.0, 0.0);
-  Point2d_t<float> point_3(4.0, 4.0);
-  Point2d_t<float> point_4(0.0, 4.0);
+  Point2d_t<double> point_1(0.0, 0.0);
+  Point2d_t<double> point_2(4.0, 0.0);
+  Point2d_t<double> point_3(4.0, 4.0);
+  Point2d_t<double> point_4(0.0, 4.0);
 
-  Polygon_t<Point2d_t<float>> polygon;
+  Polygon_t<Point2d_t<double>> polygon;
   polygon.AddPoint(point_1);
   polygon.AddPoint(point_2);
   polygon.AddPoint(point_3);
   polygon.AddPoint(point_4);
 
-  Point2d_t<float> check_point(5.0, 2.0);
+  Point2d_t<double> check_point(5.0, 2.0);
 
   EXPECT_NEAR(Distance(polygon, check_point), 1.0, 0.01);
 
@@ -65,7 +65,7 @@ TEST(line, base_functionality) {
   line.AddPoint(point_2);
   line.AddPoint(point_3);
 
-  Point2d_t<float> check_point(2.5, 2.0);
+  Point2d_t<double> check_point(2.5, 2.0);
 
   EXPECT_NEAR(Distance(line, check_point), 2.5, 0.01);
 }
@@ -715,11 +715,11 @@ TEST(line, GetNearestPoint_1) {
   Point2d p2 = GetNearestPoint(line, point_2);
   Point2d p3 = GetNearestPoint(line, point_3);
 
-  Point2d p4 = GetNearestPoint(line, Point2d(0, 0));
-  Point2d p5 = GetNearestPoint(line, Point2d(0, 4));
+  Point2d p4 = GetNearestPoint(line, Point2d(0.0, 0.0));
+  Point2d p5 = GetNearestPoint(line, Point2d(0.0, 4.0));
 
-  Point2d p6 = GetNearestPoint(line, Point2d(1, 1));
-  Point2d p7 = GetNearestPoint(line, Point2d(1, 2.2));
+  Point2d p6 = GetNearestPoint(line, Point2d(1.0, 1.0));
+  Point2d p7 = GetNearestPoint(line, Point2d(1.0f, 2.2f));
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -729,7 +729,7 @@ TEST(line, GetNearestPoint_1) {
   EXPECT_TRUE(Point2d(0.0, 3.0) == p5);
 
   EXPECT_TRUE(Point2d(0.0, 1.0) == p6);
-  EXPECT_TRUE(Point2d(0.0, 2.2) == p7);
+  EXPECT_TRUE(Point2d(0.0f, 2.2f) == p7);
 }
 
 TEST(line, segment_intersection_check_1) {
