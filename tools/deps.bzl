@@ -11,8 +11,15 @@ def bark_dependencies():
 
     _maybe(
     git_repository,
+    name = "com_github_rules_rss",
+    commit = "f28d98d75010204db6a96ab1949f8346ba7e3237",
+    remote = "https://github.com/bark-simulator/rules_rss"
+    )
+
+    _maybe(
+    git_repository,
     name = "gtest",
-    commit = "482ac6ee63429af2aa9c44f4e6427873fb68fb1f",
+    commit = "703bd9caab50b139428cea1aaff9974ebee5742e",
     remote = "https://github.com/google/googletest"
     )
 
@@ -83,6 +90,23 @@ cc_library(
 )
     """
     )
+
+    _maybe(
+      new_git_repository,
+      name = "com_github_spline",
+      commit = "619c634ef5f6f2df1508c767f979eb4b7bf9c66a",
+      remote = "https://github.com/ttk592/spline",
+      build_file_content = """
+cc_library(
+    name = 'spline',
+    srcs = [],
+    includes = ['.'],
+    hdrs = ["src/spline.h"],
+    visibility = ['//visibility:public'],
+)
+    """
+    )
+
 
     _maybe(
     git_repository,

@@ -934,6 +934,65 @@ TEST(optimizer, shrink_polygon) {
   ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
+TEST(line, line_subsampling) {
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  namespace bg = boost::geometry;
+
+  // template
+  Point2d point_1(0.0, 0.0);
+  Point2d point_2(3.0, 1.0);
+  Point2d point_3(4.0, 4.0);
+  Point2d point_4(7.0, 5.0);
+
+  Line line;
+
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+  line.AddPoint(point_4);
+
+  double ds = 1.0;
+  Line lss = bark::geometry::SmoothLine(line, ds);
+
+  EXPECT_EQ(lss.size(), 11);
+  EXPECT_TRUE(lss.Length()>line.Length());
+
+  double tol = 0.3;
+  EXPECT_EQ(bg::get<0>(lss.obj_[0]), 0.0);
+  EXPECT_EQ(bg::get<1>(lss.obj_[0]), 0.0);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[1]), 1.4076, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[1]), -0.1427, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[2]), 2.3418, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[2]), 0.1881, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[3]), 2.9289, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[3]), 0.8659, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[4]), 3.2954, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[4]), 1.7642, tol);
+  
+  EXPECT_NEAR(bg::get<0>(lss.obj_[5]), 3.5680, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[5]), 2.7566, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[6]), 3.8730, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[6]), 3.7165, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[7]), 4.3369, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[7]), 4.5175, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[8]), 5.0863, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[8]), 5.0330, tol);
+
+  EXPECT_NEAR(bg::get<0>(lss.obj_[9]), 6.2476, tol);
+  EXPECT_NEAR(bg::get<1>(lss.obj_[9]), 5.1366, tol);
+
+  EXPECT_EQ(bg::get<0>(lss.obj_[10]), 7.0);
+  EXPECT_EQ(bg::get<1>(lss.obj_[10]), 5.0);
+}
+
 TEST(buffer, inflate) {
   using bark::geometry::Point2d;
   using bark::geometry::Polygon;

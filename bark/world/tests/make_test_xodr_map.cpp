@@ -21,7 +21,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
   OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
 
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 200.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 200.0f, 200.0f);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -65,7 +65,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
 
   // ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f, 50.0f);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -98,7 +98,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   //! ROAD 2
   //! Plan View
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f);
+  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f, 100.0f);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));
@@ -144,7 +144,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
 
   // ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f, 50.0f);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -183,7 +183,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   //! ROAD 2
   //! Plan View
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f);
+  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f, 100.0f);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));

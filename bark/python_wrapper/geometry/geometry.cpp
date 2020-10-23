@@ -96,6 +96,9 @@ void python_geometry(py::module m) {
   m.def("ComputeCenterLine", &bark::geometry::ComputeCenterLine,
         "computes the center line.");
 
+  m.def("SmoothLine", &bark::geometry::SmoothLine,
+        "smoothes line using spline interpolation");
+
   m.def("Collide", py::overload_cast<const Polygon&, const Point2d&>(&Collide),
         "Returns true if polygon and point2d collide.");
 

@@ -14,8 +14,9 @@ from bark.core.geometry import Point2d
 logger = logging.getLogger()
 
 class XodrParser(object):
-    def __init__(self, file_name):
+    def __init__(self, file_name, **kwargs):
         self.xodr = self.load_xodr(file_name)
+        self._s_inc_straight_line = kwargs.pop("s_inc_straight_line", None)
         self.python_map = {}
         self.parse_xml(self.xodr)
         self.map = OpenDriveMap()
@@ -282,8 +283,14 @@ class XodrParser(object):
             starting_point = Point2d(
                 float(geometry["x"]), float(geometry["y"]))
             if geometry["geometry"]["type"] == "line":
+                if self._s_inc_straight_line is None:
+                  s_inc_straight_line = float(geometry["length"]) 
+                elif isinstance(self._s_inc_straight_line, float):
+                  s_inc_straight_line = self._s_inc_straight_line
+                else:
+                  raise TypeError("s_inc_straight_line not specified")
                 new_plan_view.AddLine(starting_point, float(geometry["hdg"]),
-                                       float(geometry["length"]))
+                                       float(geometry["length"]), s_inc_straight_line)
             if geometry["geometry"]["type"] == "arc":
                 new_plan_view.AddArc(starting_point, float(geometry["hdg"]),
                                       float(geometry["length"]),

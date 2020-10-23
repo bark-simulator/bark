@@ -26,7 +26,8 @@ class PlanView {
   ~PlanView() {}
 
   //! setter functions
-  bool AddLine(Point2d start_point, float heading, float length);
+  bool AddLine(Point2d start_point, float heading, float length,
+               float s_inc);
 
   bool AddSpiral(Point2d start_point, float heading, float length,
                  float curvStart, float curvEnd, float s_inc = 2.0f);

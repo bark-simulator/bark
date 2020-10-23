@@ -23,6 +23,8 @@
 #include "bark/geometry/angle.hpp"
 #include "bark/geometry/commons.hpp"
 
+#include "src/spline.h"
+
 namespace bark {
 namespace geometry {
 
@@ -511,6 +513,38 @@ inline double SignedDistance(const Line& line, const Point2d& p,
   double sign = (diff > 0) ? 1 : ((diff < 0) ? -1 : 0);
 
   return bg::distance(line.obj_, p) * sign;
+}
+
+// Subsampling using spline
+inline Line SmoothLine(const Line& l, const double ds) {
+  if (l.size() < 3) {
+    LOG(WARNING) << "cannot subsample line with only 3 points";
+    return l;
+  }
+  else {
+    int num_points = l.Length() / ds;
+
+    tk::spline splineX, splineY;
+    std::vector<double> xVec, yVec;
+    for (size_t i = 0; i < l.obj_.size(); i++) {
+      xVec.push_back(bg::get<0>(l.obj_[i]));
+      yVec.push_back(bg::get<1>(l.obj_[i]));
+    }
+    std::vector<double> sVec(l.s_.begin(), l.s_.end());
+    splineX.set_points(sVec, xVec);
+    splineY.set_points(sVec, yVec);
+
+    Line lss;
+    for (size_t j = 0; j <= num_points; ++j) {
+      double x = splineX(j * ds);
+      double y = splineY(j * ds);
+      lss.AddPoint(geometry::Point2d(x, y));
+    }
+    if (l.Length() > num_points * ds) {
+      lss.AddPoint(l.obj_.at(l.size() - 1));
+    }
+    return lss;
+  }
 }
 
 inline Line ComputeCenterLine(const Line& outer_line_,
