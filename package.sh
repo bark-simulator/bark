@@ -81,7 +81,7 @@ if [[ $# -gt 0 ]] ; then
             # run nose tests outside the virtual env to verify the installed package
             echo "Running tests..."
             cd /home
-            /opt/python/cp37-cp37m/bin/nosetests bark
+            /opt/python/cp37-cp37m/bin/nosetests bark -e "py_benchmark_runner_tests|py_benchmark_process_tests|test_find_overlaps_configurable_scenario_generation"
             test_status=$?
             cd $_CURR_DIR
         done

@@ -36,8 +36,8 @@ py_test (
         "//bark/models/tests:py_behavior_model_test",
         "//bark/geometry/tests:py_geometry_tests",
         "//bark/commons/tests:py_commons_tests",
-        #"//bark/benchmark/tests:py_benchmark_runner_tests",
-       # "//bark/benchmark/tests:py_benchmark_process_tests",
+        "//bark/benchmark/tests:py_benchmark_runner_tests",
+        "//bark/benchmark/tests:py_benchmark_process_tests",
         "//bark/benchmark/tests:py_benchmark_analyzer_tests"
     ],
 )
