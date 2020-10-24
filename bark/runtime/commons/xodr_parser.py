@@ -16,13 +16,14 @@ logger = logging.getLogger()
 
 class XodrParser(object):
     def __init__(self, file_name, **kwargs):
-        self.xodr = self.load_xodr(file_name)
+        self._xodr = self.load_xodr(file_name)
         self._s_inc_straight_line = kwargs.pop("s_inc_straight_line", None)
         self._s_inc_curves = kwargs.pop("s_inc_curves", 0.2)
-        self.python_map = {}
-        self.parse_xml(self.xodr)
+        self._python_map = {}
+        
+        self.parse_xml(self._xodr)
         self.map = OpenDriveMap()
-        self.convert_to_map(self.python_map)
+        self.convert_to_map(self._python_map)
 
     def load_file(self, file_name):
         return open(file_name, 'r')
@@ -154,7 +155,7 @@ class XodrParser(object):
         new_header["west"] = header.get("west")
         if header.find("offset") is not None:
             new_header["offset"] = self.parse_offset(header)
-        self.python_map["header"] = new_header
+        self._python_map["header"] = new_header
 
     def parse_lane_sections_from_road(self, lane_sections, road):
         road["lane_sections"] = []
@@ -231,7 +232,7 @@ class XodrParser(object):
         new_road = self.parse_plan_view(road.find("planView"), new_road)
         if road.find("link") is not None:
             new_road["link"] = self.parse_road_link(road.find("link"))
-        self.python_map["roads"].append(new_road)
+        self._python_map["roads"].append(new_road)
 
     def parse_junction_links(self, connection):
         new_links = []
@@ -259,7 +260,7 @@ class XodrParser(object):
                 new_connection["lane_links"] = self.parse_junction_links(
                     connection)
                 new_junction["connections"].append(new_connection)
-            self.python_map["junctions"].append(new_junction)
+            self._python_map["junctions"].append(new_junction)
 
     def parse_xml(self, xodr_obj):
         """Imports the XODR file to python
@@ -271,15 +272,15 @@ class XodrParser(object):
       python dict -- containing all neccessary map information
     """
         self.parse_header(xodr_obj.find("header"))
-        self.python_map["roads"] = []
-        self.python_map["junctions"] = []
+        self._python_map["roads"] = []
+        self._python_map["junctions"] = []
         for road in xodr_obj.findall("road"):
             self.parse_road(road)
         self.parse_junctions(xodr_obj.findall("junction"))
 
     def print_python_map(self):
         pp = pprint.PrettyPrinter(indent=2)
-        pp.pprint(self.python_map)
+        pp.pprint(self._python_map)
 
     def create_cpp_plan_view(self, plan_view, header):
 
@@ -458,7 +459,7 @@ class XodrParser(object):
         return new_road
 
     def GetMap_element(self, key, id):
-        for x in self.python_map[key]:
+        for x in self._python_map[key]:
             if x["id"] == id:
                 return x
 
@@ -487,10 +488,10 @@ class XodrParser(object):
     Returns:
       CPP Map -- Map for usage with CPP
     """
-        for road in self.python_map["roads"]:
-            new_road = self.create_cpp_road(road, self.python_map["header"])
+        for road in self._python_map["roads"]:
+            new_road = self.create_cpp_road(road, self._python_map["header"])
             self.map.AddRoad(new_road)
 
-        for junction in self.python_map["junctions"]:
+        for junction in self._python_map["junctions"]:
             new_junction = self.create_cpp_junction(junction)
             self.map.AddJunction(new_junction)
