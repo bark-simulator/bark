@@ -7,7 +7,7 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: docker://mansoorcheema/bazel-manylinux
+      image: docker://barksim/bazel-manylinux
     steps:
       - uses: actions/checkout@v1
       - name: Setting up virtual environment

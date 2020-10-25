@@ -19,6 +19,8 @@ using bark::geometry::Pose;
 using bark::models::behavior::BehaviorStaticTrajectory;
 using bark::models::behavior::LonLatAction;
 using bark::models::behavior::StateRowVector;
+using bark::models::behavior::BehaviorStatus;
+using bark::models::behavior::BehaviorModelPtr;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 using bark::models::dynamic::Trajectory;
@@ -135,6 +137,18 @@ TEST(behavior_static_trajectory_plan, calculate_action) {
   lon_lat_action = boost::get<LonLatAction>(action);
   EXPECT_NEAR(lon_lat_action.acc_lon, sqrt(2.0) / 2.0, 0.001);
   EXPECT_NEAR(lon_lat_action.acc_lat, sqrt(2.0) / 2.0, 0.001);
+}
+
+TEST(behavior_static_trajectory, clone) {
+  Trajectory static_traj(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  static_traj << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0, 0, 1, 3, 3, 0, 0, 1;
+
+  BehaviorModelPtr beh_model(new BehaviorStaticTrajectory(nullptr, static_traj));
+  ASSERT_EQ(BehaviorStatus::NOT_STARTED_YET, beh_model->GetBehaviorStatus());
+  beh_model->SetBehaviorStatus(BehaviorStatus::EXPIRED);
+  
+  auto cloned_model = BehaviorModelPtr(beh_model->Clone());
+  ASSERT_EQ(BehaviorStatus::EXPIRED, cloned_model->GetBehaviorStatus());
 }
 
 int main(int argc, char** argv) {

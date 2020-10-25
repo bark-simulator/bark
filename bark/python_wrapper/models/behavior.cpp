@@ -21,6 +21,9 @@
 #include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
+#include "bark/models/behavior/not_started/behavior_not_started.hpp"
+#include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
+#include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/python_wrapper/models/plan/plan.hpp"
 #include "bark/python_wrapper/polymorphic_conversion.hpp"
 
@@ -267,7 +270,7 @@ void python_behavior(py::module m) {
             return py::make_tuple(ParamsToPython(b.Primitive::GetParams()));
           },
           [](py::tuple t) {
-            if (t.size() != 0)
+            if (t.size() != 1)
               throw std::runtime_error("Invalid behavior model state!");
             return new PrimitiveGapKeeping(
                 PythonToParams(t[0].cast<py::tuple>()));
@@ -368,6 +371,82 @@ void python_behavior(py::module m) {
                 t[1].cast<bark::models::dynamic::Trajectory>());
           }));
 
+  py::class_<BehaviorNotStarted, BehaviorModel,
+             shared_ptr<BehaviorNotStarted>>(m, "BehaviorNotStarted")
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def("__repr__",
+           [](const BehaviorNotStarted& b) {
+             return "bark.behavior.BehaviorNotStarted";
+           })
+      .def(py::pickle(
+          [](const BehaviorNotStarted& b) {
+            return py::make_tuple(ParamsToPython(b.GetParams()));
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid behavior model state!");
+            /* Create a new C++ instance */
+            return new BehaviorNotStarted(
+                PythonToParams(t[0].cast<py::tuple>()));
+          }));
+  
+  py::class_<BehaviorSafety, BehaviorModel,
+             shared_ptr<BehaviorSafety>>(m, "BehaviorSafety")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("SetBehaviorModel", &BehaviorSafety::SetBehaviorModel)
+    .def("__repr__",
+      [](const BehaviorSafety& b) {
+        return "bark.behavior.BehaviorSafety";
+      })
+    .def(py::pickle(
+      [](const BehaviorSafety& b) {
+        return py::make_tuple(
+          ParamsToPython(b.GetParams()),
+          ParamsToPython(b.GetBehaviorModel()->GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 2)
+          throw std::runtime_error("Invalid behavior model state!");
+        /* Create a new C++ instance */
+        auto bs = new BehaviorSafety(
+          PythonToParams(t[0].cast<py::tuple>()));
+        auto bm = std::make_shared<BehaviorIDMLaneTracking>(
+          PythonToParams(t[1].cast<py::tuple>()));
+        bs->SetBehaviorModel(bm);
+        return bs;
+      }));
+
+  py::class_<BehaviorRSSConformant, BehaviorModel,
+             shared_ptr<BehaviorRSSConformant>>(m, "BehaviorRSSConformant")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("SetNominalBehaviorModel", &BehaviorRSSConformant::SetNominalBehaviorModel)
+    .def("SetSafetyBehaviorModel", &BehaviorRSSConformant::SetSafetyBehaviorModel)
+    .def("__repr__",
+      [](const BehaviorRSSConformant& b) {
+        return "bark.behavior.BehaviorRSSConformant";
+      })
+    .def(py::pickle(
+      [](const BehaviorRSSConformant& b) {
+        return py::make_tuple(
+          ParamsToPython(b.GetParams()), 
+          ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
+          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 3)
+          throw std::runtime_error("Invalid behavior model state!");
+        /* Create a new C++ instance */
+        auto bm = new BehaviorRSSConformant(
+          PythonToParams(t[0].cast<py::tuple>()));
+        auto nb = std::make_shared<BehaviorIDMClassic>(
+          PythonToParams(t[1].cast<py::tuple>()));
+        auto sb = std::make_shared<BehaviorSafety>(
+          PythonToParams(t[2].cast<py::tuple>()));
+        bm->SetNominalBehaviorModel(nb);
+        bm->SetSafetyBehaviorModel(sb);
+        return bm;
+      }));
+  
   py::class_<LonLatAction, shared_ptr<LonLatAction>>(m, "LonLatAction")
       .def(py::init<>())
       .def_readwrite("acc_lat", &LonLatAction::acc_lat)

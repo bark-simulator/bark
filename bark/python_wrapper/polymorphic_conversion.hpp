@@ -13,6 +13,9 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 #include "bark/python_wrapper/common.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
+#ifdef LTL_RULES
+#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
+#endif
 
 namespace py = pybind11;
 using bark::commons::ParamsPtr;
@@ -20,8 +23,11 @@ using bark::models::behavior::BehaviorModelPtr;
 using bark::models::behavior::primitives::PrimitivePtr;
 using bark::world::goal_definition::GoalDefinitionPtr;
 
-// For pickle we need conversion functions between the genereric base types and
-// the derived types
+#ifdef LTL_RULES
+using bark::world::evaluation::LabelFunctionPtr;
+#endif
+
+// For pickle we need conversion functions between the genereric base types and// the derived types
 
 // Behavior Models
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model);
@@ -36,6 +42,11 @@ ParamsPtr PythonToParams(py::tuple t);
 
 py::tuple PrimitiveToPython(const PrimitivePtr& prim);
 PrimitivePtr PythonToPrimitive(py::tuple t);
+
+#ifdef LTL_RULES
+py::tuple LabelToPython(const LabelFunctionPtr& label);
+LabelFunctionPtr PythonToLabel(py::tuple t);
+#endif
 
 // Todo: Other polymorphic types, e.g. execution model...
 

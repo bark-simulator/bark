@@ -105,7 +105,7 @@ class XodrParser(object):
             # every type we cannot read is read in as sidewalk
             new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in ["driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk" ]# assign enum type
 
-            if lane.find("userData"):
+            if lane.find("userData") is not None:
               if lane.find("userData").find("vectorLane") is not None:
                 vector_lane = lane.find("userData").find("vectorLane")
                 if str(vector_lane.get("travelDir")) in ["forward", "backward"]:
@@ -301,7 +301,7 @@ class XodrParser(object):
           off_x = header["offset"]["x"]
           off_y = header["offset"]["y"]
           off_hdg = header["offset"]["hdg"]
-          logger.info("Transforming PlanView with given offset", header["offset"])
+          logger.debug("Transforming PlanView with given offset", header["offset"])
           new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
@@ -352,7 +352,7 @@ class XodrParser(object):
             except:
                 pass
         else:
-            logger.info("No XodrLaneLink")
+            logger.debug("No XodrLaneLink")
             
         return new_link
 

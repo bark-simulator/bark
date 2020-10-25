@@ -12,6 +12,10 @@ This section describes the prerequisites and installation-steps of BARK.
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
+### Using [ad-rss-lib](https://github.com/intel/ad-rss-lib)
+
+* sqlite 3 (`sudo apt-get install libsqlite3-dev sqlite3`)
+
 ## Install using pip
 * pip3 install bark-simulator
 

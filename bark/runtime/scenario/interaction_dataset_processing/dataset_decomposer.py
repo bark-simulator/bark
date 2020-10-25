@@ -21,9 +21,10 @@ from com_github_interaction_dataset_interaction_dataset.python.utils import data
 
 
 class DatasetDecomposer:
-    def __init__(self, map_filename, track_filename):
+    def __init__(self, map_filename, track_filename, starting_offset_ms = 0):
         self._map_filename = map_filename
         self._track_filename = track_filename
+        self._starting_offset_ms = starting_offset_ms
         self._track_dict = dataset_reader.read_tracks(track_filename)
         self._map_interface = self.__setup_map_interface__()
         self._agents_track_infos = self.__setup_agents_track_infos__()
@@ -45,7 +46,8 @@ class DatasetDecomposer:
             for lane in lane_list:
                 polygon = self._map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
                 if Collide(polygon, point_agent):
-                    time_ego_first = state[0]*1e3  # use timestamp in ms
+                    timestamp_scaling = 1e3 # scale timestamp from s (BARK) to ms (dataset)
+                    time_ego_first = state[0]*timestamp_scaling + self._starting_offset_ms 
                     return time_ego_first
 
         return None
@@ -104,7 +106,7 @@ class DatasetDecomposer:
             for id_o in ids_others:
                 agent_o_track_info = self.__get_agent_track_info__(id_o)
                 new_scenario.AddTrackInfoOtherAgent(agent_o_track_info)
-
+                
             scenario_list.append(new_scenario)
 
         return scenario_list

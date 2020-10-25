@@ -13,6 +13,7 @@ import logging
 import copy
 import time
 import glob
+import numpy as np
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -21,7 +22,12 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.scenario.scenario import Scenario
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig, BehaviorConfig
 from bark.core.world.evaluation import *
-from bark.core.world.evaluation.ltl import *
+
+try:
+  from bark.core.world.evaluation.ltl import *
+except Exception as e:
+  logging.warning("LTL evaluators not loaded: {}".format(e))
+
 
 class BenchmarkRunner:
     def __init__(self,
@@ -35,7 +41,8 @@ class BenchmarkRunner:
                  logger_name=None,
                  log_eval_avg_every=None,
                  checkpoint_dir=None,
-                 merge_existing=False):
+                 merge_existing=False,
+                 deepcopy=True):
 
         self.benchmark_database = benchmark_database
         self.evaluators = evaluators or {}
@@ -52,7 +59,7 @@ class BenchmarkRunner:
         self.logger.info("Total number of {} configs to run".format(len(self.benchmark_configs)))
         self.existing_benchmark_result = BenchmarkResult()
         self.configs_to_run = self.benchmark_configs
-
+        self._deepcopy = deepcopy
         self.checkpoint_dir = checkpoint_dir or "checkpoints"
         if not os.path.exists(self.checkpoint_dir):
             os.makedirs(self.checkpoint_dir)
@@ -61,7 +68,7 @@ class BenchmarkRunner:
             self.existing_benchmark_result = \
                 BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir)
             self.logger.info("Merged {} processed configs in folder {}". \
-                format(len(self.existing_benchmark_result.get_benchmark_configs()), checkpoint_dir)) 
+                format(len(self.existing_benchmark_result.get_benchmark_configs()), checkpoint_dir))
             self.configs_to_run = self.get_configs_to_run(self.benchmark_configs, \
                                                             self.existing_benchmark_result)
             self.logger.info("Remaining  number of {} configs to run".format(len(self.configs_to_run)))
@@ -133,11 +140,12 @@ class BenchmarkRunner:
     def run(self, viewer=None, maintain_history=False, checkpoint_every=None):
         results = []
         histories = {}
-        for idx, bmark_conf in enumerate(self.configs_to_run ):
+        for idx, bmark_conf in enumerate(self.configs_to_run):
             self.logger.info("Running config idx {} being {}/{}: Scenario {} of set \"{}\" for behavior \"{}\"".format(
                 bmark_conf.config_idx, idx, len(self.benchmark_configs) - 1, bmark_conf.scenario_idx,
                 bmark_conf.scenario_set_name, bmark_conf.behavior_config.behavior_name))
-            result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), viewer,
+            bmark_conf = copy.deepcopy(bmark_conf) if self._deepcopy else bmark_conf
+            result_dict, scenario_history = self._run_benchmark_config(bmark_conf, viewer,
                                                                        maintain_history)
             results.append(result_dict)
             histories[bmark_conf.config_idx] = scenario_history
@@ -157,7 +165,8 @@ class BenchmarkRunner:
     def run_benchmark_config(self, config_idx, **kwargs):
         for idx, bmark_conf in enumerate(self.benchmark_configs):
             if bmark_conf.config_idx == config_idx:
-                result_dict, scenario_history = self._run_benchmark_config(copy.deepcopy(bmark_conf), **kwargs)
+                bmark_conf = copy.deepcopy(bmark_conf) if self._deepcopy else bmark_conf
+                result_dict, scenario_history = self._run_benchmark_config(bmark_conf, **kwargs)
                 return BenchmarkResult(result_dict, [bmark_conf], histories={config_idx : scenario_history})
         self.logger.error("Config idx {} not found in benchmark configs. Skipping...".format(config_idx))
         return
@@ -271,6 +280,10 @@ class BenchmarkRunner:
     def _log_eval_average(self, result_dct_list, configs):
         bresult = BenchmarkResult(result_dct_list, configs)
         df = bresult.get_data_frame()
+        for eval_group in bresult.get_evaluation_groups():
+          if eval_group not in df.columns:
+            df[eval_group] = np.nan
+        df.fillna(-1, inplace=True)
         grouped = df.apply(pd.to_numeric, errors='ignore').groupby(bresult.get_evaluation_groups()).mean()[
             self._evaluation_criteria()]
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
