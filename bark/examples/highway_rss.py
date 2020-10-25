@@ -16,6 +16,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
     LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.examples.paths import Data
 from bark.core.models.behavior import *
 
 try:
@@ -25,8 +26,7 @@ except:
         "This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
 
 # parameters
-param_server = ParameterServer(
-    filename="examples/params/highway_merge_configurable.json")
+param_server = ParameterServer(filename=Data.params_data("highway_merge_configurable"))
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
@@ -65,13 +65,12 @@ right_lane = HighwayLaneCorridorConfig(params=param_server,
                                        lane_corridor_id=1,
                                        controlled_ids=True)
 
-map_path = "bark/runtime/tests/data/city_highway_straight.xodr"
 
 # create 5 scenarios
 scenarios = \
     ConfigWithEase(
         num_scenarios=5,
-        map_file_name=map_path,
+        map_file_name=Data.xodr_data("city_highway_straight"),
         random_seed=0,
         params=param_server,
         lane_corridor_configs=[left_lane, right_lane])

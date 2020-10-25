@@ -85,10 +85,13 @@ py_test(
         "//bark/runtime/commons:commons",
         "//bark/examples:paths",
         "//bark/examples:highway",
+        "//bark/examples:highway_rss",
         "//bark/examples:merging",
+        "//bark/examples:merging_rss",
         "//bark/examples:intersection",
         "//bark/examples:maude_interface",
-        "//bark/examples:maude"
+        "//bark/examples:maude",
+        "//bark/examples:interaction_dataset"
           ],
 
 )

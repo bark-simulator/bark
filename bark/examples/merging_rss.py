@@ -16,6 +16,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
     LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.examples.paths import Data
 
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
@@ -81,11 +82,9 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
                                       s_min=5.,
                                       s_max=20.)
 
-map_path = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
-
 scenarios = \
     ConfigWithEase(num_scenarios=3,
-                   map_file_name=map_path,
+                   map_file_name=Data.xodr_data("DR_DEU_Merging_MT_v01_centered"),
                    random_seed=0,
                    params=param_server,
                    lane_corridor_configs=[left_lane, right_lane])
