@@ -18,10 +18,10 @@ ext_modules.append(temp_ext)
 
 setup(
     name = "bark-simulator",
-    version = "0.1.2",
+    version = "0.1.3",
     description = "A tool for Behavior benchmARKing",
-    long_description=long_description,
     long_description_content_type="text/markdown",
+    long_description=long_description,
     classifiers = ["Development Status :: 4 - Beta",
                    "Intended Audience :: Science/Research",
                    "License :: OSI Approved :: MIT License",
