@@ -89,7 +89,7 @@ class Params {
                                const std::string& distribution_type) = 0;
 
   virtual void SetString(const std::string& param_name,
-                         const std::string& default_value) = 0;
+                         const std::string& value) = 0;
 
   virtual int operator[](const std::string& param_name) = 0;
   virtual std::shared_ptr<Params> AddChild(const std::string& name) = 0;
