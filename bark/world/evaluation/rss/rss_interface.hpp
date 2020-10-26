@@ -175,7 +175,7 @@ class RssInterface {
   ::ad::map::match::Object GenerateMatchObject(
       const models::dynamic::State& agent_state, const Polygon& agent_shape);
 
-  ::ad::physics::AngularVelocity CaculateAgentAngularVelocity(
+  ::ad::physics::AngularVelocity CaculateAngularVelocity(
       const models::dynamic::Trajectory& trajectory);
 
   // Generate a RSS route from the current position and the goal of the
@@ -268,7 +268,7 @@ class RssInterface {
   double scaling_relevant_range_;
 
   ::ad::rss::world::RssDynamics rss_dynamics_;
-  
+
   // When a route to the goal cannnot be found, route_predict_range describle
   // the distance for returning all routes having less than the distance
   double route_predict_range_;

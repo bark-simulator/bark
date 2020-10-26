@@ -40,7 +40,8 @@ bool RssInterface::InitializeOpenDriveMap(
   return result;
 }
 
-::ad::rss::world::RssDynamics RssInterface::GenerateVehicleDynamicsParameters() {
+::ad::rss::world::RssDynamics
+RssInterface::GenerateVehicleDynamicsParameters() {
   ::ad::rss::world::RssDynamics dynamics;
 
   // RSS dynamics values along longitudinal coordinate system axis
@@ -105,16 +106,14 @@ bool RssInterface::InitializeOpenDriveMap(
   return matching_object;
 }
 
-::ad::physics::AngularVelocity RssInterface::CaculateAgentAngularVelocity(
-    const models::dynamic::Trajectory& trajectory) {
-  int n = trajectory.rows();
-  if (n < 2) {
+::ad::physics::AngularVelocity RssInterface::CaculateAngularVelocity(
+    const models::dynamic::Trajectory& traj) {
+  if (traj.rows() < 2) {
     return 0.f;
   } else {
-    ::ad::physics::AngularVelocity av = ::ad::physics::AngularVelocity(
-        trajectory(n - 1, THETA_POSITION) -
-        trajectory(0, THETA_POSITION) / trajectory(n - 1, TIME_POSITION) -
-        trajectory(0, TIME_POSITION));
+    double diff_theta = traj(1, THETA_POSITION) - traj(0, THETA_POSITION);
+    double diff_time = traj(1, TIME_POSITION) - traj(0, TIME_POSITION);
+    auto av = ::ad::physics::AngularVelocity(diff_theta / diff_time);
     return av;
   }
 }
@@ -257,10 +256,10 @@ bool RssInterface::GetRelevantAgents(const AgentMap& agents,
     if (other_agent_id != ego_id) {
       float other_agent_speed =
           other_agent.second->GetCurrentState()(VEL_POSITION);
-      float relevant_distance = (static_cast<float>(ego_max_stopping_distance) +
-                                 CalculateMaxStoppingDistance(
-                                     other_agent_speed, rss_dynamics_)) *
-                                scaling_relevant_range_;
+      float relevant_distance =
+          (static_cast<float>(ego_max_stopping_distance) +
+           CalculateMaxStoppingDistance(other_agent_speed, rss_dynamics_)) *
+          scaling_relevant_range_;
 
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
@@ -279,7 +278,7 @@ bool RssInterface::CreateWorldModel(
     const ::ad::map::route::FullRoute& ego_route,
     ::ad::rss::world::WorldModel& rss_world) {
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
-  auto ego_av = CaculateAgentAngularVelocity(
+  auto ego_av = CaculateAngularVelocity(
       agents.find(ego_id)->second->GetExecutionTrajectory());
   ::ad::rss::map::RssObjectData ego_data = {
       ::ad::rss::world::ObjectId(ego_id),
@@ -309,8 +308,7 @@ bool RssInterface::CreateWorldModel(
     auto const other_match_object =
         GenerateMatchObject(other_state, other_shape);
 
-    auto other_av =
-        CaculateAgentAngularVelocity(other->GetExecutionTrajectory());
+    auto other_av = CaculateAngularVelocity(other->GetExecutionTrajectory());
 
     ::ad::rss::map::RssObjectData other_data = {
         ::ad::rss::world::ObjectId(other->GetAgentId()),
@@ -407,8 +405,7 @@ bool RssInterface::GenerateRSSWorld(const ObservedWorld& observed_world,
       GenerateMatchObject(agent_state, agent_shape);
   ::ad::map::route::FullRoute agent_rss_route;
   GenerateRoute(agent_center, agent_goal, agent_match_object, agent_rss_route);
-  AgentState agent_rss_state =
-      ConvertAgentState(agent_state, rss_dynamics_);
+  AgentState agent_rss_state = ConvertAgentState(agent_state, rss_dynamics_);
 
   AgentMap other_agents = observed_world.GetAgents();  // GetOtherAgents();
   bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state,
