@@ -7,6 +7,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include <tuple>
+#include <optional>
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/world/observed_world.hpp"
@@ -32,8 +33,8 @@ Trajectory BehaviorRSSConformant::Plan(
     return GetLastTrajectory();
   }
 
-  auto eval_res = boost::get<bool>(rss_evaluator_->Evaluate(observed_world));
-  if (eval_res) {
+  auto eval_res = boost::get<std::optional<bool>>(rss_evaluator_->Evaluate(observed_world));
+  if (*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
     behavior_rss_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
     world_time_of_last_rss_violation_ = observed_world.GetWorldTime();
