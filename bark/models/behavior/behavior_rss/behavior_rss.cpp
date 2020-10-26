@@ -29,7 +29,7 @@ Trajectory BehaviorRSSConformant::Plan(
     VLOG(4) << "Initial LaneCorridor: " << &lane_corr << std::endl;
 
     // set the other lane corridor as target
-    for (const auto& lc : lane_corrs) {
+    for (auto& lc : lane_corrs) {
       VLOG(4) << "LaneCorridor: " << &lc << std::endl;
       if (lane_corr != lc) {
         VLOG(4) << "Setting LaneCorridor: " << &lc << std::endl;
