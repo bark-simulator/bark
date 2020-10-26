@@ -15,7 +15,9 @@
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
+#ifdef RSS
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
+#endif
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -30,8 +32,9 @@ using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+#ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
-
+#endif
 enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
 class BehaviorRSSConformant : public BehaviorModel {
@@ -45,7 +48,9 @@ class BehaviorRSSConformant : public BehaviorModel {
     world_time_of_last_rss_violation_(-1),
     initial_lane_corr_(nullptr) {
       try {
+        #ifdef RSS
         rss_evaluator_ = std::make_shared<EvaluatorRSS>(params);
+        #endif
       } catch (...) {
         VLOG(4) << "Could not load RSSEvaluator." << std::endl;
       }
