@@ -36,7 +36,7 @@ Trajectory BehaviorRSSConformant::Plan(
         auto nominal_behavior =
           std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
             nominal_behavior_model_);
-        nominal_behavior->SetConstantLaneCorridor(lc);
+        // nominal_behavior->SetConstantLaneCorridor(lc);
       }
     }
   }
