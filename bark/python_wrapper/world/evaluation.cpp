@@ -95,7 +95,7 @@ void python_evaluation(py::module m) {
            py::arg("default_vehicle_dynamics"),
            py::arg("agents_vehicle_dynamics") =
                std::unordered_map<AgentId, std::vector<float>>(),
-           py::arg("checking_relevent_range") = 1.,
+           py::arg("checking_relevant_range") = 1.,
            py::arg("route_predict_range") = 50.)
       .def(py::init<const AgentId&,const bark::commons::ParamsPtr>())
       .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRSS::Evaluate))

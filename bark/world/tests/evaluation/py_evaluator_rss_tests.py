@@ -94,7 +94,7 @@ class EvaluatorRSSTests(unittest.TestCase):
 
     evaluator_rss = EvaluatorRSS(ego.id, map,
                                   self.defaults["default_vehicle_dynamics"],
-                                  checking_relevent_range=1.5)
+                                  checking_relevant_range=1.5)
     world.Step(0.01)
     self.assertEqual(
         True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])

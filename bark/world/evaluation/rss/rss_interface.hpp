@@ -94,11 +94,11 @@ class RssInterface {
                         const std::vector<float>& default_vehicle_dynamics,
                         const std::unordered_map<AgentId, std::vector<float>>&
                             agents_vehicle_dynamics,
-                        const float& checking_relevent_range,
+                        const float& checking_relevant_range,
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
         agents_dynamics_(agents_vehicle_dynamics),
-        checking_relevant_range_(checking_relevent_range),
+        checking_relevant_range_(checking_relevant_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
     assert(boost::filesystem::exists(opendrive_file_name));
