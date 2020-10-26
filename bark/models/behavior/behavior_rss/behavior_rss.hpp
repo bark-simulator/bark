@@ -41,7 +41,7 @@ class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params) :
     BehaviorModel(params),
-    nominal_behavior_model_(std::make_shared<BehaviorIDMClassic>(params)),
+    nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(params)),
     behavior_safety_model_(std::make_shared<BehaviorSafety>(params)),
     rss_evaluator_(),
     behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
