@@ -165,7 +165,7 @@ class PickleTests(unittest.TestCase):
         try:
             from bark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
-            print("Rerun test with ---define planner_uct=true")
+            print("Rerun test with --define planner_uct=true")
             return
 
         params = ParameterServer()
@@ -194,12 +194,6 @@ class PickleTests(unittest.TestCase):
       params = ParameterServer()
       pickle_unpickle(BehaviorRSSConformant(params))
 
-
-    def test_evaluator_step_count(self):
-      e = EvaluatorStepCount()
-
-      ea = pickle_unpickle(e)
-      self.assertTrue(isinstance(ea,EvaluatorStepCount))
       
 if __name__ == '__main__':
     unittest.main()
