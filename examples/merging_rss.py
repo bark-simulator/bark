@@ -128,12 +128,8 @@ env = Runtime(step_time=0.2,
 # Detailed explanation please see:
 # https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
 
-# Default dynamics for every agent if it is not defined indivually
-default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
-
 # Example of using RSS to evaluate the safety situation of the evaluating agent.
 # The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
-
 
 def print_rss_safety_response(evaluator_rss, world):
     # Evaluating with RSS is quite computionally expensive
@@ -145,8 +141,6 @@ def print_rss_safety_response(evaluator_rss, world):
 
 
 param_server["EvaluatorRss"]["MapFilename"] = map_path
-param_server["EvaluatorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvaluatorRss"]["ScalingRelevantRange"] = 1
 
 
 # run n scenarios
