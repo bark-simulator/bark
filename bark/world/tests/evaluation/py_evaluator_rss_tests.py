@@ -7,6 +7,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
+import pickle
 import numpy as np
 
 from bark.core.world import *
@@ -22,7 +23,16 @@ from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
-from bark.core.world.evaluation import EvaluatorRSS
+from bark.core.world.evaluation import EvaluatorRSS, EvaluatorStepCount
+
+
+def pickle_unpickle(object):
+    with open('temp.pickle','wb') as f:
+        pickle.dump(object,f)
+    object = None
+    with open( 'temp.pickle', "rb" ) as f:
+        object = pickle.load(f)
+    return object
 
 # General tests of the whole rss_interface
 class EvaluatorRSSTests(unittest.TestCase):
@@ -54,6 +64,17 @@ class EvaluatorRSSTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     return map_interface
+
+  #@unittest.skip
+  def test_pickle_unpickle_test(self):
+    map_file = "bark/runtime/tests/data/city_highway_straight.xodr"
+
+    params = ParameterServer()
+    params["EvaluatorRss"]["MapFilename"] = map_file
+    e = EvaluatorRSS(params)
+
+    ea = pickle_unpickle(e)
+    self.assertTrue(isinstance(ea,EvaluatorRSS))
 
   def test_longitude_ego_follow_other(self):
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
@@ -94,7 +115,7 @@ class EvaluatorRSSTests(unittest.TestCase):
 
     evaluator_rss = EvaluatorRSS(ego.id, map,
                                   self.defaults["default_vehicle_dynamics"],
-                                  checking_relevent_range=1.5)
+                                  checking_relevant_range=1.5)
     world.Step(0.01)
     self.assertEqual(
         True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])

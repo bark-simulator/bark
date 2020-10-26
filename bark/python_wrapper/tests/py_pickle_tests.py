@@ -18,6 +18,7 @@ from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.core.world.goal_definition import *
+from bark.core.world.evaluation import *
 from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -193,5 +194,12 @@ class PickleTests(unittest.TestCase):
       params = ParameterServer()
       pickle_unpickle(BehaviorRSSConformant(params))
 
+
+    def test_evaluator_step_count(self):
+      e = EvaluatorStepCount()
+
+      ea = pickle_unpickle(e)
+      self.assertTrue(isinstance(ea,EvaluatorStepCount))
+      
 if __name__ == '__main__':
     unittest.main()

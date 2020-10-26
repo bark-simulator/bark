@@ -92,13 +92,13 @@ class RssInterface {
   RssInterface() {}
   explicit RssInterface(const std::string& opendrive_file_name,
                         const std::vector<float>& default_vehicle_dynamics,
-                        const std::unordered_map<AgentId, std::vector<float>>&
-                            agents_vehicle_dynamics,
-                        const float& checking_relevent_range,
+                        // const std::unordered_map<AgentId, std::vector<float>>&
+                        //     agents_vehicle_dynamics,
+                        const float& checking_relevant_range,
                         const float& route_predict_range)
       : default_dynamics_(default_vehicle_dynamics),
-        agents_dynamics_(agents_vehicle_dynamics),
-        checking_relevant_range_(checking_relevent_range),
+        // agents_dynamics_(agents_vehicle_dynamics),
+        checking_relevant_range_(checking_relevant_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
     // assert(boost::filesystem::exists(opendrive_file_name));
@@ -250,7 +250,7 @@ class RssInterface {
   // agents_dynamics_ describes the values of vehicle dynamics of a specific
   // agent. If the dynamics an agent with the ID as key, the values in this map
   // will be used instead of the ones in default_dynamics.
-  std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
+  // std::unordered_map<AgentId, std::vector<float>> agents_dynamics_;
 
   // Control the searching distance between the evaluating agent and other
   // agents to perform RSS check. Could be used for better visualization
