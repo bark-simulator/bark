@@ -32,14 +32,15 @@ class EvaluatorRSS : public BaseEvaluator {
   explicit EvaluatorRSS(
       const AgentId& agent_id, const std::string& opendrive_file_name,
       const std::vector<float>& default_vehicle_dynamics,
-      const std::unordered_map<AgentId, std::vector<float>>&
-          agents_vehicle_dynamics =
-              std::unordered_map<AgentId, std::vector<float>>(),
+      // const std::unordered_map<AgentId, std::vector<float>>&
+      //     agents_vehicle_dynamics =
+      //         std::unordered_map<AgentId, std::vector<float>>(),
       const float& checking_relevant_range = 1.,
       const float& route_predict_range = 50.)
       : agent_id_(agent_id),
         rss_(opendrive_file_name, default_vehicle_dynamics,
-             agents_vehicle_dynamics, checking_relevant_range,
+            //  agents_vehicle_dynamics, 
+             checking_relevant_range,
              route_predict_range) {}
 
   explicit EvaluatorRSS(const AgentId& agent_id,
@@ -52,10 +53,10 @@ class EvaluatorRSS : public BaseEvaluator {
                  "The default values of the vehicle dynamics in Rss",
                  std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1,
                                     1.0}),
-             params->GetMapAgentIdListFloat(
-                 "EvaluatorRss::SpecificAgentVehicleDynamics",
-                 "The values of the vehicle dynamics of a specific value",
-                 std::unordered_map<AgentId, std::vector<float>>()),
+            //  params->GetMapAgentIdListFloat(
+            //      "EvaluatorRss::SpecificAgentVehicleDynamics",
+            //      "The values of the vehicle dynamics of a specific value",
+            //      std::unordered_map<AgentId, std::vector<float>>()),
              params->GetReal("EvaluatorRss::CheckingRelevantRange",
                              "Controlling the searching distance between the "
                              "evaluating agent "

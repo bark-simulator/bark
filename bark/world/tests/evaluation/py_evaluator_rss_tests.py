@@ -23,7 +23,7 @@ from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
-from bark.core.world.evaluation import EvaluatorRSS
+from bark.core.world.evaluation import EvaluatorRSS, EvaluatorStepCount
 
 
 def pickle_unpickle(object):
@@ -65,9 +65,10 @@ class EvaluatorRSSTests(unittest.TestCase):
     map_interface.SetOpenDriveMap(xodr_parser.map)
     return map_interface
 
+  @unittest.skip
   def test_pickle_unpickle_test(self):
     map_file = "bark/runtime/tests/data/city_highway_straight.xodr"
-    
+
     params = ParameterServer()
     params["EvaluatorRss"]["MapFilename"] = map_file
     e = EvaluatorRSS(params)

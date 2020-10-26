@@ -75,13 +75,13 @@ bool RssInterface::InitializeOpenDriveMap(
 
 ::ad::rss::world::RssDynamics RssInterface::GenerateAgentDynamicsParameters(
     const AgentId& agent_id) {
-  if (agents_dynamics_.find(agent_id) != agents_dynamics_.end()) {
-    return GenerateVehicleDynamicsParameters(
-        agents_dynamics_[agent_id][0], agents_dynamics_[agent_id][1],
-        agents_dynamics_[agent_id][2], agents_dynamics_[agent_id][3],
-        agents_dynamics_[agent_id][4], agents_dynamics_[agent_id][5],
-        agents_dynamics_[agent_id][6], agents_dynamics_[agent_id][7]);
-  }
+  // if (agents_dynamics_.find(agent_id) != agents_dynamics_.end()) {
+  //   return GenerateVehicleDynamicsParameters(
+  //       agents_dynamics_[agent_id][0], agents_dynamics_[agent_id][1],
+  //       agents_dynamics_[agent_id][2], agents_dynamics_[agent_id][3],
+  //       agents_dynamics_[agent_id][4], agents_dynamics_[agent_id][5],
+  //       agents_dynamics_[agent_id][6], agents_dynamics_[agent_id][7]);
+  // }
 
   return GenerateVehicleDynamicsParameters(
       default_dynamics_[0], default_dynamics_[1], default_dynamics_[2],
