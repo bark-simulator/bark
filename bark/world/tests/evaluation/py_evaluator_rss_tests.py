@@ -7,6 +7,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
+import pickle
 import numpy as np
 
 from bark.core.world import *
@@ -23,6 +24,15 @@ from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
 from bark.core.world.evaluation import EvaluatorRSS
+
+
+def pickle_unpickle(object):
+    with open('temp.pickle','wb') as f:
+        pickle.dump(object,f)
+    object = None
+    with open( 'temp.pickle', "rb" ) as f:
+        object = pickle.load(f)
+    return object
 
 # General tests of the whole rss_interface
 class EvaluatorRSSTests(unittest.TestCase):
@@ -54,6 +64,16 @@ class EvaluatorRSSTests(unittest.TestCase):
     map_interface = MapInterface()
     map_interface.SetOpenDriveMap(xodr_parser.map)
     return map_interface
+
+  def test_pickle_unpickle_test(self):
+    map_file = "bark/runtime/tests/data/city_highway_straight.xodr"
+    
+    params = ParameterServer()
+    params["EvaluatorRss"]["MapFilename"] = map_file
+    e = EvaluatorRSS(params)
+
+    ea = pickle_unpickle(e)
+    self.assertTrue(isinstance(ea,EvaluatorRSS))
 
   def test_longitude_ego_follow_other(self):
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
