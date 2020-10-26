@@ -65,7 +65,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     map_interface.SetOpenDriveMap(xodr_parser.map)
     return map_interface
 
-  @unittest.skip
+  #@unittest.skip
   def test_pickle_unpickle_test(self):
     map_file = "bark/runtime/tests/data/city_highway_straight.xodr"
 
