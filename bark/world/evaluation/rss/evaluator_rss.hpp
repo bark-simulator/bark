@@ -50,7 +50,7 @@ class EvaluatorRSS : public BaseEvaluator {
             params->GetReal("EvaluatorRss::FluctMargin", "fluctuation margin",
                             0.1),
             params->GetReal("EvaluatorRss::TimeResponse", "response time", 1.0),
-            params->GetReal("EvaluatorRss::CheckingRelevantRange",
+            params->GetReal("EvaluatorRss::ScalingRelevantRange",
                             "Controlling the searching distance between two "
                             "agents to perform RSS check",
                             1),

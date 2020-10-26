@@ -146,7 +146,7 @@ def print_rss_safety_response(evaluator_rss, world):
 
 param_server["EvaluatorRss"]["MapFilename"] = map_path
 param_server["EvaluatorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvaluatorRss"]["CheckingRelevantRange"] = 1
+param_server["EvaluatorRss"]["ScalingRelevantRange"] = 1
 
 
 # run n scenarios
