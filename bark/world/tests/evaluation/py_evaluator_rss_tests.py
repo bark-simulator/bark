@@ -65,17 +65,6 @@ class EvaluatorRSSTests(unittest.TestCase):
     map_interface.SetOpenDriveMap(xodr_parser.map)
     return map_interface
 
-  #@unittest.skip
-  def test_pickle_unpickle_test(self):
-    map_file = "bark/runtime/tests/data/city_highway_straight.xodr"
-
-    params = ParameterServer()
-    params["EvaluatorRss"]["MapFilename"] = map_file
-    e = EvaluatorRSS(params)
-
-    ea = pickle_unpickle(e)
-    self.assertTrue(isinstance(ea,EvaluatorRSS))
-
   def test_longitude_ego_follow_other(self):
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
     map_interface = EvaluatorRSSTests.load_map(map)

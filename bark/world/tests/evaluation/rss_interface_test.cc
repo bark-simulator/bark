@@ -165,8 +165,7 @@ TEST(rss_interface, test_rss_check) {
 
   RssInterface rss(
       "bark/runtime/tests/data/city_highway_straight.xodr",
-      std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
-      std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
+      std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.}, 1, 50);
 
   ::ad::rss::world::WorldModel rss_world;
   WorldPtr cloned_world(world->Clone());
@@ -210,8 +209,7 @@ TEST(rss_interface, test_rss_planning_route) {
   world->AddAgent(agent);
 
   RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr",
-                   std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
-                   std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
+                   std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.}, 1, 50);
 
   Point2d agent_goal;
   boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
