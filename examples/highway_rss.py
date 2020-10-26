@@ -114,10 +114,6 @@ env = Runtime(step_time=0.2,
 # Default dynamics for every agent if it is not defined indivually
 default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
 
-# Indivually dynamics, each defined with the agent id
-agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
-                           2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
-
 
 def print_rss_safety_response(evaluator_rss, world):
     # Example of using RSS to evaluate the safety situation of the evaluating agent.
@@ -132,7 +128,6 @@ def print_rss_safety_response(evaluator_rss, world):
 
 param_server["EvaluatorRss"]["MapFilename"] = map_path
 param_server["EvaluatorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvaluatorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
 param_server["EvaluatorRss"]["CheckingRelevantRange"] = 1
 
 
@@ -145,7 +140,6 @@ for episode in range(0, 3):
     # There are two ways to upset EvaluatorRSS
     # evaluator_rss = EvaluatorRSS(eval_agent_id, map_path,
     #                              default_vehicle_dynamics,
-    #                              agents_vehicle_dynamics,
     #                              checking_relevant_range=1)
     evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
 
