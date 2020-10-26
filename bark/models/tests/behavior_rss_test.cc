@@ -42,12 +42,12 @@ class DummyRSSEvaluator : public BaseEvaluator {
     step_count_(0), step_trigger_(step_trigger) {}
   virtual EvaluationReturn Evaluate(const World& world) {
     step_count_++;
-    return std::optional<bool>{step_count_ >= step_trigger_};
+    return std::optional<bool>{step_count_ <= step_trigger_};
   }
   virtual EvaluationReturn Evaluate(
     const ObservedWorld& observed_world) {
     step_count_++;
-    return std::optional<bool>{step_count_ >= step_trigger_};
+    return std::optional<bool>{step_count_ <= step_trigger_};
   }
 
  private:

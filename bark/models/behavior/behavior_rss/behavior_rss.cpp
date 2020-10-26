@@ -34,7 +34,7 @@ Trajectory BehaviorRSSConformant::Plan(
   }
 
   auto eval_res = boost::get<std::optional<bool>>(rss_evaluator_->Evaluate(observed_world));
-  if (*eval_res) {
+  if (!*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
     behavior_rss_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
     world_time_of_last_rss_violation_ = observed_world.GetWorldTime();
