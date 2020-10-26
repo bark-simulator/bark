@@ -675,7 +675,10 @@ TEST(line, GetLineFromSInterval) {
 
   EXPECT_TRUE(Point2d(0.0, 1.5) == p1);
   EXPECT_TRUE(point_2 == p2);
-  EXPECT_TRUE(Point2d(0.0, 2.4) == p3);
+  
+  EXPECT_NEAR(boost::geometry::get<0>(p3), 0.0, 1e-3);
+  EXPECT_NEAR(boost::geometry::get<1>(p3), 2.4, 1e-3);
+
   EXPECT_TRUE(Point2d(0.0, 2.5) == p4);
 }
 TEST(line, GetLineFromSInterval_entire_line) {
