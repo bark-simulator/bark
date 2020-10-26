@@ -178,10 +178,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
 
   boost::geometry::unique(previous_line.obj_);
 
-  geometry::Line simplified_prev_line;
-  boost::geometry::simplify(previous_line.obj_, simplified_prev_line.obj_,
-                            s_max_delta);
-  simplified_prev_line.RecomputeS();
+  geometry::Line simplified_prev_line = Simplify(previous_line, s_max_delta);
 
   geometry::Line tmp_line;
   geometry::Point2d normal(0.0f, 0.0f);
@@ -234,9 +231,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   }
 
   // SIMPLIFY line with max error
-  geometry::Line simplified_line;
-  boost::geometry::simplify(tmp_line.obj_, simplified_line.obj_, s_max_delta);
-  simplified_line.RecomputeS();
+  geometry::Line simplified_line = Simplify(tmp_line, s_max_delta); 
   return simplified_line;
 }
 

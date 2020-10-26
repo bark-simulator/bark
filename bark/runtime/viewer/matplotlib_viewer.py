@@ -36,7 +36,10 @@ class MPViewer(BaseViewer):
             alpha=alpha,
             marker='x')
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, **kwargs):
+        line_width = kwargs.pop("linewidth", 1)
+        marker = kwargs.pop("marker", None)
+        marker_size = kwargs.pop("markersize", 12)
         lineStyle_string = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
@@ -46,7 +49,9 @@ class MPViewer(BaseViewer):
             color=self.getColor(color),
             alpha=alpha,
             zorder=zorder,
-            linewidth=linewidth)
+            linewidth=line_width,
+            marker=marker,
+            markersize = marker_size)
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10):
         points = polygon.ToArray()

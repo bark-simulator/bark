@@ -220,3 +220,42 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
 
   return open_drive_map;
 }
+
+OpenDriveMapPtr bark::world::tests::MakeXodrMapCurved(const double length,
+                                                      const double curvature) {
+  using namespace bark::geometry;
+  using namespace bark::world::opendrive;
+
+  OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
+
+  PlanViewPtr p(new PlanView());
+  // p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 200.0f, 200.0f);
+  p->AddArc(Point2d(0.0f, 0.0f), 0, length, curvature);
+
+  //! XodrLane-Section 1
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
+
+  //! Plan View
+  XodrLanePtr lane0(new XodrLane(0));
+  lane0->SetLine(p->GetReferenceLine());
+
+  //! Lanes
+  XodrLaneOffset off = {4.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lw1 = {0, length, off};
+
+  XodrLanePtr lane1 =
+      CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lw1, 0.5);
+  lane1->SetLaneType(XodrLaneType::DRIVING);
+  lane1->SetDrivingDirection(XodrDrivingDirection::FORWARD);
+
+  ls->AddLane(lane0);
+  ls->AddLane(lane1);
+
+  XodrRoadPtr r(new XodrRoad("curve", 100));
+  r->SetPlanView(p);
+  r->AddLaneSection(ls);
+
+  open_drive_map->AddRoad(r);
+
+  return open_drive_map;
+}

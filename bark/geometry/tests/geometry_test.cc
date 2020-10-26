@@ -670,11 +670,13 @@ TEST(line, GetLineFromSInterval) {
 
   Point2d p1 = GetPointAtS(line_segment, 0.0);
   Point2d p2 = GetPointAtS(line_segment, 0.5);
-  Point2d p3 = GetPointAtS(line_segment, 1.0);
+  Point2d p3 = GetPointAtS(line_segment, 0.9);
+  Point2d p4 = GetPointAtS(line_segment, 1.0);
 
   EXPECT_TRUE(Point2d(0.0, 1.5) == p1);
   EXPECT_TRUE(point_2 == p2);
-  EXPECT_TRUE(Point2d(0.0, 2.5) == p3);
+  EXPECT_TRUE(Point2d(0.0, 2.4) == p3);
+  EXPECT_TRUE(Point2d(0.0, 2.5) == p4);
 }
 TEST(line, GetLineFromSInterval_entire_line) {
   using bark::geometry::Line_t;
@@ -934,7 +936,7 @@ TEST(optimizer, shrink_polygon) {
   ASSERT_TRUE(Equals(expected_shrunk_polygon, shrunk_polygon));
 }
 
-TEST(line, line_subsampling) {
+TEST(line, line_smoothing) {
   using bark::geometry::Line;
   using bark::geometry::Point2d;
   namespace bg = boost::geometry;
@@ -956,7 +958,7 @@ TEST(line, line_subsampling) {
   Line lss = bark::geometry::SmoothLine(line, ds);
 
   EXPECT_EQ(lss.size(), 11);
-  EXPECT_TRUE(lss.Length()>line.Length());
+  EXPECT_TRUE(lss.Length() > line.Length());
 
   double tol = 0.3;
   EXPECT_EQ(bg::get<0>(lss.obj_[0]), 0.0);
@@ -973,7 +975,7 @@ TEST(line, line_subsampling) {
 
   EXPECT_NEAR(bg::get<0>(lss.obj_[4]), 3.2954, tol);
   EXPECT_NEAR(bg::get<1>(lss.obj_[4]), 1.7642, tol);
-  
+
   EXPECT_NEAR(bg::get<0>(lss.obj_[5]), 3.5680, tol);
   EXPECT_NEAR(bg::get<1>(lss.obj_[5]), 2.7566, tol);
 
@@ -991,6 +993,100 @@ TEST(line, line_subsampling) {
 
   EXPECT_EQ(bg::get<0>(lss.obj_[10]), 7.0);
   EXPECT_EQ(bg::get<1>(lss.obj_[10]), 5.0);
+}
+
+TEST(line, append_line_no_intersect) {
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  namespace bg = boost::geometry;
+
+  Line line1;
+  line1.AddPoint(Point2d(0.0, 0.0));
+  line1.AddPoint(Point2d(10.0, 0.0));
+
+  Line line2;
+  line2.AddPoint(Point2d(9.5, 0.5));
+  line2.AddPoint(Point2d(13.0, -15.0));
+
+  bool b = bg::intersects(line1.obj_, line2.obj_);
+  EXPECT_TRUE(b);
+
+  Line lout = AppendLinesNoIntersect(line1, line2);
+  EXPECT_FALSE(bg::intersects(lout.obj_)) << lout.ToArray();
+}
+
+TEST(line, concatenate_line_string) {
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  namespace bg = boost::geometry;
+  namespace barkg = bark::geometry;
+
+  Line line1;
+  line1.AddPoint(Point2d(-320.52, -635.214));
+  line1.AddPoint(Point2d(-268.065, -545.661));
+  line1.AddPoint(Point2d(-247.835, -509.644));  // ! leads to selfintersection
+
+  Line line2;
+  line2.AddPoint(Point2d(-247.904, -509.757));  // ! leads to selfintersection
+  line2.AddPoint(Point2d(-247.284, -508.826));
+  line2.AddPoint(Point2d(-246.861, -508.402));
+  line2.AddPoint(Point2d(-245.99, -507.853));
+  line2.AddPoint(Point2d(-245.376, -507.601));
+  line2.AddPoint(Point2d(-244.511, -507.491));
+  line2.AddPoint(Point2d(-243.411, -507.495));
+  line2.AddPoint(Point2d(-242.827, -507.627));
+  line2.AddPoint(Point2d(-241.861, -508.067));  // ! leads to selfintersection
+
+  bool b = bg::intersects(line1.obj_, line2.obj_);
+  EXPECT_TRUE(b);
+
+  Line lout12 = ConcatenateLinestring(line1, line2);
+  EXPECT_FALSE(bg::intersects(lout12.obj_)) << lout12.ToArray();
+
+  double prol = 1e-3;  // precision for points on line
+  double prnl = 1e-2;  // precision for removed points;
+
+  // make sure relevant points are still in there
+  // from line1
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-320.52, -635.214)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-268.065, -545.661)) < prol);
+
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-247.835, -509.644)) < prnl);
+
+  // from line2
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-247.904, -509.757)) < prnl);
+
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-247.284, -508.826)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-246.861, -508.402)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-244.511, -507.491)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout12, Point2d(-241.861, -508.067)) < prol);
+
+  Line line3;
+  line3.AddPoint(Point2d(-208.527 - 525.942));
+  line3.AddPoint(Point2d(-241.938 - 508.029));  // ! leads to selfintersection
+
+  Line lout123 = ConcatenateLinestring(lout12, line3);
+  EXPECT_FALSE(bg::intersects(lout123.obj_)) << lout123.ToArray();
+
+  // make sure relevant points are still in there
+  // from line1
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-320.52, -635.214)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-268.065, -545.661)) < prol);
+
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-247.835, -509.644)) < prnl);
+
+  // from line2
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-247.904, -509.757)) < prnl);
+
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-247.284, -508.826)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-246.861, -508.402)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-244.511, -507.491)) < prol);
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-241.861, -508.067)) < prol);
+
+  // from line3
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-208.527 - 525.942)) < prol);
+
+  EXPECT_TRUE(barkg::Distance(lout123, Point2d(-241.938 - 508.029)) < prnl);
 }
 
 TEST(buffer, inflate) {
