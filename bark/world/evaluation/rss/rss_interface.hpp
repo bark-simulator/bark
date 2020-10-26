@@ -101,16 +101,16 @@ class RssInterface {
         checking_relevant_range_(checking_relevant_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
-    assert(boost::filesystem::exists(opendrive_file_name));
-    assert(checking_relevant_range_ >= 1.);
+    // assert(boost::filesystem::exists(opendrive_file_name));
+    // assert(checking_relevant_range_ >= 1.);
     // lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct
-    assert(default_dynamics_.size() == 8);
-    assert(default_dynamics_[1] <= default_dynamics_[2] &&
-           default_dynamics_[2] <= default_dynamics_[3]);
-    for (const auto& d : agents_dynamics_) {
-      assert(d.second.size() == 8);
-      assert(d.second[1] <= d.second[2] && d.second[2] <= d.second[3]);
-    }
+    // assert(default_dynamics_.size() == 8);
+    // assert(default_dynamics_[1] <= default_dynamics_[2] &&
+    //        default_dynamics_[2] <= default_dynamics_[3]);
+    // for (const auto& d : agents_dynamics_) {
+    //   assert(d.second.size() == 8);
+    //   assert(d.second[1] <= d.second[2] && d.second[2] <= d.second[3]);
+    // }
 
     // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);

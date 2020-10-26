@@ -40,10 +40,16 @@ class BehaviorRSSConformant : public BehaviorModel {
     BehaviorModel(params),
     nominal_behavior_model_(std::make_shared<BehaviorIDMClassic>(params)),
     behavior_safety_model_(std::make_shared<BehaviorSafety>(params)),
-    rss_evaluator_(std::make_shared<EvaluatorRSS>()),
+    rss_evaluator_(),
     behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
     world_time_of_last_rss_violation_(-1),
-    initial_lane_corr_(nullptr) {}
+    initial_lane_corr_(nullptr) {
+      try {
+        rss_evaluator_ = std::make_shared<EvaluatorRSS>(params);
+      } catch (...) {
+        VLOG(4) << "Could not load RSSEvaluator." << std::endl;
+      }
+    }
 
   virtual ~BehaviorRSSConformant() {}
 
