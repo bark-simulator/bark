@@ -25,18 +25,18 @@ Trajectory BehaviorRSSConformant::Plan(
     initial_lane_corr_ = lane_corr;
     behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
     auto road_corr = observed_world.GetRoadCorridor();
-    auto lane_corrs = road_corr->GetUniqueLaneCorridors();
+    const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
     VLOG(4) << "Initial LaneCorridor: " << &lane_corr << std::endl;
 
     // set the other lane corridor as target
-    for (auto& lc : lane_corrs) {
+    for (const auto& lc : lane_corrs) {
       VLOG(4) << "LaneCorridor: " << &lc << std::endl;
       if (lane_corr != lc) {
         VLOG(4) << "Setting LaneCorridor: " << &lc << std::endl;
         auto nominal_behavior =
           std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
             nominal_behavior_model_);
-        // nominal_behavior->SetConstantLaneCorridor(lc);
+        nominal_behavior->SetConstantLaneCorridor(lc);
       }
     }
   }
