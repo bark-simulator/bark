@@ -86,14 +86,6 @@ void python_evaluation(py::module m) {
 #ifdef RSS
   py::class_<EvaluatorRSS, BaseEvaluator, std::shared_ptr<EvaluatorRSS>>(
       m, "EvaluatorRSS")
-      .def(py::init<>())
-      .def(py::init<const AgentId&, const std::string&,
-                    const std::vector<float>&,
-                    const float&, const float&>(),
-           py::arg("agent_id"), py::arg("opendrive_file_name"),
-           py::arg("default_vehicle_dynamics"),
-           py::arg("checking_relevant_range") = 1.,
-           py::arg("route_predict_range") = 50.)
       .def(py::init<const bark::commons::ParamsPtr>())
       .def(py::init<const AgentId&,const bark::commons::ParamsPtr>())
       .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRSS::Evaluate))

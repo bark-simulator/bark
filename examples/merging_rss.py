@@ -155,10 +155,6 @@ for episode in range(0, 10):
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
 
-    # There are two ways to upset EvaluatorRSS
-    # evaluator_rss = EvaluatorRSS(eval_agent_id, map_path,
-    #                              default_vehicle_dynamics,
-    #                              checking_relevant_range=1)
     evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
 
     current_world.AddEvaluator("rss", evaluator_rss)

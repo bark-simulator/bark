@@ -91,23 +91,31 @@ class RssInterface {
  public:
   RssInterface() {}
   explicit RssInterface(const std::string& opendrive_file_name,
-                        const std::vector<float>& default_vehicle_dynamics,
-                        const float& checking_relevant_range,
-                        const float& route_predict_range)
-      : default_dynamics_(default_vehicle_dynamics),
-        checking_relevant_range_(checking_relevant_range),
+                        const double acc_lon_max, const double brake_lon_max,
+                        const double brake_lon_min,
+                        const double brake_lon_min_correct,
+                        const double acc_lat_brake_max,
+                        const double acc_lat_brake_min,
+                        const double fluct_margin, const double time_response,
+                        const double scaling_relevant_range,
+                        const double route_predict_range)
+      : acc_lon_max_(acc_lon_max),
+        brake_lon_max_(brake_lon_max),
+        brake_lon_min_(brake_lon_min),
+        brake_lon_min_correct_(brake_lon_min_correct),
+        acc_lat_brake_max_(acc_lat_brake_max),
+        acc_lat_brake_min_(acc_lat_brake_min),
+        fluct_margin_(fluct_margin),
+        time_response_(time_response),
+        scaling_relevant_range_(scaling_relevant_range),
         route_predict_range_(route_predict_range) {
     // Sanity checks
     // assert(boost::filesystem::exists(opendrive_file_name));
-    // assert(checking_relevant_range_ >= 1.);
-    // lon_max_brake<=lon_min_brake && lon_min_brake<=lon_min_brake_correct
-    // assert(default_dynamics_.size() == 8);
-    // assert(default_dynamics_[1] <= default_dynamics_[2] &&
-    //        default_dynamics_[2] <= default_dynamics_[3]);
-    // for (const auto& d : agents_dynamics_) {
-    //   assert(d.second.size() == 8);
-    //   assert(d.second[1] <= d.second[2] && d.second[2] <= d.second[3]);
-    // }
+    assert(scaling_relevant_range_ >= 1.);
+    assert(brake_lon_max_ <= brake_lon_min_);
+    assert(brake_lon_min_ <= brake_lon_min_correct_);
+
+    rss_dynamics_ = GenerateVehicleDynamicsParameters();
 
     // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);
@@ -133,7 +141,8 @@ class RssInterface {
   // situations between the specified and the nearby agent is safe, false
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
-  PairwiseEvaluationReturn GetPairwiseSafetyReponse(const ObservedWorld& observed_world);
+  PairwiseEvaluationReturn GetPairwiseSafetyReponse(
+      const ObservedWorld& observed_world);
 
   // Returns an unorder_map indicating the pairwise directional safety respone
   // of the specified agent to every other nearby agents. Key is AgentId of an
@@ -154,17 +163,8 @@ class RssInterface {
   // Load OpenDrive map into RSS, needed for GetMatchObject and GenerateRoute.
   bool InitializeOpenDriveMap(const std::string& opendrive_file_name);
 
-  // Generates RSS dynamics for an agent, returns the specified dynamics if the
-  // dynamics is given in agent_vehicle_dynamics, else returns the
-  // default_vehicle_dynamics
-  ::ad::rss::world::RssDynamics GenerateAgentDynamicsParameters(
-      const AgentId& agent_id);
-
   // Creates RSS dynamics object contains the parameters for RSS check.
-  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(
-      float lon_max_accel, float lon_max_brake, float lon_min_brake,
-      float lon_min_brake_correct, float lat_max_accel, float lat_min_brake,
-      float lat_fluctuation_margin, float response_time);
+  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters();
 
   // Generates a RSS match object from BARK agent state, it contains a list of
   // nearby lanes of the agent state. Used by GenerateRoute and mainly
@@ -231,26 +231,47 @@ class RssInterface {
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
  private:
-  // default_dynamics describles the values of the default vehicle dynamics if
-  // not set by agents_dynamics_
-
-  // Input format:
-  // [longitudinal max acceleration, longitudinal max braking, longitudinal min
-  // acceleration, longitudinal min brake correct, lateral max acceleration,
-  // lateral min braking, lateral flucatuation_margin, agent response
-  // time]
-
-  // Detailed explanation please see:
+  // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
-  std::vector<float> default_dynamics_;
 
-  // Control the searching distance between the evaluating agent and other
-  // agents to perform RSS check. Could be used for better visualization
-  float checking_relevant_range_;
+  // maximum possible acceleration
+  double acc_lon_max_;
 
+  // maximum allowed deceleration in longitudinal direction
+  double brake_lon_max_;
+
+  // minimum allowed braking deceleration in longitudinal direction for most
+  // scenarios
+  double brake_lon_min_;
+
+  // minimum allowed deceleration in longitudinal direction for a car on its
+  // lane with another car approaching on the same lane in wrong driving
+  // direction
+  double brake_lon_min_correct_;
+
+  // maximum allowed acceleration in lateral direction
+  double acc_lat_brake_max_;
+
+  // minimum allowed braking deceleration in lateral direction
+  double acc_lat_brake_min_;
+
+  // fluctuation margin for that needs to be respected when calculating lateral
+  // safe distance
+  double fluct_margin_;
+
+  // response time
+  double time_response_;
+
+  // Scale the searching distance between the evaluating agent and other
+  // agents to perform RSS check (used for debugging to have more vehicles being
+  // checked)
+  double scaling_relevant_range_;
+
+  ::ad::rss::world::RssDynamics rss_dynamics_;
+  
   // When a route to the goal cannnot be found, route_predict_range describle
   // the distance for returning all routes having less than the distance
-  float route_predict_range_;
+  double route_predict_range_;
   ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
       ::ad::map::point::CoordinateTransform();
 };

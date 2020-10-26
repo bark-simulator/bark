@@ -29,36 +29,36 @@ class EvaluatorRSS : public BaseEvaluator {
  public:
   EvaluatorRSS() {}
 #ifdef RSS
-  explicit EvaluatorRSS(
-      const AgentId& agent_id, const std::string& opendrive_file_name,
-      const std::vector<float>& default_vehicle_dynamics,
-      const float& checking_relevant_range = 1.,
-      const float& route_predict_range = 50.)
-      : agent_id_(agent_id),
-        rss_(opendrive_file_name, default_vehicle_dynamics,
-             checking_relevant_range,
-             route_predict_range) {}
-
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(params->GetString("EvaluatorRss::MapFilename",
-                               "Map path for loading into Rss", ""),
-             params->GetListFloat(
-                 "EvaluatorRss::DefaultVehicleDynamics",
-                 "The default values of the vehicle dynamics in Rss",
-                 std::vector<float>{1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1,
-                                    1.0}),
-             params->GetReal("EvaluatorRss::CheckingRelevantRange",
-                             "Controlling the searching distance between the "
-                             "evaluating agent "
-                             "and other agents to perform RSS check",
-                             1),
-             params->GetReal("EvaluatorRss::RoutePredictRange",
-                             "Describle the distance for returning all routes "
-                             "having less than the distance, will be used when "
-                             "a route to the goal cannnot be found",
-                             50)) {}
+        rss_(
+            params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
+            params->GetReal("EvaluatorRss::AccLonMax", "maximum acceleration",
+                            1.7),
+            params->GetReal("EvaluatorRss::BrakeLonMax", "maximum deceleration",
+                            -1.7),
+            params->GetReal("EvaluatorRss::BrakeLonMin",
+                            "minimum braking deceleration", -1.69),
+            params->GetReal("EvaluatorRss::BrakeLonMinCorrect",
+                            "minimum deceleration with oncoming vehicle",
+                            -1.67),
+            params->GetReal("EvaluatorRss::AccLatBrakeMax",
+                            "maximum lateral acceleration", 0.2),
+            params->GetReal("EvaluatorRss::AccLatBrakeMin",
+                            "minimum lateral braking", -0.8),
+            params->GetReal("EvaluatorRss::FluctMargin", "fluctuation margin",
+                            0.1),
+            params->GetReal("EvaluatorRss::TimeResponse", "response time", 1.0),
+            params->GetReal("EvaluatorRss::CheckingRelevantRange",
+                            "Controlling the searching distance between two "
+                            "agents to perform RSS check",
+                            1),
+            params->GetReal("EvaluatorRss::RoutePredictRange",
+                            "Describle the distance for returning all routes "
+                            "having less than the distance, will be used when "
+                            "a route to the goal cannnot be found",
+                            50)) {}
 
   explicit EvaluatorRSS(const commons::ParamsPtr& params)
       : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
