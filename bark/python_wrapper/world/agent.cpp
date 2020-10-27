@@ -73,7 +73,7 @@ void python_agent(py::module m) {
                 a.GetBehaviorTrajectory(),                       // 5
                 BehaviorModelToPython(a.GetBehaviorModel()),     // 6
                 a.GetExecutionModel(),                           // 7
-                a.GetDynamicModel(),                             // 8
+                DynamicModelToPython(a.GetDynamicModel()),                // 8
                 a.GetCurrentState(),                             // 9
                 a.GetFirstValidTimestamp(),                      // 10
                 GoalDefinitionToPython(a.GetGoalDefinition()),  // 11
@@ -88,8 +88,7 @@ void python_agent(py::module m) {
             using bark::models::execution::ExecutionModelInterpolate;
             Agent agent(t[8].cast<State>(),
                         PythonToBehaviorModel(t[5].cast<py::tuple>()),
-                        std::make_shared<SingleTrackModel>(
-                            t[7].cast<SingleTrackModel>()),
+                        PythonToDynamicModel(t[7].cast<py::tuple>()),
                         std::make_shared<ExecutionModelInterpolate>(
                             t[6].cast<ExecutionModelInterpolate>()),
                         t[1].cast<bark::geometry::Polygon>(), nullptr,

@@ -10,6 +10,7 @@
 #define PYTHON_POLYMORPHIC_CONVERSION_HPP_
 
 #include "bark/models/behavior/behavior_model.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive.hpp"
 #include "bark/python_wrapper/common.hpp"
 #include "bark/world/goal_definition/goal_definition.hpp"
@@ -20,6 +21,7 @@
 namespace py = pybind11;
 using bark::commons::ParamsPtr;
 using bark::models::behavior::BehaviorModelPtr;
+using bark::models::dynamic::DynamicModelPtr;
 using bark::models::behavior::primitives::PrimitivePtr;
 using bark::world::goal_definition::GoalDefinitionPtr;
 
@@ -36,6 +38,10 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t);
 // Goal Definition
 py::tuple GoalDefinitionToPython(GoalDefinitionPtr goal_definition);
 GoalDefinitionPtr PythonToGoalDefinition(py::tuple t);
+
+// Dynamic Model
+py::tuple DynamicModelToPython(DynamicModelPtr dynamic_model);
+DynamicModelPtr PythonToDynamicModel(py::tuple t);
 
 py::tuple ParamsToPython(const ParamsPtr& params);
 ParamsPtr PythonToParams(py::tuple t);

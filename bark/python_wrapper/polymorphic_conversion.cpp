@@ -40,6 +40,8 @@
 
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
+#include "bark/models/dynamic/single_track.hpp"
+
 #ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
@@ -97,6 +99,7 @@ using bark::world::goal_definition::GoalDefinitionSequential;
 using bark::world::goal_definition::GoalDefinitionStateLimits;
 using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using bark::world::evaluation::EvaluatorCollisionEgoAgent;
+using bark::models::dynamic::SingleTrackModel;
 
 #ifdef LTL_RULES
 using bark::world::evaluation::SafeDistanceLabelFunction;
@@ -279,6 +282,27 @@ GoalDefinitionPtr PythonToGoalDefinition(py::tuple t) {
         t[0].cast<GoalDefinitionStateLimitsFrenet>());
   } else {
     LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
+    throw;
+  }
+}
+
+py::tuple DynamicModelToPython(DynamicModelPtr dynamic_model) {
+  std::string dynamic_model_name;
+  if (typeid(*dynamic_model) == typeid(SingleTrackModel)) {
+    dynamic_model_name = "SingleTrackModel";
+  } else {
+    LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
+    throw;
+  }
+  return py::make_tuple(dynamic_model, dynamic_model_name);
+}
+DynamicModelPtr PythonToDynamicModel(py::tuple t) {
+  std::string goal_definition_name = t[1].cast<std::string>();
+  if (goal_definition_name.compare("SingleTrackModel") == 0) {
+    return std::make_shared<SingleTrackModel>(
+        t[0].cast<SingleTrackModel>());
+  } else {
+    LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
     throw;
   }
 }

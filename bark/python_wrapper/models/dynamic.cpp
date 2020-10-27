@@ -12,6 +12,8 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
+
 namespace py = pybind11;
 using namespace bark::models::dynamic;
 using namespace bark::commons;
@@ -29,14 +31,16 @@ void python_dynamic(py::module m) {
              return "bark.dynamic.SingleTrackModel";
            })
       .def(py::pickle(
-          [](const SingleTrackModel& m) -> std::string {
-            return "SingleTrackModel";  // 0
+          [](const SingleTrackModel& m) {
+            return py::make_tuple(ParamsToPython(m.GetParams()));
           },
-          [](std::string s) {  // __setstate__
-            if (s != "SingleTrackModel")
-              throw std::runtime_error("Invalid dynamic modelstate!");
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid single track model state!");
             // param pointer must be set via python
-            return new SingleTrackModel(std::make_shared<SetterParams>());
+            /* Create a new C++ instance */
+            return new SingleTrackModel(
+                PythonToParams(t[0].cast<py::tuple>()));
           }));
 
   py::class_<TripleIntegratorModel, DynamicModel,
