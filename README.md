@@ -3,7 +3,6 @@
 </p>
 
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
-![macOS-CI Build](https://github.com/bark-simulator/bark/workflows/macOS-CI/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 ![NIGHTLY RSS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RSS/badge.svg)
 ![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
