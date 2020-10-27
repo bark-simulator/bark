@@ -52,7 +52,7 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 
 ## Paper
 
-If you use BARK, please cite us using the following paper:
+If you use BARK, please cite us using the following [paper](https://arxiv.org/abs/2003.02604):
 
 ```
 @inproceedings{Bernhard2020,

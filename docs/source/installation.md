@@ -53,4 +53,10 @@ Optional: We recommend to use Anaconda. This way, you can create a clean python 
 
 Make sure that there is a 'Python.h' file in the `python/venv` folder.
 
+### GCC: Interal Compiler Error: Killed (program cc1plus)
+
+You might be running out of memory during the bazel build. 
+Try limiting the memory available to bark via 
+`bazel build //... --local_ram_resources=HOST_RAM*.4` (or any other build or test call).
+
 ### Feel free to add your questions here or asks us directly by submitting an issue!
