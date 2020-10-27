@@ -438,7 +438,7 @@ void python_behavior(py::module m) {
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(
           PythonToParams(t[0].cast<py::tuple>()));
-        auto nb = std::make_shared<BehaviorIDMClassic>(
+        auto nb = std::make_shared<BehaviorIDMLaneTracking>(
           PythonToParams(t[1].cast<py::tuple>()));
         auto sb = std::make_shared<BehaviorSafety>(
           PythonToParams(t[2].cast<py::tuple>()));
