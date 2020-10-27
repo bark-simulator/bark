@@ -42,6 +42,9 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
   std::vector<float> acc_vec = params->GetListFloat(
       "AccelerationInputs", "A list of acceleration ", {0, 1, 4, -1, -8});
 
+  bool add_lane_changes = params->GetBool(
+      "AddLaneChangeActions", "If lane change actions are added ", true);
+
   std::vector<std::shared_ptr<Primitive>> prim_vec;
 
   for (auto& acc : acc_vec) {
@@ -49,15 +52,16 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
     prim_vec.push_back(primitive);
   }
 
-  auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(params);
-  prim_vec.push_back(primitive_left);
+  if(add_lane_changes) {
+    auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(params);
+    prim_vec.push_back(primitive_left);
 
-  auto primitive_right =
-      std::make_shared<PrimitiveConstAccChangeToRight>(params);
-  prim_vec.push_back(primitive_right);
-
+    auto primitive_right =
+        std::make_shared<PrimitiveConstAccChangeToRight>(params);
+    prim_vec.push_back(primitive_right);
+  }
   auto primitive_gap_keeping = std::make_shared<PrimitiveGapKeeping>(params);
-  prim_vec.push_back(primitive_gap_keeping);
+ // prim_vec.push_back(primitive_gap_keeping);
 
   for (auto& p : prim_vec) {
     auto idx =

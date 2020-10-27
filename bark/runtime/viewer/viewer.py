@@ -376,11 +376,12 @@ class BaseViewer(Viewer):
                                                shape.rear_dist)) * math.sin(pose[2]) + pose[1]
 
             if self.draw_agent_id:
-                self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
-                              coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+                angle = min(pose[2], pose[2] - math.pi / 2.0)
+                self.drawText(position=(centerx, centery), rotation=180.0*(angle/math.pi), text="{}".format(agent.id),
+                              coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller", zorder=10)
 
             self.drawPolygon2d(transformed_polygon, color,
-                               alpha, facecolor, zorder=10)
+                               alpha, facecolor, zorder=8)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 

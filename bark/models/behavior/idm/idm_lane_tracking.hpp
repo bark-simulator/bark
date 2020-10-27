@@ -22,7 +22,7 @@ namespace behavior {
 class BehaviorIDMLaneTracking : public BaseIDM {
  public:
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params)
-      : BehaviorModel(params), BaseIDM(params), limit_steering_rate_(true) {
+      : BehaviorModel(params), BaseIDM(params), limit_steering_rate_(false) {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);
