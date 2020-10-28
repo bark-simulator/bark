@@ -19,7 +19,9 @@ EvaluatorDynamicSafeDistLong::EvaluatorDynamicSafeDistLong(const bark::commons::
         params->GetBool("EvaluatorDynamicSafeDistLong::ToRear", "Include rear agent", true),
         params->GetReal("EvaluatorDynamicSafeDistLong::ReactionTime", "Reaction time", 100.0f),
         params->GetReal("EvaluatorDynamicSafeDistLong::MaxEgoDecceleration", "Maximum ego decceleration", 5.0f),
-        params->GetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f)) {}
+        params->GetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f),
+        params->GetBool("EvaluatorDynamicSafeDistLong::ConsiderCrossingCorridors", "If true agens in other lane corridors are considered", false),
+        params->GetInt("EvaluatorDynamicSafeDistLong::MaxAgentssCrossingCorridors", "How many nearest agents are lookup in other corridors", 4)) {}
 
 bool EvaluatorDynamicSafeDistLong::CheckSafeDistance(
     const world::ObservedWorld& observed_world) {
