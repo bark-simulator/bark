@@ -106,8 +106,6 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
                 nearest_agent.second->GetShape().front_dist_;
     bool distance_safe = CheckSafeDistance(v_f, frenet_state.vlon,
                                     dist, a_o_, a_e_);
-    LOG(INFO) << "safe dist corridor between " << nearest_agent.second->GetAgentId() << 
-                                "and " << fr_agents.front.first->GetAgentId();
     if(!distance_safe) return distance_safe;
   }
   return true;
