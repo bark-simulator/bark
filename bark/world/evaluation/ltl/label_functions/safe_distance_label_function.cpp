@@ -8,6 +8,7 @@
 
 #include "safe_distance_label_function.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/commons/frenet_state.hpp"
 
 namespace bark {
 namespace world {
@@ -47,11 +48,16 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
   auto fr_agents =
       observed_world.GetAgentFrontRearForId(ego->GetAgentId(), lane_corridor);
   bool distance_safe = true;
+
   if (to_rear_ && fr_agents.rear.first) {
-    distance_safe = CheckSafeDistance(fr_agents.rear.first, ego,
+    double v_f = fr_agents.rear.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
+    distance_safe = CheckSafeDistance(v_f, v_r,
                                       fr_agents.rear.second, a_o_, a_e_);
   } else if (fr_agents.front.first) {
-    distance_safe = CheckSafeDistance(ego, fr_agents.front.first,
+    double v_f = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double v_r = fr_agents.front.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+    distance_safe = CheckSafeDistance(v_f, v_r,
                                       fr_agents.front.second, a_e_, a_o_);
   }
   return distance_safe;
@@ -78,23 +84,25 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     // since ego is in different lane corridor)
     if(!fr_agents.front.first) continue;
     if(fr_agents.front.first->GetAgentId() != observed_world.GetEgoAgentId()) continue;
-    bool distance_safe = CheckSafeDistance(nearest_agent.second, fr_agents.front.first,
+    double v_f = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
+    bark::commons::transformation::FrenetState frenet_state(fr_agents.front.first->GetCurrentState(),
+                                            lane_corridor->GetCenterLine()); 
+    bool distance_safe = CheckSafeDistance(nearest_agent.second, frenet_state.vlon,
                                     fr_agents.front.second, a_o_, a_e_);
+    LOG(INFO) << "safe dist corridor between " << nearest_agent.second->GetAgentId() << 
+                                "and " << fr_agents.front.first->GetAgentId();
     if(!distance_safe) return distance_safe;
   }
   return true;
 }
 
 bool SafeDistanceLabelFunction::CheckSafeDistance(
-    const AgentPtr& rear_agent, const AgentPtr& front_agent,
+    const float v_f, const float v_r,
     const FrenetPosition& frenet_dist, const double a_r,
     const double a_f) const {
   double dist = std::abs(frenet_dist.lon) - front_agent->GetShape().rear_dist_ -
                 rear_agent->GetShape().front_dist_;
   if (dist < 0.0) {
-    VLOG(2) << "Vehicle distance between agent " << rear_agent->GetAgentId()
-            << " and " << front_agent->GetAgentId() << " = " << dist
-            << " < 0! Skipping!";
     return true;
   }
 
