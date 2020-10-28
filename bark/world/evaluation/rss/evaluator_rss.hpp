@@ -25,6 +25,11 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
+template <typename Enumeration>
+auto as_integer(Enumeration const value) {
+    return static_cast<typename std::underlying_type<Enumeration>::type>(value);
+}
+
 class EvaluatorRSS : public BaseEvaluator {
  public:
   EvaluatorRSS() {}
@@ -80,10 +85,10 @@ class EvaluatorRSS : public BaseEvaluator {
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
-    auto rss_response = result.GetRSSResponse();
-    lon_ = longitudinalResponse.isSafe;
-    lat_left_ = lateralResponseLeft.isSafe;
-    lat_right_ = lateralResponseRight.isSafe;
+    auto rss_response = rss_.GetRSSResponse();
+    lon_ = as_integer(rss_response.longitudinalResponse);
+    lat_left_ = as_integer(rss_response.lateralResponseLeft);
+    lat_right_ = as_integer(rss_response.lateralResponseRight);
     dangerous_objects_ = rss_response.dangerousObjects;
     return rss_.GetSafetyReponse(observed_world);
   };
@@ -128,25 +133,19 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
-  bool GetLongitudinalSafetyResponse() const { return lon_; }
-  bool GetLateralLeftSafetyResponse() const { return lat_left_; }
-  bool GetLateralRightSafetyResponse() const { return lat_right_; }
-  std::vector<uint64_t> GetDangerousObjectIdsResponse() const { return dangerous_objects_; }
-
-  void SetLongitudinalSafetyResponse(bool lon) const { lon_ = lon; }
-  void SetLateralLeftSafetyResponse(bool lat_left) const { lat_left; }
-  void SetLateralRightSafetyResponse(bool lat_right) const { lat_right; }
-  void SetDangerousObjectIdsResponse(const std::vector<uint64_t>& ids) const { dangerous_objects_ = ids; }
+  int32_t GetLongitudinalResponse() const { return lon_; }
+  int32_t GetLateralLeftResponse() const { return lat_left_; }
+  int32_t GetLateralRightResponse() const { return lat_right_; }
+  std::vector<uint64_t> GetDangerousObjectIdsSafetyResponse() const { return dangerous_objects_; }
 
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
-  bool lon_{false}, lat_left_{false}, lat_right_{false};
+  int32_t lon_{0}, lat_left_{0}, lat_right_{0};
   std::vector<uint64_t> dangerous_objects_{};
 #endif
   AgentId agent_id_;
-#endif
 };
 }  // namespace evaluation
 }  // namespace world

@@ -80,6 +80,16 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
+  int32_t GetLongitudinalResponse() const { return lon_; }
+  int32_t GetLateralLeftResponse() const { return lat_left_; }
+  int32_t GetLateralRightResponse() const { return lat_right_; }
+  std::vector<uint64_t> GetDangerousObjectIdsResponse() const { return dangerous_objects_; }
+
+  void SetLongitudinalResponse(int32_t lon) { lon_ = lon; }
+  void SetLateralLeftResponse(int32_t lat_left) { lat_left_ = lat_left; }
+  void SetLateralRightResponse(int32_t lat_right) { lat_right_ = lat_right; }
+  void SetDangerousObjectIdsResponse(const std::vector<uint64_t>& ids) { dangerous_objects_ = ids; }
+
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorSafety> behavior_safety_model_;
@@ -87,6 +97,9 @@ class BehaviorRSSConformant : public BehaviorModel {
   BehaviorRSSConformantStatus behavior_rss_status_;
   float world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
+
+  int32_t lon_{0}, lat_left_{0}, lat_right_{0};
+  std::vector<uint64_t> dangerous_objects_{};
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {

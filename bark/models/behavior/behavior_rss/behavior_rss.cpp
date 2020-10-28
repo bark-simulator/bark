@@ -48,7 +48,18 @@ Trajectory BehaviorRSSConformant::Plan(
     return GetLastTrajectory();
   }
 
-  auto eval_res = boost::get<std::optional<bool>>(rss_evaluator_->Evaluate(observed_world));
+  auto eval_res = boost::get<std::optional<bool>>(
+    rss_evaluator_->Evaluate(observed_world));
+
+  auto rss_evaluator = std::dynamic_pointer_cast<EvaluatorRSS>(
+    rss_evaluator_);
+  if(rss_evaluator) {
+    lon_ = rss_evaluator->GetLongitudinalResponse();
+    lat_left_ = rss_evaluator->GetLateralLeftResponse();
+    lat_right_ = rss_evaluator->GetLateralRightResponse();
+    dangerous_objects_ = rss_evaluator->GetDangerousObjectIdsSafetyResponse();
+  }
+
   if (!*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
     behavior_rss_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
