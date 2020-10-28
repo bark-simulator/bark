@@ -40,10 +40,9 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   double GetMaxDecelOther() const { return a_o_; }
 
  private:
-  bool CheckSafeDistance(const AgentPtr& rear_agent,
-                         const AgentPtr& front_agent,
-                         const FrenetPosition& frenet_dist, double a_r,
-                         double a_f) const;
+  bool CheckSafeDistance(
+    const float v_f, const float v_r, const float dist,
+    const double a_r,  const double a_f) const;
   inline double CalcVelFrontStar(double v_f, double a_f) const;
   inline double CalcSafeDistance0(double v_r, double a_r) const;
   inline double CalcSafeDistance1(double v_r, double v_f, double a_r,

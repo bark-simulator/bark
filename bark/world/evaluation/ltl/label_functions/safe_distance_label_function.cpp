@@ -8,7 +8,7 @@
 
 #include "safe_distance_label_function.hpp"
 #include "bark/world/observed_world.hpp"
-#include "bark/commons/frenet_state.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 
 namespace bark {
 namespace world {
@@ -50,15 +50,21 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
   bool distance_safe = true;
 
   if (to_rear_ && fr_agents.rear.first) {
-    double v_f = fr_agents.rear.first->GetCurrentState()(StateDefinition::VEL_POSITION);
-    double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
-    distance_safe = CheckSafeDistance(v_f, v_r,
-                                      fr_agents.rear.second, a_o_, a_e_);
-  } else if (fr_agents.front.first) {
+    double v_r = fr_agents.rear.first->GetCurrentState()(StateDefinition::VEL_POSITION);
     double v_f = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
-    double v_r = fr_agents.front.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double dist = std::abs(fr_agents.rear.second.lon) - ego->GetShape().rear_dist_ -
+                fr_agents.rear.first->GetShape().front_dist_;
     distance_safe = CheckSafeDistance(v_f, v_r,
-                                      fr_agents.front.second, a_e_, a_o_);
+                                      dist, a_o_, a_e_);
+  } 
+  
+  if (fr_agents.front.first) {
+    double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double v_f = fr_agents.front.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double dist = std::abs(fr_agents.front.second.lon) - fr_agents.front.first->GetShape().rear_dist_ -
+                ego->GetShape().front_dist_;
+    distance_safe = distance_safe && CheckSafeDistance(v_f, v_r,
+                                      dist, a_e_, a_o_);
   }
   return distance_safe;
 }
@@ -86,9 +92,20 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     if(fr_agents.front.first->GetAgentId() != observed_world.GetEgoAgentId()) continue;
     double v_f = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
     bark::commons::transformation::FrenetState frenet_state(fr_agents.front.first->GetCurrentState(),
-                                            lane_corridor->GetCenterLine()); 
-    bool distance_safe = CheckSafeDistance(nearest_agent.second, frenet_state.vlon,
-                                    fr_agents.front.second, a_o_, a_e_);
+                                            lane_corridor->GetCenterLine());
+    const double norm_a = bark::geometry::Norm0To2PI(frenet_state.angle);
+    // Assume left and right dist equal
+    const double ego_long_shape_width =
+        ((norm_a < bark::geometry::B_PI_2) || (norm_a > 3 * bark::geometry::B_PI_2)) ?
+          (cos(frenet_state.angle)*fr_agents.front.first->GetShape().rear_dist_ +
+            sin(frenet_state.angle)*fr_agents.front.first->GetShape().left_dist_) :  
+          (cos(frenet_state.angle)*fr_agents.front.first->GetShape().front_dist_ +
+            sin(frenet_state.angle)*fr_agents.front.first->GetShape().left_dist_);
+
+    double dist = std::abs(fr_agents.front.second.lon) - ego_long_shape_width -
+                nearest_agent.second->GetShape().front_dist_;
+    bool distance_safe = CheckSafeDistance(v_f, frenet_state.vlon,
+                                    dist, a_o_, a_e_);
     LOG(INFO) << "safe dist corridor between " << nearest_agent.second->GetAgentId() << 
                                 "and " << fr_agents.front.first->GetAgentId();
     if(!distance_safe) return distance_safe;
@@ -97,17 +114,13 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
 }
 
 bool SafeDistanceLabelFunction::CheckSafeDistance(
-    const float v_f, const float v_r,
-    const FrenetPosition& frenet_dist, const double a_r,
-    const double a_f) const {
-  double dist = std::abs(frenet_dist.lon) - front_agent->GetShape().rear_dist_ -
-                rear_agent->GetShape().front_dist_;
+    const float v_f, const float v_r, const float dist,
+    const double a_r,  const double a_f) const {
+
   if (dist < 0.0) {
     return true;
   }
 
-  double v_f = front_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
-  double v_r = rear_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
   double v_f_star = CalcVelFrontStar(v_f, a_f);
   double t_stop_f_star = -v_f_star / a_r;
   double t_stop_r = -v_r / a_r;
