@@ -4,7 +4,6 @@
 
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![Ubtuntu-ManyLinux Build](https://github.com/bark-simulator/bark/workflows/ManyLinux/badge.svg)
-![macOS-CI Build](https://github.com/bark-simulator/bark/workflows/macOS-CI/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 ![NIGHTLY RSS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RSS/badge.svg)
 ![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
@@ -53,7 +52,7 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 
 ## Paper
 
-If you use BARK, please cite us using the following paper:
+If you use BARK, please cite us using the following [paper](https://arxiv.org/abs/2003.02604):
 
 ```
 @inproceedings{Bernhard2020,

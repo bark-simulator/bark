@@ -37,10 +37,9 @@ sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
 for _ in range(0, sim_time_steps):
-  world_state.PlanAgents(sim_step_time)
   viewer.clear()
+  world_state.Step(sim_step_time)
   video_renderer.drawWorld(world_state)
-  world_state.DoExecution(sim_step_time)
 
-# video_renderer.export_video(filename="./interaction_dataset", remove_image_dir=True)
+# video_renderer.export_video(filename="/tmp/interaction_dataset", remove_image_dir=True)
     
