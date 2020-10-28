@@ -52,6 +52,7 @@ Trajectory BehaviorRSSConformant::Plan(
   auto eval_res = boost::get<std::optional<bool>>(
     rss_evaluator_->Evaluate(observed_world));
 
+  #ifdef RSS
   auto rss_evaluator = std::dynamic_pointer_cast<EvaluatorRSS>(
     rss_evaluator_);
   if(rss_evaluator) {
@@ -60,6 +61,7 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_right_ = rss_evaluator->GetLateralRightResponse();
     dangerous_objects_ = rss_evaluator->GetDangerousObjectIdsSafetyResponse();
   }
+  #endif
 
   if (!*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
