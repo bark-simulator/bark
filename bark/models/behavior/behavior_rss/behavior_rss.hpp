@@ -83,12 +83,15 @@ class BehaviorRSSConformant : public BehaviorModel {
   int32_t GetLongitudinalResponse() const { return lon_; }
   int32_t GetLateralLeftResponse() const { return lat_left_; }
   int32_t GetLateralRightResponse() const { return lat_right_; }
-  std::vector<uint64_t> GetDangerousObjectIdsResponse() const { return dangerous_objects_; }
+  std::vector<uint64_t> GetDangerousObjectIdsResponse() const {
+    return dangerous_objects_;
+  }
 
   void SetLongitudinalResponse(int32_t lon) { lon_ = lon; }
   void SetLateralLeftResponse(int32_t lat_left) { lat_left_ = lat_left; }
   void SetLateralRightResponse(int32_t lat_right) { lat_right_ = lat_right; }
-  void SetDangerousObjectIdsResponse(const std::vector<uint64_t>& ids) { dangerous_objects_ = ids; }
+  void SetDangerousObjectIdsResponse(
+    const std::vector<uint64_t>& ids) { dangerous_objects_ = ids; }
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
