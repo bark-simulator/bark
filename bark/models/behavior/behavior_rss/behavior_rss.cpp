@@ -8,6 +8,7 @@
 
 #include <tuple>
 #include <optional>
+#include <memory>
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/world/observed_world.hpp"
