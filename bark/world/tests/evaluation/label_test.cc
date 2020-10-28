@@ -63,7 +63,7 @@ TEST(label_test, safe_distance) {
   double a_o = -8.0;
 
   auto evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o, true));
   auto label = evaluator->GetLabel();
   double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
 

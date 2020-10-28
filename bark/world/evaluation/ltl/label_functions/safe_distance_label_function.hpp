@@ -26,8 +26,14 @@ using bark::world::objects::AgentPtr;
 class SafeDistanceLabelFunction : public BaseLabelFunction {
  public:
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
-                            double delta, double a_e, double a_o);
+                            double delta, double a_e, double a_o,
+                            bool consider_crossing_corridors = false,
+                            unsigned int max_agents_for_crossing = 4);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+
+  bool EvaluateEgoCorridor(const world::ObservedWorld& observed_world) const;
+  bool EvaluateCrossingCorridors(const world::ObservedWorld& observed_world) const;
+
   bool GetToRear() const { return to_rear_; }
   double GetDelta() const { return delta_; }
   double GetMaxDecelEgo() const { return a_e_; }
@@ -51,6 +57,8 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   double delta_;  //! Reaction time
   double a_e_;    //! Max. deceleration of ego
   double a_o_;    //! Max. deceleration of front/rear agent (why rear agent?)
+  bool consider_crossing_corridors_;
+  unsigned int max_agents_for_crossing_;
 };
 
 }  // namespace evaluation
