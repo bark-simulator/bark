@@ -7,6 +7,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include <tuple>
+#include <optional>
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/world/observed_world.hpp"
@@ -23,6 +24,21 @@ Trajectory BehaviorRSSConformant::Plan(
   if (!initial_lane_corr_) {
     initial_lane_corr_ = lane_corr;
     behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
+    auto road_corr = observed_world.GetRoadCorridor();
+    const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
+    VLOG(4) << "Initial LaneCorridor: " << &lane_corr << std::endl;
+
+    // set the other lane corridor as target
+    for (const auto& lc : lane_corrs) {
+      VLOG(4) << "LaneCorridor: " << &lc << std::endl;
+      if (lane_corr != lc) {
+        VLOG(4) << "Setting LaneCorridor: " << &lc << std::endl;
+        auto nominal_behavior =
+          std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
+            nominal_behavior_model_);
+        nominal_behavior->SetConstantLaneCorridor(lc);
+      }
+    }
   }
 
   if (!lane_corr) {
@@ -32,8 +48,8 @@ Trajectory BehaviorRSSConformant::Plan(
     return GetLastTrajectory();
   }
 
-  auto eval_res = boost::get<bool>(rss_evaluator_->Evaluate(observed_world));
-  if (eval_res) {
+  auto eval_res = boost::get<std::optional<bool>>(rss_evaluator_->Evaluate(observed_world));
+  if (!*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
     behavior_rss_status_ = BehaviorRSSConformantStatus::SAFETY_BEHAVIOR;
     world_time_of_last_rss_violation_ = observed_world.GetWorldTime();

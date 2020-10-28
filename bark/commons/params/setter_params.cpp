@@ -54,11 +54,6 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 
-  // Add Map AgentId List Floats
-  for (const auto param : params_map_agentidlist_float_) {
-    param_list.push_back(std::make_pair(param.first, param.second));
-  }
-
   // Add Childs recursively
   for (const auto& child : childs_) {
     CondensedParamList param_list_child = child.second->GetCondensedParamList();

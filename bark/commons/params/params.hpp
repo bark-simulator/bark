@@ -21,10 +21,8 @@ namespace commons {
 typedef std::vector<std::vector<float>> ListListFloat;
 typedef std::vector<float> ListFloat;
 typedef unsigned int AgentId;
-typedef std::unordered_map<AgentId, std::vector<float>> MapAgentIdListFloat;
 
-typedef boost::variant<bool, float, int, std::string, ListListFloat, ListFloat,
-                       MapAgentIdListFloat>
+typedef boost::variant<bool, float, int, std::string, ListListFloat, ListFloat>
     Parameter;
 typedef std::pair<std::string, Parameter> ParamPair;
 
@@ -62,10 +60,6 @@ class Params {
       const std::string& param_name, const std::string& description,
       const ListListFloat& default_value) = 0;
 
-  virtual MapAgentIdListFloat GetMapAgentIdListFloat(
-      const std::string& param_name, const std::string& description,
-      const MapAgentIdListFloat& default_value) = 0;
-
   virtual std::vector<float> GetListFloat(const std::string& param_name,
                                           const std::string& description,
                                           const ListFloat& default_value) = 0;
@@ -95,10 +89,7 @@ class Params {
                                const std::string& distribution_type) = 0;
 
   virtual void SetString(const std::string& param_name,
-                         const std::string& default_value) = 0;
-
-  virtual void SetMapAgentIdListFloat(const std::string& param_name,
-                                      const MapAgentIdListFloat& value) = 0;
+                         const std::string& value) = 0;
 
   virtual int operator[](const std::string& param_name) = 0;
   virtual std::shared_ptr<Params> AddChild(const std::string& name) = 0;

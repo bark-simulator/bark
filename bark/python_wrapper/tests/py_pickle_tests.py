@@ -18,6 +18,7 @@ from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.core.world.goal_definition import *
+from bark.core.world.evaluation import *
 from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -164,7 +165,7 @@ class PickleTests(unittest.TestCase):
         try:
             from bark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
-            print("Rerun test with ---define planner_uct=true")
+            print("Rerun test with --define planner_uct=true")
             return
 
         params = ParameterServer()
@@ -193,5 +194,6 @@ class PickleTests(unittest.TestCase):
       params = ParameterServer()
       pickle_unpickle(BehaviorRSSConformant(params))
 
+      
 if __name__ == '__main__':
     unittest.main()

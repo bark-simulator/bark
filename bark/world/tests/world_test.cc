@@ -15,6 +15,9 @@
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/evaluation/evaluator_distance_to_goal.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
+#ifdef RSS
+#include "bark/world/evaluation/rss/evaluator_rss.hpp"
+#endif
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/map/roadgraph.hpp"
@@ -228,6 +231,43 @@ TEST(world, world_outside_drivable_area) {
 
   ASSERT_FALSE(boost::get<bool>(eval_res));
 }
+
+#ifdef RSS
+TEST(world, rss_evaluator) {
+  using bark::world::goal_definition::GoalDefinitionPolygon;
+
+  auto params = std::make_shared<SetterParams>();
+  params->SetString("EvaluatorRss::MapFilename", "bark/runtime/tests/data/city_highway_straight.xodr");
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
+
+  EvaluatorPtr evaluator_rss(new EvaluatorRSS(params));
+
+  Polygon polygon = GenerateGoalRectangle(6,3);
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+
+  // TODO: pass goal polygon to make_world_test
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
+
+  ObservedWorld observed_world(world, 1);
+
+  observed_world.AddEvaluator("rss", evaluator_rss);
+  auto eval_res = observed_world.Evaluate()["rss"];
+  
+  // no real test assertion, as maps do not match ...
+}
+#endif
 
 TEST(world, nearest_agents) {
   auto params = std::make_shared<SetterParams>();

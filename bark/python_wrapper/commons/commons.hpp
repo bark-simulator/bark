@@ -62,13 +62,6 @@ class PyParams : public Params {
                            default_value);
   }
 
-  MapAgentIdListFloat GetMapAgentIdListFloat(
-      const std::string& param_name, const std::string& description,
-      const MapAgentIdListFloat& default_value) override {
-    PYBIND11_OVERLOAD_PURE(MapAgentIdListFloat, Params, GetMapAgentIdListFloat,
-                           param_name, description, default_value);
-  }
-
   std::vector<float> GetListFloat(
       const std::string& param_name, const std::string& description,
       const std::vector<float>& default_value) override {
@@ -101,12 +94,6 @@ class PyParams : public Params {
   void SetListFloat(const std::string& param_name,
                     const std::vector<float>& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListFloat, param_name, value);
-  }
-
-  void SetMapAgentIdListFloat(const std::string& param_name,
-                              const MapAgentIdListFloat& value) override {
-    PYBIND11_OVERLOAD_PURE(void, Params, SetMapAgentIdListFloat, param_name,
-                           value);
   }
 
   void SetDistribution(const std::string& param_name,
