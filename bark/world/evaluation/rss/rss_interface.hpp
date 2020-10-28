@@ -233,6 +233,10 @@ class RssInterface {
   ExtractPairwiseDirectionalSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
+  ::ad::rss::state::ProperResponse GetRSSResponse() const {
+    return rss_proper_response_;
+  }
+  
  private:
   // default_dynamics describles the values of the default vehicle dynamics if
   // not set by agents_dynamics_
@@ -261,6 +265,9 @@ class RssInterface {
   float route_predict_range_;
   ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
       ::ad::map::point::CoordinateTransform();
+  // Contains longitudinal and lateral response of the ego object, a list of
+  // id of the dangerous objects
+  ::ad::rss::state::ProperResponse rss_proper_response_;
 };
 
 }  // namespace evaluation

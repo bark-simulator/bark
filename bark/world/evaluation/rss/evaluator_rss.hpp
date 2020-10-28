@@ -82,6 +82,12 @@ class EvaluatorRSS : public BaseEvaluator {
   };
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
+    auto result = rss_.GetSafetyReponse(observed_world);
+    auto rss_response = result.GetRSSResponse();
+    lon_ = longitudinalResponse.isSafe;
+    lat_left_ = lateralResponseLeft.isSafe;
+    lat_right_ = lateralResponseRight.isSafe;
+    dangerous_objects_ = rss_response.dangerousObjects;
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -125,10 +131,22 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
+  bool GetLongitudinalSafetyResponse() const { return lon_; }
+  bool GetLateralLeftSafetyResponse() const { return lat_left_; }
+  bool GetLateralRightSafetyResponse() const { return lat_right_; }
+  std::vector<uint64_t> GetDangerousObjectIdsResponse() const { return dangerous_objects_; }
+
+  void SetLongitudinalSafetyResponse(bool lon) const { lon_ = lon; }
+  void SetLateralLeftSafetyResponse(bool lat_left) const { lat_left; }
+  void SetLateralRightSafetyResponse(bool lat_right) const { lat_right; }
+  void SetDangerousObjectIdsResponse(const std::vector<uint64_t>& ids) const { dangerous_objects_ = ids; }
+
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
+  bool lon_{false}, lat_left_{false}, lat_right_{false};
+  std::vector<uint64_t> dangerous_objects_{};
 #endif
   AgentId agent_id_;
 };

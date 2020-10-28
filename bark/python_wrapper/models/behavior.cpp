@@ -430,10 +430,15 @@ void python_behavior(py::module m) {
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
           ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
-          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
+          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()),
+          b.GetLongitudinalSafetyResponse(),
+          b.GetLateralLeftSafetyResponse(),
+          b.GetLateralRightSafetyResponse(),
+          b.GetDangerousObjectIdsResponse());
       },
       [](py::tuple t) {
-        if (t.size() != 3)
+        // TODO: add safety response
+        if (t.size() != 7)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(
@@ -444,6 +449,11 @@ void python_behavior(py::module m) {
           PythonToParams(t[2].cast<py::tuple>()));
         bm->SetNominalBehaviorModel(nb);
         bm->SetSafetyBehaviorModel(sb);
+        // safety responses
+        bm->SetLongitudinalSafetyResponse(t[3].cast<bool>());
+        bm->SetLateralLeftSafetyResponse(t[4].cast<bool>());
+        bm->SetLateralRightSafetyResponse(t[5].cast<bool>());
+        bm->SetDangerousObjectIdsResponse(t[6].cast<std::vector<uint64_t>>());
         return bm;
       }));
   
