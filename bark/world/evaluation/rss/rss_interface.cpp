@@ -341,14 +341,10 @@ bool RssInterface::RssCheck(
   // situations
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
 
-  // Contains longitudinal and lateral response of the ego object, a list of
-  // id of the dangerous objects
-  ::ad::rss::state::ProperResponse proper_response;
-
   // rss_state_snapshot: individual situation responses calculated from
   // SituationSnapshot
   bool result = rss_check.calculateProperResponse(
-      world_model, situation_snapshot, rss_state_snapshot, proper_response);
+    world_model, situation_snapshot, rss_state_snapshot, rss_proper_response_);
 
   if (!result) {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;

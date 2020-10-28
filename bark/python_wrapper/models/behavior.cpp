@@ -421,6 +421,14 @@ void python_behavior(py::module m) {
     .def(py::init<const bark::commons::ParamsPtr&>())
     .def("SetNominalBehaviorModel", &BehaviorRSSConformant::SetNominalBehaviorModel)
     .def("SetSafetyBehaviorModel", &BehaviorRSSConformant::SetSafetyBehaviorModel)
+    .def("GetLongitudinalResponse", &BehaviorRSSConformant::GetLongitudinalResponse)
+    .def("GetLateralLeftResponse", &BehaviorRSSConformant::GetLateralLeftResponse)
+    .def("GetLateralRightResponse", &BehaviorRSSConformant::GetLateralRightResponse)
+    .def("GetDangerousObjectIdsResponse", &BehaviorRSSConformant::GetDangerousObjectIdsResponse)
+    .def("SetLongitudinalResponse", &BehaviorRSSConformant::SetLongitudinalResponse)
+    .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
+    .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
+    .def("SetDangerousObjectIdsResponse", &BehaviorRSSConformant::SetDangerousObjectIdsResponse)
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {
         return "bark.behavior.BehaviorRSSConformant";
@@ -430,10 +438,15 @@ void python_behavior(py::module m) {
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
           ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
-          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
+          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()),
+          b.GetLongitudinalResponse(),
+          b.GetLateralLeftResponse(),
+          b.GetLateralRightResponse(),
+          b.GetDangerousObjectIdsResponse());
       },
       [](py::tuple t) {
-        if (t.size() != 3)
+        // TODO: add safety response
+        if (t.size() != 7)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(
@@ -444,6 +457,11 @@ void python_behavior(py::module m) {
           PythonToParams(t[2].cast<py::tuple>()));
         bm->SetNominalBehaviorModel(nb);
         bm->SetSafetyBehaviorModel(sb);
+        // safety responses
+        bm->SetLongitudinalResponse(t[3].cast<bool>());
+        bm->SetLateralLeftResponse(t[4].cast<bool>());
+        bm->SetLateralRightResponse(t[5].cast<bool>());
+        bm->SetDangerousObjectIdsResponse(t[6].cast<std::vector<uint64_t>>());
         return bm;
       }));
   

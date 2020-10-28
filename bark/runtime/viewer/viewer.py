@@ -369,7 +369,7 @@ class BaseViewer(Viewer):
         for evaluator in world.evaluators:
             if isinstance(world.evaluators[evaluator], EvaluatorRSS):
                 rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
-                    world)
+                  world)
                 break
 
         ego_agent = world.agents[ego_id]

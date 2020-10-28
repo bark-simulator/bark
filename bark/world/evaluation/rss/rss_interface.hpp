@@ -230,6 +230,10 @@ class RssInterface {
   ExtractPairwiseDirectionalSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
+  ::ad::rss::state::ProperResponse GetRSSResponse() const {
+    return rss_proper_response_;
+  }
+  
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
@@ -274,6 +278,9 @@ class RssInterface {
   double route_predict_range_;
   ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
       ::ad::map::point::CoordinateTransform();
+  // Contains longitudinal and lateral response of the ego object, a list of
+  // id of the dangerous objects
+  ::ad::rss::state::ProperResponse rss_proper_response_;
 };
 
 }  // namespace evaluation
