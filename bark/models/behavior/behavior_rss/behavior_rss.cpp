@@ -56,10 +56,10 @@ Trajectory BehaviorRSSConformant::Plan(
   auto rss_evaluator = std::dynamic_pointer_cast<EvaluatorRSS>(
     rss_evaluator_);
   if(rss_evaluator) {
-    lon_ = rss_evaluator->GetLongitudinalResponse();
-    lat_left_ = rss_evaluator->GetLateralLeftResponse();
-    lat_right_ = rss_evaluator->GetLateralRightResponse();
-    dangerous_objects_ = rss_evaluator->GetDangerousObjectIdsSafetyResponse();
+    const auto& rss_response = rss_evaluator->GetRSSProperResponse();
+    lon_response_ = rss_response.longitudinalResponse;
+    lat_left_response_ = rss_response.lateralResponseLeft;
+    lat_right_response_ = rss_response.lateralResponseRight;
   }
   #endif
 

@@ -37,6 +37,11 @@ using bark::world::evaluation::EvaluatorRSS;
 #endif
 enum class BehaviorRSSConformantStatus {SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR};
 
+template <typename Enumeration>
+auto as_integer(Enumeration const value) {
+    return static_cast<typename std::underlying_type<Enumeration>::type>(value);
+}
+
 class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params) :
@@ -80,18 +85,20 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  int32_t GetLongitudinalResponse() const { return lon_; }
-  int32_t GetLateralLeftResponse() const { return lat_left_; }
-  int32_t GetLateralRightResponse() const { return lat_right_; }
-  std::vector<uint64_t> GetDangerousObjectIdsResponse() const {
-    return dangerous_objects_;
+  #ifdef RSS
+  int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
+  int32_t GetLateralLeftResponse() const { return as_integer(lat_left_response_); }
+  int32_t GetLateralRightResponse() const { return as_integer(lat_right_response_); }
+  void SetLongitudinalResponse(int32_t lon) {
+    lon_response_ = static_cast<::ad::rss::state::LongitudinalResponse>(lon);
   }
-
-  void SetLongitudinalResponse(int32_t lon) { lon_ = lon; }
-  void SetLateralLeftResponse(int32_t lat_left) { lat_left_ = lat_left; }
-  void SetLateralRightResponse(int32_t lat_right) { lat_right_ = lat_right; }
-  void SetDangerousObjectIdsResponse(
-    const std::vector<uint64_t>& ids) { dangerous_objects_ = ids; }
+  void SetLateralLeftResponse(int32_t lat_left) {
+    lat_left_response_ = static_cast<::ad::rss::state::LateralResponse>(lat_left);
+  }
+  void SetLateralRightResponse(int32_t lat_right) {
+    lat_right_response_ = static_cast<::ad::rss::state::LateralResponse>(lat_right);
+  }
+  #endif
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
@@ -100,9 +107,11 @@ class BehaviorRSSConformant : public BehaviorModel {
   BehaviorRSSConformantStatus behavior_rss_status_;
   float world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
-
-  int32_t lon_{0}, lat_left_{0}, lat_right_{0};
-  std::vector<uint64_t> dangerous_objects_{};
+  #ifdef RSS
+  ::ad::rss::state::LongitudinalResponse lon_response_;
+  ::ad::rss::state::LateralResponse lat_left_response_;
+  ::ad::rss::state::LateralResponse lat_right_response_;
+  #endif
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {

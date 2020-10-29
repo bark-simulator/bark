@@ -25,10 +25,6 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-template <typename Enumeration>
-auto as_integer(Enumeration const value) {
-    return static_cast<typename std::underlying_type<Enumeration>::type>(value);
-}
 
 class EvaluatorRSS : public BaseEvaluator {
  public:
@@ -85,11 +81,7 @@ class EvaluatorRSS : public BaseEvaluator {
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
-    auto rss_response = rss_.GetRSSResponse();
-    lon_ = as_integer(rss_response.longitudinalResponse);
-    lat_left_ = as_integer(rss_response.lateralResponseLeft);
-    lat_right_ = as_integer(rss_response.lateralResponseRight);
-    dangerous_objects_ = rss_response.dangerousObjects;
+    rss_proper_response_ = rss_.GetRSSResponse();
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -133,17 +125,17 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
-  int32_t GetLongitudinalResponse() const { return lon_; }
-  int32_t GetLateralLeftResponse() const { return lat_left_; }
-  int32_t GetLateralRightResponse() const { return lat_right_; }
-  std::vector<uint64_t> GetDangerousObjectIdsSafetyResponse() const { return dangerous_objects_; }
+  ::ad::rss::state::ProperResponse GetRSSProperResponse() const {
+    return rss_proper_response_;
+  }
 
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
-  int32_t lon_{0}, lat_left_{0}, lat_right_{0};
+  // int32_t lon_{0}, lat_left_{0}, lat_right_{0};
   std::vector<uint64_t> dangerous_objects_{};
+  ::ad::rss::state::ProperResponse rss_proper_response_;
 #endif
   AgentId agent_id_;
 };

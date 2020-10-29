@@ -424,11 +424,9 @@ void python_behavior(py::module m) {
     .def("GetLongitudinalResponse", &BehaviorRSSConformant::GetLongitudinalResponse)
     .def("GetLateralLeftResponse", &BehaviorRSSConformant::GetLateralLeftResponse)
     .def("GetLateralRightResponse", &BehaviorRSSConformant::GetLateralRightResponse)
-    .def("GetDangerousObjectIdsResponse", &BehaviorRSSConformant::GetDangerousObjectIdsResponse)
     .def("SetLongitudinalResponse", &BehaviorRSSConformant::SetLongitudinalResponse)
     .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
     .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
-    .def("SetDangerousObjectIdsResponse", &BehaviorRSSConformant::SetDangerousObjectIdsResponse)
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {
         return "bark.behavior.BehaviorRSSConformant";
@@ -441,12 +439,11 @@ void python_behavior(py::module m) {
           ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()),
           b.GetLongitudinalResponse(),
           b.GetLateralLeftResponse(),
-          b.GetLateralRightResponse(),
-          b.GetDangerousObjectIdsResponse());
+          b.GetLateralRightResponse());
       },
       [](py::tuple t) {
         // TODO: add safety response
-        if (t.size() != 7)
+        if (t.size() != 6)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(
@@ -461,7 +458,6 @@ void python_behavior(py::module m) {
         bm->SetLongitudinalResponse(t[3].cast<bool>());
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
-        bm->SetDangerousObjectIdsResponse(t[6].cast<std::vector<uint64_t>>());
         return bm;
       }));
   
