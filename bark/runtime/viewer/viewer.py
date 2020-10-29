@@ -364,34 +364,6 @@ class BaseViewer(Viewer):
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
-    def drawRssSafetyResponses(self, world, ego_id):
-        from bark.core.world.evaluation import EvaluatorRSS
-        for evaluator in world.evaluators:
-            if isinstance(world.evaluators[evaluator], EvaluatorRSS):
-                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
-                  world)
-                break
-
-        ego_agent = world.agents[ego_id]
-        shape = ego_agent.shape
-        pose = generatePoseFromState(ego_agent.state)
-        transformed_polygon = shape.ScalingTransform(1.5, pose)
-        self.drawPolygon2d(
-            transformed_polygon,
-            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
-
-        # draw response for other agents
-        relevent_agents = [
-            agent for agent in world.agents.values() if agent.id in rss_responses]
-        for agent in relevent_agents:
-            shape = agent.shape
-            pose = generatePoseFromState(agent.state)
-            transformed_polygon = shape.ScalingTransform(1.5, pose)
-
-            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
-            self.drawPolygon2d(transformed_polygon, response_color,
-                               0.6, response_color, zorder=9)
-
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
             color = "blue"
@@ -447,7 +419,34 @@ class BaseViewer(Viewer):
 
         self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
             agent_id, char_func(overall_safety)))
-            
+    
+    def drawRssSafetyResponses(self, world, ego_id):
+        from bark.core.world.evaluation import EvaluatorRSS
+        for evaluator in world.evaluators:
+            if isinstance(world.evaluators[evaluator], EvaluatorRSS):
+                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
+                  world)
+                break
+
+        ego_agent = world.agents[ego_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
+        transformed_polygon = shape.ScalingTransform(1.5, pose)
+        self.drawPolygon2d(
+            transformed_polygon,
+            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
+
+        # draw response for other agents
+        relevent_agents = [
+            agent for agent in world.agents.values() if agent.id in rss_responses]
+        for agent in relevent_agents:
+            shape = agent.shape
+            pose = generatePoseFromState(agent.state)
+            transformed_polygon = shape.ScalingTransform(1.5, pose)
+
+            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
+            self.drawPolygon2d(transformed_polygon, response_color,
+                               0.6, response_color, zorder=9)
 
       
 def generatePoseFromState(state):

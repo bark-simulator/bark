@@ -419,6 +419,7 @@ void python_behavior(py::module m) {
   py::class_<BehaviorRSSConformant, BehaviorModel,
              shared_ptr<BehaviorRSSConformant>>(m, "BehaviorRSSConformant")
     .def(py::init<const bark::commons::ParamsPtr&>())
+    #ifdef RSS
     .def("SetNominalBehaviorModel", &BehaviorRSSConformant::SetNominalBehaviorModel)
     .def("SetSafetyBehaviorModel", &BehaviorRSSConformant::SetSafetyBehaviorModel)
     .def("GetLongitudinalResponse", &BehaviorRSSConformant::GetLongitudinalResponse)
@@ -427,12 +428,14 @@ void python_behavior(py::module m) {
     .def("SetLongitudinalResponse", &BehaviorRSSConformant::SetLongitudinalResponse)
     .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
     .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
+    #endif
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {
         return "bark.behavior.BehaviorRSSConformant";
       })
     .def(py::pickle(
       [](const BehaviorRSSConformant& b) {
+        #ifdef RSS
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
           ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
@@ -440,10 +443,18 @@ void python_behavior(py::module m) {
           b.GetLongitudinalResponse(),
           b.GetLateralLeftResponse(),
           b.GetLateralRightResponse());
+        #endif
+        return py::make_tuple(
+          ParamsToPython(b.GetParams()), 
+          ParamsToPython(b.GetNominalBehaviorModel()->GetParams()), 
+          ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()));
       },
       [](py::tuple t) {
-        // TODO: add safety response
-        if (t.size() != 6)
+        int num_params = 3;
+        #ifdef RSS
+        num_params = 6;
+        #endif
+        if (t.size() != num_params)
           throw std::runtime_error("Invalid behavior model state!");
         /* Create a new C++ instance */
         auto bm = new BehaviorRSSConformant(
@@ -454,10 +465,12 @@ void python_behavior(py::module m) {
           PythonToParams(t[2].cast<py::tuple>()));
         bm->SetNominalBehaviorModel(nb);
         bm->SetSafetyBehaviorModel(sb);
+        #ifdef RSS
         // safety responses
         bm->SetLongitudinalResponse(t[3].cast<bool>());
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
+        #endif
         return bm;
       }));
   
