@@ -79,7 +79,7 @@ Trajectory BehaviorRSSConformant::Plan(
     last_action = nominal_behavior_model_->GetLastAction();
     last_traj = nominal_behavior_model_->GetLastTrajectory();
   } else {
-    // LOG(INFO) << "Executing safety behavior." << std::endl;
+    LOG(INFO) << "Executing safety behavior." << std::endl;
     behavior_safety_model_->Plan(min_planning_time, observed_world);
     last_action = behavior_safety_model_->GetLastAction();
     last_traj = behavior_safety_model_->GetLastTrajectory();
