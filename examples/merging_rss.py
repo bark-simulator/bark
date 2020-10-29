@@ -145,18 +145,18 @@ param_server["EvaluatorRss"]["MapFilename"] = map_path
 
 # run n scenarios
 for episode in range(0, 10):
-    env.reset()
-    current_world = env._world
-    eval_agent_id = env._scenario._eval_agent_ids[0]
+  env.reset()
+  current_world = env._world
+  eval_agent_id = env._scenario._eval_agent_ids[0]
+  current_world.agents[eval_agent_id].behavior_model = \
+    BehaviorRSSConformant(param_server)
+  evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
+  current_world.AddEvaluator("rss", evaluator_rss)
 
-    evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
+  # step each scenario 40 times
+  for step in range(0, 40):
+    env.step()
+    # print_rss_safety_response(evaluator_rss, current_world)
+    time.sleep(sim_step_time / sim_real_time_factor)
 
-    current_world.AddEvaluator("rss", evaluator_rss)
-
-    # step each scenario 40 times
-    for step in range(0, 40):
-        env.step()
-        print_rss_safety_response(evaluator_rss, current_world)
-        time.sleep(sim_step_time / sim_real_time_factor)
-
-viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)
+# viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)

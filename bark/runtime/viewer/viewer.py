@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
+from bark.core.models.behavior import *
 
 logger = logging.getLogger()
 
@@ -78,6 +79,11 @@ class BaseViewer(Viewer):
 
         self.draw_rss_safety_responses = params["Visualization"]["Evaluation"]["DrawRssSafetyResponses",
                                                                                "Flag to specify if visualizating rss safety responses.", False]
+
+        self._draw_ego_rss_safety_responses = params["Visualization"]["Evaluation"][
+          "DrawEgoRSSSafetyResponses",
+          "Flag to specify if visualizating rss safety responses.",
+          False]
 
         self.parameters = params
         self.agent_color_map = {}
@@ -319,6 +325,9 @@ class BaseViewer(Viewer):
             if self.draw_rss_safety_responses:
                 self.drawRssSafetyResponses(world, eval_agent_ids[0])
         
+        if self._draw_ego_rss_safety_responses:
+          self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
+        
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -448,6 +457,20 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(transformed_polygon, response_color,
                                0.6, response_color, zorder=9)
 
+    def DrawRSSEvaluatorState(self, world, agent_id):
+      agent = world.agents[agent_id]
+      behavior = agent.behavior_model
+      if isinstance(behavior, BehaviorRSSConformant):
+        longitudinal_response = behavior.GetLongitudinalResponse()
+        lateral_left_response = behavior.GetLateralLeftResponse()
+        lateral_right_response = behavior.GetLateralRightResponse()
+        if longitudinal_response != 0:
+          print("Longitudinal violation")
+        elif lateral_left_response != 0 or lateral_right_response != 0:
+          print("Lateral violation")
+        else:
+          print("No violation")
+            
       
 def generatePoseFromState(state):
   # pybind creates column based vectors, initialization maybe row-based -> we consider both
