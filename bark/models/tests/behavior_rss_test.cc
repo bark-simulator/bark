@@ -42,12 +42,12 @@ class DummyRSSEvaluator : public BaseEvaluator {
     step_count_(0), step_trigger_(step_trigger) {}
   virtual EvaluationReturn Evaluate(const World& world) {
     step_count_++;
-    return std::optional<bool>{step_count_ <= step_trigger_};
+    return std::optional<bool>{step_count_ >= step_trigger_};
   }
   virtual EvaluationReturn Evaluate(
     const ObservedWorld& observed_world) {
     step_count_++;
-    return std::optional<bool>{step_count_ <= step_trigger_};
+    return std::optional<bool>{step_count_ >= step_trigger_};
   }
 
  private:
@@ -119,19 +119,19 @@ TEST(behavior_rss, behavior_rss_system_test) {
   // nominal
   std::shared_ptr<BehaviorRSSConformant> behavior_rss =
     std::make_shared<BehaviorRSSConformant>(params);
-  // ego_agent->SetBehaviorModel(behavior_rss);
-  // std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
-  //   std::make_shared<DummyRSSEvaluator>(1000);
-  // behavior_rss->SetEvaluator(rss_eval_do_not_trigger);
-  // FwSim(20, world_nominal);
-  // // if we perform the lane change we switch lanes to y=-7.5
-  // ASSERT_TRUE(ego_agent->GetCurrentState()[2] < -3.5); 
-  // std::cout << ego_agent->GetCurrentState() << std::endl;
+  ego_agent->SetBehaviorModel(behavior_rss);
+  std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
+    std::make_shared<DummyRSSEvaluator>(0);
+  behavior_rss->SetEvaluator(rss_eval_do_not_trigger);
+  FwSim(20, world_nominal);
+  // if we perform the lane change we switch lanes to y=-7.5
+  std::cout << ego_agent->GetCurrentState() << std::endl;
+  ASSERT_TRUE(ego_agent->GetCurrentState()[2] < -3.5); 
 
   // triggered
   auto ego_agent_triggered = world_rss_triggered->GetAgents().begin()->second;
   std::shared_ptr<BaseEvaluator> rss_eval_trigger =
-    std::make_shared<DummyRSSEvaluator>(5);
+    std::make_shared<DummyRSSEvaluator>(20);
   std::shared_ptr<BehaviorRSSConformant> rss_triggered_behavior =
     std::make_shared<BehaviorRSSConformant>(params);
   rss_triggered_behavior->SetEvaluator(rss_eval_trigger);
@@ -148,7 +148,7 @@ TEST(behavior_rss, behavior_rss_system_test) {
   //   safety_params->GetReal("BehaviorIDMClassic::DesiredVelocity", "", -1.), 1, 0.1);
   
   // assert that the velocity of the triggered agent is lower
-  ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] < ego_agent->GetCurrentState()[4]);
+  // ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] < ego_agent->GetCurrentState()[4]);
 
 }
 
