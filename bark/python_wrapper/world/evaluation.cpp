@@ -7,13 +7,13 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "evaluation.hpp"
+#include "bark/world/evaluation/commons.hpp"
 #include "bark/world/evaluation/evaluator_behavior_expired.hpp"
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
-#include "bark/world/evaluation/commons.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -86,8 +86,9 @@ void python_evaluation(py::module m) {
 #ifdef RSS
   py::class_<EvaluatorRSS, BaseEvaluator, std::shared_ptr<EvaluatorRSS>>(
       m, "EvaluatorRSS")
-      .def(py::init<const bark::commons::ParamsPtr>())
-      .def(py::init<const AgentId&,const bark::commons::ParamsPtr>())
+      .def(py::init<const bark::commons::ParamsPtr>(), py::arg("params"))
+      .def(py::init<const AgentId&, const bark::commons::ParamsPtr>(),
+           py::arg("agent_id"), py::arg("params"))
       .def("Evaluate", py::overload_cast<const World&>(&EvaluatorRSS::Evaluate))
       .def("PairwiseEvaluate",
            py::overload_cast<const World&>(&EvaluatorRSS::PairwiseEvaluate))
@@ -99,10 +100,10 @@ void python_evaluation(py::module m) {
       });
 #endif
 
-  m.def("CaptureAgentStates", py::overload_cast<const World&>(
-    &CaptureAgentStates<World>));
+  m.def("CaptureAgentStates",
+        py::overload_cast<const World&>(&CaptureAgentStates<World>));
   m.def("CaptureAgentStates", py::overload_cast<const ObservedWorld&>(
-    &CaptureAgentStates<ObservedWorld>));
+                                  &CaptureAgentStates<ObservedWorld>));
 
   python_ltl(m.def_submodule("ltl", "LTL Rules"));
 }

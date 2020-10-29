@@ -41,6 +41,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                  ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
         self._behavior_model = params_temp["BehaviorModel",
                                            "Overwrite static trajectory with behavior model", None]
+        self._xy_offset = params_temp["XYOffset",
+                                      "offset in x and y direction.", [0, 0]]
         self._excluded_tracks = params_temp[
             "ExcludeTracks", "Track IDs to be excluded from the scenario generation", []]
         self._base_params_json = params_temp[
@@ -59,7 +61,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         for track_file_name in self._track_file_name_list:
 
             dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
-                                                   track_filename=track_file_name, starting_offset_ms=self._starting_offset_ms)
+                                                   track_filename=track_file_name,
+                                                   xy_offset=self._xy_offset,
+                                                   starting_offset_ms=self._starting_offset_ms)
             scenario_track_info_list = dataset_decomposer.decompose()
 
             # for scenario_idx in range(0, num_scenarios):
