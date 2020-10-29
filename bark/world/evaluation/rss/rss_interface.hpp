@@ -175,8 +175,8 @@ class RssInterface {
   ::ad::map::match::Object GenerateMatchObject(
       const models::dynamic::State& agent_state, const Polygon& agent_shape);
 
-  ::ad::physics::AngularVelocity CaculateAngularVelocity(
-      const models::dynamic::Trajectory& trajectory);
+  ::ad::physics::AngularVelocity CalculateAngularVelocity(
+    const models::behavior::StateActionHistory& history);
 
   // Generate a RSS route from the current position and the goal of the
   // specified BARK agent, the corresponding RSS match object. Used by

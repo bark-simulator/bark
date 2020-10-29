@@ -106,16 +106,19 @@ RssInterface::GenerateVehicleDynamicsParameters() {
   return matching_object;
 }
 
-::ad::physics::AngularVelocity RssInterface::CaculateAngularVelocity(
-    const models::dynamic::Trajectory& traj) {
-  if (traj.rows() < 2) {
-    return 0.f;
+::ad::physics::AngularVelocity RssInterface::CalculateAngularVelocity(
+    const models::behavior::StateActionHistory& history) {
+  ::ad::physics::AngularVelocity av;
+  if (history.size() < 2) {
+    av = ::ad::physics::AngularVelocity(0.0);
   } else {
-    double diff_theta = traj(1, THETA_POSITION) - traj(0, THETA_POSITION);
-    double diff_time = traj(1, TIME_POSITION) - traj(0, TIME_POSITION);
-    auto av = ::ad::physics::AngularVelocity(diff_theta / diff_time);
-    return av;
+    models::dynamic::State curr_state = history.at(history.size() - 1).first;
+    models::dynamic::State prev_state = history.at(history.size() - 2).first;
+    double diff_theta = curr_state(THETA_POSITION) - prev_state(THETA_POSITION);
+    double diff_time = curr_state(TIME_POSITION) - prev_state(TIME_POSITION);
+    av = ::ad::physics::AngularVelocity(diff_theta / diff_time);
   }
+  return av;
 }
 
 bool RssInterface::GenerateRoute(const Point2d& agent_center,
@@ -278,8 +281,8 @@ bool RssInterface::CreateWorldModel(
     const ::ad::map::route::FullRoute& ego_route,
     ::ad::rss::world::WorldModel& rss_world) {
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
-  auto ego_av = CaculateAngularVelocity(
-      agents.find(ego_id)->second->GetExecutionTrajectory());
+  auto ego_av = CalculateAngularVelocity(
+      agents.find(ego_id)->second->GetStateInputHistory());
   ::ad::rss::map::RssObjectData ego_data = {
       ::ad::rss::world::ObjectId(ego_id),
       ::ad::rss::world::ObjectType::EgoVehicle,
@@ -308,7 +311,7 @@ bool RssInterface::CreateWorldModel(
     auto const other_match_object =
         GenerateMatchObject(other_state, other_shape);
 
-    auto other_av = CaculateAngularVelocity(other->GetExecutionTrajectory());
+    auto other_av = CalculateAngularVelocity(other->GetStateInputHistory());
 
     ::ad::rss::map::RssObjectData other_data = {
         ::ad::rss::world::ObjectId(other->GetAgentId()),
@@ -344,7 +347,8 @@ bool RssInterface::RssCheck(
   // rss_state_snapshot: individual situation responses calculated from
   // SituationSnapshot
   bool result = rss_check.calculateProperResponse(
-    world_model, situation_snapshot, rss_state_snapshot, rss_proper_response_);
+      world_model, situation_snapshot, rss_state_snapshot,
+      rss_proper_response_);
 
   if (!result) {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
