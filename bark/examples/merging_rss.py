@@ -16,90 +16,106 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
     LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.examples.paths import Data
+
+from bark.core.world.opendrive import *
+from bark.core.world.goal_definition import *
 from bark.core.models.behavior import *
+from bark.core.commons import SetVerboseLevel
 
 try:
     from bark.core.world.evaluation import EvaluatorRSS
 except:
     raise ImportError(
-        "This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
+        "This example requires building RSS, please run with \"bazel run //examples:merging_rss --define rss=true\"")
 
 # parameters
-param_server = ParameterServer(
-    filename="examples/params/highway_merge_configurable.json")
-param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
-param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
+param_server = ParameterServer()
+
+# scenario
+
+
+class CustomLaneCorridorConfig(LaneCorridorConfig):
+    def __init__(self,
+                 params=None,
+                 **kwargs):
+        super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
+
+    def goal(self, world):
+        road_corr = world.map.GetRoadCorridor(
+            self._road_ids, XodrDrivingDirection.forward)
+        lane_corr = self._road_corridor.lane_corridors[0]
+        return GoalDefinitionPolygon(lane_corr.polygon)
+
+
+param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.0
+param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 80.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 0.
+param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
+param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
+param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
 
 param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
 
-# custom lane configuration that sets a different behavior model
-# and sets the desired speed for the behavior
-class HighwayLaneCorridorConfig(LaneCorridorConfig):
-    def __init__(self, params=None, **kwargs):
-        super().__init__(params=params, **kwargs)
-        self._count = 0
-
-    def velocity(self):
-        return np.random.uniform(2., 10.)
-
-    def behavior_model(self, world):
-        # agent_params = ParameterServer()
-        params = self._params.AddChild(
-            "BehaviorLaneChangeRuleBased"+str(self._count))
-        params["BehaviorIDMClassic"]["DesiredVelocity"] = \
-            np.random.uniform(5., 10.)
-        behavior_model = BehaviorLaneChangeRuleBased(params)
-        self._count += 1
-        return behavior_model
-
+SetVerboseLevel(0)
 
 # configure both lanes of the highway. the right lane has one controlled agent
-left_lane = HighwayLaneCorridorConfig(params=param_server,
-                                      road_ids=[16],
-                                      lane_corridor_id=0)
-right_lane = HighwayLaneCorridorConfig(params=param_server,
-                                       road_ids=[16],
-                                       lane_corridor_id=1,
-                                       controlled_ids=True)
+left_lane = CustomLaneCorridorConfig(params=param_server,
+                                     lane_corridor_id=0,
+                                     road_ids=[0, 1],
+                                     behavior_model=BehaviorMobilRuleBased(
+                                         param_server),
+                                     s_min=5.,
+                                     s_max=50.)
+right_lane = CustomLaneCorridorConfig(params=param_server,
+                                      lane_corridor_id=1,
+                                      road_ids=[0, 1],
+                                      controlled_ids=True,
+                                      behavior_model=BehaviorMobilRuleBased(
+                                          param_server),
+                                      s_min=5.,
+                                      s_max=20.)
 
-map_path = "bark/runtime/tests/data/city_highway_straight.xodr"
-
-# create 5 scenarios
 scenarios = \
-    ConfigWithEase(
-        num_scenarios=5,
-        map_file_name=map_path,
-        random_seed=0,
-        params=param_server,
-        lane_corridor_configs=[left_lane, right_lane])
+    ConfigWithEase(num_scenarios=3,
+                   map_file_name=Data.xodr_data("DR_DEU_Merging_MT_v01_centered"),
+                   random_seed=0,
+                   params=param_server,
+                   lane_corridor_configs=[left_lane, right_lane])
 
 # viewer
 viewer = MPViewer(params=param_server,
-                  x_range=[-75, 75],
-                  y_range=[-75, 75],
-                  follow_agent_id=True)
+                  # x_range=[-35, 35],
+                  # y_range=[-35, 35],
+                  follow_agent_id=False)
+# viewer = Panda3dViewer(params=param_server,
+#                        x_range=[-40, 40],
+#                        y_range=[-40, 40],
+#                        follow_agent_id=True,
+#                        light_pose=[1000, 1000, 100000],
+#                        camera_pose=[1000, 980, 100])
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.05]
-sim_real_time_factor = param_server["simulation"][
-    "real_time_factor",
-    "execution in real-time or faster",
-    0.5]
+                                           0.2]
+sim_real_time_factor = param_server["simulation"]["real_time_factor",
+                                                  "execution in real-time or faster",
+                                                  1.]
 
 viewer = VideoRenderer(renderer=viewer,
                        world_step_time=sim_step_time,
                        fig_path="/tmp/video")
 
-# gym like interface
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
               render=True)
-
 
 # Defining vehicles dynamics for RSS
 
@@ -118,10 +134,11 @@ default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
 agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
                            2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
 
+# Example of using RSS to evaluate the safety situation of the evaluating agent.
+# The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
+
 
 def print_rss_safety_response(evaluator_rss, world):
-    # Example of using RSS to evaluate the safety situation of the evaluating agent.
-    # The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
     # Evaluating with RSS is quite computionally expensive
     print("Overall safety response: ", evaluator_rss.Evaluate(world))
     # print("Pairwise safety response: ",
@@ -136,8 +153,8 @@ param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dy
 param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
 
 
-# run 3 scenarios
-for episode in range(0, 3):
+# run n scenarios
+for episode in range(0, 10):
     env.reset()
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
@@ -157,4 +174,4 @@ for episode in range(0, 3):
         print_rss_safety_response(evaluator_rss, current_world)
         time.sleep(sim_step_time / sim_real_time_factor)
 
-# viewer.export_video(filename="/tmp/highway_rss", remove_image_dir=False)
+viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)

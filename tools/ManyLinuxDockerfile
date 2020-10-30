@@ -1,6 +1,8 @@
+# use base manylinux image based on centOs 6
 FROM quay.io/pypa/manylinux2010_x86_64
 USER root
 
+# setup jdk environment variables
 ENV JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0*" \
     PLATFORM="el6" \
     PATH=/root/bin:$PATH
@@ -8,10 +10,13 @@ ENV BASH_ENV="/usr/bin/scl_enable" \
     ENV="/usr/bin/scl_enable" \
     PROMPT_COMMAND=". /usr/bin/scl_enable"
 
+# install openjdk for bazel
 RUN yum install -y centos-release-scl unzip vim wget cmake3 doxygen ccache sudo \
     && yum install -y devtoolset-7 rh-python36 \
     && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel 
 
+# install python 3 for compiling bazel. Its different from python
+# used for initializing virtual for bark.
 RUN source scl_source enable devtoolset-7 rh-python36 \
     && gcc --version \
     && python -V \
@@ -28,8 +33,9 @@ RUN echo "unset BASH_ENV PROMPT_COMMAND ENV" > /usr/bin/scl_enable \
     && echo "export JAVA_HOME=\$FULL_JAVA_HOME" >> /usr/bin/scl_enable
 RUN chmod a+x /usr/bin/scl_enable
 
-# build libstacktrace . Required to compile boost from source as libstacketrace is not
-# bundled with the devtoolset-7 toolkit for gcc.
+# build libstacktrace . Required to compile boost a (requirement for bark)
+# from source as libstacketrace is not bundled with the devtoolset-7
+# toolkit for gcc available in the image.
 RUN wget -O libbacktrace-master.zip https://github.com/ianlancetaylor/libbacktrace/archive/master.zip \
     && unzip libbacktrace-master.zip \
     && cd libbacktrace-master \
@@ -48,9 +54,7 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/ba
     && ./compile.sh \
     && mv /bazel-$BAZEL_VERSION/output/bazel /usr/bin/bazel
 
-RUN bazel
-
-# Install virtual env for bark using default python. switch to 
+# install virtual env for bark using default python. switch to 
 # target when container is running.
 ENV PATH=/opt/rh/rh-python36/root/usr/bin:$PATH
 RUN pip3 install --upgrade pip

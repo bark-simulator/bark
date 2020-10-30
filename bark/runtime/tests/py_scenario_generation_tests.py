@@ -75,17 +75,20 @@ class ScenarioGenerationTests(unittest.TestCase):
         }]
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = sink_source_dict
-    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
+      os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
     scenario_generation = ConfigurableScenarioGeneration(
         num_scenarios=2, params=params)
     scenario_generation.dump_scenario_list("test.scenario")
     params.Save("default_params_behavior_type_sampling.json")
 
   def test_configurable_scenario_generation_interaction_merging_track_ids(self):
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+    map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
       "Description": "merging_deu_standard",
-      "ConfigAgentStatesGeometries": {"Type": "InteractionDataTrackIdsStatesGeometries"},
+      "ConfigAgentStatesGeometries": {"Type": "InteractionDataTrackIdsStatesGeometries", "TrackFilename": track_filename},
       "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
       "ConfigExecutionModels": {"Type": "FixedExecutionType"},
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
@@ -96,8 +99,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
-    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = map_filename
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
@@ -112,10 +114,12 @@ class ScenarioGenerationTests(unittest.TestCase):
     params.Save("default_params_interaction_dataset.json")
 
   def test_configurable_scenario_generation_interaction_merging_window(self):
+    track_filenames =  os.path.join(os.path.dirname(__file__), "data/*_dataset_dummy_track.csv")
+    map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
       "Description": "merging_deu_standard",
-      "ConfigAgentStatesGeometries": {"Type": "InteractionDataWindowStatesGeometries"},
+      "ConfigAgentStatesGeometries": {"Type": "InteractionDataWindowStatesGeometries", "TrackFilenames": track_filenames},
       "ConfigBehaviorModels": {"Type": "InteractionDataBehaviors"},
       "ConfigExecutionModels": {"Type": "FixedExecutionType"},
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
@@ -126,8 +130,7 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     params = ParameterServer()
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
-    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = \
-          "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = map_filename
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)
     scenario_generation.dump_scenario_list("test.scenario")
 
@@ -159,6 +162,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     }
 
     params = ParameterServer()
+    mapfile = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+    params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"] = mapfile
     params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["SinksSources"] = [sink_source_dict]
     add_config_reader_module("bark.runtime.tests.test_config_reader_module")
     scenario_generation = ConfigurableScenarioGeneration(num_scenarios=2,params=params)

@@ -7,7 +7,7 @@ All examples are found in the `/examples`-directory of BARK.
 ## Merging Example
 
 In this example, we show the basic functionality of BARK using a merging scenario.
-It can be ran using: `bazel run //examples:merging`.
+It can be ran using: `bazel run //bark/examples:merging`.
 
 ```eval_rst
 .. image:: gifs/bark_merging.gif
@@ -80,7 +80,7 @@ However, BARK also provides a `BenchmarkRunner` that runs scenarios automaticall
 ## Other Examples
 The other examples can be run in a similar fashion using:
 
-* `bazel run //examples:highway`: Two-lane highway example.
-* `bazel run //examples:intersection`: Three way intersection.
-* `bazel run //examples:interaction_dataset`: Dataset replay.
-* `bazel run //examples:benchmark_database`: Benchmarks behaviors using a scenario database.
+* `bazel run //bark/examples:highway`: Two-lane highway example.
+* `bazel run //bark/examples:intersection`: Three way intersection.
+* `bazel run //bark/examples:interaction_dataset`: Dataset replay.
+* `bazel run //bark/examples:benchmark_database`: Benchmarks behaviors using a scenario database.
