@@ -23,8 +23,9 @@ class PythonDistanceBehavior(BehaviorModel):
   """
   def __init__(self, params = None):
     super(PythonDistanceBehavior, self).__init__(params)
+    self._params = params
     self._distance_range_constant_acceleration = \
-            self.params["PythonDistanceBehavior::RangeConstantVelocity", \
+            self._params["PythonDistanceBehavior::RangeConstantVelocity", \
           "Range in meters defining when controlled vehicle does not change velocity", [10, 20]]
 
   def Plan(self, delta_time, observed_world):
