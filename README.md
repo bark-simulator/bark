@@ -28,7 +28,7 @@ The BARK ecosystem is composed of multiple components that all share the common 
 
 ## Quick Start
 ### Pip-package
-Bark is available as PIP-Package for Ubuntu and Python>=3.7. You can install the latest version with 
+Bark is available as PIP-Package for Ubuntu and MacOS for Python>=3.7. You can install the latest version with 
 `pip install bark-simulator`. The Pip package supports full benchmarking functionality of existing behavior models and development of your models within python. The pip-package not yet includes MCTS and Carla interfaces. 
 
 After installing the package, you can have a look at the examples to check how to use BARK. 
