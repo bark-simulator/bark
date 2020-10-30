@@ -58,9 +58,10 @@ param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
 
-param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
-param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
+param_server["Visualization"]["Evaluation"]["DrawEgoRSSSafetyResponses"] = True
 
 SetVerboseLevel(0)
 
@@ -141,7 +142,6 @@ def print_rss_safety_response(evaluator_rss, world):
 
 
 param_server["EvaluatorRss"]["MapFilename"] = map_path
-
 
 # run n scenarios
 for episode in range(0, 10):

@@ -74,12 +74,14 @@ class MPViewer(BaseViewer):
     def drawText(self, position, text, coordinate="axes", **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")
         horizontalalignment = kwargs.pop("horizontalalignment", "center")
+        t = None
         if coordinate=="axes":
-            self.axes.text(position[0], position[1], text, horizontalalignment=horizontalalignment,
+            t = self.axes.text(position[0], position[1], text, horizontalalignment=horizontalalignment,
              verticalalignment=verticalalignment, transform=self.axes.transAxes, **kwargs)
         else:
-            self.axes.text(position[0], position[1], text, horizontalalignment='center',
+            t = self.axes.text(position[0], position[1], text, horizontalalignment='center',
              verticalalignment='top', **kwargs)
+        return t
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):

@@ -464,14 +464,36 @@ class BaseViewer(Viewer):
         longitudinal_response = behavior.GetLongitudinalResponse()
         lateral_left_response = behavior.GetLateralLeftResponse()
         lateral_right_response = behavior.GetLateralRightResponse()
+        violations = []
         if longitudinal_response != 0:
           print("Longitudinal violation")
-        elif lateral_left_response != 0 or lateral_right_response != 0:
+          violations.append({"label": "LON", "color": "purple"})
+        if lateral_left_response != 0 or lateral_right_response != 0:
           print("Lateral violation")
-        else:
-          print("No violation")
-            
-      
+          violations.append({"label": "LAT", "color": "red"})
+          
+        # draw labels
+        ego_agent = world.agents[agent_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
+        a = shape.front_dist - 0.5*(shape.front_dist + shape.rear_dist)
+        centerx = a * math.cos(pose[2]) + pose[0] + 2.5
+        centery = a * math.sin(pose[2]) + pose[1] + shape.right_dist + 2.
+        
+        if self.draw_agent_id:
+          for violation in violations:
+            t = self.drawText(
+              position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi),
+              text="{}".format(violation["label"]),
+              coordinate="not axes", ha='center', va="center",
+              multialignment="center", size="smaller",
+              color = violation["color"])
+            centerx += 5.
+            t.set_bbox(dict(
+              facecolor=violation["color"], alpha=0.5,
+              edgecolor=violation["color"]))
+
+
 def generatePoseFromState(state):
   # pybind creates column based vectors, initialization maybe row-based -> we consider both
   pose = np.zeros(3)
