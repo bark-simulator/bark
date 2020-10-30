@@ -15,6 +15,7 @@ py_test(
       "@benchmark_database//load:benchmark_database",
       "@benchmark_database//serialization:database_serializer",
       "//bark/runtime/commons:commons",
+      "//bark/world/tests:python_behavior_model",
       ],
 )
 

@@ -107,6 +107,15 @@ py_test(
   visibility = ["//visibility:public"],
 )
 
+py_library(
+    name = "python_behavior_model",
+    srcs = ["python_behavior_model.py"],
+    data = ['//bark:generate_core'],
+    imports = ['../../../python'],
+    deps = ["//bark/runtime/commons:parameters"],
+    visibility = ["//visibility:public"],
+)
+
 py_test(
   name = "py_system_tests",
   srcs = ["py_system_tests.py"],
@@ -115,6 +124,7 @@ py_test(
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime:runtime",
+          "//bark/world/tests:python_behavior_model",
           "//bark/runtime/viewer:video_renderer"],
   visibility = ["//visibility:public"],
 )
