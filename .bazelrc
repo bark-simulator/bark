@@ -3,4 +3,4 @@ test --test_output=errors --action_env="GTEST_COLOR=1"
 # Force bazel output to use colors (good for jenkins) and print useful errors.
 common --color=yes
 
-build --cxxopt='-std=c++17' --define planner_miqp=true
+build --cxxopt='-std=c++17' --define planner_miqp=true --test_env LD_LIBRARY_PATH=/opt/ibm/ILOG/CPLEX_Studio1210/opl/bin/x86-64_linux
