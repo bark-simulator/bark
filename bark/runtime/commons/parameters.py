@@ -63,7 +63,7 @@ class ParameterServer(Params):
                 val_self = self.store[key]
                 val_other = p_server.store[key]
                 if isinstance(val_self, ParameterServer) and isinstance(val_other, ParameterServer):
-                    val_self.AppendParamServer(val_other)
+                    val_self.AppendParamServer(val_other, overwrite=overwrite)
                 elif not overwrite:
                     logging.warning("Cannot append conflicting key '{}'!".format(key))
             if not key in self.store or overwrite:
