@@ -322,6 +322,24 @@ TEST(map, open_drive) {
   EXPECT_NEAR(bg::get<1>(ret_line.obj_[ret_line.obj_.size() - 1]), -1.0f, 0.1f);
 }
 
+TEST(curved_plan_view, open_drive) {
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
+
+  PlanViewPtr p(new PlanView());
+  float s_inc = 0.2;
+  p->AddLine(Point2d(-2.51e+2, -5.12e+2), 1.06e+0, 2.55e-1, 2.55e-1);
+
+  p->AddArc(Point2d(-2.51e+2, -5.12e+2), 1.06e+0, 1.03e+1, -8.95e-2, s_inc);
+  p->AddArc(Point2d(-2.43e+2, -5.06e+2), 1.32e-1, 1.08e+1, -5.73e-2, s_inc);
+  p->AddLine(Point2d(-2.32e+2, -5.08e+2), -4.87e-1, 2.55e-1, 2.55e-1);
+
+  XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width = {0, 2.1673645178459658e+1, off};
+
+  EXPECT_FALSE(boost::geometry::intersects(p->GetReferenceLine().obj_));
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
 

@@ -237,8 +237,8 @@ inline Point2d GetPointAtIdx(const Line& l, const uint idx) {
 inline Eigen::VectorXd Gradient(Eigen::VectorXd vec) {
   // calculating central difference
   Eigen::VectorXd g(vec.size());
-  for (int i=1; i<vec.size()-1; i++) {
-    g(i)=(vec(i+1)-vec(i-1))/2;
+  for (int i = 1; i < vec.size() - 1; i++) {
+    g(i) = (vec(i + 1) - vec(i - 1)) / 2;
   }
   // TODO: find better solution for first and last point
   g(0) = g(1);
@@ -246,8 +246,7 @@ inline Eigen::VectorXd Gradient(Eigen::VectorXd vec) {
   return g;
 }
 
-inline Eigen::VectorXd GetCurvature(Line l)  {
-
+inline Eigen::VectorXd GetCurvature(Line l) {
   Eigen::MatrixXd larray = l.ToArray();
   Eigen::VectorXd dx = Gradient(larray.col(0));
   Eigen::VectorXd ddx = Gradient(dx);
@@ -256,7 +255,7 @@ inline Eigen::VectorXd GetCurvature(Line l)  {
 
   // elementwise, as pow(vector, scalar) does not work
   Eigen::VectorXd curvature(larray.rows());
-  for (int i=0; i<curvature.size(); i++) {
+  for (int i = 0; i < curvature.size(); i++) {
     float n = dx(i) * ddy(i) - ddx(i) * dy(i);
     float r = pow(dx(i), 2) + pow(dy(i), 2);
     float d = pow(r, 1.5);
@@ -494,25 +493,25 @@ inline Line AppendLinesNoIntersect(const Line& ls1, const Line& ls2) {
     float rel_s_i2 = s_i2 / ls2.Length();
 
     Line ls1_part, ls2_part;
-    if (rel_s_i1 < 0.1) {
+    if (rel_s_i1 < 0.3) {
       // take latter part of line
       ls1_part = GetLineFromSInterval(ls1, s_i1, ls1.Length());
-    } else if (rel_s_i1 > 0.9) {
+    } else if (rel_s_i1 > 0.7) {
       // take front part of line
       ls1_part = GetLineFromSInterval(ls1, 0, s_i1);
     } else {
-      LOG(WARNING) << "Lines are intersecting too much";
+      LOG(WARNING) << "Lines intersecting too much, only appending";
       ls1_part = ls1;
     }
 
-    if (rel_s_i2 < 0.1) {
+    if (rel_s_i2 < 0.3) {
       // take latter part of line
       ls2_part = GetLineFromSInterval(ls2, s_i2, ls2.Length());
-    } else if (rel_s_i2 > 0.9) {
+    } else if (rel_s_i2 > 0.7) {
       // take front part of line
       ls2_part = GetLineFromSInterval(ls2, 0, s_i2);
     } else {
-      LOG(WARNING) << "Lines are intersecting too much";
+      LOG(WARNING) << "Lines intersecting too much, only appending";
       ls2_part = ls2;
     }
 
@@ -530,12 +529,14 @@ inline Line AppendLinesNoIntersect(const Line& ls1, const Line& ls2) {
 
   if (boost::geometry::intersects(lout.obj_)) {
     LOG(ERROR) << "AppendLinesNoIntersect yields self intersecting line";
+    LOG(ERROR) << "ls1" << ls1.ToArray();
+    LOG(ERROR) << "ls2" << ls2.ToArray();
+    LOG(ERROR) << "lout" << lout.ToArray();
   }
   return lout;
 }
 
 inline Line ConcatenateLinestring(const Line& ls1, const Line& ls2) {
-
   // Get first and last points
   auto first_point_this = *ls1.begin();
   auto last_point_this = *(ls1.end() - 1);
@@ -597,14 +598,20 @@ inline Line SmoothLine(const Line& l, const double ds) {
   }
 }
 
-inline Line ComputeCenterLine(const Line& outer_line_,
-                              const Line& inner_line_) {
+inline Line ComputeCenterLine(const Line& outer_line, const Line& inner_line) {
+  if (boost::geometry::intersects(outer_line.obj_)) {
+    LOG(WARNING) << "Computing center line, but outer line self-intersects";
+  }
+  if (boost::geometry::intersects(inner_line.obj_)) {
+    LOG(WARNING) << "Computing center line, but inner line self-intersects";
+  }
+
   Line center_line_;
-  Line line_more_points = outer_line_;
-  Line line_less_points = inner_line_;
-  if (inner_line_.obj_.size() > outer_line_.obj_.size()) {
-    line_more_points = inner_line_;
-    line_less_points = outer_line_;
+  Line line_more_points = outer_line;
+  Line line_less_points = inner_line;
+  if (inner_line.obj_.size() > outer_line.obj_.size()) {
+    line_more_points = inner_line;
+    line_less_points = outer_line;
   }
   for (Point2d& point_loop : line_more_points.obj_) {
     Point2d nearest_point_other =

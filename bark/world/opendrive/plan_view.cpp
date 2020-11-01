@@ -34,8 +34,14 @@ bool PlanView::AddLine(Point2d start_point, float heading, float length,
                   bg::get<1>(start_point) + length * sin(heading));
     reference_line_.AddPoint(end_p);
   }
+
   //! calculate overall length
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding line";
+  }
+
   return true;
 }
 
@@ -55,7 +61,13 @@ bool PlanView::AddSpiral(Point2d start_point, float heading, float length,
     if ((length - s < s_inc) && (length - s > 0.)) s_inc = length - s;
     s += s_inc;
   }
+
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding spiral";
+  }
+
   return true;
 }
 
@@ -83,6 +95,11 @@ bool PlanView::AddArc(Point2d start_point, float heading, float length,
     if (length - s < s_inc && length - s > 0.) s_inc = length - s;
     s += s_inc;
   }
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding arc";
+  }
+
   return true;
 }
 
