@@ -32,3 +32,18 @@ py_library(
   visibility = ["//visibility:public"],
 )
 
+py_library(
+  name = "scenario_dumper",
+  srcs = ["scenario_dumper.py"],
+  data = ["//bark:generate_core"],
+  deps = [
+      "//bark/runtime/commons:commons",
+      "//bark/runtime/viewer:matplotlib_viewer",
+      "//bark/benchmark:benchmark_analyzer",
+      "//bark/benchmark:benchmark_result",
+      ],
+  visibility = ["//visibility:public"],
+)
+
+
+
