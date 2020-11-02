@@ -291,6 +291,32 @@ class ParameterServer(Params):
             logging.warning("Key was nowhere found.")
         return value
 
+    def HasEqualParamsAs(self, other_param_server, unequal_params=None):
+        unequal_params = unequal_params or ParameterServer()
+        for key, value in other_param_server.store.items():
+            if not key in self.store:
+                unequal_params[key] = value
+                continue
+            self_value = self.store[key]
+            # Both are param servers -> ascend in hierarchy
+            if isinstance(self_value, ParameterServer) and isinstance(value, ParameterServer):
+                result, child_unequal_params = self_value.HasEqualParamsAs(value, ParameterServer())
+                if result:
+                  unequal_params[key] = child_unequal_params
+            # one of them is ParamServer, the other not -> unequal params found
+            elif (isinstance(self_value, ParameterServer) and not isinstance(value, ParameterServer)) or \
+                (not isinstance(self_value, ParameterServer) and isinstance(value, ParameterServer)):
+                unequal_params[key] = value
+            # both are parameters -> check for equality
+            else:
+                if self.store[key] != value:
+                     unequal_params[key] = value
+        return len(unequal_params) > 0, unequal_params
+              
+
+
+
+
     # get values
     def GetBool(self, param_name, description, default_value):
         #return self[param_name, description, default_value]

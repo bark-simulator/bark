@@ -154,5 +154,28 @@ class ParamServerTests(unittest.TestCase):
     self.assertEqual(params2["test1"]["test2"]["test3"]["param2"], 345554)
     self.assertEqual(params2["test1"]["test2"]["param3"], 52.0451646)
 
+  def test_has_unequal_params(self):
+    params1 = ParameterServer()
+    params1["test1"]["test2"]["param1"] = 4.023343
+    params1["test1"]["test2"]["test3"]["param1"] = 4234.00032356
+    params1["test1"]["test2"]["param2"] = 2356
+
+    params2 = ParameterServer()
+    params2["test1"]["test2"]["test3"]["param2"] = 345554
+    params2["test1"]["test2"]["param3"] = 52.0451646
+    params2["test1"]["test2"]["param2"] = 123578
+
+    params1_clone = params1.clone()
+    params1_clone.AppendParamServer(params2, overwrite=True)
+
+    result, unequal_params = params1_clone.HasEqualParamsAs(params2)
+    self.assertFalse(result)
+    self.assertEqual(len(unequal_params), 0)
+
+    params1.AppendParamServer(params2, overwrite=False)
+    result, unequal_params = params1.HasEqualParamsAs(params2)
+    self.assertTrue(result)
+    self.assertEqual(unequal_params["test1"]["test2"]["param2"], 123578)
+
 if __name__ == '__main__':
   unittest.main()
