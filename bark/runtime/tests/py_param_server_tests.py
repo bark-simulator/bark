@@ -126,5 +126,33 @@ class ParamServerTests(unittest.TestCase):
     self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["Lala"], False)
     self.assertAlmostEquals(params_unpickled["test_child"]["Test3"]["Test2"]["Lala1"], 23.3434)
     self.assertAlmostEquals(params_unpickled["test_child"]["Test1"]["Test2"]["asdsd"], 14)
+
+  def test_append_param_server(self):
+    params1 = ParameterServer()
+    params1["test1"]["test2"]["param1"] = 4.023343
+    params1["test1"]["test2"]["test3"]["param1"] = 4234.00032356
+    params1["test1"]["test2"]["param2"] = 2356
+
+    params2 = ParameterServer()
+    params2["test1"]["test2"]["test3"]["param2"] = 345554
+    params2["test1"]["test2"]["param3"] = 52.0451646
+    params2["test1"]["test2"]["param2"] = 123578
+
+    params1_clone = params1.clone()
+
+    params1_clone.AppendParamServer(params2, overwrite=True)
+    self.assertEqual(params1_clone["test1"]["test2"]["param1"], 4.023343)
+    self.assertEqual(params1_clone["test1"]["test2"]["test3"]["param1"], 4234.00032356)
+    self.assertEqual(params1_clone["test1"]["test2"]["param2"], 123578)
+    self.assertEqual(params1_clone["test1"]["test2"]["test3"]["param2"], 345554)
+    self.assertEqual(params1_clone["test1"]["test2"]["param3"], 52.0451646)
+
+    params2.AppendParamServer(params1, overwrite=True)
+    self.assertEqual(params2["test1"]["test2"]["param1"], 4.023343)
+    self.assertEqual(params2["test1"]["test2"]["test3"]["param1"], 4234.00032356)
+    self.assertEqual(params2["test1"]["test2"]["param2"], 2356)
+    self.assertEqual(params2["test1"]["test2"]["test3"]["param2"], 345554)
+    self.assertEqual(params2["test1"]["test2"]["param3"], 52.0451646)
+
 if __name__ == '__main__':
   unittest.main()
