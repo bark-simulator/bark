@@ -40,12 +40,12 @@ class EvaluationConfig:
       self.evaluators_default = evaluator_config
 
   def GetEvaluationCriteria(self):
-    evaluation_criteria = []
+    evaluation_criteria = set()
     if self.evaluators_default:
-      evaluation_criteria = list( self.evaluators_default.keys())
+      evaluation_criteria.update(self.evaluators_default.keys())
     for _, evaluation_config in self.evaluators_scenario_specific.items():
-      evaluation_criteria.extend(list(evaluation_config.keys()))
-    return evaluation_criteria
+      evaluation_criteria.update(evaluation_config.keys())
+    return list(evaluation_criteria)
 
   def _GetScenarioEvaluators(self, scenario_set_name):
     if len(self.evaluators_scenario_specific) > 1:
