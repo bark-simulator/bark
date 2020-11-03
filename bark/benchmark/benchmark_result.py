@@ -14,9 +14,6 @@ import math
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
-
-
-
 class BehaviorConfig:
     def __init__(self, behavior_name, behavior, param_descriptions=None):
         self.behavior_name = behavior_name
@@ -102,10 +99,13 @@ class BenchmarkResult:
         return [bc.config_idx for bc in self.__benchmark_configs]
 
     def get_history(self, config_idx):
-        if len(self.__histories) < config_idx:
-          logging.warning("Cannot get the history for index = ", str(config_idx))
-          return
-        return self.__histories[config_idx]
+      try:
+        retval = self.__histories[config_idx]
+      except:
+        logging.warning("Cannot get the history for index = " + \
+            str(config_idx) + " len histories = " + str(len(self.__histories)))
+        retval = None
+      return retval
 
     def get_evaluation_groups(self):
         evaluation_groups = {"scen_set"}

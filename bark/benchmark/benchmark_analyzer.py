@@ -84,7 +84,10 @@ class BenchmarkAnalyzer:
               histories = self._benchmark_result.get_history(config_idx)
               histories_collected[viewer_idx] = histories
 
-              if len(histories) == 0:
+              if benchmark_config is None :
+                return
+
+              if histories is None or len(histories) == 0:
                 logging.info("No histories for config idx {}. Skipping....".format(config_idx))
 
               if real_time_factor:
