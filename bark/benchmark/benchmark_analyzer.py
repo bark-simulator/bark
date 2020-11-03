@@ -16,6 +16,9 @@ class BenchmarkAnalyzer:
       self._benchmark_result = benchmark_result
       self._data_frame = benchmark_result.get_data_frame()
 
+  def get_benchmark_result(self):
+    return self._benchmark_result
+
   def get_scenario_ids(self, config_idx_list):
       scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]
       scen_df_copy = scenario_idxs.copy()

@@ -102,6 +102,9 @@ class BenchmarkResult:
         return [bc.config_idx for bc in self.__benchmark_configs]
 
     def get_history(self, config_idx):
+        if len(self.__histories) < config_idx:
+          logging.warning("Cannot get the history for index = ", str(config_idx))
+          return
         return self.__histories[config_idx]
 
     def get_evaluation_groups(self):
