@@ -23,7 +23,8 @@ py_test(
   name = "py_benchmark_result_tests",
   srcs = ["py_benchmark_result_tests.py"],
   deps = [
-      "//bark/benchmark:benchmark_result"
+      "//bark/benchmark:benchmark_result",
+      "//tools/debug:debug_settings"
     ],
 )
 

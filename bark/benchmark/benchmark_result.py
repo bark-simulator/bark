@@ -228,7 +228,10 @@ class BenchmarkResult:
                                       protocol=pickle.HIGHEST_PROTOCOL))
         num_files = math.ceil(whole_list_byte_size/max_bytes_per_file)
         num_configs_per_file = math.floor(len(pickable_iterable)/num_files)
-        config_idx_list = list(range(0, len(pickable_iterable)))
+        if isinstance(pickable_iterable, list):
+          config_idx_list = list(range(0, len(pickable_iterable)))
+        elif isinstance(pickable_iterable, dict):
+          config_idx_list = list(pickable_iterable.keys())
         config_idx_splits = [config_idx_list[i:i + num_configs_per_file] \
                      for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:

@@ -21,9 +21,9 @@ def random_result_data(size):
              for column in columns}  for _ in range(0, size)]
     return results
 
-def random_history_data(history_num, hist_size):
+def random_history_data(history_num, hist_size, multiply=1):
     histories = {i : bytearray(os.urandom(hist_size)) \
-             for i in range(0, history_num)}
+             for i in range(0, history_num*multiply, multiply)}
     return histories
 
 class TestConfig:
@@ -46,14 +46,27 @@ class DatabaseRunnerTests(unittest.TestCase):
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(result_data, loaded_dict)
 
-    def test_dump_and_load_histories(self):
+    def test_dump_and_load_histories_many(self):
         result_num = 100
         result_data = random_result_data(size = result_num)
-        histories = random_history_data(result_num, 2000000)
+        histories = random_history_data(result_num, 2000000, multiply=3)
         br = BenchmarkResult(result_dict=result_data, histories=histories)
         br.dump("./results_with_history", dump_histories=True, max_mb_per_file = 5)
         br_loaded = BenchmarkResult.load("./results_with_history")
-        br_loaded.load_histories(config_idx_list = list(range(0, result_num)))
+        br_loaded.load_histories(config_idx_list = list(histories.keys()))
+        loaded_histories = br_loaded.get_histories()
+        self.assertEqual(histories, loaded_histories)
+        loaded_dict = br_loaded.get_result_dict()
+        self.assertEqual(result_data, loaded_dict)
+
+    def test_dump_and_load_histories_one(self):
+        result_num = 2
+        result_data = random_result_data(size = result_num)
+        histories = random_history_data(result_num, 20)
+        br = BenchmarkResult(result_dict=result_data, histories=histories)
+        br.dump("./results_with_history", dump_histories=True, max_mb_per_file = 2)
+        br_loaded = BenchmarkResult.load("./results_with_history")
+        br_loaded.load_histories(config_idx_list = list(histories.keys()))
         loaded_histories = br_loaded.get_histories()
         self.assertEqual(histories, loaded_histories)
         loaded_dict = br_loaded.get_result_dict()
