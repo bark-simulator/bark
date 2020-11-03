@@ -28,6 +28,60 @@ try:
 except Exception as e:
   logging.warning("LTL evaluators not loaded: {}".format(e))
 
+class EvaluationConfig:
+  def __init__(self, evaluators = None):
+    self.evaluators_scenario_specific = {}
+    self.evaluators_default = evaluators or None
+
+  def AddEvaluatorConfig(self, evaluator_config, scenario_type=None):
+    if scenario_type:
+      self.evaluators_scenario_specific[scenario_type] = evaluator_config
+    else:
+      self.evaluators_default = evaluator_config
+
+  def GetEvaluationCriteria(self):
+    evaluation_criteria = []
+    if self.evaluators_default:
+      evaluation_criteria = list( self.evaluators_default.keys())
+    for _, evaluation_config in self.evaluators_scenario_specific.items():
+      evaluation_criteria.extend(list(evaluation_config.keys()))
+    return evaluation_criteria
+
+  def _GetScenarioEvaluators(self, scenario_set_name):
+    if len(self.evaluators_scenario_specific) > 1:
+        evaluator_names = list(self.evaluators_scenario_specific.keys())
+        matching = [name for name in evaluator_names if name in scenario_set_name]
+        if len(matching) == 0:
+          return self.evaluators_default 
+        if len(matching) > 1:
+          raise ValueError("Invalid matching of evaluation configs {} to scenario set {}".format(matching, scenario_set_name))
+        else:
+          return self.evaluators_scenario_specific[matching[0]]
+    else:
+      return self.evaluators_default
+
+  def CreateInitializedEvaluators(self, eval_agent_ids, scenario_set_name):
+    current_evaluators = self._GetScenarioEvaluators(scenario_set_name)
+    evaluators_initialized = {}
+    for evaluator_name, evaluator_params in current_evaluators.items():
+      evaluator_bark = None
+      if isinstance(evaluator_params, str):
+          try:
+              evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
+          except:
+              evaluator_bark = eval("{}()".format(evaluator_params))
+      elif isinstance(evaluator_params, dict):
+          try:
+            evaluator_bark = eval(
+              "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
+          except:
+            evaluator_bark = eval(
+              "{}(evaluator_params['params'], eval_agent_ids[0])".format(evaluator_params["type"]))
+      else:
+          raise ValueError
+      evaluators_initialized[evaluator_name] = evaluator_bark
+    return evaluators_initialized
+
 
 class BenchmarkRunner:
     def __init__(self,
@@ -45,7 +99,7 @@ class BenchmarkRunner:
                  deepcopy=True):
 
         self.benchmark_database = benchmark_database
-        self.evaluators = evaluators or {}
+        self.evaluators = evaluators if isinstance(evaluators, EvaluationConfig) else EvaluationConfig(evaluators)
         self.terminal_when = terminal_when or []
         if behaviors:
           self.behavior_configs = BehaviorConfig.configs_from_dict(behaviors)
@@ -173,6 +227,7 @@ class BenchmarkRunner:
 
     def _run_benchmark_config(self, benchmark_config, viewer=None, maintain_history=False):
         scenario = benchmark_config.scenario
+        scenario_set_name = benchmark_config.scenario_set_name
         behavior = benchmark_config.behavior_config.behavior
         parameter_server = ParameterServer(json=scenario._json_params)
         scenario_history = []
@@ -192,7 +247,7 @@ class BenchmarkRunner:
             world.agents[scenario._eval_agent_ids[0]].behavior_model = behavior
         if maintain_history:
             self._append_to_scenario_history(scenario_history, world, scenario)
-        self._reset_evaluators(world, scenario._eval_agent_ids)
+        self._reset_evaluators(world, scenario._eval_agent_ids, scenario_set_name)
         step_time = parameter_server["Simulation"]["StepTime", "", 0.2]
         if not isinstance(step_time, float):
             step_time = 0.2
@@ -245,27 +300,14 @@ class BenchmarkRunner:
     def _append_exception(self, benchmark_config, exception):
         self.exceptions_caught.append((benchmark_config.config_idx, exception))
 
-    def _reset_evaluators(self, world, eval_agent_ids):
-        for evaluator_name, evaluator_params in self.evaluators.items():
-            evaluator_bark = None
-            if isinstance(evaluator_params, str):
-                try:
-                    evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
-                except:
-                    evaluator_bark = eval("{}()".format(evaluator_params))
-            elif isinstance(evaluator_params, dict):
-                try:
-                  evaluator_bark = eval(
-                    "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
-                except:
-                  evaluator_bark = eval(
-                    "{}(evaluator_params['params'], eval_agent_ids[0])".format(evaluator_params["type"]))
-            else:
-                raise ValueError
+    def _reset_evaluators(self, world, eval_agent_ids, scenario_set_name):
+        initialized_evaluators =\
+            self.evaluators.CreateInitializedEvaluators(eval_agent_ids, scenario_set_name)
+        for evaluator_name, evaluator_bark in initialized_evaluators.items():
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):
-        bark_evals = [eval_crit for eval_crit, _ in self.evaluators.items()]
+        bark_evals = self.evaluators.GetEvaluationCriteria()
         bark_evals.append("step")
         return bark_evals
 
