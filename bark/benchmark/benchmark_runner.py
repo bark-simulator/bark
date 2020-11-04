@@ -146,17 +146,23 @@ class BenchmarkRunner:
           logging.info("Loading checkpoint {}".format(os.path.abspath(checkpoint_file)))
           next_result = BenchmarkResult.load(os.path.abspath(checkpoint_file), \
               load_configs=True, load_histories=True)
+          if not next_result:
+            logging.info("Skipping....due to loading error.")
           merged_result.extend(next_result)
         # dump merged result
         if len(merged_result.get_result_dict()) > 0:
           logging.info("Dumping merged result")
-          merged_result_filename = os.path.join(checkpoint_dir,"merged_results.ckpnt")
-          merged_result.dump(merged_result_filename, \
+          tmp_merged_result_filename = os.path.join(checkpoint_dir,"merged_results_tmp.ckpnt")
+          merged_result.dump(tmp_merged_result_filename, \
               dump_configs=True, dump_histories=True)
+          merged_result_filename = os.path.join(checkpoint_dir,"merged_results.ckpnt")
+          if os.path.exists(merged_result_filename):
+            os.remove(merged_result_filename)
+          os.rename(tmp_merged_result_filename, merged_result_filename)
 
         # delete checkpoints
         for checkpoint_file in checkpoint_files:
-          if checkpoint_file == merged_result_filename:
+          if "merged_result" in checkpoint_file:
             continue
           os.remove(checkpoint_file)
           logging.info("Removed old checkpoint file {}".format(checkpoint_file))

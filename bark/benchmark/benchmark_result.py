@@ -265,10 +265,14 @@ class BenchmarkResult:
 
     @staticmethod
     def load_results(filename):
-        with zipfile.ZipFile(filename, 'r') as result_zip_file:
-            bytes = result_zip_file.read("benchmark.results")
-        data_frame = pickle.loads(bytes)
-        return BenchmarkResult(data_frame = data_frame, file_name = filename)
+        try:
+          with zipfile.ZipFile(filename, 'r') as result_zip_file:
+              bytes = result_zip_file.read("benchmark.results")
+          data_frame = pickle.loads(bytes)
+          return BenchmarkResult(data_frame = data_frame, file_name = filename)
+        except zipfile.BadZipFile:
+          logging.error("BadZipeFile {}".format(filename))
+          return None
 
     def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000):
         with zipfile.ZipFile(filename, 'w') as result_zip_file:
