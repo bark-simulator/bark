@@ -148,6 +148,7 @@ class BenchmarkRunner:
               load_configs=True, load_histories=True)
           if not next_result:
             logging.info("Skipping....due to loading error.")
+            continue
           merged_result.extend(next_result)
         # dump merged result
         if len(merged_result.get_result_dict()) > 0:
