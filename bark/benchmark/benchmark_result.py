@@ -139,6 +139,8 @@ class BenchmarkResult:
           return BenchmarkResult.load_pickle(filename)
         else:
           rst = BenchmarkResult.load_results(filename)
+          if not rst:
+            return None
           if load_configs:
               rst.load_benchmark_configs()
           if load_histories:
