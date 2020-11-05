@@ -36,7 +36,7 @@ cc_library(
         "@boost//:type_traits",
         "@boost//:stacktrace",
         "@boost//:math",
-        "@com_github_google_glog//:glog"
+        "@com_github_glog_glog//:glog"
     ],
     visibility = ["//visibility:public"],
 )
