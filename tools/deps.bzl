@@ -68,7 +68,7 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "com_github_glog_glog",
-    commit = "96a2f23",  # release v0.4.0
+    commit = "c5dcae830670bfaea9573fa7b700e862833d14ff", 
     remote = "https://github.com/google/glog.git"
     )
 

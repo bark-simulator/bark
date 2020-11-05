@@ -78,8 +78,9 @@ void python_commons(py::module m) {
 
   m.def(
       "GLogInit",
-      [](char* program_path, char* log_path, int v_level, bool log_to_std_err) {
+      [](char* program_path, char* log_path, int v_level, bool log_to_std_err, std::string vmodule) {
         FLAGS_v = v_level;
+        FLAGS_vmodule = vmodule;
         FLAGS_alsologtostderr = log_to_std_err;
         FLAGS_log_dir = log_path;
         FLAGS_minloglevel = 0;
@@ -87,7 +88,8 @@ void python_commons(py::module m) {
         LOG(INFO) << "GLog init";
       },
       py::arg("program_path") = "", py::arg("log_path") = "/tmp",
-      py::arg("v_level") = 0, py::arg("log_to_std_err") = true);
+      py::arg("v_level") = 0, py::arg("log_to_std_err") = true,
+      py::arg("vmodule") = "");
 
   m.def("do_logging", &do_logging);
 }
