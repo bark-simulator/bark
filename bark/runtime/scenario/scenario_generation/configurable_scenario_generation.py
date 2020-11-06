@@ -19,7 +19,7 @@ import math
 import copy
 import importlib
 import aabbtree
-from collections import defaultdict 
+from collections import defaultdict
 
 __CONFIG_READER_MODULES = []
 
@@ -43,7 +43,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "Path to the open drive map", 
       "bark/runtime/tests/data/city_highway_straight.xodr",    ]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
-      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "SourceSink": [[-1.057, -172.1965],  [-1.894, 14.1725] ],
       "Description": "left_lane",
       "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [0]},
       "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 60.0}},
@@ -54,7 +54,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "AgentParams" : {}
     },
     {
-      "SourceSink": [[5111.626, 5006.8305],  [5110.789, 5193.1725] ],
+      "SourceSink": [[-1.057, -172.1965],  [-1.894, 14.1725] ],
       "Description": "right_lane",
       "ConfigAgentStatesGeometries": {"Type": "UniformVehicleDistribution", "LanePositions": [1]},
       "ConfigBehaviorModels": {"Type": "FixedBehaviorType", "ModelType" : "BehaviorIDMClassic", "ModelParams" :  {"BehaviorIDMClassic::MaxVelocity" : 30.0}},
@@ -67,7 +67,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     ]
     ]
 
-    print (self._map_file_name)
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
               sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
     self._random_state = np.random.RandomState(self._random_seed)

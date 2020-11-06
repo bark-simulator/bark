@@ -36,7 +36,10 @@ cc_binary(
     "//bark/models/behavior/rule_based:intersection_behavior",
     "//bark/models/behavior/rule_based:mobil_behavior",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/not_started",
     "//bark/models/behavior/idm/stochastic:stochastic",
+    "//bark/models/behavior/behavior_safety:behavior_safety",
+    "//bark/models/behavior/behavior_rss:behavior_rss",
     #"//bark/models/execution/mpc:mpc",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
@@ -44,12 +47,14 @@ cc_binary(
     "//bark/python_wrapper/models/plan:planners",
     "//bark/python_wrapper/tests:logging_tests"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark_mcts/python_wrapper:planner_uct"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["@planner_rules_mcts//python:planner_rules_mcts"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["@planner_miqp//python/bindings:planner_miqp"], "//conditions:default": []})
   + select({"//bark/world/evaluation/ltl:_ltl_rules": ["@rule_monitor_project//python/bindings:rule_monitor"], "//conditions:default": []}),
-  copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"]
-  + select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
-  + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP"], "//conditions:default": []})
-  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
+  copts = select({"//bark/models/behavior/plan:_planner_uct" : ["-D PLANNER_UCT"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["-D PLANNER_RULES_MCTS"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
+  + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []})
+  + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP", "-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"], "//conditions:default": []}),
   linkshared = 1,
   linkstatic = 1
 )
@@ -62,7 +67,8 @@ cc_library(
     "@python_linux//:python-lib",
     "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
-    ]
+    ],
+    defines = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["LTL_RULES"], "//conditions:default": []}),
 )
 
 # needed to test external python wrapping of planners in their own bark
@@ -82,7 +88,10 @@ cc_library(
     "//bark/models/behavior/idm:idm_classic",
     "//bark/models/behavior/idm:idm_lane_tracking",
     "//bark/models/behavior/static_trajectory",
+    "//bark/models/behavior/behavior_safety:behavior_safety",
+    "//bark/models/behavior/behavior_rss:behavior_rss",
     "//bark/models/behavior/idm/stochastic:stochastic",
+    "//bark/world/evaluation/ltl/label_functions:label_function"
     ],
-    copts=["-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"]
+    copts = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
 )

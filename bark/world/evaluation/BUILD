@@ -150,7 +150,12 @@ cc_library(
         ":evaluator_distance_to_goal",
         ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
-    ],
+    ] + select({
+        "//bark/world/evaluation/rss:_rss": [
+            "//bark/world/evaluation/rss:evaluator_rss"
+        ],
+        "//conditions:default": []
+    }),
     visibility = ["//visibility:public"],
 )
 

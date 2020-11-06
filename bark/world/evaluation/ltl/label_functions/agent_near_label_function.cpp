@@ -13,13 +13,17 @@
 using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Distance;
 
-bark::world::evaluation::AgentNearLabelFunction::AgentNearLabelFunction(
-    const std::string& string, const double distance_thres)
+namespace bark {
+namespace world {
+namespace evaluation {
+
+AgentNearLabelFunction::AgentNearLabelFunction(const std::string& string,
+                                               const double distance_thres)
     : MultiAgentLabelFunction(string), distance_thres_(distance_thres) {
   assert(distance_thres_ >= 0.0);
 }
 
-bool bark::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
+bool AgentNearLabelFunction::EvaluateAgent(
     const bark::world::ObservedWorld& observed_world,
     const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
@@ -32,3 +36,7 @@ bool bark::world::evaluation::AgentNearLabelFunction::EvaluateAgent(
   }
   return false;
 }
+
+}  // namespace evaluation
+}  // namespace world
+}  // namespace bark

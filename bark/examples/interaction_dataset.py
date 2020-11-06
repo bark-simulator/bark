@@ -11,12 +11,13 @@ from bark.runtime.scenario.scenario_generation.interaction_dataset_scenario_gene
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.examples.paths import Data
 import os
 import argparse
 
 
 # set you json config that contains a map and matching tracks.
-param_server = ParameterServer(filename=os.path.join(os.path.join(os.path.dirname(__file__),"params/interaction_example.json")))
+param_server = ParameterServer(filename=Data.params_data("interaction_example"))
 scenario_generation = InteractionDatasetScenarioGeneration(num_scenarios=1,
                                                            random_seed=0,
                                                            params=param_server)
@@ -36,10 +37,9 @@ sim_time_steps = param_server["simulation"]["simulation_time_steps", "Number of 
 video_renderer = VideoRenderer(renderer=viewer, world_step_time=sim_step_time)
 
 for _ in range(0, sim_time_steps):
-  world_state.PlanAgents(sim_step_time)
   viewer.clear()
+  world_state.Step(sim_step_time)
   video_renderer.drawWorld(world_state)
-  world_state.DoExecution(sim_step_time)
 
-# video_renderer.export_video(filename="./interaction_dataset", remove_image_dir=True)
+# video_renderer.export_video(filename="/tmp/interaction_dataset", remove_image_dir=True)
     

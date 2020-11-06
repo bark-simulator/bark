@@ -9,6 +9,11 @@ config_setting(
 )
 
 config_setting(
+    name = "_planner_rules_mcts",
+    define_values = {"planner_rules_mcts": "true"},
+)
+
+config_setting(
     name = "_planner_miqp",
     define_values = {"planner_miqp": "true"},
 )
@@ -23,6 +28,7 @@ cc_library(
     name="planners",
     deps=
         select({":_planner_uct" : ["@planner_uct//modules/models/behavior:planner_uct_single_agent"], "//conditions:default": []}) + 
+        select({":_planner_rules_mcts" : ["@planner_rules_mcts//src:planner_rules_mcts"], "//conditions:default": []}) +
         select({":_planner_miqp" : ["@planner_miqp//src:behavior_miqp"], "//conditions:default": []}) + 
         select({":_planner_other2" : ["insert_dependency_other2_here"], "//conditions:default": []}),
 )

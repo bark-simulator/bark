@@ -364,8 +364,8 @@ class XodrParser(object):
             except:
                 pass
         else:
-            logger.info("No XodrLaneLink")
-
+            logger.debug("No XodrLaneLink")
+            
         return new_link
 
     def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line):

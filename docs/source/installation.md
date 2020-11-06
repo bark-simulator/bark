@@ -12,6 +12,10 @@ This section describes the prerequisites and installation-steps of BARK.
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
+### Using [ad-rss-lib](https://github.com/intel/ad-rss-lib)
+
+* sqlite 3 (`sudo apt-get install libsqlite3-dev sqlite3`)
+
 ## Install using pip
 * pip3 install bark-simulator
 
@@ -23,7 +27,7 @@ Optional: We recommend to use Anaconda. This way, you can create a clean python 
 2. Run `bash install.sh`: creates a virtual environment (located in python/venv) and installs all python packages
 2. Run `source dev_into.sh`: activates the virtual environment (make sure to run this before bazel)
 3. Use `bazel test //...` to validate that BARK is working.
-4. Finally, try one of the examples provided in BARK by running `bazel run //examples:merging`.
+4. Finally, try one of the examples provided in BARK by running `bazel run //bark/examples:merging`.
 
 
 ## Setup on MacOS
@@ -49,4 +53,29 @@ Optional: We recommend to use Anaconda. This way, you can create a clean python 
 
 Make sure that there is a 'Python.h' file in the `python/venv` folder.
 
+### GCC: Interal Compiler Error: Killed (program cc1plus)
+
+You might be running out of memory during the bazel build. 
+Try limiting the memory available to bark via 
+`bazel build //... --local_ram_resources=HOST_RAM*.4` (or any other build or test call).
+
 ### Feel free to add your questions here or asks us directly by submitting an issue!
+
+
+## Run examples
+Once you activated the virtual environment (`source dev_into.sh`), you can explore some examples of BARK.
+
+Highway: ' `bazel run //bark/examples:highway`:
+<p align="center">
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_highway.gif" alt="BARK" />
+</p>
+
+Merging: `bazel run //bark/examples:merging`:
+<p align="center">
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_merging.gif" alt="BARK" />
+</p>
+
+Intersection: `bazel run //bark/examples:intersection`:
+<p align="center">
+<img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_intersection.gif" alt="BARK" />
+</p>

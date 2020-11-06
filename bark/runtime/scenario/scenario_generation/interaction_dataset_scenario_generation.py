@@ -11,6 +11,7 @@ import os.path
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation import ScenarioGeneration
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import InteractionDatasetReader
+from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 from bark.runtime.commons import ParameterServer
 # PyBind imports
 from bark.core.world.map import *
@@ -26,7 +27,6 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
-        self.initialize_params(params)
 
     def initialize_params(self, params):
         super().initialize_params(params)
@@ -51,7 +51,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
-        """ 
+        """
             see baseclass
         """
 
@@ -78,36 +78,41 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
         return scenario_track_info
 
+    def __fill_agent_params__(self):
+        return self._params
+
     def __create_single_scenario__(self, scenario_track_info):
         scenario_track_info.TimeSanityCheck()
-        
+
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict())
+
         world = scenario.GetWorldState()
-        agent_list = []
         track_params = ParameterServer()
         track_params["execution_model"] = 'ExecutionModelInterpolate'
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = world.map
 
-        for id_other in scenario_track_info.GetOtherTrackInfos().keys():
-            if str(id_other) in self._behavior_models:
-                track_params["behavior_model"] = self._behavior_models[str(
-                    id_other)]
+        all_track_ids = list(scenario_track_info.GetOtherTrackInfos().keys())
+        # also add ego id
+        all_track_ids.append(
+            scenario_track_info.GetEgoTrackInfo().GetTrackId())
+
+        agent_list = []
+        model_converter = ModelJsonConversion()
+        for track_id in all_track_ids:
+            if str(track_id) in self._behavior_models:
+                behavior_params = self.__fill_agent_params__()
+                behavior_model_name = self._behavior_models[str(track_id)]
+                track_params["behavior_model"] = model_converter.convert_model(
+                    behavior_model_name, behavior_params)
             else:
                 track_params["behavior_model"] = None
-            agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, id_other)
-            agent_list.append(agent)
 
-        id_ego = scenario_track_info.GetEgoTrackInfo().GetTrackId()
-        if str(id_ego) in self._behavior_models:
-            track_params["behavior_model"] = self._behavior_models[str(id_ego)]
-        else:
-            track_params["behavior_model"] = None
-        agent = self.interaction_ds_reader.AgentFromTrackfile(
-            track_params, self._params, scenario_track_info, id_ego)
-        agent_list.append(agent)
+            agent = self.interaction_ds_reader.AgentFromTrackfile(
+                track_params, self._params, scenario_track_info, track_id)
+            # agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
+            agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
         scenario._eval_agent_ids = [

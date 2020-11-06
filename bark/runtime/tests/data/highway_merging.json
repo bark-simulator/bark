@@ -4,29 +4,29 @@
             "UniformVehicleDistribution": {
                 "MapFilename": "bark/runtime/tests/data/city_highway_straight.xodr",
                 "EgoGoalEnd": [
-                    5128,
-                    5200
+                    15.317,
+                    21
                 ],
                 "EgoRoute": [
                     [
-                        5117.5,
-                        5072
+                        4.817,
+                        -107
                     ],
                     [
-                        5117.5,
-                        5074
+                        4.817,
+                        -105
                     ]
                 ],
                 "OthersSource": [
                     [
-                        5114.626,
-                        5064.8305
+                        1.943,
+                        -114.1695
                     ]
                 ],
                 "OthersSink": [
                     [
-                        5114.626,
-                        5194.1725
+                        1.943,
+                        15.1725
                     ]
                 ],
                 "VehicleDistanceRange": [

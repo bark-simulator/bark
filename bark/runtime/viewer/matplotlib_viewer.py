@@ -40,12 +40,12 @@ class MPViewer(BaseViewer):
         line_width = kwargs.pop("linewidth", 1)
         marker = kwargs.pop("marker", None)
         marker_size = kwargs.pop("markersize", 12)
-        lineStyle_string = (0, (5, 10)) if dashed else 'solid'
+        linestyle = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
             line2d_np[:, 0],
-            line2d_np[:, 1], 
-            lineStyle=lineStyle_string,
+            line2d_np[:, 1],
+            linestyle=linestyle,
             color=self.getColor(color),
             alpha=alpha,
             zorder=zorder,
@@ -154,7 +154,7 @@ class MPViewer(BaseViewer):
 
     def clear(self):
         self.axes.cla()
-      
-    
+
+
     def getColorFromMap(self, float_color):
         return cm.Accent(float_color)

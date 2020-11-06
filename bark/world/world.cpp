@@ -61,17 +61,20 @@ void World::PlanAgents(const float& delta_time) {
   WorldPtr current_world(this->Clone());
   const float inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
-    ObservedWorld observed_world(current_world, agent.first);
-    agent.second->PlanBehavior(delta_time, observed_world);
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
-      agent.second->PlanExecution(inc_world_time);
+    if (agent.second->IsValidAtTime(world_time_)) {
+      ObservedWorld observed_world(current_world, agent.first);
+      agent.second->PlanBehavior(delta_time, observed_world);
+      if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
+        agent.second->PlanExecution(inc_world_time);
+    }
   }
 }
 
 void World::Execute(const float& world_time) {
   using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
+    if (agent.second->IsValidAtTime(world_time_) &&
+        agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
       agent.second->UpdateStateAction();
       // make sure all agents have the same world time
@@ -98,6 +101,8 @@ AgentMap World::GetValidAgents() const {
   AgentMap::iterator it;
   for (it = agents_valid.begin(); it != agents_valid.end();) {
     if ((*it).second->GetBehaviorStatus() != BehaviorStatus::VALID) {
+      agents_valid.erase(it++);
+    } else if ((*it).second->IsValidAtTime(world_time_) == false) {
       agents_valid.erase(it++);
     } else {
       ++it;
@@ -207,7 +212,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
     auto agent = GetAgent(result_pair.second);
     if (bark::geometry::Collide(
             agent->GetPolygonFromState(agent->GetCurrentState()), polygon) &&
-        agent->GetBehaviorStatus() == BehaviorStatus::VALID) {
+        agent->GetBehaviorStatus() == BehaviorStatus::VALID &&
+        agent->IsValidAtTime(world_time_)) {
       intersecting_agents[result_pair.second] = agent;
     }
   }
@@ -243,7 +249,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
   for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
        ++it) {
     if (it->second->GetAgentId() == agent_id ||
-        it->second->GetBehaviorStatus() != BehaviorStatus::VALID) {
+        it->second->GetBehaviorStatus() != BehaviorStatus::VALID ||
+        it->second->IsValidAtTime(world_time_) == false) {
       continue;
     }
 

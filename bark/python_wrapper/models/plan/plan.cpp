@@ -15,6 +15,10 @@
 #include "python/bindings/python_planner_miqp.hpp"
 #endif
 
+#ifdef PLANNER_RULES_MCTS
+#include "python/python_planner_rules_mcts.hpp"
+#endif
+
 void python_behavior_plan(py::module m) {
 #ifdef PLANNER_UCT
   python_planner_uct(m);
@@ -22,5 +26,9 @@ void python_behavior_plan(py::module m) {
 
 #ifdef PLANNER_MIQP
   python_planner_miqp(m);
+#endif
+
+#ifdef PLANNER_RULES_MCTS
+  python_planner_rules_mcts(m);
 #endif
 }

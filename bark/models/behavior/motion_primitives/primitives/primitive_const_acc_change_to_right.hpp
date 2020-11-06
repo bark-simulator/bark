@@ -31,6 +31,8 @@ class PrimitiveConstAccChangeToRight : public PrimitiveConstAccStayLane {
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
 
+  std::string GetName() const override;
+
  private:
   float min_length_;
 };

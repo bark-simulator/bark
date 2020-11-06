@@ -10,8 +10,6 @@ import json
 import os
 from bark.core.commons import Params
 import logging
-logging.getLogger().setLevel(logging.DEBUG)
-
 
 class ParameterServer(Params):
     def __init__(self, **kwargs):
@@ -55,6 +53,21 @@ class ParameterServer(Params):
             else:  # else it is a Params instance
                 self.store[new_key] = ParameterServer(log_if_default = self.log_if_default)
                 return self.store[new_key]
+
+    def __contains__(self, key):
+        return key in self.store
+
+    def AppendParamServer(self, p_server):
+        for key in p_server.store.keys():
+            if key in self.store:
+                val_self = self.store[key]
+                val_other = p_server.store[key]
+                if isinstance(val_self, ParameterServer) and isinstance(val_other, ParameterServer):
+                    val_self.AppendParamServer(val_other)
+                else:
+                    logging.warning("Cannot append conflicting key '{}'!".format(key))
+            else:
+                self.__setitem__(key, p_server[key])
 
     def FindKey(self, param_key):
       delimiter = "::"
@@ -139,7 +152,8 @@ class ParameterServer(Params):
         return self
 
     def clone(self):
-      return ParameterServer(json = self.ConvertToDict())
+      return ParameterServer(json = self.ConvertToDict(), \
+          log_if_default = self.log_if_default)
 
     def ConvertToDict(self, print_description=False):
         dict = {}
@@ -162,7 +176,7 @@ class ParameterServer(Params):
                 v_tmp.append(v.ConvertToDict())
               dict[key] = v_tmp
             else:
-                dict[key] = value
+                dict[key] = self._ItemToDict(value)
                 if print_description:
                     if key in self.param_descriptions:
                         dict[key] = self.param_descriptions[key]
@@ -170,6 +184,21 @@ class ParameterServer(Params):
                         dict[key] = "--"
 
         return dict
+
+    def _ItemToDict(self, item):
+        if isinstance(item, list):
+            ret = []
+            for v in item:
+                ret.append(self._ItemToDict(v))
+        elif isinstance(item, dict):
+            ret = {}
+            for (key, val) in item.items():
+                ret[key] = self._ItemToDict(val)
+        elif isinstance(item, ParameterServer):
+            ret = item.ConvertToDict()
+        else:
+            ret = item
+        return ret
 
     def Save(self, filename, print_description=False):
         #if not os.path.exists(os.path.dirname(filename)):
@@ -278,6 +307,9 @@ class ParameterServer(Params):
     def GetListFloat(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
+    def GetMapAgentIdListFloat(self, param_name, description, default_value):
+        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
+
     def GetString(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
@@ -310,7 +342,7 @@ class ParameterServer(Params):
         if child_name in self.store and not delete:
           child = self.store[child_name]
         else:
-          self.store[child_name] = ParameterServer()
+          self.store[child_name] = ParameterServer(log_if_default=self.log_if_default)
           child = self.store[child_name]
 
         if len(rest_name) == 0:
