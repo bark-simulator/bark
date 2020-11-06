@@ -243,8 +243,6 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
         t[0].cast<BehaviorMiqpAgent>());
   } 
 #endif
-  else {
-    LOG(FATAL) << "Unknown BehaviorType for polymorphic conversion to C++ : "
 #ifdef PLANNER_RULES_MCTS
   else if (behavior_model_name.compare("BehaviorRulesMctsUct") == 0) {
     return std::make_shared<BehaviorRulesMctsUct>(t[0].cast<BehaviorRulesMctsUct>());
