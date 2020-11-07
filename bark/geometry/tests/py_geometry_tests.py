@@ -239,6 +239,7 @@ class GeometryTests(unittest.TestCase):
         self.assertAlmostEqual(shape.left_dist, 0.955999, places=4)
         self.assertAlmostEqual(shape.right_dist, 0.955999, places=4)
 
+        # TODO: need assertion in this test
 
 if __name__ == '__main__':
     unittest.main()

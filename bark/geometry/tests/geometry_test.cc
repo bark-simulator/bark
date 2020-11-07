@@ -944,6 +944,31 @@ TEST(geometry, scale_transformed_polygon) {
   ASSERT_TRUE(Equals(expected_scaled_polygon, *p3));
 }
 
+TEST(geometry, inflate_polygon_y) {
+  using bark::geometry::Polygon;
+  using bark::geometry::Point2d;
+  using bark::geometry::Pose;
+
+  Polygon p1(Pose(0.5, 0.5, 0.0), {
+              Point2d(-0.5, -0.5),
+              Point2d(-0.5, 0.5),
+              Point2d(0.5, 0.5),
+              Point2d(0.5, -0.5),
+              Point2d(-0.5, -0.5)});
+
+  const auto p2 = std::dynamic_pointer_cast<Polygon>(p1.Inflate(0.1, 3));
+  
+  Polygon expected_inflated_polygon(Pose(0.5, 0.5, 0.0), {
+          Point2d(-0.6, -3.5),
+          Point2d(-0.6, 3.5),
+          Point2d(0.6, 3.5),
+          Point2d(0.6, -3.5),
+          Point2d(-0.6, -3.5)});
+
+  ASSERT_TRUE(Equals(expected_inflated_polygon, *p2));
+}
+
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

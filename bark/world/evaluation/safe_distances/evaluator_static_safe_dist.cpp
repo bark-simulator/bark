@@ -31,7 +31,7 @@ bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& obse
   int num_agents = 4;
   auto ego_agent = observed_world.GetEgoAgent();
   if (!ego_agent) {
-    return false;
+    return true;
   }
   State ego_state = ego_agent->GetCurrentState();
   Point2d ego_position(ego_state(X_POSITION), ego_state(Y_POSITION));
@@ -39,17 +39,29 @@ bool EvaluatorStaticSafeDist::CheckSafeDistance(const world::ObservedWorld& obse
 
   // Evaluation assumes that - at zero orientation - shape of ego agent is oriented such that lateral 
   // coordinate is y and longitudinal coordinate is x
-  Pose agent_pose(ego_state(StateDefinition::X_POSITION),
+  Pose ego_agent_pose(ego_state(StateDefinition::X_POSITION),
                   ego_state(StateDefinition::Y_POSITION),
                   ego_state(StateDefinition::THETA_POSITION));
-  const auto ego_scaled_shape = std::dynamic_pointer_cast<Polygon>(
-          ego_agent->GetShape().Scale(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(agent_pose));
-
+  const auto ego_inflated_shape = std::dynamic_pointer_cast<Polygon>(
+          ego_agent->GetShape().Inflate(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(ego_agent_pose));
   for (const auto& agent : nearby_agents) {
     if (observed_world.GetEgoAgentId() != agent.second->GetAgentId()) {
       const Polygon& agent_polygon =
           agent.second->GetPolygonFromState(agent.second->GetCurrentState());
-      if (Collide(*ego_scaled_shape, agent_polygon)) {
+      if (Collide(*ego_inflated_shape, agent_polygon)) {
+        colliding = true;
+        break;
+      }
+      // check if other agent inflated collides with our agents normal shape
+      State other_state = agent.second->GetCurrentState();
+      Pose other_agent_pose(other_state(StateDefinition::X_POSITION),
+                  other_state(StateDefinition::Y_POSITION),
+                  other_state(StateDefinition::THETA_POSITION));
+      const auto other_inflated_shape = std::dynamic_pointer_cast<Polygon>(
+          agent.second->GetShape().Inflate(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(other_agent_pose));
+      const Polygon& ego_polygon =
+          ego_agent->GetPolygonFromState(ego_agent->GetCurrentState());
+      if (Collide(*other_inflated_shape, ego_polygon)) {
         colliding = true;
         break;
       }
