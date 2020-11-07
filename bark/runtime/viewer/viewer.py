@@ -441,6 +441,13 @@ class BaseViewer(Viewer):
                     observed_world, label_functions, evaluator_type)
                 break
 
+    def drawEvalResults(self, eval_results):
+        y_pos = 0.9
+        for eval_name, eval_result in eval_results.items():
+          text = "{}: {}".format(eval_name, eval_result)
+          self.drawText(position=(0.7, y_pos), text=text)
+          y_pos -= 0.03
+
     def drawRssDebugInfomation(self, world, agent_id):
         from bark.core.world.evaluation import EvaluatorRss
         for evaluator in world.evaluators:
