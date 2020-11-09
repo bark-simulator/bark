@@ -12,6 +12,9 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 import logging
+from shutil import copyfile
+import pathlib
+import ntpath
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.viewer import MPViewer
@@ -36,9 +39,6 @@ class ScenarioDumper(BenchmarkAnalyzer):
     configs_found = super().find_configs(filter)
     for config in configs_found:
       self.export(config)
-    if configs_found:
-      self.write_map(self._result_folder)
-
 
   # Dump a scenario given by the index in the result
   def export(self, config_idx):
@@ -48,6 +48,7 @@ class ScenarioDumper(BenchmarkAnalyzer):
     self.write_trajectory(config_idx, this_folder)
     self.write_scenario_parameter(config_idx, this_folder)
     self.write_behavior_parameter(config_idx, this_folder)
+    self.write_map(config_idx, self._result_folder)
 
   # Write video
   def render_video(self, config_idx, folder):
@@ -84,14 +85,24 @@ class ScenarioDumper(BenchmarkAnalyzer):
     #print(df.to_string())
 
   def write_scenario_parameter(self, config_idx, folder):
-    pass
-    # todo
+    benchmark_config = super().get_benchmark_result().get_benchmark_config(config_idx)
+    params = benchmark_config.scenario.json_params
+    p = ParameterServer()
+    p.ConvertToParam(params)
+    p.Save(os.path.join(folder, "scenario_parameters.json"))
 
   def write_behavior_parameter(self, config_idx, folder):
-    pass
-    # todo
+    scenario = super().get_benchmark_result().get_history(config_idx)[-1]
+    world = scenario.GetWorldState()
+    params = world.GetParams()
+    # TODO das muss doch gehen... aus einem Params object einen ParameterServer erstellen. aber ich sehe nicht wie.
+    #p = ParameterServer(params)
+    #p.Save(os.path.join(folder, "behavior_parameters.json"))
+    #print(p)
 
-  def write_map(self, folder):
-    pass
-    #todo
-
+  def write_map(self, config_idx, folder):
+    benchmark_config = super().get_benchmark_result().get_benchmark_config(config_idx)
+    params = benchmark_config.scenario.json_params
+    mapfile = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"]
+    src = os.path.join("src", "database", mapfile)
+    copyfile(src, os.path.join(folder, ntpath.basename(mapfile)))
