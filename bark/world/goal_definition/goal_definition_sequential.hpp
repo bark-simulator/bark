@@ -54,10 +54,15 @@ class GoalDefinitionSequential : public GoalDefinition {
 
   int LastSequentialGoal() const { return last_sequential_goal_reached_; }
 
+  GoalDefinitionPtr Clone() const override;
  private:
   std::vector<GoalDefinitionPtr> sequential_goals_;
   int last_sequential_goal_reached_;
 };
+
+inline GoalDefinitionPtr GoalDefinitionSequential::Clone() const {
+  return std::make_shared<GoalDefinitionSequential>(*this);
+}
 
 }  // namespace goal_definition
 }  // namespace world

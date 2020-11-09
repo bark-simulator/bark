@@ -33,10 +33,15 @@ class GoalDefinitionStateLimits : public GoalDefinition {
   const bark::geometry::Polygon& GetShape() const { return xy_limits_; }
   const std::pair<float, float> GetAngleLimits() const { return angle_limits_; }
 
+  GoalDefinitionPtr Clone() const override;
  private:
   bark::geometry::Polygon xy_limits_;
   std::pair<float, float> angle_limits_;
 };
+
+inline GoalDefinitionPtr GoalDefinitionStateLimits::Clone() const {
+  return std::make_shared<GoalDefinitionStateLimits>(*this);
+}
 
 }  // namespace goal_definition
 }  // namespace world

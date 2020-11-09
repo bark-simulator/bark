@@ -15,6 +15,8 @@
 #include "bark/world/goal_definition/goal_definition_state_limits.hpp"
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
+
 namespace py = pybind11;
 using bark::geometry::Line;
 using bark::geometry::Polygon;
@@ -135,15 +137,20 @@ void python_goal_definition(py::module m) {
       .def_property_readonly("sequential_goals",
                              &GoalDefinitionSequential::GetSequentialGoals)
       .def(py::pickle(
-          [](const GoalDefinitionSequential& g) -> py::tuple {  // __getstate__
+          [](const GoalDefinitionSequential& g) -> py::list {  // __getstate__
             /* Return a tuple that fully encodes the state of the object */
-            return py::make_tuple(g.GetSequentialGoals());
+            py::list goal_list;
+            for (const auto& goal_def : g.GetSequentialGoals()) {
+              goal_list.append(GoalDefinitionToPython(goal_def));
+            }
+            return goal_list;
           },
-          [](py::tuple t) {
-            if (t.size() != 1)
-              throw std::runtime_error(
-                  "Invalid GoalDefinitionSequential state!");
-            return new GoalDefinitionSequential(
-                t[0].cast<std::vector<GoalDefinitionPtr>>());
+          [](py::list list) {
+            const auto new_goal_def = new GoalDefinitionSequential();
+            for(const auto& goal_def_py : list) {
+              const auto goal_def_cpp = PythonToGoalDefinition(goal_def_py.cast<py::tuple>());
+              new_goal_def->AddSequentialGoal(goal_def_cpp);
+            }
+            return new_goal_def;
           }));
 }

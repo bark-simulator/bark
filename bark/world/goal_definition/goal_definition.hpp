@@ -28,6 +28,8 @@ class GoalDefinition {
   virtual bool AtGoal(const bark::world::objects::Agent& agent) = 0;
 
   virtual const bark::geometry::Polygon& GetShape() const {}
+
+  virtual std::shared_ptr<GoalDefinition> Clone() const = 0;
 };
 
 typedef std::shared_ptr<GoalDefinition> GoalDefinitionPtr;

@@ -47,6 +47,7 @@ class GoalDefinitionStateLimitsFrenet : public GoalDefinition {
   }
   virtual const bark::geometry::Polygon& GetShape() const { return shape_; }
 
+  GoalDefinitionPtr Clone() const override;
  private:
   const bark::geometry::Line center_line_;
   const std::pair<float, float> max_lateral_distances_;
@@ -54,6 +55,10 @@ class GoalDefinitionStateLimitsFrenet : public GoalDefinition {
   const std::pair<float, float> velocity_range_;
   bark::geometry::Polygon shape_;
 };
+
+inline GoalDefinitionPtr GoalDefinitionStateLimitsFrenet::Clone() const {
+  return std::make_shared<GoalDefinitionStateLimitsFrenet>(*this);
+}
 
 }  // namespace goal_definition
 }  // namespace world

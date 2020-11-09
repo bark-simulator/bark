@@ -27,6 +27,11 @@ class PyGoalDefinition : public GoalDefinition {
   const bark::geometry::Polygon& GetShape() const override {
     PYBIND11_OVERLOAD(bark::geometry::Polygon&, GoalDefinition, GetShape);
   }
+
+  std::shared_ptr<GoalDefinition> Clone() const {
+    PYBIND11_OVERLOAD_PURE(std::shared_ptr<GoalDefinition>, GoalDefinition,
+                           Clone);
+  }
 };
 
 void python_goal_definition(py::module m);

@@ -9,7 +9,7 @@
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderGoalDefinitions
 
-from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet
+from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet, GoalDefinitionSequential
 from bark.runtime.commons.parameters import ParameterServer
 
 from bark.core.geometry import *
@@ -68,6 +68,12 @@ class GoalGenerator:
     goal_definition = GoalDefinitionStateLimitsFrenet(goal_line_string, lateral_max_dist, max_orientation_diff, velocity_range)
     return goal_definition
 
+  @staticmethod
+  def make_sequential(goal_definition, num_steps):
+    goal_sequence = [goal_definition]*num_steps
+    goal_def_seq = GoalDefinitionSequential(goal_sequence)
+    return goal_def_seq
+
 
 class FixedGoalTypes(ConfigReaderGoalDefinitions):
   def create_from_config(self, config_param_object, road_corridor, agent_states, controlled_agent_ids, **kwargs):
@@ -78,6 +84,8 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
     self._enforce_others_goal = config_param_object["EnforceOthersGoal", "If true exception is raised if goal not available", True]
+    self._use_sequential_goal_controlled = config_param_object["SequentialGoalEgo", "If true sequential goals for ego are added", True]
+    self._num_sequential_steps = config_param_object["SequentialGoalNumSteps", "Numbre of sequential goals when true", 4]
 
     goal_definitions = []
     agent_lane_positions = kwargs.pop("agent_lane_positions")
@@ -88,6 +96,8 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
       if controlled_agent_ids[idx]:
           goal_definition = GoalGenerator.get_goal_definition(
             config_param_object, self._controlled_agents_goal_type, road_corridor, lane_position, self._enforce_controlled_goal)
+          if self._use_sequential_goal_controlled:
+            goal_definition = GoalGenerator.make_sequential(goal_definition, self._num_sequential_steps)
       else:
           goal_definition = GoalGenerator.get_goal_definition(
           config_param_object, self._other_agents_goal_type, road_corridor, lane_position, self._enforce_others_goal)

@@ -225,21 +225,9 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(goal_definition.goal_shape,
                                color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionSequential):
-            prev_center = np.array([])
-            for idx, goal_def in enumerate(goal_definition.sequential_goals):
-                self.drawGoalDefinition(goal_def, color, alpha, facecolor)
-                goal_pos = None
-                if isinstance(goal_def, GoalDefinitionPolygon):
-                    goal_pos = goal_def.goal_shape.center
-                elif isinstance(goal_def, GoalDefinitionStateLimits):
-                    goal_pos = goal_def.xy_limits.center
-                # self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
-                if prev_center.any():
-                    line = Line2d()
-                    line.AddPoint(Point2d(prev_center[0], prev_center[1]))
-                    line.AddPoint(Point2d(goal_pos[0], goal_pos[1]))
-                    self.drawLine2d(line, color, alpha=0.9)
-                prev_center = goal_pos
+            # draw only first goal
+            self.drawGoalDefinition(goal_definition.sequential_goals[0], color,
+                                alpha, facecolor)
 
     def drawLabelsAsText(self, observed_world, label_functions, evaluator_type):
         labels = {}

@@ -29,9 +29,15 @@ class GoalDefinitionPolygon : public GoalDefinition {
 
   const bark::geometry::Polygon& GetShape() const { return goal_shape_; }
 
+  GoalDefinitionPtr Clone() const override;
+
  private:
   bark::geometry::Polygon goal_shape_;
 };
+
+inline GoalDefinitionPtr GoalDefinitionPolygon::Clone() const {
+  return std::make_shared<GoalDefinitionPolygon>(*this);
+}
 
 }  // namespace goal_definition
 }  // namespace world
