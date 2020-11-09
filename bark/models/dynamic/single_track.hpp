@@ -92,6 +92,8 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   using StateDefinition::THETA_POSITION;
   using StateDefinition::X_POSITION;
   using StateDefinition::Y_POSITION;
+  using bark::geometry::Point2d;
+  using bark::geometry::Norm0ToPI;
 
   const double l = model->GetWheelBase();
 
@@ -103,7 +105,10 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
 
   FrenetState f_state = FrenetState(state_front, ref_line);
   double vel = state(StateDefinition::VEL_POSITION);
-  double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
+  double delta = -Norm0ToPI(f_state.angle) + atan2(-gain * f_state.lat, vel);
+
+  LOG(INFO) << "del=" << delta << ", fa=" << f_state.angle << ", na=" << Norm0ToPI(f_state.angle) <<
+              ", g=" << gain << ", lat=" << f_state.lat << ", v=" << vel;
 
   if (limit_steering) {
     double delta_max =
