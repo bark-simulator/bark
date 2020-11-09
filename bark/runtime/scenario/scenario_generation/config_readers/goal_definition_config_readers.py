@@ -84,7 +84,7 @@ class FixedGoalTypes(ConfigReaderGoalDefinitions):
     self._other_agents_goal_type = config_param_object["GoalTypeOthers", "Specifies type of goals \
                           for other agents (EndOfLane, LaneChangeLeft, LaneChangeRight)", "EndOfLane"]
     self._enforce_others_goal = config_param_object["EnforceOthersGoal", "If true exception is raised if goal not available", True]
-    self._use_sequential_goal_controlled = config_param_object["SequentialGoalEgo", "If true sequential goals for ego are added", True]
+    self._use_sequential_goal_controlled = config_param_object["SequentialGoalEgo", "If true sequential goals for ego are added", False]
     self._num_sequential_steps = config_param_object["SequentialGoalNumSteps", "Numbre of sequential goals when true", 4]
 
     goal_definitions = []
