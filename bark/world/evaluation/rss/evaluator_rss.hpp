@@ -75,8 +75,11 @@ class EvaluatorRSS : public BaseEvaluator {
   // lateral one is unsafety.
   virtual EvaluationReturn Evaluate(const World& world) {
     WorldPtr cloned_world = world.Clone();
-    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
-    return rss_.GetSafetyReponse(observed_world);
+    std::vector<ObservedWorld> observed_worlds = cloned_world->Observe({agent_id_});
+    if (observed_worlds.size() > 0) {
+      return rss_.GetSafetyReponse(observed_worlds[0]);
+    }
+    return false;
   };
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
