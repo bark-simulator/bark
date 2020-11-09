@@ -39,10 +39,10 @@ FrenetState::FrenetState(const State& state, const Line& path) {
 
   // calculate sign of lateral coordinate
   auto tangent_angle = mg::GetTangentAngleAtS(path, lon);
-  auto norm_tangent_angle = mg::Norm0To2PI(tangent_angle);
-  angle = mg::SignedAngleDiff(norm_tangent_angle,
-                              state(StateDefinition::THETA_POSITION));
+  angle = mg::SignedAngleDiff(state(StateDefinition::THETA_POSITION),
+                              tangent_angle);
   auto direction_vector = pos - nearest_point;
+  auto norm_tangent_angle = mg::Norm0To2PI(tangent_angle);
   double diff = mg::SignedAngleDiff(
       norm_tangent_angle,
       atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));

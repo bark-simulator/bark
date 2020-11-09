@@ -34,6 +34,12 @@ inline float Norm0To2PI(const float& angle) {
   return normalized;
 }
 
+inline float Norm0ToPI(const float& angle_0_2pi) {
+  if (angle_0_2pi < B_PI)
+    return angle_0_2pi;
+  return angle_0_2pi - B_2PI;
+}
+
 inline float AngleDiff(const float& angle1, const float& angle2) {
   return abs(Norm0To2PI(angle1) - Norm0To2PI(angle2));
 }
