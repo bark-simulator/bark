@@ -29,7 +29,6 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(
       max_agents_for_crossing_(max_agents_for_crossing) {}
 
 LabelMap SafeDistanceLabelFunction::Evaluate(const world::ObservedWorld& observed_world) const {
-  LOG(INFO) << "consider crossing " << consider_crossing_corridors_;
   if(!EvaluateEgoCorridor(observed_world)) {
     return {{GetLabel(), false}};; 
   }
@@ -93,7 +92,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     double v_rear = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
     bark::commons::transformation::FrenetState frenet_state(fr_agents.front.first->GetCurrentState(),
                                             lane_corridor->GetCenterLine());
-    const double norm_a = bark::geometry::Norm0To2PI(frenet_state.angle);
+    const double norm_a = frenet_state.angle;
     // Assume left and right dist equal
     const double ego_long_shape_width =
         ((norm_a < bark::geometry::B_PI_2) || (norm_a > 3 * bark::geometry::B_PI_2)) ?
@@ -102,10 +101,10 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
           (cos(frenet_state.angle)*fr_agents.front.first->GetShape().front_dist_ +
             sin(frenet_state.angle)*fr_agents.front.first->GetShape().left_dist_);
 
-    double dist = std::abs(fr_agents.front.second.lon) - ego_long_shape_width -
+    double dist = std::abs(fr_agents.front.second.lon) - std::abs(ego_long_shape_width) -
                 nearest_agent.second->GetShape().front_dist_;
-    LOG(INFO) << "Checking dist for " << nearest_agent.first << ", ve=" << frenet_state.vlon << ", vr=" << v_rear
-         << ", d=" << dist << ", a_o=" << a_o_ << ", a_e=" << a_e_; 
+    VLOG(5) << "Checking dist for " << nearest_agent.first << ", ve=" << frenet_state.vlon << ", vr=" << v_rear
+         << ", d=" << dist << ", a_o=" << a_o_ << ", a_e=" << a_e_ << " w=" <<ego_long_shape_width << "na=" << norm_a << "fa=" << frenet_state.angle; 
     bool distance_safe = CheckSafeDistance(frenet_state.vlon, v_rear,
                                     dist, a_o_, a_e_);
     if(!distance_safe) return distance_safe;
@@ -132,7 +131,7 @@ bool SafeDistanceLabelFunction::CheckSafeDistance(
   double safe_dist_2 = CalcSafeDistance2(v_r, v_f, a_r, a_f);
   double safe_dist_3 = CalcSafeDistance3(v_r, v_f, a_r, a_f);
 
-  LOG(INFO) << "sf0=" << safe_dist_0 << ", sf1=" << safe_dist_1 << ", sf2=" << safe_dist_2 << 
+  VLOG(5) << "sf0=" << safe_dist_0 << ", sf1=" << safe_dist_1 << ", sf2=" << safe_dist_2 << 
         ", sf3=" << safe_dist_3;
 
   if (dist > safe_dist_0 || (delta_ <= t_stop_f && dist > safe_dist_3)) {
