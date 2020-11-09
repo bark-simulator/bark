@@ -107,7 +107,7 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double vel = state(StateDefinition::VEL_POSITION);
   double delta = -Norm0ToPI(f_state.angle) + atan2(-gain * f_state.lat, vel);
 
-  LOG(INFO) << "del=" << delta << ", fa=" << f_state.angle << ", na=" << Norm0ToPI(f_state.angle) <<
+  VLOG(4) << "del=" << delta << ", fa=" << f_state.angle << ", na=" << Norm0ToPI(f_state.angle) <<
               ", g=" << gain << ", lat=" << f_state.lat << ", v=" << vel;
 
   if (limit_steering) {
