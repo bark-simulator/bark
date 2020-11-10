@@ -138,8 +138,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
     #2 remove overlapping agent states from different sources and sinks
-    collected_sources_sinks_agent_states_geometries = \
-            self.resolve_overlaps_in_sources_sinks_agents(collected_sources_sinks_agent_states_geometries)
+    #collected_sources_sinks_agent_states_geometries = \
+     #       self.resolve_overlaps_in_sources_sinks_agents(collected_sources_sinks_agent_states_geometries)
 
     agent_list = []
     controlled_agent_ids_all = []
