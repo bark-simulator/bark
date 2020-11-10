@@ -112,7 +112,7 @@ class XodrParser(object):
             new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in [
                 "driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk"]  # assign enum type
 
-            if lane.find("userData"):
+            if lane.find("userData") is not None:
                 if lane.find("userData").find("vectorLane") is not None:
                     vector_lane = lane.find("userData").find("vectorLane")
                     if str(vector_lane.get("travelDir")) in ["forward", "backward"]:
