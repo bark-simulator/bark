@@ -39,21 +39,16 @@ class BehaviorConfig:
 class BenchmarkConfig:
     def __init__(self, config_idx, behavior_config,
                  scenario, scenario_idx, scenario_set_name,
-                 scenario_set_param_desc=None):
+                 scenario_set_param_desc=None, track_id_ego=None, 
+                 track_file_name=None):
         self.config_idx = config_idx
         self.behavior_config = behavior_config
         self.scenario = scenario
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
         self.scenario_set_param_desc = scenario_set_param_desc or {}
-        
-        # only relevant for scenarios from dataset
-        try:
-          self.track_id_ego = scenario.eval_agent_ids[0]
-          self.track_file_name = scenario.json_params["track_file"]
-        except:
-          self.track_id_ego = None
-          self.track_file_name = None
+        self.track_id_ego = track_id_ego
+        self.track_file_name = track_file_name
 
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),

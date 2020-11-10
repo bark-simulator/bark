@@ -125,6 +125,10 @@ class BenchmarkRunner:
                 for scenario, scenario_idx in scenario_generator:
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
+                    
+                    # only relevant for scenarios from dataset
+                    track_id_ego, track_file_name = self._get_track_id_and_filename(scenario)
+                      
                     benchmark_config = \
                         BenchmarkConfig(
                             len(benchmark_configs),
@@ -132,7 +136,9 @@ class BenchmarkRunner:
                             scenario,
                             scenario_idx,
                             scenario_set_name,
-                            scenario_set_param_desc
+                            scenario_set_param_desc,
+                            track_id_ego,
+                            track_file_name
                         )
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
@@ -289,3 +295,13 @@ class BenchmarkRunner:
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
 ---------------------------------------------------------------------".format(len(result_dct_list),
                                                                               grouped.to_string()))
+
+    def _get_track_id_and_filename(self, scenario):
+        # only relevant for scenarios from dataset
+        try:
+          track_id_ego = scenario.eval_agent_ids[0]
+          track_file_name = scenario.json_params["track_file"]
+        except:
+          track_id_ego = None
+          track_file_name = None
+        return track_id_ego, track_file_name
