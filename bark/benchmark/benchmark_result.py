@@ -46,13 +46,23 @@ class BenchmarkConfig:
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
         self.scenario_set_param_desc = scenario_set_param_desc or {}
+        
+        # only relevant for scenarios from dataset
+        try:
+          self.track_id_ego = scenario.eval_agent_ids[0]
+          self.track_file_name = scenario.json_params["track_file"]
+        except:
+          self.track_id_ego = None
+          self.track_file_name = None
 
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),
                         "Behavior: {}".format(self.behavior_config.behavior_name),
                         "ScenarioSet: {}".format(self.scenario_set_name),
                         "ScenarioIdx: {}".format(self.scenario_idx),
-                        "ScenarioParamDes: {}".format(self.scenario_set_param_desc)]
+                        "ScenarioParamDes: {}".format(self.scenario_set_param_desc),
+                        "TrackIdEgo: {}".format(self.track_id_ego),
+                        "TrackFileName: {}".format(self.track_file_name)]
         return info_strings
 
     def as_dict(self):
@@ -60,7 +70,9 @@ class BenchmarkConfig:
                 "scen_set": self.scenario_set_name,
                 "scen_idx": self.scenario_idx,
                 **self.scenario_set_param_desc,
-                **self.behavior_config.as_dict()}
+                **self.behavior_config.as_dict(),
+                "track_id_ego": self.track_id_ego,
+                "track_file_name": self.track_file_name}
 
     def get_evaluation_groups(self):
       return ["scen_set", *list(self.behavior_config.as_dict().keys())]
