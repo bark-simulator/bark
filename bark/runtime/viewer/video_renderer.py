@@ -10,6 +10,7 @@ import tempfile
 import os
 import shutil
 import uuid
+import subprocess
 
 from bark.core.geometry import *
 from bark.core.viewer import *
@@ -67,9 +68,11 @@ class VideoRenderer(BaseViewer):
             os.remove(filename)
         if not os.path.exists(os.path.dirname(filename)):
             os.makedirs(os.path.dirname(filename))
-        cmd = "ffmpeg -y -framerate {} -i \'{}/%03d.png\' -vcodec h264 -force_key_frames 'expr:gte(t,n_forced*{})' -acodec pcm_s16le -s 1920x1080 -r 30 -b:v 36M -pix_fmt yuv420p -f mp4 \'{}.mp4\'".format(
+        cmd = "ffmpeg -nostdin -y -framerate {} -i \'{}/%03d.png\' -vcodec h264 -force_key_frames 'expr:gte(t,n_forced*{})' -acodec pcm_s16le -s 1920x1080 -r 30 -b:v 36M -pix_fmt yuv420p -f mp4 \'{}.mp4\'".format(
             framerate, self.video_frame_dir, 1 / framerate, os.path.abspath(filename))
-        os.system(cmd)
+        retval = subprocess.call(cmd, shell=True)
+        if retval:
+          logging.error("Error during video export.")
 
         if remove_image_dir:
             shutil.rmtree(os.path.abspath(self.video_frame_dir))
