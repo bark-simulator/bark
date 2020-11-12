@@ -86,23 +86,27 @@ class ScenarioDumper(BenchmarkAnalyzer):
 
   def write_scenario_parameter(self, config_idx, folder):
     benchmark_config = super().get_benchmark_result().get_benchmark_config(config_idx)
-    params = benchmark_config.scenario.json_params
-    p = ParameterServer()
-    p.ConvertToParam(params)
-    p.Save(os.path.join(folder, "scenario_parameters.json"))
+    if benchmark_config is not None:
+      params = benchmark_config.scenario.json_params
+      p = ParameterServer()
+      p.ConvertToParam(params)
+      p.Save(os.path.join(folder, "scenario_parameters.json"))
 
   def write_behavior_parameter(self, config_idx, folder):
-    scenario = super().get_benchmark_result().get_history(config_idx)[-1]
-    world = scenario.GetWorldState()
-    params = world.GetParams()
-    # TODO das muss doch gehen... aus einem Params object einen ParameterServer erstellen. aber ich sehe nicht wie.
-    #p = ParameterServer(params)
-    #p.Save(os.path.join(folder, "behavior_parameters.json"))
-    #print(p)
+    scenarios = super().get_benchmark_result().get_history(config_idx)
+    if scenarios is not None:
+      scenario = scenarios[-1]
+      world = scenario.GetWorldState()
+      params = world.GetParams()
+      # TODO das muss doch gehen... aus einem Params object einen ParameterServer erstellen. aber ich sehe nicht wie.
+      #p = ParameterServer(params)
+      #p.Save(os.path.join(folder, "behavior_parameters.json"))
+      #print(p)
 
   def write_map(self, config_idx, folder):
     benchmark_config = super().get_benchmark_result().get_benchmark_config(config_idx)
-    params = benchmark_config.scenario.json_params
-    mapfile = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"]
-    src = os.path.join("src", "database", mapfile)
-    copyfile(src, os.path.join(folder, ntpath.basename(mapfile)))
+    if benchmark_config is not None:
+      params = benchmark_config.scenario.json_params
+      mapfile = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"]
+      src = os.path.join("src", "database", mapfile)
+      copyfile(src, os.path.join(folder, ntpath.basename(mapfile)))
