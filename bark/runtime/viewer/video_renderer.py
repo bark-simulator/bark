@@ -11,6 +11,7 @@ import os
 import shutil
 import uuid
 import subprocess
+import logging
 
 from bark.core.geometry import *
 from bark.core.viewer import *
