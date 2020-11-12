@@ -147,7 +147,7 @@ def print_rss_safety_response(evaluator_rss, world):
     #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
-param_server["EvalutaorRss"]["MapFilename"] = map_path
+param_server["EvalutaorRss"]["MapFilename"] = Data.xodr_data("DR_DEU_Merging_MT_v01_centered")
 param_server["EvalutaorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
 param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
 param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
