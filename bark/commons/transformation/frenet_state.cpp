@@ -14,11 +14,15 @@ namespace transformation {
 
 using bark::geometry::Line;
 using bark::geometry::Point2d;
+using bark::geometry::Polygon;
 using bark::geometry::operator-;
 using bark::geometry::operator*;
 using bark::geometry::operator+;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
+using bark::geometry::B_PI_2;
+using bark::geometry::B_2PI;
+
 namespace bg = boost::geometry;
 namespace mg = bark::geometry;
 
@@ -82,6 +86,78 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
   state(StateDefinition::VEL_POSITION) = velocity;
   return state;
 }
+
+auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
+  // Assumes equal extension to sides for polygon
+  BARK_EXPECT_TRUE(std::abs(polygon.right_dist_ - polygon.left_dist_) < 0.01);
+  const double polygon_side_extend = polygon.left_dist_;
+  auto norm_tangent_angle = bark::geometry::Norm0ToPI(tangent_angle);
+  auto positive_angle = tangent_angle < B_PI_2 ? std::abs(norm_tangent_angle) : std::abs(norm_tangent_angle - B_PI_2);
+  double front_dist = cos(positive_angle)*polygon.front_dist_ + sin(positive_angle)*polygon_side_extend;
+  double rear_dist = cos(positive_angle)*polygon.rear_dist_ + sin(positive_angle)*polygon_side_extend;
+  double left_dist = sin(positive_angle)*polygon.front_dist_ + cos(positive_angle)*polygon_side_extend;
+  double right_dist = sin(positive_angle)*polygon.rear_dist_ + cos(positive_angle)*polygon_side_extend;
+
+  if(norm_tangent_angle > B_PI_2) {
+    std::swap(front_dist, rear_dist);
+  } else if(norm_tangent_angle < -B_PI_2) {
+    std::swap(front_dist, rear_dist);
+    std::swap(left_dist, right_dist);
+  } else {
+    std::swap(left_dist, right_dist);
+  }
+  const struct{double front_dist; double rear_dist; double left_dist; double right_dist;}
+         shape_extension{front_dist, rear_dist, left_dist, right_dist};
+  return shape_extension;
+}
+
+
+FrenetState FrenetStateDiffShapeExtension(const FrenetState& frenet_state1, const Polygon& polygon1,
+                                        const FrenetState& frenet_state2, const Polygon& polygon2) {
+    // Returns differences between frenet state and also considers projected shapes based on tangent angles
+    // Conventions: 
+    // - positive longitudinal difference if frenet_state2 is in "front" of frenet_state1
+    // - positive lateral difference if frenet_state2 is in "left" of frenet_state1
+    // - positive long and velocities diff if frenet state 2 is "faster" than frenet state1
+    // - positive angle difference if frenet state2 is turned more left than frenet state 1
+
+    BARK_EXPECT_TRUE(frenet_state1.Valid());
+    BARK_EXPECT_TRUE(frenet_state2.Valid());
+
+    auto shape_extend_at_tangent1 = ShapeExtensionAtTangentAngle(frenet_state1.angle, polygon1);
+    auto shape_extend_at_tangent2 = ShapeExtensionAtTangentAngle(frenet_state1.angle, polygon1);
+
+    FrenetState difference;
+    if(frenet_state1.lon < frenet_state2.lon) {
+      double diff_lon = frenet_state2.lon - shape_extend_at_tangent2.rear_dist -
+                         (frenet_state1.lon + shape_extend_at_tangent1.front_dist);
+      difference.lon = diff_lon > 0 ? diff_lon : 0;
+    } else {
+      double diff_lon = frenet_state1.lon - shape_extend_at_tangent1.rear_dist -
+                         (frenet_state2.lon + shape_extend_at_tangent2.front_dist);
+      difference.lon = diff_lon < 0 ? diff_lon : 0;
+    }
+
+    // the more negative the lateral coordinate is,
+    // the more on the right side of the center line its state is
+    if(frenet_state1.lat < frenet_state2.lat) {
+      // lateral difference is positive
+      double diff_lat = frenet_state2.lat - shape_extend_at_tangent2.right_dist -
+                        (frenet_state1.lat + shape_extend_at_tangent1.left_dist);
+      difference.lat = diff_lat > 0 ? diff_lat : 0;
+    } else {
+      // lateral difference is negative
+      double diff_lat = frenet_state1.lat - shape_extend_at_tangent1.right_dist -
+                        (frenet_state2.lat + shape_extend_at_tangent2.left_dist);
+      difference.lat = diff_lat < 0 ? diff_lat : 0;
+    }
+    
+    difference.vlat = frenet_state2.vlat - frenet_state1.vlat;
+    difference.vlon = frenet_state2.vlon - frenet_state1.vlon;
+    difference.angle = frenet_state2.angle - frenet_state1.angle;
+    return difference;
+}
+
 
 }  // namespace transformation
 }  // namespace commons

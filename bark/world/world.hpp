@@ -17,6 +17,7 @@
 
 #include <boost/geometry/index/rtree.hpp>
 #include "bark/commons/transformation/frenet.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/objects/agent.hpp"
@@ -27,6 +28,7 @@ namespace bark {
 namespace world {
 
 using bark::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetState;
 using models::behavior::StateActionPair;
 using world::evaluation::EvaluatorPtr;
 using world::map::LaneCorridorPtr;
@@ -51,7 +53,7 @@ using AgentRTree =
     boost::geometry::index::rtree<rtree_agent_value,
                                   boost::geometry::index::linear<16, 4> >;
 
-typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
+typedef std::pair<AgentPtr, FrenetState> AgentFrenetPair;
 
 struct FrontRearAgents {
   AgentFrenetPair front;

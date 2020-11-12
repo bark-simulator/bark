@@ -12,7 +12,9 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/geometry/line.hpp"
+#include "bark/geometry/polygon.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
+
 
 namespace bark {
 namespace commons {
@@ -30,6 +32,8 @@ struct FrenetState : public FrenetPosition {
   FrenetState(const bark::models::dynamic::State& state,
               const bark::geometry::Line& path);
 
+  bool Valid() const { return FrenetPosition::Valid() && angle <= bark::geometry::B_PI; }
+
   double vlon;
   double vlat;
   double angle;
@@ -37,6 +41,11 @@ struct FrenetState : public FrenetPosition {
 
 bark::models::dynamic::State FrenetStateToDynamicState(
     const FrenetState& frenet_state, const bark::geometry::Line& path);
+
+auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const bark::geometry::Polygon& polygon);
+
+FrenetState FrenetStateDiffShapeExtension(const FrenetState& frenet_state1, const bark::geometry::Polygon& polygon1,
+                                        const FrenetState& frenet_state2, const bark::geometry::Polygon& polygon2);
 
 }  // namespace transformation
 }  // namespace commons

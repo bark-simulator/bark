@@ -22,6 +22,8 @@ struct FrenetPosition {
   FrenetPosition(const bark::geometry::Point2d& position,
                  const bark::geometry::Line& path);
   FrenetPosition operator+(const FrenetPosition& rhs);
+
+  bool Valid() const { return lon >=0.0; }
   double lon;
   double lat;
 };
