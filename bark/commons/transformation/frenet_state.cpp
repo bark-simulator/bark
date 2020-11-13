@@ -120,28 +120,29 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
   auto shape_extend_at_tangent1 = ShapeExtensionAtTangentAngle(from.angle, polygon_from);
   auto shape_extend_at_tangent2 = ShapeExtensionAtTangentAngle(to.angle, polygon_to);
 
-  if(from.lon < to.lon) {
+  if(from.lon <= to.lon) {
     double diff_lon = to.lon - shape_extend_at_tangent2.rear_dist -
                         (from.lon + shape_extend_at_tangent1.front_dist);
-    lon = diff_lon > 0 ? diff_lon : 0;
+    lon = diff_lon > 0 ? diff_lon : to.lon - from.lon;
   } else {
     double diff_lon = to.lon + shape_extend_at_tangent2.front_dist -
                       (from.lon - shape_extend_at_tangent1.rear_dist);
-    lon = diff_lon < 0 ? diff_lon : 0;
+    lon = diff_lon < 0 ? diff_lon : to.lon - from.lon;
   }
 
   // the more negative the lateral coordinate is,
   // the more on the right side of the center line its state is
-  if(from.lat < to.lat) {
+  if(from.lat <= to.lat) {
     // lateral difference is positive
     double diff_lat = to.lat - shape_extend_at_tangent2.right_dist -
                       (from.lat + shape_extend_at_tangent1.left_dist);
-    lat = diff_lat > 0 ? diff_lat : 0;
+    // if shape consideration leads to negative distance use only pure lateral difference
+    lat = diff_lat > 0 ? diff_lat : to.lat - from.lat;
   } else {
     // lateral difference is negative
     double diff_lat = to.lat - shape_extend_at_tangent1.right_dist -
                       (from.lat + shape_extend_at_tangent2.left_dist);
-    lat = diff_lat < 0 ? diff_lat : 0;
+    lat = diff_lat < 0 ? diff_lat : to.lat - from.lat;
   }
   
   vlat = to.vlat - from.vlat;
