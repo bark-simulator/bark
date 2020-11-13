@@ -16,6 +16,15 @@ namespace bark {
 namespace world {
 namespace opendrive {
 
+/**
+ * @brief adds a line segment to the plan view. if only two points shall be
+ * generated, set s_inc to length.
+ *
+ * @param start_point starting point
+ * @param heading heading
+ * @param length length of line
+ * @param s_inc increment at which points are sampled
+ */
 bool PlanView::AddLine(Point2d start_point, float heading, float length,
                        float s_inc) {
   namespace bg = boost::geometry;
