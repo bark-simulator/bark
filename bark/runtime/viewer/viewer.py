@@ -25,8 +25,20 @@ class BaseViewer(Viewer):
         if(params is None):
             params = ParameterServer()
         Viewer.__init__(self)
-        # color parameters
-        # agents
+        self.use_world_bounds = kwargs.pop("use_world_bounds", params["Visualization"]["Camera"]["UseWorldBounds", "", True])
+        self.follow_agent_id = kwargs.pop("follow_agent_id", params["Visualization"]["Camera"]["FollowAgentIds", "", None])
+
+        self.center = np.array(kwargs.pop("center", params["Visualization"]["Camera"]["Center", "", [0, 0]]))
+
+        self.world_x_range = np.array(kwargs.pop("x_range", params["Visualization"]["Camera"]["XRange", "", [-40, 40]]))
+        self.world_y_range = np.array(kwargs.pop("y_range", params["Visualization"]["Camera"]["YRange", "", [-40, 40]]))
+
+        self.enforce_x_length = kwargs.pop("enforce_x_length", params["Visualization"]["Camera"]["EnforceXLength", "", True])
+        self.enforce_y_length = kwargs.pop("enforce_y_length", params["Visualization"]["Camera"]["EnforceYLength", "", False])
+
+        self.initialize_params(params, kwargs)
+
+    def initialize_params(self, params, kwargs={}):
         self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines",
                                                                                            "Color of other agents", (0.1, 0.1, 0.1)]
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face",
@@ -97,9 +109,9 @@ class BaseViewer(Viewer):
         default_x_length = np.sum(np.absolute(self.world_x_range))
         default_x_length = np.sum(np.absolute(self.world_y_range))
         self.x_length = kwargs.pop(
-            "x_length", params["Visualization"]["Camera"]["XLength", "", default_x_length])
+            "x_length", params["Visualization"]["Camera"]["XLength", "", int(default_x_length)])
         self.y_length = kwargs.pop(
-            "y_length", params["Visualization"]["Camera"]["YLength", "", default_x_length])
+            "y_length", params["Visualization"]["Camera"]["YLength", "", int(default_x_length)])
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()

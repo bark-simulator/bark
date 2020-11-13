@@ -239,6 +239,8 @@ class BenchmarkRunner:
         parameter_server = ParameterServer(json=scenario._json_params)
         scenario_history = []
         step = 0
+        if viewer:
+          viewer.initialize_params(parameter_server)
         try:
             world = scenario.GetWorldState()
         except Exception as e:
