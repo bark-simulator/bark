@@ -16,14 +16,15 @@ namespace commons {
 namespace transformation {
 
 struct FrenetPosition {
-  FrenetPosition() : lon(0.0f), lat(0.0f) {}
+  FrenetPosition() : lon(std::numeric_limits<double>::max()),
+                     lat(std::numeric_limits<double>::max()) {}
   FrenetPosition(const double& longitudinal, const double& lateral)
       : lon(longitudinal), lat(lateral) {}
   FrenetPosition(const bark::geometry::Point2d& position,
                  const bark::geometry::Line& path);
   FrenetPosition operator+(const FrenetPosition& rhs);
 
-  bool Valid() const { return lon >=0.0; }
+  bool Valid() const { return true; }
   double lon;
   double lat;
 };

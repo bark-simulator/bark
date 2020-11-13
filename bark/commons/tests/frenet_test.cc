@@ -142,7 +142,7 @@ TEST(calculate_state_diff, zero_oriented_no_overlap) {
       Pose(0.5, width2/2, 0),
       {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
                            Point2d(length2, 0), Point2d(0, 0)});
-  FrenetState diff = FrenetStateDiffShapeExtension(state1, shape1, state2, shape2);
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
 
   EXPECT_NEAR(diff.lon, 4.0 - (length1 - 0.5) - 0.5, 0.001);
   EXPECT_NEAR(diff.lat, 8.0 - width1/2 - width2/2, 0.001);
@@ -165,7 +165,7 @@ TEST(calculate_state_diff, pi2_minuspi_oriented_no_overlap) {
       Pose(0.5, width2/2, 0),
       {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
                            Point2d(length2, 0), Point2d(0, 0)});
-  FrenetState diff = FrenetStateDiffShapeExtension(state1, shape1, state2, shape2);
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
 
   EXPECT_NEAR(diff.lon, -4.0 + width1/2.0 + 0.5, 0.001);
   EXPECT_NEAR(diff.lat, 8.0 - 0.5 - width2/2, 0.001);
@@ -188,7 +188,7 @@ TEST(calculate_state_diff, pi2_minuspi_oriented_overlap) {
       Pose(0.5, width2/2, 0),
       {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
                            Point2d(length2, 0), Point2d(0, 0)});
-  FrenetState diff = FrenetStateDiffShapeExtension(state1, shape1, state2, shape2);
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
 
   EXPECT_NEAR(diff.lon, 0.0, 0.001);
   EXPECT_NEAR(diff.lat, 0.0, 0.001);
@@ -211,7 +211,7 @@ TEST(calculate_state_diff, minus_pi2_minuspi4_oriented_no_overlap) {
       Pose(0.5, width2/2, 0),
       {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
                            Point2d(length2, 0), Point2d(0, 0)});
-  FrenetState diff = FrenetStateDiffShapeExtension(state1, shape1, state2, shape2);
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
 
   EXPECT_NEAR(diff.lon, -7.0 + cos(B_PI_2/3)*3.5 + sin(B_PI_2/3)*1.5 + 1.0, 0.001);
   EXPECT_NEAR(diff.lat, 8.0 - 0.5 - sin(B_PI_2/3)*3.5 - cos(B_PI_2/3)*1.5, 0.001);

@@ -68,6 +68,21 @@ void python_commons(py::module m) {
       .def(py::init<>())
       .def_readwrite("lon", &transformation::FrenetPosition::lon)
       .def_readwrite("lat", &transformation::FrenetPosition::lat);
+  
+  py::class_<transformation::FrenetState, transformation::FrenetPosition,
+             std::shared_ptr<transformation::FrenetState>>(m,
+                                                              "FrenetState")
+      .def(py::init<>())
+      .def_readwrite("vlon", &transformation::FrenetState::vlon)
+      .def_readwrite("vlat", &transformation::FrenetState::vlat)
+      .def_readwrite("angle", &transformation::FrenetState::angle);
+
+  py::class_<transformation::FrenetStateDifference, transformation::FrenetState,
+             std::shared_ptr<transformation::FrenetStateDifference>>(m,
+                                                              "FrenetStateDifference")
+      .def(py::init<>())
+      .def_readwrite("lon", &transformation::FrenetStateDifference::lon)
+      .def_readwrite("lat", &transformation::FrenetStateDifference::lat);
 
   m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
   m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });
