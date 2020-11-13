@@ -177,7 +177,7 @@ class BaseViewer(Viewer):
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
         pass
 
-    def drawTrajectory(self, trajectory, color):
+    def drawTrajectory(self, trajectory, color, **kwargs):
         pass
 
     def drawObstacle(self, obstacle):
