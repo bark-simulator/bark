@@ -50,19 +50,17 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
   bool distance_safe = true;
 
   if (to_rear_ && fr_agents.rear.first) {
-    double v_r = fr_agents.rear.first->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double v_r = fr_agents.rear.second.to.vlon;
     double v_f = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
-    double dist = std::abs(fr_agents.rear.second.lon) - ego->GetShape().rear_dist_ -
-                fr_agents.rear.first->GetShape().front_dist_;
+    double dist = fr_agents.front.second.lon;;
     distance_safe = CheckSafeDistance(v_f, v_r,
                                       dist, a_o_, a_e_);
   } 
   
   if (fr_agents.front.first) {
     double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
-    double v_f = fr_agents.front.first->GetCurrentState()(StateDefinition::VEL_POSITION);
-    double dist = std::abs(fr_agents.front.second.lon) - fr_agents.front.first->GetShape().rear_dist_ -
-                ego->GetShape().front_dist_;
+    double v_f = fr_agents.front.second.to.vlon;
+    double dist = fr_agents.front.second.lon;
     distance_safe = distance_safe && CheckSafeDistance(v_f, v_r,
                                       dist, a_e_, a_o_);
   }
@@ -90,22 +88,11 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     if(!fr_agents.front.first) continue;
     if(fr_agents.front.first->GetAgentId() != observed_world.GetEgoAgentId()) continue;
     double v_rear = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
-    bark::commons::transformation::FrenetState frenet_state(fr_agents.front.first->GetCurrentState(),
-                                            lane_corridor->GetCenterLine());
-    const double norm_a = frenet_state.angle;
-    // Assume left and right dist equal
-    const double ego_long_shape_width =
-        ((norm_a < bark::geometry::B_PI_2) || (norm_a > 3 * bark::geometry::B_PI_2)) ?
-          (cos(frenet_state.angle)*fr_agents.front.first->GetShape().rear_dist_ +
-            sin(frenet_state.angle)*fr_agents.front.first->GetShape().left_dist_) :  
-          (cos(frenet_state.angle)*fr_agents.front.first->GetShape().front_dist_ +
-            sin(frenet_state.angle)*fr_agents.front.first->GetShape().left_dist_);
-
-    double dist = std::abs(fr_agents.front.second.lon) - std::abs(ego_long_shape_width) -
-                nearest_agent.second->GetShape().front_dist_;
-    VLOG(5) << "Checking dist for " << nearest_agent.first << ", ve=" << frenet_state.vlon << ", vr=" << v_rear
-         << ", d=" << dist << ", a_o=" << a_o_ << ", a_e=" << a_e_ << " w=" <<ego_long_shape_width << "na=" << norm_a << "fa=" << frenet_state.angle; 
-    bool distance_safe = CheckSafeDistance(frenet_state.vlon, v_rear,
+    double v_front = fr_agents.front.second.to.vlon;
+    double dist = fr_agents.front.second.lon;
+    VLOG(5) << "Checking dist for " << nearest_agent.first << ", ve=" << v_front << ", vr=" << v_rear
+         << ", d=" << dist << ", a_o=" << a_o_ << ", a_e=" << a_e_; 
+    bool distance_safe = CheckSafeDistance(v_front, v_rear,
                                     dist, a_o_, a_e_);
     if(!distance_safe) return distance_safe;
   }

@@ -47,7 +47,7 @@ param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
-param_server["World"]["FracLateralOffset"] = 0.8
+param_server["World"]["LateralDifferenceThreshold"] = 0.8
 
 SetVerboseLevel(0)
 

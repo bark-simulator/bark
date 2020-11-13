@@ -173,16 +173,16 @@ TEST(evaluator, collision) {
 
 TEST(evaluator, static_safe_dist) {
   auto params = std::make_shared<SetterParams>();
-  params->SetReal("EvaluatorStaticSafeDist::LateralSafeDist", 1.4f);
-  params->SetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist", 1.4f);
+  params->SetReal("EvaluatorStaticSafeDist::LateralSafeDist", 10.9f);
+  params->SetReal("EvaluatorStaticSafeDist::LongitudinalSafeDist", 0.5f);
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
 
   Polygon polygon(
       Pose(0.0, 0.0, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, 1), Point2d(1, 1),
-                           Point2d(1, 0), Point2d(0, 0)});
+      std::vector<Point2d>{Point2d(-0.5, -0.5), Point2d(-0.5, 0.5), Point2d(0.5, 0.5),
+                           Point2d(0.5, -0.5), Point2d(-0.5, -0.5)});
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
@@ -190,7 +190,7 @@ TEST(evaluator, static_safe_dist) {
                             polygon, params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state2 << 0.0, 1.41, 0.0, 0.0, 5.0;
+  init_state2 << 0.0, 1.51, 0.0, 0.0, 5.0;
   AgentPtr agent2(new Agent(init_state2, beh_model, dyn_model, exec_model,
                             polygon, params));
 
@@ -206,7 +206,7 @@ TEST(evaluator, static_safe_dist) {
 
   // safe dist gives polygon widths of 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state3 << 0.0, 1.4, 0.0, 0.0, 5.0;
+  init_state3 << 0.0, 1.5, 0.0, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
                             polygon, params));
   world->AddAgent(agent3);
