@@ -29,6 +29,7 @@ namespace world {
 
 using bark::commons::transformation::FrenetPosition;
 using bark::commons::transformation::FrenetState;
+using bark::commons::transformation::FrenetStateDifference;
 using models::behavior::StateActionPair;
 using world::evaluation::EvaluatorPtr;
 using world::map::LaneCorridorPtr;
@@ -53,7 +54,7 @@ using AgentRTree =
     boost::geometry::index::rtree<rtree_agent_value,
                                   boost::geometry::index::linear<16, 4> >;
 
-typedef std::pair<AgentPtr, FrenetState> AgentFrenetPair;
+typedef std::pair<AgentPtr, FrenetStateDifference> AgentFrenetPair;
 
 struct FrontRearAgents {
   AgentFrenetPair front;
@@ -130,7 +131,7 @@ class World : public commons::BaseType {
 
   bool GetRemoveAgents() { return remove_agents_; }
 
-  double GetFracLateralOffset() const { return frac_lateral_offset_; }
+  double GetLateralDifferenceThreshold() const { return lateral_difference_threshold_; }
 
   void SetRemoveAgents(const bool& remove_agents) {
     remove_agents_ = remove_agents;
@@ -181,7 +182,7 @@ class World : public commons::BaseType {
   float world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
-  double frac_lateral_offset_;
+  double lateral_difference_threshold_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

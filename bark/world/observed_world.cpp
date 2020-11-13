@@ -23,8 +23,8 @@ using bark::world::AgentMap;
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
   if (!lane_corridor) {
-    return FrontRearAgents{AgentFrenetPair(nullptr, FrenetState()),
-                           AgentFrenetPair(nullptr, FrenetState())};
+    return FrontRearAgents{AgentFrenetPair(nullptr, FrenetStateDifference()),
+                           AgentFrenetPair(nullptr, FrenetStateDifference())};
   }
 
   AgentId id = GetEgoAgentId();
