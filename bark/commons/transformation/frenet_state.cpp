@@ -7,21 +7,19 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/commons/transformation/frenet_state.hpp"
+#include "bark/geometry/angle.hpp"
 
 namespace bark {
 namespace commons {
 namespace transformation {
 
-using bark::geometry::Line;
-using bark::geometry::Point2d;
-using bark::geometry::Polygon;
+using namespace bark::geometry;
 using bark::geometry::operator-;
 using bark::geometry::operator*;
 using bark::geometry::operator+;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
-using bark::geometry::B_PI_2;
-using bark::geometry::B_2PI;
+
 
 namespace bg = boost::geometry;
 namespace mg = bark::geometry;
@@ -92,15 +90,15 @@ auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& po
   BARK_EXPECT_TRUE(std::abs(polygon.right_dist_ - polygon.left_dist_) < 0.01);
   const double polygon_side_extend = polygon.left_dist_;
   auto norm_tangent_angle = bark::geometry::Norm0ToPI(tangent_angle);
-  auto positive_angle = tangent_angle < B_PI_2 ? std::abs(norm_tangent_angle) : std::abs(norm_tangent_angle - B_PI_2);
+  auto positive_angle = std::abs(tangent_angle) < B_PI_2 ? std::abs(norm_tangent_angle) : std::abs(std::abs(norm_tangent_angle) - B_PI);
   double front_dist = cos(positive_angle)*polygon.front_dist_ + sin(positive_angle)*polygon_side_extend;
   double rear_dist = cos(positive_angle)*polygon.rear_dist_ + sin(positive_angle)*polygon_side_extend;
   double left_dist = sin(positive_angle)*polygon.front_dist_ + cos(positive_angle)*polygon_side_extend;
   double right_dist = sin(positive_angle)*polygon.rear_dist_ + cos(positive_angle)*polygon_side_extend;
 
-  if(norm_tangent_angle > B_PI_2) {
+  if(tangent_angle > B_PI_2) {
     std::swap(front_dist, rear_dist);
-  } else if(norm_tangent_angle < -B_PI_2) {
+  } else if(tangent_angle < -B_PI_2) {
     std::swap(front_dist, rear_dist);
     std::swap(left_dist, right_dist);
   } else {
@@ -125,7 +123,7 @@ FrenetState FrenetStateDiffShapeExtension(const FrenetState& frenet_state1, cons
     BARK_EXPECT_TRUE(frenet_state2.Valid());
 
     auto shape_extend_at_tangent1 = ShapeExtensionAtTangentAngle(frenet_state1.angle, polygon1);
-    auto shape_extend_at_tangent2 = ShapeExtensionAtTangentAngle(frenet_state1.angle, polygon1);
+    auto shape_extend_at_tangent2 = ShapeExtensionAtTangentAngle(frenet_state2.angle, polygon2);
 
     FrenetState difference;
     if(frenet_state1.lon < frenet_state2.lon) {
@@ -133,8 +131,8 @@ FrenetState FrenetStateDiffShapeExtension(const FrenetState& frenet_state1, cons
                          (frenet_state1.lon + shape_extend_at_tangent1.front_dist);
       difference.lon = diff_lon > 0 ? diff_lon : 0;
     } else {
-      double diff_lon = frenet_state1.lon - shape_extend_at_tangent1.rear_dist -
-                         (frenet_state2.lon + shape_extend_at_tangent2.front_dist);
+      double diff_lon = frenet_state2.lon + shape_extend_at_tangent2.front_dist -
+                        (frenet_state1.lon - shape_extend_at_tangent1.rear_dist);
       difference.lon = diff_lon < 0 ? diff_lon : 0;
     }
 
@@ -154,7 +152,7 @@ FrenetState FrenetStateDiffShapeExtension(const FrenetState& frenet_state1, cons
     
     difference.vlat = frenet_state2.vlat - frenet_state1.vlat;
     difference.vlon = frenet_state2.vlon - frenet_state1.vlon;
-    difference.angle = frenet_state2.angle - frenet_state1.angle;
+    difference.angle = Norm0ToPI(Norm0To2PI(frenet_state2.angle - frenet_state1.angle));
     return difference;
 }
 
