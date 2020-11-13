@@ -176,15 +176,15 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   double leading_acc = 0.0f;
   IDMRelativeValues rel_values;
 
-  std::pair<AgentPtr, FrenetPosition> leading_vehicle =
+  auto leading_vehicle =
       observed_world.GetAgentInFront(lane_corr);
 
   // vehicles
   if (leading_vehicle.first) {
-    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first);
+    leading_distance = leading_vehicle.second.lon;
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
-    leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);
+    leading_velocity = leading_vehicle.second.to.vlon;
     interaction_term_active = true;
     // Get acceleration action other
     if (param_coolness_factor_ > 0.0f) {
