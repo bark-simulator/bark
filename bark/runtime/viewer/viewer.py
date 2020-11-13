@@ -83,25 +83,28 @@ class BaseViewer(Viewer):
         self.agent_color_map = {}
         self.max_agents_color_map = 0
 
-        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
-        self.follow_agent_id = kwargs.pop("follow_agent_id", None)
+        self.use_world_bounds = kwargs.pop("use_world_bounds", params["Visualization"]["Camera"]["UseWorldBounds", "", True])
+        self.follow_agent_id = kwargs.pop("follow_agent_id", params["Visualization"]["Camera"]["FollowAgentIds", "", None])
 
-        self.center = kwargs.pop("center", np.array([0, 0]))
+        self.center = kwargs.pop("center", params["Visualization"]["Camera"]["Center", "", np.array([0, 0])])
 
-        self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
-        self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
+        self.world_x_range = kwargs.pop("x_range", params["Visualization"]["Camera"]["XRange", "", np.array([-40, 40])])
+        self.world_y_range = kwargs.pop("y_range", params["Visualization"]["Camera"]["YRange", "", np.array([-40, 40])])
 
-        self.enforce_x_length = kwargs.pop("enforce_x_length", True)
-        self.enforce_y_length = kwargs.pop("enforce_y_length", False)
+        self.enforce_x_length = kwargs.pop("enforce_x_length", params["Visualization"]["Camera"]["EnforceXLength", "", True])
+        self.enforce_y_length = kwargs.pop("enforce_y_length", params["Visualization"]["Camera"]["EnforceYLength", "", False])
+
+        default_x_length = np.sum(np.absolute(self.world_x_range))
+        default_x_length = np.sum(np.absolute(self.world_y_range))
         self.x_length = kwargs.pop(
-            "x_length", np.sum(np.absolute(self.world_x_range)))
+            "x_length", params["Visualization"]["Camera"]["XLength", "", default_x_length])
         self.y_length = kwargs.pop(
-            "y_length", np.sum(np.absolute(self.world_y_range)))
+            "y_length", params["Visualization"]["Camera"]["YLength", "", default_x_length])
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
 
-    def reset():
+    def reset(self):
         pass
 
     def get_aspect_ratio(self):
