@@ -27,6 +27,7 @@ using Eigen::Matrix;
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
+  m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
 }
 
 void python_geometry(py::module m) {
