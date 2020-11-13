@@ -8,6 +8,7 @@ cc_library(
         "motion_primitives.hpp",
         "continuous_actions.hpp",
         "macro_actions.hpp",
+        "random_macro_actions.hpp"
     ] + glob(["primitives/*.hpp"]),
     deps = [
         "//bark/commons:commons",

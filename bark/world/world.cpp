@@ -30,7 +30,7 @@ World::World(const commons::ParamsPtr& params)
           false)),
       lateral_difference_threshold_(params->GetReal("World::LateralDifferenceThreshold",
           "Fraction of lateral offset for FrontRearAgent Calculation, should be larger than 0.",
-          5.0)) {
+          100.0)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
