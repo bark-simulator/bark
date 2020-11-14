@@ -50,10 +50,8 @@ World::World(const std::shared_ptr<World>& world)
 }
 
 void World::Step(const float& delta_time) {
-  const float inc_world_time = world_time_ + delta_time;
   PlanAgents(delta_time);
-  Execute(inc_world_time);
-  world_time_ = inc_world_time;
+  Execute(delta_time);
 }
 
 void World::PlanAgents(const float& delta_time) {
@@ -70,7 +68,8 @@ void World::PlanAgents(const float& delta_time) {
   }
 }
 
-void World::Execute(const float& world_time) {
+void World::Execute(const float& delta_time) {
+  const float inc_world_time = world_time_ + delta_time;
   using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_) &&
@@ -80,10 +79,12 @@ void World::Execute(const float& world_time) {
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
-      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - world_time) < 0.01);
+      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) < 0.01);
     }
   }
   RemoveInvalidAgents();
+
+  world_time_ = inc_world_time;
 }
 
 WorldPtr World::GetWorldAtTime(const float& world_time) const {

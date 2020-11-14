@@ -79,7 +79,7 @@ class World : public commons::BaseType {
   /**
    * @brief  Updates the agent states
    */
-  void Execute(const float& world_time);
+  void Execute(const float& delta_time);
 
   /**
    * @brief Get world for a specific time
