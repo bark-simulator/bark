@@ -216,15 +216,25 @@ class BenchmarkRunner:
                 break
             terminal, terminal_why = self._is_terminal(evaluation_dict)
             if not terminal:
+                try:
+                    world.PlanAgents(step_time)
+                except Exception as e:
+                    self.logger.error("For config-idx {}, Exception thrown in world.PlanAgents: {}".format(
+                        benchmark_config.config_idx, e))
+                    terminal_why = "exception_raised"
+                    self._append_exception(benchmark_config, e)
+                    break
+
                 if viewer:
                     viewer.drawWorld(world, scenario._eval_agent_ids, scenario_idx=benchmark_config.scenario_idx)
                     viewer.show(block=False)
                     time.sleep(step_time)
                     viewer.clear()
+
                 try:
-                    world.Step(step_time)
+                    world.Execute(step_time)
                 except Exception as e:
-                    self.logger.error("For config-idx {}, Exception thrown in world.Step: {}".format(
+                    self.logger.error("For config-idx {}, Exception thrown in world.Execute: {}".format(
                         benchmark_config.config_idx, e))
                     terminal_why = "exception_raised"
                     self._append_exception(benchmark_config, e)
