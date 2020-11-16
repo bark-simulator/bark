@@ -3,6 +3,7 @@
 </p>
 
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
+![Ubtuntu-ManyLinux Build](https://github.com/bark-simulator/bark/workflows/ManyLinux/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 ![NIGHTLY RSS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RSS/badge.svg)
 ![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
@@ -26,25 +27,30 @@ The BARK ecosystem is composed of multiple components that all share the common 
 * [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
 
 ## Quick Start
+### Pip-package
+Bark is available as PIP-Package for Ubuntu and MacOS for Python>=3.7. You can install the latest version with 
+`pip install bark-simulator`. The Pip package supports full benchmarking functionality of existing behavior models and development of your models within python. The pip-package not yet includes MCTS and Carla interfaces. 
 
-Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
-Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/master/docs/source/installation.md).
-Once you activated the virtual environment (`source dev_into.sh`), you can explore some examples of BARK.
+After installing the package, you can have a look at the examples to check how to use BARK. 
 
-Highway: `bazel run //examples:highway`:
+Highway: ' `import bark.examples.highway`:
 <p align="center">
 <img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_highway.gif" alt="BARK" />
 </p>
 
-Merging: `bazel run //examples:merging`:
+Merging: `import bark.examples.merging`:
 <p align="center">
 <img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_merging.gif" alt="BARK" />
 </p>
 
-Intersection: `bazel run //examples:intersection`:
+Intersection: `import bark.examples.intersection`:
 <p align="center">
 <img src="https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_intersection.gif" alt="BARK" />
 </p>
+
+### Development setup
+If you want to write own behavior models in C++ or contribute to the development of Bark. Use `git clone https://github.com/bark-simulator/bark.git` or download the repository from this page.
+Then follow the instructions at [How to Install BARK](https://github.com/bark-simulator/bark/blob/master/docs/source/installation.md).
 
 To get step-by-step instructions on how to use BARK, you can run our IPython Notebook tutorials using `bazel run //docs/tutorials:run`.
 For a more detailed understanding of how BARK works, its concept and use cases have a look at our [documentation](https://bark-simulator.readthedocs.io/en/latest/about.html).
