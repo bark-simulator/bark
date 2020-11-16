@@ -31,11 +31,23 @@ Polygon bark::geometry::standard_shapes::CarRectangle() {
                            Point2d(3, -1), Point2d(-1, -1)});
 }
 
-Polygon bark::geometry::standard_shapes::GenerateGoalRectangle(float length, float width) {
-  return Polygon(
-      Pose(width/2, length/2, 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(0, length), Point2d(width, length),
-                           Point2d(width, 0), Point2d(0, 0)});
+Polygon bark::geometry::standard_shapes::GenerateCarRectangle(
+    float wheelbase, float collision_radius) {
+  return Polygon(Pose(0, 0, 0),
+                 std::vector<Point2d>{
+                     Point2d(-collision_radius, -collision_radius),
+                     Point2d(-collision_radius, collision_radius),
+                     Point2d(wheelbase + collision_radius, collision_radius),
+                     Point2d(wheelbase + collision_radius, -collision_radius),
+                     Point2d(-collision_radius, -collision_radius)});
+}
+
+Polygon bark::geometry::standard_shapes::GenerateGoalRectangle(float length,
+                                                               float width) {
+  return Polygon(Pose(width / 2, length / 2, 0),
+                 std::vector<Point2d>{Point2d(0, 0), Point2d(0, length),
+                                      Point2d(width, length), Point2d(width, 0),
+                                      Point2d(0, 0)});
 }
 
 }  // namespace geometry

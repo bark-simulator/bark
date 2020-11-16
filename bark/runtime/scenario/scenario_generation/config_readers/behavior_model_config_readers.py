@@ -48,6 +48,7 @@ class InteractionDataBehaviors(ConfigReaderBehaviorModels):
 
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     tracks = kwargs["tracks"]
+    xy_offset = kwargs["xy_offset"]
     start_time = kwargs["start_time"]
     end_time = kwargs["end_time"]
 
@@ -57,7 +58,7 @@ class InteractionDataBehaviors(ConfigReaderBehaviorModels):
     for idx, _ in enumerate(agent_states):
       track = tracks[idx]
       params = ParameterServer()
-      behavior = BehaviorFromTrack(track, params, start_time, end_time)
+      behavior = BehaviorFromTrack(track, params, xy_offset, start_time, end_time)
       self.param_servers.append(params)
       behavior_models.append(behavior)
       behavior_model_types.append("BehaviorStaticTrajectory")

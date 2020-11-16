@@ -17,7 +17,7 @@ from bark.core.geometry import Point2d, Polygon2d
 from bark.core.geometry import Point2d
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.world.opendrive import OpenDriveMap, MakeXodrMapOneRoadTwoLanes, \
-    XodrLaneType
+    XodrLaneType, MakeXodrMapCurved, XodrDrivingDirection
 from bark.core.world.map import MapInterface
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
@@ -48,7 +48,31 @@ class EnvironmentTests(unittest.TestCase):
         viewer.drawWorld(world)
 
         # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
-        time.sleep(2)
+        time.sleep(1)
+
+    
+    def test_curved_road(self):
+        params = ParameterServer()
+        world = World(params)
+
+        xodr_map = MakeXodrMapCurved(50, 0.1)
+
+        map_interface = MapInterface()
+        map_interface.SetOpenDriveMap(xodr_map)
+        world.SetMap(map_interface)
+
+        roads = [100]
+        driving_direction = XodrDrivingDirection.forward
+        map_interface.GenerateRoadCorridor(roads, driving_direction)
+        road_corr = map_interface.GetRoadCorridor(roads, driving_direction)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.drawRoadCorridor(road_corr)
+        #viewer.show(block=True)
+
+        # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
+        time.sleep(1)
 
     def test_between_lanes(self):
         xodr_parser = XodrParser(os.path.join(os.path.dirname(

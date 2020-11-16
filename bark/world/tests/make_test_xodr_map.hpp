@@ -23,6 +23,8 @@ OpenDriveMapPtr MakeXodrMapTwoRoadsOneLane();
 
 OpenDriveMapPtr MakeXodrMapEndingLaneInParallel();
 
+OpenDriveMapPtr MakeXodrMapCurved(const double length, const double curvature);
+
 }  // namespace tests
 }  // namespace world
 }  // namespace bark

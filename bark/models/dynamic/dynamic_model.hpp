@@ -33,10 +33,10 @@ typedef enum StateDefinition : int {
   INP_DELTA = 8  // steerint-rate input [m/s]
 } StateDefinition;
 
-using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
-using Input = Eigen::Matrix<float, Eigen::Dynamic, 1>;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
+using Input = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-using Trajectory = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
+using Trajectory = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>;
 
 inline bool IsValid(const State& state) {
   return ((state - state).array() == (state - state).array()).all() &&

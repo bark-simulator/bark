@@ -15,7 +15,6 @@
 #include <utility>
 #include <vector>
 #include "bark/geometry/geometry.hpp"
-#include "bark/world/map/map_interface.hpp"
 #include "bark/world/map/road_corridor.hpp"
 #include "bark/world/map/roadgraph.hpp"
 

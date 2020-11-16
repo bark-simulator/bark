@@ -49,7 +49,7 @@ dynamic::Trajectory execution::ExecutionModelMpc::Execute(
       static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   desired_states.setZero();
   desired_states.col(StateDefinition::TIME_POSITION) =
-      Eigen::ArrayXf::LinSpaced(
+      Eigen::ArrayXd::LinSpaced(
           optimization_settings_.num_optimization_steps, current_world_time,
           current_world_time +
               (optimization_settings_.num_optimization_steps - 1) *
@@ -60,7 +60,7 @@ dynamic::Trajectory execution::ExecutionModelMpc::Execute(
       static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   weights_desired_states.setZero();
   weights_desired_states.col(StateDefinition::TIME_POSITION) =
-      Eigen::ArrayXf::LinSpaced(
+      Eigen::ArrayXd::LinSpaced(
           optimization_settings_.num_optimization_steps, current_world_time,
           current_world_time +
               (optimization_settings_.num_optimization_steps - 1) *

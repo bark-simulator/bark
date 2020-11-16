@@ -38,6 +38,7 @@ class DummyRoadCorridor : public bark::world::map::RoadCorridor {
     lane_corridor.SetLeftBoundary(driving_corridor_left_boundary);
     lane_corridor.SetRightBoundary(driving_corridor_right_boundary);
     lane_corridor.SetCenterLine(driving_corridor_center);
+    lane_corridor.SetFineCenterLine(driving_corridor_center);
     lane_corridor.SetMergedPolygon(corridor_polygon);
     corridor_ptr_ = std::make_shared<LaneCorridor>(lane_corridor);
   }

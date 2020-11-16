@@ -58,7 +58,11 @@ cc_test(
     srcs = [
         "world_test.cc",
     ],
-    copts = ["-Iexternal/gtest/include"],
+    copts = ["-Iexternal/gtest/include"] + select({
+        "//bark/world/evaluation/rss:_rss": ["-D RSS"],
+        "//conditions:default": [],
+    }),
+    data = ["//bark/runtime/tests:xodr_data"],
     deps = [
         "//bark/geometry",
         "//bark/world:world",
@@ -71,7 +75,10 @@ cc_test(
         ":make_test_world",
         ":dummy_road_corridor",
         "@gtest//:gtest_main",
-    ],
+        ] + select({
+        "//bark/world/evaluation/rss:_rss": ["//bark/world/evaluation/rss:evaluator_rss"],
+        "//conditions:default": [],
+    }),
 )
 
 cc_test(

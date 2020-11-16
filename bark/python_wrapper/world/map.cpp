@@ -88,6 +88,7 @@ void python_map(py::module m) {
       .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
       .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)
       .def("GetLeftRightLaneCorridor", &RoadCorridor::GetLeftRightLaneCorridor)
+      .def("ComputeRoadPolygon", &RoadCorridor::ComputeRoadPolygon)
       .def_property_readonly("lane_corridors",
                              &RoadCorridor::GetUniqueLaneCorridors)
       .def(py::pickle(
@@ -112,6 +113,7 @@ void python_map(py::module m) {
       .def(py::init<>())
       .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
       .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
+      .def_property_readonly("fine_center_line", &LaneCorridor::GetFineCenterLine)
       .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
       .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
       .def_property_readonly("lanes", &LaneCorridor::GetLanes)

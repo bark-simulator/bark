@@ -77,7 +77,7 @@ TEST(rss_interface, test_rss_check) {
   std::shared_ptr<PlanView> p(new PlanView());
 
   //! add line
-  p->AddLine(Point2d(0, -125), M_PI_2, 250);
+  p->AddLine(Point2d(0, -125), M_PI_2, 250, 250);
 
   //! lane sections
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0f));
@@ -163,10 +163,8 @@ TEST(rss_interface, test_rss_check) {
 
   world->Step(0.2f);
 
-  RssInterface rss(
-      "bark/runtime/tests/data/city_highway_straight.xodr",
-      std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
-      std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
+  RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", 3.5,
+                   -8., -4., -3., 0.2, -0.8, 0.1, 1., 1, 50);
 
   ::ad::rss::world::WorldModel rss_world;
   WorldPtr cloned_world(world->Clone());
@@ -210,11 +208,11 @@ TEST(rss_interface, test_rss_planning_route) {
   world->AddAgent(agent);
 
   RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr",
-                   std::vector<float>{3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1.},
-                   std::unordered_map<AgentId, std::vector<float>>(), 1, 50);
+                   3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1., 1, 50);
 
   Point2d agent_goal;
-  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
+  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,
+                            agent_goal);
   State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();

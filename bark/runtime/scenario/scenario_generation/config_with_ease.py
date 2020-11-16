@@ -159,12 +159,9 @@ class LaneCorridorConfig:
   def shape(self, crad=1, wb=3):
     """Returns shape
     """
-    return Polygon2d([0, 0, 0],
-                     [Point2d(-crad, -crad),
-                      Point2d(-crad, crad),
-                      Point2d(wb + crad, crad),
-                      Point2d(wb + crad, -crad),
-                      Point2d(-crad, -crad)])
+    radius = 1 # 2*radius := width
+    wheelbase = 3 # 2*radius + wheelbase := length
+    return GenerateCarRectangle(wheelbase, radius)
 
   def goal(self, world):
     """Returns goal def.

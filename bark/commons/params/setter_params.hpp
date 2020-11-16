@@ -24,7 +24,6 @@ class SetterParams : public Params {
         params_int_(),
         params_listlist_float_(),
         params_list_float_(),
-        params_map_agentidlist_float_(),
         log_if_default_(log_if_default) {}
   SetterParams(bool log_if_default, const CondensedParamList& param_list);
 
@@ -65,12 +64,6 @@ class SetterParams : public Params {
     return get_parameter(params_list_float_, param_name, default_value);
   }
 
-  virtual std::unordered_map<unsigned int,std::vector<float>> GetMapAgentIdListFloat(
-      const std::string& param_name, const std::string& description,
-      const std::unordered_map<unsigned int,std::vector<float>>& default_value) {
-    return get_parameter(params_map_agentidlist_float_, param_name, default_value);
-  }
-
   virtual void SetBool(const std::string& param_name, const bool& value) {
     set_parameter(params_bool_, param_name, value);
   }
@@ -91,11 +84,6 @@ class SetterParams : public Params {
   virtual void SetListFloat(const std::string& param_name,
                             const std::vector<float>& value) {
     set_parameter(params_list_float_, param_name, value);
-  }
-
-  virtual void SetMapAgentIdListFloat(const std::string& param_name,
-                            const std::unordered_map<unsigned int,std::vector<float>>& value) {
-    set_parameter(params_map_agentidlist_float_, param_name, value);
   }
 
   virtual void SetDistribution(const std::string& param_name,
@@ -203,7 +191,6 @@ class SetterParams : public Params {
       params_listlist_float_;
   std::unordered_map<std::string, std::vector<float>> params_list_float_;
   std::unordered_map<std::string, std::string> params_string_;
-  std::unordered_map<std::string, std::unordered_map<unsigned int,std::vector<float>>>params_map_agentidlist_float_;
 
   bool log_if_default_;
 };
@@ -222,9 +209,6 @@ struct ParamVisitor : public boost::static_visitor<> {
   }
   void operator()(const std::string& s) const {
     params_->SetString(param_name_, s);
-  }
-  void operator()(const MapAgentIdListFloat& m) const {
-    params_->SetMapAgentIdListFloat(param_name_, m);
   }
 
  private:
@@ -265,11 +249,6 @@ SetterParams::get_param_map() {
   return params_string_;
 }
 
-template <>
-inline std::unordered_map<std::string, std::unordered_map<unsigned int,std::vector<float>>>&
-SetterParams::get_param_map() {
-  return params_map_agentidlist_float_;
-}
 
 }  // namespace commons
 }  // namespace bark

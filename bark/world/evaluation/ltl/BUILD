@@ -29,5 +29,9 @@ cc_library(
 cc_library(
     name = "include",
     hdrs = glob(["*.hpp"]),
+    deps = [
+        "//bark/world/evaluation/ltl/label_functions:include",
+        "//bark/world/evaluation/ltl/label:include"
+    ],
     visibility = ["//visibility:public"],
 )

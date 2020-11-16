@@ -27,11 +27,11 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
   Polygon_t(const Pose& center,
-            const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
+            const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
                 line);  //! create a polygon from a line enclosing the polygon
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
   virtual float CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
@@ -45,6 +45,14 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     boost::geometry::union_(this->obj_, poly.obj_, merged_polygon);
     if (merged_polygon.size() > 0) {
       Shape<bg::model::polygon<T>, T>::obj_ = merged_polygon[0];
+    }
+  }
+
+  void SetPrecision(int precision) {
+    const double scale = pow(10, precision);
+    for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end(); ++it) {
+      boost::geometry::set<0>(*it, round(boost::geometry::get<0>(*it) * scale) / scale);
+      boost::geometry::set<1>(*it, round(boost::geometry::get<1>(*it) * scale) / scale);
     }
   }
 
@@ -76,7 +84,7 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const std::vector<T> points)
 template <typename T>
 inline Polygon_t<T>::Polygon_t(
     const Pose& center,
-    const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points)
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points)
     : Shape<bg::model::polygon<T>, T>(center, points, 0),
       rear_dist_(0.0f),
       front_dist_(0.0f),
@@ -128,10 +136,10 @@ using PolygonPoint = Point2d;  // for internal stores of collision checkers
 using Polygon = Polygon_t<PolygonPoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     const {
   std::vector<Point2d> points = obj_.outer();
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
   for (std::vector<Point2d>::size_type i = 0; i < points.size(); ++i) {
     mat.row(i) << bg::get<0>(points[i]), bg::get<1>(points[i]);
   }

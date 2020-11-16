@@ -21,10 +21,11 @@ from com_github_interaction_dataset_interaction_dataset.python.utils import data
 
 
 class DatasetDecomposer:
-    def __init__(self, map_filename, track_filename, starting_offset_ms = 0):
+    def __init__(self, map_filename, track_filename, xy_offset, starting_offset_ms = 0):
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._starting_offset_ms = starting_offset_ms
+        self._xy_offset = xy_offset
         self._track_dict = dataset_reader.read_tracks(track_filename)
         self._map_interface = self.__setup_map_interface__()
         self._agents_track_infos = self.__setup_agents_track_infos__()
@@ -39,7 +40,7 @@ class DatasetDecomposer:
         return map_interface
 
     def __find_first_ts_on_map__(self, id_ego):
-        traj = TrajectoryFromTrack(self._track_dict[id_ego])
+        traj = TrajectoryFromTrack(self._track_dict[id_ego], xy_offset=self._xy_offset)
         for state in traj:
             point_agent = Point2d(state[1], state[2])
             lane_list = self._map_interface.find_nearest_lanes(point_agent, 3)
@@ -100,7 +101,7 @@ class DatasetDecomposer:
         for id_ego in self._agents_track_infos.keys():
             ego_track_info = self.__get_agent_track_info__(id_ego)
             new_scenario = ScenarioTrackInfo(
-                map_filename=self._map_filename, track_filename=self._track_filename, ego_track_info=ego_track_info)
+                map_filename=self._map_filename, track_filename=self._track_filename, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
 
             ids_others = self.__find_all_ids__(id_ego)
             for id_o in ids_others:
