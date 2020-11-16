@@ -156,14 +156,15 @@ class LaneCorridorConfig:
     return SingleTrackModel(self._params)
 
   @property
-  def shape(self):
+  def shape(self, crad=1, wb=3):
     """Returns shape
     """
-    return Polygon2d([0, 0, 0], [Point2d(-2, -1),
-                      Point2d(2, -1),
-                      Point2d(2, 1),
-                      Point2d(-2, 1),
-                      Point2d(-2, -1)])
+    return Polygon2d([0, 0, 0],
+                     [Point2d(-crad, -crad),
+                      Point2d(-crad, crad),
+                      Point2d(wb + crad, crad),
+                      Point2d(wb + crad, -crad),
+                      Point2d(-crad, -crad)])
 
   def goal(self, world):
     """Returns goal def.
@@ -299,4 +300,5 @@ class ConfigWithEase(ScenarioGeneration):
       scenario._eval_agent_ids.extend(controlled_agent_ids)
       scenario._agent_list.extend(lc_agents)
       lc_config.reset()
+      world.UpdateAgentRTree()
     return scenario
