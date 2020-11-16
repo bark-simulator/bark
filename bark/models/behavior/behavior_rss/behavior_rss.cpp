@@ -45,7 +45,6 @@ Trajectory BehaviorRSSConformant::Plan(
   const float length_until_end =
       behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
           observed_world.CurrentEgoPosition());
-          std::cout << "length until end: " << length_until_end << std::endl;
   if (length_until_end <= minimum_safety_corridor_length_) {
     // Do not switch the lane corridor any more but only apply braking in the
     // current lane corridor
