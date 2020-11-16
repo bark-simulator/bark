@@ -280,10 +280,14 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
     return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);
   }
 
+  // Catch case where longitiduinal distance is zero (still lateral distance can be such that
+  // no collision is there)
+  auto tmp_net_distance = net_distance == 0.0 ? std::numeric_limits<double>::min() : net_distance;
+
   const double cah_acc =
-      CalcCAHAcc(net_distance, vel_ego, vel_other, acc_ego, acc_other);
+      CalcCAHAcc(tmp_net_distance, vel_ego, vel_other, acc_ego, acc_other);
   if (std::isnan(cah_acc)) {
-    LOG(FATAL) << "cah_acc isnan for net_dist " << net_distance
+    LOG(FATAL) << "cah_acc isnan for net_dist " << tmp_net_distance
                << ". ve = " << vel_ego << ", vo=" << vel_other
                << ", ao=" << acc_other;
   }
