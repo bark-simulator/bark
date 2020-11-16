@@ -25,46 +25,44 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
+
 class EvaluatorRSS : public BaseEvaluator {
  public:
-  EvaluatorRSS() : agent_id_(std::numeric_limits<AgentId>::max()) {}
+  EvaluatorRSS() {}
 #ifdef RSS
-  explicit EvaluatorRSS(
-      const AgentId& agent_id, const std::string& opendrive_file_name,
-      const std::vector<float>& default_vehicle_dynamics,
-      const std::unordered_map<AgentId, std::vector<float>>&
-          agents_vehicle_dynamics =
-              std::unordered_map<AgentId, std::vector<float>>(),
-      const float& checking_relevent_range = 1.,
-      const float& route_predict_range = 50.)
-      : agent_id_(agent_id),
-        rss_(opendrive_file_name, default_vehicle_dynamics,
-             agents_vehicle_dynamics, checking_relevent_range,
-             route_predict_range) {}
-
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(params->GetString("EvalutaorRss::MapFilename",
-                               "Map path for loading into Rss", ""),
-             params->GetListFloat(
-                 "EvalutaorRss::DefaultVehicleDynamics",
-                 "The default values of the vehicle dynamics using in Rss",
-                 std::vector<float>()),
-             params->GetMapAgentIdListFloat(
-                 "EvalutaorRss::SpecificAgentVehicleDynamics",
-                 "The values of the vehicle dynamics of a specific value",
-                 std::unordered_map<AgentId, std::vector<float>>()),
-             params->GetReal("EvalutaorRss::CheckingRelevantRange",
-                             "Controlling the searching distance between the "
-                             "evaluating agent "
-                             "and other agents to perform RSS check",
-                             1),
-             params->GetReal("EvalutaorRss::RoutePredictRange",
-                             "Describle the distance for returning all routes "
-                             "having less than the distance, will be used when "
-                             "a route to the goal cannnot be found",
-                             50)) {}
+        rss_(
+            params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
+            params->GetReal("EvaluatorRss::AccLonMax", "maximum acceleration",
+                            1.7),
+            params->GetReal("EvaluatorRss::BrakeLonMax", "maximum deceleration",
+                            -1.7),
+            params->GetReal("EvaluatorRss::BrakeLonMin",
+                            "minimum braking deceleration", -1.69),
+            params->GetReal("EvaluatorRss::BrakeLonMinCorrect",
+                            "minimum deceleration with oncoming vehicle",
+                            -1.67),
+            params->GetReal("EvaluatorRss::AccLatBrakeMax",
+                            "maximum lateral acceleration", 0.2),
+            params->GetReal("EvaluatorRss::AccLatBrakeMin",
+                            "minimum lateral braking", -0.8),
+            params->GetReal("EvaluatorRss::FluctMargin", "fluctuation margin",
+                            0.1),
+            params->GetReal("EvaluatorRss::TimeResponse", "response time", 1.0),
+            params->GetReal("EvaluatorRss::ScalingRelevantRange",
+                            "Controlling the searching distance between two "
+                            "agents to perform RSS check",
+                            1),
+            params->GetReal("EvaluatorRss::RoutePredictRange",
+                            "Describle the distance for returning all routes "
+                            "having less than the distance, will be used when "
+                            "a route to the goal cannnot be found",
+                            50)) {}
+
+  explicit EvaluatorRSS(const commons::ParamsPtr& params)
+      : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
 
   // Returns a boolean indicating the safety response of the specified agent.
   // True if for each nearby agents, at least one of the two directional RSS
@@ -82,6 +80,8 @@ class EvaluatorRSS : public BaseEvaluator {
   };
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
+    auto result = rss_.GetSafetyReponse(observed_world);
+    rss_proper_response_ = rss_.GetRSSResponse();
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -125,10 +125,17 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
+  ::ad::rss::state::ProperResponse GetRSSProperResponse() const {
+    return rss_proper_response_;
+  }
+
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
+  // int32_t lon_{0}, lat_left_{0}, lat_right_{0};
+  std::vector<uint64_t> dangerous_objects_{};
+  ::ad::rss::state::ProperResponse rss_proper_response_;
 #endif
   AgentId agent_id_;
 };

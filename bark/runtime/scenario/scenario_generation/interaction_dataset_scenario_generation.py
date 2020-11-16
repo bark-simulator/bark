@@ -41,6 +41,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         self._track_ids = params_temp["TrackIds",
                                       "IDs of the vehicle tracks to import.",
                                       [1]]
+        self._xy_offset = params_temp["XYOffset",
+                                      "offset in x and y direction.", [0, 0]]
         self._start_time = params_temp["StartTs",
                                        "Timestamp when to start the scenario (ms)", 0]
         self._end_time = params_temp["EndTs",
@@ -70,7 +72,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         ego_track_info = AgentTrackInfo(filename=self._track_file_name, track_id=self._ego_track_id,
                                         start_offset=self._start_time, end_offset=self._end_time)
         scenario_track_info = ScenarioTrackInfo(
-            map_filename=self._map_file_name, track_filename=self._track_file_name, ego_track_info=ego_track_info)
+            map_filename=self._map_file_name, track_filename=self._track_file_name, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
         for track_id in self._track_ids:
             new_agent = AgentTrackInfo(filename=self._track_file_name, track_id=track_id,
                                        start_offset=self._start_time, end_offset=self._end_time)

@@ -7,13 +7,15 @@ from bark.runtime.scenario.interaction_dataset_processing.agent_track_info impor
 
 
 class ScenarioTrackInfo:
-    def __init__(self, map_filename, track_filename, ego_track_info, start_ts=None, end_ts=None, precision=-2):
+    def __init__(self, map_filename, track_filename, ego_track_info, xy_offset, start_ts=None, end_ts=None, precision=-2):
         self._map_filename = map_filename
         self._track_filename = track_filename
         self._ego_track_info = ego_track_info
+        self._xy_offset = xy_offset
 
         if start_ts is None:
-            self._start_ts = int(round(ego_track_info.GetStartOffset(), precision))
+            self._start_ts = int(
+                round(ego_track_info.GetStartOffset(), precision))
         else:
             self._start_ts = int(round(start_ts, precision))
 
@@ -25,7 +27,8 @@ class ScenarioTrackInfo:
         self._other_agents_track_infos = {}
 
     def __str__(self):
-        str_out = 'start_ts={} end_ts={} ego: {}'.format(self.GetStartTs(), self.GetEndTs(), self._ego_track_info)
+        str_out = 'start_ts={} end_ts={} ego: {}'.format(
+            self.GetStartTs(), self.GetEndTs(), self._ego_track_info)
         for other in self.GetOtherTrackInfos().values():
             str_out = str_out + ', other: {}'.format(other)
         return str_out
@@ -43,6 +46,9 @@ class ScenarioTrackInfo:
     def GetEgoTrackInfo(self):
         return self._ego_track_info
 
+    def GetXYOffset(self):
+        return self._xy_offset
+
     def GetStartTs(self):
         return self._start_ts
 
@@ -54,11 +60,12 @@ class ScenarioTrackInfo:
 
     def GetOffsetOfAgentMillisec(self, agent_id):
         if (agent_id == self._ego_track_info.GetTrackId()):
-          return 0.0
+            return 0.0
         else:
-          start_ts = self._other_agents_track_infos[agent_id].GetStartOffset()
-          timestamp_offset = float(start_ts - self.GetStartTs()) / 1000.0
-          return timestamp_offset
+            start_ts = self._other_agents_track_infos[agent_id].GetStartOffset(
+            )
+            timestamp_offset = float(start_ts - self.GetStartTs()) / 1000.0
+            return timestamp_offset
 
     def TimeSanityCheck(self):
         # for other in self.GetOtherTrackInfos().values():

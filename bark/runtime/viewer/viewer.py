@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
+from bark.core.models.behavior import *
 
 logger = logging.getLogger()
 
@@ -78,6 +79,11 @@ class BaseViewer(Viewer):
 
         self.draw_rss_safety_responses = params["Visualization"]["Evaluation"]["DrawRssSafetyResponses",
                                                                                "Flag to specify if visualizating rss safety responses.", False]
+
+        self._draw_ego_rss_safety_responses = params["Visualization"]["Evaluation"][
+          "DrawEgoRSSSafetyResponses",
+          "Flag to specify if visualizating rss safety responses.",
+          False]
 
         self.parameters = params
         self.agent_color_map = {}
@@ -319,6 +325,9 @@ class BaseViewer(Viewer):
             if self.draw_rss_safety_responses:
                 self.drawRssSafetyResponses(world, eval_agent_ids[0])
         
+        if self._draw_ego_rss_safety_responses:
+          self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
+        
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -363,34 +372,6 @@ class BaseViewer(Viewer):
                                alpha, facecolor, zorder=10)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
-
-    def drawRssSafetyResponses(self, world, ego_id):
-        from bark.core.world.evaluation import EvaluatorRSS
-        for evaluator in world.evaluators:
-            if isinstance(world.evaluators[evaluator], EvaluatorRSS):
-                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
-                    world)
-                break
-
-        ego_agent = world.agents[ego_id]
-        shape = ego_agent.shape
-        pose = generatePoseFromState(ego_agent.state)
-        transformed_polygon = shape.ScalingTransform(1.5, pose)
-        self.drawPolygon2d(
-            transformed_polygon,
-            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
-
-        # draw response for other agents
-        relevent_agents = [
-            agent for agent in world.agents.values() if agent.id in rss_responses]
-        for agent in relevent_agents:
-            shape = agent.shape
-            pose = generatePoseFromState(agent.state)
-            transformed_polygon = shape.ScalingTransform(1.5, pose)
-
-            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
-            self.drawPolygon2d(transformed_polygon, response_color,
-                               0.6, response_color, zorder=9)
 
     def drawLaneCorridor(self, lane_corridor, color=None):
         if color is None:
@@ -447,9 +428,72 @@ class BaseViewer(Viewer):
 
         self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
             agent_id, char_func(overall_safety)))
-            
+    
+    def drawRssSafetyResponses(self, world, ego_id):
+        from bark.core.world.evaluation import EvaluatorRSS
+        for evaluator in world.evaluators:
+            if isinstance(world.evaluators[evaluator], EvaluatorRSS):
+                rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
+                  world)
+                break
 
-      
+        ego_agent = world.agents[ego_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
+        transformed_polygon = shape.ScalingTransform(1.5, pose)
+        self.drawPolygon2d(
+            transformed_polygon,
+            self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
+
+        # draw response for other agents
+        relevent_agents = [
+            agent for agent in world.agents.values() if agent.id in rss_responses]
+        for agent in relevent_agents:
+            shape = agent.shape
+            pose = generatePoseFromState(agent.state)
+            transformed_polygon = shape.ScalingTransform(1.5, pose)
+
+            response_color = "LightGreen" if rss_responses[agent.id] else "Red"
+            self.drawPolygon2d(transformed_polygon, response_color,
+                               0.6, response_color, zorder=9)
+
+    def DrawRSSEvaluatorState(self, world, agent_id):
+      agent = world.agents[agent_id]
+      behavior = agent.behavior_model
+      if isinstance(behavior, BehaviorRSSConformant):
+        longitudinal_response = behavior.GetLongitudinalResponse()
+        lateral_left_response = behavior.GetLateralLeftResponse()
+        lateral_right_response = behavior.GetLateralRightResponse()
+        violations = []
+        if longitudinal_response != 0:
+          print("Longitudinal violation")
+          violations.append({"label": "LON", "color": "purple"})
+        if lateral_left_response != 0 or lateral_right_response != 0:
+          print("Lateral violation")
+          violations.append({"label": "LAT", "color": "red"})
+          
+        # draw labels
+        ego_agent = world.agents[agent_id]
+        shape = ego_agent.shape
+        pose = generatePoseFromState(ego_agent.state)
+        a = shape.front_dist - 0.5*(shape.front_dist + shape.rear_dist)
+        centerx = a * math.cos(pose[2]) + pose[0] + 2.5
+        centery = a * math.sin(pose[2]) + pose[1] + shape.right_dist + 2.
+        
+        if self.draw_agent_id:
+          for violation in violations:
+            t = self.drawText(
+              position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi),
+              text="{}".format(violation["label"]),
+              coordinate="not axes", ha='center', va="center",
+              multialignment="center", size="smaller",
+              color = violation["color"])
+            centerx += 5.
+            t.set_bbox(dict(
+              facecolor=violation["color"], alpha=0.5,
+              edgecolor=violation["color"]))
+
+
 def generatePoseFromState(state):
   # pybind creates column based vectors, initialization maybe row-based -> we consider both
   pose = np.zeros(3)

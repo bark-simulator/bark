@@ -57,3 +57,14 @@ py_test(
       ],
 )
 
+py_test(
+  name = "py_scenario_dumper_tests",
+  srcs = ["py_scenario_dumper_tests.py"],
+  data = [],
+  deps = ["//bark/benchmark:scenario_dumper",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/commons:commons",
+          "//bark/runtime:runtime",
+         ],
+)
+

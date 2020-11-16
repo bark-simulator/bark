@@ -18,6 +18,7 @@ from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.core.world.goal_definition import *
+from bark.core.world.evaluation import *
 from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -164,7 +165,7 @@ class PickleTests(unittest.TestCase):
         try:
             from bark.core.models.behavior import BehaviorUCTSingleAgentMacroActions
         except:
-            print("Rerun test with ---define planner_uct=true")
+            print("Rerun test with --define planner_uct=true")
             return
 
         params = ParameterServer()
@@ -191,7 +192,21 @@ class PickleTests(unittest.TestCase):
     def test_behavior_rss(self):
       from bark.core.models.behavior import BehaviorRSSConformant
       params = ParameterServer()
-      pickle_unpickle(BehaviorRSSConformant(params))
+      rss_behavior = BehaviorRSSConformant(params)
+      unpickled_rss_behavior = pickle_unpickle(rss_behavior)
+      
+      try:
+        rss_behavior.SetLongitudinalResponse(1)
+        rss_behavior.SetLateralLeftResponse(1)
+        rss_behavior.SetLateralRightResponse(1)
+        unpickled_rss_behavior = pickle_unpickle(rss_behavior)
+        self.assertTrue(unpickled_rss_behavior.GetLongitudinalResponse() == 1)
+        self.assertTrue(unpickled_rss_behavior.GetLateralLeftResponse() == 1)
+        self.assertTrue(unpickled_rss_behavior.GetLateralRightResponse() == 1)
+      except:
+        print("Rerun test with --define rss=true")
+      
 
+      
 if __name__ == '__main__':
     unittest.main()

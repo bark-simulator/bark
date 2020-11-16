@@ -7,6 +7,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
+import pickle
 import numpy as np
 
 from bark.core.world import *
@@ -22,7 +23,7 @@ from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
-from bark.core.world.evaluation import EvaluatorRSS
+from bark.core.world.evaluation import EvaluatorRSS, EvaluatorStepCount
 
 # General tests of the whole rss_interface
 class EvaluatorRSSTests(unittest.TestCase):
@@ -45,8 +46,8 @@ class EvaluatorRSSTests(unittest.TestCase):
         param_server)
     self.defaults["other_shape"] = CarLimousine()
     self.defaults["agent_params"] = param_server.addChild("agent")
-    self.defaults["default_vehicle_dynamics"] = [
-        1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
+    # self.defaults["default_vehicle_dynamics"] = [
+    #     1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
 
   @staticmethod
   def load_map(map):
@@ -56,7 +57,11 @@ class EvaluatorRSSTests(unittest.TestCase):
     return map_interface
 
   def test_longitude_ego_follow_other(self):
+
+    params = ParameterServer()
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
+    params["EvaluatorRss"]["MapFilename"] = map
+
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -92,9 +97,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRSS(ego.id, map,
-                                  self.defaults["default_vehicle_dynamics"],
-                                  checking_relevent_range=1.5)
+    evaluator_rss = EvaluatorRSS(ego.id, params)
     world.Step(0.01)
     self.assertEqual(
         True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])
@@ -102,8 +105,13 @@ class EvaluatorRSSTests(unittest.TestCase):
     self.assertEqual(
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][0])
 
+
   def test_lateral_same_direction(self):
+
+    params = ParameterServer()
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
+    params["EvaluatorRss"]["MapFilename"] = map
+
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -142,16 +150,20 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRSS(ego.id, map,
-                                  self.defaults["default_vehicle_dynamics"])
+    evaluator_rss = EvaluatorRSS(ego.id, params)
 
     for _ in range(7):
       world.Step(1)
       self.assertEqual(
           True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
+
   def test_lateral_merging(self):
+
+    params = ParameterServer()
     map = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
+    params["EvaluatorRss"]["MapFilename"] = map
+
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -186,8 +198,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(ego)
     world.AddAgent(other)
 
-    evaluator_rss = EvaluatorRSS(ego.id, map,
-                                  self.defaults["default_vehicle_dynamics"])
+    evaluator_rss = EvaluatorRSS(ego.id, params)
     world.Step(1)
     self.assertEqual(
         True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
@@ -196,8 +207,13 @@ class EvaluatorRSSTests(unittest.TestCase):
     self.assertEqual(
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
+
   def test_relevent_agents(self):
+
+    params = ParameterServer()
     map = "bark/runtime/tests/data/city_highway_straight.xodr"
+    params["EvaluatorRss"]["MapFilename"] = map
+
     map_interface = EvaluatorRSSTests.load_map(map)
     world = self.defaults["world"].Copy()
     world.SetMap(map_interface)
@@ -254,8 +270,7 @@ class EvaluatorRSSTests(unittest.TestCase):
     world.AddAgent(other_1)
     world.AddAgent(other_2)
 
-    evaluator_rss = EvaluatorRSS(ego.id, map,
-                                 self.defaults["default_vehicle_dynamics"])
+    evaluator_rss = EvaluatorRSS(ego.id, params)
     world.Step(1)
     responses = evaluator_rss.PairwiseEvaluate(world)
     
