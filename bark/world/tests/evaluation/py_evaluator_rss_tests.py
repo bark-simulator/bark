@@ -208,7 +208,7 @@ class EvaluatorRSSTests(unittest.TestCase):
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
 
-  def test_relevent_agents(self):
+  def test_relevant_agents(self):
 
     params = ParameterServer()
     map = "bark/runtime/tests/data/city_highway_straight.xodr"

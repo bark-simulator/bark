@@ -27,7 +27,7 @@ bool RssInterface::InitializeOpenDriveMap(
   ::ad::map::access::cleanup();
 
   // the 2nd argument is the value of narrowing overlapping between two lanes,
-  // it is only relevent if the map has intersection
+  // it is only relevant if the map has intersection
   bool result = ::ad::map::access::initFromOpenDriveContent(
       opendrive_file_content, 0.05,
       ::ad::map::intersection::IntersectionType::Unknown,
@@ -253,7 +253,7 @@ bool RssInterface::GetRelevantAgents(const AgentMap& agents,
                                      const Point2d& ego_center,
                                      const AgentId& ego_id,
                                      const Distance& ego_max_stopping_distance,
-                                     std::vector<AgentPtr>& relevent_agents) {
+                                     std::vector<AgentPtr>& relevant_agents) {
   for (const auto& other_agent : agents) {
     AgentId other_agent_id = other_agent.second->GetAgentId();
     if (other_agent_id != ego_id) {
@@ -261,13 +261,13 @@ bool RssInterface::GetRelevantAgents(const AgentMap& agents,
           other_agent.second->GetCurrentState()(VEL_POSITION);
       double relevant_distance =
           (static_cast<double>(ego_max_stopping_distance) +
-           CalculateMaxStoppingDistance(other_agent_speed, rss_dynamics_)) *
+           CalculateMaxStoppingDistance(other_agent_speed, rss_dynamics_others_)) *
           scaling_relevant_range_;
 
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
           relevant_distance)
-        relevent_agents.push_back(other_agent.second);
+        relevant_agents.push_back(other_agent.second);
     }
   }
   return true;
@@ -277,7 +277,6 @@ bool RssInterface::CreateWorldModel(
     const AgentMap& agents, const AgentId& ego_id,
     const AgentState& ego_rss_state,
     const ::ad::map::match::Object& ego_match_object,
-    const ::ad::rss::world::RssDynamics& ego_dynamics,
     const ::ad::map::route::FullRoute& ego_route,
     ::ad::rss::world::WorldModel& rss_world) {
   geometry::Point2d ego_center(ego_rss_state.center.x, ego_rss_state.center.y);
@@ -290,21 +289,21 @@ bool RssInterface::CreateWorldModel(
       ego_rss_state.speed,
       ego_av,
       ::ad::physics::Angle(ego_rss_state.heading),
-      ego_dynamics};
+      rss_dynamics_ego_};
 
-  std::vector<AgentPtr> relevent_agents;
+  std::vector<AgentPtr> relevant_agents;
   GetRelevantAgents(agents, ego_center, ego_id,
-                    ego_rss_state.max_stopping_distance, relevent_agents);
+                    ego_rss_state.max_stopping_distance, relevant_agents);
 
   // +1 is a work around because RSS defines the world is only valid after
   // world_time >=1
   ::ad::rss::map::RssSceneCreation scene_creation(ego_rss_state.timestamp + 1,
-                                                  ego_dynamics);
+                                                  rss_dynamics_ego_);
 
-  // It is not relevent, but needed by appendScenes.
+  // It is not relevant, but needed by appendScenes.
   ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
 
-  for (const auto& other : relevent_agents) {
+  for (const auto& other : relevant_agents) {
     models::dynamic::State other_state = other->GetCurrentState();
 
     Polygon other_shape = other->GetShape();
@@ -320,9 +319,9 @@ bool RssInterface::CreateWorldModel(
         other_state(VEL_POSITION),
         other_av,
         ::ad::physics::Angle(other_state(THETA_POSITION)),
-        rss_dynamics_};
+        rss_dynamics_others_};
 
-    // Find all possible scenes between the ego agent and a relevent agent
+    // Find all possible scenes between the ego agent and a relevant agent
     scene_creation.appendScenes(ego_data, ego_route, other_data,
                                 ::ad::rss::map::RssSceneCreation::
                                     RestrictSpeedLimitMode::ExactSpeedLimit,
@@ -405,11 +404,11 @@ bool RssInterface::GenerateRSSWorld(const ObservedWorld& observed_world,
       GenerateMatchObject(agent_state, agent_shape);
   ::ad::map::route::FullRoute agent_rss_route;
   GenerateRoute(agent_center, agent_goal, agent_match_object, agent_rss_route);
-  AgentState agent_rss_state = ConvertAgentState(agent_state, rss_dynamics_);
+  AgentState agent_rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
 
   AgentMap other_agents = observed_world.GetAgents();  // GetOtherAgents();
   bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state,
-                                 agent_match_object, rss_dynamics_,
+                                 agent_match_object,
                                  agent_rss_route, rss_world);
 
   return result;

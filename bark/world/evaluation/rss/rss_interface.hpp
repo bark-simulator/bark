@@ -91,7 +91,7 @@ class RssInterface {
  public:
   RssInterface() {}
   explicit RssInterface(const commons::ParamsPtr& params) {
-    opendrive_file_name = params->GetString(
+    std::string opendrive_file_name = params->GetString(
       "EvaluatorRss::MapFilename", "Map path", "");
     acc_lon_max_ = params->GetReal(
       "EvaluatorRss::AccLonMax", "maximum acceleration", 1.7);
@@ -105,7 +105,7 @@ class RssInterface {
     acc_lat_brake_max_ = params->GetReal(
       "EvaluatorRss::AccLatBrakeMax", "maximum lateral acceleration", 0.2);
     acc_lat_brake_min_ = params->GetReal(
-      "EvaluatorRss::AccLatBrakeMin", "minimum lateral braking", -0.8),;
+      "EvaluatorRss::AccLatBrakeMin", "minimum lateral braking", -0.8);
     fluct_margin_ = params->GetReal(
       "EvaluatorRss::FluctMargin", "fluctuation margin", 0.1);
     response_time_ = params->GetReal(
@@ -213,7 +213,7 @@ class RssInterface {
   bool GetRelevantAgents(const AgentMap& agents, const Point2d& ego_center,
                          const AgentId& ego_id,
                          const Distance& ego_max_stopping_distance,
-                         std::vector<AgentPtr>& relevent_agents);
+                         std::vector<AgentPtr>& relevant_agents);
 
   // Generates a RSS world model which contains all possible RSS situation
   // (same/opposite direction, merging/usual scene, intersection scene, etc.)
@@ -222,7 +222,6 @@ class RssInterface {
   bool CreateWorldModel(const AgentMap& agents, const AgentId& ego_id,
                         const AgentState& ego_state,
                         const ::ad::map::match::Object& ego_match_object,
-                        const ::ad::rss::world::RssDynamics& ego_dynamics,
                         const ::ad::map::route::FullRoute& ego_route,
                         ::ad::rss::world::WorldModel& rss_world);
 
