@@ -104,8 +104,8 @@ TEST(behavior_rss, behavior_rss_system_test) {
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity, rel_distance = 7.0, velocity_difference = 0.0;
-  float time_step = 0.2f;
+  double ego_velocity, rel_distance = 7.0, velocity_difference = 0.0;
+  double time_step = 0.2f;
 
   // should place an agent on the left lane (-1.75)
   WorldPtr world =

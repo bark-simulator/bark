@@ -49,7 +49,7 @@ using ::ad::physics::Duration;
 using ::ad::physics::Speed;
 
 struct AgentState {
-  float timestamp;
+  double timestamp;
   Speed speed;
   Distance max_stopping_distance;
   ::ad::map::point::ENUPoint center;
@@ -90,32 +90,48 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 class RssInterface {
  public:
   RssInterface() {}
-  explicit RssInterface(const std::string& opendrive_file_name,
-                        const double acc_lon_max, const double brake_lon_max,
-                        const double brake_lon_min,
-                        const double brake_lon_min_correct,
-                        const double acc_lat_brake_max,
-                        const double acc_lat_brake_min,
-                        const double fluct_margin, const double time_response,
-                        const double scaling_relevant_range,
-                        const double route_predict_range)
-      : acc_lon_max_(acc_lon_max),
-        brake_lon_max_(brake_lon_max),
-        brake_lon_min_(brake_lon_min),
-        brake_lon_min_correct_(brake_lon_min_correct),
-        acc_lat_brake_max_(acc_lat_brake_max),
-        acc_lat_brake_min_(acc_lat_brake_min),
-        fluct_margin_(fluct_margin),
-        time_response_(time_response),
-        scaling_relevant_range_(scaling_relevant_range),
-        route_predict_range_(route_predict_range) {
+  explicit RssInterface(const commons::ParamsPtr& params) {
+    opendrive_file_name = params->GetString(
+      "EvaluatorRss::MapFilename", "Map path", "");
+    acc_lon_max_ = params->GetReal(
+      "EvaluatorRss::AccLonMax", "maximum acceleration", 1.7);
+    brake_lon_max_ = params->GetReal(
+      "EvaluatorRss::BrakeLonMax", "maximum deceleration", -1.7);
+    brake_lon_min_ = params->GetReal(
+      "EvaluatorRss::BrakeLonMin", "minimum braking deceleration", -1.69);
+    brake_lon_min_correct_ = params->GetReal(
+      "EvaluatorRss::BrakeLonMinCorrect",
+      "minimum deceleration with oncoming vehicle", -1.67);
+    acc_lat_brake_max_ = params->GetReal(
+      "EvaluatorRss::AccLatBrakeMax", "maximum lateral acceleration", 0.2);
+    acc_lat_brake_min_ = params->GetReal(
+      "EvaluatorRss::AccLatBrakeMin", "minimum lateral braking", -0.8),;
+    fluct_margin_ = params->GetReal(
+      "EvaluatorRss::FluctMargin", "fluctuation margin", 0.1);
+    response_time_ = params->GetReal(
+      "EvaluatorRss::TimeResponse", "response time of the ego vehicle", 0.2);
+    response_time_others_ = params->GetReal(
+      "EvaluatorRss::TimeResponseOthers",
+      "response time of other vehicles", 1.0);
+    scaling_relevant_range_ = params->GetReal(
+      "EvaluatorRss::ScalingRelevantRange",
+      "Controls the search distance between two agents to perform RSS check",
+      1);
+    route_predict_range_ = params->GetReal(
+      "EvaluatorRss::RoutePredictRange",
+      "Describle the distance for returning all routes "
+      "having less than the distance, will be used when "
+      "a route to the goal cannnot be found",
+      50);
+  
     // Sanity checks
     // assert(boost::filesystem::exists(opendrive_file_name));
     assert(scaling_relevant_range_ >= 1.);
     assert(brake_lon_max_ <= brake_lon_min_);
     assert(brake_lon_min_ <= brake_lon_min_correct_);
 
-    rss_dynamics_ = GenerateVehicleDynamicsParameters();
+    rss_dynamics_ego_ = GenerateVehicleDynamicsParameters(response_time_);
+    rss_dynamics_others_ = GenerateVehicleDynamicsParameters(response_time_others_);
 
     // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);
@@ -164,7 +180,7 @@ class RssInterface {
   bool InitializeOpenDriveMap(const std::string& opendrive_file_name);
 
   // Creates RSS dynamics object contains the parameters for RSS check.
-  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters();
+  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(double response_time);
 
   // Generates a RSS match object from BARK agent state, it contains a list of
   // nearby lanes of the agent state. Used by GenerateRoute and mainly
@@ -264,14 +280,18 @@ class RssInterface {
   double fluct_margin_;
 
   // response time
-  double time_response_;
+  double response_time_;
+
+  // response time of other
+  double response_time_others_;
 
   // Scale the searching distance between the evaluating agent and other
   // agents to perform RSS check (used for debugging to have more vehicles being
   // checked)
   double scaling_relevant_range_;
 
-  ::ad::rss::world::RssDynamics rss_dynamics_;
+  ::ad::rss::world::RssDynamics rss_dynamics_ego_;
+  ::ad::rss::world::RssDynamics rss_dynamics_others_;
 
   // When a route to the goal cannnot be found, route_predict_range describle
   // the distance for returning all routes having less than the distance

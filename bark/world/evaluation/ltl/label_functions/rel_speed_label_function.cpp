@@ -21,7 +21,7 @@ bool bark::world::evaluation::RelSpeedLabelFunction::EvaluateAgent(
     const AgentPtr& other_agent) const {
   const auto ego_agent = observed_world.GetEgoAgent();
   if (other_agent) {
-    const float rel_speed =
+    const double rel_speed =
         ego_agent->GetCurrentState()(StateDefinition::VEL_POSITION) -
         other_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
     return rel_speed >= rel_speed_thres_;

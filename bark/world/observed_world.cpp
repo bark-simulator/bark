@@ -82,7 +82,7 @@ void ObservedWorld::SetupPrediction(const PredictionSettings& settings) {
   settings.ApplySettings(*this);
 }
 
-ObservedWorldPtr ObservedWorld::Predict(float time_span) const {
+ObservedWorldPtr ObservedWorld::Predict(double time_span) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
   next_world->Step(time_span);
@@ -90,7 +90,7 @@ ObservedWorldPtr ObservedWorld::Predict(float time_span) const {
 }
 
 ObservedWorldPtr ObservedWorld::Predict(
-    float time_span, const DiscreteAction& ego_action) const {
+    double time_span, const DiscreteAction& ego_action) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
   std::shared_ptr<BehaviorMotionPrimitives> ego_behavior_model =
@@ -107,7 +107,7 @@ ObservedWorldPtr ObservedWorld::Predict(
 }
 
 ObservedWorldPtr ObservedWorld::Predict(
-    float time_span,
+    double time_span,
     const std::unordered_map<AgentId, DiscreteAction>& agent_action_map) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
@@ -132,7 +132,7 @@ ObservedWorldPtr ObservedWorld::Predict(
 
 // Predict each agent with specific behavior model (Note setup required)
 ObservedWorldPtr ObservedWorld::Predict(
-    float time_span, BehaviorModelPtr ego_behavior_model,
+    double time_span, BehaviorModelPtr ego_behavior_model,
     const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());

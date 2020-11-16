@@ -64,7 +64,7 @@ class ScenarioTrackInfo:
         else:
             start_ts = self._other_agents_track_infos[agent_id].GetStartOffset(
             )
-            timestamp_offset = float(start_ts - self.GetStartTs()) / 1000.0
+            timestamp_offset = double(start_ts - self.GetStartTs()) / 1000.0
             return timestamp_offset
 
     def TimeSanityCheck(self):

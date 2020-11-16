@@ -29,29 +29,29 @@ class GoalDefinitionStateLimitsFrenet : public GoalDefinition {
         velocity_range_() {}
   GoalDefinitionStateLimitsFrenet(
       const bark::geometry::Line& center_line,
-      const std::pair<float, float> max_lateral_distances,
-      const std::pair<float, float> max_orientation_differences,
-      const std::pair<float, float> velocity_range);
+      const std::pair<double, double> max_lateral_distances,
+      const std::pair<double, double> max_orientation_differences,
+      const std::pair<double, double> velocity_range);
 
   virtual bool AtGoal(const bark::world::objects::Agent& agent);
 
   const bark::geometry::Line& GetCenterLine() const { return center_line_; }
-  const std::pair<float, float>& GetMaxLateralDistance() const {
+  const std::pair<double, double>& GetMaxLateralDistance() const {
     return max_lateral_distances_;
   }
-  const std::pair<float, float>& GetMaxOrientationDifferences() const {
+  const std::pair<double, double>& GetMaxOrientationDifferences() const {
     return max_orientation_differences_;
   }
-  const std::pair<float, float>& GetVelocityRange() const {
+  const std::pair<double, double>& GetVelocityRange() const {
     return velocity_range_;
   }
   virtual const bark::geometry::Polygon& GetShape() const { return shape_; }
 
  private:
   const bark::geometry::Line center_line_;
-  const std::pair<float, float> max_lateral_distances_;
-  const std::pair<float, float> max_orientation_differences_;
-  const std::pair<float, float> velocity_range_;
+  const std::pair<double, double> max_lateral_distances_;
+  const std::pair<double, double> max_orientation_differences_;
+  const std::pair<double, double> velocity_range_;
   bark::geometry::Polygon shape_;
 };
 

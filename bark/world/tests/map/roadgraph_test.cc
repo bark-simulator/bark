@@ -652,7 +652,7 @@ TEST(roadgraph, generate_roadgraph_neighbours_test) {
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
+  p->AddLine(Point2d(0.0, 0.0), 0.0, 10.0, 10.0);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -661,7 +661,7 @@ TEST(roadgraph, generate_roadgraph_neighbours_test) {
   XodrLanePtr lane0(new XodrLane(0));
   lane0->SetLine(p->GetReferenceLine());
 
-  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {1.0, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 10, off};
 
   XodrLanePtr lane1 =
@@ -704,7 +704,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
   OpenDriveMapPtr open_drive_map(new OpenDriveMap());
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
+  p->AddLine(Point2d(0.0, 0.0), 0.0, 10.0, 10.0);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -713,7 +713,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
   XodrLanePtr lane00(new XodrLane(0));
   lane00->SetLine(p->GetReferenceLine());
 
-  XodrLaneOffset off = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {1.0, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 10, off};
   XodrLanePtr lane10 =
       CreateLaneFromLaneWidth(1, p->GetReferenceLine(), lane_width_1, 0.05);
@@ -731,7 +731,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
 
   //! ROAD 2
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(10.0f, 0.0f), 0.0f, 20.0f, 20.0f);
+  p2->AddLine(Point2d(10.0, 0.0), 0.0, 20.0, 20.0);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));
@@ -740,7 +740,7 @@ TEST(roadgraph, generate_roadgraph_successors_test) {
   XodrLanePtr lane01(new XodrLane(0));
   lane01->SetLine(p2->GetReferenceLine());
 
-  XodrLaneOffset off2 = {1.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off2 = {1.0, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_2 = {0, 10, off};
   XodrLanePtr lane11 =
       CreateLaneFromLaneWidth(1, p2->GetReferenceLine(), lane_width_2, 0.05);

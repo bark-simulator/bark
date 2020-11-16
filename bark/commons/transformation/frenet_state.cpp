@@ -75,7 +75,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
   // build state
   State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  state(StateDefinition::TIME_POSITION) = 0.0f;
+  state(StateDefinition::TIME_POSITION) = 0.0;
   state(StateDefinition::X_POSITION) = bg::get<0>(position);
   state(StateDefinition::Y_POSITION) = bg::get<1>(position);
   state(StateDefinition::THETA_POSITION) = angle;

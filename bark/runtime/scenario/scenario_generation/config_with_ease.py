@@ -91,11 +91,11 @@ class LaneCorridorConfig:
     """Increment for placing the agents
     
     Keyword Arguments:
-        s_min {float} -- Min. lon. distance (default: {5.})
-        s_max {float} -- Max. lon. distance (default: {10.})
+        s_min {double} -- Min. lon. distance (default: {5.})
+        s_max {double} -- Max. lon. distance (default: {10.})
     
     Returns:
-        float -- delta s-value
+        double -- delta s-value
     """
     return np.random.uniform(self._ds_min, self._ds_max)
 
@@ -106,8 +106,8 @@ class LaneCorridorConfig:
         world {bark.core.world} -- BARK world
     
     Keyword Arguments:
-        min_s {float} -- Min. lon. value (default: {0.})
-        max_s {float} -- Max. lon. value (default: {100.})
+        min_s {double} -- Min. lon. value (default: {0.})
+        max_s {double} -- Max. lon. value (default: {100.})
     
     Returns:
         tuple -- (x, y, theta)

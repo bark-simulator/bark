@@ -42,17 +42,17 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
 
-  double initial_acceleration = 0.0f;
+  double initial_acceleration = 0.0;
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
         ego_vehicle_state.transpose().block<1, StateDefinition::MIN_STATE_SIZE>(
             0, 0);
 
-    float s_start = GetNearestS(line, pose);  // checked
+    double s_start = GetNearestS(line, pose);  // checked
     double start_time = observed_world.GetWorldTime();
-    float vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
-    float s_i = s_start;
+    double vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
+    double s_i = s_start;
 
     double rel_distance = rel_values.leading_distance;
     // calc. traj.
@@ -65,12 +65,12 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
         initial_acceleration = acc;
       }
       s_i += 0.5f * acc * dt * dt + vel_i * dt;
-      const float temp_velocity = vel_i + acc * dt;
+      const double temp_velocity = vel_i + acc * dt;
       vel_i =
           std::max(std::min(temp_velocity, GetMaxVelocity()), GetMinVelocity());
-      t_i = static_cast<float>(i) * dt + start_time;
+      t_i = static_cast<double>(i) * dt + start_time;
       geometry::Point2d traj_point = GetPointAtS(line, s_i);
-      float traj_angle = GetTangentAngleAtS(line, s_i);
+      double traj_angle = GetTangentAngleAtS(line, s_i);
 
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<0>(traj_point)));
       BARK_EXPECT_TRUE(!std::isnan(boost::geometry::get<1>(traj_point)));

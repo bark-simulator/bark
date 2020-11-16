@@ -41,7 +41,7 @@ bool RssInterface::InitializeOpenDriveMap(
 }
 
 ::ad::rss::world::RssDynamics
-RssInterface::GenerateVehicleDynamicsParameters() {
+RssInterface::GenerateVehicleDynamicsParameters(double response_time) {
   ::ad::rss::world::RssDynamics dynamics;
 
   // RSS dynamics values along longitudinal coordinate system axis
@@ -55,7 +55,7 @@ RssInterface::GenerateVehicleDynamicsParameters() {
   dynamics.alphaLat.brakeMin = Acceleration(acc_lat_brake_min_);
   dynamics.lateralFluctuationMargin = Distance(fluct_margin_);
 
-  dynamics.responseTime = Duration(time_response_);
+  dynamics.responseTime = Duration(response_time);
 
   // new parameters after ad-rss v4.0.0
   // leave them as the default ones for now
@@ -257,10 +257,10 @@ bool RssInterface::GetRelevantAgents(const AgentMap& agents,
   for (const auto& other_agent : agents) {
     AgentId other_agent_id = other_agent.second->GetAgentId();
     if (other_agent_id != ego_id) {
-      float other_agent_speed =
+      double other_agent_speed =
           other_agent.second->GetCurrentState()(VEL_POSITION);
-      float relevant_distance =
-          (static_cast<float>(ego_max_stopping_distance) +
+      double relevant_distance =
+          (static_cast<double>(ego_max_stopping_distance) +
            CalculateMaxStoppingDistance(other_agent_speed, rss_dynamics_)) *
           scaling_relevant_range_;
 

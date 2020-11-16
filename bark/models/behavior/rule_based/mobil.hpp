@@ -42,7 +42,7 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
     safe_deceleration_ = params->GetReal(
         "BehaviorMobil::SafeDeceleration",
         "Maximum deceleration for follower in target lane, positive number",
-        2.0f);
+        2.0);
     asymmetric_passing_rules_ = params->GetBool(
         "BehaviorMobil::AsymmetricPassingRules",
         "Whether passing on the right side is forbidden", false);
@@ -65,7 +65,7 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
 
   double CalcLongRawAccWithoutLeader(
       const world::LaneCorridorPtr& lane_corridor,
-      const bark::geometry::Point2d& pos, const float vel) const;
+      const bark::geometry::Point2d& pos, const double vel) const;
 
   std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
   CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);

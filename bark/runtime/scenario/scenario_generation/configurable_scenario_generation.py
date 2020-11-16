@@ -382,7 +382,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     elif not is_int_1 and not is_int_2:
       probablistic_conflict_resolution = True
     else:
-      raise ValueError("Conflict resolution specifications must be either both integers or both floats")
+      raise ValueError("Conflict resolution specifications must be either both integers or both doubles")
 
     return conflict_res_1, conflict_res_2, probablistic_conflict_resolution
 
@@ -461,7 +461,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                                                 end_road_id)
     elif isinstance(source_sink, list) and \
            isinstance(source_sink[0], list)  and \
-           isinstance(source_sink[0][0], float):
+           isinstance(source_sink[0][0], double):
            # point 2d given to find start and end road id road corridor
             goal_polygon = Polygon2d([0, 0, 0],
                                   [Point2d(-1,0),

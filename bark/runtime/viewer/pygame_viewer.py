@@ -210,7 +210,7 @@ class PygameViewer(BaseViewer):
         self.screen.fill(self.background_color)
         self.screen_surface.fill(self.background_color)
 
-    def getColorFromMap(self, float_color):
+    def getColorFromMap(self, double_color):
         # TODO
         return (1.0, 0, 0)
 
@@ -245,7 +245,7 @@ class PygameViewer(BaseViewer):
                 / self.camera_view_size * self.screen_dims
 
     def createTransparentSurace(self, dims, background_color, alpha):
-        alpha = round(float(alpha), 2)
+        alpha = round(double(alpha), 2)
         if alpha not in self.alpha_surf:
             s = pg.Surface(dims, pg.DOUBLEBUF | pg.HWSURFACE)
             s.fill(background_color)

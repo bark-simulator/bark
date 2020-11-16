@@ -179,7 +179,7 @@ BehaviorLaneChangeRuleBased::CheckIfLaneChangeBeneficial(
 }
 
 Trajectory BehaviorLaneChangeRuleBased::Plan(
-    float delta_time, const world::ObservedWorld& observed_world) {
+    double delta_time, const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 

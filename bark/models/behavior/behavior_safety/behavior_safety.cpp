@@ -18,7 +18,7 @@ namespace models {
 namespace behavior {
 
 Trajectory BehaviorSafety::Plan(
-    float min_planning_time, const world::ObservedWorld& observed_world) {
+    double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   // for now we support only the BehaviorIDMLaneTracking

@@ -31,7 +31,7 @@ class ExecutionModelInterpolate : public ExecutionModel {
    * @retval boolean: true if contained
    */
   bool CheckIfWorldTimeIsWithinTrajectory(const Trajectory& trajectory,
-                                          const float& world_time) const;
+                                          const double& world_time) const;
 
   /**
    * @brief  Find exact time in trajectory
@@ -51,12 +51,12 @@ class ExecutionModelInterpolate : public ExecutionModel {
    * @brief  Interpolates between two states
    * @retval State: interpolated state
    */
-  State Interpolate(const State& p0, const State& p1, const float& time) const;
+  State Interpolate(const State& p0, const State& p1, const double& time) const;
 
   /**
    * @brief  Interpolates on trajectory
    */
-  virtual void Execute(const float& new_world_time,
+  virtual void Execute(const double& new_world_time,
                        const dynamic::Trajectory& trajectory,
                        const dynamic::DynamicModelPtr dynamic_model);
 

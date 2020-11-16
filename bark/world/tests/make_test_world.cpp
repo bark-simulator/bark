@@ -47,9 +47,9 @@ using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 WorldPtr bark::world::tests::make_test_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
-    float ego_acc, float other_acc) {
-  float pos_x = 3.0;
-  float pos_y = -1.75;
+    double ego_acc, double other_acc) {
+  double pos_x = 3.0;
+  double pos_y = -1.75;
 
   OpenDriveMapPtr open_drive_map = MakeXodrMapOneRoadTwoLanes();
 
@@ -78,7 +78,7 @@ WorldPtr bark::world::tests::make_test_world(
   agent1->SetAgentId(1);
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  float rel_dist_vlength =
+  double rel_dist_vlength =
       rel_distance + polygon.front_dist_ + polygon.rear_dist_;  // NOLINT
   init_state2 << 0.0, pos_x + rel_dist_vlength, pos_y, 0.0,
       ego_velocity - velocity_difference;  // NOLINT
@@ -112,7 +112,7 @@ WorldPtr bark::world::tests::make_test_world(
 ObservedWorld bark::world::tests::make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
-    float ego_acc, float other_acc) {
+    double ego_acc, double other_acc) {
   // Create observed world for first agent
   WorldPtr current_world_state = make_test_world(
       num_other_agents, rel_distance, ego_velocity, velocity_difference,

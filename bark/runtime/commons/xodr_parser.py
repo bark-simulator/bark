@@ -141,10 +141,10 @@ class XodrParser(object):
     def parse_offset(self, header):
         # in compiliance with 5.2.2 of specification
         offset = {}
-        offset["x"] = float(header.find("offset").get("x"))
-        offset["y"] = float(header.find("offset").get("y"))
-        offset["z"] = float(header.find("offset").get("z"))
-        offset["hdg"] = float(header.find("offset").get("hdg"))
+        offset["x"] = double(header.find("offset").get("x"))
+        offset["y"] = double(header.find("offset").get("y"))
+        offset["z"] = double(header.find("offset").get("z"))
+        offset["hdg"] = double(header.find("offset").get("hdg"))
         return offset
 
     def parse_header(self, header):
@@ -287,24 +287,24 @@ class XodrParser(object):
         new_plan_view = PlanView()
         # create plan view..
         for geo in plan_view["geometries"]:
-            start_p = Point2d(float(geo["x"]), float(geo["y"]))
+            start_p = Point2d(double(geo["x"]), double(geo["y"]))
             if geo["geometry"]["type"] == "line":
                 if self._s_inc_straight_line is None:
-                    s_inc_straight_line = float(geo["length"])
-                elif isinstance(self._s_inc_straight_line, float):
+                    s_inc_straight_line = double(geo["length"])
+                elif isinstance(self._s_inc_straight_line, double):
                     s_inc_straight_line = self._s_inc_straight_line
                 else:
                     raise TypeError("s_inc_straight_line not specified")
-                new_plan_view.AddLine(start_p, float(geo["hdg"]),
-                                      float(geo["length"]), s_inc_straight_line)
+                new_plan_view.AddLine(start_p, double(geo["hdg"]),
+                                      double(geo["length"]), s_inc_straight_line)
 
             if geo["geometry"]["type"] == "arc":
-                new_plan_view.AddArc(start_p, float(geo["hdg"]), float(
-                    geo["length"]), float(geo["geometry"]["curvature"]), self._s_inc_curves)
+                new_plan_view.AddArc(start_p, double(geo["hdg"]), double(
+                    geo["length"]), double(geo["geometry"]["curvature"]), self._s_inc_curves)
 
             if geo["geometry"]["type"] == "spiral":
-                new_plan_view.AddSpiral(start_p, float(geo["hdg"]), float(geo["length"]), float(
-                    geo["geometry"]["curv_start"]), float(geo["geometry"]["curv_end"]), self._s_inc_curves)
+                new_plan_view.AddSpiral(start_p, double(geo["hdg"]), double(geo["length"]), double(
+                    geo["geometry"]["curv_start"]), double(geo["geometry"]["curv_end"]), self._s_inc_curves)
 
         # now use header/ offset to modify plan view
         if "offset" in header:
@@ -373,16 +373,16 @@ class XodrParser(object):
             new_lane = XodrLane(int(lane["id"]))
             for idx_w, lw in enumerate(lane["width"]):
 
-                a = float(lane["width"][idx_w]["a"])
-                b = float(lane["width"][idx_w]["b"])
-                c = float(lane["width"][idx_w]["c"])
-                d = float(lane["width"][idx_w]["d"])
+                a = double(lane["width"][idx_w]["a"])
+                b = double(lane["width"][idx_w]["b"])
+                c = double(lane["width"][idx_w]["c"])
+                d = double(lane["width"][idx_w]["d"])
                 offset = XodrLaneOffset(a, b, c, d)
 
-                s_start_temp = float(lane["width"][idx_w]["s_offset"])
+                s_start_temp = double(lane["width"][idx_w]["s_offset"])
 
                 if idx_w < len(lane["width"]) - 1:
-                    s_end_temp = float(lane["width"][idx_w+1]["s_offset"])
+                    s_end_temp = double(lane["width"][idx_w+1]["s_offset"])
                 else:
                     # last or only lane width element
                     s_end_temp = s_end
@@ -405,7 +405,7 @@ class XodrParser(object):
                 rm = XodrRoadMark()
                 rm.type = lane['road_mark']['type']
                 rm.color = lane['road_mark']['color']
-                rm.width = float(lane['road_mark']['width'])
+                rm.width = double(lane['road_mark']['width'])
                 new_lane.road_mark = rm
 
             new_lane_section.AddLane(new_lane)
@@ -419,7 +419,7 @@ class XodrParser(object):
 
     def create_cpp_lane_section(self, new_road, road):
         for lane_section in road["lane_sections"]:
-            new_lane_section = XodrLaneSection(float(lane_section["s"]))
+            new_lane_section = XodrLaneSection(double(lane_section["s"]))
             # sort lanes
             # for idx_iterator in range(len(lane_section["lanes"])):
             #    if lane_section["lanes"][idx_iterator]['id'] in list_id_read_in_lanes:
@@ -432,11 +432,11 @@ class XodrParser(object):
                 lane = lane_section["lanes"][idx_iterator]
                 if lane['id'] == 0:
                     # plan view
-                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, double(
                         road["length"]), new_road.plan_view.GetReferenceLine())
                 elif lane['id'] == -1 or lane['id'] == 1:
                     # use plan view for offset calculation
-                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
+                    new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, double(
                         road["length"]), new_road.plan_view.GetReferenceLine())
                 else:
                     # use previous line for offset calculation

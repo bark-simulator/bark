@@ -18,13 +18,13 @@ class Panda3dViewer(BaseViewer, ShowBase):
       "model_path",
       os.path.join(os.path.dirname(os.path.abspath(__file__))) + "/models/car_model.obj")
     self._model_scale = kwargs.pop("model_scale",
-                                   np.array([.3,.3,.3], dtype=float))
+                                   np.array([.3,.3,.3], dtype=double))
     self._model_orientation = \
       kwargs.pop("model_orientation",
                  np.array([0, 90, 90],
-                 dtype=float))
+                 dtype=double))
     self._model_translation = kwargs.pop("model_translation",
-                                         np.array([0., 0., 0.], dtype=float))
+                                         np.array([0., 0., 0.], dtype=double))
     self._screen_dims = kwargs.pop("screen_dims", [2*1024, 1024])
     self._line_thickness = kwargs.pop("line_thickness", 0.05)
     self._follow_agent = kwargs.pop("follow_agent", True)

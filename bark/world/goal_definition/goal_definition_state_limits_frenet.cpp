@@ -26,9 +26,9 @@ using bark::geometry::Pose;
 
 GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(
     const Line& center_line,
-    const std::pair<float, float> max_lateral_distances,
-    const std::pair<float, float> max_orientation_differences,
-    const std::pair<float, float> velocity_range)
+    const std::pair<double, double> max_lateral_distances,
+    const std::pair<double, double> max_orientation_differences,
+    const std::pair<double, double> velocity_range)
     : GoalDefinition(),
       center_line_(center_line),
       max_lateral_distances_(max_lateral_distances),

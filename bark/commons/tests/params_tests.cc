@@ -22,7 +22,7 @@ TEST(setter_params, param_tests) {
   bark::commons::SetterParams params(true);
 
   params.SetReal("Test::2", 0.5f);
-  EXPECT_EQ(params.GetReal("Test::2", "", 1.0f), 0.5f);
+  EXPECT_EQ(params.GetReal("Test::2", "", 1.0), 0.5f);
 
   params.SetInt("Test::2", 2);
   EXPECT_EQ(params.GetInt("Test::2", "", 1), 2);
@@ -32,7 +32,7 @@ TEST(setter_params, param_tests) {
 
   params.SetListListFloat("Test::2", {{0, 1}, {0, 2}, {0.5, 1.5}});
   EXPECT_EQ(params.GetListListFloat("Test::2", "", {{0, 1}, {0, 2}}),
-            std::vector<std::vector<float>>({{0, 1}, {0, 2}, {0.5, 1.5}}));
+            std::vector<std::vector<double>>({{0, 1}, {0, 2}, {0.5, 1.5}}));
 
   auto child_params = params.AddChild("Child");
   child_params->SetInt("Test::4", 21);
@@ -48,21 +48,21 @@ TEST(setter_params, param_tests) {
   child_params2->SetListListFloat("Test::21", {{0, 22}, {1, 2}, {0.5, 1.5}});
   EXPECT_EQ(
       params.GetListListFloat("Child::Child2::Test::21", "", {{0, 1}, {0, 2}}),
-      std::vector<std::vector<float>>({{0, 22}, {1, 2}, {0.5, 1.5}}));
+      std::vector<std::vector<double>>({{0, 22}, {1, 2}, {0.5, 1.5}}));
 
   child_params2->SetListFloat("Test::248", {0, 1, 2});
   EXPECT_EQ(params.GetListFloat("Child::Child2::Test::248", "", {99, 100}),
-            std::vector<float>({0, 1, 2}));
+            std::vector<double>({0, 1, 2}));
 
   params.SetReal("Test1::Test2::Test3::2", 123123.23783f);
   auto child_params3 = params.AddChild("Test1")->AddChild("Test2");
-  EXPECT_EQ(child_params3->GetReal("Test3::2", "", 1.0f), 123123.23783f);
+  EXPECT_EQ(child_params3->GetReal("Test3::2", "", 1.0), 123123.23783f);
   auto child_params4 = child_params3->AddChild("Test3");
-  EXPECT_EQ(child_params4->GetReal("2", "", 1.0f), 123123.23783f);
+  EXPECT_EQ(child_params4->GetReal("2", "", 1.0), 123123.23783f);
 
   // Setters used for distribution spec
-  params.SetReal("Test2::25::123::LowerBound", -10.0f);
-  params.SetReal("Test2::25::123::UpperBound", 10.0f);
+  params.SetReal("Test2::25::123::LowerBound", -10.0);
+  params.SetReal("Test2::25::123::UpperBound", 10.0);
   params.SetInt("Test2::25::123::RandomSeed", 1000);
   params.SetDistribution("Test2::25::123", "UniformDistribution1D");
 
@@ -72,7 +72,7 @@ TEST(setter_params, param_tests) {
               typeid(bark::commons::UniformDistribution1D));
   EXPECT_EQ(dist_uniform->GetParams()->GetReal("LowerBound", "some description",
                                                2323.0),
-            -10.0f);
+            -10.0);
 
   // No defaults for dist spec fiven
   bark::commons::SetterParams params2(false);

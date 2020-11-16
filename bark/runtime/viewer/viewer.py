@@ -305,7 +305,7 @@ class BaseViewer(Viewer):
                         self.agent_color_map = {}
                     if not agent_id in self.agent_color_map:
                         self.agent_color_map[agent_id] = self.getColorFromMap(
-                            float(agent_id) / self.max_agents_color_map)
+                            double(agent_id) / self.max_agents_color_map)
                     if self.if_colormap_use_line_others:
                         color_line = self.color_other_agents_line
                     else:
