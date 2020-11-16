@@ -26,7 +26,7 @@ TEST(create_plan_view, open_drive) {
   PlanView p;
 
   //! add line
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5, 10.0f, 10.0f);
 
   //! add arc
   p.AddArc(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 0.1f);
@@ -47,7 +47,7 @@ TEST(lane, open_drive) {
   XodrLaneOffset off = {1.5f, 0.0f, 0.0f, 0.0f};
 
   //! vertical
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
   XodrLaneWidth lane_width = {0, 10.0, off};
 
   XodrLanePtr lane = CreateLaneFromLaneWidth(1, p.GetReferenceLine(),
@@ -79,7 +79,7 @@ TEST(lane, open_drive) {
   PlanView p2;
 
   //! horizontal
-  p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p2.AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   lane = CreateLaneFromLaneWidth(1, p2.GetReferenceLine(), lane_width,
                                  0.05f);  // left side
@@ -116,7 +116,7 @@ TEST(multiple_lane_widths, open_drive) {
   XodrLaneWidth lane_width1 = {0, 4.0, off1};
   XodrLaneWidth lane_width2 = {4.0, 10.0, off2};
   //! vertical
-  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p.AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
 
   XodrLanePtr lane = std::make_shared<XodrLane>(1);
   bool succ = lane->append(p.GetReferenceLine(), lane_width1, 0.05f);
@@ -142,7 +142,7 @@ TEST(road, open_drive) {
 
   //! new plan view
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 1.5707, 10.0f, 10.0f);
 
   XodrRoadLinkInfo pre;
   pre.id_ = 2;
@@ -209,7 +209,7 @@ TEST(map, open_drive) {
 
   //! ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrRoad-Link
 
@@ -253,7 +253,7 @@ TEST(map, open_drive) {
 
   //! ROAD 2
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f);
+  p2->AddLine(Point2d(0.0f, 0.0f), 0.0f, 10.0f, 10.0f);
 
   //! XodrRoad-Link
   XodrRoadLink l2 = {};  // can either link to another road or to a junction
@@ -320,6 +320,24 @@ TEST(map, open_drive) {
   EXPECT_NEAR(bg::get<1>(ret_line.obj_[0]), -1.0f, 0.1f);
   EXPECT_NEAR(bg::get<0>(ret_line.obj_[ret_line.obj_.size() - 1]), 10.0f, 0.1f);
   EXPECT_NEAR(bg::get<1>(ret_line.obj_[ret_line.obj_.size() - 1]), -1.0f, 0.1f);
+}
+
+TEST(curved_plan_view, open_drive) {
+  using namespace bark::world::opendrive;
+  using namespace bark::geometry;
+
+  PlanViewPtr p(new PlanView());
+  float s_inc = 0.2;
+  p->AddLine(Point2d(-2.51e+2, -5.12e+2), 1.06e+0, 2.55e-1, 2.55e-1);
+
+  p->AddArc(Point2d(-2.51e+2, -5.12e+2), 1.06e+0, 1.03e+1, -8.95e-2, s_inc);
+  p->AddArc(Point2d(-2.43e+2, -5.06e+2), 1.32e-1, 1.08e+1, -5.73e-2, s_inc);
+  p->AddLine(Point2d(-2.32e+2, -5.08e+2), -4.87e-1, 2.55e-1, 2.55e-1);
+
+  XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneWidth lane_width = {0, 2.1673645178459658e+1, off};
+
+  EXPECT_FALSE(boost::geometry::intersects(p->GetReferenceLine().obj_));
 }
 
 int main(int argc, char** argv) {

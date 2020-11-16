@@ -92,6 +92,23 @@ cc_library(
     )
 
     _maybe(
+      new_git_repository,
+      name = "com_github_spline",
+      commit = "619c634ef5f6f2df1508c767f979eb4b7bf9c66a",
+      remote = "https://github.com/ttk592/spline",
+      build_file_content = """
+cc_library(
+    name = 'spline',
+    srcs = [],
+    includes = ['.'],
+    hdrs = ["src/spline.h"],
+    visibility = ['//visibility:public'],
+)
+    """
+    )
+
+
+    _maybe(
     git_repository,
     name = "rule_monitor_project",
     commit = "3bf19a30c72d615af3265c22c391d9bbc6806680",

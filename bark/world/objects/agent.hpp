@@ -142,6 +142,10 @@ class Agent : public Object {
     return first_valid_timestamp_;
   }
 
+  int GetMaxHistoryLength() const {
+    return max_history_length_;
+  }
+
   //! Setter
   void SetBehaviorModel(const BehaviorModelPtr& behavior_model_ptr) {
     behavior_model_ = behavior_model_ptr;

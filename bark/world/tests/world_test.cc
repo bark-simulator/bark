@@ -86,8 +86,8 @@ TEST(world, world_step) {
   std::shared_ptr<PlanView> p_1(new PlanView());
 
   //! add line
-  p_1->AddLine(Point2d(0.0f, 0.0f), 0.0, 25.0f);
-  p_1->AddLine(Point2d(25.0f, 0.0f), 0.0, 25.0f);
+  p_1->AddLine(Point2d(0.0f, 0.0f), 0.0, 25.0f, 25.0f);
+  p_1->AddLine(Point2d(25.0f, 0.0f), 0.0, 25.0f, 25.0f);
 
   //! lane sections
   std::shared_ptr<XodrLaneSection> section_1(new XodrLaneSection(0.0f));

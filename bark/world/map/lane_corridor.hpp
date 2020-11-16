@@ -36,6 +36,7 @@ struct LaneCorridor {
   Line& GetLeftBoundary() { return left_boundary_; }
   Line& GetRightBoundary() { return right_boundary_; }
   Line& GetCenterLine() { return center_line_; }
+  Line& GetFineCenterLine() { return fine_center_line_; }
   Polygon& GetMergedPolygon() { return merged_polygon_; }
   std::map<float, LanePtr>& GetLanes() { return lanes_; }
   LanePtr GetCurrentLane(const Point2d& pt) const {
@@ -66,6 +67,7 @@ struct LaneCorridor {
   void SetLeftBoundary(const Line& boundary) { left_boundary_ = boundary; }
   void SetRightBoundary(const Line& boundary) { right_boundary_ = boundary; }
   void SetCenterLine(const Line& line) { center_line_ = line; }
+  void SetFineCenterLine(const Line& line) { fine_center_line_ = line; }
   void SetMergedPolygon(const Polygon& poly) { merged_polygon_ = poly; }
   void SetLane(float s_start, const LanePtr& lane) { lanes_[s_start] = lane; }
 
@@ -82,6 +84,7 @@ struct LaneCorridor {
 
   std::map<float, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
+  Line fine_center_line_;
   Polygon merged_polygon_;
   Line left_boundary_;
   Line right_boundary_;

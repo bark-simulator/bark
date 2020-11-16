@@ -16,18 +16,41 @@ namespace bark {
 namespace world {
 namespace opendrive {
 
-bool PlanView::AddLine(Point2d start_point, float heading, float length) {
+/**
+ * @brief adds a line segment to the plan view. if only two points shall be
+ * generated, set s_inc to length.
+ *
+ * @param start_point starting point
+ * @param heading heading
+ * @param length length of line
+ * @param s_inc increment at which points are sampled
+ */
+bool PlanView::AddLine(Point2d start_point, float heading, float length,
+                       float s_inc) {
   namespace bg = boost::geometry;
   using bark::geometry::Line;
   using bark::geometry::Point2d;
 
+  int num_points = length / s_inc;
   //! straight line
-  reference_line_.AddPoint(start_point);
-  Point2d end_point(bg::get<0>(start_point) + length * cos(heading),
-                    bg::get<1>(start_point) + length * sin(heading));
-  reference_line_.AddPoint(end_point);
+  for (size_t i = 0; i <= num_points; ++i) {
+    Point2d p(bg::get<0>(start_point) + i * s_inc * cos(heading),
+              bg::get<1>(start_point) + i * s_inc * sin(heading));
+    reference_line_.AddPoint(p);
+  }
+  if (length > num_points * s_inc) {
+    Point2d end_p(bg::get<0>(start_point) + length * cos(heading),
+                  bg::get<1>(start_point) + length * sin(heading));
+    reference_line_.AddPoint(end_p);
+  }
+
   //! calculate overall length
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding line";
+  }
+
   return true;
 }
 
@@ -47,7 +70,13 @@ bool PlanView::AddSpiral(Point2d start_point, float heading, float length,
     if ((length - s < s_inc) && (length - s > 0.)) s_inc = length - s;
     s += s_inc;
   }
+
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding spiral";
+  }
+
   return true;
 }
 
@@ -75,6 +104,11 @@ bool PlanView::AddArc(Point2d start_point, float heading, float length,
     if (length - s < s_inc && length - s > 0.) s_inc = length - s;
     s += s_inc;
   }
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding arc";
+  }
+
   return true;
 }
 

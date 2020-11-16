@@ -77,7 +77,7 @@ TEST(rss_interface, test_rss_check) {
   std::shared_ptr<PlanView> p(new PlanView());
 
   //! add line
-  p->AddLine(Point2d(0, -125), M_PI_2, 250);
+  p->AddLine(Point2d(0, -125), M_PI_2, 250, 250);
 
   //! lane sections
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0f));

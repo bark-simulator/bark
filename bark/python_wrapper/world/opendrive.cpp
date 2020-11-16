@@ -152,6 +152,7 @@ void python_opendrive(py::module m) {
         &bark::world::tests::MakeXodrMapTwoRoadsOneLane);
   m.def("MakeXodrMapEndingLaneInParallel",
         &bark::world::tests::MakeXodrMapEndingLaneInParallel);
+  m.def("MakeXodrMapCurved", &bark::world::tests::MakeXodrMapCurved);
 
   py::class_<XodrLaneLink>(m, "XodrLaneLink")
       .def(py::init<>())

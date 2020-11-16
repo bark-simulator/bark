@@ -50,6 +50,7 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals",
                                                                  "Draw Route of eval agent goals", True]
         self.eval_goal_color = params["Visualization"]["Agents"]["EvalGoalColor",
@@ -183,13 +184,20 @@ class BaseViewer(Viewer):
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
         pass
 
-    def drawTrajectory(self, trajectory, color):
+    def drawTrajectory(self, trajectory, color, **kwargs):
         pass
 
     def drawObstacle(self, obstacle):
         pass
 
     def drawText(self, position, text, **kwargs):
+        pass
+
+    def drawCircles(self, position_list, radius):
+        for pos in position_list:
+          self.drawCircle(pos, radius)
+
+    def drawCircle(self, position, radius):
         pass
 
     def getColor(self, color):
@@ -204,6 +212,10 @@ class BaseViewer(Viewer):
     def drawAgents(self, world):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
+    
+    def drawBehaviorPlan(self, behavior_model):
+        self.drawTrajectory(behavior_model.last_trajectory,
+                                  color='black', linewidth=1.0)
 
     def drawHistory(self, agent, color, alpha, facecolor, zorder):
         shape = agent.shape
@@ -324,6 +336,11 @@ class BaseViewer(Viewer):
                 self.drawRssDebugInfomation(world, eval_agent_ids[0])
             if self.draw_rss_safety_responses:
                 self.drawRssSafetyResponses(world, eval_agent_ids[0])
+
+        if self.draw_behavior_plan_eval_agent:
+          eval_agent = world.GetAgent(eval_agent_ids[0])
+          if eval_agent is not None:
+              self.drawBehaviorPlan(eval_agent.behavior_model)
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])

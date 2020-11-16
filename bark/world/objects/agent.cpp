@@ -28,7 +28,7 @@ Agent::Agent(const State& initial_state,
       dynamic_model_(dynamic_model_ptr),
       execution_model_(execution_model),
       history_(),
-      max_history_length_(10),
+      max_history_length_(30),
       first_valid_timestamp_(0.0),
       goal_definition_(goal_definition) {
   if (params) {

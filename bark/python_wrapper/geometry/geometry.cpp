@@ -27,6 +27,7 @@ using Eigen::Matrix;
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
+  m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
 }
 
 void python_geometry(py::module m) {
@@ -96,6 +97,9 @@ void python_geometry(py::module m) {
   m.def("ComputeCenterLine", &bark::geometry::ComputeCenterLine,
         "computes the center line.");
 
+  m.def("SmoothLine", &bark::geometry::SmoothLine,
+        "smoothes line using spline interpolation");
+
   m.def("Collide", py::overload_cast<const Polygon&, const Point2d&>(&Collide),
         "Returns true if polygon and point2d collide.");
 
@@ -146,8 +150,6 @@ void python_geometry(py::module m) {
       .def("Reverse", &Line::Reverse, "reverse linestring in place")
       .def("AppendLinestring", &Line::AppendLinestring,
            "append linestrings in place")
-      .def("concatenate_linestring", &Line::ConcatenateLinestring,
-           "concatenate linestrings in place")
       .def_property_readonly("bounding_box", &Line::BoundingBox)
       .def_readwrite("center", &Line::center_, "center point.")
       .def(py::pickle(
@@ -157,7 +159,7 @@ void python_geometry(py::module m) {
           [](const py::tuple& t) {
             if (t.size() != 1) throw std::runtime_error("Invalid line state!");
             Line l;
-            auto points = t[0].cast<Matrix<float, Dynamic, Dynamic>>();
+            auto points = t[0].cast<Matrix<double, Dynamic, Dynamic>>();
             for (int i = 0; i < points.rows(); ++i) {
               l.AddPoint(Point2d(points(i, 0), points(i, 1)));
             }
@@ -168,7 +170,7 @@ void python_geometry(py::module m) {
       .def(py::init<>(), "Create empty polygon")
       .def(py::init<Pose, std::vector<Point2d>>(),
            "Create polygon with center point and point list")
-      .def(py::init<Pose, const Matrix<float, Dynamic, Dynamic>&>(),
+      .def(py::init<Pose, const Matrix<double, Dynamic, Dynamic>&>(),
            "Create polygon with center point and point list")
       .def(py::init<Pose, const Line&>(),
            "Create polygon with center point and line enclosing polygon")
@@ -218,7 +220,7 @@ void python_geometry(py::module m) {
           [](py::tuple& t) {
             if (t.size() != 2) throw std::runtime_error("Invalid point state!");
             Polygon p(t[1].cast<Pose>(),
-                      t[0].cast<Matrix<float, Dynamic, Dynamic>>());
+                      t[0].cast<Matrix<double, Dynamic, Dynamic>>());
             return p;
           }));
 

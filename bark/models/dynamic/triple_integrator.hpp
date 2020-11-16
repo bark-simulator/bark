@@ -36,8 +36,8 @@ class TripleIntegratorModel : public DynamicModel {
    * @return State
    */
   State StateSpaceModel(const State& x, const Input& u) const {
-    Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> A(15, 15);
-    Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> B(15, 3);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> A(15, 15);
+    Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> B(15, 3);
     A << 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,

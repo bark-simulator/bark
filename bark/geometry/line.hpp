@@ -23,6 +23,8 @@
 #include "bark/geometry/angle.hpp"
 #include "bark/geometry/commons.hpp"
 
+#include "src/spline.h"
+
 namespace bark {
 namespace geometry {
 
@@ -34,7 +36,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       : Shape<bg::model::linestring<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0) {
   }
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
 
@@ -72,45 +74,6 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   void Reverse() {
     boost::geometry::reverse(Shape<bg::model::linestring<T>, T>::obj_);
-  }
-
-  void ConcatenateLinestring(const Line_t& other_line) {
-    // Get first and last points
-    auto first_point_this = *begin();
-    auto last_point_this = *(end() - 1);
-    auto first_point_other = *other_line.begin();
-    auto last_point_other = *(other_line.end() - 1);
-
-    float distance_first_first = Distance(first_point_this, first_point_other);
-    float distance_first_last = Distance(first_point_this, last_point_other);
-    float distance_last_first = Distance(last_point_this, first_point_other);
-    float distance_last_last = Distance(last_point_this, last_point_other);
-
-    if (distance_first_first <=
-        std::min(
-            {distance_first_last, distance_last_first, distance_last_last})) {
-      // Reverse this
-      Reverse();
-      AppendLinestring(other_line);
-    } else if (distance_first_last <=
-               std::min({distance_first_first, distance_last_first,
-                         distance_last_last})) {
-      // Reverse both
-      Reverse();
-      Line_t new_line = other_line;
-      new_line.Reverse();
-      AppendLinestring(new_line);
-    } else if (distance_last_first <=
-               std::min({distance_first_first, distance_first_last,
-                         distance_last_last})) {
-      // No reversing
-      AppendLinestring(other_line);
-    } else {
-      // Reverse other
-      Line_t new_line = other_line;
-      new_line.Reverse();
-      AppendLinestring(new_line);
-    }
   }
 
   typedef typename std::vector<T>::iterator point_iterator;
@@ -183,9 +146,9 @@ using LinePoint = Point2d;
 using Line = Line_t<LinePoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray()
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray()
     const {
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(obj_.size(), 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(obj_.size(), 2);
   for (uint32_t i = 0; i < obj_.size(); i++) {
     mat.row(i) << bg::get<0>(obj_[i]), bg::get<1>(obj_[i]);
   }
@@ -197,6 +160,13 @@ inline std::shared_ptr<Shape<bg::model::linestring<T>, T>> Line_t<T>::Clone()
     const {
   std::shared_ptr<Line_t<T>> new_line = std::make_shared<Line_t<T>>(*this);
   return new_line;
+}
+
+template <typename T>
+inline Line Reverse(const T& l) {
+  T lr = l;
+  lr.Reverse();
+  return lr;
 }
 
 inline float Distance(const Line& line, const Point2d& p) {
@@ -262,6 +232,40 @@ inline Point2d GetPointAtIdx(const Line& l, const uint idx) {
   } else {
     return l.obj_.at(idx);
   }
+}
+
+inline Eigen::VectorXd Gradient(Eigen::VectorXd vec) {
+  // calculating central difference
+  Eigen::VectorXd g(vec.size());
+  for (int i = 1; i < vec.size() - 1; i++) {
+    g(i) = (vec(i + 1) - vec(i - 1)) / 2;
+  }
+  // TODO: find better solution for first and last point
+  g(0) = g(1);
+  g(vec.size() - 1) = g(vec.size() - 2);
+  return g;
+}
+
+inline Eigen::VectorXd GetCurvature(Line l) {
+  Eigen::MatrixXd larray = l.ToArray();
+  Eigen::VectorXd dx = Gradient(larray.col(0));
+  Eigen::VectorXd ddx = Gradient(dx);
+  Eigen::VectorXd dy = Gradient(larray.col(1));
+  Eigen::VectorXd ddy = Gradient(dy);
+
+  // elementwise, as pow(vector, scalar) does not work
+  Eigen::VectorXd curvature(larray.rows());
+  for (int i = 0; i < curvature.size(); i++) {
+    float n = dx(i) * ddy(i) - ddx(i) * dy(i);
+    float r = pow(dx(i), 2) + pow(dy(i), 2);
+    float d = pow(r, 1.5);
+    if (d == 0) {
+      curvature(i) = 0;
+    } else {
+      curvature(i) = n / d;
+    }
+  }
+  return curvature;
 }
 
 inline Point2d GetPointAtS(Line l, float s) {
@@ -477,14 +481,137 @@ inline double SignedDistance(const Line& line, const Point2d& p,
   return bg::distance(line.obj_, p) * sign;
 }
 
-inline Line ComputeCenterLine(const Line& outer_line_,
-                              const Line& inner_line_) {
+inline Line AppendLinesNoIntersect(const Line& ls1, const Line& ls2) {
+  std::vector<Point2d> intersecting_points;
+  bg::intersection(ls1.obj_, ls2.obj_, intersecting_points);
+  Line lout;
+  if (intersecting_points.size() == 1) {
+    // get s value for both lines
+    float s_i1 = GetNearestS(ls1, intersecting_points.at(0));
+    float s_i2 = GetNearestS(ls2, intersecting_points.at(0));
+    float rel_s_i1 = s_i1 / ls1.Length();
+    float rel_s_i2 = s_i2 / ls2.Length();
+
+    Line ls1_part, ls2_part;
+    if (rel_s_i1 < 0.3) {
+      // take latter part of line
+      ls1_part = GetLineFromSInterval(ls1, s_i1, ls1.Length());
+    } else if (rel_s_i1 > 0.7) {
+      // take front part of line
+      ls1_part = GetLineFromSInterval(ls1, 0, s_i1);
+    } else {
+      LOG(WARNING) << "Lines intersecting too much, only appending";
+      ls1_part = ls1;
+    }
+
+    if (rel_s_i2 < 0.3) {
+      // take latter part of line
+      ls2_part = GetLineFromSInterval(ls2, s_i2, ls2.Length());
+    } else if (rel_s_i2 > 0.7) {
+      // take front part of line
+      ls2_part = GetLineFromSInterval(ls2, 0, s_i2);
+    } else {
+      LOG(WARNING) << "Lines intersecting too much, only appending";
+      ls2_part = ls2;
+    }
+
+    lout = ls1_part;
+    lout.AppendLinestring(ls2_part);
+  } else if (intersecting_points.size() > 1) {
+    // do something
+    LOG(ERROR) << "two intersecting points";
+    lout = ls1;
+    lout.AppendLinestring(ls2);
+  } else {
+    lout = ls1;
+    lout.AppendLinestring(ls2);
+  }
+
+  if (boost::geometry::intersects(lout.obj_)) {
+    LOG(ERROR) << "AppendLinesNoIntersect yields self intersecting line";
+    LOG(ERROR) << "ls1" << ls1.ToArray();
+    LOG(ERROR) << "ls2" << ls2.ToArray();
+    LOG(ERROR) << "lout" << lout.ToArray();
+  }
+  return lout;
+}
+
+inline Line ConcatenateLinestring(const Line& ls1, const Line& ls2) {
+  // Get first and last points
+  auto first_point_this = *ls1.begin();
+  auto last_point_this = *(ls1.end() - 1);
+  auto first_point_other = *ls2.begin();
+  auto last_point_other = *(ls2.end() - 1);
+
+  float d_first_first = Distance(first_point_this, first_point_other);
+  float d_first_last = Distance(first_point_this, last_point_other);
+  float d_last_first = Distance(last_point_this, first_point_other);
+  float d_last_last = Distance(last_point_this, last_point_other);
+
+  Line lconcat;
+  if (d_first_first <= std::min({d_first_last, d_last_first, d_last_last})) {
+    // Reverse this
+    lconcat = AppendLinesNoIntersect(Reverse(ls1), ls2);
+  } else if (d_first_last <=
+             std::min({d_first_first, d_last_first, d_last_last})) {
+    // Reverse both
+    lconcat = AppendLinesNoIntersect(Reverse(ls1), Reverse(ls2));
+  } else if (d_last_first <=
+             std::min({d_first_first, d_first_last, d_last_last})) {
+    // No reversing
+    lconcat = AppendLinesNoIntersect(ls1, ls2);
+  } else {
+    // Reverse other
+    lconcat = AppendLinesNoIntersect(ls1, Reverse(ls2));
+  }
+  return lconcat;
+}
+
+// Subsampling using spline
+inline Line SmoothLine(const Line& l, const double ds) {
+  if (l.size() < 3) {
+    LOG(WARNING) << "cannot subsample line with only 3 points";
+    return l;
+  } else {
+    int num_points = l.Length() / ds;
+
+    tk::spline splineX, splineY;
+    std::vector<double> xVec, yVec;
+    for (size_t i = 0; i < l.obj_.size(); i++) {
+      xVec.push_back(bg::get<0>(l.obj_[i]));
+      yVec.push_back(bg::get<1>(l.obj_[i]));
+    }
+    std::vector<double> sVec(l.s_.begin(), l.s_.end());
+    splineX.set_points(sVec, xVec);
+    splineY.set_points(sVec, yVec);
+
+    Line lss;
+    for (size_t j = 0; j <= num_points; ++j) {
+      double x = splineX(j * ds);
+      double y = splineY(j * ds);
+      lss.AddPoint(geometry::Point2d(x, y));
+    }
+    if (l.Length() > num_points * ds) {
+      lss.AddPoint(l.obj_.at(l.size() - 1));
+    }
+    return lss;
+  }
+}
+
+inline Line ComputeCenterLine(const Line& outer_line, const Line& inner_line) {
+  if (boost::geometry::intersects(outer_line.obj_)) {
+    LOG(WARNING) << "Computing center line, but outer line self-intersects";
+  }
+  if (boost::geometry::intersects(inner_line.obj_)) {
+    LOG(WARNING) << "Computing center line, but inner line self-intersects";
+  }
+
   Line center_line_;
-  Line line_more_points = outer_line_;
-  Line line_less_points = inner_line_;
-  if (inner_line_.obj_.size() > outer_line_.obj_.size()) {
-    line_more_points = inner_line_;
-    line_less_points = outer_line_;
+  Line line_more_points = outer_line;
+  Line line_less_points = inner_line;
+  if (inner_line.obj_.size() > outer_line.obj_.size()) {
+    line_more_points = inner_line;
+    line_less_points = outer_line;
   }
   for (Point2d& point_loop : line_more_points.obj_) {
     Point2d nearest_point_other =

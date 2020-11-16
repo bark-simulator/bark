@@ -162,6 +162,7 @@ cc_library(
 cc_library(
     name="include",
     hdrs=glob(["*.hpp"]),
+    deps = ["//bark/world/evaluation/ltl:include"],
     visibility = ["//visibility:public"],
 )
 

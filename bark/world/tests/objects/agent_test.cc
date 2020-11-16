@@ -46,8 +46,8 @@ params)); WorldPtr world(new World(params));
        //! new plan view
     PlanView p_1;
     //! add line
-    p_1.AddLine(Point2d(0.0f,0.0f), 0.0, 25.0f);
-    p_1.AddLine(Point2d(25.0f,0.0f), 0.0, 25.0f);
+    p_1.AddLine(Point2d(0.0f,0.0f), 0.0, 25.0f, 25.0f);
+    p_1.AddLine(Point2d(25.0f,0.0f), 0.0, 25.0f, 25.0f);
 
     //! lane sections
     XodrLaneSection section_1(0.0f);

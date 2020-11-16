@@ -126,8 +126,9 @@ TEST(CalculateSteeringAngle, dynamic_test) {
 
   EXPECT_LE(std::abs(a_lat(x, x1)), a_lat_max);
   EXPECT_LE(std::abs(delta), delta_max);
-  EXPECT_LT(x1(static_cast<int>(StateDefinition::X_POSITION)),
-            x(static_cast<int>(StateDefinition::X_POSITION)));
+  EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
+                  x(static_cast<int>(StateDefinition::X_POSITION)),
+              0, 1e-10);
 
   // Parallel to line, high crosstrack error, low speed
   x << 50.0f, 0.0f, 0.0f, M_PI / 2.0f, 0.1f;
@@ -137,8 +138,9 @@ TEST(CalculateSteeringAngle, dynamic_test) {
 
   EXPECT_LE(std::abs(a_lat(x, x1)), a_lat_max);
   EXPECT_LE(std::abs(delta), delta_max);
-  EXPECT_LT(x1(static_cast<int>(StateDefinition::X_POSITION)),
-            x(static_cast<int>(StateDefinition::X_POSITION)));
+  EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
+                  x(static_cast<int>(StateDefinition::X_POSITION)),
+              0, 1e-10);
 }
 
 TEST(triple_integrator_model, dynamic_test) {
