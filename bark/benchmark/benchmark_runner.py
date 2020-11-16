@@ -127,7 +127,7 @@ class BenchmarkRunner:
                         break
                     
                     # only relevant for scenarios from dataset
-                    dataset_scenario_desc = self._get_dataset_scenario_description(scenario)
+                    dataset_scenario_desc = scenario.GetDatasetScenarioDescription()
                     scenario_set_param_desc.update(dataset_scenario_desc)
                       
                     benchmark_config = \
@@ -304,13 +304,3 @@ class BenchmarkRunner:
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
 ---------------------------------------------------------------------".format(len(result_dct_list),
                                                                               grouped.to_string()))
-
-    def _get_dataset_scenario_description(self, scenario):
-        # only relevant for scenarios from dataset
-        try:
-          track_id_ego = scenario.eval_agent_ids[0]
-          track_file_name = scenario.json_params["track_file"]
-          dataset_scenario_desc = {'TrackIdEgo': track_id_ego, 'TrackFileName': track_file_name}
-        except:
-          dataset_scenario_desc = {}
-        return dataset_scenario_desc
