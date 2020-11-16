@@ -26,12 +26,12 @@ class Panda3dViewer(BaseViewer, ShowBase):
         self.texture_path = kwargs.pop("model_path",
                                            self.path + "/models/white_texture.png")
         self.agent_scale = kwargs.pop("model_scale",
-                                      np.array([1.,1.,1.], dtype=double))
+                                      np.array([1.,1.,1.], dtype=float))
         self.agent_orientation = \
             kwargs.pop("model_orientation",np.array([0, 90, 90],
-                       dtype=double))
+                       dtype=float))
         self.agent_translation = kwargs.pop("model_translation",
-                                            np.array([0., 0.], dtype=double))
+                                            np.array([0., 0.], dtype=float))
         self.range_for_zoom = kwargs.pop("is_zoom_range", False)
         self.line_thicknesses = kwargs.pop("line_thickness", { # Dict of keys cameras and values [line thickness, height] which are needed to calculate the dynamic thickness
             -3: [0.03, 10],
@@ -199,8 +199,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
     def initCam(self, poses=None, orientation=None):#TODO Calculate from map parameter before
         poses = poses or [0, 0, 700]
         orientation = orientation or [0, 270, 0]
-        self.cam_pose = np.array(poses, dtype=double)
-        self.cam_or = np.array(orientation, dtype=double)
+        self.cam_pose = np.array(poses, dtype=float)
+        self.cam_or = np.array(orientation, dtype=float)
 
     def setMouseControl(self):
         # Enables Panda3d Standard Mouse Control
@@ -221,7 +221,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         Arguments:
             agent_poses {[dict]} -- [look up table of all agent poses]
         """
-        points = np.array([[]], dtype=double)
+        points = np.array([[]], dtype=float)
         if ((self.world_x_range is not None)
                 and (self.world_y_range is not None) and self.range_for_zoom):
             points = np.array([[self.world_x_range[0], self.world_y_range[0]],
@@ -229,7 +229,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         # Build concat matrix of all positions
         for _, agent in agent_poses.items():
             if points.size is 0:
-                points = np.array([[agent[0], agent[1]]], dtype=double)
+                points = np.array([[agent[0], agent[1]]], dtype=float)
             else:
                 points = np.append(points, [[agent[0], agent[1]]], axis=0)
         # Calculate maximum distance between min,max of x or y poses
@@ -240,8 +240,8 @@ class Panda3dViewer(BaseViewer, ShowBase):
         max_dist = np.maximum(max_dist * 1.25, 40)
         # Calculate camera height
         zoom = max_dist * np.tan(pi * (60 / 180))
-        self.cam_pose = np.array([center[0], center[1], zoom], dtype=double)
-        self.cam_or = np.array([0, 270, 0], dtype=double)
+        self.cam_pose = np.array([center[0], center[1], zoom], dtype=float)
+        self.cam_or = np.array([0, 270, 0], dtype=float)
         self.updateCamera(lookAt=False)
 
     def setAgentCam(self, perspective, agent_poses):
@@ -264,7 +264,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             (agent_poses[2] * 180) / pi +
             self.agent_cam_parameter[perspective][4]
         ],
-                               dtype=double)
+                               dtype=float)
         self.updateCamera(lookAt=self.agent_cam_parameter[perspective][5])
 
     def calcLineThickness(self,cameras=None):
@@ -317,7 +317,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
             self.agent_nodes[agent.id].setPos(0, 0, 2)
             self.agent_nodes[agent.id].setScale(
                 self.agent_scale[0], self.agent_scale[1], self.agent_scale[2])
-            self.agent_poses[agent.id] = np.array([0, 0, 0], dtype=double)
+            self.agent_poses[agent.id] = np.array([0, 0, 0], dtype=float)
 
             self.camera_list.insert(len(self.camera_list), agent.id)
 
@@ -347,7 +347,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
                 np.cos(self.agent_poses[agent.id][2] + pi * 0.5),
                 np.sin(self.agent_poses[agent.id][2] + pi * 0.5)
             ]],
-                         dtype=double)
+                         dtype=float)
             translation = np.dot(translation, r)
         self.agent_nodes[agent.id].setPos(
             self.agent_poses[agent.id][0] + translation[0],

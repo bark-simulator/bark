@@ -35,9 +35,9 @@ class ParamServerTests(unittest.TestCase):
     value_bool_true = params_child["Child3"]["Child2"]["ValueBoolTrue", "Desc", True]
     value_int = params_child["Child1"]["Child4"]["ValueInt", "Desc", 2041]
     value_list_list_double = params_child["Child1"]["Child4"]["ValueListListFloat", "Desc",
-         [[1.0, 2.0, double(5.4545234)], [double(1.1266135),2.0], [double(123.234234)]]]
+         [[1.0, 2.0, float(5.4545234)], [float(1.1266135),2.0], [float(123.234234)]]]
     value_list_double = params_child["Child1"]["Child5"]["ValueListFloat", "Desc",
-         [1.0, 2.0, double(5.4545234), double(1.1266135),2.0, double(123.234234)]]
+         [1.0, 2.0, float(5.4545234), float(1.1266135),2.0, float(123.234234)]]
 
     behavior = BehaviorIDMClassic(params_child)
     cpp_object = CppParamServerTestObject(params_child)
@@ -48,10 +48,10 @@ class ParamServerTests(unittest.TestCase):
     self.assertEqual(cpp_object.GetBoolValueTrue(), True)
     self.assertEqual(cpp_object.GetIntValue(), 2041)
     list1 = cpp_object.GetListListFloatValue()
-    list2 =[[1.0,2.0, double(5.4545234)], [double(1.1266135),2.0], [double(123.234234)]]
+    list2 =[[1.0,2.0, float(5.4545234)], [float(1.1266135),2.0], [float(123.234234)]]
 
     list3 = cpp_object.GetListFloatValue()
-    list4 =[1.0, 2.0, double(5.4545234), double(1.1266135),2.0, double(123.234234)]
+    list4 =[1.0, 2.0, float(5.4545234), float(1.1266135),2.0, float(123.234234)]
 
     self.assertEqual(len(list1), len(list2))
     for idx, _ in enumerate(list1):

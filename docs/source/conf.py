@@ -122,7 +122,7 @@ latex_elements = {
     #
     # 'preamble': '',
 
-    # Latex figure (double) alignment
+    # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
 }

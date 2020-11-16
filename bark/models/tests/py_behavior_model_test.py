@@ -38,10 +38,10 @@ class PythonBehaviorModelWrapper(BehaviorModel):
 
   def Plan(self, delta_time, world):
     super(PythonBehaviorModelWrapper, self).ActionToBehavior(
-      np.array([2., 1.], dtype=np.double32))
+      np.array([2., 1.], dtype=np.float32))
     # print(super(PythonBehaviorModelWrapper, self).GetAction())
     trajectory = np.array([[0., 0., 0., 0., 0.],
-                           [0., 0., 0., 0., 0.]], dtype=np.double32)
+                           [0., 0., 0., 0., 0.]], dtype=np.float32)
     super(PythonBehaviorModelWrapper, self).SetLastTrajectory(trajectory)
     return trajectory
 
@@ -60,7 +60,7 @@ class PythonBehaviorModelWrapperInheritance(BehaviorModel):
   
   def Plan(self, delta_time, world):
     self._dynamic_behavior_model.ActionToBehavior(
-      np.array([2., 1.], dtype=np.double32))
+      np.array([2., 1.], dtype=np.float32))
     trajectory = self._dynamic_behavior_model.Plan(delta_time, world)
     super(PythonBehaviorModelWrapperInheritance, self).SetLastTrajectory(trajectory)
     return trajectory
@@ -90,7 +90,7 @@ class PyBehaviorModelTests(unittest.TestCase):
       single_track_model, param_server)
     world.GetAgent(0).behavior_model = behavior_model
     world.GetAgent(0).behavior_model.SetLastAction(
-      np.array([1., 1.], dtype=np.double32))
+      np.array([1., 1.], dtype=np.float32))
     world.Step(0.2)
 
   def test_python_model_inheritance(self):
@@ -111,7 +111,7 @@ class PyBehaviorModelTests(unittest.TestCase):
     
     world.GetAgent(0).behavior_model = behavior_model
     world.GetAgent(0).behavior_model.SetLastAction(
-      np.array([1., 1.], dtype=np.double32))
+      np.array([1., 1.], dtype=np.float32))
     world.Step(0.2)
 
 

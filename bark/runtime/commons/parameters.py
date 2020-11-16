@@ -240,11 +240,11 @@ class ParameterServer(Params):
 
     def GetCondensedParamList(self):
         def check_append(value):
-          if isinstance(value, double) or isinstance(value, int) \
+          if isinstance(value, float) or isinstance(value, int) \
               or isinstance(value,bool) or isinstance(value, str):
               return True
           # list double
-          elif isinstance(value, list) and all(isinstance(el, double) for el in value):
+          elif isinstance(value, list) and all(isinstance(el, float) for el in value):
             return True
           # list list double
           elif isinstance(value, list):
@@ -252,7 +252,7 @@ class ParameterServer(Params):
                 if not isinstance(el, list):
                   return False
                 for e in el:
-                  if not isinstance(e, double):
+                  if not isinstance(e, float):
                     return False
               return True
           return False

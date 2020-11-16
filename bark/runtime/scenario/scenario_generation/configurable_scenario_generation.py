@@ -461,7 +461,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
                                                 end_road_id)
     elif isinstance(source_sink, list) and \
            isinstance(source_sink[0], list)  and \
-           isinstance(source_sink[0][0], double):
+           isinstance(source_sink[0][0], float):
            # point 2d given to find start and end road id road corridor
             goal_polygon = Polygon2d([0, 0, 0],
                                   [Point2d(-1,0),

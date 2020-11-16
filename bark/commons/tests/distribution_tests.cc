@@ -24,7 +24,7 @@ TEST(distribution_test, normal_dist_1d) {
 
   auto dist_normal = bark::commons::NormalDistribution1D(params_ptr);
 
-  size_t samples = 30000;
+  size_t samples = 100000;
   double mean = 0.0;
   for (size_t i = 0; i < samples; ++i) {
     mean += dist_normal.Sample()[0];
@@ -98,7 +98,7 @@ TEST(distribution_test, multivariate_distribution) {
 
   auto dist_multivariate = bark::commons::MultivariateDistribution(params_ptr);
 
-  size_t samples = 200000;
+  size_t samples = 500000;
   std::vector<double> mean(3, 0.0);
   for (size_t i = 0; i < samples; ++i) {
     auto sample = dist_multivariate.Sample();
