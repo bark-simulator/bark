@@ -163,7 +163,7 @@ TEST(rss_interface, test_rss_check) {
 
   world->Step(0.2f);
 
-  params->AddChild("EvaluatorRss")->GetString("MapFilename", "",
+  params->GetString("EvaluatorRss::MapFilename", "",
     "bark/runtime/tests/data/city_highway_straight.xodr");
   RssInterface rss(params);
 
@@ -208,7 +208,7 @@ TEST(rss_interface, test_rss_planning_route) {
   WorldPtr world(new World(params));
   world->AddAgent(agent);
 
-  params->AddChild("EvaluatorRss")->GetString("MapFilename", "",
+  params->GetString("EvaluatorRss::MapFilename", "",
     "bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr");
   RssInterface rss(params);
 

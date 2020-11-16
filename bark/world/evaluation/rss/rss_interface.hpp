@@ -124,6 +124,7 @@ class RssInterface {
       "a route to the goal cannnot be found",
       50);
   
+    // LOG(FATAL) <<  opendrive_file_name << std::endl;
     // Sanity checks
     // assert(boost::filesystem::exists(opendrive_file_name));
     assert(scaling_relevant_range_ >= 1.);
