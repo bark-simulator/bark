@@ -39,25 +39,20 @@ class BehaviorConfig:
 class BenchmarkConfig:
     def __init__(self, config_idx, behavior_config,
                  scenario, scenario_idx, scenario_set_name,
-                 scenario_set_param_desc=None, track_id_ego=None, 
-                 track_file_name=None):
+                 scenario_set_param_desc=None):
         self.config_idx = config_idx
         self.behavior_config = behavior_config
         self.scenario = scenario
         self.scenario_idx = scenario_idx
         self.scenario_set_name = scenario_set_name
         self.scenario_set_param_desc = scenario_set_param_desc or {}
-        self.track_id_ego = track_id_ego
-        self.track_file_name = track_file_name
 
     def get_info_string_list(self):
         info_strings = ["ConfigIdx: {}".format(self.config_idx),
                         "Behavior: {}".format(self.behavior_config.behavior_name),
                         "ScenarioSet: {}".format(self.scenario_set_name),
                         "ScenarioIdx: {}".format(self.scenario_idx),
-                        "ScenarioParamDes: {}".format(self.scenario_set_param_desc),
-                        "TrackIdEgo: {}".format(self.track_id_ego),
-                        "TrackFileName: {}".format(self.track_file_name)]
+                        "ScenarioParamDes: {}".format(self.scenario_set_param_desc)]
         return info_strings
 
     def as_dict(self):
@@ -65,9 +60,7 @@ class BenchmarkConfig:
                 "scen_set": self.scenario_set_name,
                 "scen_idx": self.scenario_idx,
                 **self.scenario_set_param_desc,
-                **self.behavior_config.as_dict(),
-                "track_id_ego": self.track_id_ego,
-                "track_file_name": self.track_file_name}
+                **self.behavior_config.as_dict()}
 
     def get_evaluation_groups(self):
       return ["scen_set", *list(self.behavior_config.as_dict().keys())]

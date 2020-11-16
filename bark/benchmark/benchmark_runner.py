@@ -127,7 +127,8 @@ class BenchmarkRunner:
                         break
                     
                     # only relevant for scenarios from dataset
-                    track_id_ego, track_file_name = self._get_track_id_and_filename(scenario)
+                    dataset_scenario_desc = self._get_dataset_scenario_description(scenario)
+                    scenario_set_param_desc.update(dataset_scenario_desc)
                       
                     benchmark_config = \
                         BenchmarkConfig(
@@ -136,9 +137,7 @@ class BenchmarkRunner:
                             scenario,
                             scenario_idx,
                             scenario_set_name,
-                            scenario_set_param_desc,
-                            track_id_ego,
-                            track_file_name
+                            scenario_set_param_desc
                         )
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
@@ -306,12 +305,12 @@ class BenchmarkRunner:
 ---------------------------------------------------------------------".format(len(result_dct_list),
                                                                               grouped.to_string()))
 
-    def _get_track_id_and_filename(self, scenario):
+    def _get_dataset_scenario_description(self, scenario):
         # only relevant for scenarios from dataset
         try:
           track_id_ego = scenario.eval_agent_ids[0]
           track_file_name = scenario.json_params["track_file"]
+          dataset_scenario_desc = {'TrackIdEgo': track_id_ego, 'TrackFileName': track_file_name}
         except:
-          track_id_ego = None
-          track_file_name = None
-        return track_id_ego, track_file_name
+          dataset_scenario_desc = {}
+        return dataset_scenario_desc
