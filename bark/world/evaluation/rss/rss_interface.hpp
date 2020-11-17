@@ -92,8 +92,6 @@ class RssInterface {
   RssInterface() {}
   explicit RssInterface(std::string opendrive_file_name,
                         const commons::ParamsPtr& params) {
-    // std::string opendrive_file_name = params->GetString(
-    //   "EvaluatorRss::MapFilename", "Map path", "");
     acc_lon_max_ = params->GetReal(
       "EvaluatorRss::AccLonMax", "maximum acceleration", 1.7);
     brake_lon_max_ = params->GetReal(
@@ -125,7 +123,6 @@ class RssInterface {
       "a route to the goal cannnot be found",
       50);
   
-    // LOG(FATAL) <<  opendrive_file_name << std::endl;
     // Sanity checks
     // assert(boost::filesystem::exists(opendrive_file_name));
     assert(scaling_relevant_range_ >= 1.);
