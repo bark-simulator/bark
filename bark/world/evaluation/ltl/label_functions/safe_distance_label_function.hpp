@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
 
@@ -33,6 +34,9 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
 
   bool EvaluateEgoCorridor(const world::ObservedWorld& observed_world) const;
   bool EvaluateCrossingCorridors(const world::ObservedWorld& observed_world) const;
+
+  bool IsOncomingVehicle(const bark::world::objects::AgentPtr& front_agent,
+           const bark::world::objects::AgentPtr& rear_agent) const;
 
   bool GetToRear() const { return to_rear_; }
   double GetDelta() const { return delta_; }

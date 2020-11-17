@@ -39,6 +39,23 @@ LabelMap SafeDistanceLabelFunction::Evaluate(const world::ObservedWorld& observe
   return {{GetLabel(), safe_dist}};
 }
 
+bool SafeDistanceLabelFunction::IsOncomingVehicle(const bark::world::AgentPtr& front_agent,
+           const bark::world::AgentPtr& rear_agent) const {
+  // Angular deviation allowed around orientation difference of 180
+  using bark::models::dynamic::StateDefinition;
+  const double max_angular_deviation = 5.0 / 360.0 * bark::geometry::B_2PI;
+  const double lower_angular_range = bark::geometry::B_PI - max_angular_deviation;
+  const double upper_angular_range = bark::geometry::B_PI + max_angular_deviation;
+  const double angle_difference = front_agent->GetCurrentState()[StateDefinition::THETA_POSITION] - 
+                                  rear_agent->GetCurrentState()[StateDefinition::THETA_POSITION];
+  const double normed_angle = bark::geometry::Norm0To2PI(angle_difference);
+  const bool is_oncoming = normed_angle < upper_angular_range &&
+         normed_angle > lower_angular_range;
+  VLOG(5) << "oncoming?:" << is_oncoming << ", lar=" << lower_angular_range << ", uar=" 
+          << upper_angular_range << ", na=" << normed_angle;
+  return is_oncoming;
+}
+
 
 bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
     const world::ObservedWorld& observed_world) const {
@@ -58,6 +75,9 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
   } 
   
   if (fr_agents.front.first) {
+    if (IsOncomingVehicle(fr_agents.front.first, ego)) {
+      return true;
+    }
     double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
     double v_f = fr_agents.front.second.to.vlon;
     double dist = fr_agents.front.second.lon;
