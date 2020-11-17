@@ -33,7 +33,9 @@ class EvaluatorRSS : public BaseEvaluator {
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(params) {}
+        rss_(
+          params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
+          params) {}
   explicit EvaluatorRSS(const commons::ParamsPtr& params)
       : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
 

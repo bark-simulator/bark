@@ -162,10 +162,7 @@ TEST(rss_interface, test_rss_check) {
   // ===================================================
 
   world->Step(0.2f);
-
-  params->GetString("EvaluatorRss::MapFilename", "",
-    "bark/runtime/tests/data/city_highway_straight.xodr");
-  RssInterface rss(params);
+  RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", params);
 
   ::ad::rss::world::WorldModel rss_world;
   WorldPtr cloned_world(world->Clone());
@@ -208,9 +205,7 @@ TEST(rss_interface, test_rss_planning_route) {
   WorldPtr world(new World(params));
   world->AddAgent(agent);
 
-  params->GetString("EvaluatorRss::MapFilename", "",
-    "bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr");
-  RssInterface rss(params);
+  RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr", params);
 
   Point2d agent_goal;
   boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,

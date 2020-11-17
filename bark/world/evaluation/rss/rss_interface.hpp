@@ -90,9 +90,10 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 class RssInterface {
  public:
   RssInterface() {}
-  explicit RssInterface(const commons::ParamsPtr& params) {
-    std::string opendrive_file_name = params->GetString(
-      "EvaluatorRss::MapFilename", "Map path", "");
+  explicit RssInterface(std::string opendrive_file_name,
+                        const commons::ParamsPtr& params) {
+    // std::string opendrive_file_name = params->GetString(
+    //   "EvaluatorRss::MapFilename", "Map path", "");
     acc_lon_max_ = params->GetReal(
       "EvaluatorRss::AccLonMax", "maximum acceleration", 1.7);
     brake_lon_max_ = params->GetReal(
