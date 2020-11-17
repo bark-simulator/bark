@@ -77,10 +77,10 @@ typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
 
-// This is a library to access RSS library for generating RSS world model from
-// information of agents from BARK, which serves as the input of RSS check.
-// Performs RSS check and returns safety responses the specifed agent.
-// It mostly follows the implements of Carla-RSS integration
+// An interface that provides a wrapper for the RSS library.
+// It provides functionality to convert a BARK into a RSS world and to
+// perform a RSS check -- either pairwise or in general for the ego agent.
+// Additionally, it also returns the safety response of a specified agent.
 //
 // RSS: https://github.com/intel/ad-rss-lib
 // ad_map_access (dependency of RSS): https://github.com/carla-simulator/map
@@ -100,7 +100,7 @@ class RssInterface {
       "EvaluatorRss::BrakeLonMin", "minimum braking deceleration", -1.69);
     brake_lon_min_correct_ = params->GetReal(
       "EvaluatorRss::BrakeLonMinCorrect",
-      "minimum deceleration with oncoming vehicle", -1.67);
+      "minimum deceleration of oncoming vehicle", -1.67);
     acc_lat_brake_max_ = params->GetReal(
       "EvaluatorRss::AccLatBrakeMax", "maximum lateral acceleration", 0.2);
     acc_lat_brake_min_ = params->GetReal(
@@ -118,9 +118,7 @@ class RssInterface {
       1);
     route_predict_range_ = params->GetReal(
       "EvaluatorRss::RoutePredictRange",
-      "Describle the distance for returning all routes "
-      "having less than the distance, will be used when "
-      "a route to the goal cannnot be found",
+      "Describes the distance for returning all routes.",
       50);
   
     // Sanity checks
@@ -139,37 +137,31 @@ class RssInterface {
         ::ad::map::access::getENUReferencePoint());
   }
 
-  // Returns a boolean indicating the safety response of the specified agent.
-  // True if for each nearby agents, at least one of the two directional RSS
-  // situations (longitude and lateral) is safe, false if unsafe, uninitialized
-  // (none in python) if rss check can not be performed (only in rare cases).
-  // A directional RSS situation considers only the safety in that direction.
-  //
-  // For example, if the ego agent is following another agent in the same lane
-  // at a safe distance, the longitudinal RSS situtation is safe but the
-  // lateral one is unsafety.
+  /**
+   * @brief  Returns a RSS EvaluationReturn for the ObservedWorld
+   *         (contains a single ego agent)
+   * @note   The function returns false, if the RSS check is found to be unsafe.
+   * @param  observed_world: ObservedWorld of an agent's point of view
+   * @retval EvaluationReturn
+   */
   EvaluationReturn GetSafetyReponse(const ObservedWorld& observed_world);
 
-  // Returns an unorder_map indicating the pairwise safety respone of the
-  // specified agent to every other nearby agents. Key is AgentId of an nearby
-  // agent, value ofis true if at least one of the two directional RSS
-  // situations between the specified and the nearby agent is safe, false
-  // otherwise.
-  // Return empty map if no agent is nearby or no Rss check can be performed.
+
+  /**
+   * @brief  Checks the RSS pairwise
+   * @note   Returns a PairwiseEvaluationReturn between two specified agents
+   * @param  observed_world: ObservedWorld of an agent's point of view
+   * @retval PairwiseEvaluationReturn
+   */
   PairwiseEvaluationReturn GetPairwiseSafetyReponse(
       const ObservedWorld& observed_world);
 
-  // Returns an unorder_map indicating the pairwise directional safety respone
-  // of the specified agent to every other nearby agents. Key is AgentId of an
-  // nearby agent, value is a pair of directional safety response:
-  //
-  // 1. longitudinal safety response
-  // 2. lateral safety response
-  //
-  // It is true if at least one of the two directional RSS situations between
-  // the specified and the nearby agent is safe, false otherwise, respectively
-  // in each direction.
-  // Return empty map if no agent is nearby or no Rss check can be performed.
+  /**
+   * @brief  Returns a directional evaluation return.
+   * @note   Function is currently not used.
+   * @param  observed_world: ObservedWorld of an agent's point of view
+   * @retval PairwiseDirectionalEvaluationReturn
+   */
   PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
       const ObservedWorld& observed_world);
 
@@ -224,13 +216,11 @@ class RssInterface {
                         const ::ad::map::route::FullRoute& ego_route,
                         ::ad::rss::world::WorldModel& rss_world);
 
-  // Placeholder for performing RSS check. Inputs RSS world and returns RSS
-  // snapshot which contains the result of RSS check.
+  // Performs RSS check
   bool RssCheck(const ::ad::rss::world::WorldModel& world_model,
                 ::ad::rss::state::RssStateSnapshot& rss_state_snapshot);
 
-  // Generates RSS world from the information of BARK world, coordinates other
-  // functions.
+  // Generates an RSS world from a BARK world
   bool GenerateRSSWorld(const ObservedWorld& observed_world,
                         ::ad::rss::world::WorldModel& rss_world);
 
@@ -258,12 +248,11 @@ class RssInterface {
   // maximum allowed deceleration in longitudinal direction
   double brake_lon_max_;
 
-  // minimum allowed braking deceleration in longitudinal direction for most
-  // scenarios
+  // minimum allowed braking deceleration in longitudinal direction
   double brake_lon_min_;
 
   // minimum allowed deceleration in longitudinal direction for a car on its
-  // lane with another car approaching on the same lane in wrong driving
+  // lane with another car approaching on the same lane having an opposite driving
   // direction
   double brake_lon_min_correct_;
 
@@ -273,25 +262,22 @@ class RssInterface {
   // minimum allowed braking deceleration in lateral direction
   double acc_lat_brake_min_;
 
-  // fluctuation margin for that needs to be respected when calculating lateral
-  // safe distance
+  // fluctuation margin to be considerd for the lateral safe distance
   double fluct_margin_;
 
-  // response time
+  // response time of the ego vehicle
   double response_time_;
 
-  // response time of other
+  // response time of others
   double response_time_others_;
 
-  // Scale the searching distance between the evaluating agent and other
-  // agents to perform RSS check (used for debugging to have more vehicles being
-  // checked)
+  // scaling of the relevant range
   double scaling_relevant_range_;
 
   ::ad::rss::world::RssDynamics rss_dynamics_ego_;
   ::ad::rss::world::RssDynamics rss_dynamics_others_;
 
-  // When a route to the goal cannnot be found, route_predict_range describle
+  // When a route to the goal cannnot be found, route_predict_range describes
   // the distance for returning all routes having less than the distance
   double route_predict_range_;
   ::ad::map::point::CoordinateTransform rss_coordinate_transform_ =
