@@ -111,6 +111,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   ::ad::rss::state::LongitudinalResponse lon_response_;
   ::ad::rss::state::LateralResponse lat_left_response_;
   ::ad::rss::state::LateralResponse lat_right_response_;
+  ::ad::rss::state::AccelerationRestriction acc_restrictions_;
   #endif
 };
 

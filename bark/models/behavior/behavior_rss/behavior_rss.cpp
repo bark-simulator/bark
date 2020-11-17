@@ -60,6 +60,7 @@ Trajectory BehaviorRSSConformant::Plan(
     lon_response_ = rss_response.longitudinalResponse;
     lat_left_response_ = rss_response.lateralResponseLeft;
     lat_right_response_ = rss_response.lateralResponseRight;
+    acc_restrictions_ = rss_response.accelerationRestrictions;
   }
   #endif
 
