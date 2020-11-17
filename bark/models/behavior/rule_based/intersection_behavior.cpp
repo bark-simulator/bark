@@ -78,7 +78,7 @@ std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
           observed_world.GetLaneCorridor()->GetCenterLine(), agent_pos));
       double ego_angle = ego_state[THETA_POSITION];
       double other_angle = agent_state[THETA_POSITION];
-      if (AngleDiff(ego_angle, other_angle) > angle_diff_for_intersection_ &&
+      if (SignedAngleDiff(ego_angle, other_angle) > angle_diff_for_intersection_ &&
           s_other > s_ego && s_other - s_ego < braking_distance_) {
         intersecting_agent_id = agent.second->GetAgentId();
         is_intersecting = true;
