@@ -72,7 +72,7 @@ void World::Execute(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
   using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
-    if (agent.second->IsValidAtTime(world_time_) &&
+    if (agent.second->IsValidAtTime(inc_world_time) &&
         agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
         agent.second->GetExecutionStatus() == ExecutionStatus::VALID) {
       agent.second->UpdateStateAction();

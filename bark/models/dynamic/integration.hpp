@@ -23,7 +23,7 @@ inline State euler_int(const DynamicModel& model,
                 double dt) {
   State new_x = x + dt * model.StateSpaceModel(x, u);
   new_x(StateDefinition::THETA_POSITION) =
-      geometry::Norm0To2PI(new_x(StateDefinition::THETA_POSITION));
+      geometry::NormToPI(new_x(StateDefinition::THETA_POSITION));
   return new_x;
 }
 

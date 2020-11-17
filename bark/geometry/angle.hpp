@@ -34,12 +34,34 @@ inline double Norm0To2PI(const double& angle) {
   return normalized;
 }
 
-inline double AngleDiff(const double& angle1, const double& angle2) {
-  return abs(Norm0To2PI(angle1) - Norm0To2PI(angle2));
+inline double NormToPI(double x){
+    double normalized = fmod(x + B_PI, B_2PI);
+    if (normalized < 0) {
+      normalized += B_2PI;
+    }
+    return normalized - B_PI;
 }
 
+/**
+ * @brief calculated absolute angle difference
+ * 
+ * @param angle1 in [-pi, pi]
+ * @param angle2 in [-pi, pi]
+ * @return double 
+ */
+inline double AngleDiff(const double& angle1, const double& angle2) {
+  return abs(NormToPI(angle1) - NormToPI(angle2));
+}
+
+/**
+ * @brief calculated signed angle difference
+ * 
+ * @param angle1 in [-pi, pi]
+ * @param angle2 in [-pi, pi]
+ * @return double 
+ */
 inline double SignedAngleDiff(const double& angle1, const double& angle2) {
-  auto adiff = angle1 - angle2;
+  auto adiff = NormToPI(angle1 - angle2);
   return std::fmod(adiff + B_PI, B_2PI) - B_PI;
 }
 

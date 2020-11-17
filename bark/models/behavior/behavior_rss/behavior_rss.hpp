@@ -71,6 +71,11 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BehaviorModel> GetNominalBehaviorModel() const {
     return nominal_behavior_model_;
   }
+  
+  BehaviorRSSConformantStatus GetBehaviorRssStatus() const { 
+    return behavior_rss_status_; 
+  }
+
   void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
     nominal_behavior_model_ = model;
   } 

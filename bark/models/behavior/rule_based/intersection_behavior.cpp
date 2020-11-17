@@ -28,8 +28,8 @@ namespace behavior {
 
 using bark::commons::SetterParams;
 using bark::commons::transformation::FrenetPosition;
-using bark::geometry::Norm0To2PI;
 using bark::geometry::Point2d;
+using bark::geometry::AngleDiff;
 using bark::geometry::SignedAngleDiff;
 using bark::models::behavior::BehaviorConstantAcceleration;
 using bark::models::dynamic::DynamicModelPtr;
@@ -76,9 +76,9 @@ std::pair<AgentId, bool> BehaviorIntersectionRuleBased::GetIntersectingAgent(
           observed_world.GetLaneCorridor()->GetCenterLine(), ego_pos));
       double s_other = std::get<1>(GetNearestPointAndS(
           observed_world.GetLaneCorridor()->GetCenterLine(), agent_pos));
-      double ego_angle = Norm0To2PI(ego_state[THETA_POSITION]);
-      double other_angle = Norm0To2PI(agent_state[THETA_POSITION]);
-      if (fabs(ego_angle - other_angle) > angle_diff_for_intersection_ &&
+      double ego_angle = ego_state[THETA_POSITION];
+      double other_angle = agent_state[THETA_POSITION];
+      if (AngleDiff(ego_angle, other_angle) > angle_diff_for_intersection_ &&
           s_other > s_ego && s_other - s_ego < braking_distance_) {
         intersecting_agent_id = agent.second->GetAgentId();
         is_intersecting = true;
@@ -168,8 +168,8 @@ Trajectory BehaviorIntersectionRuleBased::Plan(
     const auto& ego_agent = observed_world.GetEgoAgent();
     const auto& other_agent_state = std::get<1>(time_agent)->GetCurrentState();
     const auto& ego_agent_state = ego_agent->GetCurrentState();
-    double other_angle = Norm0To2PI(other_agent_state[THETA_POSITION]);
-    double ego_angle = Norm0To2PI(ego_agent_state[THETA_POSITION]);
+    double other_angle = other_agent_state[THETA_POSITION];
+    double ego_angle = ego_agent_state[THETA_POSITION];
     double angle_diff = SignedAngleDiff(ego_angle, other_angle);
 
     // if there is a vehicle from the right
