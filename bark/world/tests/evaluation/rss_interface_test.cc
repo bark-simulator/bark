@@ -161,7 +161,7 @@ TEST(rss_interface, test_rss_check) {
   world->UpdateAgentRTree();
   // ===================================================
 
-  world->Step(0.2f);
+  world->Step(0.2);
   RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", params);
 
   ::ad::rss::world::WorldModel rss_world;

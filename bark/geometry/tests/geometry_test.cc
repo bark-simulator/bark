@@ -128,8 +128,8 @@ TEST(geometry, line) {
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -0.7, 0.1);
 
-  EXPECT_NEAR(GetNearestS(l, Point2d(5, 5)), 5.0, 0.1f);
-  EXPECT_NEAR(GetNearestS(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1f);
+  EXPECT_NEAR(GetNearestS(l, Point2d(5, 5)), 5.0, 0.1);
+  EXPECT_NEAR(GetNearestS(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1);
 }
 
 TEST(geometry, line_transform) {
@@ -724,7 +724,7 @@ TEST(line, GetNearestPoint_1) {
   Point2d p5 = GetNearestPoint(line, Point2d(0.0, 4.0));
 
   Point2d p6 = GetNearestPoint(line, Point2d(1.0, 1.0));
-  Point2d p7 = GetNearestPoint(line, Point2d(1.0, 2.2f));
+  Point2d p7 = GetNearestPoint(line, Point2d(1.0, 2.2));
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -734,7 +734,7 @@ TEST(line, GetNearestPoint_1) {
   EXPECT_TRUE(Point2d(0.0, 3.0) == p5);
 
   EXPECT_TRUE(Point2d(0.0, 1.0) == p6);
-  EXPECT_TRUE(Point2d(0.0, 2.2f) == p7);
+  EXPECT_TRUE(Point2d(0.0, 2.2) == p7);
 }
 
 TEST(line, segment_intersection_check_1) {
@@ -757,9 +757,9 @@ TEST(line, segment_intersection_check_1) {
   line.AddPoint(point_5);
   line.AddPoint(point_6);
 
-  EXPECT_NEAR(GetSegmentEndIdx(line, 0.0), 1, 0.1f);
-  EXPECT_NEAR(GetSegmentEndIdx(line, 3.0), 4, 0.1f);
-  EXPECT_NEAR(GetSegmentEndIdx(line, 6.0), 5, 0.1f);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 0.0), 1, 0.1);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 3.0), 4, 0.1);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 6.0), 5, 0.1);
 }
 TEST(line, segment_intersection_tangent_1) {
   using bark::geometry::Line_t;
@@ -780,8 +780,8 @@ TEST(line, segment_intersection_tangent_1) {
   line.AddPoint(point_4);
   line.AddPoint(point_5);
 
-  EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1);
+  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1);
 
   // template
   Point2d point_6(0.0, 0.0);
@@ -798,8 +798,8 @@ TEST(line, segment_intersection_tangent_1) {
   line2.AddPoint(point_9);
   line2.AddPoint(point_10);
 
-  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1f);
-  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1);
 }
 
 TEST(line, segment_get_normal_1) {
@@ -821,19 +821,19 @@ TEST(line, segment_get_normal_1) {
   line.AddPoint(point_4);
   line.AddPoint(point_1);
 
-  Point2d p = GetNormalAtS(line, 0.5f);
+  Point2d p = GetNormalAtS(line, 0.5);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = GetNormalAtS(line, 1.5f);
+  p = GetNormalAtS(line, 1.5);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = GetNormalAtS(line, 2.5f);
+  p = GetNormalAtS(line, 2.5);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -1.0, 0.1);
 
-  p = GetNormalAtS(line, 3.5f);
+  p = GetNormalAtS(line, 3.5);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 

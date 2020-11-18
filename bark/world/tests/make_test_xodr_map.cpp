@@ -31,7 +31,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
   lane0->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 200, off};
 
   XodrLanePtr lane1 =
@@ -75,7 +75,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   lane00->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 50, off};
 
   XodrLanePtr lane10 =
@@ -107,7 +107,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   XodrLanePtr lane01(new XodrLane(0));
   lane01->SetLine(p2->GetReferenceLine());
 
-  XodrLaneOffset off2 = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off2 = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_2 = {0, 50, off};
   XodrLanePtr lane11 =
       CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.5);
@@ -154,7 +154,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   lane00->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 50, off};
 
   XodrLanePtr lane10 =
@@ -192,7 +192,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   XodrLanePtr lane01(new XodrLane(0));
   lane01->SetLine(p2->GetReferenceLine());
 
-  XodrLaneOffset off2 = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off2 = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_2 = {0, 50, off};
   XodrLanePtr lane11 =
       CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.5);

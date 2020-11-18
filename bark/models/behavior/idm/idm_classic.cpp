@@ -64,7 +64,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
       if (i == 1) {
         initial_acceleration = acc;
       }
-      s_i += 0.5f * acc * dt * dt + vel_i * dt;
+      s_i += 0.5 * acc * dt * dt + vel_i * dt;
       const double temp_velocity = vel_i + acc * dt;
       vel_i =
           std::max(std::min(temp_velocity, GetMaxVelocity()), GetMinVelocity());

@@ -36,9 +36,9 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                                            "See Wikipedia IDM article", 2.0);
   param_desired_time_head_way_ =
       params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway",
-                      "See Wikipedia IDM article", 1.5f);
+                      "See Wikipedia IDM article", 1.5);
   param_max_acceleration_ = params->GetReal(
-      "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
+      "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7);
   param_acceleration_lower_bound_ =
       params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
                       "See Wikipedia IDM article", -5.0);
@@ -321,7 +321,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     } else {
       acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     }
-    traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
+    traveled_ego = 0.5 * acc * dt * dt + vel_i * dt;
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {

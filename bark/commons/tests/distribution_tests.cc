@@ -93,7 +93,7 @@ TEST(distribution_test, multivariate_distribution) {
   const double upper_bound = 10.0;
   params_ptr->SetListListFloat(
       "Covariance", {{1.0, 0.2, 0.1}, {0.2, 3.0, -0.5}, {0.1, -0.5, 0.125553}});
-  params_ptr->SetListFloat("Mean", {1.2f, 12.0, 0.1234f});
+  params_ptr->SetListFloat("Mean", {1.2, 12.0, 0.1234f});
   params_ptr->SetInt("RandomSeed", 1000.0);
 
   auto dist_multivariate = bark::commons::MultivariateDistribution(params_ptr);

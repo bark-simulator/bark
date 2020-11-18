@@ -29,10 +29,10 @@ TEST(create_plan_view, open_drive) {
   p.AddLine(Point2d(0.0, 0.0), 1.5, 10.0, 10.0);
 
   //! add arc
-  p.AddArc(Point2d(0.0, 0.0), 0.0, 10.0, 0.1f);
+  p.AddArc(Point2d(0.0, 0.0), 0.0, 10.0, 0.1);
 
   //! add spiral
-  p.AddSpiral(Point2d(0.0, 0.0), 0.0, 1.0, 0.0, 0.7f);
+  p.AddSpiral(Point2d(0.0, 0.0), 0.0, 1.0, 0.0, 0.7);
 
   // p.print_points();
 }
@@ -44,7 +44,7 @@ TEST(lane, open_drive) {
 
   //! new plan view
   PlanView p;
-  XodrLaneOffset off = {1.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off = {1.5, 0.0, 0.0, 0.0};
 
   //! vertical
   p.AddLine(Point2d(0.0, 0.0), 1.5707, 10.0, 10.0);
@@ -110,7 +110,7 @@ TEST(multiple_lane_widths, open_drive) {
 
   //! new plan view
   PlanView p;
-  XodrLaneOffset off1 = {1.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off1 = {1.5, 0.0, 0.0, 0.0};
   XodrLaneOffset off2 = {0.0, 0.003f, 0.0, 0.0};
 
   XodrLaneWidth lane_width1 = {0, 4.0, off1};
@@ -316,10 +316,10 @@ TEST(map, open_drive) {
             << print(*(result->second)) << '\n';
   Line ret_line = result->second->GetLine();
 
-  EXPECT_NEAR(bg::get<0>(ret_line.obj_[0]), 0.0, 0.1f);
-  EXPECT_NEAR(bg::get<1>(ret_line.obj_[0]), -1.0, 0.1f);
-  EXPECT_NEAR(bg::get<0>(ret_line.obj_[ret_line.obj_.size() - 1]), 10.0, 0.1f);
-  EXPECT_NEAR(bg::get<1>(ret_line.obj_[ret_line.obj_.size() - 1]), -1.0, 0.1f);
+  EXPECT_NEAR(bg::get<0>(ret_line.obj_[0]), 0.0, 0.1);
+  EXPECT_NEAR(bg::get<1>(ret_line.obj_[0]), -1.0, 0.1);
+  EXPECT_NEAR(bg::get<0>(ret_line.obj_[ret_line.obj_.size() - 1]), 10.0, 0.1);
+  EXPECT_NEAR(bg::get<1>(ret_line.obj_[ret_line.obj_.size() - 1]), -1.0, 0.1);
 }
 
 TEST(curved_plan_view, open_drive) {
@@ -334,7 +334,7 @@ TEST(curved_plan_view, open_drive) {
   p->AddArc(Point2d(-2.43e+2, -5.06e+2), 1.32e-1, 1.08e+1, -5.73e-2, s_inc);
   p->AddLine(Point2d(-2.32e+2, -5.08e+2), -4.87e-1, 2.55e-1, 2.55e-1);
 
-  XodrLaneOffset off = {3.5f, 0.0, 0.0, 0.0};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width = {0, 2.1673645178459658e+1, off};
 
   EXPECT_FALSE(boost::geometry::intersects(p->GetReferenceLine().obj_));

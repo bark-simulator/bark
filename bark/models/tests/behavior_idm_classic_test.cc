@@ -176,7 +176,7 @@ TEST(drive_free, behavior_idm_classic) {
   // advance
   double ego_velocity = desired_velocity, rel_distance = 7.0,
         velocity_difference = 0.0;
-  double time_step = 0.2f;
+  double time_step = 0.2;
   int num_steps = 10;
   WorldPtr world =
       make_test_world(0, rel_distance, ego_velocity, velocity_difference);
@@ -277,7 +277,7 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
   double ego_velocity = desired_velocity, rel_distance = 10.0,
         velocity_difference = -2, acc_ego = 2.0, acc_other = -5.0;
   double other_velocity = ego_velocity - velocity_difference;
-  double time_step = 0.2f;  // Very small time steps to verify differential
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
   int num_steps = 1000;
 
@@ -330,7 +330,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   params->SetReal("BehaviorIDMClassic::BrakeForLaneEndEnabledDistance", 2.0);
   params->SetReal("BehaviorIDMClassic::BrakeForLaneEndDistanceOffset", 2.0);
   params->SetInt("BehaviorIDMClassic::NumTrajectoryTimePoints", 11);
-  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6f);
+  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6);
   BehaviorIDMClassic behavior(params);
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
@@ -341,7 +341,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   double ego_velocity = desired_velocity, rel_distance = 20.0,
         velocity_difference = -1, acc_ego = 2.0, acc_other = 1.0;
   double other_velocity = ego_velocity - velocity_difference;
-  double time_step = 0.2f;  // Very small time steps to verify differential
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
 
   Polygon polygon = GenerateGoalRectangle(6, 3);
@@ -385,7 +385,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0);
   params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0);
   params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0);
-  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6f);
+  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6);
   BehaviorIDMClassic behavior(params);
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
@@ -396,7 +396,7 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   double ego_velocity = desired_velocity, rel_distance = 5.0,
         velocity_difference = 5, acc_ego = 2.0, acc_other = 1.0;
   double other_velocity = ego_velocity - velocity_difference;
-  double time_step = 0.2f;  // Very small time steps to verify differential
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
   int num_steps = 1000;
 

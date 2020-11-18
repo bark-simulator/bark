@@ -131,7 +131,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
               0, 1e-10);
 
   // Parallel to line, high crosstrack error, low speed
-  x << 50.0, 0.0, 0.0, M_PI / 2.0, 0.1f;
+  x << 50.0, 0.0, 0.0, M_PI / 2.0, 0.1;
   delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
   u << 0.0, delta;
   x1 = euler_int(*m, x, u, dt);
