@@ -12,6 +12,7 @@
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/models/dynamic/single_track.hpp"
 
 namespace bark {
 namespace models {
@@ -76,6 +77,7 @@ Trajectory BehaviorRSSConformant::Plan(
   dynamic::Trajectory last_traj;
   if (behavior_rss_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR) {
     // execute normal
+    ApplyRestrictionsToNominalModel();
     nominal_behavior_model_->Plan(min_planning_time, observed_world);
     last_action = nominal_behavior_model_->GetLastAction();
     last_traj = nominal_behavior_model_->GetLastTrajectory();
@@ -90,7 +92,9 @@ Trajectory BehaviorRSSConformant::Plan(
   return last_traj;
 }
 
-
+void BehaviorRSSConformant::ApplyRestrictionsToNominalModel() {
+  bark::models::dynamic::AccelerationLimits acc_lim;
+}
 }  // namespace behavior
 }  // namespace models
 }  // namespace bark
