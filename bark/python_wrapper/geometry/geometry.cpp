@@ -15,7 +15,6 @@ namespace py = pybind11;
 using bark::geometry::Collide;
 using bark::geometry::Distance;
 using bark::geometry::Line;
-using bark::geometry::Norm0To2PI;
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
@@ -119,6 +118,8 @@ void python_geometry(py::module m) {
         "Returns true if polygon within polygon.");
 
   m.def("Norm0To2PI", &bark::geometry::Norm0To2PI, "limit input to 0..2pi");
+
+  m.def("NormToPI", &bark::geometry::NormToPI, "limit input to -pi..pi");
 
   py::class_<Line, std::shared_ptr<Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")

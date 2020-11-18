@@ -91,6 +91,19 @@ struct LaneCorridor {
 };
 using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
 
+inline std::ostream& operator<<(std::ostream& os, LaneCorridor& lc) {
+  Line centerline = lc.GetCenterLine();
+  Point2d center_front_pt = centerline.obj_.front();
+  Point2d center_last_pt = centerline.obj_.back();
+  os << "LaneCorridor = ("
+    << " Length: " << lc.GetLength() << ", "
+    << " center(0): [" << boost::geometry::get<0>(center_front_pt) << ", " << boost::geometry::get<1>(center_front_pt) << "], " 
+    << " center(end): [" << boost::geometry::get<0>(center_last_pt) << ", " << boost::geometry::get<1>(center_last_pt) << "]"
+    << " width(0): " << lc.GetLaneWidth(center_front_pt) << ", " 
+    << " width(end): " << lc.GetLaneWidth(center_last_pt) << ")";
+  return os;
+}
+
 }  // namespace map
 }  // namespace world
 }  // namespace bark

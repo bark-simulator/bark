@@ -38,15 +38,10 @@ class Runtime(PyRuntime):
 
   def step(self):
     assert(self._reset_has_been_called == True)
-    # instead of calling world.step() seperately, we call PlanAgents() and Execute() seperately
-    self._world.PlanAgents(self._step_time)
+    self._world.Step(self._step_time)
 
     if self._render:
         self.render()
-
-    inc_world_time = self._world.time + self._step_time
-    self._world.Execute(inc_world_time)
-    self._world.time = inc_world_time
 
   def render(self):
     # self._viewer.clear()
