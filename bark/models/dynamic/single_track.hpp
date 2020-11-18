@@ -43,6 +43,15 @@ inline AccelerationLimits AccelerationLimitsFromParamServer(const bark::commons:
   return al;
 }
 
+
+inline double CalculateLateralAcceleration(const State& x, const State& x_next, const double dt) {
+    double theta = x(StateDefinition::THETA_POSITION);
+    double theta_next = x_next(StateDefinition::THETA_POSITION);
+    auto theta_dot = bark::geometry::SignedAngleDiff(theta_next, theta) / dt;
+    double acc_lat = theta_dot * x(StateDefinition::VEL_POSITION);
+    return acc_lat;
+}
+
 class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const bark::commons::ParamsPtr& params)

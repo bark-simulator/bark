@@ -159,8 +159,8 @@ std::pair<bool, double> BaseIDM::GetDistanceToLaneEnding(
 double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
                            const double vel_other) const {
   // BARK_EXPECT_TRUE(net_distance >= 0);
-  const float acc_lower_bound = GetAccelerationLowerBound();
-  const float acc_upper_bound = GetAccelerationUpperBound();
+  const float acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+  const float acc_upper_bound = GetAccelerationLimits().lon_acc_max;
   // For now, linit acceleration of IDM to brake with -acc_max
   float acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
@@ -283,8 +283,8 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
                            const double& acc_other) const {
   // implements equation 11.26 on on page 199
   const float c = GetCoolnessFactor();
-  const float acc_lower_bound = GetAccelerationLowerBound();
-  const float acc_upper_bound = GetAccelerationUpperBound();
+  const float acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+  const float acc_upper_bound = GetAccelerationLimits().lon_acc_max;
   const float idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
   if (c == 0.0f) {
     return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);

@@ -121,8 +121,8 @@ TEST(interaction_term, behavior_idm_classic) {
   const double minimum_spacing = behavior.GetMinimumSpacing();
   const double desired_time_headway = behavior.GetDesiredTimeHeadway();
   const double max_acceleration = behavior.GetLonAccelerationMax();
-  const double acc_lower_bound = behavior.GetAccelerationLowerBound();
-  const double acc_upper_bound = behavior.GetAccelerationUpperBound();
+  const double acc_lower_bound = behavior.GetAccelerationLimits().lon_acc_min;
+  const double acc_upper_bound = behavior.GetAccelerationLimits().lon_acc_max;
   const double comfortable_braking_acceleration =
       behavior.GetComfortableBrakingAcceleration();
 

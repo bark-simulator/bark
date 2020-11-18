@@ -102,12 +102,6 @@ class BaseIDM : virtual public BehaviorModel {
   const float GetLonAccelerationMax() const {
     return param_max_acceleration_;
   }  // unit is meter/second^2
-  const float GetAccelerationLowerBound() const {
-    return acceleration_limits_.lon_acc_min;
-  }
-  const float GetAccelerationUpperBound() const {
-    return acceleration_limits_.lon_acc_max;
-  }
   const int GetNumTrajectoryTimePoints() const {
     return num_trajectory_time_points_;
   }
@@ -132,8 +126,6 @@ class BaseIDM : virtual public BehaviorModel {
   float param_minimum_spacing_;
   float param_desired_time_head_way_;
   float param_max_acceleration_;
-  // float param_acceleration_lower_bound_;
-  // float param_acceleration_upper_bound_;
   float param_desired_velocity_;
   float param_comfortable_braking_acceleration_;
   float param_min_velocity_;

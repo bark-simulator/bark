@@ -77,7 +77,9 @@ Trajectory BehaviorRSSConformant::Plan(
   dynamic::Trajectory last_traj;
   if (behavior_rss_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR) {
     // execute normal
-    ApplyRestrictionsToNominalModel();
+    #ifdef RSS
+    ApplyRestrictionsToNominalModel(acc_restrictions_);
+    #endif
     nominal_behavior_model_->Plan(min_planning_time, observed_world);
     last_action = nominal_behavior_model_->GetLastAction();
     last_traj = nominal_behavior_model_->GetLastTrajectory();
@@ -92,8 +94,8 @@ Trajectory BehaviorRSSConformant::Plan(
   return last_traj;
 }
 
-void BehaviorRSSConformant::ApplyRestrictionsToNominalModel() {
-  #ifdef RSS
+#ifdef RSS
+void BehaviorRSSConformant::ApplyRestrictionsToNominalModel(const ::ad::rss::state::AccelerationRestriction& acc_restrictions) {
   bark::models::dynamic::AccelerationLimits acc_lim;
   acc_lim.lat_acc_left_max = acc_restrictions_.lateralLeftRange.maximum;
   acc_lim.lat_acc_right_max = acc_restrictions_.lateralRightRange.maximum;
@@ -106,8 +108,9 @@ void BehaviorRSSConformant::ApplyRestrictionsToNominalModel() {
           std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
             nominal_behavior_model_);
   nominal_behavior->SetAccelerationLimits(acc_lim);
-  #endif
 }
+#endif
+
 }  // namespace behavior
 }  // namespace models
 }  // namespace bark

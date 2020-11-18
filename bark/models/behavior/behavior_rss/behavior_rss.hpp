@@ -90,9 +90,9 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  void ApplyRestrictionsToNominalModel();
-
   #ifdef RSS
+  void ApplyRestrictionsToNominalModel(const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+
   int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
   int32_t GetLateralLeftResponse() const { return as_integer(lat_left_response_); }
   int32_t GetLateralRightResponse() const { return as_integer(lat_right_response_); }
