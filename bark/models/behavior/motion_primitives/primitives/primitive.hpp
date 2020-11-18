@@ -60,7 +60,7 @@ class Primitive : public bark::commons::BaseType {
   virtual bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) = 0;
-  virtual Trajectory Plan(float min_planning_time,
+  virtual Trajectory Plan(double min_planning_time,
                           const ObservedWorld& observed_world,
                           const LaneCorridorPtr& target_corridor) = 0;
   /**
@@ -78,7 +78,7 @@ class Primitive : public bark::commons::BaseType {
   void SetLastAction(const Action action) { last_action_ = action; };
 
  protected:
-  float integration_time_delta_;
+  double integration_time_delta_;
 
  private:
   Action last_action_;

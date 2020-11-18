@@ -15,10 +15,10 @@ using namespace bark::geometry;
 using namespace bark::models::dynamic;
 using st = bark::models::dynamic::StateDefinition;
 
-void test_state_two_way(const float x, const float y, const float theta,
-                        const float v, const Line& line) {
+void test_state_two_way(const double x, const double y, const double theta,
+                        const double v, const Line& line) {
   State state(static_cast<int>(st::MIN_STATE_SIZE));
-  state << 0.0f, x, y, theta, v;
+  state << 0.0, x, y, theta, v;
 
   FrenetState frenet_state(state, line);
   auto state_conv = FrenetStateToDynamicState(frenet_state, line);
@@ -29,11 +29,11 @@ void test_state_two_way(const float x, const float y, const float theta,
   EXPECT_NEAR(state(st::THETA_POSITION), state_conv(st::THETA_POSITION), 0.001);
 }
 
-void test_state_one_way(const float x, const float y, const float theta,
-                        const float v, const Line& line, const float lat,
-                        const float lon, const float vlat, const float vlon) {
+void test_state_one_way(const double x, const double y, const double theta,
+                        const double v, const Line& line, const double lat,
+                        const double lon, const double vlat, const double vlon) {
   State state(static_cast<int>(st::MIN_STATE_SIZE));
-  state << 0.0f, x, y, theta, v;
+  state << 0.0, x, y, theta, v;
 
   FrenetState frenet_state(state, line);
 

@@ -126,7 +126,7 @@ std::vector<std::vector<XodrLaneId>> Roadgraph::FindAllPathsInSubgraph(
     // start_vertex has no predecessors
     std::vector<vertex_t> p(boost::num_vertices(filtered_graph));
     std::vector<int> d(boost::num_vertices(filtered_graph));
-    boost::property_map<XodrLaneGraph, float XodrLaneEdge::*>::type weightmap =
+    boost::property_map<XodrLaneGraph, double XodrLaneEdge::*>::type weightmap =
         boost::get(&XodrLaneEdge::weight, filtered_graph);
 
     boost::dijkstra_shortest_paths(

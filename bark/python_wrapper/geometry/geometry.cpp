@@ -31,7 +31,7 @@ void python_standard_shapes(py::module m) {
 
 void python_geometry(py::module m) {
   py::class_<Point2d>(m, "Point2d")
-      .def(py::init<float, float>())
+      .def(py::init<double, double>())
       .def("__repr__",
            [](const Point2d& p) { return bark::geometry::print(p); })
       .def("x", [](Point2d& p) { return p.get<0>(); })
@@ -42,7 +42,7 @@ void python_geometry(py::module m) {
           },
           [](py::tuple t) {
             if (t.size() != 2) throw std::runtime_error("Invalid point state!");
-            return Point2d(t[0].cast<float>(), t[1].cast<float>());
+            return Point2d(t[0].cast<double>(), t[1].cast<double>());
           }));
 
   m.def("Distance",
@@ -53,7 +53,7 @@ void python_geometry(py::module m) {
         "Returns euclidean distance between Line2d and Point2d.");
 
   m.def("SignedDistance",
-        py::overload_cast<const Line&, const Point2d&, const float&>(
+        py::overload_cast<const Line&, const Point2d&, const double&>(
             &SignedDistance),
         "Returns signed euclidean distance between Line2d and Point2d.");
 
@@ -131,7 +131,7 @@ void python_geometry(py::module m) {
                return;
              }
              line.AddPoint(
-                 Point2d(list[0].cast<float>(), list[1].cast<float>()));
+                 Point2d(list[0].cast<double>(), list[1].cast<double>()));
            })
       .def("__repr__",
            [](const Line& l) {
@@ -183,7 +183,7 @@ void python_geometry(py::module m) {
                return;
              }
              polygon.AddPoint(
-                 Point2d(list[0].cast<float>(), list[1].cast<float>()));
+                 Point2d(list[0].cast<double>(), list[1].cast<double>()));
            })
       .def("__repr__",
            [](const Polygon& p) {

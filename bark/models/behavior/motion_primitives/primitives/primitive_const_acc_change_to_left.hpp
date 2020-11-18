@@ -34,7 +34,7 @@ class PrimitiveConstAccChangeToLeft : public PrimitiveConstAccStayLane {
   std::string GetName() const override;
 
  private:
-  float min_length_;
+  double min_length_;
 };
 
 }  // namespace primitives

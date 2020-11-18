@@ -12,7 +12,7 @@ bark::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     : BehaviorModel(params),
       PrimitiveConstAccStayLane(params),
       min_length_(params->GetReal(
-          "MinLength", "Minimum length of lane to change to", 0.0f)) {}
+          "MinLength", "Minimum length of lane to change to", 0.0)) {}
 bark::world::LaneCorridorPtr bark::models::behavior::primitives::
     PrimitiveConstAccChangeToRight::SelectTargetCorridor(
         const bark::world::ObservedWorld& observed_world,
@@ -41,7 +41,7 @@ bool bark::models::behavior::primitives::PrimitiveConstAccChangeToRight::
     //! lane
     const Point2d point_on_target_line =
         GetNearestPoint(adjacent_corridors.right->GetCenterLine(), ego_pos);
-    float remaining_length =
+    double remaining_length =
         adjacent_corridors.right->LengthUntilEnd(point_on_target_line);
     satisfied = remaining_length >= min_length_;
   }

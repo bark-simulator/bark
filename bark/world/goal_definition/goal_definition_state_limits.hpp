@@ -24,18 +24,18 @@ class GoalDefinitionStateLimits : public GoalDefinition {
   GoalDefinitionStateLimits()
       : GoalDefinition(), xy_limits_(), angle_limits_() {}
   GoalDefinitionStateLimits(const bark::geometry::Polygon& xy_limits,
-                            const std::pair<float, float> angle_limits)
+                            const std::pair<double, double> angle_limits)
       : xy_limits_(xy_limits), angle_limits_(angle_limits) {}
 
   virtual bool AtGoal(const bark::world::objects::Agent& agent);
 
   const bark::geometry::Polygon& GetXyLimits() const { return xy_limits_; }
   const bark::geometry::Polygon& GetShape() const { return xy_limits_; }
-  const std::pair<float, float> GetAngleLimits() const { return angle_limits_; }
+  const std::pair<double, double> GetAngleLimits() const { return angle_limits_; }
 
  private:
   bark::geometry::Polygon xy_limits_;
-  std::pair<float, float> angle_limits_;
+  std::pair<double, double> angle_limits_;
 };
 
 }  // namespace goal_definition

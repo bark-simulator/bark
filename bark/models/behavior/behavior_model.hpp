@@ -118,7 +118,7 @@ class BehaviorModel : public bark::commons::BaseType {
     behavior_status_ = status;
   }
 
-  virtual Trajectory Plan(float min_planning_time,
+  virtual Trajectory Plan(double min_planning_time,
                           const world::ObservedWorld& observed_world) = 0;
 
   virtual std::shared_ptr<BehaviorModel> Clone() const = 0;

@@ -158,5 +158,5 @@ class MPViewer(BaseViewer):
         self.axes.cla()
 
 
-    def getColorFromMap(self, float_color):
-        return cm.Accent(float_color)
+    def getColorFromMap(self, double_color):
+        return cm.Accent(double_color)

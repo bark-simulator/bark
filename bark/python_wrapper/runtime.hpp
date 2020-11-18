@@ -29,7 +29,7 @@ void python_runtime(py::module m) {
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("step", py::overload_cast<>(&Runtime::Step))
       .def("step", py::overload_cast<int>(&Runtime::Step))
-      .def("step", py::overload_cast<float>(&Runtime::Step))
+      .def("step", py::overload_cast<double>(&Runtime::Step))
       .def("step", py::overload_cast<double>(&Runtime::Step))
       .def("step", py::overload_cast<
                        Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>(

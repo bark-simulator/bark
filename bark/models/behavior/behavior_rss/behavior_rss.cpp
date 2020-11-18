@@ -18,7 +18,7 @@ namespace models {
 namespace behavior {
 
 Trajectory BehaviorRSSConformant::Plan(
-    float min_planning_time, const world::ObservedWorld& observed_world) {
+    double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
   const auto& lane_corr = observed_world.GetLaneCorridor();

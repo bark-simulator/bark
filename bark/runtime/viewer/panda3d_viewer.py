@@ -273,7 +273,7 @@ class Panda3dViewer(BaseViewer, ShowBase):
         Arguments:
             cameras {int array} -- Sets the indices of the target cameras
         Returns:
-            [float] -- [The approximated thickness]
+            [double] -- [The approximated thickness]
         """
         cameras = cameras or [-1,0]
         incline = (self.line_thicknesses[cameras[0]][0] - self.line_thicknesses[cameras[1]][0]) / (self.line_thicknesses[cameras[0]][1]-self.line_thicknesses[cameras[1]][1])

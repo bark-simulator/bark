@@ -16,7 +16,7 @@ namespace bark {
 namespace commons {
 
 typedef double Probability;
-typedef float RandomVariableValueType;
+typedef double RandomVariableValueType;
 typedef unsigned int RandomSeed;
 typedef std::vector<RandomVariableValueType> RandomVariate;
 typedef std::vector<std::pair<RandomVariableValueType, RandomVariableValueType>> RandomVariableSupport;

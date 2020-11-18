@@ -45,12 +45,12 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
   }
 
   // Add List List Floats
-  for (const auto param : params_listlist_float_) {
+  for (const auto param : params_listlist_double_) {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 
   // Add List Floats
-  for (const auto param : params_list_float_) {
+  for (const auto param : params_list_double_) {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 

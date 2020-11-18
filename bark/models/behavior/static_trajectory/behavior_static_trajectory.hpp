@@ -35,19 +35,19 @@ class BehaviorStaticTrajectory : public BehaviorModel {
   explicit BehaviorStaticTrajectory(const commons::ParamsPtr& params);
   BehaviorStaticTrajectory(const commons::ParamsPtr& params,
                            const Trajectory& static_trajectory);
-  Trajectory Plan(float min_planning_time,
+  Trajectory Plan(double min_planning_time,
                   const world::ObservedWorld& observed_world) override;
   std::shared_ptr<BehaviorModel> Clone() const override;
   const Trajectory& GetStaticTrajectory() const;
-  void UpdateBehaviorStatus(float delta_time,
+  void UpdateBehaviorStatus(double delta_time,
                             const world::ObservedWorld& observed_world);
   static Action CalculateAction(
-      float delta_time, const bark::world::ObservedWorld& observed_world,
+      double delta_time, const bark::world::ObservedWorld& observed_world,
       const dynamic::Trajectory& trajectory);
 
  private:
   static Trajectory ReadInStaticTrajectory(
-      std::vector<std::vector<float>> list);
+      std::vector<std::vector<double>> list);
   std::pair<int, int> Interpolate(const double t,
                                   StateRowVector* interpolated) const;
   Trajectory static_trajectory_;

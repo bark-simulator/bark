@@ -49,7 +49,7 @@ class BehaviorSafety : public BehaviorModel {
 
   virtual ~BehaviorSafety() {}
 
-  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world);
+  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 

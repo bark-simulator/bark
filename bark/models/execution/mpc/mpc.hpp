@@ -46,7 +46,7 @@ class ExecutionModelMpc : public ExecutionModel {
     last_desired_states_ = desired_states;
   }
 
-  virtual Trajectory Execute(const float& new_world_time,
+  virtual Trajectory Execute(const double& new_world_time,
                              const Trajectory& trajectory,
                              const DynamicModelPtr dynamic_model,
                              const State current_state);

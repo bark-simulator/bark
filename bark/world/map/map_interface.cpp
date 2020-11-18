@@ -159,7 +159,7 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
 
     LaneCorridorPtr lane_corridor = std::make_shared<LaneCorridor>();
     LanePtr current_lane = lane.second;
-    float total_s = current_lane->GetCenterLine().Length();
+    double total_s = current_lane->GetCenterLine().Length();
     lane_corridor->SetCenterLine(current_lane->GetCenterLine());
     lane_corridor->SetFineCenterLine(current_lane->GetCenterLine());
     // lane_corridor->SetMergedPolygon(current_lane->GetPolygon());

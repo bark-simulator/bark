@@ -29,7 +29,7 @@ class PyBehaviorModel : public BehaviorModel {
  public:
   using BehaviorModel::BehaviorModel;
 
-  Trajectory Plan(float min_planning_time,
+  Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world) {
     PYBIND11_OVERLOAD_PURE(bark::models::dynamic::Trajectory, BehaviorModel,
                            Plan, min_planning_time, observed_world);
@@ -57,7 +57,7 @@ class PyPrimitive : public Primitive {
                            observed_world, adjacent_corridors);
   }
 
-  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
+  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world,
                   const bark::world::LaneCorridorPtr& target_corridor) {
     PYBIND11_OVERLOAD_PURE(bark::models::dynamic::Trajectory, Primitive, Plan,
                            min_planning_time, observed_world, target_corridor);

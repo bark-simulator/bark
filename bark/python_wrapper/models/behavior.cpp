@@ -279,7 +279,7 @@ void python_behavior(py::module m) {
   py::class_<PrimitiveConstAccStayLane, Primitive,
              std::shared_ptr<PrimitiveConstAccStayLane>>(
       m, "PrimitiveConstAccStayLane")
-      .def(py::init<const bark::commons::ParamsPtr&, float>())
+      .def(py::init<const bark::commons::ParamsPtr&, double>())
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccStayLane& b) {

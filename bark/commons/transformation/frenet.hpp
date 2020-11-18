@@ -16,7 +16,7 @@ namespace commons {
 namespace transformation {
 
 struct FrenetPosition {
-  FrenetPosition() : lon(0.0f), lat(0.0f) {}
+  FrenetPosition() : lon(0.0), lat(0.0) {}
   FrenetPosition(const double& longitudinal, const double& lateral)
       : lon(longitudinal), lat(lateral) {}
   FrenetPosition(const bark::geometry::Point2d& position,

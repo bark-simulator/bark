@@ -33,28 +33,28 @@ using bark::world::objects::AgentPtr;
 
 BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
   param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing",
-                                           "See Wikipedia IDM article", 2.0f);
+                                           "See Wikipedia IDM article", 2.0);
   param_desired_time_head_way_ =
       params->GetReal("BehaviorIDMClassic::DesiredTimeHeadway",
-                      "See Wikipedia IDM article", 1.5f);
+                      "See Wikipedia IDM article", 1.5);
   param_max_acceleration_ = params->GetReal(
-      "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
+      "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7);
   param_acceleration_lower_bound_ =
       params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
-                      "See Wikipedia IDM article", -5.0f);
+                      "See Wikipedia IDM article", -5.0);
   param_acceleration_upper_bound_ =
       params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
-                      "See Wikipedia IDM article", 8.0f);
+                      "See Wikipedia IDM article", 8.0);
   param_desired_velocity_ =
       params->GetReal("BehaviorIDMClassic::DesiredVelocity",
-                      "See Wikipedia IDM article", 15.0f);
+                      "See Wikipedia IDM article", 15.0);
   param_comfortable_braking_acceleration_ =
       params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration",
                       "See Wikipedia IDM article", 1.67f);
   param_min_velocity_ = params->GetReal("BehaviorIDMClassic::MinVelocity",
-                                        "See Wikipedia IDM article", 0.0f);
+                                        "See Wikipedia IDM article", 0.0);
   param_max_velocity_ = params->GetReal("BehaviorIDMClassic::MaxVelocity",
-                                        "See Wikipedia IDM article", 50.0f);
+                                        "See Wikipedia IDM article", 50.0);
   param_exponent_ = params->GetInt("BehaviorIDMClassic::Exponent",
                                    "See Wikipedia IDM article", 4);
   brake_lane_end_ = params->GetBool(
@@ -71,12 +71,12 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                      "Number of points of the trajectory.", 11);
   param_coolness_factor_ = params->GetReal(
       "BehaviorIDMClassic::CoolnessFactor",
-      "If non-zero, constant accleration heuristic is applied", 0.0f);
-  SetLastAction(Continuous1DAction(0.0f));
+      "If non-zero, constant accleration heuristic is applied", 0.0);
+  SetLastAction(Continuous1DAction(0.0));
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
-  const float desired_velocity = GetDesiredVelocity();
+  const double desired_velocity = GetDesiredVelocity();
   const int exponent = GetExponent();
   double free_road_term = 1 - pow(vel_ego / desired_velocity, exponent);
   return free_road_term;
@@ -85,10 +85,10 @@ double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
 double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
                                     double vel_other) const {
   // Parameters
-  const float minimum_spacing = GetMinimumSpacing();
-  const float desired_time_headway = GetDesiredTimeHeadway();
-  const float max_acceleration = GetMaxAcceleration();
-  const float comfortable_braking_acceleration =
+  const double minimum_spacing = GetMinimumSpacing();
+  const double desired_time_headway = GetDesiredTimeHeadway();
+  const double max_acceleration = GetMaxAcceleration();
+  const double comfortable_braking_acceleration =
       GetComfortableBrakingAcceleration();
   net_distance = std::max(net_distance, 0.0);
   const double net_velocity = vel_ego - vel_other;
@@ -112,11 +112,11 @@ double BaseIDM::CalcNetDistance(
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
-  const float ego_velocity = ego_state(StateDefinition::VEL_POSITION);
+  const double ego_velocity = ego_state(StateDefinition::VEL_POSITION);
 
   // Leading vehicle exists in driving corridor, we calculate interaction term
   const State leading_state = leading_agent->GetCurrentState();
-  const float other_velocity = leading_state(StateDefinition::VEL_POSITION);
+  const double other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
   // we need to use the lane corridor of the ego agent to be able to compare the
   // frenet values
@@ -124,7 +124,7 @@ double BaseIDM::CalcNetDistance(
   FrenetPosition frenet_leading(leading_agent->GetCurrentPosition(),
                                 lane_corridor->GetCenterLine());
 
-  const float vehicle_length =
+  const double vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
       frenet_leading.lon - vehicle_length - frenet_ego.lon;
@@ -149,10 +149,10 @@ std::pair<bool, double> BaseIDM::GetDistanceToLaneEnding(
 double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
                            const double vel_other) const {
   // BARK_EXPECT_TRUE(net_distance >= 0);
-  const float acc_lower_bound = GetAccelerationLowerBound();
-  const float acc_upper_bound = GetAccelerationUpperBound();
+  const double acc_lower_bound = GetAccelerationLowerBound();
+  const double acc_upper_bound = GetAccelerationUpperBound();
   // For now, linit acceleration of IDM to brake with -acc_max
-  float acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
+  double acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
   return acc;
 }
@@ -172,8 +172,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   bool interaction_term_active = false;
   double leading_distance = 0.;
   double leading_velocity = 1e6;
-  double ego_acc = 0.0f;  // TODO: ommit, as it is confusing
-  double leading_acc = 0.0f;
+  double ego_acc = 0.0;  // TODO: ommit, as it is confusing
+  double leading_acc = 0.0;
   IDMRelativeValues rel_values;
 
   std::pair<AgentPtr, FrenetPosition> leading_vehicle =
@@ -187,7 +187,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
     leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);
     interaction_term_active = true;
     // Get acceleration action other
-    if (param_coolness_factor_ > 0.0f) {
+    if (param_coolness_factor_ > 0.0) {
       Action last_action =
           leading_vehicle.first->GetStateInputHistory().back().second;
       if (last_action.type() == typeid(Continuous1DAction)) {
@@ -257,7 +257,7 @@ double BaseIDM::CalcCAHAcc(const double& net_distance, const double& vel_ego,
     return vel_ego * vel_ego * effect_acc_other /
            (vel_other * vel_other - 2 * net_distance * effect_acc_other);
   } else {
-    const double step_function = (vel_ego - vel_other) >= 0.0f ? 1.0f : 0.0f;
+    const double step_function = (vel_ego - vel_other) >= 0.0 ? 1.0 : 0.0;
     return effect_acc_other - (vel_ego - vel_other) * (vel_ego - vel_other) *
                                   step_function / (2 * net_distance);
   }
@@ -272,11 +272,11 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
                            const double& vel_other, const double& acc_ego,
                            const double& acc_other) const {
   // implements equation 11.26 on on page 199
-  const float c = GetCoolnessFactor();
-  const float acc_lower_bound = GetAccelerationLowerBound();
-  const float acc_upper_bound = GetAccelerationUpperBound();
-  const float idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
-  if (c == 0.0f) {
+  const double c = GetCoolnessFactor();
+  const double acc_lower_bound = GetAccelerationLowerBound();
+  const double acc_upper_bound = GetAccelerationUpperBound();
+  const double idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
+  if (c == 0.0) {
     return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);
   }
 
@@ -287,9 +287,9 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
                << ". ve = " << vel_ego << ", vo=" << vel_other
                << ", ao=" << acc_other;
   }
-  const float b = GetComfortableBrakingAcceleration();
+  const double b = GetComfortableBrakingAcceleration();
 
-  float acc = 0.0f;
+  double acc = 0.0;
   if (idm_acc >= cah_acc) {
     acc = idm_acc;
   } else {
@@ -321,7 +321,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     } else {
       acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     }
-    traveled_ego = 0.5f * acc * dt * dt + vel_i * dt;
+    traveled_ego = 0.5 * acc * dt * dt + vel_i * dt;
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
@@ -331,7 +331,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
 }
 
 //! IDM Model will assume const. vel. for the leading vehicle
-Trajectory BaseIDM::Plan(float min_planning_time,
+Trajectory BaseIDM::Plan(double min_planning_time,
                          const world::ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
