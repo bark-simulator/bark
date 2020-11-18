@@ -97,7 +97,7 @@ class BaseIDM : virtual public BehaviorModel {
   const float GetDesiredTimeHeadway() const {
     return param_desired_time_head_way_;
   }  // unit is seconds
-  const float GetMaxAcceleration() const {
+  const float GetLonAccelerationMax() const {
     return param_max_acceleration_;
   }  // unit is meter/second^2
   const float GetAccelerationLowerBound() const {

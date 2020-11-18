@@ -52,7 +52,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
       double vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
       acc = CalcIDMAcc(net_distance, vel_i, vel_other);
     } else {
-      acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+      acc = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_i);
     }
     return acc;
   }
@@ -68,7 +68,7 @@ TEST(free_road_term, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
   const float desired_velocity = behavior.GetDesiredVelocity();
-  const float max_acceleration = behavior.GetMaxAcceleration();
+  const float max_acceleration = behavior.GetLonAccelerationMax();
   const int exponent = behavior.GetExponent();
 
   // Create an observed world with specific goal definition and the
@@ -120,7 +120,7 @@ TEST(interaction_term, behavior_idm_classic) {
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
   const double desired_time_headway = behavior.GetDesiredTimeHeadway();
-  const double max_acceleration = behavior.GetMaxAcceleration();
+  const double max_acceleration = behavior.GetLonAccelerationMax();
   const double acc_lower_bound = behavior.GetAccelerationLowerBound();
   const double acc_upper_bound = behavior.GetAccelerationUpperBound();
   const double comfortable_braking_acceleration =
