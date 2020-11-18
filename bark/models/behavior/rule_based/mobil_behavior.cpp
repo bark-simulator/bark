@@ -40,7 +40,7 @@ double BehaviorMobilRuleBased::CalcLongRawAccWithoutLeader(
     const LaneCorridorPtr& lane_corr, const Point2d& pos, double vel) const {
   double acc;
   double acc_free =
-      BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
+      BaseIDM::GetLonAccelerationMax() * BaseIDM::CalcFreeRoadTerm(vel);
   if (BaseIDM::brake_lane_end_) {
     bool braking_required;
     double len_until_end;

@@ -35,8 +35,8 @@ bool bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     LOG(FATAL) << "Only single track model supported! Aborting!";
   }
   auto ego_state = observed_world.CurrentEgoState();
-  return acceleration_ >= single_track->GetMinAcceleration(ego_state) &&
-         acceleration_ <= single_track->GetMaxAcceleration(ego_state);
+  return acceleration_ >= single_track->GetLonAccelerationMin(ego_state) &&
+         acceleration_ <= single_track->GetLonAccelerationMax(ego_state);
 }
 
 bark::models::dynamic::Trajectory

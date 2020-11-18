@@ -87,7 +87,7 @@ double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
   // Parameters
   const float minimum_spacing = GetMinimumSpacing();
   const float desired_time_headway = GetDesiredTimeHeadway();
-  const float max_acceleration = GetMaxAcceleration();
+  const float max_acceleration = GetLonAccelerationMax();
   const float comfortable_braking_acceleration =
       GetComfortableBrakingAcceleration();
   net_distance = std::max(net_distance, 0.0);
@@ -235,7 +235,7 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
   const double free_road_term = CalcFreeRoadTerm(vel_ego);
   const double interaction_term =
       CalcInteractionTerm(net_distance, vel_ego, vel_other);
-  return GetMaxAcceleration() * (free_road_term - interaction_term);
+  return GetLonAccelerationMax() * (free_road_term - interaction_term);
 }
 
 /**
@@ -250,7 +250,7 @@ double BaseIDM::CalcCAHAcc(const double& net_distance, const double& vel_ego,
   // we deviate from eq. 11.25 for the equality case to avoid a nan acceleration
   // when both the leading velocity and effective acceleration are zero
 
-  const double max_acceleration = GetMaxAcceleration();
+  const double max_acceleration = GetLonAccelerationMax();
   const double effect_acc_other = std::min(acc_other, max_acceleration);
   if (vel_other * (vel_ego - vel_other) <
       -2 * net_distance * effect_acc_other) {
@@ -325,7 +325,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
-    acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+    acc = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_i);
   }
   return std::pair<double, double>(acc, rel_distance);
 }
