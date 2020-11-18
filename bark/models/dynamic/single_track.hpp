@@ -25,12 +25,21 @@ struct AccelerationLimits {
   double lon_acc_min;
 };
 
+inline std::ostream& operator<<(std::ostream& os, AccelerationLimits& al) {
+  os << "AccelerationLimits = ("
+    << " lat_acc_left_max: " << al.lat_acc_left_max << ", "
+    << " lat_acc_right_max: " << al.lat_acc_right_max << ", "
+    << " lon_acc_max: " << al.lon_acc_max << ", "
+    << " lon_acc_min: " << al.lon_acc_min << ")";
+  return os;
+}
+
 inline AccelerationLimits AccelerationLimitsFromParamServer(const bark::commons::ParamsPtr& params) {
   AccelerationLimits al = AccelerationLimits();
-  al.lat_acc_left_max = params->GetReal("DynamicModel::lat_acc_left_max", "Maximum lateral left acceleration [m/s^2]", 4.0);
-  al.lat_acc_right_max = params->GetReal("DynamicModel::lat_acc_right_max", "Maximum lateral right acceleration [m/s^2]", 4.0);
-  al.lon_acc_max = params->GetReal("DynamicModel::lon_acceleration_max", "Maximum longitudinal acceleration", 4.0);
-  al.lon_acc_min = params->GetReal("DynamicModel::lon_acceleration_min", "Minimum longitudinal acceleration", -8.0);
+  al.lat_acc_left_max = params->GetReal("DynamicModel::LatAccLeftMax", "Maximum lateral left acceleration [m/s^2]", 4.0);
+  al.lat_acc_right_max = params->GetReal("DynamicModel::LatAccRightMax", "Maximum lateral right acceleration [m/s^2]", 4.0);
+  al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax", "Maximum longitudinal acceleration", 4.0);
+  al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin", "Minimum longitudinal acceleration", -8.0);
   return al;
 }
 
@@ -38,10 +47,8 @@ class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const bark::commons::ParamsPtr& params)
       : DynamicModel(params),
-        wheel_base_(params->GetReal("DynamicModel::wheel_base",
-                                    "Wheel base of vehicle [m]", 2.7)),
-        steering_angle_max_(params->GetReal(
-            "DynamicModel::delta_max", "Maximum Steering Angle [rad]", 0.2)) {
+        wheel_base_(params->GetReal("DynamicModel::WheelBase", "Wheel base of vehicle [m]", 2.7)),
+        steering_angle_max_(params->GetReal("DynamicModel::DeltaMax", "Maximum Steering Angle [rad]", 0.2)) {
     acceleration_limits_ = AccelerationLimitsFromParamServer(params);
   }
   virtual ~SingleTrackModel() {}

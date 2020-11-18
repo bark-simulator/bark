@@ -39,12 +39,12 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                       "See Wikipedia IDM article", 1.5f);
   param_max_acceleration_ = params->GetReal(
       "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7f);
-  param_acceleration_lower_bound_ =
-      params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
-                      "See Wikipedia IDM article", -5.0f);
-  param_acceleration_upper_bound_ =
-      params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
-                      "See Wikipedia IDM article", 8.0f);
+  // param_acceleration_lower_bound_ =
+  //     params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
+  //                     "See Wikipedia IDM article", -5.0f);
+  // param_acceleration_upper_bound_ =
+  //     params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
+  //                     "See Wikipedia IDM article", 8.0f);
   param_desired_velocity_ =
       params->GetReal("BehaviorIDMClassic::DesiredVelocity",
                       "See Wikipedia IDM article", 15.0f);
@@ -72,6 +72,16 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
   param_coolness_factor_ = params->GetReal(
       "BehaviorIDMClassic::CoolnessFactor",
       "If non-zero, constant accleration heuristic is applied", 0.0f);
+
+  acceleration_limits_ =
+      bark::models::dynamic::AccelerationLimitsFromParamServer(params);
+  acceleration_limits_.lon_acc_max =
+      params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
+                      "Maximum longitudinal acceleration", 8.0);
+  acceleration_limits_.lon_acc_min =
+      params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
+                      "Minimum longitudinal acceleration", -5.0);
+
   SetLastAction(Continuous1DAction(0.0f));
 }
 
@@ -317,7 +327,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
   if (interaction_term_active) {
     if (param_coolness_factor_ > 0.0) {
       acc = CalcACCAcc(rel_distance, vel_i, vel_front, rel_values.ego_acc,
-                     rel_values.leading_acc);
+                       rel_values.leading_acc);
     } else {
       acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     }

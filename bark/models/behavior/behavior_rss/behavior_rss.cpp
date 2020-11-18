@@ -93,7 +93,20 @@ Trajectory BehaviorRSSConformant::Plan(
 }
 
 void BehaviorRSSConformant::ApplyRestrictionsToNominalModel() {
+  #ifdef RSS
   bark::models::dynamic::AccelerationLimits acc_lim;
+  acc_lim.lat_acc_left_max = acc_restrictions_.lateralLeftRange.maximum;
+  acc_lim.lat_acc_right_max = acc_restrictions_.lateralRightRange.maximum;
+  acc_lim.lon_acc_max = acc_restrictions_.longitudinalRange.maximum;
+  acc_lim.lon_acc_min = acc_restrictions_.longitudinalRange.minimum;
+  // TODO: Do we need minimum values as well?
+  VLOG(4) << "RSS Response Acceleration Restrictions " << acc_restrictions_;
+  VLOG(4) << "AccelerationLimits for IDM " << acc_lim;
+  auto nominal_behavior =
+          std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
+            nominal_behavior_model_);
+  nominal_behavior->SetAccelerationLimits(acc_lim);
+  #endif
 }
 }  // namespace behavior
 }  // namespace models
