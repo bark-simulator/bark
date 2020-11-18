@@ -157,7 +157,8 @@ class XodrParser(object):
             new_header["offset"] = self.parse_offset(header)
         self._python_map["header"] = new_header
 
-    def parse_lane_sections_from_road(self, lane_sections, road):
+    def parse_lane_sections_from_road(self, lane_sections, road, lane_offset):
+        road["lane_offset"] = lane_offset
         road["lane_sections"] = []
         for lane_section in lane_sections:
             new_lane_section = {}
@@ -227,8 +228,10 @@ class XodrParser(object):
         new_road["junction"] = road.get("junction")
         new_road["name"] = road.get("name")
         lanes = road.find("lanes")
+        lane_offset = self.parse_lane_offset(lanes.find("laneOffset"))
         lane_sections = lanes.findall("laneSection")
-        new_road = self.parse_lane_sections_from_road(lane_sections, new_road)
+        new_road = self.parse_lane_sections_from_road(
+            lane_sections, new_road, lane_offset)
         new_road = self.parse_plan_view(road.find("planView"), new_road)
         if road.find("link") is not None:
             new_road["link"] = self.parse_road_link(road.find("link"))
@@ -365,21 +368,23 @@ class XodrParser(object):
                 pass
         else:
             logger.debug("No XodrLaneLink")
-            
+
         return new_link
 
-    def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line):
+    def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line, lane_offset):
+
         try:
             new_lane = XodrLane(int(lane["id"]))
             for idx_w, lw in enumerate(lane["width"]):
 
-                a = float(lane["width"][idx_w]["a"])
-                b = float(lane["width"][idx_w]["b"])
-                c = float(lane["width"][idx_w]["c"])
-                d = float(lane["width"][idx_w]["d"])
+                a = float(lane["width"][idx_w]["a"]) + lane_offset["a"]
+                b = float(lane["width"][idx_w]["b"]) + lane_offset["b"]
+                c = float(lane["width"][idx_w]["c"]) + lane_offset["c"]
+                d = float(lane["width"][idx_w]["d"]) + lane_offset["d"]
                 offset = XodrLaneOffset(a, b, c, d)
 
-                s_start_temp = float(lane["width"][idx_w]["s_offset"])
+                s_start_temp = float(
+                    lane["width"][idx_w]["s_offset"]) + lane_offset["s"]
 
                 if idx_w < len(lane["width"]) - 1:
                     s_end_temp = float(lane["width"][idx_w+1]["s_offset"])
@@ -418,6 +423,12 @@ class XodrParser(object):
         return sorted(range(len(lst)), key=lambda x: (abs(lst[x])))
 
     def create_cpp_lane_section(self, new_road, road):
+
+        # In xodr the <lane> tag can have a <laneOffset> tag, that shifts all lanes by this 
+        # constant offset. We here shift the inner lanes explicitly by the offset and the outer lanes
+        #  (|id| > 1) are then shifted implicitly.
+        lane_offset = road["lane_offset"]
+        no_lane_offset = {"s": 0.0, "a": 0.0, "b": 0.0, "c": 0.0, "d": 0.0}
         for lane_section in road["lane_sections"]:
             new_lane_section = XodrLaneSection(float(lane_section["s"]))
             # sort lanes
@@ -433,11 +444,11 @@ class XodrParser(object):
                 if lane['id'] == 0:
                     # plan view
                     new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
-                        road["length"]), new_road.plan_view.GetReferenceLine())
+                        road["length"]), new_road.plan_view.GetReferenceLine(), no_lane_offset)
                 elif lane['id'] == -1 or lane['id'] == 1:
                     # use plan view for offset calculation
                     new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
-                        road["length"]), new_road.plan_view.GetReferenceLine())
+                        road["length"]), new_road.plan_view.GetReferenceLine(), lane_offset)
                 else:
                     # use previous line for offset calculation
                     #temp_lanes = new_lane_section.GetLanes()
@@ -446,12 +457,12 @@ class XodrParser(object):
                         previous_line = new_lane_section.GetLaneByPosition(
                             lane['id']-1).line
                         new_lane_section = self.create_cpp_lane(
-                            new_lane_section, new_road, lane, previous_line.Length(), previous_line)
+                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset)
                     elif lane['id'] < 0:
                         previous_line = new_lane_section.GetLaneByPosition(
                             lane['id']+1).line
                         new_lane_section = self.create_cpp_lane(
-                            new_lane_section, new_road, lane, previous_line.Length(), previous_line)
+                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset)
                     else:
                         logger.info("Calculating previous lane did not work.")
 
@@ -495,3 +506,18 @@ class XodrParser(object):
         for junction in self._python_map["junctions"]:
             new_junction = self.create_cpp_junction(junction)
             self.map.AddJunction(new_junction)
+
+    def parse_lane_offset(self, lane_offset):
+        if lane_offset is not None:
+            s = float(lane_offset.get("s"))
+            a = float(lane_offset.get("a"))
+            b = float(lane_offset.get("b"))
+            c = float(lane_offset.get("c"))
+            d = float(lane_offset.get("d"))
+        else:
+            s = 0.0
+            a = 0.0
+            b = 0.0
+            c = 0.0
+            d = 0.0
+        return {"s": s, "a": a, "b": b, "c": c, "d": d}
