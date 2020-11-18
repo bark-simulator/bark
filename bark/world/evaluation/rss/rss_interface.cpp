@@ -40,37 +40,6 @@ bool RssInterface::InitializeOpenDriveMap(
   return result;
 }
 
-::ad::rss::world::RssDynamics
-RssInterface::GenerateVehicleDynamicsParameters(double response_time) {
-  ::ad::rss::world::RssDynamics dynamics;
-
-  // RSS dynamics values along longitudinal coordinate system axis
-  dynamics.alphaLon.accelMax = Acceleration(acc_lon_max_);
-  dynamics.alphaLon.brakeMax = Acceleration(brake_lon_max_);
-  dynamics.alphaLon.brakeMin = Acceleration(brake_lon_min_);
-  dynamics.alphaLon.brakeMinCorrect = Acceleration(brake_lon_min_correct_);
-
-  // RSS dynamics values along lateral coordinate system axis
-  dynamics.alphaLat.accelMax = Acceleration(acc_lat_brake_max_);
-  dynamics.alphaLat.brakeMin = Acceleration(acc_lat_brake_min_);
-  dynamics.lateralFluctuationMargin = Distance(fluct_margin_);
-
-  dynamics.responseTime = Duration(response_time);
-
-  // new parameters after ad-rss v4.0.0
-  // leave them as the default ones for now
-  dynamics.unstructuredSettings.pedestrianTurningRadius =
-      ad::physics::Distance(2.0);
-  dynamics.unstructuredSettings.driveAwayMaxAngle = ad::physics::Angle(2.4);
-  dynamics.unstructuredSettings.vehicleYawRateChange =
-      ad::physics::AngularAcceleration(0.3);
-  dynamics.unstructuredSettings.vehicleMinRadius = ad::physics::Distance(3.5);
-  dynamics.unstructuredSettings.vehicleTrajectoryCalculationStep =
-      ad::physics::Duration(0.2);
-
-  return dynamics;
-}
-
 ::ad::map::match::Object RssInterface::GenerateMatchObject(
     const models::dynamic::State& agent_state, const Polygon& agent_shape) {
   ::ad::map::match::Object matching_object;
@@ -104,6 +73,43 @@ RssInterface::GenerateVehicleDynamicsParameters(double response_time) {
       map_matching.getMapMatchedBoundingBox(matching_object.enuPosition);
 
   return matching_object;
+}
+
+void RssInterface::FillRSSDynamics(
+  ::ad::rss::world::RssDynamics& rss_dynamics,
+  const commons::ParamsPtr& params) {
+  rss_dynamics.alphaLon.accelMax = Acceleration(params->GetReal(
+    "AccLonMax", "maximum acceleration", 1.7));
+  rss_dynamics.alphaLon.brakeMax = Acceleration(params->GetReal(
+    "BrakeLonMax", "maximum deceleration", -1.7));
+  rss_dynamics.alphaLon.brakeMin = Acceleration(params->GetReal(
+    "BrakeLonMin", "minimum braking deceleration", -1.69));
+  rss_dynamics.alphaLon.brakeMinCorrect = Acceleration(params->GetReal(
+    "BrakeLonMinCorrect",
+    "minimum deceleration of oncoming vehicle", -1.67));
+  // lateral
+  rss_dynamics.alphaLat.accelMax = Acceleration(params->GetReal(
+    "AccLatBrakeMax", "maximum lateral acceleration", 0.2));
+  rss_dynamics.alphaLat.brakeMin = Acceleration(params->GetReal(
+    "AccLatBrakeMin", "minimum lateral braking", -0.8));
+  // other
+  rss_dynamics.lateralFluctuationMargin = Distance(params->GetReal(
+    "FluctMargin", "fluctuation margin", 0.1));
+  rss_dynamics.responseTime = Duration(params->GetReal(
+    "TimeResponse", "response time of the ego vehicle", 0.2));
+
+  // new parameters after ad-rss v4.0.0
+  rss_dynamics.unstructuredSettings.pedestrianTurningRadius =
+    ad::physics::Distance(2.0);
+  rss_dynamics.unstructuredSettings.driveAwayMaxAngle = ad::physics::Angle(2.4);
+  rss_dynamics.unstructuredSettings.vehicleYawRateChange =
+      ad::physics::AngularAcceleration(0.3);
+  rss_dynamics.unstructuredSettings.vehicleMinRadius = ad::physics::Distance(3.5);
+  rss_dynamics.unstructuredSettings.vehicleTrajectoryCalculationStep =
+    ad::physics::Duration(0.2);
+  // Sanity check
+  // assert(brake_lon_max_ <= brake_lon_min_);
+  // assert(brake_lon_min_ <= brake_lon_min_correct_);
 }
 
 ::ad::physics::AngularVelocity RssInterface::CalculateAngularVelocity(

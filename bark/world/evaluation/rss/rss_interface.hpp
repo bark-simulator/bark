@@ -77,6 +77,7 @@ typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
 
+
 // An interface that provides a wrapper for the RSS library.
 // It provides functionality to convert a BARK into a RSS world and to
 // perform a RSS check -- either pairwise or in general for the ego agent.
@@ -92,26 +93,12 @@ class RssInterface {
   RssInterface() {}
   explicit RssInterface(std::string opendrive_file_name,
                         const commons::ParamsPtr& params) {
-    acc_lon_max_ = params->GetReal(
-      "EvaluatorRss::AccLonMax", "maximum acceleration", 1.7);
-    brake_lon_max_ = params->GetReal(
-      "EvaluatorRss::BrakeLonMax", "maximum deceleration", -1.7);
-    brake_lon_min_ = params->GetReal(
-      "EvaluatorRss::BrakeLonMin", "minimum braking deceleration", -1.69);
-    brake_lon_min_correct_ = params->GetReal(
-      "EvaluatorRss::BrakeLonMinCorrect",
-      "minimum deceleration of oncoming vehicle", -1.67);
-    acc_lat_brake_max_ = params->GetReal(
-      "EvaluatorRss::AccLatBrakeMax", "maximum lateral acceleration", 0.2);
-    acc_lat_brake_min_ = params->GetReal(
-      "EvaluatorRss::AccLatBrakeMin", "minimum lateral braking", -0.8);
-    fluct_margin_ = params->GetReal(
-      "EvaluatorRss::FluctMargin", "fluctuation margin", 0.1);
-    response_time_ = params->GetReal(
-      "EvaluatorRss::TimeResponse", "response time of the ego vehicle", 0.2);
-    response_time_others_ = params->GetReal(
-      "EvaluatorRss::TimeResponseOthers",
-      "response time of other vehicles", 1.0);
+
+    // only adds child if it does not exist; otherwise returns child
+    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss"));
+    FillRSSDynamics(rss_dynamics_others_, params->AddChild("EvaluatorRss::Others"));
+
+    // general parameters
     scaling_relevant_range_ = params->GetReal(
       "EvaluatorRss::ScalingRelevantRange",
       "Controls the search distance between two agents to perform RSS check",
@@ -120,15 +107,10 @@ class RssInterface {
       "EvaluatorRss::RoutePredictRange",
       "Describes the distance for returning all routes.",
       50);
-  
-    // Sanity checks
+
+    // Sanity check
     // assert(boost::filesystem::exists(opendrive_file_name));
     assert(scaling_relevant_range_ >= 1.);
-    assert(brake_lon_max_ <= brake_lon_min_);
-    assert(brake_lon_min_ <= brake_lon_min_correct_);
-
-    rss_dynamics_ego_ = GenerateVehicleDynamicsParameters(response_time_);
-    rss_dynamics_others_ = GenerateVehicleDynamicsParameters(response_time_others_);
 
     // the debugging level in RSS
     spdlog::set_level(spdlog::level::off);
@@ -137,6 +119,17 @@ class RssInterface {
         ::ad::map::access::getENUReferencePoint());
   }
 
+  /**
+   * @brief  Fills the RSS libs dynamics
+   * @note   
+   * @param  rss_dynamics: See RSS documentation 
+   * @param  params: child of ParameterServer()
+   * @retval None
+   */
+  void FillRSSDynamics(
+    ::ad::rss::world::RssDynamics& rss_dynamics,
+    const commons::ParamsPtr& params);
+  
   /**
    * @brief  Returns a RSS EvaluationReturn for the ObservedWorld
    *         (contains a single ego agent)
@@ -170,12 +163,8 @@ class RssInterface {
   // Load OpenDrive map into RSS, needed for GetMatchObject and GenerateRoute.
   bool InitializeOpenDriveMap(const std::string& opendrive_file_name);
 
-  // Creates RSS dynamics object contains the parameters for RSS check.
-  ::ad::rss::world::RssDynamics GenerateVehicleDynamicsParameters(double response_time);
-
-  // Generates a RSS match object from BARK agent state, it contains a list of
-  // nearby lanes of the agent state. Used by GenerateRoute and mainly
-  // CreateWorldModel.
+  // Generates a RSS match object from the BARK agent state. It contains a list of
+  // nearby lanes of the agent state. 
   //
   // Detailed explanation:
   // https://ad-map-access.readthedocs.io/en/latest/ad_map_access/HLD_MapMatching/
@@ -186,8 +175,7 @@ class RssInterface {
     const models::behavior::StateActionHistory& history);
 
   // Generate a RSS route from the current position and the goal of the
-  // specified BARK agent, the corresponding RSS match object. Used by
-  // CreateWorldModel.
+  // specified BARK agent and the corresponding RSS match object.
   bool GenerateRoute(const Point2d& agent_center, const Point2d& agent_goal,
                      const ::ad::map::match::Object& match_object,
                      ::ad::map::route::FullRoute& route);
@@ -241,42 +229,10 @@ class RssInterface {
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
-
-  // maximum possible acceleration
-  double acc_lon_max_;
-
-  // maximum allowed deceleration in longitudinal direction
-  double brake_lon_max_;
-
-  // minimum allowed braking deceleration in longitudinal direction
-  double brake_lon_min_;
-
-  // minimum allowed deceleration in longitudinal direction for a car on its
-  // lane with another car approaching on the same lane having an opposite driving
-  // direction
-  double brake_lon_min_correct_;
-
-  // maximum allowed acceleration in lateral direction
-  double acc_lat_brake_max_;
-
-  // minimum allowed braking deceleration in lateral direction
-  double acc_lat_brake_min_;
-
-  // fluctuation margin to be considerd for the lateral safe distance
-  double fluct_margin_;
-
-  // response time of the ego vehicle
-  double response_time_;
-
-  // response time of others
-  double response_time_others_;
-
-  // scaling of the relevant range
-  double scaling_relevant_range_;
-
   ::ad::rss::world::RssDynamics rss_dynamics_ego_;
   ::ad::rss::world::RssDynamics rss_dynamics_others_;
 
+  double scaling_relevant_range_;
   // When a route to the goal cannnot be found, route_predict_range describes
   // the distance for returning all routes having less than the distance
   double route_predict_range_;
