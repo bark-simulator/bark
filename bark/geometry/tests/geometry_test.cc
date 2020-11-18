@@ -734,7 +734,8 @@ TEST(line, GetNearestPoint_1) {
   EXPECT_TRUE(Point2d(0.0, 3.0) == p5);
 
   EXPECT_TRUE(Point2d(0.0, 1.0) == p6);
-  EXPECT_TRUE(Point2d(0.0, 2.2) == p7);
+  EXPECT_NEAR(boost::geometry::get<0>(p7), 0, 0.0001);
+  EXPECT_NEAR(boost::geometry::get<1>(p7), 2.2, 0.0001);
 }
 
 TEST(line, segment_intersection_check_1) {
