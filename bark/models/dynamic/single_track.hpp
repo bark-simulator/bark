@@ -119,18 +119,18 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
 
   if (limit_steering) {
     // delta to the left is negative
-    double delta_max_left =
+    double delta_max_right =
         std::min(model->GetSteeringAngleMax(),
                  std::abs(std::atan2(model->GetLatAccelerationRightMax() *
                                          model->GetWheelBase(),
                                      vel * vel)));
-    double delta_max_right =
+    double delta_max_left =
         std::min(model->GetSteeringAngleMax(),
                  std::abs(std::atan2(
                      model->GetLatAccelerationLeftMax() * model->GetWheelBase(),
                      vel * vel)));
-    double clamped_delta = std::min(delta, delta_max_right);
-    clamped_delta = std::max(clamped_delta, -delta_max_left);
+    double clamped_delta = std::min(delta, delta_max_left);
+    clamped_delta = std::max(clamped_delta, -delta_max_right);
     return clamped_delta;
   }
   return delta;
