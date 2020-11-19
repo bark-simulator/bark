@@ -25,21 +25,29 @@ struct AccelerationLimits {
   double lon_acc_min;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const AccelerationLimits& al) {
+inline std::ostream& operator<<(std::ostream& os,
+                                const AccelerationLimits& al) {
   os << "AccelerationLimits = ("
-    << " lat_acc_left_max: " << al.lat_acc_left_max << ", "
-    << " lat_acc_right_max: " << al.lat_acc_right_max << ", "
-    << " lon_acc_max: " << al.lon_acc_max << ", "
-    << " lon_acc_min: " << al.lon_acc_min << ")";
+     << " lat_acc_left_max: " << al.lat_acc_left_max << ", "
+     << " lat_acc_right_max: " << al.lat_acc_right_max << ", "
+     << " lon_acc_max: " << al.lon_acc_max << ", "
+     << " lon_acc_min: " << al.lon_acc_min << ")";
   return os;
 }
 
-inline AccelerationLimits AccelerationLimitsFromParamServer(const bark::commons::ParamsPtr& params) {
+inline AccelerationLimits AccelerationLimitsFromParamServer(
+    const bark::commons::ParamsPtr& params) {
   AccelerationLimits al = AccelerationLimits();
-  al.lat_acc_left_max = params->GetReal("DynamicModel::LatAccLeftMax", "Maximum lateral left acceleration [m/s^2]", 4.0);
-  al.lat_acc_right_max = params->GetReal("DynamicModel::LatAccRightMax", "Maximum lateral right acceleration [m/s^2]", 4.0);
-  al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax", "Maximum longitudinal acceleration", 4.0);
-  al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin", "Minimum longitudinal acceleration", -8.0);
+  al.lat_acc_left_max =
+      params->GetReal("DynamicModel::LatAccLeftMax",
+                      "Maximum lateral left acceleration [m/s^2]", 4.0);
+  al.lat_acc_right_max =
+      params->GetReal("DynamicModel::LatAccRightMax",
+                      "Maximum lateral right acceleration [m/s^2]", 4.0);
+  al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax",
+                                   "Maximum longitudinal acceleration", 4.0);
+  al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin",
+                                   "Minimum longitudinal acceleration", -8.0);
   return al;
 }
 
@@ -47,8 +55,10 @@ class SingleTrackModel : public DynamicModel {
  public:
   explicit SingleTrackModel(const bark::commons::ParamsPtr& params)
       : DynamicModel(params),
-        wheel_base_(params->GetReal("DynamicModel::WheelBase", "Wheel base of vehicle [m]", 2.7)),
-        steering_angle_max_(params->GetReal("DynamicModel::DeltaMax", "Maximum Steering Angle [rad]", 0.2)) {
+        wheel_base_(params->GetReal("DynamicModel::WheelBase",
+                                    "Wheel base of vehicle [m]", 2.7)),
+        steering_angle_max_(params->GetReal(
+            "DynamicModel::DeltaMax", "Maximum Steering Angle [rad]", 0.2)) {
     acceleration_limits_ = AccelerationLimitsFromParamServer(params);
   }
   virtual ~SingleTrackModel() {}
@@ -60,8 +70,7 @@ class SingleTrackModel : public DynamicModel {
             cos(x(StateDefinition::THETA_POSITION)),
         x(StateDefinition::VEL_POSITION) *
             sin(x(StateDefinition::THETA_POSITION)),
-        x(StateDefinition::VEL_POSITION) * tan(u(1)) / wheel_base_, 
-        u(0);
+        x(StateDefinition::VEL_POSITION) * tan(u(1)) / wheel_base_, u(0);
     return tmp;
   }
 
@@ -91,8 +100,8 @@ class SingleTrackModel : public DynamicModel {
     }
   }
 
-  void SetAccelerationLimits(const AccelerationLimits& acc_lim) { 
-    acceleration_limits_ = acc_lim; 
+  void SetAccelerationLimits(const AccelerationLimits& acc_lim) {
+    acceleration_limits_ = acc_lim;
   }
 
  private:
@@ -103,19 +112,13 @@ class SingleTrackModel : public DynamicModel {
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
 
-
-inline double CalculateLateralAcceleration(const State& x, const State& x_next, const double dt) {
-    double theta = x(StateDefinition::THETA_POSITION);
-    double theta_next = x_next(StateDefinition::THETA_POSITION);
-    auto theta_dot = bark::geometry::SignedAngleDiff(theta_next, theta) / dt;
-    double acc_lat = theta_dot * x(StateDefinition::VEL_POSITION);
-    return acc_lat;
-}
-
-inline double CalculateLateralAcceleration(const SingleTrackModelPtr& model, 
-                                           const double delta, const double vel) {
-    double acc_lat = vel * vel * tan(delta) / model->GetWheelBase();
-    return acc_lat;
+inline double CalculateLateralAcceleration(const SingleTrackModelPtr& model,
+                                           const double delta,
+                                           const double vel) {
+  // Implemented after M. Althoff "CommonRoad: Vehicle Models (Version 2019b)"
+  double theta_dot = vel * tan(delta) / model->GetWheelBase();
+  double acc_lat = vel * theta_dot;
+  return acc_lat;
 }
 
 inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
