@@ -35,14 +35,14 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
     //! Acceleration bias needs to be larger than the acceleration threshold
     acceleration_threshold_ = params->GetReal(
         "BehaviorMobil::AccelerationThreshold",
-        "Models intertia to only trigger if there is real improvement", 0.1f);
+        "Models intertia to only trigger if there is real improvement", 0.1);
     acceleration_bias_ =
         params->GetReal("BehaviorMobil::AccelerationBias",
-                        "Bias to encourage keep right directive", 0.1f);
+                        "Bias to encourage keep right directive", 0.1);
     safe_deceleration_ = params->GetReal(
         "BehaviorMobil::SafeDeceleration",
         "Maximum deceleration for follower in target lane, positive number",
-        2.0f);
+        2.0);
     asymmetric_passing_rules_ = params->GetBool(
         "BehaviorMobil::AsymmetricPassingRules",
         "Whether passing on the right side is forbidden", false);
@@ -65,7 +65,7 @@ class BehaviorMobil : public BehaviorLaneChangeRuleBased {
 
   double CalcLongRawAccWithoutLeader(
       const world::LaneCorridorPtr& lane_corridor,
-      const bark::geometry::Point2d& pos, const float vel) const;
+      const bark::geometry::Point2d& pos, const double vel) const;
 
   std::pair<LaneChangeDecision, world::map::LaneCorridorPtr>
   CheckIfLaneChangeBeneficial(const world::ObservedWorld& observed_world);

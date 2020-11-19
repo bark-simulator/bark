@@ -69,7 +69,7 @@ ParameterRegions BehaviorIDMStochastic::GetParameterRegions() const {
   return parameter_regions;
 }
 
-Trajectory BehaviorIDMStochastic::Plan(float delta_time,
+Trajectory BehaviorIDMStochastic::Plan(double delta_time,
                                        const ObservedWorld& observed_world) {
   SampleParameters();
   return BehaviorIDMClassic::Plan(delta_time, observed_world);

@@ -32,7 +32,7 @@ Polygon bark::geometry::standard_shapes::CarRectangle() {
 }
 
 Polygon bark::geometry::standard_shapes::GenerateCarRectangle(
-    float wheelbase, float collision_radius) {
+    double wheelbase, double collision_radius) {
   return Polygon(Pose(0, 0, 0),
                  std::vector<Point2d>{
                      Point2d(-collision_radius, -collision_radius),
@@ -42,8 +42,8 @@ Polygon bark::geometry::standard_shapes::GenerateCarRectangle(
                      Point2d(-collision_radius, -collision_radius)});
 }
 
-Polygon bark::geometry::standard_shapes::GenerateGoalRectangle(float length,
-                                                               float width) {
+Polygon bark::geometry::standard_shapes::GenerateGoalRectangle(double length,
+                                                               double width) {
   return Polygon(Pose(width / 2, length / 2, 0),
                  std::vector<Point2d>{Point2d(0, 0), Point2d(0, length),
                                       Point2d(width, length), Point2d(width, 0),

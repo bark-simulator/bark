@@ -382,7 +382,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     elif not is_int_1 and not is_int_2:
       probablistic_conflict_resolution = True
     else:
-      raise ValueError("Conflict resolution specifications must be either both integers or both floats")
+      raise ValueError("Conflict resolution specifications must be either both integers or both doubles")
 
     return conflict_res_1, conflict_res_2, probablistic_conflict_resolution
 

@@ -35,8 +35,8 @@ XodrLane::XodrLane(const XodrLanePosition& lane_position)
       speed_() {}
 
 bool XodrLane::append(geometry::Line previous_line,
-                      XodrLaneWidth lane_width_current, float s_inc) {
-  float s_max_delta =
+                      XodrLaneWidth lane_width_current, double s_inc) {
+  double s_max_delta =
       0.001;  // this parameter has to be small!!! otherwise, the line will be
               // too discrete, and this will cause problems for the next line
               // creation with an offset

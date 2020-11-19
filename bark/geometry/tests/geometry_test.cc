@@ -77,59 +77,59 @@ TEST(geometry, line) {
   namespace bg = boost::geometry;
 
   Line l;  // vertical
-  l.AddPoint(Point2d(0.0f, 0.0f));
-  l.AddPoint(Point2d(0.0f, 10.0f));
+  l.AddPoint(Point2d(0.0, 0.0));
+  l.AddPoint(Point2d(0.0, 10.0));
 
-  Point2d p = GetPointAtS(l, 5.0f);
+  Point2d p = GetPointAtS(l, 5.0);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
-  p = GetNormalAtS(l, 5.0f);
+  p = GetNormalAtS(l, 5.0);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = GetNearestPoint(l, Point2d(5.0f, 5.0f));
+  p = GetNearestPoint(l, Point2d(5.0, 5.0));
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
   Line l2;  // horizontal
-  l2.AddPoint(Point2d(0.0f, 0.0f));
-  l2.AddPoint(Point2d(10.0f, 0.0f));
+  l2.AddPoint(Point2d(0.0, 0.0));
+  l2.AddPoint(Point2d(10.0, 0.0));
 
-  p = GetPointAtS(l2, 5.0f);
+  p = GetPointAtS(l2, 5.0);
   EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = GetNormalAtS(l2, 5.0f);
+  p = GetNormalAtS(l2, 5.0);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = GetNearestPoint(l2, Point2d(5.0f, 5.0f));
+  p = GetNearestPoint(l2, Point2d(5.0, 5.0));
   EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
   Line l3;  // 45 deg
-  l3.AddPoint(Point2d(0.0f, 0.0f));
-  l3.AddPoint(Point2d(10.0f, 10.0f));
+  l3.AddPoint(Point2d(0.0, 0.0));
+  l3.AddPoint(Point2d(10.0, 10.0));
 
   p = GetPointAtS(l3, 0.5 * sqrt(200));
-  EXPECT_NEAR(bg::get<0>(p), 5.0f, 0.1);
-  EXPECT_NEAR(bg::get<1>(p), 5.0f, 0.1);
+  EXPECT_NEAR(bg::get<0>(p), 5.0, 0.1);
+  EXPECT_NEAR(bg::get<1>(p), 5.0, 0.1);
 
   p = GetNormalAtS(l3, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.7, 0.1);
 
   Line l4;  // 45 deg
-  l4.AddPoint(Point2d(0.0f, 0.0f));
-  l4.AddPoint(Point2d(-10.0f, 10.0f));
+  l4.AddPoint(Point2d(0.0, 0.0));
+  l4.AddPoint(Point2d(-10.0, 10.0));
 
   p = GetNormalAtS(l4, 0.5 * sqrt(200));
   EXPECT_NEAR(bg::get<0>(p), -0.7, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -0.7, 0.1);
 
-  EXPECT_NEAR(GetNearestS(l, Point2d(5, 5)), 5.0f, 0.1f);
-  EXPECT_NEAR(GetNearestS(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1f);
+  EXPECT_NEAR(GetNearestS(l, Point2d(5, 5)), 5.0, 0.1);
+  EXPECT_NEAR(GetNearestS(l3, Point2d(5, 5)), 0.5 * sqrt(200), 0.1);
 }
 
 TEST(geometry, line_transform) {
@@ -138,12 +138,12 @@ TEST(geometry, line_transform) {
   namespace bg = boost::geometry;
 
   Line line_in;  // vertical
-  line_in.AddPoint(Point2d(0.0f, 0.0f));
-  line_in.AddPoint(Point2d(0.0f, 10.0f));
+  line_in.AddPoint(Point2d(0.0, 0.0));
+  line_in.AddPoint(Point2d(0.0, 10.0));
 
-  float hdg = 3.14159265359;
-  float offset_x = 1;
-  float offset_y = 2;
+  double hdg = 3.14159265359;
+  double offset_x = 1;
+  double offset_y = 2;
 
   Line obj_rotated = Rotate(line_in, hdg);
   EXPECT_NEAR(line_in.Length(), obj_rotated.Length(), 0.01);
@@ -724,7 +724,7 @@ TEST(line, GetNearestPoint_1) {
   Point2d p5 = GetNearestPoint(line, Point2d(0.0, 4.0));
 
   Point2d p6 = GetNearestPoint(line, Point2d(1.0, 1.0));
-  Point2d p7 = GetNearestPoint(line, Point2d(1.0f, 2.2f));
+  Point2d p7 = GetNearestPoint(line, Point2d(1.0, 2.2));
 
   EXPECT_TRUE(point_1 == p1);
   EXPECT_TRUE(point_2 == p2);
@@ -734,7 +734,8 @@ TEST(line, GetNearestPoint_1) {
   EXPECT_TRUE(Point2d(0.0, 3.0) == p5);
 
   EXPECT_TRUE(Point2d(0.0, 1.0) == p6);
-  EXPECT_TRUE(Point2d(0.0f, 2.2f) == p7);
+  EXPECT_NEAR(boost::geometry::get<0>(p7), 0, 0.0001);
+  EXPECT_NEAR(boost::geometry::get<1>(p7), 2.2, 0.0001);
 }
 
 TEST(line, segment_intersection_check_1) {
@@ -757,9 +758,9 @@ TEST(line, segment_intersection_check_1) {
   line.AddPoint(point_5);
   line.AddPoint(point_6);
 
-  EXPECT_NEAR(GetSegmentEndIdx(line, 0.0f), 1, 0.1f);
-  EXPECT_NEAR(GetSegmentEndIdx(line, 3.0f), 4, 0.1f);
-  EXPECT_NEAR(GetSegmentEndIdx(line, 6.0), 5, 0.1f);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 0.0), 1, 0.1);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 3.0), 4, 0.1);
+  EXPECT_NEAR(GetSegmentEndIdx(line, 6.0), 5, 0.1);
 }
 TEST(line, segment_intersection_tangent_1) {
   using bark::geometry::Line_t;
@@ -780,8 +781,8 @@ TEST(line, segment_intersection_tangent_1) {
   line.AddPoint(point_4);
   line.AddPoint(point_5);
 
-  EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1f);
-  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line, sqrt(2)), 0, 0.1);
+  EXPECT_NEAR(GetTangentAngleAtS(line, 2 * sqrt(2)), (1.0 / 8.0) * 3.141, 0.1);
 
   // template
   Point2d point_6(0.0, 0.0);
@@ -798,8 +799,8 @@ TEST(line, segment_intersection_tangent_1) {
   line2.AddPoint(point_9);
   line2.AddPoint(point_10);
 
-  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1f);
-  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1f);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.25), (1.0 / 2.0) * 3.141, 0.1);
+  EXPECT_NEAR(GetTangentAngleAtS(line2, 0.5), (1.0 / 2.0) * 3.141, 0.1);
 }
 
 TEST(line, segment_get_normal_1) {
@@ -821,23 +822,23 @@ TEST(line, segment_get_normal_1) {
   line.AddPoint(point_4);
   line.AddPoint(point_1);
 
-  Point2d p = GetNormalAtS(line, 0.5f);
+  Point2d p = GetNormalAtS(line, 0.5);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 1.0, 0.1);
 
-  p = GetNormalAtS(line, 1.5f);
+  p = GetNormalAtS(line, 1.5);
   EXPECT_NEAR(bg::get<0>(p), -1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = GetNormalAtS(line, 2.5f);
+  p = GetNormalAtS(line, 2.5);
   EXPECT_NEAR(bg::get<0>(p), 0.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), -1.0, 0.1);
 
-  p = GetNormalAtS(line, 3.5f);
+  p = GetNormalAtS(line, 3.5);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 
-  p = GetNormalAtS(line, 4.0f);
+  p = GetNormalAtS(line, 4.0);
   EXPECT_NEAR(bg::get<0>(p), 1.0, 0.1);
   EXPECT_NEAR(bg::get<1>(p), 0.0, 0.1);
 }
@@ -864,7 +865,7 @@ TEST(line, gradient) {
   gradY_expect << 0.3090, 0.2939, 0.2500, 0.1816, 0.0955, 0.0489;
 
   // do not compare first and last values
-  float precision = 1e-3;
+  double precision = 1e-3;
   EXPECT_TRUE(gradX.size() == gradX_expect.size()) << gradX.size() << std::endl
                                                    << gradX_expect.size();
   EXPECT_TRUE(
@@ -899,7 +900,7 @@ TEST(line, curvature) {
 
   // do not compare first and last values, as gradient calculation is not
   // correct there
-  float precision = 1e-3;
+  double precision = 1e-3;
   EXPECT_TRUE(c.size() == c_expect.size()) << c.size() << std::endl
                                            << c_expect.size();
   EXPECT_NEAR(c(2), c_expect(2), precision);

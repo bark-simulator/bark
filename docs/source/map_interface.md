@@ -78,7 +78,7 @@ It provides many utility functions, such as the distance to the end of the `Lane
 ```cpp
 struct LaneCorridor {
   ...
-  std::map<float, LanePtr> lanes_;  // s_end, LanePtr
+  std::map<double, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
   Polygon merged_polygon_;
   Line left_boundary_;

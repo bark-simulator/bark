@@ -22,7 +22,7 @@ namespace opendrive {
 
 class XodrLaneSection {
  public:
-  explicit XodrLaneSection(float s) : s_(s) {}
+  explicit XodrLaneSection(double s) : s_(s) {}
   ~XodrLaneSection() {}
 
   XodrLanes GetLanes() const { return lanes_; }
@@ -33,10 +33,10 @@ class XodrLaneSection {
   void AddLane(const XodrLanePtr& l);
 
   //! getter functions
-  float GetS() const { return s_; }
+  double GetS() const { return s_; }
 
  private:
-  float s_;
+  double s_;
   XodrLanes lanes_;
 };
 

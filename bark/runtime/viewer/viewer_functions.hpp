@@ -22,7 +22,7 @@ inline void drawRandomThings(Viewer* viewer) {
   const uint16_t num_points = 100;
   for (auto i = 0; i < num_points; ++i) {
     Point2d p(rand() % 10 + 1, rand() % 10 + 1);
-    viewer->drawPoint2d(p, Viewer::Color::Color_Blue, 1.0f);
+    viewer->drawPoint2d(p, Viewer::Color::Color_Blue, 1.0);
   }
   const uint16_t num_lines = 100;
   for (auto i = 0; i < num_lines; ++i) {
@@ -31,7 +31,7 @@ inline void drawRandomThings(Viewer* viewer) {
       Point2d p(rand() % 10 + 1, rand() % 10 + 1);
       l.AddPoint(p);
     }
-    viewer->drawLine2d(l, Viewer::Color::Color_Cyan, 1.0f);
+    viewer->drawLine2d(l, Viewer::Color::Color_Cyan, 1.0);
   }
 }
 

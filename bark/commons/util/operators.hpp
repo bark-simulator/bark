@@ -26,8 +26,8 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& v) {
 }
 
 template <>
-inline std::ostream& operator<<<std::vector<float>>(
-    std::ostream& os, const std::vector<std::vector<float>>& v) {
+inline std::ostream& operator<<<std::vector<double>>(
+    std::ostream& os, const std::vector<std::vector<double>>& v) {
   os << "[";
   for (const auto sb : v) {
     os << "[";

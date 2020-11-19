@@ -38,7 +38,7 @@ struct LaneCorridor {
   Line& GetCenterLine() { return center_line_; }
   Line& GetFineCenterLine() { return fine_center_line_; }
   Polygon& GetMergedPolygon() { return merged_polygon_; }
-  std::map<float, LanePtr>& GetLanes() { return lanes_; }
+  std::map<double, LanePtr>& GetLanes() { return lanes_; }
   LanePtr GetCurrentLane(const Point2d& pt) const {
     // NOTE(@all): the matching could also be done using the s-value
     for (auto& lane : lanes_) {
@@ -46,20 +46,20 @@ struct LaneCorridor {
     }
     return nullptr;
   }
-  float GetLength() const { return center_line_.Length(); }
-  float GetS(const Point2d& pt) const {
+  double GetLength() const { return center_line_.Length(); }
+  double GetS(const Point2d& pt) const {
     return std::get<1>(GetNearestPointAndS(center_line_, pt));
   }
-  float LengthUntilEnd(const Point2d& pt) const {
+  double LengthUntilEnd(const Point2d& pt) const {
     return GetLength() - GetS(pt);
   }
 
-  float GetLaneWidth(const Point2d& pt) {
+  double GetLaneWidth(const Point2d& pt) {
     uint idx = FindNearestIdx(GetCenterLine(), pt);
     // assumption: center, left and right have same # elements
     Point2d left_pt = GetPointAtIdx(GetLeftBoundary(), idx);
     Point2d right_pt = GetPointAtIdx(GetRightBoundary(), idx);
-    float width = bark::geometry::Distance(left_pt, right_pt);
+    double width = bark::geometry::Distance(left_pt, right_pt);
     return width;
   }
 
@@ -69,20 +69,20 @@ struct LaneCorridor {
   void SetCenterLine(const Line& line) { center_line_ = line; }
   void SetFineCenterLine(const Line& line) { fine_center_line_ = line; }
   void SetMergedPolygon(const Polygon& poly) { merged_polygon_ = poly; }
-  void SetLane(float s_start, const LanePtr& lane) { lanes_[s_start] = lane; }
+  void SetLane(double s_start, const LanePtr& lane) { lanes_[s_start] = lane; }
 
   bool operator==(const LaneCorridor other) {
     return lanes_.size() == other.lanes_.size() &&
            std::equal(lanes_.begin(), lanes_.end(), other.lanes_.begin(),
-                      [](const std::map<float, LanePtr>::value_type& a,
-                         const std::map<float, LanePtr>::value_type& b) {
+                      [](const std::map<double, LanePtr>::value_type& a,
+                         const std::map<double, LanePtr>::value_type& b) {
                         return a.first == b.first && *(a.second) == *(b.second);
                       });
   }
 
   bool operator!=(const LaneCorridor other) { return !(*this == other); }
 
-  std::map<float, LanePtr> lanes_;  // s_end, LanePtr
+  std::map<double, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;
   Line fine_center_line_;
   Polygon merged_polygon_;

@@ -30,13 +30,13 @@ class ParamServerTests(unittest.TestCase):
     params = ParameterServer()
     params_child = params["test_child"]
     del params
-    value_float = params_child["Child1"]["Child2"]["ValueFloat", "Desc", 2.0]
+    value_double = params_child["Child1"]["Child2"]["ValueFloat", "Desc", 2.0]
     value_bool_false = params_child["Child1"]["Child2"]["ValueBoolFalse", "Desc", False]
     value_bool_true = params_child["Child3"]["Child2"]["ValueBoolTrue", "Desc", True]
     value_int = params_child["Child1"]["Child4"]["ValueInt", "Desc", 2041]
-    value_list_list_float = params_child["Child1"]["Child4"]["ValueListListFloat", "Desc",
+    value_list_list_double = params_child["Child1"]["Child4"]["ValueListListFloat", "Desc",
          [[1.0, 2.0, float(5.4545234)], [float(1.1266135),2.0], [float(123.234234)]]]
-    value_list_float = params_child["Child1"]["Child5"]["ValueListFloat", "Desc",
+    value_list_double = params_child["Child1"]["Child5"]["ValueListFloat", "Desc",
          [1.0, 2.0, float(5.4545234), float(1.1266135),2.0, float(123.234234)]]
 
     behavior = BehaviorIDMClassic(params_child)

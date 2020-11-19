@@ -94,7 +94,7 @@ class SingleTrackModel : public DynamicModel {
   double GetLonAccelerationMin(const State& x) const {
     // Do not allow to drive backwards
     if (std::abs(x(StateDefinition::VEL_POSITION)) < 1e-5) {
-      return 0.0f;
+      return 0.0;
     } else {
       return acceleration_limits_.lon_acc_min;
     }

@@ -53,7 +53,7 @@ class BehaviorMotionPrimitives : public BehaviorModel {
   Action active_motion_;
 
   // Parameters
-  float integration_time_delta_;
+  double integration_time_delta_;
 };
 
 typedef std::shared_ptr<BehaviorMotionPrimitives> BehaviorMotionPrimitivesPtr;

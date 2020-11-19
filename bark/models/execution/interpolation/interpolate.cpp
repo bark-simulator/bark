@@ -18,9 +18,9 @@ using dynamic::Trajectory;
 using dynamic::StateDefinition::TIME_POSITION;
 
 bool ExecutionModelInterpolate::CheckIfWorldTimeIsWithinTrajectory(
-    const Trajectory& trajectory, const float& world_time) const {
+    const Trajectory& trajectory, const double& world_time) const {
   bool is_in_traj = true;
-  const float delta = 1e-3;
+  const double delta = 1e-3;
   if ((world_time + delta) < trajectory(0, TIME_POSITION) ||
       (world_time - delta) > trajectory(trajectory.rows() - 1, TIME_POSITION)) {
     is_in_traj = false;
@@ -37,9 +37,9 @@ bool ExecutionModelInterpolate::CheckIfWorldTimeIsWithinTrajectory(
 std::pair<State, bool>
 ExecutionModelInterpolate::CheckIfTimeExactIsInTrajectory(
     const Trajectory& trajectory, const double& world_time) const {
-  const float delta = 1e-3;
-  float start_time = trajectory(0, TIME_POSITION);
-  float end_time = trajectory(trajectory.rows() - 1, TIME_POSITION);
+  const double delta = 1e-3;
+  double start_time = trajectory(0, TIME_POSITION);
+  double end_time = trajectory(trajectory.rows() - 1, TIME_POSITION);
   int half_traj_num = static_cast<int>(trajectory.rows() / 2);
 
   // closer to the end; reverse; only need to check half of the traj.
@@ -57,7 +57,7 @@ ExecutionModelInterpolate::CheckIfTimeExactIsInTrajectory(
 
 std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
     const Trajectory& trajectory, const double& world_time) const {
-  const float delta = 1e-3;
+  const double delta = 1e-3;
   int ret_idx = 0;
   bool found_closest_pt = false;
   for (int i = 0; i < trajectory.rows(); i++) {
@@ -71,15 +71,15 @@ std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
 }
 
 State ExecutionModelInterpolate::Interpolate(const State& p0, const State& p1,
-                                             const float& time) const {
-  const float start_time = p0(TIME_POSITION);
-  const float end_time = p1(TIME_POSITION);
-  const float lambda = fabs((time - start_time) / (end_time - start_time));
+                                             const double& time) const {
+  const double start_time = p0(TIME_POSITION);
+  const double end_time = p1(TIME_POSITION);
+  const double lambda = fabs((time - start_time) / (end_time - start_time));
   BARK_EXPECT_TRUE(end_time >= start_time && time >= start_time);
   return (1 - lambda) * p0 + (lambda)*p1;
 }
 
-void ExecutionModelInterpolate::Execute(const float& new_world_time,
+void ExecutionModelInterpolate::Execute(const double& new_world_time,
                                         const Trajectory& trajectory,
                                         const DynamicModelPtr dynamic_model) {
 

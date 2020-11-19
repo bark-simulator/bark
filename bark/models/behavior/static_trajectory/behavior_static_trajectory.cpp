@@ -24,18 +24,18 @@ BehaviorStaticTrajectory::BehaviorStaticTrajectory(
       static_trajectory_(ReadInStaticTrajectory(params->GetListListFloat(
           "static_trajectory",
           "List of states that form a static trajectory to follow", {{}}))) {
-  SetLastAction(LonLatAction{0.0f, 0.0f});
+  SetLastAction(LonLatAction{0.0, 0.0});
 }
 
 BehaviorStaticTrajectory::BehaviorStaticTrajectory(
     const commons::ParamsPtr& params, const Trajectory& static_trajectory)
     : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET),
       static_trajectory_(static_trajectory) {
-  SetLastAction(LonLatAction{0.0f, 0.0f});
+  SetLastAction(LonLatAction{0.0, 0.0});
 }
 
 Trajectory BehaviorStaticTrajectory::Plan(
-    float delta_time, const bark::world::ObservedWorld& observed_world) {
+    double delta_time, const bark::world::ObservedWorld& observed_world) {
   UpdateBehaviorStatus(delta_time, observed_world);
 
   const double start_time = observed_world.GetWorldTime();
@@ -48,7 +48,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
 
   if (idx_start < 0 || idx_end < 0) {
     auto traj = dynamic::Trajectory();
-    this->SetLastAction(LonLatAction{0.0f, 0.0f});
+    this->SetLastAction(LonLatAction{0.0, 0.0});
     this->SetLastTrajectory(traj);
     return traj;
   }
@@ -66,7 +66,7 @@ Trajectory BehaviorStaticTrajectory::Plan(
 }
 
 Action BehaviorStaticTrajectory::CalculateAction(
-    float delta_time, const bark::world::ObservedWorld& observed_world,
+    double delta_time, const bark::world::ObservedWorld& observed_world,
     const dynamic::Trajectory& trajectory) {
   auto lane_corridor = observed_world.GetLaneCorridor();
   BARK_EXPECT_TRUE(bool(lane_corridor));
@@ -91,8 +91,8 @@ std::pair<int, int> BehaviorStaticTrajectory::Interpolate(
     return {-1, -1};
   }
   for (int i = 0; i < static_trajectory_.rows() - 1; ++i) {
-    float t_i = static_trajectory_(i, dynamic::TIME_POSITION);
-    float t_i_succ = static_trajectory_(i + 1, dynamic::TIME_POSITION);
+    double t_i = static_trajectory_(i, dynamic::TIME_POSITION);
+    double t_i_succ = static_trajectory_(i + 1, dynamic::TIME_POSITION);
 
     if (t_i <= t && t <= t_i_succ) {
       idx = i;
@@ -123,7 +123,7 @@ std::shared_ptr<BehaviorModel> BehaviorStaticTrajectory::Clone() const {
 }
 
 Trajectory BehaviorStaticTrajectory::ReadInStaticTrajectory(
-    std::vector<std::vector<float>> list) {
+    std::vector<std::vector<double>> list) {
   Trajectory traj(list.size(), list[0].size());
   for (int i = 0; i < traj.rows(); ++i) {
     BARK_EXPECT_TRUE(list[i].size() == static_cast<size_t>(traj.cols()));
@@ -139,7 +139,7 @@ const Trajectory& BehaviorStaticTrajectory::GetStaticTrajectory() const {
 }
 
 void BehaviorStaticTrajectory::UpdateBehaviorStatus(
-    float delta_time, const bark::world::ObservedWorld& observed_world) {
+    double delta_time, const bark::world::ObservedWorld& observed_world) {
   const double start_time = observed_world.GetWorldTime();
   const double end_time = start_time + delta_time;
 

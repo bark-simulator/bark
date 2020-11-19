@@ -64,7 +64,7 @@ class TripleIntegratorModel : public DynamicModel {
   }
 
  private:
-  float mass_;
+  double mass_;
 };
 
 }  // namespace dynamic

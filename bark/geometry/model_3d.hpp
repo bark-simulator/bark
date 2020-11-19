@@ -28,9 +28,9 @@ class Model3D {
   void UpdateScale(const Polygon bounding_box) {}
 
  private:
-  float scale_x_;
-  float scale_y_;
-  float scale_z_;
+  double scale_x_;
+  double scale_y_;
+  double scale_z_;
   Type type_;
 };
 

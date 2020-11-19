@@ -137,7 +137,7 @@ BehaviorIntersectionRuleBased::CheckIntersectingVehicles(
 
 // see base class
 Trajectory BehaviorIntersectionRuleBased::Plan(
-    float delta_time, const ObservedWorld& observed_world) {
+    double delta_time, const ObservedWorld& observed_world) {
   using dynamic::StateDefinition;
   SetBehaviorStatus(BehaviorStatus::VALID);
 

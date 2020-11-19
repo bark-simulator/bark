@@ -45,7 +45,7 @@ class BaseIDM : virtual public BehaviorModel {
 
   virtual ~BaseIDM() {}
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(double delta_time,
                           const ObservedWorld& observed_world);
 
   double CalcFreeRoadTerm(const double vel_ego) const;
@@ -88,15 +88,15 @@ class BaseIDM : virtual public BehaviorModel {
       const LaneCorridorPtr& lane_corr) const;
 
   //! Getter and Setter
-  virtual float GetMinVelocity() const { return param_min_velocity_; }
-  virtual float GetMaxVelocity() const { return param_max_velocity_; }
+  virtual double GetMinVelocity() const { return param_min_velocity_; }
+  virtual double GetMaxVelocity() const { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
     return param_desired_velocity_;
   }  // unit is meter/second
-  const float GetMinimumSpacing() const {
+  const double GetMinimumSpacing() const {
     return param_minimum_spacing_;
   }  // unit is meter
-  const float GetDesiredTimeHeadway() const {
+  const double GetDesiredTimeHeadway() const {
     return param_desired_time_head_way_;
   }  // unit is seconds
   const float GetLonAccelerationMax() const {
@@ -105,11 +105,11 @@ class BaseIDM : virtual public BehaviorModel {
   const int GetNumTrajectoryTimePoints() const {
     return num_trajectory_time_points_;
   }
-  const float GetComfortableBrakingAcceleration() const {
+  const double GetComfortableBrakingAcceleration() const {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
-  const float GetCoolnessFactor() const { return param_coolness_factor_; }
+  const double GetCoolnessFactor() const { return param_coolness_factor_; }
   LaneCorridorPtr GetLaneCorridor() const { return lane_corr_; }
   void SetLaneCorridor(const LaneCorridorPtr& lane_corr) {
     lane_corr_ = lane_corr;
@@ -123,13 +123,13 @@ class BaseIDM : virtual public BehaviorModel {
 
  protected:
   // Parameters
-  float param_minimum_spacing_;
-  float param_desired_time_head_way_;
-  float param_max_acceleration_;
-  float param_desired_velocity_;
-  float param_comfortable_braking_acceleration_;
-  float param_min_velocity_;
-  float param_max_velocity_;
+  double param_minimum_spacing_;
+  double param_desired_time_head_way_;
+  double param_max_acceleration_;
+  double param_desired_velocity_;
+  double param_comfortable_braking_acceleration_;
+  double param_min_velocity_;
+  double param_max_velocity_;
   AccelerationLimits acceleration_limits_;
   int param_exponent_;
   int num_trajectory_time_points_;
@@ -137,13 +137,13 @@ class BaseIDM : virtual public BehaviorModel {
 
   // IDM extension to stop at the end of the LaneCorridor
   bool brake_lane_end_;
-  float brake_lane_end_enabled_distance_;
-  float brake_lane_end_distance_offset_;
+  double brake_lane_end_enabled_distance_;
+  double brake_lane_end_distance_offset_;
 
   // constant acceleration heuristic
   // according chapter 11. Car-Following Models based on Driving Strategies
   // in "Traffic Flow Dynamics" by M.Treiber and A.Kesting
-  float param_coolness_factor_;
+  double param_coolness_factor_;
 };
 
 }  // namespace behavior

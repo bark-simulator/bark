@@ -44,7 +44,7 @@ class XodrLane {
   void SetId(const XodrLaneId lane_id) { lane_id_ = lane_id; }
   void SetLine(const Line line) { line_ = line; }
   void SetLink(const XodrLaneLink link) { link_ = link; }
-  void SetSpeed(float speed) { speed_ = speed; }
+  void SetSpeed(double speed) { speed_ = speed; }
   void SetLaneType(const XodrLaneType lt) { lane_type_ = lt; }
   void SetDrivingDirection(const XodrDrivingDirection& d) {
     driving_direction_ = d;
@@ -55,14 +55,14 @@ class XodrLane {
   }
 
   bool append(Line previous_line, XodrLaneWidth lane_width_current,
-              float s_inc);
+              double s_inc);
 
   //! getter functions
   Line GetLine() const { return line_; }
 
   XodrLaneLink GetLink() const { return link_; }
   XodrRoadMark GetRoad_mark() const { return road_mark_; }
-  float GetSpeed() const { return speed_; }
+  double GetSpeed() const { return speed_; }
   XodrLaneType GetLaneType() const { return lane_type_; }
   XodrDrivingDirection GetDrivingDirection() const {
     return driving_direction_;
@@ -79,7 +79,7 @@ class XodrLane {
   XodrLaneType lane_type_;
   XodrDrivingDirection driving_direction_;
   XodrRoadMark road_mark_;
-  float speed_;
+  double speed_;
   static XodrLaneId lane_count;
 };
 
@@ -103,7 +103,7 @@ using XodrLanes = std::map<XodrLaneId, XodrLanePtr>;
 inline XodrLanePtr CreateLaneFromLaneWidth(XodrLanePosition lane_position,
                                            Line previous_line,
                                            XodrLaneWidth lane_width_current,
-                                           float s_inc = 0.05f) {
+                                           double s_inc = 0.05f) {
   std::shared_ptr<XodrLane> ret_lane(new XodrLane(lane_position));
   ret_lane->append(previous_line, lane_width_current, s_inc);
   return ret_lane;
