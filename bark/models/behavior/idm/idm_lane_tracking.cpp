@@ -26,10 +26,12 @@ namespace behavior {
 
 using bark::commons::transformation::FrenetPosition;
 using bark::geometry::Point2d;
+using bark::models::dynamic::CalculateLateralAcceleration;
 using bark::models::dynamic::DynamicModelPtr;
 using bark::models::dynamic::State;
 using bark::models::dynamic::StateDefinition;
 using bark::world::objects::Agent;
+;
 using bark::world::objects::AgentPtr;
 
 std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
@@ -43,13 +45,17 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       std::dynamic_pointer_cast<dynamic::SingleTrackModel>(dynamic_model);
   if (!single_track) {
     LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
+  } else {
+    single_track->SetAccelerationLimits(GetAccelerationLimits());
   }
+
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   double start_time = observed_world.GetWorldTime();
   double t_i = 0., acc = 0.;
   geometry::Line line;
   if (constant_lane_corr_ != nullptr) {
-    // std::cout << "using const. lane corr: " << constant_lane_corr_ << std::endl;
+    // std::cout << "using const. lane corr: " << constant_lane_corr_ <<
+    // std::endl;
     line = constant_lane_corr_->GetCenterLine();
   } else {
     line = lane_corr->GetCenterLine();
@@ -88,11 +94,42 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
           std::max(traj(i, StateDefinition::VEL_POSITION), 0.0);
       t_i = static_cast<double>(i) * dt + start_time;
       traj(i, StateDefinition::TIME_POSITION) = t_i;
+
+      double acc_lat = CalculateLateralAcceleration(
+          single_track, angle, traj(i, StateDefinition::VEL_POSITION));
+      VLOG(4) << "Plan(i=" << i << "): LonAcc:  " << acc << ", "
+              << "LatAcc: " << acc_lat << ", "
+              << GetAccelerationLimits();
+      CheckAccelerationLimits(acc, acc_lat);
     }
   }
 
   return std::tuple<Trajectory, Action>(
       traj, Continuous1DAction(initial_acceleration));
+}
+
+void BehaviorIDMLaneTracking::CheckAccelerationLimits(double acc_lon,
+                                                      double acc_lat) const {
+  if (acc_lon > GetAccelerationLimits().lon_acc_max) {
+    LOG(WARNING) << "LonAccMax is violated" << acc_lon << " vs. "
+                 << GetAccelerationLimits().lon_acc_max;
+  }
+
+  if (acc_lon < GetAccelerationLimits().lon_acc_min) {
+    LOG(WARNING) << "LonAccMin is violated" << acc_lon << " vs. "
+                 << GetAccelerationLimits().lon_acc_min;
+  }
+
+  // Steering to the right == Accelerations are negative
+  if (acc_lat < -GetAccelerationLimits().lat_acc_right_max) {
+    LOG(WARNING) << "LatAccRightMax is violated" << acc_lat << " vs. "
+                 << GetAccelerationLimits().lat_acc_right_max;
+  }
+
+  if (acc_lat > GetAccelerationLimits().lat_acc_left_max) {
+    LOG(WARNING) << "LatAccLeftMax is violated" << acc_lat << " vs. "
+                 << GetAccelerationLimits().lat_acc_left_max;
+  }
 }
 
 }  // namespace behavior

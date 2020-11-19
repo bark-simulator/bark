@@ -39,12 +39,6 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                       "See Wikipedia IDM article", 1.5);
   param_max_acceleration_ = params->GetReal(
       "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7);
-  param_acceleration_lower_bound_ =
-      params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
-                      "See Wikipedia IDM article", -5.0);
-  param_acceleration_upper_bound_ =
-      params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
-                      "See Wikipedia IDM article", 8.0);
   param_desired_velocity_ =
       params->GetReal("BehaviorIDMClassic::DesiredVelocity",
                       "See Wikipedia IDM article", 15.0);
@@ -71,8 +65,18 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                      "Number of points of the trajectory.", 11);
   param_coolness_factor_ = params->GetReal(
       "BehaviorIDMClassic::CoolnessFactor",
-      "If non-zero, constant accleration heuristic is applied", 0.0);
-  SetLastAction(Continuous1DAction(0.0));
+      "If non-zero, constant accleration heuristic is applied", 0.0f);
+
+  acceleration_limits_ =
+      bark::models::dynamic::AccelerationLimitsFromParamServer(params);
+  acceleration_limits_.lon_acc_max =
+      params->GetReal("BehaviorIDMClassic::AccelerationUpperBound",
+                      "Maximum longitudinal acceleration", 8.0);
+  acceleration_limits_.lon_acc_min =
+      params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
+                      "Minimum longitudinal acceleration", -5.0);
+
+  SetLastAction(Continuous1DAction(0.0f));
 }
 
 double BaseIDM::CalcFreeRoadTerm(const double vel_ego) const {
@@ -87,7 +91,7 @@ double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
   // Parameters
   const double minimum_spacing = GetMinimumSpacing();
   const double desired_time_headway = GetDesiredTimeHeadway();
-  const double max_acceleration = GetMaxAcceleration();
+  const double max_acceleration = GetLonAccelerationMax();
   const double comfortable_braking_acceleration =
       GetComfortableBrakingAcceleration();
   net_distance = std::max(net_distance, 0.0);
@@ -149,8 +153,8 @@ std::pair<bool, double> BaseIDM::GetDistanceToLaneEnding(
 double BaseIDM::CalcIDMAcc(const double net_distance, const double vel_ego,
                            const double vel_other) const {
   // BARK_EXPECT_TRUE(net_distance >= 0);
-  const double acc_lower_bound = GetAccelerationLowerBound();
-  const double acc_upper_bound = GetAccelerationUpperBound();
+  const double acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+  const double acc_upper_bound = GetAccelerationLimits().lon_acc_max;
   // For now, linit acceleration of IDM to brake with -acc_max
   double acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
   acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
@@ -235,7 +239,7 @@ double BaseIDM::CalcRawIDMAcc(const double& net_distance, const double& vel_ego,
   const double free_road_term = CalcFreeRoadTerm(vel_ego);
   const double interaction_term =
       CalcInteractionTerm(net_distance, vel_ego, vel_other);
-  return GetMaxAcceleration() * (free_road_term - interaction_term);
+  return GetLonAccelerationMax() * (free_road_term - interaction_term);
 }
 
 /**
@@ -250,7 +254,7 @@ double BaseIDM::CalcCAHAcc(const double& net_distance, const double& vel_ego,
   // we deviate from eq. 11.25 for the equality case to avoid a nan acceleration
   // when both the leading velocity and effective acceleration are zero
 
-  const double max_acceleration = GetMaxAcceleration();
+  const double max_acceleration = GetLonAccelerationMax();
   const double effect_acc_other = std::min(acc_other, max_acceleration);
   if (vel_other * (vel_ego - vel_other) <
       -2 * net_distance * effect_acc_other) {
@@ -273,10 +277,10 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
                            const double& acc_other) const {
   // implements equation 11.26 on on page 199
   const double c = GetCoolnessFactor();
-  const double acc_lower_bound = GetAccelerationLowerBound();
-  const double acc_upper_bound = GetAccelerationUpperBound();
+  const double acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+  const double acc_upper_bound = GetAccelerationLimits().lon_acc_max;
   const double idm_acc = CalcRawIDMAcc(net_distance, vel_ego, vel_other);
-  if (c == 0.0) {
+  if (c == 0.0f) {
     return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);
   }
 
@@ -317,7 +321,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
   if (interaction_term_active) {
     if (param_coolness_factor_ > 0.0) {
       acc = CalcACCAcc(rel_distance, vel_i, vel_front, rel_values.ego_acc,
-                     rel_values.leading_acc);
+                       rel_values.leading_acc);
     } else {
       acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     }
@@ -325,7 +329,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
-    acc = GetMaxAcceleration() * CalcFreeRoadTerm(vel_i);
+    acc = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_i);
   }
   return std::pair<double, double>(acc, rel_distance);
 }

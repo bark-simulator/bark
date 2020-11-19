@@ -27,6 +27,7 @@ void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
   m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
+  m.def("GenerateGoalRectangle", &bark::geometry::standard_shapes::GenerateGoalRectangle);
 }
 
 void python_geometry(py::module m) {

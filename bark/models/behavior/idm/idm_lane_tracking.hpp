@@ -20,7 +20,6 @@ namespace behavior {
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
 
-
 // IDM that follows the centerline of a LaneCorridor
 // using the dynamic SingleTrack model
 class BehaviorIDMLaneTracking : public BaseIDM {
@@ -50,6 +49,8 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   void SetConstantLaneCorridor(const LaneCorridorPtr& lc) {
     constant_lane_corr_ = lc;
   }
+
+  void CheckAccelerationLimits(double acc_lon, double acc_lat) const;
 
   friend class BaseIDM;
 

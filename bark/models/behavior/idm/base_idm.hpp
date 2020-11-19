@@ -17,6 +17,7 @@
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/models/dynamic/single_track.hpp"
 
 namespace bark {
 namespace models {
@@ -26,6 +27,7 @@ using bark::geometry::Point2d;
 using bark::world::ObservedWorld;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+using bark::models::dynamic::AccelerationLimits;
 
 struct IDMRelativeValues {
   double leading_distance;
@@ -97,15 +99,9 @@ class BaseIDM : virtual public BehaviorModel {
   const double GetDesiredTimeHeadway() const {
     return param_desired_time_head_way_;
   }  // unit is seconds
-  const double GetMaxAcceleration() const {
+  const float GetLonAccelerationMax() const {
     return param_max_acceleration_;
   }  // unit is meter/second^2
-  const double GetAccelerationLowerBound() const {
-    return param_acceleration_lower_bound_;
-  }
-  const double GetAccelerationUpperBound() const {
-    return param_acceleration_upper_bound_;
-  }
   const int GetNumTrajectoryTimePoints() const {
     return num_trajectory_time_points_;
   }
@@ -119,17 +115,22 @@ class BaseIDM : virtual public BehaviorModel {
     lane_corr_ = lane_corr;
   }
 
+  AccelerationLimits GetAccelerationLimits() const { return acceleration_limits_; }
+
+  void SetAccelerationLimits(const AccelerationLimits& acc_lim) { 
+    acceleration_limits_ = acc_lim; 
+  }
+
  protected:
   // Parameters
   double param_minimum_spacing_;
   double param_desired_time_head_way_;
   double param_max_acceleration_;
-  double param_acceleration_lower_bound_;
-  double param_acceleration_upper_bound_;
   double param_desired_velocity_;
   double param_comfortable_braking_acceleration_;
   double param_min_velocity_;
   double param_max_velocity_;
+  AccelerationLimits acceleration_limits_;
   int param_exponent_;
   int num_trajectory_time_points_;
   LaneCorridorPtr lane_corr_;
