@@ -6,9 +6,9 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include <tuple>
-#include <optional>
 #include <memory>
+#include <optional>
+#include <tuple>
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
 #include "bark/world/observed_world.hpp"
@@ -36,34 +36,42 @@ Trajectory BehaviorRSSConformant::Plan(
       if (lane_corr != lc) {
         VLOG(4) << "Setting LaneCorridor for nominal behavior: " << *lc << std::endl;
         auto nominal_behavior =
-          std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
-            nominal_behavior_model_);
+            std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
+                nominal_behavior_model_);
         nominal_behavior->SetConstantLaneCorridor(lc);
       }
     }
   }
 
+  const float length_until_end =
+      behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
+          observed_world.CurrentEgoPosition());
+  if (length_until_end <= minimum_safety_corridor_length_) {
+    // Do not switch the lane corridor any more but only apply braking in the
+    // current lane corridor
+    behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
+  }
+
   if (!lane_corr) {
     VLOG(4) << "Agent " << observed_world.GetEgoAgentId()
-              << ": Behavior status has expired!" << std::endl;
+            << ": Behavior status has expired!" << std::endl;
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
     return GetLastTrajectory();
   }
 
-  auto eval_res = boost::get<std::optional<bool>>(
-    rss_evaluator_->Evaluate(observed_world));
+  auto eval_res =
+      boost::get<std::optional<bool>>(rss_evaluator_->Evaluate(observed_world));
 
-  #ifdef RSS
-  auto rss_evaluator = std::dynamic_pointer_cast<EvaluatorRSS>(
-    rss_evaluator_);
-  if(rss_evaluator) {
+#ifdef RSS
+  auto rss_evaluator = std::dynamic_pointer_cast<EvaluatorRSS>(rss_evaluator_);
+  if (rss_evaluator) {
     const auto& rss_response = rss_evaluator->GetRSSProperResponse();
     lon_response_ = rss_response.longitudinalResponse;
     lat_left_response_ = rss_response.lateralResponseLeft;
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
   }
-  #endif
+#endif
 
   if (!*eval_res) {
     VLOG(4) << "RSS is violated." << std::endl;
