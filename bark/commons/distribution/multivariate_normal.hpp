@@ -28,7 +28,7 @@ class MultivariateDistribution : public Distribution {
         dist_(),
         mean_(MeanFromParams(params)) {
     auto covariance = CovarFromParams(params);
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> eigenSolver(covariance);
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenSolver(covariance);
     transform_ = eigenSolver.eigenvectors() *
                  eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
   }
@@ -36,10 +36,10 @@ class MultivariateDistribution : public Distribution {
   virtual RandomVariate Sample();
 
   virtual Probability Density(const RandomVariate& variate) const {
-    return 0.0f;
+    return 0.0;
   };
 
-  virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
+  virtual Probability CDF(const RandomVariate& variate) const { return 0.0; };
 
   virtual RandomVariableSupport GetSupport() const {
     std::pair<RandomVariableValueType, RandomVariableValueType> support_1d{
@@ -48,27 +48,27 @@ class MultivariateDistribution : public Distribution {
     return RandomVariableSupport(mean_.size(), support_1d);
   }
 
-  Eigen::MatrixXf CovarFromParams(const ParamsPtr& params) const;
-  Eigen::VectorXf MeanFromParams(const ParamsPtr& params) const;
+  Eigen::MatrixXd CovarFromParams(const ParamsPtr& params) const;
+  Eigen::VectorXd MeanFromParams(const ParamsPtr& params) const;
 
  private:
   RandomSeed seed_;
   std::mt19937 generator_;
   std::normal_distribution<RandomVariableValueType> dist_;
-  Eigen::VectorXf mean_;
-  Eigen::MatrixXf transform_;
+  Eigen::VectorXd mean_;
+  Eigen::MatrixXd transform_;
 };
 
 inline RandomVariate MultivariateDistribution::Sample() {
-  Eigen::VectorXf eigen_sample =
-      mean_ + transform_ * Eigen::VectorXf{mean_.size()}.unaryExpr(
+  Eigen::VectorXd eigen_sample =
+      mean_ + transform_ * Eigen::VectorXd{mean_.size()}.unaryExpr(
                                [&](auto x) { return dist_(generator_); });
   RandomVariate sample(eigen_sample.data(),
                        eigen_sample.data() + eigen_sample.size());
   return sample;
 }
 
-inline Eigen::MatrixXf MultivariateDistribution::CovarFromParams(
+inline Eigen::MatrixXd MultivariateDistribution::CovarFromParams(
     const ParamsPtr& params) const {
   auto covar_vector = params->GetListListFloat(
       "Covariance", "Covariance of multivariate distribution",
@@ -77,19 +77,19 @@ inline Eigen::MatrixXf MultivariateDistribution::CovarFromParams(
     BARK_EXPECT_TRUE(covar_vector.size() == row.size());
   }
 
-  Eigen::MatrixXf covar(covar_vector.size(), covar_vector.size());
+  Eigen::MatrixXd covar(covar_vector.size(), covar_vector.size());
   for (int i = 0; i < covar_vector.size(); ++i) {
-    covar.row(i) = Eigen::Map<Eigen::VectorXf, Eigen::Unaligned>(
+    covar.row(i) = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(
         covar_vector[i].data(), covar_vector[i].size());
   }
   return covar;
 }
 
-inline Eigen::VectorXf MultivariateDistribution::MeanFromParams(
+inline Eigen::VectorXd MultivariateDistribution::MeanFromParams(
     const ParamsPtr& params) const {
   auto mean_vector = params->GetListFloat(
       "Mean", "Mean of multivariate distribution", {1.0, 2.0, 3.0});
-  Eigen::VectorXf mean = Eigen::Map<Eigen::VectorXf, Eigen::Unaligned>(
+  Eigen::VectorXd mean = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(
       mean_vector.data(), mean_vector.size());
   return mean;
 }

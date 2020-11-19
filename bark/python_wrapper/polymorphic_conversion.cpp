@@ -64,6 +64,11 @@ using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
 #endif
 
+#ifdef PLANNER_MIQP
+#include "src/behavior_miqp_agent.hpp"
+using bark::models::behavior::BehaviorMiqpAgent;
+#endif
+
 #ifdef PLANNER_RULES_MCTS
 #include "src/behavior_rules_mcts.hpp"
 using bark::models::behavior::BehaviorRulesMctsGreedy;
@@ -157,6 +162,11 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorHypothesisIDM";
   }
 #endif
+#ifdef PLANNER_MIQP
+  else if (typeid(*behavior_model) == typeid(BehaviorMiqpAgent)) {
+    behavior_model_name = "BehaviorMiqpAgent";
+  }
+#endif
 #ifdef PLANNER_RULES_MCTS
   else if (typeid(*behavior_model) == typeid(BehaviorRulesMctsUct)) {
     behavior_model_name = "BehaviorRulesMctsUct";
@@ -226,6 +236,12 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
     return std::make_shared<BehaviorHypothesisIDM>(
         t[0].cast<BehaviorHypothesisIDM>());
   }
+#endif
+#ifdef PLANNER_MIQP
+  else if (behavior_model_name.compare("BehaviorMiqpAgent") == 0) {
+    return std::make_shared<BehaviorMiqpAgent>(
+        t[0].cast<BehaviorMiqpAgent>());
+  } 
 #endif
 #ifdef PLANNER_RULES_MCTS
   else if (behavior_model_name.compare("BehaviorRulesMctsUct") == 0) {

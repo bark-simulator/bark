@@ -34,14 +34,14 @@ WorldPtr make_test_world(int num_other_agents, double rel_distance,
                          double ego_velocity, double velocity_difference,
                          const GoalDefinitionPtr& ego_goal_definition =
                              std::make_shared<GoalDefinitionPolygon>(),
-                         float ego_acc = 0.0f, float other_acc = 0.0f);
+                         double ego_acc = 0.0, double other_acc = 0.0);
 
 ObservedWorld make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference,
     const GoalDefinitionPtr& ego_goal_definition =
         std::make_shared<GoalDefinitionPolygon>(),
-    float ego_acc = 0.0f, float other_acc = 0.0f);
+    double ego_acc = 0.0, double other_acc = 0.0);
 
 WorldPtr MakeTestWorldHighway();
 

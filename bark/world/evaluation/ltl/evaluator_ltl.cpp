@@ -73,12 +73,12 @@ EvaluationReturn EvaluatorLTL::Evaluate(
   LabelMap labels = EvaluateLabels(observed_world);
 
   unsigned int guarantee_violations = 0;
-  float penalty = 0.0f;
+  double penalty = 0.0;
   // Evaluate for every rule state
   for (auto& rs : rule_states_) {
     // Check for violations of safety properties
     penalty = rs.GetAutomaton()->Evaluate(labels, rs);
-    if (penalty != 0.0f) {
+    if (penalty != 0.0) {
       safety_violations_++;
       VLOG(1) << "Rule \"" << ltl_formula_str_ << "\" violated in timestep "
               << observed_world.GetWorldTime() << " for agent ids "
@@ -87,7 +87,7 @@ EvaluationReturn EvaluatorLTL::Evaluate(
     // Check for violations of guarantee properties by assuming the trace
     // has ended.
     penalty = rs.GetAutomaton()->FinalTransit(rs);
-    if (penalty != 0.0f) {
+    if (penalty != 0.0) {
       // Do not make guarantee violations persistent
       // otherwise if more evaluations are performed, guarantee violations would
       // be counted twice!

@@ -173,8 +173,8 @@ class EvaluatorRSSTests(unittest.TestCase):
     goal_polygon = goal_polygon.Translate(Point2d(-16, 108))
 
     # Hard coded
-    ego_state = np.array([0, 68, 108, 0, 5])
-    other_state = np.array([0, 64, 104, 0, 5])
+    ego_state = np.array([0, 68.1, 107, 0, 5])
+    other_state = np.array([0, 64.1, 103, 0, 5])
 
     ego = Agent(
         ego_state,
@@ -208,7 +208,7 @@ class EvaluatorRSSTests(unittest.TestCase):
         False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
 
-  def test_relevent_agents(self):
+  def test_relevant_agents(self):
 
     params = ParameterServer()
     map = "bark/runtime/tests/data/city_highway_straight.xodr"

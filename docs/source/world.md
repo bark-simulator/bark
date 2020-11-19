@@ -11,7 +11,7 @@ The `World` class is defined as
 ```cpp
 class World {
   public:
-    void Step(float delta_time);
+    void Step(double delta_time);
   ...
   private:
     MapInterface map_interface_;

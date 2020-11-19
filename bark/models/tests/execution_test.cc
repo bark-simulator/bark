@@ -21,9 +21,9 @@ TEST(execution_model, execution_model_interpolate) {
 
   Trajectory test_trajectory(11, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) =
-      Eigen::ArrayXf::LinSpaced(11, 0, 10);  // Time 0 to 10 seconds
+      Eigen::ArrayXd::LinSpaced(11, 0, 10);  // Time 0 to 10 seconds
   test_trajectory.col(StateDefinition::X_POSITION) =
-      Eigen::ArrayXf::LinSpaced(11, 0, 10);
+      Eigen::ArrayXd::LinSpaced(11, 0, 10);
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
 
@@ -40,7 +40,7 @@ TEST(execution_model, execution_model_interpolate) {
   //  EXPECT_EQ(next_state2(StateDefinition::X_POSITION),4);
 
   test_trajectory.col(StateDefinition::Y_POSITION) =
-      Eigen::ArrayXf::LinSpaced(11, 0, 10);
+      Eigen::ArrayXd::LinSpaced(11, 0, 10);
   std::cout << test_trajectory << std::endl;
   exec_model->Execute(0.9, test_trajectory, dyn_model);
   Trajectory followed_trajectory3 = exec_model->GetLastTrajectory();
@@ -57,15 +57,15 @@ TEST(execution_model, execution_model_mpc) {
 
   Trajectory test_trajectory(3, (int)StateDefinition::MIN_STATE_SIZE);
   test_trajectory.col(StateDefinition::TIME_POSITION) =
-Eigen::ArrayXf::LinSpaced(3, 0, 10); // Time 0 to 10 seconds
+Eigen::ArrayXd::LinSpaced(3, 0, 10); // Time 0 to 10 seconds
   test_trajectory.col(StateDefinition::X_POSITION) =
-Eigen::ArrayXf::LinSpaced(3, 0, 10);
+Eigen::ArrayXd::LinSpaced(3, 0, 10);
   test_trajectory.col(StateDefinition::Y_POSITION) =
-Eigen::ArrayXf::LinSpaced(3, 0, 0);
+Eigen::ArrayXd::LinSpaced(3, 0, 0);
   test_trajectory.col(StateDefinition::THETA_POSITION) =
-Eigen::ArrayXf::LinSpaced(3, 0, 0);
+Eigen::ArrayXd::LinSpaced(3, 0, 0);
   test_trajectory.col(StateDefinition::VEL_POSITION) =
-Eigen::ArrayXf::LinSpaced(3, 1, 1);
+Eigen::ArrayXd::LinSpaced(3, 1, 1);
 
   ExecutionModelPtr exec_model(new ExecutionModelMpc(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));

@@ -22,7 +22,7 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
 
   virtual ~BehaviorIDMStochastic() {}
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(double delta_time,
                           const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;

@@ -54,7 +54,7 @@ class ExecutionModel : public commons::BaseType {
 
   ExecutionStatus GetExecutionStatus() const { return execution_status_; }
 
-  virtual void Execute(const float& new_world_time,
+  virtual void Execute(const double& new_world_time,
                        const Trajectory& trajectory,
                        const DynamicModelPtr dynamic_model) = 0;
 

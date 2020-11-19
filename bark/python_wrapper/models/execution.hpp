@@ -19,7 +19,7 @@ class PyExecutionModel : public ExecutionModel {
  public:
   using ExecutionModel::ExecutionModel;
 
-  void Execute(const float& delta_time, const Trajectory& trajectory,
+  void Execute(const double& delta_time, const Trajectory& trajectory,
                const DynamicModelPtr dynamic_model) override {
     PYBIND11_OVERLOAD_PURE(void, ExecutionModel, Execute, delta_time,
                            trajectory, dynamic_model);

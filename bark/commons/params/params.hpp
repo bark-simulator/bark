@@ -18,11 +18,11 @@
 namespace bark {
 namespace commons {
 
-typedef std::vector<std::vector<float>> ListListFloat;
-typedef std::vector<float> ListFloat;
+typedef std::vector<std::vector<double>> ListListFloat;
+typedef std::vector<double> ListFloat;
 typedef unsigned int AgentId;
 
-typedef boost::variant<bool, float, int, std::string, ListListFloat, ListFloat>
+typedef boost::variant<bool, double, int, std::string, ListListFloat, ListFloat>
     Parameter;
 typedef std::pair<std::string, Parameter> ParamPair;
 
@@ -44,9 +44,9 @@ class Params {
                        const std::string& description,
                        const bool& default_value) = 0;
 
-  virtual float GetReal(const std::string& param_name,
+  virtual double GetReal(const std::string& param_name,
                         const std::string& description,
-                        const float& default_value) = 0;
+                        const double& default_value) = 0;
 
   virtual int GetInt(const std::string& param_name,
                      const std::string& description,
@@ -56,11 +56,11 @@ class Params {
                                 const std::string& description,
                                 const std::string& default_value) = 0;
 
-  virtual std::vector<std::vector<float>> GetListListFloat(
+  virtual std::vector<std::vector<double>> GetListListFloat(
       const std::string& param_name, const std::string& description,
       const ListListFloat& default_value) = 0;
 
-  virtual std::vector<float> GetListFloat(const std::string& param_name,
+  virtual std::vector<double> GetListFloat(const std::string& param_name,
                                           const std::string& description,
                                           const ListFloat& default_value) = 0;
 
@@ -79,7 +79,7 @@ class Params {
   std::string Print() const;
 
   virtual void SetBool(const std::string& param_name, const bool& value) = 0;
-  virtual void SetReal(const std::string& param_name, const float& value) = 0;
+  virtual void SetReal(const std::string& param_name, const double& value) = 0;
   virtual void SetInt(const std::string& param_name, const int& value) = 0;
   virtual void SetListListFloat(const std::string& param_name,
                                 const ListListFloat& value) = 0;

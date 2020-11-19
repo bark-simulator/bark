@@ -30,7 +30,7 @@ bool AgentAtLaneEndLabelFunction::EvaluateAgent(
     const auto& other_pos = other_agent->GetCurrentPosition();
     const auto& lc =
         other_agent->GetRoadCorridor()->GetNearestLaneCorridor(other_pos);
-    const float dist_until_end =
+    const double dist_until_end =
         lc->LengthUntilEnd(other_pos) - other_agent->GetShape().front_dist_;
     return std::abs(dist_until_end) < distance_thres_;
   }

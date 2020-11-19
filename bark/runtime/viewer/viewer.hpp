@@ -50,11 +50,11 @@ class Viewer {
   Viewer() {}
   virtual ~Viewer() {}
   virtual void drawPoint2d(const Point2d& point2d, const Color& color,
-                           const float& alpha) = 0;
+                           const double& alpha) = 0;
   virtual void drawLine2d(const Line& line, const Color& color,
-                          const float& alpha) = 0;
+                          const double& alpha) = 0;
   virtual void drawPolygon2d(const Polygon& polygon, const Color& color,
-                             const float& alpha) = 0;
+                             const double& alpha) = 0;
 };
 
 }  // namespace viewer

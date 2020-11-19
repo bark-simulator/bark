@@ -20,7 +20,7 @@ class EnvironmentTests(unittest.TestCase):
     pv = PlanView()
 
     # Line
-    pv.AddLine(Point2d(0, 0), 1.57079632679, 10)
+    pv.AddLine(Point2d(0, 0), 1.57079632679, 10, 10)
     line = pv.GetReferenceLine().ToArray()
 
     # Spiral
@@ -45,7 +45,7 @@ class EnvironmentTests(unittest.TestCase):
     newXodrRoad.name = "Autobahn A9"
 
     newPlanView = PlanView()
-    newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10)
+    newPlanView.AddLine(Point2d(0, 0), 1.57079632679, 10, 10)
 
     newXodrRoad.plan_view = newPlanView
 

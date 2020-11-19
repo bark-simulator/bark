@@ -31,7 +31,7 @@ namespace bg = boost::geometry;
 //! points
 template <typename T>
 using Point2d_t = bg::model::point<T, 2, bg::cs::cartesian>;
-using Point2d = Point2d_t<float>;
+using Point2d = Point2d_t<double>;
 
 //! Point operators
 inline bool operator==(const Point2d& lhs, const Point2d& rhs) {
@@ -45,21 +45,21 @@ inline Point2d operator+(const Point2d& lhs, const Point2d& rhs) {
   return Point2d(bg::get<0>(lhs) + bg::get<0>(rhs),
                  bg::get<1>(lhs) + bg::get<1>(rhs));
 }
-inline Point2d operator+(const Point2d& lhs, const float& rhs) {
+inline Point2d operator+(const Point2d& lhs, const double& rhs) {
   return Point2d(bg::get<0>(lhs) + rhs, bg::get<1>(lhs) + rhs);
 }
 inline Point2d operator-(const Point2d& lhs, const Point2d& rhs) {
   return Point2d(bg::get<0>(lhs) - bg::get<0>(rhs),
                  bg::get<1>(lhs) - bg::get<1>(rhs));
 }
-inline Point2d operator-(const Point2d& lhs, const float& rhs) {
+inline Point2d operator-(const Point2d& lhs, const double& rhs) {
   return Point2d(bg::get<0>(lhs) - rhs, bg::get<1>(lhs) - rhs);
 }
 
-inline Point2d operator*(const Point2d& point, const float& factor) {
+inline Point2d operator*(const Point2d& point, const double& factor) {
   return Point2d(bg::get<0>(point) * factor, bg::get<1>(point) * factor);
 }
-inline Point2d operator/(const Point2d& point, const float& divisor) {
+inline Point2d operator/(const Point2d& point, const double& divisor) {
   return Point2d(bg::get<0>(point) / divisor, bg::get<1>(point) / divisor);
 }
 
@@ -72,9 +72,9 @@ inline std::string print(const Point2d& p) {
   return ss.str();
 }
 
-inline float Distance(const Point2d& p1, const Point2d& p2) {
-  float dx = bg::get<0>(p1) - bg::get<0>(p2);
-  float dy = bg::get<1>(p1) - bg::get<1>(p2);
+inline double Distance(const Point2d& p1, const Point2d& p2) {
+  double dx = bg::get<0>(p1) - bg::get<0>(p2);
+  double dy = bg::get<1>(p1) - bg::get<1>(p2);
   return sqrt(dx * dx + dy * dy);
 }
 
@@ -86,7 +86,7 @@ struct Shape {
   }
 
   Shape(const Pose& center,
-        const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points,
+        const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points,
         int32_t id)
       : obj_(), id_(id), center_(center) {
     auto row_num = points.rows();
@@ -100,11 +100,11 @@ struct Shape {
   virtual std::string ShapeToString() const;
 
   // translates, scales, and rotates object
-  std::shared_ptr<Shape<G, T>> ScalingTransform(const float& scaling_factor,
+  std::shared_ptr<Shape<G, T>> ScalingTransform(const double& scaling_factor,
                                                 const Pose& pose) const;
 
   // rotates object
-  std::shared_ptr<Shape<G, T>> Rotate(const float& a) const;
+  std::shared_ptr<Shape<G, T>> Rotate(const double& a) const;
 
   // translates object
   std::shared_ptr<Shape<G, T>> Translate(const Point2d& point) const;
@@ -114,7 +114,7 @@ struct Shape {
 
   virtual bool Valid() const;
 
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray()
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray()
       const = 0;
 
   bool AddPoint(const T& p) {
@@ -147,7 +147,7 @@ inline bool Shape<G, T>::Valid() const {
 }
 
 template <typename G, typename T>
-inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const float& a) const {
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const double& a) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(
@@ -174,7 +174,7 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Rotate(const float& a) const {
 
 template <typename G, typename T>
 inline std::shared_ptr<Shape<G, T>> Shape<G, T>::ScalingTransform(
-    const float& scaling_factor, const Pose& pose) const {
+    const double& scaling_factor, const Pose& pose) const {
   namespace trans = boost::geometry::strategy::transform;
   // move shape relative to coordinate center
   trans::translate_transformer<double, 2, 2> translate_rel_to_center(
@@ -255,7 +255,7 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Transform(
 template <typename G, typename T>
 inline std::string Shape<G, T>::ShapeToString() const {
   std::stringstream ss;
-  Eigen::IOFormat OctaveFmt(Eigen::StreamPrecision, 0, ", ", ";\n", "", "", "[",
+  Eigen::IOFormat OctaveFmt(Eigen::FullPrecision, 0, ", ", ";\n", "", "", "[",
                             "]");
   ss << ToArray().format(OctaveFmt);
   return ss.str();

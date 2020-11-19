@@ -29,16 +29,16 @@ void python_runtime(py::module m) {
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("step", py::overload_cast<>(&Runtime::Step))
       .def("step", py::overload_cast<int>(&Runtime::Step))
-      .def("step", py::overload_cast<float>(&Runtime::Step))
+      .def("step", py::overload_cast<double>(&Runtime::Step))
       .def("step", py::overload_cast<double>(&Runtime::Step))
       .def("step", py::overload_cast<
-                       Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>(
+                       Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>(
                        &Runtime::Step));
 
   m.def("eval_runtime", py::overload_cast<Runtime, int>(&EvalRuntime));
   m.def("eval_runtime",
         py::overload_cast<Runtime,
-                          Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>(
+                          Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>(
             &EvalRuntime));
 }
 

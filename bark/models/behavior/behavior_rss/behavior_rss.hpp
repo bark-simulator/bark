@@ -69,7 +69,7 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual ~BehaviorRSSConformant() {}
 
-  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world);
+  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
@@ -77,7 +77,12 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BehaviorModel> GetNominalBehaviorModel() const {
     return nominal_behavior_model_;
   }
-  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model) {
+  
+  BehaviorRSSConformantStatus GetBehaviorRssStatus() const { 
+    return behavior_rss_status_; 
+  }
+
+  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
     nominal_behavior_model_ = model;
   }
   std::shared_ptr<BehaviorSafety> GetBehaviorSafetyModel() const {
@@ -117,7 +122,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BehaviorSafety> behavior_safety_model_;
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   BehaviorRSSConformantStatus behavior_rss_status_;
-  float world_time_of_last_rss_violation_;
+  double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   float minimum_safety_corridor_length_;
 #ifdef RSS

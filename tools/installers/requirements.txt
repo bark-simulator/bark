@@ -13,7 +13,7 @@ panda3d==1.10.5
 aabbtree==2.3.1
 ray==0.8.5
 psutil==5.7.2
-notebook==6.0.3
+notebook==6.1.5
 jupyter==1.0.0
 ipython==7.13.0
 six==1.15.0

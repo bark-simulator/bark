@@ -25,6 +25,15 @@ git_repository(
 #planner_uct_rules_dependencies()
 # --------------------------------------------------
 
+# ------ Planner MIQP ------------------------------
+# git_repository(
+#     name = "planner_miqp",
+#     commit="4b40b797b64d096e528c473068af2a2e10a2a048",
+#     remote = "https://git.fortiss.org/esterle/miqp_logical_constraints.git"
+# )
+# load("@planner_miqp//util:deps.bzl", "planner_miqp_dependencies")
+# planner_miqp_dependencies()
+
 # ------ Planner Rules-MCTS ------------------------------
 git_repository(
   name = "planner_rules_mcts",

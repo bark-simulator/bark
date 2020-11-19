@@ -57,13 +57,13 @@ class SingleTrackModel : public DynamicModel {
   double GetWheelBase() const { return wheel_base_; }
   double GetSteeringAngleMax() const { return steering_angle_max_; }
   double GetLatAccelerationMax() const { return lat_acceleration_max_; }
-  float GetMaxAcceleration(const State& x) const {
+  double GetMaxAcceleration(const State& x) const {
     return lon_acceleration_max_;
   }
-  float GetMinAcceleration(const State& x) const {
+  double GetMinAcceleration(const State& x) const {
     // Do not allow to drive backwards
     if (std::abs(x(StateDefinition::VEL_POSITION)) < 1e-5) {
-      return 0.0f;
+      return 0.0;
     } else {
       return lon_acceleration_min_;
     }
@@ -73,8 +73,8 @@ class SingleTrackModel : public DynamicModel {
   double wheel_base_;
   double steering_angle_max_;
   double lat_acceleration_max_;
-  float lon_acceleration_max_;
-  float lon_acceleration_min_;
+  double lon_acceleration_max_;
+  double lon_acceleration_min_;
 };
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;

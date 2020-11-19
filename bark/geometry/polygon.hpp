@@ -27,12 +27,12 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
   Polygon_t(const Pose& center,
-            const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points);
+            const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
                 line);  //! create a polygon from a line enclosing the polygon
-  virtual Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
-  virtual float CalculateArea() const;
+  virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
+  virtual double CalculateArea() const;
 
   virtual std::shared_ptr<Shape<bg::model::polygon<T>, T>> Clone() const;
 
@@ -48,27 +48,35 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     }
   }
 
-  float rear_dist_;
-  float front_dist_;
-  float left_dist_;
-  float right_dist_;
+  void SetPrecision(int precision) {
+    const double scale = pow(10, precision);
+    for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end(); ++it) {
+      boost::geometry::set<0>(*it, round(boost::geometry::get<0>(*it) * scale) / scale);
+      boost::geometry::set<1>(*it, round(boost::geometry::get<1>(*it) * scale) / scale);
+    }
+  }
+
+  double rear_dist_;
+  double front_dist_;
+  double left_dist_;
+  double right_dist_;
 };
 
 template <typename T>
 inline Polygon_t<T>::Polygon_t()
     : Shape<bg::model::polygon<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0),
-      rear_dist_(0.0f),
-      front_dist_(0.0f),
-      left_dist_(0.0f),
-      right_dist_(0.0f) {}
+      rear_dist_(0.0),
+      front_dist_(0.0),
+      left_dist_(0.0),
+      right_dist_(0.0) {}
 
 template <typename T>
 inline Polygon_t<T>::Polygon_t(const Pose& center, const std::vector<T> points)
     : Shape<bg::model::polygon<T>, T>(center, points, 0),
-      rear_dist_(0.0f),
-      front_dist_(0.0f),
-      left_dist_(0.0f),
-      right_dist_(0.0f) {
+      rear_dist_(0.0),
+      front_dist_(0.0),
+      left_dist_(0.0),
+      right_dist_(0.0) {
   boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
   UpdateDistancesToCenter();
 }
@@ -76,12 +84,12 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const std::vector<T> points)
 template <typename T>
 inline Polygon_t<T>::Polygon_t(
     const Pose& center,
-    const Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>& points)
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points)
     : Shape<bg::model::polygon<T>, T>(center, points, 0),
-      rear_dist_(0.0f),
-      front_dist_(0.0f),
-      left_dist_(0.0f),
-      right_dist_(0.0f) {
+      rear_dist_(0.0),
+      front_dist_(0.0),
+      left_dist_(0.0),
+      right_dist_(0.0) {
   boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
   UpdateDistancesToCenter();
 }
@@ -89,10 +97,10 @@ inline Polygon_t<T>::Polygon_t(
 template <typename T>
 inline Polygon_t<T>::Polygon_t(const Pose& center, const Line_t<T>& line)
     : Shape<bg::model::polygon<T>, T>(center, std::vector<T>(), 0),
-      rear_dist_(0.0f),
-      front_dist_(0.0f),
-      left_dist_(0.0f),
-      right_dist_(0.0f) {
+      rear_dist_(0.0),
+      front_dist_(0.0),
+      left_dist_(0.0),
+      right_dist_(0.0) {
   for (const T& next_pt : line.obj_) {
     Shape<bg::model::polygon<T>, T>::AddPoint(next_pt);
   }
@@ -106,8 +114,8 @@ void Polygon_t<T>::UpdateDistancesToCenter() {
   boost::geometry::envelope(Shape<bg::model::polygon<T>, T>::obj_, box);
 
   boost::geometry::correct(box);
-  float center_x = Shape<bg::model::polygon<T>, T>::center_[0];
-  float center_y = Shape<bg::model::polygon<T>, T>::center_[1];
+  double center_x = Shape<bg::model::polygon<T>, T>::center_[0];
+  double center_y = Shape<bg::model::polygon<T>, T>::center_[1];
 
   rear_dist_ = std::abs(bg::get<bg::min_corner, 0>(box) - center_x);
   front_dist_ = std::abs(bg::get<bg::max_corner, 0>(box) - center_x);
@@ -123,15 +131,15 @@ inline std::shared_ptr<Shape<bg::model::polygon<T>, T>> Polygon_t<T>::Clone()
   return new_poly;
 }
 
-//! for better usage simple float defines
+//! for better usage simple double defines
 using PolygonPoint = Point2d;  // for internal stores of collision checkers
 using Polygon = Polygon_t<PolygonPoint>;
 
 template <>
-inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
+inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
     const {
   std::vector<Point2d> points = obj_.outer();
-  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
+  Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> mat(points.size(), 2);
   for (std::vector<Point2d>::size_type i = 0; i < points.size(); ++i) {
     mat.row(i) << bg::get<0>(points[i]), bg::get<1>(points[i]);
   }
@@ -139,7 +147,7 @@ inline Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> Polygon::ToArray()
 }
 
 template <>
-inline float Polygon::CalculateArea() const {
+inline double Polygon::CalculateArea() const {
   return bg::area(obj_);
 }
 
@@ -147,15 +155,15 @@ inline bool Equals(const Polygon& poly1, const Polygon& poly2) {
   return bg::equals(poly1.obj_, poly2.obj_);
 }
 
-inline float Distance(const Polygon& poly, const Point2d& p) {
+inline double Distance(const Polygon& poly, const Point2d& p) {
   return bg::distance(poly.obj_, p);
 }
 
-inline float Distance(const Polygon& poly, const Line& l) {
+inline double Distance(const Polygon& poly, const Line& l) {
   return bg::distance(poly.obj_, l.obj_);
 }
 
-inline float Distance(const Polygon& poly1, const Polygon& poly2) {
+inline double Distance(const Polygon& poly1, const Polygon& poly2) {
   return bg::distance(poly1.obj_, poly2.obj_);
 }
 
@@ -210,7 +218,7 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
   namespace bg = boost::geometry;
   namespace bbuf = bg::strategy::buffer;
 
-  bbuf::distance_symmetric<float> distance_strategy(distance);
+  bbuf::distance_symmetric<double> distance_strategy(distance);
   bbuf::side_straight side_strategy;
   bbuf::join_miter join_strategy;
   bbuf::end_flat end_strategy;

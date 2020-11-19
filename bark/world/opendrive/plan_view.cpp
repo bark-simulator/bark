@@ -16,24 +16,47 @@ namespace bark {
 namespace world {
 namespace opendrive {
 
-bool PlanView::AddLine(Point2d start_point, float heading, float length) {
+/**
+ * @brief adds a line segment to the plan view. if only two points shall be
+ * generated, set s_inc to length.
+ *
+ * @param start_point starting point
+ * @param heading heading
+ * @param length length of line
+ * @param s_inc increment at which points are sampled
+ */
+bool PlanView::AddLine(Point2d start_point, double heading, double length,
+                       double s_inc) {
   namespace bg = boost::geometry;
   using bark::geometry::Line;
   using bark::geometry::Point2d;
 
+  int num_points = length / s_inc;
   //! straight line
-  reference_line_.AddPoint(start_point);
-  Point2d end_point(bg::get<0>(start_point) + length * cos(heading),
-                    bg::get<1>(start_point) + length * sin(heading));
-  reference_line_.AddPoint(end_point);
+  for (size_t i = 0; i <= num_points; ++i) {
+    Point2d p(bg::get<0>(start_point) + i * s_inc * cos(heading),
+              bg::get<1>(start_point) + i * s_inc * sin(heading));
+    reference_line_.AddPoint(p);
+  }
+  if (length > num_points * s_inc) {
+    Point2d end_p(bg::get<0>(start_point) + length * cos(heading),
+                  bg::get<1>(start_point) + length * sin(heading));
+    reference_line_.AddPoint(end_p);
+  }
+
   //! calculate overall length
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding line";
+  }
+
   return true;
 }
 
-bool PlanView::AddSpiral(Point2d start_point, float heading, float length,
-                         float curvature_start, float curvature_end,
-                         float s_inc) {
+bool PlanView::AddSpiral(Point2d start_point, double heading, double length,
+                         double curvature_start, double curvature_end,
+                         double s_inc) {
   namespace bg = boost::geometry;
   double x = bg::get<0>(start_point);
   double y = bg::get<1>(start_point);
@@ -47,26 +70,32 @@ bool PlanView::AddSpiral(Point2d start_point, float heading, float length,
     if ((length - s < s_inc) && (length - s > 0.)) s_inc = length - s;
     s += s_inc;
   }
+
   length_ = bg::length(reference_line_.obj_);
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding spiral";
+  }
+
   return true;
 }
 
-void PlanView::CalcArcPosition(const float s, float initial_heading,
-                               float curvature, float& dx, float& dy) {
+void PlanView::CalcArcPosition(const double s, double initial_heading,
+                               double curvature, double& dx, double& dy) {
   initial_heading = fmod(initial_heading, 2 * M_PI);
-  float hdg = initial_heading - M_PI / 2;
-  float a = 2 / curvature * sin(s * curvature / 2);
-  float alpha = (M_PI - s * curvature) / 2 - hdg;
+  double hdg = initial_heading - M_PI / 2;
+  double a = 2 / curvature * sin(s * curvature / 2);
+  double alpha = (M_PI - s * curvature) / 2 - hdg;
   dx = -1 * a * cos(alpha);
   dy = a * sin(alpha);
   // tangent = initial_heading + s * initial_curvature;
 }
 
-bool PlanView::AddArc(Point2d start_point, float heading, float length,
-                      float curvature, float s_inc) {
+bool PlanView::AddArc(Point2d start_point, double heading, double length,
+                      double curvature, double s_inc) {
   // AddSpiral(start_point, heading, length, curvature, curvature, s_inc);
   namespace bg = boost::geometry;
-  float dx, dy;
+  double dx, dy;
   double x_old = bg::get<0>(start_point), y_old = bg::get<1>(start_point);
   double s = 0.0;
   for (; s <= length;) {
@@ -75,10 +104,15 @@ bool PlanView::AddArc(Point2d start_point, float heading, float length,
     if (length - s < s_inc && length - s > 0.) s_inc = length - s;
     s += s_inc;
   }
+
+  if (boost::geometry::intersects(reference_line_.obj_)) {
+    LOG(ERROR) << "planview has self-intersection after adding arc";
+  }
+
   return true;
 }
 
-bool PlanView::ApplyOffsetTransform(float x, float y, float hdg) {
+bool PlanView::ApplyOffsetTransform(double x, double y, double hdg) {
   Line rotated_line = Rotate(reference_line_, hdg);
   Line transformed_line = Translate(rotated_line, x, y);
   reference_line_ = transformed_line;

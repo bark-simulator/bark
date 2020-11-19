@@ -77,10 +77,10 @@ TEST(rss_interface, test_rss_check) {
   std::shared_ptr<PlanView> p(new PlanView());
 
   //! add line
-  p->AddLine(Point2d(0, -125), M_PI_2, 250);
+  p->AddLine(Point2d(0, -125), M_PI_2, 250, 250);
 
   //! lane sections
-  XodrLaneSectionPtr ls(new XodrLaneSection(0.0f));
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
 
   XodrLaneOffset off = {3.6, 0, 0, 0};
   XodrLaneWidth lane_width_1 = {0, 250, off};
@@ -161,10 +161,8 @@ TEST(rss_interface, test_rss_check) {
   world->UpdateAgentRTree();
   // ===================================================
 
-  world->Step(0.2f);
-
-  RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", 3.5,
-                   -8., -4., -3., 0.2, -0.8, 0.1, 1., 1, 50);
+  world->Step(0.2);
+  RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", params);
 
   ::ad::rss::world::WorldModel rss_world;
   WorldPtr cloned_world(world->Clone());
@@ -207,8 +205,7 @@ TEST(rss_interface, test_rss_planning_route) {
   WorldPtr world(new World(params));
   world->AddAgent(agent);
 
-  RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr",
-                   3.5, -8., -4., -3., 0.2, -0.8, 0.1, 1., 1, 50);
+  RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr", params);
 
   Point2d agent_goal;
   boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,

@@ -30,15 +30,15 @@ class BehaviorNotStarted : public BehaviorModel {
  public:
   BehaviorNotStarted(const commons::ParamsPtr& params)
       : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET) {
-    SetLastAction(LonLatAction{0.0f, 0.0f});
+    SetLastAction(LonLatAction{0.0, 0.0});
   }
 
-  Trajectory Plan(float min_planning_time,
+  Trajectory Plan(double min_planning_time,
                   const world::ObservedWorld& observed_world) {
     UpdateBehaviorStatus(min_planning_time, observed_world);
 
     auto traj = dynamic::Trajectory();
-    this->SetLastAction(LonLatAction{0.0f, 0.0f});
+    this->SetLastAction(LonLatAction{0.0, 0.0});
     this->SetLastTrajectory(traj);
     return traj;
   };
@@ -49,7 +49,7 @@ class BehaviorNotStarted : public BehaviorModel {
     return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
   };
 
-  void UpdateBehaviorStatus(float delta_time,
+  void UpdateBehaviorStatus(double delta_time,
                             const world::ObservedWorld& observed_world) {
     SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
   }

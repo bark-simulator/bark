@@ -28,9 +28,9 @@ LabelMap EgoAccelerateLabelFunction::Evaluate(
   const auto& history = ego->GetStateInputHistory();
   if (history.size() > 2) {
     const auto dx = (history.end() - 1)->first - (history.end() - 2)->first;
-    const float dv = dx(StateDefinition::VEL_POSITION);
-    const float dt = dx(StateDefinition::TIME_POSITION);
-    const float avg_accel = dv / dt;
+    const double dv = dx(StateDefinition::VEL_POSITION);
+    const double dt = dx(StateDefinition::TIME_POSITION);
+    const double avg_accel = dv / dt;
     accel = avg_accel >= acc_thres_;
   }
   return {{GetLabel(), accel}};

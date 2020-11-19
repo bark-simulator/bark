@@ -26,7 +26,7 @@ class MPViewer(BaseViewer):
         else:
           self.axes = plt.subplots()[1]
           # removes whitespace
-          plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
+          # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -36,7 +36,10 @@ class MPViewer(BaseViewer):
             alpha=alpha,
             marker='x')
 
-    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, linewidth=1):
+    def drawLine2d(self, line2d, color='blue', alpha=1.0, dashed=False, zorder=1, **kwargs):
+        line_width = kwargs.pop("linewidth", 1)
+        marker = kwargs.pop("marker", None)
+        marker_size = kwargs.pop("markersize", 12)
         linestyle = (0, (5, 10)) if dashed else 'solid'
         line2d_np = line2d.ToArray()
         self.axes.plot(
@@ -46,7 +49,9 @@ class MPViewer(BaseViewer):
             color=self.getColor(color),
             alpha=alpha,
             zorder=zorder,
-            linewidth=linewidth)
+            linewidth=line_width,
+            marker=marker,
+            markersize = marker_size)
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10):
         points = polygon.ToArray()
@@ -64,12 +69,20 @@ class MPViewer(BaseViewer):
         center = polygon.center
         self.axes.plot(center[0], center[1], color=self.getColor(color))
 
-    def drawTrajectory(self, trajectory, color):
+    def drawTrajectory(self, trajectory, color='black', **kwargs):
+        line_width = kwargs.pop("linewidth", 2)
+        line_style = kwargs.pop("linestyle", "-")
+        marker = kwargs.pop("marker", None)
+        marker_size = kwargs.pop("markersize", 12)
         if len(trajectory) > 0:
             self.axes.plot(
                 trajectory[:, int(StateDefinition.X_POSITION)],
                 trajectory[:, int(StateDefinition.Y_POSITION)],
-                color=self.getColor(color))
+                color=self.getColor(color),
+                linewidth=line_width,
+                linestyle=line_style,
+                marker=marker,
+                markersize = marker_size)
 
     def drawText(self, position, text, coordinate="axes", **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")
@@ -82,6 +95,11 @@ class MPViewer(BaseViewer):
             t = self.axes.text(position[0], position[1], text, horizontalalignment='center',
              verticalalignment='top', **kwargs)
         return t
+
+
+    def drawCircle(self, position, radius):
+        circle = plt.Circle(position, radius, color='r')
+        self.axes.add_artist(circle)
 
     def getColor(self, color):
         if isinstance(color, Viewer.Color):
@@ -109,11 +127,12 @@ class MPViewer(BaseViewer):
       height *= fig.dpi
       return width, height
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
         self.clear()
-        self.axes.set_axis_off()
+        if not axes_visible:
+            self.axes.set_axis_off()
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
-        self._set_visualization_options()
+        self._set_visualization_options(axes_visible)
         self.show()
         if filename:
             self.axes.get_figure().savefig(filename)
@@ -128,16 +147,16 @@ class MPViewer(BaseViewer):
         else:
             plt.pause(0.001)
 
-    def _set_visualization_options(self):
+    def _set_visualization_options(self, axes_visible):
         # x and y limits
         self.axes.set_xlim(self.dynamic_world_x_range[0], self.dynamic_world_x_range[1])
         self.axes.set_ylim(self.dynamic_world_y_range[0], self.dynamic_world_y_range[1])
-        self.axes.get_xaxis().set_visible(False)
-        self.axes.get_yaxis().set_visible(False)
+        self.axes.get_xaxis().set_visible(axes_visible)
+        self.axes.get_yaxis().set_visible(axes_visible) 
 
     def clear(self):
         self.axes.cla()
 
 
-    def getColorFromMap(self, float_color):
-        return cm.Accent(float_color)
+    def getColorFromMap(self, double_color):
+        return cm.Accent(double_color)

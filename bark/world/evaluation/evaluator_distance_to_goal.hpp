@@ -35,11 +35,11 @@ class EvaluatorDistanceToGoal : public BaseEvaluator {
     return EvaluatorDistanceToGoal::DistanceToGoal(agent);
   }
 
-  static float DistanceToGoal(
+  static double DistanceToGoal(
       const std::shared_ptr<const bark::world::objects::Agent>& agent) {
     const auto& goal_shape = agent->GetGoalDefinition()->GetShape();
     const auto& agent_pos = agent->GetCurrentPosition();
-    float dist = bark::geometry::Distance(goal_shape, agent_pos);
+    double dist = bark::geometry::Distance(goal_shape, agent_pos);
     return dist;
   }
 

@@ -57,7 +57,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
-  double initial_acceleration = 0.0f;
+  double initial_acceleration = 0.0;
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
@@ -85,8 +85,8 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
       // Do not allow negative speeds
       traj(i, StateDefinition::VEL_POSITION) =
-          std::max(traj(i, StateDefinition::VEL_POSITION), 0.0f);
-      t_i = static_cast<float>(i) * dt + start_time;
+          std::max(traj(i, StateDefinition::VEL_POSITION), 0.0);
+      t_i = static_cast<double>(i) * dt + start_time;
       traj(i, StateDefinition::TIME_POSITION) = t_i;
     }
   }

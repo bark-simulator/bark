@@ -39,7 +39,7 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
     const FrenetPosition& ego_frenet,
     const std::shared_ptr<const Agent>& leading_agent,
     const FrenetPosition& leading_frenet) const {
-  const float vehicle_length =
+  const double vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
       leading_frenet.lon - vehicle_length - ego_frenet.lon;
@@ -48,7 +48,7 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
 
 double BehaviorMobil::CalcLongRawAccWithoutLeader(
     const world::LaneCorridorPtr& lane_corridor,
-    const bark::geometry::Point2d& pos, const float vel) const {
+    const bark::geometry::Point2d& pos, const double vel) const {
   double acc;
   if (stop_at_lane_ending_) {
     // TODO(@hart): change to parameter
@@ -69,7 +69,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
 
-  const float vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
+  const double vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
   const LaneCorridorPtr current_corridor = observed_world.GetLaneCorridor();
 
   FrontRearAgents agents_current_lane = observed_world.GetAgentFrontRear();
@@ -171,7 +171,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
 
     // TODO(@Klemens): is this correct?
     if (leader_current.first && asymmetric_passing_rules_) {
-      float vel_leader_left =
+      double vel_leader_left =
           leader_current.first->GetCurrentState()(VEL_POSITION);
 
       // Passing on the right is disallowed, therefore if the ego vehicle is
@@ -291,7 +291,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
 
     // TODO(@Klemens): is this correct?
     if (leader_left.first && asymmetric_passing_rules_) {
-      float vel_leader_left =
+      double vel_leader_left =
           leader_left.first->GetCurrentState()(VEL_POSITION);
       // Passing on the right is disallowed, therefore if the ego vehicle is
       // faster than the leading vehicle on the left lane, its acceleration on
