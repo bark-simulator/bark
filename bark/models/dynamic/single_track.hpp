@@ -25,7 +25,7 @@ struct AccelerationLimits {
   double lon_acc_min;
 };
 
-inline std::ostream& operator<<(std::ostream& os, AccelerationLimits& al) {
+inline std::ostream& operator<<(std::ostream& os, const AccelerationLimits& al) {
   os << "AccelerationLimits = ("
     << " lat_acc_left_max: " << al.lat_acc_left_max << ", "
     << " lat_acc_right_max: " << al.lat_acc_right_max << ", "
@@ -41,15 +41,6 @@ inline AccelerationLimits AccelerationLimitsFromParamServer(const bark::commons:
   al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax", "Maximum longitudinal acceleration", 4.0);
   al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin", "Minimum longitudinal acceleration", -8.0);
   return al;
-}
-
-
-inline double CalculateLateralAcceleration(const State& x, const State& x_next, const double dt) {
-    double theta = x(StateDefinition::THETA_POSITION);
-    double theta_next = x_next(StateDefinition::THETA_POSITION);
-    auto theta_dot = bark::geometry::SignedAngleDiff(theta_next, theta) / dt;
-    double acc_lat = theta_dot * x(StateDefinition::VEL_POSITION);
-    return acc_lat;
 }
 
 class SingleTrackModel : public DynamicModel {
@@ -69,7 +60,8 @@ class SingleTrackModel : public DynamicModel {
             cos(x(StateDefinition::THETA_POSITION)),
         x(StateDefinition::VEL_POSITION) *
             sin(x(StateDefinition::THETA_POSITION)),
-        x(StateDefinition::VEL_POSITION) * tan(u(1)) / wheel_base_, u(0);
+        x(StateDefinition::VEL_POSITION) * tan(u(1)) / wheel_base_, 
+        u(0);
     return tmp;
   }
 
@@ -99,6 +91,10 @@ class SingleTrackModel : public DynamicModel {
     }
   }
 
+  void SetAccelerationLimits(const AccelerationLimits& acc_lim) { 
+    acceleration_limits_ = acc_lim; 
+  }
+
  private:
   double wheel_base_;
   double steering_angle_max_;
@@ -106,6 +102,21 @@ class SingleTrackModel : public DynamicModel {
 };
 
 using SingleTrackModelPtr = std::shared_ptr<SingleTrackModel>;
+
+
+inline double CalculateLateralAcceleration(const State& x, const State& x_next, const double dt) {
+    double theta = x(StateDefinition::THETA_POSITION);
+    double theta_next = x_next(StateDefinition::THETA_POSITION);
+    auto theta_dot = bark::geometry::SignedAngleDiff(theta_next, theta) / dt;
+    double acc_lat = theta_dot * x(StateDefinition::VEL_POSITION);
+    return acc_lat;
+}
+
+inline double CalculateLateralAcceleration(const SingleTrackModelPtr& model, 
+                                           const double delta, const double vel) {
+    double acc_lat = vel * vel * tan(delta) / model->GetWheelBase();
+    return acc_lat;
+}
 
 inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
                                      const State& state,
@@ -134,7 +145,6 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
   if (limit_steering) {
-    // delta to the left is negative
     double delta_max_right =
         std::min(model->GetSteeringAngleMax(),
                  std::abs(std::atan2(model->GetLatAccelerationRightMax() *

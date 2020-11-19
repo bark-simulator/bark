@@ -119,6 +119,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   u << 0.0f, delta;
   auto x1 = euler_int(*m, x, u, dt);
 
+  EXPECT_LE(std::abs(CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)))), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(CalculateLateralAcceleration(x, x1, dt)), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
@@ -131,6 +132,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   u << 0.0f, delta;
   x1 = euler_int(*m, x, u, dt);
 
+  EXPECT_LE(std::abs(CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)))), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(CalculateLateralAcceleration(x, x1, dt)), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
@@ -175,7 +177,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   auto x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_NEAR(std::abs(CalculateLateralAcceleration(x, x1, dt)), 0, 0.1);
+  EXPECT_NEAR(std::abs(CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)))), 0, 0.1);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -187,6 +189,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   x1 = euler_int(*m, x, u, dt);
 
+  EXPECT_LE(std::abs(CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)))), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(CalculateLateralAcceleration(x, x1, dt)), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
@@ -199,6 +202,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   x1 = euler_int(*m, x, u, dt);
 
+  EXPECT_LE(std::abs(CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)))), a_lat_right_max+1e-6);
   EXPECT_LE(std::abs(CalculateLateralAcceleration(x, x1, dt)), a_lat_right_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
