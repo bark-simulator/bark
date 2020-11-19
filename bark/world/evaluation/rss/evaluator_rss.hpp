@@ -25,7 +25,6 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-
 class EvaluatorRSS : public BaseEvaluator {
  public:
   EvaluatorRSS() {}
@@ -33,9 +32,8 @@ class EvaluatorRSS : public BaseEvaluator {
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(
-          params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
-          params) {}
+        rss_(params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
+             params) {}
   explicit EvaluatorRSS(const commons::ParamsPtr& params)
       : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
 
@@ -50,12 +48,20 @@ class EvaluatorRSS : public BaseEvaluator {
   // lateral one is unsafety.
   virtual EvaluationReturn Evaluate(const World& world) {
     WorldPtr cloned_world = world.Clone();
-    std::vector<ObservedWorld> observed_worlds = cloned_world->Observe({agent_id_});
-    if (observed_worlds.size() > 0) {
-      return rss_.GetSafetyReponse(observed_worlds[0]);
+    if (world.GetAgent(agent_id_)) {
+      std::vector<ObservedWorld> observed_worlds =
+          cloned_world->Observe({agent_id_});
+      if (observed_worlds.size() > 0) {
+        return rss_.GetSafetyReponse(observed_worlds[0]);
+      } else {
+        LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
+        return false;
+      }
+    } else {
+      LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
+      return false;
     }
-    return false;
-  };
+  }
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
