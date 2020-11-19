@@ -125,10 +125,11 @@ class BenchmarkRunner:
                 for scenario, scenario_idx in scenario_generator:
                     if num_scenarios and scenario_idx >= num_scenarios:
                         break
-                    
+                      
                     # only relevant for scenarios from dataset
                     dataset_scenario_desc = scenario.GetDatasetScenarioDescription()
-                    scenario_set_param_desc.update(dataset_scenario_desc)
+                    temp_scenario_set_param_desc = scenario_set_param_desc.copy()
+                    temp_scenario_set_param_desc.update(dataset_scenario_desc)
                       
                     benchmark_config = \
                         BenchmarkConfig(
@@ -137,7 +138,7 @@ class BenchmarkRunner:
                             scenario,
                             scenario_idx,
                             scenario_set_name,
-                            scenario_set_param_desc
+                            temp_scenario_set_param_desc
                         )
                     benchmark_configs.append(benchmark_config)
         return benchmark_configs
