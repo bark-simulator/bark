@@ -56,7 +56,7 @@ double BehaviorMobil::CalcLongRawAccWithoutLeader(
     // setting vel_other to zero
     acc = BaseIDM::CalcRawIDMAcc(net_distance, vel, 0.0);
   } else {
-    acc = BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
+    acc = BaseIDM::GetLonAccelerationMax() * BaseIDM::CalcFreeRoadTerm(vel);
   }
   return acc;
 }
@@ -92,7 +92,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         leader_current.first->GetCurrentState()(VEL_POSITION));
 
   } else {
-    // acc_c_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+    // acc_c_before = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
     acc_c_before = CalcLongRawAccWithoutLeader(
         current_corridor, ego_agent->GetCurrentPosition(), vel_ego);
   }
@@ -123,7 +123,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           dist_o_after, vel_follower_current,
           leader_current.first->GetCurrentState()(VEL_POSITION));
     } else {
-      // acc_o_after = GetMaxAcceleration() *
+      // acc_o_after = GetLonAccelerationMax() *
       // CalcFreeRoadTerm(follower_current.first->GetCurrentState()(VEL_POSITION));
       acc_o_after = CalcLongRawAccWithoutLeader(
           current_corridor, follower_current.first->GetCurrentPosition(),
@@ -164,7 +164,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           leader_right.first->GetCurrentState()(VEL_POSITION));
 
     } else {
-      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
       acc_c_after = CalcLongRawAccWithoutLeader(
           right_corridor, ego_agent->GetCurrentPosition(), vel_ego);
     }
@@ -200,7 +200,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
             dist_n_before, vel_follower_right,
             leader_right.first->GetCurrentState()(VEL_POSITION));
       } else {
-        // acc_n_before = GetMaxAcceleration() *
+        // acc_n_before = GetLonAccelerationMax() *
         // CalcFreeRoadTerm(vel_follower_right);
         acc_n_before = CalcLongRawAccWithoutLeader(
             right_corridor, follower_right.first->GetCurrentPosition(),
@@ -284,7 +284,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           dist_c_after, vel_ego,
           leader_left.first->GetCurrentState()(VEL_POSITION));
     } else {
-      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
       acc_c_after = CalcLongRawAccWithoutLeader(
           left_corridor, ego_agent->GetCurrentPosition(), vel_ego);
     }
@@ -319,7 +319,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
             dist_n_before, vel_follower_left,
             leader_left.first->GetCurrentState()(VEL_POSITION));
       } else {
-        // acc_n_before = GetMaxAcceleration() *
+        // acc_n_before = GetLonAccelerationMax() *
         // CalcFreeRoadTerm(vel_follower_left);
         acc_n_before = CalcLongRawAccWithoutLeader(
             left_corridor, follower_left.first->GetCurrentPosition(),

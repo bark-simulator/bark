@@ -91,19 +91,14 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace bark::commons;
 
   const double dt = 1.0;
-  auto a_lat = [dt](const State& x, const State& x1) {
-    auto theta_dot = (x1(static_cast<int>(StateDefinition::THETA_POSITION)) -
-                      x(static_cast<int>(StateDefinition::THETA_POSITION))) /
-                     dt;
-    return theta_dot * x(static_cast<int>(StateDefinition::VEL_POSITION));
-  };
 
   auto params = std::make_shared<SetterParams>();
   DynamicModel* m;
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
   m = single_track_model.get();
-  const double a_lat_max = single_track_model->GetLatAccelerationMax();
+  const double a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
+  const double a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
   const double delta_max = single_track_model->GetSteeringAngleMax();
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -119,24 +114,97 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   line.AddPoint(point_2);
 
   // Parallel to line, high crosstrack error, high speed
-  x << 50.0, 0.0, 0.0, M_PI / 2.0, 50.0;
+  x << 0.0f, 5.0f, 0.0f, M_PI / 2.0f, 50.0f;
   auto delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
   u << 0.0, delta;
   auto x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(a_lat(x, x1)), a_lat_max);
+  double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
               0, 1e-10);
 
   // Parallel to line, high crosstrack error, low speed
-  x << 50.0, 0.0, 0.0, M_PI / 2.0, 0.1;
+  x << 0.0, 5.0, 0.0, M_PI / 2.0, 0.1;
   delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
   u << 0.0, delta;
   x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(a_lat(x, x1)), a_lat_max);
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
+  EXPECT_LE(std::abs(delta), delta_max);
+  EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
+                  x(static_cast<int>(StateDefinition::X_POSITION)),
+              0, 1e-10);
+}
+
+TEST(AccelerationCorridor, dynamic_test) {
+  using namespace std;
+  using namespace bark::geometry;
+  using namespace bark::models::dynamic;
+  using namespace bark::commons;
+
+  const float dt = 1.0;
+
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("DynamicModel::lat_acc_right_max", 0.5f);
+  params->SetReal("DynamicModel::lat_acc_left_max", 1.5f);
+  DynamicModel* m;
+  SingleTrackModelPtr single_track_model =
+      std::make_shared<SingleTrackModel>(params);
+  m = single_track_model.get();
+  const double a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
+  const double a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
+  const double delta_max = single_track_model->GetSteeringAngleMax();
+
+  State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+
+  Input u(2);
+
+  Point2d point_1(0.0, 0.0);
+  Point2d point_2(0.0, 10.0);
+
+  Line_t<Point2d> line;
+
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+
+  // On line, no steering
+  x << 0.0f, 0.0f, 0.0f, M_PI / 2.0f, 10;
+  auto delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
+  u << 0.0f, delta;
+  auto x1 = euler_int(*m, x, u, dt);
+
+  double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_NEAR(std::abs(a_lat_calc), 0, 0.1);
+  EXPECT_LE(std::abs(delta), delta_max);
+  EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
+                  x(static_cast<int>(StateDefinition::X_POSITION)),
+              0, 1e-10);
+
+  // Parallel to line, steering to the left
+  x << 0.0f, 2.0f, 0.0f, M_PI / 2.0f, 10;
+  delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
+  u << 0.0f, delta;
+  x1 = euler_int(*m, x, u, dt);
+
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
+  EXPECT_LE(std::abs(delta), delta_max);
+  EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
+                  x(static_cast<int>(StateDefinition::X_POSITION)),
+              0, 1e-10);
+
+  // Parallel to line, steering to the right
+  x << 0.0f, -2.0f, 0.0f, M_PI / 2.0f, 10;
+  delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
+  u << 0.0f, delta;
+  x1 = euler_int(*m, x, u, dt);
+
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_right_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
