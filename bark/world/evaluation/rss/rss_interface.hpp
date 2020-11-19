@@ -95,7 +95,7 @@ class RssInterface {
                         const commons::ParamsPtr& params) {
 
     // only adds child if it does not exist; otherwise returns child
-    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss"));
+    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss::Ego"));
     FillRSSDynamics(rss_dynamics_others_, params->AddChild("EvaluatorRss::Others"));
 
     // general parameters

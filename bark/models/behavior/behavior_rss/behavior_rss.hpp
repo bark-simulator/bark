@@ -47,20 +47,22 @@ class BehaviorRSSConformant : public BehaviorModel {
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params)
       : BehaviorModel(params),
         nominal_behavior_model_(
-            std::make_shared<BehaviorIDMLaneTracking>(params)),
-        behavior_safety_model_(std::make_shared<BehaviorSafety>(params)),
+            std::make_shared<BehaviorIDMLaneTracking>(
+                GetParams()->AddChild("NominalBehavior"))),
+        behavior_safety_model_(std::make_shared<BehaviorSafety>(
+              GetParams())),
         rss_evaluator_(),
         behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
         world_time_of_last_rss_violation_(-1),
         initial_lane_corr_(nullptr),
-        minimum_safety_corridor_length_(params->GetReal(
-            "BehaviorRSSConformant::MinimumSafetyCorridorLength",
+        minimum_safety_corridor_length_(GetParams()->GetReal(
+            "MinimumSafetyCorridorLength",
             "Minimal lenght a safety corridor should have that a lateral "
             "safety maneuver is performed.",
             0.f)) {
     try {
 #ifdef RSS
-      rss_evaluator_ = std::make_shared<EvaluatorRSS>(params);
+      rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
 #endif
     } catch (...) {
       VLOG(4) << "Could not load RSSEvaluator." << std::endl;
