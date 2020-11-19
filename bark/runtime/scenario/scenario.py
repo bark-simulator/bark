@@ -131,7 +131,7 @@ class Scenario:
             track_id_ego = self.eval_agent_ids[0]
             track_file_name = self.json_params["track_file"]
             dataset_scenario_desc = {
-                'TrackIdEgo': track_id_ego, 'LidlFileName': track_file_name}
+                'TrackIdEgo': track_id_ego, 'TrackFileName': track_file_name}
         except:
             dataset_scenario_desc = {}
         return dataset_scenario_desc

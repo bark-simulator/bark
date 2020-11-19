@@ -999,7 +999,7 @@ TEST(line, line_smoothing) {
   EXPECT_EQ(bg::get<1>(lss.obj_[10]), 5.0);
 }
 
-TEST(line, append_line_no_intersect) {
+TEST(line, append_line_no_intersect1) {
   using bark::geometry::Line;
   using bark::geometry::Point2d;
   namespace bg = boost::geometry;
@@ -1014,6 +1014,76 @@ TEST(line, append_line_no_intersect) {
 
   bool b = bg::intersects(line1.obj_, line2.obj_);
   EXPECT_TRUE(b);
+
+  Line lout = AppendLinesNoIntersect(line1, line2);
+  EXPECT_FALSE(bg::intersects(lout.obj_)) << lout.ToArray();
+}
+
+
+TEST(line, append_line_no_intersect2) {
+
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  namespace bg = boost::geometry;
+
+  Line line1;
+  
+  line1.AddPoint(Point2d(106.424, 103.972));
+  line1.AddPoint(Point2d(101.24, 104.38));
+  line1.AddPoint(Point2d(99.2392, 104.532));
+  line1.AddPoint(Point2d(94.4502, 104.884));
+  line1.AddPoint(Point2d(80.4863, 105.889));
+  line1.AddPoint(Point2d(79.8727, 105.931));
+  line1.AddPoint(Point2d(79.6731, 105.943));
+  line1.AddPoint(Point2d(79.4609, 105.956));
+  line1.AddPoint(Point2d(78.8466, 105.988));
+  line1.AddPoint(Point2d(78.2345, 106.012));
+  line1.AddPoint(Point2d(77.8347, 106.025));
+  line1.AddPoint(Point2d(77.4247, 106.035));
+  line1.AddPoint(Point2d(77.0147, 106.042));
+  line1.AddPoint(Point2d(76.6047, 106.046));
+  line1.AddPoint(Point2d(76.1946, 106.047));
+  line1.AddPoint(Point2d(75.5733, 106.044));
+  line1.AddPoint(Point2d(74.7734, 106.033));
+  line1.AddPoint(Point2d(73.7679, 106.015));
+  line1.AddPoint(Point2d(72.9625, 105.998));
+  line1.AddPoint(Point2d(72.1578, 105.978));
+  line1.AddPoint(Point2d(70.9488, 105.942));
+  line1.AddPoint(Point2d(69.9493, 105.91));
+  line1.AddPoint(Point2d(50.7593, 105.29));
+  line1.AddPoint(Point2d(49.9589, 105.268));
+  line1.AddPoint(Point2d(48.9649, 105.245));
+  line1.AddPoint(Point2d(47.9938, 105.227));
+  line1.AddPoint(Point2d(46.9931, 105.214));
+  line1.AddPoint(Point2d(46.1989, 105.208));
+  line1.AddPoint(Point2d(45.4046, 105.205));
+  line1.AddPoint(Point2d(44.6104, 105.206));
+  line1.AddPoint(Point2d(43.8161, 105.21));
+  line1.AddPoint(Point2d(43.0218, 105.217));
+  line1.AddPoint(Point2d(42.2276, 105.228));
+  line1.AddPoint(Point2d(41.4342, 105.242));
+  line1.AddPoint(Point2d(40.4409, 105.264));
+  line1.AddPoint(Point2d(39.6469, 105.286));
+  line1.AddPoint(Point2d(38.8534, 105.311));
+  line1.AddPoint(Point2d(36.8547, 105.383));
+  line1.AddPoint(Point2d(36.0579, 105.413));
+  line1.AddPoint(Point2d(35.0637, 105.454));
+  line1.AddPoint(Point2d(34.2695, 105.489));
+  line1.AddPoint(Point2d(33.4748, 105.528));
+  line1.AddPoint(Point2d(32.4754, 105.58));
+
+  Line line2;
+  line2.AddPoint(Point2d(32.4847, 105.579));
+  line2.AddPoint(Point2d(31.4972, 105.635));
+  line2.AddPoint(Point2d(30.5044, 105.695));
+  line2.AddPoint(Point2d(29.5065, 105.759));
+  line2.AddPoint(Point2d(28.5148, 105.827));
+  line2.AddPoint(Point2d(27.3224, 105.914));
+  line2.AddPoint(Point2d(22.3407, 106.294));
+  line2.AddPoint(Point2d(10.7769, 107.211));
+  line2.AddPoint(Point2d(0.608936, 108.018));
+  line2.AddPoint(Point2d(-8.96079, 108.78));
+  line2.AddPoint(Point2d(-18.1085, 109.51));
 
   Line lout = AppendLinesNoIntersect(line1, line2);
   EXPECT_FALSE(bg::intersects(lout.obj_)) << lout.ToArray();

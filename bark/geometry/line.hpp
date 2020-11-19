@@ -315,13 +315,13 @@ inline double GetTangentAngleAtS(Line l, double s) {
       Point2d p2 = l.obj_.at(end_segment_it - 1);
       Point2d p3 = l.obj_.at(end_segment_it);
       double sin_mean = 0.5 * (sin(atan2(bg::get<1>(p2) - bg::get<1>(p1),
-                                        bg::get<0>(p2) - bg::get<0>(p1))) +
-                              sin(atan2(bg::get<1>(p3) - bg::get<1>(p2),
-                                        bg::get<0>(p3) - bg::get<0>(p2))));
+                                         bg::get<0>(p2) - bg::get<0>(p1))) +
+                               sin(atan2(bg::get<1>(p3) - bg::get<1>(p2),
+                                         bg::get<0>(p3) - bg::get<0>(p2))));
       double cos_mean = 0.5 * (cos(atan2(bg::get<1>(p2) - bg::get<1>(p1),
-                                        bg::get<0>(p2) - bg::get<0>(p1))) +
-                              cos(atan2(bg::get<1>(p3) - bg::get<1>(p2),
-                                        bg::get<0>(p3) - bg::get<0>(p2))));
+                                         bg::get<0>(p2) - bg::get<0>(p1))) +
+                               cos(atan2(bg::get<1>(p3) - bg::get<1>(p2),
+                                         bg::get<0>(p3) - bg::get<0>(p2))));
       return atan2(sin_mean, cos_mean);
     } else {  // every s not start, end or intersection
       Point2d p1 = l.obj_.at(end_segment_it - 1);
@@ -527,11 +527,19 @@ inline Line AppendLinesNoIntersect(const Line& ls1, const Line& ls2) {
     lout.AppendLinestring(ls2);
   }
 
+  // Remove duplicates
+  boost::geometry::unique(lout.obj_);
+
   if (boost::geometry::intersects(lout.obj_)) {
-    LOG(ERROR) << "AppendLinesNoIntersect yields self intersecting line";
-    LOG(ERROR) << "ls1" << ls1.ToArray();
-    LOG(ERROR) << "ls2" << ls2.ToArray();
-    LOG(ERROR) << "lout" << lout.ToArray();
+    const double tol = 1e-6;
+    LOG(WARNING) << "AppendLinesNoIntersect yields self intersecting line, "
+                    "will simplify it with "
+                 << tol;
+    VLOG(5) << "ls1: " << ls1.ToArray();
+    VLOG(5) << "ls2: " << ls2.ToArray();
+    VLOG(5) << "lout: " << lout.ToArray();
+
+    lout = Simplify(lout, tol);
   }
   return lout;
 }
