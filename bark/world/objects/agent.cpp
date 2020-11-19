@@ -71,12 +71,12 @@ Agent::Agent(const Agent& other_agent)
       first_valid_timestamp_(other_agent.first_valid_timestamp_),
       goal_definition_(other_agent.goal_definition_) {}
 
-void Agent::PlanBehavior(const float& min_planning_dt,
+void Agent::PlanBehavior(const double& min_planning_dt,
                          const ObservedWorld& observed_world) {
   behavior_model_->Plan(min_planning_dt, observed_world);
 }
 
-void Agent::PlanExecution(const float& world_time) {
+void Agent::PlanExecution(const double& world_time) {
   execution_model_->Execute(world_time, behavior_model_->GetLastTrajectory(),
                             dynamic_model_);
 }
@@ -110,7 +110,7 @@ FrenetPosition Agent::CurrentFrenetPosition() const {
   if (!lane_corridor) {
     // assume vehicle is far far away on same lane
     // (until better failure handling implemented)
-    return FrenetPosition(0.0f, std::numeric_limits<double>::max());
+    return FrenetPosition(0.0, std::numeric_limits<double>::max());
   }
   FrenetPosition frenet_pos(pos, lane_corridor->GetCenterLine());
   return frenet_pos;
@@ -136,8 +136,8 @@ bool Agent::AtGoal() const {
  * @param world_time ... current world time
  * @return true if agent is valid
  */
-bool Agent::IsValidAtTime(const float& world_time) const {
-  return isgreaterequal(world_time + std::numeric_limits<float>::epsilon(),
+bool Agent::IsValidAtTime(const double& world_time) const {
+  return isgreaterequal(world_time + std::numeric_limits<double>::epsilon(),
                         first_valid_timestamp_);
 }
 

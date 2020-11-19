@@ -42,7 +42,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
         observed_world.GetAgentInFront();
     std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
 
-    float vel_i = ego_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
+    double vel_i = ego_agent->GetCurrentState()(StateDefinition::VEL_POSITION);
 
     double acc;
     if (leading_vehicle.first) {
@@ -67,8 +67,8 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
 TEST(free_road_term, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float max_acceleration = behavior.GetLonAccelerationMax();
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double max_acceleration = behavior.GetLonAccelerationMax();
   const int exponent = behavior.GetExponent();
 
   // Create an observed world with specific goal definition and the
@@ -81,7 +81,7 @@ TEST(free_road_term, behavior_idm_classic) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
-  float ego_velocity = desired_velocity, rel_distance = 7.0,
+  double ego_velocity = desired_velocity, rel_distance = 7.0,
         velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(
       0, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
@@ -121,8 +121,8 @@ TEST(interaction_term, behavior_idm_classic) {
   const double minimum_spacing = behavior.GetMinimumSpacing();
   const double desired_time_headway = behavior.GetDesiredTimeHeadway();
   const double max_acceleration = behavior.GetLonAccelerationMax();
-  const double acc_lower_bound = behavior.GetAccelerationLowerBound();
-  const double acc_upper_bound = behavior.GetAccelerationUpperBound();
+  const double acc_lower_bound = behavior.GetAccelerationLimits().lon_acc_min;
+  const double acc_upper_bound = behavior.GetAccelerationLimits().lon_acc_max;
   const double comfortable_braking_acceleration =
       behavior.GetComfortableBrakingAcceleration();
 
@@ -170,27 +170,27 @@ TEST(interaction_term, behavior_idm_classic) {
 TEST(drive_free, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   DummyBehaviorIDM behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
+  const double desired_velocity = behavior.GetDesiredVelocity();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity = desired_velocity, rel_distance = 7.0,
+  double ego_velocity = desired_velocity, rel_distance = 7.0,
         velocity_difference = 0.0;
-  float time_step = 0.2f;
+  double time_step = 0.2;
   int num_steps = 10;
   WorldPtr world =
       make_test_world(0, rel_distance, ego_velocity, velocity_difference);
 
-  float x_start = world->GetAgents()
+  double x_start = world->GetAgents()
                       .begin()
                       ->second->GetCurrentState()[StateDefinition::X_POSITION];
   for (int i = 0; i < num_steps; ++i) {
     world->Step(time_step);
   }
-  float x_end = world->GetAgents()
+  double x_end = world->GetAgents()
                     .begin()
                     ->second->GetCurrentState()[StateDefinition::X_POSITION];
-  float x_diff_desired = x_start + ego_velocity * num_steps * time_step - x_end;
+  double x_diff_desired = x_start + ego_velocity * num_steps * time_step - x_end;
   EXPECT_NEAR(x_diff_desired, 0, 0.01);
 }
 
@@ -198,26 +198,26 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
-  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
-  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0f);
-  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
-  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0);
+  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0);
+  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0);
+  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0);
   BehaviorIDMClassic behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float minimum_spacing = behavior.GetMinimumSpacing();
-  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double minimum_spacing = behavior.GetMinimumSpacing();
+  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity = desired_velocity, rel_distance = 5.0,
+  double ego_velocity = desired_velocity, rel_distance = 5.0,
         velocity_difference = 4;
-  float time_step = 0.02f;  // Very small time steps to verify differential
+  double time_step = 0.02f;  // Very small time steps to verify differential
                             // integration character
   int num_steps = 1000;
 
@@ -234,14 +234,14 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   WorldPtr world = make_test_world(1, rel_distance, ego_velocity,
                                    velocity_difference, goal_definition_ptr);
 
-  float v_start =
+  double v_start =
       world->GetAgents()
           .begin()
           ->second->GetCurrentState()[StateDefinition::VEL_POSITION];
   for (int i = 0; i < num_steps; ++i) {
     world->Step(time_step);
   }
-  float v_end = world->GetAgents()
+  double v_end = world->GetAgents()
                     .begin()
                     ->second->GetCurrentState()[StateDefinition::VEL_POSITION];
 
@@ -252,32 +252,32 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
-  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
-  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0f);
-  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
-  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0);
+  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0);
+  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0);
+  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0);
   params->SetBool("BehaviorIDMClassic::BrakeForLaneEnd", false);
-  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndEnabledDistance", 2.0f);
-  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndDistanceOffset", 2.0f);
+  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndEnabledDistance", 2.0);
+  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndDistanceOffset", 2.0);
   params->SetInt("BehaviorIDMClassic::NumTrajectoryTimePoints", 11);
   params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.89f);
   BehaviorIDMClassic behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float minimum_spacing = behavior.GetMinimumSpacing();
-  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double minimum_spacing = behavior.GetMinimumSpacing();
+  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity = desired_velocity, rel_distance = 10.0,
-        velocity_difference = -2, acc_ego = 2.0f, acc_other = -5.0f;
-  float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f;  // Very small time steps to verify differential
+  double ego_velocity = desired_velocity, rel_distance = 10.0,
+        velocity_difference = -2, acc_ego = 2.0, acc_other = -5.0;
+  double other_velocity = ego_velocity - velocity_difference;
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
   int num_steps = 1000;
 
@@ -299,14 +299,14 @@ TEST(coolness_factor_upper_eq_case, behavior_idm_classic) {
   auto action = behavior.GetLastAction();
 
   // upper case of equation 11.25
-  const float b = behavior.GetComfortableBrakingAcceleration();
-  const float acc_cah_desired =
+  const double b = behavior.GetComfortableBrakingAcceleration();
+  const double acc_cah_desired =
       ego_velocity * ego_velocity * acc_other /
       (other_velocity * other_velocity - 2 * rel_distance * acc_other);
-  const float acc_idm_desired =
+  const double acc_idm_desired =
       behavior.CalcRawIDMAcc(rel_distance, ego_velocity, other_velocity);
-  const float c = 0.89;
-  const float acc_acc_desired =
+  const double c = 0.89;
+  const double acc_acc_desired =
       (1 - c) * acc_idm_desired +
       c * (acc_cah_desired + b * tanh((acc_idm_desired - acc_cah_desired) / b));
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
@@ -316,32 +316,32 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
-  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
-  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0f);
-  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
-  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0);
+  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0);
+  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0);
+  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0);
   params->SetBool("BehaviorIDMClassic::BrakeForLaneEnd", false);
-  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndEnabledDistance", 2.0f);
-  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndDistanceOffset", 2.0f);
+  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndEnabledDistance", 2.0);
+  params->SetReal("BehaviorIDMClassic::BrakeForLaneEndDistanceOffset", 2.0);
   params->SetInt("BehaviorIDMClassic::NumTrajectoryTimePoints", 11);
-  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6f);
+  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6);
   BehaviorIDMClassic behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float minimum_spacing = behavior.GetMinimumSpacing();
-  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double minimum_spacing = behavior.GetMinimumSpacing();
+  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity = desired_velocity, rel_distance = 20.0,
-        velocity_difference = -1, acc_ego = 2.0f, acc_other = 1.0f;
-  float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f;  // Very small time steps to verify differential
+  double ego_velocity = desired_velocity, rel_distance = 20.0,
+        velocity_difference = -1, acc_ego = 2.0, acc_other = 1.0;
+  double other_velocity = ego_velocity - velocity_difference;
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
 
   Polygon polygon = GenerateGoalRectangle(6, 3);
@@ -360,12 +360,12 @@ TEST(coolness_factor_lower_eq_case_vel_diff_neg, behavior_idm_classic) {
   auto action = behavior.GetLastAction();
 
   // upper case of equation 11.25
-  const float b = behavior.GetComfortableBrakingAcceleration();
-  const float acc_cah_desired = acc_other;
-  const float acc_idm_desired =
+  const double b = behavior.GetComfortableBrakingAcceleration();
+  const double acc_cah_desired = acc_other;
+  const double acc_idm_desired =
       behavior.CalcRawIDMAcc(rel_distance, ego_velocity, other_velocity);
-  const float c = 0.6;
-  const float acc_acc_desired =
+  const double c = 0.6;
+  const double acc_acc_desired =
       (1 - c) * acc_idm_desired +
       c * (acc_cah_desired + b * tanh((acc_idm_desired - acc_cah_desired) / b));
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
@@ -375,28 +375,28 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   auto params = std::make_shared<SetterParams>();
   // IDM Classic
   params->SetReal("BehaviorIDMClassic::MinimumSpacing",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", 3.5);
   params->SetReal("BehaviorIDMClassic::MaxAcceleration",
-                  1.0f);  // Required for testing
+                  1.0);  // Required for testing
   params->SetReal("BehaviorIDMClassic::AccelerationLowerBound", -1000.0);
   params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", 1000.0);
-  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0f);
-  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0f);
-  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0f);
-  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0f);
-  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6f);
+  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 8.0);
+  params->SetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration", 1.0);
+  params->SetReal("BehaviorIDMClassic::MinVelocity", 0.0);
+  params->SetReal("BehaviorIDMClassic::MaxVelocity", 50.0);
+  params->SetReal("BehaviorIDMClassic::CoolnessFactor", 0.6);
   BehaviorIDMClassic behavior(params);
-  const float desired_velocity = behavior.GetDesiredVelocity();
-  const float minimum_spacing = behavior.GetMinimumSpacing();
-  const float desired_time_headway = behavior.GetDesiredTimeHeadway();
+  const double desired_velocity = behavior.GetDesiredVelocity();
+  const double minimum_spacing = behavior.GetMinimumSpacing();
+  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance
-  float ego_velocity = desired_velocity, rel_distance = 5.0,
-        velocity_difference = 5, acc_ego = 2.0f, acc_other = 1.0f;
-  float other_velocity = ego_velocity - velocity_difference;
-  float time_step = 0.2f;  // Very small time steps to verify differential
+  double ego_velocity = desired_velocity, rel_distance = 5.0,
+        velocity_difference = 5, acc_ego = 2.0, acc_other = 1.0;
+  double other_velocity = ego_velocity - velocity_difference;
+  double time_step = 0.2;  // Very small time steps to verify differential
                            // integration character
   int num_steps = 1000;
 
@@ -418,14 +418,14 @@ TEST(coolness_factor_lower_eq_case_vel_diff_pos, behavior_idm_classic) {
   auto action = behavior.GetLastAction();
 
   // upper case of equation 11.25
-  const float b = behavior.GetComfortableBrakingAcceleration();
-  const float acc_cah_desired = acc_other - velocity_difference *
+  const double b = behavior.GetComfortableBrakingAcceleration();
+  const double acc_cah_desired = acc_other - velocity_difference *
                                                 velocity_difference * 1.0 /
                                                 (2.0 * rel_distance);
-  const float acc_idm_desired =
+  const double acc_idm_desired =
       behavior.CalcRawIDMAcc(rel_distance, ego_velocity, other_velocity);
-  const float c = 0.6;
-  const float acc_acc_desired =
+  const double c = 0.6;
+  const double acc_acc_desired =
       (1 - c) * acc_idm_desired +
       c * (acc_cah_desired + b * tanh((acc_idm_desired - acc_cah_desired) / b));
   EXPECT_NEAR(boost::get<Continuous1DAction>(action), acc_acc_desired, 0.001);
@@ -476,10 +476,10 @@ TEST(CalcNetDistance, behavior_idm_classic) {
       current_world_state->GetAgents().begin()->second->GetAgentId());
 
   BehaviorIDMClassic behavior(params);
-  float distance = behavior.CalcNetDistance(observed_world, agent2);
-  float x_diff = init_state2(StateDefinition::X_POSITION) -
+  double distance = behavior.CalcNetDistance(observed_world, agent2);
+  double x_diff = init_state2(StateDefinition::X_POSITION) -
                  init_state1(StateDefinition::X_POSITION);
-  float distance_expected =
+  double distance_expected =
       x_diff - agent1->GetShape().front_dist_ - agent2->GetShape().rear_dist_;
 
   EXPECT_EQ(distance, distance_expected);

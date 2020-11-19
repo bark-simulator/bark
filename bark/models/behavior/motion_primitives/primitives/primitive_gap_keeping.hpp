@@ -25,14 +25,14 @@ class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
       : Primitive(params),
         BehaviorModel(params),
         BehaviorIDMLaneTracking(params) {
-    Primitive::SetLastAction(Continuous1DAction(0.0f));
+    Primitive::SetLastAction(Continuous1DAction(0.0));
   }
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override {
     return true;
   }
-  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
+  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor) override {
     auto traj =
         BehaviorIDMLaneTracking::Plan(min_planning_time, observed_world);

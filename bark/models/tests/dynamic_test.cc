@@ -34,7 +34,7 @@ TEST(single_track_model, dynamic_test) {
   SingleTrackModel single_track_model(params);
   m = &single_track_model;
 
-  float dt = 0.1;
+  double dt = 0.1;
   for (int i = 0; i < 10; i++) {
     x = euler_int(*m, x, u, dt);
     cout << x << endl;
@@ -43,22 +43,22 @@ TEST(single_track_model, dynamic_test) {
 
 TEST(valid_state_test, dynamic_test) {
   State x1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  x1 << 50.0f, 0.0f, 0.0f, M_PI / 2.0f, 50.0f;
+  x1 << 50.0, 0.0, 0.0, M_PI / 2.0, 50.0;
   EXPECT_TRUE(IsValid(x1));
 
   // nan
   State x2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  x2 << 50.0f, 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  x2 << 50.0, 0.0, 1 / 0.0, M_PI / 2.0, 50.0;
   EXPECT_FALSE(IsValid(x2));
 
   // inf
   State x3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  x3 << 50.0f, 0.0f / 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  x3 << 50.0, 0.0 / 0.0, 1 / 0.0, M_PI / 2.0, 50.0;
   EXPECT_FALSE(IsValid(x3));
 
   // nan and inf
   State x4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  x4 << 50.0f, 0.0 / 0.0f, 1 / 0.0f, M_PI / 2.0f, 50.0f;
+  x4 << 50.0, 0.0 / 0.0, 1 / 0.0, M_PI / 2.0, 50.0;
   EXPECT_FALSE(IsValid(x4));
 }
 
@@ -69,27 +69,20 @@ TEST(valid_trajectory_test, dynamic_test) {
 
   // inf
   Trajectory traj2(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  traj2 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 1 / 0.0f, 0, 1, 3, 3, 0, 0, 1;
+  traj2 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 1 / 0.0, 0, 1, 3, 3, 0, 0, 1;
   EXPECT_FALSE(IsValid(traj2));
 
   // nan
   Trajectory traj3(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  traj3 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0.0 / 0.0f, 0, 1, 3, 3, 0, 0, 1;
+  traj3 << 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0.0 / 0.0, 0, 1, 3, 3, 0, 0, 1;
   EXPECT_FALSE(IsValid(traj3));
 
   // both
   Trajectory traj4(4, static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  traj4 << 0, 1 / 0.0f, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0, 0, 1, 3, 3, 0, 0,
-      0.0 / 0.0f;
+  traj4 << 0, 1 / 0.0, 0, 0, 1, 1, 1, 0, 0, 1, 2, 2, 0, 0, 1, 3, 3, 0, 0,
+      0.0 / 0.0;
   EXPECT_FALSE(IsValid(traj4));
 }
-
-double CalcAccLat(const State& x, const State& x1, const double dt) {
-  auto theta_dot = (x1(static_cast<int>(StateDefinition::THETA_POSITION)) -
-                    x(static_cast<int>(StateDefinition::THETA_POSITION))) /
-                    dt;
-  return theta_dot * x(static_cast<int>(StateDefinition::VEL_POSITION));
-};
 
 TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace std;
@@ -97,16 +90,16 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   using namespace bark::models::dynamic;
   using namespace bark::commons;
 
-  const float dt = 1.0;
+  const double dt = 1.0;
 
   auto params = std::make_shared<SetterParams>();
   DynamicModel* m;
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
   m = single_track_model.get();
-  const float a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
-  const float a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
-  const float delta_max = single_track_model->GetSteeringAngleMax();
+  const double a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
+  const double a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
+  const double delta_max = single_track_model->GetSteeringAngleMax();
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
@@ -123,22 +116,24 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   // Parallel to line, high crosstrack error, high speed
   x << 0.0f, 5.0f, 0.0f, M_PI / 2.0f, 50.0f;
   auto delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
-  u << 0.0f, delta;
+  u << 0.0, delta;
   auto x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(CalcAccLat(x, x1, dt)), a_lat_left_max+1e-6);
+  double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
               0, 1e-10);
 
   // Parallel to line, high crosstrack error, low speed
-  x << 0.0f, 5.0f, 0.0f, M_PI / 2.0f, 0.1f;
+  x << 0.0, 5.0, 0.0, M_PI / 2.0, 0.1;
   delta = CalculateSteeringAngle(single_track_model, x, line, 1.0);
-  u << 0.0f, delta;
+  u << 0.0, delta;
   x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(CalcAccLat(x, x1, dt)), a_lat_left_max+1e-6);
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -182,7 +177,8 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   auto x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_NEAR(std::abs(CalcAccLat(x, x1, dt)), 0, 0.1);
+  double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_NEAR(std::abs(a_lat_calc), 0, 0.1);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -194,7 +190,8 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(CalcAccLat(x, x1, dt)), a_lat_left_max+1e-6);
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -206,7 +203,8 @@ TEST(AccelerationCorridor, dynamic_test) {
   u << 0.0f, delta;
   x1 = euler_int(*m, x, u, dt);
 
-  EXPECT_LE(std::abs(CalcAccLat(x, x1, dt)), a_lat_right_max+1e-6);
+  a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
+  EXPECT_LE(std::abs(a_lat_calc), a_lat_right_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -233,7 +231,7 @@ TEST(triple_integrator_model, dynamic_test) {
   TripleIntegratorModel triple_int_model(params);
   m = &triple_int_model;
 
-  float dt = 0.1;
+  double dt = 0.1;
   for (int i = 0; i < 10; i++) {
     x = euler_int(*m, x, u0, dt);
     cout << x << endl << endl;

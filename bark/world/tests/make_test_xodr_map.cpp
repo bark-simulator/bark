@@ -21,7 +21,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
   OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
 
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 200.0f, 200.0f);
+  p->AddLine(Point2d(0.0, 0.0), 0.0, 200.0, 200.0);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -31,7 +31,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapOneRoadTwoLanes() {
   lane0->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 200, off};
 
   XodrLanePtr lane1 =
@@ -65,7 +65,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
 
   // ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f, 50.0f);
+  p->AddLine(Point2d(0.0, 0.0), 0.0, 50.0, 50.0);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -75,7 +75,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   lane00->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 50, off};
 
   XodrLanePtr lane10 =
@@ -98,7 +98,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   //! ROAD 2
   //! Plan View
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f, 100.0f);
+  p2->AddLine(Point2d(50.0, 0.0), 0.0, 100.0, 100.0);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));
@@ -107,7 +107,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapTwoRoadsOneLane() {
   XodrLanePtr lane01(new XodrLane(0));
   lane01->SetLine(p2->GetReferenceLine());
 
-  XodrLaneOffset off2 = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off2 = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_2 = {0, 50, off};
   XodrLanePtr lane11 =
       CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.5);
@@ -144,7 +144,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
 
   // ROAD 1
   PlanViewPtr p(new PlanView());
-  p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 50.0f, 50.0f);
+  p->AddLine(Point2d(0.0, 0.0), 0.0, 50.0, 50.0);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -154,7 +154,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   lane00->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_1 = {0, 50, off};
 
   XodrLanePtr lane10 =
@@ -183,7 +183,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   //! ROAD 2
   //! Plan View
   PlanViewPtr p2(new PlanView());
-  p2->AddLine(Point2d(50.0f, 0.0f), 0.0f, 100.0f, 100.0f);
+  p2->AddLine(Point2d(50.0, 0.0), 0.0, 100.0, 100.0);
 
   //! XodrLane-Section 2
   XodrLaneSectionPtr ls2(new XodrLaneSection(0.0));
@@ -192,7 +192,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapEndingLaneInParallel() {
   XodrLanePtr lane01(new XodrLane(0));
   lane01->SetLine(p2->GetReferenceLine());
 
-  XodrLaneOffset off2 = {3.5f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off2 = {3.5, 0.0, 0.0, 0.0};
   XodrLaneWidth lane_width_2 = {0, 50, off};
   XodrLanePtr lane11 =
       CreateLaneFromLaneWidth(-1, p2->GetReferenceLine(), lane_width_2, 0.5);
@@ -229,8 +229,8 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapCurved(const double length,
   OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
 
   PlanViewPtr p(new PlanView());
-  // p->AddLine(Point2d(0.0f, 0.0f), 0.0f, 200.0f, 200.0f);
-  p->AddArc(Point2d(0.0f, 0.0f), 0, length, curvature);
+  // p->AddLine(Point2d(0.0, 0.0), 0.0, 200.0, 200.0);
+  p->AddArc(Point2d(0.0, 0.0), 0, length, curvature);
 
   //! XodrLane-Section 1
   XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
@@ -240,7 +240,7 @@ OpenDriveMapPtr bark::world::tests::MakeXodrMapCurved(const double length,
   lane0->SetLine(p->GetReferenceLine());
 
   //! Lanes
-  XodrLaneOffset off = {4.0f, 0.0f, 0.0f, 0.0f};
+  XodrLaneOffset off = {4.0, 0.0, 0.0, 0.0};
   XodrLaneWidth lw1 = {0, length, off};
 
   XodrLanePtr lane1 =

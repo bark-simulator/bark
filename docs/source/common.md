@@ -49,9 +49,9 @@ class Params {
                         const std::string &description,
                         const bool &default_value) = 0;
 
-  virtual float GetReal(const std::string &param_name,
+  virtual double GetReal(const std::string &param_name,
                          const std::string &description,
-                         const float &default_value) = 0;
+                         const double &default_value) = 0;
 
   virtual int GetInt(const std::string &param_name,
                       const std::string &description,
@@ -59,7 +59,7 @@ class Params {
 
   // not used atm
   virtual void SetBool(const std::string &param_name, const bool &value) = 0;
-  virtual void SetReal(const std::string &param_name, const float &value) = 0;
+  virtual void SetReal(const std::string &param_name, const double &value) = 0;
   virtual void SetInt(const std::string &param_name, const int &value) = 0;
 
   virtual int operator[](const std::string &param_name) = 0;

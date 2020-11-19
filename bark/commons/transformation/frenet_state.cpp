@@ -47,8 +47,8 @@ FrenetState::FrenetState(const State& state, const Line& path) {
       norm_tangent_angle,
       atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
-  VLOG(5) << "orientation: " << orientation << "frenet angle " << angle
-          << "sign" << sign;
+  VLOG(5) << "Orientation: " << orientation << ", Frenet Angle: " << angle
+          << ", Sign: " << sign;
   lat = lat_val * sign;
 
   // velocities
@@ -74,7 +74,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
   // build state
   State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  state(StateDefinition::TIME_POSITION) = 0.0f;
+  state(StateDefinition::TIME_POSITION) = 0.0;
   state(StateDefinition::X_POSITION) = bg::get<0>(position);
   state(StateDefinition::Y_POSITION) = bg::get<1>(position);
   state(StateDefinition::THETA_POSITION) = angle;

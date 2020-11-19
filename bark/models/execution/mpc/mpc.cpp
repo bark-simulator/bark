@@ -26,7 +26,7 @@ execution::ExecutionModelMpc::ExecutionModelMpc(
 }
 
 dynamic::Trajectory execution::ExecutionModelMpc::Execute(
-    const float& new_world_time, const dynamic::Trajectory& trajectory,
+    const double& new_world_time, const dynamic::Trajectory& trajectory,
     const dynamic::DynamicModelPtr dynamic_model,
     const dynamic::State current_state) {
   double current_world_time = current_state(StateDefinition::TIME_POSITION);
@@ -167,7 +167,7 @@ dynamic::Trajectory execution::ExecutionModelMpc::Optimize(
       KinematicModel<double>(const_parameter_block, discrete_states,
                              optimization_settings_);
 
-  return traj.cast<float>();
+  return traj.cast<double>();
 }
 
 }  // namespace models

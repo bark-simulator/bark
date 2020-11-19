@@ -463,9 +463,9 @@ class BaseViewer(Viewer):
             self.color_eval_agents_line, 0.6, self.color_other_agents_face, linewidth=1.5, zorder=9)
 
         # draw response for other agents
-        relevent_agents = [
+        relevant_agents = [
             agent for agent in world.agents.values() if agent.id in rss_responses]
-        for agent in relevent_agents:
+        for agent in relevant_agents:
             shape = agent.shape
             pose = generatePoseFromState(agent.state)
             transformed_polygon = shape.ScalingTransform(1.5, pose)

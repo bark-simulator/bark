@@ -32,7 +32,7 @@ BehaviorDynamicModel::BehaviorDynamicModel(const commons::ParamsPtr& params)
                           "delta t for integration", 0.05)) {}
 
 dynamic::Trajectory BehaviorDynamicModel::Plan(
-    float min_planning_time, const world::ObservedWorld& observed_world) {
+    double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
   const DynamicModelPtr dynamic_model =
       observed_world.GetEgoAgent()->GetDynamicModel();
@@ -44,7 +44,7 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
   dynamic::State ego_vehicle_state =
       observed_world.GetEgoAgent()->GetCurrentState();
   double start_time = observed_world.GetWorldTime();
-  float dt = integration_time_delta_;
+  double dt = integration_time_delta_;
   int num_trajectory_points =
       static_cast<int>(std::ceil(min_planning_time / dt)) + 1;
 

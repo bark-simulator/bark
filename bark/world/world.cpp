@@ -49,15 +49,15 @@ World::World(const std::shared_ptr<World>& world)
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
 
-void World::Step(const float& delta_time) {
+void World::Step(const double& delta_time) {
   PlanAgents(delta_time);
   Execute(delta_time);
 }
 
-void World::PlanAgents(const float& delta_time) {
+void World::PlanAgents(const double& delta_time) {
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
-  const float inc_world_time = world_time_ + delta_time;
+  const double inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_)) {
       ObservedWorld observed_world(current_world, agent.first);
@@ -68,8 +68,8 @@ void World::PlanAgents(const float& delta_time) {
   }
 }
 
-void World::Execute(const float& delta_time) {
-  const float inc_world_time = world_time_ + delta_time;
+void World::Execute(const double& delta_time) {
+  const double inc_world_time = world_time_ + delta_time;
   using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(inc_world_time) &&
@@ -87,7 +87,7 @@ void World::Execute(const float& delta_time) {
   world_time_ = inc_world_time;
 }
 
-WorldPtr World::GetWorldAtTime(const float& world_time) const {
+WorldPtr World::GetWorldAtTime(const double& world_time) const {
   WorldPtr current_world_state(this->Clone());
   for (auto agent : current_world_state->GetAgents()) {
     if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
@@ -256,7 +256,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
-    float width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
+    double width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
     if (std::abs(frenet_other.lat) > frac_lateral_offset_ * width) {
       // agent seems to be not really in same lane
       continue;
@@ -264,11 +264,11 @@ FrontRearAgents World::GetAgentFrontRearForId(
     double long_dist = frenet_other.lon - frenet_ego.lon;
     double lat_dist = frenet_other.lat - frenet_ego.lat;
 
-    if (long_dist > 0.0f && long_dist < nearest_lon_front) {
+    if (long_dist > 0.0 && long_dist < nearest_lon_front) {
       nearest_lon_front = long_dist;
       nearest_lat_front = lat_dist;
       nearest_agent_front = it->second;
-    } else if (long_dist < 0.0f &&
+    } else if (long_dist < 0.0 &&
                std::abs(long_dist) < std::abs(nearest_lon_rear)) {
       nearest_lon_rear = long_dist;
       nearest_lat_rear = lat_dist;

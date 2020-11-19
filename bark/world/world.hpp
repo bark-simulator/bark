@@ -68,24 +68,24 @@ class World : public commons::BaseType {
    * @brief  Steps the BARK world
    * @param  delta_time: world step time
    */
-  void Step(const float& delta_time);
+  void Step(const double& delta_time);
 
   /**
    * @brief Calls the behavior and execution model of the agents
    * @param  delta_time: minimum planning time
    */
-  void PlanAgents(const float& delta_time);
+  void PlanAgents(const double& delta_time);
 
   /**
    * @brief  Updates the agent states
    */
-  void Execute(const float& delta_time);
+  void Execute(const double& delta_time);
 
   /**
    * @brief Get world for a specific time
    * @param  execution_time: world_time
    */
-  std::shared_ptr<World> GetWorldAtTime(const float& world_time) const;
+  std::shared_ptr<World> GetWorldAtTime(const double& world_time) const;
 
   /**
    * @brief  calls all added evaluators of the world
@@ -108,8 +108,8 @@ class World : public commons::BaseType {
   void RemoveInvalidAgents();
 
   //! Getter
-  float GetWorldTime() const { return world_time_; }
-  void SetWorldTime(const float& world_time) { world_time_ = world_time; }
+  double GetWorldTime() const { return world_time_; }
+  void SetWorldTime(const double& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
   virtual AgentMap GetAgents() const { return agents_; }
   AgentMap GetValidAgents() const;
@@ -176,7 +176,7 @@ class World : public commons::BaseType {
   AgentMap agents_;
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
-  float world_time_;
+  double world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
   double frac_lateral_offset_;

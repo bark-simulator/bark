@@ -21,13 +21,13 @@ class PrimitiveConstAccStayLane : public Primitive,
   // Covers Primitives KeepVelocity, Accelerat, Decelerate
  public:
   PrimitiveConstAccStayLane(const commons::ParamsPtr& params,
-                            float acceleration);
+                            double acceleration);
   explicit PrimitiveConstAccStayLane(const commons::ParamsPtr& params);
   bool IsPreConditionSatisfied(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
 
-  Trajectory Plan(float min_planning_time, const ObservedWorld& observed_world,
+  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world,
                   const LaneCorridorPtr& target_corridor);
 
   std::string GetName() const override;
@@ -41,7 +41,7 @@ class PrimitiveConstAccStayLane : public Primitive,
                                         const IDMRelativeValues& rel_values,
                                         double rel_distance,
                                         double dt) const override;
-  float acceleration_;
+  double acceleration_;
 };
 
 }  // namespace primitives

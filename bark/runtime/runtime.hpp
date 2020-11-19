@@ -27,7 +27,6 @@ class Runtime : public bark::commons::BaseType {
 
   virtual void Step() {}
   virtual void Step(int action) {}
-  virtual void Step(float action) {}
   virtual void Step(double action) {}
   virtual void Step(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m) {}
 };

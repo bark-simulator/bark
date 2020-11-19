@@ -13,7 +13,7 @@ from bark.core.world.agent import Agent
 from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.core.geometry import Point2d, Polygon2d
+from bark.core.geometry import Point2d, Polygon2d, NormToPI
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
@@ -29,9 +29,10 @@ def BarkStateFromMotionState(state, xy_offset, time_offset=0):
         state.time_stamp_ms - time_offset) / 1000.0
     bark_state[int(StateDefinition.X_POSITION)] = state.x + xy_offset[0]
     bark_state[int(StateDefinition.Y_POSITION)] = state.y + xy_offset[1]
-    if (state.psi_rad > np.pi or state.psi_rad < -np.pi):
-      logging.error("Orientation in Track file is ill-defined")
-    bark_state[int(StateDefinition.THETA_POSITION)] = state.psi_rad
+    orientation = NormToPI(state.psi_rad)
+    if (orientation > np.pi or orientation < -np.pi):
+      logging.error("Orientation in Track file is ill-defined: {}".format(state.psi_rad))
+    bark_state[int(StateDefinition.THETA_POSITION)] = orientation
     bark_state[int(StateDefinition.VEL_POSITION)] = pow(
         pow(state.vx, 2) + pow(state.vy, 2), 0.5)
     return bark_state.reshape((1, int(StateDefinition.MIN_STATE_SIZE)))

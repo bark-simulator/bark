@@ -25,7 +25,6 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-
 class EvaluatorRSS : public BaseEvaluator {
  public:
   EvaluatorRSS() {}
@@ -33,34 +32,8 @@ class EvaluatorRSS : public BaseEvaluator {
   explicit EvaluatorRSS(const AgentId& agent_id,
                         const commons::ParamsPtr& params)
       : agent_id_(agent_id),
-        rss_(
-            params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
-            params->GetReal("EvaluatorRss::AccLonMax", "maximum acceleration",
-                            1.7),
-            params->GetReal("EvaluatorRss::BrakeLonMax", "maximum deceleration",
-                            -1.7),
-            params->GetReal("EvaluatorRss::BrakeLonMin",
-                            "minimum braking deceleration", -1.69),
-            params->GetReal("EvaluatorRss::BrakeLonMinCorrect",
-                            "minimum deceleration with oncoming vehicle",
-                            -1.67),
-            params->GetReal("EvaluatorRss::AccLatBrakeMax",
-                            "maximum lateral acceleration", 0.2),
-            params->GetReal("EvaluatorRss::AccLatBrakeMin",
-                            "minimum lateral braking", -0.8),
-            params->GetReal("EvaluatorRss::FluctMargin", "fluctuation margin",
-                            0.1),
-            params->GetReal("EvaluatorRss::TimeResponse", "response time", 1.0),
-            params->GetReal("EvaluatorRss::ScalingRelevantRange",
-                            "Controlling the searching distance between two "
-                            "agents to perform RSS check",
-                            1),
-            params->GetReal("EvaluatorRss::RoutePredictRange",
-                            "Describle the distance for returning all routes "
-                            "having less than the distance, will be used when "
-                            "a route to the goal cannnot be found",
-                            50)) {}
-
+        rss_(params->GetString("EvaluatorRss::MapFilename", "Map path", ""),
+             params) {}
   explicit EvaluatorRSS(const commons::ParamsPtr& params)
       : EvaluatorRSS(std::numeric_limits<AgentId>::max(), params) {}
 
@@ -75,9 +48,20 @@ class EvaluatorRSS : public BaseEvaluator {
   // lateral one is unsafety.
   virtual EvaluationReturn Evaluate(const World& world) {
     WorldPtr cloned_world = world.Clone();
-    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
-    return rss_.GetSafetyReponse(observed_world);
-  };
+    if (world.GetAgent(agent_id_)) {
+      std::vector<ObservedWorld> observed_worlds =
+          cloned_world->Observe({agent_id_});
+      if (observed_worlds.size() > 0) {
+        return rss_.GetSafetyReponse(observed_worlds[0]);
+      } else {
+        LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
+        return false;
+      }
+    } else {
+      LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
+      return false;
+    }
+  }
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);

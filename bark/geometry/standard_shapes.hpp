@@ -20,9 +20,9 @@ Polygon CarLimousine();
 Polygon CarRectangle();
 
 // Creates Car Rectangle from wheelbase l and collision radius r
-Polygon GenerateCarRectangle(float wheelbase, float collision_radius);
+Polygon GenerateCarRectangle(double wheelbase, double collision_radius);
 
-Polygon GenerateGoalRectangle(float length, float width);
+Polygon GenerateGoalRectangle(double length, double width);
 
 // TODO(@all): add more variants and objects here
 

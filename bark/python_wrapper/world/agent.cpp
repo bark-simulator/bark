@@ -91,7 +91,7 @@ void python_agent(py::module m) {
                         t[1].cast<bark::geometry::Polygon>(), nullptr,
                         PythonToGoalDefinition(t[10].cast<py::tuple>()));
             agent.SetAgentId(t[2].cast<AgentId>());
-            agent.SetFirstValidTimestamp(t[9].cast<float>());
+            agent.SetFirstValidTimestamp(t[9].cast<double>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
             return agent;
           }));

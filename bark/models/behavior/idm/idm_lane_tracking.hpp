@@ -50,6 +50,8 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     constant_lane_corr_ = lc;
   }
 
+  void CheckAccelerationLimits(double acc_lon, double acc_lat) const;
+
   friend class BaseIDM;
 
  private:

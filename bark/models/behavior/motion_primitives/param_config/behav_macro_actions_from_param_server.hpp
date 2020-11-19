@@ -39,7 +39,7 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
     const commons::ParamsPtr& params) {
   BehaviorModelPtr ego_prediction_model(new BehaviorMPMacroActions(params));
 
-  std::vector<float> acc_vec = params->GetListFloat(
+  std::vector<double> acc_vec = params->GetListFloat(
       "AccelerationInputs", "A list of acceleration ", {0, 1, 4, -1, -8});
 
   std::vector<std::shared_ptr<Primitive>> prim_vec;

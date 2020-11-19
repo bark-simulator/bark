@@ -105,7 +105,7 @@ TEST(behavior_rss, behavior_rss_system_test) {
   // First case, we start with the desired velocity. After num steps, we should
   // advance
   float ego_velocity = 0.0, rel_distance = 7.0, velocity_difference = 0.0;
-  float time_step = 0.2f;
+  float time_step = 0.2;
 
   // should place an agent on the left lane (-1.75)
   WorldPtr world =
@@ -157,6 +157,55 @@ TEST(behavior_rss, behavior_rss_system_test) {
   // assert that the velocity of the triggered agent is lower
   // ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] <
   // ego_agent->GetCurrentState()[4]);
+}
+
+TEST(behavior_rss, safety_corridor_length_test) {
+  auto params = std::make_shared<SetterParams>();
+  params->SetReal("BehaviorRSSConformant::MinimumSafetyCorridorLength", 180.0f);
+
+  // First case, we start with the desired velocity. After num steps, we should
+  // advance
+  float ego_velocity, rel_distance = 7.0, velocity_difference = 0.0;
+  float time_step = 0.2f;
+
+  // should place an agent on the left lane (-1.75)
+  WorldPtr world =
+      make_test_world(0, rel_distance, ego_velocity, velocity_difference);
+  auto ego_agent = world->GetAgents().begin()->second;
+  auto world_nominal = world;
+
+  // model
+  std::shared_ptr<BehaviorRSSConformant> behavior_rss =
+      std::make_shared<BehaviorRSSConformant>(params);
+  ego_agent->SetBehaviorModel(behavior_rss);
+  std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
+      std::make_shared<DummyRSSEvaluator>(0);
+  behavior_rss->SetEvaluator(rss_eval_do_not_trigger);
+
+  // simulate
+  FwSim(1, world_nominal);
+  auto safety_corr1 =
+      behavior_rss->GetBehaviorSafetyModel()->GetInitialLaneCorridor();
+  FwSim(1, world_nominal);
+  auto safety_corr2 =
+      behavior_rss->GetBehaviorSafetyModel()->GetInitialLaneCorridor();
+  EXPECT_EQ(safety_corr1, safety_corr2);  // not triggered -> equal
+
+  FwSim(10, world_nominal);
+  auto lcp = std::make_shared<bark::world::map::LaneCorridor>(
+      bark::world::map::LaneCorridor());
+  behavior_rss->GetBehaviorSafetyModel()->SetInitialLaneCorridor(lcp);
+  // trigger violation:
+  auto safety_corr3 =
+      behavior_rss->GetBehaviorSafetyModel()->GetInitialLaneCorridor();
+  EXPECT_NE(safety_corr1, safety_corr3);
+
+  // we are now below MinimumSafetyCorridorLength, the lane corridor is re-set
+  // in model:
+  FwSim(10, world_nominal);
+  auto safety_corr4 =
+      behavior_rss->GetBehaviorSafetyModel()->GetInitialLaneCorridor();
+  EXPECT_EQ(safety_corr1, safety_corr4);
 }
 
 TEST(behavior_rss, real_rss_evaluator) {
