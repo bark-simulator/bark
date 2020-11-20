@@ -398,8 +398,9 @@ bool RssInterface::GenerateRSSWorld(const ObservedWorld& observed_world,
   AgentPtr agent = observed_world.GetEgoAgent();
   AgentId agent_id = observed_world.GetEgoAgentId();
 
-  Point2d agent_goal;
-  bg::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
   models::dynamic::State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();
