@@ -5,7 +5,7 @@
         <userData>
             <vectorScene program="RoadRunner" version="2019.2.12 (build 5161c15)"/>
         </userData>
-        <offset x="0" y="-0.4" z="0" hdg="0.0"></offset>
+        <offset x="0" y="-0.9" z="0" hdg="0.0"></offset>
     </header>
     <road name="Road 0" length="7.3979999999999990e+1" id="0" junction="-1">
         <link>
