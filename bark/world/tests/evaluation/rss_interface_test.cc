@@ -178,7 +178,7 @@ TEST(rss_interface, test_rss_check) {
   ASSERT_TRUE(::ad::rss::state::isLateralSafe(snapshot.individualResponses[0]));
 }
 
-TEST(rss_interface, test_rss_planning_route) {
+TEST(rss_interface, test_rss_planning_route_chinese_merge) {
   auto params = std::make_shared<SetterParams>(false);
 
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
@@ -234,6 +234,52 @@ TEST(rss_interface, test_rss_planning_route) {
                   .laneInterval.laneId,
               lanes_id[i]);
   }
+}
+
+TEST(rss_interface, test_rss_planning_route_german_merge) {
+  auto params = std::make_shared<SetterParams>(false);
+
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+
+  Polygon shape = standard_shapes::CarRectangle();
+
+  Polygon polygon(
+      Pose(0, 0., 0),
+      std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
+                           Point2d(2, 2), Point2d(2, -2)});
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(925, 1005))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state << 0, 1000, 1006.6, 3.14, 10;
+  objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
+                                    shape, params, goal_definition_ptr));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent);
+
+  RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
+
+  Point2d agent_goal;
+  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,
+                            agent_goal);
+  State agent_state;
+  agent_state = agent->GetCurrentState();
+  Polygon agent_shape = agent->GetShape();
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+
+  ::ad::map::match::Object agent_match_object =
+      rss.GenerateMatchObject(agent_state, agent_shape);
+  ::ad::map::route::FullRoute agent_rss_route;
+  ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
+                                agent_rss_route));
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 3);
 }
 
 #endif
