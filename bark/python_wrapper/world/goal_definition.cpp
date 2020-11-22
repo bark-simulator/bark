@@ -55,7 +55,7 @@ void python_goal_definition(py::module m) {
              std::shared_ptr<GoalDefinitionStateLimits>>(
       m, "GoalDefinitionStateLimits")
       .def(py::init<>())
-      .def(py::init<const Polygon&, const std::pair<float, float>&>())
+      .def(py::init<const Polygon&, const std::pair<double, double>&>())
       .def("__repr__",
            [](const GoalDefinitionStateLimits& g) {
              return "bark.core.world.goal_definition.GoalDefinitionStateLimits";
@@ -74,16 +74,16 @@ void python_goal_definition(py::module m) {
               throw std::runtime_error(
                   "Invalid GoalDefinitionStateLimits state!");  // NOLINT
             return new GoalDefinitionStateLimits(
-                t[0].cast<Polygon>(), t[1].cast<std::pair<float, float>>());
+                t[0].cast<Polygon>(), t[1].cast<std::pair<double, double>>());
           }));
 
   py::class_<GoalDefinitionStateLimitsFrenet, GoalDefinition,
              std::shared_ptr<GoalDefinitionStateLimitsFrenet>>(
       m, "GoalDefinitionStateLimitsFrenet")
       .def(py::init<>())
-      .def(py::init<const bark::geometry::Line&, const std::pair<float, float>,
-                    const std::pair<float, float>,
-                    const std::pair<float, float>>())
+      .def(py::init<const bark::geometry::Line&, const std::pair<double, double>,
+                    const std::pair<double, double>,
+                    const std::pair<double, double>>())
       .def("__repr__",
            [](const GoalDefinitionStateLimitsFrenet& g) {
              return "bark.core.world.goal_definition."
@@ -115,9 +115,9 @@ void python_goal_definition(py::module m) {
                   "Invalid GoalDefinitionStateLimitsFrenet state!");
 
             return new GoalDefinitionStateLimitsFrenet(
-                t[0].cast<Line>(), t[1].cast<std::pair<float, float>>(),
-                t[2].cast<std::pair<float, float>>(),
-                t[3].cast<std::pair<float, float>>());
+                t[0].cast<Line>(), t[1].cast<std::pair<double, double>>(),
+                t[2].cast<std::pair<double, double>>(),
+                t[3].cast<std::pair<double, double>>());
           }));
 
   py::class_<GoalDefinitionSequential, GoalDefinition,

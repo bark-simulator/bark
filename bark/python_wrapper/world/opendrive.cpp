@@ -109,14 +109,14 @@ void python_opendrive(py::module m) {
       });
 
   py::class_<XodrLaneOffset>(m, "XodrLaneOffset")
-      .def(py::init<float, float, float, float>());
+      .def(py::init<double, double, double, double>());
 
   py::class_<XodrLaneWidth>(m, "XodrLaneWidth")
-      .def(py::init<float, float, XodrLaneOffset>());
+      .def(py::init<double, double, XodrLaneOffset>());
 
   py::class_<XodrLaneSection, std::shared_ptr<XodrLaneSection>>(
       m, "XodrLaneSection")
-      .def(py::init<float>())
+      .def(py::init<double>())
       .def("AddLane", &XodrLaneSection::AddLane, "Add lane element")
       .def("GetLanes", &XodrLaneSection::GetLanes, "Get all lane elements")
       .def("GetLaneByPosition", &XodrLaneSection::GetLaneByPosition,
@@ -152,6 +152,7 @@ void python_opendrive(py::module m) {
         &bark::world::tests::MakeXodrMapTwoRoadsOneLane);
   m.def("MakeXodrMapEndingLaneInParallel",
         &bark::world::tests::MakeXodrMapEndingLaneInParallel);
+  m.def("MakeXodrMapCurved", &bark::world::tests::MakeXodrMapCurved);
 
   py::class_<XodrLaneLink>(m, "XodrLaneLink")
       .def(py::init<>())

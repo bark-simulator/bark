@@ -16,8 +16,7 @@ namespace goal_definition {
 bool GoalDefinitionStateLimits::AtGoal(
     const bark::world::objects::Agent& agent) {
   const auto agent_state = agent.GetCurrentState();
-  auto agent_angle = bark::geometry::Norm0To2PI(
-      agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION]);
+  auto agent_angle = agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION];
   const bark::geometry::Point2d agent_pos = agent.GetCurrentPosition();
   return (bark::geometry::Within(agent_pos, xy_limits_) &&
           agent_angle >= angle_limits_.first &&

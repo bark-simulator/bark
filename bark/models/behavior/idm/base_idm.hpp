@@ -17,6 +17,7 @@
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/models/dynamic/single_track.hpp"
 
 namespace bark {
 namespace models {
@@ -26,6 +27,7 @@ using bark::geometry::Point2d;
 using bark::world::ObservedWorld;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
+using bark::models::dynamic::AccelerationLimits;
 
 struct IDMRelativeValues {
   double leading_distance;
@@ -43,7 +45,7 @@ class BaseIDM : virtual public BehaviorModel {
 
   virtual ~BaseIDM() {}
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(double delta_time,
                           const ObservedWorld& observed_world);
 
   double CalcFreeRoadTerm(const double vel_ego) const;
@@ -86,63 +88,62 @@ class BaseIDM : virtual public BehaviorModel {
       const LaneCorridorPtr& lane_corr) const;
 
   //! Getter and Setter
-  virtual float GetMinVelocity() const { return param_min_velocity_; }
-  virtual float GetMaxVelocity() const { return param_max_velocity_; }
+  virtual double GetMinVelocity() const { return param_min_velocity_; }
+  virtual double GetMaxVelocity() const { return param_max_velocity_; }
   const double GetDesiredVelocity() const {
     return param_desired_velocity_;
   }  // unit is meter/second
-  const float GetMinimumSpacing() const {
+  const double GetMinimumSpacing() const {
     return param_minimum_spacing_;
   }  // unit is meter
-  const float GetDesiredTimeHeadway() const {
+  const double GetDesiredTimeHeadway() const {
     return param_desired_time_head_way_;
   }  // unit is seconds
-  const float GetMaxAcceleration() const {
+  const float GetLonAccelerationMax() const {
     return param_max_acceleration_;
   }  // unit is meter/second^2
-  const float GetAccelerationLowerBound() const {
-    return param_acceleration_lower_bound_;
-  }
-  const float GetAccelerationUpperBound() const {
-    return param_acceleration_upper_bound_;
-  }
   const int GetNumTrajectoryTimePoints() const {
     return num_trajectory_time_points_;
   }
-  const float GetComfortableBrakingAcceleration() const {
+  const double GetComfortableBrakingAcceleration() const {
     return param_comfortable_braking_acceleration_;
   }  // unit is meter/second^2
   const int GetExponent() const { return param_exponent_; }
-  const float GetCoolnessFactor() const { return param_coolness_factor_; }
+  const double GetCoolnessFactor() const { return param_coolness_factor_; }
   LaneCorridorPtr GetLaneCorridor() const { return lane_corr_; }
   void SetLaneCorridor(const LaneCorridorPtr& lane_corr) {
     lane_corr_ = lane_corr;
   }
 
+  AccelerationLimits GetAccelerationLimits() const { return acceleration_limits_; }
+
+  void SetAccelerationLimits(const AccelerationLimits& acc_lim) { 
+    acceleration_limits_ = acc_lim; 
+  }
+
  protected:
   // Parameters
-  float param_minimum_spacing_;
-  float param_desired_time_head_way_;
-  float param_max_acceleration_;
-  float param_acceleration_lower_bound_;
-  float param_acceleration_upper_bound_;
-  float param_desired_velocity_;
-  float param_comfortable_braking_acceleration_;
-  float param_min_velocity_;
-  float param_max_velocity_;
+  double param_minimum_spacing_;
+  double param_desired_time_head_way_;
+  double param_max_acceleration_;
+  double param_desired_velocity_;
+  double param_comfortable_braking_acceleration_;
+  double param_min_velocity_;
+  double param_max_velocity_;
+  AccelerationLimits acceleration_limits_;
   int param_exponent_;
   int num_trajectory_time_points_;
   LaneCorridorPtr lane_corr_;
 
   // IDM extension to stop at the end of the LaneCorridor
   bool brake_lane_end_;
-  float brake_lane_end_enabled_distance_;
-  float brake_lane_end_distance_offset_;
+  double brake_lane_end_enabled_distance_;
+  double brake_lane_end_distance_offset_;
 
   // constant acceleration heuristic
   // according chapter 11. Car-Following Models based on Driving Strategies
   // in "Traffic Flow Dynamics" by M.Treiber and A.Kesting
-  float param_coolness_factor_;
+  double param_coolness_factor_;
 };
 
 }  // namespace behavior

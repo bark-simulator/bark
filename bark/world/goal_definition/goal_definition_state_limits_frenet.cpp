@@ -19,16 +19,15 @@ using bark::geometry::GetNearestPointAndS;
 using bark::geometry::GetPointAtS;
 using bark::geometry::GetTangentAngleAtS;
 using bark::geometry::Line;
-using bark::geometry::Norm0To2PI;
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
 
 GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(
     const Line& center_line,
-    const std::pair<float, float> max_lateral_distances,
-    const std::pair<float, float> max_orientation_differences,
-    const std::pair<float, float> velocity_range)
+    const std::pair<double, double> max_lateral_distances,
+    const std::pair<double, double> max_orientation_differences,
+    const std::pair<double, double> velocity_range)
     : GoalDefinition(),
       center_line_(center_line),
       max_lateral_distances_(max_lateral_distances),
@@ -50,8 +49,7 @@ GoalDefinitionStateLimitsFrenet::GoalDefinitionStateLimitsFrenet(
 bool GoalDefinitionStateLimitsFrenet::AtGoal(
     const bark::world::objects::Agent& agent) {
   const auto agent_state = agent.GetCurrentState();
-  const auto agent_angle = Norm0To2PI(
-      agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION]);
+  const auto agent_angle = agent_state[bark::models::dynamic::StateDefinition::THETA_POSITION];
   const Point2d agent_pos = agent.GetCurrentPosition();
   const auto agent_velocity =
       agent_state[bark::models::dynamic::StateDefinition::VEL_POSITION];
@@ -69,7 +67,7 @@ bool GoalDefinitionStateLimitsFrenet::AtGoal(
       GetNearestPointAndS(center_line_, agent_pos);
   const auto tangent_angle =
       GetTangentAngleAtS(center_line_, std::get<double>(nearest_point));
-  const auto tangent_angle_normalized = Norm0To2PI(tangent_angle);
+  const auto tangent_angle_normalized = tangent_angle;
   const auto angle_diff = tangent_angle_normalized - agent_angle;
 
   if (angle_diff <= max_orientation_differences_.first &&

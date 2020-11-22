@@ -15,7 +15,7 @@ namespace execution {
 
 struct OptimizationSettings {
   int num_optimization_steps;
-  float dt;
+  double dt;
 };
 
 }  // namespace execution

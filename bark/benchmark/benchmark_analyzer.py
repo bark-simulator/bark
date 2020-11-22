@@ -16,6 +16,9 @@ class BenchmarkAnalyzer:
       self._benchmark_result = benchmark_result
       self._data_frame = benchmark_result.get_data_frame()
 
+  def get_benchmark_result(self):
+    return self._benchmark_result
+
   def get_scenario_ids(self, config_idx_list):
       scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]
       scen_df_copy = scenario_idxs.copy()
@@ -81,7 +84,10 @@ class BenchmarkAnalyzer:
               histories = self._benchmark_result.get_history(config_idx)
               histories_collected[viewer_idx] = histories
 
-              if len(histories) == 0:
+              if benchmark_config is None :
+                return
+
+              if histories is None or len(histories) == 0:
                 logging.info("No histories for config idx {}. Skipping....".format(config_idx))
 
               if real_time_factor:

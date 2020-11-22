@@ -13,7 +13,7 @@ from bark.core.world.agent import Agent
 from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
-from bark.core.geometry import Point2d, Polygon2d, Norm0To2PI
+from bark.core.geometry import Point2d, Polygon2d, NormToPI
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
@@ -23,19 +23,22 @@ import numpy as np
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 
 
-def BarkStateFromMotionState(state, time_offset=0):
+def BarkStateFromMotionState(state, xy_offset, time_offset=0):
     bark_state = np.zeros(int(StateDefinition.MIN_STATE_SIZE))
     bark_state[int(StateDefinition.TIME_POSITION)] = (
         state.time_stamp_ms - time_offset) / 1000.0
-    bark_state[int(StateDefinition.X_POSITION)] = state.x
-    bark_state[int(StateDefinition.Y_POSITION)] = state.y
-    bark_state[int(StateDefinition.THETA_POSITION)] = Norm0To2PI(state.psi_rad)
+    bark_state[int(StateDefinition.X_POSITION)] = state.x + xy_offset[0]
+    bark_state[int(StateDefinition.Y_POSITION)] = state.y + xy_offset[1]
+    orientation = NormToPI(state.psi_rad)
+    if (orientation > np.pi or orientation < -np.pi):
+      logging.error("Orientation in Track file is ill-defined: {}".format(state.psi_rad))
+    bark_state[int(StateDefinition.THETA_POSITION)] = orientation
     bark_state[int(StateDefinition.VEL_POSITION)] = pow(
         pow(state.vx, 2) + pow(state.vy, 2), 0.5)
     return bark_state.reshape((1, int(StateDefinition.MIN_STATE_SIZE)))
 
 
-def TrajectoryFromTrack(track, start=0, end=None):
+def TrajectoryFromTrack(track, xy_offset, start=0, end=None):
     states = list(dict_utils.get_item_iterator(track.motion_states))
     if end is None:
         end = states[-1][0]
@@ -45,7 +48,8 @@ def TrajectoryFromTrack(track, start=0, end=None):
     traj = np.zeros((n, int(StateDefinition.MIN_STATE_SIZE)))
     for i, state in enumerate(filtered_motion_states):
         # TODO: rename start to be the scenario start time!
-        traj[i, :] = BarkStateFromMotionState(state[1], start)
+        traj[i, :] = BarkStateFromMotionState(
+            state[1], xy_offset=xy_offset, time_offset=start)
     return traj
 
 
@@ -63,21 +67,22 @@ def ShapeFromTrack(track, wheelbase=2.7):
     return poly
 
 
-def InitStateFromTrack(track, start):
+def InitStateFromTrack(track, xy_offset, start):
     minimum_start = min(track.motion_states)
     if minimum_start > start:
         start = minimum_start
     state = track.motion_states[int(start)]
-    bark_state = BarkStateFromMotionState(state, state.time_stamp_ms)
+    bark_state = BarkStateFromMotionState(
+        state, xy_offset=xy_offset, time_offset=state.time_stamp_ms)
     return bark_state.reshape((int(StateDefinition.MIN_STATE_SIZE), 1))
 
 
-def GoalDefinitionFromTrack(track, end):
+def GoalDefinitionFromTrack(track, end, xy_offset):
     goal_size = 12.0
     states = list(dict_utils.get_item_iterator(track.motion_states))
     # Goal position is spatial position of last state
     motion_state = states[-1][1]
-    bark_state = BarkStateFromMotionState(motion_state)
+    bark_state = BarkStateFromMotionState(motion_state, xy_offset=xy_offset)
     goal_polygon = Polygon2d(np.array([0.5 * goal_size, 0.5 * goal_size, 0.0]),
                              [Point2d(0.0, 0.0),
                               Point2d(goal_size, 0.0),
@@ -91,8 +96,8 @@ def GoalDefinitionFromTrack(track, end):
     return goal_definition
 
 
-def BehaviorFromTrack(track, params, start, end):
-    return BehaviorStaticTrajectory(params, TrajectoryFromTrack(track, start, end))
+def BehaviorFromTrack(track, params, xy_offset, start, end):
+    return BehaviorStaticTrajectory(params, TrajectoryFromTrack(track, xy_offset=xy_offset, start=start, end=end))
 
 
 class InteractionDatasetReader:
@@ -124,6 +129,9 @@ class InteractionDatasetReader:
         track_id = agent_track_info.GetTrackId()  # track_params["track_id"]
         agent_id = agent_track_info.GetTrackId()
         track = self.TrackFromTrackfile(fname, track_id)
+
+        xy_offset = scenario_track_info.GetXYOffset()
+
         start_time = scenario_track_info.GetStartTs()
         end_time = scenario_track_info.GetEndTs()
 
@@ -132,12 +140,12 @@ class InteractionDatasetReader:
         if behavior_model is None:
             # each agent need's its own param server
             behavior = BehaviorFromTrack(track, param_server.AddChild(
-                "agent{}".format(agent_id)), start_time, end_time)
+                "agent{}".format(agent_id)), xy_offset, start_time, end_time)
         else:
             behavior = behavior_model
 
         try:
-            initial_state = InitStateFromTrack(track, start_time)
+            initial_state = InitStateFromTrack(track, xy_offset, start_time)
         except:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
                 agent_id, start_time))
@@ -167,7 +175,7 @@ class InteractionDatasetReader:
             execution_model,
             vehicle_shape,
             param_server.AddChild("agent{}".format(agent_id)),
-            GoalDefinitionFromTrack(track, end_time),
+            GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset),
             track_params["map_interface"])
         # set agent id from track
         bark_agent.SetAgentId(track_id)

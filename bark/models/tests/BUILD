@@ -132,7 +132,10 @@ cc_test(
     srcs = [
         "behavior_rss_test.cc",
     ],
-    copts = ["-Iexternal/gtest/include"],
+    copts = ["-Iexternal/gtest/include"] + select({
+        "//bark/world/evaluation/rss:_rss": ["-D RSS"],
+        "//conditions:default": [],
+    }),
     deps = [        
         "//bark/geometry",
         "//bark/models/behavior/behavior_safety:behavior_safety",

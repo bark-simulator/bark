@@ -35,10 +35,27 @@ XodrLane::XodrLane(const XodrLanePosition& lane_position)
       speed_() {}
 
 bool XodrLane::append(geometry::Line previous_line,
-                      XodrLaneWidth lane_width_current, float s_inc) {
+                      XodrLaneWidth lane_width_current, double s_inc) {
+  double s_max_delta =
+      0.001;  // this parameter has to be small!!! otherwise, the line will be
+              // too discrete, and this will cause problems for the next line
+              // creation with an offset
+
+  if (boost::geometry::intersects(previous_line.obj_)) {
+    LOG(ERROR) << "Previous Line in XodrLane::apend is already intersecting";
+  }
+
   geometry::Line tmp_line = CreateLineWithOffsetFromLine(
-      previous_line, lane_position_, lane_width_current, s_inc);
+      previous_line, lane_position_, lane_width_current, s_inc, s_max_delta);
+
+  if (boost::geometry::intersects(tmp_line.obj_)) {
+    LOG(ERROR) << "CreateLineWithOffsetFromLine yields intersecting line";
+  }
   line_.AppendLinestring(tmp_line);
+
+  if (boost::geometry::intersects(line_.obj_)) {
+    LOG(ERROR) << "XodrLane line has self-intersection";
+  }
   return true;
 }
 

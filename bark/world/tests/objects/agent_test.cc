@@ -46,12 +46,12 @@ params)); WorldPtr world(new World(params));
        //! new plan view
     PlanView p_1;
     //! add line
-    p_1.AddLine(Point2d(0.0f,0.0f), 0.0, 25.0f);
-    p_1.AddLine(Point2d(25.0f,0.0f), 0.0, 25.0f);
+    p_1.AddLine(Point2d(0.0,0.0), 0.0, 25.0, 25.0);
+    p_1.AddLine(Point2d(25.0,0.0), 0.0, 25.0, 25.0);
 
     //! lane sections
-    XodrLaneSection section_1(0.0f);
-    XodrLaneSection section_2(30.0f);
+    XodrLaneSection section_1(0.0);
+    XodrLaneSection section_2(30.0);
 
     XodrLaneOffset off = {1.5, 0, 0, 0};
     XodrLaneWidths lane_widths_1 = {{0, 30, off}};

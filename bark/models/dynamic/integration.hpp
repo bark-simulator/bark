@@ -20,15 +20,15 @@ namespace dynamic {
 inline State euler_int(const DynamicModel& model,
                 const State &x,
                 const Input &u,
-                float dt) {
+                double dt) {
   State new_x = x + dt * model.StateSpaceModel(x, u);
   new_x(StateDefinition::THETA_POSITION) =
-      geometry::Norm0To2PI(new_x(StateDefinition::THETA_POSITION));
+      geometry::NormToPI(new_x(StateDefinition::THETA_POSITION));
   return new_x;
 }
 
 inline State rk4(const DynamicModel& model, const State& x, const Input& u,
-                 float dt) {
+                 double dt) {
   State k0 = dt * model.StateSpaceModel(x, u);
   State k1 = dt * model.StateSpaceModel(x + k0 / 2, u);
   State k2 = dt * model.StateSpaceModel(x + k1 / 2, u);

@@ -28,7 +28,7 @@ class BehaviorModel : public bark::commons::BaseType {
         last_action_(),
         behavior_status_(status) {}
   ...
-  virtual Trajectory Plan(float min_planning_time,
+  virtual Trajectory Plan(double min_planning_time,
                           const ObservedWorld& observed_world) = 0;
  private:
   dynamic::Trajectory last_trajectory_;
@@ -81,7 +81,7 @@ class ExecutionModel : public commons::BaseType {
     last_trajectory_ = trajectory;
   }
 
-  virtual Trajectory Execute(const float& new_world_time,
+  virtual Trajectory Execute(const double& new_world_time,
                              const Trajectory& trajectory,
                              const DynamicModelPtr dynamic_model,
                              const State current_state) = 0;
@@ -167,8 +167,8 @@ class SingleTrackModel : public DynamicModel {
   double wheel_base_;
   double steering_angle_max_;
   double lat_acceleration_max_;
-  float lon_acceleration_max_;
-  float lon_acceleration_min_;
+  double lon_acceleration_max_;
+  double lon_acceleration_min_;
 };
 ```
 

@@ -39,7 +39,7 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
     const FrenetPosition& ego_frenet,
     const std::shared_ptr<const Agent>& leading_agent,
     const FrenetPosition& leading_frenet) const {
-  const float vehicle_length =
+  const double vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
   const double net_distance =
       leading_frenet.lon - vehicle_length - ego_frenet.lon;
@@ -48,7 +48,7 @@ double BehaviorMobil::CalcNetDistanceFromFrenet(
 
 double BehaviorMobil::CalcLongRawAccWithoutLeader(
     const world::LaneCorridorPtr& lane_corridor,
-    const bark::geometry::Point2d& pos, const float vel) const {
+    const bark::geometry::Point2d& pos, const double vel) const {
   double acc;
   if (stop_at_lane_ending_) {
     // TODO(@hart): change to parameter
@@ -56,7 +56,7 @@ double BehaviorMobil::CalcLongRawAccWithoutLeader(
     // setting vel_other to zero
     acc = BaseIDM::CalcRawIDMAcc(net_distance, vel, 0.0);
   } else {
-    acc = BaseIDM::GetMaxAcceleration() * BaseIDM::CalcFreeRoadTerm(vel);
+    acc = BaseIDM::GetLonAccelerationMax() * BaseIDM::CalcFreeRoadTerm(vel);
   }
   return acc;
 }
@@ -69,7 +69,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
   std::shared_ptr<const Agent> ego_agent = observed_world.GetEgoAgent();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
 
-  const float vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
+  const double vel_ego = ego_agent->GetCurrentState()(VEL_POSITION);
   const LaneCorridorPtr current_corridor = observed_world.GetLaneCorridor();
 
   FrontRearAgents agents_current_lane = observed_world.GetAgentFrontRear();
@@ -92,7 +92,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
         leader_current.first->GetCurrentState()(VEL_POSITION));
 
   } else {
-    // acc_c_before = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+    // acc_c_before = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
     acc_c_before = CalcLongRawAccWithoutLeader(
         current_corridor, ego_agent->GetCurrentPosition(), vel_ego);
   }
@@ -123,7 +123,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           dist_o_after, vel_follower_current,
           leader_current.first->GetCurrentState()(VEL_POSITION));
     } else {
-      // acc_o_after = GetMaxAcceleration() *
+      // acc_o_after = GetLonAccelerationMax() *
       // CalcFreeRoadTerm(follower_current.first->GetCurrentState()(VEL_POSITION));
       acc_o_after = CalcLongRawAccWithoutLeader(
           current_corridor, follower_current.first->GetCurrentPosition(),
@@ -164,14 +164,14 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           leader_right.first->GetCurrentState()(VEL_POSITION));
 
     } else {
-      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
       acc_c_after = CalcLongRawAccWithoutLeader(
           right_corridor, ego_agent->GetCurrentPosition(), vel_ego);
     }
 
     // TODO(@Klemens): is this correct?
     if (leader_current.first && asymmetric_passing_rules_) {
-      float vel_leader_left =
+      double vel_leader_left =
           leader_current.first->GetCurrentState()(VEL_POSITION);
 
       // Passing on the right is disallowed, therefore if the ego vehicle is
@@ -200,7 +200,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
             dist_n_before, vel_follower_right,
             leader_right.first->GetCurrentState()(VEL_POSITION));
       } else {
-        // acc_n_before = GetMaxAcceleration() *
+        // acc_n_before = GetLonAccelerationMax() *
         // CalcFreeRoadTerm(vel_follower_right);
         acc_n_before = CalcLongRawAccWithoutLeader(
             right_corridor, follower_right.first->GetCurrentPosition(),
@@ -284,14 +284,14 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
           dist_c_after, vel_ego,
           leader_left.first->GetCurrentState()(VEL_POSITION));
     } else {
-      // acc_c_after = GetMaxAcceleration() * CalcFreeRoadTerm(vel_ego);
+      // acc_c_after = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_ego);
       acc_c_after = CalcLongRawAccWithoutLeader(
           left_corridor, ego_agent->GetCurrentPosition(), vel_ego);
     }
 
     // TODO(@Klemens): is this correct?
     if (leader_left.first && asymmetric_passing_rules_) {
-      float vel_leader_left =
+      double vel_leader_left =
           leader_left.first->GetCurrentState()(VEL_POSITION);
       // Passing on the right is disallowed, therefore if the ego vehicle is
       // faster than the leading vehicle on the left lane, its acceleration on
@@ -319,7 +319,7 @@ BehaviorMobil::CheckIfLaneChangeBeneficial(
             dist_n_before, vel_follower_left,
             leader_left.first->GetCurrentState()(VEL_POSITION));
       } else {
-        // acc_n_before = GetMaxAcceleration() *
+        // acc_n_before = GetLonAccelerationMax() *
         // CalcFreeRoadTerm(vel_follower_left);
         acc_n_before = CalcLongRawAccWithoutLeader(
             left_corridor, follower_left.first->GetCurrentPosition(),

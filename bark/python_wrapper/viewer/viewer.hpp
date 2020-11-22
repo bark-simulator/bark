@@ -22,17 +22,17 @@ class PyViewer : public Viewer {
  public:
   using Viewer::Viewer;
   void drawPoint2d(const Point2d& point2d, const Color& color,
-                   const float& alpha) override {
+                   const double& alpha) override {
     PYBIND11_OVERLOAD_PURE(void, Viewer, drawPoint2d, point2d, color, alpha);
   }
 
   void drawLine2d(const Line& line, const Color& color,
-                  const float& alpha) override {
+                  const double& alpha) override {
     PYBIND11_OVERLOAD_PURE(void, Viewer, drawLine2d, line, color, alpha);
   }
 
   void drawPolygon2d(const Polygon& polygon, const Color& color,
-                     const float& alpha) override {
+                     const double& alpha) override {
     PYBIND11_OVERLOAD_PURE(void, Viewer, drawPolygon2d, polygon, color, alpha);
   }
 };

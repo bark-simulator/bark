@@ -195,7 +195,7 @@ TEST(observed_world, agent_in_front_other_lane) {
       road_corridor4->GetLeftRightLaneCorridor(ego_pos4);
   const LaneCorridorPtr& lane_corridor4 = left_right_lane_corridor.first;
   BARK_EXPECT_TRUE(lane_corridor4 != nullptr);
-  EXPECT_EQ(3.5f, lane_corridor4->GetLaneWidth(ego_pos4));
+  EXPECT_EQ(3.5, lane_corridor4->GetLaneWidth(ego_pos4));
 
   // in the lane corridor left of agent4, there is agent2 in front
   FrontRearAgents fr_vehicle4b =
@@ -268,7 +268,7 @@ TEST(observed_world, predict) {
   auto params = std::make_shared<SetterParams>();
   params->SetReal("integration_time_delta", 0.01);
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  float ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
+  double ego_velocity = 5.0, rel_distance = 7.0, velocity_difference = 0.0;
   auto observed_world = make_test_observed_world(1, rel_distance, ego_velocity,
                                                  velocity_difference);
   for (const auto& agent : observed_world.GetAgents()) {
@@ -279,7 +279,7 @@ TEST(observed_world, predict) {
   BehaviorModelPtr prediction_model(new BehaviorConstantAcceleration(params));
   PredictionSettings prediction_settings(prediction_model, prediction_model);
   observed_world.SetupPrediction(prediction_settings);
-  WorldPtr predicted_world = observed_world.Predict(1.0f);
+  WorldPtr predicted_world = observed_world.Predict(1.0);
   ObservedWorldPtr observed_predicted_world =
       std::dynamic_pointer_cast<ObservedWorld>(predicted_world);
   double distance_ego =
@@ -293,12 +293,12 @@ TEST(observed_world, predict) {
 
   // distance current and predicted state should be
   // velocity x prediction time span
-  EXPECT_NEAR(distance_ego, ego_velocity * 1.0f, 0.06);
+  EXPECT_NEAR(distance_ego, ego_velocity * 1.0, 0.06);
   EXPECT_NEAR(distance_other,
               observed_world.GetOtherAgents()
                       .begin()
                       ->second->GetCurrentState()[VEL_POSITION] *
-                  1.0f,  // NOLINT
+                  1.0,  // NOLINT
               0.06);
 
   // predict ego agent with motion primitive model
@@ -323,24 +323,24 @@ TEST(observed_world, predict) {
                                           others_prediction_model);
   observed_world.SetupPrediction(prediction_settings2);
   WorldPtr predicted_world2 =
-      observed_world.Predict(1.0f, DiscreteAction(idx1));
+      observed_world.Predict(1.0, DiscreteAction(idx1));
   auto ego_pred_velocity =
       std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)
           ->CurrentEgoState()[StateDefinition::VEL_POSITION];  // NOLINT
   // distance current and predicted state should be velocity
   // + prediction time span
-  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2 * 1.0f, 0.05);
+  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2 * 1.0, 0.05);
 
   // We should get the same results with Predict of Agent Map
   std::unordered_map<AgentId, DiscreteAction> agent_action_map;
   agent_action_map.insert(
       {observed_world.GetEgoAgentId(), DiscreteAction(idx1)});
 
-  predicted_world2 = observed_world.Predict(1.0f, agent_action_map);
+  predicted_world2 = observed_world.Predict(1.0, agent_action_map);
   ego_pred_velocity =
       std::dynamic_pointer_cast<ObservedWorld>(predicted_world2)
           ->CurrentEgoState()[StateDefinition::VEL_POSITION];  // NOLINT
   // distance current and predicted state should be velocity
   // + prediction time span
-  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2 * 1.0f, 0.05);
+  EXPECT_NEAR(ego_pred_velocity, ego_velocity + 2 * 1.0, 0.05);
 }

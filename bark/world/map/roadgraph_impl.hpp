@@ -58,7 +58,7 @@ std::vector<XodrLaneId> Roadgraph::FindPath(const XodrLaneId& startid,
 
     std::vector<int> d(num_vertices);
 
-    boost::property_map<FilteredXodrLaneGraph, float XodrLaneEdge::*>::type
+    boost::property_map<FilteredXodrLaneGraph, double XodrLaneEdge::*>::type
         weightmap = boost::get(&XodrLaneEdge::weight, fg);
 
     boost::dijkstra_shortest_paths(

@@ -26,30 +26,31 @@ class PlanView {
   ~PlanView() {}
 
   //! setter functions
-  bool AddLine(Point2d start_point, float heading, float length);
+  bool AddLine(Point2d start_point, double heading, double length,
+               double s_inc);
 
-  bool AddSpiral(Point2d start_point, float heading, float length,
-                 float curvStart, float curvEnd, float s_inc = 2.0f);
+  bool AddSpiral(Point2d start_point, double heading, double length,
+                 double curvStart, double curvEnd, double s_inc = 2.0);
 
-  bool AddArc(Point2d start_point, float heading, float length, float curvature,
-              float s_inc = 2.0f);
+  bool AddArc(Point2d start_point, double heading, double length, double curvature,
+              double s_inc = 2.0);
 
-  void CalcArcPosition(const float s, float initial_heading, float curvature,
-                       float& dx, float& dy);
+  void CalcArcPosition(const double s, double initial_heading, double curvature,
+                       double& dx, double& dy);
 
   //! getter functions
   Line GetReferenceLine() const { return reference_line_; }
 
-  bool ApplyOffsetTransform(float x, float y, float hdg);
+  bool ApplyOffsetTransform(double x, double y, double hdg);
 
-  float GetLength() const { return length_; }
-  float GetDistance(const Point2d& p) const {
+  double GetLength() const { return length_; }
+  double GetDistance(const Point2d& p) const {
     return boost::geometry::distance(reference_line_.obj_, p);
   }
 
  private:
   Line reference_line_;  // sequential build up
-  float length_;
+  double length_;
 };
 
 using PlanViewPtr = std::shared_ptr<PlanView>;

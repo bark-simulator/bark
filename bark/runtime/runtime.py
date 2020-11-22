@@ -37,10 +37,11 @@ class Runtime(PyRuntime):
     self._viewer.Reset()
 
   def step(self):
-    assert(self._reset_has_been_called==True)
+    assert(self._reset_has_been_called == True)
     self._world.Step(self._step_time)
+
     if self._render:
-      self.render()
+        self.render()
 
   def render(self):
     # self._viewer.clear()

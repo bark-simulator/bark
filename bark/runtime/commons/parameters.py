@@ -243,10 +243,10 @@ class ParameterServer(Params):
           if isinstance(value, float) or isinstance(value, int) \
               or isinstance(value,bool) or isinstance(value, str):
               return True
-          # list float
+          # list double
           elif isinstance(value, list) and all(isinstance(el, float) for el in value):
             return True
-          # list list float
+          # list list double
           elif isinstance(value, list):
               for el in value:
                 if not isinstance(el, list):
@@ -305,9 +305,6 @@ class ParameterServer(Params):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
     
     def GetListFloat(self, param_name, description, default_value):
-        return self.GetValFromString(param_name, description, default_value, self.log_if_default)
-
-    def GetMapAgentIdListFloat(self, param_name, description, default_value):
         return self.GetValFromString(param_name, description, default_value, self.log_if_default)
 
     def GetString(self, param_name, description, default_value):

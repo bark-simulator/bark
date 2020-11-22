@@ -6,7 +6,7 @@ py_binary(
         ],
   data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data',
-          '//examples:params'],
+          '//bark/examples:params'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:matplotlib_viewer",

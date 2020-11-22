@@ -16,6 +16,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
     LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.examples.paths import Data
 from bark.core.models.behavior import *
 
 try:
@@ -25,8 +26,7 @@ except:
         "This example requires building RSS, please run with \"bazel run //examples:highway_rss --define rss=true\"")
 
 # parameters
-param_server = ParameterServer(
-    filename="examples/params/highway_merge_configurable.json")
+param_server = ParameterServer(filename=Data.params_data("highway_merge_configurable"))
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
@@ -65,13 +65,12 @@ right_lane = HighwayLaneCorridorConfig(params=param_server,
                                        lane_corridor_id=1,
                                        controlled_ids=True)
 
-map_path = "bark/runtime/tests/data/city_highway_straight.xodr"
 
 # create 5 scenarios
 scenarios = \
     ConfigWithEase(
         num_scenarios=5,
-        map_file_name=map_path,
+        map_file_name=Data.xodr_data("city_highway_straight"),
         random_seed=0,
         params=param_server,
         lane_corridor_configs=[left_lane, right_lane])
@@ -111,14 +110,6 @@ env = Runtime(step_time=0.2,
 # Detailed explanation please see:
 # https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
 
-# Default dynamics for every agent if it is not defined indivually
-default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
-
-# Indivually dynamics, each defined with the agent id
-agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
-                           2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
-
-
 def print_rss_safety_response(evaluator_rss, world):
     # Example of using RSS to evaluate the safety situation of the evaluating agent.
     # The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
@@ -130,11 +121,7 @@ def print_rss_safety_response(evaluator_rss, world):
     #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
-param_server["EvalutaorRss"]["MapFilename"] = map_path
-param_server["EvalutaorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
-param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
-
+param_server["EvaluatorRss"]["MapFilename"] = Data.xodr_data("city_highway_straight")
 
 # run 3 scenarios
 for episode in range(0, 3):
@@ -142,11 +129,6 @@ for episode in range(0, 3):
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
 
-    # There are two ways to upset EvaluatorRSS
-    # evaluator_rss = EvaluatorRSS(eval_agent_id, map_path,
-    #                              default_vehicle_dynamics,
-    #                              agents_vehicle_dynamics,
-    #                              checking_relevent_range=1)
     evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
 
     current_world.AddEvaluator("rss", evaluator_rss)

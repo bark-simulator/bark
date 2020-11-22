@@ -54,7 +54,7 @@ enum XodrLaneEdgeType {
 
 struct XodrLaneEdge {
   XodrLaneEdgeType edge_type;
-  float weight;  //! @todo tobias: for shortest path calculation: a very basic
+  double weight;  //! @todo tobias: for shortest path calculation: a very basic
                  //! implementation!
   XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}

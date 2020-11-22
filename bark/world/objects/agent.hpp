@@ -76,12 +76,12 @@ class Agent : public Object {
   /**
    * @brief  Calls the behavior model of the agent
    */
-  void PlanBehavior(const float& dt, const ObservedWorld& observed_world);
+  void PlanBehavior(const double& dt, const ObservedWorld& observed_world);
 
   /**
    * @brief  Calls the execution model of the agent
    */
-  void PlanExecution(const float& world_time);
+  void PlanExecution(const double& world_time);
 
   /**
    * @brief  Updates the agent states based on the execution model
@@ -96,7 +96,7 @@ class Agent : public Object {
   /**
    * @brief  Checks is valid at the given world time
    */
-  bool IsValidAtTime(const float& world_time) const;
+  bool IsValidAtTime(const double& world_time) const;
 
   //! Getter
   BehaviorModelPtr GetBehaviorModel() const { return behavior_model_; }
@@ -138,8 +138,12 @@ class Agent : public Object {
   ExecutionStatus GetExecutionStatus() const {
     return execution_model_->GetExecutionStatus();
   }
-  float GetFirstValidTimestamp() const {
+  double GetFirstValidTimestamp() const {
     return first_valid_timestamp_;
+  }
+
+  int GetMaxHistoryLength() const {
+    return max_history_length_;
   }
 
   //! Setter
@@ -167,7 +171,7 @@ class Agent : public Object {
     road_corridor_ = road_corridor;
   }
 
-  void SetFirstValidTimestamp(const float first_valid_timestamp) {
+  void SetFirstValidTimestamp(const double first_valid_timestamp) {
     first_valid_timestamp_ = first_valid_timestamp;
   }
 
@@ -181,7 +185,7 @@ class Agent : public Object {
   StateActionHistory history_;
   uint32_t max_history_length_;
   GoalDefinitionPtr goal_definition_;
-  float first_valid_timestamp_;
+  double first_valid_timestamp_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;

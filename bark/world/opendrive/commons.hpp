@@ -56,10 +56,10 @@ inline std::string print(const XodrRoadLink& l) {
 }
 
 struct XodrLaneOffset {
-  float a, b, c, d;
+  double a, b, c, d;
 };
 
-inline float Polynom(float x, float a, float b, float c, float d) {
+inline double Polynom(double x, double a, double b, double c, double d) {
   return a + b * x + c * x * x + d * x * x * x;
 }
 
@@ -151,7 +151,7 @@ enum XodrRoadMarkColor {
 struct XodrRoadMark {
   roadmark::XodrRoadMarkType type_;
   roadmark::XodrRoadMarkColor color_;
-  float width_;
+  double width_;
 };
 
 inline std::string print(const XodrRoadMark& r) {
@@ -162,29 +162,26 @@ inline std::string print(const XodrRoadMark& r) {
 }
 
 struct XodrLaneWidth {
-  float s_start;
-  float s_end;
+  double s_start;
+  double s_end;
   XodrLaneOffset off;
 };
 
 inline geometry::Line CreateLineWithOffsetFromLine(
     geometry::Line previous_line, int id, XodrLaneWidth lane_width_current_lane,
-    float s_inc = 0.2f, float s_max_delta = 0.1f) {
+    double s_inc, double s_max_delta) {
   namespace bg = boost::geometry;
   XodrLaneOffset off = lane_width_current_lane.off;
-  float s = lane_width_current_lane.s_start;
-  float s_end = lane_width_current_lane.s_end;
-  float scale = 0.0f;
+  double s = lane_width_current_lane.s_start;
+  double s_end = lane_width_current_lane.s_end;
+  double scale = 0.0;
 
   boost::geometry::unique(previous_line.obj_);
 
-  geometry::Line simplified_prev_line;
-  boost::geometry::simplify(previous_line.obj_, simplified_prev_line.obj_,
-                            s_max_delta);
-  simplified_prev_line.RecomputeS();
+  geometry::Line simplified_prev_line = Simplify(previous_line, s_max_delta);
 
   geometry::Line tmp_line;
-  geometry::Point2d normal(0.0f, 0.0f);
+  geometry::Point2d normal(0.0, 0.0);
   int sign = id > 0 ? -1 : 1;
   if (s_end > simplified_prev_line.Length())
     s_end = simplified_prev_line.Length();
@@ -198,7 +195,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
     geometry::Point2d prev_point = simplified_prev_line.obj_[0],
                       current_point = simplified_prev_line.obj_[1];
 
-    float tangent_angle =
+    double tangent_angle =
         atan2(bg::get<1>(current_point) - bg::get<1>(prev_point),
               bg::get<0>(current_point) - bg::get<0>(prev_point));
     normal = geometry::Point2d(cos(tangent_angle + asin(1)),
@@ -234,9 +231,7 @@ inline geometry::Line CreateLineWithOffsetFromLine(
   }
 
   // SIMPLIFY line with max error
-  geometry::Line simplified_line;
-  boost::geometry::simplify(tmp_line.obj_, simplified_line.obj_, s_max_delta);
-  simplified_line.RecomputeS();
+  geometry::Line simplified_line = Simplify(tmp_line, s_max_delta); 
   return simplified_line;
 }
 

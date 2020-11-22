@@ -15,6 +15,9 @@
 #include "bark/world/evaluation/evaluator_collision_agents.hpp"
 #include "bark/world/evaluation/evaluator_distance_to_goal.hpp"
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
+#ifdef RSS
+#include "bark/world/evaluation/rss/evaluator_rss.hpp"
+#endif
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/map/map_interface.hpp"
 #include "bark/world/map/roadgraph.hpp"
@@ -83,12 +86,12 @@ TEST(world, world_step) {
   std::shared_ptr<PlanView> p_1(new PlanView());
 
   //! add line
-  p_1->AddLine(Point2d(0.0f, 0.0f), 0.0, 25.0f);
-  p_1->AddLine(Point2d(25.0f, 0.0f), 0.0, 25.0f);
+  p_1->AddLine(Point2d(0.0, 0.0), 0.0, 25.0, 25.0);
+  p_1->AddLine(Point2d(25.0, 0.0), 0.0, 25.0, 25.0);
 
   //! lane sections
-  std::shared_ptr<XodrLaneSection> section_1(new XodrLaneSection(0.0f));
-  std::shared_ptr<XodrLaneSection> section_2(new XodrLaneSection(0.0f));
+  std::shared_ptr<XodrLaneSection> section_1(new XodrLaneSection(0.0));
+  std::shared_ptr<XodrLaneSection> section_2(new XodrLaneSection(0.0));
 
   XodrLaneOffset off = {1.5, 0, 0, 0};
   XodrLaneWidth lane_width_1 = {0, 30, off};
@@ -217,7 +220,7 @@ TEST(world, world_outside_drivable_area) {
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
-  float ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+  double ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
 
   // TODO: pass goal polygon to make_world_test
   WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
@@ -228,6 +231,43 @@ TEST(world, world_outside_drivable_area) {
 
   ASSERT_FALSE(boost::get<bool>(eval_res));
 }
+
+#ifdef RSS
+TEST(world, rss_evaluator) {
+  using bark::world::goal_definition::GoalDefinitionPolygon;
+
+  auto params = std::make_shared<SetterParams>();
+  params->SetString("EvaluatorRss::MapFilename", "bark/runtime/tests/data/city_highway_straight.xodr");
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  EvaluatorPtr col_checker(new EvaluatorCollisionAgents());
+
+  EvaluatorPtr evaluator_rss(new EvaluatorRSS(params));
+
+  Polygon polygon = GenerateGoalRectangle(6,3);
+  std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+          Point2d(50, -2))));  // < move the goal polygon into the driving
+                               // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  double ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+
+  // TODO: pass goal polygon to make_world_test
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
+
+  ObservedWorld observed_world(world, 1);
+
+  observed_world.AddEvaluator("rss", evaluator_rss);
+  auto eval_res = observed_world.Evaluate()["rss"];
+  
+  // no real test assertion, as maps do not match ...
+}
+#endif
 
 TEST(world, nearest_agents) {
   auto params = std::make_shared<SetterParams>();
@@ -257,12 +297,12 @@ TEST(world, nearest_agents) {
 
   world->UpdateAgentRTree();
 
-  AgentMap nearest_agents = world->GetNearestAgents(Point2d(0.0f, 0.0f), 1);
+  AgentMap nearest_agents = world->GetNearestAgents(Point2d(0.0, 0.0), 1);
 
   EXPECT_EQ(nearest_agents.size(), 1);
   EXPECT_EQ(nearest_agents.begin()->second->GetCurrentState(), init_state1);
 
-  AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0f, 0.0f), 2);
+  AgentMap nearest_agents2 = world->GetNearestAgents(Point2d(0.0, 0.0), 2);
 
   // Comment as this crashes in CI -> TODO: Why?
   /*EXPECT_EQ(nearest_agents2.size(), 2);
@@ -278,7 +318,7 @@ TEST(world, nearest_agents) {
   world->AddAgent(agent3);
   world->UpdateAgentRTree();
 
-  AgentMap nearest_agents3 = world->GetNearestAgents(Point2d(4.0f,5.0f),2);
+  AgentMap nearest_agents3 = world->GetNearestAgents(Point2d(4.0,5.0),2);
   EXPECT_EQ(nearest_agents3.size(), 2);
   EXPECT_EQ(nearest_agents3[agent1->GetAgentId()]->GetCurrentState(),
   init_state1 );
@@ -326,8 +366,8 @@ TEST(world, distance_to_goal) {
   EvaluatorPtr dist_checker2(new EvaluatorDistanceToGoal(agent2->GetAgentId()));
   world->AddEvaluator("distance2", dist_checker2);
 
-  EXPECT_NEAR(boost::get<float>(world->Evaluate()["distance1"]), 10, 0.001);
-  EXPECT_NEAR(boost::get<float>(world->Evaluate()["distance2"]),
+  EXPECT_NEAR(boost::get<double>(world->Evaluate()["distance1"]), 10, 0.001);
+  EXPECT_NEAR(boost::get<double>(world->Evaluate()["distance2"]),
               sqrt(9 * 9 + (15 + 5.3) * (15 + 5.3)), 0.001);
 }
 

@@ -27,7 +27,8 @@ py_test(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          "//bark/runtime:runtime"],
+          "//bark/runtime:runtime",
+          ":paths"],
 )
 
 py_test(
@@ -43,7 +44,8 @@ py_test(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          "//bark/runtime:runtime"],
+          "//bark/runtime:runtime",
+          ":paths"],
 )
 
 py_binary(
@@ -58,7 +60,8 @@ py_binary(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          "//bark/runtime:runtime"],
+          "//bark/runtime:runtime",
+          ":paths"],
 )
 
 filegroup(
@@ -89,8 +92,8 @@ py_binary(
         "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
         "//bark/runtime/viewer:matplotlib_viewer",
         "//bark/runtime/viewer:video_renderer",
-        "//bark/runtime:runtime"
-    ],
+        "//bark/runtime:runtime",
+        ":paths"],
 )
 
 py_binary(
@@ -106,7 +109,8 @@ py_binary(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          "//bark/runtime:runtime"],
+          "//bark/runtime:runtime",
+          ":paths"],
 )
 
 py_binary(
@@ -122,7 +126,8 @@ py_binary(
           "//bark/runtime/viewer:matplotlib_viewer",
           "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
-          "//bark/runtime:runtime"],
+          "//bark/runtime:runtime",
+          ":paths"],
 )
 
 py_binary(
@@ -143,4 +148,9 @@ py_binary(
           '//bark/world/tests:params2'],
   
   deps = [':maude_interface'],
+)
+
+py_library(
+  name = "paths",
+  srcs = ["paths.py"],
 )

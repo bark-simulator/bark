@@ -32,7 +32,7 @@ class BehaviorDynamicModel : public BehaviorModel {
 
   virtual ~BehaviorDynamicModel() {}
 
-  virtual Trajectory Plan(float delta_time,
+  virtual Trajectory Plan(double delta_time,
                           const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
@@ -40,7 +40,7 @@ class BehaviorDynamicModel : public BehaviorModel {
   virtual void ActionToBehavior(const Action& action) { action_ = action; }
 
  private:
-  float integration_time_delta_;
+  double integration_time_delta_;
   Action action_;
 };
 

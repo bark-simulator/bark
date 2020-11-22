@@ -27,13 +27,12 @@ class Runtime : public bark::commons::BaseType {
 
   virtual void Step() {}
   virtual void Step(int action) {}
-  virtual void Step(float action) {}
   virtual void Step(double action) {}
-  virtual void Step(Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> m) {}
+  virtual void Step(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> m) {}
 };
 
 inline void EvalRuntime(
-    Runtime r, Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> action) {
+    Runtime r, Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> action) {
   LOG(INFO) << "Received valid runtime." << std::endl;
   LOG(INFO) << "Stepping runtime..." << std::endl;
   r.Step(action);

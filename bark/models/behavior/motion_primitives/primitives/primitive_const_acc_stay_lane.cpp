@@ -18,7 +18,7 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::
 
 bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params,
-                              float acceleration)
+                              double acceleration)
     : Primitive(params),
       BehaviorModel(params),
       BehaviorIDMLaneTracking(params),
@@ -35,13 +35,13 @@ bool bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     LOG(FATAL) << "Only single track model supported! Aborting!";
   }
   auto ego_state = observed_world.CurrentEgoState();
-  return acceleration_ >= single_track->GetMinAcceleration(ego_state) &&
-         acceleration_ <= single_track->GetMaxAcceleration(ego_state);
+  return acceleration_ >= single_track->GetLonAccelerationMin(ego_state) &&
+         acceleration_ <= single_track->GetLonAccelerationMax(ego_state);
 }
 
 bark::models::dynamic::Trajectory
 bark::models::behavior::primitives::PrimitiveConstAccStayLane::Plan(
-    float delta_time, const bark::world::ObservedWorld& observed_world,
+    double delta_time, const bark::world::ObservedWorld& observed_world,
     const bark::world::LaneCorridorPtr& target_corridor) {
   SetBehaviorStatus(BehaviorStatus::VALID);
 
@@ -81,7 +81,7 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::GetTotalAcc(
     const bark::world::ObservedWorld& observed_world,
     const bark::models::behavior::IDMRelativeValues& rel_values,
     double rel_distance, double dt) const {
-  return {acceleration_, 0.0f};
+  return {acceleration_, 0.0};
 }
 
 std::string bark::models::behavior::primitives::PrimitiveConstAccStayLane::GetName() const {

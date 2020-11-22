@@ -47,7 +47,7 @@ class DummyObservedWorld : public ObservedWorld {
 
   virtual State CurrentEgoState() const { return init_state_; }
 
-  virtual double GetWorldTime() const { return 0.0f; }
+  virtual double GetWorldTime() const { return 0.0; }
 
  private:
   State init_state_;

@@ -19,7 +19,7 @@ import math
 import copy
 import importlib
 import aabbtree
-from collections import defaultdict 
+from collections import defaultdict
 
 __CONFIG_READER_MODULES = []
 
@@ -67,7 +67,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     ]
     ]
 
-    print (self._map_file_name)
     self._conflict_resolutions = params_temp["ConflictResolution", "How are conflicts for overlapping \
               sources and sinks resolved", {"left_lane/right_lane" : (0.2, 0.8)}]
     self._random_state = np.random.RandomState(self._random_seed)
@@ -136,10 +135,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #sink_source_default_params.append(sink_source_config)
       #sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.ConvertToDict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
-
-    #2 remove overlapping agent states from different sources and sinks
-    collected_sources_sinks_agent_states_geometries = \
-            self.resolve_overlaps_in_sources_sinks_agents(collected_sources_sinks_agent_states_geometries)
 
     agent_list = []
     controlled_agent_ids_all = []
@@ -387,7 +382,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     elif not is_int_1 and not is_int_2:
       probablistic_conflict_resolution = True
     else:
-      raise ValueError("Conflict resolution specifications must be either both integers or both floats")
+      raise ValueError("Conflict resolution specifications must be either both integers or both doubles")
 
     return conflict_res_1, conflict_res_2, probablistic_conflict_resolution
 

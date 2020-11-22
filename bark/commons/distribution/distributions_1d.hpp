@@ -22,16 +22,16 @@ class FixedValue : public Distribution {
   FixedValue(const ParamsPtr& params)
       : Distribution(params),
         fixed_value_(params->GetListFloat(
-            "FixedValue", "Value always returned when called sample", {1.0f})) {
+            "FixedValue", "Value always returned when called sample", {1.0})) {
   }
 
   virtual RandomVariate Sample() { return fixed_value_; }
 
   virtual Probability Density(const RandomVariate& variate) const {
-    return 0.0f;
+    return 0.0;
   };
 
-  virtual Probability CDF(const RandomVariate& variate) const { return 0.0f; };
+  virtual Probability CDF(const RandomVariate& variate) const { return 0.0; };
 
   virtual RandomVariableSupport GetSupport() const {
     return RandomVariableSupport(
@@ -91,9 +91,9 @@ template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
     const ParamsPtr& params) const {
   const RandomVariableValueType lower_bound =
-      params->GetReal("LowerBound", "Lower bound of uniform distr.", 0.0f);
+      params->GetReal("LowerBound", "Lower bound of uniform distr.", 0.0);
   const RandomVariableValueType upper_bound =
-      params->GetReal("UpperBound", "Upper bound of uniform distr.", 1.0f);
+      params->GetReal("UpperBound", "Upper bound of uniform distr.", 1.0);
   return boost_uniform(lower_bound, upper_bound);
 }
 
@@ -101,9 +101,9 @@ template <>
 inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(
     const ParamsPtr& params) const {
   const RandomVariableValueType mean =
-      params->GetReal("Mean", "Mean of normal distribution", 0.0f);
+      params->GetReal("Mean", "Mean of normal distribution", 0.0);
   const RandomVariableValueType std = params->GetReal(
-      "StdDev", "Standard deviation of normal distribution", 1.0f);
+      "StdDev", "Standard deviation of normal distribution", 1.0);
   return boost_normal(mean, std);
 }
 

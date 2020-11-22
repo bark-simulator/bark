@@ -16,6 +16,7 @@ from bark.runtime.scenario.scenario_generation.config_with_ease import \
     LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.panda3d_easy import Panda3dViewer
+from bark.examples.paths import Data
 
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
@@ -58,9 +59,10 @@ param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
 
-param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
-param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
+param_server["Visualization"]["Evaluation"]["DrawEgoRSSSafetyResponses"] = True
 
 SetVerboseLevel(0)
 
@@ -81,11 +83,9 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
                                       s_min=5.,
                                       s_max=20.)
 
-map_path = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
-
 scenarios = \
     ConfigWithEase(num_scenarios=3,
-                   map_file_name=map_path,
+                   map_file_name=Data.xodr_data("DR_DEU_Merging_MT_v01_centered"),
                    random_seed=0,
                    params=param_server,
                    lane_corridor_configs=[left_lane, right_lane])
@@ -128,16 +128,8 @@ env = Runtime(step_time=0.2,
 # Detailed explanation please see:
 # https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
 
-# Default dynamics for every agent if it is not defined indivually
-default_vehicle_dynamics = [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]
-
-# Indivually dynamics, each defined with the agent id
-agents_vehicle_dynamics = {1: [1.7, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.],
-                           2: [1.71, -1.7, -1.69, -1.67, 0.2, -0.8, 0.1, 1.]}
-
 # Example of using RSS to evaluate the safety situation of the evaluating agent.
 # The evaluating agent is defined with agent_id when initializing EvaluatorRSS.
-
 
 def print_rss_safety_response(evaluator_rss, world):
     # Evaluating with RSS is quite computionally expensive
@@ -148,31 +140,22 @@ def print_rss_safety_response(evaluator_rss, world):
     #       evaluator_rss.PairwiseDirectionalEvaluate(world))
 
 
-param_server["EvalutaorRss"]["MapFilename"] = map_path
-param_server["EvalutaorRss"]["DefaultVehicleDynamics"] = default_vehicle_dynamics
-param_server["EvalutaorRss"]["SpecificAgentVehicleDynamics"] = agents_vehicle_dynamics
-param_server["EvalutaorRss"]["CheckingRelevantRange"] = 1
-
+param_server["EvaluatorRss"]["MapFilename"] = Data.xodr_data("DR_DEU_Merging_MT_v01_centered")
 
 # run n scenarios
 for episode in range(0, 10):
-    env.reset()
-    current_world = env._world
-    eval_agent_id = env._scenario._eval_agent_ids[0]
+  env.reset()
+  current_world = env._world
+  eval_agent_id = env._scenario._eval_agent_ids[0]
+  current_world.agents[eval_agent_id].behavior_model = \
+    BehaviorRSSConformant(param_server)
+  evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
+  current_world.AddEvaluator("rss", evaluator_rss)
 
-    # There are two ways to upset EvaluatorRSS
-    # evaluator_rss = EvaluatorRSS(eval_agent_id, map_path,
-    #                              default_vehicle_dynamics,
-    #                              agents_vehicle_dynamics,
-    #                              checking_relevent_range=1)
-    evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
+  # step each scenario 40 times
+  for step in range(0, 40):
+    env.step()
+    # print_rss_safety_response(evaluator_rss, current_world)
+    time.sleep(sim_step_time / sim_real_time_factor)
 
-    current_world.AddEvaluator("rss", evaluator_rss)
-
-    # step each scenario 40 times
-    for step in range(0, 40):
-        env.step()
-        print_rss_safety_response(evaluator_rss, current_world)
-        time.sleep(sim_step_time / sim_real_time_factor)
-
-viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)
+# viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)

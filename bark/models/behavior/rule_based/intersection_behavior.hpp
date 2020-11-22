@@ -56,7 +56,7 @@ class BehaviorIntersectionRuleBased : public BehaviorLaneChangeRuleBased {
         "Angle at which vehicles are counted as intersecting.", 1.4);
   }
 
-  Trajectory Plan(float delta_time, const world::ObservedWorld& observed_world);
+  Trajectory Plan(double delta_time, const world::ObservedWorld& observed_world);
 
   std::tuple<double, AgentPtr> CheckIntersectingVehicles(
       const ObservedWorld& observed_world, double t_inc = 0.5);

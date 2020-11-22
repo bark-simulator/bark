@@ -15,41 +15,41 @@ class CppParamServerTestObject {
  public:
   CppParamServerTestObject(std::shared_ptr<bark::commons::Params> params)
       : params_(params) {
-    value_float_ =
+    value_double_ =
         params_->GetReal("Child1::Child2::ValueFloat", "Desc", 23434.0);
     value_bool_false_ =
         params_->GetBool("Child1::Child2::ValueBoolFalse", "Desc", true);
     value_bool_true_ =
         params_->GetBool("Child3::Child2::ValueBoolTrue", "Desc", false);
     value_int_ = params_->GetInt("Child1::Child4::ValueInt", "Desc", 234);
-    value_list_list_float_ =
+    value_list_list_double_ =
         params_->GetListListFloat("Child1::Child4::ValueListListFloat", "Desc",
                                   {{1.0, 3.4545234}, {1.1266135, 2.0, 3434.4}});
-    value_list_float_ =
+    value_list_double_ =
         params_->GetListFloat("Child1::Child5::ValueListFloat", "Desc",
                               {1.0, 3.4545234, 1.1266135, 2.0, 3434.4});
   }
 
-  float GetRealValue() const { return value_float_; }
+  double GetRealValue() const { return value_double_; }
   bool GetBoolValueTrue() const { return value_bool_true_; }
   bool GetBoolValueFalse() const { return value_bool_false_; }
-  float GetIntValue() const { return value_int_; }
+  double GetIntValue() const { return value_int_; }
   bark::commons::ListListFloat GetListListFloatValue() const {
-    return value_list_list_float_;
+    return value_list_list_double_;
   }
   bark::commons::ListFloat GetListFloatValue() const {
-    return value_list_float_;
+    return value_list_double_;
   }
 
   std::shared_ptr<bark::commons::Params> GetParams() const { return params_; }
 
  private:
-  float value_float_;
+  double value_double_;
   bool value_bool_false_;
   bool value_bool_true_;
   int value_int_;
-  bark::commons::ListListFloat value_list_list_float_;
-  bark::commons::ListFloat value_list_float_;
+  bark::commons::ListListFloat value_list_list_double_;
+  bark::commons::ListFloat value_list_double_;
 
   std::shared_ptr<bark::commons::Params> params_;
 };
