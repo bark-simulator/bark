@@ -102,7 +102,7 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
     road_corridor_road_ids_ = road_corridor_->GetRoadIds();
     road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
   } else if(!road_corridor_road_ids_.empty()) {
-    LOG(INFO) << "Road corridor from ids" << road_corridor_road_ids_;
+    VLOG(6) << "Road corridor from ids" << road_corridor_road_ids_;
     map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
                                   road_corridor_driving_direction_);
     road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
