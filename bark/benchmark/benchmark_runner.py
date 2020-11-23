@@ -14,6 +14,7 @@ import copy
 import time
 import glob
 import numpy as np
+import importlib
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -28,10 +29,15 @@ try:
 except Exception as e:
   logging.warning("LTL evaluators not loaded: {}".format(e))
 
+
+
 class EvaluationConfig:
+  __EVALUATION_MODULES = []
+
   def __init__(self, evaluators = None):
     self.evaluators_scenario_specific = {}
     self.evaluators_default = evaluators or None
+    self.import_module_names = EvaluationConfig.__EVALUATION_MODULES
 
   def AddEvaluatorConfig(self, evaluator_config, scenario_type=None):
     if scenario_type:
@@ -46,6 +52,13 @@ class EvaluationConfig:
     for _, evaluation_config in self.evaluators_scenario_specific.items():
       evaluation_criteria.update(evaluation_config.keys())
     return list(evaluation_criteria)
+
+  @staticmethod
+  def AddEvaluationModule(module_name):
+    EvaluationConfig.__EVALUATION_MODULES.append(module_name)
+  
+  def GetEvaluationModuleNames(self):
+    return self.import_module_names
 
   def _GetScenarioEvaluators(self, scenario_set_name):
     if len(self.evaluators_scenario_specific) > 1:
@@ -69,7 +82,18 @@ class EvaluationConfig:
           try:
               evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
           except:
+            try:
               evaluator_bark = eval("{}()".format(evaluator_params))
+            except NameError:
+              for module_name in self.GetEvaluationModuleNames():
+                try:
+                  module = importlib.import_module(module_name)
+                  eval_type = getattr(module, evaluator_params)
+                  evaluator_bark = eval("eval_type(eval_agent_ids[0])")
+                except:
+                  pass
+              if not evaluator_bark:
+                raise ValueError("Invalid evaluation spec.")
       elif isinstance(evaluator_params, dict):
           try:
             evaluator_bark = eval(
@@ -78,7 +102,7 @@ class EvaluationConfig:
             evaluator_bark = eval(
               "{}(evaluator_params['params'], eval_agent_ids[0])".format(evaluator_params["type"]))
       else:
-          raise ValueError
+          raise ValueError("Invalid evaluation spec.")
       evaluators_initialized[evaluator_name] = evaluator_bark
     return evaluators_initialized
 
@@ -311,9 +335,9 @@ class BenchmarkRunner:
         self.exceptions_caught.append((benchmark_config.config_idx, exception))
 
     def _reset_evaluators(self, world, eval_agent_ids, scenario_set_name):
-        initialized_evaluators =\
+        self.initialized_evaluators =\
             self.evaluators.CreateInitializedEvaluators(eval_agent_ids, scenario_set_name)
-        for evaluator_name, evaluator_bark in initialized_evaluators.items():
+        for evaluator_name, evaluator_bark in self.initialized_evaluators.items():
             world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):

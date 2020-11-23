@@ -18,7 +18,7 @@ except:
 
 from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
-from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig
+from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, EvaluationConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP, _BenchmarkRunnerActor, \
   deserialize_benchmark_config, serialize_benchmark_config
 
@@ -47,12 +47,13 @@ class DatabaseRunnerTests(unittest.TestCase):
         safe_dist_params = ParameterServer(log_if_default=True)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDistLong", "params" : safe_dist_params},
-                      "safe_dist_lat" : {"type" : "EvaluatorStaticSafeDist", "params" : safe_dist_params}}
+                      "safe_dist_lat" : {"type" : "EvaluatorStaticSafeDist", "params" : safe_dist_params},
+                      "experience_collector" : "ExperienceCollector"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2, "safe_dist_lon" : lambda x: x }
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
                                         
-
+        EvaluationConfig.AddEvaluationModule("bark.benchmark.tests.test_evaluator")
         benchmark_runner = BenchmarkRunner(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
@@ -66,7 +67,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         groups = result.get_evaluation_groups()
         self.assertEqual(set(groups), set(["behavior", "scen_set"]))
-
+    @unittest.skip
     def test_database_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -130,11 +131,13 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         db = BenchmarkDatabase(database_root=local_release_filename)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
-                      "max_steps": "EvaluatorStepCount"}
+                      "max_steps": "EvaluatorStepCount",
+                      "experience_collector" : "ExperienceCollector"}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2}
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}
 
+        EvaluationConfig.AddEvaluationModule("bark.benchmark.tests.test_evaluator")
         benchmark_runner = BenchmarkRunnerMP(benchmark_database=db,
                                            evaluators=evaluators,
                                            terminal_when=terminal_when,
@@ -147,14 +150,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         print(df)
         self.assertEqual(len(df.index), 20) # 2 Behaviors * 5 Serialize Scenarios * 2 scenario sets
 
-        params2 = ParameterServer()
-        viewer = MPViewer(
-              params=params2,
-              x_range=[5060, 5160],
-              y_range=[5070,5150],
-              use_world_bounds=True)
-        rst  = benchmark_runner.run_benchmark_config(10, viewer=viewer)
-
+    @unittest.skip
     def test_database_multiprocessing_history(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
         dbs.process("data/database1")
@@ -188,7 +184,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                           eval_agent_ids=scenario_history[1].eval_agent_ids)
 
         viewer.show(block=True)
-
+    @unittest.skip
     def test_database_multiprocessing_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=1, test_world_steps=2, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -243,7 +239,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints2/")
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 40)
-
+    @unittest.skip
     def test_database_runner_python_behavior(self):
           dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
           dbs.process("data/database1")

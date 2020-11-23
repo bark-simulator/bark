@@ -1,7 +1,9 @@
 package(default_visibility = ["//visibility:public"])
 py_test(
   name = "py_benchmark_runner_tests",
-  srcs = ["py_benchmark_runner_tests.py"],
+  srcs = ["py_benchmark_runner_tests.py",
+          "test_evaluator.py"
+          ],
   data = ["//bark:generate_core",
           "@benchmark_database//data/database1:database1",
           "//bark/runtime/tests:xodr_data"
@@ -15,6 +17,7 @@ py_test(
       "@benchmark_database//load:benchmark_database",
       "@benchmark_database//serialization:database_serializer",
       "//bark/runtime/commons:commons",
+      "//tools/debug:debug_settings",
       "//bark/world/tests:python_behavior_model",
       ],
 )
