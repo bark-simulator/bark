@@ -32,10 +32,17 @@ py_library(
   visibility = ["//visibility:public"],
 )
 
+filegroup(
+   name="xml_template",
+   srcs=glob(["*.xml"]),
+   visibility = ["//visibility:public"],
+)
+
 py_library(
   name = "scenario_dumper",
   srcs = ["scenario_dumper.py"],
-  data = ["//bark:generate_core"],
+  data = ["//bark:generate_core",
+          ":xml_template"],
   deps = [
       "//bark/runtime/commons:commons",
       "//bark/runtime/viewer:matplotlib_viewer",

@@ -19,6 +19,7 @@ from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons.parameters import ParameterServer
+from lxml import etree
 
 
 class ScenarioDumper(BenchmarkAnalyzer):
@@ -81,7 +82,7 @@ class ScenarioDumper(BenchmarkAnalyzer):
         table.append([agent_id, state[0], state[1], state[2], state[3], state[4]])
     np_table = np.array(table)
     df = pd.DataFrame(np_table, columns=cols)
-    df.to_csv(os.path.join(folder,"trajectories.csv"), sep='\t', encoding='utf-8')
+    df.to_csv(os.path.join(folder, "trajectories.csv"), sep='\t', encoding='utf-8')
     #print(df.to_string())
 
   def write_scenario_parameter(self, config_idx, folder):
@@ -110,3 +111,56 @@ class ScenarioDumper(BenchmarkAnalyzer):
       mapfile = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]["MapFilename"]
       src = os.path.join("src", "database", mapfile)
       copyfile(src, os.path.join(folder, ntpath.basename(mapfile)))
+
+
+class OpenScenarioDumper(BenchmarkAnalyzer):
+  def __init__(self, base_result_folder, benchmark_result):
+    super(OpenScenarioDumper).__init__(
+      base_result_folder, benchmark_result)
+  
+  def GetTrajectoryPerAgent(self, world):
+    trajectory_per_agents = {}
+    for (agent_id, agent) in world.agents.items():
+      trajectory_per_agents[agent_id] = []
+      for state_action in agent.history:
+        state = state_action[0]
+        trajectory_per_agents[agent_id].append(
+          [state[0], state[1], state[2], state[3], state[4]])
+    return trajectory_per_agents
+  
+  def GetTemplates(self):
+    template_xml = r'bark/benchmark/template_traj.xml'
+    with open(template_xml, 'r') as f:
+      xml_file = etree.parse(f)
+    vertex_template = xml_file.find("Vertex")
+    temp_vertex = etree.tostring(vertex_template)
+    xml_file.remove(vertex_template)
+    temp_xml = etree.tostring(xml_file)
+    return temp_vertex, temp_xml
+    
+  def write_trajectory(self, config_idx, folder):
+    histories = super().get_benchmark_result().get_history(config_idx)
+    if histories is None:
+      logging.warning("No historic state saved, cannot dump trajetory")
+      return
+    scenario = histories[-1]  # the last state inclues all the historic states
+    world = scenario.GetWorldState()
+    trajectory_per_agents = self.GetTrajectoryPerAgent(world)
+    temp_vertex, temp_xml = self.GetTemplates()
+    
+    for agent_id, traj in trajectory_per_agents.items():
+      agent_xml = etree.fromstring(temp_xml)
+      polyline = agent_xml.find("Polyline")
+      for state in traj:
+        # TODO: generate from string
+        vertex = etree.fromstring(temp_vertex)
+        vertex.attrib['time'] = state[0]
+        world_pos = vertex.find("Position").find("WorldPosition")
+        world_pos.attrib['x'] = state[1]
+        world_pos.attrib['y'] = state[2]
+        world_pos.attrib['z'] = 0.
+        world_pos.attrib['h'] = state[4]
+        etree.SubElement(polyline, vertex)
+      filename = os.path.join(folder, "trajectory_" + str(agent_id) + ".xml")
+      agent_xml.write(filename)
+    
