@@ -204,7 +204,6 @@ TEST(rss_interface, test_rss_planning_route_chinese_merge) {
 
   const auto center = agent->GetGoalDefinition()->GetShape().center_;
   Point2d agent_goal(center[0], center[1]);
-  std::cout << "goal center " << center[0] << ", " << center[1] << std::endl;
 
   State agent_state;
   agent_state = agent->GetCurrentState();
@@ -232,7 +231,7 @@ TEST(rss_interface, test_rss_planning_route_chinese_merge) {
   }
 }
 
-TEST(rss_interface, test_rss_planning_route_german_merge) {
+TEST(rss_interface, test_rss_planning_route_german_merge_ongoing_lane) {
   auto params = std::make_shared<SetterParams>(false);
 
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
@@ -263,20 +262,207 @@ TEST(rss_interface, test_rss_planning_route_german_merge) {
 
   const auto center = agent->GetGoalDefinition()->GetShape().center_;
   Point2d agent_goal(center[0], center[1]);
-  std::cout << "goal center " << center[0] << ", " << center[1] << std::endl;
 
   State agent_state;
   agent_state = agent->GetCurrentState();
-  Polygon agent_shape = agent->GetShape();
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
 
   ::ad::map::match::Object agent_match_object =
-      rss.GenerateMatchObject(agent_state, agent_shape);
+      rss.GenerateMatchObject(agent_state, agent->GetShape());
   ::ad::map::route::FullRoute agent_rss_route;
   ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
                                 agent_rss_route));
   ASSERT_EQ(agent_rss_route.roadSegments.size(), 2) << agent_rss_route.roadSegments;
 }
+
+TEST(rss_interface, test_rss_planning_route_german_merge_ending_lane1) {
+  // vehicle is at the beginning of ending lane
+  auto params = std::make_shared<SetterParams>(false);
+
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+
+  Polygon shape = standard_shapes::CarRectangle();
+
+  Polygon polygon(
+      Pose(0, 0., 0),
+      std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
+                           Point2d(2, 2), Point2d(2, -2)});
+ std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(-15.4, 108.6))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state << 0, 94, 107.0, 3.14, 10;
+  objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
+                                    shape, params, goal_definition_ptr));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent);
+
+  RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
+
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
+  State agent_state;
+  agent_state = agent->GetCurrentState();
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+
+  ::ad::map::match::Object agent_match_object =
+      rss.GenerateMatchObject(agent_state, agent->GetShape());
+  ::ad::map::route::FullRoute agent_rss_route;
+  ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
+                                agent_rss_route));
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 2) << agent_rss_route.roadSegments;
+}
+
+
+TEST(rss_interface, test_rss_planning_route_german_merge_ending_lane2) {
+  // vehicle has made some progress on ending lane
+  auto params = std::make_shared<SetterParams>(false);
+
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+
+  Polygon shape = standard_shapes::CarRectangle();
+
+  Polygon polygon(
+      Pose(0, 0., 0),
+      std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
+                           Point2d(2, 2), Point2d(2, -2)});
+ std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(-15.4, 108.6))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state << 0, 80.3525, 108.183, 3.14, 10;
+  objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
+                                    shape, params, goal_definition_ptr));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent);
+
+  RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
+
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
+  State agent_state;
+  agent_state = agent->GetCurrentState();
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+
+  ::ad::map::match::Object agent_match_object =
+      rss.GenerateMatchObject(agent_state, agent->GetShape());
+  ::ad::map::route::FullRoute agent_rss_route;
+  ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
+                                agent_rss_route));
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 2) << agent_rss_route.roadSegments;
+}
+
+
+TEST(rss_interface, test_rss_planning_route_german_merge_ending_lane3) {
+  // vehicle has made some progress on ending lane
+  auto params = std::make_shared<SetterParams>(false);
+
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+
+  Polygon shape = standard_shapes::CarRectangle();
+
+  Polygon polygon(
+      Pose(0, 0., 0),
+      std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
+                           Point2d(2, 2), Point2d(2, -2)});
+ std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(-15.4, 108.6))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state << 0, 62.8, 107.8, 3.14, 10;
+  objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
+                                    shape, params, goal_definition_ptr));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent);
+
+  RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
+
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
+  State agent_state;
+  agent_state = agent->GetCurrentState();
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+
+  ::ad::map::match::Object agent_match_object =
+      rss.GenerateMatchObject(agent_state, agent->GetShape());
+  ::ad::map::route::FullRoute agent_rss_route;
+  ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
+                                agent_rss_route));
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 2) << agent_rss_route.roadSegments;
+}
+
+
+
+TEST(rss_interface, test_rss_planning_route_german_merge_after) {
+  // vehicle has passed merging point
+  auto params = std::make_shared<SetterParams>(false);
+
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+
+  Polygon shape = standard_shapes::CarRectangle();
+
+  Polygon polygon(
+      Pose(0, 0., 0),
+      std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
+                           Point2d(2, 2), Point2d(2, -2)});
+ std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(-15.4, 108.6))));
+
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+
+  State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state << 0, 23.0, 105.6, 3.14, 10;
+  objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
+                                    shape, params, goal_definition_ptr));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent);
+
+  RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
+
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
+  State agent_state;
+  agent_state = agent->GetCurrentState();
+  Point2d agent_center =
+      Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
+
+  ::ad::map::match::Object agent_match_object =
+      rss.GenerateMatchObject(agent_state, agent->GetShape());
+  ::ad::map::route::FullRoute agent_rss_route;
+  ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
+                                agent_rss_route));
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 1) << agent_rss_route.roadSegments;
+}
+
 
 #endif
