@@ -57,6 +57,7 @@ using bark::world::map::MapInterfacePtr;
 using bark::world::map::Roadgraph;
 using bark::world::map::RoadgraphPtr;
 using bark::world::opendrive::XodrLaneId;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 
 TEST(rss_interface, test_maps_compatibility) {
   // not all map can be loaded into rss
@@ -120,10 +121,7 @@ TEST(rss_interface, test_rss_check) {
   world->SetMap(map_interface);
 
   Polygon shape = standard_shapes::CarRectangle();
-  Polygon polygon(
-      Pose(0, 0., 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(-1, -1), Point2d(-1, 1),
-                           Point2d(1, 1), Point2d(1, -1)});
+  Polygon polygon = GenerateGoalRectangle(2,2);
 
   std::shared_ptr<Polygon> goal_polygon_1(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(5.5, 120))));
@@ -187,10 +185,7 @@ TEST(rss_interface, test_rss_planning_route_chinese_merge) {
 
   Polygon shape = standard_shapes::CarRectangle();
 
-  Polygon polygon(
-      Pose(0, 0., 0),
-      std::vector<Point2d>{Point2d(0, 0), Point2d(-1, -1), Point2d(-1, 1),
-                           Point2d(1, 1), Point2d(1, -1)});
+  Polygon polygon = GenerateGoalRectangle(2,2);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(27, -157))));
 
@@ -207,9 +202,10 @@ TEST(rss_interface, test_rss_planning_route_chinese_merge) {
 
   RssInterface rss("bark/runtime/tests/data/DR_CHN_Merging_ZS_partial_v02.xodr", params);
 
-  Point2d agent_goal;
-  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,
-                            agent_goal);
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+  std::cout << "goal center " << center[0] << ", " << center[1] << std::endl;
+
   State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();
@@ -249,14 +245,14 @@ TEST(rss_interface, test_rss_planning_route_german_merge) {
       Pose(0, 0., 0),
       std::vector<Point2d>{Point2d(2, -2), Point2d(-2, -2), Point2d(-2, 2),
                            Point2d(2, 2), Point2d(2, -2)});
-  std::shared_ptr<Polygon> goal_polygon(
-      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(925, 1005))));
+ std::shared_ptr<Polygon> goal_polygon(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(-15.4, 108.6))));
 
   auto goal_definition_ptr =
       std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
 
   State state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  state << 0, 1000, 1006.6, 3.14, 10;
+  state << 0, 94, 104.2, 3.14, 10;
   objects::AgentPtr agent(new Agent(state, beh_model, dyn_model, exec_model,
                                     shape, params, goal_definition_ptr));
 
@@ -265,9 +261,10 @@ TEST(rss_interface, test_rss_planning_route_german_merge) {
 
   RssInterface rss("bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr", params);
 
-  Point2d agent_goal;
-  boost::geometry::centroid(agent->GetGoalDefinition()->GetShape().obj_,
-                            agent_goal);
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+  std::cout << "goal center " << center[0] << ", " << center[1] << std::endl;
+
   State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();
@@ -279,7 +276,7 @@ TEST(rss_interface, test_rss_planning_route_german_merge) {
   ::ad::map::route::FullRoute agent_rss_route;
   ASSERT_TRUE(rss.GenerateRoute(agent_center, agent_goal, agent_match_object,
                                 agent_rss_route));
-  ASSERT_EQ(agent_rss_route.roadSegments.size(), 3);
+  ASSERT_EQ(agent_rss_route.roadSegments.size(), 2) << agent_rss_route.roadSegments;
 }
 
 #endif
