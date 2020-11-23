@@ -20,11 +20,11 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons.parameters import ParameterServer
 from lxml import etree
-
+from pathlib import Path
 
 class ScenarioDumper(BenchmarkAnalyzer):
   def __init__(self, base_result_folder, benchmark_result):
-    super().__init__(benchmark_result)
+    super(ScenarioDumper, self).__init__(benchmark_result)
 
     # Create result dir
     if not os.path.isdir(base_result_folder):
@@ -113,9 +113,9 @@ class ScenarioDumper(BenchmarkAnalyzer):
       copyfile(src, os.path.join(folder, ntpath.basename(mapfile)))
 
 
-class OpenScenarioDumper(BenchmarkAnalyzer):
+class OpenScenarioDumper(ScenarioDumper):
   def __init__(self, base_result_folder, benchmark_result):
-    super(OpenScenarioDumper).__init__(
+    super(OpenScenarioDumper, self).__init__(
       base_result_folder, benchmark_result)
   
   def GetTrajectoryPerAgent(self, world):
@@ -129,19 +129,20 @@ class OpenScenarioDumper(BenchmarkAnalyzer):
     return trajectory_per_agents
   
   def GetTemplates(self):
-    template_xml = r'bark/benchmark/templates/template_traj.xml'
+    curr_folder = pathlib.Path(__file__).parent.absolute()
+    template_xml = str(curr_folder) + "/templates/template_traj.xml"
     with open(template_xml, 'r') as f:
       xml_file = etree.parse(f)
-    vertex_template = xml_file.find("Vertex")
+    vertex_template = xml_file.findall('.//Vertex')[0]
     temp_vertex = etree.tostring(vertex_template)
-    xml_file.remove(vertex_template)
+    vertex_template.getparent().remove(vertex_template)
     temp_xml = etree.tostring(xml_file)
     return temp_vertex, temp_xml
     
   def write_trajectory(self, config_idx, folder):
     histories = super().get_benchmark_result().get_history(config_idx)
     if histories is None:
-      logging.warning("No historic state saved, cannot dump trajetory")
+      logging.warning("No historic state saved, cannot dump trajetory.")
       return
     scenario = histories[-1]  # the last state inclues all the historic states
     world = scenario.GetWorldState()
@@ -150,16 +151,17 @@ class OpenScenarioDumper(BenchmarkAnalyzer):
     
     for agent_id, traj in trajectory_per_agents.items():
       agent_xml = etree.fromstring(temp_xml)
-      polyline = agent_xml.find("Polyline")
+      polyline = agent_xml.findall(".//Polyline")[0]
       for state in traj:
         vertex = etree.fromstring(temp_vertex)
-        vertex.attrib['time'] = state[0]
+        vertex.attrib['time'] = str(state[0])
         world_pos = vertex.find("Position").find("WorldPosition")
-        world_pos.attrib['x'] = state[1]
-        world_pos.attrib['y'] = state[2]
-        world_pos.attrib['z'] = 0.
-        world_pos.attrib['h'] = state[4]
-        etree.SubElement(polyline, vertex)
+        world_pos.attrib['x'] = str(state[1])
+        world_pos.attrib['y'] = str(state[2])
+        world_pos.attrib['z'] = str(0.)
+        world_pos.attrib['h'] = str(state[4])
+        polyline.append(vertex)
       filename = os.path.join(folder, "trajectory_" + str(agent_id) + ".xml")
-      agent_xml.write(filename)
-    
+      print(filename)
+      et = etree.ElementTree(agent_xml)
+      et.write(filename, pretty_print=True)

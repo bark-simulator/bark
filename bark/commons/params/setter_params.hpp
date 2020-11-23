@@ -154,7 +154,7 @@ class SetterParams : public Params {
     auto search_result =
         get_parameter_recursive(map, param_name, default_value);
     if (!search_result.second && log_if_default_) {
-      LOG(FATAL) << "Using default " << default_value << " for param \""
+      LOG(INFO) << "Using default " << default_value << " for param \""
                  << param_name << "\"";
     }
     return search_result.first;
