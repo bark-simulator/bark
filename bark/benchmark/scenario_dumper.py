@@ -129,7 +129,7 @@ class OpenScenarioDumper(BenchmarkAnalyzer):
     return trajectory_per_agents
   
   def GetTemplates(self):
-    template_xml = r'bark/benchmark/template_traj.xml'
+    template_xml = r'bark/benchmark/templates/template_traj.xml'
     with open(template_xml, 'r') as f:
       xml_file = etree.parse(f)
     vertex_template = xml_file.find("Vertex")
@@ -152,7 +152,6 @@ class OpenScenarioDumper(BenchmarkAnalyzer):
       agent_xml = etree.fromstring(temp_xml)
       polyline = agent_xml.find("Polyline")
       for state in traj:
-        # TODO: generate from string
         vertex = etree.fromstring(temp_vertex)
         vertex.attrib['time'] = state[0]
         world_pos = vertex.find("Position").find("WorldPosition")

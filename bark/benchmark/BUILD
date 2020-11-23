@@ -34,7 +34,7 @@ py_library(
 
 filegroup(
    name="xml_template",
-   srcs=glob(["*.xml"]),
+   srcs=glob(["templates/*.xml"]),
    visibility = ["//visibility:public"],
 )
 
