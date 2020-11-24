@@ -82,25 +82,25 @@ class EvaluationConfig:
           try:
               evaluator_bark = eval("{}(eval_agent_ids[0])".format(evaluator_params))
           except:
-            try:
-              evaluator_bark = eval("{}()".format(evaluator_params))
-            except NameError:
-              for module_name in self.GetEvaluationModuleNames():
-                try:
-                  module = importlib.import_module(module_name)
-                  eval_type = getattr(module, evaluator_params)
-                  evaluator_bark = eval("eval_type(eval_agent_ids[0])")
-                except:
-                  pass
-              if not evaluator_bark:
-                raise ValueError("Invalid evaluation spec.")
+              evaluator_bark = eval("{}()".format(evaluator_params)) 
       elif isinstance(evaluator_params, dict):
           try:
             evaluator_bark = eval(
               "{}(agent_id=eval_agent_ids[0], **evaluator_params['params'])".format(evaluator_params["type"]))
           except:
-            evaluator_bark = eval(
-              "{}(evaluator_params['params'], eval_agent_ids[0])".format(evaluator_params["type"]))
+            try:
+              evaluator_bark = eval(
+                "{}(evaluator_params['params'], eval_agent_ids[0])".format(evaluator_params["type"]))
+            except NameError:
+              for module_name in self.GetEvaluationModuleNames():
+                try:
+                  module = importlib.import_module(module_name)
+                  eval_type = getattr(module, evaluator_params["type"])
+                  evaluator_bark = eval("eval_type(evaluator_params['params'], eval_agent_ids[0])")
+                except:
+                  pass
+              if not evaluator_bark:
+                raise ValueError("Invalid evaluation spec.")
       else:
           raise ValueError("Invalid evaluation spec.")
       evaluators_initialized[evaluator_name] = evaluator_bark
@@ -337,8 +337,6 @@ class BenchmarkRunner:
     def _reset_evaluators(self, world, eval_agent_ids, scenario_set_name):
         self.initialized_evaluators =\
             self.evaluators.CreateInitializedEvaluators(eval_agent_ids, scenario_set_name)
-        for evaluator_name, evaluator_bark in self.initialized_evaluators.items():
-            world.AddEvaluator(evaluator_name, evaluator_bark)
 
     def _evaluation_criteria(self):
         bark_evals = self.evaluators.GetEvaluationCriteria()
@@ -346,7 +344,10 @@ class BenchmarkRunner:
         return bark_evals
 
     def _get_evalution_dict(self, world):
-        return world.Evaluate()
+        evaluation_dict = {}
+        for evaluator_name, evaluator_bark in self.initialized_evaluators.items():
+          evaluation_dict[evaluator_name] = evaluator_bark.Evaluate(world)
+        return evaluation_dict
 
     def _is_terminal(self, evaluation_dict):
         terminal = False
@@ -364,8 +365,7 @@ class BenchmarkRunner:
           if eval_group not in df.columns:
             df[eval_group] = np.nan
         df.fillna(-1, inplace=True)
-        grouped = df.apply(pd.to_numeric, errors='ignore').groupby(bresult.get_evaluation_groups()).mean()[
-            self._evaluation_criteria()]
+        grouped = df.apply(pd.to_numeric, errors='ignore').groupby(bresult.get_evaluation_groups()).mean()
         self.logger.info("\n------------------- Current Evaluation Results ---------------------- \n Num. Results:{}\n {} \n \
 ---------------------------------------------------------------------".format(len(result_dct_list),
                                                                               grouped.to_string()))
