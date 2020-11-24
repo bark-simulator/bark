@@ -73,6 +73,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                behaviors=None,
                behavior_configs=None,
                num_scenarios=None,
+               scenario_generation=None,
                benchmark_configs=None,
                log_eval_avg_every=None,
                glog_init_settings=None,
@@ -85,7 +86,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
-                          benchmark_configs=benchmark_configs, checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
+                          benchmark_configs=benchmark_configs, scenario_generation=scenario_generation,
+                          checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
         num_cpus_available = psutil.cpu_count(logical=True)
 
         if ip_head and redis_password:

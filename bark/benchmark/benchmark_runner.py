@@ -116,6 +116,7 @@ class BenchmarkRunner:
                  behavior_configs=None,
                  num_scenarios=None,
                  benchmark_configs=None,
+                 scenario_generation=None,
                  logger_name=None,
                  log_eval_avg_every=None,
                  checkpoint_dir=None,
@@ -123,14 +124,23 @@ class BenchmarkRunner:
                  deepcopy=True):
 
         self.benchmark_database = benchmark_database
+        self.scenario_generation = scenario_generation
         self.evaluators = evaluators if isinstance(evaluators, EvaluationConfig) else EvaluationConfig(evaluators)
         self.terminal_when = terminal_when or []
         if behaviors:
           self.behavior_configs = BehaviorConfig.configs_from_dict(behaviors)
         else:
           self.behavior_configs = behavior_configs or {}
-        self.benchmark_configs = benchmark_configs or \
-                                 self._create_configurations(num_scenarios)
+        if benchmark_configs:
+          self.benchmark_configs = benchmark_configs
+        elif benchmark_database:
+          self.benchmark_configs = \
+                                 self._create_configurations_from_database(num_scenarios)
+        elif scenario_generation:
+          self.benchmark_configs = \
+                                  self._create_configurations_from_scenario_generation(num_scenarios)
+        else:
+          self.benchmark_configs = [] # to be compatible when benchmark runner is used in ray actor
 
         self.logger = logging.getLogger(logger_name or "BenchmarkRunner")
         self.logger.setLevel(logging.DEBUG)
@@ -202,7 +212,7 @@ class BenchmarkRunner:
         filtered_configs = filter(lambda bc : bc.config_idx in missing_inds, benchmark_configs)
         return list(filtered_configs)
 
-    def _create_configurations(self, num_scenarios=None):
+    def _create_configurations_from_database(self, num_scenarios=None):
         benchmark_configs = []
         for behavior_config in self.behavior_configs:
             # run over all scenario generators from benchmark database
@@ -220,6 +230,24 @@ class BenchmarkRunner:
                             scenario_set_param_desc
                         )
                     benchmark_configs.append(benchmark_config)
+        return benchmark_configs
+    
+    def _create_configurations_from_scenario_generation(self, num_scenarios):
+        benchmark_configs = []
+        for behavior_config in self.behavior_configs:
+          for scenario, scenario_idx in self.scenario_generation:
+            if num_scenarios and scenario_idx >= num_scenarios:
+              break
+            benchmark_config = \
+                        BenchmarkConfig(
+                            len(benchmark_configs),
+                            behavior_config,
+                            scenario,
+                            scenario_idx,
+                            type(self.scenario_generation).__name__,
+                            {}
+                        )
+            benchmark_configs.append(benchmark_config)
         return benchmark_configs
 
     def run(self, viewer=None, maintain_history=False, checkpoint_every=None):

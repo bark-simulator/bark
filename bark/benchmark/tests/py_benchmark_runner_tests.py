@@ -68,7 +68,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         groups = result.get_evaluation_groups()
         self.assertEqual(set(groups), set(["behavior", "scen_set"]))
-    @unittest.skip
+
     def test_database_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -88,7 +88,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=20,
                                            checkpoint_dir="checkpoints1/")
-
+        benchmark_runner.clear_checkpoint_dir()
         # one run after 30 steps benchmark dumped
         result = benchmark_runner.run(checkpoint_every = 30)
         df = result.get_data_frame()
@@ -124,7 +124,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 37)
-    @unittest.skip
+
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=5)
         dbs.process("data/database1")
@@ -151,7 +151,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 20) # 2 Behaviors * 5 Serialize Scenarios * 2 scenario sets
-    @unittest.skip
+
     def test_database_multiprocessing_history(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
         dbs.process("data/database1")
@@ -185,7 +185,7 @@ class DatabaseRunnerTests(unittest.TestCase):
                           eval_agent_ids=scenario_history[1].eval_agent_ids)
 
         viewer.show(block=True)
-    @unittest.skip
+
     def test_database_multiprocessing_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=1, test_world_steps=2, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -240,7 +240,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints2/")
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 40)
-    @unittest.skip
+
     def test_database_runner_python_behavior(self):
           dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=2)
           dbs.process("data/database1")
