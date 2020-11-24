@@ -162,6 +162,5 @@ class OpenScenarioDumper(ScenarioDumper):
         world_pos.attrib['h'] = str(state[4])
         polyline.append(vertex)
       filename = os.path.join(folder, "trajectory_" + str(agent_id) + ".xml")
-      print(filename)
       et = etree.ElementTree(agent_xml)
       et.write(filename, pretty_print=True)
