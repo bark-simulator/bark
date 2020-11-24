@@ -30,6 +30,7 @@ from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 from bark.world.tests.python_behavior_model import PythonDistanceBehavior
 
+from bark.benchmark.tests.test_evaluator import TestPythonEvaluatorSerializable
 
 try: # bazel run
   os.chdir("../benchmark_database/")
@@ -49,7 +50,8 @@ class DatabaseRunnerTests(unittest.TestCase):
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
                       "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDistLong", "params" : safe_dist_params},
                       "safe_dist_lat" : {"type" : "EvaluatorStaticSafeDist", "params" : safe_dist_params},
-                      "test_evaluator" : {"type" : "TestPythonEvaluator", "params" : test_python_params}}
+                      "test_evaluator" : {"type" : "TestPythonEvaluator", "params" : test_python_params},
+                      "test_evaluator_serializable" : TestPythonEvaluatorSerializable()}
         terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2, "safe_dist_lon" : lambda x: x }
         params = ParameterServer() # only for evaluated agents not passed to scenario!
         behaviors_tested = {"IDM": BehaviorIDMClassic(params), "Const" : BehaviorConstantAcceleration(params)}

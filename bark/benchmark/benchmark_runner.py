@@ -101,6 +101,9 @@ class EvaluationConfig:
                   pass
               if not evaluator_bark:
                 raise ValueError("Invalid evaluation spec.")
+      elif issubclass(type(evaluator_params), BaseEvaluator):
+          evaluator_bark = copy.deepcopy(evaluator_params)
+          evaluator_bark.SetAgentId(eval_agent_ids[0])
       else:
           raise ValueError("Invalid evaluation spec.")
       evaluators_initialized[evaluator_name] = evaluator_bark
