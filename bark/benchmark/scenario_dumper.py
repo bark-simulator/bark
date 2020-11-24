@@ -21,6 +21,7 @@ from bark.runtime.viewer import MPViewer
 from bark.runtime.commons.parameters import ParameterServer
 from lxml import etree
 from pathlib import Path
+from bark.core.models.dynamic import StateDefinition
 
 class ScenarioDumper(BenchmarkAnalyzer):
   def __init__(self, base_result_folder, benchmark_result):
@@ -124,8 +125,7 @@ class OpenScenarioDumper(ScenarioDumper):
       trajectory_per_agents[agent_id] = []
       for state_action in agent.history:
         state = state_action[0]
-        trajectory_per_agents[agent_id].append(
-          [state[0], state[1], state[2], state[3], state[4]])
+        trajectory_per_agents[agent_id].append(state)
     return trajectory_per_agents
   
   def GetTemplates(self):
@@ -144,22 +144,26 @@ class OpenScenarioDumper(ScenarioDumper):
     if histories is None:
       logging.warning("No historic state saved, cannot dump trajetory.")
       return
+    # one history for each time-step
+    total_history_length = len(histories)
     scenario = histories[-1]  # the last state inclues all the historic states
     world = scenario.GetWorldState()
     trajectory_per_agents = self.GetTrajectoryPerAgent(world)
     temp_vertex, temp_xml = self.GetTemplates()
     
     for agent_id, traj in trajectory_per_agents.items():
+      if len(traj) < total_history_length:
+        logging.warning("State history in agent does not cover all time-step.")
       agent_xml = etree.fromstring(temp_xml)
       polyline = agent_xml.findall(".//Polyline")[0]
       for state in traj:
         vertex = etree.fromstring(temp_vertex)
-        vertex.attrib['time'] = str(state[0])
+        vertex.attrib['time'] = str(state[int(StateDefinition.TIME_POSITION)])
         world_pos = vertex.find("Position").find("WorldPosition")
-        world_pos.attrib['x'] = str(state[1])
-        world_pos.attrib['y'] = str(state[2])
+        world_pos.attrib['x'] = str(state[int(StateDefinition.X_POSITION)])
+        world_pos.attrib['y'] = str(state[int(StateDefinition.Y_POSITION)])
         world_pos.attrib['z'] = str(0.)
-        world_pos.attrib['h'] = str(state[4])
+        world_pos.attrib['h'] = str(state[int(StateDefinition.THETA_POSITION)])
         polyline.append(vertex)
       filename = os.path.join(folder, "trajectory_" + str(agent_id) + ".xml")
       et = etree.ElementTree(agent_xml)
