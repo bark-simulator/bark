@@ -11,7 +11,6 @@ import pickle
 import numpy as np
 
 from bark.core.world import *
-from bark.core.world.evaluation.ltl import *
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.core.models.behavior import BehaviorConstantAcceleration
@@ -23,190 +22,318 @@ from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d
-from bark.core.world.evaluation import EvaluatorRSS, EvaluatorStepCount
+from bark.core.world.evaluation import EvaluatorRSS
 from bark.core.commons import SetVerboseLevel
+from bark.runtime.viewer import MPViewer
+
 
 class TestAgent(Agent):
     """Derived Agent Class
     """
 
     def __init__(self, init_state, goal_polygon, map_interface, params):
-        
+
         behavior_model = BehaviorConstantAcceleration(params)
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
         agent_2d_shape = CarLimousine()
 
         agent_params = params.AddChild("agent")
-        super(TestAgent, self).__init__(init_state, behavior_model, dynamic_model, execution_model, agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+        super(TestAgent, self).__init__(init_state, behavior_model, dynamic_model,
+                                        execution_model, agent_2d_shape, agent_params,
+                                        GoalDefinitionPolygon(goal_polygon), map_interface)
 
-# General tests of the whole rss_interface
+
 class EvaluatorRSSTests(unittest.TestCase):
-  # def setUp(self):
-  #   # param_server = ParameterServer()
-  #   # world = World(params)
-    
-    # self.defaults = dict()
-    # self.defaults["world"] = world
 
-  @staticmethod
-  def load_map(map):
-    xodr_parser = XodrParser(map)
-    map_interface = MapInterface()
-    map_interface.SetOpenDriveMap(xodr_parser.map)
-    return map_interface
+    @staticmethod
+    def load_map(map):
+        xodr_parser = XodrParser(map)
+        map_interface = MapInterface()
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        return map_interface
 
+    def test_longitude_highway_safe(self):
+        """
+        Checking Longitudinal Responses (true means safe)
+        """
 
-  def test_longitude_ego_follow_other(self):
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
 
-    params = ParameterServer()
-    map = "bark/runtime/tests/data/city_highway_straight.xodr"
-    params["EvaluatorRss"]["MapFilename"] = map
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
 
-    map_interface = EvaluatorRSSTests.load_map(map)
-    world = World(params)
-    world.SetMap(map_interface)
+        goal_polygon = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(1.8, 120))
 
-    goal_polygon = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon = goal_polygon.Translate(Point2d(1.8, 120))
+        # The safety distance seems more conservative than in the paper
+        # Hard coded
+        ego_state = np.array([0, 1.8, -114.9, np.pi/2, 10])
+        other_state = np.array([0, 1.8, -72.95, np.pi/2, 7])
 
-    # The safety distance seems more conservative than in the paper
-    # Hard coded
-    ego_state = np.array([0, 1.8, -114.9, np.pi/2, 10])
-    other_state = np.array([0, 1.8, -72.95, np.pi/2, 7])
+        ego = TestAgent(ego_state, goal_polygon, map_interface, params)
+        other = TestAgent(other_state, goal_polygon, map_interface, params)
 
-    ego = TestAgent(ego_state, goal_polygon, map_interface, params)
-    other = TestAgent(other_state, goal_polygon, map_interface, params)
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
 
-    world.AddAgent(ego)
-    world.AddAgent(other)
-    world.UpdateAgentRTree()
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
 
-    evaluator_rss = EvaluatorRSS(ego.id, params)
-    world.Step(0.2)
+        evaluator_rss = EvaluatorRSS(ego.id, params)
 
-    # Checking Longitudinal Responses (true means safe)
-    pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(world)
-    self.assertEqual(True, pw_directional_evaluation_return[other.id][0])
+        pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(
+            world)
+        self.assertEqual(True, pw_directional_evaluation_return[other.id][0])
 
-    world.Step(0.2)
-    pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(world)
-    self.assertEqual(True, pw_directional_evaluation_return[other.id][0])
+    def test_longitude_highway_unsafe(self):
+        """
+        Checking Longitudinal Responses (true means safe)
+        """
 
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
 
-  def test_lateral_same_direction(self):
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
 
-    params = ParameterServer()
-    map = "bark/runtime/tests/data/city_highway_straight.xodr"
-    params["EvaluatorRss"]["MapFilename"] = map
+        goal_polygon = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(1.8, 120))
 
-    map_interface = EvaluatorRSSTests.load_map(map)
-    world = World(params)
-    world.SetMap(map_interface)
+        # The safety distance seems more conservative than in the paper
+        # Hard coded
+        ego_state = np.array([0, 1.8, -60.0, np.pi/2, 10])
+        other_state = np.array([0, 1.8, -68.0, np.pi/2, 10])
 
-    goal_polygon_1 = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon_1 = goal_polygon_1.Translate(Point2d(5.5, 120))
+        ego = TestAgent(ego_state, goal_polygon, map_interface, params)
+        other = TestAgent(other_state, goal_polygon, map_interface, params)
 
-    goal_polygon_2 = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon_2 = goal_polygon_2.Translate(Point2d(1.8, 120))
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
 
-    # Hard coded
-    ego_state = np.array([0, 5.5, 10, 0, 10])
-    other_state = np.array([0, 1.8, -10, 0, 15])
-    
-    ego = TestAgent(ego_state, goal_polygon_1, map_interface, params)
-    other = TestAgent(other_state, goal_polygon_2, map_interface, params)
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
 
-    world.AddAgent(ego)
-    world.AddAgent(other)
+        evaluator_rss = EvaluatorRSS(ego.id, params)
 
-    evaluator_rss = EvaluatorRSS(ego.id, params)
+        pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(
+            world)
+        self.assertEqual(False, pw_directional_evaluation_return[other.id][0])
 
-    for _ in range(7):
-      world.Step(1)
-      self.assertEqual(
-          True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
+    def test_lateral_highway_safe(self):
+        """
+        Checking Longitudinal Responses (true means safe)
+        """
 
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
 
-  def test_lateral_merging(self):
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
 
-    params = ParameterServer()
-    map = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
-    params["EvaluatorRss"]["MapFilename"] = map
+        goal_polygon_1 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_1 = goal_polygon_1.Translate(Point2d(5.5, 120))
 
-    map_interface = EvaluatorRSSTests.load_map(map)
-    world = World(params)
-    world.SetMap(map_interface)
+        goal_polygon_2 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_2 = goal_polygon_2.Translate(Point2d(1.8, 120))
 
-    goal_polygon = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon = goal_polygon.Translate(Point2d(-15.4, 108.6))
+        # Hard coded
+        ego_state = np.array([0, 5.5, 10, np.pi/2, 10])  # straight north
+        other_state = np.array([0, 1.8, 0, np.pi/2, 15])  # straight north
 
-    # Hard coded
-    ego_state = np.array([0, 68.1, 108, -np.pi, 5])
-    other_state = np.array([0, 64.1, 105, -np.pi, 5])
+        ego = TestAgent(ego_state, goal_polygon_1, map_interface, params)
+        other = TestAgent(other_state, goal_polygon_2, map_interface, params)
 
-    ego = TestAgent(ego_state, goal_polygon, map_interface, params)
-    other = TestAgent(other_state, goal_polygon, map_interface, params)
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
 
-    world.AddAgent(ego)
-    world.AddAgent(other)
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
 
-    evaluator_rss = EvaluatorRSS(ego.id, params)
+        evaluator_rss = EvaluatorRSS(ego.id, params)
 
-    world.AddEvaluator("rss", evaluator_rss)
-    world.Step(1)
+        self.assertEqual(
+            True, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
 
-    # Checking Lateral Responses (true means safe)
-    pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(world)
-    self.assertEqual(True, pw_directional_evaluation_return[other.id][1])
+    def test_lateral_highway_unsafe(self):
+        """
+        Checking Lateral Responses (true means safe)
+        """
 
-    world.Step(1)
-    pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(world)
-    self.assertEqual(False, pw_directional_evaluation_return[other.id][1])
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
 
-  def test_relevant_agents(self):
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
 
-    params = ParameterServer()
-    map = "bark/runtime/tests/data/city_highway_straight.xodr"
-    params["EvaluatorRss"]["MapFilename"] = map
+        goal_polygon_1 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_1 = goal_polygon_1.Translate(Point2d(5.5, 120))
 
-    map_interface = EvaluatorRSSTests.load_map(map)
-    world = World(params)
-    world.SetMap(map_interface)
+        goal_polygon_2 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_2 = goal_polygon_2.Translate(Point2d(1.8, 120))
 
-    goal_polygon_1 = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon_1 = goal_polygon_1.Translate(Point2d(5.5, 120))
+        # Hard coded
+        ego_state = np.array([0, 5.0, 10, np.pi/2, 10])  # straight north
+        other_state = np.array([0, 3.1, 0, np.pi/2, 10])  # straight north
 
-    goal_polygon_2 = Polygon2d(
-        [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
-    goal_polygon_2 = goal_polygon_2.Translate(Point2d(1.8, 120))
+        ego = TestAgent(ego_state, goal_polygon_1, map_interface, params)
+        other = TestAgent(other_state, goal_polygon_2, map_interface, params)
 
-    # Hard coded
-    ego_state = np.array([0, 5.5, 10, 0, 10])
-    other_1_state = np.array([0, 1.8, -10, 0, 15])
-    other_2_state = np.array([0, 1.8, -120, 0, 10])
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
 
-    ego = TestAgent(ego_state, goal_polygon_1, map_interface, params)
-    other_1 = TestAgent(other_1_state, goal_polygon_2, map_interface, params)
-    other_2 = TestAgent(other_2_state, goal_polygon_2, map_interface, params)
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
 
-    world.AddAgent(ego)
-    world.AddAgent(other_1)
-    world.AddAgent(other_2)
+        evaluator_rss = EvaluatorRSS(ego.id, params)
 
-    evaluator_rss = EvaluatorRSS(ego.id, params)
-    world.Step(1)
-    responses = evaluator_rss.PairwiseEvaluate(world)
-    
-    self.assertEqual(1, len(responses)) # Test GetRelevantAgents
-    self.assertTrue(responses[other_1.id])
-    self.assertFalse(other_2.id in responses)
+        self.assertEqual(
+            False, evaluator_rss.PairwiseDirectionalEvaluate(world)[other.id][1])
+
+    def test_lateral_merging_safe(self):
+        """
+        Checking Lateral Responses (true means safe)
+        """
+
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
+
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
+
+        goal_polygon = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(-15.4, 108.6))
+
+        # Hard coded
+        ego_state = np.array([0, 68.1, 108, -np.pi, 5])
+        other_state = np.array([0, 64.1, 105, -np.pi, 5])
+
+        ego = TestAgent(ego_state, goal_polygon, map_interface, params)
+        other = TestAgent(other_state, goal_polygon, map_interface, params)
+
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
+
+        evaluator_rss = EvaluatorRSS(ego.id, params)
+        world.AddEvaluator("rss", evaluator_rss)
+
+        pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(
+            world)
+        self.assertEqual(True, pw_directional_evaluation_return[other.id][1])
+
+    def test_lateral_merging_unsafe(self):
+        """
+        Checking Lateral Responses (true means safe)
+        """
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_centered.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
+
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
+
+        goal_polygon = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(-15.4, 108.6))
+
+        # Hard coded
+        ego_state = np.array([0, 62.8, 107.8, -np.pi+0.2, 5])
+        other_state = np.array([0, 67.5, 105.3, -np.pi, 5])
+
+        ego = TestAgent(ego_state, goal_polygon, map_interface, params)
+        other = TestAgent(other_state, goal_polygon, map_interface, params)
+
+        world.AddAgent(ego)
+        world.AddAgent(other)
+        world.UpdateAgentRTree()
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
+
+        evaluator_rss = EvaluatorRSS(ego.id, params)
+        world.AddEvaluator("rss", evaluator_rss)
+
+        pw_directional_evaluation_return = evaluator_rss.PairwiseDirectionalEvaluate(
+            world)
+        self.assertEqual(False, pw_directional_evaluation_return[other.id][1])
+
+    def test_relevant_agents(self):
+
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
+
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
+
+        goal_polygon_1 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_1 = goal_polygon_1.Translate(Point2d(5.5, 120))
+
+        goal_polygon_2 = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon_2 = goal_polygon_2.Translate(Point2d(1.8, 120))
+
+        ego_state = np.array([0, 5.5, 10, np.pi/2, 10])
+        other_1_state = np.array([0, 1.8, -10, np.pi/2, 15])
+        other_2_state = np.array([0, 1.8, -120, np.pi/2, 10])
+
+        ego = TestAgent(ego_state, goal_polygon_1, map_interface, params)
+        other_1 = TestAgent(other_1_state, goal_polygon_2,
+                            map_interface, params)
+        other_2 = TestAgent(other_2_state, goal_polygon_2,
+                            map_interface, params)
+
+        world.AddAgent(ego)
+        world.AddAgent(other_1)
+        world.AddAgent(other_2)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
+
+        evaluator_rss = EvaluatorRSS(ego.id, params)
+        responses = evaluator_rss.PairwiseEvaluate(world)
+
+        self.assertEqual(1, len(responses))
+        self.assertTrue(responses[other_1.id])
+        self.assertFalse(other_2.id in responses)
+
 
 if __name__ == '__main__':
-  SetVerboseLevel(4)
-  unittest.main()
+    SetVerboseLevel(4)
+    unittest.main()
