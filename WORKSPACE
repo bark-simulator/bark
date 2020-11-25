@@ -70,14 +70,6 @@ load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
 rule_monitor_dependencies()
 # --------------------------------------------------
 
-# ------------------- BARK-ML ----------------------
-git_repository(
-  name = "bark_ml",
-  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
-  remote = "https://github.com/bark-simulator/bark-ml"
-)
-# --------------------------------------------------
-
 # ---------------------- RSS -----------------------
 load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
 rss_dependencies()
