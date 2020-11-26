@@ -278,6 +278,8 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
+        self.drawMapAerialImage()
+
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
@@ -344,7 +346,10 @@ class BaseViewer(Viewer):
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
-        
+
+    def drawMapAerialImage(self):
+        pass
+
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
