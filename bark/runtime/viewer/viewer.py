@@ -71,6 +71,7 @@ class BaseViewer(Viewer):
                                                                    "Alpha of the background plane", 1.0]
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth",
                                                                                        "Linewidth of linestrings", 1.0]
+        self._draw_aerial_image = params["Visualization"]["Map"]["DrawAerialImage", "Flag to draw aerial image behind map", False]
 
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
@@ -278,7 +279,8 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
-        self.drawMapAerialImage()
+        if self._draw_aerial_image:
+          self.drawMapAerialImage()
 
         # draw agent goals
         for agent_id, agent in world.agents.items():
