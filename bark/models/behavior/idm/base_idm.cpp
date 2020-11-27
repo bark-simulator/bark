@@ -198,6 +198,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
         leading_acc = boost::get<Continuous1DAction>(last_action);
       } else if (last_action.type() == typeid(LonLatAction)) {
         leading_acc = boost::get<LonLatAction>(last_action).acc_lon;
+      } else if (last_action.type() == typeid(Input)) {
+        leading_acc = boost::get<Input>(last_action)(0);
       } else {
         LOG(FATAL) << "Other's action type unknown in cah calculation: "
                    << boost::apply_visitor(action_tostring_visitor(),
@@ -226,9 +228,23 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
       }
     }
   }
+
+  Action ego_action = GetLastAction();
+  if (ego_action.type() == typeid(Continuous1DAction)) {
+    ego_acc = boost::get<Continuous1DAction>(ego_action);
+  } else if (ego_action.type() == typeid(LonLatAction)) {
+    ego_acc = boost::get<LonLatAction>(ego_action).acc_lon;
+  } else if (ego_action.type() == typeid(Input)) {
+    ego_acc = boost::get<Input>(ego_action)(0);
+  } else {
+    LOG(FATAL) << "ego action type unknown: "
+                << boost::apply_visitor(action_tostring_visitor(),
+                                        ego_action);
+  }
+
   rel_values.leading_distance = leading_distance;
   rel_values.leading_velocity = leading_velocity;
-  rel_values.ego_acc = boost::get<Continuous1DAction>(GetLastAction());
+  rel_values.ego_acc = ego_acc;
   rel_values.leading_acc = leading_acc;
   rel_values.has_leading_object = interaction_term_active;
   return rel_values;
