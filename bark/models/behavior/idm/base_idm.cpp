@@ -75,7 +75,6 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
   acceleration_limits_.lon_acc_min =
       params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
                       "Minimum longitudinal acceleration", -5.0);
-
   SetLastAction(Continuous1DAction(0.0f));
 }
 
@@ -329,7 +328,10 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
+    const double acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+    const double acc_upper_bound = GetAccelerationLimits().lon_acc_max;
     acc = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_i);
+    acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
   }
   return std::pair<double, double>(acc, rel_distance);
 }

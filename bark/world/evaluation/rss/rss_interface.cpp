@@ -14,6 +14,8 @@ using ::ad::physics::Acceleration;
 using ::ad::physics::Distance;
 using ::ad::physics::Duration;
 
+using bark::geometry::SignedAngleDiff;
+
 namespace bark {
 namespace world {
 namespace evaluation {
@@ -75,38 +77,37 @@ bool RssInterface::InitializeOpenDriveMap(
   return matching_object;
 }
 
-void RssInterface::FillRSSDynamics(
-  ::ad::rss::world::RssDynamics& rss_dynamics,
-  const commons::ParamsPtr& params) {
-  rss_dynamics.alphaLon.accelMax = Acceleration(params->GetReal(
-    "AccLonMax", "maximum acceleration", 1.7));
-  rss_dynamics.alphaLon.brakeMax = Acceleration(params->GetReal(
-    "BrakeLonMax", "maximum deceleration", -1.7));
-  rss_dynamics.alphaLon.brakeMin = Acceleration(params->GetReal(
-    "BrakeLonMin", "minimum braking deceleration", -1.69));
+void RssInterface::FillRSSDynamics(::ad::rss::world::RssDynamics& rss_dynamics,
+                                   const commons::ParamsPtr& params) {
+  rss_dynamics.alphaLon.accelMax =
+      Acceleration(params->GetReal("AccLonMax", "maximum acceleration", 1.7));
+  rss_dynamics.alphaLon.brakeMax = Acceleration(
+      params->GetReal("BrakeLonMax", "maximum deceleration", -1.7));
+  rss_dynamics.alphaLon.brakeMin = Acceleration(
+      params->GetReal("BrakeLonMin", "minimum braking deceleration", -1.69));
   rss_dynamics.alphaLon.brakeMinCorrect = Acceleration(params->GetReal(
-    "BrakeLonMinCorrect",
-    "minimum deceleration of oncoming vehicle", -1.67));
+      "BrakeLonMinCorrect", "minimum deceleration of oncoming vehicle", -1.67));
   // lateral
-  rss_dynamics.alphaLat.accelMax = Acceleration(params->GetReal(
-    "AccLatBrakeMax", "maximum lateral acceleration", 0.2));
-  rss_dynamics.alphaLat.brakeMin = Acceleration(params->GetReal(
-    "AccLatBrakeMin", "minimum lateral braking", -0.8));
+  rss_dynamics.alphaLat.accelMax = Acceleration(
+      params->GetReal("AccLatBrakeMax", "maximum lateral acceleration", 0.2));
+  rss_dynamics.alphaLat.brakeMin = Acceleration(
+      params->GetReal("AccLatBrakeMin", "minimum lateral braking", -0.8));
   // other
-  rss_dynamics.lateralFluctuationMargin = Distance(params->GetReal(
-    "FluctMargin", "fluctuation margin", 0.1));
-  rss_dynamics.responseTime = Duration(params->GetReal(
-    "TimeResponse", "response time of the ego vehicle", 0.2));
+  rss_dynamics.lateralFluctuationMargin =
+      Distance(params->GetReal("FluctMargin", "fluctuation margin", 0.1));
+  rss_dynamics.responseTime = Duration(
+      params->GetReal("TimeResponse", "response time of the ego vehicle", 0.2));
 
   // new parameters after ad-rss v4.0.0
   rss_dynamics.unstructuredSettings.pedestrianTurningRadius =
-    ad::physics::Distance(2.0);
+      ad::physics::Distance(2.0);
   rss_dynamics.unstructuredSettings.driveAwayMaxAngle = ad::physics::Angle(2.4);
   rss_dynamics.unstructuredSettings.vehicleYawRateChange =
       ad::physics::AngularAcceleration(0.3);
-  rss_dynamics.unstructuredSettings.vehicleMinRadius = ad::physics::Distance(3.5);
+  rss_dynamics.unstructuredSettings.vehicleMinRadius =
+      ad::physics::Distance(3.5);
   rss_dynamics.unstructuredSettings.vehicleTrajectoryCalculationStep =
-    ad::physics::Duration(0.2);
+      ad::physics::Duration(0.2);
   // Sanity check
   // assert(brake_lon_max_ <= brake_lon_min_);
   // assert(brake_lon_min_ <= brake_lon_min_correct_);
@@ -120,7 +121,8 @@ void RssInterface::FillRSSDynamics(
   } else {
     models::dynamic::State curr_state = history.at(history.size() - 1).first;
     models::dynamic::State prev_state = history.at(history.size() - 2).first;
-    double diff_theta = curr_state(THETA_POSITION) - prev_state(THETA_POSITION);
+    double diff_theta =
+        SignedAngleDiff(curr_state(THETA_POSITION), prev_state(THETA_POSITION));
     double diff_time = curr_state(TIME_POSITION) - prev_state(TIME_POSITION);
     av = ::ad::physics::AngularVelocity(diff_theta / diff_time);
   }
@@ -267,13 +269,15 @@ bool RssInterface::GetRelevantAgents(const AgentMap& agents,
           other_agent.second->GetCurrentState()(VEL_POSITION);
       double relevant_distance =
           (static_cast<double>(ego_max_stopping_distance) +
-           CalculateMaxStoppingDistance(other_agent_speed, rss_dynamics_others_)) *
+           CalculateMaxStoppingDistance(other_agent_speed,
+                                        rss_dynamics_others_)) *
           scaling_relevant_range_;
 
       if (geometry::Distance(ego_center,
                              other_agent.second->GetCurrentPosition()) <
-          relevant_distance)
+          relevant_distance) {
         relevant_agents.push_back(other_agent.second);
+      }
     }
   }
   return true;
@@ -310,7 +314,7 @@ bool RssInterface::CreateWorldModel(
   ::ad::map::landmark::LandmarkIdSet green_traffic_lights;
 
   for (const auto& other : relevant_agents) {
-    models::dynamic::State other_state = other->GetCurrentState();
+    const models::dynamic::State other_state = other->GetCurrentState();
 
     Polygon other_shape = other->GetShape();
     auto const other_match_object =
@@ -398,24 +402,36 @@ bool RssInterface::GenerateRSSWorld(const ObservedWorld& observed_world,
   AgentPtr agent = observed_world.GetEgoAgent();
   AgentId agent_id = observed_world.GetEgoAgentId();
 
-  Point2d agent_goal;
-  bg::centroid(agent->GetGoalDefinition()->GetShape().obj_, agent_goal);
+  const auto center = agent->GetGoalDefinition()->GetShape().center_;
+  Point2d agent_goal(center[0], center[1]);
+
   models::dynamic::State agent_state;
   agent_state = agent->GetCurrentState();
   Polygon agent_shape = agent->GetShape();
   Point2d agent_center =
       Point2d(agent_state(X_POSITION), agent_state(Y_POSITION));
 
+  const auto& road_corr = agent->GetRoadCorridor();
+  if (!bark::geometry::Collide(agent_goal, road_corr->GetPolygon())) {
+    LOG(ERROR) << "agent " << agent_id << " at position "
+               << boost::geometry::get<0>(agent_center) << ", "
+               << boost::geometry::get<1>(agent_center) << " with goal at "
+               << boost::geometry::get<0>(agent_goal) << ", "
+               << boost::geometry::get<1>(agent_goal)
+               << " cannot reach goal, as it's not inside road corridor";
+  }
+
   ::ad::map::match::Object agent_match_object =
       GenerateMatchObject(agent_state, agent_shape);
   ::ad::map::route::FullRoute agent_rss_route;
   GenerateRoute(agent_center, agent_goal, agent_match_object, agent_rss_route);
-  AgentState agent_rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
+  AgentState agent_rss_state =
+      ConvertAgentState(agent_state, rss_dynamics_ego_);
 
   AgentMap other_agents = observed_world.GetAgents();  // GetOtherAgents();
-  bool result = CreateWorldModel(other_agents, agent_id, agent_rss_state,
-                                 agent_match_object,
-                                 agent_rss_route, rss_world);
+  bool result =
+      CreateWorldModel(other_agents, agent_id, agent_rss_state,
+                       agent_match_object, agent_rss_route, rss_world);
 
   return result;
 }
@@ -453,6 +469,9 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
+  } else {
+    LOG(WARNING) << "Could not Generate RSSWorld, thus no "
+                    "PairwiseDirectionalSafetyReponse";
   }
   return response;
 }
