@@ -489,7 +489,11 @@ class BaseViewer(Viewer):
           print("Lateral violation")
           violations.append({"label": "LAT", "color": "red"})
         
+        # have to compute shape here
+        observed_world = world.Observe([agent_id])[0]
+        behavior.ComputeSafetyPolygons(observed_world)
         safety_polygons = behavior.GetSafetyPolygons()
+        
         for poly in safety_polygons:
           print(poly)
           self.drawPolygon2d(poly.GetPolygon(), "Blue", 0.6, "Blue", zorder=9)

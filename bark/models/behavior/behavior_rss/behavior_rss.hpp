@@ -34,6 +34,7 @@ using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::objects::AgentId;
 using world::evaluation::SafetyPolygon;
+using world::evaluation::ComputeSafetyPolygon;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
 #endif
@@ -121,6 +122,11 @@ class BehaviorRSSConformant : public BehaviorModel {
     lat_right_response_ =
         static_cast<::ad::rss::state::LateralResponse>(lat_right);
   }
+  void ComputeSafetyPolygons(const ObservedWorld& observed_world) {
+    for (auto& sp : safety_polygons_)
+      ComputeSafetyPolygon(sp, observed_world);
+  }
+
 #endif
   std::vector<SafetyPolygon> GetSafetyPolygons() const {
     return safety_polygons_;

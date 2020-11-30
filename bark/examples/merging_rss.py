@@ -49,9 +49,9 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
 
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.0
-param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 80.
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 25.0
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.0
+param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 20.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
