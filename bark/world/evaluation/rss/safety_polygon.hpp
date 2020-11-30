@@ -26,9 +26,9 @@ using bark::world::AgentId;
 
 // TODO: make serializable
 struct SafetyPolygon {
-  double lat_left_safety_distance;
-  double lat_right_safety_distance;
-  double lon_safety_distance;
+  double lat_left_safety_distance{0.};
+  double lat_right_safety_distance{0.};
+  double lon_safety_distance{0.};
   Polygon polygon;
   Polygon GetPolygon() const {
     return polygon;

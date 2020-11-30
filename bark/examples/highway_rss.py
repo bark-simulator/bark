@@ -32,8 +32,10 @@ param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["World"]["FracLateralOffset"] = 2.0
 
-param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
-param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
+# param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
+param_server["Visualization"]["Evaluation"]["DrawEgoRSSSafetyResponses"] = True
+
 
 # custom lane configuration that sets a different behavior model
 # and sets the desired speed for the behavior
@@ -128,7 +130,8 @@ for episode in range(0, 3):
     env.reset()
     current_world = env._world
     eval_agent_id = env._scenario._eval_agent_ids[0]
-
+    current_world.agents[eval_agent_id].behavior_model = \
+      BehaviorRSSConformant(param_server)
     evaluator_rss = EvaluatorRSS(eval_agent_id, param_server)
 
     current_world.AddEvaluator("rss", evaluator_rss)

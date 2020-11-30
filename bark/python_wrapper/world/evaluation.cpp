@@ -88,23 +88,27 @@ void python_evaluation(py::module m) {
              std::shared_ptr<SafetyPolygon>>(m, "SafetyPolygon")
     .def(py::init<>())
     .def("GetPolygon", &SafetyPolygon::GetPolygon)
-    .def("__repr__", [](const SafetyPolygon& g) {
-      return "bark.core.world.evaluation.SafetyPolygon";
-  })
-  .def(py::pickle(
-    [](const SafetyPolygon& a) {
-      // make tuple here
-      return py::make_tuple(
-        a.lat_left_safety_distance, a.lat_right_safety_distance,
-        a.lon_safety_distance, a.polygon);
-    },
-    [](py::tuple t) {
-      if (t.size() != 4)
-        throw std::runtime_error("Invalid SafetyPolygon model state!");
-      return new SafetyPolygon{
-        t[0].cast<double>(), t[1].cast<double>(),
-        t[2].cast<double>(), t[3].cast<Polygon>()};
-  }));
+    .def("__repr__",
+      [](const SafetyPolygon& poly) {
+        std::stringstream ss;
+        ss << "<bark.SafetyPolygon>: ";
+        ss << poly;
+        return ss.str();
+      })
+    .def(py::pickle(
+      [](const SafetyPolygon& a) {
+        // make tuple here
+        return py::make_tuple(
+          a.lat_left_safety_distance, a.lat_right_safety_distance,
+          a.lon_safety_distance, a.polygon);
+      },
+      [](py::tuple t) {
+        if (t.size() != 4)
+          throw std::runtime_error("Invalid SafetyPolygon model state!");
+        return new SafetyPolygon{
+          t[0].cast<double>(), t[1].cast<double>(),
+          t[2].cast<double>(), t[3].cast<Polygon>()};
+    }));
 
 
 #ifdef RSS

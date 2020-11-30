@@ -491,6 +491,7 @@ class BaseViewer(Viewer):
         
         safety_polygons = behavior.GetSafetyPolygons()
         for poly in safety_polygons:
+          print(poly)
           self.drawPolygon2d(poly.GetPolygon(), "Blue", 0.6, "Blue", zorder=9)
           
         # draw labels
