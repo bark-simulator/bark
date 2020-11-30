@@ -420,11 +420,16 @@ class BaseViewer(Viewer):
 
     def drawRssDebugInfomation(self, world, agent_id):
         from bark.core.world.evaluation import EvaluatorRSS
+        rss_responses = None
         for evaluator in world.evaluators:
           if isinstance(world.evaluators[evaluator], EvaluatorRSS):
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
                 world)
             break
+
+        if not rss_responses:
+            evaluator = EvaluatorRSS(agent_id=agent_id, params=self.parameters)
+            rss_responses = evaluator.PairwiseDirectionalEvaluate(world)
 
         def char_func(value):
             if value == True:
@@ -448,11 +453,16 @@ class BaseViewer(Viewer):
     
     def drawRssSafetyResponses(self, world, ego_id):
         from bark.core.world.evaluation import EvaluatorRSS
+        rss_responses = None
         for evaluator in world.evaluators:
             if isinstance(world.evaluators[evaluator], EvaluatorRSS):
                 rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
                   world)
                 break
+
+        if not rss_responses:
+            evaluator = EvaluatorRSS(agent_id=ego_id, params=self.parameters)
+            rss_responses = evaluator.PairwiseEvaluate(world)
 
         ego_agent = world.agents[ego_id]
         shape = ego_agent.shape
