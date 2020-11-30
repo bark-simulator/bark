@@ -86,7 +86,6 @@ class EvaluatorRSS : public BaseEvaluator {
   void GenerateSafetyPolygons(const ObservedWorld& observed_world) {
     safety_polygons_.clear();
     for (auto& rss_state : rss_state_snapshot_.individualResponses) {
-      // from agent_id, to_agent_id
       SafetyPolygon safe_poly;
       safe_poly.lon_safety_distance = GetSafeDistance(rss_state.longitudinalState);
       safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
@@ -149,6 +148,10 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_proper_response_;
   }
 
+  std::vector<SafetyPolygon> GetSafetyPolygons() const {
+    return safety_polygons_;
+  }
+  
   virtual ~EvaluatorRSS() {}
 
  private:

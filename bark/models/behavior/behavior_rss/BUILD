@@ -15,7 +15,8 @@ cc_library(
         "//bark/world:world",
         "//bark/models/behavior/behavior_safety:behavior_safety",
         "//bark/models/dynamic:dynamic",
-        "//bark/world/evaluation:evaluation"
+        "//bark/world/evaluation:evaluation",
+        "//bark/world/evaluation/rss:safety_polygon"
     ] +  select({
         "//bark/world/evaluation/rss:_rss": ["//bark/world/evaluation/rss:evaluator_rss"],
         "//conditions:default": [],
