@@ -28,6 +28,8 @@ namespace world {
 namespace evaluation {
 
 using geometry::Polygon;
+using objects::StateDefinition;
+using bark::geometry::SignedAngleDiff;
 
 class EvaluatorRSS : public BaseEvaluator {
  public:
@@ -77,10 +79,44 @@ class EvaluatorRSS : public BaseEvaluator {
 
   void ComputeSafetyPolygon(
     SafetyPolygon& safe_poly, const ObservedWorld& observed_world) {
-    // TODO: generate and fill safety polygon here
-    // auto ego_agent = observed_world.Get
-    // 1. calculate bounding box
-    // 2. enlarge bounding box in longitudinal
+    // 1. copy shape and inser into safe_poly
+    auto ego_agent = observed_world.GetEgoAgent();
+    auto ego_pose = ego_agent->GetCurrentPosition();
+    auto ego_state = ego_agent->GetCurrentState();
+    auto theta = ego_state(StateDefinition::THETA_POSITION);
+
+    // 2. transform
+    // -> angle_diff_lat = SignedAngleDiff(theta, pt_angle) -> lat (+/-)
+    // x sign(angle_diff_lat)= lat_brake*sin(theta)
+    // y sign(angle_diff_lat)= lat_brake*cos(theta)
+    // -> angle_diff_lon = SignedAngleDiff(theta + pi/2, pt_angle) -> lon (+/-)
+    // x sign(angle_diff_lon)= lat_brake*cos(theta)
+    // y sign(angle_diff_lon)= lat_brake*sin(theta)
+    std::vector<Point2d> points = ego_agent->GetShape().obj_.outer();
+    for (auto pt : points) {
+      double pt_angle = atan2(
+        bg::get<1>(pt) - bg::get<1>(ego_pose),
+        bg::get<0>(pt) - bg::get<0>(ego_pose));
+      double signed_angle_diff_lat = SignedAngleDiff(theta, pt_angle);
+      double signed_angle_diff_lon = SignedAngleDiff(theta, pt_angle);
+      double sgn_lat = signed_angle_diff_lat > 0 ? 1 : -1;
+      double sgn_lon = signed_angle_diff_lon > 0 ? 1 : -1;
+
+      // lateral
+      double lat_dist = 0;
+      lat_dist =  sgn_lat < 0 ? safe_poly.lat_left_safety_distance : safe_poly.lat_right_safety_distance;  // NOLINT
+      bg::set<0>(pt, bg::get<0>(pt) + sgn_lat*lat_dist*sin(theta));
+      bg::set<1>(pt, bg::get<1>(pt) + sgn_lat*lat_dist*cos(theta));
+
+      // longitudinal back and front
+      bg::set<0>(
+        pt, bg::get<0>(pt) + sgn_lon*safe_poly.lon_safety_distance*cos(theta));
+      bg::set<1>(
+        pt, bg::get<1>(pt) + sgn_lon*safe_poly.lon_safety_distance*sin(theta));
+
+      safe_poly.polygon.AddPoint(pt);
+    }
+
   }
 
   void GenerateSafetyPolygons(const ObservedWorld& observed_world) {
@@ -91,7 +127,6 @@ class EvaluatorRSS : public BaseEvaluator {
       safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
       safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
       ComputeSafetyPolygon(safe_poly, observed_world);
-      // std::cout << safe_poly << std::endl;
       safety_polygons_.push_back(safe_poly);
     }
   }

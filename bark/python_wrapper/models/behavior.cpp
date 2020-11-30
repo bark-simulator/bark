@@ -428,6 +428,7 @@ void python_behavior(py::module m) {
     .def("SetLongitudinalResponse", &BehaviorRSSConformant::SetLongitudinalResponse)
     .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
     .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
+    .def("GetSafetyPolygons", &BehaviorRSSConformant::GetSafetyPolygons)
     #endif
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {

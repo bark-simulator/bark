@@ -488,6 +488,10 @@ class BaseViewer(Viewer):
         if lateral_left_response != 0 or lateral_right_response != 0:
           print("Lateral violation")
           violations.append({"label": "LAT", "color": "red"})
+        
+        safety_polygons = behavior.GetSafetyPolygons()
+        for poly in safety_polygons:
+          self.drawPolygon2d(poly.GetPolygon(), "Blue", 0.6, "Blue", zorder=9)
           
         # draw labels
         ego_agent = world.agents[agent_id]

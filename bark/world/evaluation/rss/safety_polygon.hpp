@@ -30,6 +30,9 @@ struct SafetyPolygon {
   double lat_right_safety_distance;
   double lon_safety_distance;
   Polygon polygon;
+  Polygon GetPolygon() const {
+    return polygon;
+  }
 };
 
 typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;

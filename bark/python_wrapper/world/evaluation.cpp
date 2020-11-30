@@ -87,6 +87,7 @@ void python_evaluation(py::module m) {
   py::class_<SafetyPolygon,
              std::shared_ptr<SafetyPolygon>>(m, "SafetyPolygon")
     .def(py::init<>())
+    .def("GetPolygon", &SafetyPolygon::GetPolygon)
     .def("__repr__", [](const SafetyPolygon& g) {
       return "bark.core.world.evaluation.SafetyPolygon";
   })
