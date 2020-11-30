@@ -75,11 +75,15 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_state.rssStateInformation.safeDistance;
   }
 
-  void ComputeSafetyPolygon(SafetyPolygon& safe_poly) {
+  void ComputeSafetyPolygon(
+    SafetyPolygon& safe_poly, const ObservedWorld& observed_world) {
     // TODO: generate and fill safety polygon here
+    // auto ego_agent = observed_world.Get
+    // 1. calculate bounding box
+    // 2. enlarge bounding box in longitudinal
   }
 
-  void GenerateSafetyPolygons() {
+  void GenerateSafetyPolygons(const ObservedWorld& observed_world) {
     safety_polygons_.clear();
     for (auto& rss_state : rss_state_snapshot_.individualResponses) {
       // from agent_id, to_agent_id
@@ -87,7 +91,8 @@ class EvaluatorRSS : public BaseEvaluator {
       safe_poly.lon_safety_distance = GetSafeDistance(rss_state.longitudinalState);
       safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
       safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
-      ComputeSafetyPolygon(safe_poly);
+      ComputeSafetyPolygon(safe_poly, observed_world);
+      // std::cout << safe_poly << std::endl;
       safety_polygons_.push_back(safe_poly);
     }
   }
@@ -96,7 +101,7 @@ class EvaluatorRSS : public BaseEvaluator {
     auto result = rss_.GetSafetyReponse(observed_world);
     rss_proper_response_ = rss_.GetRSSResponse();
     rss_state_snapshot_ = rss_.GetRSSStateSnapshot();
-    GenerateSafetyPolygons();
+    GenerateSafetyPolygons(observed_world);
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -148,10 +153,8 @@ class EvaluatorRSS : public BaseEvaluator {
 
  private:
   RssInterface rss_;
-  std::vector<uint64_t> dangerous_objects_{};
   ::ad::rss::state::ProperResponse rss_proper_response_;
   ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
-  // TODO: serialize this
   std::vector<SafetyPolygon> safety_polygons_;
 
 #endif

@@ -30,10 +30,24 @@ struct SafetyPolygon {
   double lat_right_safety_distance;
   double lon_safety_distance;
   Polygon polygon;
-  AgentId from_id, to_id;
 };
 
 typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
+
+inline std::ostream &operator<<(std::ostream &os, const SafetyPolygon& v)
+{
+  os << "SafetyPolygon(";
+  os << "lat_left_safety_distance:";
+  os << v.lat_left_safety_distance;
+  os << ",";
+  os << "lat_right_safety_distance:";
+  os << v.lat_right_safety_distance;
+  os << ",";
+  os << "lon_safety_distance:";
+  os << v.lon_safety_distance;
+  os << ")";
+  return os;
+}
 
 }  // namespace evaluation
 }  // namespace world

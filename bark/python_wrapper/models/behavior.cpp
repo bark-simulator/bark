@@ -435,6 +435,7 @@ void python_behavior(py::module m) {
       })
     .def(py::pickle(
       [](const BehaviorRSSConformant& b) {
+        // TODO: store safety polygons
         #ifdef RSS
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
@@ -470,6 +471,7 @@ void python_behavior(py::module m) {
         bm->SetLongitudinalResponse(t[3].cast<bool>());
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
+        // TODO: load safety polygons
         #endif
         return bm;
       }));
