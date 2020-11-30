@@ -16,14 +16,18 @@
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/geometry/polygon.hpp"
 
 #ifdef RSS
 #include "bark/world/evaluation/rss/rss_interface.hpp"
 #endif
+#include "bark/world/evaluation/rss/safety_polygon.hpp"
 
 namespace bark {
 namespace world {
 namespace evaluation {
+
+using geometry::Polygon;
 
 class EvaluatorRSS : public BaseEvaluator {
  public:
@@ -63,9 +67,36 @@ class EvaluatorRSS : public BaseEvaluator {
     }
   }
 
+  double GetSafeDistance(const ::ad::rss::state::LongitudinalRssState& rss_state) {
+    return rss_state.rssStateInformation.safeDistance;
+  }
+
+  double GetSafeDistance(const ::ad::rss::state::LateralRssState& rss_state) {
+    return rss_state.rssStateInformation.safeDistance;
+  }
+
+  void ComputeSafetyPolygon(SafetyPolygon& safe_poly) {
+    // TODO: generate and fill safety polygon here
+  }
+
+  void GenerateSafetyPolygons() {
+    safety_polygons_.clear();
+    for (auto& rss_state : rss_state_snapshot_.individualResponses) {
+      // from agent_id, to_agent_id
+      SafetyPolygon safe_poly;
+      safe_poly.lon_safety_distance = GetSafeDistance(rss_state.longitudinalState);
+      safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
+      safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
+      ComputeSafetyPolygon(safe_poly);
+      safety_polygons_.push_back(safe_poly);
+    }
+  }
+
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
     rss_proper_response_ = rss_.GetRSSResponse();
+    rss_state_snapshot_ = rss_.GetRSSStateSnapshot();
+    GenerateSafetyPolygons();
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -117,9 +148,12 @@ class EvaluatorRSS : public BaseEvaluator {
 
  private:
   RssInterface rss_;
-  // int32_t lon_{0}, lat_left_{0}, lat_right_{0};
   std::vector<uint64_t> dangerous_objects_{};
   ::ad::rss::state::ProperResponse rss_proper_response_;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
+  // TODO: serialize this
+  std::vector<SafetyPolygon> safety_polygons_;
+
 #endif
   AgentId agent_id_;
 };

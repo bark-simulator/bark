@@ -24,6 +24,15 @@ cc_library(
 )
 
 cc_library(
+    name = "safety_polygon",
+    hdrs = ["safety_polygon.hpp"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//bark/world:world",
+    ]
+)
+
+cc_library(
     name = "evaluator_rss",
     hdrs = ["evaluator_rss.hpp"],
     visibility = ["//visibility:public"],
@@ -31,6 +40,7 @@ cc_library(
         "//bark/world:world",
         "//bark/world/evaluation:base_evaluator",
         ":_rss_interface",
+        ":safety_polygon"
     ]
 )
 

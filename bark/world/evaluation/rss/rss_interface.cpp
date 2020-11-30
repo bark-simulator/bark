@@ -352,17 +352,15 @@ bool RssInterface::RssCheck(
   // Describes the relative relation between two objects in possible
   // situations
   ::ad::rss::situation::SituationSnapshot situation_snapshot;
-
   // rss_state_snapshot: individual situation responses calculated from
   // SituationSnapshot
   bool result = rss_check.calculateProperResponse(
-      world_model, situation_snapshot, rss_state_snapshot,
+      world_model, situation_snapshot, rss_state_snapshot_,
       rss_proper_response_);
 
   if (!result) {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   }
-
   return result;
 }
 

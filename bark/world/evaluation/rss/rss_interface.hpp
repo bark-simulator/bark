@@ -225,7 +225,11 @@ class RssInterface {
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
-  
+
+  ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
+    return rss_state_snapshot_;
+  }
+
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
@@ -241,6 +245,7 @@ class RssInterface {
   // Contains longitudinal and lateral response of the ego object, a list of
   // id of the dangerous objects
   ::ad::rss::state::ProperResponse rss_proper_response_;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
 };
 
 }  // namespace evaluation
