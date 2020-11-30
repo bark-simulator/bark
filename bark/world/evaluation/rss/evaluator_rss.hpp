@@ -55,11 +55,11 @@ class EvaluatorRSS : public BaseEvaluator {
         return rss_.GetSafetyReponse(observed_worlds[0]);
       } else {
         LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
-        return false;
+        return true;
       }
     } else {
       LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
-      return false;
+      return true;
     }
   }
 
