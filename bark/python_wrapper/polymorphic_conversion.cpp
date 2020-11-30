@@ -25,6 +25,7 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "bark/models/behavior/motion_primitives/random_macro_actions.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil.hpp"
@@ -84,6 +85,7 @@ using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::behavior::BehaviorIDMStochastic;
 using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
+using bark::models::behavior::BehaviorRandomMacroActions;
 using bark::models::behavior::BehaviorMobil;
 using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
@@ -148,6 +150,8 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorIDMStochastic";
   } else if (typeid(*behavior_model) == typeid(BehaviorMPMacroActions)) {
     behavior_model_name = "BehaviorMPMacroActions";
+  } else if (typeid(*behavior_model) == typeid(BehaviorRandomMacroActions)) {
+    behavior_model_name = "BehaviorRandomMacroActions";
   }
 #ifdef PLANNER_UCT
   else if (typeid(*behavior_model) == typeid(BehaviorUCTCooperative)) {
@@ -214,6 +218,9 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorMPMacroActions") == 0) {
     return std::make_shared<BehaviorMPMacroActions>(
         t[0].cast<BehaviorMPMacroActions>());
+  } else if (behavior_model_name.compare("BehaviorRandomMacroActions") == 0) {
+    return std::make_shared<BehaviorRandomMacroActions>(
+        t[0].cast<BehaviorRandomMacroActions>());
   }
 #ifdef PLANNER_UCT
   else if (behavior_model_name.compare("BehaviorUCTCooperative") == 0) {
