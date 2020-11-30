@@ -32,6 +32,9 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);
+    dynamic::Input input(2);
+    input << 0.0, 0.0;
+    SetLastAction(input);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
