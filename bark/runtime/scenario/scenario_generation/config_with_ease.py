@@ -56,8 +56,8 @@ class LaneCorridorConfig:
     self._controlled_behavior_model = \
       kwargs.pop("controlled_behavior_model", None)
     self._controlled_ids = kwargs.pop("controlled_ids", None)
-    self._wb = kwargs.pop("wb", 1) # wheelbase
-    self._crad = kwargs.pop("crad", 3) # collision radius
+    self._wb = kwargs.pop("wb", 3) # wheelbase
+    self._crad = kwargs.pop("crad", 1) # collision radius
 
   def InferRoadIdsAndLaneCorr(self, world):
     goal_polygon = Polygon2d([0, 0, 0],
