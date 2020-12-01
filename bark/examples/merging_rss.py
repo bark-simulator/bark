@@ -105,7 +105,7 @@ viewer = MPViewer(params=param_server,
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.2]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]

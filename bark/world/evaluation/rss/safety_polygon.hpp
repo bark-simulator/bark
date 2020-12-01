@@ -66,7 +66,7 @@ inline void ComputeSafetyPolygon(
     double sgn_lat = signed_angle_diff_lat > 0 ? 1 : -1;
     double sgn_lon = signed_angle_diff_lon > 0 ? 1 : -1;
 
-    // lateral safety distancesa
+    // lateral safety distances
     double lat_dist = 0;
     lat_dist =  sgn_lat < 0 ? safe_poly.lat_left_safety_distance : safe_poly.lat_right_safety_distance;  // NOLINT
     auto lat_proj_angle = sgn_lat > 0 ? theta - 3.14/2. : theta + 3.14/2.;
@@ -76,6 +76,20 @@ inline void ComputeSafetyPolygon(
       bg::set<0>(pt, x_new);
       bg::set<1>(pt, y_new);
     }
+
+    // intermediate step: calculate if the agent is in front or behind
+    auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
+    auto other_pose = other_agent->GetCurrentPosition();
+    double relative_angle = atan2(
+      bg::get<1>(ego_pose) - bg::get<1>(other_pose),
+      bg::get<0>(ego_pose) - bg::get<0>(other_pose));
+    double diff_angle = SignedAngleDiff(theta - 3.14/2., relative_angle);
+    double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
+
+    // if the signs are different we do not want to modify the original
+    // point of the polygon
+    if (sgn_lon_in_front*sgn_lon < 0.)
+      sgn_lon = 0.;
 
     // longitudinal back and front safety distance
     bg::set<0>(
