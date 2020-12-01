@@ -101,14 +101,14 @@ void python_evaluation(py::module m) {
         // make tuple here
         return py::make_tuple(
           a.lat_left_safety_distance, a.lat_right_safety_distance,
-          a.lon_safety_distance, a.polygon, a.agent_id);
+          a.lon_safety_distance, a.polygon, a.agent_id, a.curr_distance);
       },
       [](py::tuple t) {
-        if (t.size() != 5)
+        if (t.size() != 6)
           throw std::runtime_error("Invalid SafetyPolygon model state!");
         return new SafetyPolygon{
           t[0].cast<double>(), t[1].cast<double>(), t[2].cast<double>(),
-          t[3].cast<Polygon>(), t[4].cast<AgentId>()};
+          t[3].cast<Polygon>(), t[4].cast<AgentId>(), t[5].cast<double>()};
     }));
 
 

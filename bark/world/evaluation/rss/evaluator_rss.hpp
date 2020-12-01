@@ -69,12 +69,16 @@ class EvaluatorRSS : public BaseEvaluator {
     }
   }
 
-  double GetSafeDistance(const ::ad::rss::state::LongitudinalRssState& rss_state) {
+  // double GetSafeDistance(const ::ad::rss::state::LongitudinalRssState& rss_state) {
+
+  template<typename T>
+  double GetSafeDistance(const T& rss_state) {
     return rss_state.rssStateInformation.safeDistance;
   }
 
-  double GetSafeDistance(const ::ad::rss::state::LateralRssState& rss_state) {
-    return rss_state.rssStateInformation.safeDistance;
+  template<typename T>
+  double GetCurrentDistance(const T& rss_state) {
+    return rss_state.rssStateInformation.currentDistance;
   }
 
   void GenerateSafetyPolygons(const ObservedWorld& observed_world) {
@@ -85,6 +89,7 @@ class EvaluatorRSS : public BaseEvaluator {
       safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
       safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
       safe_poly.agent_id = rss_state.objectId;
+      safe_poly.curr_distance = GetCurrentDistance(rss_state.longitudinalState);
       safety_polygons_.push_back(safe_poly);
     }
   }
