@@ -214,8 +214,8 @@ class BaseViewer(Viewer):
         for _, agent in world.agents.items():
             self.drawAgent(agent)
     
-    def drawBehaviorPlan(self, behavior_model):
-        self.drawTrajectory(behavior_model.last_trajectory,
+    def drawBehaviorPlan(self, agent):
+        self.drawTrajectory(agent.behavior_model.last_trajectory,
                                   color='black', linewidth=1.0)
 
     def drawHistory(self, agent, color, alpha, facecolor, zorder):
@@ -344,7 +344,7 @@ class BaseViewer(Viewer):
         if self.draw_behavior_plan_eval_agent:
           eval_agent = world.GetAgent(eval_agent_ids[0])
           if eval_agent is not None:
-              self.drawBehaviorPlan(eval_agent.behavior_model)
+              self.drawBehaviorPlan(eval_agent)
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
