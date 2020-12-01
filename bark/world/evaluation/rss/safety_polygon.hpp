@@ -35,8 +35,12 @@ struct SafetyPolygon {
   double lat_right_safety_distance{0.};
   double lon_safety_distance{0.};
   Polygon polygon;
+  AgentId agent_id{0};
   Polygon GetPolygon() const {
     return polygon;
+  }
+  AgentId GetAgentId() const {
+    return agent_id;
   }
 };
 
@@ -92,6 +96,9 @@ inline std::ostream &operator<<(std::ostream &os, const SafetyPolygon& v)
   os << ",";
   os << "lon_safety_distance:";
   os << v.lon_safety_distance;
+  os << ",";
+  os << "agent_id:";
+  os << v.agent_id;
   os << ")";
   return os;
 }

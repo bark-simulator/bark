@@ -84,6 +84,7 @@ class EvaluatorRSS : public BaseEvaluator {
       safe_poly.lon_safety_distance = GetSafeDistance(rss_state.longitudinalState);
       safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
       safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
+      safe_poly.agent_id = rss_state.objectId;
       safety_polygons_.push_back(safe_poly);
     }
   }

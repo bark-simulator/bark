@@ -88,6 +88,7 @@ void python_evaluation(py::module m) {
              std::shared_ptr<SafetyPolygon>>(m, "SafetyPolygon")
     .def(py::init<>())
     .def("GetPolygon", &SafetyPolygon::GetPolygon)
+    .def("GetAgentId", &SafetyPolygon::GetAgentId)
     .def("__repr__",
       [](const SafetyPolygon& poly) {
         std::stringstream ss;
@@ -100,14 +101,14 @@ void python_evaluation(py::module m) {
         // make tuple here
         return py::make_tuple(
           a.lat_left_safety_distance, a.lat_right_safety_distance,
-          a.lon_safety_distance, a.polygon);
+          a.lon_safety_distance, a.polygon, a.agent_id);
       },
       [](py::tuple t) {
-        if (t.size() != 4)
+        if (t.size() != 5)
           throw std::runtime_error("Invalid SafetyPolygon model state!");
         return new SafetyPolygon{
-          t[0].cast<double>(), t[1].cast<double>(),
-          t[2].cast<double>(), t[3].cast<Polygon>()};
+          t[0].cast<double>(), t[1].cast<double>(), t[2].cast<double>(),
+          t[3].cast<Polygon>(), t[4].cast<AgentId>()};
     }));
 
 
