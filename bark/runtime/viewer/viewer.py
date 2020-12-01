@@ -71,6 +71,7 @@ class BaseViewer(Viewer):
                                                                    "Alpha of the background plane", 1.0]
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth",
                                                                                        "Linewidth of linestrings", 1.0]
+        self._draw_aerial_image = params["Visualization"]["Map"]["DrawAerialImage", "Flag to draw aerial image behind map", False]
 
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
@@ -278,6 +279,9 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
+        if self._draw_aerial_image:
+          self.drawMapAerialImage()
+
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
@@ -344,7 +348,10 @@ class BaseViewer(Viewer):
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
-        
+
+    def drawMapAerialImage(self):
+        pass
+
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
