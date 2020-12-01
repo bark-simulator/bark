@@ -32,9 +32,9 @@ using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
-using world::objects::AgentId;
-using world::evaluation::SafetyPolygon;
 using world::evaluation::ComputeSafetyPolygon;
+using world::evaluation::SafetyPolygon;
+using world::objects::AgentId;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
 #endif
@@ -49,11 +49,9 @@ class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params)
       : BehaviorModel(params),
-        nominal_behavior_model_(
-            std::make_shared<BehaviorIDMLaneTracking>(
-                GetParams()->AddChild("NominalBehavior"))),
-        behavior_safety_model_(std::make_shared<BehaviorSafety>(
-              GetParams())),
+        nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
+            GetParams()->AddChild("NominalBehavior"))),
+        behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
         rss_evaluator_(),
         behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
         world_time_of_last_rss_violation_(-1),
@@ -74,7 +72,8 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual ~BehaviorRSSConformant() {}
 
-  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world);
+  Trajectory Plan(double min_planning_time,
+                  const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
@@ -82,12 +81,12 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BehaviorModel> GetNominalBehaviorModel() const {
     return nominal_behavior_model_;
   }
-  
-  BehaviorRSSConformantStatus GetBehaviorRssStatus() const { 
-    return behavior_rss_status_; 
+
+  BehaviorRSSConformantStatus GetBehaviorRssStatus() const {
+    return behavior_rss_status_;
   }
 
-  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model) {
     nominal_behavior_model_ = model;
   }
   std::shared_ptr<BehaviorSafety> GetBehaviorSafetyModel() const {
@@ -101,8 +100,9 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  #ifdef RSS
-  void ApplyRestrictionsToNominalModel(const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+#ifdef RSS
+  void ApplyRestrictionsToNominalModel(
+      const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
 
   int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
   int32_t GetLateralLeftResponse() const {
@@ -123,8 +123,7 @@ class BehaviorRSSConformant : public BehaviorModel {
         static_cast<::ad::rss::state::LateralResponse>(lat_right);
   }
   void ComputeSafetyPolygons(const ObservedWorld& observed_world) {
-    for (auto& sp : safety_polygons_)
-      ComputeSafetyPolygon(sp, observed_world);
+    for (auto& sp : safety_polygons_) ComputeSafetyPolygon(sp, observed_world);
   }
 
 #endif
@@ -134,6 +133,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   void SetSafetyPolygons(const std::vector<SafetyPolygon>& sp) {
     safety_polygons_ = sp;
   }
+
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorSafety> behavior_safety_model_;
@@ -147,8 +147,8 @@ class BehaviorRSSConformant : public BehaviorModel {
   ::ad::rss::state::LateralResponse lat_left_response_;
   ::ad::rss::state::LateralResponse lat_right_response_;
   ::ad::rss::state::AccelerationRestriction acc_restrictions_;
+#endif
   std::vector<SafetyPolygon> safety_polygons_;
-  #endif
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {
