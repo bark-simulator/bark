@@ -429,6 +429,7 @@ void python_behavior(py::module m) {
     .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
     .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
     #endif
+    .def("GetAccelerationLimits", &BehaviorRSSConformant::GetAccelerationLimits)
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {
         return "bark.behavior.BehaviorRSSConformant";
