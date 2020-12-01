@@ -58,6 +58,7 @@ param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
+param_server["Visualization"]["Agents"]["DrawAgentId"] =  True
 
 # param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 # param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True

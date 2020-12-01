@@ -496,7 +496,8 @@ class BaseViewer(Viewer):
         
         for poly in safety_polygons:
           print(poly)
-          self.drawPolygon2d(poly.GetPolygon(), "Blue", 0.6, "Blue", zorder=9)
+          color_face = self.agent_color_map[poly.GetAgentId()]
+          self.drawPolygon2d(poly.GetPolygon(), color_face, 0.3, color_face, zorder=9)
           
         # draw labels
         ego_agent = world.agents[agent_id]
