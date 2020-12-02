@@ -37,10 +37,27 @@ class ScenarioDumper(BenchmarkAnalyzer):
     Path(self._result_folder).mkdir(parents=True, exist_ok=True)
 
   # Based on the given filter dump the matching scenarios
-  def export_scenarios_filter(self, filter):
-    configs_found = super().find_configs(filter)
+  # @note we do not check if the entries in config_idx_list really exist!
+  def export_scenarios_filter(self, filter = {}, config_idx_list = []):
+    if filter:
+      configs_found = super().find_configs(filter)
+    else:
+      configs_found = []
+
+    if configs_found and config_idx_list:
+      configs_found = list(set(configs_found) & set(config_idx_list))
+    elif not configs_found and config_idx_list:
+      configs_found = config_idx_list
+    elif configs_found and not config_idx_list:
+      # noting to do
+      configs_found = configs_found
+    else: #both empty -> error
+      raise ValueError("Either specify a non-empty filter of a valid list of indices!")
+
     for config in configs_found:
       self.export(config)
+
+    return configs_found
 
   # Dump a scenario given by the index in the result
   def export(self, config_idx):

@@ -18,6 +18,7 @@
 #ifdef RSS
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
+#include "bark/world/evaluation/rss/safety_polygon.hpp"
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -32,6 +33,8 @@ using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
+using world::evaluation::ComputeSafetyPolygon;
+using world::evaluation::SafetyPolygon;
 using world::objects::AgentId;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
@@ -140,7 +143,17 @@ class BehaviorRSSConformant : public BehaviorModel {
     lat_right_response_ =
         static_cast<::ad::rss::state::LateralResponse>(lat_right);
   }
+  void ComputeSafetyPolygons(const ObservedWorld& observed_world) {
+    for (auto& sp : safety_polygons_) ComputeSafetyPolygon(sp, observed_world);
+  }
+
 #endif
+  std::vector<SafetyPolygon> GetSafetyPolygons() const {
+    return safety_polygons_;
+  }
+  void SetSafetyPolygons(const std::vector<SafetyPolygon>& sp) {
+    safety_polygons_ = sp;
+  }
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
@@ -160,6 +173,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   ::ad::rss::state::LateralResponse lat_right_response_;
   ::ad::rss::state::AccelerationRestriction acc_restrictions_;
 #endif
+  std::vector<SafetyPolygon> safety_polygons_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {

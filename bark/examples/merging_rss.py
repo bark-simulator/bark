@@ -49,15 +49,16 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
 
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.0
-param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 80.
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 25.0
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.0
+param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 20.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
+param_server["Visualization"]["Agents"]["DrawAgentId"] =  True
 
 # param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 # param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
@@ -104,7 +105,7 @@ viewer = MPViewer(params=param_server,
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.2]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]

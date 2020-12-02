@@ -17,7 +17,7 @@
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
-
+#include "bark/world/evaluation/rss/safety_polygon.hpp"
 #ifdef RSS
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
@@ -26,6 +26,7 @@ namespace py = pybind11;
 
 void python_evaluation(py::module m) {
   using namespace bark::world::evaluation;
+  using bark::geometry::Polygon;
 
   py::class_<BaseEvaluator, PyBaseEvaluator, EvaluatorPtr>(m, "BaseEvaluator")
       .def(py::init<>())
@@ -82,6 +83,34 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorStepCount& g) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
       });
+
+  py::class_<SafetyPolygon,
+             std::shared_ptr<SafetyPolygon>>(m, "SafetyPolygon")
+    .def(py::init<>())
+    .def("GetPolygon", &SafetyPolygon::GetPolygon)
+    .def("GetAgentId", &SafetyPolygon::GetAgentId)
+    .def("__repr__",
+      [](const SafetyPolygon& poly) {
+        std::stringstream ss;
+        ss << "<bark.SafetyPolygon>: ";
+        ss << poly;
+        return ss.str();
+      })
+    .def(py::pickle(
+      [](const SafetyPolygon& a) {
+        // make tuple here
+        return py::make_tuple(
+          a.lat_left_safety_distance, a.lat_right_safety_distance,
+          a.lon_safety_distance, a.polygon, a.agent_id, a.curr_distance);
+      },
+      [](py::tuple t) {
+        if (t.size() != 6)
+          throw std::runtime_error("Invalid SafetyPolygon model state!");
+        return new SafetyPolygon{
+          t[0].cast<double>(), t[1].cast<double>(), t[2].cast<double>(),
+          t[3].cast<Polygon>(), t[4].cast<AgentId>(), t[5].cast<double>()};
+    }));
+
 
 #ifdef RSS
   py::class_<EvaluatorRSS, BaseEvaluator, std::shared_ptr<EvaluatorRSS>>(

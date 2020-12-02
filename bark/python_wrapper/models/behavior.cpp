@@ -428,6 +428,8 @@ void python_behavior(py::module m) {
     .def("SetLongitudinalResponse", &BehaviorRSSConformant::SetLongitudinalResponse)
     .def("SetLateralLeftResponse", &BehaviorRSSConformant::SetLateralLeftResponse)
     .def("SetLateralRightResponse", &BehaviorRSSConformant::SetLateralRightResponse)
+    .def("GetSafetyPolygons", &BehaviorRSSConformant::GetSafetyPolygons)
+    .def("ComputeSafetyPolygons", &BehaviorRSSConformant::ComputeSafetyPolygons)
     #endif
     .def("GetAccelerationLimits", &BehaviorRSSConformant::GetAccelerationLimits)
     .def("__repr__",
@@ -436,6 +438,7 @@ void python_behavior(py::module m) {
       })
     .def(py::pickle(
       [](const BehaviorRSSConformant& b) {
+        // TODO: store safety polygons
         #ifdef RSS
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
@@ -443,7 +446,8 @@ void python_behavior(py::module m) {
           ParamsToPython(b.GetBehaviorSafetyModel()->GetParams()),
           b.GetLongitudinalResponse(),
           b.GetLateralLeftResponse(),
-          b.GetLateralRightResponse());
+          b.GetLateralRightResponse(),
+          b.GetSafetyPolygons());
         #endif
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
@@ -453,7 +457,7 @@ void python_behavior(py::module m) {
       [](py::tuple t) {
         int num_params = 3;
         #ifdef RSS
-        num_params = 6;
+        num_params = 7;
         #endif
         if (t.size() != num_params)
           throw std::runtime_error("Invalid behavior model state!");
@@ -471,6 +475,8 @@ void python_behavior(py::module m) {
         bm->SetLongitudinalResponse(t[3].cast<bool>());
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
+        bm->SetSafetyPolygons(t[6].cast<std::vector<SafetyPolygon>>());
+        // TODO: load safety polygons
         #endif
         return bm;
       }));

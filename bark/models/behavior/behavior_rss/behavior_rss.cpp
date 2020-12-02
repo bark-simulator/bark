@@ -72,6 +72,7 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_left_response_ = rss_response.lateralResponseLeft;
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
+    safety_polygons_ = rss_evaluator->GetSafetyPolygons();
     AccelerationLimits acc_lim = ConvertRestrictions(acc_restrictions_);
     SetAccelerationLimits(acc_lim);
   }
