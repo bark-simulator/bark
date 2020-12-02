@@ -67,8 +67,7 @@ class BehaviorRSSConformant : public BehaviorModel {
             "AccRestrictionsForSafety",
             "Restrict Safety Model using Acc Limits", false)),
         no_safety_maneuver_(GetParams()->GetBool(
-            "NoSafetyManeuver",
-            "No triggering of safety maneuver", false)) {
+            "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
@@ -120,9 +119,8 @@ class BehaviorRSSConformant : public BehaviorModel {
   AccelerationLimits ConvertRestrictions(
       const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
 
-  void ApplyRestrictionsToNominalModel(const AccelerationLimits& limits);
-
-  void ApplyRestrictionsToSafetyModel(const AccelerationLimits& limits);
+  void ApplyRestrictionsToModel(const AccelerationLimits& limits,
+                                std::shared_ptr<BehaviorModel> model);
 
   int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
   int32_t GetLateralLeftResponse() const {
