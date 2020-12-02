@@ -178,9 +178,9 @@ TEST(behavior_rss, behavior_rss_acceleration_limits) {
   const double ego_velocity = 10;
   const double acc_lon_max = 1.7;
 
-  params->SetReal("BehaviorIDMClassic::MaxAcceleration", 100);
-  params->SetReal("BehaviorIDMClassic::DesiredVelocity", 100);
-  params->SetReal("BehaviorIDMClassic::AccelerationUpperBound", acc_lon_max);
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::MaxAcceleration", 100);
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::DesiredVelocity", 100);
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::AccelerationUpperBound", acc_lon_max);
 
   auto open_drive_map = MakeXodrMapOneRoadTwoLanes();
   auto map_interface = std::make_shared<MapInterface>();
@@ -214,8 +214,9 @@ TEST(behavior_rss, behavior_rss_acceleration_limits) {
   ASSERT_TRUE(behavior_rss->GetBehaviorRssStatus() ==
               BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR);
   std::cout << agent1->GetCurrentState() << std::endl;
-  auto action = behavior_rss->GetLastAction();
-  EXPECT_LE(boost::get<Continuous1DAction>(action), acc_lon_max);
+  Input action = boost::get<Input>(behavior_rss->GetLastAction());
+  EXPECT_LE(action(1), acc_lon_max);
+  BARK_EXPECT_TRUE(false);
 }
 #endif
 

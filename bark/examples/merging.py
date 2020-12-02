@@ -100,7 +100,8 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
-              render=True)
+              render=True,
+              maintain_world_history=True)
 
 # run 3 scenarios
 for _ in range(0, 3):
@@ -109,5 +110,8 @@ for _ in range(0, 3):
   for step in range(0, 20):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
+    
+  df = env.ExtractTimeSeries()
+  print(df)
 
 # viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
