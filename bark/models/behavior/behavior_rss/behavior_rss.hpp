@@ -27,6 +27,7 @@ namespace behavior {
 
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
+using bark::models::dynamic::AccelerationLimits;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
@@ -60,7 +61,16 @@ class BehaviorRSSConformant : public BehaviorModel {
             "MinimumSafetyCorridorLength",
             "Minimal lenght a safety corridor should have that a lateral "
             "safety maneuver is performed.",
-            0.f)) {
+            0.f)),
+        acceleration_limits_(),
+        acc_restrictions_for_nominal_(GetParams()->GetBool(
+            "AccRestrictionsForNominal",
+            "Restrict Nominal Model using Acc Limits", false)),
+        acc_restrictions_for_safety_(GetParams()->GetBool(
+            "AccRestrictionsForSafety",
+            "Restrict Safety Model using Acc Limits", false)),
+        no_safety_maneuver_(GetParams()->GetBool(
+            "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
@@ -100,9 +110,20 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
+  void SetAccelerationLimits(const AccelerationLimits& limits) {
+    acceleration_limits_ = limits;
+  }
+
+  AccelerationLimits GetAccelerationLimits() const {
+    return acceleration_limits_;
+  }
+
 #ifdef RSS
-  void ApplyRestrictionsToNominalModel(
+  AccelerationLimits ConvertRestrictions(
       const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+
+  void ApplyRestrictionsToModel(const AccelerationLimits& limits,
+                                std::shared_ptr<BehaviorModel> model);
 
   int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
   int32_t GetLateralLeftResponse() const {
@@ -142,6 +163,10 @@ class BehaviorRSSConformant : public BehaviorModel {
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   float minimum_safety_corridor_length_;
+  AccelerationLimits acceleration_limits_;
+  bool acc_restrictions_for_nominal_;
+  bool acc_restrictions_for_safety_;
+  bool no_safety_maneuver_;
 #ifdef RSS
   ::ad::rss::state::LongitudinalResponse lon_response_;
   ::ad::rss::state::LateralResponse lat_left_response_;
