@@ -378,7 +378,7 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   double dt = min_planning_time / (GetNumTrajectoryTimePoints() - 1);
   std::tuple<Trajectory, Action> traj_action =
-      GenerateTrajectory(observed_world, current_lane_corridor, rel_values, dt);
+      GenerateTrajectory(observed_world, lane_corr_, rel_values, dt);
 
   // set values
   Trajectory traj = std::get<0>(traj_action);
