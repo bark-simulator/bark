@@ -355,9 +355,8 @@ bool RssInterface::RssCheck(
   // rss_state_snapshot: individual situation responses calculated from
   // SituationSnapshot
   bool result = rss_check.calculateProperResponse(
-      world_model, situation_snapshot, rss_state_snapshot_,
+      world_model, situation_snapshot, rss_state_snapshot,
       rss_proper_response_);
-
   if (!result) {
     LOG(ERROR) << "Failed to perform RSS check" << std::endl;
   }
@@ -441,6 +440,7 @@ EvaluationReturn RssInterface::GetSafetyReponse(
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
+    rss_state_snapshot_ = snapshot;
     response = ExtractSafetyEvaluation(snapshot);
   }
   return response;
@@ -453,6 +453,7 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
+    rss_state_snapshot_ = snapshot;
     response = ExtractPairwiseSafetyEvaluation(snapshot);
   }
   return response;

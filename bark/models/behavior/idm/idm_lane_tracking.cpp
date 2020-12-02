@@ -97,9 +97,9 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
       double acc_lat = CalculateLateralAcceleration(
           single_track, angle, traj(i, StateDefinition::VEL_POSITION));
-      VLOG(4) << "Plan(i=" << i << "): LonAcc:  " << acc << ", "
-              << "LatAcc: " << acc_lat << ", "
-              << GetAccelerationLimits();
+      // VLOG(4) << "Plan(i=" << i << "): LonAcc:  " << acc << ", "
+      //         << "LatAcc: " << acc_lat << ", "
+      //         << GetAccelerationLimits();
       CheckAccelerationLimits(acc, acc_lat);
     }
   }

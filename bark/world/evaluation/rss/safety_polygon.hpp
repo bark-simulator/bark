@@ -93,7 +93,7 @@ inline void ComputeSafetyPolygon(
     // compute lateral safety distances
     double lat_dist = 0;
     lat_dist =  sgn_lat < 0 ? safe_poly.lat_left_safety_distance : safe_poly.lat_right_safety_distance;  // NOLINT
-    auto lat_proj_angle = sgn_lat < 0 ? theta - M_PI_2 : theta + M_PI_2;
+    auto lat_proj_angle = sgn_lat > 0 ? theta - M_PI_2 : theta + M_PI_2;
     // NOTE: often the safety distance is returned as 1+e9
     if (lat_dist < 10000) {
       auto x_new = bg::get<0>(pt) + lat_dist*cos(lat_proj_angle);
