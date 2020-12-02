@@ -62,15 +62,15 @@ inline void ComputeSafetyPolygon(
       bg::get<1>(ego_pose) - bg::get<1>(pt),
       bg::get<0>(ego_pose) - bg::get<0>(pt));
     double signed_angle_diff_lat = SignedAngleDiff(theta, pt_angle);
-    double signed_angle_diff_lon = SignedAngleDiff(theta - 3.14/2., pt_angle);
+    double signed_angle_diff_lon = SignedAngleDiff(theta - M_PI_2, pt_angle);
     double sgn_lat = signed_angle_diff_lat > 0 ? 1 : -1;
     double sgn_lon = signed_angle_diff_lon > 0 ? 1 : -1;
 
     // lateral safety distances
     double lat_dist = 0;
     lat_dist =  sgn_lat < 0 ? safe_poly.lat_left_safety_distance : safe_poly.lat_right_safety_distance;  // NOLINT
-    auto lat_proj_angle = sgn_lat > 0 ? theta - 3.14/2. : theta + 3.14/2.;
-    if (sgn_lat < 0) {
+    auto lat_proj_angle = sgn_lat < 0 ? theta - M_PI_2 : theta + M_PI_2;
+    if (lat_dist < 10000) {
       auto x_new = bg::get<0>(pt) + lat_dist*cos(lat_proj_angle);
       auto y_new = bg::get<1>(pt) + lat_dist*sin(lat_proj_angle);
       bg::set<0>(pt, x_new);
@@ -83,12 +83,13 @@ inline void ComputeSafetyPolygon(
     double relative_angle = atan2(
       bg::get<1>(ego_pose) - bg::get<1>(other_pose),
       bg::get<0>(ego_pose) - bg::get<0>(other_pose));
-    double diff_angle = SignedAngleDiff(theta - 3.14/2., relative_angle);
+    double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
     double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
 
     // if the signs are different we do not want to modify the original
     // point of the polygon
-    if (sgn_lon_in_front*sgn_lon < 0.)
+    if (sgn_lon_in_front*sgn_lon < 0. ||
+        safe_poly.lon_safety_distance > 10000.)
       sgn_lon = 0.;
 
     // longitudinal back and front safety distance
