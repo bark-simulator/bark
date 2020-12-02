@@ -117,7 +117,8 @@ viewer = VideoRenderer(renderer=viewer,
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
-              render=True)
+              render=True,
+              maintain_world_history=True)
 
 # Defining vehicles dynamics for RSS
 
@@ -158,5 +159,8 @@ for episode in range(0, 10):
     env.step()
     # print_rss_safety_response(evaluator_rss, current_world)
     time.sleep(sim_step_time / sim_real_time_factor)
+
+  df = env.ExtractTimeSeries()
+  print(df)
 
 # viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)

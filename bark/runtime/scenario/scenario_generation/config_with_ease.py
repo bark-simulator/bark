@@ -56,6 +56,8 @@ class LaneCorridorConfig:
     self._controlled_behavior_model = \
       kwargs.pop("controlled_behavior_model", None)
     self._controlled_ids = kwargs.pop("controlled_ids", None)
+    self._wb = kwargs.pop("wb", 3) # wheelbase
+    self._crad = kwargs.pop("crad", 1) # collision radius
 
   def InferRoadIdsAndLaneCorr(self, world):
     goal_polygon = Polygon2d([0, 0, 0],
@@ -156,12 +158,10 @@ class LaneCorridorConfig:
     return SingleTrackModel(self._params)
 
   @property
-  def shape(self, crad=1, wb=3):
+  def shape(self):
     """Returns shape
     """
-    radius = 1 # 2*radius := width
-    wheelbase = 3 # 2*radius + wheelbase := length
-    return GenerateCarRectangle(wheelbase, radius)
+    return GenerateCarRectangle(self._wb, self._crad)
 
   def goal(self, world):
     """Returns goal def.
