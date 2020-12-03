@@ -60,8 +60,8 @@ void python_dynamic(py::module m) {
 
   py::class_<AccelerationLimits, std::shared_ptr<AccelerationLimits>>(m, "AccelerationLimits")
       .def(py::init<>())
-      .def_readwrite("lat_acc_left_max", &AccelerationLimits::lat_acc_left_max)
-      .def_readwrite("lat_acc_right_max", &AccelerationLimits::lat_acc_right_max)
+      .def_readwrite("lat_acc_max", &AccelerationLimits::lat_acc_max)
+      .def_readwrite("lat_acc_min", &AccelerationLimits::lat_acc_min)
       .def_readwrite("lon_acc_max", &AccelerationLimits::lon_acc_max)
       .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min);
 

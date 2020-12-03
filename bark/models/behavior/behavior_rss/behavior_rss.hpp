@@ -120,7 +120,8 @@ class BehaviorRSSConformant : public BehaviorModel {
 
 #ifdef RSS
   AccelerationLimits ConvertRestrictions(
-      const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+      const ::ad::rss::state::AccelerationRestriction& acc_restrictions,
+      const ObservedWorld& observed_world);
 
   void ApplyRestrictionsToModel(const AccelerationLimits& limits,
                                 std::shared_ptr<BehaviorModel> model);

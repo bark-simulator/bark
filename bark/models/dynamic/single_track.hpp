@@ -19,8 +19,8 @@ namespace models {
 namespace dynamic {
 
 struct AccelerationLimits {
-  double lat_acc_left_max;
-  double lat_acc_right_max;
+  double lat_acc_max;
+  double lat_acc_min;
   double lon_acc_max;
   double lon_acc_min;
 };
@@ -28,8 +28,8 @@ struct AccelerationLimits {
 inline std::ostream& operator<<(std::ostream& os,
                                 const AccelerationLimits& al) {
   os << "AccelerationLimits = ("
-     << " lat_acc_left_max: " << al.lat_acc_left_max << ", "
-     << " lat_acc_right_max: " << al.lat_acc_right_max << ", "
+     << " lat_acc_max: " << al.lat_acc_max << ", "
+     << " lat_acc_min: " << al.lat_acc_min << ", "
      << " lon_acc_max: " << al.lon_acc_max << ", "
      << " lon_acc_min: " << al.lon_acc_min << ")";
   return os;
@@ -38,12 +38,12 @@ inline std::ostream& operator<<(std::ostream& os,
 inline AccelerationLimits AccelerationLimitsFromParamServer(
     const bark::commons::ParamsPtr& params) {
   AccelerationLimits al = AccelerationLimits();
-  al.lat_acc_left_max =
-      params->GetReal("DynamicModel::LatAccLeftMax",
+  al.lat_acc_max =
+      params->GetReal("DynamicModel::LatAccMax",
                       "Maximum lateral left acceleration [m/s^2]", 4.0);
-  al.lat_acc_right_max =
-      params->GetReal("DynamicModel::LatAccRightMax",
-                      "Maximum lateral right acceleration [m/s^2]", 4.0);
+  al.lat_acc_min =
+      params->GetReal("DynamicModel::LatAccMin",
+                      "Maximum lateral right acceleration [m/s^2]", -4.0);
   al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax",
                                    "Maximum longitudinal acceleration", 4.0);
   al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin",
@@ -82,11 +82,11 @@ class SingleTrackModel : public DynamicModel {
 
   double GetWheelBase() const { return wheel_base_; }
   double GetSteeringAngleMax() const { return steering_angle_max_; }
-  double GetLatAccelerationLeftMax() const {
-    return acceleration_limits_.lat_acc_left_max;
+  double GetLatAccelerationMin() const {
+    return acceleration_limits_.lat_acc_min;
   }
-  double GetLatAccelerationRightMax() const {
-    return acceleration_limits_.lat_acc_right_max;
+  double GetLatAccelerationMax() const {
+    return acceleration_limits_.lat_acc_max;
   }
   double GetLonAccelerationMax(const State& x) const {
     return acceleration_limits_.lon_acc_max;
@@ -148,18 +148,18 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
   if (limit_steering) {
-    double delta_max_right =
+    double delta_max =
         std::min(model->GetSteeringAngleMax(),
-                 std::abs(std::atan2(model->GetLatAccelerationRightMax() *
+                 std::abs(std::atan2(model->GetLatAccelerationMax() *
                                          model->GetWheelBase(),
                                      vel * vel)));
-    double delta_max_left =
-        std::min(model->GetSteeringAngleMax(),
+    double delta_min =
+        - std::min(model->GetSteeringAngleMax(),
                  std::abs(std::atan2(
-                     model->GetLatAccelerationLeftMax() * model->GetWheelBase(),
+                     model->GetLatAccelerationMin() * model->GetWheelBase(),
                      vel * vel)));
-    double clamped_delta = std::min(delta, delta_max_left);
-    clamped_delta = std::max(clamped_delta, -delta_max_right);
+    double clamped_delta = std::min(delta, delta_max);
+    clamped_delta = std::max(clamped_delta, delta_min);
     return clamped_delta;
   }
   return delta;

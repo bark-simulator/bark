@@ -129,14 +129,14 @@ void BehaviorIDMLaneTracking::CheckAccelerationLimits(double acc_lon,
   }
 
   // Steering to the right == Accelerations are negative
-  if (acc_lat <= 0 && !almost_larger(acc_lat, - GetAccelerationLimits().lat_acc_right_max)) {
-    LOG(WARNING) << "LatAccRightMax is violated " << acc_lat << " vs. "
-                 << GetAccelerationLimits().lat_acc_right_max;
+  if (acc_lat >= 0 && !almost_larger(acc_lat, GetAccelerationLimits().lat_acc_max)) {
+    LOG(WARNING) << "LatAccMax is violated " << acc_lat << " vs. "
+                 << GetAccelerationLimits().lat_acc_max;
   }
 
-  if (acc_lat > 0 && !almost_smaller(acc_lat, GetAccelerationLimits().lat_acc_left_max)) {
-    LOG(WARNING) << "LatAccLeftMax is violated " << acc_lat << " vs. "
-                 << GetAccelerationLimits().lat_acc_left_max;
+  if (acc_lat < 0 && !almost_smaller(acc_lat, GetAccelerationLimits().lat_acc_min)) {
+    LOG(WARNING) << "LatAccMin is violated " << acc_lat << " vs. "
+                 << GetAccelerationLimits().lat_acc_min;
   }
 }
 

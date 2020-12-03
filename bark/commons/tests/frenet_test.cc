@@ -31,7 +31,8 @@ void test_state_two_way(const double x, const double y, const double theta,
 
 void test_state_one_way(const double x, const double y, const double theta,
                         const double v, const Line& line, const double lat,
-                        const double lon, const double vlat, const double vlon) {
+                        const double lon, const double vlat,
+                        const double vlon) {
   State state(static_cast<int>(st::MIN_STATE_SIZE));
   state << 0.0, x, y, theta, v;
 
@@ -125,4 +126,42 @@ TEST(frenet_state_two_way, straight_line_top_right) {
 
   // state on right side of path with orientation on path
   // test_state_two_way(-1, 5, B_PI_2, 5, line);
+}
+
+TEST(transform_lat_acc_street_to_vehicle, straight_line_aligned) {
+  Line line;
+  line.AddPoint(Point2d(0, 0));
+  line.AddPoint(Point2d(10, 0));
+
+  double acc_lat_street = 0.1;
+  double acc_lon = 0.0;
+
+  State state(static_cast<int>(st::MIN_STATE_SIZE));
+  state << 0, 0, 0, 0, 10;
+
+  FrenetState frenet_state(state, line);
+
+  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon,
+                                                  state, frenet_state);
+
+  EXPECT_EQ(acc_lat, acc_lat_street);
+}
+
+TEST(transform_lat_acc_street_to_vehicle, straight_line_not_aligned) {
+  Line line;
+  line.AddPoint(Point2d(0, 0));
+  line.AddPoint(Point2d(10, 0));
+
+  double acc_lat_street = 0.1;
+  double acc_lon = 0.0;
+
+  State state(static_cast<int>(st::MIN_STATE_SIZE));
+  state << 0, 0, 0, 0.3, 10;
+
+  FrenetState frenet_state(state, line);
+
+  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon,
+                                                  state, frenet_state);
+
+  EXPECT_NE(acc_lat, acc_lat_street);
 }

@@ -18,6 +18,8 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::commons::transformation::FrenetState;
+
 Trajectory BehaviorRSSConformant::Plan(
     double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
@@ -73,7 +75,8 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
     safety_polygons_ = rss_evaluator->GetSafetyPolygons();
-    AccelerationLimits acc_lim = ConvertRestrictions(acc_restrictions_);
+    AccelerationLimits acc_lim =
+        ConvertRestrictions(acc_restrictions_, observed_world);
     SetAccelerationLimits(acc_lim);
   }
 #endif
@@ -104,7 +107,8 @@ Trajectory BehaviorRSSConformant::Plan(
     LOG(INFO) << "Executing safety behavior." << std::endl;
 #ifdef RSS
     if (acc_restrictions_for_safety_) {
-      ApplyRestrictionsToModel(GetAccelerationLimits(), behavior_safety_model_->GetBehaviorModel());
+      ApplyRestrictionsToModel(GetAccelerationLimits(),
+                               behavior_safety_model_->GetBehaviorModel());
     }
 #endif
     behavior_safety_model_->Plan(min_planning_time, observed_world);
@@ -118,14 +122,44 @@ Trajectory BehaviorRSSConformant::Plan(
 
 #ifdef RSS
 AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
-    const ::ad::rss::state::AccelerationRestriction& acc_restrictions) {
+    const ::ad::rss::state::AccelerationRestriction& acc_restrictions,
+    const ObservedWorld& observed_world) {
   AccelerationLimits acc_lim;
-  acc_lim.lat_acc_left_max = acc_restrictions_.lateralLeftRange.maximum;
-  acc_lim.lat_acc_right_max = acc_restrictions_.lateralRightRange.maximum;
+
+  State ego_state = observed_world.CurrentEgoState();
+  FrenetState ego_frenet(ego_state, observed_world.GetLaneCorridor()->GetCenterLine());
+  double acc_lon;
+  auto last_action = GetLastAction();
+  if (last_action.type() == typeid(Continuous1DAction)) {
+    acc_lon = boost::get<Continuous1DAction>(last_action);
+  } else if (last_action.type() == typeid(LonLatAction)) {
+    acc_lon = boost::get<LonLatAction>(last_action).acc_lon;
+  } else if (last_action.type() == typeid(Input)) {
+    acc_lon = boost::get<Input>(last_action)(0);
+  } else {
+    LOG(FATAL) << "Other's action type unknown: "
+                << boost::apply_visitor(action_tostring_visitor(),
+                                        last_action);
+  }
+
+  if (ego_frenet.vlat < 0) {
+    double acc_lat_street_max = acc_restrictions_.lateralLeftRange.maximum;
+    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, ego_state, ego_frenet);
+    double acc_lat_street_min = acc_restrictions_.lateralLeftRange.minimum;
+    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, ego_state, ego_frenet);
+  } else if (ego_frenet.vlat > 0) {
+    double acc_lat_street_max = acc_restrictions_.lateralRightRange.maximum;
+    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, ego_state, ego_frenet);
+    double acc_lat_street_min = acc_restrictions_.lateralRightRange.minimum;
+    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, ego_state, ego_frenet);
+  } else {
+    // combine them, how?
+  }
+
   acc_lim.lon_acc_max = acc_restrictions_.longitudinalRange.maximum;
   acc_lim.lon_acc_min = acc_restrictions_.longitudinalRange.minimum;
-  // TODO: Do we need minimum values as well?
-  VLOG(4) << "RSS Response Acceleration Restrictions " << acc_restrictions_;
+  VLOG(4) << "RSS Response Acceleration Restrictions in Road System: " << acc_restrictions_;
+  VLOG(4) << "Acceleration Limits in Vehicle System: " << acc_lim;
   return acc_lim;
 }
 
