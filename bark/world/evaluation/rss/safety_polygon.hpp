@@ -115,6 +115,8 @@ inline void ComputeSafetyPolygon(
     if (directional == LonDirectionMode::AUTO) {
       // calculate if the agent is in front or behind
       auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
+      if (!other_agent)
+        return;
       auto other_pose = other_agent->GetCurrentPosition();
       double relative_angle = atan2(
         bg::get<1>(ego_pose) - bg::get<1>(other_pose),
