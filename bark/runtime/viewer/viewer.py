@@ -497,8 +497,11 @@ class BaseViewer(Viewer):
           rss_params = self.parameters["EvaluatorRss"]["Ego"]
         else:
           rss_params = self.parameters["EvaluatorRss"]["Others"]
-        min_braking_safety_polygon = ComputeMinBrakingPolygon(observed_world, rss_params)
-        color_face = "red" # self.agent_color_map[agent_id]
+        try:
+          min_braking_safety_polygon = ComputeMinBrakingPolygon(observed_world, rss_params)
+        except:
+          pass
+        color_face = "red"
         self.drawPolygon2d(
           min_braking_safety_polygon.GetPolygon(), color_face, 0.25, color_face, zorder=9)
         
