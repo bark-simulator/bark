@@ -75,6 +75,9 @@ inline void ComputeSafetyPolygon(
   LonDirectionMode directional = LonDirectionMode::AUTO) {
   // 1. Get the ego agent required values
   auto ego_agent = observed_world.GetEgoAgent();
+  if (!ego_agent)
+    return safe_poly;
+  
   auto ego_pose = ego_agent->GetCurrentPosition();
   auto ego_state = ego_agent->GetCurrentState();
   auto theta = ego_state(StateDefinition::THETA_POSITION);
