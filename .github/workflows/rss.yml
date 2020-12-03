@@ -1,4 +1,4 @@
-name: NIGHTLY_RSS
+name: CI_RSS
 
 on: [push]
 
