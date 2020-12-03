@@ -53,7 +53,7 @@ class MPViewer(BaseViewer):
             marker=marker,
             markersize = marker_size)
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10, hatch=''):
         points = polygon.ToArray()
         polygon_draw = matplotlib.patches.Polygon(
             points,
@@ -62,7 +62,8 @@ class MPViewer(BaseViewer):
             edgecolor=self.getColor(color),
             alpha=alpha,
             linewidth=linewidth,
-            zorder=zorder)
+            zorder=zorder,
+            hatch=hatch)
         t_start = self.axes.transData
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
