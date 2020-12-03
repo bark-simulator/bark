@@ -71,6 +71,11 @@ class BehaviorRSSConformant : public BehaviorModel {
             "Restrict Safety Model using Acc Limits", false)),
         no_safety_maneuver_(GetParams()->GetBool(
             "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
+    
+    dynamic::Input input(2);
+    input << 0.0, 0.0;
+    SetLastAction(input);
+    
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());

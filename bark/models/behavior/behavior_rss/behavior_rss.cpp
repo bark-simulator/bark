@@ -137,7 +137,7 @@ AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
   } else if (last_action.type() == typeid(Input)) {
     acc_lon = boost::get<Input>(last_action)(0);
   } else {
-    LOG(FATAL) << "Other's action type unknown: "
+    LOG(FATAL) << "action type unknown: "
                 << boost::apply_visitor(action_tostring_visitor(),
                                         last_action);
   }
