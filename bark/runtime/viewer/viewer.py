@@ -90,7 +90,7 @@ class BaseViewer(Viewer):
         self._rss_min_braking_distances = params["Visualization"]["Evaluation"][
           "DrawMinRSSBrakingDistanced",
           "Flag whether the min. braking distances shall be plotted.",
-          True]
+          False]
         
         self.parameters = params
         self.agent_color_map = {}
