@@ -112,7 +112,6 @@ inline void ComputeSafetyPolygon(
         bg::get<0>(ego_pose) - bg::get<0>(other_pose));
       double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
       double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
-      }
       // this enables directional computation for the longitudinal
       // safety distance
       // if the signs are different, sgn_lon is set to zero
