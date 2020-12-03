@@ -47,7 +47,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
     double acc;
     if (leading_vehicle.first) {
       double net_distance =
-          CalcNetDistance(observed_world, leading_vehicle.first);
+          CalcNetDistance(observed_world, leading_vehicle.first, observed_world.GetLaneCorridor());
       State other_vehicle_state = leading_vehicle.first->GetCurrentState();
       double vel_other = other_vehicle_state(StateDefinition::VEL_POSITION);
       acc = CalcIDMAcc(net_distance, vel_i, vel_other);
@@ -476,7 +476,7 @@ TEST(CalcNetDistance, behavior_idm_classic) {
       current_world_state->GetAgents().begin()->second->GetAgentId());
 
   BehaviorIDMClassic behavior(params);
-  double distance = behavior.CalcNetDistance(observed_world, agent2);
+  double distance = behavior.CalcNetDistance(observed_world, agent2, observed_world.GetLaneCorridor());
   double x_diff = init_state2(StateDefinition::X_POSITION) -
                  init_state1(StateDefinition::X_POSITION);
   double distance_expected =
