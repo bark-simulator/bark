@@ -85,7 +85,7 @@ inline SafetyPolygon ComputeMinBrakingPolygon(
   SafetyPolygon safety_poly;
 
   // if the distances could not be calculated
-  if (!lon_result || !lat_result);
+  if (!lon_result || !lat_result)
     return safety_poly;
   
   safety_poly.lat_left_safety_distance = min_stopping_distance_lat;
