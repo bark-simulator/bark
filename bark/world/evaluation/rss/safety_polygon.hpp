@@ -65,7 +65,8 @@ typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
  * @retval None
  */
 inline void ComputeSafetyPolygon(
-  SafetyPolygon& safe_poly, const ObservedWorld& observed_world) {
+  SafetyPolygon& safe_poly, const ObservedWorld& observed_world, 
+  bool directional = true) {
   // 1. Get the ego agent required values
   auto ego_agent = observed_world.GetEgoAgent();
   auto ego_pose = ego_agent->GetCurrentPosition();
@@ -102,24 +103,29 @@ inline void ComputeSafetyPolygon(
       bg::set<1>(pt, y_new);
     }
 
-    // calculate if the agent is in front or behind
-    auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
-    auto other_pose = other_agent->GetCurrentPosition();
-    double relative_angle = atan2(
-      bg::get<1>(ego_pose) - bg::get<1>(other_pose),
-      bg::get<0>(ego_pose) - bg::get<0>(other_pose));
-    double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
-    double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
+    if (directional) {
+      // calculate if the agent is in front or behind
+      auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
+      auto other_pose = other_agent->GetCurrentPosition();
+      double relative_angle = atan2(
+        bg::get<1>(ego_pose) - bg::get<1>(other_pose),
+        bg::get<0>(ego_pose) - bg::get<0>(other_pose));
+      double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
+      double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
+      }
+      // this enables directional computation for the longitudinal
+      // safety distance
+      // if the signs are different, sgn_lon is set to zero
+      // Thus, the original point of the polygon will not be modified
+      // NOTE: often the safety distance is returned as 1+e9
+      if (sgn_lon_in_front*sgn_lon < 0.)
+        sgn_lon = 0.;
+    }
 
-    // this enables directional computation for the longitudinal
-    // safety distance
-    // if the signs are different, sgn_lon is set to zero
-    // Thus, the original point of the polygon will not be modified
-    // NOTE: often the safety distance is returned as 1+e9
-    if (sgn_lon_in_front*sgn_lon < 0. ||
-        safe_poly.lon_safety_distance > 10000.)
-      sgn_lon = 0.;
-
+    // if too large number
+    if (safe_poly.lon_safety_distance > 10000.)
+      sgn_lon = 0;
+    
     // longitudinal safety distance
     bg::set<0>(
       pt, bg::get<0>(pt) + sgn_lon*safe_poly.lon_safety_distance*cos(theta));
