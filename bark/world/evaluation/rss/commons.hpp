@@ -36,9 +36,12 @@ using ad::physics::Duration;
 using bark::commons::transformation::FrenetState;
 
 /**
- * @brief  Calculates the min. braking distance of an agent
+ * @brief  Calculates the min. braking distance for an agent
  * @note   
- * @retval 
+ * @param  observed_world: ObservedWorld for which the braking distance
+ *                         should be dran
+ * @param  rss_params:  RSSDynamics either for ego ot others
+ * @retval SafetyPolygon
  */
 inline SafetyPolygon ComputeMinBrakingPolygon(
   const ObservedWorld& observed_world, const commons::ParamsPtr& rss_params) {

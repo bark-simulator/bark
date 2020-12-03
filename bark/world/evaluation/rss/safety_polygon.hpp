@@ -53,10 +53,16 @@ struct SafetyPolygon {
 
 typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
 
+/**
+ * @brief  Modes for drawing the longitudinal visualization
+ * @note   
+ * @retval None
+ */
 enum LonDirectionMode {
   AUTO = 0,
   FRONT = 1,
-  BEHIND = 2
+  BEHIND = 2,
+  FRONT_BEHIND = 3
 };
 
 /**
@@ -112,6 +118,7 @@ inline void ComputeSafetyPolygon(
       bg::set<1>(pt, y_new);
     }
 
+    // draws the polygon in relation to the other agent
     if (directional == LonDirectionMode::AUTO) {
       // calculate if the agent is in front or behind
       auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
@@ -130,15 +137,17 @@ inline void ComputeSafetyPolygon(
       // NOTE: often the safety distance is returned as 1+e9
       if (sgn_lon_in_front*sgn_lon < 0.)
         sgn_lon = 0.;
-    } else if(directional == LonDirectionMode::FRONT) {
+    } else if(directional == LonDirectionMode::FRONT) { 
+      // draws the polygon only in the front
       if (sgn_lon < 0.)
         sgn_lon = 0;
     } else if(directional == LonDirectionMode::BEHIND) {
+      // draws the polygon only behind
       if (sgn_lon > 0.)
         sgn_lon = 0;
     }
 
-    // if too large number
+    // if number is too large
     if (safe_poly.lon_safety_distance > 10000.)
       sgn_lon = 0;
     
