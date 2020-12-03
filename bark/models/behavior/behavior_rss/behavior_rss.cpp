@@ -104,7 +104,7 @@ Trajectory BehaviorRSSConformant::Plan(
     LOG(INFO) << "Executing safety behavior." << std::endl;
 #ifdef RSS
     if (acc_restrictions_for_safety_) {
-      ApplyRestrictionsToModel(GetAccelerationLimits(), behavior_safety_model_);
+      ApplyRestrictionsToModel(GetAccelerationLimits(), behavior_safety_model_->GetBehaviorModel());
     }
 #endif
     behavior_safety_model_->Plan(min_planning_time, observed_world);
