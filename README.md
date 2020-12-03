@@ -5,7 +5,7 @@
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![Ubtuntu-ManyLinux Build](https://github.com/bark-simulator/bark/workflows/ManyLinux/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
-![NIGHTLY RSS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RSS/badge.svg)
+![CI RSS Build](https://github.com/bark-simulator/bark/workflows/CI_RSS/badge.svg)
 ![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
 
 # BARK - a tool for **B**ehavior benchm**ARK**ing
