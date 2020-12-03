@@ -94,7 +94,7 @@ inline SafetyPolygon ComputeMinBrakingPolygon(
 
   // compute actual BARK polygon
   ComputeSafetyPolygon(
-    safety_poly, observed_world);
+    safety_poly, observed_world, LonDirectionMode::FRONT);
 
   return safety_poly;
 } 

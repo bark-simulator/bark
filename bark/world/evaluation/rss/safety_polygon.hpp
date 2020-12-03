@@ -53,6 +53,12 @@ struct SafetyPolygon {
 
 typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
 
+enum LonDirectionMode {
+  AUTO = 0,
+  FRONT = 1,
+  BEHIND = 2
+};
+
 /**
  * @brief  A function that computes the actual polygon within the SafetyPolygon
  * @note   It uses the current vehicle shape and extends it with the given
@@ -66,7 +72,7 @@ typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
  */
 inline void ComputeSafetyPolygon(
   SafetyPolygon& safe_poly, const ObservedWorld& observed_world, 
-  bool directional = true) {
+  LonDirectionMode directional = LonDirectionMode::AUTO) {
   // 1. Get the ego agent required values
   auto ego_agent = observed_world.GetEgoAgent();
   auto ego_pose = ego_agent->GetCurrentPosition();
@@ -103,7 +109,7 @@ inline void ComputeSafetyPolygon(
       bg::set<1>(pt, y_new);
     }
 
-    if (directional) {
+    if (directional == LonDirectionMode::AUTO) {
       // calculate if the agent is in front or behind
       auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
       auto other_pose = other_agent->GetCurrentPosition();
@@ -119,6 +125,12 @@ inline void ComputeSafetyPolygon(
       // NOTE: often the safety distance is returned as 1+e9
       if (sgn_lon_in_front*sgn_lon < 0.)
         sgn_lon = 0.;
+    } else if(directional == LonDirectionMode::FRONT) {
+      if (sgn_lon < 0.)
+        sgn_lon = 0;
+    } else if(directional == LonDirectionMode::BEHIND) {
+      if (sgn_lon > 0.)
+        sgn_lon = 0;
     }
 
     // if too large number
