@@ -40,7 +40,6 @@ FrenetState::FrenetState(const State& state, const Line& path) {
   // calculate sign of lateral coordinate
   const auto orientation = state[StateDefinition::THETA_POSITION];
   angleRoad = mg::GetTangentAngleAtS(path, lon);
-  auto norm_tangent_angle = angleRoad;
   angle = mg::SignedAngleDiff(angleRoad, orientation);
   auto direction_vector = pos - nearest_point;
   double diff = mg::SignedAngleDiff(
@@ -83,6 +82,18 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
   return state;
 }
 
+/**
+ * @brief Transforms Lateral Acceleration from Streetwise to Vehicle Coordinate
+ * System
+ *
+ * @param acc_lat_street ... lateral acceleration (street corrdinate system)
+ * @param acc_lon ... longitudinal acceleration
+ * @param delta_time ... time increment from t_i-1 to t_i
+ * @param current_state ... state of vehicle at t_i
+ * @param current_frenet_state ... frenet state of vehicle t_i
+ * @param last_frenet_state ... frenet state at t_i-1
+ * @return double lateral acceleration (vehicle coordinate system)
+ */
 double LatAccStreetToVehicleCs(double acc_lat_street, double acc_lon,
                                double delta_time, const State& current_state,
                                const FrenetState& current_frenet_state,
