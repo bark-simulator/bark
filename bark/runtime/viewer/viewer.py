@@ -88,7 +88,7 @@ class BaseViewer(Viewer):
           "Flag to specify if visualizating rss safety responses.",
           False]
         self._rss_min_braking_distances = params["Visualization"]["Evaluation"][
-          "DrawMinRSSBrakingDistanced",
+          "DrawMinRSSBrakingDistances",
           "Flag whether the min. braking distances shall be plotted.",
           False]
         
