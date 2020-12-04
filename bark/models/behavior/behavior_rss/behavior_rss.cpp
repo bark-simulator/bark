@@ -46,6 +46,8 @@ Trajectory BehaviorRSSConformant::Plan(
   }
 
   if (last_state_(StateDefinition::TIME_POSITION) < 0) {
+    // this invalid time is set in the constructor (we don't have access to
+    // state there yet)
     last_state_ = observed_world.CurrentEgoState();
     VLOG(4) << "Initializing last_state: " << last_state_ << std::endl;
   }
