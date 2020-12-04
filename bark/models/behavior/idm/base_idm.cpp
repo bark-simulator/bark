@@ -369,16 +369,9 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
-    // Tobias: 	
-    // GenerateTrajectory uses lane_corr_
-    // CalcRelativeValues uses current_lane_corridor
-
-    // postulate: we need only to modify: current_lane_corridor
-
-    
-    // LaneCorridor ChooseLaneCorridorBasedOnVehicleState(observed_world)
-    // TODO: set current_lane_corridor
-    current_lane_corridor = constant_lane_corr_;
+    auto corrected_lane_corr = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
+    current_lane_corridor = corrected_lane_corr;
   } else {
     current_lane_corridor = lane_corr_;
   }
