@@ -447,7 +447,8 @@ void python_behavior(py::module m) {
           b.GetLongitudinalResponse(),
           b.GetLateralLeftResponse(),
           b.GetLateralRightResponse(),
-          b.GetSafetyPolygons());
+          b.GetSafetyPolygons(),
+          b.GetAccelerationLimits());
         #endif
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
@@ -457,7 +458,7 @@ void python_behavior(py::module m) {
       [](py::tuple t) {
         int num_params = 3;
         #ifdef RSS
-        num_params = 7;
+        num_params = 8;
         #endif
         if (t.size() != num_params)
           throw std::runtime_error("Invalid behavior model state!");
@@ -476,6 +477,7 @@ void python_behavior(py::module m) {
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
         bm->SetSafetyPolygons(t[6].cast<std::vector<SafetyPolygon>>());
+        bm->SetAccelerationLimits(t[6].cast<std::vector<AccelerationLimits>>());
         // TODO: load safety polygons
         #endif
         return bm;

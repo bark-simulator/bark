@@ -59,11 +59,25 @@ void python_dynamic(py::module m) {
 
 
   py::class_<AccelerationLimits, std::shared_ptr<AccelerationLimits>>(m, "AccelerationLimits")
-      .def(py::init<>())
-      .def_readwrite("lat_acc_left_max", &AccelerationLimits::lat_acc_left_max)
-      .def_readwrite("lat_acc_right_max", &AccelerationLimits::lat_acc_right_max)
-      .def_readwrite("lon_acc_max", &AccelerationLimits::lon_acc_max)
-      .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min);
+    .def(py::init<>())
+    .def_readwrite("lat_acc_left_max", &AccelerationLimits::lat_acc_left_max)
+    .def_readwrite("lat_acc_right_max", &AccelerationLimits::lat_acc_right_max)
+    .def_readwrite("lon_acc_max", &AccelerationLimits::lon_acc_max)
+    .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min)
+    .def(py::pickle(
+      [](const AccelerationLimits& a) {
+        // make tuple here
+        return py::make_tuple(
+          a.lat_acc_left_max, a.lat_acc_right_max,
+          a.lon_acc_max, a.lon_acc_min);
+      },
+      [](py::tuple t) {
+        if (t.size() != 4)
+          throw std::runtime_error("Invalid AccelerationLimits model state!");
+        return new AccelerationLimits{
+          t[0].cast<double>(), t[1].cast<double>(), t[2].cast<double>(),
+          t[3].cast<double>()};
+    }));
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())
       .value("TIME_POSITION", TIME_POSITION)
@@ -75,3 +89,4 @@ void python_dynamic(py::module m) {
       .value("Z_POSITION", Z_POSITION)
       .export_values();
 }
+
