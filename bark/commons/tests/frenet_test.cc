@@ -135,33 +135,68 @@ TEST(transform_lat_acc_street_to_vehicle, straight_line_aligned) {
 
   double acc_lat_street = 0.1;
   double acc_lon = 0.0;
+  double delta_time = 1;
 
-  State state(static_cast<int>(st::MIN_STATE_SIZE));
-  state << 0, 0, 0, 0, 10;
+  State last_state(static_cast<int>(st::MIN_STATE_SIZE));
+  last_state << 0, 0, 0, 0, 1;
+  State current_state(static_cast<int>(st::MIN_STATE_SIZE));
+  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
 
-  FrenetState frenet_state(state, line);
+  FrenetState last_frenet_state(last_state, line);
+  FrenetState current_frenet_state(current_state, line);
 
-  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon,
-                                                  state, frenet_state);
+  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
+                                                  current_state, current_frenet_state, last_frenet_state);
 
   EXPECT_EQ(acc_lat, acc_lat_street);
 }
 
-TEST(transform_lat_acc_street_to_vehicle, straight_line_not_aligned) {
+TEST(transform_lat_acc_street_to_vehicle, left_curved_line_aligned) {
   Line line;
   line.AddPoint(Point2d(0, 0));
-  line.AddPoint(Point2d(10, 0));
+  line.AddPoint(Point2d(1, 0));
+  line.AddPoint(Point2d(2, 1));
+  line.AddPoint(Point2d(2, 10));
 
   double acc_lat_street = 0.1;
   double acc_lon = 0.0;
+  double delta_time = 1;
 
-  State state(static_cast<int>(st::MIN_STATE_SIZE));
-  state << 0, 0, 0, 0.3, 10;
+  State last_state(static_cast<int>(st::MIN_STATE_SIZE));
+  last_state << 0, 0, 0, 0, 1;
+  State current_state(static_cast<int>(st::MIN_STATE_SIZE));
+  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
 
-  FrenetState frenet_state(state, line);
+  FrenetState last_frenet_state(last_state, line);
+  FrenetState current_frenet_state(current_state, line);
 
-  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon,
-                                                  state, frenet_state);
+  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
+                                                  current_state, current_frenet_state, last_frenet_state);
 
-  EXPECT_NE(acc_lat, acc_lat_street);
+  EXPECT_GT(acc_lat, acc_lat_street);
+}
+
+TEST(transform_lat_acc_street_to_vehicle, right_curved_line_aligned) {
+  Line line;
+  line.AddPoint(Point2d(0, 0));
+  line.AddPoint(Point2d(1, 0));
+  line.AddPoint(Point2d(2, -1));
+  line.AddPoint(Point2d(2, -10));
+
+  double acc_lat_street = 0.1;
+  double acc_lon = 0.0;
+  double delta_time = 1;
+
+  State last_state(static_cast<int>(st::MIN_STATE_SIZE));
+  last_state << 0, 0, 0, 0, 1;
+  State current_state(static_cast<int>(st::MIN_STATE_SIZE));
+  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
+
+  FrenetState last_frenet_state(last_state, line);
+  FrenetState current_frenet_state(current_state, line);
+
+  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
+                                                  current_state, current_frenet_state, last_frenet_state);
+
+  EXPECT_LT(acc_lat, acc_lat_street);
 }

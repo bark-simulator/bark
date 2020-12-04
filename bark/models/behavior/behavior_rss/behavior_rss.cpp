@@ -18,8 +18,6 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-using bark::commons::transformation::FrenetState;
-
 Trajectory BehaviorRSSConformant::Plan(
     double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
@@ -45,6 +43,11 @@ Trajectory BehaviorRSSConformant::Plan(
         nominal_behavior->SetConstantLaneCorridor(lc);
       }
     }
+  }
+
+  if (last_state_(StateDefinition::TIME_POSITION) < 0) {
+    last_state_ = observed_world.CurrentEgoState();
+    VLOG(4) << "Initializing last_state: " << last_state_ << std::endl;
   }
 
   const float length_until_end =
@@ -76,7 +79,7 @@ Trajectory BehaviorRSSConformant::Plan(
     acc_restrictions_ = rss_response.accelerationRestrictions;
     safety_polygons_ = rss_evaluator->GetSafetyPolygons();
     AccelerationLimits acc_lim =
-        ConvertRestrictions(acc_restrictions_, observed_world);
+        ConvertRestrictions(min_planning_time, acc_restrictions_, observed_world);
     SetAccelerationLimits(acc_lim);
   }
 #endif
@@ -121,13 +124,14 @@ Trajectory BehaviorRSSConformant::Plan(
 }
 
 #ifdef RSS
-AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
+AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(double min_planning_time,
     const ::ad::rss::state::AccelerationRestriction& acc_restrictions,
     const ObservedWorld& observed_world) {
   AccelerationLimits acc_lim;
 
   State ego_state = observed_world.CurrentEgoState();
   FrenetState ego_frenet(ego_state, observed_world.GetLaneCorridor()->GetCenterLine());
+  FrenetState last_ego_frenet(last_state_, observed_world.GetLaneCorridor()->GetCenterLine());
   double acc_lon;
   auto last_action = GetLastAction();
   if (last_action.type() == typeid(Continuous1DAction)) {
@@ -144,14 +148,14 @@ AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
 
   if (ego_frenet.vlat < 0) {
     double acc_lat_street_max = acc_restrictions_.lateralLeftRange.maximum;
-    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, ego_state, ego_frenet);
+    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, min_planning_time, ego_state, ego_frenet, last_ego_frenet);
     double acc_lat_street_min = acc_restrictions_.lateralLeftRange.minimum;
-    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, ego_state, ego_frenet);
+    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, min_planning_time, ego_state, ego_frenet, last_ego_frenet);
   } else if (ego_frenet.vlat > 0) {
     double acc_lat_street_max = acc_restrictions_.lateralRightRange.maximum;
-    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, ego_state, ego_frenet);
+    acc_lim.lat_acc_max = TransformLatAccStreetToVehicle(acc_lat_street_max, acc_lon, min_planning_time, ego_state, ego_frenet, last_ego_frenet);
     double acc_lat_street_min = acc_restrictions_.lateralRightRange.minimum;
-    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, ego_state, ego_frenet);
+    acc_lim.lat_acc_min = TransformLatAccStreetToVehicle(acc_lat_street_min, acc_lon, min_planning_time, ego_state, ego_frenet, last_ego_frenet);
   } else {
     // combine them, how?
   }

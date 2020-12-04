@@ -84,18 +84,26 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 }
 
 double TransformLatAccStreetToVehicle(double acc_lat_street, double acc_lon,
-                                      const State& state,
-                                      FrenetState& frenet_state) {
-  double vel_lon = state(StateDefinition::VEL_POSITION);
-  double theta = state(StateDefinition::THETA_POSITION);
-  double theta_street = frenet_state.angleRoad;
-  double delta_theta = mg::SignedAngleDiff(theta, theta_street); // in fact, I think that is frenet_state.angle
+                                      double delta_time,
+                                      const State& current_state,
+                                      const FrenetState& current_frenet_state,
+                                      const FrenetState& last_frenet_state) {
+  double vel_lon = current_state(StateDefinition::VEL_POSITION);
+  double theta = current_state(StateDefinition::THETA_POSITION);
+  double theta_street = current_frenet_state.angleRoad;
+  double delta_theta = mg::SignedAngleDiff(
+      theta, theta_street);  // in fact, I think that is frenet_state.angle
   double route_heading_dot =
-      0;  // where does this come from? can we assume this to be zero?
+      (current_frenet_state.angleRoad - last_frenet_state.angleRoad) /
+      delta_time;
 
   double acc_lat =
       (acc_lat_street - acc_lon * sin(delta_theta)) / cos(delta_theta) +
       vel_lon * route_heading_dot;
+  VLOG(4) << "TransformLatAccStreetToVehicle() acc_lat_street="
+          << acc_lat_street << " vel_lon=" << vel_lon << " acc_lon=" << acc_lon
+          << " route_heading_dot=" << route_heading_dot
+          << " delta_theta=" << delta_theta;
   return acc_lat;
 }
 
