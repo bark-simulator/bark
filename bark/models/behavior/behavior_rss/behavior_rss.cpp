@@ -45,13 +45,6 @@ Trajectory BehaviorRSSConformant::Plan(
     }
   }
 
-  if (last_state_(StateDefinition::TIME_POSITION) < 0) {
-    // this invalid time is set in the constructor (we don't have access to
-    // state there yet)
-    last_state_ = observed_world.CurrentEgoState();
-    VLOG(4) << "Initializing last_state: " << last_state_ << std::endl;
-  }
-
   const float length_until_end =
       behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
           observed_world.CurrentEgoPosition());
@@ -128,11 +121,20 @@ void BehaviorRSSConformant::ConvertRestrictions(
     double delta_time,
     const ::ad::rss::state::AccelerationRestriction& rss_rest,
     const ObservedWorld& observed_world) {
+  
+  State last_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  auto history = observed_world.GetEgoAgent()->GetStateInputHistory();
+  if (history.size() >= 2) {
+    last_state = (history.end() - 2)->first;
+  } else {
+    last_state = observed_world.CurrentEgoState();
+  }
+
   State ego_state = observed_world.CurrentEgoState();
   FrenetState ego_frenet(ego_state,
                          observed_world.GetLaneCorridor()->GetCenterLine());
   FrenetState last_ego_frenet(
-      last_state_, observed_world.GetLaneCorridor()->GetCenterLine());
+      last_state, observed_world.GetLaneCorridor()->GetCenterLine());
   double acc_lon;
   auto last_action = GetLastAction();
   if (last_action.type() == typeid(Continuous1DAction)) {
@@ -145,6 +147,7 @@ void BehaviorRSSConformant::ConvertRestrictions(
     LOG(FATAL) << "action type unknown: "
                << boost::apply_visitor(action_tostring_visitor(), last_action);
   }
+
 
   // Transform from streetwise to vehicle coordinate system
   double acc_lat_le_max, acc_lat_le_min, acc_lat_ri_max, acc_lat_ri_min;

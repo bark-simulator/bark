@@ -78,10 +78,6 @@ class BehaviorRSSConformant : public BehaviorModel {
     input << 0.0, 0.0;
     SetLastAction(input);
 
-    State last_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-    last_state << -1000, 0, 0, 0, 0;  // initializing with invalid time
-    last_state_ = last_state;
-
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
@@ -182,7 +178,6 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   BehaviorRSSConformantStatus behavior_rss_status_;
   double world_time_of_last_rss_violation_;
-  State last_state_;
   LaneCorridorPtr initial_lane_corr_;
   float minimum_safety_corridor_length_;
   AccelerationLimits acceleration_limits_vehicle_cs_;
