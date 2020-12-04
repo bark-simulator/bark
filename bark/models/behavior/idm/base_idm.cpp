@@ -124,9 +124,8 @@ double BaseIDM::CalcNetDistance(
 
   // we need to use the lane corridor of the ego agent to be able to compare the
   // frenet values
-  const auto& lane_corridor = local_lane_corr;
   FrenetPosition frenet_leading(leading_agent->GetCurrentPosition(),
-                                lane_corridor->GetCenterLine());
+                                local_lane_corr->GetCenterLine());
 
   const double vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
