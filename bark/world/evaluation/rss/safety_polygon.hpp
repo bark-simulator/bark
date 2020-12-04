@@ -54,6 +54,18 @@ struct SafetyPolygon {
 typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
 
 /**
+ * @brief  Modes for drawing the longitudinal visualization
+ * @note   
+ * @retval None
+ */
+enum LonDirectionMode {
+  AUTO = 0,
+  FRONT = 1,
+  BEHIND = 2,
+  FRONT_BEHIND = 3
+};
+
+/**
  * @brief  A function that computes the actual polygon within the SafetyPolygon
  * @note   It uses the current vehicle shape and extends it with the given
  *         safety distances. The longitudinal safety distance is drawn
@@ -64,10 +76,16 @@ typedef std::shared_ptr<SafetyPolygon> SafetyPolygonPtr;
  * @param  observed_world: ObservedWorld of the Agent to obtain geospatial info
  * @retval None
  */
-inline void ComputeSafetyPolygon(
-  SafetyPolygon& safe_poly, const ObservedWorld& observed_world) {
+inline bool ComputeSafetyPolygon(
+  SafetyPolygon& safe_poly, const ObservedWorld& observed_world, 
+  LonDirectionMode directional = LonDirectionMode::AUTO) {
   // 1. Get the ego agent required values
   auto ego_agent = observed_world.GetEgoAgent();
+  if (!ego_agent) {
+    VLOG(4) << "SafetyPolygon could not be computed" << std::endl;
+    return false;
+  }
+  
   auto ego_pose = ego_agent->GetCurrentPosition();
   auto ego_state = ego_agent->GetCurrentState();
   auto theta = ego_state(StateDefinition::THETA_POSITION);
@@ -102,24 +120,41 @@ inline void ComputeSafetyPolygon(
       bg::set<1>(pt, y_new);
     }
 
-    // calculate if the agent is in front or behind
-    auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
-    auto other_pose = other_agent->GetCurrentPosition();
-    double relative_angle = atan2(
-      bg::get<1>(ego_pose) - bg::get<1>(other_pose),
-      bg::get<0>(ego_pose) - bg::get<0>(other_pose));
-    double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
-    double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
+    // draws the polygon in relation to the other agent
+    if (directional == LonDirectionMode::AUTO) {
+      // calculate if the agent is in front or behind
+      auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
+      if (!other_agent) {
+        VLOG(4) << "SafetyPolygon could not be computed" << std::endl;
+        return false;
+      }
+      auto other_pose = other_agent->GetCurrentPosition();
+      double relative_angle = atan2(
+        bg::get<1>(ego_pose) - bg::get<1>(other_pose),
+        bg::get<0>(ego_pose) - bg::get<0>(other_pose));
+      double diff_angle = SignedAngleDiff(theta - M_PI_2, relative_angle);
+      double sgn_lon_in_front = diff_angle > 0 ? 1 : -1;
+      // this enables directional computation for the longitudinal
+      // safety distance
+      // if the signs are different, sgn_lon is set to zero
+      // Thus, the original point of the polygon will not be modified
+      // NOTE: often the safety distance is returned as 1+e9
+      if (sgn_lon_in_front*sgn_lon < 0.)
+        sgn_lon = 0.;
+    } else if(directional == LonDirectionMode::FRONT) { 
+      // draws the polygon only in the front
+      if (sgn_lon < 0.)
+        sgn_lon = 0;
+    } else if(directional == LonDirectionMode::BEHIND) {
+      // draws the polygon only behind
+      if (sgn_lon > 0.)
+        sgn_lon = 0;
+    }
 
-    // this enables directional computation for the longitudinal
-    // safety distance
-    // if the signs are different, sgn_lon is set to zero
-    // Thus, the original point of the polygon will not be modified
-    // NOTE: often the safety distance is returned as 1+e9
-    if (sgn_lon_in_front*sgn_lon < 0. ||
-        safe_poly.lon_safety_distance > 10000.)
-      sgn_lon = 0.;
-
+    // if number is too large
+    if (safe_poly.lon_safety_distance > 10000.)
+      sgn_lon = 0;
+    
     // longitudinal safety distance
     bg::set<0>(
       pt, bg::get<0>(pt) + sgn_lon*safe_poly.lon_safety_distance*cos(theta));
@@ -127,6 +162,7 @@ inline void ComputeSafetyPolygon(
       pt, bg::get<1>(pt) + sgn_lon*safe_poly.lon_safety_distance*sin(theta));
     safe_poly.polygon.AddPoint(pt);
   }
+  return true;
 }
 
 inline std::ostream &operator<<(std::ostream &os, const SafetyPolygon& v)

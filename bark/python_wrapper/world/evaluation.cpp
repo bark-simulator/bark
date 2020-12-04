@@ -19,6 +19,7 @@
 #include "bark/python_wrapper/world/ltl.hpp"
 #include "bark/world/evaluation/rss/safety_polygon.hpp"
 #ifdef RSS
+#include "bark/world/evaluation/rss/commons.hpp"
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
 
@@ -127,6 +128,7 @@ void python_evaluation(py::module m) {
       .def("__repr__", [](const EvaluatorRSS& g) {
         return "bark.core.world.evaluation.EvaluatorRSS";
       });
+  m.def("ComputeMinBrakingPolygon", &ComputeMinBrakingPolygon);
 #endif
 
   m.def("CaptureAgentStates",

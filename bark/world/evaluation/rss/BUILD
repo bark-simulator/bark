@@ -5,7 +5,7 @@ cc_library(
         "//conditions:default": [],
     }),
     hdrs = select({
-        "//bark/world/evaluation/rss:_rss": ["rss_interface.hpp"],
+        "//bark/world/evaluation/rss:_rss": ["rss_interface.hpp", "commons.hpp"],
         "//conditions:default": [],
     }),
     visibility = ["//visibility:public"],
@@ -43,6 +43,7 @@ cc_library(
         ":safety_polygon"
     ]
 )
+
 
 config_setting(
     name = "_rss",

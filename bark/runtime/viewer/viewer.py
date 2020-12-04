@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
+from bark.core.world.evaluation import *
 from bark.core.models.behavior import *
 
 logger = logging.getLogger()
@@ -86,7 +87,11 @@ class BaseViewer(Viewer):
           "DrawEgoRSSSafetyResponses",
           "Flag to specify if visualizating rss safety responses.",
           False]
-
+        self._rss_min_braking_distances = params["Visualization"]["Evaluation"][
+          "DrawMinRSSBrakingDistances",
+          "Flag whether the min. braking distances shall be plotted.",
+          False]
+        
         self.parameters = params
         self.agent_color_map = {}
         self.max_agents_color_map = 0
@@ -348,6 +353,9 @@ class BaseViewer(Viewer):
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
+        
+        if self._rss_min_braking_distances:
+          self.DrawRSSBrakingDistances(world, eval_agent_ids[0])
 
     def drawMapAerialImage(self):
         pass
@@ -481,9 +489,26 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(transformed_polygon, response_color,
                                0.6, response_color, zorder=9)
 
+    def DrawRSSBrakingDistances(self, world, eval_id):
+      for agent_id, agent in world.agents.items():
+        observed_world = world.Observe([agent_id])[0]
+        rss_params = None
+        if eval_id == agent_id:
+          rss_params = self.parameters["EvaluatorRss"]["Ego"]
+        else:
+          rss_params = self.parameters["EvaluatorRss"]["Others"]
+        try:
+          min_braking_safety_polygon = ComputeMinBrakingPolygon(observed_world, rss_params)
+        except:
+          pass
+        color_face = "red"
+        self.drawPolygon2d(
+          min_braking_safety_polygon.GetPolygon(), color_face, 0.25, color_face, zorder=9)
+        
     def DrawRSSEvaluatorState(self, world, agent_id):
       agent = world.agents[agent_id]
       behavior = agent.behavior_model
+
       if isinstance(behavior, BehaviorRSSConformant):
         longitudinal_response = behavior.GetLongitudinalResponse()
         lateral_left_response = behavior.GetLateralLeftResponse()
@@ -500,7 +525,7 @@ class BaseViewer(Viewer):
         observed_world = world.Observe([agent_id])[0]
         behavior.ComputeSafetyPolygons(observed_world)
         safety_polygons = behavior.GetSafetyPolygons()
-        
+    
         for poly in safety_polygons:
           print(poly)
           color_face = self.agent_color_map[poly.GetAgentId()]
