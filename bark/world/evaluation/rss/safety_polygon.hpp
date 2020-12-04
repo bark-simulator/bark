@@ -76,13 +76,15 @@ enum LonDirectionMode {
  * @param  observed_world: ObservedWorld of the Agent to obtain geospatial info
  * @retval None
  */
-inline void ComputeSafetyPolygon(
+inline bool ComputeSafetyPolygon(
   SafetyPolygon& safe_poly, const ObservedWorld& observed_world, 
   LonDirectionMode directional = LonDirectionMode::AUTO) {
   // 1. Get the ego agent required values
   auto ego_agent = observed_world.GetEgoAgent();
-  if (!ego_agent)
-    return;
+  if (!ego_agent) {
+    VLOG(4) << "SafetyPolygon could not be computed" << std::endl;
+    return false;
+  }
   
   auto ego_pose = ego_agent->GetCurrentPosition();
   auto ego_state = ego_agent->GetCurrentState();
@@ -122,8 +124,10 @@ inline void ComputeSafetyPolygon(
     if (directional == LonDirectionMode::AUTO) {
       // calculate if the agent is in front or behind
       auto other_agent = observed_world.GetAgents()[safe_poly.agent_id];
-      if (!other_agent)
-        return;
+      if (!other_agent) {
+        VLOG(4) << "SafetyPolygon could not be computed" << std::endl;
+        return false;
+      }
       auto other_pose = other_agent->GetCurrentPosition();
       double relative_angle = atan2(
         bg::get<1>(ego_pose) - bg::get<1>(other_pose),
@@ -158,6 +162,7 @@ inline void ComputeSafetyPolygon(
       pt, bg::get<1>(pt) + sgn_lon*safe_poly.lon_safety_distance*sin(theta));
     safe_poly.polygon.AddPoint(pt);
   }
+  return true;
 }
 
 inline std::ostream &operator<<(std::ostream &os, const SafetyPolygon& v)
