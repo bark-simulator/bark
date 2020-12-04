@@ -63,7 +63,7 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     if (other_lane_corr == nullptr) {
       // in this case we are entirely in one lane corridor
       // here we want to only account for the preceeding vehicle
-      return observed_world.GetCurrentLaneCorridor();
+      return observed_world.GetLaneCorridor();
     }
 
 
