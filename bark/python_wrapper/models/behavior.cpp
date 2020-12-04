@@ -31,6 +31,7 @@ namespace py = pybind11;
 using namespace bark::models::behavior;
 using namespace bark::models::behavior::primitives;
 using bark::models::dynamic::DynamicModelPtr;
+using bark::models::dynamic::AccelerationLimits;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -477,7 +478,7 @@ void python_behavior(py::module m) {
         bm->SetLateralLeftResponse(t[4].cast<bool>());
         bm->SetLateralRightResponse(t[5].cast<bool>());
         bm->SetSafetyPolygons(t[6].cast<std::vector<SafetyPolygon>>());
-        bm->SetAccelerationLimits(t[6].cast<std::vector<AccelerationLimits>>());
+        bm->SetAccelerationLimits(t[6].cast<AccelerationLimits>());
         // TODO: load safety polygons
         #endif
         return bm;
