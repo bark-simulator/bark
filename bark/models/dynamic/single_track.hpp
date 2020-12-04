@@ -40,10 +40,10 @@ inline AccelerationLimits AccelerationLimitsFromParamServer(
   AccelerationLimits al = AccelerationLimits();
   al.lat_acc_max =
       params->GetReal("DynamicModel::LatAccMax",
-                      "Maximum lateral left acceleration [m/s^2]", 4.0);
+                      "Maximum lateral acceleration [m/s^2]", 4.0);
   al.lat_acc_min =
       params->GetReal("DynamicModel::LatAccMin",
-                      "Maximum lateral right acceleration [m/s^2]", -4.0);
+                      "Minimum lateral acceleration [m/s^2]", -4.0);
   al.lon_acc_max = params->GetReal("DynamicModel::LonAccelerationMax",
                                    "Maximum longitudinal acceleration", 4.0);
   al.lon_acc_min = params->GetReal("DynamicModel::LonAccelerationMin",
@@ -129,7 +129,16 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   // Thrun, “Autonomous Automobile Trajectory Tracking for Off-Road Driving:
   // Controller Design, Experimental Validation and Racing,” in 2007 ACC
   //
-  // Author: Luis Gressenbuch
+  // Initial Author: Luis Gressenbuch
+
+  const auto boundValue = [](const double val, const double min, const double max) {
+    return std::max(std::min(val, max), min);
+  };
+
+  const auto SteeringAngle = [](const double acc_lat, const double vel_lon, const double wheelbase) {
+    return std::atan2(acc_lat * wheelbase, vel_lon * vel_lon);
+  };
+
   using bark::commons::transformation::FrenetState;
   using StateDefinition::THETA_POSITION;
   using StateDefinition::X_POSITION;
@@ -148,19 +157,15 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
 
   if (limit_steering) {
-    double delta_max =
-        std::min(model->GetSteeringAngleMax(),
-                 std::abs(std::atan2(model->GetLatAccelerationMax() *
-                                         model->GetWheelBase(),
-                                     vel * vel)));
-    double delta_min =
-        - std::min(model->GetSteeringAngleMax(),
-                 std::abs(std::atan2(
-                     model->GetLatAccelerationMin() * model->GetWheelBase(),
-                     vel * vel)));
-    double clamped_delta = std::min(delta, delta_max);
-    clamped_delta = std::max(clamped_delta, delta_min);
-    return clamped_delta;
+    double wb = model->GetWheelBase();
+    double delta_max_acc = SteeringAngle(model->GetLatAccelerationMax(), vel, wb);
+    double delta_min_acc = SteeringAngle(model->GetLatAccelerationMin(), vel, wb);
+    VLOG(4) << "DeltaMaxAcc: " << delta_max_acc << ", DeltaMinAcc: " << delta_min_acc << ", LatAccMax: " << model->GetLatAccelerationMax() << ", LatAccMin: " << model->GetLatAccelerationMin();
+
+    double delta1 = boundValue(delta, -model->GetSteeringAngleMax(), model->GetSteeringAngleMax());
+    double delta2 = boundValue(delta1, delta_min_acc, delta_max_acc);
+    VLOG(4) << "Delta (unbounded): << " << delta << ", Delta (bound angle): << " << delta1 << ", Delta (bound acc): << " << delta2;
+    return delta2;
   }
   return delta;
 }

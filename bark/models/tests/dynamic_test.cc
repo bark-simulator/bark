@@ -120,7 +120,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   auto x1 = euler_int(*m, x, u, dt);
 
   double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), acc_lat_max+1e-6);
+  EXPECT_LE(a_lat_calc, acc_lat_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -133,7 +133,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   x1 = euler_int(*m, x, u, dt);
 
   a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), acc_lat_max+1e-6);
+  EXPECT_LE(a_lat_calc, acc_lat_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
