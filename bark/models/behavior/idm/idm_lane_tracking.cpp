@@ -112,29 +112,33 @@ void BehaviorIDMLaneTracking::CheckAccelerationLimits(double acc_lon,
                                                       double acc_lat) const {
   const auto almost_smaller = [](const double val1, const double val2) {
     const double precision = 0.01;
-    return val1 <= val2 || std::abs(val1 - val2)  < precision;
+    return val1 <= val2 || std::abs(val1 - val2) < precision;
   };
   const auto almost_larger = [](const double val1, const double val2) {
     const double precision = 0.01;
-    return val1 >= val2 || std::abs(val1 - val2)  < precision;
+    return val1 >= val2 || std::abs(val1 - val2) < precision;
   };
-  if (acc_lon >= 0 && !almost_smaller(acc_lon, GetAccelerationLimits().lon_acc_max)) {
+  if (acc_lon >= 0 &&
+      !almost_smaller(acc_lon, GetAccelerationLimits().lon_acc_max)) {
     LOG(WARNING) << "LonAccMax is violated " << acc_lon << " vs. "
                  << GetAccelerationLimits().lon_acc_max;
   }
 
-  if (acc_lon < 0 && !almost_larger(acc_lon, GetAccelerationLimits().lon_acc_min)) {
+  if (acc_lon < 0 &&
+      !almost_larger(acc_lon, GetAccelerationLimits().lon_acc_min)) {
     LOG(WARNING) << "LonAccMin is violated" << acc_lon << " vs. "
                  << GetAccelerationLimits().lon_acc_min;
   }
 
   // Steering to the right == Accelerations are negative
-  if (acc_lat >= 0 && !almost_larger(acc_lat, GetAccelerationLimits().lat_acc_max)) {
+  if (acc_lat >= 0 &&
+      !almost_smaller(acc_lat, GetAccelerationLimits().lat_acc_max)) {
     LOG(WARNING) << "LatAccMax is violated " << acc_lat << " vs. "
                  << GetAccelerationLimits().lat_acc_max;
   }
 
-  if (acc_lat < 0 && !almost_smaller(acc_lat, GetAccelerationLimits().lat_acc_min)) {
+  if (acc_lat < 0 &&
+      !almost_larger(acc_lat, GetAccelerationLimits().lat_acc_min)) {
     LOG(WARNING) << "LatAccMin is violated " << acc_lat << " vs. "
                  << GetAccelerationLimits().lat_acc_min;
   }

@@ -140,13 +140,15 @@ TEST(transform_lat_acc_street_to_vehicle, straight_line_aligned) {
   State last_state(static_cast<int>(st::MIN_STATE_SIZE));
   last_state << 0, 0, 0, 0, 1;
   State current_state(static_cast<int>(st::MIN_STATE_SIZE));
-  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
+  current_state << delta_time,
+      delta_time * last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
 
   FrenetState last_frenet_state(last_state, line);
   FrenetState current_frenet_state(current_state, line);
 
-  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
-                                                  current_state, current_frenet_state, last_frenet_state);
+  double acc_lat = LatAccStreetToVehicleCs(acc_lat_street, acc_lon, delta_time,
+                                           current_state, current_frenet_state,
+                                           last_frenet_state);
 
   EXPECT_EQ(acc_lat, acc_lat_street);
 }
@@ -165,13 +167,15 @@ TEST(transform_lat_acc_street_to_vehicle, left_curved_line_aligned) {
   State last_state(static_cast<int>(st::MIN_STATE_SIZE));
   last_state << 0, 0, 0, 0, 1;
   State current_state(static_cast<int>(st::MIN_STATE_SIZE));
-  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
+  current_state << delta_time,
+      delta_time * last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
 
   FrenetState last_frenet_state(last_state, line);
   FrenetState current_frenet_state(current_state, line);
 
-  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
-                                                  current_state, current_frenet_state, last_frenet_state);
+  double acc_lat = LatAccStreetToVehicleCs(acc_lat_street, acc_lon, delta_time,
+                                           current_state, current_frenet_state,
+                                           last_frenet_state);
 
   EXPECT_GT(acc_lat, acc_lat_street);
 }
@@ -190,13 +194,15 @@ TEST(transform_lat_acc_street_to_vehicle, right_curved_line_aligned) {
   State last_state(static_cast<int>(st::MIN_STATE_SIZE));
   last_state << 0, 0, 0, 0, 1;
   State current_state(static_cast<int>(st::MIN_STATE_SIZE));
-  current_state << delta_time, delta_time*last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
+  current_state << delta_time,
+      delta_time * last_state(StateDefinition::VEL_POSITION), 0, 0, 1;
 
   FrenetState last_frenet_state(last_state, line);
   FrenetState current_frenet_state(current_state, line);
 
-  double acc_lat = TransformLatAccStreetToVehicle(acc_lat_street, acc_lon, delta_time, 
-                                                  current_state, current_frenet_state, last_frenet_state);
+  double acc_lat = LatAccStreetToVehicleCs(acc_lat_street, acc_lon, delta_time,
+                                           current_state, current_frenet_state,
+                                           last_frenet_state);
 
   EXPECT_LT(acc_lat, acc_lat_street);
 }

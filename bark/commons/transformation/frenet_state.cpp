@@ -83,17 +83,17 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
   return state;
 }
 
-double TransformLatAccStreetToVehicle(double acc_lat_street, double acc_lon,
-                                      double delta_time,
-                                      const State& current_state,
-                                      const FrenetState& current_frenet_state,
-                                      const FrenetState& last_frenet_state) {
+double LatAccStreetToVehicleCs(double acc_lat_street, double acc_lon,
+                               double delta_time, const State& current_state,
+                               const FrenetState& current_frenet_state,
+                               const FrenetState& last_frenet_state) {
   double vel_lon = current_state(StateDefinition::VEL_POSITION);
   double theta = current_state(StateDefinition::THETA_POSITION);
   double theta_street = current_frenet_state.angleRoad;
   double delta_theta = mg::SignedAngleDiff(
       theta, theta_street);  // in fact, I think that is frenet_state.angle
-      // also not sure, if we should calculate theta-theta_street or theta_street-theta
+  // also not sure, if we should calculate theta-theta_street or
+  // theta_street-theta
   double route_heading_dot =
       (current_frenet_state.angleRoad - last_frenet_state.angleRoad) /
       delta_time;
@@ -101,8 +101,8 @@ double TransformLatAccStreetToVehicle(double acc_lat_street, double acc_lon,
   double acc_lat =
       (acc_lat_street - acc_lon * sin(delta_theta)) / cos(delta_theta) +
       vel_lon * route_heading_dot;
-  VLOG(4) << "TransformLatAccStreetToVehicle() acc_lat_street="
-          << acc_lat_street << " vel_lon=" << vel_lon << " acc_lon=" << acc_lon
+  VLOG(4) << "LatAccStreetToVehicleCs() acc_lat_street=" << acc_lat_street
+          << " vel_lon=" << vel_lon << " acc_lon=" << acc_lon
           << " route_heading_dot=" << route_heading_dot
           << " delta_theta=" << delta_theta;
   return acc_lat;
