@@ -17,6 +17,7 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/world/map/commons.hpp"
 
 namespace bark {
 namespace models {
@@ -368,6 +369,15 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
+    // Tobias: 	
+    // GenerateTrajectory uses lane_corr_
+    // CalcRelativeValues uses current_lane_corridor
+
+    // postulate: we need only to modify: current_lane_corridor
+
+    
+    // LaneCorridor ChooseLaneCorridorBasedOnVehicleState(observed_world)
+    // TODO: set current_lane_corridor
     current_lane_corridor = constant_lane_corr_;
   } else {
     current_lane_corridor = lane_corr_;
