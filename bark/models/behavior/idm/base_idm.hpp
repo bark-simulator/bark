@@ -54,7 +54,8 @@ class BaseIDM : virtual public BehaviorModel {
                              const double vel_other) const;
   double CalcNetDistance(
       const world::ObservedWorld& observed_world,
-      const std::shared_ptr<const world::objects::Agent>& leading_agent) const;
+      const std::shared_ptr<const world::objects::Agent>& leading_agent,
+      const LaneCorridorPtr& local_lane_corr) const;
 
   std::pair<bool, double> GetDistanceToLaneEnding(
       const LaneCorridorPtr& lane_corr, const Point2d& pos) const;
@@ -121,6 +122,10 @@ class BaseIDM : virtual public BehaviorModel {
     acceleration_limits_ = acc_lim; 
   }
 
+  void SetConstantLaneCorridor(const LaneCorridorPtr& lc) {
+    constant_lane_corr_ = lc;
+  }
+
  protected:
   // Parameters
   double param_minimum_spacing_;
@@ -134,6 +139,7 @@ class BaseIDM : virtual public BehaviorModel {
   int param_exponent_;
   int num_trajectory_time_points_;
   LaneCorridorPtr lane_corr_;
+  LaneCorridorPtr constant_lane_corr_;
 
   // IDM extension to stop at the end of the LaneCorridor
   bool brake_lane_end_;
