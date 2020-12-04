@@ -60,17 +60,21 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     }
 
     // if it is only in one lane corridor
-    if (other_lane_corr == nullptr)
-      return target_corr;
+    if (other_lane_corr == nullptr) {
+      // in this case we are entirely in one lane corridor
+      // here we want to only account for the preceeding vehicle
+      return observed_world.GetCurrentLaneCorridor();
+    }
 
-    // check if any point of the vehicle shape (front)
-    // is in the other lane corridor
+
+    // check if the front points of the ego vehicle are in the
+    // other lane corridor
     for (auto pt : vehicle_shape.obj_.outer()) {
       double pt_angle = atan2(
         bg::get<1>(ego_pose) - bg::get<1>(pt),
         bg::get<0>(ego_pose) - bg::get<0>(pt));
       double signed_angle_diff_lon = SignedAngleDiff(theta - M_PI_2, pt_angle);
-      // if a point is in front and inside the other lane corridor
+      // if a point in the front of the polygon is inside the other lane corridor
       // return that lane corridor
       if(Within(pt, other_lane_corr->GetMergedPolygon()) &&
          signed_angle_diff_lon > 0) {
