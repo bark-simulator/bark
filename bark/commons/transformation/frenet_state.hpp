@@ -33,7 +33,7 @@ struct FrenetState : public FrenetPosition {
 
   double vlon;
   double vlat;
-  double angle;  // in fact, this is theta - theta_road
+  double angle;  // in fact, this is theta_road - theta_vehicle
   double angleRoad;
 };
 
