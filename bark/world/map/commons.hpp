@@ -29,6 +29,16 @@ namespace bg = boost::geometry;
 using models::dynamic::StateDefinition;
 using bark::geometry::SignedAngleDiff;
 
+/**
+ * @brief  Function that selects LaneCorridors
+ * @note   If an agent is in two LaneCorridors with its shape
+ *         the other one it selected if the front points of the
+ *         agent are within the other lane corridor.
+ *         This models an entering of the other lane corridor.
+ * @param  observed_world: ObservedWorld of agent
+ * @param  target_corr: fallback corridor in case calculation fails
+ * @retval LaneCorridorPtr: the computed lane corridor
+ */
 inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
   const ObservedWorld& observed_world, const LaneCorridorPtr& target_corr) {
     // ego info
