@@ -187,7 +187,7 @@ class BaseViewer(Viewer):
     def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=2):
         pass
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10, hatch=''):
         pass
 
     def drawTrajectory(self, trajectory, color, **kwargs):
@@ -217,7 +217,10 @@ class BaseViewer(Viewer):
 
     def drawAgents(self, world):
         for _, agent in world.agents.items():
-            self.drawAgent(agent)
+            if agent.id in world.agents_valid:
+              self.drawAgent(agent)
+            else:
+              self.drawAgent(agent, hatch='o')
     
     def drawBehaviorPlan(self, agent):
         self.drawTrajectory(agent.behavior_model.last_trajectory,
@@ -330,7 +333,12 @@ class BaseViewer(Viewer):
                     color_face_history = (1.0, 1.0, 1, .0)
                 self.drawHistory(agent, color_line, alpha,
                                  color_face_history, zorder=5)
-            self.drawAgent(agent, color_line, alpha, color_face)
+            
+            if agent.id in world.agents_valid:
+              hatch = ''
+            else:
+              hatch = 'o'
+            self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
                 scenario_idx), fontsize=14)
@@ -384,7 +392,7 @@ class BaseViewer(Viewer):
         self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
                         dashed, zorder=1, linewidth=self.map_linewidth)
 
-    def drawAgent(self, agent, color, alpha, facecolor):
+    def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             state = agent.state
@@ -401,7 +409,7 @@ class BaseViewer(Viewer):
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
 
             self.drawPolygon2d(transformed_polygon, color,
-                               alpha, facecolor, zorder=10)
+                               alpha, facecolor, zorder=10, hatch=hatch)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
