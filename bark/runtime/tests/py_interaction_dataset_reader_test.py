@@ -17,7 +17,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
     def test_scenario_track_info(self):
         map_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/interaction_dataset_dummy_track.csv")
+        track_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent1 = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
@@ -40,7 +40,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
     def test_agent_from_trackfile(self):
 
         map_filename = os.path.join(os.path.dirname(__file__),"../tests/data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_dummy_track.csv")
+        track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent_track_info = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)
@@ -67,7 +67,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
     def test_agent_from_trackfile_centered(self):
 
         map_filename = os.path.join(os.path.dirname(__file__),"../tests/data/DR_DEU_Merging_MT_v01_centered.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_dummy_track.csv")
+        track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent_track_info = AgentTrackInfo(
             track_filename, track_id=1, start_offset=500, end_offset=1000)

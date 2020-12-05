@@ -7,20 +7,19 @@ from bark.runtime.scenario.interaction_dataset_processing.agent_track_info impor
 
 
 class ScenarioTrackInfo:
-    def __init__(self, map_filename, track_filename, ego_track_info, xy_offset, start_ts=None, end_ts=None, precision=-2):
-        self._map_filename = map_filename
+    def __init__(self, track_filename, ego_track_info, xy_offset, start_ts=None, end_ts=None, precision=-2):
         self._track_filename = track_filename
         self._ego_track_info = ego_track_info
         self._xy_offset = xy_offset
 
         if start_ts is None:
             self._start_ts = int(
-                round(ego_track_info.GetStartOffset(), precision))
+                round(ego_track_info.GetStartTime(), precision))
         else:
             self._start_ts = int(round(start_ts, precision))
 
         if end_ts is None:
-            self._end_ts = int(round(ego_track_info.GetEndOffset(), precision))
+            self._end_ts = int(round(ego_track_info.GetEndTime(), precision))
         else:
             self._end_ts = int(round(end_ts, precision))
 
@@ -36,9 +35,6 @@ class ScenarioTrackInfo:
     def AddTrackInfoOtherAgent(self, track_info_other):
         self._other_agents_track_infos[track_info_other.GetTrackId(
         )] = track_info_other
-
-    def GetMapFilename(self):
-        return self._map_filename
 
     def GetTrackFilename(self):
         return self._track_filename
@@ -62,24 +58,15 @@ class ScenarioTrackInfo:
         if (agent_id == self._ego_track_info.GetTrackId()):
             return 0.0
         else:
-            start_ts = self._other_agents_track_infos[agent_id].GetStartOffset(
-            )
+            start_ts = self._other_agents_track_infos[agent_id].GetStartTime()
             timestamp_offset = float(start_ts - self.GetStartTs()) / 1000.0
             return timestamp_offset
 
     def TimeSanityCheck(self):
-        # for other in self.GetOtherTrackInfos().values():
-        #     if self.GetStartTs() > other.GetStartOffset():
-        #         raise ValueError(
-        #             "Other agent {} starts before scenario".format(other.GetTrackId()))
-        #     elif self.GetEndTs() < other.GetEndOffset():
-        #         raise ValueError(
-        #             "Other agent {} ends after scenario".format(other.GetTrackId()))
-
-        if self.GetStartTs() < self.GetEgoTrackInfo().GetStartOffset():
+        if self.GetStartTs() < self.GetEgoTrackInfo().GetStartTime():
             raise ValueError("ego agent {} starts after scenario".format(
                 self.GetEgoTrackInfo().GetTrackId()))
-        elif self.GetEndTs() > self.GetEgoTrackInfo().GetEndOffset():
+        elif self.GetEndTs() > self.GetEgoTrackInfo().GetEndTime():
             raise ValueError("ego agent {} ends before scenario".format(
                 self.GetEgoTrackInfo().GetTrackId()))
 

@@ -31,7 +31,8 @@ def BarkStateFromMotionState(state, xy_offset, time_offset=0):
     bark_state[int(StateDefinition.Y_POSITION)] = state.y + xy_offset[1]
     orientation = NormToPI(state.psi_rad)
     if (orientation > np.pi or orientation < -np.pi):
-      logging.error("Orientation in Track file is ill-defined: {}".format(state.psi_rad))
+        logging.error(
+            "Orientation in Track file is ill-defined: {}".format(state.psi_rad))
     bark_state[int(StateDefinition.THETA_POSITION)] = orientation
     bark_state[int(StateDefinition.VEL_POSITION)] = pow(
         pow(state.vx, 2) + pow(state.vy, 2), 0.5)
@@ -64,6 +65,7 @@ def ShapeFromTrack(track, wheelbase=2.7):
     p4 = [-length / 2.0 + offset, -width / 2.0]
     points = [p1, p2, p3, p4, p1]
     poly = Polygon2d(pose, points)
+    # TODO(@esterle): also infer wheelbase
     return poly
 
 
@@ -133,7 +135,11 @@ class InteractionDatasetReader:
         xy_offset = scenario_track_info.GetXYOffset()
 
         start_time = scenario_track_info.GetStartTs()
-        end_time = scenario_track_info.GetEndTs()
+
+        if start_time < scenario_track_info.GetEndTs():
+          end_time = scenario_track_info.GetEndTs()
+        else:
+          raise ValueError("Agent cannot start after scenario end")
 
         behavior_model = track_params["behavior_model"]
         model_converter = ModelJsonConversion()
@@ -145,10 +151,11 @@ class InteractionDatasetReader:
             behavior = behavior_model
 
         try:
-            initial_state = InitStateFromTrack(track, xy_offset, start_time)
+            start_time_first_valid = scenario_track_info.GetStartTs() + scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000
+            initial_state = InitStateFromTrack(track, xy_offset, start_time_first_valid)
         except:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
-                agent_id, start_time))
+                agent_id, scenario_track_info.GetStartTs() + scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000))
 
         try:
             dynamic_model = model_converter.convert_model(

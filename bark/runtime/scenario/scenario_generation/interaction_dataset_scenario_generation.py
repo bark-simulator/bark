@@ -70,12 +70,11 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             raise ValueError("No ego id has been defined")
 
         ego_track_info = AgentTrackInfo(filename=self._track_file_name, track_id=self._ego_track_id,
-                                        start_offset=self._start_time, end_offset=self._end_time)
-        scenario_track_info = ScenarioTrackInfo(
-            map_filename=self._map_file_name, track_filename=self._track_file_name, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
+                                        start_time=self._start_time, end_time=self._end_time)
+        scenario_track_info = ScenarioTrackInfo(track_filename=self._track_file_name, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
         for track_id in self._track_ids:
             new_agent = AgentTrackInfo(filename=self._track_file_name, track_id=track_id,
-                                       start_offset=self._start_time, end_offset=self._end_time)
+                                       start_time=self._start_time, end_time=self._end_time)
             scenario_track_info.AddTrackInfoOtherAgent(new_agent)
 
         return scenario_track_info

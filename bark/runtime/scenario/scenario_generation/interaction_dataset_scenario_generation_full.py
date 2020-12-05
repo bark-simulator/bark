@@ -16,6 +16,7 @@ from bark.runtime.commons import ParameterServer
 from bark.core.world.map import *
 from bark.core.models.dynamic import *
 from bark.core.models.execution import *
+from bark.core.world.opendrive import *
 
 import logging
 
@@ -38,7 +39,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                           "bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr"]
         self._track_file_name_list = params_temp["TrackFilenameList",
                                                  "List of Paths to track files (csv)",
-                                                 ["bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]]
+                                                 ["bark/runtime/tests/data/interaction_dataset_DEU_Merging_dummy_track.csv"]]
         self._behavior_model = params_temp["BehaviorModel",
                                            "Overwrite static trajectory with behavior model", None]
         self._xy_offset = params_temp["XYOffset",
@@ -50,6 +51,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._agent_params = []
         self._starting_offset_ms = params_temp["StartingOffsetMs",
                                                "Starting Offset to each agent in miliseconds", 500]
+        self._road_ids = [0, 1]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -58,9 +60,13 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         """
         scenario_list = []
 
+        self._map_interface = self.__create_map_interface__()
+        self._road_corridor = self.__create_road_corridor__()
+
         for track_file_name in self._track_file_name_list:
 
-            dataset_decomposer = DatasetDecomposer(map_filename=self._map_file_name,
+            dataset_decomposer = DatasetDecomposer(map_interface=self._map_interface,
+                                                   road_corridor=self._road_corridor,
                                                    track_filename=track_file_name,
                                                    xy_offset=self._xy_offset,
                                                    starting_offset_ms=self._starting_offset_ms)
@@ -86,14 +92,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         scenario_track_info.TimeSanityCheck()
 
         scenario = Scenario(map_file_name=self._map_file_name,
-                            json_params=self._params.ConvertToDict())
-        # as we always use the same world, we can create the MapIntf. once
-        if self._map_interface is None:
-            scenario.CreateMapInterface(self._map_file_name)
-            print("Creating New Map Interface for Scenario!")
-        else:
-            scenario.map_interface = self._map_interface
-        self._map_interface = scenario.map_interface
+                            json_params=self._params.ConvertToDict(),
+                            map_interface = self._map_interface)
 
         world = scenario.GetWorldState()
         track_params = ParameterServer()
@@ -140,3 +140,21 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         return agent_params
 
         # print("\n", agent_params.ConvertToDict())
+
+    def __create_map_interface__(self):
+        params = ParameterServer()
+        # we are creating a dummy scenario to get the map interface from it
+        scenario = Scenario(map_file_name=self._map_file_name,
+                            json_params=params.ConvertToDict())
+        world = scenario.GetWorldState()
+        map_interface = world.map
+
+        return map_interface
+
+    def __create_road_corridor__(self):
+        if self._map_interface is not None:
+          map_interface = self._map_interface
+          map_interface.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+        else:
+          raise ValueError("map interface not available")
+        return map_interface.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)

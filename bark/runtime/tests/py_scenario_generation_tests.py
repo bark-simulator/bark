@@ -83,7 +83,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params.Save("default_params_behavior_type_sampling.json")
 
   def test_configurable_scenario_generation_interaction_merging_track_ids(self):
-    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track.csv")
     map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
@@ -114,7 +114,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     params.Save("default_params_interaction_dataset.json")
 
   def test_configurable_scenario_generation_interaction_merging_window(self):
-    track_filenames =  os.path.join(os.path.dirname(__file__), "data/*_dataset_dummy_track.csv")
+    track_filenames =  os.path.join(os.path.dirname(__file__), "data/*_dataset_DEU_Merging_dummy_track_late.csv")
     map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
     sink_source_dict = {
       "SourceSink": [[1001.92, 1005.59],  [883.064, 1009.07] ],
@@ -247,37 +247,63 @@ class ScenarioGenerationTests(unittest.TestCase):
     params = ParameterServer()
 
     map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["StartingOffsetMs"] = 0
 
     scenario_generation = InteractionDatasetScenarioGenerationFull(
         params=params, num_scenarios=2)
 
     self.assertEqual(scenario_generation.get_num_scenarios(), 2)
 
+    # first scenario
+    agent11 = scenario_generation.get_scenario(0).GetWorldState().agents[1]
+    agent12 = scenario_generation.get_scenario(0).GetWorldState().agents[2]
+    self.assertEqual(agent11.first_valid_timestamp, 0.0)
+    self.assertEqual(agent12.first_valid_timestamp, 0.0)
+
+    # second scenario
+    agent21 = scenario_generation.get_scenario(1).GetWorldState().agents[1]
+    agent22 = scenario_generation.get_scenario(1).GetWorldState().agents[2]
+    self.assertEqual(agent21.first_valid_timestamp, 0.0)
+    self.assertEqual(agent22.first_valid_timestamp, 0.0)
+
   def test_dataset_scenario_generation_full_incomplete(self):
     params = ParameterServer()
 
     map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_CHN_Merging_ZS_partial_v02.xodr")
-    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_incomplete.csv")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_CHN_Merging_dummy_track_incomplete.csv")
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["StartingOffsetMs"] = 0
 
     scenario_generation = InteractionDatasetScenarioGenerationFull(
         params=params, num_scenarios=3)
-    # agent 1 is not part of the map, so it should only generate 2 scenarios
+    # agent 1 is never part of the map, so it should only generate 2 scenarios
 
     self.assertEqual(scenario_generation.get_num_scenarios(), 2)
+
+    # first scenario
+    agent12 = scenario_generation.get_scenario(0).GetWorldState().agents[2]
+    agent17 = scenario_generation.get_scenario(0).GetWorldState().agents[7]
+    self.assertEqual(agent12.first_valid_timestamp, 0.0)
+    self.assertEqual(agent17.first_valid_timestamp, 0.0)
+
+    # second scenario
+    agent22 = scenario_generation.get_scenario(1).GetWorldState().agents[2]
+    agent27 = scenario_generation.get_scenario(1).GetWorldState().agents[7]
+    self.assertEqual(agent22.first_valid_timestamp, 0.0)
+    self.assertEqual(agent27.first_valid_timestamp, 0.0)
   
   def test_dataset_scenario_generation_full_late(self):
     # test wether agent 2 coming in late is correctly identified as invalid at first world time step
     params = ParameterServer()
 
     map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track_late.csv")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track_late.csv")
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
@@ -300,11 +326,119 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(isinstance(agent2, Agent), True)
     self.assertEqual(agent2.IsValidAtTime(world_state.time), False)
 
+
+  def test_dataset_scenario_generation_full_outside1(self):
+    # test wether agent 3 outside at the beginning is correctly identified as invalid at first world time step
+    params = ParameterServer()
+
+    map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track_outside.csv")
+
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["StartingOffsetMs"] = 0
+
+    scenario_generation = InteractionDatasetScenarioGenerationFull(
+        params=params, num_scenarios=1)
+
+    scenario = scenario_generation.get_scenario(0)
+    self.assertAlmostEqual(scenario.eval_agent_ids, [1])
+
+    world_state = scenario.GetWorldState()
+    agent11 = world_state.GetAgent(1)
+    agent12 = world_state.GetAgent(2)
+    agent13 = world_state.GetAgent(3)
+
+    self.assertAlmostEqual(agent11.first_valid_timestamp, 0.0)
+    self.assertAlmostEqual(agent12.first_valid_timestamp, 0.0)
+    self.assertNotEqual(agent13.first_valid_timestamp, 0.0)
+    
+    # agent13 should not be valid at the beginning, as he is outside of map
+    world_state.time = 0
+    self.assertEqual(isinstance(agent11, Agent), True)
+    self.assertEqual(agent11.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent11.InsideRoadCorridor(), True)
+    
+    self.assertEqual(isinstance(agent12, Agent), True)
+    self.assertEqual(agent12.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent12.InsideRoadCorridor(), True)
+
+    self.assertEqual(isinstance(agent13, Agent), True)
+    self.assertEqual(agent13.IsValidAtTime(world_state.time), False)
+    # as we use only state once it's in map, this will be true, although the time step is not valid yet
+    self.assertEqual(agent13.InsideRoadCorridor(), True)
+
+    # agent13 should not be valid at the beginning, as he is outside of map
+    world_state.time = 0.5
+    self.assertEqual(isinstance(agent11, Agent), True)
+    self.assertEqual(agent11.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent11.InsideRoadCorridor(), True)
+    
+    self.assertEqual(isinstance(agent12, Agent), True)
+    self.assertEqual(agent12.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent12.InsideRoadCorridor(), True)
+
+    self.assertEqual(isinstance(agent13, Agent), True)
+    self.assertEqual(agent13.IsValidAtTime(world_state.time), False)
+    # as we use only state once it's in map, this will be true, although the time step is not valid yet
+    self.assertEqual(agent13.InsideRoadCorridor(), True)
+
+    # agent13 should be valid at some point
+    world_state.time = agent13.first_valid_timestamp
+    self.assertEqual(isinstance(agent11, Agent), True)
+    self.assertEqual(agent11.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent11.InsideRoadCorridor(), True)
+    
+    self.assertEqual(isinstance(agent12, Agent), True)
+    self.assertEqual(agent12.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent12.InsideRoadCorridor(), True)
+
+    self.assertEqual(isinstance(agent13, Agent), True)
+    self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent13.InsideRoadCorridor(), True)
+
+
+  def test_dataset_scenario_generation_full_outside3(self):
+    # test wether agent 3 outside at the beginning is correctly identified as invalid at first world time step
+    params = ParameterServer()
+
+    map_filename =  os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
+    track_filename =  os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track_outside.csv")
+
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["MapFilename"] = map_filename
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["TrackFilenameList"] = [track_filename]
+    params["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"]["StartingOffsetMs"] = 0
+
+    scenario_generation = InteractionDatasetScenarioGenerationFull(
+        params=params, num_scenarios=3)
+
+    scenario = scenario_generation.get_scenario(2)
+    self.assertAlmostEqual(scenario.eval_agent_ids, [3])
+    world_state = scenario.GetWorldState()
+    agent31 = world_state.GetAgent(1)
+    agent32 = world_state.GetAgent(2)
+    agent33 = world_state.GetAgent(3)
+
+    # they all should be valid at the beginning
+    world_state.time = 0
+    self.assertEqual(isinstance(agent31, Agent), True)
+    self.assertEqual(agent31.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent31.InsideRoadCorridor(), True)
+    
+    self.assertEqual(isinstance(agent32, Agent), True)
+    self.assertEqual(agent32.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent32.InsideRoadCorridor(), True)
+
+    self.assertEqual(isinstance(agent33, Agent), True)
+    self.assertEqual(agent33.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent33.InsideRoadCorridor(), True)
+
   def test_dataset_scenario_generation(self):
     params = ParameterServer()
 
     map_filename = os.path.join(os.path.dirname(__file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
-    track_filename = os.path.join(os.path.dirname(__file__), "data/interaction_dataset_dummy_track.csv")
+    track_filename = os.path.join(os.path.dirname(__file__), "data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename
@@ -324,7 +458,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     map_filename = os.path.join(os.path.dirname(
         __file__), "data/DR_DEU_Merging_MT_v01_shifted.xodr")
     track_filename = os.path.join(os.path.dirname(
-        __file__), "data/interaction_dataset_dummy_track.csv")
+        __file__), "data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["MapFilename"] = map_filename
     params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]["TrackFilename"] = track_filename

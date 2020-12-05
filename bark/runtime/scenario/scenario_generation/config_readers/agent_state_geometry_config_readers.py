@@ -105,7 +105,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
 class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
     track_file_name = config_param_object["TrackFilename", "Path to track file (csv)",
-                                        "bark/runtime/tests/data/interaction_dataset_dummy_track.csv"]
+                                        "bark/runtime/tests/data/interaction_dataset_DEU_Merging_dummy_track.csv"]
     track_ids = config_param_object["TrackIds", "IDs of the vehicle tracks to import.", [1]]
     start_time = config_param_object["StartTs", "Timestamp when to start the scenario (ms)", 0]
     end_time = config_param_object["EndTs","Timestamp when to end the scenario (ms)", None]

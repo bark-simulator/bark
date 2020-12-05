@@ -5,14 +5,14 @@
 
 
 class AgentTrackInfo:
-    def __init__(self, filename, track_id, start_offset, end_offset, first_ts_on_map=None, precision=-2):
+    def __init__(self, filename, track_id, start_time, end_time, first_ts_on_map=None, precision=-2):
         self._filename = filename
         self._track_id = track_id  # TODO: rename to agent_id
-        self._start_offset = int(round(start_offset, precision))  # TODO: rename to start_time
-        self._end_offset = int(round(end_offset, precision))  # TODO: rename to end_time
+        self._start_time = int(round(start_time, precision))  # in ms
+        self._end_time = int(round(end_time, precision))  # in ms
 
     def __str__(self):
-        return 'id={} start_offset={} end_offset={}'.format(self._track_id, self._start_offset, self._end_offset)
+        return 'id={} start_time={} end_time={}'.format(self._track_id, self._start_time, self._end_time)
 
     def GetFileName(self):
         # yields track filename
@@ -21,8 +21,8 @@ class AgentTrackInfo:
     def GetTrackId(self):
         return self._track_id
 
-    def GetStartOffset(self):
-        return self._start_offset
+    def GetStartTime(self):
+        return self._start_time
 
-    def GetEndOffset(self):
-        return self._end_offset
+    def GetEndTime(self):
+        return self._end_time

@@ -15,7 +15,7 @@ class DatasetDecomposerTest(unittest.TestCase):
     def test_decompose_dataset(self):
 
         map_filename = os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
+        track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_DEU_Merging_dummy_track.csv")
         xy_offset = [0, 0]
 
         dataset_decomposer = DatasetDecomposer(
@@ -29,7 +29,7 @@ class DatasetDecomposerTest(unittest.TestCase):
     def test_decompose_dataset_centered(self):
 
         map_filename = os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_centered.xodr")
-        track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_dummy_track.csv")
+        track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_DEU_Merging_dummy_track.csv")
         xy_offset = [-900, -900]
 
         dataset_decomposer = DatasetDecomposer(
