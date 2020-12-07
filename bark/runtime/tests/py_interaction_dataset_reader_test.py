@@ -20,17 +20,16 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         track_filename = os.path.join(os.path.dirname(__file__),"../runtime/tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent1 = AgentTrackInfo(
-            track_filename, track_id=1, start_offset=500, end_offset=1000)
+            track_filename, track_id=1, start_time=500, end_time=1000)
 
         print(agent1)
 
         agent2 = AgentTrackInfo(
-            track_filename, track_id=2, start_offset=500, end_offset=1000)
+            track_filename, track_id=2, start_time=500, end_time=1000)
 
         print(agent2)
 
-        scen_info = ScenarioTrackInfo(
-            map_filename, track_filename, agent1, xy_offset = [0, 0], start_ts=500, end_ts=1000)
+        scen_info = ScenarioTrackInfo(track_filename, agent1, xy_offset = [0, 0], start_ts=500, end_ts=1000)
         scen_info.AddTrackInfoOtherAgent(agent2)
 
         print(scen_info)
@@ -43,7 +42,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent_track_info = AgentTrackInfo(
-            track_filename, track_id=1, start_offset=500, end_offset=1000)
+            track_filename, track_id=1, start_time=500, end_time=1000)
 
         params = ParameterServer()
         params_id = params["Scenario"]["Generation"]["InteractionDataset"]
@@ -57,8 +56,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         track_params["map_interface"] = None  # world.map
         track_params["behavior_model"] = None
 
-        scenario_info = ScenarioTrackInfo(
-            map_filename, track_filename, agent_track_info, xy_offset=[0, 0])
+        scenario_info = ScenarioTrackInfo(track_filename, agent_track_info, xy_offset=[0, 0])
         ds_reader = InteractionDatasetReader()
         agent = ds_reader.AgentFromTrackfile(
             track_params, params, scenario_info, agent_track_info.GetTrackId())
@@ -70,7 +68,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         track_filename = os.path.join(os.path.dirname(__file__),"../tests/data/interaction_dataset_DEU_Merging_dummy_track.csv")
 
         agent_track_info = AgentTrackInfo(
-            track_filename, track_id=1, start_offset=500, end_offset=1000)
+            track_filename, track_id=1, start_time=500, end_time=1000)
 
         params = ParameterServer()
         params_id = params["Scenario"]["Generation"]["InteractionDataset"]
@@ -84,8 +82,7 @@ class InteractionDatasetReaderTest(unittest.TestCase):
         track_params["map_interface"] = None  # world.map
         track_params["behavior_model"] = None
 
-        scenario_info = ScenarioTrackInfo(
-            map_filename, track_filename, agent_track_info, xy_offset=[-900, -900])
+        scenario_info = ScenarioTrackInfo(track_filename, agent_track_info, xy_offset=[-900, -900])
         ds_reader = InteractionDatasetReader()
         agent = ds_reader.AgentFromTrackfile(
             track_params, params, scenario_info, agent_track_info.GetTrackId())
