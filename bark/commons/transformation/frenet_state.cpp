@@ -105,9 +105,9 @@ double LatAccStreetToVehicleCs(double acc_lat_street, double acc_lon,
       theta, theta_street);  // in fact, I think that is frenet_state.angle
   // also not sure, if we should calculate theta-theta_street or
   // theta_street-theta
-  double route_heading_dot =
-      (current_frenet_state.angleRoad - last_frenet_state.angleRoad) /
-      delta_time;
+  double route_heading_dot = mg::SignedAngleDiff(current_frenet_state.angleRoad,
+                                                 last_frenet_state.angleRoad) /
+                             delta_time;
 
   double acc_lat =
       (acc_lat_street - acc_lon * sin(delta_theta)) / cos(delta_theta) +
