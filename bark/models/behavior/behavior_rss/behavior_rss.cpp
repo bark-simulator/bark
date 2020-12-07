@@ -73,8 +73,7 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
     safety_polygons_ = rss_evaluator->GetSafetyPolygons();
-    AccelerationLimits acc_lim = ConvertRestrictions(acc_restrictions_);
-    SetAccelerationLimits(acc_lim);
+    ConvertRestrictions(min_planning_time, acc_restrictions_, observed_world);
   }
 #endif
 
@@ -93,7 +92,7 @@ Trajectory BehaviorRSSConformant::Plan(
 // execute normal
 #ifdef RSS
     if (acc_restrictions_for_nominal_) {
-      ApplyRestrictionsToModel(GetAccelerationLimits(),
+      ApplyRestrictionsToModel(GetAccelerationLimitsVehicleCs(),
                                nominal_behavior_model_);
     }
 #endif
@@ -104,7 +103,8 @@ Trajectory BehaviorRSSConformant::Plan(
     LOG(INFO) << "Executing safety behavior." << std::endl;
 #ifdef RSS
     if (acc_restrictions_for_safety_) {
-      ApplyRestrictionsToModel(GetAccelerationLimits(), behavior_safety_model_->GetBehaviorModel());
+      ApplyRestrictionsToModel(GetAccelerationLimitsVehicleCs(),
+                               behavior_safety_model_->GetBehaviorModel());
     }
 #endif
     behavior_safety_model_->Plan(min_planning_time, observed_world);
@@ -117,16 +117,90 @@ Trajectory BehaviorRSSConformant::Plan(
 }
 
 #ifdef RSS
-AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
-    const ::ad::rss::state::AccelerationRestriction& acc_restrictions) {
-  AccelerationLimits acc_lim;
-  acc_lim.lat_acc_left_max = acc_restrictions_.lateralLeftRange.maximum;
-  acc_lim.lat_acc_right_max = acc_restrictions_.lateralRightRange.maximum;
-  acc_lim.lon_acc_max = acc_restrictions_.longitudinalRange.maximum;
-  acc_lim.lon_acc_min = acc_restrictions_.longitudinalRange.minimum;
-  // TODO: Do we need minimum values as well?
-  VLOG(4) << "RSS Response Acceleration Restrictions " << acc_restrictions_;
-  return acc_lim;
+void BehaviorRSSConformant::ConvertRestrictions(
+    double delta_time,
+    const ::ad::rss::state::AccelerationRestriction& rss_rest,
+    const ObservedWorld& observed_world) {
+  
+  State last_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  auto history = observed_world.GetEgoAgent()->GetStateInputHistory();
+  if (history.size() >= 2) {
+    last_state = (history.end() - 2)->first;
+  } else {
+    last_state = observed_world.CurrentEgoState();
+  }
+
+  State ego_state = observed_world.CurrentEgoState();
+  FrenetState ego_frenet(ego_state,
+                         observed_world.GetLaneCorridor()->GetCenterLine());
+  FrenetState last_ego_frenet(
+      last_state, observed_world.GetLaneCorridor()->GetCenterLine());
+  double acc_lon;
+  auto last_action = GetLastAction();
+  if (last_action.type() == typeid(Continuous1DAction)) {
+    acc_lon = boost::get<Continuous1DAction>(last_action);
+  } else if (last_action.type() == typeid(LonLatAction)) {
+    acc_lon = boost::get<LonLatAction>(last_action).acc_lon;
+  } else if (last_action.type() == typeid(Input)) {
+    acc_lon = boost::get<Input>(last_action)(0);
+  } else {
+    LOG(FATAL) << "action type unknown: "
+               << boost::apply_visitor(action_tostring_visitor(), last_action);
+  }
+
+
+  // Transform from streetwise to vehicle coordinate system
+  double acc_lat_le_max, acc_lat_le_min, acc_lat_ri_max, acc_lat_ri_min;
+  acc_lat_le_max = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.maximum,
+                                           acc_lon, delta_time, ego_state,
+                                           ego_frenet, last_ego_frenet);
+  acc_lat_le_min = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.minimum,
+                                           acc_lon, delta_time, ego_state,
+                                           ego_frenet, last_ego_frenet);
+  acc_lat_ri_max = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.maximum,
+                                           acc_lon, delta_time, ego_state,
+                                           ego_frenet, last_ego_frenet);
+  acc_lat_ri_min = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.minimum,
+                                           acc_lon, delta_time, ego_state,
+                                           ego_frenet, last_ego_frenet);
+
+  AccelerationLimits acc_lim_vehicle_cs, acc_lim_street_cs;
+  if (ego_frenet.vlat < 0) {
+    // use left limits
+    acc_lim_vehicle_cs.lat_acc_max = acc_lat_le_max;
+    acc_lim_vehicle_cs.lat_acc_min = acc_lat_le_min;
+
+    acc_lim_street_cs.lat_acc_max = rss_rest.lateralLeftRange.maximum;
+    acc_lim_street_cs.lat_acc_min = rss_rest.lateralLeftRange.minimum;
+  } else if (ego_frenet.vlat > 0) {
+    // use right limits
+    acc_lim_vehicle_cs.lat_acc_max = acc_lat_ri_max;
+    acc_lim_vehicle_cs.lat_acc_min = acc_lat_ri_min;
+
+    acc_lim_street_cs.lat_acc_max = rss_rest.lateralRightRange.maximum;
+    acc_lim_street_cs.lat_acc_min = rss_rest.lateralRightRange.minimum;
+  } else {
+    // use both limits
+    acc_lim_vehicle_cs.lat_acc_max = std::min(acc_lat_le_max, acc_lat_ri_max);
+    acc_lim_vehicle_cs.lat_acc_min = std::max(acc_lat_le_min, acc_lat_ri_min);
+
+    acc_lim_street_cs.lat_acc_max = std::min(
+        rss_rest.lateralLeftRange.maximum, rss_rest.lateralRightRange.maximum);
+    acc_lim_street_cs.lat_acc_min = std::max(
+        rss_rest.lateralLeftRange.minimum, rss_rest.lateralRightRange.minimum);
+  }
+
+  acc_lim_vehicle_cs.lon_acc_max = rss_rest.longitudinalRange.maximum;
+  acc_lim_vehicle_cs.lon_acc_min = rss_rest.longitudinalRange.minimum;
+
+  acc_lim_street_cs.lon_acc_max = rss_rest.longitudinalRange.maximum;
+  acc_lim_street_cs.lon_acc_min = rss_rest.longitudinalRange.minimum;
+  VLOG(4) << "RSS Acceleration Restrictions in Road System: " << rss_rest;
+  VLOG(4) << "Acceleration Limits in Road System: " << acc_lim_street_cs;
+  VLOG(4) << "Acceleration Limits in Vehicle System: " << acc_lim_vehicle_cs;
+
+  SetAccelerationLimitsVehicleCs(acc_lim_vehicle_cs);
+  SetAccelerationLimitsStreetCs(acc_lim_street_cs);
 }
 
 void BehaviorRSSConformant::ApplyRestrictionsToModel(

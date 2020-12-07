@@ -25,9 +25,11 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::commons::transformation::FrenetState;
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
 using bark::models::dynamic::AccelerationLimits;
+using bark::models::dynamic::StateDefinition;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
@@ -62,7 +64,8 @@ class BehaviorRSSConformant : public BehaviorModel {
             "Minimal lenght a safety corridor should have that a lateral "
             "safety maneuver is performed.",
             0.f)),
-        acceleration_limits_(),
+        acceleration_limits_vehicle_cs_(),
+        acceleration_limits_street_cs_(),
         acc_restrictions_for_nominal_(GetParams()->GetBool(
             "AccRestrictionsForNominal",
             "Restrict Nominal Model using Acc Limits", false)),
@@ -71,6 +74,10 @@ class BehaviorRSSConformant : public BehaviorModel {
             "Restrict Safety Model using Acc Limits", false)),
         no_safety_maneuver_(GetParams()->GetBool(
             "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
+    dynamic::Input input(2);
+    input << 0.0, 0.0;
+    SetLastAction(input);
+
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
@@ -110,17 +117,27 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  void SetAccelerationLimits(const AccelerationLimits& limits) {
-    acceleration_limits_ = limits;
+  void SetAccelerationLimitsVehicleCs(const AccelerationLimits& limits) {
+    acceleration_limits_vehicle_cs_ = limits;
   }
 
-  AccelerationLimits GetAccelerationLimits() const {
-    return acceleration_limits_;
+  AccelerationLimits GetAccelerationLimitsVehicleCs() const {
+    return acceleration_limits_vehicle_cs_;
+  }
+
+  void SetAccelerationLimitsStreetCs(const AccelerationLimits& limits) {
+    acceleration_limits_street_cs_ = limits;
+  }
+
+  AccelerationLimits GetAccelerationLimitsStreetCs() const {
+    return acceleration_limits_street_cs_;
   }
 
 #ifdef RSS
-  AccelerationLimits ConvertRestrictions(
-      const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+  void ConvertRestrictions(
+      double min_planning_time,
+      const ::ad::rss::state::AccelerationRestriction& acc_restrictions,
+      const ObservedWorld& observed_world);
 
   void ApplyRestrictionsToModel(const AccelerationLimits& limits,
                                 std::shared_ptr<BehaviorModel> model);
@@ -163,7 +180,8 @@ class BehaviorRSSConformant : public BehaviorModel {
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   float minimum_safety_corridor_length_;
-  AccelerationLimits acceleration_limits_;
+  AccelerationLimits acceleration_limits_vehicle_cs_;
+  AccelerationLimits acceleration_limits_street_cs_;
   bool acc_restrictions_for_nominal_;
   bool acc_restrictions_for_safety_;
   bool no_safety_maneuver_;

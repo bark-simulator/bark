@@ -39,12 +39,11 @@ FrenetState::FrenetState(const State& state, const Line& path) {
 
   // calculate sign of lateral coordinate
   const auto orientation = state[StateDefinition::THETA_POSITION];
-  auto tangent_angle = mg::GetTangentAngleAtS(path, lon);
-  auto norm_tangent_angle = (tangent_angle);
-  angle = mg::SignedAngleDiff(norm_tangent_angle, orientation);
+  angleRoad = mg::GetTangentAngleAtS(path, lon);
+  angle = mg::SignedAngleDiff(angleRoad, orientation);
   auto direction_vector = pos - nearest_point;
   double diff = mg::SignedAngleDiff(
-      norm_tangent_angle,
+      angleRoad,
       atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
   double sign = (diff > 0) ? -1 : ((diff < 0) ? 1 : 0);
   VLOG(5) << "Orientation: " << orientation << ", Frenet Angle: " << angle
@@ -53,8 +52,8 @@ FrenetState::FrenetState(const State& state, const Line& path) {
 
   // velocities
   const auto velocity = state[StateDefinition::VEL_POSITION];
-  vlon = cos(mg::SignedAngleDiff(orientation, norm_tangent_angle)) * velocity;
-  vlat = sin(mg::SignedAngleDiff(orientation, norm_tangent_angle)) * velocity;
+  vlon = cos(mg::SignedAngleDiff(orientation, angleRoad)) * velocity;
+  vlat = sin(mg::SignedAngleDiff(orientation, angleRoad)) * velocity;
 }
 
 State FrenetStateToDynamicState(const FrenetState& frenet_state,
@@ -67,7 +66,8 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
   // calculate angle from frenet velocities
   //  std::cout << frenet_state.vlat << ", " << frenet_state.vlon << std::endl;
-  const auto angle = mg::NormToPI(atan2(frenet_state.vlat, frenet_state.vlon) + line_angle);  // todo che
+  const auto angle = mg::NormToPI(atan2(frenet_state.vlat, frenet_state.vlon) +
+                                  line_angle);  // todo che
 
   const auto velocity = sqrt(frenet_state.vlon * frenet_state.vlon +
                              frenet_state.vlat * frenet_state.vlat);
@@ -80,6 +80,43 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
   state(StateDefinition::THETA_POSITION) = angle;
   state(StateDefinition::VEL_POSITION) = velocity;
   return state;
+}
+
+/**
+ * @brief Transforms Lateral Acceleration from Streetwise to Vehicle Coordinate
+ * System
+ *
+ * @param acc_lat_street ... lateral acceleration (street corrdinate system)
+ * @param acc_lon ... longitudinal acceleration
+ * @param delta_time ... time increment from t_i-1 to t_i
+ * @param current_state ... state of vehicle at t_i
+ * @param current_frenet_state ... frenet state of vehicle t_i
+ * @param last_frenet_state ... frenet state at t_i-1
+ * @return double lateral acceleration (vehicle coordinate system)
+ */
+double LatAccStreetToVehicleCs(double acc_lat_street, double acc_lon,
+                               double delta_time, const State& current_state,
+                               const FrenetState& current_frenet_state,
+                               const FrenetState& last_frenet_state) {
+  double vel_lon = current_state(StateDefinition::VEL_POSITION);
+  double theta = current_state(StateDefinition::THETA_POSITION);
+  double theta_street = current_frenet_state.angleRoad;
+  double delta_theta = mg::SignedAngleDiff(
+      theta, theta_street);  // in fact, I think that is frenet_state.angle
+  // also not sure, if we should calculate theta-theta_street or
+  // theta_street-theta
+  double route_heading_dot =
+      (current_frenet_state.angleRoad - last_frenet_state.angleRoad) /
+      delta_time;
+
+  double acc_lat =
+      (acc_lat_street - acc_lon * sin(delta_theta)) / cos(delta_theta) +
+      vel_lon * route_heading_dot;
+  VLOG(4) << "LatAccStreetToVehicleCs() acc_lat_street=" << acc_lat_street
+          << " vel_lon=" << vel_lon << " acc_lon=" << acc_lon
+          << " route_heading_dot=" << route_heading_dot
+          << " delta_theta=" << delta_theta;
+  return acc_lat;
 }
 
 }  // namespace transformation

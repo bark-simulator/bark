@@ -97,8 +97,8 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
   m = single_track_model.get();
-  const double a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
-  const double a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
+  const double acc_lat_max = single_track_model->GetLatAccelerationMax();
+  const double acc_lat_min = single_track_model->GetLatAccelerationMin();
   const double delta_max = single_track_model->GetSteeringAngleMax();
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -120,7 +120,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   auto x1 = euler_int(*m, x, u, dt);
 
   double a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
+  EXPECT_LE(a_lat_calc, acc_lat_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -133,7 +133,7 @@ TEST(CalculateSteeringAngle, dynamic_test) {
   x1 = euler_int(*m, x, u, dt);
 
   a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
+  EXPECT_LE(a_lat_calc, acc_lat_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -149,14 +149,14 @@ TEST(AccelerationCorridor, dynamic_test) {
   const float dt = 1.0;
 
   auto params = std::make_shared<SetterParams>();
-  params->SetReal("DynamicModel::lat_acc_right_max", 0.5f);
-  params->SetReal("DynamicModel::lat_acc_left_max", 1.5f);
+  params->SetReal("DynamicModel::lat_acc_max", 0.5f);
+  params->SetReal("DynamicModel::lat_acc_min", -1.5f);
   DynamicModel* m;
   SingleTrackModelPtr single_track_model =
       std::make_shared<SingleTrackModel>(params);
   m = single_track_model.get();
-  const double a_lat_left_max = single_track_model->GetLatAccelerationLeftMax();
-  const double a_lat_right_max = single_track_model->GetLatAccelerationRightMax();
+  const double acc_lat_max = single_track_model->GetLatAccelerationMax();
+  const double acc_lat_min = single_track_model->GetLatAccelerationMin();
   const double delta_max = single_track_model->GetSteeringAngleMax();
 
   State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -191,7 +191,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   x1 = euler_int(*m, x, u, dt);
 
   a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), a_lat_left_max+1e-6);
+  EXPECT_LE(std::abs(a_lat_calc), acc_lat_max+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
@@ -204,7 +204,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   x1 = euler_int(*m, x, u, dt);
 
   a_lat_calc = CalculateLateralAcceleration(single_track_model, delta, x1(static_cast<int>(StateDefinition::VEL_POSITION)));
-  EXPECT_LE(std::abs(a_lat_calc), a_lat_right_max+1e-6);
+  EXPECT_LE(a_lat_calc, acc_lat_min+1e-6);
   EXPECT_LE(std::abs(delta), delta_max);
   EXPECT_NEAR(-x1(static_cast<int>(StateDefinition::X_POSITION)) +
                   x(static_cast<int>(StateDefinition::X_POSITION)),
