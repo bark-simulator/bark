@@ -152,7 +152,7 @@ void BehaviorStaticTrajectory::UpdateBehaviorStatus(
     SetBehaviorStatus(BehaviorStatus::NOT_STARTED_YET);
   } else if (end_time_static_traj <= end_time) {
     VLOG(1) << "Agent " << observed_world.GetEgoAgentId()
-            << ": Behavior status has expired!" << std::endl;
+            << ": Behavior status has expired!";
     SetBehaviorStatus(BehaviorStatus::EXPIRED);
   } else {
     SetBehaviorStatus(BehaviorStatus::VALID);

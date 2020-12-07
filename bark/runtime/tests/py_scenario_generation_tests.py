@@ -27,8 +27,10 @@ from bark.runtime.commons import ParameterServer
 
 from bark.core.geometry import *
 from bark.core.world.agent import Agent
+from bark.core.models.behavior import *
 import os
 
+from bark.core.commons import SetVerboseLevel
 
 class ScenarioGenerationTests(unittest.TestCase):
   def test_configurable_scenario_generation_default_params(self):
@@ -297,7 +299,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     agent27 = scenario_generation.get_scenario(1).GetWorldState().agents[7]
     self.assertEqual(agent22.first_valid_timestamp, 0.0)
     self.assertEqual(agent27.first_valid_timestamp, 0.0)
-  
+
   def test_dataset_scenario_generation_full_late(self):
     # test wether agent 2 coming in late is correctly identified as invalid at first world time step
     params = ParameterServer()
@@ -369,7 +371,8 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(agent13.InsideRoadCorridor(), True)
 
     # agent13 should not be valid at the beginning, as he is outside of map
-    world_state.time = 0.5
+    world_state.Step(0.05)
+
     self.assertEqual(isinstance(agent11, Agent), True)
     self.assertEqual(agent11.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent11.InsideRoadCorridor(), True)
@@ -383,8 +386,12 @@ class ScenarioGenerationTests(unittest.TestCase):
     # as we use only state once it's in map, this will be true, although the time step is not valid yet
     self.assertEqual(agent13.InsideRoadCorridor(), True)
 
+    self.assertEqual(list(world_state.agents_valid.keys()), [1,2])
+
     # agent13 should be valid at some point
-    world_state.time = agent13.first_valid_timestamp
+    world_state.Step(agent13.first_valid_timestamp)
+    world_state.Step(0.01) # agent13.IsValidAtTime() uses previous time stamp, therefore we increment it one more step
+
     self.assertEqual(isinstance(agent11, Agent), True)
     self.assertEqual(agent11.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent11.InsideRoadCorridor(), True)
@@ -398,6 +405,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent13.InsideRoadCorridor(), True)
 
+    self.assertEqual(list(world_state.agents_valid.keys()), [1,2,3])
 
   def test_dataset_scenario_generation_full_outside3(self):
     # test wether agent 3 outside at the beginning is correctly identified as invalid at first world time step
@@ -433,6 +441,9 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(isinstance(agent33, Agent), True)
     self.assertEqual(agent33.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent33.InsideRoadCorridor(), True)
+
+    world_state.Step(0.05)
+    self.assertEqual(len(world_state.agents_valid), 3)
 
   def test_dataset_scenario_generation(self):
     params = ParameterServer()
@@ -473,8 +484,9 @@ class ScenarioGenerationTests(unittest.TestCase):
     scenario_generation = InteractionDatasetScenarioGeneration(
         params=params, num_scenarios=1)
 
-    model_str = scenario_generation.get_scenario(0)._agent_list[1].behavior_model.__repr__()
-    self.assertEqual(model_str, "bark.behavior.BehaviorMobilRuleBased")
+    beh_model = scenario_generation.get_scenario(0)._agent_list[1].behavior_model
+    self.assertTrue(isinstance(beh_model, BehaviorMobilRuleBased))
 
 if __name__ == '__main__':
+  SetVerboseLevel(2)
   unittest.main()
