@@ -41,7 +41,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                  "List of Paths to track files (csv)",
                                                  ["bark/runtime/tests/data/interaction_dataset_DEU_Merging_dummy_track.csv"]]
         self._behavior_model = params_temp["BehaviorModel",
-                                           "Overwrite static trajectory with behavior model", None]
+                                           "Overwrite static trajectory of others with behavior model", None]
         self._xy_offset = params_temp["XYOffset",
                                       "offset in x and y direction.", [0, 0]]
         self._excluded_tracks = params_temp[
