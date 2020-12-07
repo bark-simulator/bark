@@ -72,6 +72,7 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_left_response_ = rss_response.lateralResponseLeft;
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
+    VLOG(4) << "RSS Response: " << rss_response;
     safety_polygons_ = rss_evaluator->GetSafetyPolygons();
     ConvertRestrictions(min_planning_time, acc_restrictions_, observed_world);
   }
@@ -165,14 +166,16 @@ void BehaviorRSSConformant::ConvertRestrictions(
                                            ego_frenet, last_ego_frenet);
 
   AccelerationLimits acc_lim_vehicle_cs, acc_lim_street_cs;
-  if (ego_frenet.vlat < 0) {
+  if (ego_frenet.vlat > 0) {
+    VLOG(4) << "vel_lat_street > 0, Using left rss limits";
     // use left limits
     acc_lim_vehicle_cs.lat_acc_max = acc_lat_le_max;
     acc_lim_vehicle_cs.lat_acc_min = acc_lat_le_min;
 
     acc_lim_street_cs.lat_acc_max = rss_rest.lateralLeftRange.maximum;
     acc_lim_street_cs.lat_acc_min = rss_rest.lateralLeftRange.minimum;
-  } else if (ego_frenet.vlat > 0) {
+  } else if (ego_frenet.vlat < 0) {
+    VLOG(4) << "vel_lat_street < 0, Using right rss limits";
     // use right limits
     acc_lim_vehicle_cs.lat_acc_max = acc_lat_ri_max;
     acc_lim_vehicle_cs.lat_acc_min = acc_lat_ri_min;
@@ -180,6 +183,7 @@ void BehaviorRSSConformant::ConvertRestrictions(
     acc_lim_street_cs.lat_acc_max = rss_rest.lateralRightRange.maximum;
     acc_lim_street_cs.lat_acc_min = rss_rest.lateralRightRange.minimum;
   } else {
+    VLOG(4) << "vel_lat_street = 0, Using both rss limits";
     // use both limits
     acc_lim_vehicle_cs.lat_acc_max = std::min(acc_lat_le_max, acc_lat_ri_max);
     acc_lim_vehicle_cs.lat_acc_min = std::max(acc_lat_le_min, acc_lat_ri_min);
