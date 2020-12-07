@@ -160,11 +160,11 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
     double wb = model->GetWheelBase();
     double delta_max_acc = SteeringAngle(model->GetLatAccelerationMax(), vel, wb);
     double delta_min_acc = SteeringAngle(model->GetLatAccelerationMin(), vel, wb);
-    VLOG(4) << "DeltaMaxAcc: " << delta_max_acc << ", DeltaMinAcc: " << delta_min_acc << ", LatAccMax: " << model->GetLatAccelerationMax() << ", LatAccMin: " << model->GetLatAccelerationMin();
+    VLOG(5) << "DeltaMaxAcc: " << delta_max_acc << ", DeltaMinAcc: " << delta_min_acc << ", LatAccMax: " << model->GetLatAccelerationMax() << ", LatAccMin: " << model->GetLatAccelerationMin();
 
     double delta1 = boundValue(delta, -model->GetSteeringAngleMax(), model->GetSteeringAngleMax());
     double delta2 = boundValue(delta1, delta_min_acc, delta_max_acc);
-    VLOG(4) << "Delta (unbounded): << " << delta << ", Delta (bound angle): << " << delta1 << ", Delta (bound acc): << " << delta2;
+    VLOG(5) << "Delta (unbounded): << " << delta << ", Delta (bound angle): << " << delta1 << ", Delta (bound acc): << " << delta2;
     return delta2;
   }
   return delta;
