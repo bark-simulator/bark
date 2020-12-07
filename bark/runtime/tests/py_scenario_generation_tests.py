@@ -247,7 +247,8 @@ class ScenarioGenerationTests(unittest.TestCase):
 
   def test_dataset_scenario_generation_full(self):
     """
-    Checking Track file with two track ids, both become valid at time 0. Two Scenarios should be created from this.
+    Checking Track file with two track ids, both become valid at time 0. 
+    Two Scenarios should be created from this.
     """
     params = ParameterServer()
 
@@ -286,7 +287,8 @@ class ScenarioGenerationTests(unittest.TestCase):
 
   def test_dataset_scenario_generation_full_incomplete(self):
     """
-    Checking Track file with three track ids, but agent 1 is never inside the map, so it should only generate 2 scenarios
+    Checking Track file with three track ids, but agent 1 is never inside the map, 
+    so it should only generate 2 scenarios
     """
     params = ParameterServer()
 
@@ -315,7 +317,8 @@ class ScenarioGenerationTests(unittest.TestCase):
 
   def test_dataset_scenario_generation_full_late(self):
     """
-    Checking Track file with two track ids. test wether agent 2 coming in late is correctly identified as invalid at first world time step.
+    Checking Track file with two track ids. test wether agent 2 coming in late is 
+    correctly identified as invalid at first world time step.
     """
     
     params = ParameterServer()
@@ -346,7 +349,9 @@ class ScenarioGenerationTests(unittest.TestCase):
 
   def test_dataset_scenario_generation_full_late_behavior_overwritten(self):
     """
-    Checking Track file with two track ids. test wether agent 2 coming in late is correctly identified as invalid at first world time step. Behavior Model of others is overwritten
+    Checking Track file with two track ids. test wether agent 2 coming in late is 
+    correctly identified as invalid at first world time step. Behavior Model of others
+    is overwritten
     """
     params = ParameterServer()
 
