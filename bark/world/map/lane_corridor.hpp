@@ -29,6 +29,7 @@ using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Within;
 using bark::world::opendrive::XodrRoadId;
+namespace bg = boost::geometry;
 
 struct LaneCorridor {
   using LaneCorridorPtr = std::shared_ptr<LaneCorridor>;
@@ -103,6 +104,7 @@ inline std::ostream& operator<<(std::ostream& os, LaneCorridor& lc) {
     << " width(end): " << lc.GetLaneWidth(center_last_pt) << ")";
   return os;
 }
+
 
 }  // namespace map
 }  // namespace world

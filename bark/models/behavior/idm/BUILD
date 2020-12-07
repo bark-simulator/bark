@@ -9,6 +9,7 @@ cc_library(
     deps = [
         "//bark/commons:commons",
         "//bark/world:world",
+        "//bark/world/map:commons",
         "//bark/models/dynamic:dynamic",
         "//bark/commons/transformation:frenet",
     ],

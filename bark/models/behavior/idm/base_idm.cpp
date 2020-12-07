@@ -17,6 +17,7 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/observed_world.hpp"
+#include "bark/world/map/commons.hpp"
 
 namespace bark {
 namespace models {
@@ -367,7 +368,11 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
-    current_lane_corridor = constant_lane_corr_;
+    // decides which lane corridor to use if the agent' shape
+    // is in multiple lane corridors
+    auto corrected_lane_corr = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
+    current_lane_corridor = corrected_lane_corr;
   } else {
     current_lane_corridor = lane_corr_;
   }
