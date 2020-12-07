@@ -527,7 +527,7 @@ class BaseViewer(Viewer):
         safety_polygons = behavior.GetSafetyPolygons()
     
         for poly in safety_polygons:
-          print(poly)
+          # print(poly)
           color_face = self.agent_color_map[poly.GetAgentId()]
           self.drawPolygon2d(poly.GetPolygon(), color_face, 0.3, color_face, zorder=9)
           
