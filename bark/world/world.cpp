@@ -26,11 +26,12 @@ World::World(const commons::ParamsPtr& params)
       world_time_(0.0),
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
-          "Whether agents should be removed outside the bounding box.",
-          false)),
-      frac_lateral_offset_(params->GetReal("World::FracLateralOffset",
-          "Fraction of lateral offset for FrontRearAgent Calculation, should be larger than 0.",
-          0.5)) {
+          "Whether agents should be removed outside the bounding box.", false)),
+      frac_lateral_offset_(
+          params->GetReal("World::FracLateralOffset",
+                          "Fraction of lateral offset for FrontRearAgent "
+                          "Calculation, should be larger than 0.",
+                          0.5)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -79,7 +80,8 @@ void World::Execute(const double& delta_time) {
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
-      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) < 0.01);
+      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) <
+                       0.01);
     }
   }
   RemoveInvalidAgents();
@@ -193,7 +195,11 @@ AgentMap World::GetNearestAgents(const bark::geometry::Point2d& position,
 
   AgentMap nearest_agents;
   for (auto& result_pair : results_n) {
-    nearest_agents[result_pair.second] = GetAgent(result_pair.second);
+    AgentPtr agent = GetAgent(result_pair.second);
+    if (agent->GetBehaviorStatus() == BehaviorStatus::VALID &&
+        agent->IsValidAtTime(world_time_)) {
+      nearest_agents[result_pair.second] = agent;
+    }
   }
   return nearest_agents;
 }
@@ -256,7 +262,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
-    double width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
+    double width =
+        lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
     if (std::abs(frenet_other.lat) > frac_lateral_offset_ * width) {
       // agent seems to be not really in same lane
       continue;
