@@ -67,16 +67,16 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     auto center_line = curr_lane_corr->GetCenterLine();
     FrenetState frenet_state(ego_state, center_line);
 
-    auto deviation_angle = observed_world.GetParams()->GetReal(
-      "DeviationAngleCenterLine",
-      "if the deviation is larger than the defined threshold,
-       the target_corr will be returned", 0.15);
-    
+    // auto deviation_angle = observed_world.GetParams()->GetReal(
+    //   "DeviationAngleCenterLine",
+    //   "angle deviation threshold form which the target_corr on is returned",
+    //   0.15);
+    double deviation_angle = 0.1;
     // target_corr should always be the left one in the merging map
     // if we are standing leaning on the right LaneCorridor
     // we want to use the left corridor
-    if (fabs(frenet_state.angle) > deviation_angle &&
-        other_lane_corr != nullptr)
+    // in the case we are on the target corridor, we still will return it
+    if (fabs(frenet_state.angle) > deviation_angle)
       return target_corr;
     
     // if it is only in one lane corridor
@@ -103,7 +103,7 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     }
 
     // 3. fallback return and log message
-    VLOG(4) << "Could not calculate the lane corridor." << std::endl;
+    // VLOG(4) << "Could not calculate the lane corridor." << std::endl;
     return target_corr;
 }
 
