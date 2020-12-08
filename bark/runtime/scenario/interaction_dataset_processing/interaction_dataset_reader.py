@@ -14,6 +14,7 @@ from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.core.geometry import Point2d, Polygon2d, NormToPI
+from bark.core.geometry.standard_shapes import *
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
@@ -54,20 +55,17 @@ def TrajectoryFromTrack(track, xy_offset, start=0, end=None):
     return traj
 
 
-def ShapeFromTrack(track, wheelbase=2.7):
-    offset = wheelbase / 2.0
-    length = track.length
-    width = track.width
-    pose = [0.0, 0.0, 0.0]
-    p1 = [length / 2.0 + offset, -width / 2.0]
-    p2 = [length / 2.0 + offset, width / 2.0]
-    p3 = [-length / 2.0 + offset, width / 2.0]
-    p4 = [-length / 2.0 + offset, -width / 2.0]
-    points = [p1, p2, p3, p4, p1]
-    poly = Polygon2d(pose, points)
-    # TODO(@esterle): also infer wheelbase
+def ShapeFromTrack(track):
+    r = track.width/2
+    wb = track.length - 2*r
+    poly = GenerateCarRectangle(wb, r)
     return poly
 
+
+def WheelbaseFromTrack(track):
+    r = track.width
+    wb = track.length - 2*r
+    return wb
 
 def InitStateFromTrack(track, xy_offset, start):
     minimum_start = min(track.motion_states)
@@ -151,12 +149,13 @@ class InteractionDatasetReader:
             behavior = behavior_model
 
         try:
-            start_time_first_valid = scenario_track_info.GetStartTs() + scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000
+            start_time_first_valid = scenario_track_info.GetStartTs() + round(scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000)
             initial_state = InitStateFromTrack(track, xy_offset, start_time_first_valid)
         except:
-            raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
-                agent_id, scenario_track_info.GetStartTs() + scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000))
+            raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(agent_id, start_time_first_valid))
 
+        wb = WheelbaseFromTrack(track)
+        param_server["DynamicModel"]["wheel_base"] = wb
         try:
             dynamic_model = model_converter.convert_model(
                 track_params["dynamic_model"], param_server)
@@ -170,8 +169,7 @@ class InteractionDatasetReader:
             raise ValueError("Could not retrieve execution_model")
 
         try:
-            vehicle_shape = ShapeFromTrack(
-                track, param_server["DynamicModel"]["wheel_base", "Wheel base", 2.7])
+            vehicle_shape = ShapeFromTrack(track)
         except:
             raise ValueError("Could not create vehicle_shape")
 
