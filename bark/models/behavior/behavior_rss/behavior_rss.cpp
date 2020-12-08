@@ -184,16 +184,20 @@ void BehaviorRSSConformant::ConvertRestrictions(
                                              ego_frenet, last_ego_frenet);
   }
   AccelerationLimits acc_lim_vehicle_cs, acc_lim_street_cs;
-  if (ego_frenet.vlat > 0) {
-    VLOG(4) << "vel_lat_street = " ego_frenet.vlat << " > 0, Using left rss limits";
+  const float rss_vlat_threshold =
+      0.01;  // @TODO parameter if this eps is too sensitive
+  if (ego_frenet.vlat > rss_vlat_threshold) {
+    VLOG(4) << "vel_lat_street = " << ego_frenet.vlat
+            << ", Using left rss limits";
     // use left limits
     acc_lim_vehicle_cs.lat_acc_max = acc_lat_le_max;
     acc_lim_vehicle_cs.lat_acc_min = acc_lat_le_min;
 
     acc_lim_street_cs.lat_acc_max = rss_rest.lateralLeftRange.maximum;
     acc_lim_street_cs.lat_acc_min = rss_rest.lateralLeftRange.minimum;
-  } else if (ego_frenet.vlat < 0) {
-    VLOG(4) << "vel_lat_street = " ego_frenet.vlat << " < 0, Using right rss limits";
+  } else if (ego_frenet.vlat < -rss_vlat_threshold) {
+    VLOG(4) << "vel_lat_street = " << ego_frenet.vlat
+            << ", Using right rss limits";
     // use right limits
     acc_lim_vehicle_cs.lat_acc_max = acc_lat_ri_max;
     acc_lim_vehicle_cs.lat_acc_min = acc_lat_ri_min;
@@ -201,7 +205,8 @@ void BehaviorRSSConformant::ConvertRestrictions(
     acc_lim_street_cs.lat_acc_max = rss_rest.lateralRightRange.maximum;
     acc_lim_street_cs.lat_acc_min = rss_rest.lateralRightRange.minimum;
   } else {
-    VLOG(4) << "vel_lat_street = 0, Using both rss limits";
+    VLOG(4) << "vel_lat_street = " << ego_frenet.vlat << ", |vel_lat_street| < "
+            << rss_vlat_threshold << " , Using both rss limits";
     // use both limits
     acc_lim_vehicle_cs.lat_acc_max = std::min(acc_lat_le_max, acc_lat_ri_max);
     acc_lim_vehicle_cs.lat_acc_min = std::max(acc_lat_le_min, acc_lat_ri_min);
