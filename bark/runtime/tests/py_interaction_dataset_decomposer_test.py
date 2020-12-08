@@ -31,17 +31,36 @@ class DatasetDecomposerTest(unittest.TestCase):
         track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_DEU_Merging_dummy_track.csv")
         xy_offset = [0, 0]
         road_ids = [0,1]
+        vehicle_length_max=5
 
         map_interface = create_map_interface(map_filename, road_ids)
         road_corridor = map_interface.GetRoadCorridor(road_ids, XodrDrivingDirection.forward)
 
         dataset_decomposer = DatasetDecomposer(
-            map_interface=map_interface, road_corridor=road_corridor, track_filename=track_filename, xy_offset=xy_offset)
+            map_interface=map_interface, road_corridor=road_corridor, track_filename=track_filename, vehicle_length_max=vehicle_length_max, xy_offset=xy_offset)
 
         scenario_list = dataset_decomposer.decompose()
+        self.assertEqual(len(scenario_list), 2)
         for scen in scenario_list:
           self.assertEqual(int(scen._start_ts), scen._start_ts)
           self.assertEqual(int(scen._end_ts), scen._end_ts)
+
+    def test_decompose_dataset_max_length(self):
+
+        map_filename = os.path.join(os.path.dirname(__file__),"data/DR_DEU_Merging_MT_v01_shifted.xodr")
+        track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_DEU_Merging_dummy_track.csv")
+        xy_offset = [0, 0]
+        road_ids = [0,1]
+        vehicle_length_max=1
+
+        map_interface = create_map_interface(map_filename, road_ids)
+        road_corridor = map_interface.GetRoadCorridor(road_ids, XodrDrivingDirection.forward)
+
+        dataset_decomposer = DatasetDecomposer(
+            map_interface=map_interface, road_corridor=road_corridor, track_filename=track_filename, vehicle_length_max=vehicle_length_max, xy_offset=xy_offset)
+
+        scenario_list = dataset_decomposer.decompose()
+        self.assertEqual(len(scenario_list), 0)
 
     def test_decompose_dataset_centered(self):
 
@@ -49,14 +68,16 @@ class DatasetDecomposerTest(unittest.TestCase):
         track_filename = os.path.join(os.path.dirname(__file__),"data/interaction_dataset_DEU_Merging_dummy_track.csv")
         xy_offset = [-900, -900]
         road_ids = [0,1]
+        vehicle_length_max=5
 
         map_interface = create_map_interface(map_filename, road_ids)
         road_corridor = map_interface.GetRoadCorridor(road_ids, XodrDrivingDirection.forward)
 
         dataset_decomposer = DatasetDecomposer(
-            map_interface=map_interface, road_corridor=road_corridor, track_filename=track_filename, xy_offset=xy_offset)
+            map_interface=map_interface, road_corridor=road_corridor, track_filename=track_filename, vehicle_length_max=vehicle_length_max, xy_offset=xy_offset)
 
         scenario_list = dataset_decomposer.decompose()
+        self.assertEqual(len(scenario_list), 2)
         for scen in scenario_list:
           self.assertEqual(int(scen._start_ts), scen._start_ts)
           self.assertEqual(int(scen._end_ts), scen._end_ts)

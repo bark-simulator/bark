@@ -52,6 +52,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._starting_offset_ms = params_temp["StartingOffsetMs",
                                                "Starting Offset to each agent in miliseconds", 500]
         self._road_ids = [0, 1]
+        self._vehicle_length_max = params_temp["VehicleLengthMax",
+                                               "Maximum allowed vehicle length", 5.0]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -68,6 +70,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             dataset_decomposer = DatasetDecomposer(map_interface=self._map_interface,
                                                    road_corridor=self._road_corridor,
                                                    track_filename=track_file_name,
+                                                   vehicle_length_max=self._vehicle_length_max,
                                                    xy_offset=self._xy_offset,
                                                    starting_offset_ms=self._starting_offset_ms)
             scenario_track_info_list = dataset_decomposer.decompose()

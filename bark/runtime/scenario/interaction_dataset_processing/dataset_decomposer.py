@@ -8,6 +8,7 @@
 
 import os
 import shutil
+import logging
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.commons import FrenetState
@@ -22,11 +23,12 @@ from com_github_interaction_dataset_interaction_dataset.python.utils import data
 
 
 class DatasetDecomposer:
-    def __init__(self, map_interface, road_corridor, track_filename, xy_offset, starting_offset_ms=0):
+    def __init__(self, map_interface, road_corridor, track_filename, vehicle_length_max, xy_offset, starting_offset_ms=0):
         self._map_interface = map_interface
         self._track_filename = track_filename
         self._starting_offset_ms = starting_offset_ms
         self._xy_offset = xy_offset
+        self._vehicle_length_max = vehicle_length_max
         self._road_corridor = road_corridor
         self._track_dict = dataset_reader.read_tracks(track_filename)
         self._agents_track_infos = self.__setup_agents_track_infos__()
@@ -54,12 +56,19 @@ class DatasetDecomposer:
         for agent_id in self._track_dict.keys():
             # TODO: this could be made optional
             first_ts_on_map = self.__find_first_ts_on_map__(agent_id)
+            track = self._track_dict[agent_id]
             if first_ts_on_map is None:
-                print("Agent %d not found on map" % agent_id)
+                logging.info("Skip, as agent {} not found on map".format(agent_id))
+                pass
+            elif str(track.agent_type) != "car":
+                logging.info("Skip, as agent {} is of type {}".format(agent_id, track.agent_type))
+                pass
+            elif track.length > self._vehicle_length_max:
+                logging.info("Skip, as agent {} exceeds max length of {} with ".format(agent_id, self._vehicle_length_max, track.length))
                 pass
             else:
                 start_time = first_ts_on_map
-                end_time = self._track_dict[agent_id].time_stamp_ms_last
+                end_time = track.time_stamp_ms_last
                 new_agent = AgentTrackInfo(filename=self._track_filename, track_id=agent_id,
                                            start_time=start_time, end_time=end_time)
                 agents_track_infos[agent_id] = new_agent
