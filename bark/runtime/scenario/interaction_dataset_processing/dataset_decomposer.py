@@ -64,7 +64,7 @@ class DatasetDecomposer:
                 logging.info("Skip, as agent {} is of type {}".format(agent_id, track.agent_type))
                 pass
             elif track.length > self._vehicle_length_max:
-                logging.info("Skip, as agent {} exceeds max length of {} with ".format(agent_id, self._vehicle_length_max, track.length))
+                logging.info("Skip, as agent {} exceeds max length of {} with length {}".format(agent_id, self._vehicle_length_max, track.length))
                 pass
             else:
                 start_time = first_ts_on_map
