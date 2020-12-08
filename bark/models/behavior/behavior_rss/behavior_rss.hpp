@@ -37,9 +37,15 @@ using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::evaluation::ComputeSafetyPolygon;
 using world::evaluation::SafetyPolygon;
+using bark::geometry::Polygon;
+using bark::geometry::Within;
+using bark::geometry::Collide;
 using world::objects::AgentId;
+using bark::world::opendrive::XodrRoadId;
+using bark::world::opendrive::XodrDrivingDirection;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
+
 #endif
 enum class BehaviorRSSConformantStatus { SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR };
 
@@ -59,6 +65,7 @@ class BehaviorRSSConformant : public BehaviorModel {
         behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
         world_time_of_last_rss_violation_(-1),
         initial_lane_corr_(nullptr),
+        roadx_polygon_(),
         minimum_safety_corridor_length_(GetParams()->GetReal(
             "MinimumSafetyCorridorLength",
             "Minimal lenght a safety corridor should have that a lateral "
@@ -73,7 +80,11 @@ class BehaviorRSSConformant : public BehaviorModel {
             "AccRestrictionsForSafety",
             "Restrict Safety Model using Acc Limits", false)),
         no_safety_maneuver_(GetParams()->GetBool(
-            "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
+            "NoSafetyManeuver", "No triggering of safety maneuver", false)),
+        switch_off_lat_limits_on_road_x_(GetParams()->GetBool(
+            "SwitchOffLatLimitsOnRoadX", "No lateral limits within road x", false)),
+        roadx_id_(GetParams()->GetInt(
+            "RoadXId", "Road ids for road x without lat limits", 1)) {
     dynamic::Input input(2);
     input << 0.0, 0.0;
     SetLastAction(input);
@@ -185,6 +196,9 @@ class BehaviorRSSConformant : public BehaviorModel {
   bool acc_restrictions_for_nominal_;
   bool acc_restrictions_for_safety_;
   bool no_safety_maneuver_;
+  bool switch_off_lat_limits_on_road_x_;
+  XodrRoadId roadx_id_;
+  Polygon roadx_polygon_;
 #ifdef RSS
   ::ad::rss::state::LongitudinalResponse lon_response_;
   ::ad::rss::state::LateralResponse lat_left_response_;

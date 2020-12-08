@@ -45,6 +45,16 @@ Trajectory BehaviorRSSConformant::Plan(
     }
   }
 
+  if (switch_off_lat_limits_on_road_x_) {
+    // we calculate a road polygon in which we do not apply the lateral limits
+    std::vector<XodrRoadId> road_ids{roadx_id_};
+    observed_world.GetMap()->GenerateRoadCorridor(
+        road_ids, XodrDrivingDirection::FORWARD);
+    auto rc = observed_world.GetMap()->GetRoadCorridor(
+        road_ids, XodrDrivingDirection::FORWARD);
+    roadx_polygon_ = rc->GetPolygon();
+  }
+
   const float length_until_end =
       behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
           observed_world.CurrentEgoPosition());
@@ -122,7 +132,6 @@ void BehaviorRSSConformant::ConvertRestrictions(
     double delta_time,
     const ::ad::rss::state::AccelerationRestriction& rss_rest,
     const ObservedWorld& observed_world) {
-  
   State last_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   auto history = observed_world.GetEgoAgent()->GetStateInputHistory();
   if (history.size() >= 2) {
@@ -149,22 +158,31 @@ void BehaviorRSSConformant::ConvertRestrictions(
                << boost::apply_visitor(action_tostring_visitor(), last_action);
   }
 
-
   // Transform from streetwise to vehicle coordinate system
   double acc_lat_le_max, acc_lat_le_min, acc_lat_ri_max, acc_lat_ri_min;
-  acc_lat_le_max = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.maximum,
-                                           acc_lon, delta_time, ego_state,
-                                           ego_frenet, last_ego_frenet);
-  acc_lat_le_min = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.minimum,
-                                           acc_lon, delta_time, ego_state,
-                                           ego_frenet, last_ego_frenet);
-  acc_lat_ri_max = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.maximum,
-                                           acc_lon, delta_time, ego_state,
-                                           ego_frenet, last_ego_frenet);
-  acc_lat_ri_min = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.minimum,
-                                           acc_lon, delta_time, ego_state,
-                                           ego_frenet, last_ego_frenet);
-
+  Polygon ego_polygon =
+      observed_world.GetEgoAgent()->GetPolygonFromState(ego_state);
+  if (switch_off_lat_limits_on_road_x_ &&
+      Collide(ego_polygon, roadx_polygon_)) {
+    // we do not apply the lateral limits
+    acc_lat_le_max = 1000;  // could use default max and min values from rss lib
+    acc_lat_le_min = -1000;
+    acc_lat_ri_max = 1000;
+    acc_lat_ri_min = -1000;
+  } else {
+    acc_lat_le_max = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.maximum,
+                                             acc_lon, delta_time, ego_state,
+                                             ego_frenet, last_ego_frenet);
+    acc_lat_le_min = LatAccStreetToVehicleCs(rss_rest.lateralLeftRange.minimum,
+                                             acc_lon, delta_time, ego_state,
+                                             ego_frenet, last_ego_frenet);
+    acc_lat_ri_max = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.maximum,
+                                             acc_lon, delta_time, ego_state,
+                                             ego_frenet, last_ego_frenet);
+    acc_lat_ri_min = LatAccStreetToVehicleCs(rss_rest.lateralRightRange.minimum,
+                                             acc_lon, delta_time, ego_state,
+                                             ego_frenet, last_ego_frenet);
+  }
   AccelerationLimits acc_lim_vehicle_cs, acc_lim_street_cs;
   if (ego_frenet.vlat > 0) {
     VLOG(4) << "vel_lat_street > 0, Using left rss limits";
