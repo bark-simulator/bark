@@ -115,7 +115,12 @@ double LatAccStreetToVehicleCs(double acc_lat_street, double acc_lon,
   VLOG(4) << "LatAccStreetToVehicleCs() acc_lat_street=" << acc_lat_street
           << " vel_lon=" << vel_lon << " acc_lon=" << acc_lon
           << " route_heading_dot=" << route_heading_dot
-          << " delta_theta=" << delta_theta;
+          << " delta_theta=" << delta_theta
+          << " acc_lat=" << acc_lat
+          << " sin=" << sin(delta_theta)
+          << " cos=" << cos(delta_theta)
+          << " 1st term=" << (acc_lat_street - acc_lon * sin(delta_theta)) / cos(delta_theta)
+          << " 2nd term=" << vel_lon * route_heading_dot;
   return acc_lat;
 }
 
