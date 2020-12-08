@@ -16,6 +16,9 @@
 
 #include "bark/geometry/geometry.hpp"
 #include "bark/world/world.hpp"
+#include "bark/commons/transformation/frenet.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
+
 
 namespace bark {
 namespace world {
@@ -28,6 +31,7 @@ using bark::world::ObservedWorld;
 namespace bg = boost::geometry;
 using models::dynamic::StateDefinition;
 using bark::geometry::SignedAngleDiff;
+using commons::transformation::FrenetState;
 
 /**
  * @brief  Function that selects LaneCorridors
@@ -59,11 +63,27 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
         other_lane_corr = lc;
     }
 
+    auto curr_lane_corr = observed_world.GetLaneCorridor();
+    auto center_line = curr_lane_corr->GetCenterLine();
+    FrenetState frenet_state(ego_state, center_line);
+
+    // auto deviation_angle = observed_world.GetParams()->GetReal(
+    //   "DeviationAngleCenterLine",
+    //   "angle deviation threshold form which the target_corr on is returned",
+    //   0.15);
+    double deviation_angle = 0.1;
+    // target_corr should always be the left one in the merging map
+    // if we are standing leaning on the right LaneCorridor
+    // we want to use the left corridor
+    // in the case we are on the target corridor, we still will return it
+    if (fabs(frenet_state.angle) > deviation_angle)
+      return target_corr;
+    
     // if it is only in one lane corridor
     if (other_lane_corr == nullptr) {
       // in this case we are entirely in one lane corridor
       // here we want to only account for the preceeding vehicle
-      return observed_world.GetLaneCorridor();
+      return curr_lane_corr;
     }
 
 
@@ -83,7 +103,7 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     }
 
     // 3. fallback return and log message
-    VLOG(4) << "Could not calculate the lane corridor." << std::endl;
+    // VLOG(4) << "Could not calculate the lane corridor." << std::endl;
     return target_corr;
 }
 
