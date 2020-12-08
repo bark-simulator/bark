@@ -10,6 +10,8 @@ from matplotlib.patches import Polygon
 from matplotlib import cm
 import matplotlib.pyplot as plt
 
+import math
+
 from bark.core.viewer import *
 from bark.core.geometry import *
 from bark.core.models.dynamic import StateDefinition
@@ -84,6 +86,9 @@ class MPViewer(BaseViewer):
                 linestyle=line_style,
                 marker=marker,
                 markersize = marker_size)
+
+    def drawArrow(self, pose):
+        plt.annotate(s='', xy=(pose[0]+3*math.cos(pose[2]),pose[1]+3*math.sin(pose[2])), xytext=(pose[0],pose[1]), arrowprops=dict(arrowstyle='->'))
 
     def drawText(self, position, text, coordinate="axes", **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")

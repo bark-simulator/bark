@@ -51,6 +51,8 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_orientation_arrow = params["Visualization"]["Agents"]["DrawOrientationArrow",
+                                                               "Draw Orientation of Arrow", False]
         self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals",
                                                                  "Draw Route of eval agent goals", True]
@@ -191,6 +193,9 @@ class BaseViewer(Viewer):
         pass
 
     def drawTrajectory(self, trajectory, color, **kwargs):
+        pass
+    
+    def drawArrow(self, pose):
         pass
 
     def drawObstacle(self, obstacle):
@@ -407,6 +412,9 @@ class BaseViewer(Viewer):
             if self.draw_agent_id:
                 self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+            
+            if self.draw_orientation_arrow:
+              self.drawArrow(pose)
 
             self.drawPolygon2d(transformed_polygon, color,
                                alpha, facecolor, zorder=10, hatch=hatch)
