@@ -51,60 +51,24 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     auto ego_state = ego_agent->GetCurrentState();
     auto theta = ego_state(StateDefinition::THETA_POSITION); 
     Polygon vehicle_shape = ego_agent->GetPolygonFromState(ego_state);
-
-    // road and lane corridor info
-    auto road_corridor = ego_agent->GetRoadCorridor();
-
-    // 1. check if vehicle shape intersects with an other lane corridor
-    LaneCorridorPtr other_lane_corr;
-    for (auto& lc : road_corridor->GetUniqueLaneCorridors()) {
-      if (Collide(vehicle_shape, lc->GetMergedPolygon()) &&
-          lc != target_corr)
-        other_lane_corr = lc;
-    }
-
     auto curr_lane_corr = observed_world.GetLaneCorridor();
     auto center_line = curr_lane_corr->GetCenterLine();
     FrenetState frenet_state(ego_state, center_line);
 
-    // auto deviation_angle = observed_world.GetParams()->GetReal(
-    //   "DeviationAngleCenterLine",
-    //   "angle deviation threshold form which the target_corr on is returned",
-    //   0.15);
-    double deviation_angle = 0.1;
-    // target_corr should always be the left one in the merging map
-    // if we are standing leaning on the right LaneCorridor
-    // we want to use the left corridor
-    // in the case we are on the target corridor, we still will return it
-    if (fabs(frenet_state.angle) > deviation_angle)
-      return target_corr;
-    
-    // if it is only in one lane corridor
-    if (other_lane_corr == nullptr) {
-      // in this case we are entirely in one lane corridor
-      // here we want to only account for the preceeding vehicle
-      return curr_lane_corr;
-    }
-
-
-    // check if the front points of the ego vehicle are in the
-    // other lane corridor
+    // if any point of the vehicle shape is within the target corr
     for (auto pt : vehicle_shape.obj_.outer()) {
-      double pt_angle = atan2(
-        bg::get<1>(ego_pose) - bg::get<1>(pt),
-        bg::get<0>(ego_pose) - bg::get<0>(pt));
-      double signed_angle_diff_lon = SignedAngleDiff(theta - M_PI_2, pt_angle);
-      // if a point in the front of the polygon is inside the other lane corridor
-      // return that lane corridor
-      if(Within(pt, other_lane_corr->GetMergedPolygon()) &&
-         signed_angle_diff_lon > 0) {
-        return other_lane_corr;
+      if(Within(pt, target_corr->GetMergedPolygon())) {
+        return target_corr;
       }
     }
 
-    // 3. fallback return and log message
-    // VLOG(4) << "Could not calculate the lane corridor." << std::endl;
-    return target_corr;
+    // if the deviation is too large
+    double deviation_angle = 0.2;
+    if (fabs(frenet_state.angle) < deviation_angle) {
+      return curr_lane_corr;
+    } else {
+      return target_corr;
+    }
 }
 
 }  // namespace map

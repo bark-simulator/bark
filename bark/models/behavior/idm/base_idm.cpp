@@ -371,12 +371,15 @@ Trajectory BaseIDM::Plan(double min_planning_time,
   if (constant_lane_corr_ != nullptr) {
     // decides which lane corridor to use if the agent' shape
     // is in multiple lane corridors
-    if (constant_lane_corr_ != lane_corr_) {
-      current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
-          observed_world, constant_lane_corr_);
-    } else {
-      current_lane_corridor = constant_lane_corr_;
-    }
+    // if (constant_lane_corr_ != lane_corr_) {
+    //   current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
+    //       observed_world, constant_lane_corr_);
+    // } else {
+    //   current_lane_corridor = constant_lane_corr_;
+    // }
+    // current_lane_corridor = constant_lane_corr_;
+    current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
   } else {
     current_lane_corridor = lane_corr_;
   }
