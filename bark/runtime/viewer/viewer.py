@@ -501,9 +501,8 @@ class BaseViewer(Viewer):
           min_braking_safety_polygon = ComputeMinBrakingPolygon(observed_world, rss_params)
         except:
           pass
-        color_face = "red"
         self.drawPolygon2d(
-          min_braking_safety_polygon.GetPolygon(), color_face, 0.25, color_face, zorder=9)
+          min_braking_safety_polygon.GetPolygon(), "black", 0.33, "gray", zorder=12)
         
     def DrawRSSEvaluatorState(self, world, agent_id):
       agent = world.agents[agent_id]
