@@ -165,4 +165,4 @@ class MPViewer(BaseViewer):
 
 
     def getColorFromMap(self, double_color):
-        return cm.Accent(double_color)
+        return cm.tab20(double_color)
