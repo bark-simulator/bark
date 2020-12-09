@@ -21,8 +21,8 @@ class AgentTrackInfo:
     def GetTrackId(self):
         return self._track_id
 
-    def GetStartTime(self):
+    def GetStartTimeMs(self):
         return self._start_time
 
-    def GetEndTime(self):
+    def GetEndTimeMs(self):
         return self._end_time

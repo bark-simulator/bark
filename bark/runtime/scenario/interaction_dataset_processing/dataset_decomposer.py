@@ -83,16 +83,16 @@ class DatasetDecomposer:
     def __find_other_ids__(self, id_ego):
         # for each agent extract ids of other agents present in the same time span
         list_ids = []
-        time_ego_first = self.__get_agent_track_info__(id_ego).GetStartTime()
-        time_ego_last = self.__get_agent_track_info__(id_ego).GetEndTime()
+        time_ego_first = self.__get_agent_track_info__(id_ego).GetStartTimeMs()
+        time_ego_last = self.__get_agent_track_info__(id_ego).GetEndTimeMs()
 
         for id_o in self._agents_track_infos.keys():
             if id_ego == id_o:
                 pass
-            elif self.__get_agent_track_info__(id_o).GetEndTime() <= time_ego_first:
+            elif self.__get_agent_track_info__(id_o).GetEndTimeMs() <= time_ego_first:
                 # other ends too early
                 pass
-            elif self.__get_agent_track_info__(id_o).GetStartTime() >= time_ego_last:
+            elif self.__get_agent_track_info__(id_o).GetStartTimeMs() >= time_ego_last:
                 # other starts too late
                 pass
             else:

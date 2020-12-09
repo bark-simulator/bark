@@ -75,28 +75,28 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                    starting_offset_ms=self._starting_offset_ms)
             scenario_track_info_list = dataset_decomposer.decompose()
 
-            # for scenario_idx in range(0, num_scenarios):
-            for idx_s, scenario_track_info in enumerate(scenario_track_info_list):
-                if idx_s < num_scenarios and scenario_track_info.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
-                    logging.info(
-                        "Creating scenario {}/{}".format(idx_s, min(num_scenarios, len(scenario_track_info_list))))
+            num = min(num_scenarios, len(scenario_track_info_list))
+
+            for idx_s, sti in enumerate(scenario_track_info_list):
+                if idx_s < num_scenarios and sti.GetEgoTrackInfo().GetTrackId() not in self._excluded_tracks:
+
+                    logging.info("Creating scenario {}/{}".format(idx_s, num))
                     try:
-                        scenario = self.__create_single_scenario__(
-                            scenario_track_info)
+                        scenario = self.__create_single_scenario__(sti)
                     except:
                         raise ValueError(
-                            "Generation of scenario failed: {}".format(scenario_track_info))
+                            "Generation of scenario failed: {}".format(sti))
                     scenario_list.append(scenario)
                 else:
                     break
         return scenario_list
 
-    def __create_single_scenario__(self, scenario_track_info):
-        scenario_track_info.TimeSanityCheck()
+    def __create_single_scenario__(self, scen_track_info):
+        scen_track_info.TimeSanityCheck()
 
         scenario = Scenario(map_file_name=self._map_file_name,
                             json_params=self._params.ConvertToDict(),
-                            map_interface = self._map_interface)
+                            map_interface=self._map_interface)
 
         world = scenario.GetWorldState()
         track_params = ParameterServer()
@@ -104,45 +104,44 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         track_params["dynamic_model"] = 'SingleTrackModel'
         track_params["map_interface"] = world.map
 
-        all_track_ids = list(scenario_track_info.GetOtherTrackInfos().keys())
+        all_track_ids = list(scen_track_info.GetOtherTrackInfos().keys())
         # also add ego id
-        ego_track_id = scenario_track_info.GetEgoTrackInfo().GetTrackId()
+        ego_track_id = scen_track_info.GetEgoTrackInfo().GetTrackId()
         all_track_ids.append(ego_track_id)
 
         agent_list = []
         model_converter = ModelJsonConversion()
         for track_id in all_track_ids:
             if self._behavior_model and track_id != ego_track_id:
-                behavior_params = self.__fill_agent_params(scenario_track_info.GetEgoTrackInfo(
-                ), scenario_track_info.GetOtherTrackInfos()[track_id])
+                behavior_params = self.__fill_agent_params()
                 behavior_model_name = self._behavior_model
                 track_params["behavior_model"] = model_converter.convert_model(
                     behavior_model_name, behavior_params)
                 # behavior_params.Save("/tmp/agent_prams_{}.json".format(track_id))
             else:
+                # we do not change behavior model of ego agent -> will be set in benchmark
                 track_params["behavior_model"] = None
 
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, track_id)
-            agent.first_valid_timestamp = scenario_track_info.GetOffsetOfAgentMillisec(
+                track_params, self._params, scen_track_info, track_id)
+
+            # set first valid time stamp of the agent (in relation to scenario start)
+            agent.first_valid_timestamp = scen_track_info.GetTimeOffsetOfAgentInSec(
                 track_id)
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
-        scenario._eval_agent_ids = [
-            scenario_track_info.GetEgoTrackInfo().GetTrackId()]
-        scenario.json_params["track_file"] = scenario_track_info.GetTrackFilename(
-        )
+        scenario._eval_agent_ids = [ego_track_id]
+        scenario.json_params["track_file"] = scen_track_info.GetTrackFilename()
 
         return scenario
 
-    def __fill_agent_params(self, ego_track_info, agent_track_info):
+    def __fill_agent_params(self):
         agent_params = ParameterServer(
             log_if_default=True, json=self._base_params_json)
         self._agent_params.append(agent_params)
-        return agent_params
-
         # print("\n", agent_params.ConvertToDict())
+        return agent_params
 
     def __create_map_interface__(self):
         params = ParameterServer()
@@ -156,8 +155,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __create_road_corridor__(self):
         if self._map_interface is not None:
-          map_interface = self._map_interface
-          map_interface.GenerateRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+            map_interface = self._map_interface
+            map_interface.GenerateRoadCorridor(
+                self._road_ids, XodrDrivingDirection.forward)
         else:
-          raise ValueError("map interface not available")
+            raise ValueError("map interface not available")
         return map_interface.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)

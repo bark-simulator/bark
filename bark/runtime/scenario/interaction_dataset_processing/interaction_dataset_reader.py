@@ -67,6 +67,7 @@ def WheelbaseFromTrack(track):
     wb = track.length - 2*r
     return wb
 
+
 def InitStateFromTrack(track, xy_offset, start):
     minimum_start = min(track.motion_states)
     if minimum_start > start:
@@ -132,13 +133,9 @@ class InteractionDatasetReader:
 
         xy_offset = scenario_track_info.GetXYOffset()
 
-        start_time = scenario_track_info.GetStartTs()
-
-        if start_time < scenario_track_info.GetEndTs():
-          end_time = scenario_track_info.GetEndTs()
-        else:
-          raise ValueError("Agent cannot start after scenario end")
-
+        # create behavior model from track, we use start time of scenario here
+        start_time = scenario_track_info.GetStartTimeMs()
+        end_time = scenario_track_info.GetEndTimeMs()
         behavior_model = track_params["behavior_model"]
         model_converter = ModelJsonConversion()
         if behavior_model is None:
@@ -148,11 +145,18 @@ class InteractionDatasetReader:
         else:
             behavior = behavior_model
 
+        # retrieve initial state of valid agent
+        if agent_id in scenario_track_info._other_agents_track_infos:
+            start_time_init_state = max(
+                scenario_track_info._other_agents_track_infos[agent_id].GetStartTimeMs(), start_time)
+        else:
+            start_time_init_state = start_time
         try:
-            start_time_first_valid = scenario_track_info.GetStartTs() + round(scenario_track_info.GetOffsetOfAgentMillisec(agent_id)*1000)
-            initial_state = InitStateFromTrack(track, xy_offset, start_time_first_valid)
+            initial_state = InitStateFromTrack(
+                track, xy_offset, start_time_init_state)
         except:
-            raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(agent_id, start_time_first_valid))
+            raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
+                agent_id, start_time_init_state))
 
         wb = WheelbaseFromTrack(track)
         param_server["DynamicModel"]["wheel_base"] = wb
