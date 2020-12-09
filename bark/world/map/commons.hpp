@@ -53,7 +53,7 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     Polygon vehicle_shape = ego_agent->GetPolygonFromState(ego_state);
     auto curr_lane_corr = observed_world.GetLaneCorridor();
     auto center_line = curr_lane_corr->GetCenterLine();
-    FrenetState frenet_state(ego_state, center_line);
+    FrenetState frenet_state(ego_state, target_corr->GetCenterLine());
 
     // if any point of the vehicle shape is within the target corr
     for (auto pt : vehicle_shape.obj_.outer()) {
