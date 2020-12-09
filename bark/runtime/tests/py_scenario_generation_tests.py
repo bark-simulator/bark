@@ -29,6 +29,7 @@ from bark.core.geometry import *
 from bark.core.world.agent import Agent
 from bark.core.models.behavior import *
 import os
+from bark.core.world.evaluation import EvaluatorCollisionEgoAgent, EvaluatorCollisionAgents
 
 from bark.core.commons import SetVerboseLevel
 
@@ -456,7 +457,6 @@ class ScenarioGenerationTests(unittest.TestCase):
 
     self.assertEqual(isinstance(agent13, Agent), True)
     self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
-    self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent13.InsideRoadCorridor(), True)
 
     self.assertEqual(list(world_state.agents_valid.keys()), [1,2,3])
@@ -544,7 +544,6 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(agent12.InsideRoadCorridor(), True)
 
     self.assertEqual(isinstance(agent13, Agent), True)
-    self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent13.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent13.InsideRoadCorridor(), True)
 
@@ -639,7 +638,22 @@ class ScenarioGenerationTests(unittest.TestCase):
     self.assertEqual(agent33.IsValidAtTime(world_state.time), True)
     self.assertEqual(agent33.InsideRoadCorridor(), True)
 
+    self.assertEqual(isinstance(agent33, Agent), True)
+    self.assertEqual(agent33.IsValidAtTime(world_state.time), True)
+    self.assertEqual(agent33.InsideRoadCorridor(), True)
+
+    evaluator = EvaluatorCollisionAgents()
+    world_state.AddEvaluator("collision", evaluator)
+    info = world_state.Evaluate()
+    self.assertEqual(info["collision"], False)
+
     world_state.Step(0.05)
+
+    evaluator = EvaluatorCollisionAgents()
+    world_state.AddEvaluator("collision", evaluator)
+    info = world_state.Evaluate()
+    self.assertEqual(info["collision"], False)
+
     self.assertEqual(len(world_state.agents_valid), 3)
 
   def test_dataset_scenario_generation(self):
