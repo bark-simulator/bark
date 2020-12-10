@@ -38,7 +38,7 @@ class ScenarioDumper(BenchmarkAnalyzer):
 
   # Based on the given filter dump the matching scenarios
   # @note we do not check if the entries in config_idx_list really exist!
-  def export_scenarios_filter(self, filter = {}, config_idx_list = []):
+  def export_scenarios_filter(self, filter = {}, config_idx_list = [], export_video=False):
     if filter:
       configs_found = super().find_configs(filter)
     else:
@@ -55,19 +55,20 @@ class ScenarioDumper(BenchmarkAnalyzer):
       raise ValueError("Either specify a non-empty filter of a valid list of indices!")
 
     for config in configs_found:
-      self.export(config)
+      self.export(config, export_video)
 
     return configs_found
 
   # Dump a scenario given by the index in the result
-  def export(self, config_idx):
+  def export(self, config_idx, export_video=False):
     this_folder = os.path.join(self._result_folder, "ConfigIdx_"+str(config_idx))
     Path(this_folder).mkdir(parents=True, exist_ok=True)
-    self.render_video(config_idx, this_folder)
     self.write_trajectory(config_idx, this_folder)
     self.write_scenario_parameter(config_idx, this_folder)
     self.write_behavior_parameter(config_idx, this_folder)
     self.write_map(config_idx, self._result_folder)
+    if export_video:
+      self.render_video(config_idx, this_folder)
 
   # Write video
   def render_video(self, config_idx, folder):
