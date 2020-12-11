@@ -33,6 +33,7 @@
 #include <ad/rss/core/RssCheck.hpp>
 #include <ad/rss/map/RssSceneCreation.hpp>
 #include <ad/rss/situation/Physics.hpp>
+#include <ad/rss/situation/RssFormulas.hpp>
 #include <ad/rss/situation/SituationSnapshot.hpp>
 #include <ad/rss/state/ProperResponse.hpp>
 #include <ad/rss/state/RssStateOperation.hpp>
@@ -225,7 +226,14 @@ class RssInterface {
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
-  
+  bool
+  lateralDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance);
+    bool
+  longitudinalDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance);
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion

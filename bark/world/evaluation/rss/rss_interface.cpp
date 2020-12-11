@@ -170,7 +170,7 @@ bool RssInterface::GenerateRoute(const Point2d& agent_center,
       routes_probability.push_back(position.probability);
     } else {
       // If no route is found, the RSS check may not be accurate anymore
-      LOG(WARNING) << "No route to the goal is found:\nCurrent location x : "
+      LOG(WARNING) << "No 00route to the goal is found:\nCurrent location x : "
                    << bg::get<0>(agent_center)
                    << " y: " << bg::get<1>(agent_center)
                    << "\nGoal: x: " << bg::get<0>(agent_goal)
@@ -383,12 +383,18 @@ PairwiseEvaluationReturn RssInterface::ExtractPairwiseSafetyEvaluation(
 
 PairwiseDirectionalEvaluationReturn
 RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
+
+
     const ::ad::rss::state::RssStateSnapshot& snapshot) {
+      
   PairwiseDirectionalEvaluationReturn is_pairwise_directionally_safe;
   for (auto const state : snapshot.individualResponses) {
     is_pairwise_directionally_safe[static_cast<AgentId>(state.objectId)] =
         std::make_pair(::ad::rss::state::isLongitudinalSafe(state),
                        ::ad::rss::state::isLateralSafe(state));
+
+        // use std::tuple instead of make_pair and return numerical values for 
+        // the violations
   }
   return is_pairwise_directionally_safe;
 }
@@ -428,6 +434,10 @@ EvaluationReturn RssInterface::GetSafetyReponse(
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractSafetyEvaluation(snapshot);
+    // Works until here, but response always returns true
+    
+    
+    
   }
   return response;
 }
@@ -453,9 +463,62 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
     response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
+    
+    Distance lat_distance = 0;
+    Distance long_distance =0;
+    AgentPtr agent = observed_world.GetEgoAgent();
+    models::dynamic::State agent_state;
+    agent_state = agent->GetCurrentState();
+
+    bool latResp =  lateralDistanceOffset(agent_state, lat_distance); 
+    bool longResp = longitudinalDistanceOffset(agent_state, long_distance); 
+    std::cout << lat_distance << " Lat" << std::endl;
+    std::cout << long_distance << " Long" << std::endl;
   }
+  // TODO: change it to a tuple
   return response;
 }
+
+bool
+RssInterface::lateralDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance) {
+  const AgentState rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
+  bool resp = ::ad::rss::situation::calculateLateralDistanceOffsetAfterStatedBrakingPattern(
+  rss_state.speed,
+  rss_dynamics_ego_.responseTime,
+  rss_dynamics_ego_.alphaLon.accelMax,
+  rss_dynamics_ego_.alphaLon.brakeMax,
+  distance);
+        //Speed const &currentSpeed,
+        //Duration const &responseTime,
+         //Acceleration const &acceleration,
+         ///Acceleration const &deceleration,
+         //Distance &distanceOffset
+  
+  return resp;
+}
+
+bool
+RssInterface::longitudinalDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance) {
+  const AgentState rss_state =ConvertAgentState(agent_state, rss_dynamics_ego_);
+
+	return ::ad::rss::situation::calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern(
+		rss_state.speed,
+		Speed::getMax(),
+	  rss_dynamics_ego_.responseTime,
+		rss_dynamics_ego_.alphaLon.accelMax,
+		rss_dynamics_ego_.alphaLon.brakeMax,
+      distance
+	);
+}
+
+
+
+
+
 
 }  // namespace evaluation
 }  // namespace world
