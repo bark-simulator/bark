@@ -225,6 +225,11 @@ class RssInterface {
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
+
+	bool longitudinalDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance
+	);
   
  private:
   // For a detailed explanation of parameters, please see:

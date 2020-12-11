@@ -440,6 +440,7 @@ EvaluationReturn RssInterface::GetSafetyReponse(
     const ObservedWorld& observed_world) {
   std::optional<bool> response;
   ::ad::rss::world::WorldModel rss_world;
+	}
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
@@ -474,6 +475,22 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(
                     "PairwiseDirectionalSafetyReponse";
   }
   return response;
+}
+
+bool
+RssInterface::longitudinalDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance) {
+  const AgentState rss_state = = ConvertAgentState(agent_state, rss_dynamics_ego_)
+
+	return ::ad::rss::situation::calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern(
+		rss_state.speed,
+		Speed::getMax(),
+	  rss_dynamics.responseTime,
+		rss_dynamics.alphaLon.accelMax,
+		rss_dynamics.alphaLon.brakeMax,
+		distance,
+	);
 }
 
 }  // namespace evaluation
