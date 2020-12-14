@@ -66,7 +66,6 @@ class EvaluatorRSS : public BaseEvaluator {
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\n2" << std::endl;
     rss_proper_response_ = rss_.GetRSSResponse();
     return rss_.GetSafetyReponse(observed_world);
   };
