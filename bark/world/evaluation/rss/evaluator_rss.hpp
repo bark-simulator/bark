@@ -50,9 +50,10 @@ class EvaluatorRSS : public BaseEvaluator {
     WorldPtr cloned_world = world.Clone();
     if (world.GetAgent(agent_id_)) {
       std::vector<ObservedWorld> observed_worlds =
-          cloned_world->Observe({agent_id_});
+          cloned_world->Observe({agent_id_});      
       if (observed_worlds.size() > 0) {
         return rss_.GetSafetyReponse(observed_worlds[0]);
+         
       } else {
         LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
         return false;
@@ -75,6 +76,7 @@ class EvaluatorRSS : public BaseEvaluator {
   // situations between the specified and the nearby agent is safe, false
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
+  // TODO: bunu duzelt tuple donsun
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
     WorldPtr cloned_world = world.Clone();
     ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
@@ -97,14 +99,14 @@ class EvaluatorRSS : public BaseEvaluator {
   // the specified and the nearby agent is safe, false otherwise, respectively
   // in each direction.
   // Return empty map if no agent is nearby or no Rss check can be performed.
-  virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
+  virtual PairwiseDirectionalEvaluationReturnTuple PairwiseDirectionalEvaluate(
       const World& world) {
     WorldPtr cloned_world = world.Clone();
     ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
-  virtual PairwiseDirectionalEvaluationReturn PairwiseDirectionalEvaluate(
+  virtual PairwiseDirectionalEvaluationReturnTuple PairwiseDirectionalEvaluate(
       const ObservedWorld& observed_world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };

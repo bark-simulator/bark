@@ -33,6 +33,7 @@
 #include <ad/rss/core/RssCheck.hpp>
 #include <ad/rss/map/RssSceneCreation.hpp>
 #include <ad/rss/situation/Physics.hpp>
+#include <ad/rss/situation/RssFormulas.hpp>
 #include <ad/rss/situation/SituationSnapshot.hpp>
 #include <ad/rss/state/ProperResponse.hpp>
 #include <ad/rss/state/RssStateOperation.hpp>
@@ -76,7 +77,8 @@ namespace evaluation {
 typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
-
+typedef std::unordered_map<objects::AgentId, std::tuple<bool, bool, int,int >>
+    PairwiseDirectionalEvaluationReturnTuple;
 
 // An interface that provides a wrapper for the RSS library.
 // It provides functionality to convert a BARK into a RSS world and to
@@ -153,9 +155,9 @@ class RssInterface {
    * @brief  Returns a directional evaluation return.
    * @note   Function is currently not used.
    * @param  observed_world: ObservedWorld of an agent's point of view
-   * @retval PairwiseDirectionalEvaluationReturn
+   * @retval PairwiseDirectionalEvaluationReturnTuple
    */
-  PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
+  PairwiseDirectionalEvaluationReturnTuple GetPairwiseDirectionalSafetyReponse(
       const ObservedWorld& observed_world);
 
   virtual ~RssInterface() {}
@@ -218,19 +220,21 @@ class RssInterface {
   PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
-  PairwiseDirectionalEvaluationReturn
+  PairwiseDirectionalEvaluationReturnTuple
   ExtractPairwiseDirectionalSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot& snapshot);
+      const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance);
 
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
-
-	bool longitudinalDistanceOffset(
+  bool
+  lateralDistanceOffset(
 		const models::dynamic::State& agent_state,
-		Distance& distance
-	);
-  
+		Distance& distance);
+    bool
+  longitudinalDistanceOffset(
+		const models::dynamic::State& agent_state,
+		Distance& distance);
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
