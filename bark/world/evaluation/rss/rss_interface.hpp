@@ -77,7 +77,7 @@ namespace evaluation {
 typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
-typedef std::unordered_map<objects::AgentId, std::tuple<bool, bool,Distance,Distance >>
+typedef std::unordered_map<objects::AgentId, std::tuple<bool, bool, int,int >>
     PairwiseDirectionalEvaluationReturnTuple;
 
 // An interface that provides a wrapper for the RSS library.
