@@ -381,17 +381,19 @@ PairwiseEvaluationReturn RssInterface::ExtractPairwiseSafetyEvaluation(
   return is_pairwise_safe;
 }
 
-PairwiseDirectionalEvaluationReturn
+PairwiseDirectionalEvaluationReturnTuple
 RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
 
 
-    const ::ad::rss::state::RssStateSnapshot& snapshot) {
+    const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance ) {
       
-  PairwiseDirectionalEvaluationReturn is_pairwise_directionally_safe;
+  PairwiseDirectionalEvaluationReturnTuple is_pairwise_directionally_safe;
   for (auto const state : snapshot.individualResponses) {
     is_pairwise_directionally_safe[static_cast<AgentId>(state.objectId)] =
-        std::make_pair(::ad::rss::state::isLongitudinalSafe(state),
-                       ::ad::rss::state::isLateralSafe(state));
+        std::make_tuple(::ad::rss::state::isLongitudinalSafe(state),
+                       ::ad::rss::state::isLateralSafe(state),
+                        lat_distance,
+                        long_distance) ;
 
         // use std::tuple instead of make_pair and return numerical values for 
         // the violations
@@ -454,15 +456,15 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
   return response;
 }
 
-PairwiseDirectionalEvaluationReturn
+PairwiseDirectionalEvaluationReturnTuple
 RssInterface::GetPairwiseDirectionalSafetyReponse(
     const ObservedWorld& observed_world) {
   ::ad::rss::world::WorldModel rss_world;
-  PairwiseDirectionalEvaluationReturn response;
+  PairwiseDirectionalEvaluationReturnTuple response;
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
-    response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
+    
     
     Distance lat_distance = 0;
     Distance long_distance =0;
@@ -474,6 +476,7 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(
     bool longResp = longitudinalDistanceOffset(agent_state, long_distance); 
     std::cout << lat_distance << " Lat" << std::endl;
     std::cout << long_distance << " Long" << std::endl;
+    response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot,lat_distance, long_distance);
   }
   // TODO: change it to a tuple
   return response;

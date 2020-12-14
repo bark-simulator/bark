@@ -77,7 +77,8 @@ namespace evaluation {
 typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
-
+typedef std::unordered_map<objects::AgentId, std::tuple<bool, bool,Distance,Distance >>
+    PairwiseDirectionalEvaluationReturnTuple;
 
 // An interface that provides a wrapper for the RSS library.
 // It provides functionality to convert a BARK into a RSS world and to
@@ -154,9 +155,9 @@ class RssInterface {
    * @brief  Returns a directional evaluation return.
    * @note   Function is currently not used.
    * @param  observed_world: ObservedWorld of an agent's point of view
-   * @retval PairwiseDirectionalEvaluationReturn
+   * @retval PairwiseDirectionalEvaluationReturnTuple
    */
-  PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
+  PairwiseDirectionalEvaluationReturnTuple GetPairwiseDirectionalSafetyReponse(
       const ObservedWorld& observed_world);
 
   virtual ~RssInterface() {}
@@ -219,9 +220,9 @@ class RssInterface {
   PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
-  PairwiseDirectionalEvaluationReturn
+  PairwiseDirectionalEvaluationReturnTuple
   ExtractPairwiseDirectionalSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot& snapshot);
+      const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance);
 
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;

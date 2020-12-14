@@ -273,7 +273,11 @@ class BaseViewer(Viewer):
         self.drawText(position=(0.7, 0.9), text=str)
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+        
         # self.clear()
+        
+        self.draw_rss_safety_responses = False
+        self.draw_rss_debug_info = False
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
@@ -330,8 +334,13 @@ class BaseViewer(Viewer):
 
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
+        
 
+        self.draw_rss_safety_responses = False
+        self.draw_rss_debug_info = True
         if self.draw_rss_debug_info or self.draw_rss_safety_responses:
+          
+            self.draw_rss_debug_info = True
             if self.draw_rss_debug_info:
                 self.drawRssDebugInfomation(world, eval_agent_ids[0])
             if self.draw_rss_safety_responses:
@@ -341,7 +350,7 @@ class BaseViewer(Viewer):
           eval_agent = world.GetAgent(eval_agent_ids[0])
           if eval_agent is not None:
               self.drawBehaviorPlan(eval_agent.behavior_model)
-        
+        self._draw_ego_rss_safety_responses = True # do it wit param server instead
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
         
@@ -420,12 +429,20 @@ class BaseViewer(Viewer):
 
     def drawRssDebugInfomation(self, world, agent_id):
         from bark.core.world.evaluation import EvaluatorRSS
+        rss_responses = None
+        
         for evaluator in world.evaluators:
+          print(evaluator)
           if isinstance(world.evaluators[evaluator], EvaluatorRSS):
-            rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(
-                world)
+            # TODO: use violations in DrawRSSevalutor, labels etc
+            rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(world)
             break
-
+        if not rss_responses:
+          self.parameters["EvaluatorRss"]["MapFilename"] = "database_deu/maps/DR_DEU_Merging_MT_v01_centered.xodr"
+          print(EvaluatorRSS(agent_id = agent_id, params = self.parameters))
+          evaluator = EvaluatorRSS(agent_id = agent_id, params = self.parameters)
+          rss_responses =  evaluator.PairwiseDirectionalEvaluate(world)
+          print(rss_responses)
         def char_func(value):
             if value == True:
                 return "T"
@@ -433,7 +450,6 @@ class BaseViewer(Viewer):
                 return "F"
             else:
                 return "UNKNOWN"
-
         overall_safety = True
         if rss_responses:
             self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
@@ -453,7 +469,7 @@ class BaseViewer(Viewer):
                 rss_responses = world.evaluators[evaluator].PairwiseEvaluate(
                   world)
                 break
-
+        rss_responses = None 
         ego_agent = world.agents[ego_id]
         shape = ego_agent.shape
         pose = generatePoseFromState(ego_agent.state)
@@ -477,6 +493,8 @@ class BaseViewer(Viewer):
     def DrawRSSEvaluatorState(self, world, agent_id):
       agent = world.agents[agent_id]
       behavior = agent.behavior_model
+      
+      
       if isinstance(behavior, BehaviorRSSConformant):
         longitudinal_response = behavior.GetLongitudinalResponse()
         lateral_left_response = behavior.GetLateralLeftResponse()
