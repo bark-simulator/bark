@@ -244,6 +244,17 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
   return true;
 }
 
+inline Polygon CalculateBoundingBoxPolygon(const Polygon& polygon) {
+  auto box = polygon.BoundingBox();
+  // Polygon(polygon.center, std::vector<Point2d>{Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1), Point2d(3, -1), Point2d(-1, -1)});
+  double xmin = bg::get<0>(box.first);
+  double xmax = bg::get<0>(box.second);
+  double ymin = bg::get<1>(box.first);
+  double ymax = bg::get<1>(box.second);
+  Polygon bbpoly = Polygon(polygon.center_, std::vector<Point2d>{Point2d(xmin, ymin), Point2d(xmin, ymax), Point2d(xmax, ymax), Point2d(xmax, ymin), Point2d(xmin, ymin)});
+  return bbpoly;
+}
+
 }  // namespace geometry
 }  // namespace bark
 

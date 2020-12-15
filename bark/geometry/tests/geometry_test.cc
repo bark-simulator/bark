@@ -1190,6 +1190,41 @@ TEST(buffer, inflate) {
   EXPECT_TRUE(Equals(out, s)) << s.ToArray();
 }
 
+TEST(generate_car_limousine, vehicleshapes) {
+  using namespace bark::geometry;
+  using bark::geometry::standard_shapes::GenerateCarLimousine;
+  using bark::geometry::standard_shapes::CarLimousine;
+
+  double wb = 3.0568;
+  double r = 0.9560;
+  Polygon in1 = GenerateCarLimousine(wb, r);
+  Polygon in2 = CarLimousine();
+  
+  // due to numerical issues, this will fail:
+  // EXPECT_TRUE(Equals(in1, in2)) << in1.ToArray() << in2.ToArray();
+  
+  EXPECT_TRUE(std::abs(in1.CalculateArea() - in2.CalculateArea()) < 1e-3);
+  EXPECT_TRUE(Distance(in1, in2) < 1e-6);
+}
+
+TEST(boundingpolygon, vehicleshapes) {
+  using bark::geometry::Point2d;
+  using bark::geometry::Polygon;
+  using bark::geometry::Pose;
+  using bark::geometry::standard_shapes::GenerateCarLimousine;
+  using bark::geometry::standard_shapes::GenerateCarRectangle;
+
+  double wb = 2.8;
+  double r = 1;
+  Polygon in1 = GenerateCarLimousine(wb, r);
+  Polygon out1 = CalculateBoundingBoxPolygon(in1);
+  EXPECT_TRUE(Within(in1, out1));
+
+  Polygon in2 = GenerateCarRectangle(wb, r);
+  Polygon out2 = CalculateBoundingBoxPolygon(in2);
+  EXPECT_TRUE(Within(in2, out2));
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

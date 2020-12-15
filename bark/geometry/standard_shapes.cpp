@@ -31,6 +31,23 @@ Polygon bark::geometry::standard_shapes::CarRectangle() {
                            Point2d(3, -1), Point2d(-1, -1)});
 }
 
+Polygon bark::geometry::standard_shapes::GenerateCarLimousine(
+    double wheelbase, double collision_radius) {
+  double sw = collision_radius; // scale width
+  double sl = (wheelbase+2*collision_radius)/1.2906; // scale length
+  return Polygon(
+      Pose(0, 0, 0),
+      std::vector<Point2d>{Point2d(1.0000*sl, 0*sw), Point2d(0.9797*sl, -0.5178*sw),
+                           Point2d(0.8899*sl, -0.9278*sw), Point2d(0.7569*sl, -1.0000*sw),
+                           Point2d(0.3784*sl, -1.0000*sw), Point2d(0*sl, -1.0000*sw),
+                           Point2d(-0.1330*sl, -0.9268*sw), Point2d(-0.2649*sl, -0.6161*sw),
+                           Point2d(-0.2906*sl, 0*sw), Point2d(-0.2649*sl, 0.6161*sw),
+                           Point2d(-0.1330*sl, 0.9268*sw), Point2d(0*sl, 1.0000*sw),
+                           Point2d(0.3784*sl, 1.0000*sw), Point2d(0.7569*sl, 1.0000*sw),
+                           Point2d(0.8899*sl, 0.9278*sw), Point2d(0.9797*sl, 0.5178*sw),
+                           Point2d(1.0000*sl, 0*sw)});
+}
+
 Polygon bark::geometry::standard_shapes::GenerateCarRectangle(
     double wheelbase, double collision_radius) {
   return Polygon(Pose(0, 0, 0),
