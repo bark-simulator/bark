@@ -55,10 +55,13 @@ def TrajectoryFromTrack(track, xy_offset, start=0, end=None):
     return traj
 
 
-def ShapeFromTrack(track):
+def ShapeFromTrack(track, use_rectangle=True):
     r = track.width/2
     wb = track.length - 2*r
-    poly = GenerateCarRectangle(wb, r)
+    if use_rectangle:
+      poly = GenerateCarRectangle(wb, r)
+    else:
+      poly = GenerateCarLimousine(wb, r)
     return poly
 
 
@@ -118,7 +121,7 @@ class InteractionDatasetReader:
         # TODO: Filter track
         return track
 
-    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id):
+    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, use_rectangle_shape):
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
             agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
@@ -173,7 +176,7 @@ class InteractionDatasetReader:
             raise ValueError("Could not retrieve execution_model")
 
         try:
-            vehicle_shape = ShapeFromTrack(track)
+            vehicle_shape = ShapeFromTrack(track, use_rectangle=use_rectangle_shape)
         except:
             raise ValueError("Could not create vehicle_shape")
 

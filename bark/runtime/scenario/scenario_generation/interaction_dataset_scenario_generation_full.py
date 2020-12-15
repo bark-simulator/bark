@@ -54,6 +54,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._road_ids = [0, 1]
         self._vehicle_length_max = params_temp["VehicleLengthMax",
                                                "Maximum allowed vehicle length", 5.0]
+        self._use_rectangle_shape = params_temp["RectangleShape",
+                                                "Use Rectangle vehicle shape", True]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -123,7 +125,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 track_params["behavior_model"] = None
 
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scen_track_info, track_id)
+                track_params, self._params, scen_track_info, track_id, self._use_rectangle_shape)
 
             # set first valid time stamp of the agent (in relation to scenario start)
             agent.first_valid_timestamp = scen_track_info.GetTimeOffsetOfAgentInSec(

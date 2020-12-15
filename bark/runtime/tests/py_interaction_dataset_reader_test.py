@@ -58,8 +58,9 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
         scenario_info = ScenarioTrackInfo(track_filename, agent_track_info, xy_offset=[0, 0])
         ds_reader = InteractionDatasetReader()
+        use_rectangle_shape = True
         agent = ds_reader.AgentFromTrackfile(
-            track_params, params, scenario_info, agent_track_info.GetTrackId())
+            track_params, params, scenario_info, agent_track_info.GetTrackId(), use_rectangle_shape)
 
 
     def test_agent_from_trackfile_centered(self):
@@ -84,8 +85,9 @@ class InteractionDatasetReaderTest(unittest.TestCase):
 
         scenario_info = ScenarioTrackInfo(track_filename, agent_track_info, xy_offset=[-900, -900])
         ds_reader = InteractionDatasetReader()
+        use_rectangle_shape = False
         agent = ds_reader.AgentFromTrackfile(
-            track_params, params, scenario_info, agent_track_info.GetTrackId())
+            track_params, params, scenario_info, agent_track_info.GetTrackId(), use_rectangle_shape)
 
 
 if __name__ == '__main__':
