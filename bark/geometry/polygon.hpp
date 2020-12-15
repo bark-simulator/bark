@@ -26,8 +26,9 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t();
   virtual ~Polygon_t() {}
   Polygon_t(const Pose& center, const std::vector<T> points);
-  Polygon_t(const Pose& center,
-            const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
+  Polygon_t(
+      const Pose& center,
+      const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
   Polygon_t(const Pose& center,
             const Line_t<T>&
                 line);  //! create a polygon from a line enclosing the polygon
@@ -50,9 +51,12 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
 
   void SetPrecision(int precision) {
     const double scale = pow(10, precision);
-    for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end(); ++it) {
-      boost::geometry::set<0>(*it, round(boost::geometry::get<0>(*it) * scale) / scale);
-      boost::geometry::set<1>(*it, round(boost::geometry::get<1>(*it) * scale) / scale);
+    for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end();
+         ++it) {
+      boost::geometry::set<0>(
+          *it, round(boost::geometry::get<0>(*it) * scale) / scale);
+      boost::geometry::set<1>(
+          *it, round(boost::geometry::get<1>(*it) * scale) / scale);
     }
   }
 
@@ -246,12 +250,15 @@ inline bool BufferPolygon(const Polygon& polygon, const double distance,
 
 inline Polygon CalculateBoundingBoxPolygon(const Polygon& polygon) {
   auto box = polygon.BoundingBox();
-  // Polygon(polygon.center, std::vector<Point2d>{Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1), Point2d(3, -1), Point2d(-1, -1)});
   double xmin = bg::get<0>(box.first);
   double xmax = bg::get<0>(box.second);
   double ymin = bg::get<1>(box.first);
   double ymax = bg::get<1>(box.second);
-  Polygon bbpoly = Polygon(polygon.center_, std::vector<Point2d>{Point2d(xmin, ymin), Point2d(xmin, ymax), Point2d(xmax, ymax), Point2d(xmax, ymin), Point2d(xmin, ymin)});
+  Polygon bbpoly =
+      Polygon(polygon.center_,
+              std::vector<Point2d>{Point2d(xmin, ymin), Point2d(xmin, ymax),
+                                   Point2d(xmax, ymax), Point2d(xmax, ymin),
+                                   Point2d(xmin, ymin)});
   return bbpoly;
 }
 
