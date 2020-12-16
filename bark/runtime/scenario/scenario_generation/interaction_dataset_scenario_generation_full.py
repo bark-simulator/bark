@@ -17,6 +17,8 @@ from bark.core.world.map import *
 from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 from bark.core.world.opendrive import *
+from bark.core.world.goal_definition import *
+from bark.core.geometry import *
 
 import logging
 
@@ -56,6 +58,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                "Maximum allowed vehicle length", 5.0]
         self._use_rectangle_shape = params_temp["RectangleShape",
                                                 "Use Rectangle vehicle shape", True]
+        self._use_goal_from_road = params_temp["GoalFromRoad",
+                                               "Use goal from road", False]
+        self._rel_pose_goal_on_road = params_temp["RelPoseGoalOnRoad", "Relative position of goal on road", 0.99]
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -124,12 +129,18 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                 # we do not change behavior model of ego agent -> will be set in benchmark
                 track_params["behavior_model"] = None
 
+            if self._use_goal_from_road:
+                goal = self.__infer_goal_from_road__(lc=0)
+            else:
+                goal = None
+
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scen_track_info, track_id, self._use_rectangle_shape)
+                track_params, self._params, scen_track_info, track_id, self._use_rectangle_shape, goal_def=goal)
 
             # set first valid time stamp of the agent (in relation to scenario start)
             agent.first_valid_timestamp = scen_track_info.GetTimeOffsetOfAgentInSec(
                 track_id)
+
             agent_list.append(agent)
 
         scenario._agent_list = agent_list  # must contain all agents!
@@ -163,3 +174,10 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         else:
             raise ValueError("map interface not available")
         return map_interface.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
+
+    def __infer_goal_from_road__(self, lc):
+        lane_corr = self._road_corridor.lane_corridors[0]
+        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-10, -10), Point2d(-10, 10), Point2d(10, 10), Point2d(10, -10)])
+        goal_point = GetPointAtS(lane_corr.center_line, lane_corr.center_line.Length()*self._rel_pose_goal_on_road)
+        goal_polygon = goal_polygon.Translate(goal_point)
+        return GoalDefinitionPolygon(goal_polygon)

@@ -113,7 +113,7 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
                 track_params["behavior_model"] = None
 
             agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, track_id, self._use_rectangle_shape)
+                track_params, self._params, scenario_track_info, track_id, self._use_rectangle_shape, goal_def=None)
             # agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
             agent_list.append(agent)
 

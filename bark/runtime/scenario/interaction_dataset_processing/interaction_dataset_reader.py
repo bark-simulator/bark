@@ -121,7 +121,7 @@ class InteractionDatasetReader:
         # TODO: Filter track
         return track
 
-    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, use_rectangle_shape):
+    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, use_rectangle_shape, goal_def):
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
             agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
@@ -179,6 +179,9 @@ class InteractionDatasetReader:
             vehicle_shape = ShapeFromTrack(track, use_rectangle=use_rectangle_shape)
         except:
             raise ValueError("Could not create vehicle_shape")
+        
+        if goal_def is None:
+          goal_def = GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset)
 
         bark_agent = Agent(
             initial_state,
@@ -187,7 +190,7 @@ class InteractionDatasetReader:
             execution_model,
             vehicle_shape,
             param_server.AddChild("agent{}".format(agent_id)),
-            GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset),
+            goal_def,
             track_params["map_interface"])
         # set agent id from track
         bark_agent.SetAgentId(track_id)
