@@ -179,6 +179,24 @@ TEST(geometry, polygon) {
       std::dynamic_pointer_cast<Polygon>(p.Rotate(3.14 / 2));
 }
 
+TEST(geometry, polygon_from_two_lines) {
+  using bark::geometry::Point2d;
+  using bark::geometry::Polygon;
+  using bark::geometry::Line;
+
+  Line left_line;  // vertical
+  left_line.AddPoint(Point2d(0.0, 0.0));
+  left_line.AddPoint(Point2d(0.0, 10.0));
+
+  Line right_line;  // vertical
+  right_line.AddPoint(Point2d(3.0, 0.0));
+  right_line.AddPoint(Point2d(3.0, 10.0));
+  
+  Polygon p(left_line, right_line);
+
+  EXPECT_TRUE(p.Valid());
+}
+
 TEST(geometry, standard_shapes) {
   using bark::geometry::Polygon;
   using bark::geometry::standard_shapes::CarLimousine;
