@@ -105,8 +105,13 @@ def BehaviorFromTrack(track, params, xy_offset, start, end):
 
 
 class InteractionDatasetReader:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._track_dict_cache = {}
+
+        self._use_shape_from_track = kwargs.pop("use_shape_from_track", True)
+        self._use_rectangle_shape = kwargs.pop("_use_rectangle_shape", True)
+        self._wb = kwargs.pop("wb", 2.7) # wheelbase
+        self._crad = kwargs.pop("crad", 1.0) # collision radius
 
     def TrackFromTrackfile(self, filename, track_id):
         if filename not in self._track_dict_cache:
@@ -121,7 +126,8 @@ class InteractionDatasetReader:
         # TODO: Filter track
         return track
 
-    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, use_rectangle_shape, goal_def):
+    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, goal_def):
+        
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
             agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
@@ -161,8 +167,11 @@ class InteractionDatasetReader:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
                 agent_id, start_time_init_state))
 
-        wb = WheelbaseFromTrack(track)
-        param_server["DynamicModel"]["wheel_base"] = wb
+        
+        if self._use_shape_from_track:
+          self._wb = WheelbaseFromTrack(track)
+
+        param_server["DynamicModel"]["wheel_base"] = self._wb
         try:
             dynamic_model = model_converter.convert_model(
                 track_params["dynamic_model"], param_server)
@@ -175,10 +184,13 @@ class InteractionDatasetReader:
         except:
             raise ValueError("Could not retrieve execution_model")
 
-        try:
-            vehicle_shape = ShapeFromTrack(track, use_rectangle=use_rectangle_shape)
-        except:
-            raise ValueError("Could not create vehicle_shape")
+        if self._use_shape_from_track:
+          try:
+              vehicle_shape = ShapeFromTrack(track, use_rectangle=self._use_rectangle_shape)
+          except:
+              raise ValueError("Could not create vehicle_shape")
+        else:
+          vehicle_shape = GenerateCarRectangle(self._wb, self._crad)
         
         if goal_def is None:
           goal_def = GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset)

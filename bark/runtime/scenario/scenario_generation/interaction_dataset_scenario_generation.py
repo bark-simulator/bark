@@ -25,7 +25,6 @@ import os.path
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
-        self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
 
     def initialize_params(self, params):
@@ -52,6 +51,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
                                             "Overwrite static trajectory with prediction model", {}]
         self._use_rectangle_shape = params_temp["RectangleShape",
                                                 "Use Rectangle vehicle shape", True]
+        
+        self._interaction_ds_reader = InteractionDatasetReader()
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -112,8 +113,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             else:
                 track_params["behavior_model"] = None
 
-            agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, track_id, self._use_rectangle_shape, goal_def=None)
+            agent = self._interaction_ds_reader.AgentFromTrackfile(
+                track_params, self._params, scenario_track_info, track_id, goal_def=None)
             # agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
             agent_list.append(agent)
 

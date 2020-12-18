@@ -29,7 +29,6 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self._map_interface = None
-        self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
 
     def initialize_params(self, params):
@@ -53,14 +52,21 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         self._agent_params = []
         self._starting_offset_ms = params_temp["StartingOffsetMs",
                                                "Starting Offset to each agent in miliseconds", 500]
-        self._road_ids = [0, 1]
+        self._road_ids = params_temp["RoadIds",
+                                     "Road ids for road corridor.", [0, 1]]
         self._vehicle_length_max = params_temp["VehicleLengthMax",
                                                "Maximum allowed vehicle length", 5.0]
+        self._use_shape_from_track = params_temp["UseShapeFromTrack",
+                                                 "Use shape from track", True]
         self._use_rectangle_shape = params_temp["RectangleShape",
                                                 "Use Rectangle vehicle shape", True]
         self._use_goal_from_road = params_temp["GoalFromRoad",
                                                "Use goal from road", False]
-        self._rel_pose_goal_on_road = params_temp["RelPoseGoalOnRoad", "Relative position of goal on road", 0.99]
+        self._rel_pose_goal_on_road = params_temp["RelPoseGoalOnRoad",
+                                                  "Relative position of goal on road", 0.99]
+
+        self._interaction_ds_reader = InteractionDatasetReader(
+            use_shape_from_track=self._use_shape_from_track, use_goal_from_road=self._use_goal_from_road)
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -134,8 +140,8 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
             else:
                 goal = None
 
-            agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scen_track_info, track_id, self._use_rectangle_shape, goal_def=goal)
+            agent = self._interaction_ds_reader.AgentFromTrackfile(
+                track_params, self._params, scen_track_info, track_id, goal_def=goal)
 
             # set first valid time stamp of the agent (in relation to scenario start)
             agent.first_valid_timestamp = scen_track_info.GetTimeOffsetOfAgentInSec(
@@ -177,7 +183,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
 
     def __infer_goal_from_road__(self, lc):
         lane_corr = self._road_corridor.lane_corridors[0]
-        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-10, -10), Point2d(-10, 10), Point2d(10, 10), Point2d(10, -10)])
-        goal_point = GetPointAtS(lane_corr.center_line, lane_corr.center_line.Length()*self._rel_pose_goal_on_road)
+        goal_polygon = Polygon2d([0, 0, 0], [
+                                 Point2d(-10, -10), Point2d(-10, 10), Point2d(10, 10), Point2d(10, -10)])
+        goal_point = GetPointAtS(
+            lane_corr.center_line, lane_corr.center_line.Length()*self._rel_pose_goal_on_road)
         goal_polygon = goal_polygon.Translate(goal_point)
         return GoalDefinitionPolygon(goal_polygon)
