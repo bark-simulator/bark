@@ -153,7 +153,7 @@ std::vector<ObservedWorld> World::Observe(
 
 void World::UpdateAgentRTree() {
   rtree_agents_.clear();
-  for (auto& agent : agents_) {
+  for (auto& agent : GetValidAgents()) {
     auto obj =
         agent.second->GetPolygonFromState(agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
