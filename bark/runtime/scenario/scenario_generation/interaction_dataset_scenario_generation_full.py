@@ -66,7 +66,7 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
                                                   "Relative position of goal on road", 0.99]
 
         self._interaction_ds_reader = InteractionDatasetReader(
-            use_shape_from_track=self._use_shape_from_track, use_goal_from_road=self._use_goal_from_road)
+            use_shape_from_track=self._use_shape_from_track, use_rectangle_shape=self._use_rectangle_shape)
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):

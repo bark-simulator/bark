@@ -55,20 +55,21 @@ def TrajectoryFromTrack(track, xy_offset, start=0, end=None):
     return traj
 
 
-def ShapeFromTrack(track, use_rectangle=True):
-    r = track.width/2
-    wb = track.length - 2*r
-    if use_rectangle:
-      poly = GenerateCarRectangle(wb, r)
-    else:
-      poly = GenerateCarLimousine(wb, r)
+def ShapeFromTrack(track):
+    r = ColRadiusFromTrack(track)
+    wb = WheelbaseFromTrack(track)
+    poly = GenerateCarRectangle(wb, r)
     return poly
 
 
 def WheelbaseFromTrack(track):
-    r = track.width
+    r = ColRadiusFromTrack(track)
     wb = track.length - 2*r
     return wb
+
+
+def ColRadiusFromTrack(track):
+    return track.width/2
 
 
 def InitStateFromTrack(track, xy_offset, start):
@@ -109,9 +110,9 @@ class InteractionDatasetReader:
         self._track_dict_cache = {}
 
         self._use_shape_from_track = kwargs.pop("use_shape_from_track", True)
-        self._use_rectangle_shape = kwargs.pop("_use_rectangle_shape", True)
-        self._wb = kwargs.pop("wb", 2.7) # wheelbase
-        self._crad = kwargs.pop("crad", 1.0) # collision radius
+        self._use_rectangle_shape = kwargs.pop("use_rectangle_shape", True)
+        self._wb = kwargs.pop("wb", 2.7)  # wheelbase
+        self._crad = kwargs.pop("crad", 1.0)  # collision radius
 
     def TrackFromTrackfile(self, filename, track_id):
         if filename not in self._track_dict_cache:
@@ -127,7 +128,7 @@ class InteractionDatasetReader:
         return track
 
     def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, goal_def):
-        
+
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
             agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
@@ -167,9 +168,9 @@ class InteractionDatasetReader:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
                 agent_id, start_time_init_state))
 
-        
         if self._use_shape_from_track:
-          self._wb = WheelbaseFromTrack(track)
+            self._wb = WheelbaseFromTrack(track)
+            self._crad = ColRadiusFromTrack(track)
 
         param_server["DynamicModel"]["wheel_base"] = self._wb
         try:
@@ -184,16 +185,19 @@ class InteractionDatasetReader:
         except:
             raise ValueError("Could not retrieve execution_model")
 
-        if self._use_shape_from_track:
-          try:
-              vehicle_shape = ShapeFromTrack(track, use_rectangle=self._use_rectangle_shape)
-          except:
-              raise ValueError("Could not create vehicle_shape")
-        else:
-          vehicle_shape = GenerateCarRectangle(self._wb, self._crad)
-        
+        try:
+            if self._use_rectangle_shape:
+                print("Car Rectangle", self._wb, self._crad)
+                vehicle_shape = GenerateCarRectangle(self._wb, self._crad)
+            else:
+                print("Car Limousine")
+                vehicle_shape = GenerateCarLimousine(self._wb, self._crad)
+        except:
+            raise ValueError("Could not create vehicle_shape")
+
         if goal_def is None:
-          goal_def = GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset)
+            goal_def = GoalDefinitionFromTrack(
+                track, end_time, xy_offset=xy_offset)
 
         bark_agent = Agent(
             initial_state,
