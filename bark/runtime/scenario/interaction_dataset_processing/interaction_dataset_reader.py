@@ -187,10 +187,8 @@ class InteractionDatasetReader:
 
         try:
             if self._use_rectangle_shape:
-                print("Car Rectangle", self._wb, self._crad)
                 vehicle_shape = GenerateCarRectangle(self._wb, self._crad)
             else:
-                print("Car Limousine")
                 vehicle_shape = GenerateCarLimousine(self._wb, self._crad)
         except:
             raise ValueError("Could not create vehicle_shape")
