@@ -12,12 +12,12 @@ import logging
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.commons import FrenetState
-from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import TrajectoryFromTrack
+from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import *
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.scenario.scenario import Scenario
 from bark.core.geometry import Point2d, Collide, Within
-from bark.core.geometry.standard_shapes import GenerateCarRectangle, CarLimousine
+from bark.core.geometry.standard_shapes import *
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 
@@ -37,6 +37,9 @@ class DatasetDecomposer:
         traj = TrajectoryFromTrack(
             self._track_dict[id_ego], xy_offset=self._xy_offset)
         for state in traj:
+            # wb = WheelbaseFromTrack(self._track_dict[id_ego])
+            # r = ColRadiusFromTrack(self._track_dict[id_ego])
+            # agent_shape = GenerateCarLimousine(wb, r)
             agent_shape = CarLimousine()
             agent_shape = agent_shape.Transform([state[1], state[2], state[3]])
             for lc in self._road_corridor.lane_corridors:

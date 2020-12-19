@@ -169,10 +169,13 @@ class InteractionDatasetReader:
                 agent_id, start_time_init_state))
 
         if self._use_shape_from_track:
-            self._wb = WheelbaseFromTrack(track)
-            self._crad = ColRadiusFromTrack(track)
+            wb = WheelbaseFromTrack(track)
+            crad = ColRadiusFromTrack(track)
+        else:
+            wb = self._wb
+            crad = self._crad
 
-        param_server["DynamicModel"]["wheel_base"] = self._wb
+        param_server["DynamicModel"]["wheel_base"] = wb
         try:
             dynamic_model = model_converter.convert_model(
                 track_params["dynamic_model"], param_server)
@@ -187,9 +190,9 @@ class InteractionDatasetReader:
 
         try:
             if self._use_rectangle_shape:
-                vehicle_shape = GenerateCarRectangle(self._wb, self._crad)
+                vehicle_shape = GenerateCarRectangle(wb, crad)
             else:
-                vehicle_shape = GenerateCarLimousine(self._wb, self._crad)
+                vehicle_shape = GenerateCarLimousine(wb, crad)
         except:
             raise ValueError("Could not create vehicle_shape")
 
