@@ -307,7 +307,6 @@ class BaseViewer(Viewer):
 
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
-            print("draw world", agent_id)
             alpha = 1.0
 
             if eval_agent_ids and agent.id in eval_agent_ids:
@@ -325,7 +324,6 @@ class BaseViewer(Viewer):
                     else:
                         color_line = self.agent_color_map[agent_id]
                     color_face = self.agent_color_map[agent_id]
-                    print("selecting colour face ", color_face)
                 else:
                     color_line = self.color_other_agents_line
                     color_face = self.color_other_agents_face
