@@ -7,10 +7,12 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 import matplotlib
 from matplotlib.patches import Polygon
-from matplotlib import cm
+from matplotlib import cm, colors
 import matplotlib.pyplot as plt
 
 import math
+
+import numpy as np
 
 from bark.core.viewer import *
 from bark.core.geometry import *
@@ -29,6 +31,7 @@ class MPViewer(BaseViewer):
           self.axes = plt.subplots()[1]
           # removes whitespace
           # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
+        self._cmap = self.setupColormap()
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -163,6 +166,11 @@ class MPViewer(BaseViewer):
     def clear(self):
         self.axes.cla()
 
+    def setupColormap(self):
+        cmap_np = cm.tab20(np.linspace(0, 1, 20)) # tab20 has 20 colours
+        cmap_np = np.delete(cmap_np, [6,7], 0) # remove red (reserved for ego)
+        return colors.ListedColormap(cmap_np)
+
 
     def getColorFromMap(self, double_color):
-        return cm.tab20(double_color)
+        return self._cmap(double_color)
