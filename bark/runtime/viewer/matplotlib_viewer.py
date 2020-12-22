@@ -166,11 +166,13 @@ class MPViewer(BaseViewer):
     def clear(self):
         self.axes.cla()
 
+    def getSizeOfColormap(self):
+        return 20 # cm.tab20 has 20 entries
+
     def setupColormap(self):
         cmap_np = cm.tab20(np.linspace(0, 1, 20)) # tab20 has 20 colours
         cmap_np = np.delete(cmap_np, [6,7], 0) # remove red (reserved for ego)
         return colors.ListedColormap(cmap_np)
-
 
     def getColorFromMap(self, double_color):
         return self._cmap(double_color)

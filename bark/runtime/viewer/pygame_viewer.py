@@ -210,6 +210,10 @@ class PygameViewer(BaseViewer):
         self.screen.fill(self.background_color)
         self.screen_surface.fill(self.background_color)
 
+    def getSizeOfColormap(self):
+        # TODO
+        return 1
+
     def getColorFromMap(self, double_color):
         # TODO
         return (1.0, 0, 0)
