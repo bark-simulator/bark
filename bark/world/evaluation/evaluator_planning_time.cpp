@@ -26,7 +26,7 @@ double EvaluatorPlanningTime::CalculateMean(const std::vector<double>& v) {
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(const world::World& world) {
   auto ego_agent = world.GetAgent(this->agent_id_);
-  double planning_time = -1e3;
+  double planning_time = nan("");
   if (ego_agent) {
     auto model = ego_agent->GetBehaviorModel();
     planning_time = model->GetLastSolutionTime();

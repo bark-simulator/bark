@@ -326,7 +326,7 @@ class EvaluationTests(unittest.TestCase):
 
 
     info = world.Evaluate()
-    self.assertEqual(info["time"], -1e3)
+    self.assertEqual(info["time"], 0.0)
         
 if __name__ == '__main__':
   unittest.main()

@@ -93,7 +93,7 @@ class BehaviorModel : public bark::commons::BaseType {
         last_trajectory_(),
         last_action_(),
         behavior_status_(status),
-        last_solution_time_(-1e3) {}
+        last_solution_time_(0.0) {}
 
   explicit BehaviorModel(const commons::ParamsPtr& params)
       : BehaviorModel(params, BehaviorStatus::VALID) {}
