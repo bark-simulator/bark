@@ -23,15 +23,16 @@ namespace evaluation {
 class EvaluatorPlanningTime : public BaseEvaluator {
  public:
   EvaluatorPlanningTime()
-      : agent_id_(std::numeric_limits<AgentId>::max()) {}
+      : agent_id_(std::numeric_limits<AgentId>::max()), planning_times_() {}
   explicit EvaluatorPlanningTime(const AgentId& agent_id)
-      : agent_id_(agent_id) {}
+      : agent_id_(agent_id), planning_times_() {}
   virtual ~EvaluatorPlanningTime() {}
+  double CalculateMean(const std::vector<double>& v);
   virtual EvaluationReturn Evaluate(const world::World& world);
   virtual EvaluationReturn Evaluate(const world::ObservedWorld& observed_world);
-
  private:
   AgentId agent_id_;
+  std::vector<double> planning_times_;
 };
 
 }  // namespace evaluation

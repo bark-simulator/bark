@@ -7,13 +7,22 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/evaluation/evaluator_planning_time.hpp"
-
+#include <numeric>
 
 namespace bark {
 namespace world {
 class World;
 namespace evaluation {
 using bark::models::behavior::BehaviorModelPtr;
+
+double EvaluatorPlanningTime::CalculateMean(const std::vector<double>& v) {
+  size_t n = v.size(); 
+  double mean = 0.0;
+  if ( n != 0) {
+      mean = std::accumulate( v.begin(), v.end(), 0.0) / n; 
+  }
+  return mean;
+}
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(const world::World& world) {
   auto ego_agent = world.GetAgent(this->agent_id_);
@@ -22,7 +31,9 @@ EvaluationReturn EvaluatorPlanningTime::Evaluate(const world::World& world) {
     auto model = ego_agent->GetBehaviorModel();
     planning_time = model->GetLastSolutionTime();
   }
-  return planning_time;
+  planning_times_.push_back(planning_time);
+  double mean = CalculateMean(planning_times_);
+  return mean;
 }
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(
@@ -31,8 +42,11 @@ EvaluationReturn EvaluatorPlanningTime::Evaluate(
   auto ego_agent = observed_world.GetEgoAgent();
   BehaviorModelPtr model = ego_agent->GetBehaviorModel();
   double planning_time = model->GetLastSolutionTime();
-  return planning_time;
+  planning_times_.push_back(planning_time);
+  double mean = CalculateMean(planning_times_);
+  return mean;
 }
+
 
 }  // namespace evaluation
 }  // namespace world
