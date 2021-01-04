@@ -437,27 +437,49 @@ class BaseViewer(Viewer):
             # TODO: use violations in DrawRSSevalutor, labels etc
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(world)
             break
+
+        evaluator = None
+
         if not rss_responses:
           self.parameters["EvaluatorRss"]["MapFilename"] = "database_deu/maps/DR_DEU_Merging_MT_v01_centered.xodr"
           print(EvaluatorRSS(agent_id = agent_id, params = self.parameters))
           evaluator = EvaluatorRSS(agent_id = agent_id, params = self.parameters)
-          rss_responses =  evaluator.PairwiseDirectionalEvaluate(world)
-          print(rss_responses)
+          rss_responses = evaluator.PairwiseDirectionalEvaluate(world)
+          print('eval', dir(evaluator))
+
         def char_func(value):
             if value == True:
                 return "T"
             elif value == False:
                 return "F"
             else:
-                return "UNKNOWN"
+                return value
+
         overall_safety = True
         if rss_responses:
-            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat")
+            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat   LonD   LatD")
             for i, (id, responses) in enumerate(rss_responses.items()):
                 overall_safety = overall_safety and any(responses)
-                str = "{}:    {}     {}".format(
+                str = "{}:    {}     {}     {}     {}".format(
                     id, *list(map(char_func, responses)))
                 self.drawText(position=(0.82, 0.88-0.03*i), text=str)
+                lon_distance = responses[2]
+                lat_distance = responses[3]
+
+            ego_agent = world.agents[agent_id]
+            shape = ego_agent.shape
+            state = ego_agent.state
+            pose = generatePoseFromState(state)
+            pose[0] -= lon_distance
+            pose[1] -= lat_distance
+            transformed_polygon = shape.Transform(pose)
+
+            self.drawPolygon2d(transformed_polygon, self.color_eval_agents_face, 1, self.color_eval_agents_face, zorder=11)
+
+            # draw longitudinal distance in lane
+            longitudinal_polygon = evaluator.GetLaneLongitudinalPolygon(world, lon_distance)
+            self.drawPolygon2d(longitudinal_polygon, color="blue",
+                           facecolor="blue", alpha=.3, zorder=2)
 
         self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
             agent_id, char_func(overall_safety)))

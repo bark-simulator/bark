@@ -95,6 +95,7 @@ void python_evaluation(py::module m) {
       .def("PairwiseDirectionalEvaluate",
            py::overload_cast<const World&>(
                &EvaluatorRSS::PairwiseDirectionalEvaluate))
+      .def("GetLaneLongitudinalPolygon", &EvaluatorRSS::GetLaneLongitudinalPolygon)
       .def("__repr__", [](const EvaluatorRSS& g) {
         return "bark.core.world.evaluation.EvaluatorRSS";
       });

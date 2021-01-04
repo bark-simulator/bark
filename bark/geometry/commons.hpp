@@ -112,6 +112,9 @@ struct Shape {
   // return object transform
   std::shared_ptr<Shape<G, T>> Transform(const Pose& pose) const;
 
+  // intersects objects
+  std::shared_ptr<Shape<G, T>> Intersection(const Shape<G, T>& other) const;
+
   virtual bool Valid() const;
 
   virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray()
@@ -250,6 +253,23 @@ inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Transform(
   shape_transformed->center_[1] += pose[1];
   shape_transformed->center_[2] += pose[2];
   return shape_transformed;
+}
+
+template <typename G, typename T>
+inline std::shared_ptr<Shape<G, T>> Shape<G, T>::Intersection(
+		const Shape<G, T>& other) const {
+  G obj_intersection;
+
+  std::shared_ptr<Shape<G, T>> other_ptr(std::dynamic_pointer_cast<G, T>(other));
+	
+	boost::geometry::intersection(obj_, other_ptr->obj_, obj_intersection);
+
+  std::shared_ptr<Shape<G, T>> shape_intersection = this->Clone();
+  shape_intersection->obj_ = obj_intersection;
+  //shape_intersection->center_[0] += pose[0];
+  //shape_intersection->center_[1] += pose[1];
+  //shape_intersection->center_[2] += pose[2];
+  return shape_intersection;
 }
 
 template <typename G, typename T>

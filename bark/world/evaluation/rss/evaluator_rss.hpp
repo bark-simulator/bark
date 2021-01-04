@@ -16,13 +16,25 @@
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/geometry/polygon.hpp"
+#include "bark/world/world.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 
 #ifdef RSS
 #include "bark/world/evaluation/rss/rss_interface.hpp"
 #endif
 
 namespace bark {
+
+using models::dynamic::StateDefinition;
+
 namespace world {
+
+using geometry::Polygon;
+using geometry::Point2d;
+using geometry::Pose;
+using geometry::standard_shapes::GenerateGoalRectangle;
+
 namespace evaluation {
 
 class EvaluatorRSS : public BaseEvaluator {
@@ -110,6 +122,37 @@ class EvaluatorRSS : public BaseEvaluator {
       const ObservedWorld& observed_world) {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
+
+	virtual Polygon GetLaneLongitudinalPolygon(
+			const World& world, const double& lon_distance) {
+    WorldPtr cloned_world = world.Clone();
+    ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
+    AgentPtr agent = observed_world.GetEgoAgent();
+
+		const Point2d pos = agent->GetCurrentPosition();
+		const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
+
+		Polygon lane_poly = lane_corridor->GetMergedPolygon();
+
+		// generate longitudinal distance polygon
+		auto state = agent->GetCurrentState();
+    Pose agent_pose(state(StateDefinition::X_POSITION),
+                    state(StateDefinition::Y_POSITION),
+                    state(StateDefinition::THETA_POSITION));
+
+		Polygon lon_poly = GenerateGoalRectangle(2*lon_distance, 500);
+
+
+		std::shared_ptr<Polygon> lon_shape(std::dynamic_pointer_cast<Polygon>(lon_poly.Transform(agent_pose)));
+
+		// intersect polygons
+
+		
+
+		Polygon res_poly(std::dynamic_pointer_cast<Polygon>(lon_poly.Intersection(lane_poly)));
+
+		return res_poly;
+	};
 
   ::ad::rss::state::ProperResponse GetRSSProperResponse() const {
     return rss_proper_response_;
