@@ -32,7 +32,7 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
   Polygon_t(const Pose& center,
             const Line_t<T>&
                 line);  //! create a polygon from a line enclosing the polygon
-  Polygon_t(const Line_t<T>& left_line, const Line_t<T>& right_line); 
+  Polygon_t(const Line_t<T>& left_line, const Line_t<T>& right_line);
   virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
   virtual double CalculateArea() const;
 
@@ -113,19 +113,23 @@ inline Polygon_t<T>::Polygon_t(const Pose& center, const Line_t<T>& line)
   UpdateDistancesToCenter();
 }
 
+/**
+ * @brief Template function to construct a Polygon_t object from two parallel
+ * lines. Lines have to be defined in the same direction.
+ */
 template <typename T>
-inline Polygon_t<T>::Polygon_t(const Line_t<T>& left_line, const Line_t<T>& right_line)
-  : Polygon_t() {
-  for (const T& next_pt : left_line.obj_) {
+inline Polygon_t<T>::Polygon_t(const Line_t<T>& line1, const Line_t<T>& line2)
+    : Polygon_t() {
+  for (const T& next_pt : line1.obj_) {
     Shape<bg::model::polygon<T>, T>::AddPoint(next_pt);
   }
-  auto reversed_outer = right_line;
+  auto reversed_outer = line2;
   reversed_outer.Reverse();
   for (const T& next_pt : reversed_outer.obj_) {
     Shape<bg::model::polygon<T>, T>::AddPoint(next_pt);
   }
   // Polygons need to be closed!
-  Shape<bg::model::polygon<T>, T>::AddPoint(*(left_line.begin()));
+  Shape<bg::model::polygon<T>, T>::AddPoint(*(line1.begin()));
   boost::geometry::correct(Shape<bg::model::polygon<T>, T>::obj_);
   UpdateDistancesToCenter();
 }
