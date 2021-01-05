@@ -38,7 +38,6 @@ EvaluationReturn EvaluatorPlanningTime::Evaluate(const world::World& world) {
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(
     const world::ObservedWorld& observed_world) {
-  int num_agents = 4;
   auto ego_agent = observed_world.GetEgoAgent();
   BehaviorModelPtr model = ego_agent->GetBehaviorModel();
   double planning_time = model->GetLastSolutionTime();
