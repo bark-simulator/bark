@@ -9,14 +9,14 @@
 #ifndef BARK_COMMONS_SEGFAULT_HANDLER_HPP_
 #define BARK_COMMONS_SEGFAULT_HANDLER_HPP_
 
-#include <boost/stacktrace.hpp>
+//#include <boost/stacktrace.hpp>
 #include <iostream>
 
 namespace bark {
 namespace commons {
 
 void SegfaultHandler(int sig) {
-  std::cerr << boost::stacktrace::stacktrace() << std::endl;
+//  std::cerr << boost::stacktrace::stacktrace() << std::endl;
   throw;
 }
 

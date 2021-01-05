@@ -11,7 +11,7 @@ cc_library(
         "@boost//:smart_ptr",
         "@boost//:move",
         "@boost//:type_traits",
-        "@boost//:stacktrace",
+#        "@boost//:stacktrace",
         "@com_github_google_glog//:glog"
     ],
     visibility = ["//visibility:public"],
