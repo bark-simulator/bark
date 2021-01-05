@@ -1,6 +1,5 @@
 {
     "Scenario": {
-        "Name": "DR_DEU_Merging_MT\ninteraction_dataset_DEU_Merging_dummy_track.csv",
         "Generation": {
             "InteractionDatasetScenarioGeneration": {
                 "MapFilename": "../bark_project/bark/runtime/tests/data/DR_DEU_Merging_MT_v01_shifted.xodr",
