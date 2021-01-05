@@ -153,7 +153,7 @@ std::vector<ObservedWorld> World::Observe(
 
 void World::UpdateAgentRTree() {
   rtree_agents_.clear();
-  for (auto& agent : GetValidAgents()) {
+  for (auto& agent : agents_) {
     auto obj =
         agent.second->GetPolygonFromState(agent.second->GetCurrentState()).obj_;
     rtree_agent_model box;
@@ -173,7 +173,11 @@ void World::RemoveInvalidAgents() {
     rtree_agents_.query(!boost::geometry::index::within(query_box),
                         std::back_inserter(query_results));
     for (auto& result_pair : query_results) {
-      agents_.erase(result_pair.second);
+      AgentPtr agent = GetAgent(result_pair.second);
+      if (agent && agent->GetBehaviorStatus() == BehaviorStatus::VALID &&
+          agent->IsValidAtTime(world_time_)) {
+        agents_.erase(result_pair.second);
+      }
     }
   }
 
