@@ -27,11 +27,13 @@ World::World(const commons::ParamsPtr& params)
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
-      frac_lateral_offset_(
-          params->GetReal("World::FracLateralOffset",
-                          "Fraction of lateral offset for FrontRearAgent "
-                          "Calculation, should be larger than 0.",
-                          0.5)) {
+      frac_lateral_offset_(params->GetReal(
+          "World::FracLateralOffset",
+          "Lane Width Fraction for maximum allowed lateral offset in "
+          "FrontRearAgent calculation "
+          "Calculation, should be larger than 0. value of 2 means that all "
+          "agents intersecting with lane will be considered",
+          2.0)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -181,9 +183,12 @@ void World::RemoveInvalidAgents() {
     }
   }
 
-  for (auto& agent : agents_) {
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
-      agents_.erase(agent.first);
+  for (auto it = agents_.cbegin(); it != agents_.cend(); ) {
+    if (it->second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
+      agents_.erase(it++);
+    }
+    else {
+      ++it;
     }
   }
 
