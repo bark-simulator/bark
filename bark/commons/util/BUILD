@@ -12,7 +12,7 @@ cc_library(
         "@boost_bark//:move",
         "@boost_bark//:type_traits",
 #        "@boost_bark//:stacktrace",
-        "@com_github_google_glog//:glog"
+        "@glog"
     ],
     visibility = ["//visibility:public"],
 )
@@ -30,7 +30,7 @@ cc_library(
         "@boost_bark//:type_traits",
         "@boost_bark//:stacktrace",
         "@boost_bark//:math",
-        "@com_github_google_glog//:glog"
+        "@glog"
     ],
     visibility = ["//visibility:public"],
 )
