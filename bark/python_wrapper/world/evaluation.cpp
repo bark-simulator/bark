@@ -15,6 +15,7 @@
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
 #include "bark/world/evaluation/evaluator_planning_time.hpp"
+#include "bark/world/evaluation/evaluator_velocity.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -91,6 +92,13 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorPlanningTime& g) {
         return "bark.core.world.evaluation.EvaluatorPlanningTime";
+      });
+  py::class_<EvaluatorVelocity, BaseEvaluator,
+             std::shared_ptr<EvaluatorVelocity>>(m, "EvaluatorVelocity")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorVelocity& g) {
+        return "bark.core.world.evaluation.EvaluatorVelocity";
       });
 
   py::class_<SafetyPolygon,

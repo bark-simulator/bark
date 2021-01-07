@@ -9,7 +9,8 @@ cc_library(
     deps = [
         "//bark/commons/params:params",
         "//bark/commons/util:util",
-        "//bark/commons/distribution:distribution"
+        "//bark/commons/distribution:distribution",
+        "//bark/commons/math:math",
     ],
     visibility = ["//visibility:public"],
 )
@@ -30,6 +31,7 @@ cc_library(
         "//bark/commons/params:include",
         "//bark/commons/util:include",
         "//bark/commons/distribution:include",
+        "//bark/commons/math:include",
         "@boost//:system",
         "@boost//:smart_ptr",
         "@boost//:move",

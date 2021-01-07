@@ -26,7 +26,7 @@ from bark.core.world.map import MapInterface
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d, Line2d
 from bark.core.world.evaluation import EvaluatorGoalReached, \
-  EvaluatorCollisionEgoAgent, EvaluatorStepCount, EvaluatorPlanningTime
+  EvaluatorCollisionEgoAgent, EvaluatorStepCount, EvaluatorPlanningTime, EvaluatorVelocity
 
 
 
@@ -327,7 +327,44 @@ class EvaluationTests(unittest.TestCase):
 
     info = world.Evaluate()
     self.assertEqual(info["time"], 0.0)
-        
+
+
+  def test_velocity(self):
+    param_server = ParameterServer()
+    # Model Definition
+    behavior_model = BehaviorConstantAcceleration(param_server)
+    execution_model = ExecutionModelInterpolate(param_server)
+    dynamic_model = SingleTrackModel(param_server)
+
+    # Agent Definition
+    agent_2d_shape = CarLimousine()
+    init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
+    agent_params = param_server.AddChild("agent1")
+    goal_polygon = Polygon2d([0, 0, 0],
+                             [Point2d(-4,-4),
+                              Point2d(-4,4),
+                              Point2d(4,4),
+                              Point2d(4,-4)])
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
+
+    agent = Agent(init_state,
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                GoalDefinitionPolygon(goal_polygon),
+                  None)
+
+    world = World(param_server)
+    world.AddAgent(agent)
+    evaluator = EvaluatorVelocity(agent.id)
+    world.AddEvaluator("vel", evaluator)
+
+
+    info = world.Evaluate()
+    self.assertEqual(info["vel"], init_state[4])
+
 if __name__ == '__main__':
   unittest.main()
 

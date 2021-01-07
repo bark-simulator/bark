@@ -128,6 +128,25 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_velocity",
+    hdrs = [
+        "evaluator_velocity.hpp"
+    ],
+    srcs = [
+        "evaluator_velocity.cpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
+        "//bark/geometry",
+        "//bark/commons:commons",
+        "//bark/models/dynamic:dynamic",
+        "@boost//:geometry",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "commons",
     hdrs = [
         "commons.hpp"
@@ -168,6 +187,7 @@ cc_library(
         ":evaluator_behavior_expired",
         ":evaluator_distance_to_goal",
         ":evaluator_planning_time",
+        ":evaluator_velocity",
         ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
     ] + select({
