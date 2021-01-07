@@ -27,8 +27,11 @@ class EvaluatorVelocity : public BaseEvaluator {
   explicit EvaluatorVelocity(const AgentId& agent_id)
       : agent_id_(agent_id), vel_vec_() {}
   virtual ~EvaluatorVelocity() {}
+  double CalculateMeanVelocity(
+      const std::shared_ptr<const bark::world::objects::Agent>& agent);
   virtual EvaluationReturn Evaluate(const world::World& world);
   virtual EvaluationReturn Evaluate(const world::ObservedWorld& observed_world);
+
  private:
   AgentId agent_id_;
   std::vector<double> vel_vec_;

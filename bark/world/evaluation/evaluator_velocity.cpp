@@ -19,8 +19,21 @@ using bark::models::dynamic::StateDefinition;
 
 EvaluationReturn EvaluatorVelocity::Evaluate(const world::World& world) {
   auto ego_agent = world.GetAgent(this->agent_id_);
-  if (ego_agent) {
-    double vel = ego_agent->GetCurrentState()[StateDefinition::VEL_POSITION];
+  double mean = CalculateMeanVelocity(ego_agent);
+  return mean;
+}
+
+EvaluationReturn EvaluatorVelocity::Evaluate(
+    const world::ObservedWorld& observed_world) {
+  const auto& ego_agent = observed_world.GetEgoAgent();
+  double mean = CalculateMeanVelocity(ego_agent);
+  return mean;
+}
+
+double EvaluatorVelocity::CalculateMeanVelocity(
+    const std::shared_ptr<const bark::world::objects::Agent>& agent) {
+  if (agent) {
+    double vel = agent->GetCurrentState()[StateDefinition::VEL_POSITION];
     vel_vec_.push_back(vel);
   }
   double mean;
@@ -29,14 +42,6 @@ EvaluationReturn EvaluatorVelocity::Evaluate(const world::World& world) {
   } else {
     mean = nan("");
   }
-  return mean;
-}
-
-EvaluationReturn EvaluatorVelocity::Evaluate(
-    const world::ObservedWorld& observed_world) {
-  double vel = observed_world.CurrentEgoState()[StateDefinition::VEL_POSITION];
-  vel_vec_.push_back(vel);
-  double mean = bark::commons::math::CalculateMean(vel_vec_);
   return mean;
 }
 
