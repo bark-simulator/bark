@@ -138,7 +138,24 @@ cc_library(
     deps = [
         "//bark/world/evaluation:base_evaluator",
         "//bark/world:world",
-        "//bark/geometry",
+        "//bark/commons:commons",
+        "//bark/models/dynamic:dynamic",
+        "@boost//:geometry",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "evaluator_gap_distance_front",
+    hdrs = [
+        "evaluator_gap_distance_front.hpp"
+    ],
+    srcs = [
+        "evaluator_gap_distance_front.cpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
         "//bark/commons:commons",
         "//bark/models/dynamic:dynamic",
         "@boost//:geometry",
@@ -188,6 +205,7 @@ cc_library(
         ":evaluator_distance_to_goal",
         ":evaluator_planning_time",
         ":evaluator_velocity",
+        ":evaluator_gap_distance_front",
         ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
     ] + select({
