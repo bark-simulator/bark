@@ -14,7 +14,7 @@ cc_library(
     ],
     deps = [
 	    "@com_github_eigen_eigen//:eigen",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
         "@com_github_spline//:spline",
         "//bark/commons:commons",
     ],
@@ -27,7 +27,7 @@ cc_library(
     hdrs=glob(["*.hpp"]),
     deps = [
 	    "@com_github_eigen_eigen//:eigen",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
         "@com_github_spline//:spline",
     ],
     visibility = ["//visibility:public"],

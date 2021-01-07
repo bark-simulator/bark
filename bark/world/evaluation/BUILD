@@ -6,7 +6,7 @@ cc_library(
     deps = [
         "//bark/geometry",
         "//bark/commons:commons",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
     ],
     visibility = ["//visibility:public"],
 )
@@ -20,7 +20,7 @@ cc_library(
     deps = [
         "//bark/world:world",
         ":base_evaluator",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
 
     ],
     visibility = ["//visibility:public"],
@@ -34,7 +34,7 @@ cc_library(
     deps = [
         "//bark/world:world",
         ":base_evaluator",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
 
     ],
     visibility = ["//visibility:public"],
@@ -49,7 +49,7 @@ cc_library(
         "//bark/world:world",
         "//bark/models/behavior:behavior",
         ":base_evaluator",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
 
     ],
     visibility = ["//visibility:public"],
@@ -67,7 +67,7 @@ cc_library(
         "//bark/world/evaluation:base_evaluator",
         "//bark/geometry",
         "//bark/commons:commons",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
         "//bark/world:world",
 
     ],
@@ -88,7 +88,7 @@ cc_library(
         "//bark/geometry",
         "//bark/commons:commons",
         "//bark/models/dynamic:dynamic",
-        "@boost//:geometry"
+        "@boost_bark//:geometry"
     ],
     visibility = ["//visibility:public"],
 )
@@ -103,7 +103,7 @@ cc_library(
         "//bark/geometry",
         "//bark/commons:commons",
         "//bark/models/dynamic:dynamic",
-        "@boost//:geometry"
+        "@boost_bark//:geometry"
     ],
     visibility = ["//visibility:public"],
 )
@@ -130,7 +130,7 @@ cc_library(
     deps = [
         "//bark/world/evaluation:base_evaluator",
         "//bark/geometry",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
         "//bark/world:world",
 
     ],

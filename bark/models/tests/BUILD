@@ -11,7 +11,7 @@ cc_test(
         "//bark/models/dynamic:dynamic",
         "//bark/commons/transformation:frenet",
         "@gtest//:gtest_main",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
     ],
 )
 

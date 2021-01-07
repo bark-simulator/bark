@@ -9,7 +9,7 @@ cc_library(
     deps = [
         "//bark/geometry",
         "//bark/world/opendrive",
-        "@boost//:geometry",
+        "@boost_bark//:geometry",
         ":roadgraph",
         ":road_corridor",
 
@@ -29,8 +29,8 @@ cc_library(
     deps = [
         "//bark/geometry",
         "//bark/world/opendrive",
-        "@boost//:geometry",
-        "@boost//:graph"
+        "@boost_bark//:geometry",
+        "@boost_bark//:graph"
     ],
     visibility = ["//visibility:public"],
 )
@@ -104,7 +104,7 @@ cc_library(
     hdrs=glob(["**/*.hpp"]),
     visibility = ["//visibility:public"],
     deps = [
-        "@boost//:geometry",
-        "@boost//:graph",
+        "@boost_bark//:geometry",
+        "@boost_bark//:graph",
     ]
 )

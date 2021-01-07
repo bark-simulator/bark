@@ -7,11 +7,11 @@ cc_library(
         "segfault_handler.hpp"
     ],
     deps = [
-        "@boost//:system",
-        "@boost//:smart_ptr",
-        "@boost//:move",
-        "@boost//:type_traits",
-#        "@boost//:stacktrace",
+        "@boost_bark//:system",
+        "@boost_bark//:smart_ptr",
+        "@boost_bark//:move",
+        "@boost_bark//:type_traits",
+#        "@boost_bark//:stacktrace",
         "@com_github_google_glog//:glog"
     ],
     visibility = ["//visibility:public"],
@@ -24,12 +24,12 @@ cc_library(
         "operators.hpp"
     ],
     deps = [
-        "@boost//:system",
-        "@boost//:smart_ptr",
-        "@boost//:move",
-        "@boost//:type_traits",
-        "@boost//:stacktrace",
-        "@boost//:math",
+        "@boost_bark//:system",
+        "@boost_bark//:smart_ptr",
+        "@boost_bark//:move",
+        "@boost_bark//:type_traits",
+        "@boost_bark//:stacktrace",
+        "@boost_bark//:math",
         "@com_github_google_glog//:glog"
     ],
     visibility = ["//visibility:public"],

@@ -11,7 +11,7 @@ cc_library(
     hdrs=["plan.hpp"],
     srcs=["plan.cpp"],
     deps= ["//bark/python_wrapper:common",
-           "@boost//:geometry"] + 
+           "@boost_bark//:geometry"] + 
         select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark_mcts/python_wrapper:planner_uct"], "//conditions:default": []}) + 
         select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["@planner_rules_mcts//python:planner_rules_mcts"], "//conditions:default": []}) +
         select({"//bark/models/behavior/plan:_planner_miqp" : ["@planner_miqp//python/bindings:planner_miqp"], "//conditions:default": []}) +

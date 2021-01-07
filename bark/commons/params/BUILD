@@ -15,7 +15,7 @@ cc_library(
     deps = [
         "//bark/commons/util:util",
         "//bark/commons/distribution:distribution",
-        "@boost//:geometry", # add since sometimes "boost/variant.hpp" not found
+        "@boost_bark//:geometry", # add since sometimes "boost/variant.hpp" not found
     ]
 )
 
