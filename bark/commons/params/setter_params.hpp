@@ -10,6 +10,7 @@
 #define BARK_COMMONS_PARAMS_SETTER_PARAMS_HPP_
 
 #include <string>
+#include <memory>
 #include <unordered_map>
 #include "bark/commons/params/params.hpp"
 #include "bark/commons/util/util.hpp"
