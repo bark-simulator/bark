@@ -60,11 +60,13 @@ class MultivariateDistribution : public Distribution {
 };
 
 inline RandomVariate MultivariateDistribution::Sample() {
-  Eigen::VectorXd eigen_sample =
-      mean_ + transform_ * Eigen::VectorXd{mean_.size()}.unaryExpr(
-                               [&](auto x) { return dist_(generator_); });
-  RandomVariate sample(eigen_sample.data(),
-                       eigen_sample.data() + eigen_sample.size());
+  // TODO HACK
+  // Eigen::VectorXd eigen_sample =
+  //     mean_ + transform_ * Eigen::VectorXd{mean_.size()}.unaryExpr(
+  //                              [&](auto x) { return dist_(generator_); });
+  // RandomVariate sample(eigen_sample.data(),
+  //                      eigen_sample.data() + eigen_sample.size());
+  RandomVariate sample;                     
   return sample;
 }
 
