@@ -30,6 +30,7 @@ class EvaluatorGapDistanceFront : public BaseEvaluator {
   explicit EvaluatorGapDistanceFront(const AgentId& agent_id)
       : agent_id_(agent_id), gap_vec_() {}
   virtual ~EvaluatorGapDistanceFront() {}
+  double GetMeanGapFromVector() const;
   virtual EvaluationReturn Evaluate(const world::World& world);
   virtual EvaluationReturn Evaluate(const world::ObservedWorld& observed_world);
 

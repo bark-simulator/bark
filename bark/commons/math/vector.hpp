@@ -15,11 +15,12 @@
 namespace bark {
 namespace commons {
 namespace math {
-inline double CalculateMean(const std::vector<double>& v) {
-  size_t n = v.size(); 
-  double mean = 0.0;
-  if ( n != 0) {
-      mean = std::accumulate( v.begin(), v.end(), 0.0) / n; 
+template <typename T>
+inline T CalculateMean(const std::vector<T>& v) {
+  size_t n = v.size();
+  T mean = 0.0;
+  if (n != 0) {
+    mean = std::accumulate(v.begin(), v.end(), 0.0) / n;
   }
   return mean;
 }

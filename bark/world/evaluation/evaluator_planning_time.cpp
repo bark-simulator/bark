@@ -7,8 +7,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/evaluation/evaluator_planning_time.hpp"
-#include "bark/commons/math/vector.hpp"
 #include <numeric>
+#include "bark/commons/math/vector.hpp"
 
 namespace bark {
 namespace world {
@@ -17,15 +17,19 @@ namespace evaluation {
 using bark::models::behavior::BehaviorModelPtr;
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(const world::World& world) {
-  auto ego_agent = world.GetAgent(this->agent_id_);
-  double planning_time = nan("");
-  if (ego_agent) {
-    auto model = ego_agent->GetBehaviorModel();
-    planning_time = model->GetLastSolutionTime();
+  auto cloned_world = world.Clone();
+  if (world.GetAgent(agent_id_)) {
+    return Evaluate(cloned_world->Observe({agent_id_})[0]);
+  } else {
+    double mean;
+    if (!planning_times_.empty()) {
+      mean = bark::commons::math::CalculateMean(planning_times_);
+    } else {
+      // if empty, return nan to indicate that it could not be calculated
+      mean = nan("");
+    }
+    return mean;
   }
-  planning_times_.push_back(planning_time);
-  double mean = bark::commons::math::CalculateMean(planning_times_);
-  return mean;
 }
 
 EvaluationReturn EvaluatorPlanningTime::Evaluate(
@@ -37,7 +41,6 @@ EvaluationReturn EvaluatorPlanningTime::Evaluate(
   double mean = bark::commons::math::CalculateMean(planning_times_);
   return mean;
 }
-
 
 }  // namespace evaluation
 }  // namespace world

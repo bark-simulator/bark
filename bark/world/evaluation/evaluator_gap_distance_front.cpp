@@ -18,19 +18,25 @@ namespace evaluation {
 using bark::commons::transformation::FrenetPosition;
 using world::AgentFrenetPair;
 
+double EvaluatorGapDistanceFront::GetMeanGapFromVector() const {
+  double mean;
+  if (!gap_vec_.empty()) {
+    mean = bark::commons::math::CalculateMean(gap_vec_);
+  } else {
+    // if empty, return nan to indicate that it could not be calculated
+    mean = nan("");
+  }
+  return mean;
+}
+
 EvaluationReturn EvaluatorGapDistanceFront::Evaluate(
     const world::World& world) {
   auto cloned_world = world.Clone();
   if (world.GetAgent(agent_id_)) {
     return Evaluate(cloned_world->Observe({agent_id_})[0]);
   } else {
-    double mean;
-    if (!gap_vec_.empty()) {
-      // still return mean value
-      mean = bark::commons::math::CalculateMean(gap_vec_);
-    } else {
-      mean = nan("");
-    }
+    // if no agent to observe (may have just been removed),
+    double mean = GetMeanGapFromVector();
     return mean;
   }
 }
@@ -48,12 +54,7 @@ EvaluationReturn EvaluatorGapDistanceFront::Evaluate(
       gap_vec_.push_back(gap);
     }
   }
-  double mean;
-  if (!gap_vec_.empty()) {
-    mean = bark::commons::math::CalculateMean(gap_vec_);
-  } else {
-    mean = nan("");
-  }
+  double mean = GetMeanGapFromVector();
   return mean;
 }
 
