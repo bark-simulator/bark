@@ -27,8 +27,10 @@ typedef boost::variant<bool, double, int, std::string, ListListFloat, ListFloat>
 typedef std::pair<std::string, Parameter> ParamPair;
 
 inline std::ostream& operator<<(std::ostream& os, const Parameter& p) {
-  return boost::apply_visitor(
-      [&os](const auto& p) -> std::ostream& { return os << p; }, p);
+  // TODO HACK!!!
+  return os;
+  // return boost::apply_visitor(
+  //     [&os](const auto& p) -> std::ostream& { return os << p; }, p);
 }
 
 typedef std::vector<ParamPair> CondensedParamList;
