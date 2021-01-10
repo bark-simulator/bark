@@ -71,7 +71,6 @@ void World::PlanAgents(const double& delta_time) {
 
 void World::Execute(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
-  using models::dynamic::StateDefinition::TIME_POSITION;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_) &&
         agent.second->GetBehaviorStatus() == BehaviorStatus::VALID &&
@@ -80,7 +79,7 @@ void World::Execute(const double& delta_time) {
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
-      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) <
+      BARK_EXPECT_TRUE(fabs(agent_state(models::dynamic::StateDefinition::TIME_POSITION) - inc_world_time) <
                        0.01);
     }
   }
