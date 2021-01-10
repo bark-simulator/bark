@@ -67,7 +67,7 @@ bool GoalDefinitionStateLimitsFrenet::AtGoal(
   const std::tuple<Point2d, double, uint> nearest_point =
       GetNearestPointAndS(center_line_, agent_pos);
   const auto tangent_angle =
-      GetTangentAngleAtS(center_line_, std::get<double>(nearest_point));
+      GetTangentAngleAtS(center_line_, std::get<1>(nearest_point));
   const auto angle_diff = SignedAngleDiff(tangent_angle, agent_angle);
 
   if (angle_diff <= max_orientation_differences_.first &&
