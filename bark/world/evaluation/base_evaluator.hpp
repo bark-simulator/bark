@@ -10,7 +10,7 @@
 #define BARK_WORLD_EVALUATION_BASE_EVALUATOR_HPP_
 
 #include <boost/variant.hpp>
-#include <optional>
+//#include <optional>
 #include <memory>
 #include "bark/commons/commons.hpp"
 
@@ -20,7 +20,8 @@ class World;
 class ObservedWorld;
 namespace evaluation {
 
-typedef boost::variant<double, bool, std::optional<bool>, std::string, int> EvaluationReturn;
+//typedef boost::variant<double, bool, std::optional<bool>, std::string, int> EvaluationReturn;
+typedef bool EvaluationReturn;
 
 class BaseEvaluator {
  public:
