@@ -14,8 +14,7 @@ cc_library(
         "//bark/geometry",
         "//bark/models/dynamic",
         "//bark/world:world",
-        "@boost_bark//:geometry",
-        "@boost_bark//:filesystem",
+        "@boost_bark",
     ] + select({"//bark/world/evaluation/rss:_rss" : ["@ad_rss_lib//:ad_rss", "@ad_rss_lib//:ad_rss_map_integration", "@map_support//:ad_physics","@spdlog" ], "//conditions:default": []}),
     copts = select({
         "//bark/world/evaluation/rss:_rss": ["-D RSS"],

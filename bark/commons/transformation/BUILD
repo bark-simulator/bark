@@ -11,7 +11,7 @@ cc_library(
     deps = [
         "//bark/geometry",
         "//bark/models/dynamic",
-        "@boost_bark//:geometry",
+        "@boost_bark",
     ],
     visibility = ["//visibility:public"],
 )

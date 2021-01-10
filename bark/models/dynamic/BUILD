@@ -9,7 +9,7 @@ cc_library(
     deps = [
         "//bark/commons:commons",
 	    "@com_github_eigen_eigen//:eigen",
-        "@boost_bark//:geometry",
+        "@boost_bark",
     ],
     visibility = ["//visibility:public"]
 )

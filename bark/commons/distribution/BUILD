@@ -11,9 +11,7 @@ cc_library(
     deps = [
         "@com_github_eigen_eigen//:eigen",
         "//bark/commons:base_type",
-        "@boost_bark//:random",
-        "@boost_bark//:math",
-        "@boost_bark//:multiprecision"
+        "@boost_bark",
     ]
 )
 
