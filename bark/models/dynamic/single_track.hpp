@@ -131,17 +131,14 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   //
   // Author: Luis Gressenbuch
   using bark::commons::transformation::FrenetState;
-  using StateDefinition::THETA_POSITION;
-  using StateDefinition::X_POSITION;
-  using StateDefinition::Y_POSITION;
 
   const double l = model->GetWheelBase();
 
   // Calculating State of Front Axle
   State state_front(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   state_front = state;
-  state_front(X_POSITION) = state(X_POSITION) + l * cos(state(THETA_POSITION));
-  state_front(Y_POSITION) = state(Y_POSITION) + l * sin(state(THETA_POSITION));
+  state_front(StateDefinition::X_POSITION) = state(StateDefinition::X_POSITION) + l * cos(state(StateDefinition::THETA_POSITION));
+  state_front(StateDefinition::Y_POSITION) = state(StateDefinition::Y_POSITION) + l * sin(state(StateDefinition::THETA_POSITION));
 
   FrenetState f_state = FrenetState(state_front, ref_line);
   double vel = state(StateDefinition::VEL_POSITION);
