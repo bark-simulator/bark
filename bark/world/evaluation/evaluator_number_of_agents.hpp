@@ -32,7 +32,7 @@ class EvaluatorNumberOfAgents : public BaseEvaluator {
 
  private:
   AgentId agent_id_;
-  std::vector<AgentId> agent_ids_;
+  std::set<AgentId> agent_ids_;
 };
 
 }  // namespace evaluation
