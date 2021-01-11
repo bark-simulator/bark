@@ -457,8 +457,14 @@ class EvaluationTests(unittest.TestCase):
     self.assertEqual(info["num_agents"], len(world.agents))
 
     world.RemoveAgentById(agent2.id)
+    info = world.Evaluate()
     # evaluator should still hold two
     self.assertNotEqual(info["num_agents"], len(world.agents))
+    self.assertEqual(info["num_agents"], 2)
+
+    world.Step(0.1)
+    info = world.Evaluate()
+    # evaluator should still hold two
     self.assertEqual(info["num_agents"], 2)
 
 if __name__ == '__main__':

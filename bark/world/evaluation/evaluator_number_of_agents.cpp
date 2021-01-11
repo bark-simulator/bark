@@ -30,7 +30,11 @@ EvaluationReturn EvaluatorNumberOfAgents::Evaluate(
   for (auto it = agents.begin(); it != agents.end(); ++it) {
     agent_ids_.push_back(it->first);
   }
-  auto last = std::unique(agent_ids_.begin(), agent_ids_.end());
+
+  std::sort(agent_ids_.begin(), agent_ids_.end());
+  agent_ids_.erase(std::unique(agent_ids_.begin(), agent_ids_.end()),
+                   agent_ids_.end());
+
   return static_cast<int>(agent_ids_.size());
 }
 
