@@ -14,10 +14,10 @@ using bark::world::AgentId;
 
 bark::world::evaluation::PrecedingAgentLabelFunction::
     PrecedingAgentLabelFunction(const std::string& string,
-                                bool use_frac_lateral_offset_param,
+                                bool use_frac_param_from_world,
                                 double frac_lateral_offset)
     : MultiAgentLabelFunction(string),
-      use_frac_lateral_offset_param_(use_frac_lateral_offset_param),
+      use_frac_param_from_world_(use_frac_param_from_world),
       frac_lateral_offset_(frac_lateral_offset) {}
 
 bool bark::world::evaluation::PrecedingAgentLabelFunction::EvaluateAgent(
@@ -29,10 +29,10 @@ bool bark::world::evaluation::PrecedingAgentLabelFunction::EvaluateAgent(
   if (lane_corridor) {
     AgentId id = observed_world.GetEgoAgentId();
     double frac;
-    if (use_frac_lateral_offset_param_) {
-      frac = frac_lateral_offset_;
-    } else {
+    if (use_frac_param_from_world_) {
       frac = observed_world.GetFracLateralOffset();
+    } else {
+      frac = frac_lateral_offset_;
     }
     auto front_rear_agents =
         observed_world.GetAgentFrontRearForId(id, lane_corridor, frac);

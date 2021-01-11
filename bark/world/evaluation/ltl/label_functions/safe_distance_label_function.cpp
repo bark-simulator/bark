@@ -17,13 +17,13 @@ using bark::models::dynamic::StateDefinition;
 
 SafeDistanceLabelFunction::SafeDistanceLabelFunction(
     const std::string& label_str, bool to_rear, double delta, double a_e,
-    double a_o, bool use_frac_lateral_offset_param, double frac_lateral_offset)
+    double a_o, bool use_frac_param_from_world, double frac_lateral_offset)
     : BaseLabelFunction(label_str),
       to_rear_(to_rear),
       delta_(delta),
       a_e_(a_e),
       a_o_(a_o),
-      use_frac_lateral_offset_param_(use_frac_lateral_offset_param),
+      use_frac_param_from_world_(use_frac_param_from_world),
       frac_lateral_offset_(frac_lateral_offset) {}
 
 LabelMap SafeDistanceLabelFunction::Evaluate(
@@ -32,10 +32,10 @@ LabelMap SafeDistanceLabelFunction::Evaluate(
   auto lane_corr =
       ego->GetRoadCorridor()->GetNearestLaneCorridor(ego->GetCurrentPosition());
   double frac;
-  if (use_frac_lateral_offset_param_) {
-    frac = frac_lateral_offset_;
-  } else {
+  if (use_frac_param_from_world_) {
     frac = observed_world.GetFracLateralOffset();
+  } else {
+    frac = frac_lateral_offset_;
   }
   auto fr_agents = observed_world.GetAgentFrontRearForId(
         ego->GetAgentId(), lane_corr, frac);
