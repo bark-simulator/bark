@@ -183,11 +183,10 @@ void World::RemoveInvalidAgents() {
     }
   }
 
-  for (auto it = agents_.cbegin(); it != agents_.cend(); ) {
+  for (auto it = agents_.cbegin(); it != agents_.cend();) {
     if (it->second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
       agents_.erase(it++);
-    }
-    else {
+    } else {
       ++it;
     }
   }
@@ -237,7 +236,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
 }
 
 FrontRearAgents World::GetAgentFrontRearForId(
-    const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
+    const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
+    double frac_lateral_offset) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 
@@ -273,7 +273,7 @@ FrontRearAgents World::GetAgentFrontRearForId(
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
     double width =
         lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
-    if (std::abs(frenet_other.lat) > frac_lateral_offset_ * width) {
+    if (std::abs(frenet_other.lat) > frac_lateral_offset * width) {
       // agent seems to be not really in same lane
       continue;
     }
