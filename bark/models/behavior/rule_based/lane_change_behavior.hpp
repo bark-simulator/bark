@@ -31,10 +31,8 @@ using bark::world::map::LaneCorridorPtr;
 
 enum LaneChangeDecision {
   KeepLane = 0,
-  ChangeLeft = 1,
-  ChangeRight = 2,
-  Undefined = 3,
-  ChangeLane = 4
+  Undefined = 1,
+  ChangeLane = 2
 };
 
 enum RuleBasedState { Idle = 0, IsChanging = 1 };

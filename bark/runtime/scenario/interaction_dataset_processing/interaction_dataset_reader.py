@@ -10,7 +10,7 @@ import logging
 import os
 
 from bark.core.world.agent import Agent
-from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
+from bark.core.models.behavior import BehaviorStaticTrajectory
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.core.geometry import Point2d, Polygon2d, NormToPI
