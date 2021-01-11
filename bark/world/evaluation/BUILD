@@ -164,6 +164,24 @@ cc_library(
 )
 
 cc_library(
+    name = "evaluator_number_of_agents",
+    hdrs = [
+        "evaluator_number_of_agents.hpp"
+    ],
+    srcs = [
+        "evaluator_number_of_agents.cpp"
+    ],
+    deps = [
+        "//bark/world/evaluation:base_evaluator",
+        "//bark/world:world",
+        "//bark/commons:commons",
+        "//bark/models/dynamic:dynamic",
+        "@boost//:geometry",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name = "commons",
     hdrs = [
         "commons.hpp"
@@ -206,6 +224,7 @@ cc_library(
         ":evaluator_planning_time",
         ":evaluator_velocity",
         ":evaluator_gap_distance_front",
+        ":evaluator_number_of_agents",
         ":commons",
         "//bark/world/evaluation/ltl:evaluator_ltl",
     ] + select({

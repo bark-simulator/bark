@@ -17,6 +17,7 @@
 #include "bark/world/evaluation/evaluator_planning_time.hpp"
 #include "bark/world/evaluation/evaluator_velocity.hpp"
 #include "bark/world/evaluation/evaluator_gap_distance_front.hpp"
+#include "bark/world/evaluation/evaluator_number_of_agents.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -107,6 +108,13 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorGapDistanceFront& g) {
         return "bark.core.world.evaluation.EvaluatorGapDistanceFront";
+      });
+  py::class_<EvaluatorNumberOfAgents, BaseEvaluator,
+             std::shared_ptr<EvaluatorNumberOfAgents>>(m, "EvaluatorNumberOfAgents")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorNumberOfAgents& g) {
+        return "bark.core.world.evaluation.EvaluatorNumberOfAgents";
       });
 
   py::class_<SafetyPolygon,
