@@ -147,8 +147,13 @@ bool Agent::InsideRoadCorridor() const {
  * @return true if agent is valid
  */
 bool Agent::IsValidAtTime(const double& world_time) const {
-  return isgreaterequal(world_time + std::numeric_limits<double>::epsilon(),
-                        first_valid_timestamp_);
+  if(world_time + std::numeric_limits<double>::epsilon() >= first_valid_timestamp_) {
+    return true;
+  } else {
+    return false;
+  }
+  // return isgreaterequal(world_time + std::numeric_limits<double>::epsilon(),
+  //                       first_valid_timestamp_);
 }
 
 std::shared_ptr<Object> Agent::Clone() const {
