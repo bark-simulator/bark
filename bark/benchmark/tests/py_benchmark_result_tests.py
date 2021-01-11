@@ -115,6 +115,8 @@ class DatabaseRunnerTests(unittest.TestCase):
         for conf_idx in loaded_configs_idx:
             self.assertEqual(br_loaded.get_history(conf_idx), histories[conf_idx])
 
+    def test_extend_from_file(self):
+        
 
 if __name__ == '__main__':
     unittest.main()

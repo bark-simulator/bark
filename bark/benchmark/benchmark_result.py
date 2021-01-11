@@ -99,7 +99,10 @@ class BenchmarkResult:
             self.__benchmark_configs, config_idx)
 
     def get_benchmark_config_indices(self):
-        return [bc.config_idx for bc in self.__benchmark_configs]
+        if self.__benchmark_configs:
+          return [bc.config_idx for bc in self.__benchmark_configs]
+        else:
+          return []
 
     def get_history(self, config_idx):
         return self.__histories[config_idx]
@@ -286,7 +289,23 @@ class BenchmarkResult:
         logging.info("Saved BenchmarkResult to {}".format(
             os.path.abspath(filename)))
 
-    def extend(self, benchmark_result):
+    @staticmethod
+    def move_files(zipfile_from, zipfile_to, filetype):
+        with zipfile.ZipFile(zipfile_from, 'r') as zfh_from:
+          with zipfile.ZipFile(zipfile_to, 'w') as zfh_to:
+            from_file_list = [filename for filename in zfh_from.namelist() \
+                        if filetype in filename]
+            to_file_list = [filename for filename in zfh_from.namelist() \
+                        if filetype in filename]
+            for filename in from_file_list:
+              if filename in to_file_list:
+                raise ValueError("File {} exists in {}".format(filename, zipfile_to))
+              with zfh_from.open(filename) as fh:
+                zfh_to.writestr(filename, fh.read())
+
+    def extend(self, benchmark_result=None, filename = None):
+        if filename:
+          benchmark_result = BenchmarkResult.load(filename=filename)
         new_idxs = benchmark_result.get_benchmark_config_indices()
         this_idxs = self.get_benchmark_config_indices()
         overlap = set(new_idxs) & set(this_idxs)
@@ -303,3 +322,12 @@ class BenchmarkResult:
             if isinstance(other_data_frame, pd.DataFrame):
                 self.__data_frame = other_data_frame
         self.__histories.update(benchmark_result.get_histories())
+
+        # if histories or configs are not loaded merge directly at the file level
+        if filename:
+          if not self.get_file_name():
+            raise ValueError("Extending with filename requires filename for extended result.")
+          BenchmarkResult.move_files(benchmark_result.get_file_name(), \
+                                    self.get_file_name(), "configs")
+          BenchmarkResult.move_files(benchmark_result.get_file_name(), \
+                                    self.get_file_name(), "histories")
