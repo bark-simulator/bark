@@ -10,11 +10,10 @@ import logging
 import re
 import zipfile
 import math
+import subprocess
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
-
-
 
 
 class BehaviorConfig:
@@ -79,7 +78,8 @@ class BenchmarkResult:
         self.__file_name = file_name or None
 
     def get_data_frame(self):
-        if not isinstance(self.__data_frame, pd.DataFrame):
+        if not isinstance(self.__data_frame, pd.DataFrame) or \
+          len(self.__data_frame.index) < len(self.__result_dict):
             self.__data_frame = pd.DataFrame(self.__result_dict)
         return self.__data_frame
 
@@ -252,8 +252,18 @@ class BenchmarkResult:
             zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
                                                 protocol=pickle.HIGHEST_PROTOCOL))
 
+    @staticmethod
+    def remove_result_file_from_dumped(filename):
+        result_file_name = "benchmark.results"
+        zip_file_handle = zipfile.ZipFile(filename)
+        if result_file_name in zip_file_handle.namelist():
+          zip_file_handle.close()
+          cmd=['zip', '-Ar','-d', os.path.abspath(filename), result_file_name]
+          subprocess.check_call(cmd)
+
     def _dump_results(self, zip_file_handle):
-        zip_file_handle.writestr("benchmark.results", \
+        result_file_name = "benchmark.results"
+        zip_file_handle.writestr(result_file_name, \
             pickle.dumps(self.get_data_frame(), protocol=pickle.HIGHEST_PROTOCOL))
 
     def _dump_histories(self, zip_file_handle, max_bytes_per_file):
@@ -279,8 +289,10 @@ class BenchmarkResult:
           logging.error("BadZipeFile {}".format(filename))
           return None
 
-    def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000):
-        with zipfile.ZipFile(filename, 'w') as result_zip_file:
+    def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000, append=False):
+        if append:
+          BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
+        with zipfile.ZipFile(filename, 'a' if append else 'w') as result_zip_file:
             self._dump_results(result_zip_file)
             if dump_configs:
                 self._dump_benchmark_configs(result_zip_file, max_mb_per_file*10**6)
@@ -288,18 +300,18 @@ class BenchmarkResult:
                 self._dump_histories(result_zip_file, max_mb_per_file*10**6)
         logging.info("Saved BenchmarkResult to {}".format(
             os.path.abspath(filename)))
+        self.__file_name = filename
 
     @staticmethod
-    def move_files(zipfile_from, zipfile_to, filetype):
-        with zipfile.ZipFile(zipfile_from, 'r') as zfh_from:
-          with zipfile.ZipFile(zipfile_to, 'w') as zfh_to:
+    def move_files(zfh_from, zfh_to, filetype):
+
             from_file_list = [filename for filename in zfh_from.namelist() \
                         if filetype in filename]
-            to_file_list = [filename for filename in zfh_from.namelist() \
+            to_file_list = [filename for filename in zfh_to.namelist() \
                         if filetype in filename]
             for filename in from_file_list:
               if filename in to_file_list:
-                raise ValueError("File {} exists in {}".format(filename, zipfile_to))
+                raise ValueError("File {} exists in zip-archiv".format(filename))
               with zfh_from.open(filename) as fh:
                 zfh_to.writestr(filename, fh.read())
 
@@ -325,9 +337,12 @@ class BenchmarkResult:
 
         # if histories or configs are not loaded merge directly at the file level
         if filename:
+          BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
+          self.dump(self.get_file_name(), append=True, \
+              dump_histories=True, dump_configs=True)
           if not self.get_file_name():
             raise ValueError("Extending with filename requires filename for extended result.")
-          BenchmarkResult.move_files(benchmark_result.get_file_name(), \
-                                    self.get_file_name(), "configs")
-          BenchmarkResult.move_files(benchmark_result.get_file_name(), \
-                                    self.get_file_name(), "histories")
+          with zipfile.ZipFile(filename, 'r') as zfh_from:
+            with zipfile.ZipFile(self.get_file_name(), 'a') as zfh_to:
+              BenchmarkResult.move_files(zfh_from, zfh_to, "configs")
+              BenchmarkResult.move_files(zfh_from, zfh_to, "histories")
