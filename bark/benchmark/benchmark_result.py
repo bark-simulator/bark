@@ -142,6 +142,8 @@ class BenchmarkResult:
           return BenchmarkResult.load_pickle(filename)
         else:
           rst = BenchmarkResult.load_results(filename)
+          if not rst:
+            return None
           if load_configs:
               rst.load_benchmark_configs()
           if load_histories:
@@ -231,7 +233,10 @@ class BenchmarkResult:
                                       protocol=pickle.HIGHEST_PROTOCOL))
         num_files = math.ceil(whole_list_byte_size/max_bytes_per_file)
         num_configs_per_file = math.floor(len(pickable_iterable)/num_files)
-        config_idx_list = list(range(0, len(pickable_iterable)))
+        if isinstance(pickable_iterable, list):
+          config_idx_list = list(range(0, len(pickable_iterable)))
+        elif isinstance(pickable_iterable, dict):
+          config_idx_list = list(pickable_iterable.keys())
         config_idx_splits = [config_idx_list[i:i + num_configs_per_file] \
                      for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:
@@ -265,10 +270,14 @@ class BenchmarkResult:
 
     @staticmethod
     def load_results(filename):
-        with zipfile.ZipFile(filename, 'r') as result_zip_file:
-            bytes = result_zip_file.read("benchmark.results")
-        data_frame = pickle.loads(bytes)
-        return BenchmarkResult(data_frame = data_frame, file_name = filename)
+        try:
+          with zipfile.ZipFile(filename, 'r') as result_zip_file:
+              bytes = result_zip_file.read("benchmark.results")
+          data_frame = pickle.loads(bytes)
+          return BenchmarkResult(data_frame = data_frame, file_name = filename)
+        except zipfile.BadZipFile:
+          logging.error("BadZipeFile {}".format(filename))
+          return None
 
     def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000):
         with zipfile.ZipFile(filename, 'w') as result_zip_file:

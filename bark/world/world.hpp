@@ -140,8 +140,19 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(
       const bark::geometry::Polygon& polygon) const;
 
-  FrontRearAgents GetAgentFrontRearForId(
-      const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
+  /**
+   * @brief Get the front and rear agent for a given agent
+   *
+   * @param agent_id agent id for which to calculate front&rear agent
+   * @param lane_corridor lane corridor in which to calculate front&rear agent
+   * @param frac_lateral_offset Lane Width Fraction for maximum allowed lateral
+   * offset in, should be larger than 0. value of 2 means that all agents
+   * intersecting with lane will be considered
+   * @return FrontRearAgents
+   */
+  FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
+                                         const LaneCorridorPtr& lane_corridor,
+                                         double frac_lateral_offset) const;
 
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }

@@ -135,6 +135,11 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       return true;
     }
   }
+
+  void RemoveDuplicates() {
+    bg::unique(Shape<bg::model::linestring<T>, T>::obj_);
+    RecomputeS();
+  }
   bool operator==(const Line_t& rhs) const {
     return bg::equals(this->obj_, rhs.obj_);
   }
@@ -527,8 +532,7 @@ inline Line AppendLinesNoIntersect(const Line& ls1, const Line& ls2) {
     lout.AppendLinestring(ls2);
   }
 
-  // Remove duplicates
-  boost::geometry::unique(lout.obj_);
+  lout.RemoveDuplicates();
 
   if (boost::geometry::intersects(lout.obj_)) {
     const double tol = 1e-6;

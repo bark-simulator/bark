@@ -10,10 +10,11 @@ import logging
 import os
 
 from bark.core.world.agent import Agent
-from bark.core.models.behavior import BehaviorStaticTrajectory, BehaviorMobil
+from bark.core.models.behavior import BehaviorStaticTrajectory
 from bark.core.models.dynamic import StateDefinition
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.core.geometry import Point2d, Polygon2d, NormToPI
+from bark.core.geometry.standard_shapes import *
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 # Interaction dataset tools
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
@@ -31,7 +32,8 @@ def BarkStateFromMotionState(state, xy_offset, time_offset=0):
     bark_state[int(StateDefinition.Y_POSITION)] = state.y + xy_offset[1]
     orientation = NormToPI(state.psi_rad)
     if (orientation > np.pi or orientation < -np.pi):
-      logging.error("Orientation in Track file is ill-defined: {}".format(state.psi_rad))
+        logging.error(
+            "Orientation in Track file is ill-defined: {}".format(state.psi_rad))
     bark_state[int(StateDefinition.THETA_POSITION)] = orientation
     bark_state[int(StateDefinition.VEL_POSITION)] = pow(
         pow(state.vx, 2) + pow(state.vy, 2), 0.5)
@@ -53,18 +55,21 @@ def TrajectoryFromTrack(track, xy_offset, start=0, end=None):
     return traj
 
 
-def ShapeFromTrack(track, wheelbase=2.7):
-    offset = wheelbase / 2.0
-    length = track.length
-    width = track.width
-    pose = [0.0, 0.0, 0.0]
-    p1 = [length / 2.0 + offset, -width / 2.0]
-    p2 = [length / 2.0 + offset, width / 2.0]
-    p3 = [-length / 2.0 + offset, width / 2.0]
-    p4 = [-length / 2.0 + offset, -width / 2.0]
-    points = [p1, p2, p3, p4, p1]
-    poly = Polygon2d(pose, points)
+def ShapeFromTrack(track):
+    r = ColRadiusFromTrack(track)
+    wb = WheelbaseFromTrack(track)
+    poly = GenerateCarRectangle(wb, r)
     return poly
+
+
+def WheelbaseFromTrack(track):
+    r = ColRadiusFromTrack(track)
+    wb = track.length - 2*r
+    return wb
+
+
+def ColRadiusFromTrack(track):
+    return track.width/2
 
 
 def InitStateFromTrack(track, xy_offset, start):
@@ -101,8 +106,13 @@ def BehaviorFromTrack(track, params, xy_offset, start, end):
 
 
 class InteractionDatasetReader:
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._track_dict_cache = {}
+
+        self._use_shape_from_track = kwargs.pop("use_shape_from_track", True)
+        self._use_rectangle_shape = kwargs.pop("use_rectangle_shape", True)
+        self._wb = kwargs.pop("wb", 2.7)  # wheelbase
+        self._crad = kwargs.pop("crad", 1.0)  # collision radius
 
     def TrackFromTrackfile(self, filename, track_id):
         if filename not in self._track_dict_cache:
@@ -117,7 +127,8 @@ class InteractionDatasetReader:
         # TODO: Filter track
         return track
 
-    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id):
+    def AgentFromTrackfile(self, track_params, param_server, scenario_track_info, agent_id, goal_def):
+
         if scenario_track_info.GetEgoTrackInfo().GetTrackId() == agent_id:
             agent_track_info = scenario_track_info.GetEgoTrackInfo()
         elif agent_id in scenario_track_info.GetOtherTrackInfos().keys():
@@ -132,9 +143,9 @@ class InteractionDatasetReader:
 
         xy_offset = scenario_track_info.GetXYOffset()
 
-        start_time = scenario_track_info.GetStartTs()
-        end_time = scenario_track_info.GetEndTs()
-
+        # create behavior model from track, we use start time of scenario here
+        start_time = scenario_track_info.GetStartTimeMs()
+        end_time = scenario_track_info.GetEndTimeMs()
         behavior_model = track_params["behavior_model"]
         model_converter = ModelJsonConversion()
         if behavior_model is None:
@@ -144,12 +155,27 @@ class InteractionDatasetReader:
         else:
             behavior = behavior_model
 
+        # retrieve initial state of valid agent
+        if agent_id in scenario_track_info._other_agents_track_infos:
+            start_time_init_state = max(
+                scenario_track_info._other_agents_track_infos[agent_id].GetStartTimeMs(), start_time)
+        else:
+            start_time_init_state = start_time
         try:
-            initial_state = InitStateFromTrack(track, xy_offset, start_time)
+            initial_state = InitStateFromTrack(
+                track, xy_offset, start_time_init_state)
         except:
             raise ValueError("Could not retrieve initial state of agent {} at t={}.".format(
-                agent_id, start_time))
+                agent_id, start_time_init_state))
 
+        if self._use_shape_from_track:
+            wb = WheelbaseFromTrack(track)
+            crad = ColRadiusFromTrack(track)
+        else:
+            wb = self._wb
+            crad = self._crad
+
+        param_server["DynamicModel"]["wheel_base"] = wb
         try:
             dynamic_model = model_converter.convert_model(
                 track_params["dynamic_model"], param_server)
@@ -163,10 +189,16 @@ class InteractionDatasetReader:
             raise ValueError("Could not retrieve execution_model")
 
         try:
-            vehicle_shape = ShapeFromTrack(
-                track, param_server["DynamicModel"]["wheel_base", "Wheel base", 2.7])
+            if self._use_rectangle_shape:
+                vehicle_shape = GenerateCarRectangle(wb, crad)
+            else:
+                vehicle_shape = GenerateCarLimousine(wb, crad)
         except:
             raise ValueError("Could not create vehicle_shape")
+
+        if goal_def is None:
+            goal_def = GoalDefinitionFromTrack(
+                track, end_time, xy_offset=xy_offset)
 
         bark_agent = Agent(
             initial_state,
@@ -175,7 +207,7 @@ class InteractionDatasetReader:
             execution_model,
             vehicle_shape,
             param_server.AddChild("agent{}".format(agent_id)),
-            GoalDefinitionFromTrack(track, end_time, xy_offset=xy_offset),
+            goal_def,
             track_params["map_interface"])
         # set agent id from track
         bark_agent.SetAgentId(track_id)

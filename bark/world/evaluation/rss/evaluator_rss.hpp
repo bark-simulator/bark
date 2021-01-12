@@ -17,12 +17,12 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/world/world.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 
 #ifdef RSS
 #include "bark/world/evaluation/rss/rss_interface.hpp"
 #endif
+#include "bark/world/evaluation/rss/safety_polygon.hpp"
 
 namespace bark {
 
@@ -36,6 +36,10 @@ using geometry::Pose;
 using geometry::standard_shapes::GenerateGoalRectangle;
 
 namespace evaluation {
+
+using geometry::Polygon;
+using objects::StateDefinition;
+using bark::geometry::SignedAngleDiff;
 
 class EvaluatorRSS : public BaseEvaluator {
  public:
@@ -76,9 +80,36 @@ class EvaluatorRSS : public BaseEvaluator {
     }
   }
 
+  // double GetSafeDistance(const ::ad::rss::state::LongitudinalRssState& rss_state) {
+
+  template<typename T>
+  double GetSafeDistance(const T& rss_state) {
+    return rss_state.rssStateInformation.safeDistance;
+  }
+
+  template<typename T>
+  double GetCurrentDistance(const T& rss_state) {
+    return rss_state.rssStateInformation.currentDistance;
+  }
+
+  void GenerateSafetyPolygons(const ObservedWorld& observed_world) {
+    safety_polygons_.clear();
+    for (auto& rss_state : rss_state_snapshot_.individualResponses) {
+      SafetyPolygon safe_poly;
+      safe_poly.lon_safety_distance = GetSafeDistance(rss_state.longitudinalState);
+      safe_poly.lat_left_safety_distance = GetSafeDistance(rss_state.lateralStateLeft);
+      safe_poly.lat_right_safety_distance = GetSafeDistance(rss_state.lateralStateRight);
+      safe_poly.agent_id = rss_state.objectId;
+      safe_poly.curr_distance = GetCurrentDistance(rss_state.longitudinalState);
+      safety_polygons_.push_back(safe_poly);
+    }
+  }
+
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
     auto result = rss_.GetSafetyReponse(observed_world);
     rss_proper_response_ = rss_.GetRSSResponse();
+    rss_state_snapshot_ = rss_.GetRSSStateSnapshot();
+    GenerateSafetyPolygons(observed_world);
     return rss_.GetSafetyReponse(observed_world);
   };
 
@@ -129,42 +160,39 @@ class EvaluatorRSS : public BaseEvaluator {
     ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
     AgentPtr agent = observed_world.GetEgoAgent();
 
-		const Point2d pos = agent->GetCurrentPosition();
+		const Point2d ego_position = agent->GetCurrentPosition();
 		const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
 
-		Polygon lane_poly = lane_corridor->GetMergedPolygon();
+		// get begin and end points on the lane
+		std::tuple<Point2d, double, uint> nearest = geometry::GetNearestPointAndS(lane_corridor.centerline, ego_position);
+		double s0 = std::get<1>(nearest);
+		double s1 = s0 + lon_distance;
 
-		// generate longitudinal distance polygon
-		auto state = agent->GetCurrentState();
-    Pose agent_pose(state(StateDefinition::X_POSITION),
-                    state(StateDefinition::Y_POSITION),
-                    state(StateDefinition::THETA_POSITION));
+		// get left and right bounds from points
+		Line left_bound_for_sd = GetLineFromSInterval(lane_corridor.left_boundary, s0, s1);
+		Line right_bound_for_sd = GetLineFromSInterval(lane_corridor.right_boundary, s0, s1);
 
-		Polygon lon_poly = GenerateGoalRectangle(2*lon_distance, 500);
+		Polygon poly(left_bound_for_sd, right_bound_for_sd);
 
-
-		std::shared_ptr<Polygon> lon_shape(std::dynamic_pointer_cast<Polygon>(lon_poly.Transform(agent_pose)));
-
-		// intersect polygons
-
-		
-
-		Polygon res_poly(std::dynamic_pointer_cast<Polygon>(lon_poly.Intersection(lane_poly)));
-
-		return res_poly;
+		return poly;
 	};
 
   ::ad::rss::state::ProperResponse GetRSSProperResponse() const {
     return rss_proper_response_;
   }
 
+  std::vector<SafetyPolygon> GetSafetyPolygons() const {
+    return safety_polygons_;
+  }
+  
   virtual ~EvaluatorRSS() {}
 
  private:
   RssInterface rss_;
-  // int32_t lon_{0}, lat_left_{0}, lat_right_{0};
-  std::vector<uint64_t> dangerous_objects_{};
   ::ad::rss::state::ProperResponse rss_proper_response_;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
+  std::vector<SafetyPolygon> safety_polygons_;
+
 #endif
   AgentId agent_id_;
 };

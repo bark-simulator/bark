@@ -16,6 +16,7 @@ from bark.core.world.goal_definition import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
 from bark.core.world.evaluation.ltl import *
+from bark.core.world.evaluation import *
 from bark.core.models.behavior import *
 
 logger = logging.getLogger()
@@ -50,6 +51,8 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_orientation_arrow = params["Visualization"]["Agents"]["DrawOrientationArrow",
+                                                               "Draw Orientation of Arrow", False]
         self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals",
                                                                  "Draw Route of eval agent goals", True]
@@ -71,6 +74,7 @@ class BaseViewer(Viewer):
                                                                    "Alpha of the background plane", 1.0]
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth",
                                                                                        "Linewidth of linestrings", 1.0]
+        self._draw_aerial_image = params["Visualization"]["Map"]["DrawAerialImage", "Flag to draw aerial image behind map", False]
 
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
@@ -85,7 +89,11 @@ class BaseViewer(Viewer):
           "DrawEgoRSSSafetyResponses",
           "Flag to specify if visualizating rss safety responses.",
           False]
-
+        self._rss_min_braking_distances = params["Visualization"]["Evaluation"][
+          "DrawMinRSSBrakingDistances",
+          "Flag whether the min. braking distances shall be plotted.",
+          False]
+        
         self.parameters = params
         self.agent_color_map = {}
         self.max_agents_color_map = 0
@@ -181,10 +189,13 @@ class BaseViewer(Viewer):
     def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=2):
         pass
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10, hatch=''):
         pass
 
     def drawTrajectory(self, trajectory, color, **kwargs):
+        pass
+    
+    def drawArrow(self, pose):
         pass
 
     def drawObstacle(self, obstacle):
@@ -211,10 +222,13 @@ class BaseViewer(Viewer):
 
     def drawAgents(self, world):
         for _, agent in world.agents.items():
-            self.drawAgent(agent)
+            if agent.id in world.agents_valid:
+              self.drawAgent(agent)
+            else:
+              self.drawAgent(agent, hatch='o')
     
-    def drawBehaviorPlan(self, behavior_model):
-        self.drawTrajectory(behavior_model.last_trajectory,
+    def drawBehaviorPlan(self, agent):
+        self.drawTrajectory(agent.behavior_model.last_trajectory,
                                   color='black', linewidth=1.0)
 
     def drawHistory(self, agent, color, alpha, facecolor, zorder):
@@ -282,6 +296,9 @@ class BaseViewer(Viewer):
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
 
+        if self._draw_aerial_image:
+          self.drawMapAerialImage()
+
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
@@ -303,13 +320,9 @@ class BaseViewer(Viewer):
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                    if num_agents > self.max_agents_color_map:
-                        # reinit colormap
-                        self.max_agents_color_map = num_agents
-                        self.agent_color_map = {}
                     if not agent_id in self.agent_color_map:
-                        self.agent_color_map[agent_id] = self.getColorFromMap(
-                            float(agent_id) / self.max_agents_color_map)
+                        color_idx = len(self.agent_color_map) % self.getSizeOfColormap()
+                        self.agent_color_map[agent_id] = self.getColorFromMap(color_idx)
                     if self.if_colormap_use_line_others:
                         color_line = self.color_other_agents_line
                     else:
@@ -325,7 +338,12 @@ class BaseViewer(Viewer):
                     color_face_history = (1.0, 1.0, 1, .0)
                 self.drawHistory(agent, color_line, alpha,
                                  color_face_history, zorder=5)
-            self.drawAgent(agent, color_line, alpha, color_face)
+            
+            if agent.id in world.agents_valid:
+              hatch = ''
+            else:
+              hatch = 'o'
+            self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
                 scenario_idx), fontsize=14)
@@ -354,6 +372,12 @@ class BaseViewer(Viewer):
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
         
+        if self._rss_min_braking_distances:
+          self.DrawRSSBrakingDistances(world, eval_agent_ids[0])
+
+    def drawMapAerialImage(self):
+        pass
+
     def drawMap(self, map):
         # draw the boundary of each lane
         for _, road in map.GetRoads().items():
@@ -378,7 +402,7 @@ class BaseViewer(Viewer):
         self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
                         dashed, zorder=1, linewidth=self.map_linewidth)
 
-    def drawAgent(self, agent, color, alpha, facecolor):
+    def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             state = agent.state
@@ -393,9 +417,12 @@ class BaseViewer(Viewer):
             if self.draw_agent_id:
                 self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+            
+            if self.draw_orientation_arrow:
+              self.drawArrow(pose)
 
             self.drawPolygon2d(transformed_polygon, color,
-                               alpha, facecolor, zorder=10)
+                               alpha, facecolor, zorder=10, hatch=hatch)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 
@@ -512,11 +539,25 @@ class BaseViewer(Viewer):
             self.drawPolygon2d(transformed_polygon, response_color,
                                0.6, response_color, zorder=9)
 
+    def DrawRSSBrakingDistances(self, world, eval_id):
+      for agent_id, agent in world.agents.items():
+        observed_world = world.Observe([agent_id])[0]
+        rss_params = None
+        if eval_id == agent_id:
+          rss_params = self.parameters["EvaluatorRss"]["Ego"]
+        else:
+          rss_params = self.parameters["EvaluatorRss"]["Others"]
+        try:
+          min_braking_safety_polygon = ComputeMinBrakingPolygon(observed_world, rss_params)
+        except:
+          pass
+        color_face = "red"
+        self.drawPolygon2d(
+          min_braking_safety_polygon.GetPolygon(), color_face, 0.25, color_face, zorder=9)
+        
     def DrawRSSEvaluatorState(self, world, agent_id):
       agent = world.agents[agent_id]
       behavior = agent.behavior_model
-      
-      
       if isinstance(behavior, BehaviorRSSConformant):
         longitudinal_response = behavior.GetLongitudinalResponse()
         lateral_left_response = behavior.GetLateralLeftResponse()
@@ -528,6 +569,16 @@ class BaseViewer(Viewer):
         if lateral_left_response != 0 or lateral_right_response != 0:
           print("Lateral violation")
           violations.append({"label": "LAT", "color": "red"})
+        
+        # have to compute shape here
+        observed_world = world.Observe([agent_id])[0]
+        behavior.ComputeSafetyPolygons(observed_world)
+        safety_polygons = behavior.GetSafetyPolygons()
+    
+        for poly in safety_polygons:
+          print(poly)
+          color_face = self.agent_color_map[poly.GetAgentId()]
+          self.drawPolygon2d(poly.GetPolygon(), color_face, 0.3, color_face, zorder=9)
           
         # draw labels
         ego_agent = world.agents[agent_id]

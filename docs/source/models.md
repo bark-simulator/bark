@@ -46,9 +46,8 @@ Self-contained [behavior models](behavior_models.md) in BARK:
 * BehaviorConstantAcceleration: Interpolates on a line with const. velocity.
 * BehaviorIDMClassic: Interpolates on a line and uses the basic IDM equations.
 * BehaviorIDMLaneTracking: Follows a line using a steering function for the single-track model and the basic IDM equations.
-* BehaviorMobil: Full Mobil implementation.
 * BehaviorLaneChangeRuleBased: Rule-based agent that changes to the lane with the most free-space.
-* BehaviorMobilRuleBased: Simple rule-based Mobil implementation.
+* BehaviorMobilRuleBased: Mobil implementation.
 * BehaviorIntersectionRuleBased: Simple rule-based intersection behavior.
 * BehaviorStaticTrajectory: Data-driven replay of agents in BARK.
 

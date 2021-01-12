@@ -23,10 +23,10 @@ from bark.core.world.goal_definition import GoalDefinitionPolygon, \
     GoalDefinitionStateLimitsFrenet
 from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface
+from bark.core.world.opendrive import OpenDriveMap, MakeXodrMapOneRoadTwoLanes
 from bark.core.geometry.standard_shapes import CarLimousine
 from bark.core.geometry import Point2d, Polygon2d, Line2d
-from bark.core.world.evaluation import EvaluatorGoalReached, \
-  EvaluatorCollisionEgoAgent, EvaluatorStepCount
+from bark.core.world.evaluation import *
 
 
 
@@ -290,7 +290,183 @@ class EvaluationTests(unittest.TestCase):
     self.assertEqual(info["success5"], True)
     self.assertEqual(info["success6"], False)
     self.assertEqual(info["success7"], False)
-        
+
+  
+  def test_planning_time(self):
+    param_server = ParameterServer()
+    # Model Definition
+    behavior_model = BehaviorConstantAcceleration(param_server)
+    execution_model = ExecutionModelInterpolate(param_server)
+    dynamic_model = SingleTrackModel(param_server)
+
+    # Agent Definition
+    agent_2d_shape = CarLimousine()
+    init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
+    agent_params = param_server.AddChild("agent1")
+    goal_polygon = Polygon2d([0, 0, 0],
+                             [Point2d(-4,-4),
+                              Point2d(-4,4),
+                              Point2d(4,4),
+                              Point2d(4,-4)])
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
+
+    agent = Agent(init_state,
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                GoalDefinitionPolygon(goal_polygon),
+                  None)
+
+    world = World(param_server)
+    world.AddAgent(agent)
+    evaluator = EvaluatorPlanningTime(agent.id)
+    world.AddEvaluator("time", evaluator)
+
+
+    info = world.Evaluate()
+    self.assertEqual(info["time"], 0.0)
+
+
+  def test_velocity(self):
+    param_server = ParameterServer()
+    # Model Definition
+    behavior_model = BehaviorConstantAcceleration(param_server)
+    execution_model = ExecutionModelInterpolate(param_server)
+    dynamic_model = SingleTrackModel(param_server)
+
+    # Agent Definition
+    agent_2d_shape = CarLimousine()
+    init_state = np.array([0, -191.789,-50.1725, 3.14*3.0/4.0, 150/3.6])
+    agent_params = param_server.AddChild("agent1")
+    goal_polygon = Polygon2d([0, 0, 0],
+                             [Point2d(-4,-4),
+                              Point2d(-4,4),
+                              Point2d(4,4),
+                              Point2d(4,-4)])
+    goal_polygon = goal_polygon.Translate(Point2d(-191.789,-50.1725))
+
+    agent = Agent(init_state,
+                behavior_model,
+                dynamic_model,
+                execution_model,
+                agent_2d_shape,
+                agent_params,
+                GoalDefinitionPolygon(goal_polygon),
+                  None)
+
+    world = World(param_server)
+    world.AddAgent(agent)
+
+    evaluator = EvaluatorVelocity(agent.id)
+    world.AddEvaluator("vel", evaluator)
+
+
+    info = world.Evaluate()
+    self.assertEqual(info["vel"], init_state[4])
+
+  def test_gap_distance_front(self):    
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    gap = 10
+
+    # Model Definitions
+    behavior_model = BehaviorConstantAcceleration(params)
+    execution_model = ExecutionModelInterpolate(params)
+    dynamic_model = SingleTrackModel(params)
+
+    behavior_model2 = BehaviorConstantAcceleration(params)
+    execution_model2 = ExecutionModelInterpolate(params)
+    dynamic_model2 = SingleTrackModel(params)
+
+    # Map Definition
+    map_interface = MapInterface()
+    xodr_map = MakeXodrMapOneRoadTwoLanes()
+    map_interface.SetOpenDriveMap(xodr_map)
+    world.SetMap(map_interface)
+
+    agent_2d_shape = CarLimousine()
+    init_state = np.array([0, 13, -1.75, 0, 5])
+    agent_params = params.AddChild("agent1")
+    goal_polygon = Polygon2d(
+        [1, 1, 0], [Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0)])
+    goal_polygon = goal_polygon.Translate(Point2d(50, -2))
+
+    agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
+                  agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+    world.AddAgent(agent)
+
+    init_state2 = np.array([0, 13+gap, -1.75, 0, 5])
+    agent2 = Agent(init_state2, behavior_model2, dynamic_model2, execution_model2,
+                    agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+    world.AddAgent(agent2)
+
+    world.Step(0.1)
+
+    evaluator = EvaluatorGapDistanceFront(agent.id)
+    world.AddEvaluator("gap", evaluator)
+
+    info = world.Evaluate()
+    self.assertAlmostEqual(info["gap"], gap - agent_2d_shape.front_dist - agent_2d_shape.rear_dist, places=4)
+
+  def test_number_of_agents(self):    
+    # World Definition
+    params = ParameterServer()
+    world = World(params)
+
+    # Model Definitions
+    behavior_model = BehaviorConstantAcceleration(params)
+    execution_model = ExecutionModelInterpolate(params)
+    dynamic_model = SingleTrackModel(params)
+
+    behavior_model2 = BehaviorConstantAcceleration(params)
+    execution_model2 = ExecutionModelInterpolate(params)
+    dynamic_model2 = SingleTrackModel(params)
+
+    # Map Definition
+    map_interface = MapInterface()
+    xodr_map = MakeXodrMapOneRoadTwoLanes()
+    map_interface.SetOpenDriveMap(xodr_map)
+    world.SetMap(map_interface)
+
+    agent_2d_shape = CarLimousine()
+    init_state = np.array([0, 13, -1.75, 0, 5])
+    agent_params = params.AddChild("agent1")
+    goal_polygon = Polygon2d(
+        [1, 1, 0], [Point2d(0, 0), Point2d(0, 2), Point2d(2, 2), Point2d(2, 0)])
+    goal_polygon = goal_polygon.Translate(Point2d(50, -2))
+
+    agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
+                  agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+    world.AddAgent(agent)
+
+    init_state2 = np.array([0, 16, -1.75, 0, 5])
+    agent2 = Agent(init_state2, behavior_model2, dynamic_model2, execution_model2,
+                    agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+    world.AddAgent(agent2)
+
+    evaluator = EvaluatorNumberOfAgents(agent.id)
+    world.AddEvaluator("num_agents", evaluator)
+
+    info = world.Evaluate()
+    self.assertEqual(info["num_agents"], len(world.agents))
+    # do it once more
+    self.assertEqual(info["num_agents"], len(world.agents))
+
+    world.RemoveAgentById(agent2.id)
+    info = world.Evaluate()
+    # evaluator should still hold two
+    self.assertNotEqual(info["num_agents"], len(world.agents))
+    self.assertEqual(info["num_agents"], 2)
+
+    world.Step(0.1)
+    info = world.Evaluate()
+    # evaluator should still hold two
+    self.assertEqual(info["num_agents"], 2)
+
 if __name__ == '__main__':
   unittest.main()
 

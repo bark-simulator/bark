@@ -25,7 +25,6 @@ import os.path
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
-        self.interaction_ds_reader = InteractionDatasetReader()
         super().__init__(params, num_scenarios, random_seed)
 
     def initialize_params(self, params):
@@ -50,6 +49,10 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
         self._ego_track_id = params_temp["EgoTrackId", "TrackID of ego", -1]
         self._behavior_models = params_temp["BehaviorModel",
                                             "Overwrite static trajectory with prediction model", {}]
+        self._use_rectangle_shape = params_temp["RectangleShape",
+                                                "Use Rectangle vehicle shape", True]
+        
+        self._interaction_ds_reader = InteractionDatasetReader()
 
     # TODO: remove code duplication with configurable scenario generation
     def create_scenarios(self, params, num_scenarios):
@@ -70,12 +73,11 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             raise ValueError("No ego id has been defined")
 
         ego_track_info = AgentTrackInfo(filename=self._track_file_name, track_id=self._ego_track_id,
-                                        start_offset=self._start_time, end_offset=self._end_time)
-        scenario_track_info = ScenarioTrackInfo(
-            map_filename=self._map_file_name, track_filename=self._track_file_name, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
+                                        start_time=self._start_time, end_time=self._end_time)
+        scenario_track_info = ScenarioTrackInfo(track_filename=self._track_file_name, ego_track_info=ego_track_info, xy_offset=self._xy_offset)
         for track_id in self._track_ids:
             new_agent = AgentTrackInfo(filename=self._track_file_name, track_id=track_id,
-                                       start_offset=self._start_time, end_offset=self._end_time)
+                                       start_time=self._start_time, end_time=self._end_time)
             scenario_track_info.AddTrackInfoOtherAgent(new_agent)
 
         return scenario_track_info
@@ -111,8 +113,8 @@ class InteractionDatasetScenarioGeneration(ScenarioGeneration):
             else:
                 track_params["behavior_model"] = None
 
-            agent = self.interaction_ds_reader.AgentFromTrackfile(
-                track_params, self._params, scenario_track_info, track_id)
+            agent = self._interaction_ds_reader.AgentFromTrackfile(
+                track_params, self._params, scenario_track_info, track_id, goal_def=None)
             # agent_params.Save("/tmp/agent_params_{}.json".format(track_id))
             agent_list.append(agent)
 

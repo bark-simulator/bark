@@ -37,7 +37,7 @@ git_repository(
 # ------ Planner Rules-MCTS ------------------------------
 git_repository(
   name = "planner_rules_mcts",
-  commit="23daa6085661560a1ca9734629acda10d094429b",
+  commit="d705d06902a1181c1e675169eaf2303ab98ed264",
   remote = "https://github.com/bark-simulator/planner-rules-mcts"
 )
 load("@planner_rules_mcts//util:deps.bzl", "planner_rules_mcts_dependencies")
@@ -68,14 +68,6 @@ git_repository(
 # ------------------- LTL RuleMonitor --------------
 load("@rule_monitor_project//util:deps.bzl", "rule_monitor_dependencies")
 rule_monitor_dependencies()
-# --------------------------------------------------
-
-# ------------------- BARK-ML ----------------------
-git_repository(
-  name = "bark_ml",
-  commit="f1f392ab46bd1e5ea8db5958113526c173814a0e",
-  remote = "https://github.com/bark-simulator/bark-ml"
-)
 # --------------------------------------------------
 
 # ---------------------- RSS -----------------------

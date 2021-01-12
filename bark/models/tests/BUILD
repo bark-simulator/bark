@@ -75,7 +75,6 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [        
         "//bark/geometry",
-        "//bark/models/behavior/rule_based:mobil",
         "//bark/models/behavior/rule_based:mobil_behavior",
         "//bark/models/behavior/constant_acceleration:constant_acceleration",
         "//bark/models/execution/interpolation:interpolation",

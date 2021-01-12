@@ -18,6 +18,7 @@
 #ifdef RSS
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
+#include "bark/world/evaluation/rss/safety_polygon.hpp"
 #include "bark/world/world.hpp"
 
 namespace bark {
@@ -26,11 +27,14 @@ namespace behavior {
 
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
+using bark::models::dynamic::AccelerationLimits;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
 using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
+using world::evaluation::ComputeSafetyPolygon;
+using world::evaluation::SafetyPolygon;
 using world::objects::AgentId;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
@@ -46,21 +50,30 @@ class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params)
       : BehaviorModel(params),
-        nominal_behavior_model_(
-            std::make_shared<BehaviorIDMLaneTracking>(params)),
-        behavior_safety_model_(std::make_shared<BehaviorSafety>(params)),
+        nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
+            GetParams()->AddChild("NominalBehavior"))),
+        behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
         rss_evaluator_(),
         behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
         world_time_of_last_rss_violation_(-1),
         initial_lane_corr_(nullptr),
-        minimum_safety_corridor_length_(params->GetReal(
-            "BehaviorRSSConformant::MinimumSafetyCorridorLength",
+        minimum_safety_corridor_length_(GetParams()->GetReal(
+            "MinimumSafetyCorridorLength",
             "Minimal lenght a safety corridor should have that a lateral "
             "safety maneuver is performed.",
-            0.f)) {
+            0.f)),
+        acceleration_limits_(),
+        acc_restrictions_for_nominal_(GetParams()->GetBool(
+            "AccRestrictionsForNominal",
+            "Restrict Nominal Model using Acc Limits", false)),
+        acc_restrictions_for_safety_(GetParams()->GetBool(
+            "AccRestrictionsForSafety",
+            "Restrict Safety Model using Acc Limits", false)),
+        no_safety_maneuver_(GetParams()->GetBool(
+            "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
     try {
 #ifdef RSS
-      rss_evaluator_ = std::make_shared<EvaluatorRSS>(params);
+      rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
 #endif
     } catch (...) {
       VLOG(4) << "Could not load RSSEvaluator." << std::endl;
@@ -69,7 +82,8 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual ~BehaviorRSSConformant() {}
 
-  Trajectory Plan(double min_planning_time, const ObservedWorld& observed_world);
+  Trajectory Plan(double min_planning_time,
+                  const ObservedWorld& observed_world);
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
@@ -77,12 +91,12 @@ class BehaviorRSSConformant : public BehaviorModel {
   std::shared_ptr<BehaviorModel> GetNominalBehaviorModel() const {
     return nominal_behavior_model_;
   }
-  
-  BehaviorRSSConformantStatus GetBehaviorRssStatus() const { 
-    return behavior_rss_status_; 
+
+  BehaviorRSSConformantStatus GetBehaviorRssStatus() const {
+    return behavior_rss_status_;
   }
 
-  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model){
+  void SetNominalBehaviorModel(const std::shared_ptr<BehaviorModel>& model) {
     nominal_behavior_model_ = model;
   }
   std::shared_ptr<BehaviorSafety> GetBehaviorSafetyModel() const {
@@ -96,8 +110,20 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  #ifdef RSS
-  void ApplyRestrictionsToNominalModel(const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+  void SetAccelerationLimits(const AccelerationLimits& limits) {
+    acceleration_limits_ = limits;
+  }
+
+  AccelerationLimits GetAccelerationLimits() const {
+    return acceleration_limits_;
+  }
+
+#ifdef RSS
+  AccelerationLimits ConvertRestrictions(
+      const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+
+  void ApplyRestrictionsToModel(const AccelerationLimits& limits,
+                                std::shared_ptr<BehaviorModel> model);
 
   int32_t GetLongitudinalResponse() const { return as_integer(lon_response_); }
   int32_t GetLateralLeftResponse() const {
@@ -117,7 +143,17 @@ class BehaviorRSSConformant : public BehaviorModel {
     lat_right_response_ =
         static_cast<::ad::rss::state::LateralResponse>(lat_right);
   }
+  void ComputeSafetyPolygons(const ObservedWorld& observed_world) {
+    for (auto& sp : safety_polygons_) ComputeSafetyPolygon(sp, observed_world);
+  }
+
 #endif
+  std::vector<SafetyPolygon> GetSafetyPolygons() const {
+    return safety_polygons_;
+  }
+  void SetSafetyPolygons(const std::vector<SafetyPolygon>& sp) {
+    safety_polygons_ = sp;
+  }
 
  private:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
@@ -127,12 +163,17 @@ class BehaviorRSSConformant : public BehaviorModel {
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   float minimum_safety_corridor_length_;
+  AccelerationLimits acceleration_limits_;
+  bool acc_restrictions_for_nominal_;
+  bool acc_restrictions_for_safety_;
+  bool no_safety_maneuver_;
 #ifdef RSS
   ::ad::rss::state::LongitudinalResponse lon_response_;
   ::ad::rss::state::LateralResponse lat_left_response_;
   ::ad::rss::state::LateralResponse lat_right_response_;
   ::ad::rss::state::AccelerationRestriction acc_restrictions_;
-  #endif
+#endif
+  std::vector<SafetyPolygon> safety_polygons_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorRSSConformant::Clone() const {

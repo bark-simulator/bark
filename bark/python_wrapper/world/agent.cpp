@@ -61,6 +61,8 @@ void python_agent(py::module m) {
       .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
+      .def("AtGoal", &Agent::AtGoal)
+      .def("InsideRoadCorridor", &Agent::InsideRoadCorridor)
       .def(py::pickle(
           [](const Agent& a) -> py::tuple {
             return py::make_tuple(

@@ -97,7 +97,7 @@ class RssInterface {
                         const commons::ParamsPtr& params) {
 
     // only adds child if it does not exist; otherwise returns child
-    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss"));
+    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss::Ego"));
     FillRSSDynamics(rss_dynamics_others_, params->AddChild("EvaluatorRss::Others"));
 
     // general parameters
@@ -227,14 +227,19 @@ class RssInterface {
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
-  bool
-  lateralDistanceOffset(
+
+  bool lateralDistanceOffset(
 		const models::dynamic::State& agent_state,
 		Distance& distance);
-    bool
-  longitudinalDistanceOffset(
+
+  bool longitudinalDistanceOffset(
 		const models::dynamic::State& agent_state,
 		Distance& distance);
+
+  ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
+    return rss_state_snapshot_;
+  }
+
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
@@ -250,6 +255,7 @@ class RssInterface {
   // Contains longitudinal and lateral response of the ego object, a list of
   // id of the dangerous objects
   ::ad::rss::state::ProperResponse rss_proper_response_;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
 };
 
 }  // namespace evaluation
