@@ -491,17 +491,7 @@ class BaseViewer(Viewer):
                     id, *list(map(char_func, responses)))
                 self.drawText(position=(0.82, 0.88-0.03*i), text=str)
                 lon_distance = responses[2]
-                lat_distance = responses[3]
-
-            ego_agent = world.agents[agent_id]
-            shape = ego_agent.shape
-            state = ego_agent.state
-            pose = generatePoseFromState(state)
-            pose[0] -= lon_distance
-            pose[1] -= lat_distance
-            transformed_polygon = shape.Transform(pose)
-
-            self.drawPolygon2d(transformed_polygon, self.color_eval_agents_face, 1, self.color_eval_agents_face, zorder=11)
+                lat_distance = responses[3] # currently not in use
 
             # draw longitudinal distance in lane
             longitudinal_polygon = evaluator.GetLaneLongitudinalPolygon(world, lon_distance)

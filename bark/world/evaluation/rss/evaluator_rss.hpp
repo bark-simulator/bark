@@ -161,16 +161,16 @@ class EvaluatorRSS : public BaseEvaluator {
     AgentPtr agent = observed_world.GetEgoAgent();
 
 		const Point2d ego_position = agent->GetCurrentPosition();
-		const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
+		const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(ego_position).get();
 
 		// get begin and end points on the lane
-		std::tuple<Point2d, double, uint> nearest = geometry::GetNearestPointAndS(lane_corridor.centerline, ego_position);
+		std::tuple<Point2d, double, uint> nearest = geometry::GetNearestPointAndS(lane_corridor->GetCenterLine(), ego_position);
 		double s0 = std::get<1>(nearest);
 		double s1 = s0 + lon_distance;
 
 		// get left and right bounds from points
-		Line left_bound_for_sd = GetLineFromSInterval(lane_corridor.left_boundary, s0, s1);
-		Line right_bound_for_sd = GetLineFromSInterval(lane_corridor.right_boundary, s0, s1);
+		Line left_bound_for_sd = geometry::GetLineFromSInterval(lane_corridor->GetLeftBoundary(), s0, s1);
+		Line right_bound_for_sd = geometry::GetLineFromSInterval(lane_corridor->GetRightBoundary(), s0, s1);
 
 		Polygon poly(left_bound_for_sd, right_bound_for_sd);
 
