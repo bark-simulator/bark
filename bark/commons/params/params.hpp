@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include "bark/commons/distribution/distribution.hpp"
 #include "boost/variant.hpp"
+#include <boost/geometry.hpp>
 
 namespace bark {
 namespace commons {
@@ -35,7 +36,11 @@ typedef std::vector<ParamPair> CondensedParamList;
 
 class Params {
  public:
-  Params() {}
+  Params();
+
+using Point2d_test = boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian>;
+
+double Distance(const Point2d_test& p1, const Point2d_test& p2);
 
   virtual ~Params() {}
 

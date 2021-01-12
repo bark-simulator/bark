@@ -13,6 +13,16 @@
 namespace bark {
 namespace commons {
 
+Params::Params() {}
+
+double Params::Distance(const Point2d_test& p1, const Point2d_test& p2){
+  double dx = boost::geometry::get<0>(p1) - boost::geometry::get<0>(p2);
+  double dy = boost::geometry::get<1>(p1) - boost::geometry::get<1>(p2);
+  if(boost::geometry::is_valid(p1)) {
+  return sqrt(dx * dx + dy * dy);
+  } else { return 0; }
+}
+
 #define GET_DISTRIBUTION_IF_TYPE(type, distribution, params_ptr) \
   if (distribution.compare(#type) == 0) {                        \
     return std::make_shared<type>(params_ptr);                   \
