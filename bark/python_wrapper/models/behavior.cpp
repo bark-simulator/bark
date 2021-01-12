@@ -18,7 +18,6 @@
 #include "bark/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
@@ -42,6 +41,8 @@ void python_behavior(py::module m) {
       .def("SetLastTrajectory", &BehaviorModel::SetLastTrajectory)
       .def("SetLastAction", &BehaviorModel::SetLastAction)
       .def("GetLastAction", &BehaviorModel::GetLastAction)
+      .def("SetLastSolutionTime", &BehaviorModel::SetLastSolutionTime)
+      .def("GetLastSolutionTime", &BehaviorModel::GetLastSolutionTime)
       .def("ActionToBehavior", &BehaviorModel::ActionToBehavior)
       .def_property("last_trajectory", &BehaviorModel::GetLastTrajectory,
                     &BehaviorModel::SetLastTrajectory);
@@ -103,25 +104,6 @@ void python_behavior(py::module m) {
               throw std::runtime_error("Invalid behavior model state!");
             return new BehaviorIDMLaneTracking(
                 PythonToParams(t[0].cast<py::tuple>()));
-          }));
-
-  py::class_<BehaviorMobil, BehaviorModel, shared_ptr<BehaviorMobil>>(
-      m, "BehaviorMobil")
-      .def(py::init<const bark::commons::ParamsPtr&>())
-      .def("__repr__",
-           [](const BehaviorMobil& m) { return "bark.behavior.BehaviorMobil"; })
-      .def(py::pickle(
-          [](const BehaviorMobil& b) {
-            return py::make_tuple(ParamsToPython(b.GetParams()));
-          },
-          [](py::tuple t) {  // __setstate__
-            if (t.size() != 1)
-              throw std::runtime_error("Invalid behavior model state!");
-
-            /* Create a new C++ instance */
-            return new BehaviorMobil(
-                PythonToParams(t[0].cast<py::tuple>()));  // param pointer must
-                                                          // be set afterwards
           }));
 
   py::class_<BehaviorLaneChangeRuleBased, BehaviorModel,

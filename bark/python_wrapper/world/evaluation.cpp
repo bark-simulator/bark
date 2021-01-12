@@ -14,6 +14,10 @@
 #include "bark/world/evaluation/evaluator_drivable_area.hpp"
 #include "bark/world/evaluation/evaluator_goal_reached.hpp"
 #include "bark/world/evaluation/evaluator_step_count.hpp"
+#include "bark/world/evaluation/evaluator_planning_time.hpp"
+#include "bark/world/evaluation/evaluator_velocity.hpp"
+#include "bark/world/evaluation/evaluator_gap_distance_front.hpp"
+#include "bark/world/evaluation/evaluator_number_of_agents.hpp"
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -83,6 +87,34 @@ void python_evaluation(py::module m) {
       .def(py::init<>())
       .def("__repr__", [](const EvaluatorStepCount& g) {
         return "bark.core.world.evaluation.EvaluatorStepCount";
+      });
+  py::class_<EvaluatorPlanningTime, BaseEvaluator,
+             std::shared_ptr<EvaluatorPlanningTime>>(m, "EvaluatorPlanningTime")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorPlanningTime& g) {
+        return "bark.core.world.evaluation.EvaluatorPlanningTime";
+      });
+  py::class_<EvaluatorVelocity, BaseEvaluator,
+             std::shared_ptr<EvaluatorVelocity>>(m, "EvaluatorVelocity")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorVelocity& g) {
+        return "bark.core.world.evaluation.EvaluatorVelocity";
+      });
+  py::class_<EvaluatorGapDistanceFront, BaseEvaluator,
+             std::shared_ptr<EvaluatorGapDistanceFront>>(m, "EvaluatorGapDistanceFront")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorGapDistanceFront& g) {
+        return "bark.core.world.evaluation.EvaluatorGapDistanceFront";
+      });
+  py::class_<EvaluatorNumberOfAgents, BaseEvaluator,
+             std::shared_ptr<EvaluatorNumberOfAgents>>(m, "EvaluatorNumberOfAgents")
+      .def(py::init<const AgentId&>())
+      .def(py::init<>())
+      .def("__repr__", [](const EvaluatorNumberOfAgents& g) {
+        return "bark.core.world.evaluation.EvaluatorNumberOfAgents";
       });
 
   py::class_<SafetyPolygon,

@@ -51,6 +51,8 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_orientation_arrow = params["Visualization"]["Agents"]["DrawOrientationArrow",
+                                                               "Draw Orientation of Arrow", False]
         self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
         self.draw_eval_goals = params["Visualization"]["Agents"]["DrawEvalGoals",
                                                                  "Draw Route of eval agent goals", True]
@@ -187,10 +189,13 @@ class BaseViewer(Viewer):
     def drawLine2d(self, line2d, color, alpha, line_style=None, zorder=2):
         pass
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10, hatch=''):
         pass
 
     def drawTrajectory(self, trajectory, color, **kwargs):
+        pass
+    
+    def drawArrow(self, pose):
         pass
 
     def drawObstacle(self, obstacle):
@@ -217,7 +222,10 @@ class BaseViewer(Viewer):
 
     def drawAgents(self, world):
         for _, agent in world.agents.items():
-            self.drawAgent(agent)
+            if agent.id in world.agents_valid:
+              self.drawAgent(agent)
+            else:
+              self.drawAgent(agent, hatch='o')
     
     def drawBehaviorPlan(self, agent):
         self.drawTrajectory(agent.behavior_model.last_trajectory,
@@ -308,13 +316,9 @@ class BaseViewer(Viewer):
             else:
                 alpha = self.alpha_other_agents
                 if self.use_colormap_for_other_agents:
-                    if num_agents > self.max_agents_color_map:
-                        # reinit colormap
-                        self.max_agents_color_map = num_agents
-                        self.agent_color_map = {}
                     if not agent_id in self.agent_color_map:
-                        self.agent_color_map[agent_id] = self.getColorFromMap(
-                            float(agent_id) / self.max_agents_color_map)
+                        color_idx = len(self.agent_color_map) % self.getSizeOfColormap()
+                        self.agent_color_map[agent_id] = self.getColorFromMap(color_idx)
                     if self.if_colormap_use_line_others:
                         color_line = self.color_other_agents_line
                     else:
@@ -330,7 +334,12 @@ class BaseViewer(Viewer):
                     color_face_history = (1.0, 1.0, 1, .0)
                 self.drawHistory(agent, color_line, alpha,
                                  color_face_history, zorder=5)
-            self.drawAgent(agent, color_line, alpha, color_face)
+            
+            if agent.id in world.agents_valid:
+              hatch = ''
+            else:
+              hatch = 'o'
+            self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
                 scenario_idx), fontsize=14)
@@ -384,7 +393,7 @@ class BaseViewer(Viewer):
         self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
                         dashed, zorder=1, linewidth=self.map_linewidth)
 
-    def drawAgent(self, agent, color, alpha, facecolor):
+    def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             state = agent.state
@@ -399,9 +408,12 @@ class BaseViewer(Viewer):
             if self.draw_agent_id:
                 self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+            
+            if self.draw_orientation_arrow:
+              self.drawArrow(pose)
 
             self.drawPolygon2d(transformed_polygon, color,
-                               alpha, facecolor, zorder=10)
+                               alpha, facecolor, zorder=10, hatch=hatch)
         else:
             raise NotImplementedError("Shape drawing not implemented.")
 

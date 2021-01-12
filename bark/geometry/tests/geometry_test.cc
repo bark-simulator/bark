@@ -179,6 +179,24 @@ TEST(geometry, polygon) {
       std::dynamic_pointer_cast<Polygon>(p.Rotate(3.14 / 2));
 }
 
+TEST(geometry, polygon_from_two_lines) {
+  using bark::geometry::Point2d;
+  using bark::geometry::Polygon;
+  using bark::geometry::Line;
+
+  Line left_line;  // vertical
+  left_line.AddPoint(Point2d(0.0, 0.0));
+  left_line.AddPoint(Point2d(0.0, 10.0));
+
+  Line right_line;  // vertical
+  right_line.AddPoint(Point2d(3.0, 0.0));
+  right_line.AddPoint(Point2d(3.0, 10.0));
+  
+  Polygon p(left_line, right_line);
+
+  EXPECT_TRUE(p.Valid());
+}
+
 TEST(geometry, standard_shapes) {
   using bark::geometry::Polygon;
   using bark::geometry::standard_shapes::CarLimousine;
@@ -1188,6 +1206,41 @@ TEST(buffer, inflate) {
   boost::geometry::simplify(out.obj_, s.obj_, 0.1);
 
   EXPECT_TRUE(Equals(out, s)) << s.ToArray();
+}
+
+TEST(generate_car_limousine, vehicleshapes) {
+  using namespace bark::geometry;
+  using bark::geometry::standard_shapes::GenerateCarLimousine;
+  using bark::geometry::standard_shapes::CarLimousine;
+
+  double wb = 3.0568;
+  double r = 0.9560;
+  Polygon in1 = GenerateCarLimousine(wb, r);
+  Polygon in2 = CarLimousine();
+  
+  // due to numerical issues, this will fail:
+  // EXPECT_TRUE(Equals(in1, in2)) << in1.ToArray() << in2.ToArray();
+  
+  EXPECT_TRUE(std::abs(in1.CalculateArea() - in2.CalculateArea()) < 1e-3);
+  EXPECT_TRUE(Distance(in1, in2) < 1e-6);
+}
+
+TEST(boundingpolygon, vehicleshapes) {
+  using bark::geometry::Point2d;
+  using bark::geometry::Polygon;
+  using bark::geometry::Pose;
+  using bark::geometry::standard_shapes::GenerateCarLimousine;
+  using bark::geometry::standard_shapes::GenerateCarRectangle;
+
+  double wb = 2.8;
+  double r = 1;
+  Polygon in1 = GenerateCarLimousine(wb, r);
+  Polygon out1 = CalculateBoundingBoxPolygon(in1);
+  EXPECT_TRUE(Within(in1, out1));
+
+  Polygon in2 = GenerateCarRectangle(wb, r);
+  Polygon out2 = CalculateBoundingBoxPolygon(in2);
+  EXPECT_TRUE(Within(in2, out2));
 }
 
 int main(int argc, char** argv) {

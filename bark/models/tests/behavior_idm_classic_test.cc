@@ -60,7 +60,7 @@ class DummyBehaviorIDM : public BehaviorIDMClassic {
   virtual std::shared_ptr<BehaviorModel> Clone() const {
     std::shared_ptr<DummyBehaviorIDM> model_ptr =
         std::make_shared<DummyBehaviorIDM>(*this);
-    return std::dynamic_pointer_cast<BehaviorModel>(model_ptr);
+    return model_ptr;
   }
 };
 
@@ -452,14 +452,16 @@ TEST(CalcNetDistance, behavior_idm_classic) {
   // agent1 is placed on road 1
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 20, -1.75, 0.0, 10.0;
-  AgentPtr agent1(new Agent(init_state1, nullptr, nullptr, nullptr, shape,
+  auto b1 = std::make_shared<BehaviorIDMClassic>(params);
+  AgentPtr agent1(new Agent(init_state1, b1, nullptr, nullptr, shape,
                             params, goal_definition_ptr, map_interface,
                             bark::geometry::Model3D()));
 
   // agent2 is placed on road 2
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 70, -1.75, 0.0, 10.0;
-  AgentPtr agent2(new Agent(init_state2, nullptr, nullptr, nullptr, shape,
+  auto b2 = std::make_shared<BehaviorIDMClassic>(params);
+  AgentPtr agent2(new Agent(init_state2, b2, nullptr, nullptr, shape,
                             params, goal_definition_ptr, map_interface,
                             bark::geometry::Model3D()));
 

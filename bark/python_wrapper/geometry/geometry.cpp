@@ -25,6 +25,7 @@ using Eigen::Matrix;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
+  m.def("GenerateCarLimousine", &bark::geometry::standard_shapes::GenerateCarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
   m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
   m.def("GenerateGoalRectangle", &bark::geometry::standard_shapes::GenerateGoalRectangle);
@@ -225,6 +226,7 @@ void python_geometry(py::module m) {
                       t[0].cast<Matrix<double, Dynamic, Dynamic>>());
             return p;
           }));
+  m.def("CalculateBoundingBoxPolygon", &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
 
   python_standard_shapes(
       m.def_submodule("standard_shapes",

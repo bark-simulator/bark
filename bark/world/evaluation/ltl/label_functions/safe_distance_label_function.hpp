@@ -26,12 +26,18 @@ using bark::world::objects::AgentPtr;
 class SafeDistanceLabelFunction : public BaseLabelFunction {
  public:
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
-                            double delta, double a_e, double a_o);
+                            double delta, double a_e, double a_o,
+                            bool use_frac_param_from_world,
+                            double frac_lateral_offset);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
   bool GetToRear() const { return to_rear_; }
   double GetDelta() const { return delta_; }
   double GetMaxDecelEgo() const { return a_e_; }
   double GetMaxDecelOther() const { return a_o_; }
+  bool GetUseFracLateralOffsetParam() const {
+    return use_frac_param_from_world_;
+  }
+  double GetFracLateralOffset() const { return frac_lateral_offset_; }
 
  private:
   bool CheckSafeDistance(const AgentPtr& rear_agent,
@@ -48,9 +54,11 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
                                   double a_f) const;
 
   bool to_rear_;
-  double delta_;  //! Reaction time
-  double a_e_;    //! Max. deceleration of ego
-  double a_o_;    //! Max. deceleration of front/rear agent (why rear agent?)
+  double delta_;                //! Reaction time
+  double a_e_;                  //! Max. deceleration of ego
+  double a_o_;                  //! Max. deceleration of front/rear agent
+  bool use_frac_param_from_world_; // Flag to use passed frac param
+  double frac_lateral_offset_;  //! Fraction term for lateral offset
 };
 
 }  // namespace evaluation

@@ -17,6 +17,9 @@ namespace standard_shapes {
 
 Polygon CarLimousine();
 
+// Creates Car Rectangle from wheelbase l and collision radius r
+Polygon GenerateCarLimousine(double wheelbase, double collision_radius);
+
 Polygon CarRectangle();
 
 // Creates Car Rectangle from wheelbase l and collision radius r

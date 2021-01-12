@@ -239,6 +239,12 @@ class GeometryTests(unittest.TestCase):
         self.assertAlmostEqual(shape.left_dist, 0.955999, places=4)
         self.assertAlmostEqual(shape.right_dist, 0.955999, places=4)
 
+    def test_bounding_box_polygon(self):
+
+        shape = CarLimousine()
+
+        bbox_poly = CalculateBoundingBoxPolygon(shape)
+        self.assertTrue(Within(shape, bbox_poly))
 
 if __name__ == '__main__':
     unittest.main()
