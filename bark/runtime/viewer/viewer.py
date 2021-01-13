@@ -10,6 +10,7 @@ import numpy as np
 import logging
 from bark.core.viewer import Viewer
 from bark.core.geometry import *
+from bark.core.geometry.standard_shapes import GenerateGoalRectangle
 from bark.core.models.dynamic import *
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
@@ -415,7 +416,7 @@ class BaseViewer(Viewer):
                                                shape.rear_dist)) * math.sin(pose[2]) + pose[1]
 
             if self.draw_agent_id:
-                self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
+                self.drawText(position=(centerx, centery + 2.), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
             if self.draw_orientation_arrow:
@@ -459,7 +460,6 @@ class BaseViewer(Viewer):
         rss_responses = None
         
         for evaluator in world.evaluators:
-          print(evaluator)
           if isinstance(world.evaluators[evaluator], EvaluatorRSS):
             # TODO: use violations in DrawRSSevalutor, labels etc
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(world)
@@ -469,10 +469,8 @@ class BaseViewer(Viewer):
 
         if not rss_responses:
           self.parameters["EvaluatorRss"]["MapFilename"] = "database_deu/maps/DR_DEU_Merging_MT_v01_centered.xodr"
-          print(EvaluatorRSS(agent_id = agent_id, params = self.parameters))
           evaluator = EvaluatorRSS(agent_id = agent_id, params = self.parameters)
           rss_responses = evaluator.PairwiseDirectionalEvaluate(world)
-          print('eval', dir(evaluator))
 
         def char_func(value):
             if value == True:
@@ -493,10 +491,25 @@ class BaseViewer(Viewer):
                 lon_distance = responses[2]
                 lat_distance = responses[3] # currently not in use
 
-            # draw longitudinal distance in lane
+            # draw longitudinal distance in lane polygon
             longitudinal_polygon = evaluator.GetLaneLongitudinalPolygon(world, lon_distance)
             self.drawPolygon2d(longitudinal_polygon, color="blue",
                            facecolor="blue", alpha=.3, zorder=2)
+
+            # draw lat lon rectangle
+            lat_lon_rectangle = GenerateGoalRectangle(lon_distance, lat_distance)
+
+            ego_agent = world.agents[agent_id]
+            shape = ego_agent.shape
+            pose = generatePoseFromState(ego_agent.state)
+            pose[0] = pose[0] - lon_distance
+            pose[1] = pose[1] - (lat_distance/2.)
+
+            lat_lon_rectangle = lat_lon_rectangle.Transform(pose)
+
+            self.drawPolygon2d(lat_lon_rectangle, color="red",
+                           facecolor="red", alpha=.3, zorder=2)
+
 
         self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
             agent_id, char_func(overall_safety)))
@@ -566,7 +579,6 @@ class BaseViewer(Viewer):
         safety_polygons = behavior.GetSafetyPolygons()
     
         for poly in safety_polygons:
-          print(poly)
           color_face = self.agent_color_map[poly.GetAgentId()]
           self.drawPolygon2d(poly.GetPolygon(), color_face, 0.3, color_face, zorder=9)
           
