@@ -111,15 +111,27 @@ cc_library(
 cc_binary(
     name = "libcorec.so",
     srcs = [
+        # NOTE the cpp files have to be included here, otherwise the symbols are not in the lib. only having the files in the dependencies is not enough
+        "//bark/commons/distribution:distribution.hpp",
         "//bark/commons/params:setter_params.cpp",
         "//bark/commons/params:params.cpp",
         "//bark/commons/params:params.hpp",
-        "//bark/commons/params:setter_params.hpp"
+        "//bark/commons/params:setter_params.hpp",
+#        "//bark/world/opendrive:opendrive.hpp",
+    #    "//bark/world/map:road_corridor.hpp",
+    #    "//bark/world/map:road_corridor.cpp",
+    #    "//bark/world/map:lane_corridor.hpp",
+    #    "//bark/world/map:lane_corridor.cpp",
     ],
     deps = [
-        "//bark/commons/util:util",
         "//bark/commons/distribution:distribution",
-        "@boost//:geometry", # add since sometimes "boost/variant.hpp" not found
+        "//bark/commons/params:params",
+        "//bark/world/map:map_interface",
+    #    "//bark/world/map:road_corridor",
+    #    "//bark/world/map:lane_corridor",
+        "//bark/commons/util:util",
+    #    "//bark/commons/distribution:distribution",
+    #    "@boost//:geometry", # add since sometimes "boost/variant.hpp" not found
     # "@com_github_eigen_eigen//:eigen",
     # "//bark/geometry:geometry",
     # "//bark/world/opendrive:opendrive",
