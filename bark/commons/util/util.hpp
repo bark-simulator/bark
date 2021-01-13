@@ -10,7 +10,7 @@
 #define BARK_COMMONS_UTIL_HPP_
 
 #include <glog/logging.h>
-#include <boost/stacktrace.hpp>
+//#include <boost/stacktrace.hpp>
 #include <iostream>   // std::cerr
 #include <stdexcept>  // std::logic_error
 #include "bark/commons/util/operators.hpp"
@@ -22,10 +22,10 @@ namespace commons {
 inline void AssertionFailedMsg(char const* expr, char const* function,
                                char const* file, long line) {
   std::cerr << "Expression '" << expr << "' is false in function '" << function
-            << "'(" << file << ", l." << line << "): "
-            << "\n"
-            << "Backtrace:\n"
-            << boost::stacktrace::stacktrace() << '\n';
+            << "'(" << file << ", l." << line << "): ";
+            // << "\n"
+            // << "Backtrace:\n"
+            // << boost::stacktrace::stacktrace() << '\n';
 }
 
 }  // namespace commons
