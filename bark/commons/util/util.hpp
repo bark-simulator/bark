@@ -12,6 +12,7 @@
 #include <glog/logging.h>
 //#include <boost/stacktrace.hpp>
 #include <iostream>   // std::cerr
+#include <memory>     // std::shared_ptr
 #include <stdexcept>  // std::logic_error
 #include "bark/commons/util/operators.hpp"
 
@@ -23,9 +24,9 @@ inline void AssertionFailedMsg(char const* expr, char const* function,
                                char const* file, long line) {
   std::cerr << "Expression '" << expr << "' is false in function '" << function
             << "'(" << file << ", l." << line << "): ";
-            // << "\n"
-            // << "Backtrace:\n"
-            // << boost::stacktrace::stacktrace() << '\n';
+  // << "\n"
+  // << "Backtrace:\n"
+  // << boost::stacktrace::stacktrace() << '\n';
 }
 
 }  // namespace commons

@@ -13,11 +13,6 @@
 namespace bark {
 namespace commons {
 
-inline std::ostream& operator<<(std::ostream& os, const Parameter& p) {
-  return boost::apply_visitor(
-      [&os](const auto& p) -> std::ostream& { return os << p; }, p);
-}
-
 #define GET_DISTRIBUTION_IF_TYPE(type, distribution, params_ptr) \
   if (distribution.compare(#type) == 0) {                        \
     return std::make_shared<type>(params_ptr);                   \
