@@ -6,6 +6,7 @@
 import unittest
 import os
 import random
+import pandas as pd
 
 try:
     import debug_settings
@@ -33,12 +34,16 @@ class TestConfig:
     def __eq__(self, other):
         return self.bytes == other.bytes and \
           self.config_idx == other.config_idx
-def random_benchmark_conf_data(num_confs, conf_size):
-    confs = [ TestConfig(i, conf_size)for i in range(0, num_confs)]
-    return confs
+def random_benchmark_conf_data(num_confs, conf_size, hist_size=100, multiply=1, offset=0):
+    result_data = random_result_data(num_confs)
+    hist_data = random_history_data(num_confs, hist_size, multiply, offset)
+    for idx, result in enumerate(result_data):
+      result["config_idx"] = idx + offset
+    confs = [ TestConfig(i+ offset, conf_size )for i in range(0, num_confs)]
+    return confs, result_data, hist_data
 
 class DatabaseRunnerTests(unittest.TestCase):
-    @unittest.skip
+
     def test_dump_and_load_results(self):
         result_data = random_result_data(size = 10)
         br = BenchmarkResult(result_dict=result_data)
@@ -46,7 +51,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         br_loaded = BenchmarkResult.load("./results")
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(result_data, loaded_dict)
-    @unittest.skip
+
     def test_dump_and_load_histories_many(self):
         result_num = 100
         result_data = random_result_data(size = result_num)
@@ -59,7 +64,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         self.assertEqual(histories, loaded_histories)
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(result_data, loaded_dict)
-    @unittest.skip
+
     def test_dump_and_load_histories_one(self):
         result_num = 2
         result_data = random_result_data(size = result_num)
@@ -72,11 +77,10 @@ class DatabaseRunnerTests(unittest.TestCase):
         self.assertEqual(histories, loaded_histories)
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(result_data, loaded_dict)
-    @unittest.skip
+
     def test_dump_and_load_benchmark_configs(self):
         result_num = 100
-        result_data = random_result_data(size = result_num)
-        confs = random_benchmark_conf_data(result_num, 2000000)
+        confs, result_data, _ = random_benchmark_conf_data(result_num, 2000000)
         br = BenchmarkResult(result_dict=result_data, benchmark_configs=confs)
         br.dump("./results_with_confs", dump_configs=True, max_mb_per_file = 5)
         br_loaded = BenchmarkResult.load("./results_with_confs")
@@ -85,12 +89,10 @@ class DatabaseRunnerTests(unittest.TestCase):
         self.assertEqual(confs, loaded_confs)
         loaded_dict = br_loaded.get_result_dict()
         self.assertEqual(br.get_result_dict(), loaded_dict)
-    @unittest.skip
+
     def test_dump_and_partial_load(self):
         result_num = 100
-        result_data = random_result_data(size = result_num)
-        confs = random_benchmark_conf_data(result_num, 2000000)
-        histories = random_history_data(result_num, 1500000)
+        confs, result_data, histories = random_benchmark_conf_data(result_num, 2000000, hist_size=1500000)
         br = BenchmarkResult(result_dict=result_data,
           benchmark_configs=confs, histories=histories)
         br.dump("./results_all", dump_configs=True, dump_histories=True, max_mb_per_file = 5)
@@ -117,41 +119,39 @@ class DatabaseRunnerTests(unittest.TestCase):
             self.assertEqual(br_loaded.get_history(conf_idx), histories[conf_idx])
 
     def test_extend_from_file(self):
-        os.remove("./br1")
-        os.remove("./br2")
-        os.remove("./br3")
+        try:
+          os.remove("./br1")
+          os.remove("./br2")
+          os.remove("./br3")
+        except:
+          pass
         result_num = 100
-        result_data = random_result_data(size = result_num)
-        confs = random_benchmark_conf_data(result_num, 2000000)
-        histories1 = random_history_data(result_num, 1500000, offset=0)
+        confs, result_data, histories1 = random_benchmark_conf_data(result_num, 2000000, hist_size=1500000, offset=0)
         br1 = BenchmarkResult(result_dict=result_data,
           benchmark_configs=confs, histories=histories1)
-        br1.dump("./br1")
+        br1.dump("./br1", dump_histories=True, dump_configs=True)
+        br1_df = br1.get_data_frame().copy()
 
         result_num = 30
-        result_data = random_result_data(size = result_num)
-        confs = random_benchmark_conf_data(result_num, 2000000)
-        histories2 = random_history_data(result_num, 1500000, offset=200)
-        br2 = BenchmarkResult(result_dict=result_data,
-          benchmark_configs=confs, histories=histories2)
+        confs2, result_data2, histories2 = random_benchmark_conf_data(result_num, 2000000, hist_size=1500000, offset=200)
+        br2 = BenchmarkResult(result_dict=result_data2,
+          benchmark_configs=confs2, histories=histories2)
         br2.dump(filename="./br2", dump_histories=True, dump_configs=True)
 
         result_num = 10
-        result_data = random_result_data(size = result_num)
-        confs = random_benchmark_conf_data(result_num, 2000000)
-        histories3 = random_history_data(result_num, 1500000, offset=400)
-        br3 = BenchmarkResult(result_dict=result_data,
-          benchmark_configs=confs, histories=histories3)
+        confs3, result_data3, histories3 = random_benchmark_conf_data(result_num, 2000000, hist_size=1500000, offset=400)
+        br3 = BenchmarkResult(result_dict=result_data3,
+          benchmark_configs=confs3, histories=histories3)
         br3.dump(filename="./br3", dump_histories=True, dump_configs=True)
 
         br1.extend(filename="./br2")
         br1.extend(filename="./br3")
 
         br_loaded = BenchmarkResult.load("./br1", load_histories=True, load_configs=True)
-        result_dict_desired = br1.get_result_dict()
-        result_dict_desired.extend(br2.get_result_dict())
-        result_dict_desired.extend(br3.get_result_dict())
-        self.assertEqual(br_loaded.get_result_dict(), result_dict_desired)
+        df_desired = br1_df
+        df_desired = pd.concat([df_desired, br2.get_data_frame()])
+        df_desired = pd.concat([df_desired, br3.get_data_frame()])
+        self.assertEqual(len(br_loaded.get_data_frame().index), len(df_desired.index))
 
         extended_confs = br_loaded.get_benchmark_configs()
         self.assertEqual(len(extended_confs), 140)
@@ -160,8 +160,8 @@ class DatabaseRunnerTests(unittest.TestCase):
         extended_histories = histories1
         extended_histories.update(histories2)
         extended_histories.update(histories3)
-        for conf_idx in extended_confs:
-            self.assertEqual(br_loaded.get_history(conf_idx), extended_histories[conf_idx])
+        for bc in extended_confs:
+            self.assertEqual(br_loaded.get_history(bc.config_idx), extended_histories[bc.config_idx])
         
 
 if __name__ == '__main__':

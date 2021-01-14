@@ -101,6 +101,9 @@ class BenchmarkResult:
     def get_benchmark_config_indices(self):
         if self.__benchmark_configs:
           return [bc.config_idx for bc in self.__benchmark_configs]
+        df = self.get_data_frame()
+        if len(df.index) > 0:
+          return df["config_idx"].tolist()
         else:
           return []
 
@@ -162,28 +165,23 @@ class BenchmarkResult:
                 "histories", configs_idx_to_load)
         if len(configs_not_found) > 0:
             logging.warning("The histories with config indices {} were not found in {}".format(configs_not_found, self.__file_name))
-        if new_histories:
-            new_result = BenchmarkResult(result_dict=None, benchmark_configs=None,
-                              histories=new_histories)
-            self.extend(new_result)
+        self.__histories.update(new_histories)
         return processed_files
 
     def load_benchmark_configs(self, config_idx_list = None):
         if config_idx_list:
-            existing_config_indices = self.get_benchmark_config_indices()
-            configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
+            existing_configs_indices = [bc.config_idx for bc in self.__benchmark_configs]
+            configs_idx_to_load = list(set(config_idx_list) - set(existing_configs_indices))
         else:
             configs_idx_to_load = None # all available configs are loaded
         new_bench_configs = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
             new_bench_configs, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
                 "configs", configs_idx_to_load)
+            new_bench_configs_list = list(new_bench_configs.values())
         if len(configs_not_found) > 0:
             logging.warning("The benchmark configs with indices {} were not found in {}".format(configs_not_found, self.__file_name))
-        if new_bench_configs:
-            new_result = BenchmarkResult(result_dict=None, benchmark_configs=new_bench_configs,
-                              histories=None)
-            self.extend(new_result)
+        self.__benchmark_configs.extend(new_bench_configs_list)
         return processed_files
 
     @staticmethod
@@ -213,19 +211,12 @@ class BenchmarkResult:
         if config_idx_list:
             files_to_load, configs_not_found = BenchmarkResult._find_files_to_load(total_file_list, \
                 filetype, config_idx_list)
-        merged_iterable = None
+        merged_iterable_dict = {}
         for file in files_to_load:
             bytes = zip_file_handle.read(file)
             iterable = pickle.loads(bytes)
-            if isinstance(iterable, list):
-                if not merged_iterable:
-                    merged_iterable = []
-                merged_iterable.extend(iterable)
-            elif isinstance(iterable, dict):
-                if not merged_iterable:
-                    merged_iterable = {}
-                merged_iterable.update(iterable)
-        return merged_iterable, configs_not_found, files_to_load
+            merged_iterable_dict.update(iterable)
+        return merged_iterable_dict, configs_not_found, files_to_load
 
     @staticmethod
     def _save_and_split(zip_file_handle, filetype, pickable_iterable, max_bytes_per_file):
@@ -233,27 +224,28 @@ class BenchmarkResult:
                                       protocol=pickle.HIGHEST_PROTOCOL))
         num_files = math.ceil(whole_list_byte_size/max_bytes_per_file)
         num_configs_per_file = math.floor(len(pickable_iterable)/num_files)
+        pickable_iterable_dct=None
         if isinstance(pickable_iterable, list):
-          config_idx_list = list(range(0, len(pickable_iterable)))
+          pickable_iterable_dct = {bc.config_idx : bc for bc in pickable_iterable}
         elif isinstance(pickable_iterable, dict):
-          config_idx_list = list(pickable_iterable.keys())
+          pickable_iterable_dct = pickable_iterable
+        config_idx_list = list(pickable_iterable_dct.keys())
+        config_idx_list.sort()
         config_idx_splits = [config_idx_list[i:i + num_configs_per_file] \
                      for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:
-            iterable_to_write = None
-            if isinstance(pickable_iterable, list):
-                iterable_to_write = [pickable_iterable[i] for i in config_idx_split]
-            elif isinstance(pickable_iterable, dict):
-                iterable_to_write = { config_idx : pickable_iterable[config_idx] \
+            iterable_to_write = { config_idx : pickable_iterable_dct[config_idx] \
                                       for config_idx in config_idx_split}
-
             filename = os.path.join(filetype, "config_idx_{}_to_{}.{}".format(
                   config_idx_split[0], config_idx_split[-1], filetype))
-            zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
+            if not filename in zip_file_handle.namelist():
+                zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
                                                 protocol=pickle.HIGHEST_PROTOCOL))
 
     @staticmethod
     def remove_result_file_from_dumped(filename):
+        if not os.path.exists(filename):
+          return
         result_file_name = "benchmark.results"
         zip_file_handle = zipfile.ZipFile(filename)
         if result_file_name in zip_file_handle.namelist():
@@ -336,6 +328,7 @@ class BenchmarkResult:
         self.__histories.update(benchmark_result.get_histories())
 
         # if histories or configs are not loaded merge directly at the file level
+        # this is usefule to avoid out of memory for large amounts of data
         if filename:
           BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
           self.dump(self.get_file_name(), append=True, \

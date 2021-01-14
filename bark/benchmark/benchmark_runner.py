@@ -177,8 +177,8 @@ class BenchmarkRunner:
     @staticmethod
     def merge_checkpoint_benchmark_results(checkpoint_dir):
         checkpoint_files = glob.glob(os.path.join(checkpoint_dir, "**/*.ckpnt"), recursive=True)
-        merged_result_filename = os.path.join(checkpoint_dir,"merged_results.ckpnt")
-        tmp_merged_result_filename = os.path.join(checkpoint_dir,"merged_results_tmp.ckpnt")
+        merged_result_filename = os.path.abspath(os.path.join(checkpoint_dir,"merged_results.ckpnt"))
+        tmp_merged_result_filename = os.path.abspath(os.path.join(checkpoint_dir,"merged_results_tmp.ckpnt"))
         merged_result = BenchmarkResult(file_name=tmp_merged_result_filename)
         # merge all checkpoints with new results
         for checkpoint_file in checkpoint_files:
