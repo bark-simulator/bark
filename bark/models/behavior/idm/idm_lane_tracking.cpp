@@ -111,11 +111,11 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 void BehaviorIDMLaneTracking::CheckAccelerationLimits(double acc_lon,
                                                       double acc_lat) const {
   const auto almost_smaller = [](const double val1, const double val2) {
-    const double precision = 0.01;
+    const double precision = 0.1;
     return val1 <= val2 || std::abs(val1 - val2)  < precision;
   };
   const auto almost_larger = [](const double val1, const double val2) {
-    const double precision = 0.01;
+    const double precision = 0.1;
     return val1 >= val2 || std::abs(val1 - val2)  < precision;
   };
   if (acc_lon >= 0 && !almost_smaller(acc_lon, GetAccelerationLimits().lon_acc_max)) {
