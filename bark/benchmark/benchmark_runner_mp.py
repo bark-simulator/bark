@@ -127,15 +127,9 @@ class BenchmarkRunnerMP(BenchmarkRunner):
 
     def run(self, viewer = None, maintain_history = False, checkpoint_every=None):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every) for actor in self.actors])
-        result_dict = []
-        benchmark_configs = []
-        histories = {}
         for result_tmp in results_tmp:
-            result_dict.extend(result_tmp.get_result_dict())
-            benchmark_configs.extend(result_tmp.get_benchmark_configs())
-            histories.update(result_tmp.get_histories())
-        benchmark_result = BenchmarkResult(result_dict, benchmark_configs, histories=histories)
-        self.existing_benchmark_result.extend(benchmark_result)
+            logging.info("Result file: {}".format(result_tmp.get_file_name()))
+            self.existing_benchmark_result.extend(filename=result_tmp.get_file_name()) 
         return self.existing_benchmark_result
 
     def __del__(self):

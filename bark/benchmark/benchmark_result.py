@@ -99,11 +99,11 @@ class BenchmarkResult:
             self.__benchmark_configs, config_idx)
 
     def get_benchmark_config_indices(self):
-        if self.__benchmark_configs:
-          return [bc.config_idx for bc in self.__benchmark_configs]
         df = self.get_data_frame()
         if len(df.index) > 0:
           return df["config_idx"].tolist()
+        if self.__benchmark_configs:
+          return [bc.config_idx for bc in self.__benchmark_configs]
         else:
           return []
 
@@ -244,7 +244,7 @@ class BenchmarkResult:
 
     @staticmethod
     def remove_result_file_from_dumped(filename):
-        if not os.path.exists(filename):
+        if not filename or not os.path.exists(filename):
           return
         result_file_name = "benchmark.results"
         zip_file_handle = zipfile.ZipFile(filename)
@@ -283,8 +283,8 @@ class BenchmarkResult:
 
     def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000, append=False):
         if append:
-          BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
-        with zipfile.ZipFile(filename, 'a' if append else 'w') as result_zip_file:
+          BenchmarkResult.remove_result_file_from_dumped(filename)
+        with zipfile.ZipFile(filename, 'a' if append and os.path.exists(filename) else 'w') as result_zip_file:
             self._dump_results(result_zip_file)
             if dump_configs:
                 self._dump_benchmark_configs(result_zip_file, max_mb_per_file*10**6)
@@ -309,7 +309,9 @@ class BenchmarkResult:
 
     def extend(self, benchmark_result=None, filename = None):
         if filename:
-          benchmark_result = BenchmarkResult.load(filename=filename)
+            if filename == self.get_file_name():
+                return
+            benchmark_result = BenchmarkResult.load(filename=filename)
         new_idxs = benchmark_result.get_benchmark_config_indices()
         this_idxs = self.get_benchmark_config_indices()
         overlap = set(new_idxs) & set(this_idxs)

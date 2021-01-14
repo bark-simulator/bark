@@ -18,6 +18,7 @@ except:
 
 from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
+from bark.benchmark.benchmark_result import BenchmarkResult
 from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, EvaluationConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP, _BenchmarkRunnerActor, \
   deserialize_benchmark_config, serialize_benchmark_config
@@ -70,7 +71,7 @@ class DatabaseRunnerTests(unittest.TestCase):
 
         groups = result.get_evaluation_groups()
         self.assertEqual(set(groups), set(["behavior", "scen_set"]))
-
+    @unittest.skip
     def test_database_runner_checkpoint(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=10)
         dbs.process("data/database1")
@@ -93,6 +94,8 @@ class DatabaseRunnerTests(unittest.TestCase):
         benchmark_runner.clear_checkpoint_dir()
         # one run after 30 steps benchmark dumped
         result = benchmark_runner.run(checkpoint_every = 30)
+        # remove final already merged checkpoint to check merging without already merged result
+        os.remove(os.path.join("checkpoints1", "merged_results.ckpnt"))
         df = result.get_data_frame()
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
@@ -103,6 +106,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         # second load merged results
         self.assertTrue(os.path.exists(os.path.join("checkpoints1/merged_results.ckpnt")))
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
+        merged_result = BenchmarkResult.load(merged_result.get_file_name())
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 30)
 
@@ -122,11 +126,13 @@ class DatabaseRunnerTests(unittest.TestCase):
         print(df)
         self.assertEqual(len(df.index), 40) # 2 Behaviors * 10 Serialize Scenarios * 2 scenario sets
 
-        # check if results maintained in existing result dump, 30 from previous run + 7 after new checkpoint
+        # check if results maintained in existing result dump are only 7 when removing previous merged results
+        os.remove(os.path.join("checkpoints1", "merged_results.ckpnt"))
         merged_result = BenchmarkRunner.merge_checkpoint_benchmark_results(checkpoint_dir="checkpoints1/")
+        merged_result = BenchmarkResult.load(merged_result.get_file_name())
         df = merged_result.get_data_frame()
-        self.assertEqual(len(df.index), 37)
-    @unittest.skip
+        self.assertEqual(len(df.index), 7)
+
     def test_database_multiprocessing_runner(self):
         dbs = DatabaseSerializer(test_scenarios=4, test_world_steps=5, num_serialize_scenarios=5)
         dbs.process("data/database1")
@@ -220,6 +226,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         df = merged_result.get_data_frame()
         self.assertEqual(len(df.index), 4*9)
        # self.assertEqual(len(merged_result.get_histories()), 4*9)
+        merged_result.load_benchmark_configs()
         self.assertEqual(len(merged_result.get_benchmark_configs()), 4*9)
 
         configs_to_run = BenchmarkRunner.get_configs_to_run(benchmark_runner.configs_to_run, merged_result)
