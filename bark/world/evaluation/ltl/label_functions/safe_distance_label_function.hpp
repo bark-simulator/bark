@@ -27,7 +27,7 @@ using bark::world::objects::AgentPtr;
 class SafeDistanceLabelFunction : public BaseLabelFunction {
  public:
   SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
-                            double delta, double a_e, double a_o,
+                            double delta_ego, double delta_others, double a_e, double a_o,
                             bool consider_crossing_corridors = false,
                             unsigned int max_agents_for_crossing = 4);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
@@ -39,25 +39,27 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
            const bark::world::objects::AgentPtr& rear_agent) const;
 
   bool GetToRear() const { return to_rear_; }
-  double GetDelta() const { return delta_; }
+  double GetDeltaOthers() const { return delta_others_; }
+  double GetDeltaEgo() const { return delta_ego_; }
   double GetMaxDecelEgo() const { return a_e_; }
   double GetMaxDecelOther() const { return a_o_; }
 
  private:
   bool CheckSafeDistance(
     const float v_f, const float v_r, const float dist,
-    const double a_r,  const double a_f) const;
-  inline double CalcVelFrontStar(double v_f, double a_f) const;
-  inline double CalcSafeDistance0(double v_r, double a_r) const;
+    const double a_r,  const double a_f, const double delta) const;
+  inline double CalcVelFrontStar(double v_f, double a_f, double delta) const;
+  inline double CalcSafeDistance0(double v_r, double a_r, double delta) const;
   inline double CalcSafeDistance1(double v_r, double v_f, double a_r,
-                                  double a_f) const;
+                                  double a_f, double delta) const;
   inline double CalcSafeDistance2(double v_r, double v_f, double a_r,
-                                  double a_f) const;
+                                  double a_f, double delta) const;
   inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
-                                  double a_f) const;
+                                  double a_f, double delta) const;
 
   bool to_rear_;
-  double delta_;  //! Reaction time
+  double delta_ego_;  //! Reaction times
+  double delta_others_;  //! Reaction times
   double a_e_;    //! Max. deceleration of ego
   double a_o_;    //! Max. deceleration of front/rear agent (why rear agent?)
   bool consider_crossing_corridors_;

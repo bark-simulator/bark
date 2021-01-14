@@ -63,7 +63,7 @@ TEST(label_test, safe_distance) {
   double a_o = -8.0;
 
   auto evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o, true));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true));
   auto label = evaluator->GetLabel();
   double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
 
@@ -92,7 +92,7 @@ TEST(label_test, safe_distance) {
   delta = 0.5;
   dist = 4.5;
   evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o));
   auto world4 = make_test_world(1, dist, v_0, dv);
   auto observed_world4 = world4->Observe({ego_id})[0];
   auto labels4 = evaluator->Evaluate(observed_world4);
