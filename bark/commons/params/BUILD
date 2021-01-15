@@ -5,11 +5,13 @@ cc_library(
     hdrs = [
         "params.hpp",
         "params_test.h",
-        "setter_params.hpp"
+        "setter_params.hpp",
+        "params_c_api.h",
     ],
     srcs = [
         "setter_params.cpp",
-        "params.cpp"
+        "params.cpp",
+        "params_c_api.cpp",
     ],
     visibility = ["//visibility:public"],
     deps = [

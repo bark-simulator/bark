@@ -110,13 +110,19 @@ cc_library(
 # For apollo integration
 cc_binary(
     name = "libcorec.so",
+    copts = [
+    #    "-D_GLIBCXX_USE_CXX11_ABI=0",
+    #    "-fabi-version=7",
+        ],
     srcs = [
         # NOTE the cpp files have to be included here, otherwise the symbols are not in the lib. only having the files in the dependencies is not enough
-        "//bark/commons/distribution:distribution.hpp",
-        "//bark/commons/params:setter_params.cpp",
-        "//bark/commons/params:params.cpp",
-        "//bark/commons/params:params.hpp",
-        "//bark/commons/params:setter_params.hpp",
+        "//bark/commons/params:params_c_api.h",
+        "//bark/commons/params:params_c_api.cpp",
+    #    "//bark/commons/distribution:distribution.hpp",
+    #    "//bark/commons/params:setter_params.cpp",
+    #    "//bark/commons/params:params.cpp",
+    #    "//bark/commons/params:params.hpp",
+    #    "//bark/commons/params:setter_params.hpp",
 #        "//bark/world/opendrive:opendrive.hpp",
     #    "//bark/world/map:road_corridor.hpp",
     #    "//bark/world/map:road_corridor.cpp",
