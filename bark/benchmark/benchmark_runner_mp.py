@@ -105,7 +105,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           else:
             memory_total = memory_available
           
-          ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, \
+          ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, local_mode=True, \
              _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
         serialized_evaluators = pickle.dumps(self.evaluators)
@@ -127,10 +127,13 @@ class BenchmarkRunnerMP(BenchmarkRunner):
 
     def run(self, viewer = None, maintain_history = False, checkpoint_every=None):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every) for actor in self.actors])
+        intermediate_result = BenchmarkResult(file_name= \
+                os.path.abspath(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name())))
         for result_tmp in results_tmp:
             logging.info("Result file: {}".format(result_tmp.get_file_name()))
-            self.existing_benchmark_result.extend(filename=result_tmp.get_file_name()) 
-        return self.existing_benchmark_result
+            intermediate_result.extend(result_tmp, file_level=True) 
+        intermediate_result.extend(self.existing_benchmark_result, file_level=True)
+        return intermediate_result
 
     def __del__(self):
        ray.shutdown()

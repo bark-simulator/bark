@@ -58,12 +58,12 @@ class DatabaseRunnerTests(unittest.TestCase):
                                            terminal_when=terminal_when,
                                            behaviors=behaviors_tested,
                                            log_eval_avg_every=2)
-
+        benchmark_runner.clear_checkpoint_dir()
         result = benchmark_runner.run(maintain_history=True)
 
-        result.dump(os.path.join("./benchmark_results"), dump_configs=True, \
+        result.dump(os.path.abspath("./benchmark_results"), dump_configs=True, \
                          dump_histories=True, max_mb_per_file=1)
-        result_loaded = BenchmarkResult.load(os.path.join("./benchmark_results"))
+        result_loaded = BenchmarkResult.load(os.path.abspath("./benchmark_results"))
         result_loaded.load_histories()
         result_loaded.load_benchmark_configs()
 

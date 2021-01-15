@@ -282,6 +282,9 @@ class BenchmarkResult:
           return None
 
     def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000, append=False):
+        if self.get_file_name() and filename != self.get_file_name() and os.path.exists(self.get_file_name()):
+          os.rename(self.get_file_name(), filename)
+          append = True
         if append:
           BenchmarkResult.remove_result_file_from_dumped(filename)
         with zipfile.ZipFile(filename, 'a' if append and os.path.exists(filename) else 'w') as result_zip_file:
@@ -307,19 +310,15 @@ class BenchmarkResult:
               with zfh_from.open(filename) as fh:
                 zfh_to.writestr(filename, fh.read())
 
-    def extend(self, benchmark_result=None, filename = None):
-        if filename:
-            if filename == self.get_file_name():
-                return
-            benchmark_result = BenchmarkResult.load(filename=filename)
+    def extend(self, benchmark_result=None, file_level = False):
         new_idxs = benchmark_result.get_benchmark_config_indices()
+        if len(new_idxs) == 0:
+          return
         this_idxs = self.get_benchmark_config_indices()
         overlap = set(new_idxs) & set(this_idxs)
         if len(overlap) != 0:
             raise ValueError("Overlapping config indices. No extension possible.")
         self.__result_dict.extend(benchmark_result.get_result_dict())
-        self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())
-
         other_data_frame = benchmark_result.get_data_frame()
         if isinstance(self.__data_frame, pd.DataFrame):
             if isinstance(other_data_frame, pd.DataFrame):
@@ -327,17 +326,20 @@ class BenchmarkResult:
         else:
             if isinstance(other_data_frame, pd.DataFrame):
                 self.__data_frame = other_data_frame
-        self.__histories.update(benchmark_result.get_histories())
 
-        # if histories or configs are not loaded merge directly at the file level
-        # this is usefule to avoid out of memory for large amounts of data
-        if filename:
+        if not file_level:
+            self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())      
+            self.__histories.update(benchmark_result.get_histories())
+        else:
           BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
           self.dump(self.get_file_name(), append=True, \
               dump_histories=True, dump_configs=True)
           if not self.get_file_name():
             raise ValueError("Extending with filename requires filename for extended result.")
-          with zipfile.ZipFile(filename, 'r') as zfh_from:
-            with zipfile.ZipFile(self.get_file_name(), 'a') as zfh_to:
+          if not os.path.exists(benchmark_result.get_file_name()):
+            raise ValueError("file_level=True requires that extending result file exists.")
+          with zipfile.ZipFile(benchmark_result.get_file_name(), 'r') as zfh_from:
+            with zipfile.ZipFile(self.get_file_name(), \
+                 'a' if os.path.exists(self.get_file_name()) else 'w') as zfh_to:
               BenchmarkResult.move_files(zfh_from, zfh_to, "configs")
               BenchmarkResult.move_files(zfh_from, zfh_to, "histories")

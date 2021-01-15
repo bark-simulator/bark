@@ -144,8 +144,8 @@ class DatabaseRunnerTests(unittest.TestCase):
           benchmark_configs=confs3, histories=histories3)
         br3.dump(filename="./br3", dump_histories=True, dump_configs=True)
 
-        br1.extend(filename="./br2")
-        br1.extend(filename="./br3")
+        br1.extend(benchmark_result=br2, file_level=True)
+        br1.extend(benchmark_result=br3, file_level=True)
 
         br_loaded = BenchmarkResult.load("./br1", load_histories=True, load_configs=True)
         df_desired = br1_df
