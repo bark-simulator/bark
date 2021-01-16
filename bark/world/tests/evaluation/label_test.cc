@@ -14,6 +14,7 @@
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -191,6 +192,16 @@ TEST(label_test, rel_speed_gt) {
   auto labels2 = evaluator->Evaluate(observed_worlds2[0]);
   auto label2 = evaluator->GetLabel(2);
   EXPECT_FALSE(labels2[label2]);
+}
+
+TEST(label_test, speed_lt) {
+  auto evaluator =
+      LabelFunctionPtr(new BelowSpeedLimitLabelFunction("speed_lt", 22.0));
+  auto world = make_test_world(1, 20.0, 20.0, 15.0);
+  auto observed_world = world->Observe({1})[0];
+  auto labels1 = evaluator->Evaluate(observed_world);
+  auto label = evaluator->GetLabel();
+  EXPECT_TRUE(labels1[label]);
 }
 
 TEST(label_test, agent_near) {

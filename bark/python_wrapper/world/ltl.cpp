@@ -17,6 +17,7 @@
 #include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/constant_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/dense_traffic_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
@@ -97,6 +98,26 @@ void python_ltl(py::module m) {
                 t[0].cast<std::string>(), t[1].cast<bool>(),
                 t[2].cast<double>(), t[3].cast<double>(), t[4].cast<double>(),
                 t[5].cast<bool>(), t[6].cast<double>());
+          }));
+
+  py::class_<BelowSpeedLimitLabelFunction, BaseLabelFunction,
+             std::shared_ptr<BelowSpeedLimitLabelFunction>>(
+      m, "BelowSpeedLimitLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const BelowSpeedLimitLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl."
+                    "BelowSpeedLimitLabelFunction";
+           })
+      .def(py::pickle(
+          [](const BelowSpeedLimitLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetVelocityThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new BelowSpeedLimitLabelFunction(t[0].cast<std::string>(),
+                                                    t[1].cast<double>());
           }));
 
   py::class_<LaneChangeLabelFunction, BaseLabelFunction,

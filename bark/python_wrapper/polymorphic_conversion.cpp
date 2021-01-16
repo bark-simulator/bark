@@ -54,6 +54,7 @@
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -348,6 +349,9 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(LaneChangeLabelFunction)) {
     label_name = "LaneChangeLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(BelowSpeedLimitLabelFunction)) {
+    label_name = "BelowSpeedLimitLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(AgentNearLabelFunction)) {
     label_name = "AgentNearLabelFunction";
     return py::make_tuple(label, label_name);
@@ -394,6 +398,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("LaneChangeLabelFunction") == 0) {
     return std::make_shared<LaneChangeLabelFunction>(
         t[0].cast<LaneChangeLabelFunction>());
+  } else if (label_name.compare("BelowSpeedLimitLabelFunction") == 0) {
+    return std::make_shared<BelowSpeedLimitLabelFunction>(
+        t[0].cast<BelowSpeedLimitLabelFunction>());
   } else if (label_name.compare("AgentNearLabelFunction") == 0) {
     return std::make_shared<AgentNearLabelFunction>(
         t[0].cast<AgentNearLabelFunction>());
