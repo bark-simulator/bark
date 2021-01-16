@@ -25,8 +25,12 @@ using bark::world::objects::AgentPtr;
 
 class RightmostLaneLabelFunction : public BaseLabelFunction {
  public:
-  RightmostLaneLabelFunction(const std::string& label_str);
+  RightmostLaneLabelFunction(const std::string& label_str,
+                             const double distance_thres);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  double GetDistanceThres() const { return distance_thres_; }
+ private:
+  double distance_thres_;
 };
 
 }  // namespace evaluation

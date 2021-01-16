@@ -201,19 +201,20 @@ void python_ltl(py::module m) {
   py::class_<RightmostLaneLabelFunction, BaseLabelFunction,
              std::shared_ptr<RightmostLaneLabelFunction>>(
       m, "RightmostLaneLabelFunction")
-      .def(py::init<const std::string&>())
+      .def(py::init<const std::string&, double>())
       .def("__repr__",
            [](const RightmostLaneLabelFunction& g) {
              return "bark.core.world.evaluation.ltl.RightmostLaneLabelFunction";
            })
       .def(py::pickle(
           [](const RightmostLaneLabelFunction& b) {
-            return py::make_tuple(b.GetLabelStr());
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
           },
           [](py::tuple t) {
-            if (t.size() != 12)
+            if (t.size() != 2)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new RightmostLaneLabelFunction(t[0].cast<std::string>());
+            return new RightmostLaneLabelFunction(t[0].cast<std::string>(),
+                                                  t[1].cast<double>());
           }));
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,

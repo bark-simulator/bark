@@ -15,11 +15,12 @@ namespace world {
 namespace evaluation {
 
 RightmostLaneLabelFunction::RightmostLaneLabelFunction(
-    const std::string& label_str)
-    : BaseLabelFunction(label_str) {}
+    const std::string& label_str, const double distance_thres)
+    : BaseLabelFunction(label_str), distance_thres_(distance_thres) {}
 
 LabelMap RightmostLaneLabelFunction::Evaluate(
     const world::ObservedWorld& observed_world) const {
+  const auto& ego_agent = observed_world.GetEgoAgent();
   const auto& ego_pos = observed_world.CurrentEgoPosition();
 
   const auto right_lc = observed_world.GetRoadCorridor()
@@ -27,7 +28,14 @@ LabelMap RightmostLaneLabelFunction::Evaluate(
                             .second;
   bool is_rightmost_lane;
   if (right_lc) {
-    is_rightmost_lane = false;
+    const double dist_until_end =
+        right_lc->LengthUntilEnd(ego_pos) - ego_agent->GetShape().front_dist_;
+    if (dist_until_end > distance_thres_) {
+      // there is a right lane that is not ending soon
+      is_rightmost_lane = false;
+    } else {
+      is_rightmost_lane = true;
+    }
   } else {
     is_rightmost_lane = true;
   }

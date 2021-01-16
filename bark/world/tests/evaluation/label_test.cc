@@ -180,7 +180,7 @@ TEST(label_test, lane_change_left) {
 }
 
 TEST(label_test, rightmost_lane) {
-  auto evaluator = LabelFunctionPtr(new RightmostLaneLabelFunction("rightmost_lane"));
+  auto evaluator = LabelFunctionPtr(new RightmostLaneLabelFunction("rightmost_lane", 0));
   auto label = evaluator->GetLabel();
 
   auto world = MakeTestWorldHighway();
