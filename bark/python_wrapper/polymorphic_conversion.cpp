@@ -55,6 +55,7 @@
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_below_speed_limit_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/leftmost_lane_label_function.hpp"
 #endif
@@ -120,6 +121,7 @@ using bark::world::evaluation::GenericEgoLabelFunction;
 using bark::world::evaluation::RightmostLaneLabelFunction;
 using bark::world::evaluation::LeftmostLaneLabelFunction;
 using bark::world::evaluation::BelowSpeedLimitLabelFunction;
+using bark::world::evaluation::EgoBelowSpeedLimitLabelFunction;
 #endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -357,6 +359,9 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(BelowSpeedLimitLabelFunction)) {
     label_name = "BelowSpeedLimitLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(EgoBelowSpeedLimitLabelFunction)) {
+    label_name = "EgoBelowSpeedLimitLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(AgentNearLabelFunction)) {
     label_name = "AgentNearLabelFunction";
     return py::make_tuple(label, label_name);
@@ -412,6 +417,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("BelowSpeedLimitLabelFunction") == 0) {
     return std::make_shared<BelowSpeedLimitLabelFunction>(
         t[0].cast<BelowSpeedLimitLabelFunction>());
+  } else if (label_name.compare("EgoBelowSpeedLimitLabelFunction") == 0) {
+    return std::make_shared<EgoBelowSpeedLimitLabelFunction>(
+        t[0].cast<EgoBelowSpeedLimitLabelFunction>());
   } else if (label_name.compare("AgentNearLabelFunction") == 0) {
     return std::make_shared<AgentNearLabelFunction>(
         t[0].cast<AgentNearLabelFunction>());
