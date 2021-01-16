@@ -15,6 +15,7 @@
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -176,6 +177,24 @@ TEST(label_test, lane_change_left) {
   observed_world = world->Observe({id})[0];
   labels = evaluator->Evaluate(observed_world);
   EXPECT_TRUE(labels[label]);
+}
+
+TEST(label_test, rightmost_lane) {
+  auto evaluator = LabelFunctionPtr(new RightmostLaneLabelFunction("rightmost_lane"));
+  auto label = evaluator->GetLabel();
+
+  auto world = MakeTestWorldHighway();
+  auto params = std::make_shared<SetterParams>();
+  
+  AgentId id = 1;
+  auto observed_world = world->Observe({id})[0];
+  auto labels = evaluator->Evaluate(observed_world);
+  ASSERT_FALSE(labels[label]);
+
+  id = 4;
+  observed_world = world->Observe({id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  ASSERT_TRUE(labels[label]);
 }
 
 TEST(label_test, rel_speed_gt) {

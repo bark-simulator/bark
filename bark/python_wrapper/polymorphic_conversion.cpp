@@ -379,6 +379,9 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(BehindOfLabelFunction)) {
     label_name = "BehindOfLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(RightMostLaneLabelFunction)) {
+    label_name = "RightMostLaneLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) ==
              typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
     label_name = "CollisionEgoLabelFunction";
@@ -428,6 +431,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("BehindOfLabelFunction") == 0) {
     return std::make_shared<BehindOfLabelFunction>(
         t[0].cast<BehindOfLabelFunction>());
+  } else if (label_name.compare("RightMostLaneLabelFunction") == 0) {
+    return std::make_shared<RightMostLaneLabelFunction>(
+        t[0].cast<RightMostLaneLabelFunction>());
   } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
     return std::make_shared<
         GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(
