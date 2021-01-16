@@ -8,18 +8,20 @@
 
 #include <string>
 
-#include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/multi_agent_label_function.hpp"
+
 #include "bark/world/objects/object.hpp"
 
 namespace bark {
 namespace world {
 namespace evaluation {
 
-class BelowSpeedLimitLabelFunction : public BaseLabelFunction {
+class BelowSpeedLimitLabelFunction : public MultiAgentLabelFunction {
  public:
   BelowSpeedLimitLabelFunction(const std::string& string,
                                const double velocity_thres);
-  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  bool EvaluateAgent(const world::ObservedWorld& observed_world,
+                const AgentPtr& other_agent) const override;
   double GetVelocityThres() const { return velocity_thres_; }
 
  private:

@@ -239,7 +239,7 @@ TEST(label_test, speed_lt) {
   auto world = make_test_world(1, 20.0, 20.0, 15.0);
   auto observed_world = world->Observe({1})[0];
   auto labels1 = evaluator->Evaluate(observed_world);
-  auto label = evaluator->GetLabel();
+  auto label = evaluator->GetLabel(2);
   EXPECT_TRUE(labels1[label]);
 }
 

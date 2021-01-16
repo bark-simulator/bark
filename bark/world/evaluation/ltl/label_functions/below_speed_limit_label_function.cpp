@@ -18,15 +18,16 @@ namespace evaluation {
 
 BelowSpeedLimitLabelFunction::BelowSpeedLimitLabelFunction(
     const std::string& string, const double velocity_thres)
-    : BaseLabelFunction(string), velocity_thres_(velocity_thres) {
+    : MultiAgentLabelFunction(string), velocity_thres_(velocity_thres) {
   assert(velocity_thres_ >= 0.0);
 }
 
-LabelMap BelowSpeedLimitLabelFunction::Evaluate(
-    const bark::world::ObservedWorld& observed_world) const {
-  const auto& ego_vehicle_state = observed_world.CurrentEgoState();
-  const double vel = ego_vehicle_state(StateDefinition::VEL_POSITION);
-  return {{GetLabel(), vel < velocity_thres_}};
+bool BelowSpeedLimitLabelFunction::EvaluateAgent(
+    const bark::world::ObservedWorld& observed_world,
+    const bark::world::AgentPtr& other_agent) const {
+  const auto& state = other_agent->GetCurrentState();
+  const double vel = state(StateDefinition::VEL_POSITION);
+  return vel < velocity_thres_;
 }
 
 }  // namespace evaluation
