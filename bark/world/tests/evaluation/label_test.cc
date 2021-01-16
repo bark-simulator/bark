@@ -15,8 +15,8 @@
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -181,7 +181,7 @@ TEST(label_test, lane_change_left) {
 }
 
 TEST(label_test, rightmost_lane) {
-  auto evaluator = LabelFunctionPtr(new RightmostLaneLabelFunction("rightmost_lane", 0));
+  auto evaluator = LabelFunctionPtr(new EgoRightmostLaneLabelFunction("rightmost_lane", 0));
   auto label = evaluator->GetLabel();
 
   auto world = MakeTestWorldHighway();
@@ -200,7 +200,7 @@ TEST(label_test, rightmost_lane) {
 
 
 TEST(label_test, leftmost_lane) {
-  auto evaluator = LabelFunctionPtr(new LeftmostLaneLabelFunction("leftmost_lane", 0));
+  auto evaluator = LabelFunctionPtr(new EgoLeftmostLaneLabelFunction("leftmost_lane", 0));
   auto label = evaluator->GetLabel();
 
   auto world = MakeTestWorldHighway();

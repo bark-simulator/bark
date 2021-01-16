@@ -27,11 +27,11 @@
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
 namespace py = pybind11;
@@ -220,41 +220,41 @@ void python_ltl(py::module m) {
                                                   t[1].cast<double>());
           }));
 
-  py::class_<RightmostLaneLabelFunction, BaseLabelFunction,
-             std::shared_ptr<RightmostLaneLabelFunction>>(
-      m, "RightmostLaneLabelFunction")
+  py::class_<EgoRightmostLaneLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoRightmostLaneLabelFunction>>(
+      m, "EgoRightmostLaneLabelFunction")
       .def(py::init<const std::string&, double>())
       .def("__repr__",
-           [](const RightmostLaneLabelFunction& g) {
-             return "bark.core.world.evaluation.ltl.RightmostLaneLabelFunction";
+           [](const EgoRightmostLaneLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.EgoRightmostLaneLabelFunction";
            })
       .def(py::pickle(
-          [](const RightmostLaneLabelFunction& b) {
+          [](const EgoRightmostLaneLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
           },
           [](py::tuple t) {
             if (t.size() != 2)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new RightmostLaneLabelFunction(t[0].cast<std::string>(),
+            return new EgoRightmostLaneLabelFunction(t[0].cast<std::string>(),
                                                   t[1].cast<double>());
           }));
 
-  py::class_<LeftmostLaneLabelFunction, BaseLabelFunction,
-             std::shared_ptr<LeftmostLaneLabelFunction>>(
-      m, "LeftmostLaneLabelFunction")
+  py::class_<EgoLeftmostLaneLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoLeftmostLaneLabelFunction>>(
+      m, "EgoLeftmostLaneLabelFunction")
       .def(py::init<const std::string&, double>())
       .def("__repr__",
-           [](const LeftmostLaneLabelFunction& g) {
-             return "bark.core.world.evaluation.ltl.LeftmostLaneLabelFunction";
+           [](const EgoLeftmostLaneLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.EgoLeftmostLaneLabelFunction";
            })
       .def(py::pickle(
-          [](const LeftmostLaneLabelFunction& b) {
+          [](const EgoLeftmostLaneLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
           },
           [](py::tuple t) {
             if (t.size() != 2)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new LeftmostLaneLabelFunction(t[0].cast<std::string>(),
+            return new EgoLeftmostLaneLabelFunction(t[0].cast<std::string>(),
                                                  t[1].cast<double>());
           }));
 

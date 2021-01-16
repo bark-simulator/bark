@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
-#define BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_RIGHTMOST_LANE_LABEL_FUNCTION_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABELS_RIGHTMOST_LANE_LABEL_FUNCTION_HPP_
 
 #include <string>
 #include <vector>
@@ -23,13 +23,12 @@ namespace evaluation {
 using bark::commons::transformation::FrenetPosition;
 using bark::world::objects::AgentPtr;
 
-class LeftmostLaneLabelFunction : public BaseLabelFunction {
+class EgoRightmostLaneLabelFunction : public BaseLabelFunction {
  public:
-  LeftmostLaneLabelFunction(const std::string& label_str,
-                            const double distance_thres);
+  EgoRightmostLaneLabelFunction(const std::string& label_str,
+                             const double distance_thres);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
   double GetDistanceThres() const { return distance_thres_; }
-
  private:
   double distance_thres_;
 };
@@ -38,4 +37,4 @@ class LeftmostLaneLabelFunction : public BaseLabelFunction {
 }  // namespace world
 }  // namespace bark
 
-#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_RIGHTMOST_LANE_LABEL_FUNCTION_HPP_

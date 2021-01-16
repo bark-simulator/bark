@@ -6,7 +6,7 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
 
 #include "bark/world/observed_world.hpp"
 
@@ -14,11 +14,11 @@ namespace bark {
 namespace world {
 namespace evaluation {
 
-RightmostLaneLabelFunction::RightmostLaneLabelFunction(
+EgoRightmostLaneLabelFunction::EgoRightmostLaneLabelFunction(
     const std::string& label_str, const double distance_thres)
     : BaseLabelFunction(label_str), distance_thres_(distance_thres) {}
 
-LabelMap RightmostLaneLabelFunction::Evaluate(
+LabelMap EgoRightmostLaneLabelFunction::Evaluate(
     const world::ObservedWorld& observed_world) const {
   const auto& ego_agent = observed_world.GetEgoAgent();
   const auto& ego_pos = observed_world.CurrentEgoPosition();

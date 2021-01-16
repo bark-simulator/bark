@@ -56,8 +56,8 @@
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_below_speed_limit_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -118,8 +118,8 @@ using bark::world::evaluation::RightOfLabelFunction;
 using bark::world::evaluation::FrontOfLabelFunction;
 using bark::world::evaluation::BehindOfLabelFunction;
 using bark::world::evaluation::GenericEgoLabelFunction;
-using bark::world::evaluation::RightmostLaneLabelFunction;
-using bark::world::evaluation::LeftmostLaneLabelFunction;
+using bark::world::evaluation::EgoRightmostLaneLabelFunction;
+using bark::world::evaluation::EgoLeftmostLaneLabelFunction;
 using bark::world::evaluation::BelowSpeedLimitLabelFunction;
 using bark::world::evaluation::EgoBelowSpeedLimitLabelFunction;
 #endif
@@ -389,11 +389,11 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(BehindOfLabelFunction)) {
     label_name = "BehindOfLabelFunction";
     return py::make_tuple(label, label_name);
-  } else if (typeid(*label) == typeid(RightmostLaneLabelFunction)) {
-    label_name = "RightmostLaneLabelFunction";
+  } else if (typeid(*label) == typeid(EgoRightmostLaneLabelFunction)) {
+    label_name = "EgoRightmostLaneLabelFunction";
     return py::make_tuple(label, label_name);
-  } else if (typeid(*label) == typeid(LeftmostLaneLabelFunction)) {
-    label_name = "LeftmostLaneLabelFunction";
+  } else if (typeid(*label) == typeid(EgoLeftmostLaneLabelFunction)) {
+    label_name = "EgoLeftmostLaneLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) ==
              typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
@@ -447,12 +447,12 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("BehindOfLabelFunction") == 0) {
     return std::make_shared<BehindOfLabelFunction>(
         t[0].cast<BehindOfLabelFunction>());
-  } else if (label_name.compare("RightmostLaneLabelFunction") == 0) {
-    return std::make_shared<RightmostLaneLabelFunction>(
-        t[0].cast<RightmostLaneLabelFunction>());
-  } else if (label_name.compare("LeftmostLaneLabelFunction") == 0) {
-    return std::make_shared<LeftmostLaneLabelFunction>(
-        t[0].cast<LeftmostLaneLabelFunction>());
+  } else if (label_name.compare("EgoRightmostLaneLabelFunction") == 0) {
+    return std::make_shared<EgoRightmostLaneLabelFunction>(
+        t[0].cast<EgoRightmostLaneLabelFunction>());
+  } else if (label_name.compare("EgoLeftmostLaneLabelFunction") == 0) {
+    return std::make_shared<EgoLeftmostLaneLabelFunction>(
+        t[0].cast<EgoLeftmostLaneLabelFunction>());
   } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
     return std::make_shared<
         GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(
