@@ -537,9 +537,12 @@ RssInterface::longitudinalDistanceOffset(
 }
 
 
-
-
-
+AgentState
+RssInterface::GetRssDynamics(
+		const models::dynamic::State& agent_state) {
+    const AgentState rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
+	return rss_state;
+}
 
 }  // namespace evaluation
 }  // namespace world
