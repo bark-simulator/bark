@@ -509,8 +509,8 @@ RssInterface::lateralDistanceOffset(
   bool resp = ::ad::rss::situation::calculateLateralDistanceOffsetAfterStatedBrakingPattern(
   rss_state.speed,
   rss_dynamics_ego_.responseTime,
-  rss_dynamics_ego_.alphaLon.accelMax,
-  rss_dynamics_ego_.alphaLon.brakeMax,
+  rss_dynamics_ego_.alphaLat.accelMax,
+  rss_dynamics_ego_.alphaLat.brakeMin,
   distance);
         //Speed const &currentSpeed,
         //Duration const &responseTime,
@@ -538,9 +538,12 @@ RssInterface::longitudinalDistanceOffset(
 }
 
 
-
-
-
+AgentState
+RssInterface::GetRssDynamics(
+		const models::dynamic::State& agent_state) {
+    const AgentState rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
+	return rss_state;
+}
 
 }  // namespace evaluation
 }  // namespace world

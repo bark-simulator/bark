@@ -235,7 +235,9 @@ class RssInterface {
   bool longitudinalDistanceOffset(
 		const models::dynamic::State& agent_state,
 		Distance& distance);
-
+  AgentState GetRssDynamics(
+		const models::dynamic::State& agent_state);
+    
   ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
     return rss_state_snapshot_;
   }
