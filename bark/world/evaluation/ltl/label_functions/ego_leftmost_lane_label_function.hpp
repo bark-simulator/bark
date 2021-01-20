@@ -6,8 +6,8 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
-#define BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
+#ifndef BARK_WORLD_EVALUATION_LTL_LABELS_EGO_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
+#define BARK_WORLD_EVALUATION_LTL_LABELS_EGO_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
 
 #include <string>
 #include <vector>
@@ -38,4 +38,4 @@ class EgoLeftmostLaneLabelFunction : public BaseLabelFunction {
 }  // namespace world
 }  // namespace bark
 
-#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
+#endif  // BARK_WORLD_EVALUATION_LTL_LABELS_EGO_LEFTMOST_LANE_LABEL_FUNCTION_HPP_
