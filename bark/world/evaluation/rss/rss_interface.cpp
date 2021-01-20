@@ -384,8 +384,6 @@ PairwiseEvaluationReturn RssInterface::ExtractPairwiseSafetyEvaluation(
 
 PairwiseDirectionalEvaluationReturnTuple
 RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
-
-
     const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance ) {
       
   PairwiseDirectionalEvaluationReturnTuple is_pairwise_directionally_safe;
@@ -393,8 +391,9 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
     is_pairwise_directionally_safe[static_cast<AgentId>(state.objectId)] =
         std::make_tuple(::ad::rss::state::isLongitudinalSafe(state),
                        ::ad::rss::state::isLateralSafe(state),
-                        lat_distance,
-                        long_distance) ;
+                        state.longitudinalState.rssStateInformation.safeDistance,
+												state.lateralStateRight.rssStateInformation.safeDistance,
+												state.lateralStateLeft.rssStateInformation.safeDistance);
 
         // use std::tuple instead of make_pair and return numerical values for 
         // the violations
@@ -492,6 +491,8 @@ RssInterface::GetPairwiseDirectionalSafetyReponse(
     std::cout << lat_distance << " Lat" << std::endl;
     std::cout << long_distance << " Long" << std::endl;
     response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot,lat_distance, long_distance);
+
+		
   } else {
     LOG(WARNING) << "Could not Generate RSSWorld, thus no "
                     "PairwiseDirectionalSafetyReponse";

@@ -473,42 +473,49 @@ class BaseViewer(Viewer):
           rss_responses = evaluator.PairwiseDirectionalEvaluate(world)
 
         def char_func(value):
-            if value == True:
+            if value is True:
                 return "T"
-            elif value == False:
+            elif value is False:
                 return "F"
             else:
-                return value
+                return '%.2f' % value
 
         overall_safety = True
         if rss_responses:
-            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat   LonD   LatD")
+            self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat   LonD   LatRightD LatLeftD")
             for i, (id, responses) in enumerate(rss_responses.items()):
                 overall_safety = overall_safety and any(responses)
-                str = "{}:    {}     {}     {}     {}".format(
+                str = "{}:    {}     {}     {}     {}      {}".format(
                     id, *list(map(char_func, responses)))
                 self.drawText(position=(0.82, 0.88-0.03*i), text=str)
+
+                # draw lat lon rectangle
                 lon_distance = responses[2]
-                lat_distance = responses[3] # currently not in use
+                lat_right_distance = responses[3]
+                lat_left_distance = responses[4]
+
+                ego_agent = world.agents[agent_id]
+                shape = ego_agent.shape
+
+                lat_lon_rectangle = GenerateGoalRectangle(
+                    shape.left_dist + shape.right_dist + lat_left_distance + lat_right_distance,
+                    lon_distance)
+
+                pose = generatePoseFromState(ego_agent.state)
+                pose[0] = pose[0] - lon_distance
+                pose[1] = pose[1] - shape.left_dist - lat_left_distance
+
+                lat_lon_rectangle = lat_lon_rectangle.Transform(pose)
+
+                poly_color = self.agent_color_map[id]
+                self.drawPolygon2d(lat_lon_rectangle, color=poly_color,
+                               facecolor=poly_color, alpha=.7, zorder=2+i)
 
             # draw longitudinal distance in lane polygon
-            longitudinal_polygon = evaluator.GetLaneLongitudinalPolygon(world, lon_distance)
-            self.drawPolygon2d(longitudinal_polygon, color="blue",
-                           facecolor="blue", alpha=.3, zorder=2)
+            #longitudinal_polygon = evaluator.GetLaneLongitudinalPolygon(world, lon_distance)
+            #self.drawPolygon2d(longitudinal_polygon, color="blue",
+            #               facecolor="blue", alpha=.3, zorder=2)
 
-            # draw lat lon rectangle
-            lat_lon_rectangle = GenerateGoalRectangle(lon_distance, lat_distance)
-
-            ego_agent = world.agents[agent_id]
-            shape = ego_agent.shape
-            pose = generatePoseFromState(ego_agent.state)
-            pose[0] = pose[0] - lon_distance
-            pose[1] = pose[1] - (lat_distance/2.)
-
-            lat_lon_rectangle = lat_lon_rectangle.Transform(pose)
-
-            self.drawPolygon2d(lat_lon_rectangle, color="red",
-                           facecolor="red", alpha=.3, zorder=2)
 
 
         self.drawText(position=(0.74, 0.96), horizontalalignment="left", text="ego id {} safety: {}".format(
