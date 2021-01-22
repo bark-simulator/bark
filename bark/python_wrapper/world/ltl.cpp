@@ -33,6 +33,7 @@
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/on_road_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
 namespace py = pybind11;
@@ -278,6 +279,23 @@ void python_ltl(py::module m) {
               throw std::runtime_error("Invalid label evaluator state!");
             return new EgoLeftmostLaneLabelFunction(t[0].cast<std::string>(),
                                                     t[1].cast<double>());
+          }));
+
+  py::class_<OnRoadLabelFunction, BaseLabelFunction,
+             std::shared_ptr<OnRoadLabelFunction>>(m, "OnRoadLabelFunction")
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const OnRoadLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.OnRoadLabelFunction";
+           })
+      .def(py::pickle(
+          [](const OnRoadLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new OnRoadLabelFunction(t[0].cast<std::string>());
           }));
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,

@@ -59,6 +59,7 @@
 #include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/on_road_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -124,6 +125,7 @@ using bark::world::evaluation::RightmostLaneLabelFunction;
 using bark::world::evaluation::EgoLeftmostLaneLabelFunction;
 using bark::world::evaluation::BelowSpeedLimitLabelFunction;
 using bark::world::evaluation::EgoBelowSpeedLimitLabelFunction;
+using bark::world::evaluation::OnRoadLabelFunction;
 #endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -400,6 +402,9 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(EgoLeftmostLaneLabelFunction)) {
     label_name = "EgoLeftmostLaneLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(OnRoadLabelFunction)) {
+    label_name = "OnRoadLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) ==
              typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
     label_name = "CollisionEgoLabelFunction";
@@ -461,6 +466,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("EgoLeftmostLaneLabelFunction") == 0) {
     return std::make_shared<EgoLeftmostLaneLabelFunction>(
         t[0].cast<EgoLeftmostLaneLabelFunction>());
+  } else if (label_name.compare("OnRoadLabelFunction") == 0) {
+    return std::make_shared<OnRoadLabelFunction>(
+        t[0].cast<OnRoadLabelFunction>());
   } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
     return std::make_shared<
         GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(
