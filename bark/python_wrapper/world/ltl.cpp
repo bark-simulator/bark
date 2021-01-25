@@ -50,6 +50,7 @@ void python_ltl(py::module m) {
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
       .def_property_readonly("label_functions",
                              &EvaluatorLTL::GetLabelFunctions)
+      .def_property_readonly("safety_violations", &EvaluatorLTL::GetSafetyViolations)
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
