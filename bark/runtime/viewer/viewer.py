@@ -338,10 +338,10 @@ class BaseViewer(Viewer):
         polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
         if not lane.lane_type == XodrLaneType.driving:
           self.drawPolygon2d(polygon, ( 0.5, 0.5 , 0.5),
-                                1.0, ( 0.5, 0.5 , 0.5), zorder=1)
+                                1.0, ( 0.5, 0.5 , 0.5), linewidth=0.02,  zorder=1)
         else:
           self.drawPolygon2d(polygon, (0.7, 0.7, 0.7),
-                                1.0, (0.7, 0.7, 0.7), zorder=1, hatch="/")
+                                1.0, (0.7, 0.7, 0.7), linewidth=0.02,  zorder=1, hatch="/")
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
