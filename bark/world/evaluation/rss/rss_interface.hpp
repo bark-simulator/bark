@@ -228,16 +228,6 @@ class RssInterface {
     return rss_proper_response_;
   }
 
-  bool lateralDistanceOffset(
-		const models::dynamic::State& agent_state,
-		Distance& distance);
-
-  bool longitudinalDistanceOffset(
-		const models::dynamic::State& agent_state,
-		Distance& distance);
-  AgentState GetRssDynamics(
-		const models::dynamic::State& agent_state);
-    
   ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
     return rss_state_snapshot_;
   }

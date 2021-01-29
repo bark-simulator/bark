@@ -463,79 +463,20 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
   return response;
 }
 
-PairwiseDirectionalEvaluationReturnTuple
+PairwiseDirectionalEvaluationReturn
 RssInterface::GetPairwiseDirectionalSafetyReponse(
     const ObservedWorld& observed_world) {
   ::ad::rss::world::WorldModel rss_world;
-  PairwiseDirectionalEvaluationReturnTuple response;
+  PairwiseDirectionalEvaluationReturn response;
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
-    
-    
-    Distance lat_distance = 0;
-    Distance long_distance =0;
-    AgentPtr agent = observed_world.GetEgoAgent();
-    models::dynamic::State agent_state;
-    agent_state = agent->GetCurrentState();
-
-    bool latResp =  lateralDistanceOffset(agent_state, lat_distance); 
-    bool longResp = longitudinalDistanceOffset(agent_state, long_distance); 
-    std::cout << lat_distance << " Lat" << std::endl;
-    std::cout << long_distance << " Long" << std::endl;
-    response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot,lat_distance, long_distance);
-
-		
+		response = ExtractPairwiseDirectionalSafetyEvaluation(snapshot);
   } else {
     LOG(WARNING) << "Could not Generate RSSWorld, thus no "
                     "PairwiseDirectionalSafetyReponse";
   }
-  // TODO: change it to a tuple
   return response;
-}
-
-bool
-RssInterface::lateralDistanceOffset(
-		const models::dynamic::State& agent_state,
-		Distance& distance) {
-  const AgentState rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
-  bool resp = ::ad::rss::situation::calculateLateralDistanceOffsetAfterStatedBrakingPattern(
-  rss_state.speed,
-  rss_dynamics_ego_.responseTime,
-  rss_dynamics_ego_.alphaLat.accelMax,
-  rss_dynamics_ego_.alphaLat.brakeMin,
-  distance);
-        //Speed const &currentSpeed,
-        //Duration const &responseTime,
-         //Acceleration const &acceleration,
-         ///Acceleration const &deceleration,
-         //Distance &distanceOffset
-  
-  return resp;
-}
-
-bool
-RssInterface::longitudinalDistanceOffset(
-		const models::dynamic::State& agent_state,
-		Distance& distance) {
-  const AgentState rss_state =ConvertAgentState(agent_state, rss_dynamics_ego_);
-
-	return ::ad::rss::situation::calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern(
-		rss_state.speed,
-		Speed::getMax(),
-	  rss_dynamics_ego_.responseTime,
-		rss_dynamics_ego_.alphaLon.accelMax,
-		rss_dynamics_ego_.alphaLon.brakeMax,
-      distance
-	);
-}
-
-
-AgentState
-RssInterface::GetRssDynamics(
-		const models::dynamic::State& agent_state) {
-    const AgentState rss_state = ConvertAgentState(agent_state, rss_dynamics_ego_);
-	return rss_state;
 }
 
 }  // namespace evaluation
