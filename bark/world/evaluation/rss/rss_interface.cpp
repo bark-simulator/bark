@@ -394,9 +394,6 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
                         state.longitudinalState.rssStateInformation.safeDistance,
 												state.lateralStateRight.rssStateInformation.safeDistance,
 												state.lateralStateLeft.rssStateInformation.safeDistance);
-
-        // use std::tuple instead of make_pair and return numerical values for 
-        // the violations
   }
   return is_pairwise_directionally_safe;
 }
