@@ -337,11 +337,10 @@ class BaseViewer(Viewer):
                 self.drawHistory(agent, color_line, alpha,
                                  color_face_history, zorder=5)
             
-            if agent.id in world.agents_valid:
-              hatch = ''
-            else:
-              hatch = 'o'
-            self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
+            hatch = '' if agent.id in world.agents_valid else 'o'
+            if agent.id in world.agents_valid or self.draw_invalid_agents:
+              self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
+              
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
                 scenario_idx), fontsize=14)
