@@ -461,14 +461,12 @@ class BaseViewer(Viewer):
         
         for evaluator in world.evaluators:
           if isinstance(world.evaluators[evaluator], EvaluatorRSS):
-            # TODO: use violations in DrawRSSevalutor, labels etc
             rss_responses = world.evaluators[evaluator].PairwiseDirectionalEvaluate(world)
             break
 
         evaluator = None
 
         if not rss_responses:
-          self.parameters["EvaluatorRss"]["MapFilename"] = "database_deu/maps/DR_DEU_Merging_MT_v01_centered.xodr"
           evaluator = EvaluatorRSS(agent_id = agent_id, params = self.parameters)
           rss_responses = evaluator.PairwiseDirectionalEvaluate(world)
 
