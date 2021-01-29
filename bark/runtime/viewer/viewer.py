@@ -51,6 +51,7 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_invalid_agents = params["Visualization"]["Agents"]["DrawInvalidAgents", "Draw invalid agents with patch", False]
         self.draw_orientation_arrow = params["Visualization"]["Agents"]["DrawOrientationArrow",
                                                                "Draw Orientation of Arrow", False]
         self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
@@ -225,7 +226,8 @@ class BaseViewer(Viewer):
             if agent.id in world.agents_valid:
               self.drawAgent(agent)
             else:
-              self.drawAgent(agent, hatch='o')
+              if self.draw_invalid_agents:
+                self.drawAgent(agent, hatch='o')
     
     def drawBehaviorPlan(self, agent):
         self.drawTrajectory(agent.behavior_model.last_trajectory,
