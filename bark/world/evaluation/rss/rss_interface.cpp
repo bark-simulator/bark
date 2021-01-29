@@ -390,7 +390,7 @@ RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
   for (auto const state : snapshot.individualResponses) {
     is_pairwise_directionally_safe[static_cast<AgentId>(state.objectId)] =
         std::make_tuple(::ad::rss::state::isLongitudinalSafe(state),
-                       ::ad::rss::state::isLateralSafe(state),
+                        ::ad::rss::state::isLateralSafe(state),
                         state.longitudinalState.rssStateInformation.safeDistance,
 												state.lateralStateRight.rssStateInformation.safeDistance,
 												state.lateralStateLeft.rssStateInformation.safeDistance);
