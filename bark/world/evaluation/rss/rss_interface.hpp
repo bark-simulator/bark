@@ -222,7 +222,7 @@ class RssInterface {
 
   PairwiseDirectionalEvaluationReturnTuple
   ExtractPairwiseDirectionalSafetyEvaluation(
-      const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance);
+      const ::ad::rss::state::RssStateSnapshot& snapshot);
 
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;

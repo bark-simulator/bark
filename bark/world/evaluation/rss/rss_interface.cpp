@@ -384,7 +384,7 @@ PairwiseEvaluationReturn RssInterface::ExtractPairwiseSafetyEvaluation(
 
 PairwiseDirectionalEvaluationReturnTuple
 RssInterface::ExtractPairwiseDirectionalSafetyEvaluation(
-    const ::ad::rss::state::RssStateSnapshot& snapshot,Distance lat_distance, Distance long_distance ) {
+    const ::ad::rss::state::RssStateSnapshot& snapshot) {
       
   PairwiseDirectionalEvaluationReturnTuple is_pairwise_directionally_safe;
   for (auto const state : snapshot.individualResponses) {
@@ -463,11 +463,11 @@ PairwiseEvaluationReturn RssInterface::GetPairwiseSafetyReponse(
   return response;
 }
 
-PairwiseDirectionalEvaluationReturn
+PairwiseDirectionalEvaluationReturnTuple
 RssInterface::GetPairwiseDirectionalSafetyReponse(
     const ObservedWorld& observed_world) {
   ::ad::rss::world::WorldModel rss_world;
-  PairwiseDirectionalEvaluationReturn response;
+  PairwiseDirectionalEvaluationReturnTuple response;
   if (GenerateRSSWorld(observed_world, rss_world)) {
     ::ad::rss::state::RssStateSnapshot snapshot;
     RssCheck(rss_world, snapshot);
