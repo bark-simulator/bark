@@ -449,10 +449,6 @@ EvaluationReturn RssInterface::GetSafetyReponse(
     RssCheck(rss_world, snapshot);
     rss_state_snapshot_ = snapshot;
     response = ExtractSafetyEvaluation(snapshot);
-    // Works until here, but response always returns true
-    
-    
-    
   }
   return response;
 }
