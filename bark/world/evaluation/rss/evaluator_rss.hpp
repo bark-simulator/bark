@@ -119,7 +119,6 @@ class EvaluatorRSS : public BaseEvaluator {
   // situations between the specified and the nearby agent is safe, false
   // otherwise.
   // Return empty map if no agent is nearby or no Rss check can be performed.
-  // TODO: bunu duzelt tuple donsun
   virtual PairwiseEvaluationReturn PairwiseEvaluate(const World& world) {
     WorldPtr cloned_world = world.Clone();
     ObservedWorld observed_world = cloned_world->Observe({agent_id_})[0];
