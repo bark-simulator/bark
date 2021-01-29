@@ -17,7 +17,6 @@
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
 #include "bark/geometry/polygon.hpp"
-#include "bark/models/dynamic/dynamic_model.hpp"
 
 #ifdef RSS
 #include "bark/world/evaluation/rss/rss_interface.hpp"
@@ -25,15 +24,10 @@
 #include "bark/world/evaluation/rss/safety_polygon.hpp"
 
 namespace bark {
-
-using models::dynamic::StateDefinition;
-
 namespace world {
 
 using geometry::Polygon;
 using geometry::Point2d;
-using geometry::Pose;
-using geometry::standard_shapes::GenerateGoalRectangle;
 
 namespace evaluation {
 
@@ -66,10 +60,9 @@ class EvaluatorRSS : public BaseEvaluator {
     WorldPtr cloned_world = world.Clone();
     if (world.GetAgent(agent_id_)) {
       std::vector<ObservedWorld> observed_worlds =
-          cloned_world->Observe({agent_id_});      
+          cloned_world->Observe({agent_id_});
       if (observed_worlds.size() > 0) {
         return rss_.GetSafetyReponse(observed_worlds[0]);
-         
       } else {
         LOG(INFO) << "EvaluatorRSS not possible for agent " << agent_id_;
         return false;
