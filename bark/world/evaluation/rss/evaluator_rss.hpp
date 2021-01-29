@@ -154,14 +154,6 @@ class EvaluatorRSS : public BaseEvaluator {
     return rss_.GetPairwiseDirectionalSafetyReponse(observed_world);
   };
 
-virtual Distance ReturnMaxStoppingDistance(
-      const ObservedWorld& observed_world) {
-    auto agent = observed_world.GetEgoAgent();
-    auto agent_state = agent->GetCurrentState();
-    auto agent_dynamics = rss_.GetRssDynamics(agent_state);
-    return agent_dynamics.max_stopping_distance;
-  };
-
 	virtual Polygon GetLaneLongitudinalPolygon(
 			const World& world, const double& lon_distance) {
     WorldPtr cloned_world = world.Clone();
