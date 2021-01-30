@@ -29,7 +29,7 @@
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/succeeding_agent_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
@@ -445,12 +445,12 @@ void python_ltl(py::module m) {
                                                    t[1].cast<Point2d>());
           }));
 
-  py::class_<PrecedingAgentLabelFunction, BaseLabelFunction,
-             std::shared_ptr<PrecedingAgentLabelFunction>>(
-      m, "PrecedingAgentLabelFunction")
+  py::class_<SucceedingAgentLabelFunction, BaseLabelFunction,
+             std::shared_ptr<SucceedingAgentLabelFunction>>(
+      m, "SucceedingAgentLabelFunction")
       .def(py::init<const std::string&, bool, double>())
       .def(py::pickle(
-          [](const PrecedingAgentLabelFunction& b) {
+          [](const SucceedingAgentLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(),
                                   b.GetUseFracLateralOffsetParam(),
                                   b.GetFracLateralOffset());
@@ -458,7 +458,7 @@ void python_ltl(py::module m) {
           [](py::tuple t) {
             if (t.size() != 3)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new PrecedingAgentLabelFunction(t[0].cast<std::string>(),
+            return new SucceedingAgentLabelFunction(t[0].cast<std::string>(),
                                                    t[2].cast<bool>(),
                                                    t[1].cast<double>());
           }));

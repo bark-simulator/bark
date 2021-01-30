@@ -48,7 +48,7 @@
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/succeeding_agent_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
@@ -113,7 +113,7 @@ using bark::world::evaluation::LaneChangeLabelFunction;
 using bark::world::evaluation::AgentNearLabelFunction;
 using bark::world::evaluation::AgentBeyondPointLabelFunction;
 using bark::world::evaluation::EgoBeyondPointLabelFunction;
-using bark::world::evaluation::PrecedingAgentLabelFunction;
+using bark::world::evaluation::SucceedingAgentLabelFunction;
 using bark::world::evaluation::AgentAtLaneEndLabelFunction;
 using bark::world::evaluation::LeftOfLabelFunction;
 using bark::world::evaluation::RightOfLabelFunction;
@@ -375,8 +375,8 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(EgoBeyondPointLabelFunction)) {
     label_name = "EgoBeyondPointLabelFunction";
     return py::make_tuple(label, label_name);
-  } else if (typeid(*label) == typeid(PrecedingAgentLabelFunction)) {
-    label_name = "PrecedingAgentLabelFunction";
+  } else if (typeid(*label) == typeid(SucceedingAgentLabelFunction)) {
+    label_name = "SucceedingAgentLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(AgentAtLaneEndLabelFunction)) {
     label_name = "AgentAtLaneEndLabelFunction";
@@ -439,9 +439,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("EgoBeyondPointLabelFunction") == 0) {
     return std::make_shared<EgoBeyondPointLabelFunction>(
         t[0].cast<EgoBeyondPointLabelFunction>());
-  } else if (label_name.compare("PrecedingAgentLabelFunction") == 0) {
-    return std::make_shared<PrecedingAgentLabelFunction>(
-        t[0].cast<PrecedingAgentLabelFunction>());
+  } else if (label_name.compare("SucceedingAgentLabelFunction") == 0) {
+    return std::make_shared<SucceedingAgentLabelFunction>(
+        t[0].cast<SucceedingAgentLabelFunction>());
   } else if (label_name.compare("AgentAtLaneEndLabelFunction") == 0) {
     return std::make_shared<AgentAtLaneEndLabelFunction>(
         t[0].cast<AgentAtLaneEndLabelFunction>());
