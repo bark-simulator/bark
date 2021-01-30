@@ -329,7 +329,8 @@ class BaseViewer(Viewer):
                 else:
                     color_line = self.color_other_agents_line
                     color_face = self.color_other_agents_face
-            if self.draw_history:
+                    
+            if self.draw_history and agent.id in world.agents_valid:
                 if self.draw_history_draw_face:
                     color_face_history = color_face
                 else:
