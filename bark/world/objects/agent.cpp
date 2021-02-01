@@ -130,6 +130,16 @@ bool Agent::AtGoal() const {
   return goal_definition_->AtGoal(*this);
 }
 
+bool Agent::InsideRoadCorridor() const {
+  if (!road_corridor_) {
+    return false;
+  } else {
+    Polygon agent_poly = GetPolygonFromState(GetCurrentState());
+    bool inside = Within(agent_poly, road_corridor_->GetPolygon());
+    return inside;
+  }
+}
+
 /**
  * @brief checks validity of agent. feature is required with simulating datasets in closed loop.
  * 

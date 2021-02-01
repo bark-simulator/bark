@@ -63,7 +63,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
 
-  double initial_acceleration = 0.0;
+  Input initial_input;
   if (!line.obj_.empty()) {
     // adding state at t=0
     traj.block<1, StateDefinition::MIN_STATE_SIZE>(0, 0) =
@@ -76,10 +76,6 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       std::tie(acc, rel_distance) =
           GetTotalAcc(observed_world, rel_values, rel_distance, dt);
       BARK_EXPECT_TRUE(!std::isnan(acc));
-      // Set initial acceleration to maintain action value
-      if (i == 1) {
-        initial_acceleration = acc;
-      }
       double angle =
           CalculateSteeringAngle(single_track, traj.row(i - 1), line,
                                  crosstrack_error_gain_, limit_steering_rate_);
@@ -97,37 +93,49 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
       double acc_lat = CalculateLateralAcceleration(
           single_track, angle, traj(i, StateDefinition::VEL_POSITION));
-      VLOG(4) << "Plan(i=" << i << "): LonAcc:  " << acc << ", "
-              << "LatAcc: " << acc_lat << ", "
-              << GetAccelerationLimits();
+      // VLOG(4) << "Plan(i=" << i << "): LonAcc:  " << acc << ", "
+      //         << "LatAcc: " << acc_lat << ", "
+      //         << GetAccelerationLimits();
       CheckAccelerationLimits(acc, acc_lat);
+
+      // save initial input
+      if (i == 1) {
+        initial_input = input;
+      }
     }
   }
 
-  return std::tuple<Trajectory, Action>(
-      traj, Continuous1DAction(initial_acceleration));
+  return std::tuple<Trajectory, Action>(traj, initial_input);
 }
 
 void BehaviorIDMLaneTracking::CheckAccelerationLimits(double acc_lon,
                                                       double acc_lat) const {
-  if (acc_lon > GetAccelerationLimits().lon_acc_max) {
-    LOG(WARNING) << "LonAccMax is violated" << acc_lon << " vs. "
+  const auto almost_smaller = [](const double val1, const double val2) {
+    const double precision = 0.01;
+    return val1 <= val2 || std::abs(val1 - val2)  < precision;
+  };
+  const auto almost_larger = [](const double val1, const double val2) {
+    const double precision = 0.01;
+    return val1 >= val2 || std::abs(val1 - val2)  < precision;
+  };
+  if (acc_lon >= 0 && !almost_smaller(acc_lon, GetAccelerationLimits().lon_acc_max)) {
+    LOG(WARNING) << "LonAccMax is violated " << acc_lon << " vs. "
                  << GetAccelerationLimits().lon_acc_max;
   }
 
-  if (acc_lon < GetAccelerationLimits().lon_acc_min) {
+  if (acc_lon < 0 && !almost_larger(acc_lon, GetAccelerationLimits().lon_acc_min)) {
     LOG(WARNING) << "LonAccMin is violated" << acc_lon << " vs. "
                  << GetAccelerationLimits().lon_acc_min;
   }
 
   // Steering to the right == Accelerations are negative
-  if (acc_lat < -GetAccelerationLimits().lat_acc_right_max) {
-    LOG(WARNING) << "LatAccRightMax is violated" << acc_lat << " vs. "
+  if (acc_lat <= 0 && !almost_larger(acc_lat, - GetAccelerationLimits().lat_acc_right_max)) {
+    LOG(WARNING) << "LatAccRightMax is violated " << acc_lat << " vs. "
                  << GetAccelerationLimits().lat_acc_right_max;
   }
 
-  if (acc_lat > GetAccelerationLimits().lat_acc_left_max) {
-    LOG(WARNING) << "LatAccLeftMax is violated" << acc_lat << " vs. "
+  if (acc_lat > 0 && !almost_smaller(acc_lat, GetAccelerationLimits().lat_acc_left_max)) {
+    LOG(WARNING) << "LatAccLeftMax is violated " << acc_lat << " vs. "
                  << GetAccelerationLimits().lat_acc_left_max;
   }
 }

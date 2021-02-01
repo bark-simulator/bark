@@ -15,7 +15,6 @@
 #include "bark/geometry/polygon.hpp"
 #include "bark/geometry/standard_shapes.hpp"
 #include "bark/models/behavior/constant_acceleration/constant_acceleration.hpp"
-#include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/execution/interpolation/interpolate.hpp"
@@ -378,7 +377,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   // Ego Agent
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model(new BehaviorMobil(params));
+  BehaviorModelPtr beh_model(new BehaviorMobilRuleBased(params));
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 3.0, -1.75, 0.0, 5.0;
@@ -389,7 +388,7 @@ TEST(slower_preceding_agent, behavior_mobil) {
   // Preceding Agent
   ExecutionModelPtr exec_model2(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model2(new SingleTrackModel(params));
-  BehaviorModelPtr beh_model2(new BehaviorMobil(params));
+  BehaviorModelPtr beh_model2(new BehaviorConstantAcceleration(params));
 
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state2 << 0.0, 15.0, -1.75, 0.0, 2.0;
@@ -409,19 +408,19 @@ TEST(slower_preceding_agent, behavior_mobil) {
   const BehaviorModelPtr behavior_model = agent1->GetBehaviorModel();
 
   auto behavior_mobil =
-      std::dynamic_pointer_cast<BehaviorMobil>(behavior_model);
+      std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
 
   LaneChangeDecision decision;
   LaneCorridorPtr lane_corr;
   std::tie(decision, lane_corr) =
       behavior_mobil->CheckIfLaneChangeBeneficial(observed_world);
-  EXPECT_EQ(decision, LaneChangeDecision::ChangeRight);
+  EXPECT_EQ(decision, LaneChangeDecision::ChangeLane);
   BARK_EXPECT_TRUE(lane_corr != nullptr);
 }
 
 TEST(behavior_mobil, clone) {
   auto params = std::make_shared<SetterParams>();
-  BehaviorModelPtr beh_model(new BehaviorMobil(params));
+  BehaviorModelPtr beh_model(new BehaviorMobilRuleBased(params));
   ASSERT_EQ(BehaviorStatus::VALID, beh_model->GetBehaviorStatus());
   beh_model->SetBehaviorStatus(BehaviorStatus::EXPIRED);
 

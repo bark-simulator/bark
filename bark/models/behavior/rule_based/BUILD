@@ -1,22 +1,4 @@
 cc_library(
-    name = "mobil",
-    srcs = [
-        "mobil.cpp"
-    ],
-    hdrs = [
-        "mobil.hpp"
-    ],
-    deps = [
-        "//bark/commons:commons",
-        "//bark/world:world",
-        "//bark/models/behavior/rule_based:lane_change_behavior",
-        "//bark/models/dynamic:dynamic",
-        "//bark/commons/transformation:frenet"
-    ],
-    visibility = ["//visibility:public"]
-)
-
-cc_library(
     name = "lane_change_behavior",
     srcs = [
       "lane_change_behavior.cpp"

@@ -7,8 +7,12 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 import matplotlib
 from matplotlib.patches import Polygon
-from matplotlib import cm
+from matplotlib import cm, colors
 import matplotlib.pyplot as plt
+
+import math
+
+import numpy as np
 
 from bark.core.viewer import *
 from bark.core.geometry import *
@@ -27,6 +31,7 @@ class MPViewer(BaseViewer):
           self.axes = plt.subplots()[1]
           # removes whitespace
           # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
+        self._cmap = self.setupColormap()
 
     def drawPoint2d(self, point2d, color, alpha):
         self.axes.plot(
@@ -53,7 +58,7 @@ class MPViewer(BaseViewer):
             marker=marker,
             markersize = marker_size)
 
-    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10):
+    def drawPolygon2d(self, polygon, color, alpha, facecolor=None, linewidth=1, zorder=10, hatch=''):
         points = polygon.ToArray()
         polygon_draw = matplotlib.patches.Polygon(
             points,
@@ -62,7 +67,8 @@ class MPViewer(BaseViewer):
             edgecolor=self.getColor(color),
             alpha=alpha,
             linewidth=linewidth,
-            zorder=zorder)
+            zorder=zorder,
+            hatch=hatch)
         t_start = self.axes.transData
         polygon_draw.set_transform(t_start)
         self.axes.add_patch(polygon_draw)
@@ -83,6 +89,9 @@ class MPViewer(BaseViewer):
                 linestyle=line_style,
                 marker=marker,
                 markersize = marker_size)
+
+    def drawArrow(self, pose):
+        plt.annotate(s='', xy=(pose[0]+3*math.cos(pose[2]),pose[1]+3*math.sin(pose[2])), xytext=(pose[0],pose[1]), arrowprops=dict(arrowstyle='->'))
 
     def drawText(self, position, text, coordinate="axes", **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")
@@ -157,6 +166,13 @@ class MPViewer(BaseViewer):
     def clear(self):
         self.axes.cla()
 
+    def getSizeOfColormap(self):
+        return 20 # cm.tab20 has 20 entries
+
+    def setupColormap(self):
+        cmap_np = cm.tab20(np.linspace(0, 1, 20)) # tab20 has 20 colours
+        cmap_np = np.delete(cmap_np, [6,7], 0) # remove red (reserved for ego)
+        return colors.ListedColormap(cmap_np)
 
     def getColorFromMap(self, double_color):
-        return cm.Accent(double_color)
+        return self._cmap(double_color)

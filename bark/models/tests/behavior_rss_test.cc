@@ -14,19 +14,17 @@
 #include "bark/models/behavior/behavior_safety/behavior_safety.hpp"
 #include "bark/models/behavior/idm/idm_classic.hpp"
 #include "bark/models/behavior/idm/idm_lane_tracking.hpp"
+#include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/execution/interpolation/interpolate.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_xodr_map.hpp"
 
 using bark::commons::SetterParams;
-using bark::models::behavior::BehaviorIDMClassic;
-using bark::models::behavior::BehaviorIDMLaneTracking;
-using bark::models::behavior::BehaviorModelPtr;
-using bark::models::behavior::BehaviorRSSConformant;
-using bark::models::behavior::BehaviorRSSConformantStatus;
-using bark::models::behavior::BehaviorSafety;
-using bark::models::behavior::BehaviorStatus;
+using bark::geometry::Model3D;
+using bark::geometry::Polygon;
 using bark::world::Agent;
 using bark::world::ObservedWorld;
 using bark::world::World;
@@ -34,7 +32,16 @@ using bark::world::WorldPtr;
 using bark::world::evaluation::BaseEvaluator;
 using bark::world::evaluation::EvaluationReturn;
 using bark::world::evaluation::EvaluatorRSS;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::goal_definition::GoalDefinitionPtr;
+using bark::world::objects::AgentPtr;
 using bark::world::tests::make_test_world;
+using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
+
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
 
 class DummyRSSEvaluator : public BaseEvaluator {
   // return false if unsafe
@@ -158,6 +165,60 @@ TEST(behavior_rss, behavior_rss_system_test) {
   // ASSERT_TRUE(ego_agent_triggered->GetCurrentState()[4] <
   // ego_agent->GetCurrentState()[4]);
 }
+
+#ifndef RSS
+TEST(behavior_rss, behavior_rss_acceleration_limits) {
+  // Test-strategy: desired states of IDM are set very high. Longitudinal
+  // acceleration limits should prevent that. Only executed without RSS, as
+  // those parameters are overwritten else from RssResponse
+  auto params = std::make_shared<SetterParams>();
+
+  const double pos_x = 3.0;
+  const double pos_y = -1.75;
+  const double ego_velocity = 10;
+  const double acc_lon_max = 1.7;
+
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::MaxAcceleration", 100);
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::DesiredVelocity", 100);
+  params->SetReal("NominalBehavior::BehaviorIDMClassic::AccelerationUpperBound", acc_lon_max);
+
+  auto open_drive_map = MakeXodrMapOneRoadTwoLanes();
+  auto map_interface = std::make_shared<MapInterface>();
+  map_interface->interface_from_opendrive(open_drive_map);
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  std::shared_ptr<BehaviorRSSConformant> behavior_rss(
+      new BehaviorRSSConformant(params));
+
+  Polygon polygon = bark::geometry::standard_shapes::CarRectangle();
+  const GoalDefinitionPtr& ego_goal_definition =
+      std::make_shared<GoalDefinitionPolygon>();
+
+  State init_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state << 0.0, pos_x, pos_y, 0.0, ego_velocity;
+  AgentPtr agent1(new Agent(init_state, behavior_rss, dyn_model, exec_model,
+                            polygon, params, ego_goal_definition, map_interface,
+                            Model3D()));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent1);
+  world->UpdateAgentRTree();
+
+  world->SetMap(map_interface);
+
+  std::shared_ptr<BaseEvaluator> rss_eval_do_not_trigger =
+      std::make_shared<DummyRSSEvaluator>(0);
+  behavior_rss->SetEvaluator(rss_eval_do_not_trigger);
+  world->Step(0.2);
+  ASSERT_TRUE(behavior_rss->GetBehaviorRssStatus() ==
+              BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR);
+  std::cout << agent1->GetCurrentState() << std::endl;
+  Input action = boost::get<Input>(behavior_rss->GetLastAction());
+  EXPECT_LE(action(1), acc_lon_max);
+  BARK_EXPECT_TRUE(false);
+}
+#endif
 
 TEST(behavior_rss, safety_corridor_length_test) {
   auto params = std::make_shared<SetterParams>();

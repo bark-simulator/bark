@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSCENARIO>
+    <Trajectory>
+        <Shape>
+            <Polyline>
+                <Vertex time="0.0">
+                    <Position>
+                        <WorldPosition x = "0.0"
+                                       y = "0.0"
+                                       z = "0.0"
+                                       h = "0.0"
+                                       p = "0.0"
+                                       r = "0.0"
+                        />
+                    </Position>
+                </Vertex>
+            </Polyline>
+        </Shape>
+    </Trajectory>
+</OpenSCENARIO>

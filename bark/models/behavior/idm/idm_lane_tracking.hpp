@@ -27,11 +27,13 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
     BehaviorModel(params),
     BaseIDM(params),
-    limit_steering_rate_(true),
-    constant_lane_corr_(nullptr) {
+    limit_steering_rate_(true) {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);
+    dynamic::Input input(2);
+    input << 0.0, 0.0;
+    SetLastAction(input);
   }
 
   virtual ~BehaviorIDMLaneTracking() {}
@@ -46,10 +48,6 @@ class BehaviorIDMLaneTracking : public BaseIDM {
     limit_steering_rate_ = limit_steering;
   }
 
-  void SetConstantLaneCorridor(const LaneCorridorPtr& lc) {
-    constant_lane_corr_ = lc;
-  }
-
   void CheckAccelerationLimits(double acc_lon, double acc_lat) const;
 
   friend class BaseIDM;
@@ -57,7 +55,6 @@ class BehaviorIDMLaneTracking : public BaseIDM {
  private:
   double crosstrack_error_gain_;
   bool limit_steering_rate_;
-  LaneCorridorPtr constant_lane_corr_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMLaneTracking::Clone() const {

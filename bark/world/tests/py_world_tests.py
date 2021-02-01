@@ -12,7 +12,7 @@ import time
 from bark.runtime.commons import ParameterServer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons import XodrParser
-from bark.core.models.behavior import BehaviorConstantAcceleration, BehaviorMobil, BehaviorIDMLaneTracking
+from bark.core.models.behavior import BehaviorConstantAcceleration, BehaviorIDMLaneTracking, BehaviorMobilRuleBased
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel
 from bark.core.world import World, MakeTestWorldHighway
@@ -132,7 +132,7 @@ class WorldTests(unittest.TestCase):
         world = World(params)
 
         # Model Definitions
-        behavior_model = BehaviorMobil(params)
+        behavior_model = BehaviorMobilRuleBased(params)
         execution_model = ExecutionModelInterpolate(params)
         dynamic_model = SingleTrackModel(params)
 

@@ -18,6 +18,7 @@ namespace bg = boost::geometry;
 using bark::geometry::GetNearestPointAndS;
 using bark::geometry::GetPointAtS;
 using bark::geometry::GetTangentAngleAtS;
+using bark::geometry::SignedAngleDiff;
 using bark::geometry::Line;
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
@@ -67,8 +68,7 @@ bool GoalDefinitionStateLimitsFrenet::AtGoal(
       GetNearestPointAndS(center_line_, agent_pos);
   const auto tangent_angle =
       GetTangentAngleAtS(center_line_, std::get<double>(nearest_point));
-  const auto tangent_angle_normalized = tangent_angle;
-  const auto angle_diff = tangent_angle_normalized - agent_angle;
+  const auto angle_diff = SignedAngleDiff(tangent_angle, agent_angle);
 
   if (angle_diff <= max_orientation_differences_.first &&
       angle_diff >= -max_orientation_differences_.second) {

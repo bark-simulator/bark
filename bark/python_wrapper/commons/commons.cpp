@@ -63,9 +63,16 @@ void python_commons(py::module m) {
   py::class_<transformation::FrenetPosition,
              std::shared_ptr<transformation::FrenetPosition>>(m,
                                                               "FrenetPosition")
-      .def(py::init<>())
+      .def(py::init<const bark::geometry::Point2d&, const bark::geometry::Line&>())
       .def_readwrite("lon", &transformation::FrenetPosition::lon)
       .def_readwrite("lat", &transformation::FrenetPosition::lat);
+
+  py::class_<transformation::FrenetState, transformation::FrenetPosition,
+             std::shared_ptr<transformation::FrenetState>>(m, "FrenetState")
+      .def(py::init<const bark::models::dynamic::State&, const bark::geometry::Line&>())
+      .def_readwrite("vlon", &transformation::FrenetState::vlon)
+      .def_readwrite("vlat", &transformation::FrenetState::vlat)
+      .def_readwrite("angle", &transformation::FrenetState::angle);
 
   m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
   m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });

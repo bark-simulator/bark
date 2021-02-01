@@ -31,7 +31,8 @@ using bark::world::map::LaneCorridorPtr;
 using bark::world::objects::Agent;
 using bark::world::objects::AgentPtr;
 
-BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
+BaseIDM::BaseIDM(const commons::ParamsPtr& params)
+    : BehaviorModel(params), constant_lane_corr_(nullptr) {
   param_minimum_spacing_ = params->GetReal("BehaviorIDMClassic::MinimumSpacing",
                                            "See Wikipedia IDM article", 2.0);
   param_desired_time_head_way_ =
@@ -39,9 +40,8 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
                       "See Wikipedia IDM article", 1.5);
   param_max_acceleration_ = params->GetReal(
       "BehaviorIDMClassic::MaxAcceleration", "See Wikipedia IDM article", 1.7);
-  param_desired_velocity_ =
-      params->GetReal("BehaviorIDMClassic::DesiredVelocity",
-                      "See Wikipedia IDM article", 15.0);
+  param_desired_velocity_ = params->GetReal(
+      "BehaviorIDMClassic::DesiredVelocity", "See Wikipedia IDM article", 15.0);
   param_comfortable_braking_acceleration_ =
       params->GetReal("BehaviorIDMClassic::ComfortableBrakingAcceleration",
                       "See Wikipedia IDM article", 1.67f);
@@ -75,7 +75,6 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params) : BehaviorModel(params) {
   acceleration_limits_.lon_acc_min =
       params->GetReal("BehaviorIDMClassic::AccelerationLowerBound",
                       "Minimum longitudinal acceleration", -5.0);
-
   SetLastAction(Continuous1DAction(0.0f));
 }
 
@@ -111,7 +110,8 @@ double BaseIDM::CalcInteractionTerm(double net_distance, double vel_ego,
 
 double BaseIDM::CalcNetDistance(
     const world::ObservedWorld& observed_world,
-    const std::shared_ptr<const Agent>& leading_agent) const {
+    const std::shared_ptr<const Agent>& leading_agent,
+    const LaneCorridorPtr& local_lane_corr) const {
   const auto& ego_agent = observed_world.GetEgoAgent();
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
@@ -124,9 +124,8 @@ double BaseIDM::CalcNetDistance(
 
   // we need to use the lane corridor of the ego agent to be able to compare the
   // frenet values
-  const auto& lane_corridor = observed_world.GetLaneCorridor();
   FrenetPosition frenet_leading(leading_agent->GetCurrentPosition(),
-                                lane_corridor->GetCenterLine());
+                                local_lane_corr->GetCenterLine());
 
   const double vehicle_length =
       ego_agent->GetShape().front_dist_ + leading_agent->GetShape().rear_dist_;
@@ -185,7 +184,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
 
   // vehicles
   if (leading_vehicle.first) {
-    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first);
+    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first, lane_corr);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);
@@ -198,6 +197,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
         leading_acc = boost::get<Continuous1DAction>(last_action);
       } else if (last_action.type() == typeid(LonLatAction)) {
         leading_acc = boost::get<LonLatAction>(last_action).acc_lon;
+      } else if (last_action.type() == typeid(Input)) {
+        leading_acc = boost::get<Input>(last_action)(0);
       } else {
         LOG(FATAL) << "Other's action type unknown in cah calculation: "
                    << boost::apply_visitor(action_tostring_visitor(),
@@ -226,9 +227,22 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
       }
     }
   }
+
+  Action ego_action = GetLastAction();
+  if (ego_action.type() == typeid(Continuous1DAction)) {
+    ego_acc = boost::get<Continuous1DAction>(ego_action);
+  } else if (ego_action.type() == typeid(LonLatAction)) {
+    ego_acc = boost::get<LonLatAction>(ego_action).acc_lon;
+  } else if (ego_action.type() == typeid(Input)) {
+    ego_acc = boost::get<Input>(ego_action)(0);
+  } else {
+    LOG(FATAL) << "ego action type unknown: "
+               << boost::apply_visitor(action_tostring_visitor(), ego_action);
+  }
+
   rel_values.leading_distance = leading_distance;
   rel_values.leading_velocity = leading_velocity;
-  rel_values.ego_acc = boost::get<Continuous1DAction>(GetLastAction());
+  rel_values.ego_acc = ego_acc;
   rel_values.leading_acc = leading_acc;
   rel_values.has_leading_object = interaction_term_active;
   return rel_values;
@@ -329,7 +343,10 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {
+    const double acc_lower_bound = GetAccelerationLimits().lon_acc_min;
+    const double acc_upper_bound = GetAccelerationLimits().lon_acc_max;
     acc = GetLonAccelerationMax() * CalcFreeRoadTerm(vel_i);
+    acc = std::max(std::min(acc, acc_upper_bound), acc_lower_bound);
   }
   return std::pair<double, double>(acc, rel_distance);
 }
@@ -348,7 +365,15 @@ Trajectory BaseIDM::Plan(double min_planning_time,
     return GetLastTrajectory();
   }
 
-  IDMRelativeValues rel_values = CalcRelativeValues(observed_world, lane_corr_);
+  LaneCorridorPtr current_lane_corridor;
+  if (constant_lane_corr_ != nullptr) {
+    current_lane_corridor = constant_lane_corr_;
+  } else {
+    current_lane_corridor = lane_corr_;
+  }
+
+  IDMRelativeValues rel_values =
+      CalcRelativeValues(observed_world, current_lane_corridor);
 
   double dt = min_planning_time / (GetNumTrajectoryTimePoints() - 1);
   std::tuple<Trajectory, Action> traj_action =

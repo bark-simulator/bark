@@ -23,6 +23,7 @@ void python_dynamic(py::module m) {
 
   py::class_<SingleTrackModel, DynamicModel, std::shared_ptr<SingleTrackModel>>(
       m, "SingleTrackModel")
+      .def("GetWheelBase", &SingleTrackModel::GetWheelBase)
       .def(py::init<ParamsPtr>())
       .def("__repr__",
            [](const SingleTrackModel& m) {
@@ -55,6 +56,14 @@ void python_dynamic(py::module m) {
               throw std::runtime_error("Invalid dynamic modelstate!");
             return new TripleIntegratorModel(std::make_shared<SetterParams>());
           }));
+
+
+  py::class_<AccelerationLimits, std::shared_ptr<AccelerationLimits>>(m, "AccelerationLimits")
+      .def(py::init<>())
+      .def_readwrite("lat_acc_left_max", &AccelerationLimits::lat_acc_left_max)
+      .def_readwrite("lat_acc_right_max", &AccelerationLimits::lat_acc_right_max)
+      .def_readwrite("lon_acc_max", &AccelerationLimits::lon_acc_max)
+      .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min);
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())
       .value("TIME_POSITION", TIME_POSITION)

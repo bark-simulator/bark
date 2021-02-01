@@ -199,7 +199,7 @@ TEST(observed_world, agent_in_front_other_lane) {
 
   // in the lane corridor left of agent4, there is agent2 in front
   FrontRearAgents fr_vehicle4b =
-      obs_world4.GetAgentFrontRearForId(agent4->GetAgentId(), lane_corridor4);
+      obs_world4.GetAgentFrontRearForId(agent4->GetAgentId(), lane_corridor4, obs_world4.GetFracLateralOffset());
   EXPECT_TRUE(static_cast<bool>(fr_vehicle4b.front.first));
   EXPECT_EQ(fr_vehicle4b.front.first->GetAgentId(), agent2->GetAgentId());
 

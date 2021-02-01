@@ -35,14 +35,36 @@ class ScenarioDumperTest(unittest.TestCase):
 
   def test_filter(self):
     sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
-
     configs_found = sd.find_configs({"collision" : lambda x : x, "rss" : lambda x : not x})
     self.assertEqual(configs_found, [1])
 
   def test_export(self):
     sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
-
     sd.export(1)
+
+  def test_filtered_export1(self):
+    sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
+    ret = sd.export_scenarios_filter(filter = {"collision" : lambda x : x, "rss" : lambda x : not x})
+    self.assertEqual(ret, [1])
+
+  def test_filtered_export2(self):
+    sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
+    ret = sd.export_scenarios_filter(filter = {"collision" : lambda x : x, "rss" : lambda x : not x}, config_idx_list = [1, 2, 3, 24])
+    self.assertEqual(ret, [1])
+
+  def test_filtered_export3(self):
+    sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
+    ret = sd.export_scenarios_filter(config_idx_list = [1, 24])
+    self.assertEqual(ret, [1, 24])
+
+  def test_filtered_export4(self):
+    sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
+    ret = sd.export_scenarios_filter(filter = {"collision" : lambda x : x, "rss" : lambda x : not x}, config_idx_list = [2444])
+    self.assertEqual(ret, [])
+
+  def test_filtered_export5(self):
+    sd = ScenarioDumper("/tmp/test12345", dummy_benchmark_results())
+    self.assertRaises(ValueError, sd.export_scenarios_filter)
 
 if __name__ == '__main__':
   unittest.main()

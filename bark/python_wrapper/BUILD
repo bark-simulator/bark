@@ -45,7 +45,8 @@ cc_binary(
     "//bark/world:world",
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners",
-    "//bark/python_wrapper/tests:logging_tests"
+    "//bark/python_wrapper/tests:logging_tests",
+    "//bark/world/evaluation/rss:safety_polygon"
   ] + select({"//bark/models/behavior/plan:_planner_uct" : ["@planner_uct//bark_mcts/python_wrapper:planner_uct"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_rules_mcts" : ["@planner_rules_mcts//python:planner_rules_mcts"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["@planner_miqp//python/bindings:planner_miqp"], "//conditions:default": []})

@@ -33,6 +33,7 @@
 #include <ad/rss/core/RssCheck.hpp>
 #include <ad/rss/map/RssSceneCreation.hpp>
 #include <ad/rss/situation/Physics.hpp>
+#include <ad/rss/situation/RssFormulas.hpp>
 #include <ad/rss/situation/SituationSnapshot.hpp>
 #include <ad/rss/state/ProperResponse.hpp>
 #include <ad/rss/state/RssStateOperation.hpp>
@@ -76,7 +77,8 @@ namespace evaluation {
 typedef std::unordered_map<objects::AgentId, bool> PairwiseEvaluationReturn;
 typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
     PairwiseDirectionalEvaluationReturn;
-
+typedef std::unordered_map<objects::AgentId, std::tuple<bool, bool, float, float, float>>
+    PairwiseDirectionalEvaluationReturnTuple;
 
 // An interface that provides a wrapper for the RSS library.
 // It provides functionality to convert a BARK into a RSS world and to
@@ -95,7 +97,7 @@ class RssInterface {
                         const commons::ParamsPtr& params) {
 
     // only adds child if it does not exist; otherwise returns child
-    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss"));
+    FillRSSDynamics(rss_dynamics_ego_, params->AddChild("EvaluatorRss::Ego"));
     FillRSSDynamics(rss_dynamics_others_, params->AddChild("EvaluatorRss::Others"));
 
     // general parameters
@@ -153,9 +155,9 @@ class RssInterface {
    * @brief  Returns a directional evaluation return.
    * @note   Function is currently not used.
    * @param  observed_world: ObservedWorld of an agent's point of view
-   * @retval PairwiseDirectionalEvaluationReturn
+   * @retval PairwiseDirectionalEvaluationReturnTuple
    */
-  PairwiseDirectionalEvaluationReturn GetPairwiseDirectionalSafetyReponse(
+  PairwiseDirectionalEvaluationReturnTuple GetPairwiseDirectionalSafetyReponse(
       const ObservedWorld& observed_world);
 
   virtual ~RssInterface() {}
@@ -218,14 +220,18 @@ class RssInterface {
   PairwiseEvaluationReturn ExtractPairwiseSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
-  PairwiseDirectionalEvaluationReturn
+  PairwiseDirectionalEvaluationReturnTuple
   ExtractPairwiseDirectionalSafetyEvaluation(
       const ::ad::rss::state::RssStateSnapshot& snapshot);
 
   ::ad::rss::state::ProperResponse GetRSSResponse() const {
     return rss_proper_response_;
   }
-  
+
+  ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
+    return rss_state_snapshot_;
+  }
+
  private:
   // For a detailed explanation of parameters, please see:
   // https://intel.github.io/ad-rss-lib/ad_rss/Appendix-ParameterDiscussion/#parameter-discussion
@@ -241,6 +247,7 @@ class RssInterface {
   // Contains longitudinal and lateral response of the ego object, a list of
   // id of the dangerous objects
   ::ad::rss::state::ProperResponse rss_proper_response_;
+  ::ad::rss::state::RssStateSnapshot rss_state_snapshot_;
 };
 
 }  // namespace evaluation

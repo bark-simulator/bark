@@ -22,6 +22,7 @@ from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
 from bark.core.models.behavior import *
 from bark.core.commons import SetVerboseLevel
+from bark.core.geometry import *
 
 try:
     from bark.core.world.evaluation import EvaluatorRSS
@@ -31,9 +32,6 @@ except:
 
 # parameters
 param_server = ParameterServer()
-
-# scenario
-
 
 class CustomLaneCorridorConfig(LaneCorridorConfig):
     def __init__(self,
@@ -45,26 +43,29 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
         road_corr = world.map.GetRoadCorridor(
             self._road_ids, XodrDrivingDirection.forward)
         lane_corr = self._road_corridor.lane_corridors[0]
-        return GoalDefinitionPolygon(lane_corr.polygon)
+        goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(lane_corr.center_line.ToArray()[-1, 0], lane_corr.center_line.ToArray()[-1, 1]))
+        return GoalDefinitionPolygon(goal_polygon)
 
 
 param_server["BehaviorIDMClassic"]["BrakeForLaneEnd"] = True
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 60.0
-param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 30.0
-param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 80.
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndEnabledDistance"] = 25.0
+param_server["BehaviorIDMClassic"]["BrakeForLaneEndDistanceOffset"] = 25.0
+param_server["BehaviorLaneChangeRuleBased"]["MinRemainingLaneCorridorDistance"] = 20.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 2.0
+param_server["Visualization"]["Agents"]["DrawAgentId"] =  True
 
 # param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 # param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True
 param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
 param_server["Visualization"]["Evaluation"]["DrawEgoRSSSafetyResponses"] = True
 
-SetVerboseLevel(0)
+SetVerboseLevel(4)
 
 # configure both lanes of the highway. the right lane has one controlled agent
 left_lane = CustomLaneCorridorConfig(params=param_server,
@@ -104,7 +105,7 @@ viewer = MPViewer(params=param_server,
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
-                                           0.2]
+                                           0.05]
 sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
@@ -116,7 +117,8 @@ viewer = VideoRenderer(renderer=viewer,
 env = Runtime(step_time=0.2,
               viewer=viewer,
               scenario_generator=scenarios,
-              render=True)
+              render=True,
+              maintain_world_history=True)
 
 # Defining vehicles dynamics for RSS
 
@@ -157,5 +159,8 @@ for episode in range(0, 10):
     env.step()
     # print_rss_safety_response(evaluator_rss, current_world)
     time.sleep(sim_step_time / sim_real_time_factor)
+
+  df = env.ExtractTimeSeries()
+  print(df)
 
 # viewer.export_video(filename="/tmp/merging_rss", remove_image_dir=False)

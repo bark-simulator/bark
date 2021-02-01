@@ -11,8 +11,8 @@
 #include <tuple>
 
 #include "bark/models/behavior/behavior_rss/behavior_rss.hpp"
-#include "bark/world/observed_world.hpp"
 #include "bark/models/dynamic/single_track.hpp"
+#include "bark/world/observed_world.hpp"
 
 namespace bark {
 namespace models {
@@ -28,13 +28,15 @@ Trajectory BehaviorRSSConformant::Plan(
     behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
     auto road_corr = observed_world.GetRoadCorridor();
     const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
-    VLOG(4) << "Initial LaneCorridor used for safety behavior: " << *lane_corr << std::endl;
+    VLOG(4) << "Initial LaneCorridor used for safety behavior: " << *lane_corr
+            << std::endl;
 
     // set the other lane corridor as target
     for (const auto& lc : lane_corrs) {
       VLOG(4) << "LaneCorridor: " << *lc << std::endl;
       if (lane_corr != lc) {
-        VLOG(4) << "Setting LaneCorridor for nominal behavior: " << *lc << std::endl;
+        VLOG(4) << "Setting LaneCorridor for nominal behavior: " << *lc
+                << std::endl;
         auto nominal_behavior =
             std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
                 nominal_behavior_model_);
@@ -70,6 +72,9 @@ Trajectory BehaviorRSSConformant::Plan(
     lat_left_response_ = rss_response.lateralResponseLeft;
     lat_right_response_ = rss_response.lateralResponseRight;
     acc_restrictions_ = rss_response.accelerationRestrictions;
+    safety_polygons_ = rss_evaluator->GetSafetyPolygons();
+    AccelerationLimits acc_lim = ConvertRestrictions(acc_restrictions_);
+    SetAccelerationLimits(acc_lim);
   }
 #endif
 
@@ -83,16 +88,25 @@ Trajectory BehaviorRSSConformant::Plan(
 
   Action last_action;
   dynamic::Trajectory last_traj;
-  if (behavior_rss_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR) {
-    // execute normal
-    #ifdef RSS
-    ApplyRestrictionsToNominalModel(acc_restrictions_);
-    #endif
+  if (behavior_rss_status_ == BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR ||
+      no_safety_maneuver_) {
+// execute normal
+#ifdef RSS
+    if (acc_restrictions_for_nominal_) {
+      ApplyRestrictionsToModel(GetAccelerationLimits(),
+                               nominal_behavior_model_);
+    }
+#endif
     nominal_behavior_model_->Plan(min_planning_time, observed_world);
     last_action = nominal_behavior_model_->GetLastAction();
     last_traj = nominal_behavior_model_->GetLastTrajectory();
   } else {
     LOG(INFO) << "Executing safety behavior." << std::endl;
+#ifdef RSS
+    if (acc_restrictions_for_safety_) {
+      ApplyRestrictionsToModel(GetAccelerationLimits(), behavior_safety_model_->GetBehaviorModel());
+    }
+#endif
     behavior_safety_model_->Plan(min_planning_time, observed_world);
     last_action = behavior_safety_model_->GetLastAction();
     last_traj = behavior_safety_model_->GetLastTrajectory();
@@ -103,20 +117,26 @@ Trajectory BehaviorRSSConformant::Plan(
 }
 
 #ifdef RSS
-void BehaviorRSSConformant::ApplyRestrictionsToNominalModel(const ::ad::rss::state::AccelerationRestriction& acc_restrictions) {
-  bark::models::dynamic::AccelerationLimits acc_lim;
+AccelerationLimits BehaviorRSSConformant::ConvertRestrictions(
+    const ::ad::rss::state::AccelerationRestriction& acc_restrictions) {
+  AccelerationLimits acc_lim;
   acc_lim.lat_acc_left_max = acc_restrictions_.lateralLeftRange.maximum;
   acc_lim.lat_acc_right_max = acc_restrictions_.lateralRightRange.maximum;
   acc_lim.lon_acc_max = acc_restrictions_.longitudinalRange.maximum;
   acc_lim.lon_acc_min = acc_restrictions_.longitudinalRange.minimum;
   // TODO: Do we need minimum values as well?
   VLOG(4) << "RSS Response Acceleration Restrictions " << acc_restrictions_;
-  VLOG(4) << "AccelerationLimits for IDM " << acc_lim;
-  auto nominal_behavior =
-          std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
-            nominal_behavior_model_);
-  nominal_behavior->SetAccelerationLimits(acc_lim);
+  return acc_lim;
 }
+
+void BehaviorRSSConformant::ApplyRestrictionsToModel(
+    const AccelerationLimits& limits, std::shared_ptr<BehaviorModel> model) {
+  VLOG(4) << "AccelerationLimits for model " << limits;
+  std::shared_ptr<BehaviorIDMLaneTracking> behavior_idm_ptr =
+      std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(model);
+  behavior_idm_ptr->SetAccelerationLimits(limits);
+}
+
 #endif
 
 }  // namespace behavior
