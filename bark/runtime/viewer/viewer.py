@@ -287,12 +287,8 @@ class BaseViewer(Viewer):
                         evaluator_type, k.label_str, k.agent_id, v)
         self.drawText(position=(0.7, 0.9), text=str)
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
-        
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):       
         # self.clear()
-        
-        self.draw_rss_safety_responses = False
-        self.draw_rss_debug_info = False
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
             self.drawMap(world.map.GetOpenDriveMap())
@@ -354,12 +350,7 @@ class BaseViewer(Viewer):
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
         
-
-        self.draw_rss_safety_responses = False
-        self.draw_rss_debug_info = True
         if self.draw_rss_debug_info or self.draw_rss_safety_responses:
-          
-            self.draw_rss_debug_info = True
             if self.draw_rss_debug_info:
                 self.drawRssDebugInfomation(world, eval_agent_ids[0])
             if self.draw_rss_safety_responses:
@@ -369,7 +360,6 @@ class BaseViewer(Viewer):
           eval_agent = world.GetAgent(eval_agent_ids[0])
           if eval_agent is not None:
               self.drawBehaviorPlan(eval_agent.behavior_model)
-        self._draw_ego_rss_safety_responses = True # do it wit param server instead
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
         
