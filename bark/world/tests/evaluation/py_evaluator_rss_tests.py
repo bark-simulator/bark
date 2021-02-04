@@ -333,6 +333,44 @@ class EvaluatorRSSTests(unittest.TestCase):
         self.assertTrue(responses[other_1.id])
         self.assertFalse(other_2.id in responses)
 
+    def test_get_lane_longitudinal_polygon(self):
+        """
+        Test generation of longitudinal lane polygon
+        """
+
+        params = ParameterServer()
+        map = "bark/runtime/tests/data/city_highway_straight.xodr"
+        params["EvaluatorRss"]["MapFilename"] = map
+
+        map_interface = EvaluatorRSSTests.load_map(map)
+        world = World(params)
+        world.SetMap(map_interface)
+
+        goal_polygon = Polygon2d(
+            [0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+        goal_polygon = goal_polygon.Translate(Point2d(1.8, 120))
+
+        # The safety distance seems more conservative than in the paper
+        # Hard coded
+        ego_state = np.array([0, 1.8, -114.9, np.pi/2, 10])
+
+        ego = TestAgent(ego_state, goal_polygon, map_interface, params)
+
+        world.AddAgent(ego)
+        world.UpdateAgentRTree()
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.show(block=False)
+
+        evaluator_rss = EvaluatorRSS(ego.id, params)
+
+        lane_longitudinal_poly = evaluator_rss.GetLaneLongitudinalPolygon(
+            world, 10.)
+
+        # lane has width 3.6 so the polygon area should be 36
+        self.assertEqual(36., lane_longitudinal_poly.CalculateArea())
+
 
 if __name__ == '__main__':
     SetVerboseLevel(4)
