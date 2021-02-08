@@ -472,7 +472,8 @@ class BaseViewer(Viewer):
         if rss_responses:
             self.drawText(position=(0.82, 0.91), text="ID  Lon  Lat   LonD   LatRightD LatLeftD")
             for i, (id, responses) in enumerate(rss_responses.items()):
-                overall_safety = overall_safety and any(responses)
+                (lon, lat, _, _, _) = responses
+                overall_safety = overall_safety and any((lon, lat))
                 str = "{}:    {}     {}     {}     {}      {}".format(
                     id, *list(map(char_func, responses)))
                 self.drawText(position=(0.82, 0.88-0.03*i), text=str)
