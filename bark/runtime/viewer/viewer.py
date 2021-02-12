@@ -465,6 +465,8 @@ class BaseViewer(Viewer):
                 return "T"
             elif value is False:
                 return "F"
+            elif abs(value) > 1000:
+                return "n.d."                
             else:
                 return '%.2f' % value
 
@@ -491,7 +493,7 @@ class BaseViewer(Viewer):
                     lon_distance)
 
                 pose = generatePoseFromState(ego_agent.state)
-                pose[0] = pose[0] - lon_distance
+                pose[0] = pose[0] - lon_distance - ego_agent.shape.front_dist
                 pose[1] = pose[1] - shape.left_dist - lat_left_distance
 
                 lat_lon_rectangle = lat_lon_rectangle.Transform(pose)
