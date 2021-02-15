@@ -86,6 +86,9 @@ class BaseViewer(Viewer):
         self.draw_rss_safety_responses = params["Visualization"]["Evaluation"]["DrawRssSafetyResponses",
                                                                                "Flag to specify if visualizating rss safety responses.", False]
 
+        self.invert_rss_polygon = params["Visualization"]["Evaluation"]["InvertRssPolygon",
+                                                                               "Flag to specify if Safety Polygon rss inverted", False]
+
         self._draw_ego_rss_safety_responses = params["Visualization"]["Evaluation"][
           "DrawEgoRSSSafetyResponses",
           "Flag to specify if visualizating rss safety responses.",
@@ -488,13 +491,25 @@ class BaseViewer(Viewer):
                 ego_agent = world.agents[agent_id]
                 shape = ego_agent.shape
 
-                lat_lon_rectangle = GenerateGoalRectangle(
-                    shape.left_dist + shape.right_dist + lat_left_distance + lat_right_distance,
-                    lon_distance)
+                if self.invert_rss_polygon: # polygon appears right of car (Chinese Map)
 
-                pose = generatePoseFromState(ego_agent.state)
-                pose[0] = pose[0] - lon_distance - ego_agent.shape.front_dist
-                pose[1] = pose[1] - shape.left_dist - lat_left_distance
+                  lat_lon_rectangle = GenerateGoalRectangle(
+                      - shape.left_dist - shape.right_dist - lat_left_distance - lat_right_distance,
+                      lon_distance)
+
+                  pose = generatePoseFromState(ego_agent.state)
+                  pose[0] = pose[0] + ego_agent.shape.front_dist
+                  pose[1] = pose[1] - shape.left_dist - lat_left_distance
+
+                else: # polygon appears left of car (German Map)
+                  lat_lon_rectangle = GenerateGoalRectangle(
+                      shape.left_dist + shape.right_dist + lat_left_distance + lat_right_distance,
+                      lon_distance)
+
+                  pose = generatePoseFromState(ego_agent.state)
+                  pose[0] = pose[0] - lon_distance - ego_agent.shape.front_dist
+                  pose[1] = pose[1] - shape.left_dist - lat_left_distance
+
 
                 lat_lon_rectangle = lat_lon_rectangle.Transform(pose)
 
