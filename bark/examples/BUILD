@@ -130,26 +130,6 @@ py_binary(
           ":paths"],
 )
 
-py_binary(
-  name = "maude_interface",
-  srcs = ["maude_interface.py"],
-  data = ['//bark:generate_core',
-          '//bark/world/tests:params2'],
- 
-  deps = ["//bark/runtime/commons:parameters",
-          "//bark/runtime:runtime",
-          "//bark/runtime/viewer:video_renderer"],
-)
-
-py_binary(
-  name = "maude",
-  srcs = ["maude.py"],
-  data = ['//bark:generate_core',
-          '//bark/world/tests:params2'],
-  
-  deps = [':maude_interface'],
-)
-
 py_library(
   name = "paths",
   srcs = ["paths.py"],

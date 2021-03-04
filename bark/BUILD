@@ -89,8 +89,6 @@ py_test(
         "//bark/examples:merging",
         "//bark/examples:merging_rss",
         "//bark/examples:intersection",
-        "//bark/examples:maude_interface",
-        "//bark/examples:maude",
         "//bark/examples:interaction_dataset"
           ],
 
