@@ -17,17 +17,23 @@
 #include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/base_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/constant_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/dense_traffic_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_accelerate_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_below_speed_limit_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/lane_change_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/succeeding_agent_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/on_road_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
 
 namespace py = pybind11;
@@ -44,6 +50,7 @@ void python_ltl(py::module m) {
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
       .def_property_readonly("label_functions",
                              &EvaluatorLTL::GetLabelFunctions)
+      .def_property_readonly("safety_violations", &EvaluatorLTL::GetSafetyViolations)
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
@@ -97,6 +104,46 @@ void python_ltl(py::module m) {
                 t[0].cast<std::string>(), t[1].cast<bool>(),
                 t[2].cast<double>(), t[3].cast<double>(), t[4].cast<double>(),
                 t[5].cast<bool>(), t[6].cast<double>());
+          }));
+
+  py::class_<BelowSpeedLimitLabelFunction, BaseLabelFunction,
+             std::shared_ptr<BelowSpeedLimitLabelFunction>>(
+      m, "BelowSpeedLimitLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const BelowSpeedLimitLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl."
+                    "BelowSpeedLimitLabelFunction";
+           })
+      .def(py::pickle(
+          [](const BelowSpeedLimitLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetVelocityThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new BelowSpeedLimitLabelFunction(t[0].cast<std::string>(),
+                                                    t[1].cast<double>());
+          }));
+
+  py::class_<EgoBelowSpeedLimitLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoBelowSpeedLimitLabelFunction>>(
+      m, "EgoBelowSpeedLimitLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const EgoBelowSpeedLimitLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl."
+                    "EgoBelowSpeedLimitLabelFunction";
+           })
+      .def(py::pickle(
+          [](const EgoBelowSpeedLimitLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetVelocityThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new EgoBelowSpeedLimitLabelFunction(t[0].cast<std::string>(),
+                                                       t[1].cast<double>());
           }));
 
   py::class_<LaneChangeLabelFunction, BaseLabelFunction,
@@ -174,6 +221,82 @@ void python_ltl(py::module m) {
               throw std::runtime_error("Invalid label evaluator state!");
             return new EgoAccelerateLabelFunction(t[0].cast<std::string>(),
                                                   t[1].cast<double>());
+          }));
+
+  py::class_<EgoRightmostLaneLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoRightmostLaneLabelFunction>>(
+      m, "EgoRightmostLaneLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const EgoRightmostLaneLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl."
+                    "EgoRightmostLaneLabelFunction";
+           })
+      .def(py::pickle(
+          [](const EgoRightmostLaneLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new EgoRightmostLaneLabelFunction(t[0].cast<std::string>(),
+                                                     t[1].cast<double>());
+          }));
+
+  py::class_<RightmostLaneLabelFunction, BaseLabelFunction,
+             std::shared_ptr<RightmostLaneLabelFunction>>(
+      m, "RightmostLaneLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const RightmostLaneLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.RightmostLaneLabelFunction";
+           })
+      .def(py::pickle(
+          [](const RightmostLaneLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new RightmostLaneLabelFunction(t[0].cast<std::string>(),
+                                                  t[1].cast<double>());
+          }));
+
+  py::class_<EgoLeftmostLaneLabelFunction, BaseLabelFunction,
+             std::shared_ptr<EgoLeftmostLaneLabelFunction>>(
+      m, "EgoLeftmostLaneLabelFunction")
+      .def(py::init<const std::string&, double>())
+      .def("__repr__",
+           [](const EgoLeftmostLaneLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl."
+                    "EgoLeftmostLaneLabelFunction";
+           })
+      .def(py::pickle(
+          [](const EgoLeftmostLaneLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr(), b.GetDistanceThres());
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new EgoLeftmostLaneLabelFunction(t[0].cast<std::string>(),
+                                                    t[1].cast<double>());
+          }));
+
+  py::class_<OnRoadLabelFunction, BaseLabelFunction,
+             std::shared_ptr<OnRoadLabelFunction>>(m, "OnRoadLabelFunction")
+      .def(py::init<const std::string&>())
+      .def("__repr__",
+           [](const OnRoadLabelFunction& g) {
+             return "bark.core.world.evaluation.ltl.OnRoadLabelFunction";
+           })
+      .def(py::pickle(
+          [](const OnRoadLabelFunction& b) {
+            return py::make_tuple(b.GetLabelStr());
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid label evaluator state!");
+            return new OnRoadLabelFunction(t[0].cast<std::string>());
           }));
 
   py::class_<RelSpeedLabelFunction, BaseLabelFunction,
@@ -322,12 +445,12 @@ void python_ltl(py::module m) {
                                                    t[1].cast<Point2d>());
           }));
 
-  py::class_<PrecedingAgentLabelFunction, BaseLabelFunction,
-             std::shared_ptr<PrecedingAgentLabelFunction>>(
-      m, "PrecedingAgentLabelFunction")
+  py::class_<SucceedingAgentLabelFunction, BaseLabelFunction,
+             std::shared_ptr<SucceedingAgentLabelFunction>>(
+      m, "SucceedingAgentLabelFunction")
       .def(py::init<const std::string&, bool, double>())
       .def(py::pickle(
-          [](const PrecedingAgentLabelFunction& b) {
+          [](const SucceedingAgentLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(),
                                   b.GetUseFracLateralOffsetParam(),
                                   b.GetFracLateralOffset());
@@ -335,7 +458,7 @@ void python_ltl(py::module m) {
           [](py::tuple t) {
             if (t.size() != 3)
               throw std::runtime_error("Invalid label evaluator state!");
-            return new PrecedingAgentLabelFunction(t[0].cast<std::string>(),
+            return new SucceedingAgentLabelFunction(t[0].cast<std::string>(),
                                                    t[2].cast<bool>(),
                                                    t[1].cast<double>());
           }));

@@ -51,6 +51,7 @@ class BaseViewer(Viewer):
                                                             "Draw Route of each agent", False]
         self.draw_agent_id = params["Visualization"]["Agents"]["DrawAgentId",
                                                                "Draw id of each agent", True]
+        self.draw_invalid_agents = params["Visualization"]["Agents"]["DrawInvalidAgents", "Draw invalid agents with patch", False]
         self.draw_orientation_arrow = params["Visualization"]["Agents"]["DrawOrientationArrow",
                                                                "Draw Orientation of Arrow", False]
         self.draw_behavior_plan_eval_agent = params["Visualization"]["Agents"]["DrawBehaviorPlanEvalAgent", "Draw behavior plan of evalauted agent", False]
@@ -225,7 +226,8 @@ class BaseViewer(Viewer):
             if agent.id in world.agents_valid:
               self.drawAgent(agent)
             else:
-              self.drawAgent(agent, hatch='o')
+              if self.draw_invalid_agents:
+                self.drawAgent(agent, hatch='o')
     
     def drawBehaviorPlan(self, agent):
         self.drawTrajectory(agent.behavior_model.last_trajectory,
@@ -327,7 +329,8 @@ class BaseViewer(Viewer):
                 else:
                     color_line = self.color_other_agents_line
                     color_face = self.color_other_agents_face
-            if self.draw_history:
+                    
+            if self.draw_history and agent.id in world.agents_valid:
                 if self.draw_history_draw_face:
                     color_face_history = color_face
                 else:
@@ -335,11 +338,10 @@ class BaseViewer(Viewer):
                 self.drawHistory(agent, color_line, alpha,
                                  color_face_history, zorder=5)
             
-            if agent.id in world.agents_valid:
-              hatch = ''
-            else:
-              hatch = 'o'
-            self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
+            hatch = '' if agent.id in world.agents_valid else 'o'
+            if agent.id in world.agents_valid or self.draw_invalid_agents:
+              self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
+              
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
                 scenario_idx), fontsize=14)

@@ -148,6 +148,10 @@ const LabelFunctions& EvaluatorLTL::GetLabelFunctions() const {
   return label_functions_;
 }
 
+unsigned int EvaluatorLTL::GetSafetyViolations() const {
+  return safety_violations_;
+}
+
 #else
 EvaluatorLTL::EvaluatorLTL(){};
 #endif

@@ -93,16 +93,17 @@ class MPViewer(BaseViewer):
     def drawArrow(self, pose):
         plt.annotate(s='', xy=(pose[0]+3*math.cos(pose[2]),pose[1]+3*math.sin(pose[2])), xytext=(pose[0],pose[1]), arrowprops=dict(arrowstyle='->'))
 
-    def drawText(self, position, text, coordinate="axes", **kwargs):
+    def drawText(self, position, text, coordinate="axes", zorder=11, **kwargs):
         verticalalignment = kwargs.pop("verticalalignment", "top")
         horizontalalignment = kwargs.pop("horizontalalignment", "center")
+        zorder = kwargs.pop("zorder", 12)
         t = None
         if coordinate=="axes":
             t = self.axes.text(position[0], position[1], text, horizontalalignment=horizontalalignment,
-             verticalalignment=verticalalignment, transform=self.axes.transAxes, **kwargs)
+             verticalalignment=verticalalignment, transform=self.axes.transAxes, zorder=zorder, **kwargs)
         else:
             t = self.axes.text(position[0], position[1], text, horizontalalignment='center',
-             verticalalignment='top', **kwargs)
+             verticalalignment='top', zorder=zorder, **kwargs)
         return t
 
 
