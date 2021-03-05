@@ -23,13 +23,13 @@ LabelMap EgoLeftmostLaneLabelFunction::Evaluate(
   const auto& ego_agent = observed_world.GetEgoAgent();
   const auto& ego_pos = observed_world.CurrentEgoPosition();
 
-  const auto right_lc = observed_world.GetRoadCorridor()
+  const auto left_lc = observed_world.GetRoadCorridor()
                             ->GetLeftRightLaneCorridor(ego_pos)
                             .first;
   bool is_leftmost_lane;
-  if (right_lc) {
+  if (left_lc) {
     const double dist_until_end =
-        right_lc->LengthUntilEnd(ego_pos) - ego_agent->GetShape().front_dist_;
+        left_lc->LengthUntilEnd(ego_pos) - ego_agent->GetShape().front_dist_;
     if (dist_until_end > distance_thres_) {
       // there is a left lane that is not ending soon
       is_leftmost_lane = false;
