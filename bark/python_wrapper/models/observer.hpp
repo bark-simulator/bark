@@ -13,13 +13,17 @@
 
 namespace py = pybind11;
 using namespace bark::models::observer;
+using bark::world::AgentId;
+using bark::world::dWorldPtr;
 
 class PyObserverModel : public ObserverModel {
  public:
   using ObserverModel::ObserverModel;
 
-  ObservedWorld Observe(const World& world) override {
-    PYBIND11_OVERLOAD_PURE(ObservedWorld, ObserverModel, Observe, world);
+  ObservedWorld Observe(
+    const WorldPtr& world, const AgentId& agent_id) override {
+    PYBIND11_OVERLOAD_PURE(
+      ObservedWorld, ObserverModel, Observe, world, agent_id);
   }
 
   std::shared_ptr<ObserverModel> Clone() const override {

@@ -19,6 +19,8 @@ namespace bark {
 namespace models {
 namespace observer {
 using bark::world::World;
+using bark::world::WorldPtr;
+using bark::world::AgentId;
 using bark::world::ObservedWorld;
 
 /**
@@ -31,17 +33,19 @@ class ObserverModel : public commons::BaseType {
   explicit ObserverModel(bark::commons::ParamsPtr params)
     : BaseType(params) {}
 
-  ObserverModel(const ObserverModel& execution_model)
-    : BaseType(execution_model.GetParams()) {}
+  ObserverModel(const ObserverModel& observer_model)
+    : BaseType(observer_model.GetParams()) {}
 
   virtual ~ObserverModel() {}
 
   /**
    * @brief Function for generating an ObservedWorld
    * @param  world: BARK world
+   *         agent_id: id of the agent
    * @retval  Returns an ObservedWorld
    */
-  virtual ObservedWorld Observe(const World& world) = 0;
+  virtual ObservedWorld Observe(
+    const WorldPtr& world, const AgentId& agent_id) = 0;
 
   /**
    * @brief  Function specifying how the world shall be cloned

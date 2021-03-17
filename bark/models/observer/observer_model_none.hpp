@@ -13,13 +13,14 @@
 #include <memory>
 #include "bark/world/world.hpp"
 #include "bark/world/observed_world.hpp"
-#include "bark/models/observer/observed_model.hpp"
 #include "bark/commons/base_type.hpp"
 
 namespace bark {
 namespace models {
 namespace observer {
 using bark::world::World;
+using bark::world::WorldPtr;
+using bark::world::AgentId;
 using bark::world::ObservedWorld;
 
 /**
@@ -30,10 +31,10 @@ using bark::world::ObservedWorld;
 class ObserverModelNone : public ObserverModel {
  public:
   explicit ObserverModelNone(bark::commons::ParamsPtr params)
-    : BaseType(params) {}
+    : ObserverModel(params) {}
 
-  ObserverModelNone(const ObserverModelNone& execution_model)
-    : BaseType(execution_model.GetParams()) {}
+  ObserverModelNone(const ObserverModelNone& observer_model)
+    : ObserverModel(observer_model.GetParams()) {}
 
   virtual ~ObserverModelNone() {}
 
@@ -41,14 +42,17 @@ class ObserverModelNone : public ObserverModel {
    * @brief Clones the world and generated an ObservedWrodl
    * @retval  Returns an ObservedWorld
    */
-  virtual ObservedWorld Observe(const World& world) override {
-
+  virtual ObservedWorld Observe(
+    const WorldPtr& world, const AgentId& agent_id) {
+    // NOTE: this creates a standard observed world
+    ObservedWorld observed_world(world, agent_id);
+    return observed_world;
   }
 
   /**
    * @brief  Function specifying how the world shall be cloned
    */
-  virtual std::shared_ptr<ObserverModel> Clone() override;
+  virtual std::shared_ptr<ObserverModel> Clone() const;
 
 };
 

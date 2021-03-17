@@ -40,6 +40,8 @@ cc_test(
     deps = [
         "//bark/geometry",
         "//bark/models/observer:observer_model",
+        "//bark/models/observer:observer_model_none",
+        "//bark/world/goal_definition:goal_definition",
         "@gtest//:gtest_main",
     ],
 )
