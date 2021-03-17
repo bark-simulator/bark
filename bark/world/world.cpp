@@ -12,6 +12,7 @@
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/models/observer/observer_model.hpp"
 
 namespace bark {
 namespace world {

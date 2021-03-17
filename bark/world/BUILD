@@ -26,7 +26,6 @@ cc_library(
         "//bark/geometry:include",
         "//bark/world/map:include",
         "//bark/world/opendrive:include",
-        "//bark/models/observer:observer_model",
         "//bark/commons/transformation:include",
         "//bark/commons:include",
         "//bark/models:include",

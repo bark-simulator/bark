@@ -8,13 +8,15 @@
 
 #ifndef PYTHON_PYTHON_BINDINGS_MODELS_OBSERVER_HPP_
 #define PYTHON_PYTHON_BINDINGS_MODELS_OBSERVER_HPP_
-#include "bark/models/Observer/observer_model.hpp"
+#include "bark/models/observer/observer_model.hpp"
+#include "bark/models/observer/observer_model_none.hpp"
 #include "bark/python_wrapper/common.hpp"
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
 
 namespace py = pybind11;
 using namespace bark::models::observer;
 using bark::world::AgentId;
-using bark::world::dWorldPtr;
+using bark::world::WorldPtr;
 
 class PyObserverModel : public ObserverModel {
  public:

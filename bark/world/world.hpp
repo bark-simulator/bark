@@ -21,10 +21,14 @@
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
-// #include "bark/models/observer/observer_model.hpp"
 #include "bark/world/opendrive/opendrive.hpp"
 
 namespace bark {
+namespace models {
+namespace observer {
+class ObserverModel;
+}
+}
 namespace world {
 
 using bark::commons::transformation::FrenetPosition;
@@ -36,7 +40,7 @@ using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
-// using bark::models::observer::ObserverModel;
+using bark::models::observer::ObserverModel;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -189,7 +193,7 @@ class World : public commons::BaseType {
   AgentMap agents_;
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
-  // std::shared_ptr<ObserverModel> observer_;
+  std::shared_ptr<ObserverModel> observer_;
   double world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
