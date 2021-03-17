@@ -63,6 +63,7 @@ void World::PlanAgents(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_)) {
+      // TODO: here the observer model needs to be called
       ObservedWorld observed_world(current_world, agent.first);
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)

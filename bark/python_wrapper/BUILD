@@ -40,7 +40,7 @@ cc_binary(
     "//bark/models/behavior/idm/stochastic:stochastic",
     "//bark/models/behavior/behavior_safety:behavior_safety",
     "//bark/models/behavior/behavior_rss:behavior_rss",
-    #"//bark/models/execution/mpc:mpc",
+    "//bark/models/observer:observer_model",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
     "//bark/runtime:cc_runtime",

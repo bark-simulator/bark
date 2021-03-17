@@ -32,6 +32,19 @@ cc_test(
 )
 
 cc_test(
+    name = "observer_model_test",
+    srcs = [
+        "observer_model_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/models/observer:observer_model",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "behavior_motion_primitive_test",
     srcs = [
         "behavior_motion_primitive_test.cc",
