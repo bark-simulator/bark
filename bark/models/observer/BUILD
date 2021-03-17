@@ -5,7 +5,6 @@ cc_library(
     ],
     deps = [
         "//bark/commons:commons",
-        "//bark/world:world",
         "@com_github_eigen_eigen//:eigen",
     ],
     visibility = ["//visibility:public"],
@@ -18,7 +17,6 @@ cc_library(
     ],
     deps = [
         "//bark/commons:commons",
-        "//bark/world:world",
         "//bark/models/observer:observer_model",
         "@com_github_eigen_eigen//:eigen",
     ],

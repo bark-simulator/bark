@@ -20,7 +20,7 @@ namespace models {
 namespace observer {
 using bark::world::World;
 using bark::world::WorldPtr;
-using bark::world::AgentId;
+using bark::world::objects::AgentId;
 using bark::world::ObservedWorld;
 
 /**

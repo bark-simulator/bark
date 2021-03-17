@@ -35,6 +35,9 @@ using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 
+// TODO: change to actual implementation
+// typedef UncertaintyInfo double;
+
 class ObservedWorld : public World {
  public:
   ObservedWorld(const WorldPtr& world, const AgentId& ego_agent_id)
@@ -147,6 +150,7 @@ class ObservedWorld : public World {
 
  private:
   AgentId ego_agent_id_;
+  // std::shared_ptr<UncertaintyInfo> uncertainty_info_;
 };
 
 typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;

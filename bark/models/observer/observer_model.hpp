@@ -16,12 +16,23 @@
 #include "bark/commons/base_type.hpp"
 
 namespace bark {
+
+// forward declarations
+namespace world {
+namespace objects {
+typedef unsigned int AgentId;
+}  // namespace objects
+class ObservedWorld;
+class World;
+typedef std::shared_ptr<World> WorldPtr;
+}  // namespace world
+
 namespace models {
 namespace observer {
-using bark::world::World;
-using bark::world::WorldPtr;
-using bark::world::AgentId;
-using bark::world::ObservedWorld;
+using world::objects::AgentId;
+using world::World;
+using world::ObservedWorld;
+using world::WorldPtr;
 
 /**
  * @brief  Observer creating an ObservedWorld given a World
@@ -40,7 +51,7 @@ class ObserverModel : public commons::BaseType {
 
   /**
    * @brief Function for generating an ObservedWorld
-   * @param  world: BARK world
+   * @param  world: BARK-world
    *         agent_id: id of the agent
    * @retval  Returns an ObservedWorld
    */

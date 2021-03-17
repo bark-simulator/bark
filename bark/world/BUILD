@@ -12,6 +12,7 @@ cc_library(
         "//bark/models/behavior:behavior",
         "//bark/models/execution:execution",
         "//bark/models/dynamic:dynamic",
+        "//bark/models/observer:observer_model",
         "//bark/world/evaluation:base_evaluator",
         "//bark/world/goal_definition:goal_definition"
     ],
@@ -25,6 +26,7 @@ cc_library(
         "//bark/geometry:include",
         "//bark/world/map:include",
         "//bark/world/opendrive:include",
+        "//bark/models/observer:observer_model",
         "//bark/commons/transformation:include",
         "//bark/commons:include",
         "//bark/models:include",

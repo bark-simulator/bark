@@ -23,6 +23,7 @@ TEST(observer_model_none, base_test) {
   auto params = std::make_shared<SetterParams>();
   ObserverModelNone observer_none(params);
 
+  // TODO: integrate test
   // Polygon polygon = GenerateGoalRectangle(6,3);
   // std::shared_ptr<Polygon> goal_polygon(
   //     std::dynamic_pointer_cast<Polygon>(polygon.Translate(
@@ -35,7 +36,7 @@ TEST(observer_model_none, base_test) {
   // WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
   //                                  velocity_difference, goal_definition_ptr);
 
-
+  // TODO: call observer
   // observer_none.Observer();
 }
 

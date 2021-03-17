@@ -39,9 +39,10 @@ cc_test(
     copts = ["-Iexternal/gtest/include"],
     deps = [
         "//bark/geometry",
+        "//bark/world:world",
+        "//bark/world/goal_definition:goal_definition",
         "//bark/models/observer:observer_model",
         "//bark/models/observer:observer_model_none",
-        "//bark/world/goal_definition:goal_definition",
         "@gtest//:gtest_main",
     ],
 )
