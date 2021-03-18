@@ -11,8 +11,6 @@
 
 #include <Eigen/Core>
 #include <memory>
-#include "bark/world/world.hpp"
-#include "bark/world/observed_world.hpp"
 #include "bark/commons/base_type.hpp"
 
 namespace bark {

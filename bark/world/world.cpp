@@ -12,19 +12,21 @@
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
-#include "bark/models/observer/observer_model.hpp"
+#include "bark/models/observer/observer_model_none.hpp"
 
 namespace bark {
 namespace world {
 
 using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
+using models::obsever::ObserverModelNone;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
       map_(),
       agents_(),
       world_time_(0.0),
+      observer_(ObserverModelNone(params)),
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
@@ -45,6 +47,7 @@ World::World(const std::shared_ptr<World>& world)
       agents_(world->GetAgents()),
       objects_(world->GetObjects()),
       evaluators_(world->GetEvaluators()),
+      observer_(world->GetObserverModel()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
       frac_lateral_offset_(world->GetFracLateralOffset()),
