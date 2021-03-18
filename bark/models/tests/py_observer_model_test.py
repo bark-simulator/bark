@@ -17,13 +17,13 @@ from bark.runtime.scenario.scenario_generation.scenario_generation \
 
 from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
 from bark.core.geometry import *
-from bark.core.world import World
+from bark.core.world import World, ObservedWorld
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark.core.models.dynamic import SingleTrackModel
-from bark.core.models.observer import *
+from bark.core.models.observer import ObserverModel, ObserverModelNone
 
 
 # NOTE: this is testing the PyObserverModel wrapping
@@ -31,12 +31,11 @@ class PythonObserverModel(ObserverModel):
   def __init__(self,
                params = None):
     ObserverModel.__init__(self, params)
-    self._dynamic_model = dynamic_model
     self._params = params
 
   def Observe(self, world, agent_id):
-    # NOTE: returns an vector as this could return mult. observed worlds
-    observed_world = world.Observe([agent_id])[0]
+    # NOTE: returns a vector as this could return mult. observed worlds
+    observed_world = ObservedWorld(world, agent_id)
     return observed_world
 
   def Clone(self):
@@ -66,7 +65,7 @@ def GetParamServerAndWorld():
 
 class PyObserverModelTests(unittest.TestCase):
   def test_observer_model_none(self):
-    param_server, world = GetParamServerAndWorld()
+    world, param_server = GetParamServerAndWorld()
     # NOTE: create and assign ObserverModelNone
     observer_model = ObserverModelNone(param_server)
     world.observer_model = observer_model
@@ -74,8 +73,8 @@ class PyObserverModelTests(unittest.TestCase):
     assert(world.observer_model == observer_model)
     
   def test_py_observer_model_none(self):
-    param_server, world = GetParamServerAndWorld()
-    # NOTE: create and assign ObserverModelNone
+    world, param_server = GetParamServerAndWorld()
+    # NOTE: create and assign PythonObserverModel
     observer_model = PythonObserverModel(param_server)
     world.observer_model = observer_model
     world.Step(0.2)

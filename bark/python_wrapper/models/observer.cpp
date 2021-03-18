@@ -16,12 +16,12 @@ using std::shared_ptr;
 void python_observer(py::module m) {
   py::class_<ObserverModel, PyObserverModel, ObserverModelPtr>(
     m, "ObserverModel")
-    .def(py::init<const ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("Observe", &ObserverModel::Observe);
 
   py::class_<ObserverModelNone, ObserverModel,
-             shared_ptr<ObserverModelNone>>(m, "ObserverNone")
-    .def(py::init<const ParamsPtr&>())
+             shared_ptr<ObserverModelNone>>(m, "ObserverModelNone")
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const ObserverModelNone& m) {
           return "bark.models.observer.ObserverNone";
     })
