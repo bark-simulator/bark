@@ -43,6 +43,7 @@ cc_test(
         "//bark/world/goal_definition:goal_definition",
         "//bark/models/observer:observer_model",
         "//bark/models/observer:observer_model_none",
+        "//bark/world/tests:make_test_world",
         "@gtest//:gtest_main",
     ],
 )

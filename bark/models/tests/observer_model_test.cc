@@ -8,36 +8,38 @@
 #include "gtest/gtest.h"
 #include "bark/models/observer/observer_model.hpp"
 #include "bark/models/observer/observer_model_none.hpp"
-// #include "bark/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 #include "bark/commons/params/setter_params.hpp"
 
 using bark::commons::SetterParams;
-
-TEST(observer_model, IF_tests) {
-  auto params = std::make_shared<SetterParams>();
-
-}
+using bark::geometry::Polygon;
+using bark::geometry::Point2d;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using bark::world::objects::AgentId;
+using bark::world::tests::make_test_world;
+using namespace bark::world;
 
 TEST(observer_model_none, base_test) {
   using bark::models::observer::ObserverModelNone;
   auto params = std::make_shared<SetterParams>();
   ObserverModelNone observer_none(params);
 
-  // TODO: integrate test
-  // Polygon polygon = GenerateGoalRectangle(6,3);
-  // std::shared_ptr<Polygon> goal_polygon(
-  //     std::dynamic_pointer_cast<Polygon>(polygon.Translate(
-  //         Point2d(50, -2))));  // < move the goal polygon into the driving
-  //                              // corridor in front of the ego vehicle
-  // auto goal_definition_ptr =
-  //     std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
-  // double ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
-  // // TODO: pass goal polygon to make_world_test
-  // WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
-  //                                  velocity_difference, goal_definition_ptr);
+  Polygon polygon = GenerateGoalRectangle(6,3);
+  std::shared_ptr<Polygon> goal_polygon(
+    std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+      Point2d(50, -2))));  // < move the goal polygon into the driving
+                            // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+  double ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+  WorldPtr world = make_test_world(0, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
 
-  // TODO: call observer
-  // observer_none.Observer();
+  ObservedWorld observed_world = observer_none.Observe(world, AgentId(1));
+
+  // NOTE: assert ObservedWorld is generated for the correct AgentId
+  EXPECT_EQ(observed_world.GetEgoAgentId(), AgentId(1));
 }
 
 int main(int argc, char** argv) {
