@@ -68,7 +68,7 @@ void World::PlanAgents(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_)) {
-      ObservedWorld observed_world = obsever_->Observe(
+      ObservedWorld observed_world = observer_->Observe(
         current_world, agent.first);
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
@@ -153,7 +153,7 @@ std::vector<ObservedWorld> World::Observe(
                  << std::endl;
       continue;
     }
-    ObservedWorld observed_world = obsever_->Observe(
+    ObservedWorld observed_world = observer_->Observe(
       current_world, agent_id);
     observed_worlds.push_back(observed_world);
   }
