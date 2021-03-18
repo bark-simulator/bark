@@ -112,6 +112,17 @@ py_test(
           "//bark/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
+py_test(
+  name = "py_observer_model_test",
+  srcs = ["py_observer_model_test.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data'],
+
+  deps = ["//bark/runtime/commons:commons",
+          "//bark/runtime:runtime",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
 cc_test(
     name = "behavior_static_trajectory_test",
     srcs = [
