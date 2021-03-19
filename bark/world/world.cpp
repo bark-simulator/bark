@@ -28,8 +28,9 @@ World::World(const commons::ParamsPtr& params)
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
       lateral_difference_threshold_(params->GetReal("World::LateralDifferenceThreshold",
-          "Lateral distance to shape of vehicke for FrontRearAgent Calculation",
-          2.0)) {
+          "Lateral distance between shapes of vehicles considering orientation of shapes with respect to center line"
+                "for FrontRearAgent Calculation",
+          10.0)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
