@@ -10,6 +10,7 @@ import logging
 import re
 import zipfile
 import math
+import subprocess
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
@@ -76,7 +77,8 @@ class BenchmarkResult:
         self.__file_name = file_name or None
 
     def get_data_frame(self):
-        if not isinstance(self.__data_frame, pd.DataFrame):
+        if not isinstance(self.__data_frame, pd.DataFrame) or \
+          len(self.__data_frame.index) < len(self.__result_dict):
             self.__data_frame = pd.DataFrame(self.__result_dict)
         return self.__data_frame
 
@@ -96,7 +98,13 @@ class BenchmarkResult:
             self.__benchmark_configs, config_idx)
 
     def get_benchmark_config_indices(self):
-        return [bc.config_idx for bc in self.__benchmark_configs]
+        df = self.get_data_frame()
+        if len(df.index) > 0:
+          return df["config_idx"].tolist()
+        if self.__benchmark_configs:
+          return [bc.config_idx for bc in self.__benchmark_configs]
+        else:
+          return []
 
     def get_history(self, config_idx):
       try:
@@ -162,28 +170,23 @@ class BenchmarkResult:
                 "histories", configs_idx_to_load)
         if len(configs_not_found) > 0:
             logging.warning("The histories with config indices {} were not found in {}".format(configs_not_found, self.__file_name))
-        if new_histories:
-            new_result = BenchmarkResult(result_dict=None, benchmark_configs=None,
-                              histories=new_histories)
-            self.extend(new_result)
+        self.__histories.update(new_histories)
         return processed_files
 
     def load_benchmark_configs(self, config_idx_list = None):
         if config_idx_list:
-            existing_config_indices = self.get_benchmark_config_indices()
-            configs_idx_to_load = list(set(config_idx_list) - set(existing_config_indices))
+            existing_configs_indices = [bc.config_idx for bc in self.__benchmark_configs]
+            configs_idx_to_load = list(set(config_idx_list) - set(existing_configs_indices))
         else:
             configs_idx_to_load = None # all available configs are loaded
         new_bench_configs = None
         with zipfile.ZipFile(self.__file_name, 'r') as result_zip_file:
             new_bench_configs, configs_not_found, processed_files = BenchmarkResult._load_and_merge(result_zip_file, \
                 "configs", configs_idx_to_load)
+            new_bench_configs_list = list(new_bench_configs.values())
         if len(configs_not_found) > 0:
             logging.warning("The benchmark configs with indices {} were not found in {}".format(configs_not_found, self.__file_name))
-        if new_bench_configs:
-            new_result = BenchmarkResult(result_dict=None, benchmark_configs=new_bench_configs,
-                              histories=None)
-            self.extend(new_result)
+        self.__benchmark_configs.extend(new_bench_configs_list)
         return processed_files
 
     @staticmethod
@@ -213,19 +216,12 @@ class BenchmarkResult:
         if config_idx_list:
             files_to_load, configs_not_found = BenchmarkResult._find_files_to_load(total_file_list, \
                 filetype, config_idx_list)
-        merged_iterable = None
+        merged_iterable_dict = {}
         for file in files_to_load:
             bytes = zip_file_handle.read(file)
             iterable = pickle.loads(bytes)
-            if isinstance(iterable, list):
-                if not merged_iterable:
-                    merged_iterable = []
-                merged_iterable.extend(iterable)
-            elif isinstance(iterable, dict):
-                if not merged_iterable:
-                    merged_iterable = {}
-                merged_iterable.update(iterable)
-        return merged_iterable, configs_not_found, files_to_load
+            merged_iterable_dict.update(iterable)
+        return merged_iterable_dict, configs_not_found, files_to_load
 
     @staticmethod
     def _save_and_split(zip_file_handle, filetype, pickable_iterable, max_bytes_per_file):
@@ -233,27 +229,38 @@ class BenchmarkResult:
                                       protocol=pickle.HIGHEST_PROTOCOL))
         num_files = math.ceil(whole_list_byte_size/max_bytes_per_file)
         num_configs_per_file = math.floor(len(pickable_iterable)/num_files)
+        pickable_iterable_dct=None
         if isinstance(pickable_iterable, list):
-          config_idx_list = list(range(0, len(pickable_iterable)))
+          pickable_iterable_dct = {bc.config_idx : bc for bc in pickable_iterable}
         elif isinstance(pickable_iterable, dict):
-          config_idx_list = list(pickable_iterable.keys())
+          pickable_iterable_dct = pickable_iterable
+        config_idx_list = list(pickable_iterable_dct.keys())
+        config_idx_list.sort()
         config_idx_splits = [config_idx_list[i:i + num_configs_per_file] \
                      for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:
-            iterable_to_write = None
-            if isinstance(pickable_iterable, list):
-                iterable_to_write = [pickable_iterable[i] for i in config_idx_split]
-            elif isinstance(pickable_iterable, dict):
-                iterable_to_write = { config_idx : pickable_iterable[config_idx] \
+            iterable_to_write = { config_idx : pickable_iterable_dct[config_idx] \
                                       for config_idx in config_idx_split}
-
             filename = os.path.join(filetype, "config_idx_{}_to_{}.{}".format(
                   config_idx_split[0], config_idx_split[-1], filetype))
-            zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
+            if not filename in zip_file_handle.namelist():
+                zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
                                                 protocol=pickle.HIGHEST_PROTOCOL))
 
+    @staticmethod
+    def remove_result_file_from_dumped(filename):
+        if not filename or not os.path.exists(filename):
+          return
+        result_file_name = "benchmark.results"
+        zip_file_handle = zipfile.ZipFile(filename)
+        if result_file_name in zip_file_handle.namelist():
+          zip_file_handle.close()
+          cmd=['zip', '-Ar','-d', os.path.abspath(filename), result_file_name]
+          subprocess.check_call(cmd)
+
     def _dump_results(self, zip_file_handle):
-        zip_file_handle.writestr("benchmark.results", \
+        result_file_name = "benchmark.results"
+        zip_file_handle.writestr(result_file_name, \
             pickle.dumps(self.get_data_frame(), protocol=pickle.HIGHEST_PROTOCOL))
 
     def _dump_histories(self, zip_file_handle, max_bytes_per_file):
@@ -279,8 +286,13 @@ class BenchmarkResult:
           logging.error("BadZipeFile {}".format(filename))
           return None
 
-    def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000):
-        with zipfile.ZipFile(filename, 'w') as result_zip_file:
+    def dump(self, filename, dump_configs=False, dump_histories=False, max_mb_per_file=1000, append=False):
+        if self.get_file_name() and filename != self.get_file_name() and os.path.exists(self.get_file_name()):
+          os.rename(self.get_file_name(), filename)
+          append = True
+        if append:
+          BenchmarkResult.remove_result_file_from_dumped(filename)
+        with zipfile.ZipFile(filename, 'a' if append and os.path.exists(filename) else 'w') as result_zip_file:
             self._dump_results(result_zip_file)
             if dump_configs:
                 self._dump_benchmark_configs(result_zip_file, max_mb_per_file*10**6)
@@ -288,16 +300,30 @@ class BenchmarkResult:
                 self._dump_histories(result_zip_file, max_mb_per_file*10**6)
         logging.info("Saved BenchmarkResult to {}".format(
             os.path.abspath(filename)))
+        self.__file_name = filename
 
-    def extend(self, benchmark_result):
+    @staticmethod
+    def move_files(zfh_from, zfh_to, filetype):
+
+            from_file_list = [filename for filename in zfh_from.namelist() \
+                        if filetype in filename]
+            to_file_list = [filename for filename in zfh_to.namelist() \
+                        if filetype in filename]
+            for filename in from_file_list:
+              if filename in to_file_list:
+                raise ValueError("File {} exists in zip-archiv".format(filename))
+              with zfh_from.open(filename) as fh:
+                zfh_to.writestr(filename, fh.read())
+
+    def extend(self, benchmark_result=None, file_level = False):
         new_idxs = benchmark_result.get_benchmark_config_indices()
+        if len(new_idxs) == 0:
+          return
         this_idxs = self.get_benchmark_config_indices()
         overlap = set(new_idxs) & set(this_idxs)
         if len(overlap) != 0:
             raise ValueError("Overlapping config indices. No extension possible.")
         self.__result_dict.extend(benchmark_result.get_result_dict())
-        self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())
-
         other_data_frame = benchmark_result.get_data_frame()
         if isinstance(self.__data_frame, pd.DataFrame):
             if isinstance(other_data_frame, pd.DataFrame):
@@ -305,4 +331,20 @@ class BenchmarkResult:
         else:
             if isinstance(other_data_frame, pd.DataFrame):
                 self.__data_frame = other_data_frame
-        self.__histories.update(benchmark_result.get_histories())
+
+        if not file_level:
+            self.__benchmark_configs.extend(benchmark_result.get_benchmark_configs())      
+            self.__histories.update(benchmark_result.get_histories())
+        else:
+          BenchmarkResult.remove_result_file_from_dumped(self.get_file_name())
+          self.dump(self.get_file_name(), append=True, \
+              dump_histories=True, dump_configs=True)
+          if not self.get_file_name():
+            raise ValueError("Extending with filename requires filename for extended result.")
+          if not os.path.exists(benchmark_result.get_file_name()):
+            raise ValueError("file_level=True requires that extending result file exists.")
+          with zipfile.ZipFile(benchmark_result.get_file_name(), 'r') as zfh_from:
+            with zipfile.ZipFile(self.get_file_name(), \
+                 'a' if os.path.exists(self.get_file_name()) else 'w') as zfh_to:
+              BenchmarkResult.move_files(zfh_from, zfh_to, "configs")
+              BenchmarkResult.move_files(zfh_from, zfh_to, "histories")

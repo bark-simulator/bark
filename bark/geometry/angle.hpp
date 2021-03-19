@@ -34,12 +34,16 @@ inline double Norm0To2PI(const double& angle) {
   return normalized;
 }
 
-inline double NormToPI(double x){
+inline float Norm0ToPI(const float& angle_0_2pi) {
     double normalized = fmod(x + B_PI, B_2PI);
     if (normalized < 0) {
       normalized += B_2PI;
     }
     return normalized - B_PI;
+}
+
+inline float AngleDiff(const float& angle1, const float& angle2) {
+  return abs(Norm0To2PI(angle1) - Norm0To2PI(angle2));
 }
 
 /**

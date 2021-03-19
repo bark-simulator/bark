@@ -25,6 +25,7 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_change_to_right.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_const_acc_stay_lane.hpp"
 #include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
+#include "bark/models/behavior/motion_primitives/random_macro_actions.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
@@ -40,6 +41,8 @@
 #include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
 
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
+
+#include "bark/models/dynamic/single_track.hpp"
 
 #ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
@@ -64,9 +67,13 @@
 
 #ifdef PLANNER_UCT
 #include "bark_mcts/models/behavior/behavior_uct_hypothesis.hpp"
+#include "bark_mcts/models/behavior/behavior_uct_risk_constraint.hpp"
+#include "bark_mcts/models/behavior/behavior_uct_cooperative.hpp"
 #include "bark_mcts/models/behavior/hypothesis/idm/hypothesis_idm.hpp"
 using bark::models::behavior::BehaviorHypothesisIDM;
 using bark::models::behavior::BehaviorUCTHypothesis;
+using bark::models::behavior::BehaviorUCTRiskConstraint;
+using bark::models::behavior::BehaviorUCTCooperative;
 #endif
 
 #ifdef PLANNER_MIQP
@@ -90,6 +97,8 @@ using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::behavior::BehaviorIDMStochastic;
 using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
+using bark::models::behavior::BehaviorRandomMacroActions;
+using bark::models::behavior::BehaviorMobil;
 using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorStaticTrajectory;
@@ -106,6 +115,7 @@ using bark::world::goal_definition::GoalDefinitionSequential;
 using bark::world::goal_definition::GoalDefinitionStateLimits;
 using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using bark::world::evaluation::EvaluatorCollisionEgoAgent;
+using bark::models::dynamic::SingleTrackModel;
 
 #ifdef LTL_RULES
 using bark::world::evaluation::SafeDistanceLabelFunction;
@@ -162,9 +172,15 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorSafety";
   } else if (typeid(*behavior_model) == typeid(BehaviorRSSConformant)) {
     behavior_model_name = "BehaviorRSSConformant";
+  } else if (typeid(*behavior_model) == typeid(BehaviorRandomMacroActions)) {
+    behavior_model_name = "BehaviorRandomMacroActions";
   }
 #ifdef PLANNER_UCT
-  else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
+  else if (typeid(*behavior_model) == typeid(BehaviorUCTCooperative)) {
+    behavior_model_name = "BehaviorUCTCooperative";
+  } else if (typeid(*behavior_model) == typeid(BehaviorUCTRiskConstraint)) {
+    behavior_model_name = "BehaviorUCTRiskConstraint";
+  } else if (typeid(*behavior_model) == typeid(BehaviorUCTHypothesis)) {
     behavior_model_name = "BehaviorUCTHypothesis";
   } else if (typeid(*behavior_model) == typeid(BehaviorHypothesisIDM)) {
     behavior_model_name = "BehaviorHypothesisIDM";
@@ -233,9 +249,18 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorRSSConformant") == 0) {
     return std::make_shared<BehaviorRSSConformant>(
         t[0].cast<BehaviorRSSConformant>());
+  } else if (behavior_model_name.compare("BehaviorRandomMacroActions") == 0) {
+    return std::make_shared<BehaviorRandomMacroActions>(
+        t[0].cast<BehaviorRandomMacroActions>());
   }
 #ifdef PLANNER_UCT
-  else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
+  else if (behavior_model_name.compare("BehaviorUCTCooperative") == 0) {
+    return std::make_shared<BehaviorUCTCooperative>(
+        t[0].cast<BehaviorUCTCooperative>());
+  } else if (behavior_model_name.compare("BehaviorUCTRiskConstraint") == 0) {
+    return std::make_shared<BehaviorUCTRiskConstraint>(
+        t[0].cast<BehaviorUCTRiskConstraint>());
+  } else if (behavior_model_name.compare("BehaviorUCTHypothesis") == 0) {
     return std::make_shared<BehaviorUCTHypothesis>(
         t[0].cast<BehaviorUCTHypothesis>());
   } else if (behavior_model_name.compare("BehaviorHypothesisIDM") == 0) {
@@ -301,6 +326,27 @@ GoalDefinitionPtr PythonToGoalDefinition(py::tuple t) {
         t[0].cast<GoalDefinitionStateLimitsFrenet>());
   } else {
     LOG(ERROR) << "Unknown GoalDefinitionType for polymorphic conversion.";
+    throw;
+  }
+}
+
+py::tuple DynamicModelToPython(DynamicModelPtr dynamic_model) {
+  std::string dynamic_model_name;
+  if (typeid(*dynamic_model) == typeid(SingleTrackModel)) {
+    dynamic_model_name = "SingleTrackModel";
+  } else {
+    LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
+    throw;
+  }
+  return py::make_tuple(dynamic_model, dynamic_model_name);
+}
+DynamicModelPtr PythonToDynamicModel(py::tuple t) {
+  std::string goal_definition_name = t[1].cast<std::string>();
+  if (goal_definition_name.compare("SingleTrackModel") == 0) {
+    return std::make_shared<SingleTrackModel>(
+        t[0].cast<SingleTrackModel>());
+  } else {
+    LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
     throw;
   }
 }

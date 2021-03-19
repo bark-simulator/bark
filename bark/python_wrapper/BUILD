@@ -24,6 +24,7 @@ cc_binary(
     "//bark/world/evaluation:evaluation",
     "//bark/world/evaluation/ltl/label_functions:label_function",
     "//bark/world/evaluation/ltl:evaluator_ltl",
+    "//bark/world/evaluation/safe_distances:safe_distances",
     "//bark/commons/params:params",
     "//bark/commons/util:util",
     "//bark/models/execution/interpolation:interpolation",

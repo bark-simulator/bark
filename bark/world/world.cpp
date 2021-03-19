@@ -27,12 +27,8 @@ World::World(const commons::ParamsPtr& params)
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
-      frac_lateral_offset_(params->GetReal(
-          "World::FracLateralOffset",
-          "Lane Width Fraction for maximum allowed lateral offset in "
-          "FrontRearAgent calculation "
-          "Calculation, should be larger than 0. value of 2 means that all "
-          "agents intersecting with lane will be considered",
+      lateral_difference_threshold_(params->GetReal("World::LateralDifferenceThreshold",
+          "Lateral distance to shape of vehicke for FrontRearAgent Calculation",
           2.0)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
@@ -46,7 +42,7 @@ World::World(const std::shared_ptr<World>& world)
       evaluators_(world->GetEvaluators()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
-      frac_lateral_offset_(world->GetFracLateralOffset()),
+      lateral_difference_threshold_(world->GetLateralDifferenceThreshold()),
       rtree_agents_(world->rtree_agents_) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
@@ -138,7 +134,7 @@ EvaluationMap World::Evaluate() const {
 }
 
 std::vector<ObservedWorld> World::Observe(
-    const std::vector<AgentId>& agent_ids) {
+    const std::vector<AgentId>& agent_ids) const {
   WorldPtr current_world_state(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
@@ -242,25 +238,26 @@ FrontRearAgents World::GetAgentFrontRearForId(
   using bark::geometry::Polygon;
 
   FrontRearAgents fr_agents;
-  Point2d ego_position = World::GetAgent(agent_id)->GetCurrentPosition();
+  const auto& ego_state = World::GetAgent(agent_id)->GetCurrentState();
 
   const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
   const Line& center_line = lane_corridor->GetCenterLine();
   AgentMap intersecting_agents = GetAgentsIntersectingPolygon(corridor_polygon);
   if (intersecting_agents.size() == 0) {
-    fr_agents.front = std::make_pair(AgentPtr(nullptr), FrenetPosition(0, 0));
+    fr_agents.front = std::make_pair(AgentPtr(nullptr), FrenetStateDifference());
     fr_agents.rear = fr_agents.front;
     return fr_agents;
   }
 
-  FrenetPosition frenet_ego(ego_position, center_line);
+  FrenetState frenet_ego(ego_state, center_line);
+  const auto ego_polygon = World::GetAgent(agent_id)->GetShape();
   const double numeric_max = std::numeric_limits<double>::max();
 
-  double nearest_lon_front = numeric_max, nearest_lat_front = numeric_max,
-         nearest_lon_rear = numeric_max, nearest_lat_rear = numeric_max;
 
   AgentPtr nearest_agent_front(nullptr);
   AgentPtr nearest_agent_rear(nullptr);
+  FrenetStateDifference nearest_difference_front;
+  FrenetStateDifference nearest_difference_rear;
 
   for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
        ++it) {
@@ -270,34 +267,25 @@ FrontRearAgents World::GetAgentFrontRearForId(
       continue;
     }
 
-    FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
-    double width =
-        lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
-    if (std::abs(frenet_other.lat) > frac_lateral_offset * width) {
+    FrenetState frenet_other(it->second->GetCurrentState(), center_line);
+    FrenetStateDifference difference(frenet_ego, ego_polygon, frenet_other, it->second->GetShape());
+    if (std::abs(difference.lat) > lateral_difference_threshold_) {
       // agent seems to be not really in same lane
       continue;
     }
-    double long_dist = frenet_other.lon - frenet_ego.lon;
-    double lat_dist = frenet_other.lat - frenet_ego.lat;
 
-    if (long_dist > 0.0 && long_dist < nearest_lon_front) {
-      nearest_lon_front = long_dist;
-      nearest_lat_front = lat_dist;
+    if (difference.lon >= 0.0f && difference.lon < nearest_difference_front.lon) {
+      nearest_difference_front = difference;
       nearest_agent_front = it->second;
-    } else if (long_dist < 0.0 &&
-               std::abs(long_dist) < std::abs(nearest_lon_rear)) {
-      nearest_lon_rear = long_dist;
-      nearest_lat_rear = lat_dist;
+    } else if (difference.lon < 0.0f &&
+               std::abs(difference.lon) < std::abs(nearest_difference_rear.lon)) {
+      nearest_difference_rear = difference;
       nearest_agent_rear = it->second;
     }
   }
 
-  FrenetPosition frenet_front =
-      FrenetPosition(nearest_lon_front, nearest_lat_front);
-  fr_agents.front = std::make_pair(nearest_agent_front, frenet_front);
-  FrenetPosition frenet_rear =
-      FrenetPosition(nearest_lon_rear, nearest_lat_rear);
-  fr_agents.rear = std::make_pair(nearest_agent_rear, frenet_rear);
+  fr_agents.front = std::make_pair(nearest_agent_front, nearest_difference_front);
+  fr_agents.rear = std::make_pair(nearest_agent_rear, nearest_difference_rear);
 
   return fr_agents;
 }

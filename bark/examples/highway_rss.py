@@ -30,7 +30,7 @@ param_server = ParameterServer(filename=Data.params_data("highway_merge_configur
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleRearDistance"] = 4.
 param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 2.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
-param_server["World"]["FracLateralOffset"] = 2.0
+param_server["World"]["LateralDifferenceThreshold"] = 2.0
 
 # param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
 # param_server["Visualization"]["Evaluation"]["DrawRssSafetyResponses"] = True

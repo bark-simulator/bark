@@ -27,8 +27,20 @@ class BaseViewer(Viewer):
         if(params is None):
             params = ParameterServer()
         Viewer.__init__(self)
-        # color parameters
-        # agents
+        self.use_world_bounds = kwargs.pop("use_world_bounds", params["Visualization"]["Camera"]["UseWorldBounds", "", True])
+        self.follow_agent_id = kwargs.pop("follow_agent_id", params["Visualization"]["Camera"]["FollowAgentIds", "", None])
+
+        self.center = np.array(kwargs.pop("center", params["Visualization"]["Camera"]["Center", "", [0, 0]]))
+
+        self.world_x_range = np.array(kwargs.pop("x_range", params["Visualization"]["Camera"]["XRange", "", [-40, 40]]))
+        self.world_y_range = np.array(kwargs.pop("y_range", params["Visualization"]["Camera"]["YRange", "", [-40, 40]]))
+
+        self.enforce_x_length = kwargs.pop("enforce_x_length", params["Visualization"]["Camera"]["EnforceXLength", "", True])
+        self.enforce_y_length = kwargs.pop("enforce_y_length", params["Visualization"]["Camera"]["EnforceYLength", "", False])
+
+        self.initialize_params(params, kwargs)
+
+    def initialize_params(self, params, kwargs={}):
         self.color_other_agents_line = params["Visualization"]["Agents"]["Color"]["Other"]["Lines",
                                                                                            "Color of other agents", (0.1, 0.1, 0.1)]
         self.color_other_agents_face = params["Visualization"]["Agents"]["Color"]["Other"]["Face",
@@ -99,25 +111,28 @@ class BaseViewer(Viewer):
         self.agent_color_map = {}
         self.max_agents_color_map = 0
 
-        self.use_world_bounds = kwargs.pop("use_world_bounds", False)
-        self.follow_agent_id = kwargs.pop("follow_agent_id", None)
+        self.use_world_bounds = kwargs.pop("use_world_bounds", params["Visualization"]["Camera"]["UseWorldBounds", "", True])
+        self.follow_agent_id = kwargs.pop("follow_agent_id", params["Visualization"]["Camera"]["FollowAgentIds", "", None])
 
-        self.center = kwargs.pop("center", np.array([0, 0]))
+        self.center = np.array(kwargs.pop("center", params["Visualization"]["Camera"]["Center", "", [0, 0]]))
 
-        self.world_x_range = kwargs.pop("x_range", np.array([-40, 40]))
-        self.world_y_range = kwargs.pop("y_range", np.array([-40, 40]))
+        self.world_x_range = np.array(kwargs.pop("x_range", params["Visualization"]["Camera"]["XRange", "", [-40, 40]]))
+        self.world_y_range = np.array(kwargs.pop("y_range", params["Visualization"]["Camera"]["YRange", "", [-40, 40]]))
 
-        self.enforce_x_length = kwargs.pop("enforce_x_length", True)
-        self.enforce_y_length = kwargs.pop("enforce_y_length", False)
+        self.enforce_x_length = kwargs.pop("enforce_x_length", params["Visualization"]["Camera"]["EnforceXLength", "", True])
+        self.enforce_y_length = kwargs.pop("enforce_y_length", params["Visualization"]["Camera"]["EnforceYLength", "", False])
+
+        default_x_length = np.sum(np.absolute(self.world_x_range))
+        default_x_length = np.sum(np.absolute(self.world_y_range))
         self.x_length = kwargs.pop(
-            "x_length", np.sum(np.absolute(self.world_x_range)))
+            "x_length", params["Visualization"]["Camera"]["XLength", "", int(default_x_length)])
         self.y_length = kwargs.pop(
-            "y_length", np.sum(np.absolute(self.world_y_range)))
+            "y_length", params["Visualization"]["Camera"]["YLength", "", int(default_x_length)])
 
         self.dynamic_world_x_range = self.world_x_range.copy()
         self.dynamic_world_y_range = self.world_y_range.copy()
 
-    def reset():
+    def reset(self):
         pass
 
     def get_aspect_ratio(self):
@@ -251,29 +266,17 @@ class BaseViewer(Viewer):
     def drawGoalDefinition(self, goal_definition, color, alpha, facecolor):
         if isinstance(goal_definition, GoalDefinitionPolygon):
             self.drawPolygon2d(goal_definition.goal_shape,
-                               color, alpha, facecolor)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionStateLimits):
             self.drawPolygon2d(goal_definition.xy_limits,
-                               color, alpha, facecolor)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionStateLimitsFrenet):
             self.drawPolygon2d(goal_definition.goal_shape,
-                               color, alpha, facecolor)
+                               color, alpha, facecolor, zorder=2)
         elif isinstance(goal_definition, GoalDefinitionSequential):
-            prev_center = np.array([])
-            for idx, goal_def in enumerate(goal_definition.sequential_goals):
-                self.drawGoalDefinition(goal_def, color, alpha, facecolor)
-                goal_pos = None
-                if isinstance(goal_def, GoalDefinitionPolygon):
-                    goal_pos = goal_def.goal_shape.center
-                elif isinstance(goal_def, GoalDefinitionStateLimits):
-                    goal_pos = goal_def.xy_limits.center
-                # self.drawText(position=goal_pos, text="Goal{}".format(idx), coordinate="world")
-                if prev_center.any():
-                    line = Line2d()
-                    line.AddPoint(Point2d(prev_center[0], prev_center[1]))
-                    line.AddPoint(Point2d(goal_pos[0], goal_pos[1]))
-                    self.drawLine2d(line, color, alpha=0.9)
-                prev_center = goal_pos
+            # draw only first goal
+            self.drawGoalDefinition(goal_definition.sequential_goals[0], color,
+                                alpha, facecolor)
 
     def drawLabelsAsText(self, observed_world, label_functions, evaluator_type):
         labels = {}
@@ -292,7 +295,7 @@ class BaseViewer(Viewer):
         # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
-            self.drawMap(world.map.GetOpenDriveMap())
+            self.drawMap(world.map)
 
         if self._draw_aerial_image:
           self.drawMapAerialImage()
@@ -371,10 +374,26 @@ class BaseViewer(Viewer):
     def drawMapAerialImage(self):
         pass
 
-    def drawMap(self, map):
+    def drawMap(self, map_interface):
         # draw the boundary of each lane
-        for _, road in map.GetRoads().items():
+        road_graph = map_interface.GetRoadgraph()
+        for lane_id in road_graph.GetAllLaneids():
+            self.drawLanePolygon(map_interface.GetLane(lane_id), map_interface, self.color_lane_boundaries)
+
+        for _, road in map_interface.GetOpenDriveMap().GetRoads().items():
             self.drawXodrRoad(road, self.color_lane_boundaries)
+
+    def drawLanePolygon(self, lane, map_interface, color=None):
+        if color is None:
+            self.color_lane_boundaries
+        
+        polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
+        if not lane.lane_type == XodrLaneType.driving:
+          self.drawPolygon2d(polygon, ( 0.5, 0.5 , 0.5),
+                                1.0, ( 0.5, 0.5 , 0.5), linewidth=0.02,  zorder=1)
+        else:
+          self.drawPolygon2d(polygon, (0.7, 0.7, 0.7),
+                                1.0, (0.7, 0.7, 0.7), linewidth=0.02,  zorder=1, hatch="/")
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
@@ -389,11 +408,15 @@ class BaseViewer(Viewer):
             self.color_lane_boundaries
 
         dashed = False
+        color = ( 0.5, 0.5 , 0.5)
         # center line is type none and is drawn as broken
-        if lane.road_mark.type == XodrRoadMarkType.broken or lane.road_mark.type == XodrRoadMarkType.none:
+        if lane.road_mark.type == XodrRoadMarkType.broken:
             dashed = True
-        self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
-                        dashed, zorder=1, linewidth=self.map_linewidth)
+            color = (1, 1 ,1)
+ 
+        if not lane.road_mark.type == XodrRoadMarkType.none:
+          self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
+                          dashed, zorder=1, linewidth=1)
 
     def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
         shape = agent.shape
@@ -408,7 +431,8 @@ class BaseViewer(Viewer):
                                                shape.rear_dist)) * math.sin(pose[2]) + pose[1]
 
             if self.draw_agent_id:
-                self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
+                angle = min(pose[2], pose[2] - math.pi / 2.0)
+                self.drawText(position=(centerx, centery), rotation=180.0*(angle/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             
             if self.draw_orientation_arrow:
@@ -446,6 +470,13 @@ class BaseViewer(Viewer):
                 self.drawLabelsAsText(
                     observed_world, label_functions, evaluator_type)
                 break
+
+    def drawEvalResults(self, eval_results):
+        y_pos = 0.9
+        for eval_name, eval_result in eval_results.items():
+          text = "{}: {}".format(eval_name, eval_result)
+          self.drawText(position=(0.7, y_pos), text=text)
+          y_pos -= 0.03
 
     def drawRssDebugInfomation(self, world, agent_id):
         from bark.core.world.evaluation import EvaluatorRSS
