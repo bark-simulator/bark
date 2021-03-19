@@ -49,8 +49,7 @@ EvaluationReturn EvaluatorGapDistanceFront::Evaluate(
     if (leading_vehicle_pair.first) {
       // only add to vector if there is a vehicle in front
       FrenetPosition frenet_other = leading_vehicle_pair.second;
-      double gap = frenet_other.lon - ego_agent->GetShape().front_dist_ -
-                   leading_vehicle_pair.first->GetShape().rear_dist_;
+      double gap = frenet_other.lon;
       gap_vec_.push_back(gap);
     }
   }
