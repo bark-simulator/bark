@@ -23,7 +23,7 @@ from bark.runtime.runtime import Runtime
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
 from bark.core.models.dynamic import SingleTrackModel
-from bark.core.models.observer import ObserverModel, ObserverModelNone
+from bark.core.models.observer import ObserverModel, ObserverModelNone, ObserverModelParametric
 
 
 # NOTE: this is testing the PyObserverModel wrapping
@@ -74,6 +74,14 @@ class PyObserverModelTests(unittest.TestCase):
     world, param_server = GetParamServerAndWorld()
     # NOTE: create and assign PythonObserverModel
     observer_model = PythonObserverModel(param_server)
+    world.observer_model = observer_model
+    world.Step(0.2)
+    assert(world.observer_model == observer_model)
+
+  def test_observer_model_parametric(self):
+    world, param_server = GetParamServerAndWorld()
+    # NOTE: create and assign PythonObserverModel
+    observer_model = ObserverModelParametric(param_server)
     world.observer_model = observer_model
     world.Step(0.2)
     assert(world.observer_model == observer_model)
