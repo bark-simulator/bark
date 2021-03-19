@@ -35,12 +35,14 @@ class Scenario:
                  eval_agent_ids=None,
                  map_file_name=None,
                  json_params=None,
-                 map_interface=None):
+                 map_interface=None,
+                 observer_model=None):
         self._agent_list = agent_list or []
         self._eval_agent_ids = eval_agent_ids or []
         self._map_file_name = map_file_name
         self._json_params = json_params
         self._map_interface = map_interface
+        self._observer_model = observer_model
 
     @property
     def map_file_name(self):
@@ -81,11 +83,14 @@ class Scenario:
                         eval_agent_ids=self._eval_agent_ids.copy(),
                         map_file_name=self._map_file_name,
                         json_params=self._json_params.copy(),
-                        map_interface=self._map_interface)
+                        map_interface=self._map_interface,
+                        observer=self._observer_model.copy())
 
     def _build_world_state(self):
         param_server = ParameterServer(json=self._json_params)
         world = World(param_server)
+        if self._observer_model is not None:
+          world.SetObserverModel(self._observer_model)
         if self._map_interface is None:
             self.CreateMapInterface(self.full_map_file_name)
             world.SetMap(self._map_interface)
