@@ -38,8 +38,6 @@ class PythonObserverModel(ObserverModel):
     observed_world = ObservedWorld(world, agent_id)
     return observed_world
 
-  def Clone(self):
-    return self
 
 def GetParamServerAndWorld():
   param_server = ParameterServer(
