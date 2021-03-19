@@ -22,7 +22,9 @@ EvaluatorDynamicSafeDistLong::EvaluatorDynamicSafeDistLong(const bark::commons::
         params->GetReal("EvaluatorDynamicSafeDistLong::MaxEgoDecceleration", "Maximum ego decceleration", 5.0f),
         params->GetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", "Maximum other decceleration", 5.0f),
         params->GetBool("EvaluatorDynamicSafeDistLong::ConsiderCrossingCorridors", "If true agens in other lane corridors are considered", false),
-        params->GetInt("EvaluatorDynamicSafeDistLong::MaxAgentssCrossingCorridors", "How many nearest agents are lookup in other corridors", 4)) {}
+        params->GetInt("EvaluatorDynamicSafeDistLong::MaxAgentssCrossingCorridors", "How many nearest agents are lookup in other corridors", 4),
+        params->GetBool("EvaluatorDynamicSafeDistLong::UseFracParamFromWorld", "True, if lateral distance threshold is overriden from world param", true),
+        params->GetReal("EvaluatorDynamicSafeDistLong::LateralDistanceThreshold", "Lateral distance between vehicles to consider them as unsafe", 1.0)) {}
 
 bool EvaluatorDynamicSafeDistLong::CheckSafeDistance(
     const world::ObservedWorld& observed_world) {

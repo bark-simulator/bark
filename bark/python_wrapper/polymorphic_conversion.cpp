@@ -98,7 +98,6 @@ using bark::models::behavior::BehaviorIDMStochastic;
 using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
 using bark::models::behavior::BehaviorRandomMacroActions;
-using bark::models::behavior::BehaviorMobil;
 using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorStaticTrajectory;

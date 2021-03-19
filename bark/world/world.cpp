@@ -233,7 +233,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
 FrontRearAgents World::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
-    double frac_lateral_offset) const {
+    double lateral_difference_threshold) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 

@@ -35,15 +35,11 @@ inline double Norm0To2PI(const double& angle) {
 }
 
 inline float Norm0ToPI(const float& angle_0_2pi) {
-    double normalized = fmod(x + B_PI, B_2PI);
+    double normalized = fmod(angle_0_2pi + B_PI, B_2PI);
     if (normalized < 0) {
       normalized += B_2PI;
     }
     return normalized - B_PI;
-}
-
-inline float AngleDiff(const float& angle1, const float& angle2) {
-  return abs(Norm0To2PI(angle1) - Norm0To2PI(angle2));
 }
 
 /**
@@ -54,7 +50,7 @@ inline float AngleDiff(const float& angle1, const float& angle2) {
  * @return double 
  */
 inline double AngleDiff(const double& angle1, const double& angle2) {
-  return abs(NormToPI(angle1) - NormToPI(angle2));
+  return abs(Norm0ToPI(angle1) - Norm0ToPI(angle2));
 }
 
 /**
@@ -65,7 +61,7 @@ inline double AngleDiff(const double& angle1, const double& angle2) {
  * @return double 
  */
 inline double SignedAngleDiff(const double& angle1, const double& angle2) {
-  auto adiff = NormToPI(angle1 - angle2);
+  auto adiff = Norm0ToPI(angle1 - angle2);
   return std::fmod(adiff + B_PI, B_2PI) - B_PI;
 }
 

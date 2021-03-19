@@ -36,7 +36,7 @@ class BehaviorRandomMacroActions : public BehaviorMPMacroActions {
 
   ~BehaviorRandomMacroActions() = default;
 
-  Trajectory Plan(float min_planning_time,
+  Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world) override {
     std::uniform_int_distribution<> distrib(0,
               BehaviorMPMacroActions::GetMotionPrimitives().size() - 1);

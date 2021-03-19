@@ -18,10 +18,10 @@ using bark::models::dynamic::StateDefinition;
 
 SafeDistanceLabelFunction::SafeDistanceLabelFunction(const std::string& label_str, bool to_rear,
                             double delta_ego, double delta_others, double a_e, double a_o,
-                            bool consider_crossing_corridors = false,
-                            unsigned int max_agents_for_crossing = 4,
+                            bool consider_crossing_corridors,
+                            unsigned int max_agents_for_crossing,
                             bool use_frac_param_from_world,
-                            double frac_lateral_offset)
+                            double lateral_difference_threshold)
     : BaseLabelFunction(label_str),
       to_rear_(to_rear),
       delta_ego_(delta_ego),
@@ -29,7 +29,7 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(const std::string& label_st
       a_e_(a_e),
       a_o_(a_o),
       use_frac_param_from_world_(use_frac_param_from_world),
-      frac_lateral_offset_(frac_lateral_offset) {}
+      lateral_difference_threshold_(lateral_difference_threshold),
       consider_crossing_corridors_(consider_crossing_corridors),
       max_agents_for_crossing_(max_agents_for_crossing) {}
 
@@ -69,9 +69,9 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
       ego->GetRoadCorridor()->GetNearestLaneCorridor(ego->GetCurrentPosition());
   double frac;
   if (use_frac_param_from_world_) {
-    frac = observed_world.GetFracLateralOffset();
+    frac = observed_world.GetLateralDifferenceThreshold();
   } else {
-    frac = frac_lateral_offset_;
+    frac = lateral_difference_threshold_;
   }
   auto fr_agents = observed_world.GetAgentFrontRearForId(
         ego->GetAgentId(), lane_corr, frac);
@@ -103,6 +103,12 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
   const auto ego_pos = observed_world.CurrentEgoPosition();
   const auto nearest_agents = observed_world.GetNearestAgents(ego_pos,
                           max_agents_for_crossing_ + 1); // one more since ego agent is included
+  double frac;
+  if (use_frac_param_from_world_) {
+    frac = observed_world.GetLateralDifferenceThreshold();
+  } else {
+    frac = lateral_difference_threshold_;
+  }
   for (const auto nearest_agent : nearest_agents) {
     if(nearest_agent.first == observed_world.GetEgoAgentId()) continue;
     // Find this agents front and back agent
@@ -111,7 +117,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
                 ->GetNearestLaneCorridor(nearest_agent.second->GetCurrentPosition());
     auto fr_agents =
         observed_world.GetAgentFrontRearForId(
-            nearest_agent.second->GetAgentId(), lane_corridor);
+            nearest_agent.second->GetAgentId(), lane_corridor, frac);
 
     // front agent is ego agent
     double v_rear;

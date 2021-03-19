@@ -70,7 +70,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
   // calculate angle from frenet velocities
   //  std::cout << frenet_state.vlat << ", " << frenet_state.vlon << std::endl;
-  const auto angle = mg::NormToPI(atan2(frenet_state.vlat, frenet_state.vlon) + line_angle);  // todo che
+  const auto angle = mg::Norm0ToPI(atan2(frenet_state.vlat, frenet_state.vlon) + line_angle);  // todo che
 
   const auto velocity = sqrt(frenet_state.vlon * frenet_state.vlon +
                              frenet_state.vlat * frenet_state.vlat);
