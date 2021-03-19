@@ -7,6 +7,8 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "observer.hpp"
+#include "bark/models/observer/observer_model_none.hpp"
+#include "bark/models/observer/observer_model_parametric.hpp"
 #include <string>
 
 namespace py = pybind11;
@@ -33,6 +35,23 @@ void python_observer(py::module m) {
           throw std::runtime_error("Invalid observer model state!");
         /* Create a new C++ instance */
         return new ObserverModelNone(
+            PythonToParams(t[0].cast<py::tuple>()));
+    }));
+
+  py::class_<ObserverModelParametric, ObserverModel,
+             shared_ptr<ObserverModelParametric>>(m, "ObserverModelParametric")
+    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def("__repr__", [](const ObserverModelParametric& m) {
+          return "bark.models.observer.ObserverModelParametric";
+    })
+    .def(py::pickle([](const ObserverModelParametric& b) {
+        return py::make_tuple(ParamsToPython(b.GetParams()));
+      },
+      [](py::tuple t) {
+        if (t.size() != 1)
+          throw std::runtime_error("Invalid observer model state!");
+        /* Create a new C++ instance */
+        return new ObserverModelParametric(
             PythonToParams(t[0].cast<py::tuple>()));
     }));
 

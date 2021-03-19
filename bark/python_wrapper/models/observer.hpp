@@ -9,7 +9,6 @@
 #ifndef PYTHON_PYTHON_BINDINGS_MODELS_OBSERVER_HPP_
 #define PYTHON_PYTHON_BINDINGS_MODELS_OBSERVER_HPP_
 #include "bark/models/observer/observer_model.hpp"
-#include "bark/models/observer/observer_model_none.hpp"
 #include "bark/python_wrapper/common.hpp"
 #include "bark/python_wrapper/polymorphic_conversion.hpp"
 

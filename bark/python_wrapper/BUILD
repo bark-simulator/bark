@@ -41,6 +41,7 @@ cc_binary(
     "//bark/models/behavior/behavior_safety:behavior_safety",
     "//bark/models/behavior/behavior_rss:behavior_rss",
     "//bark/models/observer:observer_model",
+    "//bark/models/observer:observer_model_parametric",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
     "//bark/runtime:cc_runtime",
