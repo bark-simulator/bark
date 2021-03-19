@@ -84,7 +84,7 @@ class Scenario:
                         map_file_name=self._map_file_name,
                         json_params=self._json_params.copy(),
                         map_interface=self._map_interface,
-                        observer=self._observer_model.copy())
+                        observer=self._observer_model)
 
     def _build_world_state(self):
         param_server = ParameterServer(json=self._json_params)
