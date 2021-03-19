@@ -81,7 +81,7 @@ class Scenario:
     def copy(self):
         observer_model = None
         if self._observer_model is not None:
-          observer_model = self._observer_model.deepcopy()
+          observer_model = copy.deepcopy(self._observer_model)
         return Scenario(agent_list=copy.deepcopy(self._agent_list),
                         eval_agent_ids=self._eval_agent_ids.copy(),
                         map_file_name=self._map_file_name,
