@@ -79,12 +79,15 @@ class Scenario:
         return self._build_world_state()
 
     def copy(self):
+        observer_model = None
+        if self._observer_model is not None:
+          observer_model = self._observer_model.deepcopy()
         return Scenario(agent_list=copy.deepcopy(self._agent_list),
                         eval_agent_ids=self._eval_agent_ids.copy(),
                         map_file_name=self._map_file_name,
                         json_params=self._json_params.copy(),
                         map_interface=self._map_interface,
-                        observer_model=self._observer_model)
+                        observer_model=observer_model)
 
     def _build_world_state(self):
         param_server = ParameterServer(json=self._json_params)
