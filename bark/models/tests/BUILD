@@ -32,6 +32,23 @@ cc_test(
 )
 
 cc_test(
+    name = "observer_model_test",
+    srcs = [
+        "observer_model_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/world:world",
+        "//bark/world/goal_definition:goal_definition",
+        "//bark/models/observer:observer_model",
+        "//bark/models/observer:observer_model_none",
+        "//bark/world/tests:make_test_world",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "behavior_motion_primitive_test",
     srcs = [
         "behavior_motion_primitive_test.cc",
@@ -87,6 +104,17 @@ cc_test(
 py_test(
   name = "py_behavior_model_test",
   srcs = ["py_behavior_model_test.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data'],
+
+  deps = ["//bark/runtime/commons:commons",
+          "//bark/runtime:runtime",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
+)
+
+py_test(
+  name = "py_observer_model_test",
+  srcs = ["py_observer_model_test.py"],
   data = ['//bark:generate_core',
           '//bark/runtime/tests:xodr_data'],
 
