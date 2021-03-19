@@ -27,11 +27,6 @@ class PyObserverModel : public ObserverModel {
     PYBIND11_OVERLOAD_PURE(
       ObservedWorld, ObserverModel, Observe, world, agent_id);
   }
-
-  std::shared_ptr<ObserverModel> Clone() const override {
-    PYBIND11_OVERLOAD_PURE(std::shared_ptr<ObserverModel>, ObserverModel,
-                           clone);
-  }
 };
 
 void python_observer(py::module m);

@@ -48,18 +48,7 @@ class ObserverModelNone : public ObserverModel {
     return observed_world;
   }
 
-  /**
-   * @brief  Function specifying how the world shall be cloned
-   */
-  virtual std::shared_ptr<ObserverModel> Clone() const;
-
 };
-
-inline std::shared_ptr<ObserverModel> ObserverModelNone::Clone() const {
-  std::shared_ptr<ObserverModelNone> model_ptr =
-      std::make_shared<ObserverModelNone>(*this);
-  return model_ptr;
-}
 
 typedef std::shared_ptr<ObserverModelNone> ObserverModelNonePtr;
 

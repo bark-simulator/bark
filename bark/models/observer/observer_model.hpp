@@ -55,11 +55,6 @@ class ObserverModel : public commons::BaseType {
   virtual ObservedWorld Observe(
     const WorldPtr& world, const AgentId& agent_id) = 0;
 
-  /**
-   * @brief  Function specifying how the world shall be cloned
-   */
-  virtual std::shared_ptr<ObserverModel> Clone() const = 0;
-
 };
 
 typedef std::shared_ptr<ObserverModel> ObserverModelPtr;
