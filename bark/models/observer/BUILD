@@ -24,6 +24,24 @@ cc_library(
 )
 
 cc_library(
+    name = "observer_model_parametric",
+    hdrs = [
+        "observer_model_parametric.hpp",
+    ],
+    srcs = [
+        "observer_model_parametric.cpp",
+    ],
+    deps = [
+        "//bark/commons/transformation:frenet",
+        "//bark/commons/distribution:distribution",
+        "//bark/models/observer:observer_model",
+        "//bark/world:world",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
     name="include",
     hdrs= ["observer_model.hpp"],
     deps = [
