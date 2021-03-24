@@ -86,6 +86,7 @@ inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
 using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
 using boost_uniform =
     boost::math::uniform_distribution<RandomVariableValueType>;
+using boost_bernoulli = boost::math::bernoulli_distribution<RandomVariableValueType>;
 
 template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
@@ -108,6 +109,14 @@ inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(
 }
 
 template <>
+inline boost_bernoulli BoostDistribution1D<boost_bernoulli>::DistFromParams(
+    const ParamsPtr& params) const {
+  const RandomVariableValueType probability =
+      params->GetReal("Probability", "Probability in Bernoulli distribution", 0.5);
+  return boost_bernoulli(probability);
+}
+
+template <>
 inline RandomVariableSupport BoostDistribution1D<boost_uniform>::GetSupport()
     const {
   return RandomVariableSupport(1, std::make_pair(dist_.lower(), dist_.upper()));
@@ -121,8 +130,16 @@ inline RandomVariableSupport BoostDistribution1D<boost_normal>::GetSupport()
                         std::numeric_limits<RandomVariableValueType>::max()));
 }
 
+template <>
+inline RandomVariableSupport BoostDistribution1D<boost_bernoulli>::GetSupport()
+    const {
+  return RandomVariableSupport(
+      1, std::make_pair(0,1));
+}
+
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;
 using UniformDistribution1D = BoostDistribution1D<boost_uniform>;
+using BernoulliDistribution1D = BoostDistribution1D<boost_bernoulli>;
 
 }  // namespace commons
 }  // namespace bark
