@@ -27,17 +27,6 @@ class BaseViewer(Viewer):
         if(params is None):
             params = ParameterServer()
         Viewer.__init__(self)
-        self.use_world_bounds = kwargs.pop("use_world_bounds", params["Visualization"]["Camera"]["UseWorldBounds", "", True])
-        self.follow_agent_id = kwargs.pop("follow_agent_id", params["Visualization"]["Camera"]["FollowAgentIds", "", None])
-
-        self.center = np.array(kwargs.pop("center", params["Visualization"]["Camera"]["Center", "", [0, 0]]))
-
-        self.world_x_range = np.array(kwargs.pop("x_range", params["Visualization"]["Camera"]["XRange", "", [-40, 40]]))
-        self.world_y_range = np.array(kwargs.pop("y_range", params["Visualization"]["Camera"]["YRange", "", [-40, 40]]))
-
-        self.enforce_x_length = kwargs.pop("enforce_x_length", params["Visualization"]["Camera"]["EnforceXLength", "", True])
-        self.enforce_y_length = kwargs.pop("enforce_y_length", params["Visualization"]["Camera"]["EnforceYLength", "", False])
-
         self.initialize_params(params, kwargs)
 
     def initialize_params(self, params, kwargs={}):

@@ -42,7 +42,7 @@ FrenetState::FrenetState(const State& state, const Line& path) {
   // calculate sign of lateral coordinate
   const auto orientation = state[StateDefinition::THETA_POSITION];
   auto tangent_angle = mg::GetTangentAngleAtS(path, lon);
-  angle = mg::SignedAngleDiff(state(StateDefinition::THETA_POSITION),
+  angle = mg::SignedAngleDiff(orientation,
                               tangent_angle);
   auto direction_vector = pos - nearest_point;
   auto norm_tangent_angle = mg::Norm0To2PI(tangent_angle);
@@ -70,7 +70,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
 
   // calculate angle from frenet velocities
   //  std::cout << frenet_state.vlat << ", " << frenet_state.vlon << std::endl;
-  const auto angle = mg::Norm0ToPI(atan2(frenet_state.vlat, frenet_state.vlon) + line_angle);  // todo che
+  const auto angle = mg::NormToPI(atan2(frenet_state.vlat, frenet_state.vlon) + line_angle);  // todo che
 
   const auto velocity = sqrt(frenet_state.vlon * frenet_state.vlon +
                              frenet_state.vlat * frenet_state.vlat);
@@ -85,11 +85,19 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
   return state;
 }
 
+/**
+ * @brief Calculate extension of a shape oriented with tangent_angle along a straight line.
+ *        Assumes equal extension of original shape to left and right side
+ * 
+ * @param tangent_angle 
+ * @param polygon 
+ * @return A struct containing rear_dist, front_dist, left_dist, side_dist of rotated shape
+ */
 auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
   // Assumes equal extension to sides for polygon
   BARK_EXPECT_TRUE(std::abs(polygon.right_dist_ - polygon.left_dist_) < 0.01);
   const double polygon_side_extend = polygon.left_dist_;
-  auto norm_tangent_angle = bark::geometry::Norm0ToPI(tangent_angle);
+  auto norm_tangent_angle = bark::geometry::NormToPI(tangent_angle);
   auto positive_angle = std::abs(tangent_angle) < B_PI_2 ? std::abs(norm_tangent_angle) : std::abs(std::abs(norm_tangent_angle) - B_PI);
   double front_dist = cos(positive_angle)*polygon.front_dist_ + sin(positive_angle)*polygon_side_extend;
   double rear_dist = cos(positive_angle)*polygon.rear_dist_ + sin(positive_angle)*polygon_side_extend;
@@ -109,6 +117,16 @@ auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& po
   return shape_extension;
 }
 
+/**
+ * @brief Construct a new Frenet State Difference. The state difference also
+ *         considers the shape sand their relative orientations. If there is an overlap of shapes
+ *         a distance without shape information is calculated.
+ * 
+ * @param frenet_from 
+ * @param polygon_from 
+ * @param frenet_to 
+ * @param polygon_to 
+ */
 FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, const bark::geometry::Polygon& polygon_from,
                                         const FrenetState& frenet_to, const bark::geometry::Polygon& polygon_to) :
                                         FrenetState(),
@@ -147,7 +165,7 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
   
   vlat = to.vlat - from.vlat;
   vlon = to.vlon - from.vlon;
-  angle = Norm0ToPI(Norm0To2PI(to.angle - from.angle));
+  angle = NormToPI(Norm0To2PI(to.angle - from.angle));
 }
 
 

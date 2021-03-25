@@ -40,15 +40,15 @@ EvaluationReturn EvaluatorSafeDistDrivableArea::Evaluate(const world::ObservedWo
 }
 
 bark::geometry::Polygon EvaluatorSafeDistDrivableArea::GetCollisionShape(const AgentPtr& checked_agent) const {
-auto ego_state = checked_agent->GetCurrentState();
-    // Evaluation assumes that - at zero orientation - shape of ego agent is oriented such that lateral 
-    // coordinate is y and longitudinal coordinate is x
-    bark::geometry::Pose agent_pose(ego_state(StateDefinition::X_POSITION),
-                    ego_state(StateDefinition::Y_POSITION),
-                    ego_state(StateDefinition::THETA_POSITION));
-    const auto checked_agent_scaled_shape = std::dynamic_pointer_cast<Polygon>(
-          checked_agent->GetShape().Scale(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(agent_pose));
-    return *checked_agent_scaled_shape;
+  auto ego_state = checked_agent->GetCurrentState();
+  // Evaluation assumes that - at zero orientation - shape of ego agent is oriented such that lateral 
+  // coordinate is y and longitudinal coordinate is x
+  bark::geometry::Pose agent_pose(ego_state(StateDefinition::X_POSITION),
+                  ego_state(StateDefinition::Y_POSITION),
+                  ego_state(StateDefinition::THETA_POSITION));
+  const auto checked_agent_scaled_shape = std::dynamic_pointer_cast<Polygon>(
+        checked_agent->GetShape().Inflate(longitudinal_safety_dist_, lateral_safety_dist_)->Transform(agent_pose));
+  return *checked_agent_scaled_shape;
 }
 
 

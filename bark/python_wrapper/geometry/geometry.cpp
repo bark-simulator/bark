@@ -121,7 +121,7 @@ void python_geometry(py::module m) {
 
   m.def("Norm0To2PI", &bark::geometry::Norm0To2PI, "limit input to 0..2pi");
 
-  m.def("Norm0ToPI", &bark::geometry::Norm0ToPI, "limit input to -pi..pi");
+  m.def("NormToPI", &bark::geometry::NormToPI, "limit input to -pi..pi");
 
   py::class_<Line, std::shared_ptr<Line>>(m, "Line2d")
       .def(py::init<>(), "Create empty line")
