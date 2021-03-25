@@ -222,10 +222,12 @@ class ConfigWithEase(ScenarioGeneration):
                map_file_name=None,
                params=None,
                random_seed=None,
-               lane_corridor_configs=None):
+               lane_corridor_configs=None,
+               observer_model=None):
     self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
     self._map_interface = None
+    self._observer_model = observer_model
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 
@@ -245,7 +247,8 @@ class ConfigWithEase(ScenarioGeneration):
         Scenario -- Returns a BARK scenario
     """
     scenario = Scenario(map_file_name=self._map_file_name,
-                        json_params=self._params.ConvertToDict())
+                        json_params=self._params.ConvertToDict(),
+                        observer_model=self._observer_model)
     # as we always use the same world, we can create the MapIntf. once
     if self._map_interface is None:
       scenario.CreateMapInterface(self._map_file_name)
