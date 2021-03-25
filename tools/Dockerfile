@@ -9,6 +9,7 @@ ENV DISPLAY :0
 COPY installers /tmp/installers
 RUN bash /tmp/installers/install_bazel.sh
 RUN bash /tmp/installers/install_python_venv.sh
+RUN bash /tmp/installers/install_apt_packages.sh
 
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
