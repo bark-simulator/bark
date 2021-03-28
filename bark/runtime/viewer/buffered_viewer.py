@@ -13,11 +13,9 @@ from bark.core.geometry import *
 from bark.core.models.dynamic import *
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
+from bark.core.world.renderer import *
 from bark.runtime.commons.parameters import ParameterServer
 import math
-from bark.core.world.evaluation.ltl import *
-from bark.core.world.evaluation import *
-from bark.core.models.behavior import *
 
 logger = logging.getLogger()
 
@@ -26,6 +24,22 @@ class BufferedViewer:
   def __init__(self, params=None, **kwargs):
     self._params = params or ParameterServer()
     self._renderer = Renderer()
+
+  def DrawAgents(self, world, eval_agent_id):
+    ego_agent = world.agents[eval_agent_id]
+    for agent in world.agents.values():
+      agent_poly = agent.GetPolygonFromState(agent.state)
+      agent_primitive = RenderPrimitive(agent_poly)
+      # TODO: add styles
+      if agent == ego_agent:
+        pass
+      else:
+        pass
+      self._renderer.Add(agent_primitive)
+      
+  def drawWorld(self, world, eval_agent_ids=None):
+    self.DrawMap(world)
+    self.DrawAgents(world, eval_agent_ids[0])
 
   def DrawMap(self, world):
     for road in map.GetRoads().values():
@@ -38,21 +52,10 @@ class BufferedViewer:
     if lane.road_mark.type == XodrRoadMarkType.broken or \
       lane.road_mark.type == XodrRoadMarkType.none:
       line_style = dashed
-    # TODO:
-    # self._renderer.Add()
+    # TODO: add styles
+    lane_primitive = RenderPrimitive(agent_poly)
+    self._renderer.Add(lane_primitive)
 
-  def DrawAgents(self, world, eval_agent_ids):
-    ego_id = eval_agent_ids[0]
-    ego_agent = world.agents[ego_id]
-    for agent in world.agents.values():
-      pass      
-
-  def drawWorld(self, world, eval_agent_ids=None):
-    # TODO: draw map
-    self.DrawMap(world)
-    
-    # TODO: draw agents
-    
   def clear(self):
     self._renderer.Clear()
   
