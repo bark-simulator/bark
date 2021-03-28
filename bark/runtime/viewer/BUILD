@@ -87,3 +87,11 @@ py_library(
             ":py_viewer"],
     visibility = ["//visibility:public"],
 )
+
+py_library(
+    name = "buffered_viewer",
+    srcs = ["buffered_viewer.py"],
+    data = ['//bark:generate_core'],
+    deps = ["//bark/runtime/commons:commons"],
+    visibility = ["//visibility:public"],
+)

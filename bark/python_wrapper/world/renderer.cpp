@@ -18,7 +18,7 @@ using bark::geometry::Polygon;
 using bark::world::renderer::Renderer;
 using bark::world::renderer::RenderPrimitive;
 using bark::world::renderer::RenderPrimitivePtr;
-using bark::world::renderer::RenderType;
+using bark::world::renderer::HolderType;
 
 
 void python_renderer(py::module m) {
@@ -33,12 +33,9 @@ void python_renderer(py::module m) {
   py::class_<RenderPrimitive, std::shared_ptr<RenderPrimitive>>(
     m, "RenderPrimitive")
     .def(py::init<
-      const RenderType&, std::string, std::string, std::string, std::string>())
-    .def(py::init<
-      const RenderType&>())
-    .def_property(
-      "attr", &RenderPrimitive::GetAttr,  &RenderPrimitive::SetAttr)
+      const HolderType&, std::string>())
+    .def_readwrite("conf", &RenderPrimitive::conf)
+    .def_readwrite("type", &RenderPrimitive::type)
     .def_property_readonly(
       "object", &RenderPrimitive::GetObject);
-
 }

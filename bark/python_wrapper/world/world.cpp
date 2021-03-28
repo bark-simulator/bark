@@ -62,6 +62,8 @@ void python_world(py::module m) {
       .def("Copy", &World::Clone)
       .def_property("observer_model", &World::GetObserverModel,
                     &World::SetObserverModel)
+      .def_property("renderer", &World::GetRenderer,
+                    &World::SetRenderer)
       .def("GetWorldAtTime", &World::GetWorldAtTime)
       // .def("FillWorldFromCarla",&World::FillWorldFromCarla)
       // .def("PlanAgents",&World::PlanSpecificAgents)

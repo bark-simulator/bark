@@ -22,38 +22,29 @@ using bark::geometry::Point2d;
 using bark::geometry::Line;
 using bark::geometry::Polygon;
 
-using RenderType = std::variant<Line, Point2d, Polygon>;
+using HolderType = std::variant<Line, Point2d, Polygon, double, int>;
+using ParamType = std::variant<double, int, std::string>;
 
-class RenderPrimitive {
- public:
-  RenderPrimitive() {}
+struct RenderPrimitive {
   RenderPrimitive(
-    const RenderType& obj,
-    std::string line_color = "blue",
-    std::string face_color = "blue",
-    std::string line_width = "blue",
-    std::string line_style = "solid") : object_(obj) {
-      conf_[line_color] = line_color;
-      conf_[face_color] = face_color;
-      conf_[line_width] = line_width;
-      conf_[line_style] = line_style;
+    const HolderType& obj,
+    std::string type) : object(obj), type(type) {}
+
+  void SetAttr(std::string k, ParamType v) {
+    conf[k] = v;
   }
 
-  void SetAttr(std::string k, std::string v) {
-    conf_[k] = v;
+  ParamType GetAttr(std::string k) {
+    return conf[k];
   }
 
-  std::string GetAttr(std::string k) {
-    return conf_[k];
+  HolderType GetObject() const {
+    return object;
   }
 
-  RenderType GetObject() const {
-    return object_;
-  }
-
- private:
-  std::map<std::string, std::string> conf_;
-  RenderType object_;
+  std::map<std::string, ParamType> conf;
+  HolderType object;
+  std::string type;
 };
 
 using RenderPrimitivePtr = std::shared_ptr<RenderPrimitive>;
