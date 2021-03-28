@@ -18,7 +18,6 @@ from bark.runtime.commons.parameters import ParameterServer
 class BufferedViewer:
   def __init__(self, params=None, **kwargs):
     self._params = params or ParameterServer()
-    self._renderer = Renderer()
 
   def DrawAgents(self, world, eval_agent_id):
     ego_agent = world.agents[eval_agent_id]
@@ -37,7 +36,6 @@ class BufferedViewer:
         world.renderer.Add("OTHER_AGENT", agent_primitive)
       
   def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None):
-    world.renderer = self._renderer
     self.DrawMap(world)
     self.DrawAgents(world, eval_agent_ids[0])
     # add ego state
@@ -45,6 +43,7 @@ class BufferedViewer:
     ego_agent_state = ego_agent.state
     ego_vel_primitive = RenderPrimitive(ego_agent_state)
     world.renderer.Add("EGO_AGENT_STATE", ego_vel_primitive)
+    # TODO: e.g., set map origin
 
   def DrawMap(self, world):
     map = world.map.GetOpenDriveMap()
@@ -60,10 +59,10 @@ class BufferedViewer:
     if lane.road_mark.type == XodrRoadMarkType.broken or \
       lane.road_mark.type == XodrRoadMarkType.none:
       lane_primitive.conf["line_color"] = "gray"
-    world.renderer.Add("MAP", lane_primitive)
+    world.renderer.Add("MAP_LINE", lane_primitive)
 
   def clear(self):
-    self._renderer.Clear()
+    pass
   
   def Reset(self):
-    self._renderer.Clear()
+    pass

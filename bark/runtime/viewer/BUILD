@@ -57,28 +57,6 @@ py_library(
 )
 
 py_library(
-    name = "panda3d_viewer",
-    srcs = ["panda3d_viewer.py"],
-    data = ['//bark:generate_core',
-            ':model_data'],
-#    ,
-    deps = ["//bark/runtime/commons:commons",
-            ":py_viewer"],
-    visibility = ["//visibility:public"],
-)
-
-py_library(
-    name = "panda3d_easy",
-    srcs = ["panda3d_easy.py"],
-    data = ['//bark:generate_core',
-            ':model_data'],
-    deps = ["//bark/runtime/commons:parameters",
-            ":py_viewer",
-            "//bark/runtime/commons:commons"],
-    visibility = ["//visibility:public"],
-)
-
-py_library(
     name = "matplotlib_viewer",
     srcs = ["matplotlib_viewer.py"],
     data = ['//bark:generate_core'],
