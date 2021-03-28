@@ -20,3 +20,11 @@ cc_library(
     deps=["//bark/commons:commons"],
     visibility = ["//visibility:public"],
 )
+
+py_test(
+  name = "py_renderer_tests",
+  srcs = ["py_renderer_tests.py"],
+  data = ['//bark:generate_core'],
+  deps = ["//bark/runtime/commons:commons"],
+  imports = ['../../python/']
+)

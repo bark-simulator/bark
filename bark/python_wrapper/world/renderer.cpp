@@ -14,7 +14,7 @@
 
 namespace py = pybind11;
 using bark::geometry::Point2d;
-using bark::geometry::Line2d;
+using bark::geometry::Line;
 using bark::geometry::Polygon;
 using bark::world::renderer::Renderer;
 using bark::world::renderer::RenderPrimitive;
@@ -23,36 +23,34 @@ using bark::world::renderer::ObjectRenderPrimitive;
 
 void python_renderer(py::module m) {
   py::class_<Renderer, std::shared_ptr<Renderer>>(
-      m, "Renderer")
-      .def(py::init<>())
-      .def("Add", &Renderer::Add)
-      .def("Clear", &Renderer::Clear)
-      .def_property_readonly(
-        "render_primitives", &Renderer::GetRenderPrimitives);
+    m, "Renderer")
+    .def(py::init<>())
+    .def("Add", &Renderer::Add)
+    .def("Clear", &Renderer::Clear)
+    .def_property_readonly(
+      "render_primitives", &Renderer::GetRenderPrimitives);
   
-  py::class_<RenderPrimitive, RenderPrimitivePtr>(
-      m, "RenderPrimitive")
-      .def(py::init<std::string, std::string, std::string, std::string>())
-      .def("Add", &Renderer::Add)
-      .def("Clear", &Renderer::Clear)
-      .def_property_readonly(
-        "attr", &RenderPrimitive::GetAttr,  &RenderPrimitive::SetAttr);
+  py::class_<RenderPrimitive, std::shared_ptr<RenderPrimitive>>(
+    m, "RenderPrimitive")
+    .def(py::init<std::string, std::string, std::string, std::string>())
+    .def_property(
+      "attr", &RenderPrimitive::GetAttr,  &RenderPrimitive::SetAttr);
 
-  py::class_<ObjectRenderPrimitive<Line2d>, RenderPrimitive, RenderPrimitivePtr>(
-      m, "LineRenderPrimitive")
-      .def(
-        py::init<
-          const Line2d&, std::string, std::string, std::string, std::string>());
+  // py::class_<ObjectRenderPrimitive<Line>, RenderPrimitive, RenderPrimitivePtr>(
+  //     m, "LineRenderPrimitive")
+  //     .def(
+  //       py::init<
+  //         const Line&, std::string, std::string, std::string, std::string>());
 
-  py::class_<ObjectRenderPrimitive<Polygon>, RenderPrimitive, RenderPrimitivePtr>(
-      m, "LineRenderPrimitive")
-      .def(
-        py::init<
-          const Polygon&, std::string, std::string, std::string, std::string>());
+  // py::class_<ObjectRenderPrimitive<Polygon>, RenderPrimitive, RenderPrimitivePtr>(
+  //     m, "PolygonRenderPrimitive")
+  //     .def(
+  //       py::init<
+  //         const Polygon&, std::string, std::string, std::string, std::string>());
 
-  py::class_<ObjectRenderPrimitive<Point2d>, RenderPrimitive, RenderPrimitivePtr>(
-      m, "LineRenderPrimitive")
-      .def(
-        py::init<
-          const Polygon&, std::string, std::string, std::string, std::string>());
+  // py::class_<ObjectRenderPrimitive<Point2d>, RenderPrimitive, RenderPrimitivePtr>(
+  //     m, "Point2dRenderPrimitive")
+  //     .def(
+  //       py::init<
+  //         const Polygon&, std::string, std::string, std::string, std::string>());
 }

@@ -16,6 +16,7 @@
 #include "bark/python_wrapper/world/map.hpp"
 #include "bark/python_wrapper/world/opendrive.hpp"
 #include "bark/python_wrapper/world/world.hpp"
+#include "bark/python_wrapper/world/renderer.hpp"
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
@@ -126,4 +127,5 @@ void python_world(py::module m) {
   python_evaluation(m.def_submodule("evaluation", "evaluators"));
 
   python_prediction(m.def_submodule("prediction", "Prediction Settings"));
+  python_renderer(m.def_submodule("renderer", "Renderer object."));
 }

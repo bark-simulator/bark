@@ -21,9 +21,9 @@ namespace bark {
 namespace world {
 namespace renderer {
 
-class RendererBuffer {
+class Renderer {
  public:
-  RendererBuffer() {}
+  Renderer() {}
   void Add(const RenderPrimitivePtr& rp) {
     buffer_.push_back(rp);
   }
@@ -40,6 +40,7 @@ class RendererBuffer {
   std::vector<RenderPrimitivePtr> buffer_;
 };
 
+using RendererPtr = std::shared_ptr<Renderer>;
 
 }  // namespace renderer
 }  // namespace world

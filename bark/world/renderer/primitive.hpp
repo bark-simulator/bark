@@ -20,6 +20,7 @@ namespace renderer {
 
 class RenderPrimitive {
  public:
+  RenderPrimitive() {}
   RenderPrimitive(
     std::string line_color = "blue",
     std::string face_color = "blue",

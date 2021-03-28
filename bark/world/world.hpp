@@ -22,6 +22,7 @@
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
+#include "bark/world/renderer/renderer.hpp"
 #include "bark/world/opendrive/opendrive.hpp"
 
 namespace bark {
@@ -36,6 +37,7 @@ using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
+using world::renderer::RendererPtr;
 using bark::models::observer::ObserverModelPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
