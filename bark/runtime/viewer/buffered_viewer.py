@@ -25,12 +25,12 @@ class BufferedViewer:
       agent_poly = agent.GetPolygonFromState(agent.state)
       # TODO: add styles
       agent_primitive = RenderPrimitive(agent_poly)
+      agent_primitive.conf["agent_id"] = str(agent.id)
       if agent == ego_agent:
         agent_primitive.conf["line_color"] = "blue"
         agent_primitive.conf["face_color"] = "green"
         world.renderer.Add("EGO_AGENT", agent_primitive)    
       else:
-        agent_primitive = RenderPrimitive(agent_poly)
         agent_primitive.conf["line_color"] = "yellow"
         agent_primitive.conf["face_color"] = "red"
         world.renderer.Add("OTHER_AGENT", agent_primitive)
