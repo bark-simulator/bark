@@ -294,7 +294,7 @@ bool RssInterface::CreateWorldModel(
       agents.find(ego_id)->second->GetStateInputHistory());
   ::ad::rss::map::RssObjectData ego_data = {
       ::ad::rss::world::ObjectId(ego_id),
-      ::ad::rss::world::HolderType::EgoVehicle,
+      ::ad::rss::world::ObjectType::EgoVehicle,
       ego_match_object,
       ego_rss_state.speed,
       ego_av,
@@ -324,7 +324,7 @@ bool RssInterface::CreateWorldModel(
 
     ::ad::rss::map::RssObjectData other_data = {
         ::ad::rss::world::ObjectId(other->GetAgentId()),
-        ::ad::rss::world::HolderType::OtherVehicle,
+        ::ad::rss::world::ObjectType::OtherVehicle,
         other_match_object,
         other_state(VEL_POSITION),
         other_av,
