@@ -46,7 +46,6 @@ cc_binary(
     "//bark/world:world",
     "//bark/world/renderer:renderer",
     "//bark/world/renderer:primitive",
-    "//bark/world/renderer:object_primitive",
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners",
     "//bark/python_wrapper/tests:logging_tests",

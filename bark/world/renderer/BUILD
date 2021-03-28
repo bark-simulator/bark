@@ -1,14 +1,7 @@
 cc_library(
     name = "primitive",
     hdrs = ["primitive.hpp"],
-    deps = [],
-    visibility = ["//visibility:public"],
-)
-
-cc_library(
-    name = "object_primitive",
-    hdrs = ["object_primitive.hpp"],
-    deps = ["//bark/world/renderer:primitive"],
+    deps = ["//bark/geometry:geometry"],
     visibility = ["//visibility:public"],
 )
 
