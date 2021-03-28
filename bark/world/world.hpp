@@ -111,6 +111,7 @@ class World : public commons::BaseType {
 
   //! Getter
   double GetWorldTime() const { return world_time_; }
+  RendererPtr GetRenderer() const { return renderer_; }
   void SetWorldTime(const double& world_time) { world_time_ = world_time; }
   world::map::MapInterfacePtr GetMap() const { return map_; }
   virtual AgentMap GetAgents() const { return agents_; }
@@ -169,6 +170,9 @@ class World : public commons::BaseType {
       const {
     return map_->BoundingBox();
   }
+  void SetRenderer(const RendererPtr& renderer) {
+    renderer_ = renderer;
+  }
 
   void AddAgent(const AgentPtr& agent);
 
@@ -194,6 +198,7 @@ class World : public commons::BaseType {
   MapInterfacePtr map_;
   AgentMap agents_;
   ObjectMap objects_;
+  RendererPtr renderer_;
   std::map<std::string, EvaluatorPtr> evaluators_;
   ObserverModelPtr observer_;
   double world_time_;
