@@ -13,6 +13,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <Eigen/Core>
 
 namespace bark {
 namespace world {
@@ -21,14 +22,14 @@ namespace renderer {
 using bark::geometry::Point2d;
 using bark::geometry::Line;
 using bark::geometry::Polygon;
+using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-using HolderType = std::variant<Line, Point2d, Polygon, double, int>;
+using HolderType = std::variant<Line, Point2d, Polygon, double, int, State>;
 using ParamType = std::variant<double, int, std::string>;
 
 struct RenderPrimitive {
   RenderPrimitive(
-    const HolderType& obj,
-    std::string type) : object(obj), type(type) {}
+    const HolderType& obj) : object(obj) {}
 
   void SetAttr(std::string k, ParamType v) {
     conf[k] = v;
@@ -44,7 +45,6 @@ struct RenderPrimitive {
 
   std::map<std::string, ParamType> conf;
   HolderType object;
-  std::string type;
 };
 
 using RenderPrimitivePtr = std::shared_ptr<RenderPrimitive>;

@@ -33,9 +33,8 @@ void python_renderer(py::module m) {
   py::class_<RenderPrimitive, std::shared_ptr<RenderPrimitive>>(
     m, "RenderPrimitive")
     .def(py::init<
-      const HolderType&, std::string>())
+      const HolderType&>())
     .def_readwrite("conf", &RenderPrimitive::conf)
-    .def_readwrite("type", &RenderPrimitive::type)
     .def_property_readonly(
       "object", &RenderPrimitive::GetObject);
 }

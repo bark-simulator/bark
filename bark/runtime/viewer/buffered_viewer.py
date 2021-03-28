@@ -7,8 +7,6 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 import math
 import numpy as np
-import logging
-from bark.core.viewer import Viewer
 from bark.core.geometry import *
 from bark.core.models.dynamic import *
 from bark.core.world.opendrive import *
@@ -27,28 +25,26 @@ class BufferedViewer:
     for agent in world.agents.values():
       agent_poly = agent.GetPolygonFromState(agent.state)
       # TODO: add styles
+      agent_primitive = RenderPrimitive(agent_poly)
       if agent == ego_agent:
-        agent_primitive = RenderPrimitive(agent_poly, "EGO_AGENT")
         agent_primitive.conf["line_color"] = "blue"
         agent_primitive.conf["face_color"] = "green"
+        world.renderer.Add("EGO_AGENT", agent_primitive)    
       else:
-        agent_primitive = RenderPrimitive(agent_poly, "OTHER_AGENT")
+        agent_primitive = RenderPrimitive(agent_poly)
         agent_primitive.conf["line_color"] = "yellow"
         agent_primitive.conf["face_color"] = "red"
-      world.renderer.Add(agent_primitive)
+        world.renderer.Add("OTHER_AGENT", agent_primitive)
       
   def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None):
     world.renderer = self._renderer
     self.DrawMap(world)
     self.DrawAgents(world, eval_agent_ids[0])
-    
-    # add velocity
+    # add ego state
     ego_agent = world.agents[eval_agent_ids[0]]
     ego_agent_state = ego_agent.state
-    ego_vel_primitive = RenderPrimitive(
-      ego_agent_state[int(StateDefinition.VEL_POSITION)],
-      "EGO_AGENT_VEL")
-    world.renderer.Add(ego_vel_primitive)
+    ego_vel_primitive = RenderPrimitive(ego_agent_state)
+    world.renderer.Add("EGO_AGENT_STATE", ego_vel_primitive)
 
   def DrawMap(self, world):
     map = world.map.GetOpenDriveMap()
@@ -58,13 +54,13 @@ class BufferedViewer:
           self.DrawLane(lane, world)
       
   def DrawLane(self, lane, world):
-    lane_primitive = RenderPrimitive(lane.line, "MAP")
+    lane_primitive = RenderPrimitive(lane.line)
     # TODO: add styles
     lane_primitive.conf["line_color"] = "blue"
     if lane.road_mark.type == XodrRoadMarkType.broken or \
       lane.road_mark.type == XodrRoadMarkType.none:
       lane_primitive.conf["line_color"] = "gray"
-    world.renderer.Add(lane_primitive)
+    world.renderer.Add("MAP", lane_primitive)
 
   def clear(self):
     self._renderer.Clear()

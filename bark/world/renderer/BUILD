@@ -1,7 +1,8 @@
 cc_library(
     name = "primitive",
     hdrs = ["primitive.hpp"],
-    deps = ["//bark/geometry:geometry"],
+    deps = ["//bark/geometry:geometry",
+            "@com_github_eigen_eigen//:eigen"],
     visibility = ["//visibility:public"],
 )
 

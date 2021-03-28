@@ -21,23 +21,25 @@ namespace bark {
 namespace world {
 namespace renderer {
 
+using PrimitivesMap = std::map<std::string, RenderPrimitivePtr>;
+
 class Renderer {
  public:
   Renderer() {}
-  void Add(const RenderPrimitivePtr& rp) {
-    buffer_.push_back(rp);
+  void Add(std::string name, const RenderPrimitivePtr& rp) {
+    buffer_[name] = rp;
   }
 
   void Clear() {
     buffer_.clear();
   }
 
-  std::vector<RenderPrimitivePtr> GetRenderPrimitives() const {
+  PrimitivesMap GetRenderPrimitives() {
     return buffer_;
   }
 
  private:
-  std::vector<RenderPrimitivePtr> buffer_;
+  PrimitivesMap buffer_;
 };
 
 using RendererPtr = std::shared_ptr<Renderer>;
