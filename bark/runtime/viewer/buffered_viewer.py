@@ -18,21 +18,37 @@ from bark.runtime.commons.parameters import ParameterServer
 class BufferedViewer:
   def __init__(self, params=None, **kwargs):
     self._params = params or ParameterServer()
-
+    self._vparams = self._params["Visualization"]
+    # map color config
+    self._dashed_sc = self._vparams[
+      "DashedStrokeColor", "", [128, 128, 128, 64]] 
+    self._dashed_sw = self._vparams["DashedStrokeWidth", "",  0.1]
+    self._solid_sc = self._vparams[
+      "SolidStrokeColor", "", [12, 44, 132, 128]]
+    self._solid_sw = self._vparams["SolidStrokeWidth", "", 0.2]
+    # agent color config
+    self._ego_sc = self._vparams[
+      "EgoStrokeColor", "", [34, 94, 168, 255]] 
+    self._ego_fc = self._vparams[
+      "EgoFaceColor", "", [34, 94, 168, 128]] 
+    self._other_sc = self._vparams[
+      "OtherStrokeColor", "", [128, 128, 128, 255]] 
+    self._other_fc = self._vparams[
+      "OtherFaceColor", "", [128, 128, 128, 128]] 
+    
   def DrawAgents(self, world, eval_agent_id):
     ego_agent = world.agents[eval_agent_id]
     for agent in world.agents.values():
       agent_poly = agent.GetPolygonFromState(agent.state)
-      # TODO: add styles
       agent_primitive = RenderPrimitive(agent_poly)
-      agent_primitive.conf["agent_id"] = str(agent.id)
+      agent_primitive.Add("agent_id", str(agent.id))
       if agent == ego_agent:
-        agent_primitive.conf["line_color"] = "blue"
-        agent_primitive.conf["face_color"] = "green"
+        agent_primitive.Add("stroke_color", self._ego_sc)
+        agent_primitive.Add("fill_color", self._ego_fc)
         world.renderer.Add("EGO_AGENT", agent_primitive)    
       else:
-        agent_primitive.conf["line_color"] = "yellow"
-        agent_primitive.conf["face_color"] = "red"
+        agent_primitive.Add("stroke_color", self._other_sc)
+        agent_primitive.Add("fill_color", self._other_fc)
         world.renderer.Add("OTHER_AGENT", agent_primitive)
       
   def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None):
@@ -54,15 +70,16 @@ class BufferedViewer:
       
   def DrawLane(self, lane, world):
     lane_primitive = RenderPrimitive(lane.line)
-    # TODO: add styles
-    lane_primitive.conf["line_color"] = "blue"
+    lane_primitive.Add("stroke_color", self._solid_sc)
+    lane_primitive.Add("stroke_width", self._solid_sw)
     if lane.road_mark.type == XodrRoadMarkType.broken or \
       lane.road_mark.type == XodrRoadMarkType.none:
-      lane_primitive.conf["line_color"] = "gray"
+      lane_primitive.Add("stroke_color", self._dashed_sc)
+      lane_primitive.Add("stroke_width", self._dashed_sw)
     world.renderer.Add("MAP_LINE", lane_primitive)
 
+  # NOTE: legacy functions
   def clear(self):
     pass
-  
   def Reset(self):
     pass

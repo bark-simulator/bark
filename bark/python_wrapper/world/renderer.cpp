@@ -35,6 +35,7 @@ void python_renderer(py::module m) {
     .def(py::init<
       const HolderType&>())
     .def_readwrite("conf", &RenderPrimitive::conf)
+    .def("Add", &RenderPrimitive::SetAttr)
     .def_property_readonly(
       "object", &RenderPrimitive::GetObject);
 }

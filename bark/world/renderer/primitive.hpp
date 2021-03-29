@@ -24,8 +24,9 @@ using bark::geometry::Line;
 using bark::geometry::Polygon;
 using State = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
-using HolderType = std::variant<Line, Point2d, Polygon, double, int, State>;
-using ParamType = std::variant<double, int, std::string>;
+using HolderType = std::variant<
+  Line, Point2d, Polygon, double, int, State>;
+using ParamType = std::variant<double, int, std::string, std::vector<double>, std::vector<int>>;
 
 struct RenderPrimitive {
   RenderPrimitive(
