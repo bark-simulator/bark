@@ -134,7 +134,7 @@ template <>
 inline RandomVariableSupport BoostDistribution1D<boost_bernoulli>::GetSupport()
     const {
   return RandomVariableSupport(
-      1, std::make_pair(0,1));
+      1, std::make_pair(0, 1));
 }
 
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;

@@ -90,6 +90,7 @@ TEST(distribution_test, uniform_dist_1d) {
 TEST(distribution_test, bernoulli_dist_1d) {
   auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
   params_ptr->SetReal("Probability", 0.3);
+  params_ptr->SetInt("RandomSeed", 1000.0);
 
   auto dist_bernoulli = bark::commons::BernoulliDistribution1D(params_ptr);
 
