@@ -25,12 +25,19 @@ class RendererTests(unittest.TestCase):
     l.AddPoint(Point2d(1.555555, 1.244222))
     
     line_primitive = RenderPrimitive(l)
-    renderer.Add(line_primitive)
-    renderer.Add(line_primitive)
+    renderer.Add("line_prim_0", line_primitive)
+    renderer.Add("line_prim_0", line_primitive)
+    renderer.Add("line_prim_1", line_primitive)
     
     # asserts
-    self.assertTrue(len(renderer.primitives) == 2)
-    self.assertTrue((l.ToArray() == renderer.primitives[0].object.ToArray()).all())
+    rp = renderer.primitives
+    self.assertTrue(len(rp) == 2)
+    self.assertTrue(
+      (l.ToArray() == rp["line_prim_0"][0].object.ToArray()).all())
+    self.assertTrue(
+      (l.ToArray() == rp["line_prim_0"][1].object.ToArray()).all())
+    self.assertTrue(
+      (l.ToArray() == rp["line_prim_1"][0].object.ToArray()).all())
   
   
   def test_polygon_primitive(self):
@@ -44,12 +51,19 @@ class RendererTests(unittest.TestCase):
        Point2d(1,-1)])
     
     poly_primitive = RenderPrimitive(polygon)
-    renderer.Add(poly_primitive)
-    renderer.Add(poly_primitive)
+    renderer.Add("poly_prim_0", poly_primitive)
+    renderer.Add("poly_prim_0", poly_primitive)
+    renderer.Add("poly_prim_1", poly_primitive)
     
     # asserts
-    self.assertTrue(len(renderer.primitives) == 2)
-    self.assertTrue((polygon.ToArray() == renderer.primitives[0].object.ToArray()).all())
+    rp = renderer.primitives
+    self.assertTrue(len(rp) == 2)
+    self.assertTrue(
+      (polygon.ToArray() == rp["poly_prim_0"][0].object.ToArray()).all())
+    self.assertTrue(
+      (polygon.ToArray() == rp["poly_prim_0"][1].object.ToArray()).all())
+    self.assertTrue(
+      (polygon.ToArray() == rp["poly_prim_1"][0].object.ToArray()).all())
     
 
 
