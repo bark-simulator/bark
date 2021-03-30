@@ -41,7 +41,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
-      "bark/runtime/tests/data/city_highway_straight.xodr",    ]
+      "bark/runtime/tests/data/city_highway_straight.xodr", ]
+    self._observer_model = params_temp[
+      "ObserverModel",
+      "World observer for the simulation.", {
+        "Description": "world_observer",
+        "ConfigObserverModel": {"Type": "ObserverModelNoneReader"}
+    }]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[-1.057, -172.1965],  [-1.894, 14.1725] ],
       "Description": "left_lane",
@@ -51,7 +57,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "NoneControlled"},
-      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     },
     {
@@ -63,7 +68,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
-      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     }
     ]
@@ -85,6 +89,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
      #     self._sink_source_default_params
 
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
+    
     self._sink_source_parameter_servers[config_type].append(
       {"Description": description,
        "ParameterServers" : config_reader.get_param_servers()}
@@ -216,7 +221,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     
     # 6. set observer model for the world
     observer_model, _, _ = self.eval_configuration(
-      self._sinks_sources[0], "ConfigObserverModel", 
+      self._observer_model, "ConfigObserverModel", 
       [], {})
     world.observer_model = observer_model
     
@@ -434,7 +439,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     return agents
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
-    # print(sink_source_config, config_type)
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
     try:

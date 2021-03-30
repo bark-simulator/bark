@@ -19,6 +19,8 @@ from bark.core.models.observer import ObserverModelNone, ObserverModelParametric
 class ObserverModelNoneReader(ConfigReaderObserverModel):
   # returns a observer model none for the world
   def create_from_config(self, config_param_object,  **kwargs):
+    # print("reader", config_param_object)
+    
     observer_model = ObserverModelNone(config_param_object)
     return observer_model, {}, config_param_object
 
