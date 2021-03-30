@@ -12,25 +12,32 @@
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/models/observer/observer_model.hpp"
+#include "bark/models/observer/observer_model_none.hpp"
 
 namespace bark {
 namespace world {
 
 using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
+using bark::models::observer::ObserverModelNone;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
       map_(),
       agents_(),
       world_time_(0.0),
+      observer_(new ObserverModelNone(params)),
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
-          "Whether agents should be removed outside the bounding box.",
-          false)),
-      frac_lateral_offset_(params->GetReal("World::FracLateralOffset",
-          "Fraction of lateral offset for FrontRearAgent Calculation, should be larger than 0.",
-          0.5)) {
+          "Whether agents should be removed outside the bounding box.", false)),
+      frac_lateral_offset_(params->GetReal(
+          "World::FracLateralOffset",
+          "Lane Width Fraction for maximum allowed lateral offset in "
+          "FrontRearAgent calculation "
+          "Calculation, should be larger than 0. value of 2 means that all "
+          "agents intersecting with lane will be considered",
+          2.0)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -41,6 +48,7 @@ World::World(const std::shared_ptr<World>& world)
       agents_(world->GetAgents()),
       objects_(world->GetObjects()),
       evaluators_(world->GetEvaluators()),
+      observer_(world->GetObserverModel()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
       frac_lateral_offset_(world->GetFracLateralOffset()),
@@ -60,7 +68,8 @@ void World::PlanAgents(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_)) {
-      ObservedWorld observed_world(current_world, agent.first);
+      ObservedWorld observed_world = observer_->Observe(
+        current_world, agent.first);
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
         agent.second->PlanExecution(inc_world_time);
@@ -79,7 +88,8 @@ void World::Execute(const double& delta_time) {
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent.second->GetCurrentState();
-      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) < 0.01);
+      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) <
+                       0.01);
     }
   }
   RemoveInvalidAgents();
@@ -135,7 +145,7 @@ EvaluationMap World::Evaluate() const {
 
 std::vector<ObservedWorld> World::Observe(
     const std::vector<AgentId>& agent_ids) {
-  WorldPtr current_world_state(this->Clone());
+  WorldPtr current_world(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
     if (agents_.find(agent_id) == agents_.end()) {
@@ -143,7 +153,8 @@ std::vector<ObservedWorld> World::Observe(
                  << std::endl;
       continue;
     }
-    ObservedWorld observed_world(current_world_state, agent_id);
+    ObservedWorld observed_world = observer_->Observe(
+      current_world, agent_id);
     observed_worlds.push_back(observed_world);
   }
   return observed_worlds;
@@ -171,13 +182,19 @@ void World::RemoveInvalidAgents() {
     rtree_agents_.query(!boost::geometry::index::within(query_box),
                         std::back_inserter(query_results));
     for (auto& result_pair : query_results) {
-      agents_.erase(result_pair.second);
+      AgentPtr agent = GetAgent(result_pair.second);
+      if (agent && agent->GetBehaviorStatus() == BehaviorStatus::VALID &&
+          agent->IsValidAtTime(world_time_)) {
+        agents_.erase(result_pair.second);
+      }
     }
   }
 
-  for (auto& agent : agents_) {
-    if (agent.second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
-      agents_.erase(agent.first);
+  for (auto it = agents_.cbegin(); it != agents_.cend();) {
+    if (it->second->GetBehaviorStatus() == BehaviorStatus::EXPIRED) {
+      agents_.erase(it++);
+    } else {
+      ++it;
     }
   }
 
@@ -193,7 +210,11 @@ AgentMap World::GetNearestAgents(const bark::geometry::Point2d& position,
 
   AgentMap nearest_agents;
   for (auto& result_pair : results_n) {
-    nearest_agents[result_pair.second] = GetAgent(result_pair.second);
+    AgentPtr agent = GetAgent(result_pair.second);
+    if (agent->GetBehaviorStatus() == BehaviorStatus::VALID &&
+        agent->IsValidAtTime(world_time_)) {
+      nearest_agents[result_pair.second] = agent;
+    }
   }
   return nearest_agents;
 }
@@ -222,7 +243,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
 }
 
 FrontRearAgents World::GetAgentFrontRearForId(
-    const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const {
+    const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
+    double frac_lateral_offset) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 
@@ -256,8 +278,9 @@ FrontRearAgents World::GetAgentFrontRearForId(
     }
 
     FrenetPosition frenet_other(it->second->GetCurrentPosition(), center_line);
-    double width = lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
-    if (std::abs(frenet_other.lat) > frac_lateral_offset_ * width) {
+    double width =
+        lane_corridor->GetLaneWidth(it->second->GetCurrentPosition());
+    if (std::abs(frenet_other.lat) > frac_lateral_offset * width) {
       // agent seems to be not really in same lane
       continue;
     }

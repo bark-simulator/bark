@@ -50,6 +50,7 @@ using bark::geometry::Model3D;
 using bark::geometry::Point2d;
 using bark::geometry::Polygon;
 using bark::geometry::Pose;
+using bark::geometry::Within;
 
 class Agent : public Object {
  public:
@@ -135,6 +136,8 @@ class Agent : public Object {
     return behavior_model_->GetBehaviorStatus();
   }
 
+  bool InsideRoadCorridor() const;
+
   ExecutionStatus GetExecutionStatus() const {
     return execution_model_->GetExecutionStatus();
   }
@@ -165,6 +168,10 @@ class Agent : public Object {
 
   void SetStateInputHistory(const StateActionHistory& history) {
     history_ = history;
+  }
+
+  void SetCurrentState(const State& current_state) {
+    history_.back().first = current_state;
   }
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {

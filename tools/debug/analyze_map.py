@@ -26,7 +26,7 @@ import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "DR_CHN_Merging_ZS_partial_v02"
+map_name = "DR_CHN_Merging_ZS_partial_v04_lower_edited"
 output_dir = "/tmp/" + map_name
 
 # Map Definition

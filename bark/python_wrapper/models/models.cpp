@@ -10,6 +10,7 @@
 #include "bark/python_wrapper/models/behavior.hpp"
 #include "bark/python_wrapper/models/dynamic.hpp"
 #include "bark/python_wrapper/models/execution.hpp"
+#include "bark/python_wrapper/models/observer.hpp"
 
 void python_models(py::module m) {
   python_behavior(m.def_submodule("behavior", "Behavior wrapping"));
@@ -17,4 +18,6 @@ void python_models(py::module m) {
       "execution", "submodule containing all wrapped execution models"));
   python_dynamic(m.def_submodule(
       "dynamic", "submodule containing all wrapped dynamic models"));
+  python_observer(m.def_submodule(
+      "observer", "submodule containing observers"));
 }

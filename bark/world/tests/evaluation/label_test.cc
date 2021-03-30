@@ -14,6 +14,9 @@
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
 
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
@@ -61,9 +64,10 @@ TEST(label_test, safe_distance) {
   double delta = 1.0;
   double a_e = -8.0;
   double a_o = -8.0;
+  double frac_lateral_offset = 2.0;
 
-  auto evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
+  auto evaluator = LabelFunctionPtr(new SafeDistanceLabelFunction(
+      "safe_distance", false, delta, a_e, a_o, false, frac_lateral_offset));
   auto label = evaluator->GetLabel();
   double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
 
@@ -91,8 +95,8 @@ TEST(label_test, safe_distance) {
   // Case 4
   delta = 0.5;
   dist = 4.5;
-  evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, a_e, a_o));
+  evaluator = LabelFunctionPtr(new SafeDistanceLabelFunction(
+      "safe_distance", false, delta, a_e, a_o, false, frac_lateral_offset));
   auto world4 = make_test_world(1, dist, v_0, dv);
   auto observed_world4 = world4->Observe({ego_id})[0];
   auto labels4 = evaluator->Evaluate(observed_world4);
@@ -176,6 +180,43 @@ TEST(label_test, lane_change_left) {
   EXPECT_TRUE(labels[label]);
 }
 
+TEST(label_test, rightmost_lane) {
+  auto evaluator = LabelFunctionPtr(new EgoRightmostLaneLabelFunction("rightmost_lane", 0));
+  auto label = evaluator->GetLabel();
+
+  auto world = MakeTestWorldHighway();
+  auto params = std::make_shared<SetterParams>();
+  
+  AgentId id = 1;
+  auto observed_world = world->Observe({id})[0];
+  auto labels = evaluator->Evaluate(observed_world);
+  ASSERT_FALSE(labels[label]);
+
+  id = 4;
+  observed_world = world->Observe({id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  ASSERT_TRUE(labels[label]);
+}
+
+
+TEST(label_test, leftmost_lane) {
+  auto evaluator = LabelFunctionPtr(new EgoLeftmostLaneLabelFunction("leftmost_lane", 0));
+  auto label = evaluator->GetLabel();
+
+  auto world = MakeTestWorldHighway();
+  auto params = std::make_shared<SetterParams>();
+  
+  AgentId id = 1;
+  auto observed_world = world->Observe({id})[0];
+  auto labels = evaluator->Evaluate(observed_world);
+  ASSERT_TRUE(labels[label]);
+
+  id = 4;
+  observed_world = world->Observe({id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  ASSERT_FALSE(labels[label]);
+}
+
 TEST(label_test, rel_speed_gt) {
   auto evaluator =
       LabelFunctionPtr(new RelSpeedLabelFunction("rel_speed_gt", 10.0));
@@ -190,6 +231,16 @@ TEST(label_test, rel_speed_gt) {
   auto labels2 = evaluator->Evaluate(observed_worlds2[0]);
   auto label2 = evaluator->GetLabel(2);
   EXPECT_FALSE(labels2[label2]);
+}
+
+TEST(label_test, speed_lt) {
+  auto evaluator =
+      LabelFunctionPtr(new BelowSpeedLimitLabelFunction("speed_lt", 22.0));
+  auto world = make_test_world(1, 20.0, 20.0, 15.0);
+  auto observed_world = world->Observe({1})[0];
+  auto labels1 = evaluator->Evaluate(observed_world);
+  auto label = evaluator->GetLabel(2);
+  EXPECT_TRUE(labels1[label]);
 }
 
 TEST(label_test, agent_near) {

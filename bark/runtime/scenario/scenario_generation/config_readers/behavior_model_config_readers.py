@@ -74,7 +74,7 @@ class SampleBehaviorType(ConfigReaderBehaviorModels):
 
   def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
     model_types = config_param_object["ModelTypesList", "Type of behavior model" \
-                "used for all vehicles", ["BehaviorIDMClassic", "BehaviorMobil"]]
+                "used for all vehicles", ["BehaviorIDMClassic", "BehaviorMobilRuleBased"]]
     model_params = config_param_object.AddChild("ModelParams")
     # ----- DEFAULT PARAMETER HANDLING
     # based on types retrieve default params which are maintained as scenario defaults

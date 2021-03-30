@@ -27,7 +27,6 @@
 #include "bark/models/behavior/motion_primitives/primitives/primitive_gap_keeping.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
 #include "bark/models/behavior/rule_based/lane_change_behavior.hpp"
-#include "bark/models/behavior/rule_based/mobil.hpp"
 #include "bark/models/behavior/rule_based/mobil_behavior.hpp"
 #include "bark/models/behavior/static_trajectory/behavior_static_trajectory.hpp"
 #include "bark/models/behavior/not_started/behavior_not_started.hpp"
@@ -49,12 +48,18 @@
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/ego_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/generic_ego_label_function.hpp"
-#include "bark/world/evaluation/ltl/label_functions/preceding_agent_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/succeeding_agent_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/left_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/right_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/front_of_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/behind_of_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/below_speed_limit_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_below_speed_limit_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/ego_leftmost_lane_label_function.hpp"
+#include "bark/world/evaluation/ltl/label_functions/on_road_label_function.hpp"
 #endif
 
 #ifdef PLANNER_UCT
@@ -85,7 +90,6 @@ using bark::models::behavior::BehaviorIDMLaneTracking;
 using bark::models::behavior::BehaviorIDMStochastic;
 using bark::models::behavior::BehaviorIntersectionRuleBased;
 using bark::models::behavior::BehaviorLaneChangeRuleBased;
-using bark::models::behavior::BehaviorMobil;
 using bark::models::behavior::BehaviorMPMacroActions;
 using bark::models::behavior::BehaviorMobilRuleBased;
 using bark::models::behavior::BehaviorStaticTrajectory;
@@ -109,13 +113,19 @@ using bark::world::evaluation::LaneChangeLabelFunction;
 using bark::world::evaluation::AgentNearLabelFunction;
 using bark::world::evaluation::AgentBeyondPointLabelFunction;
 using bark::world::evaluation::EgoBeyondPointLabelFunction;
-using bark::world::evaluation::PrecedingAgentLabelFunction;
+using bark::world::evaluation::SucceedingAgentLabelFunction;
 using bark::world::evaluation::AgentAtLaneEndLabelFunction;
 using bark::world::evaluation::LeftOfLabelFunction;
 using bark::world::evaluation::RightOfLabelFunction;
 using bark::world::evaluation::FrontOfLabelFunction;
 using bark::world::evaluation::BehindOfLabelFunction;
 using bark::world::evaluation::GenericEgoLabelFunction;
+using bark::world::evaluation::EgoRightmostLaneLabelFunction;
+using bark::world::evaluation::RightmostLaneLabelFunction;
+using bark::world::evaluation::EgoLeftmostLaneLabelFunction;
+using bark::world::evaluation::BelowSpeedLimitLabelFunction;
+using bark::world::evaluation::EgoBelowSpeedLimitLabelFunction;
+using bark::world::evaluation::OnRoadLabelFunction;
 #endif
 
 py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
@@ -140,8 +150,6 @@ py::tuple BehaviorModelToPython(BehaviorModelPtr behavior_model) {
     behavior_model_name = "BehaviorStaticTrajectory";
   } else if (typeid(*behavior_model) == typeid(BehaviorNotStarted)) {
     behavior_model_name = "BehaviorNotStarted";
-  } else if (typeid(*behavior_model) == typeid(BehaviorMobil)) {
-    behavior_model_name = "BehaviorMobil";
   } else if (typeid(*behavior_model) == typeid(BehaviorDynamicModel)) {
     behavior_model_name = "BehaviorDynamicModel";
   } else if (typeid(*behavior_model) == typeid(PyBehaviorModel)) {
@@ -208,8 +216,6 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   } else if (behavior_model_name.compare("BehaviorMobilRuleBased") == 0) {
     return std::make_shared<BehaviorMobilRuleBased>(
         t[0].cast<BehaviorMobilRuleBased>());
-  } else if (behavior_model_name.compare("BehaviorMobil") == 0) {
-    return std::make_shared<BehaviorMobil>(t[0].cast<BehaviorMobil>());
   } else if (behavior_model_name.compare("PyBehaviorModel") == 0) {
     return std::make_shared<PyBehaviorModel>(t[0].cast<PyBehaviorModel>());
   } else if (behavior_model_name.compare("BehaviorDynamicModel") == 0) {
@@ -354,6 +360,12 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(LaneChangeLabelFunction)) {
     label_name = "LaneChangeLabelFunction";
     return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(BelowSpeedLimitLabelFunction)) {
+    label_name = "BelowSpeedLimitLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(EgoBelowSpeedLimitLabelFunction)) {
+    label_name = "EgoBelowSpeedLimitLabelFunction";
+    return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(AgentNearLabelFunction)) {
     label_name = "AgentNearLabelFunction";
     return py::make_tuple(label, label_name);
@@ -363,8 +375,8 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
   } else if (typeid(*label) == typeid(EgoBeyondPointLabelFunction)) {
     label_name = "EgoBeyondPointLabelFunction";
     return py::make_tuple(label, label_name);
-  } else if (typeid(*label) == typeid(PrecedingAgentLabelFunction)) {
-    label_name = "PrecedingAgentLabelFunction";
+  } else if (typeid(*label) == typeid(SucceedingAgentLabelFunction)) {
+    label_name = "SucceedingAgentLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(AgentAtLaneEndLabelFunction)) {
     label_name = "AgentAtLaneEndLabelFunction";
@@ -380,6 +392,18 @@ py::tuple LabelToPython(const LabelFunctionPtr& label) {
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) == typeid(BehindOfLabelFunction)) {
     label_name = "BehindOfLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(EgoRightmostLaneLabelFunction)) {
+    label_name = "EgoRightmostLaneLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(RightmostLaneLabelFunction)) {
+    label_name = "RightmostLaneLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(EgoLeftmostLaneLabelFunction)) {
+    label_name = "EgoLeftmostLaneLabelFunction";
+    return py::make_tuple(label, label_name);
+  } else if (typeid(*label) == typeid(OnRoadLabelFunction)) {
+    label_name = "OnRoadLabelFunction";
     return py::make_tuple(label, label_name);
   } else if (typeid(*label) ==
              typeid(GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>)) {
@@ -400,6 +424,12 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("LaneChangeLabelFunction") == 0) {
     return std::make_shared<LaneChangeLabelFunction>(
         t[0].cast<LaneChangeLabelFunction>());
+  } else if (label_name.compare("BelowSpeedLimitLabelFunction") == 0) {
+    return std::make_shared<BelowSpeedLimitLabelFunction>(
+        t[0].cast<BelowSpeedLimitLabelFunction>());
+  } else if (label_name.compare("EgoBelowSpeedLimitLabelFunction") == 0) {
+    return std::make_shared<EgoBelowSpeedLimitLabelFunction>(
+        t[0].cast<EgoBelowSpeedLimitLabelFunction>());
   } else if (label_name.compare("AgentNearLabelFunction") == 0) {
     return std::make_shared<AgentNearLabelFunction>(
         t[0].cast<AgentNearLabelFunction>());
@@ -409,9 +439,9 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("EgoBeyondPointLabelFunction") == 0) {
     return std::make_shared<EgoBeyondPointLabelFunction>(
         t[0].cast<EgoBeyondPointLabelFunction>());
-  } else if (label_name.compare("PrecedingAgentLabelFunction") == 0) {
-    return std::make_shared<PrecedingAgentLabelFunction>(
-        t[0].cast<PrecedingAgentLabelFunction>());
+  } else if (label_name.compare("SucceedingAgentLabelFunction") == 0) {
+    return std::make_shared<SucceedingAgentLabelFunction>(
+        t[0].cast<SucceedingAgentLabelFunction>());
   } else if (label_name.compare("AgentAtLaneEndLabelFunction") == 0) {
     return std::make_shared<AgentAtLaneEndLabelFunction>(
         t[0].cast<AgentAtLaneEndLabelFunction>());
@@ -427,6 +457,18 @@ LabelFunctionPtr PythonToLabel(py::tuple t) {
   } else if (label_name.compare("BehindOfLabelFunction") == 0) {
     return std::make_shared<BehindOfLabelFunction>(
         t[0].cast<BehindOfLabelFunction>());
+  } else if (label_name.compare("EgoRightmostLaneLabelFunction") == 0) {
+    return std::make_shared<EgoRightmostLaneLabelFunction>(
+        t[0].cast<EgoRightmostLaneLabelFunction>());
+  } else if (label_name.compare("RightmostLaneLabelFunction") == 0) {
+    return std::make_shared<RightmostLaneLabelFunction>(
+        t[0].cast<RightmostLaneLabelFunction>());
+  } else if (label_name.compare("EgoLeftmostLaneLabelFunction") == 0) {
+    return std::make_shared<EgoLeftmostLaneLabelFunction>(
+        t[0].cast<EgoLeftmostLaneLabelFunction>());
+  } else if (label_name.compare("OnRoadLabelFunction") == 0) {
+    return std::make_shared<OnRoadLabelFunction>(
+        t[0].cast<OnRoadLabelFunction>());
   } else if (label_name.compare("CollisionEgoLabelFunction") == 0) {
     return std::make_shared<
         GenericEgoLabelFunction<EvaluatorCollisionEgoAgent>>(

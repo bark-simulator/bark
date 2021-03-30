@@ -28,7 +28,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   }
 
   AgentId id = GetEgoAgentId();
-  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, GetFracLateralOffset());
 
   return fr_agent;
 }
@@ -37,7 +37,7 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear(
     const LaneCorridorPtr& lane_corridor) const {
   BARK_EXPECT_TRUE(lane_corridor != nullptr);
   AgentId id = GetEgoAgentId();
-  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor);
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, GetFracLateralOffset());
   return fr_agent;
 }
 

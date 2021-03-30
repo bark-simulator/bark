@@ -37,6 +37,18 @@ cc_test(
 )
 
 cc_test(
+    name = "math_tests",
+    srcs = [
+        "math_tests.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/commons:commons",
+        "@gtest//:gtest_main",
+    ],
+)
+
+cc_test(
     name = "frenet_test",
     srcs = [
         "frenet_test.cc",

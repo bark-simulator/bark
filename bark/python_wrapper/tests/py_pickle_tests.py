@@ -116,7 +116,7 @@ class PickleTests(unittest.TestCase):
         clf_after = pickle_unpickle(clf)
         self.assertEqual(clf.value, clf_after.value)
 
-        dlf = SafeDistanceLabelFunction("test", False, 1.0, -5.0, -5.0)
+        dlf = SafeDistanceLabelFunction("test", False, 1.0, -5.0, -5.0, False, 2.0)
         dlf_after = pickle_unpickle(clf)
 
         tlf = DenseTrafficLabelFunction("test", 20.0, 8)

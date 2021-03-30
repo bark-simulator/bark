@@ -18,6 +18,7 @@
 #include <boost/geometry/index/rtree.hpp>
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
+#include "bark/models/observer/observer_model.hpp"
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
@@ -35,6 +36,7 @@ using world::objects::Agent;
 using world::objects::AgentId;
 using world::objects::AgentPtr;
 using world::objects::ObjectPtr;
+using bark::models::observer::ObserverModelPtr;
 
 typedef std::map<AgentId, AgentPtr> AgentMap;
 typedef std::map<AgentId, ObjectPtr> ObjectMap;
@@ -125,7 +127,10 @@ class World : public commons::BaseType {
   std::map<std::string, EvaluatorPtr> GetEvaluators() const {
     return evaluators_;
   }
-
+  ObserverModelPtr GetObserverModel() const {
+    return observer_;
+  }
+  
   bool GetRemoveAgents() { return remove_agents_; }
 
   double GetFracLateralOffset() const { return frac_lateral_offset_; }
@@ -140,11 +145,25 @@ class World : public commons::BaseType {
   AgentMap GetAgentsIntersectingPolygon(
       const bark::geometry::Polygon& polygon) const;
 
-  FrontRearAgents GetAgentFrontRearForId(
-      const AgentId& agent_id, const LaneCorridorPtr& lane_corridor) const;
+  /**
+   * @brief Get the front and rear agent for a given agent
+   *
+   * @param agent_id agent id for which to calculate front&rear agent
+   * @param lane_corridor lane corridor in which to calculate front&rear agent
+   * @param frac_lateral_offset Lane Width Fraction for maximum allowed lateral
+   * offset in, should be larger than 0. value of 2 means that all agents
+   * intersecting with lane will be considered
+   * @return FrontRearAgents
+   */
+  FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
+                                         const LaneCorridorPtr& lane_corridor,
+                                         double frac_lateral_offset) const;
 
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
+  void SetObserverModel(const ObserverModelPtr& observer) {
+    observer_ = observer;
+  }
 
   std::pair<bark::geometry::Point2d, bark::geometry::Point2d> BoundingBox()
       const {
@@ -176,6 +195,7 @@ class World : public commons::BaseType {
   AgentMap agents_;
   ObjectMap objects_;
   std::map<std::string, EvaluatorPtr> evaluators_;
+  ObserverModelPtr observer_;
   double world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
