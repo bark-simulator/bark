@@ -16,15 +16,15 @@ from bark.core.models.observer import ObserverModelNone, ObserverModelParametric
 
 
 # observed worlds with no perturbations
-class ObserverModelNone(ConfigReaderControlledAgents):
+class ObserverModelNoneReader(ConfigReaderObserverModel):
   # returns a observer model none for the world
-  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+  def create_from_config(self, config_param_object,  **kwargs):
     observer_model = ObserverModelNone(config_param_object)
     return observer_model, {}, config_param_object
 
 # observed worlds with parametric perturbations
-class ObserverModelParametric(ConfigReaderControlledAgents):
+class ObserverModelParametricReader(ConfigReaderObserverModel):
   # returns a parametric observer model for the world
-  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+  def create_from_config(self, config_param_object, **kwargs):
     observer_model_parametric = ObserverModelParametric(config_param_object)
     return observer_model_parametric, {}, config_param_object

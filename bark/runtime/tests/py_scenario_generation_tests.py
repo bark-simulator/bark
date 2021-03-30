@@ -63,6 +63,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         "ConfigDynamicModels": {"Type": "FixedDynamicType"},
         "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
         "ConfigControlledAgents": {"Type": "NoneControlled"},
+        "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
         "AgentParams": {}
     },
         {
@@ -74,6 +75,7 @@ class ScenarioGenerationTests(unittest.TestCase):
         "ConfigDynamicModels": {"Type": "FixedDynamicType"},
         "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
         "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+        "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
         "AgentParams": {}
         }]
     params = ParameterServer()
@@ -97,6 +99,7 @@ class ScenarioGenerationTests(unittest.TestCase):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "AgentIds", "ControlledIds" : [1]},
+      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     }
 
@@ -128,6 +131,7 @@ class ScenarioGenerationTests(unittest.TestCase):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes", "EnforceControlledGoal": False},
       "ConfigControlledAgents": {"Type": "PositioningSingleAgent", "LanePosition" : 0},
+      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     }
 
@@ -161,6 +165,7 @@ class ScenarioGenerationTests(unittest.TestCase):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     }
 

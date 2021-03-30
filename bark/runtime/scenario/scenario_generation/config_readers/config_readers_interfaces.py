@@ -121,7 +121,7 @@ class ConfigReaderObserverModel(ConfigReader):
   
   # returns list of size num agents with true or false depending if agent is controlled or not for each agent based on property, default_params_dict
   @abstractmethod
-  def create_from_config(self, config_param_object, road_corridor, agent_states,  **kwargs):
+  def create_from_config(self, config_param_object,  **kwargs):
     pass
 
   # only reimplement if param server for this object shall be serialized (currently not needed)

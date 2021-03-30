@@ -51,7 +51,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "NoneControlled"},
-      "ConfigObserverModel": {"Type": "ObserverModelNone"},
+      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     },
     {
@@ -63,7 +63,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
-      "ConfigObserverModel": {"Type": "ObserverModelNone"},
+      "ConfigObserverModel": {"Type": "ObserverModelNoneReader"},
       "AgentParams" : {}
     }
     ]
@@ -210,15 +210,15 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #collected_sources_sinks_default_param_configs.append(sink_source_config)
 
     #self._sink_source_default_params = sink_source_default_params
+    
     scenario._eval_agent_ids = [i for i, val in enumerate(controlled_agent_ids_all) if val] 
     scenario._agent_list = self.update_agent_ids(agent_list)
     
     # 6. set observer model for the world
-    sink_source_config {"Description" : "ObserverModel"}
     observer_model, _, _ = self.eval_configuration(
-      sink_source_config, "ConfigObserverModel", 
-      args_list, kwargs_dict)
-    world.observer = observer_model
+      self._sinks_sources[0], "ConfigObserverModel", 
+      [], {})
+    world.observer_model = observer_model
     
     return scenario
 
@@ -434,6 +434,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     return agents
 
   def eval_configuration(self, sink_source_config, config_type, args, kwargs):
+    # print(sink_source_config, config_type)
     eval_config = sink_source_config[config_type]
     eval_config_type = eval_config["Type"]
     try:
