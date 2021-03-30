@@ -44,7 +44,9 @@ using commons::transformation::FrenetState;
  * @retval LaneCorridorPtr: the computed lane corridor
  */
 inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
-  const ObservedWorld& observed_world, const LaneCorridorPtr& target_corr) {
+  const ObservedWorld& observed_world,
+  const LaneCorridorPtr& target_corr,
+  double deviation_angle = 0.2) {
     // ego info
     auto ego_agent = observed_world.GetEgoAgent();
     auto ego_pose = ego_agent->GetCurrentPosition();
@@ -63,7 +65,6 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
     }
 
     // if the deviation is too large
-    double deviation_angle = 0.2;
     if (fabs(frenet_state.angle) < deviation_angle) {
       return curr_lane_corr;
     } else {

@@ -86,6 +86,7 @@ class BehaviorRSSConformant : public BehaviorModel {
       roadx_id_(GetParams()->GetInt(
         "RoadXId", "Road ids for road x without lat limits", 1)),
       rss_vlat_threshold_(GetParams()->GetReal(
+        "RSSVlatThreshold",
         "RSS lat velocity threshold.",
         0.1)) {
     dynamic::Input input(2);
