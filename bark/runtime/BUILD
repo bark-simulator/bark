@@ -7,6 +7,7 @@ py_library(
             "//bark/runtime/viewer:pygame_viewer",
             "//bark/runtime/viewer:py_viewer",
             "//bark/runtime/viewer:matplotlib_viewer",
+            "//bark/runtime/viewer:buffered_viewer",
             "//bark/runtime/viewer:video_renderer",
             "//bark/runtime/scenario:scenario"],
     visibility = ["//visibility:public"],

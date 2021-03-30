@@ -65,6 +65,7 @@ py_library(
     name = "buffered_viewer",
     srcs = ["buffered_viewer.py"],
     data = ['//bark:generate_core'],
-    deps = ["//bark/runtime/commons:commons"],
+    deps = ["//bark/runtime/commons:commons",
+            ":py_viewer"],
     visibility = ["//visibility:public"],
 )
