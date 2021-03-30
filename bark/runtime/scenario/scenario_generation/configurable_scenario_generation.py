@@ -46,7 +46,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ObserverModel",
       "World observer for the simulation.", {
         "Description": "world_observer",
-        "ConfigObserverModel": {"Type": "ObserverModelNoneReader"}
+        "ConfigObserverModel": {
+          "Type": "ObserverModelNoneReader",
+          "Mearn": 1.  
+        }
     }]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[-1.057, -172.1965],  [-1.894, 14.1725] ],
@@ -221,8 +224,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     
     # 6. set observer model for the world
     observer_model, _, _ = self.eval_configuration(
-      self._observer_model, "ConfigObserverModel", 
-      [], {})
+      self._observer_model, "ConfigObserverModel", [], {})
     world.observer_model = observer_model
     
     return scenario

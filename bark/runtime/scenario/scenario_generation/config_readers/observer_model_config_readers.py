@@ -20,13 +20,15 @@ class ObserverModelNoneReader(ConfigReaderObserverModel):
   # returns a observer model none for the world
   def create_from_config(self, config_param_object,  **kwargs):
     # print("reader", config_param_object)
-    
-    observer_model = ObserverModelNone(config_param_object)
+    params = ParameterServer()
+    print(config_param_object)
+    observer_model = ObserverModelNone(params)
     return observer_model, {}, config_param_object
 
 # observed worlds with parametric perturbations
 class ObserverModelParametricReader(ConfigReaderObserverModel):
   # returns a parametric observer model for the world
   def create_from_config(self, config_param_object, **kwargs):
-    observer_model_parametric = ObserverModelParametric(config_param_object)
+    params = ParameterServer()
+    observer_model_parametric = ObserverModelParametric(params)
     return observer_model_parametric, {}, config_param_object
