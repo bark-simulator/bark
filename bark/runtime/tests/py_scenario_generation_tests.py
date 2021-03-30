@@ -50,7 +50,6 @@ class ScenarioGenerationTests(unittest.TestCase):
         scenario_generation._scenario_list[0]._agent_list))
 
     scenario = scenario_loader.get_scenario(idx=0)
-
     params.Save("default_params.json")
 
   def test_configurable_scenario_generation_sample_behavior_types(self):
@@ -245,6 +244,35 @@ class ScenarioGenerationTests(unittest.TestCase):
     # check agent positions in list
     self.assertEqual(collisions_03[0][0][1], 2)
     self.assertEqual(collisions_03[0][1][1], 2)
+
+
+  def test_configurable_scenario_generation_parametric_observer(self):
+    params = ParameterServer()
+    mapfile = os.path.join(os.path.dirname(__file__),"data/city_highway_straight.xodr")
+    conf_params = params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
+    conf_params["MapFilename"] = mapfile
+    conf_params["ObserverModel"] = {
+      "Description": "world_observer",
+      "ConfigObserverModel": {
+        "Type": "ObserverModelParametricReader",
+        "EgoStateDeviationDist": "MultivariateDistribution",
+        "OtherStateDeviationDist": "MultivariateDistribution"
+      }
+    }
+    scenario_generation = ConfigurableScenarioGeneration(
+      num_scenarios=2, params=params)
+    scenario_generation.dump_scenario_list("test.scenario")
+
+    scenario_loader = ScenarioGeneration()
+    scenario_loader.load_scenario_list("test.scenario")
+
+    self.assertEqual(len(scenario_loader._scenario_list), 2)
+    self.assertEqual(len(scenario_loader._scenario_list[0]._agent_list), len(
+      scenario_generation._scenario_list[0]._agent_list))
+
+    scenario = scenario_loader.get_scenario(idx=0)
+    params.Save("default_params.json")
+
 
   def test_dataset_scenario_generation_full(self):
     """

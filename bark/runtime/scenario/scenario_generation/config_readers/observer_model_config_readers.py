@@ -28,11 +28,11 @@ class ObserverModelParametricReader(ConfigReaderObserverModel):
   # returns a parametric observer model for the world
   def create_from_config(self, config_param_object, **kwargs):
     params = ParameterServer()
-    if "EgoStateDeviationDist" in config_param_object:
-      params["ObserverModelParametric"]["EgoStateDeviationDist"] =\
-        config_param_object["EgoStateDeviationDist"]
-    if "OtherStateDeviationDist" in config_param_object:
-      params["ObserverModelParametric"]["OtherStateDeviationDist"] =\
-        config_param_object["OtherStateDeviationDist"]
+    # if "EgoStateDeviationDist" in config_param_object:
+    #   params["ObserverModelParametric"]["EgoStateDeviationDist"] =\
+    #     config_param_object["EgoStateDeviationDist"]
+    # if "OtherStateDeviationDist" in config_param_object:
+    #   params["ObserverModelParametric"]["OtherStateDeviationDist"] =\
+    #     config_param_object["OtherStateDeviationDist"]
     observer_model_parametric = ObserverModelParametric(params)
     return observer_model_parametric, {}, config_param_object
