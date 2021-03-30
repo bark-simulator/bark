@@ -57,34 +57,37 @@ auto as_integer(Enumeration const value) {
 class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params)
-      : BehaviorModel(params),
-        nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
-            GetParams()->AddChild("NominalBehavior"))),
-        behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
-        rss_evaluator_(),
-        behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
-        world_time_of_last_rss_violation_(-1),
-        initial_lane_corr_(nullptr),
-        roadx_polygon_(),
-        minimum_safety_corridor_length_(GetParams()->GetReal(
-            "MinimumSafetyCorridorLength",
-            "Minimal lenght a safety corridor should have that a lateral "
-            "safety maneuver is performed.",
-            0.f)),
-        acceleration_limits_vehicle_cs_(),
-        acceleration_limits_street_cs_(),
-        acc_restrictions_for_nominal_(GetParams()->GetBool(
-            "AccRestrictionsForNominal",
-            "Restrict Nominal Model using Acc Limits", false)),
-        acc_restrictions_for_safety_(GetParams()->GetBool(
-            "AccRestrictionsForSafety",
-            "Restrict Safety Model using Acc Limits", false)),
-        no_safety_maneuver_(GetParams()->GetBool(
-            "NoSafetyManeuver", "No triggering of safety maneuver", false)),
-        switch_off_lat_limits_on_road_x_(GetParams()->GetBool(
-            "SwitchOffLatLimitsOnRoadX", "No lateral limits within road x", false)),
-        roadx_id_(GetParams()->GetInt(
-            "RoadXId", "Road ids for road x without lat limits", 1)) {
+    : BehaviorModel(params),
+      nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
+        GetParams()->AddChild("NominalBehavior"))),
+      behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
+      rss_evaluator_(),
+      behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
+      world_time_of_last_rss_violation_(-1),
+      initial_lane_corr_(nullptr),
+      roadx_polygon_(),
+      minimum_safety_corridor_length_(GetParams()->GetReal(
+        "MinimumSafetyCorridorLength",
+        "Minimal lenght a safety corridor should have that a lateral "
+        "safety maneuver is performed.",
+        0.)),
+      acceleration_limits_vehicle_cs_(),
+      acceleration_limits_street_cs_(),
+      acc_restrictions_for_nominal_(GetParams()->GetBool(
+        "AccRestrictionsForNominal",
+        "Restrict Nominal Model using Acc Limits", false)),
+      acc_restrictions_for_safety_(GetParams()->GetBool(
+        "AccRestrictionsForSafety",
+        "Restrict Safety Model using Acc Limits", false)),
+      no_safety_maneuver_(GetParams()->GetBool(
+        "NoSafetyManeuver", "No triggering of safety maneuver", false)),
+      switch_off_lat_limits_on_road_x_(GetParams()->GetBool(
+        "SwitchOffLatLimitsOnRoadX", "No lateral limits within road x", false)),
+      roadx_id_(GetParams()->GetInt(
+        "RoadXId", "Road ids for road x without lat limits", 1)),
+      rss_vlat_threshold_(GetParams()->GetReal(
+        "RSS lat velocity threshold.",
+        0.1)) {
     dynamic::Input input(2);
     input << 0.0, 0.0;
     SetLastAction(input);
@@ -191,6 +194,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   double minimum_safety_corridor_length_;
+  double rss_vlat_threshold_;
   AccelerationLimits acceleration_limits_vehicle_cs_;
   AccelerationLimits acceleration_limits_street_cs_;
   bool acc_restrictions_for_nominal_;

@@ -131,11 +131,13 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   //
   // Initial Author: Luis Gressenbuch
 
-  const auto boundValue = [](const double val, const double min, const double max) {
+  const auto boundValue = [](
+    const double val, const double min, const double max) {
     return std::max(std::min(val, max), min);
   };
 
-  const auto SteeringAngle = [](const double acc_lat, const double vel_lon, const double wheelbase) {
+  const auto SteeringAngle = [](
+    const double acc_lat, const double vel_lon, const double wheelbase) {
     return std::atan2(acc_lat * wheelbase, vel_lon * vel_lon);
   };
 
@@ -158,13 +160,20 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
 
   if (limit_steering) {
     double wb = model->GetWheelBase();
-    double delta_max_acc = SteeringAngle(model->GetLatAccelerationMax(), vel, wb);
-    double delta_min_acc = SteeringAngle(model->GetLatAccelerationMin(), vel, wb);
-    VLOG(5) << "DeltaMaxAcc: " << delta_max_acc << ", DeltaMinAcc: " << delta_min_acc << ", LatAccMax: " << model->GetLatAccelerationMax() << ", LatAccMin: " << model->GetLatAccelerationMin();
+    double delta_max_acc = SteeringAngle(
+      model->GetLatAccelerationMax(), vel, wb);
+    double delta_min_acc = SteeringAngle(
+      model->GetLatAccelerationMin(), vel, wb);
+    VLOG(5) << "DeltaMaxAcc: " << delta_max_acc << ", DeltaMinAcc: "
+            << delta_min_acc << ", LatAccMax: " << model->GetLatAccelerationMax()
+            << ", LatAccMin: " << model->GetLatAccelerationMin();
 
-    double delta1 = boundValue(delta, -model->GetSteeringAngleMax(), model->GetSteeringAngleMax());
+    double delta1 = boundValue(
+      delta, -model->GetSteeringAngleMax(), model->GetSteeringAngleMax());
     double delta2 = boundValue(delta1, delta_min_acc, delta_max_acc);
-    VLOG(5) << "Delta (unbounded): << " << delta << ", Delta (bound angle): << " << delta1 << ", Delta (bound acc): << " << delta2;
+    VLOG(5) << "Delta (unbounded): << " << delta
+            << ", Delta (bound angle): << " << delta1
+            << ", Delta (bound acc): << " << delta2;
     return delta2;
   }
   return delta;
