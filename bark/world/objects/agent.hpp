@@ -170,6 +170,10 @@ class Agent : public Object {
     history_ = history;
   }
 
+  void SetCurrentState(const State& current_state) {
+    history_.back().first = current_state;
+  }
+
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
   }
