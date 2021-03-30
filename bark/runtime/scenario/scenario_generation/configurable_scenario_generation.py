@@ -48,7 +48,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
         "Description": "world_observer",
         "ConfigObserverModel": {
           "Type": "ObserverModelNoneReader",
-          "Mearn": 1.  
+          "EgoStateDeviationDist": "MultivariateDistribution",
+          "OtherStateDeviationDist": "MultivariateDistribution",
         }
     }]
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{

@@ -19,9 +19,7 @@ from bark.core.models.observer import ObserverModelNone, ObserverModelParametric
 class ObserverModelNoneReader(ConfigReaderObserverModel):
   # returns a observer model none for the world
   def create_from_config(self, config_param_object,  **kwargs):
-    # print("reader", config_param_object)
     params = ParameterServer()
-    print(config_param_object)
     observer_model = ObserverModelNone(params)
     return observer_model, {}, config_param_object
 
@@ -30,5 +28,11 @@ class ObserverModelParametricReader(ConfigReaderObserverModel):
   # returns a parametric observer model for the world
   def create_from_config(self, config_param_object, **kwargs):
     params = ParameterServer()
+    if "EgoStateDeviationDist" in config_param_object:
+      params["ObserverModelParametric"]["EgoStateDeviationDist"] =\
+        config_param_object["EgoStateDeviationDist"]
+    if "OtherStateDeviationDist" in config_param_object:
+      params["ObserverModelParametric"]["OtherStateDeviationDist"] =\
+        config_param_object["OtherStateDeviationDist"]
     observer_model_parametric = ObserverModelParametric(params)
     return observer_model_parametric, {}, config_param_object
