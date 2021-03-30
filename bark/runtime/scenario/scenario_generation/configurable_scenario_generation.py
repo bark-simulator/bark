@@ -51,6 +51,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "NoneControlled"},
+      "ConfigObserverModel": {"Type": "ObserverModelNone"},
       "AgentParams" : {}
     },
     {
@@ -62,6 +63,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       "ConfigDynamicModels": {"Type": "FixedDynamicType"},
       "ConfigGoalDefinitions": {"Type": "FixedGoalTypes"},
       "ConfigControlledAgents": {"Type": "RandomSingleAgent"},
+      "ConfigObserverModel": {"Type": "ObserverModelNone"},
       "AgentParams" : {}
     }
     ]
@@ -210,6 +212,13 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     #self._sink_source_default_params = sink_source_default_params
     scenario._eval_agent_ids = [i for i, val in enumerate(controlled_agent_ids_all) if val] 
     scenario._agent_list = self.update_agent_ids(agent_list)
+    
+    # 6. set observer model for the world
+    sink_source_config {"Description" : "ObserverModel"}
+    observer_model, _, _ = self.eval_configuration(
+      sink_source_config, "ConfigObserverModel", 
+      args_list, kwargs_dict)
+    world.observer = observer_model
     
     return scenario
 
