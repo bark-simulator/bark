@@ -55,7 +55,7 @@ Trajectory BehaviorRSSConformant::Plan(
     roadx_polygon_ = rc->GetPolygon();
   }
 
-  const float length_until_end =
+  const double length_until_end =
       behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
           observed_world.CurrentEgoPosition());
   if (length_until_end <= minimum_safety_corridor_length_) {
@@ -184,7 +184,7 @@ void BehaviorRSSConformant::ConvertRestrictions(
                                              ego_frenet, last_ego_frenet);
   }
   AccelerationLimits acc_lim_vehicle_cs, acc_lim_street_cs;
-  const float rss_vlat_threshold =
+  const double rss_vlat_threshold =
       0.01;  // @TODO parameter if this eps is too sensitive
   if (ego_frenet.vlat > rss_vlat_threshold) {
     VLOG(4) << "vel_lat_street = " << ego_frenet.vlat

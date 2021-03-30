@@ -190,7 +190,7 @@ class BehaviorRSSConformant : public BehaviorModel {
   BehaviorRSSConformantStatus behavior_rss_status_;
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
-  float minimum_safety_corridor_length_;
+  double minimum_safety_corridor_length_;
   AccelerationLimits acceleration_limits_vehicle_cs_;
   AccelerationLimits acceleration_limits_street_cs_;
   bool acc_restrictions_for_nominal_;

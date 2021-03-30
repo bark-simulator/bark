@@ -146,7 +146,7 @@ TEST(AccelerationCorridor, dynamic_test) {
   using namespace bark::models::dynamic;
   using namespace bark::commons;
 
-  const float dt = 1.0;
+  const double dt = 1.0;
 
   auto params = std::make_shared<SetterParams>();
   params->SetReal("DynamicModel::lat_acc_max", 0.5f);
