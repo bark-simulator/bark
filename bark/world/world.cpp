@@ -12,18 +12,22 @@
 #include "bark/commons/util/segfault_handler.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/world.hpp"
+#include "bark/models/observer/observer_model.hpp"
+#include "bark/models/observer/observer_model_none.hpp"
 
 namespace bark {
 namespace world {
 
 using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
+using bark::models::observer::ObserverModelNone;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
       map_(),
       agents_(),
       world_time_(0.0),
+      observer_(new ObserverModelNone(params)),
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
@@ -44,6 +48,7 @@ World::World(const std::shared_ptr<World>& world)
       agents_(world->GetAgents()),
       objects_(world->GetObjects()),
       evaluators_(world->GetEvaluators()),
+      observer_(world->GetObserverModel()),
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
       frac_lateral_offset_(world->GetFracLateralOffset()),
@@ -63,7 +68,8 @@ void World::PlanAgents(const double& delta_time) {
   const double inc_world_time = world_time_ + delta_time;
   for (auto agent : agents_) {
     if (agent.second->IsValidAtTime(world_time_)) {
-      ObservedWorld observed_world(current_world, agent.first);
+      ObservedWorld observed_world = observer_->Observe(
+        current_world, agent.first);
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
         agent.second->PlanExecution(inc_world_time);
@@ -139,7 +145,7 @@ EvaluationMap World::Evaluate() const {
 
 std::vector<ObservedWorld> World::Observe(
     const std::vector<AgentId>& agent_ids) {
-  WorldPtr current_world_state(this->Clone());
+  WorldPtr current_world(this->Clone());
   std::vector<ObservedWorld> observed_worlds;
   for (auto agent_id : agent_ids) {
     if (agents_.find(agent_id) == agents_.end()) {
@@ -147,7 +153,8 @@ std::vector<ObservedWorld> World::Observe(
                  << std::endl;
       continue;
     }
-    ObservedWorld observed_world(current_world_state, agent_id);
+    ObservedWorld observed_world = observer_->Observe(
+      current_world, agent_id);
     observed_worlds.push_back(observed_world);
   }
   return observed_worlds;
