@@ -134,8 +134,8 @@ void BehaviorRSSConformant::ConvertRestrictions(
     const ObservedWorld& observed_world) {
   State last_state(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   auto history = observed_world.GetEgoAgent()->GetStateInputHistory();
-  if (history.size() >= 2) {
-    last_state = (history.end() - 2)->first;
+  if (history.size() >= 1) {
+    last_state = (history.end() - 1)->first;
   } else {
     last_state = observed_world.CurrentEgoState();
   }
