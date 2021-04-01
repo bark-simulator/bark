@@ -50,6 +50,7 @@ param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
 param_server["World"]["FracLateralOffset"] = 0.8
+param_server["Visualization"]["Agents"]["DrawEvalGoals"] = False
 
 SetVerboseLevel(0)
 
@@ -73,21 +74,21 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
 # in directions: long. , lat, vlong. , vlat. and theta 
 params_parametric = ParameterServer()
 params_parametric["ObserverModelParametric"] \
-      ["EgoStateDeviationDist"]["Covariance"] = [[0.01, 0.0, 0.0, 0.0, 0.0], #  5 x 5 elements
-                                                 [0.0, 0.01, 0.0, 0.0, 0.0],
-                                                 [0.0, 0.0, 0.01, 0.0, 0.0],
-                                                 [0.0, 0.0, 0.0, 0.01, 0.0],
-                                                 [0.0, 0.0, 0.0, 0.0, 0.01]] 
+      ["EgoStateDeviationDist"]["Covariance"] = [[0.0001, 0.0, 0.0, 0.0, 0.0], #  5 x 5 elements
+                                                 [0.0, 0.0001, 0.0, 0.0, 0.0],
+                                                 [0.0, 0.0, 0.0001, 0.0, 0.0],
+                                                 [0.0, 0.0, 0.0, 0.0001, 0.0],
+                                                 [0.0, 0.0, 0.0, 0.0, 0.0001]] 
 params_parametric["ObserverModelParametric"] \
-      ["EgoStateDeviationDist"]["Mean"] =       [0.1, 0.1, 0.0, 0.0, 0.0] # 5 elements#
+      ["EgoStateDeviationDist"]["Mean"] =       [0.0, 0.0, 0.0, 0.0, 0.0] # 5 elements#
 params_parametric["ObserverModelParametric"] \
-      ["OtherStateDeviationDist"]["Covariance"] = [[0.01, 0.0, 0.0, 0.0, 0.0], #  5 x 5 elements
-                                                 [0.0, 0.01, 0.0, 0.0, 0.0],
-                                                 [0.0, 0.0, 0.01, 0.0, 0.0],
-                                                 [0.0, 0.0, 0.0, 0.01, 0.0],
-                                                 [0.0, 0.0, 0.0, 0.0, 0.01]] 
+      ["OtherStateDeviationDist"]["Covariance"] = [[0.2, 0.0, 0.0, 0.0, 0.0], #  5 x 5 elements
+                                                 [0.0, 0.06, 0.0, 0.0, 0.0],
+                                                 [0.0, 0.0, 0.0001, 0.0, 0.0],
+                                                 [0.0, 0.0, 0.0, 0.0001, 0.0],
+                                                 [0.0, 0.0, 0.0, 0.0, 0.0001]] 
 params_parametric["ObserverModelParametric"] \
-      ["OtherStateDeviationDist"]["Mean"] =       [0.1, 1.0, 0.0, 0.0, 0.0] # 5 elements
+      ["OtherStateDeviationDist"]["Mean"] =       [0.0, 0.0, 0.0, 0.0, 0.0] # 5 elements
 parametric_observer = ObserverModelParametric(params_parametric)
 
 
@@ -118,9 +119,8 @@ sim_real_time_factor = param_server["simulation"]["real_time_factor",
                                                   "execution in real-time or faster",
                                                   1.]
 
-# viewer = VideoRenderer(renderer=viewer,
-#                        world_step_time=sim_step_time,
-#                        fig_path="/Users/hart/2019/bark/video")
+viewer = VideoRenderer(renderer=viewer,
+                       world_step_time=sim_step_time)
 
 env = Runtime(step_time=0.2,
               viewer=viewer,
@@ -132,11 +132,11 @@ env = Runtime(step_time=0.2,
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 20):
+  for step in range(0, 40):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
     
   df = env.ExtractTimeSeries()
   print(df)
 
-# viewer.export_video(filename="/Users/hart/2019/bark/video/video", remove_image_dir=False)
+viewer.export_video(filename="/home/julo/video", remove_image_dir=False)
