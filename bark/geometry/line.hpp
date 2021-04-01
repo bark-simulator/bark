@@ -49,9 +49,9 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 
   bool AddPoints(const std::vector<T>& pts) {
     for (const auto& p : pts) {
-      return Shape<bg::model::linestring<T>, T>::AddPoint(p);
+      Shape<bg::model::linestring<T>, T>::AddPoint(p);
     }
-    RecomputeS();
+    return RecomputeS();
   }
 
   auto Length() const {

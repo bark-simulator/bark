@@ -90,6 +90,7 @@ TEST(line, add_points) {
   line2.AddPoints(pts);
 
   EXPECT_NEAR(Distance(line, line2), 0, 0.01);
+  EXPECT_NEAR(line.Length(), line2.Length(), 0.01);
 }
 
 TEST(geometry, line) {
