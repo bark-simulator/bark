@@ -50,7 +50,7 @@ ObservedWorld ObserverModelParametric::Observe(
     return observed_world;
   }
 
- // AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
+  AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
   for (auto& agent : observed_world.GetOtherAgents()) {
     AddStateDeviationFrenet(agent.second, others_state_deviation_dist_);
   }
@@ -67,13 +67,10 @@ void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, con
 
   // Add sampled frenet deviation to current frenet state
   const auto frenet_deviation = multi_dim_distribution->Sample();
-  BARK_EXPECT_TRUE(frenet_deviation.size() == 5); // Lat, Long, vlat, vlon, Orientation
+  BARK_EXPECT_TRUE(frenet_deviation.size() == 2); // Lat, Long position deviation
 
   current_frenet_state.lon += frenet_deviation[0];
   current_frenet_state.lat += frenet_deviation[1];
-  current_frenet_state.vlat += frenet_deviation[2];
-  current_frenet_state.vlon += frenet_deviation[3];
-  current_frenet_state.angle += frenet_deviation[4];
   
   // Convert back and set dynamic agent state 
   const auto deviated_state = FrenetStateToDynamicState(current_frenet_state, lane_corridor->GetCenterLine());
