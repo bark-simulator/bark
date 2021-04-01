@@ -54,15 +54,8 @@ class BoostDistribution1D : public Distribution {
         uniform_generator_(0, 1.0) {}
 
   virtual RandomVariate Sample();
-
-  virtual Probability Density(const RandomVariate& variate) const {
-    return boost::math::pdf(dist_, variate[0]);
-  };
-
-  virtual Probability CDF(const RandomVariate& variate) const {
-    return boost::math::cdf(dist_, variate[0]);
-  };
-
+  virtual Probability Density(const RandomVariate& variate) const;
+  virtual Probability CDF(const RandomVariate& variate) const;
   virtual RandomVariableSupport GetSupport() const;
 
   BoostDistType DistFromParams(const ParamsPtr& params) const;
@@ -74,8 +67,14 @@ class BoostDistribution1D : public Distribution {
   std::uniform_real_distribution<RandomVariableValueType> uniform_generator_;
 };
 
-template <class BoostDistType>
-inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
+using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
+using boost_uniform =
+    boost::math::uniform_distribution<RandomVariableValueType>;
+using boost_bernoulli = boost::math::bernoulli_distribution<RandomVariableValueType>;
+using boost_discrete = std::discrete_distribution<int>;
+
+template <>
+inline RandomVariate BoostDistribution1D<boost_uniform>::Sample() {
   // Boost does not provide direct sampling, but we can go over the quantile
   // function
   auto probability = uniform_generator_(generator_);
@@ -83,10 +82,73 @@ inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
   return RandomVariate(1, sample);
 }
 
-using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
-using boost_uniform =
-    boost::math::uniform_distribution<RandomVariableValueType>;
-using boost_bernoulli = boost::math::bernoulli_distribution<RandomVariableValueType>;
+template <>
+inline RandomVariate BoostDistribution1D<boost_normal>::Sample() {
+  // Boost does not provide direct sampling, but we can go over the quantile
+  // function
+  auto probability = uniform_generator_(generator_);
+  auto sample = boost::math::quantile(dist_, probability);
+  return RandomVariate(1, sample);
+}
+
+template <>
+inline RandomVariate BoostDistribution1D<boost_bernoulli>::Sample() {
+  // Boost does not provide direct sampling, but we can go over the quantile
+  // function
+  auto probability = uniform_generator_(generator_);
+  auto sample = boost::math::quantile(dist_, probability);
+  return RandomVariate(1, sample);
+}
+
+template <>
+inline RandomVariate BoostDistribution1D<boost_discrete>::Sample() {
+  auto sample = dist_(generator_);
+  return RandomVariate(1, sample);
+}
+
+template <>
+inline Probability BoostDistribution1D<boost_uniform>::Density(const RandomVariate& variate) const {
+    return boost::math::pdf(dist_, variate[0]);
+};
+
+template <>
+inline Probability BoostDistribution1D<boost_normal>::Density(const RandomVariate& variate) const {
+    return boost::math::pdf(dist_, variate[0]);
+};
+
+template <>
+inline Probability BoostDistribution1D<boost_bernoulli>::Density(const RandomVariate& variate) const {
+    return boost::math::pdf(dist_, variate[0]);
+};
+
+template <>
+inline double BoostDistribution1D<boost_discrete>::Density(const RandomVariate& variate) const {
+    return dist_.probabilities()[variate[0]];
+};
+
+template <>
+inline Probability BoostDistribution1D<boost_uniform>::CDF(const RandomVariate& variate) const {
+    return boost::math::cdf(dist_, variate[0]);
+};
+
+template <>
+inline Probability BoostDistribution1D<boost_normal>::CDF(const RandomVariate& variate) const {
+    return boost::math::cdf(dist_, variate[0]);
+};
+
+template <>
+inline Probability BoostDistribution1D<boost_bernoulli>::CDF(const RandomVariate& variate) const {
+    return boost::math::cdf(dist_, variate[0]);
+};
+
+template <>
+inline double BoostDistribution1D<boost_discrete>::CDF(const RandomVariate& variate) const {
+    double cdf = 0;
+    for (int j = 0; j < variate[0]; ++j) {
+      cdf += dist_.probabilities()[j];
+    }
+    return cdf;
+};
 
 template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
@@ -117,6 +179,15 @@ inline boost_bernoulli BoostDistribution1D<boost_bernoulli>::DistFromParams(
 }
 
 template <>
+inline boost_discrete BoostDistribution1D<boost_discrete>::DistFromParams(
+    const ParamsPtr& params) const {
+  const std::vector<int> weights =
+      params->GetListInt("Weights", "Weight of occurence of Discrete Values", {2, 2, 1});
+  return boost_discrete(weights.begin(), weights.end());
+}
+
+
+template <>
 inline RandomVariableSupport BoostDistribution1D<boost_uniform>::GetSupport()
     const {
   return RandomVariableSupport(1, std::make_pair(dist_.lower(), dist_.upper()));
@@ -137,9 +208,19 @@ inline RandomVariableSupport BoostDistribution1D<boost_bernoulli>::GetSupport()
       1, std::make_pair(0,1));
 }
 
+template <>
+inline RandomVariableSupport BoostDistribution1D<boost_discrete>::GetSupport() const {
+    std::pair<int, int> support_1d{
+        0,
+        std::numeric_limits<int>::max()};
+    return RandomVariableSupport(dist_.probabilities().size(), support_1d);
+  }
+
+
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;
 using UniformDistribution1D = BoostDistribution1D<boost_uniform>;
 using BernoulliDistribution1D = BoostDistribution1D<boost_bernoulli>;
+using DiscreteDistribution1D = BoostDistribution1D<boost_discrete>;
 
 }  // namespace commons
 }  // namespace bark
