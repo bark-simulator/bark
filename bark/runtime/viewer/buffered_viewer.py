@@ -36,7 +36,7 @@ class BufferedViewer:
     self._other_fc = self._vparams[
       "OtherFaceColor", "", [128, 128, 128, 128]] 
     self._agent_height = self._vparams[
-      "OtherFaceColor", "", 2.] 
+      "AgentHeight", "", 2.] 
     
   def DrawAgents(self, world, eval_agent_id):
     ego_agent = world.agents[eval_agent_id]
