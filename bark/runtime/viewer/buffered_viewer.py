@@ -35,6 +35,8 @@ class BufferedViewer:
       "OtherStrokeColor", "", [128, 128, 128, 255]] 
     self._other_fc = self._vparams[
       "OtherFaceColor", "", [128, 128, 128, 128]] 
+    self._agent_height = self._vparams[
+      "OtherFaceColor", "", 2.] 
     
   def DrawAgents(self, world, eval_agent_id):
     ego_agent = world.agents[eval_agent_id]
@@ -42,6 +44,7 @@ class BufferedViewer:
       agent_poly = agent.GetPolygonFromState(agent.state)
       agent_primitive = RenderPrimitive(agent_poly)
       agent_primitive.Add("agent_id", str(agent.id))
+      agent_primitive.Add("height", self._agent_height)
       if agent == ego_agent:
         agent_primitive.Add("stroke_color", self._ego_sc)
         agent_primitive.Add("fill_color", self._ego_fc)
