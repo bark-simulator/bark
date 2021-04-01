@@ -58,6 +58,7 @@ void python_agent(py::module m) {
       .def_property("goal_definition", &Agent::GetGoalDefinition,
                     &Agent::SetGoalDefinition)
       .def_property("first_valid_timestamp", &Agent::GetFirstValidTimestamp, &Agent::SetFirstValidTimestamp)
+      .def_property_readonly("sensed_world", &Agent::GetSensedWorld)
       .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)

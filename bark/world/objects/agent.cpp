@@ -30,7 +30,8 @@ Agent::Agent(const State& initial_state,
       history_(),
       max_history_length_(30),
       first_valid_timestamp_(0.0),
-      goal_definition_(goal_definition) {
+      goal_definition_(goal_definition),
+      sensed_world_() {
   if (params) {
     max_history_length_ = params->GetInt(
         "MaxHistoryLength",
