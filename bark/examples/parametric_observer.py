@@ -87,7 +87,7 @@ params_parametric["ObserverModelParametric"] \
                                                  [0.0, 0.0, 0.0, 0.01, 0.0],
                                                  [0.0, 0.0, 0.0, 0.0, 0.01]] 
 params_parametric["ObserverModelParametric"] \
-      ["OtherStateDeviationDist"]["Mean"] =       [0.1, 0.1, 0.0, 0.0, 0.0] # 5 elements
+      ["OtherStateDeviationDist"]["Mean"] =       [0.1, 1.0, 0.0, 0.0, 0.0] # 5 elements
 parametric_observer = ObserverModelParametric(params_parametric)
 
 

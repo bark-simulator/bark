@@ -304,7 +304,7 @@ class BaseViewer(Viewer):
       for i, (agent_id, agent) in enumerate(world.agents.items()):
           color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
           color_face = (1.0, 1.0, 1.0) # face color white
-          self.drawAgent(agent, color_line, alpha, color_face, hatch='')
+          self.drawAgent(agent, color_line, alpha, color_face, hatch='', draw_agent_id=False)
 
     def GetAgentColor(self, agent, eval_agent_ids):
       alpha = 1.0
@@ -417,7 +417,7 @@ class BaseViewer(Viewer):
         self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
                         dashed, zorder=1, linewidth=self.map_linewidth)
 
-    def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
+    def drawAgent(self, agent, color, alpha, facecolor, hatch='', draw_agent_id=True):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             state = agent.state
@@ -429,7 +429,7 @@ class BaseViewer(Viewer):
             centery = (shape.front_dist - 0.5*(shape.front_dist +
                                                shape.rear_dist)) * math.sin(pose[2]) + pose[1]
 
-            if self.draw_agent_id:
+            if draw_agent_id and self.draw_agent_id:
                 self.drawText(position=(centerx, centery), rotation=180.0*(1.0+pose[2]/math.pi), text="{}".format(agent.id),
                               coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
             

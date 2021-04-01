@@ -44,6 +44,12 @@ ObservedWorld ObserverModelParametric::Observe(
   // Clone world here since otherwise we change global world state
   auto observed_world = ObservedWorld(world->Clone(), agent_id);
 
+  const auto observe_only_for = GetObserveOnlyForAgents();
+  if(!observe_only_for.empty() && std::find(observe_only_for.begin(),
+     observe_only_for.end(), agent_id) == observe_only_for.end()) {
+    return observed_world;
+  }
+
   AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
   for (auto& agent : observed_world.GetOtherAgents()) {
     AddStateDeviationFrenet(agent.second, others_state_deviation_dist_);

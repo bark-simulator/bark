@@ -19,7 +19,9 @@ void python_observer(py::module m) {
   py::class_<ObserverModel, PyObserverModel, ObserverModelPtr>(
     m, "ObserverModel")
     .def(py::init<const bark::commons::ParamsPtr&>())
-    .def("Observe", &ObserverModel::Observe);
+    .def("Observe", &ObserverModel::Observe)
+    .def_property("observe_only_for_agents", &ObserverModel::GetObserveOnlyForAgents,
+                               &ObserverModel::SetObserveOnlyForAgents);
 
   py::class_<ObserverModelNone, ObserverModel,
              shared_ptr<ObserverModelNone>>(m, "ObserverModelNone")
@@ -40,7 +42,7 @@ void python_observer(py::module m) {
 
   py::class_<ObserverModelParametric, ObserverModel,
              shared_ptr<ObserverModelParametric>>(m, "ObserverModelParametric")
-    .def(py::init<const bark::commons::ParamsPtr&>())
+    .def(py::init<const bark::commons::ParamsPtr&> ())
     .def("__repr__", [](const ObserverModelParametric& m) {
           return "bark.models.observer.ObserverModelParametric";
     })
