@@ -1,4 +1,20 @@
 package(default_visibility = ["//visibility:public"])
+load("@npm//http-server:index.bzl", "http_server")
+load("@npm//webpack-cli:index.bzl", webpack = "webpack_cli")
+
+
+webpack(
+    name = "bundle",
+    outs = ["app.bundle.js"],
+    args = [
+        "external/barkscape_project/web_interface/src/app.js",
+        "--config",
+        "external/barkscape_project/web_interface/webpack.config.js",
+        "-o",
+        "$@",
+    ],
+    data = ["@barkscape_project//web_interface:websrcs"],
+)
 
 py_test(
   name = "benchmark_database",
@@ -124,6 +140,16 @@ py_binary(
           "//bark/runtime:runtime",
           ":paths"],
 )
+
+
+
+# py_binary(
+#   name = "barkscape_web",
+#   srcs = ["barkscape_web.py"],
+#   data = ["@barkscape_project//web_interface:server"],
+#   imports = ['../python/'],
+#   deps = [],
+# )
 
 py_library(
   name = "paths",
