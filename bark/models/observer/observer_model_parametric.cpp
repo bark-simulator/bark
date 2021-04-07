@@ -7,6 +7,7 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 
+#include <string>
 #include <memory>
 #include "bark/models/observer/observer_model_parametric.hpp"
 #include "bark/commons/distribution/distribution.hpp"
@@ -20,6 +21,7 @@ using namespace bark::world;
 using namespace bark::world::objects;
 using namespace bark::commons::transformation;
 using namespace bark::commons;
+using world::renderer::RendererPtr;
 
 ObserverModelParametric::ObserverModelParametric(bark::commons::ParamsPtr params) :
   ObserverModel(params),
@@ -43,6 +45,11 @@ ObservedWorld ObserverModelParametric::Observe(
   
   // Clone world here since otherwise we change global world state
   auto observed_world = ObservedWorld(world->Clone(), agent_id);
+
+  // NOTE: generate child renderer for the observed world
+  RendererPtr renderer = world->GetRenderer()->AddChildRenderer(
+    std::to_string(agent_id));
+  observed_world.SetRenderer(renderer);
 
   AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
   for (auto& agent : observed_world.GetOtherAgents()) {

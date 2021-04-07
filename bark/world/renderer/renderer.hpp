@@ -25,6 +25,7 @@ using PrimitivesMap = std::map<std::string, std::vector<RenderPrimitivePtr>>;
 
 class Renderer {
  public:
+  using RendererMap = std::map<std::string, std::shared_ptr<Renderer>>;
   Renderer() {}
   void Add(std::string name, const RenderPrimitivePtr& rp) {
     buffer_[name].push_back(rp);
@@ -38,8 +39,22 @@ class Renderer {
     return buffer_;
   }
 
+  std::shared_ptr<Renderer> AddChildRenderer(std::string name) {
+    children_renderer_[name] = std::make_shared<Renderer>();
+    return children_renderer_[name];
+  }
+
+  std::shared_ptr<Renderer> GetChildRenderer(std::string name) const {
+    return children_renderer_.at(name);
+  }
+
+  RendererMap GetChildrenRenderer() const {
+    return children_renderer_;
+  }
+
  private:
   PrimitivesMap buffer_;
+  RendererMap children_renderer_;
 };
 
 using RendererPtr = std::shared_ptr<Renderer>;
