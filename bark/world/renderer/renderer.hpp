@@ -33,6 +33,7 @@ class Renderer {
 
   void Clear() {
     buffer_.clear();
+    renderer_children_.clear();
   }
 
   PrimitivesMap GetRenderPrimitives() {
