@@ -82,8 +82,8 @@ load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
 yarn_install(
     # Name this npm so that Bazel Label references look like @npm//package
     name = "npm",
-    package_json = "@barkscape_project//web_interface:package.json",
-    yarn_lock = "@barkscape_project//web_interface:yarn.lock",
+    package_json = "@barkscape_project//barkscape/web:package.json",
+    yarn_lock = "@barkscape_project//barkscape/web:yarn.lock",
 )
 # --------------------------------------------------
 

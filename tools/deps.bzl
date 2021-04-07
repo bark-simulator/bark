@@ -115,18 +115,18 @@ cc_library(
     remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
 
-    # _maybe(
-    # git_repository,
-    # name = "barkscape_project",
-    # branch = "master",
-    # remote = "https://github.com/bark-simulator/barkscape.git",
-    # )
-
     _maybe(
-        native.local_repository,
-        name = "barkscape_project",
-        path = "/Users/hart/Development/barkscape",
+    git_repository,
+    name = "barkscape_project",
+    branch = "master",
+    remote = "https://github.com/bark-simulator/barkscape.git",
     )
+
+    # _maybe(
+    #     native.local_repository,
+    #     name = "barkscape_project",
+    #     path = "/Users/hart/Development/barkscape",
+    # )
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():

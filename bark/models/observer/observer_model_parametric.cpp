@@ -47,7 +47,7 @@ ObservedWorld ObserverModelParametric::Observe(
   auto observed_world = ObservedWorld(world->Clone(), agent_id);
 
   // NOTE: generate child renderer for the observed world
-  RendererPtr renderer = world->GetRenderer()->AddChildRenderer(
+  RendererPtr renderer = world->GetRenderer()->AddRendererChild(
     std::to_string(agent_id));
   observed_world.SetRenderer(renderer);
 

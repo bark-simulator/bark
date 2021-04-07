@@ -39,22 +39,26 @@ class Renderer {
     return buffer_;
   }
 
-  std::shared_ptr<Renderer> AddChildRenderer(std::string name) {
-    children_renderer_[name] = std::make_shared<Renderer>();
-    return children_renderer_[name];
+  std::shared_ptr<Renderer> AddRendererChild(std::string name) {
+    renderer_children_[name] = std::make_shared<Renderer>();
+    return renderer_children_[name];
   }
 
-  std::shared_ptr<Renderer> GetChildRenderer(std::string name) const {
-    return children_renderer_.at(name);
+  std::shared_ptr<Renderer> GetRendererChild(std::string name) const {
+    return renderer_children_.at(name);
   }
 
-  RendererMap GetChildrenRenderer() const {
-    return children_renderer_;
+  RendererMap GetRendererChildren() const {
+    return renderer_children_;
+  }
+
+  void ClearRendererChildren() {
+    renderer_children_.clear();
   }
 
  private:
   PrimitivesMap buffer_;
-  RendererMap children_renderer_;
+  RendererMap renderer_children_;
 };
 
 using RendererPtr = std::shared_ptr<Renderer>;
