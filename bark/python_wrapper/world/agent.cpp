@@ -60,6 +60,7 @@ void python_agent(py::module m) {
       .def_property("first_valid_timestamp", &Agent::GetFirstValidTimestamp, &Agent::SetFirstValidTimestamp)
       .def("IsValidAtTime", &Agent::IsValidAtTime)
       .def("SetAgentId", &Object::SetAgentId)
+      .def("GetPolygonFromState", &Agent::GetPolygonFromState)
       .def("GenerateRoadCorridor", &Agent::GenerateRoadCorridor)
       .def("AtGoal", &Agent::AtGoal)
       .def("InsideRoadCorridor", &Agent::InsideRoadCorridor)

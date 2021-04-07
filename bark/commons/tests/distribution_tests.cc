@@ -88,6 +88,23 @@ TEST(distribution_test, uniform_dist_1d) {
   EXPECT_NEAR(dist_uniform.CDF({0.0}), 3.0 * uniform_prob, 0.001f);
 }
 
+// TODO(fortiss): fill our this test
+TEST(distribution_test, bernoulli_dist_1d) {
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
+  params_ptr->SetReal("Probability", 0.3);
+  params_ptr->SetInt("RandomSeed", 1000.0);
+
+  auto dist_bernoulli = bark::commons::BernoulliDistribution1D(params_ptr);
+
+  size_t samples = 100000;
+  double mean = 0.0;
+  for (size_t i = 0; i < samples; ++i) {
+    mean += dist_bernoulli.Sample()[0];
+  }
+  mean /= samples;
+  EXPECT_NEAR(mean, 0.3, 0.01);
+}
+
 TEST(distribution_test, multivariate_distribution) {
   // First test zero covariances
   auto params_ptr1 = std::make_shared<bark::commons::SetterParams>(true);

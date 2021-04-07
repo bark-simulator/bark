@@ -11,7 +11,6 @@ import time
 import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
