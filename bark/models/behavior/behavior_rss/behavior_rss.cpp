@@ -18,10 +18,7 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-Trajectory BehaviorRSSConformant::Plan(
-    double min_planning_time, const world::ObservedWorld& observed_world) {
-  SetBehaviorStatus(BehaviorStatus::VALID);
-
+bool BehaviorRSSConformant::PreprocessLaneInformation(const world::ObservedWorld& observed_world) {
   const auto& lane_corr = observed_world.GetLaneCorridor();
   if (!initial_lane_corr_) {
     initial_lane_corr_ = lane_corr;
@@ -54,7 +51,16 @@ Trajectory BehaviorRSSConformant::Plan(
     behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
   }
 
-  if (!lane_corr) {
+  if (!lane_corr) return false; else return true;
+}
+
+Trajectory BehaviorRSSConformant::Plan(
+    double min_planning_time, const world::ObservedWorld& observed_world) {
+  SetBehaviorStatus(BehaviorStatus::VALID);
+
+  bool preprocess_lane_res = PreprocessLaneInformation(observed_world);
+
+  if (!preprocess_lane_res) {
     VLOG(4) << "Agent " << observed_world.GetEgoAgentId()
             << ": Behavior status has expired!" << std::endl;
     SetBehaviorStatus(BehaviorStatus::EXPIRED);

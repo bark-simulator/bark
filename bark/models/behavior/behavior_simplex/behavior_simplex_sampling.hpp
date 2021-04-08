@@ -50,6 +50,7 @@ class BehaviorSimplexSampling : public BehaviorRSSConformant {
 
   virtual ~BehaviorSimplexSampling() {}
 
+  bool PreprocessLaneInformation(const ObservedWorld& observed_world);
   Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world);
 
@@ -62,6 +63,8 @@ class BehaviorSimplexSampling : public BehaviorRSSConformant {
   unsigned int num_samples_;
   double current_expected_safety_violation_;
   double violation_threshold_;
+  LaneCorridorPtr initial_lane_corr_;
+  float minimum_safety_corridor_length_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSimplexSampling::Clone() const {

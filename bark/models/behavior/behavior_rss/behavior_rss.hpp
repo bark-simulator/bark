@@ -82,6 +82,8 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual ~BehaviorRSSConformant() {}
 
+  bool PreprocessLaneInformation(const ObservedWorld& observed_world);
+
   Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world);
 
