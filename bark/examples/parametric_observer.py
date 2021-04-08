@@ -133,4 +133,4 @@ for _ in range(0, 3):
   df = env.ExtractTimeSeries()
   print(df)
 
-viewer.export_video(filename="/home/julo/video", remove_image_dir=False)
+viewer.export_video(filename="./example_video", remove_image_dir=False)

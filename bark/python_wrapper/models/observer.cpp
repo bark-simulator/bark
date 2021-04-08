@@ -42,7 +42,7 @@ void python_observer(py::module m) {
 
   py::class_<ObserverModelParametric, ObserverModel,
              shared_ptr<ObserverModelParametric>>(m, "ObserverModelParametric")
-    .def(py::init<const bark::commons::ParamsPtr&> ())
+    .def(py::init<const bark::commons::ParamsPtr&>())
     .def("__repr__", [](const ObserverModelParametric& m) {
           return "bark.models.observer.ObserverModelParametric";
     })
