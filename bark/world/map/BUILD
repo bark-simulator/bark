@@ -108,3 +108,14 @@ cc_library(
         "@boost//:graph",
     ]
 )
+
+cc_library(
+    name = "commons",
+    hdrs = [
+        "commons.hpp"
+    ],
+    deps = [
+        "//bark/world:world"
+    ],
+    visibility = ["//visibility:public"],
+)

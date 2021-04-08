@@ -44,6 +44,8 @@ cc_binary(
     "//bark/models/observer:observer_model_parametric",
     "//bark/runtime/viewer:viewer",
     "//bark/world:world",
+    "//bark/world/renderer:renderer",
+    "//bark/world/renderer:primitive",
     "//bark/runtime:cc_runtime",
     "//bark/python_wrapper/models/plan:planners",
     "//bark/python_wrapper/tests:logging_tests",

@@ -44,7 +44,6 @@ setup(
       "autopep8>=1.4.4",
       "cpplint>=1.4.4",
       "pygame>=1.9.6",
-      "panda3d>=1.10.5",
       "aabbtree>=2.3.1",
       "ray>=0.8.5",
       "psutil>=5.7.2",
