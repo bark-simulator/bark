@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "bark/commons/transformation/frenet.hpp"
+#include "bark/world/map/commons.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
@@ -184,7 +185,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
 
   // vehicles
   if (leading_vehicle.first) {
-    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first, lane_corr);
+    leading_distance =
+        CalcNetDistance(observed_world, leading_vehicle.first, lane_corr);
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
     leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);
@@ -367,7 +369,8 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
-    current_lane_corridor = constant_lane_corr_;
+    current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
   } else {
     current_lane_corridor = lane_corr_;
   }

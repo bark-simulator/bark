@@ -15,7 +15,8 @@ cc_library(
         "//bark/models/observer:observer_model",
         "//bark/models/observer:observer_model_none",
         "//bark/world/evaluation:base_evaluator",
-        "//bark/world/goal_definition:goal_definition"
+        "//bark/world/goal_definition:goal_definition",
+        "//bark/world/renderer:renderer"
     ],
     visibility = ["//visibility:public"],
 )
@@ -33,6 +34,7 @@ cc_library(
         "//bark/models:include",
         "//bark/world/evaluation:include",
         "//bark/world/goal_definition:include",
+        "//bark/world/renderer:include"
     ],
     visibility = ["//visibility:public"],
 )
