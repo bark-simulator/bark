@@ -225,7 +225,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # 6. set observer model for the world
     observer_model, _, _ = self.eval_configuration(
       self._observer_model_params, "ConfigObserverModel", [], {})
-    world.observer_model = observer_model
+    scenario._observer_model = observer_model
     
     return scenario
 
