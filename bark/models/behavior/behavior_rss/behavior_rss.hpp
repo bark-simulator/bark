@@ -155,10 +155,12 @@ class BehaviorRSSConformant : public BehaviorModel {
     safety_polygons_ = sp;
   }
 
- private:
+ protected:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorSafety> behavior_safety_model_;
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
+
+ private:  
   BehaviorRSSConformantStatus behavior_rss_status_;
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
