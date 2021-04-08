@@ -53,7 +53,10 @@ void python_geometry(py::module m) {
 
   m.def("Distance", py::overload_cast<const Line&, const Point2d&>(&Distance),
         "Returns euclidean distance between Line2d and Point2d.");
-
+  
+  m.def("SignedAngleDiff", &bark::geometry::SignedAngleDiff,
+        "Signed angle diff");
+  
   m.def("SignedDistance",
         py::overload_cast<const Line&, const Point2d&, const double&>(
             &SignedDistance),
@@ -175,6 +178,8 @@ void python_geometry(py::module m) {
            "Create polygon with center point and point list")
       .def(py::init<Pose, const Matrix<double, Dynamic, Dynamic>&>(),
            "Create polygon with center point and point list")
+      .def(py::init<const Line&, const Line&>(),
+           "Create polygon with left and right line")
       .def(py::init<Pose, const Line&>(),
            "Create polygon with center point and line enclosing polygon")
       .def("AddPoint", &Polygon::AddPoint, "add a point")
@@ -227,7 +232,9 @@ void python_geometry(py::module m) {
             return p;
           }));
   m.def("CalculateBoundingBoxPolygon", &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
-
+  m.def("Intersection", &bark::geometry::Intersection<Polygon, Line>, "return intersection points");
+  m.def("Intersection", &bark::geometry::Intersection<Line, Line>, "return intersection points");
+  
   python_standard_shapes(
       m.def_submodule("standard_shapes",
                       "Define several standard car, pedestrians,... shapes"));
