@@ -131,8 +131,8 @@ TEST(frenet_state_two_way, straight_line_top_right) {
 
 TEST(calculate_state_diff, zero_oriented_no_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{1.0, 2.0, 3.0, 5.0, 0.0};
-  FrenetState state2{5.0, 10.0, 4.0, 3.0, 0.0};
+  FrenetState state1{1.0, 2.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{5.0, 10.0, 4.0, 3.0, 0.0, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
   const auto shape1 = Polygon(
@@ -154,8 +154,8 @@ TEST(calculate_state_diff, zero_oriented_no_overlap) {
 
 TEST(calculate_state_diff, pi2_minuspi_oriented_no_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{5.0, 2.0, 3.0, 1.0, B_PI_2};
-  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI};
+  FrenetState state1{5.0, 2.0, 3.0, 1.0, B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
   const auto shape1 = Polygon(
@@ -177,8 +177,8 @@ TEST(calculate_state_diff, pi2_minuspi_oriented_no_overlap) {
 
 TEST(calculate_state_diff, pi2_minuspi_oriented_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{2.0, 2.0, 3.0, 1.0, B_PI_2};
-  FrenetState state2{1.0, 3.95, 1.0, 2.0, -B_PI};
+  FrenetState state1{2.0, 2.0, 3.0, 1.0, B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 3.95, 1.0, 2.0, -B_PI, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
   const auto shape1 = Polygon(
@@ -200,8 +200,8 @@ TEST(calculate_state_diff, pi2_minuspi_oriented_overlap) {
 
 TEST(calculate_state_diff, minus_pi2_minuspi4_oriented_no_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{8.0, 2.0, 3.0, 1.0, -B_PI_2};
-  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI_2/3};
+  FrenetState state1{8.0, 2.0, 3.0, 1.0, -B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI_2/3, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 5.0, length2 = 4.0;
   const auto shape1 = Polygon(
@@ -223,8 +223,8 @@ TEST(calculate_state_diff, minus_pi2_minuspi4_oriented_no_overlap) {
 
 TEST(calculate_state_diff, lateral_zero_oriented_no_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{1.0, 0.0, 3.0, 5.0, 0.0};
-  FrenetState state2{5.0, 0.0, 4.0, 3.0, 0.0};
+  FrenetState state1{1.0, 0.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{5.0, 0.0, 4.0, 3.0, 0.0, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
   const auto shape1 = Polygon(
@@ -246,8 +246,8 @@ TEST(calculate_state_diff, lateral_zero_oriented_no_overlap) {
 
 TEST(calculate_state_diff, both_zero_oriented_no_overlap) {
   // some line with three points from x=1 to x=10, y=0
-  FrenetState state1{1.0, 4.0, 3.0, 5.0, 0.0};
-  FrenetState state2{1.0, 4.0, 4.0, 3.0, 0.0};
+  FrenetState state1{1.0, 4.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{1.0, 4.0, 4.0, 3.0, 0.0, 0.0, 0.0};
 
   double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
   const auto shape1 = Polygon(

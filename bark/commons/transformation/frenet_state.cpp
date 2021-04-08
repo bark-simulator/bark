@@ -44,7 +44,6 @@ FrenetState::FrenetState(const State& state, const Line& path) {
   angleRoad = mg::GetTangentAngleAtS(path, lon);
   angle = mg::SignedAngleDiff(angleRoad, orientation);
   auto direction_vector = pos - nearest_point;
-  auto norm_tangent_angle = mg::Norm0To2PI(tangent_angle);
   double diff = mg::SignedAngleDiff(
       angleRoad,
       atan2(bg::get<1>(direction_vector), bg::get<0>(direction_vector)));
