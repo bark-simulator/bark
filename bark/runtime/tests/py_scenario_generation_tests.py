@@ -254,9 +254,7 @@ class ScenarioGenerationTests(unittest.TestCase):
     conf_params["ObserverModel"] = {
       "Description": "world_observer",
       "ConfigObserverModel": {
-        "Type": "ObserverModelParametricReader",
-        "EgoStateDeviationDist": "MultivariateDistribution",
-        "OtherStateDeviationDist": "MultivariateDistribution"
+        "Type": "ObserverModelParametricReader"
       }
     }
     scenario_generation = ConfigurableScenarioGeneration(
@@ -271,7 +269,7 @@ class ScenarioGenerationTests(unittest.TestCase):
       scenario_generation._scenario_list[0]._agent_list))
 
     scenario = scenario_loader.get_scenario(idx=0)
-    params.Save("default_params.json")
+    params.Save("default_params_observer.json")
 
 
   def test_dataset_scenario_generation_full(self):
