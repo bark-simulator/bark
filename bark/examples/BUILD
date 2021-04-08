@@ -57,7 +57,6 @@ py_test(
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:pygame_viewer",
           "//bark/runtime/viewer:matplotlib_viewer",
-          "//bark/runtime/viewer:panda3d_easy",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           "//bark/runtime:runtime",
           ":paths"],

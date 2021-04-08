@@ -78,12 +78,6 @@ viewer = MPViewer(params=param_server,
                   x_range=[-35, 35],
                   y_range=[-35, 35],
                   follow_agent_id=True)
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=True,
-#                        light_pose=[1000, 1000, 100000],
-#                        camera_pose=[1000, 980, 100])
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",

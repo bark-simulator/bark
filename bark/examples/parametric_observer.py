@@ -15,7 +15,6 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
-from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.examples.paths import Data
 
 from bark.core.world.opendrive import *
@@ -99,12 +98,6 @@ viewer = MPViewer(params=param_server,
                   x_range=[-35, 35],
                   y_range=[-35, 35],
                   follow_agent_id=True)
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=True,
-#                        light_pose=[1000, 1000, 100000],
-#                        camera_pose=[1000, 980, 100])
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",
