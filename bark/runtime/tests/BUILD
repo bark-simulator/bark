@@ -35,15 +35,20 @@ py_test(
           ],
 )
 
-#py_test(
-#  name = "py_runtime_tests",
-#  srcs = ["py_runtime_tests.py"],
-#  data = ['//bark:generate_core',
-#            ':xodr_data'],
-#  deps = ["//bark/runtime/commons:commons",
-#          "//bark/runtime:runtime",
-#          "//bark/runtime/scenario/scenario_generation:scenario_generation"],
-#)
+py_test(
+  name = "py_runtime_tests",
+  srcs = ["py_runtime_tests.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data',
+          '//bark/examples:paths'],
+  deps = ["//bark/runtime/commons:parameters",
+          "//bark/runtime/commons:xodr_parser",
+          "//bark/runtime/viewer:pygame_viewer",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/viewer:buffered_viewer",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "//bark/runtime:runtime"],
+)
 
 cc_library(
     name="py_param_server_test_helper",

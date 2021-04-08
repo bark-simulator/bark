@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "bark/commons/transformation/frenet.hpp"
+#include "bark/world/map/commons.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
@@ -371,7 +372,8 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
-    current_lane_corridor = constant_lane_corr_;
+    current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
   } else {
     current_lane_corridor = lane_corr_;
   }

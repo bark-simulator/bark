@@ -41,7 +41,16 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       self._params["Scenario"]["Generation"]["ConfigurableScenarioGeneration"]
     self._map_file_name = params_temp["MapFilename",
       "Path to the open drive map", 
-      "bark/runtime/tests/data/city_highway_straight.xodr",    ]
+      "bark/runtime/tests/data/city_highway_straight.xodr", ]
+    self._observer_model_params = params_temp[
+      "ObserverModel",
+      "World observer for the simulation.", {
+        "Description": "world_observer",
+        "ConfigObserverModel": {
+          "Type": "ObserverModelNoneReader"
+        }
+    }]
+
     self._sinks_sources = params_temp["SinksSources", "Random seed used for sampling", [{
       "SourceSink": [[-1.057, -172.1965],  [-1.894, 14.1725] ],
       "Description": "left_lane",
@@ -83,6 +92,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
      #     self._sink_source_default_params
 
   def add_config_reader_parameter_servers(self, description, config_type, config_reader):
+    
     self._sink_source_parameter_servers[config_type].append(
       {"Description": description,
        "ParameterServers" : config_reader.get_param_servers()}
@@ -208,8 +218,14 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
       #collected_sources_sinks_default_param_configs.append(sink_source_config)
 
     #self._sink_source_default_params = sink_source_default_params
+    
     scenario._eval_agent_ids = [i for i, val in enumerate(controlled_agent_ids_all) if val] 
     scenario._agent_list = self.update_agent_ids(agent_list)
+    
+    # 6. set observer model for the world
+    observer_model, _, _ = self.eval_configuration(
+      self._observer_model_params, "ConfigObserverModel", [], {})
+    world.observer_model = observer_model
     
     return scenario
 

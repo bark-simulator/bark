@@ -15,7 +15,6 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
 from bark.runtime.runtime import Runtime
-from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.examples.paths import Data
 
 from bark.core.world.opendrive import *

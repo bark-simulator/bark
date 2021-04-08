@@ -25,19 +25,17 @@ class MultivariateDistribution : public Distribution {
         seed_(params->GetInt(
             "RandomSeed", "Specifies seed for mersenne twister engine", 1234)),
         generator_(seed_),
-        dist_(),
-        mean_(MeanFromParams(params)) {
-    auto covariance = CovarFromParams(params);
-    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenSolver(covariance);
-    transform_ = eigenSolver.eigenvectors() *
+        dist_(){
+    mean_ = MeanFromParams(params);
+    covariance_ = CovarFromParams(params);
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eigenSolver(covariance_);
+    transform_ = eigenSolver.eigenvectors() * // cholesky decomposition
                  eigenSolver.eigenvalues().cwiseSqrt().asDiagonal();
   }
 
   virtual RandomVariate Sample();
 
-  virtual Probability Density(const RandomVariate& variate) const {
-    return 0.0;
-  };
+  virtual Probability Density(const RandomVariate& variate) const;
 
   virtual Probability CDF(const RandomVariate& variate) const { return 0.0; };
 
@@ -56,6 +54,7 @@ class MultivariateDistribution : public Distribution {
   std::mt19937 generator_;
   std::normal_distribution<RandomVariableValueType> dist_;
   Eigen::VectorXd mean_;
+  Eigen::MatrixXd covariance_;
   Eigen::MatrixXd transform_;
 };
 
@@ -68,6 +67,14 @@ inline RandomVariate MultivariateDistribution::Sample() {
   return sample;
 }
 
+inline Probability MultivariateDistribution::Density(const RandomVariate& variate) const {
+  const Eigen::VectorXd x = Eigen::Map<const Eigen::VectorXd>(variate.data(), variate.size());
+  double sqrt2pi = std::sqrt(2 * M_PI);
+  double quadform  = (x - mean_).transpose() * covariance_.inverse() * (x - mean_);
+  double norm = std::pow(sqrt2pi, - x.size()) * std::pow(covariance_.determinant(), -0.5);
+  return norm * exp(-0.5 * quadform);
+}
+
 inline Eigen::MatrixXd MultivariateDistribution::CovarFromParams(
     const ParamsPtr& params) const {
   auto covar_vector = params->GetListListFloat(
@@ -78,7 +85,7 @@ inline Eigen::MatrixXd MultivariateDistribution::CovarFromParams(
   }
 
   Eigen::MatrixXd covar(covar_vector.size(), covar_vector.size());
-  for (int i = 0; i < covar_vector.size(); ++i) {
+  for (unsigned int i = 0; i < covar_vector.size(); ++i) {
     covar.row(i) = Eigen::Map<Eigen::VectorXd, Eigen::Unaligned>(
         covar_vector[i].data(), covar_vector[i].size());
   }

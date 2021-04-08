@@ -40,11 +40,15 @@ class ParameterServer(Params):
             return self.store[new_key]
         else:
             if isinstance(key, tuple):  # if key for parameter
+                # is the default parameter a list of dicts, then generate a child list of param servers
                 if isinstance(default_val, list) and all(type(el) is dict for el in default_val):
                   value_tmp = []
                   for list_el in default_val:
                     value_tmp.append(ParameterServer(json=list_el))
                   default_val = value_tmp
+                # is the default parameter a single dict, then generate a single param server child
+                if isinstance(default_val, dict):
+                  default_val = ParameterServer(json=default_val)
                 self.store[new_key] = default_val
                 if self.log_if_default:
                   logging.warning("Using default {} for {}".format(
@@ -98,6 +102,9 @@ class ParameterServer(Params):
           for list_el in value:
             value_tmp.append(ParameterServer(json=list_el))
           value = value_tmp
+
+        if isinstance(value, dict):
+          value = ParameterServer(json=value)
 
         if isinstance(key, str):
           self._set_item_from_hierarchy_string(key, value)

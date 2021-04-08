@@ -372,11 +372,12 @@ inline std::string Shape<G, T>::ShapeToString() const {
   return ss.str();
 }
 
-// template<typename G, typename T>
-// inline bool Shape<G,T>::Collide(const G& shape1, const G& shape2)
-//{
-//  return Collide(shape1, shape2);
-//}
+template<typename G, typename T>
+std::vector<Point2d> Intersection(const G& g1, const T& g2) {
+  std::vector<Point2d> intersecting_points;
+  bg::intersection(g1.obj_, g2.obj_, intersecting_points);
+  return intersecting_points;
+}
 
 }  // namespace geometry
 }  // namespace bark

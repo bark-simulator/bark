@@ -16,6 +16,7 @@
 #include "bark/python_wrapper/world/map.hpp"
 #include "bark/python_wrapper/world/opendrive.hpp"
 #include "bark/python_wrapper/world/world.hpp"
+#include "bark/python_wrapper/world/renderer.hpp"
 #include "bark/world/map/roadgraph.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/world/tests/make_test_world.hpp"
@@ -61,6 +62,8 @@ void python_world(py::module m) {
       .def("Copy", &World::Clone)
       .def_property("observer_model", &World::GetObserverModel,
                     &World::SetObserverModel)
+      .def_property("renderer", &World::GetRenderer,
+                    &World::SetRenderer)
       .def("GetWorldAtTime", &World::GetWorldAtTime)
       // .def("FillWorldFromCarla",&World::FillWorldFromCarla)
       // .def("PlanAgents",&World::PlanSpecificAgents)
@@ -126,4 +129,5 @@ void python_world(py::module m) {
   python_evaluation(m.def_submodule("evaluation", "evaluators"));
 
   python_prediction(m.def_submodule("prediction", "Prediction Settings"));
+  python_renderer(m.def_submodule("renderer", "Renderer object."));
 }
