@@ -29,6 +29,7 @@ void python_commons(py::module m) {
       .def("getReal", &Params::GetReal)
       .def("getInt", &Params::GetInt)
       .def("getListFloat", &Params::GetListFloat)
+      .def("getListInt", &Params::GetListInt)
       .def("getListListFloat", &Params::GetListListFloat)
       .def("getString", &Params::GetString)
       .def("setBool", &Params::SetBool)

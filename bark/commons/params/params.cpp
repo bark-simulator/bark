@@ -26,6 +26,8 @@ DistributionPtr Params::GetDistributionFromType(
                            distr_params)
   GET_DISTRIBUTION_IF_TYPE(BernoulliDistribution1D, distribution_type,
                            distr_params)
+  GET_DISTRIBUTION_IF_TYPE(DiscreteDistribution1D, distribution_type,
+                           distr_params)
   GET_DISTRIBUTION_IF_TYPE(MultivariateDistribution, distribution_type,
                            distr_params)
   GET_DISTRIBUTION_IF_TYPE(FixedValue, distribution_type, distr_params)
