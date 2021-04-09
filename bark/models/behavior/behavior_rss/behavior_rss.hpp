@@ -25,9 +25,11 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+using bark::commons::transformation::FrenetState;
 using bark::models::behavior::BehaviorIDMClassic;
 using bark::models::behavior::BehaviorSafety;
 using bark::models::dynamic::AccelerationLimits;
+using bark::models::dynamic::StateDefinition;
 using bark::world::map::LaneCorridor;
 using bark::world::map::LaneCorridorPtr;
 using dynamic::Trajectory;
@@ -35,9 +37,15 @@ using world::ObservedWorld;
 using world::evaluation::BaseEvaluator;
 using world::evaluation::ComputeSafetyPolygon;
 using world::evaluation::SafetyPolygon;
+using bark::geometry::Polygon;
+using bark::geometry::Within;
+using bark::geometry::Collide;
 using world::objects::AgentId;
+using bark::world::opendrive::XodrRoadId;
+using bark::world::opendrive::XodrDrivingDirection;
 #ifdef RSS
 using bark::world::evaluation::EvaluatorRSS;
+
 #endif
 enum class BehaviorRSSConformantStatus { SAFETY_BEHAVIOR, NOMINAL_BEHAVIOR };
 
@@ -49,28 +57,42 @@ auto as_integer(Enumeration const value) {
 class BehaviorRSSConformant : public BehaviorModel {
  public:
   explicit BehaviorRSSConformant(const commons::ParamsPtr& params)
-      : BehaviorModel(params),
-        nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
-            GetParams()->AddChild("NominalBehavior"))),
-        behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
-        rss_evaluator_(),
-        behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
-        world_time_of_last_rss_violation_(-1),
-        initial_lane_corr_(nullptr),
-        minimum_safety_corridor_length_(GetParams()->GetReal(
-            "MinimumSafetyCorridorLength",
-            "Minimal lenght a safety corridor should have that a lateral "
-            "safety maneuver is performed.",
-            0.f)),
-        acceleration_limits_(),
-        acc_restrictions_for_nominal_(GetParams()->GetBool(
-            "AccRestrictionsForNominal",
-            "Restrict Nominal Model using Acc Limits", false)),
-        acc_restrictions_for_safety_(GetParams()->GetBool(
-            "AccRestrictionsForSafety",
-            "Restrict Safety Model using Acc Limits", false)),
-        no_safety_maneuver_(GetParams()->GetBool(
-            "NoSafetyManeuver", "No triggering of safety maneuver", false)) {
+    : BehaviorModel(params),
+      nominal_behavior_model_(std::make_shared<BehaviorIDMLaneTracking>(
+        GetParams()->AddChild("NominalBehavior"))),
+      behavior_safety_model_(std::make_shared<BehaviorSafety>(GetParams())),
+      rss_evaluator_(),
+      behavior_rss_status_(BehaviorRSSConformantStatus::NOMINAL_BEHAVIOR),
+      world_time_of_last_rss_violation_(-1),
+      initial_lane_corr_(nullptr),
+      roadx_polygon_(),
+      minimum_safety_corridor_length_(GetParams()->GetReal(
+        "MinimumSafetyCorridorLength",
+        "Minimal lenght a safety corridor should have that a lateral "
+        "safety maneuver is performed.",
+        0.)),
+      acceleration_limits_vehicle_cs_(),
+      acceleration_limits_street_cs_(),
+      acc_restrictions_for_nominal_(GetParams()->GetBool(
+        "AccRestrictionsForNominal",
+        "Restrict Nominal Model using Acc Limits", false)),
+      acc_restrictions_for_safety_(GetParams()->GetBool(
+        "AccRestrictionsForSafety",
+        "Restrict Safety Model using Acc Limits", false)),
+      no_safety_maneuver_(GetParams()->GetBool(
+        "NoSafetyManeuver", "No triggering of safety maneuver", false)),
+      switch_off_lat_limits_on_road_x_(GetParams()->GetBool(
+        "SwitchOffLatLimitsOnRoadX", "No lateral limits within road x", false)),
+      roadx_id_(GetParams()->GetInt(
+        "RoadXId", "Road ids for road x without lat limits", 1)),
+      rss_vlat_threshold_(GetParams()->GetReal(
+        "RSSVlatThreshold",
+        "RSS lat velocity threshold.",
+        0.1)) {
+    dynamic::Input input(2);
+    input << 0.0, 0.0;
+    SetLastAction(input);
+
     try {
 #ifdef RSS
       rss_evaluator_ = std::make_shared<EvaluatorRSS>(GetParams());
@@ -112,17 +134,27 @@ class BehaviorRSSConformant : public BehaviorModel {
     rss_evaluator_ = evaluator;
   }
 
-  void SetAccelerationLimits(const AccelerationLimits& limits) {
-    acceleration_limits_ = limits;
+  void SetAccelerationLimitsVehicleCs(const AccelerationLimits& limits) {
+    acceleration_limits_vehicle_cs_ = limits;
   }
 
-  AccelerationLimits GetAccelerationLimits() const {
-    return acceleration_limits_;
+  AccelerationLimits GetAccelerationLimitsVehicleCs() const {
+    return acceleration_limits_vehicle_cs_;
+  }
+
+  void SetAccelerationLimitsStreetCs(const AccelerationLimits& limits) {
+    acceleration_limits_street_cs_ = limits;
+  }
+
+  AccelerationLimits GetAccelerationLimitsStreetCs() const {
+    return acceleration_limits_street_cs_;
   }
 
 #ifdef RSS
-  AccelerationLimits ConvertRestrictions(
-      const ::ad::rss::state::AccelerationRestriction& acc_restrictions);
+  void ConvertRestrictions(
+      double min_planning_time,
+      const ::ad::rss::state::AccelerationRestriction& acc_restrictions,
+      const ObservedWorld& observed_world);
 
   void ApplyRestrictionsToModel(const AccelerationLimits& limits,
                                 std::shared_ptr<BehaviorModel> model);
@@ -166,11 +198,16 @@ class BehaviorRSSConformant : public BehaviorModel {
   BehaviorRSSConformantStatus behavior_rss_status_;
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
-  float minimum_safety_corridor_length_;
-  AccelerationLimits acceleration_limits_;
+  double minimum_safety_corridor_length_;
+  double rss_vlat_threshold_;
+  AccelerationLimits acceleration_limits_vehicle_cs_;
+  AccelerationLimits acceleration_limits_street_cs_;
   bool acc_restrictions_for_nominal_;
   bool acc_restrictions_for_safety_;
   bool no_safety_maneuver_;
+  bool switch_off_lat_limits_on_road_x_;
+  XodrRoadId roadx_id_;
+  Polygon roadx_polygon_;
 #ifdef RSS
   ::ad::rss::state::LongitudinalResponse lon_response_;
   ::ad::rss::state::LateralResponse lat_left_response_;

@@ -11,7 +11,6 @@ import time
 import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-from bark.runtime.viewer.panda3d_easy import Panda3dViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
@@ -76,11 +75,6 @@ scenarios = \
 
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
-
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=agent3.id)
 
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",

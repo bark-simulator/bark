@@ -39,10 +39,12 @@ using world::WorldPtr;
 class ObserverModel : public commons::BaseType {
  public:
   explicit ObserverModel(bark::commons::ParamsPtr params)
-    : BaseType(params) {}
+    : BaseType(params),
+      observe_only_for_agents_() {}
 
   ObserverModel(const ObserverModel& observer_model)
-    : BaseType(observer_model.GetParams()) {}
+    : BaseType(observer_model.GetParams()),
+      observe_only_for_agents_() {}
 
   virtual ~ObserverModel() {}
 
@@ -54,6 +56,17 @@ class ObserverModel : public commons::BaseType {
    */
   virtual ObservedWorld Observe(
     const WorldPtr& world, const AgentId& agent_id) = 0;
+
+  void SetObserveOnlyForAgents(const std::vector<AgentId>& observe_only_for_agents) {
+    observe_only_for_agents_ = observe_only_for_agents;
+  }
+
+  std::vector<AgentId> GetObserveOnlyForAgents() const {
+    return observe_only_for_agents_;
+  }
+
+  private:
+    std::vector<AgentId> observe_only_for_agents_;
 
 };
 

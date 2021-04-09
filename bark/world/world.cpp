@@ -14,6 +14,7 @@
 #include "bark/world/world.hpp"
 #include "bark/models/observer/observer_model.hpp"
 #include "bark/models/observer/observer_model_none.hpp"
+#include "bark/world/renderer/renderer.hpp"
 
 namespace bark {
 namespace world {
@@ -21,6 +22,7 @@ namespace world {
 using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
 using bark::models::observer::ObserverModelNone;
+using bark::world::renderer::Renderer;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
@@ -28,6 +30,7 @@ World::World(const commons::ParamsPtr& params)
       agents_(),
       world_time_(0.0),
       observer_(new ObserverModelNone(params)),
+      renderer_(new Renderer()),
       remove_agents_(params->GetBool(
           "World::remove_agents_out_of_map",
           "Whether agents should be removed outside the bounding box.", false)),
@@ -70,6 +73,7 @@ void World::PlanAgents(const double& delta_time) {
     if (agent.second->IsValidAtTime(world_time_)) {
       ObservedWorld observed_world = observer_->Observe(
         current_world, agent.first);
+      agent.second->SetSensedWorld(std::make_shared<ObservedWorld>(observed_world));
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
         agent.second->PlanExecution(inc_world_time);

@@ -24,6 +24,7 @@
 namespace bark {
 namespace world {
 class ObservedWorld;
+typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 namespace objects {
 
 typedef unsigned int AgentId;
@@ -182,6 +183,14 @@ class Agent : public Object {
     first_valid_timestamp_ = first_valid_timestamp;
   }
 
+  void SetSensedWorld(const ObservedWorldPtr& observed_world) {
+    sensed_world_ = observed_world;
+  }
+
+  ObservedWorldPtr GetSensedWorld() const {
+    return sensed_world_;
+  }
+
   virtual std::shared_ptr<Object> Clone() const;
 
  private:
@@ -193,6 +202,8 @@ class Agent : public Object {
   uint32_t max_history_length_;
   GoalDefinitionPtr goal_definition_;
   double first_valid_timestamp_;
+
+  ObservedWorldPtr sensed_world_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;
