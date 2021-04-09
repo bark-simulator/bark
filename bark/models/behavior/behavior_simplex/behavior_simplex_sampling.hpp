@@ -56,9 +56,6 @@ class BehaviorSimplexSampling : public BehaviorRSSConformant {
 
   virtual ~BehaviorSimplexSampling() {}
 
-  BehaviorRSSConformantStatus GetBehaviorRssStatus() const;
-
-  bool PreprocessLaneInformation(const ObservedWorld& observed_world);
   Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world);
 

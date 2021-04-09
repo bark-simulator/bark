@@ -48,39 +48,13 @@ using namespace bark::models::execution;
 using namespace bark::models::behavior;
 using namespace bark::world::map;
 
-TEST(behavior_simplex_sampling, init) {
-  // safety behavior
-  auto params = std::make_shared<SetterParams>();
-  auto behavior_lane_tracking =
-      std::make_shared<BehaviorIDMLaneTracking>(params);
-  std::shared_ptr<BehaviorSafety> behavior_safety =
-      std::make_shared<BehaviorSafety>(params);
-  behavior_safety->SetBehaviorModel(behavior_lane_tracking);
-
-  // rss behavior
-  auto behavior_simplex_sampling = BehaviorSimplexSampling(params);
-  auto behavior_idm_classic = std::make_shared<BehaviorIDMClassic>(params);
-  behavior_simplex_sampling.SetNominalBehaviorModel(behavior_idm_classic);
-  behavior_simplex_sampling.SetSafetyBehaviorModel(behavior_safety);
-
-  auto behavior_safety_model = behavior_simplex_sampling.GetBehaviorSafetyModel();
-  auto safety_params = behavior_safety_model->GetBehaviorSafetyParams();
-}
-
 TEST(behavior_simplex_sampling, violation_threshold) {
-  // Test-strategy: both time the ego agent is controlled by the
-  // BehaviorIDMLaneTracking and attempts to change from the right to the
-  // left lane (by setting the target corridor). One time the dummy rss
-  // evaluator intervenes and the lane-change is aborted.
   auto params = std::make_shared<SetterParams>();
   double SAFETY_THRESHOLD = 0.1;
 
-  // First case, we start with the desired velociobserver_model_parametricty. After num steps, we should
-  // advance
   float ego_velocity = 0.0, rel_distance = 7.0, velocity_difference = 0.0;
   float time_step = 0.2;
 
-  //should place an agent on the left lane (-1.75)
   WorldPtr world =
       make_test_world(1, rel_distance, ego_velocity, velocity_difference);
 
@@ -130,17 +104,6 @@ TEST(behavior_simplex_sampling, violation_threshold) {
   }
   
   EXPECT_EQ(num_safety_maneuvers/max_samples, SAFETY_THRESHOLD);
-  // vehicle x and y aligned along x
-  // x ------- y 
-  // With some uncertainy
-  // x --y , x----y , x ------------y, collision: xy
-  // Probability that the deviation is in between two values giving a collision
-  // CDF(first val < deviation < second val)
-
-  // EXPECT_NEAR: current expected violation must be equal to calculated probaiblity
-
-  //double expected_safety_violation = behavior_simplex.GetCurrentExpectedSafetyViolation();
-
 }
 
 int main(int argc, char** argv) {

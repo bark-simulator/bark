@@ -19,46 +19,6 @@ namespace bark {
 namespace models {
 namespace behavior {
 
-bool BehaviorSimplexSampling::PreprocessLaneInformation(const world::ObservedWorld& observed_world) {
-  const auto& lane_corr = observed_world.GetLaneCorridor();
-  if (!initial_lane_corr_) {
-    initial_lane_corr_ = lane_corr;
-    behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
-    auto road_corr = observed_world.GetRoadCorridor();
-    const auto& lane_corrs = road_corr->GetUniqueLaneCorridors();
-    VLOG(4) << "Initial LaneCorridor used for safety behavior: " << *lane_corr
-            << std::endl;
-
-    // set the other lane corridor as target
-    for (const auto& lc : lane_corrs) {
-      VLOG(4) << "LaneCorridor: " << *lc << std::endl;
-      if (lane_corr != lc) {
-        VLOG(4) << "Setting LaneCorridor for nominal behavior: " << *lc
-                << std::endl;
-        auto nominal_behavior =
-            std::dynamic_pointer_cast<BehaviorIDMLaneTracking>(
-                nominal_behavior_model_);
-        nominal_behavior->SetConstantLaneCorridor(lc);
-      }
-    }
-  }
-
-  const float length_until_end =
-      behavior_safety_model_->GetInitialLaneCorridor()->LengthUntilEnd(
-          observed_world.CurrentEgoPosition());
-  if (length_until_end <= minimum_safety_corridor_length_) {
-    // Do not switch the lane corridor any more but only apply braking in the
-    // current lane corridor
-    behavior_safety_model_->SetInitialLaneCorridor(lane_corr);
-  }
-
-  if (!lane_corr) return false; else return true;
-}
-
-BehaviorRSSConformantStatus BehaviorSimplexSampling::GetBehaviorRssStatus() const {
-  return behavior_rss_status_;
-}
-
 Trajectory BehaviorSimplexSampling::Plan(
     double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
