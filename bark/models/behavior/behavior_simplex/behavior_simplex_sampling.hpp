@@ -44,15 +44,9 @@ class BehaviorSimplexSampling : public BehaviorRSSConformant {
  public:
   explicit BehaviorSimplexSampling(const commons::ParamsPtr& params)
       : BehaviorRSSConformant(params),
-        num_samples_(params->GetInt("NumSamples", "Number of samples from observer", 1000)),
-        violation_threshold_(params->GetReal("ViolationThreshold", "Maximum allowed probability"
-        " of RSS violation before switching to safety behavior", 0.1)),
-        initial_lane_corr_(nullptr),
-        minimum_safety_corridor_length_(GetParams()->GetReal(
-            "MinimumSafetyCorridorLength",
-            "Minimal lenght a safety corridor should have that a lateral "
-            "safety maneuver is performed.",
-            0.f)) {}
+        num_samples_(params->GetInt("BehaviorSimplexSampling::NumSamples", "Number of samples from observer", 1000)),
+        violation_threshold_(params->GetReal("BehaviorSimplexSampling::ViolationThreshold", "Maximum allowed probability"
+        " of RSS violation before switching to safety behavior", 0.1)) {}
 
   virtual ~BehaviorSimplexSampling() {}
 
@@ -68,9 +62,6 @@ class BehaviorSimplexSampling : public BehaviorRSSConformant {
   unsigned int num_samples_;
   double current_expected_safety_violation_;
   double violation_threshold_;
-  LaneCorridorPtr initial_lane_corr_;
-  float minimum_safety_corridor_length_;
-  BehaviorRSSConformantStatus behavior_rss_status_;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorSimplexSampling::Clone() const {
