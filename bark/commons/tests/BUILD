@@ -61,6 +61,17 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "timer_test",
+    srcs = [
+        "timer_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/commons/timer:timer",
+        "@gtest//:gtest_main",
+    ],
+)
 
 
 py_test(

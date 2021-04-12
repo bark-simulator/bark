@@ -9,6 +9,7 @@ cc_library(
         "//bark/commons:commons",
         "//bark/commons/util:util",
         "//bark/commons/transformation:frenet",
+        "//bark/commons/timer:timer",
         "//bark/models/behavior:behavior",
         "//bark/models/execution:execution",
         "//bark/models/dynamic:dynamic",
