@@ -8,7 +8,7 @@ This section describes the prerequisites and installation-steps of BARK.
 
 * Bazel > 3(requires Java)
 * Python3.7 (`sudo apt-get install python3.7 python3.7-dev python3.7-tk`)
-* Virtual Env (`pip3 install virtualenv==16.7.8`) (note that the newest version does not seem to link the Python.h)
+* Virtual Env (`sudo pip3 install virtualenv==16.7.8`) (note that the newest version does not seem to link the Python.h)
 * gcc7 (needs to be set as the default compiler)
 * Visual Studio Code
 
