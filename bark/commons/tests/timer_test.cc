@@ -20,7 +20,7 @@ TEST(timer_test, timer_test50ms) {
   timer.Start();
   std::this_thread::sleep_for(50ms);
   double duration = timer.DurationInSeconds();
-  EXPECT_EQ(duration, 50e-3);
+  EXPECT_NEAR(duration, 50e-3, 5e-3);
 }
 
 TEST(timer_test, timer_test10ms) {
@@ -28,5 +28,5 @@ TEST(timer_test, timer_test10ms) {
   timer.Start();
   std::this_thread::sleep_for(10ms);
   double duration = timer.DurationInSeconds();
-  EXPECT_EQ(duration, 10e-3);
+  EXPECT_NEAR(duration, 10e-3, 1e-3);
 }
