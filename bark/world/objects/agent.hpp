@@ -199,6 +199,7 @@ class Agent : public Object {
 
   void SetRoadCorridorDrivingDirection(const world::map::XodrDrivingDirection& driving_direction) {
     road_corridor_driving_direction_ = driving_direction;
+  }
 
   void SetSensedWorld(const ObservedWorldPtr& observed_world) {
     sensed_world_ = observed_world;
