@@ -63,21 +63,15 @@ TEST(observer_model_parametric, state_deviation_test) {
   WorldPtr world = make_test_world(2, rel_distance, ego_velocity,
                                    velocity_difference, goal_definition_ptr);
 
-  params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0.7, 1.8, 0.5, 0.5, 0.1});
+  params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0.7, 1.8});
   params->SetListListFloat("ObserverModelParametric::EgoStateDeviationDist::Covariance",
-                             {{0.2, 0.0, 0.0, 0.0, 0.0}, 
-                              {0.0, 0.2, 0.0, 0.0, 0.0}, 
-                              {0.0, 0.0, 0.2, 0.0, 0.0},
-                              {0.0, 0.0, 0.0, 0.2, 0.0},
-                              {0.0, 0.0, 0.0, 0.0, 0.1}});
+                             {{0.2, 0.0}, 
+                              {0.0, 0.2}});
   
-  params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {1.2, 3.5, 0.5, 0.5, 0.2});
+  params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {1.2, 3.5});
   params->SetListListFloat("ObserverModelParametric::OtherStateDeviationDist::Covariance",
-                             {{0.3, 0.0, 0.0, 0.0, 0.0}, 
-                              {0.0, 2.1, 0.0, 0.0, 0.0}, 
-                              {0.0, 0.0, 0.2, 0.0, 0.0},
-                              {0.0, 0.0, 0.0, 0.2, 0.0},
-                              {0.0, 0.0, 0.0, 0.0, 0.1}});
+                             {{0.3, 0.0}, 
+                              {0.0, 2.1}});
 
   ObserverModelParametric observer_parametric(params);
 
@@ -120,22 +114,6 @@ TEST(observer_model_parametric, state_deviation_test) {
   EXPECT_NEAR(mean_deviation1(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(1), 0.05);
   EXPECT_NEAR(mean_deviation2(index), params->GetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", "", {}).at(1), 0.05);
   EXPECT_NEAR(mean_deviation3(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(1), 0.05);
-
-  // Compare V, mean square root of gaussians changes mean, use larger tolerance 
-  index = static_cast<int>(StateDefinition::VEL_POSITION);
-  auto vel_deviate_desired_other = sqrt(std::pow(params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(2), 2.0)+
-                            std::pow(params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(3), 2.0));
-  auto vel_deviate_desired_ego = sqrt(std::pow(params->GetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", "", {}).at(2), 2.0)+
-                            std::pow(params->GetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", "", {}).at(3), 2.0));
-  EXPECT_NEAR(mean_deviation1(index), vel_deviate_desired_other , 0.15); // 
-  EXPECT_NEAR(mean_deviation2(index), vel_deviate_desired_ego, 0.15);
-  EXPECT_NEAR(mean_deviation3(index), vel_deviate_desired_other, 0.15);
-
-  // Compare Theta, angle calculations change mean, use larger tolerance 
-  index = static_cast<int>(StateDefinition::THETA_POSITION); 
-  EXPECT_NEAR(mean_deviation1(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(4), 0.1);
-  EXPECT_NEAR(mean_deviation2(index), params->GetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", "", {}).at(4), 0.1);
-  EXPECT_NEAR(mean_deviation3(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(4), 0.1);
 }
 
 int main(int argc, char** argv) {

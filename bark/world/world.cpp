@@ -70,6 +70,7 @@ void World::PlanAgents(const double& delta_time) {
     if (agent.second->IsValidAtTime(world_time_)) {
       ObservedWorld observed_world = observer_->Observe(
         current_world, agent.first);
+      agent.second->SetSensedWorld(std::make_shared<ObservedWorld>(observed_world));
       agent.second->PlanBehavior(delta_time, observed_world);
       if (agent.second->GetBehaviorStatus() == BehaviorStatus::VALID)
         agent.second->PlanExecution(inc_world_time);

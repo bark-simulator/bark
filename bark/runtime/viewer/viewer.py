@@ -281,6 +281,49 @@ class BaseViewer(Viewer):
         self.drawText(position=(0.7, 0.9), text=str)
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+      sensed_world = None
+      if eval_agent_ids:
+          sensed_world = world.agents[eval_agent_ids[0]].sensed_world
+      if sensed_world:
+          self.drawTrueWorld(world, eval_agent_ids)
+          self.drawSensedWorld(sensed_world, eval_agent_ids, filename, scenario_idx, debug_text)
+      else:
+          self.drawWorldImplementation(world, eval_agent_ids, filename, scenario_idx, debug_text)
+
+    def drawSensedWorld(self, sensed_world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+      self.drawWorldImplementation(sensed_world, eval_agent_ids, filename, scenario_idx, debug_text)
+
+    def drawTrueWorld(self, world, eval_agent_ids):
+      # draw only boundaries of agents in same color as observed agents
+      for i, (agent_id, agent) in enumerate(world.agents.items()):
+          color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
+          color_face = (1.0, 1.0, 1.0) # face color white
+          self.drawAgent(agent, color_line, alpha, color_face, hatch='', draw_agent_id=False)
+
+    def GetAgentColor(self, agent, eval_agent_ids):
+      alpha = 1.0
+      agent_id = agent.id
+      if eval_agent_ids and agent.id in eval_agent_ids:
+          color_line = self.color_eval_agents_line
+          color_face = self.color_eval_agents_face
+          alpha = self.alpha_eval_agent
+      else:
+          alpha = self.alpha_other_agents
+          if self.use_colormap_for_other_agents:
+              if not agent_id in self.agent_color_map:
+                  color_idx = len(self.agent_color_map) % self.getSizeOfColormap()
+                  self.agent_color_map[agent_id] = self.getColorFromMap(color_idx)
+              if self.if_colormap_use_line_others:
+                  color_line = self.color_other_agents_line
+              else:
+                  color_line = self.agent_color_map[agent_id]
+              color_face = self.agent_color_map[agent_id]
+          else:
+              color_line = self.color_other_agents_line
+              color_face = self.color_other_agents_face
+      return color_line, color_face, alpha
+
+    def drawWorldImplementation(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         # self.clear()
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
@@ -301,26 +344,7 @@ class BaseViewer(Viewer):
 
         num_agents = len(world.agents.items())
         for i, (agent_id, agent) in enumerate(world.agents.items()):
-            alpha = 1.0
-
-            if eval_agent_ids and agent.id in eval_agent_ids:
-                color_line = self.color_eval_agents_line
-                color_face = self.color_eval_agents_face
-                alpha = self.alpha_eval_agent
-            else:
-                alpha = self.alpha_other_agents
-                if self.use_colormap_for_other_agents:
-                    if not agent_id in self.agent_color_map:
-                        color_idx = len(self.agent_color_map) % self.getSizeOfColormap()
-                        self.agent_color_map[agent_id] = self.getColorFromMap(color_idx)
-                    if self.if_colormap_use_line_others:
-                        color_line = self.color_other_agents_line
-                    else:
-                        color_line = self.agent_color_map[agent_id]
-                    color_face = self.agent_color_map[agent_id]
-                else:
-                    color_line = self.color_other_agents_line
-                    color_face = self.color_other_agents_face
+            color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
                     
             if self.draw_history and agent.id in world.agents_valid:
                 if self.draw_history_draw_face:
@@ -407,7 +431,7 @@ class BaseViewer(Viewer):
           self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
                           dashed, zorder=1, linewidth=1)
 
-    def drawAgent(self, agent, color, alpha, facecolor, hatch=''):
+    def drawAgent(self, agent, color, alpha, facecolor, hatch='', draw_agent_id=True):
         shape = agent.shape
         if isinstance(shape, Polygon2d):
             state = agent.state
