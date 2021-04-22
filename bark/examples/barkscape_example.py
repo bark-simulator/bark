@@ -46,26 +46,78 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
 if __name__ == "__main__":
   # configure lanes
   param_server = ParameterServer()
-  left_lane = CustomLaneCorridorConfig(params=param_server,
-                                      lane_corridor_id=0,
-                                      road_ids=[0, 1],
-                                      behavior_model=BehaviorMobilRuleBased(param_server),
-                                      s_min=5.,
-                                      s_max=50.)
-  right_lane = CustomLaneCorridorConfig(params=param_server,
-                                        lane_corridor_id=1,
-                                        road_ids=[0, 1],
-                                        controlled_ids=True,
-                                        behavior_model=BehaviorMobilRuleBased(param_server),
-                                        s_min=5.,
-                                        s_max=20.)
+  # NOTE: merging
+  # left_lane = CustomLaneCorridorConfig(params=param_server,
+  #                                     lane_corridor_id=0,
+  #                                     road_ids=[0, 1],
+  #                                     behavior_model=BehaviorMobilRuleBased(param_server),
+  #                                     s_min=5.,
+  #                                     s_max=50.)
+  # right_lane = CustomLaneCorridorConfig(params=param_server,
+  #                                       lane_corridor_id=1,
+  #                                       road_ids=[0, 1],
+  #                                       controlled_ids=True,
+  #                                       behavior_model=BehaviorMobilRuleBased(param_server),
+  #                                       s_min=5.,
+  #                                       s_max=20.)
+  # scenarios = \
+  #   ConfigWithEase(num_scenarios=3,
+  #                 map_file_name=Data.xodr_data("DR_DEU_Merging_MT_v01_shifted"),
+  #                 random_seed=0,
+  #                 params=param_server,
+  #                 lane_corridor_configs=[left_lane, right_lane])
+    
+  # NOTE: intersection
+  param_server["BehaviorIDMLaneTracking"]["CrosstrackErrorGain"] = 2.5
+  param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 5.
+  param_server["BehaviorIntersectionRuleBased"]["BrakingDistance"] = 10.
+  param_server["BehaviorIntersectionRuleBased"]["PredictionTimeHorizon"] = 5.
+  param_server["BehaviorIntersectionRuleBased"]["AngleDiffForIntersection"] = 0.25
+
+  # configure the lane corridors and how the agents 
+  lane_corridors = []
+  lane_corridors.append(
+    LaneCorridorConfig(params=param_server,
+                       source_pos=[-30, -3],
+                       sink_pos=[30, -3],
+                       behavior_model=BehaviorIntersectionRuleBased(param_server),
+                       min_vel=5.,
+                       max_vel=5.,
+                       ds_min=5.,
+                       ds_max=10.,
+                       s_min=15.,
+                       s_max=30.))
+  lane_corridors.append(
+    LaneCorridorConfig(params=param_server,
+                       source_pos=[30, 3],
+                       sink_pos=[-30, 3],
+                       behavior_model=BehaviorIntersectionRuleBased(param_server),
+                       min_vel=5.,
+                       max_vel=5.,
+                       ds_min=5.,
+                       ds_max=10.,
+                       s_min=15.,
+                       s_max=30.))
+  lane_corridors.append(
+    LaneCorridorConfig(params=param_server,
+                      source_pos=[3, -30],
+                      sink_pos=[-30, 3],
+                      behavior_model=BehaviorIntersectionRuleBased(param_server),
+                      controlled_ids=True,
+                      min_vel=5.,
+                      max_vel=5.,
+                      ds_min=5.,
+                      ds_max=10.,
+                      s_min=15.,
+                      s_max=30.))
+
   scenarios = \
     ConfigWithEase(num_scenarios=3,
-                  map_file_name=Data.xodr_data("DR_DEU_Merging_MT_v01_shifted"),
+                  map_file_name=Data.xodr_data("threeway_intersection"),
                   random_seed=0,
                   params=param_server,
-                  lane_corridor_configs=[left_lane, right_lane])
-
+                  lane_corridor_configs=lane_corridors)
+  
   viewer = BufferedViewer()
   env = Runtime(step_time=0.2,
                 viewer=viewer,
