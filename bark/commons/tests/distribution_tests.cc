@@ -10,10 +10,12 @@
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include "gtest/gtest.h"
+#include <glog/logging.h>
 
 #include "bark/commons/distribution/distributions_1d.hpp"
 #include "bark/commons/distribution/multivariate_normal.hpp"
 #include "bark/commons/params/setter_params.hpp"
+#include "bark/commons/distribution/distribution.hpp"
 
 // TODO(fortiss): fill our this test
 TEST(distribution_test, normal_dist_1d) {
@@ -40,7 +42,7 @@ TEST(distribution_test, normal_dist_1d) {
   EXPECT_NEAR(sqrt(std_dev / samples), 2.0, 0.01);
 }
 
-// TODO(fortiss): fill our this test
+// TODO(fortiss): fill out this test
 TEST(distribution_test, uniform_dist_1d) {
   auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
   const double lower_bound = -3.0;
@@ -105,15 +107,14 @@ TEST(distribution_test, bernoulli_dist_1d) {
 
 TEST(distribution_test, multivariate_distribution) {
   // First test zero covariances
-  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
-  const double lower_bound = -3.0;
-  const double upper_bound = 10.0;
-  params_ptr->SetListListFloat(
+  auto params_ptr1 = std::make_shared<bark::commons::SetterParams>(true);
+  //const double lower_bound = -3.0;
+  //const double upper_bound = 10.0;
+  params_ptr1->SetListListFloat(
       "Covariance", {{1.0, 0.2, 0.1}, {0.2, 3.0, -0.5}, {0.1, -0.5, 0.125553}});
-  params_ptr->SetListFloat("Mean", {1.2, 12.0, 0.1234f});
-  params_ptr->SetInt("RandomSeed", 1000.0);
-
-  auto dist_multivariate = bark::commons::MultivariateDistribution(params_ptr);
+  params_ptr1->SetListFloat("Mean", {1.2, 12.0, 0.1234f});
+  params_ptr1->SetInt("RandomSeed", 1000.0);
+  auto dist_multivariate = bark::commons::MultivariateDistribution(params_ptr1);
 
   size_t samples = 500000;
   std::vector<double> mean(3, 0.0);
@@ -126,7 +127,7 @@ TEST(distribution_test, multivariate_distribution) {
   for (int j = 0; j < 3; ++j) {
     mean[j] /= samples;
   }
-  auto mean_desired = params_ptr->GetListFloat("Mean", "", {});
+  auto mean_desired = params_ptr1->GetListFloat("Mean", "", {});
   for (int j = 0; j < 3; ++j) {
     EXPECT_NEAR(mean[j], mean_desired[j], 0.01);
   }
@@ -145,15 +146,35 @@ TEST(distribution_test, multivariate_distribution) {
       covar[j][z] /= samples;
     }
   }
-  auto covar_desired = params_ptr->GetListListFloat("Covariance", "", {{}});
+  auto covar_desired = params_ptr1->GetListListFloat("Covariance", "", {{}});
   for (int j = 0; j < 3; ++j) {
     for (int z = 0; z < 3; ++z) {
       EXPECT_NEAR(covar[j][z], covar_desired[j][z], 0.01);
     }
   }
+
+  // Test density function
+  auto params_ptr2 = std::make_shared<bark::commons::SetterParams>(true);
+  params_ptr2->SetListListFloat("Covariance", {{4.0, 1.3}, {1.3, 1.0}});
+  params_ptr2->SetListFloat("Mean", {3.1, 2.0});
+  params_ptr2->SetInt("RandomSeed", 1000.0);
+  auto dist_multivariate2d = bark::commons::MultivariateDistribution(params_ptr2);
+
+  auto test_p1 = bark::commons::RandomVariate{3.1, 2.};
+  auto test_p2 = bark::commons::RandomVariate{4.,2.6};
+  auto test_p3 = bark::commons::RandomVariate{3.4, 1.58};
+
+  auto p1_likelihood = dist_multivariate2d.Density(test_p1);
+  auto p2_likelihood = dist_multivariate2d.Density(test_p2);
+  auto p3_likelihood = dist_multivariate2d.Density(test_p3);
+
+  ASSERT_FLOAT_EQ(p1_likelihood, 0.10471626);
+  ASSERT_FLOAT_EQ(p2_likelihood, 0.08719418);
+  ASSERT_FLOAT_EQ(p3_likelihood, 0.08211638);
 }
 
 int main(int argc, char** argv) {
+  google::InitGoogleLogging(argv[0]);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

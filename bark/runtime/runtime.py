@@ -53,10 +53,11 @@ class Runtime(PyRuntime):
     if len(self._world_history) == 0 and self._maintain_world_history:
         self._world_history.append(self._world.Copy())
 
-    self._world.Step(self._step_time)
+    self._world.PlanAgents(self._step_time)
 
     if self._render:
         self.render()
+    self._world.Execute(self._step_time)
     
     if self._maintain_world_history:
       self._world_history.append(self._world.Copy())

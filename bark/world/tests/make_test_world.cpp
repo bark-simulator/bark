@@ -66,7 +66,7 @@ WorldPtr bark::world::tests::make_test_world(
   beh_model_const->SetLastAction(Continuous1DAction(other_acc));
 
   Polygon polygon(
-      Pose(1.25, 1, 0),
+      Pose(1.25, 0, 0),
       std::vector<Point2d>{Point2d(-1, -1), Point2d(-1, 1), Point2d(3, 1),
                            Point2d(3, -1), Point2d(-1, -1)});
 

@@ -24,6 +24,7 @@
 namespace bark {
 namespace world {
 class ObservedWorld;
+typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 namespace objects {
 
 typedef unsigned int AgentId;
@@ -176,10 +177,36 @@ class Agent : public Object {
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {
     road_corridor_ = road_corridor;
+    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
   }
 
   void SetFirstValidTimestamp(const double first_valid_timestamp) {
     first_valid_timestamp_ = first_valid_timestamp;
+  }
+
+  std::vector<world::map::XodrRoadId> GetRoadCorridorRoadIds() const {
+    return road_corridor_road_ids_;
+  }
+
+  world::map::XodrDrivingDirection GetRoadCorridorDrivingDirection() const {
+    return road_corridor_driving_direction_;
+  }
+
+  void SetRoadCorridorRoadIds(const std::vector<world::map::XodrRoadId>& road_corridor_road_ids) {
+    road_corridor_road_ids_ = road_corridor_road_ids;
+  }
+
+  void SetRoadCorridorDrivingDirection(const world::map::XodrDrivingDirection& driving_direction) {
+    road_corridor_driving_direction_ = driving_direction;
+  }
+
+  void SetSensedWorld(const ObservedWorldPtr& observed_world) {
+    sensed_world_ = observed_world;
+  }
+
+  ObservedWorldPtr GetSensedWorld() const {
+    return sensed_world_;
   }
 
   virtual std::shared_ptr<Object> Clone() const;
@@ -192,7 +219,12 @@ class Agent : public Object {
   StateActionHistory history_;
   uint32_t max_history_length_;
   GoalDefinitionPtr goal_definition_;
+
   double first_valid_timestamp_;
+  std::vector<world::map::XodrRoadId> road_corridor_road_ids_;
+  world::map::XodrDrivingDirection road_corridor_driving_direction_;
+
+  ObservedWorldPtr sensed_world_;
 };
 
 typedef std::shared_ptr<Agent> AgentPtr;

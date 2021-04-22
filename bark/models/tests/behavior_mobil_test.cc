@@ -155,7 +155,7 @@ TEST(safety_not_met, behavior_mobil) {
 }
 
 TEST(impolite_incentive_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", 0.1);
@@ -179,7 +179,7 @@ TEST(impolite_incentive_met_safety_met, behavior_mobil) {
 }
 
 TEST(polite_incentive_not_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", 0.2);
@@ -203,7 +203,7 @@ TEST(polite_incentive_not_met_safety_met, behavior_mobil) {
 }
 
 TEST(polite_incentive_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", -5.0);  // HACK

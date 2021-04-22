@@ -12,6 +12,8 @@
 #include "bark/models/dynamic/single_track.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
+#include "bark/python_wrapper/polymorphic_conversion.hpp"
+
 namespace py = pybind11;
 using namespace bark::models::dynamic;
 using namespace bark::commons;
@@ -30,14 +32,16 @@ void python_dynamic(py::module m) {
              return "bark.dynamic.SingleTrackModel";
            })
       .def(py::pickle(
-          [](const SingleTrackModel& m) -> std::string {
-            return "SingleTrackModel";  // 0
+          [](const SingleTrackModel& m) {
+            return py::make_tuple(ParamsToPython(m.GetParams()));
           },
-          [](std::string s) {  // __setstate__
-            if (s != "SingleTrackModel")
-              throw std::runtime_error("Invalid dynamic modelstate!");
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid single track model state!");
             // param pointer must be set via python
-            return new SingleTrackModel(std::make_shared<SetterParams>());
+            /* Create a new C++ instance */
+            return new SingleTrackModel(
+                PythonToParams(t[0].cast<py::tuple>()));
           }));
 
   py::class_<TripleIntegratorModel, DynamicModel,
@@ -60,10 +64,25 @@ void python_dynamic(py::module m) {
 
   py::class_<AccelerationLimits, std::shared_ptr<AccelerationLimits>>(m, "AccelerationLimits")
       .def(py::init<>())
-      .def_readwrite("lat_acc_left_max", &AccelerationLimits::lat_acc_left_max)
-      .def_readwrite("lat_acc_right_max", &AccelerationLimits::lat_acc_right_max)
+      .def_readwrite("lat_acc_max", &AccelerationLimits::lat_acc_max)
+      .def_readwrite("lat_acc_min", &AccelerationLimits::lat_acc_min)
       .def_readwrite("lon_acc_max", &AccelerationLimits::lon_acc_max)
-      .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min);
+      .def_readwrite("lon_acc_min", &AccelerationLimits::lon_acc_min)
+      .def("__repr__",
+           [](const AccelerationLimits& b) { return "bark.dynamic.AccelerationLimits"; })
+      .def(py::pickle(
+          [](const AccelerationLimits& a) {
+            return py::make_tuple(a.lat_acc_max, a.lat_acc_min, a.lon_acc_max, a.lon_acc_min);
+          },
+          [](py::tuple t) {
+            if (t.size() != 4)
+              throw std::runtime_error("Invalid AccelerationLimits!");
+            /* Create a new C++ instance */
+            return new AccelerationLimits{t[0].cast<double>(),
+                                    t[1].cast<double>(),
+                                    t[2].cast<double>(),
+                                    t[3].cast<double>()};
+          }));
 
   py::enum_<StateDefinition>(m, "StateDefinition", py::arithmetic())
       .value("TIME_POSITION", TIME_POSITION)
@@ -75,3 +94,4 @@ void python_dynamic(py::module m) {
       .value("Z_POSITION", Z_POSITION)
       .export_values();
 }
+

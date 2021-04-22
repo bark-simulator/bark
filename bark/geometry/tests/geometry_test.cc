@@ -1243,6 +1243,104 @@ TEST(boundingpolygon, vehicleshapes) {
   EXPECT_TRUE(Within(in2, out2));
 }
 
+TEST(geometry, scale_polygon_x) {
+  using bark::geometry::Polygon;
+  using bark::geometry::Point2d;
+
+  Polygon p1;
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
+
+  const auto p2 = std::dynamic_pointer_cast<Polygon>(p1.Scale(1.371, 0.0));
+  
+  Polygon expected_scaled_polygon;
+  expected_scaled_polygon.AddPoint(Point2d(0, 0));
+  expected_scaled_polygon.AddPoint(Point2d(0, 1));
+  expected_scaled_polygon.AddPoint(Point2d(1.371, 1));
+  expected_scaled_polygon.AddPoint(Point2d(1.371, 0));
+  expected_scaled_polygon.AddPoint(Point2d(0, 0));
+
+  ASSERT_TRUE(Equals(expected_scaled_polygon, *p2));
+}
+
+TEST(geometry, scale_polygon_y) {
+  using bark::geometry::Polygon;
+  using bark::geometry::Point2d;
+
+  Polygon p1;
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
+
+  const auto p2 = std::dynamic_pointer_cast<Polygon>(p1.Scale(0.0, 2.3467));
+  
+  Polygon expected_scaled_polygon;
+  expected_scaled_polygon.AddPoint(Point2d(0, 0));
+  expected_scaled_polygon.AddPoint(Point2d(0, 2.3467));
+  expected_scaled_polygon.AddPoint(Point2d(1, 2.3467));
+  expected_scaled_polygon.AddPoint(Point2d(1, 0));
+  expected_scaled_polygon.AddPoint(Point2d(0, 0));
+
+  ASSERT_TRUE(Equals(expected_scaled_polygon, *p2));
+}
+
+TEST(geometry, scale_transformed_polygon) {
+  using bark::geometry::Polygon;
+  using bark::geometry::Point2d;
+  using bark::geometry::Pose;
+  using bark::geometry::B_PI_2;
+
+  Polygon p1;
+  p1.AddPoint(Point2d(0, 0));
+  p1.AddPoint(Point2d(0, 1));
+  p1.AddPoint(Point2d(1, 1));
+  p1.AddPoint(Point2d(1, 0));
+  p1.AddPoint(Point2d(0, 0));
+
+  const auto p2 = p1.Transform(Pose(-431.0, 244.0, B_PI_2));
+
+  const auto p3 = std::dynamic_pointer_cast<Polygon>(p2->Scale(1.5, 2.5));
+  
+  // We should have polygon p1 scaled by 1.5 and 2.5 rotated by pi/2 and shifted to -431.0, 244.0
+  Polygon expected_scaled_polygon;
+  expected_scaled_polygon.AddPoint(Point2d(-431.0      , 244.0      ));
+  expected_scaled_polygon.AddPoint(Point2d(-431.0 - 2.5, 244.0      ));  // rotation by pi/2 exchanges x and y scale
+  expected_scaled_polygon.AddPoint(Point2d(-431.0 - 2.5, 244.0 + 1.5));
+  expected_scaled_polygon.AddPoint(Point2d(-431.0      , 244.0 + 1.5));
+  expected_scaled_polygon.AddPoint(Point2d(-431.0      , 244.0      ));
+
+  ASSERT_TRUE(Equals(expected_scaled_polygon, *p3));
+}
+
+TEST(geometry, inflate_polygon_y) {
+  using bark::geometry::Polygon;
+  using bark::geometry::Point2d;
+  using bark::geometry::Pose;
+
+  Polygon p1(Pose(0.5, 0.5, 0.0), {
+              Point2d(-0.5, -0.5),
+              Point2d(-0.5, 0.5),
+              Point2d(0.5, 0.5),
+              Point2d(0.5, -0.5),
+              Point2d(-0.5, -0.5)});
+
+  const auto p2 = std::dynamic_pointer_cast<Polygon>(p1.Inflate(0.1, 3));
+  
+  Polygon expected_inflated_polygon(Pose(0.5, 0.5, 0.0), {
+          Point2d(-0.6, -3.5),
+          Point2d(-0.6, 3.5),
+          Point2d(0.6, 3.5),
+          Point2d(0.6, -3.5),
+          Point2d(-0.6, -3.5)});
+
+  ASSERT_TRUE(Equals(expected_inflated_polygon, *p2));
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

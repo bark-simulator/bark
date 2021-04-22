@@ -21,7 +21,7 @@ class World;
 class ObservedWorld;
 namespace evaluation {
 
-class EvaluatorDrivableArea : public BaseEvaluator {
+class EvaluatorDrivableArea : virtual public BaseEvaluator {
  public:
   EvaluatorDrivableArea() : agent_id_(std::numeric_limits<AgentId>::max()) {}
   explicit EvaluatorDrivableArea(const AgentId& agent_id)
@@ -37,7 +37,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
       if (!agent) {
         return true;
       }
-      Polygon poly_agent = agent->GetPolygonFromState(agent->GetCurrentState());
+      Polygon poly_agent = GetCollisionShape(agent);
       const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
       if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
         return true;
@@ -62,7 +62,7 @@ class EvaluatorDrivableArea : public BaseEvaluator {
     namespace bg = boost::geometry;
 
     const auto& agent = observed_world.GetEgoAgent();
-    Polygon poly_agent = agent->GetPolygonFromState(agent->GetCurrentState());
+    Polygon poly_agent = GetCollisionShape(agent);
     const auto& poly_road = agent->GetRoadCorridor()->GetPolygon();
     if (!bg::within(poly_agent.obj_, poly_road.obj_)) {
       return true;
@@ -71,6 +71,9 @@ class EvaluatorDrivableArea : public BaseEvaluator {
   }
 
  private:
+  virtual bark::geometry::Polygon GetCollisionShape(const AgentPtr& checked_agent) const {
+    return checked_agent->GetPolygonFromState(checked_agent->GetCurrentState());
+  };
   AgentId agent_id_;
 };
 

@@ -16,6 +16,7 @@
 #include <utility>
 
 #include "bark/commons/transformation/frenet.hpp"
+#include "bark/world/map/commons.hpp"
 #include "bark/world/observed_world.hpp"
 
 namespace bark {
@@ -179,15 +180,15 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   double leading_acc = 0.0;
   IDMRelativeValues rel_values;
 
-  std::pair<AgentPtr, FrenetPosition> leading_vehicle =
+  auto leading_vehicle =
       observed_world.GetAgentInFront(lane_corr);
 
   // vehicles
   if (leading_vehicle.first) {
-    leading_distance = CalcNetDistance(observed_world, leading_vehicle.first, lane_corr);
+    leading_distance = leading_vehicle.second.lon;
     dynamic::State other_vehicle_state =
         leading_vehicle.first->GetCurrentState();
-    leading_velocity = other_vehicle_state(StateDefinition::VEL_POSITION);
+    leading_velocity = leading_vehicle.second.to.vlon;
     interaction_term_active = true;
     // Get acceleration action other
     if (param_coolness_factor_ > 0.0) {
@@ -298,10 +299,14 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
     return std::max(std::min(idm_acc, acc_upper_bound), acc_lower_bound);
   }
 
+  // Catch case where longitiduinal distance is zero (still lateral distance can be such that
+  // no collision is there)
+  auto tmp_net_distance = net_distance == 0.0 ? std::numeric_limits<double>::min() : net_distance;
+
   const double cah_acc =
-      CalcCAHAcc(net_distance, vel_ego, vel_other, acc_ego, acc_other);
+      CalcCAHAcc(tmp_net_distance, vel_ego, vel_other, acc_ego, acc_other);
   if (std::isnan(cah_acc)) {
-    LOG(FATAL) << "cah_acc isnan for net_dist " << net_distance
+    LOG(FATAL) << "cah_acc isnan for net_dist " << tmp_net_distance
                << ". ve = " << vel_ego << ", vo=" << vel_other
                << ", ao=" << acc_other;
   }
@@ -367,7 +372,8 @@ Trajectory BaseIDM::Plan(double min_planning_time,
 
   LaneCorridorPtr current_lane_corridor;
   if (constant_lane_corr_ != nullptr) {
-    current_lane_corridor = constant_lane_corr_;
+    current_lane_corridor = ChooseLaneCorridorBasedOnVehicleState(
+      observed_world, constant_lane_corr_);
   } else {
     current_lane_corridor = lane_corr_;
   }

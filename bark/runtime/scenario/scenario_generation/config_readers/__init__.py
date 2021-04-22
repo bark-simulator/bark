@@ -12,3 +12,4 @@ from .controlled_agents_config_readers import *
 from .dynamic_model_config_readers import *
 from .execution_model_config_readers import *
 from .goal_definition_config_readers import *
+from .observer_model_config_readers import *

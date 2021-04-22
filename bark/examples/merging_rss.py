@@ -56,7 +56,7 @@ param_server["BehaviorLaneChangeRuleBased"]["MinVehicleFrontDistance"] = 0.
 param_server["BehaviorLaneChangeRuleBased"]["TimeKeepingGap"] = 0.
 param_server["BehaviorMobilRuleBased"]["Politeness"] = 0.0
 param_server["BehaviorIDMClassic"]["DesiredVelocity"] = 10.
-param_server["World"]["FracLateralOffset"] = 2.0
+param_server["World"]["LateralDifferenceThreshold"] = 2.0
 param_server["Visualization"]["Agents"]["DrawAgentId"] =  True
 
 # param_server["Visualization"]["Evaluation"]["DrawRssDebugInfo"] = True
@@ -95,12 +95,6 @@ viewer = MPViewer(params=param_server,
                   # x_range=[-35, 35],
                   # y_range=[-35, 35],
                   follow_agent_id=False)
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=True,
-#                        light_pose=[1000, 1000, 100000],
-#                        camera_pose=[1000, 980, 100])
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",

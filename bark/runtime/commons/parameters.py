@@ -40,11 +40,15 @@ class ParameterServer(Params):
             return self.store[new_key]
         else:
             if isinstance(key, tuple):  # if key for parameter
+                # is the default parameter a list of dicts, then generate a child list of param servers
                 if isinstance(default_val, list) and all(type(el) is dict for el in default_val):
                   value_tmp = []
                   for list_el in default_val:
                     value_tmp.append(ParameterServer(json=list_el))
                   default_val = value_tmp
+                # is the default parameter a single dict, then generate a single param server child
+                if isinstance(default_val, dict):
+                  default_val = ParameterServer(json=default_val)
                 self.store[new_key] = default_val
                 if self.log_if_default:
                   logging.warning("Using default {} for {}".format(
@@ -57,17 +61,20 @@ class ParameterServer(Params):
     def __contains__(self, key):
         return key in self.store
 
-    def AppendParamServer(self, p_server):
+    def AppendParamServer(self, p_server, overwrite=False):
         for key in p_server.store.keys():
-            if key in self.store:
-                val_self = self.store[key]
-                val_other = p_server.store[key]
-                if isinstance(val_self, ParameterServer) and isinstance(val_other, ParameterServer):
-                    val_self.AppendParamServer(val_other)
+            if key in self.store: 
+              val_self = self.store[key]
+              val_other = p_server.store[key]
+              if isinstance(val_self, ParameterServer) and isinstance(val_other, ParameterServer):
+                  val_self.AppendParamServer(val_other, overwrite=overwrite)
+              else:
+                if overwrite:
+                  self.__setitem__(key, p_server[key])
                 else:
-                    logging.warning("Cannot append conflicting key '{}'!".format(key))
+                  logging.warning("Cannot append conflicting key '{}'!".format(key))
             else:
-                self.__setitem__(key, p_server[key])
+              self.__setitem__(key, p_server[key])
 
     def FindKey(self, param_key):
       delimiter = "::"
@@ -95,6 +102,9 @@ class ParameterServer(Params):
           for list_el in value:
             value_tmp.append(ParameterServer(json=list_el))
           value = value_tmp
+
+        if isinstance(value, dict):
+          value = ParameterServer(json=value)
 
         if isinstance(key, str):
           self._set_item_from_hierarchy_string(key, value)
@@ -287,6 +297,32 @@ class ParameterServer(Params):
           else:
             logging.warning("Key was nowhere found.")
         return value
+
+    def HasEqualParamsAs(self, other_param_server, unequal_params=None):
+        unequal_params = unequal_params or ParameterServer()
+        for key, value in other_param_server.store.items():
+            if not key in self.store:
+                unequal_params[key] = value
+                continue
+            self_value = self.store[key]
+            # Both are param servers -> ascend in hierarchy
+            if isinstance(self_value, ParameterServer) and isinstance(value, ParameterServer):
+                result, child_unequal_params = self_value.HasEqualParamsAs(value, ParameterServer())
+                if result:
+                  unequal_params[key] = child_unequal_params
+            # one of them is ParamServer, the other not -> unequal params found
+            elif (isinstance(self_value, ParameterServer) and not isinstance(value, ParameterServer)) or \
+                (not isinstance(self_value, ParameterServer) and isinstance(value, ParameterServer)):
+                unequal_params[key] = value
+            # both are parameters -> check for equality
+            else:
+                if self.store[key] != value:
+                     unequal_params[key] = value
+        return len(unequal_params) > 0, unequal_params
+              
+
+
+
 
     # get values
     def GetBool(self, param_name, description, default_value):

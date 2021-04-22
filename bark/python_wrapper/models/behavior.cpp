@@ -14,6 +14,7 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/motion_primitives/random_macro_actions.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
@@ -30,6 +31,7 @@ namespace py = pybind11;
 using namespace bark::models::behavior;
 using namespace bark::models::behavior::primitives;
 using bark::models::dynamic::DynamicModelPtr;
+using bark::models::dynamic::AccelerationLimits;
 
 using std::shared_ptr;
 void python_behavior(py::module m) {
@@ -243,6 +245,31 @@ void python_behavior(py::module m) {
             return new BehaviorMPMacroActions(
                 PythonToParams(t[0].cast<py::tuple>()), prims);
           }));
+  
+  py::class_<BehaviorRandomMacroActions, BehaviorMPMacroActions,
+             shared_ptr<BehaviorRandomMacroActions>>(m, "BehaviorRandomMacroActions")
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&,
+                    const std::vector<primitives::PrimitivePtr>&>())
+      .def(py::pickle(
+          [](const BehaviorRandomMacroActions& b) {
+            std::vector<py::tuple> prims;
+            for (const auto& p : b.GetMotionPrimitives()) {
+              prims.emplace_back(PrimitiveToPython(p));
+            }
+            return py::make_tuple(ParamsToPython(b.GetParams()), prims);
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid behavior model state!");
+            auto tuples = t[1].cast<std::vector<py::tuple>>();
+            std::vector<PrimitivePtr> prims;
+            for (const auto& tup : tuples) {
+              prims.emplace_back(PythonToPrimitive(tup));
+            }
+            return new BehaviorRandomMacroActions(
+                PythonToParams(t[0].cast<py::tuple>()), prims);
+          }));
 
   py::class_<PrimitiveGapKeeping, Primitive,
              std::shared_ptr<PrimitiveGapKeeping>>(m, "PrimitiveGapKeeping")
@@ -413,7 +440,8 @@ void python_behavior(py::module m) {
     .def("GetSafetyPolygons", &BehaviorRSSConformant::GetSafetyPolygons)
     .def("ComputeSafetyPolygons", &BehaviorRSSConformant::ComputeSafetyPolygons)
     #endif
-    .def("GetAccelerationLimits", &BehaviorRSSConformant::GetAccelerationLimits)
+    .def("GetAccelerationLimitsVehicleCs", &BehaviorRSSConformant::GetAccelerationLimitsVehicleCs)
+    .def("GetAccelerationLimitsStreetCs", &BehaviorRSSConformant::GetAccelerationLimitsStreetCs)
     .def("__repr__",
       [](const BehaviorRSSConformant& b) {
         return "bark.behavior.BehaviorRSSConformant";
@@ -429,7 +457,9 @@ void python_behavior(py::module m) {
           b.GetLongitudinalResponse(),
           b.GetLateralLeftResponse(),
           b.GetLateralRightResponse(),
-          b.GetSafetyPolygons());
+          b.GetSafetyPolygons(),
+          b.GetAccelerationLimitsVehicleCs(),
+          b.GetAccelerationLimitsStreetCs());
         #endif
         return py::make_tuple(
           ParamsToPython(b.GetParams()), 
@@ -439,7 +469,7 @@ void python_behavior(py::module m) {
       [](py::tuple t) {
         int num_params = 3;
         #ifdef RSS
-        num_params = 7;
+        num_params = 9;
         #endif
         if (t.size() != num_params)
           throw std::runtime_error("Invalid behavior model state!");
@@ -459,6 +489,8 @@ void python_behavior(py::module m) {
         bm->SetLateralRightResponse(t[5].cast<bool>());
         bm->SetSafetyPolygons(t[6].cast<std::vector<SafetyPolygon>>());
         // TODO: load safety polygons
+        bm->SetAccelerationLimitsVehicleCs(t[7].cast<AccelerationLimits>());
+        bm->SetAccelerationLimitsStreetCs(t[8].cast<AccelerationLimits>());
         #endif
         return bm;
       }));

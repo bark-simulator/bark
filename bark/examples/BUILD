@@ -46,6 +46,22 @@ py_test(
           ":paths"],
 )
 
+py_test(
+  name = "parametric_observer",
+  srcs = ["parametric_observer.py"],
+  data = ['//bark:generate_core',
+          '//bark/runtime/tests:xodr_data',
+          ':params'],
+  
+  deps = ["//bark/runtime/commons:parameters",
+          "//bark/runtime/commons:xodr_parser",
+          "//bark/runtime/viewer:pygame_viewer",
+          "//bark/runtime/viewer:matplotlib_viewer",
+          "//bark/runtime/scenario/scenario_generation:scenario_generation",
+          "//bark/runtime:runtime",
+          ":paths"],
+)
+
 py_binary(
   name = "intersection",
   srcs = ["intersection.py"],

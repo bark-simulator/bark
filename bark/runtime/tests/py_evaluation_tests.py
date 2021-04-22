@@ -398,8 +398,8 @@ class EvaluationTests(unittest.TestCase):
     agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
                   agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
     world.AddAgent(agent)
-
-    init_state2 = np.array([0, 13+gap, -1.75, 0, 5])
+    x_distance = gap + agent_2d_shape.front_dist + agent_2d_shape.rear_dist
+    init_state2 = np.array([0, 13+x_distance, -1.75, 0, 5])
     agent2 = Agent(init_state2, behavior_model2, dynamic_model2, execution_model2,
                     agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
     world.AddAgent(agent2)
@@ -410,7 +410,7 @@ class EvaluationTests(unittest.TestCase):
     world.AddEvaluator("gap", evaluator)
 
     info = world.Evaluate()
-    self.assertAlmostEqual(info["gap"], gap - agent_2d_shape.front_dist - agent_2d_shape.rear_dist, places=4)
+    self.assertAlmostEqual(info["gap"], gap, places=4)
 
   def test_number_of_agents(self):    
     # World Definition

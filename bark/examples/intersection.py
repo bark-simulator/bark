@@ -76,11 +76,6 @@ scenarios = \
 # viewer
 viewer = MPViewer(params=param_server, use_world_bounds=True)
 
-# viewer = Panda3dViewer(params=param_server,
-#                        x_range=[-40, 40],
-#                        y_range=[-40, 40],
-#                        follow_agent_id=agent3.id)
-
 # World Simulation
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",

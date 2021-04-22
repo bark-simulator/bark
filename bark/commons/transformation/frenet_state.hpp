@@ -12,31 +12,62 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/geometry/line.hpp"
+#include "bark/geometry/polygon.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
+
 
 namespace bark {
 namespace commons {
 namespace transformation {
 
 struct FrenetState : public FrenetPosition {
-  FrenetState() : FrenetPosition() {}
+  FrenetState() : FrenetPosition(),
+                  vlon(std::numeric_limits<double>::max()),
+                  vlat(std::numeric_limits<double>::max()),
+                  angle(std::numeric_limits<double>::max()) {}
   FrenetState(const double& longitudinal, const double& lateral,
               const double& vlongitudinal, const double& vlateral,
-              const double& angle)
+              const double& angle, double angleRoad, double vLatRoad)
       : FrenetPosition(longitudinal, lateral),
         vlon(vlongitudinal),
         vlat(vlateral),
-        angle(angle) {}
+        angle(angle),
+        angleRoad(angleRoad) {}
   FrenetState(const bark::models::dynamic::State& state,
               const bark::geometry::Line& path);
 
+  bool Valid() const { return FrenetPosition::Valid() && angle <= bark::geometry::B_PI; }
+
   double vlon;
   double vlat;
-  double angle;
+  double angle;  // in fact, this is theta_road - theta_vehicle
+  double angleRoad;
+};
+
+struct FrenetStateDifference : public FrenetState {
+  // Represents differences between frenet state and also considers projected shapes based on tangent angles
+  // Conventions: 
+  // - positive longitudinal difference if frenet_state2 is in "front" of frenet_state1
+  // - positive lateral difference if frenet_state2 is in "left" of frenet_state1
+  // - positive long and velocities diff if frenet state 2 is "faster" than frenet state1
+  // - positive angle difference if frenet state2 is turned more left than frenet state 1
+  FrenetStateDifference() : FrenetState(), from(), to() {}
+  FrenetStateDifference(const FrenetState& frenet_state1, const bark::geometry::Polygon& polygon1,
+                                        const FrenetState& frenet_state2, const bark::geometry::Polygon& polygon2);
+  FrenetState from;
+  FrenetState to;
 };
 
 bark::models::dynamic::State FrenetStateToDynamicState(
     const FrenetState& frenet_state, const bark::geometry::Line& path);
+
+auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const bark::geometry::Polygon& polygon);
+
+double LatAccStreetToVehicleCs(
+    double acc_lat_street, double acc_lon, double delta_time,
+    const bark::models::dynamic::State& current_state,
+    const FrenetState& current_frenet_state,
+    const FrenetState& last_frenet_state);
 
 }  // namespace transformation
 }  // namespace commons

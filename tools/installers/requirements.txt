@@ -1,6 +1,6 @@
 matplotlib==3.3.2
 numpy==1.18.1
-lxml==4.6.2
+lxml==4.6.3
 scipy==1.4.1
 sphinx==2.3.1
 recommonmark==0.6.0
@@ -10,6 +10,7 @@ autopep8==1.4.4
 cpplint==1.4.4
 pygame==1.9.6
 aabbtree==2.3.1
+panda3d==1.10.5
 ray==0.8.5
 psutil==5.7.2
 notebook==6.1.5

@@ -93,7 +93,9 @@ class Scenario:
         param_server = ParameterServer(json=self._json_params)
         world = World(param_server)
         if self._observer_model is not None:
-          world.SetObserverModel(self._observer_model)
+          world.observer_model = self._observer_model
+          world.observer_model.observe_only_for_agents = \
+                  self.eval_agent_ids
         if self._map_interface is None:
             self.CreateMapInterface(self.full_map_file_name)
             world.SetMap(self._map_interface)
