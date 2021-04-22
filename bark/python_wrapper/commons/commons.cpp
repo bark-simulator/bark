@@ -74,6 +74,13 @@ void python_commons(py::module m) {
       .def_readwrite("vlat", &transformation::FrenetState::vlat)
       .def_readwrite("angle", &transformation::FrenetState::angle);
 
+  py::class_<transformation::FrenetStateDifference, transformation::FrenetState,
+             std::shared_ptr<transformation::FrenetStateDifference>>(m,
+                                                              "FrenetStateDifference")
+      .def(py::init<>())
+      .def_readwrite("lon", &transformation::FrenetStateDifference::lon)
+      .def_readwrite("lat", &transformation::FrenetStateDifference::lat);
+
   m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
   m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });
 
@@ -83,8 +90,9 @@ void python_commons(py::module m) {
 
   m.def(
       "GLogInit",
-      [](char* program_path, char* log_path, int v_level, bool log_to_std_err) {
+      [](char* program_path, char* log_path, int v_level, bool log_to_std_err, std::string vmodule) {
         FLAGS_v = v_level;
+        FLAGS_vmodule = vmodule;
         FLAGS_alsologtostderr = log_to_std_err;
         FLAGS_log_dir = log_path;
         FLAGS_minloglevel = 0;
@@ -92,7 +100,8 @@ void python_commons(py::module m) {
         LOG(INFO) << "GLog init";
       },
       py::arg("program_path") = "", py::arg("log_path") = "/tmp",
-      py::arg("v_level") = 0, py::arg("log_to_std_err") = true);
+      py::arg("v_level") = 0, py::arg("log_to_std_err") = true,
+      py::arg("vmodule") = "");
 
   m.def("do_logging", &do_logging);
 }

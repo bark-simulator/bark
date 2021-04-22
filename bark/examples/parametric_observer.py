@@ -70,11 +70,11 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
 
 # configure parametric observer,
 # multivariate distributions modeling random state deviations 
-# in directions: long. , lat, vlong. , vlat. and theta 
+# in directions: long. , lat
 params_parametric = ParameterServer()
 params_parametric["ObserverModelParametric"] \
-      ["EgoStateDeviationDist"]["Covariance"] = [[0.07, 0.0],  #  2 x 2 elements
-                                                 [0.0, 0.04]]
+      ["EgoStateDeviationDist"]["Covariance"] = [[0.01, 0.0],  #  2 x 2 elements
+                                                 [0.0, 0.01]]
 params_parametric["ObserverModelParametric"] \
       ["EgoStateDeviationDist"]["Mean"] =       [0.0, 0.0] # 2 elements
 params_parametric["ObserverModelParametric"] \
@@ -119,7 +119,7 @@ env = Runtime(step_time=0.2,
 for _ in range(0, 3):
   env.reset()
   # step each scenario 20 times
-  for step in range(0, 40):
+  for step in range(0, 10):
     env.step()
     time.sleep(sim_step_time/sim_real_time_factor)
     
