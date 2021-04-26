@@ -182,10 +182,13 @@ TEST(distribution_test, change_seed) {
   auto dist_normal1 = bark::commons::NormalDistribution1D(params_ptr);
   auto dist_normal2 = bark::commons::NormalDistribution1D(params_ptr);
 
+  // First samples of both disributions (equal with equal seed)
   auto sample1 = dist_normal1.Sample()[0];
   auto sample2 = dist_normal2.Sample()[0];
   EXPECT_EQ(sample1, sample2);
 
+  // Second samples of both distributions
+  // (different since seed of 2nd dist changed)
   dist_normal2.ChangeSeed(2000);
   sample1 = dist_normal1.Sample()[0];
   sample2 = dist_normal2.Sample()[0];
