@@ -62,7 +62,9 @@ void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, con
   // Get Current Frenet State of Agent
   const Point2d pos = agent->GetCurrentPosition();
   const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
-  BARK_EXPECT_TRUE(bool(lane_corridor));
+  if(!lane_corridor) {
+    return;
+  };
   FrenetState current_frenet_state(agent->GetCurrentState(), lane_corridor->GetCenterLine());
 
   // Add sampled frenet deviation to current frenet state

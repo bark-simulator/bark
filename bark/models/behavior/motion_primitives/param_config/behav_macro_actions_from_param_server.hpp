@@ -40,7 +40,7 @@ inline BehaviorMotionPrimitivesPtr BehaviorMacroActionsFromParamServer(
   BehaviorModelPtr ego_prediction_model(new BehaviorMPMacroActions(params));
 
   std::vector<double> acc_vec = params->GetListFloat(
-      "AccelerationInputs", "A list of acceleration ", {0, 1, 4, -1, -8});
+      "AccelerationInputs", "A list of acceleration ", {0, 1, 4, -1, -5});
 
   bool add_lane_changes = params->GetBool(
       "AddLaneChangeActions", "If lane change actions are added ", true);
