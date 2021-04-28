@@ -47,7 +47,7 @@ TEST(observer_model_none, base_test) {
   EXPECT_EQ(observed_world.GetEgoAgentId(), AgentId(1));
 }
 
-TEST(observer_model_parametric, state_deviation_test) {
+TEST(observer_model_parametric, position_deviation_test) {
   auto params = std::make_shared<SetterParams>();
 
   // Create World with known agent positions
@@ -114,6 +114,77 @@ TEST(observer_model_parametric, state_deviation_test) {
   EXPECT_NEAR(mean_deviation1(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(1), 0.05);
   EXPECT_NEAR(mean_deviation2(index), params->GetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", "", {}).at(1), 0.05);
   EXPECT_NEAR(mean_deviation3(index), params->GetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", "", {}).at(1), 0.05);
+}
+
+TEST(observer_model_parametric, velocity_deviation_test) {
+  auto params = std::make_shared<SetterParams>();
+
+  // Create World with known agent positions
+  // Frenet coordinates oriented along cartesian coordinate system
+  Polygon polygon = GenerateGoalRectangle(6,3);
+  std::shared_ptr<Polygon> goal_polygon(
+    std::dynamic_pointer_cast<Polygon>(polygon.Translate(
+      Point2d(50, -2))));  // < move the goal polygon into the driving
+                            // corridor in front of the ego vehicle
+  auto goal_definition_ptr =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
+  double ego_velocity = 5.0, rel_distance = 2.0, velocity_difference = 2.0;
+  WorldPtr world = make_test_world(2, rel_distance, ego_velocity,
+                                   velocity_difference, goal_definition_ptr);
+
+  params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0.7, 1.8});
+  params->SetListListFloat("ObserverModelParametric::EgoStateDeviationDist::Covariance",
+                             {{0.2, 0.0}, 
+                              {0.0, 0.2}});
+  
+  params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {1.2, 3.5});
+  params->SetListListFloat("ObserverModelParametric::OtherStateDeviationDist::Covariance",
+                             {{0.3, 0.0}, 
+                              {0.0, 2.1}});
+
+  auto observer_parametric = std::make_shared<ObserverModelParametric>(params);
+  world->SetObserverModel(observer_parametric);
+
+  const auto agent1 = world->GetAgents().begin()->second;
+  const auto agent2 = std::next(world->GetAgents().begin())->second;
+  const auto agent3 = std::next(world->GetAgents().begin(), 2)->second;
+
+  unsigned int num_steps = 10;
+  const double step_time = 0.2;
+
+  world->Step(step_time);
+
+  auto get_sensed_state = [](const WorldPtr& world, const AgentId& agent_id) {
+    return world->GetAgents().at(agent_id)->GetSensedWorld()->GetAgents().at(agent_id)->GetCurrentState();
+  };
+
+  auto calc_desired_velocity = [](const State& current_state, const State& prev_state, const double& step_time) {
+    auto vlon = (current_state[StateDefinition::X_POSITION] - prev_state[StateDefinition::X_POSITION]) / step_time;
+    auto vlat = (current_state[StateDefinition::Y_POSITION] - prev_state[StateDefinition::Y_POSITION]) / step_time;
+    return sqrt(vlon*vlon + vlat*vlat);
+  };
+
+  for (int i = 0; i <= num_steps; ++i) {
+    const auto prev_sense_state1 = get_sensed_state(world, agent1->GetAgentId());
+    const auto prev_sense_state2 = get_sensed_state(world, agent2->GetAgentId());
+    const auto prev_sense_state3 = get_sensed_state(world, agent3->GetAgentId());
+
+    world->Step(step_time);
+
+    const auto cur_sense_state1 = get_sensed_state(world, agent1->GetAgentId());
+    const auto cur_sense_state2 = get_sensed_state(world, agent2->GetAgentId());
+    const auto cur_sense_state3 = get_sensed_state(world, agent3->GetAgentId());
+
+    // Frenet state is aligned along coordinate system, so no transformation required
+    auto des_velocity1 = calc_desired_velocity(cur_sense_state1, prev_sense_state1, step_time);
+    EXPECT_NEAR(des_velocity1, cur_sense_state1[StateDefinition::VEL_POSITION], 0.00001);
+
+    auto des_velocity2 = calc_desired_velocity(cur_sense_state2, prev_sense_state2, step_time);
+    EXPECT_NEAR(des_velocity2, cur_sense_state2[StateDefinition::VEL_POSITION], 0.00001);
+
+    auto des_velocity3 = calc_desired_velocity(cur_sense_state3, prev_sense_state3, step_time);
+    EXPECT_NEAR(des_velocity3, cur_sense_state3[StateDefinition::VEL_POSITION], 0.00001);
+  }
 }
 
 int main(int argc, char** argv) {

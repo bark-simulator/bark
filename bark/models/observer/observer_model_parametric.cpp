@@ -49,16 +49,23 @@ ObservedWorld ObserverModelParametric::Observe(
      observe_only_for.end(), agent_id) == observe_only_for.end()) {
     return observed_world;
   }
-
-  AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
+  const auto previous_observed_world = world->GetAgents().at(agent_id)->GetSensedWorld();
+  double delta_time = 0.0f; // must only be valid when previous observed world exists
+  if(previous_observed_world) {
+      delta_time = world->GetWorldTime() - previous_observed_world->GetWorldTime();
+  }
+  AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_,
+                        previous_observed_world, delta_time);
   for (auto& agent : observed_world.GetOtherAgents()) {
-    AddStateDeviationFrenet(agent.second, others_state_deviation_dist_);
+    AddStateDeviationFrenet(agent.second, others_state_deviation_dist_,
+                            previous_observed_world, delta_time);
   }
 
   return observed_world;
 }
 
-void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution) const {
+void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution,
+                         const ObservedWorldPtr& previous_observed_world, const double& delta_time) const {
   // Get Current Frenet State of Agent
   const Point2d pos = agent->GetCurrentPosition();
   const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
@@ -71,8 +78,16 @@ void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, con
 
   current_frenet_state.lon += frenet_deviation[0];
   current_frenet_state.lat += frenet_deviation[1];
+
+  // Use previous observed state to calculate velocity deviation based on current lane corridor
+  if(previous_observed_world) {
+    FrenetState previous_frenet_state(
+          previous_observed_world->GetAgents().at(agent->GetAgentId())->GetCurrentState(), lane_corridor->GetCenterLine());
+    current_frenet_state.vlon = (previous_frenet_state.lon - current_frenet_state.lon)/delta_time;
+    current_frenet_state.vlat = (previous_frenet_state.lat - current_frenet_state.lat)/delta_time;
+  } // else: skip this step in the first time step, giving full observable velocity in this case
   
-  // Convert back and set dynamic agent state 
+  // Convert back (calculates angle based on frenet velocities) and set dynamic agent state 
   const auto deviated_state = FrenetStateToDynamicState(current_frenet_state, lane_corridor->GetCenterLine());
   agent->SetCurrentState(deviated_state);
 

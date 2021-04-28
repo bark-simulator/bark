@@ -25,6 +25,7 @@ typedef std::shared_ptr<Agent> AgentPtr;
 class ObservedWorld;
 class World;
 typedef std::shared_ptr<World> WorldPtr;
+typedef std::shared_ptr<ObservedWorld> ObservedWorldPtr;
 }  // namespace world
 namespace models {
 namespace observer {
@@ -32,6 +33,7 @@ using bark::world::World;
 using bark::world::WorldPtr;
 using bark::world::objects::AgentId;
 using bark::world::ObservedWorld;
+using bark::world::ObservedWorldPtr;
 using bark::world::objects::AgentPtr;
 using bark::commons::DistributionPtr;
 
@@ -53,7 +55,9 @@ class ObserverModelParametric : public ObserverModel {
 
  private:
   void AddStateDeviationFrenet(const AgentPtr& agent,
-                         const DistributionPtr& multi_dim_distribution) const;
+                         const DistributionPtr& multi_dim_distribution,
+                         const ObservedWorldPtr& previous_observed_world,
+                         const double& delta_time) const;
   const DistributionPtr ego_state_deviation_dist_;
   const DistributionPtr others_state_deviation_dist_;
 };
