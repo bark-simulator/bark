@@ -52,6 +52,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   double GetLateralDifferenceThreshold() const { return lateral_difference_threshold_; }
   bool GetConsiderCrossingCorridors() const { return consider_crossing_corridors_; }
   unsigned int GetMaxAgentsForCrossing() const { return max_agents_for_crossing_; }
+  bool GetCheckLateralDist() const { return check_lateral_dist_; }
 
  private:
   bool CheckSafeDistanceLongitudinal(

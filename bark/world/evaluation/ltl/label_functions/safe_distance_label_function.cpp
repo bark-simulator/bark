@@ -9,6 +9,7 @@
 #include "safe_distance_label_function.hpp"
 #include "bark/world/observed_world.hpp"
 #include "bark/commons/transformation/frenet_state.hpp"
+#include "bark/models/dynamic/single_track.hpp"
 
 namespace bark {
 namespace world {
@@ -83,7 +84,7 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
     double v_r = fr_agents.rear.second.to.vlon;
     double v_f = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
     double dist = fr_agents.front.second.lon;;
-    distance_safe = CheckSafeDistance(v_f, v_r,
+    distance_safe = CheckSafeDistanceLongitudinal(v_f, v_r,
                                       dist, a_o_, a_e_, delta_others_);
   } 
   
@@ -94,7 +95,7 @@ bool SafeDistanceLabelFunction::EvaluateEgoCorridor(
     double v_r = ego->GetCurrentState()(StateDefinition::VEL_POSITION);
     double v_f = fr_agents.front.second.to.vlon;
     double dist = fr_agents.front.second.lon;
-    distance_safe = distance_safe && CheckSafeDistance(v_f, v_r,
+    distance_safe = distance_safe && CheckSafeDistanceLongitudinal(v_f, v_r,
                                       dist, a_e_, a_o_, delta_ego_);
   }
   return distance_safe;
@@ -150,8 +151,8 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     bool distance_safe = CheckSafeDistanceLongitudinal(v_front_lon, v_rear_lon,
                                     dist_lon, a_o_, a_e_, delta_lon);
     if (check_lateral_dist_) {
-      auto single_track = std::dynamic_pointer_cast<dynamics::SingleTrackModel>(
-          observed_world.GetEgoAgent()->GetDynamicModel())
+      auto single_track = std::dynamic_pointer_cast<models::dynamic::SingleTrackModel>(
+          observed_world.GetEgoAgent()->GetDynamicModel());
       BARK_EXPECT_TRUE(bool(single_track));
       const double max_acc_lat_dyn = single_track->GetLatAccelerationMax();
       const double delta1 = delta_others_; // First vehicle is other agent
@@ -162,7 +163,9 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
       // Maximum lateral dynamic acceleration and max. long acceleration contribute both positively
       // since they can be applied on both lateral sides and either in relative forward or backward movements 
       const double a_2_lat = std::abs(sin(frenet_angle)*a_e_) + std::abs(cos(frenet_angle)*max_acc_lat_dyn);
-      distance_safe &= CheckSafeDistanceLateral(v_1_lat, v_2_lat, dist_lat,
+
+      // Safe distance satisfied when either longitudinal or lateral or both are satisfied
+      distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, dist_lat,
           a_1_lat,  a_2_lat, delta1, delta2);
     }
 
@@ -270,12 +273,12 @@ double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
  * @return true if lateral safe distance satisfied
  * @return false if lateral safe distance violated
  */
-bool CheckSafeDistanceLateral(
+bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(
     const float v_1_lat, const float v_2_lat, const float dist_lat,
     const double a_1_lat,  const double a_2_lat, const double delta1,
      const double delta2) const {
 
-    return dist >= v_1_lat*delta1 + v_1_lat*v_1_lat / (2 * a_1_lat) - 
+    return dist_lat >= v_1_lat*delta1 + v_1_lat*v_1_lat / (2 * a_1_lat) - 
                     (v_2_lat*delta2 - v_2_lat*v_2_lat / (2 * a_2_lat) );
 }
 
