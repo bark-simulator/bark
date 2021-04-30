@@ -31,7 +31,8 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
                             bool consider_crossing_corridors,
                             unsigned int max_agents_for_crossing,
                             bool use_frac_param_from_world,
-                            double lateral_difference_threshold);
+                            double lateral_difference_threshold,
+                            bool check_lateral_dist);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 
   bool EvaluateEgoCorridor(const world::ObservedWorld& observed_world) const;
@@ -53,7 +54,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   unsigned int GetMaxAgentsForCrossing() const { return max_agents_for_crossing_; }
 
  private:
-  bool CheckSafeDistance(
+  bool CheckSafeDistanceLongitudinal(
     const float v_f, const float v_r, const float dist,
     const double a_r,  const double a_f, const double delta) const;
   inline double CalcVelFrontStar(double v_f, double a_f, double delta) const;
@@ -65,6 +66,11 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
                                   double a_f, double delta) const;
 
+  bool CheckSafeDistanceLateral(
+    const float v_f_lat, const float v_r_lat, const float dist_lat,
+    const double a_r_lat,  const double a_f_lat, const double delta1,
+     const double delta2) const;
+
   bool to_rear_;
   double delta_ego_;  //! Reaction times
   double delta_others_;  //! Reaction times
@@ -74,6 +80,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   double lateral_difference_threshold_;  //! Fraction term for lateral offset
   bool consider_crossing_corridors_;
   unsigned int max_agents_for_crossing_;
+  bool check_lateral_dist_;
 };
 
 }  // namespace evaluation
