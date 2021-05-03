@@ -47,7 +47,7 @@ using bark::world::tests::MakeXodrMapOneRoadTwoLanes;
 WorldPtr bark::world::tests::make_test_world(
     int num_other_agents, double rel_distance, double ego_velocity,
     double velocity_difference, const GoalDefinitionPtr& ego_goal_definition,
-    double ego_acc, double other_acc) {
+    double ego_acc, double other_acc, double lat_diff, double others_theta) {
   double pos_x = 3.0;
   double pos_y = -1.75;
 
@@ -80,7 +80,19 @@ WorldPtr bark::world::tests::make_test_world(
   State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   double rel_dist_vlength =
       rel_distance + polygon.front_dist_ + polygon.rear_dist_;  // NOLINT
-  init_state2 << 0.0, pos_x + rel_dist_vlength, pos_y, 0.0,
+
+  
+  double lat_offset = 0.0;
+  if (lat_diff != 0.0) {
+    // Only consider a lateral offset including shape properties if desired lateral difference should be 
+    // different from zero
+    auto shape_extension = bark::commons::transformation::ShapeExtensionAtTangentAngle(others_theta, polygon);
+    lat_offset = lat_diff + lat_diff < 0 ? - polygon.left_dist_ - shape_extension.right_dist :
+             + polygon.right_dist_ + shape_extension.left_dist;
+  }
+  
+  init_state2 << 0.0, pos_x + rel_dist_vlength, 
+                pos_y + lat_offset , others_theta,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model,
                             polygon, params, ego_goal_definition, map_interface,
@@ -88,7 +100,8 @@ WorldPtr bark::world::tests::make_test_world(
   agent2->SetAgentId(2);
 
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
-  init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, pos_y, 0.0,
+  init_state3 << 0.0, pos_x + 10.0 + rel_dist_vlength, 
+                pos_y + lat_offset, others_theta,
       ego_velocity - velocity_difference;  // NOLINT
   AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model,
                             polygon, params, ego_goal_definition, map_interface,

@@ -61,7 +61,8 @@ struct FrenetStateDifference : public FrenetState {
 bark::models::dynamic::State FrenetStateToDynamicState(
     const FrenetState& frenet_state, const bark::geometry::Line& path);
 
-auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const bark::geometry::Polygon& polygon);
+typedef struct{double front_dist; double rear_dist; double left_dist; double right_dist;} ShapeExtension;
+ShapeExtension ShapeExtensionAtTangentAngle(const double& tangent_angle, const bark::geometry::Polygon& polygon);
 
 double LatAccStreetToVehicleCs(
     double acc_lat_street, double acc_lon, double delta_time,

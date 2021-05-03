@@ -92,7 +92,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
  * @param polygon 
  * @return A struct containing rear_dist, front_dist, left_dist, side_dist of rotated shape
  */
-auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
+ShapeExtension ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
   // Assumes equal extension to sides for polygon
   BARK_EXPECT_TRUE(std::abs(polygon.right_dist_ - polygon.left_dist_) < 0.01);
   const double polygon_side_extend = polygon.left_dist_;
@@ -111,8 +111,7 @@ auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& po
   } else {
     std::swap(left_dist, right_dist);
   }
-  const struct{double front_dist; double rear_dist; double left_dist; double right_dist;}
-         shape_extension{front_dist, rear_dist, left_dist, right_dist};
+  ShapeExtension shape_extension{front_dist, rear_dist, left_dist, right_dist};
   return shape_extension;
 }
 

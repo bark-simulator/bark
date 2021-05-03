@@ -122,7 +122,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
         observed_world.GetAgentFrontRearForId(
             nearest_agent.second->GetAgentId(), lane_corridor, frac);
 
-    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat, frenet_angle;
+    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat, frenet_angle, v_ego;
     VLOG(5) << "Nearest = " << nearest_agent.first;
     if(fr_agents.front.first && fr_agents.front.first->GetAgentId() == observed_world.GetEgoAgentId()) {
       // Ego agent is front agent
@@ -159,10 +159,10 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
       const double delta2 = delta_ego_;
       const double v_1_lat = 0.0; // no lateral velocity in own driving corridor of other agent
       const double a_1_lat = 0.0; // no lateral acceleration in own driving corridor of other agent
-      // Ego maximum lateral braking acceleration depends on angle of ego relative to other vehicle
-      // Maximum lateral dynamic acceleration and max. long acceleration contribute both positively
-      // since they can be applied on both lateral sides and either in relative forward or backward movements 
-      const double a_2_lat = std::abs(sin(frenet_angle)*a_e_) + std::abs(cos(frenet_angle)*max_acc_lat_dyn);
+      // Max ego lateral acceleration of rear axis ( front axis may have larger acceleration, we apply the more restrictive case)
+      const double a_2_lat = single_track->CalculateLatAccelerationMaxAtFrenetAngle(
+                observed_world.CurrentEgoState()(StateDefinition::VEL_POSITION), 
+                frenet_angle);
 
       // Safe distance satisfied when either longitudinal or lateral or both are satisfied
       distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, dist_lat,
@@ -278,8 +278,9 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(
     const double a_1_lat,  const double a_2_lat, const double delta1,
      const double delta2) const {
 
-    return dist_lat >= v_1_lat*delta1 + v_1_lat*v_1_lat / (2 * a_1_lat) - 
-                    (v_2_lat*delta2 - v_2_lat*v_2_lat / (2 * a_2_lat) );
+    const double min_lat_safe_dist = v_1_lat*delta1 + (v_1_lat == 0.0 ? 0.0 : v_1_lat*v_1_lat / (2 * a_1_lat)) - 
+                    (v_2_lat*delta2 -  (v_2_lat == 0.0 ? 0.0 : v_2_lat*v_2_lat / (2 * a_2_lat) ) );
+    return dist_lat > min_lat_safe_dist;
 }
 
 }  // namespace evaluation
