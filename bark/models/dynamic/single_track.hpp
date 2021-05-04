@@ -89,9 +89,12 @@ class SingleTrackModel : public DynamicModel {
     return acceleration_limits_.lat_acc_max;
   }
 
-  double CalculateLatAccelerationMaxAtFrenetAngle(const double &v, const double& frenet_angle) const {
-    const double max_acc_lat_bicycle = v*v*tan(steering_angle_max_)/wheel_base_;
-    return std::abs(cos(frenet_angle)*max_acc_lat_bicycle);
+  double CalculateLatAccelerationMaxAtFrenetAngle(const double &v, const double& theta,
+                                                 const double& tangent_angle,
+                                                 const double a_long_max) const {
+    const double max_lat_acc = std::abs(a_long_max)*(sin(tangent_angle-theta)) - 
+                              v*v*sin(steering_angle_max_)/wheel_base_*cos(tangent_angle+theta);
+    return std::abs(max_lat_acc);
   }
 
   double GetLonAccelerationMax(const State& x) const {

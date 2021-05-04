@@ -37,9 +37,9 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(const std::string& label_st
       check_lateral_dist_(check_lateral_dist) {}
 
 LabelMap SafeDistanceLabelFunction::Evaluate(const world::ObservedWorld& observed_world) const {
-  if(!EvaluateEgoCorridor(observed_world)) {
-    return {{GetLabel(), false}};; 
-  }
+  //if(!EvaluateEgoCorridor(observed_world)) {
+  //  return {{GetLabel(), false}};; 
+  //}
   bool safe_dist = true;
   if(consider_crossing_corridors_) {
     safe_dist = EvaluateCrossingCorridors(observed_world);
@@ -122,7 +122,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
         observed_world.GetAgentFrontRearForId(
             nearest_agent.second->GetAgentId(), lane_corridor, frac);
 
-    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat, frenet_angle, v_ego;
+    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat, road_angle, v_ego;
     VLOG(5) << "Nearest = " << nearest_agent.first;
     if(fr_agents.front.first && fr_agents.front.first->GetAgentId() == observed_world.GetEgoAgentId()) {
       // Ego agent is front agent
@@ -131,17 +131,17 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
       dist_lon = fr_agents.front.second.lon;
       delta_lon = delta_others_;
       v_2_lat = fr_agents.front.second.to.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
-      dist_lat = std::abs(fr_agents.front.second.lat); // remove directional sign
-      frenet_angle = fr_agents.front.second.angle;
+      dist_lat = fr_agents.front.second.lat; // remove directional sign
+      road_angle = fr_agents.front.second.angleRoad;
     } else if(fr_agents.rear.first && fr_agents.rear.first->GetAgentId() == observed_world.GetEgoAgentId()) {
       // Ego agent is rear agent
-      v_rear_lon = fr_agents.rear.second.to.vlon;
+      v_rear_lon = fr_agents.rear.second.from.vlon;
       v_front_lon = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
       dist_lon = std::abs(fr_agents.rear.second.lon);
       delta_lon = delta_ego_;
-      v_2_lat = fr_agents.rear.second.to.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
-      dist_lat = std::abs(fr_agents.rear.second.lat); // remove directional sign
-      frenet_angle = fr_agents.rear.second.angle;
+      v_2_lat = fr_agents.rear.second.from.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
+      dist_lat = fr_agents.rear.second.lat; // remove directional sign
+      road_angle = fr_agents.rear.second.angleRoad;
     } else {
       continue;
     }
@@ -160,12 +160,15 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
       const double v_1_lat = 0.0; // no lateral velocity in own driving corridor of other agent
       const double a_1_lat = 0.0; // no lateral acceleration in own driving corridor of other agent
       // Max ego lateral acceleration of rear axis ( front axis may have larger acceleration, we apply the more restrictive case)
+      // Depending on frenet angle also longitudinal acc. contributes to lateral acceleration with respect to center line
+      const auto ego_state = observed_world.CurrentEgoState();
       const double a_2_lat = single_track->CalculateLatAccelerationMaxAtFrenetAngle(
-                observed_world.CurrentEgoState()(StateDefinition::VEL_POSITION), 
-                frenet_angle);
+                              ego_state(StateDefinition::VEL_POSITION), 
+                              ego_state(StateDefinition::THETA_POSITION), 
+                              road_angle, a_e_);
 
       // Safe distance satisfied when either longitudinal or lateral or both are satisfied
-      distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, dist_lat,
+      distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, std::abs(dist_lat),
           a_1_lat,  a_2_lat, delta1, delta2);
     }
 

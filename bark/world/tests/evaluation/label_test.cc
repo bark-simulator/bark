@@ -134,8 +134,8 @@ TEST(label_test, safe_distance_lateral) {
   double dist_lat = 0.0;
   double angle = 0.0;
   auto world = make_test_world(1, stop_dist - 1.0, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
-  auto second_agent_id = std::next(world->GetAgents().begin())->second->GetAgentId();
-  auto observed_world = world->Observe({second_agent_id})[0];
+  auto ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  auto observed_world = world->Observe({ego_agent_id})[0];
   auto labels = evaluator->Evaluate(observed_world);
   EXPECT_TRUE(labels[label]);
 
@@ -144,8 +144,8 @@ TEST(label_test, safe_distance_lateral) {
   dist_lat = 0.0;
   angle = 0.0;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
-  second_agent_id = std::next(world->GetAgents().begin())->second->GetAgentId();
-  observed_world = world->Observe({second_agent_id})[0];
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
   labels = evaluator->Evaluate(observed_world);
   EXPECT_FALSE(labels[label]);
 
@@ -154,19 +154,29 @@ TEST(label_test, safe_distance_lateral) {
   dist_lat = 2.0;
   angle = 0.0;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
-  second_agent_id = std::next(world->GetAgents().begin())->second->GetAgentId();
-  observed_world = world->Observe({second_agent_id})[0];
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
   labels = evaluator->Evaluate(observed_world);
   EXPECT_TRUE(labels[label]);
 
 
-  // Longitudinal safe dist violated -> lateral on right of ego, lat velocity towards ego -> violated 
-  dist_long = 5.0;
+  // Longitudinal safe dist violated -> lateral on left of ego, lat velocity away from ego -> not violated 
+  dist_long = 3.0;
   angle = B_PI/4.0;
   dist_lat = 2.0;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
-  second_agent_id = std::next(world->GetAgents().begin())->second->GetAgentId();
-  observed_world = world->Observe({second_agent_id})[0];
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  EXPECT_TRUE(labels[label]);
+
+  // Longitudinal safe dist violated -> lateral on left of ego, lat velocity towards ego -> violated 
+  dist_long = 3.0;
+  angle = -B_PI/4.0;
+  dist_lat = 2.0;
+  world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
   labels = evaluator->Evaluate(observed_world);
   EXPECT_FALSE(labels[label]);
 
