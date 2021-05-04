@@ -32,6 +32,8 @@ class Distribution : public BaseType {
   virtual Probability CDF(const RandomVariate& variate) const = 0;
 
   virtual RandomVariableSupport GetSupport() const = 0;
+
+  virtual void ChangeSeed(const RandomSeed& new_seed) = 0;
 };
 
 typedef std::shared_ptr<Distribution> DistributionPtr;

@@ -173,6 +173,28 @@ TEST(distribution_test, multivariate_distribution) {
   ASSERT_FLOAT_EQ(p3_likelihood, 0.08211638);
 }
 
+TEST(distribution_test, change_seed) {
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
+  params_ptr->SetReal("Mean", -3.0);
+  params_ptr->SetReal("StdDev", 2.0);
+  params_ptr->SetInt("RandomSeed", 1000.0);
+
+  auto dist_normal1 = bark::commons::NormalDistribution1D(params_ptr);
+  auto dist_normal2 = bark::commons::NormalDistribution1D(params_ptr);
+
+  // First samples of both disributions (equal with equal seed)
+  auto sample1 = dist_normal1.Sample()[0];
+  auto sample2 = dist_normal2.Sample()[0];
+  EXPECT_EQ(sample1, sample2);
+
+  // Second samples of both distributions
+  // (different since seed of 2nd dist changed)
+  dist_normal2.ChangeSeed(2000);
+  sample1 = dist_normal1.Sample()[0];
+  sample2 = dist_normal2.Sample()[0];
+  EXPECT_TRUE(sample1 != sample2);
+}
+
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   ::testing::InitGoogleTest(&argc, argv);
