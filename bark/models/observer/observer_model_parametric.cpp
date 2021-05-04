@@ -66,32 +66,19 @@ ObservedWorld ObserverModelParametric::Observe(
 
 void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution,
                          const ObservedWorldPtr& previous_observed_world, const double& delta_time) const {
-  // Get Current Frenet State of Agent
-  const Point2d pos = agent->GetCurrentPosition();
-  const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
-  BARK_EXPECT_TRUE(bool(lane_corridor));
-  FrenetState current_frenet_state(agent->GetCurrentState(), lane_corridor->GetCenterLine());
-
   // Add sampled frenet deviation to current frenet state
-  const auto frenet_deviation = multi_dim_distribution->Sample();
-  BARK_EXPECT_TRUE(frenet_deviation.size() == 2); // Lat, Long position deviation
+  const auto state_deviation = multi_dim_distribution->Sample();
+  BARK_EXPECT_TRUE(state_deviation.size() == 4); // directional, orthogonal position deviation + velocity and angular deviation
 
-  current_frenet_state.lon += frenet_deviation[0];
-  current_frenet_state.lat += frenet_deviation[1];
+  // Get Current Frenet State of Agent
+  auto state = agent->GetCurrentState();
+  const auto theta = state[StateDefinition::THETA_POSITION];
+  state[StateDefinition::X_POSITION] += state_deviation[0]*cos(theta) + state_deviation[1]*sin(theta);
+  state[StateDefinition::Y_POSITION] += state_deviation[0]*sin(theta) + state_deviation[1]*cos(theta);
+  state[StateDefinition::THETA_POSITION] += state_deviation[2];
+  state[StateDefinition::VEL_POSITION] += state_deviation[3];
 
-  // Use previous observed state to calculate velocity deviation based on current lane corridor
-  if(previous_observed_world) {
-    FrenetState previous_frenet_state(
-          previous_observed_world->GetAgents().at(agent->GetAgentId())->GetCurrentState(), lane_corridor->GetCenterLine());
-    current_frenet_state.vlon = (previous_frenet_state.lon - current_frenet_state.lon)/delta_time;
-    current_frenet_state.vlat = (previous_frenet_state.lat - current_frenet_state.lat)/delta_time;
-  } // else: skip this step in the first time step, giving full observable velocity in this case
-  
-  // Convert back (calculates angle based on frenet velocities) and set dynamic agent state 
-  const auto deviated_state = FrenetStateToDynamicState(current_frenet_state, lane_corridor->GetCenterLine());
-  agent->SetCurrentState(deviated_state);
-
-  return;
+  agent->SetCurrentState(state);
 }
 
 }  // namespace observer
