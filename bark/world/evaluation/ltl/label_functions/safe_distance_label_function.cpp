@@ -122,35 +122,39 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
         observed_world.GetAgentFrontRearForId(
             nearest_agent.second->GetAgentId(), lane_corridor, frac);
 
-    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat, road_angle, v_ego;
+    double v_rear_lon, v_front_lon, dist_lon, delta_lon, v_2_lat, dist_lat_zeroed, dist_lat, road_angle, v_ego;
     VLOG(5) << "Nearest = " << nearest_agent.first;
     if(fr_agents.front.first && fr_agents.front.first->GetAgentId() == observed_world.GetEgoAgentId()) {
       // Ego agent is front agent
       v_rear_lon = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
       v_front_lon = fr_agents.front.second.to.vlon;
-      dist_lon = fr_agents.front.second.lon;
+      dist_lon = fr_agents.front.second.lon_zeroed ? 0.0 : fr_agents.front.second.lon;
       delta_lon = delta_others_;
       v_2_lat = fr_agents.front.second.to.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
-      dist_lat = fr_agents.front.second.lat; // remove directional sign
-      road_angle = fr_agents.front.second.angleRoad;
+      dist_lat = fr_agents.front.second.lat;
+      dist_lat_zeroed = fr_agents.front.second.lat_zeroed ? 0.0 : dist_lat; 
+      road_angle = fr_agents.front.second.to.angleRoad;
     } else if(fr_agents.rear.first && fr_agents.rear.first->GetAgentId() == observed_world.GetEgoAgentId()) {
       // Ego agent is rear agent
-      v_rear_lon = fr_agents.rear.second.from.vlon;
+      v_rear_lon = fr_agents.rear.second.to.vlon;
       v_front_lon = nearest_agent.second->GetCurrentState()(StateDefinition::VEL_POSITION);
-      dist_lon = std::abs(fr_agents.rear.second.lon);
+      dist_lon = fr_agents.rear.second.lon_zeroed ? 0.0 : std::abs(fr_agents.rear.second.lon);
       delta_lon = delta_ego_;
-      v_2_lat = fr_agents.rear.second.from.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
-      dist_lat = fr_agents.rear.second.lat; // remove directional sign
-      road_angle = fr_agents.rear.second.angleRoad;
+      v_2_lat = fr_agents.rear.second.to.vlat; // Lateral velocity of ego with respect to centerline of rear agents corridor
+      dist_lat = fr_agents.rear.second.lat;
+      dist_lat_zeroed = fr_agents.rear.second.lat_zeroed ? 0.0 : dist_lat;
+      road_angle = fr_agents.rear.second.to.angleRoad;
     } else {
       continue;
     }
 
-    VLOG(5) << "Checking dist for " << nearest_agent.first << ", ve=" << v_front_lon << ", vr=" << v_rear_lon
-         << ", d=" << dist_lon << ", a_o=" << a_o_ << ", a_e=" << a_e_; 
+    VLOG(5) << "Checking dist for " << nearest_agent.first << ", v_long_f=" << v_front_lon << ", v_long_r=" << v_rear_lon
+         << ", d=" << dist_lon << ", a_o=" << a_o_ << ", a_e=" << a_e_
+         << ", v_lat_e = " << v_2_lat << ", dist_lat = " << dist_lat_zeroed << ", road_angle = " << road_angle; 
     bool distance_safe = CheckSafeDistanceLongitudinal(v_front_lon, v_rear_lon,
                                     dist_lon, a_o_, a_e_, delta_lon);
     if (check_lateral_dist_) {
+      VLOG(5)  << "reached";
       auto single_track = std::dynamic_pointer_cast<models::dynamic::SingleTrackModel>(
           observed_world.GetEgoAgent()->GetDynamicModel());
       BARK_EXPECT_TRUE(bool(single_track));
@@ -166,9 +170,15 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
                               ego_state(StateDefinition::VEL_POSITION), 
                               ego_state(StateDefinition::THETA_POSITION), 
                               road_angle, a_e_);
+      // A positive lateral velocity in BARK definition means moving from right to left side of center line
+      // In the RSS model a negative velocity of vehicle 2 means that vehicle 2 moves towards the center vehicle 1
+      // Therefore, in this case, flip signs
+      if(dist_lat < 0.0) {
+        v_2_lat *= -1.0;
+      }
 
       // Safe distance satisfied when either longitudinal or lateral or both are satisfied
-      distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, std::abs(dist_lat),
+      distance_safe = distance_safe || CheckSafeDistanceLateral(v_1_lat, v_2_lat, std::abs(dist_lat_zeroed),
           a_1_lat,  a_2_lat, delta1, delta2);
     }
 
@@ -191,10 +201,13 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLongitudinal(
   double t_stop_f = -v_f / a_f;
 
   bool distance_safe;
-  double safe_dist_0 = CalcSafeDistance0(v_r, a_r, delta);
-  double safe_dist_1 = CalcSafeDistance1(v_r, v_f, a_r, a_f, delta);
-  double safe_dist_2 = CalcSafeDistance2(v_r, v_f, a_r, a_f, delta);
-  double safe_dist_3 = CalcSafeDistance3(v_r, v_f, a_r, a_f, delta);
+  auto ZeroToPositive = [](double safe_dist) {
+    return safe_dist < 0.0 ? 0.0 : safe_dist;
+  };
+  double safe_dist_0 = ZeroToPositive(CalcSafeDistance0(v_r, a_r, delta));
+  double safe_dist_1 = ZeroToPositive(CalcSafeDistance1(v_r, v_f, a_r, a_f, delta));
+  double safe_dist_2 = ZeroToPositive(CalcSafeDistance2(v_r, v_f, a_r, a_f, delta));
+  double safe_dist_3 = ZeroToPositive(CalcSafeDistance3(v_r, v_f, a_r, a_f, delta));
 
   VLOG(5) << "sf0=" << safe_dist_0 << ", sf1=" << safe_dist_1 << ", sf2=" << safe_dist_2 << 
         ", sf3=" << safe_dist_3;
@@ -283,6 +296,7 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(
 
     const double min_lat_safe_dist = v_1_lat*delta1 + (v_1_lat == 0.0 ? 0.0 : v_1_lat*v_1_lat / (2 * a_1_lat)) - 
                     (v_2_lat*delta2 -  (v_2_lat == 0.0 ? 0.0 : v_2_lat*v_2_lat / (2 * a_2_lat) ) );
+    VLOG(5) << "Min lat safe dist" <<min_lat_safe_dist;
     return dist_lat > min_lat_safe_dist;
 }
 

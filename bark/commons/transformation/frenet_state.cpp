@@ -139,10 +139,12 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
   if(from.lon <= to.lon) {
     double diff_lon = to.lon - shape_extend_at_tangent2.rear_dist -
                         (from.lon + shape_extend_at_tangent1.front_dist);
+    lon_zeroed = diff_lon <= 0;
     lon = diff_lon > 0 ? diff_lon : to.lon - from.lon;
   } else {
     double diff_lon = to.lon + shape_extend_at_tangent2.front_dist -
                       (from.lon - shape_extend_at_tangent1.rear_dist);
+    lon_zeroed = diff_lon >= 0;
     lon = diff_lon < 0 ? diff_lon : to.lon - from.lon;
   }
 
@@ -153,11 +155,13 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
     double diff_lat = to.lat - shape_extend_at_tangent2.right_dist -
                       (from.lat + shape_extend_at_tangent1.left_dist);
     // if shape consideration leads to negative distance use only pure lateral difference
+    lat_zeroed = diff_lat <= 0;
     lat = diff_lat > 0 ? diff_lat : to.lat - from.lat;
   } else {
     // lateral difference is negative
     double diff_lat = to.lat + shape_extend_at_tangent1.right_dist -
                       (from.lat - shape_extend_at_tangent2.left_dist);
+    lat_zeroed = diff_lat >= 0;
     lat = diff_lat < 0 ? diff_lat : to.lat - from.lat;
   }
   

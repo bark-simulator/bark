@@ -51,11 +51,13 @@ struct FrenetStateDifference : public FrenetState {
   // - positive lateral difference if frenet_state2 is in "left" of frenet_state1
   // - positive long and velocities diff if frenet state 2 is "faster" than frenet state1
   // - positive angle difference if frenet state2 is turned more left than frenet state 1
-  FrenetStateDifference() : FrenetState(), from(), to() {}
+  FrenetStateDifference() : FrenetState(), from(), to(), lat_zeroed(false), lon_zeroed(false) {}
   FrenetStateDifference(const FrenetState& frenet_state1, const bark::geometry::Polygon& polygon1,
                                         const FrenetState& frenet_state2, const bark::geometry::Polygon& polygon2);
   FrenetState from;
   FrenetState to;
+  bool lat_zeroed;
+  bool lon_zeroed;
 };
 
 bark::models::dynamic::State FrenetStateToDynamicState(
