@@ -55,10 +55,10 @@ ObservedWorld ObserverModelParametric::Observe(
       delta_time = world->GetWorldTime() - previous_observed_world->GetWorldTime();
   }
   AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_,
-                        previous_observed_world, delta_time);
+                        previous_observed_world);
   for (auto& agent : observed_world.GetOtherAgents()) {
     AddStateDeviationFrenet(agent.second, others_state_deviation_dist_,
-                            previous_observed_world, delta_time);
+                            previous_observed_world);
   }
 
   return observed_world;
