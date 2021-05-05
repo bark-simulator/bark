@@ -125,7 +125,7 @@ TEST(label_test, safe_distance_lateral) {
   
 
   auto evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 1.0, true));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 5.0, true));
   auto label = evaluator->GetLabel();
 
   // Longitudinal safe dist not violated -> lateral on same lane -> no violation
@@ -151,7 +151,7 @@ TEST(label_test, safe_distance_lateral) {
 
   // Longitudinal safe dist violated -> lateral on right of ego zero lat velocity -> not violated
   dist_long = 0.0;
-  dist_lat = 2.0;
+  dist_lat = 2.5;
   angle = 0.0;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
   ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
@@ -163,7 +163,7 @@ TEST(label_test, safe_distance_lateral) {
   // Longitudinal safe dist violated -> lateral on left of ego, lat velocity away from ego -> not violated 
   dist_long = 3.0;
   angle = B_PI/4.0;
-  dist_lat = 2.0;
+  dist_lat = 3.5;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
   ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
   observed_world = world->Observe({ego_agent_id})[0];
@@ -173,7 +173,7 @@ TEST(label_test, safe_distance_lateral) {
   // Longitudinal safe dist violated -> lateral on left of ego, lat velocity towards ego -> violated 
   dist_long = 3.0;
   angle = -B_PI/4.0;
-  dist_lat = 2.0;
+  dist_lat = 3.5;
   world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
   ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
   observed_world = world->Observe({ego_agent_id})[0];

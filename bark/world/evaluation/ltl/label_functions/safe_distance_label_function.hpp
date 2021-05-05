@@ -16,6 +16,7 @@
 #include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/world/objects/agent.hpp"
 #include "bark/world/objects/object.hpp"
+#include "bark/world/world.hpp"
 
 namespace bark {
 namespace world {
@@ -23,6 +24,7 @@ namespace evaluation {
 
 using bark::commons::transformation::FrenetPosition;
 using bark::world::objects::AgentPtr;
+using bark::world::FrontRearAgents;
 
 class SafeDistanceLabelFunction : public BaseLabelFunction {
  public:
@@ -55,6 +57,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   bool GetCheckLateralDist() const { return check_lateral_dist_; }
 
  private:
+  bool CheckSafeDistanceLongitudinal(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
   bool CheckSafeDistanceLongitudinal(
     const float v_f, const float v_r, const float dist,
     const double a_r,  const double a_f, const double delta) const;
@@ -67,6 +70,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
                                   double a_f, double delta) const;
 
+  bool CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
   bool CheckSafeDistanceLateral(
     const float v_f_lat, const float v_r_lat, const float dist_lat,
     const double a_r_lat,  const double a_f_lat, const double delta1,

@@ -37,7 +37,10 @@ World::World(const commons::ParamsPtr& params)
       lateral_difference_threshold_(params->GetReal("World::LateralDifferenceThreshold",
           "Lateral distance between shapes of vehicles considering orientation of shapes with respect to center line"
                 "for FrontRearAgent Calculation",
-          10.0)) {
+          2.0)),
+      max_agents_front_rear_(params->GetInt("World::MaxAgentsFrontRear",
+          "How many nearest agents are considered to search for front/rear agents",
+          4)) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
 }
@@ -52,6 +55,7 @@ World::World(const std::shared_ptr<World>& world)
       world_time_(world->GetWorldTime()),
       remove_agents_(world->GetRemoveAgents()),
       lateral_difference_threshold_(world->GetLateralDifferenceThreshold()),
+      max_agents_front_rear_(world->GetMaxAgentsFrontRear()),
       rtree_agents_(world->rtree_agents_) {
   //! segfault handler
   std::signal(SIGSEGV, bark::commons::SegfaultHandler);
@@ -245,33 +249,40 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
 FrontRearAgents World::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
-    double lateral_difference_threshold) const {
+    double lateral_difference_threshold, bool must_be_in_corridor) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 
-  FrontRearAgents fr_agents;
-  const auto& ego_state = World::GetAgent(agent_id)->GetCurrentState();
+  AgentMap considered_agents;
+  if(must_be_in_corridor) {
+    const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
+    const Line& center_line = lane_corridor->GetCenterLine();
+    considered_agents = GetAgentsIntersectingPolygon(corridor_polygon);
+  } else {
+    const auto& ego_pos = World::GetAgent(agent_id)->GetCurrentPosition();
+    considered_agents = GetNearestAgents(ego_pos,
+    max_agents_front_rear_+1); // one more since ego agent is included
+  }
 
-  const Polygon& corridor_polygon = lane_corridor->GetMergedPolygon();
-  const Line& center_line = lane_corridor->GetCenterLine();
-  AgentMap intersecting_agents = GetAgentsIntersectingPolygon(corridor_polygon);
-  if (intersecting_agents.size() == 0) {
+  FrontRearAgents fr_agents;
+  if (considered_agents.size() == 0) {
     fr_agents.front = std::make_pair(AgentPtr(nullptr), FrenetStateDifference());
     fr_agents.rear = fr_agents.front;
     return fr_agents;
   }
 
+  const auto& ego_state = World::GetAgent(agent_id)->GetCurrentState();
+  const Line& center_line = lane_corridor->GetCenterLine();
   FrenetState frenet_ego(ego_state, center_line);
   const auto ego_polygon = World::GetAgent(agent_id)->GetShape();
   const double numeric_max = std::numeric_limits<double>::max();
-
 
   AgentPtr nearest_agent_front(nullptr);
   AgentPtr nearest_agent_rear(nullptr);
   FrenetStateDifference nearest_difference_front;
   FrenetStateDifference nearest_difference_rear;
 
-  for (auto it = intersecting_agents.begin(); it != intersecting_agents.end();
+  for (auto it = considered_agents.begin(); it != considered_agents.end();
        ++it) {
     if (it->second->GetAgentId() == agent_id ||
         it->second->GetBehaviorStatus() != BehaviorStatus::VALID ||
@@ -281,7 +292,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
 
     FrenetState frenet_other(it->second->GetCurrentState(), center_line);
     FrenetStateDifference difference(frenet_ego, ego_polygon, frenet_other, it->second->GetShape());
-    if (std::abs(difference.lat) > lateral_difference_threshold_) {
+    double lat_difference = difference.lat_zeroed ? 0.0 : difference.lat;
+    if (std::abs(lat_difference) > lateral_difference_threshold) {
       // agent seems to be not really in same lane
       continue;
     }
