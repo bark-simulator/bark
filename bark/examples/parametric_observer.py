@@ -73,15 +73,19 @@ right_lane = CustomLaneCorridorConfig(params=param_server,
 # in directions: long. , lat
 params_parametric = ParameterServer()
 params_parametric["ObserverModelParametric"] \
-      ["EgoStateDeviationDist"]["Covariance"] = [[0.01, 0.0],  #  2 x 2 elements
-                                                 [0.0, 0.01]]
+      ["EgoStateDeviationDist"]["Covariance"] = [[0.01, 0.0, 0.0, 0.0],  #  4 x 4 elements
+                                                 [0.0, 0.01, 0.0, 0.0],
+                                                 [0.0, 0.00, 0.00001, 0.0],
+                                                 [0.0, 0.00, 0.0, 0.0001]]
 params_parametric["ObserverModelParametric"] \
-      ["EgoStateDeviationDist"]["Mean"] =       [0.0, 0.0] # 2 elements
+      ["EgoStateDeviationDist"]["Mean"] =       [0.0, 0.0, 0.0, 0.0] # 4 elements
 params_parametric["ObserverModelParametric"] \
-      ["OtherStateDeviationDist"]["Covariance"] = [[0.1, 0.0],  #  2 x 2 elements
-                                                 [0.0, 0.05]]
+      ["OtherStateDeviationDist"]["Covariance"] = [[0.05, 0.0, 0.0, 0.0],  #  4 x 4 elements
+                                                 [0.0, 0.01, 0.0, 0.0],
+                                                 [0.0, 0.00, 0.001, 0.0],
+                                                 [0.0, 0.00, 0.0, 0.05]]
 params_parametric["ObserverModelParametric"] \
-      ["OtherStateDeviationDist"]["Mean"] =       [0.0, 0.0] # 2 elements
+      ["OtherStateDeviationDist"]["Mean"] =       [0.0, 0.0, 0.0, 0.0] # 4 elements
 parametric_observer = ObserverModelParametric(params_parametric)
 
 
