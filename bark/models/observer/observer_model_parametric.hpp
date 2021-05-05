@@ -56,8 +56,7 @@ class ObserverModelParametric : public ObserverModel {
  private:
   void AddStateDeviationFrenet(const AgentPtr& agent,
                          const DistributionPtr& multi_dim_distribution,
-                         const ObservedWorldPtr& previous_observed_world,
-                         const double& delta_time) const;
+                         const ObservedWorldPtr& previous_observed_world) const;
   const DistributionPtr ego_state_deviation_dist_;
   const DistributionPtr others_state_deviation_dist_;
 };

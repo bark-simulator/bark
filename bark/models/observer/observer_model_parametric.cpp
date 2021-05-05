@@ -65,7 +65,7 @@ ObservedWorld ObserverModelParametric::Observe(
 }
 
 void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution,
-                         const ObservedWorldPtr& previous_observed_world, const double& delta_time) const {
+                         const ObservedWorldPtr& previous_observed_world) const {
   // Add sampled frenet deviation to current frenet state
   const auto state_deviation = multi_dim_distribution->Sample();
   BARK_EXPECT_TRUE(state_deviation.size() == 4); // directional, orthogonal position deviation + velocity and angular deviation
