@@ -293,13 +293,14 @@ void python_behavior(py::module m) {
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccStayLane& b) {
-            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()));
+            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()), 
+                                    b.GetAcceleration());
           },
           [](py::tuple t) {
-            if (t.size() != 1)
+            if (t.size() != 2)
               throw std::runtime_error("Invalid behavior model state!");
             return new PrimitiveConstAccStayLane(
-                PythonToParams(t[0].cast<py::tuple>()));
+                PythonToParams(t[0].cast<py::tuple>()), t[1].cast<double>());
           }));
 
   py::class_<PrimitiveConstAccChangeToLeft, Primitive,

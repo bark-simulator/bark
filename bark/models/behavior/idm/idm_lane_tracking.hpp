@@ -27,7 +27,8 @@ class BehaviorIDMLaneTracking : public BaseIDM {
   explicit BehaviorIDMLaneTracking(const commons::ParamsPtr& params) :
     BehaviorModel(params),
     BaseIDM(params),
-    limit_steering_rate_(true) {
+    limit_steering_rate_(params->GetBool("BehaviorIDMLaneTracking::LimitSteeringRate",
+                        "Bool if steering limited according to dynamics model", true)) {
     crosstrack_error_gain_ =
         params->GetReal("BehaviorIDMLaneTracking::CrosstrackErrorGain",
                         "Tuning factor of stanley controller", 1.0);
