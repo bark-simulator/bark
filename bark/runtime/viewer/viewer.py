@@ -461,6 +461,7 @@ class BaseViewer(Viewer):
             color = "blue"
         self.drawPolygon2d(lane_corridor.polygon, color=color,
                            facecolor=color, alpha=.3, zorder=2)
+        self.drawLine2d(lane_corridor.center_line, "k")
 
     def Reset(self):
         pass

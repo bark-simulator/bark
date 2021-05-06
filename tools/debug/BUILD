@@ -10,6 +10,7 @@ py_binary(
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime/commons:xodr_parser",
           "//bark/runtime/viewer:matplotlib_viewer",
+          "//tools/debug:debug_settings",
           "//bark/runtime:runtime",],
 )
 

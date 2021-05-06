@@ -37,7 +37,7 @@ World::World(const commons::ParamsPtr& params)
       lateral_difference_threshold_(params->GetReal("World::LateralDifferenceThreshold",
           "Lateral distance between shapes of vehicles considering orientation of shapes with respect to center line"
                 "for FrontRearAgent Calculation",
-          2.0)),
+          0.0)),
       max_agents_front_rear_(params->GetInt("World::MaxAgentsFrontRear",
           "How many nearest agents are considered to search for front/rear agents",
           4)) {

@@ -6,6 +6,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+try:
+    import debug_settings
+except:
+    pass
+
 import os
 import unittest
 import time
@@ -20,13 +25,16 @@ from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.core.geometry import Point2d, Polygon2d
 from bark.core.world.opendrive import XodrDrivingDirection
+import bark
+
+bark.core.commons.GLogInit("", "./", 5, True, "")
 
 import numpy as np
 import itertools
 
 # Name and Output Directory
 # CHANGE THIS #
-map_name = "DR_CHN_Merging_ZS_partial_v04_lower_edited"
+map_name = "left_turn_rural"
 output_dir = "/tmp/" + map_name
 
 # Map Definition
@@ -102,8 +110,8 @@ lane_ids = roadgraph.GetAllLaneids()
 
 
 comb_all = []
-start_point = [Point2d(-115+1117, -158+1107)]
-end_point_list = [Point2d(27+1117, -158+1107)]
+start_point = [Point2d(114.8, -56   ), Point2d( 494.2,  1.81), Point2d( 114.8,  -56   )]
+end_point_list = [Point2d(  -253.2, 1.81 ), Point2d(114.8, -56   ), Point2d(-253.2, 1.81      )]
 comb = list(itertools.product(start_point, end_point_list))
 comb_all = comb_all + comb
 

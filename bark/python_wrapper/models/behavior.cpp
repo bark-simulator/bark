@@ -213,7 +213,8 @@ void python_behavior(py::module m) {
   py::class_<Primitive, PyPrimitive, PrimitivePtr>(m, "Primitive")
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("Plan", &Primitive::Plan)
-      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
+      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied)
+      .def_property_readonly("name", &Primitive::GetName);
 
   py::class_<BehaviorMPMacroActions, BehaviorModel,
              shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
