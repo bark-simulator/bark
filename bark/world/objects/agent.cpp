@@ -11,7 +11,6 @@
 #include <limits>
 #include "bark/world/objects/object.hpp"
 #include "bark/world/observed_world.hpp"
-#include "bark/commons/timer/timer.hpp"
 
 namespace bark {
 namespace world {
@@ -74,11 +73,7 @@ Agent::Agent(const Agent& other_agent)
 
 void Agent::PlanBehavior(const double& min_planning_dt,
                          const ObservedWorld& observed_world) {
-  auto timer = bark::commons::timer::Timer();
-  timer.Start();
-  behavior_model_->Plan(min_planning_dt, observed_world);
-  double duration = timer.DurationInSeconds();
-  behavior_model_->SetLastSolutionTime(duration);
+  behavior_model_->PlanBehavior(min_planning_dt, observed_world);
 }
 
 void Agent::PlanExecution(const double& world_time) {
@@ -146,8 +141,9 @@ bool Agent::InsideRoadCorridor() const {
 }
 
 /**
- * @brief checks validity of agent. feature is required with simulating datasets in closed loop.
- * 
+ * @brief checks validity of agent. feature is required with simulating datasets
+ * in closed loop.
+ *
  * @param world_time ... current world time
  * @return true if agent is valid
  */

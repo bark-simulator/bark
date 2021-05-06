@@ -23,7 +23,7 @@ class Timer {
     boost::posix_time::ptime t2 =
         boost::posix_time::microsec_clock::local_time();
     boost::posix_time::time_duration diff = t2 - t1_;
-    return static_cast<double>(diff.total_milliseconds()) / 1e3;
+    return static_cast<double>(diff.total_microseconds()) / 1e6;
   }
 
  private:

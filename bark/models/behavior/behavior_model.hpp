@@ -93,6 +93,7 @@ class BehaviorModel : public bark::commons::BaseType {
         last_trajectory_(),
         last_action_(),
         behavior_status_(status),
+        measure_solution_time_(false),
         last_solution_time_(0.0) {}
 
   explicit BehaviorModel(const commons::ParamsPtr& params)
@@ -103,6 +104,7 @@ class BehaviorModel : public bark::commons::BaseType {
         last_trajectory_(behavior_model.GetLastTrajectory()),
         last_action_(behavior_model.GetLastAction()),
         behavior_status_(behavior_model.GetBehaviorStatus()),
+        measure_solution_time_(behavior_model.GetMeasureSolutionTime()),
         last_solution_time_(behavior_model.GetLastSolutionTime()) {}
 
   virtual ~BehaviorModel() {}
@@ -119,6 +121,9 @@ class BehaviorModel : public bark::commons::BaseType {
     behavior_status_ = status;
   }
 
+  Trajectory PlanBehavior(double min_planning_time,
+                          const world::ObservedWorld& observed_world);
+
   virtual Trajectory Plan(double min_planning_time,
                           const world::ObservedWorld& observed_world) = 0;
 
@@ -133,6 +138,11 @@ class BehaviorModel : public bark::commons::BaseType {
     action_to_behavior_ = action;
   };
 
+  bool GetMeasureSolutionTime() const { return measure_solution_time_; }
+  void SetMeasureSolutionTime(bool measure_solution_time) {
+    measure_solution_time_ = measure_solution_time;
+  }
+
   double GetLastSolutionTime() const { return last_solution_time_; }
   void SetLastSolutionTime(double last_solution_time) {
     last_solution_time_ = last_solution_time;
@@ -144,6 +154,7 @@ class BehaviorModel : public bark::commons::BaseType {
   Action last_action_;
   Action action_to_behavior_;
   BehaviorStatus behavior_status_;
+  bool measure_solution_time_;
   double last_solution_time_;
 };
 
