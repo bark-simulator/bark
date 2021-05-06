@@ -176,6 +176,106 @@ TEST(rss_interface, test_rss_check) {
   ASSERT_TRUE(::ad::rss::state::isLateralSafe(snapshot.individualResponses[0]));
 }
 
+TEST(rss_interface, test_rss_acc_restrictions) {
+  // set up highway center for testing
+  // ===================================================
+  auto params = std::make_shared<SetterParams>(false);
+
+  std::shared_ptr<PlanView> p(new PlanView());
+
+  //! add line
+  p->AddLine(Point2d(0, -125), M_PI_2, 250, 250);
+
+  //! lane sections
+  XodrLaneSectionPtr ls(new XodrLaneSection(0.0));
+
+  XodrLaneOffset off = {3.6, 0, 0, 0};
+  XodrLaneWidth lane_width_1 = {0, 250, off};
+  XodrLaneWidth lane_width_2 = {0, 250, off};
+
+  //! Plan View
+  XodrLanePtr l_0(new XodrLane(0));
+  l_0->SetLine(p->GetReferenceLine());
+
+  XodrLanePtr l_1(new XodrLane(-1));
+  XodrLanePtr l_2(new XodrLane(-2));
+
+  l_1 = CreateLaneFromLaneWidth(-1, p->GetReferenceLine(), lane_width_1);
+  l_1->SetLaneType(XodrLaneType::DRIVING);
+  l_1->SetDrivingDirection(XodrDrivingDirection::FORWARD);
+
+  l_2 = CreateLaneFromLaneWidth(-2, l_1->GetLine(), lane_width_2);
+  l_2->SetLaneType(XodrLaneType::DRIVING);
+  l_2->SetDrivingDirection(XodrDrivingDirection::FORWARD);
+
+  ls->AddLane(l_0);
+  ls->AddLane(l_1);
+  ls->AddLane(l_2);
+
+  XodrRoadPtr r(new XodrRoad("highway", 100));
+  r->SetPlanView(p);
+  r->AddLaneSection(ls);
+
+  OpenDriveMapPtr open_drive_map(new OpenDriveMap());
+  open_drive_map->AddRoad(r);
+
+  RoadgraphPtr roadgraph(new Roadgraph());
+  MapInterfacePtr map_interface(new MapInterface());
+  map_interface->interface_from_opendrive(open_drive_map);
+
+  WorldPtr world(new World(params));
+  world->SetMap(map_interface);
+
+  Polygon shape = standard_shapes::CarRectangle();
+  Polygon polygon = GenerateGoalRectangle(2,2);
+
+  std::shared_ptr<Polygon> goal_polygon_1(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(5.5, 120))));
+  auto goal_definition_ptr_1 =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon_1);
+
+  std::shared_ptr<Polygon> goal_polygon_2(
+      std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(1.8, 120))));
+  auto goal_definition_ptr_2 =
+      std::make_shared<GoalDefinitionPolygon>(*goal_polygon_2);
+
+  BehaviorModelPtr beh_model_1(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model_1(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model_1(new ExecutionModelInterpolate(params));
+  State state_1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state_1 << 0, 5.5, 0, 0, 10;
+  objects::AgentPtr agent_1(new Agent(state_1, beh_model_1, dyn_model_1,
+                                      exec_model_1, shape, params,
+                                      goal_definition_ptr_1, map_interface));
+  agent_1->SetAgentId(1);
+
+  BehaviorModelPtr beh_model_2(new BehaviorConstantAcceleration(params));
+  DynamicModelPtr dyn_model_2(new SingleTrackModel(params));
+  ExecutionModelPtr exec_model_2(new ExecutionModelInterpolate(params));
+  State state_2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  state_2 << 0, 1.8, 0, 0, 10;
+  objects::AgentPtr agent_2(new Agent(state_2, beh_model_2, dyn_model_2,
+                                      exec_model_2, shape, params,
+                                      goal_definition_ptr_2, map_interface));
+  agent_1->SetAgentId(2);
+
+  world->AddAgent(agent_1);
+  world->UpdateAgentRTree();
+  world->AddAgent(agent_2);
+  world->UpdateAgentRTree();
+  // ===================================================
+
+  world->Step(0.2);
+  RssInterface rss("bark/runtime/tests/data/city_highway_straight.xodr", params);
+
+  ::ad::rss::world::WorldModel rss_world;
+  WorldPtr cloned_world(world->Clone());
+  ObservedWorld observed_world(cloned_world, agent_1->GetAgentId());
+  ASSERT_TRUE(rss.GenerateRSSWorld(observed_world, rss_world));
+
+  rss.GetRssAccRestrictions(rss_world);  
+}
+
 TEST(rss_interface, test_rss_planning_route_chinese_merge) {
   auto params = std::make_shared<SetterParams>(false);
 

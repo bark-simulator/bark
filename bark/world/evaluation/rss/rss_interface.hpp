@@ -226,6 +226,9 @@ class RssInterface {
     return rss_proper_response_;
   }
 
+  ::ad::rss::state::AccelerationRestriction GetRssAccRestrictions(
+    const ::ad::rss::world::WorldModel& world_model);
+
   ::ad::rss::state::RssStateSnapshot GetRSSStateSnapshot() const {
     return rss_state_snapshot_;
   }
