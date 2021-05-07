@@ -54,6 +54,11 @@ CondensedParamList SetterParams::GetCondensedParamList() const {
     param_list.push_back(std::make_pair(param.first, param.second));
   }
 
+  // Add List Ints
+  for (const auto param : params_list_int_) {
+    param_list.push_back(std::make_pair(param.first, param.second));
+  }
+
   // Add Childs recursively
   for (const auto& child : childs_) {
     CondensedParamList param_list_child = child.second->GetCondensedParamList();
