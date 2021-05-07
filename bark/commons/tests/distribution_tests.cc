@@ -136,22 +136,6 @@ TEST(distribution_test, discrete_dist_1d) {
   }
 }
 
-TEST(distribution_test, multivariate_distribution) {
-  // First test zero covariances
-  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
-  params_ptr->SetReal("Probability", 0.3);
-  params_ptr->SetInt("RandomSeed", 1000.0);
-
-  auto dist_bernoulli = bark::commons::BernoulliDistribution1D(params_ptr);
-
-  size_t samples = 100000;
-  double mean = 0.0;
-  for (size_t i = 0; i < samples; ++i) {
-    mean += dist_bernoulli.Sample()[0];
-  }
-  mean /= samples;
-  EXPECT_NEAR(mean, 0.3, 0.01);
-}
 
 TEST(distribution_test, multivariate_distribution) {
   // First test zero covariances
