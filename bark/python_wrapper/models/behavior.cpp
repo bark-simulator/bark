@@ -497,23 +497,9 @@ void python_behavior(py::module m) {
         return bm;
       }));
   
-  py::class_<BehaviorSimplexSampling, BehaviorModel,
+  py::class_<BehaviorSimplexSampling, BehaviorRSSConformant,
              shared_ptr<BehaviorSimplexSampling>>(m, "BehaviorSimplexSampling")
     .def(py::init<const bark::commons::ParamsPtr&>())
-    #ifdef RSS
-    .def("SetNominalBehaviorModel", &BehaviorSimplexSampling::SetNominalBehaviorModel)
-    .def("SetSafetyBehaviorModel", &BehaviorSimplexSampling::SetSafetyBehaviorModel)
-    .def("GetLongitudinalResponse", &BehaviorSimplexSampling::GetLongitudinalResponse)
-    .def("GetLateralLeftResponse", &BehaviorSimplexSampling::GetLateralLeftResponse)
-    .def("GetLateralRightResponse", &BehaviorSimplexSampling::GetLateralRightResponse)
-    .def("SetLongitudinalResponse", &BehaviorSimplexSampling::SetLongitudinalResponse)
-    .def("SetLateralLeftResponse", &BehaviorSimplexSampling::SetLateralLeftResponse)
-    .def("SetLateralRightResponse", &BehaviorSimplexSampling::SetLateralRightResponse)
-    .def("GetSafetyPolygons", &BehaviorSimplexSampling::GetSafetyPolygons)
-    .def("ComputeSafetyPolygons", &BehaviorSimplexSampling::ComputeSafetyPolygons)
-    #endif
-    .def("GetAccelerationLimitsVehicleCs", &BehaviorSimplexSampling::GetAccelerationLimitsVehicleCs)
-    .def("GetAccelerationLimitsStreetCs", &BehaviorSimplexSampling::GetAccelerationLimitsStreetCs)
     .def("__repr__",
       [](const BehaviorSimplexSampling& b) {
         return "bark.behavior.BehaviorSimplexSampling";
