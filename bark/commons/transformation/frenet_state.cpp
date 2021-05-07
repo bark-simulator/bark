@@ -160,7 +160,7 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
   } else {
     // lateral difference is negative
     double diff_lat = to.lat + shape_extend_at_tangent1.right_dist -
-                      (from.lat - shape_extend_at_tangent2.left_dist);
+                      (from.lat - shape_extend_at_tangent2.right_dist);
     lat_zeroed = diff_lat >= 0;
     lat = diff_lat < 0 ? diff_lat : to.lat - from.lat;
   }
