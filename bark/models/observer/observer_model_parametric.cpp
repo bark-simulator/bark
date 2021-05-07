@@ -49,34 +49,36 @@ ObservedWorld ObserverModelParametric::Observe(
      observe_only_for.end(), agent_id) == observe_only_for.end()) {
     return observed_world;
   }
-
-  AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_);
+  const auto previous_observed_world = world->GetAgents().at(agent_id)->GetSensedWorld();
+  double delta_time = 0.0f; // must only be valid when previous observed world exists
+  if(previous_observed_world) {
+      delta_time = world->GetWorldTime() - previous_observed_world->GetWorldTime();
+  }
+  AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_,
+                        previous_observed_world);
   for (auto& agent : observed_world.GetOtherAgents()) {
-    AddStateDeviationFrenet(agent.second, others_state_deviation_dist_);
+    AddStateDeviationFrenet(agent.second, others_state_deviation_dist_,
+                            previous_observed_world);
   }
 
   return observed_world;
 }
 
-void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution) const {
-  // Get Current Frenet State of Agent
-  const Point2d pos = agent->GetCurrentPosition();
-  const auto& lane_corridor = agent->GetRoadCorridor()->GetCurrentLaneCorridor(pos);
-  BARK_EXPECT_TRUE(bool(lane_corridor));
-  FrenetState current_frenet_state(agent->GetCurrentState(), lane_corridor->GetCenterLine());
-
+void ObserverModelParametric::AddStateDeviationFrenet(const AgentPtr& agent, const DistributionPtr& multi_dim_distribution,
+                         const ObservedWorldPtr& previous_observed_world) const {
   // Add sampled frenet deviation to current frenet state
-  const auto frenet_deviation = multi_dim_distribution->Sample();
-  BARK_EXPECT_TRUE(frenet_deviation.size() == 2); // Lat, Long position deviation
+  const auto state_deviation = multi_dim_distribution->Sample();
+  BARK_EXPECT_TRUE(state_deviation.size() == 4); // directional, orthogonal position deviation + velocity and angular deviation
 
-  current_frenet_state.lon += frenet_deviation[0];
-  current_frenet_state.lat += frenet_deviation[1];
-  
-  // Convert back and set dynamic agent state 
-  const auto deviated_state = FrenetStateToDynamicState(current_frenet_state, lane_corridor->GetCenterLine());
-  agent->SetCurrentState(deviated_state);
+  // Get Current Frenet State of Agent
+  auto state = agent->GetCurrentState();
+  const auto theta = state[StateDefinition::THETA_POSITION];
+  state[StateDefinition::X_POSITION] += state_deviation[0]*cos(theta) + state_deviation[1]*sin(theta);
+  state[StateDefinition::Y_POSITION] += state_deviation[0]*sin(theta) + state_deviation[1]*cos(theta);
+  state[StateDefinition::THETA_POSITION] += state_deviation[2];
+  state[StateDefinition::VEL_POSITION] += state_deviation[3];
 
-  return;
+  agent->SetCurrentState(state);
 }
 
 }  // namespace observer

@@ -38,6 +38,8 @@ class FixedValue : public Distribution {
         1, std::make_pair(fixed_value_[0], fixed_value_[0]));
   };
 
+  virtual void ChangeSeed(const RandomSeed& new_seed) {}
+
  private:
   RandomVariate fixed_value_;
 };
@@ -66,6 +68,11 @@ class BoostDistribution1D : public Distribution {
   virtual RandomVariableSupport GetSupport() const;
 
   BoostDistType DistFromParams(const ParamsPtr& params) const;
+
+  virtual void ChangeSeed(const RandomSeed& new_seed) {
+    seed_ = new_seed;
+    generator_.seed(seed_);
+  }
 
  private:
   RandomSeed seed_;

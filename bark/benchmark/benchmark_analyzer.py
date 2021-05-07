@@ -21,7 +21,7 @@ class BenchmarkAnalyzer:
 
   def get_scenario_ids(self, config_idx_list):
       scenario_idxs = self._data_frame.loc[self._data_frame["config_idx"].isin(config_idx_list)]
-      scen_df_copy = scenario_idxs.copy()
+      scen_df_copy = scenario_idxs.reset_index()
       scen_df_copy = scen_df_copy.reindex(scen_df_copy.config_idx.map( \
                     {x: i for i, x in enumerate(config_idx_list)}).sort_values().index)
       return list(scen_df_copy.scen_idx.values)
@@ -42,8 +42,11 @@ class BenchmarkAnalyzer:
             df_satisfied = df_satisfied.loc[df_satisfied["config_idx"].isin(in_configs)]
       if scenario_idx_list:
             df_satisfied = df_satisfied.loc[df_satisfied["scen_idx"].isin(scenario_idx_list)]
+            found_scen_idx = [scen_idx for scen_idx in scenario_idx_list if scen_idx in \
+                        list(df_satisfied["scen_idx"].values)]
+            df_satisfied.reset_index(inplace=True)
             df_satisfied = df_satisfied.reindex(df_satisfied.scen_idx.map( \
-                    {x: i for i, x in enumerate(scenario_idx_list)}).sort_values().index)
+                    {x: i for i, x in enumerate(found_scen_idx)}).sort_values().index)
 
       configs_found = list(df_satisfied["config_idx"].values)
       return configs_found

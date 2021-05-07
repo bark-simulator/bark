@@ -49,6 +49,11 @@ class MultivariateDistribution : public Distribution {
   Eigen::MatrixXd CovarFromParams(const ParamsPtr& params) const;
   Eigen::VectorXd MeanFromParams(const ParamsPtr& params) const;
 
+  virtual void ChangeSeed(const RandomSeed& new_seed) {
+    seed_ = new_seed;
+    generator_.seed(seed_);
+  }
+
  private:
   RandomSeed seed_;
   std::mt19937 generator_;

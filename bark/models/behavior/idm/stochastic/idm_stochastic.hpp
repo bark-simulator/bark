@@ -29,6 +29,8 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
 
   void SampleParameters();
 
+  void ChangeSeed(const bark::commons::RandomSeed& new_seed);
+
   ParameterRegions GetParameterRegions() const;
 
  protected:

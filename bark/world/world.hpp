@@ -17,6 +17,7 @@
 
 #include <boost/geometry/index/rtree.hpp>
 #include "bark/commons/transformation/frenet.hpp"
+#include "bark/commons/transformation/frenet_state.hpp"
 #include "bark/world/evaluation/base_evaluator.hpp"
 #include "bark/models/observer/observer_model.hpp"
 #include "bark/world/map/roadgraph.hpp"
@@ -29,6 +30,8 @@ namespace bark {
 namespace world {
 
 using bark::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetState;
+using bark::commons::transformation::FrenetStateDifference;
 using models::behavior::StateActionPair;
 using world::evaluation::EvaluatorPtr;
 using world::map::LaneCorridorPtr;
@@ -55,7 +58,7 @@ using AgentRTree =
     boost::geometry::index::rtree<rtree_agent_value,
                                   boost::geometry::index::linear<16, 4> >;
 
-typedef std::pair<AgentPtr, FrenetPosition> AgentFrenetPair;
+typedef std::pair<AgentPtr, FrenetStateDifference> AgentFrenetPair;
 
 struct FrontRearAgents {
   AgentFrenetPair front;
@@ -136,7 +139,7 @@ class World : public commons::BaseType {
   
   bool GetRemoveAgents() { return remove_agents_; }
 
-  double GetFracLateralOffset() const { return frac_lateral_offset_; }
+  double GetLateralDifferenceThreshold() const { return lateral_difference_threshold_; }
 
   void SetRemoveAgents(const bool& remove_agents) {
     remove_agents_ = remove_agents;
@@ -153,14 +156,14 @@ class World : public commons::BaseType {
    *
    * @param agent_id agent id for which to calculate front&rear agent
    * @param lane_corridor lane corridor in which to calculate front&rear agent
-   * @param frac_lateral_offset Lane Width Fraction for maximum allowed lateral
+   * @param lateral_difference_threshold Lane Width Fraction for maximum allowed lateral
    * offset in, should be larger than 0. value of 2 means that all agents
    * intersecting with lane will be considered
    * @return FrontRearAgents
    */
   FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
                                          const LaneCorridorPtr& lane_corridor,
-                                         double frac_lateral_offset) const;
+                                         double lateral_difference_threshold) const;
 
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
@@ -206,7 +209,7 @@ class World : public commons::BaseType {
   double world_time_;
   AgentRTree rtree_agents_;
   bool remove_agents_;
-  double frac_lateral_offset_;
+  double lateral_difference_threshold_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

@@ -73,6 +73,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                behaviors=None,
                behavior_configs=None,
                num_scenarios=None,
+               scenario_generation=None,
                benchmark_configs=None,
                log_eval_avg_every=None,
                glog_init_settings=None,
@@ -85,7 +86,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
-                          benchmark_configs=benchmark_configs, checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
+                          benchmark_configs=benchmark_configs, scenario_generation=scenario_generation,
+                          checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
         num_cpus_available = psutil.cpu_count(logical=True)
 
         if ip_head and redis_password:
@@ -106,7 +108,7 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, \
              _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
-        serialized_evaluators = pickle.dumps(evaluators)
+        serialized_evaluators = pickle.dumps(self.evaluators)
         ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
@@ -125,16 +127,13 @@ class BenchmarkRunnerMP(BenchmarkRunner):
 
     def run(self, viewer = None, maintain_history = False, checkpoint_every=None):
         results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every) for actor in self.actors])
-        result_dict = []
-        benchmark_configs = []
-        histories = {}
+        intermediate_result = BenchmarkResult(file_name= \
+                os.path.abspath(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name())))
         for result_tmp in results_tmp:
-            result_dict.extend(result_tmp.get_result_dict())
-            benchmark_configs.extend(result_tmp.get_benchmark_configs())
-            histories.update(result_tmp.get_histories())
-        benchmark_result = BenchmarkResult(result_dict, benchmark_configs, histories=histories)
-        self.existing_benchmark_result.extend(benchmark_result)
-        return self.existing_benchmark_result
+            logging.info("Result file: {}".format(result_tmp.get_file_name()))
+            intermediate_result.extend(result_tmp, file_level=True) 
+        intermediate_result.extend(self.existing_benchmark_result, file_level=True)
+        return intermediate_result
 
     def __del__(self):
        ray.shutdown()
