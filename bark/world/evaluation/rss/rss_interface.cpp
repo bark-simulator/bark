@@ -345,18 +345,6 @@ bool RssInterface::CreateWorldModel(
   return result;
 }
 
-::ad::rss::state::AccelerationRestriction RssInterface::GetRssAccRestrictions(
-    const ::ad::rss::world::WorldModel& world_model) {
-  ::ad::rss::core::RssCheck rss_check;
-  ::ad::rss::state::ProperResponse rss_response;
-  bool result = rss_check.calculateProperResponse(
-      world_model, rss_response);
-  if (!result) {
-    LOG(ERROR) << "Failed to calculate rss proper response" << std::endl;
-  }
-  return rss_response.accelerationRestrictions;
-}
-
 bool RssInterface::RssCheck(
     const ::ad::rss::world::WorldModel& world_model,
     ::ad::rss::state::RssStateSnapshot& rss_state_snapshot) {
