@@ -91,11 +91,22 @@ class SingleTrackModel : public DynamicModel {
 
   double CalculateLatAccelerationMaxAtFrenetAngle(const double &v, const double& theta,
                                                  const double& tangent_angle,
-                                                 const double a_long_max) const {
+                                                 const double a_long_max,
+                                                 bool on_left_of_center_line) const {
     const auto max_acc_lat_dyn = GetLatAccelerationMax();
     const double delta_max = std::atan2(max_acc_lat_dyn * wheel_base_, v * v);
-    const double max_lat_acc = std::abs(a_long_max)*(sin(tangent_angle-theta)) - 
-                              v*v*sin(delta_max)/wheel_base_*cos(tangent_angle+theta);
+    double delta_max_evasive;
+    const double abs_angle_diff = std::abs(bark::geometry::SignedAngleDiff(theta, tangent_angle));
+    const double evasive_sign = abs_angle_diff < bark::geometry::B_PI_2;
+    if ((on_left_of_center_line && abs_angle_diff < bark::geometry::B_PI_2) ||
+        (!on_left_of_center_line && abs_angle_diff > bark::geometry::B_PI_2)) {
+      delta_max_evasive = delta_max;
+    } else {
+      delta_max_evasive = delta_max;
+    }
+    const double max_lat_acc_from_steering = v*v*sin(delta_max_evasive)/wheel_base_*cos(tangent_angle+theta);
+    const double max_lat_acc_from_long_acc = std::abs(a_long_max)*(sin(tangent_angle-theta));
+    const double max_lat_acc = max_lat_acc_from_long_acc-max_lat_acc_from_steering;
     return std::abs(max_lat_acc);
   }
 

@@ -213,7 +213,8 @@ double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
 bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const {  
   auto GetMaxAccLat = [](const AgentPtr& agent,
                            const double& road_angle,
-                           const double& max_long_acc) {
+                           const double& max_long_acc,
+                           const bool& on_left_side_of_center_line) {
     auto single_track = std::dynamic_pointer_cast<models::dynamic::SingleTrackModel>(
       agent->GetDynamicModel());
     BARK_EXPECT_TRUE(bool(single_track));
@@ -221,7 +222,8 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
     const double a_max_lat = single_track->CalculateLatAccelerationMaxAtFrenetAngle(
                         state(StateDefinition::VEL_POSITION), 
                         state(StateDefinition::THETA_POSITION), 
-                        road_angle, max_long_acc);
+                        road_angle, max_long_acc,
+                        on_left_side_of_center_line);
     return a_max_lat;
   };
 
@@ -234,8 +236,8 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
     v_2_lat = fr_agents.front.second.to.vlat; // ego agent
     dist_lat = fr_agents.front.second.lat;
     dist_lat_zeroed = fr_agents.front.second.lat_zeroed ? 0.0 : dist_lat; 
-    a_1_lat = GetMaxAccLat(fr_agents.front.first, fr_agents.front.second.from.angleRoad, a_o_);
-    a_2_lat = GetMaxAccLat(ego_agent, fr_agents.front.second.to.angleRoad, a_e_);
+    a_1_lat = GetMaxAccLat(fr_agents.front.first, fr_agents.front.second.from.angleRoad, a_o_, dist_lat >= 0);
+    a_2_lat = GetMaxAccLat(ego_agent, fr_agents.front.second.to.angleRoad, a_e_, dist_lat >= 0);
   } else if(fr_agents.rear.first && fr_agents.rear.first->GetAgentId() == ego_agent->GetAgentId()) {
     // Ego agent is rear agent
     checked_agent = fr_agents.rear.first->GetAgentId();
@@ -243,8 +245,8 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
     v_2_lat = fr_agents.rear.second.to.vlat; // ego agent
     dist_lat = fr_agents.rear.second.lat;
     dist_lat_zeroed = fr_agents.rear.second.lat_zeroed ? 0.0 : dist_lat;
-    a_1_lat = GetMaxAccLat(fr_agents.rear.first, fr_agents.rear.second.from.angleRoad, a_o_);
-    a_2_lat = GetMaxAccLat(ego_agent, fr_agents.rear.second.to.angleRoad, a_e_);
+    a_1_lat = GetMaxAccLat(fr_agents.rear.first, fr_agents.rear.second.from.angleRoad, a_o_, dist_lat >= 0);
+    a_2_lat = GetMaxAccLat(ego_agent, fr_agents.rear.second.to.angleRoad, a_e_, dist_lat >= 0);
   } else {
     return true;
   }
@@ -252,23 +254,29 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
   VLOG(5) << "Checking lateral safe dist for " << checked_agent << ", v_lat_e = " << v_2_lat << ", v_lat_o = " << v_1_lat << 
     ", dist_lat = " << dist_lat_zeroed << ", acc_lat_1" << a_1_lat << ", acc_lat_2" << a_2_lat; 
 
-  const double delta1 = delta_others_; // First vehicle is other agent
-  const double delta2 = delta_ego_;
+  double delta1 = delta_others_; // First vehicle is other agent
+  double delta2 = delta_ego_;
 
   if(dist_lat_zeroed == 0.0) {
     return false;
+  // Positive lateral velocity means driving from right to left with respect to center
+  // Negative lateral velocity means driving from left to right with respect to center
   } else if(v_1_lat >= 0.0 && v_2_lat <= 0.0 && dist_lat_zeroed < 0.0) { // Vehicles move laterally away from each other...
     // vehicle 2 to the right of vehicle 1
     return true;
   } else if (v_1_lat <= 0.0 && v_2_lat >= 0.0 && dist_lat_zeroed > 0.0) {
     // vehicle 2 to the left of vehicle 1
     return true;
-  } else { // vehicles move laterally towards each other or into common direction
-    // For convention of RSS paper, make v_1_lat be larger (e.g. positive compared to v_2_lat)
+  } else { // vehicles move laterally towards each other or into common lateral direction
+    // For convention of RSS paper, make v_1_lat be larger (e.g. positive compared to v_2_lat) ...
     if (v_1_lat < v_2_lat) {
       std::swap(v_1_lat, v_2_lat);
+      std::swap(delta1, delta2);
+      std::swap(a_1_lat, a_2_lat);
     }
-    bool distance_safe = CheckSafeDistanceLateral(v_1_lat, v_2_lat, std::abs(dist_lat_zeroed),
+    // ... and lateral distance positive 
+    const double lateral_positive = std::abs(dist_lat_zeroed);
+    bool distance_safe = CheckSafeDistanceLateral(v_1_lat, v_2_lat, lateral_positive,
       a_1_lat,  a_2_lat, delta1, delta2);
     return distance_safe;
   }
