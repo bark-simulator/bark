@@ -70,6 +70,29 @@ TEST(line, base_functionality) {
   EXPECT_NEAR(Distance(line, check_point), 2.5, 0.01);
 }
 
+TEST(line, add_points) {
+  using bark::geometry::Line_t;
+  using bark::geometry::Point2d;
+  using bark::geometry::Point2d_t;
+
+  // template
+  Point2d point_1(0.0, 1.0);
+  Point2d point_2(0.0, 2.0);
+  Point2d point_3(0.0, 3.0);
+
+  Line_t<Point2d> line, line2;
+
+  line.AddPoint(point_1);
+  line.AddPoint(point_2);
+  line.AddPoint(point_3);
+
+  std::vector<Point2d> pts = {point_1, point_2, point_3};
+  line2.AddPoints(pts);
+
+  EXPECT_NEAR(Distance(line, line2), 0, 0.01);
+  EXPECT_NEAR(line.Length(), line2.Length(), 0.01);
+}
+
 TEST(geometry, line) {
   using bark::geometry::Line;
   using bark::geometry::Point2d;
@@ -180,9 +203,9 @@ TEST(geometry, polygon) {
 }
 
 TEST(geometry, polygon_from_two_lines) {
+  using bark::geometry::Line;
   using bark::geometry::Point2d;
   using bark::geometry::Polygon;
-  using bark::geometry::Line;
 
   Line left_line;  // vertical
   left_line.AddPoint(Point2d(0.0, 0.0));
@@ -191,7 +214,7 @@ TEST(geometry, polygon_from_two_lines) {
   Line right_line;  // vertical
   right_line.AddPoint(Point2d(3.0, 0.0));
   right_line.AddPoint(Point2d(3.0, 10.0));
-  
+
   Polygon p(left_line, right_line);
 
   EXPECT_TRUE(p.Valid());
@@ -693,7 +716,7 @@ TEST(line, GetLineFromSInterval) {
 
   EXPECT_TRUE(Point2d(0.0, 1.5) == p1);
   EXPECT_TRUE(point_2 == p2);
-  
+
   EXPECT_NEAR(boost::geometry::get<0>(p3), 0.0, 1e-3);
   EXPECT_NEAR(boost::geometry::get<1>(p3), 2.4, 1e-3);
 
@@ -1037,15 +1060,13 @@ TEST(line, append_line_no_intersect1) {
   EXPECT_FALSE(bg::intersects(lout.obj_)) << lout.ToArray();
 }
 
-
 TEST(line, append_line_no_intersect2) {
-
   using bark::geometry::Line;
   using bark::geometry::Point2d;
   namespace bg = boost::geometry;
 
   Line line1;
-  
+
   line1.AddPoint(Point2d(106.424, 103.972));
   line1.AddPoint(Point2d(101.24, 104.38));
   line1.AddPoint(Point2d(99.2392, 104.532));
@@ -1210,17 +1231,17 @@ TEST(buffer, inflate) {
 
 TEST(generate_car_limousine, vehicleshapes) {
   using namespace bark::geometry;
-  using bark::geometry::standard_shapes::GenerateCarLimousine;
   using bark::geometry::standard_shapes::CarLimousine;
+  using bark::geometry::standard_shapes::GenerateCarLimousine;
 
   double wb = 3.0568;
   double r = 0.9560;
   Polygon in1 = GenerateCarLimousine(wb, r);
   Polygon in2 = CarLimousine();
-  
+
   // due to numerical issues, this will fail:
   // EXPECT_TRUE(Equals(in1, in2)) << in1.ToArray() << in2.ToArray();
-  
+
   EXPECT_TRUE(std::abs(in1.CalculateArea() - in2.CalculateArea()) < 1e-3);
   EXPECT_TRUE(Distance(in1, in2) < 1e-6);
 }

@@ -3,10 +3,14 @@ cc_library(
     hdrs = [
         "behavior_model.hpp",
     ],
+    srcs = [
+        "behavior_model.cpp",
+    ],
     deps = [
         "//bark/commons:commons",
         "//bark/models/dynamic:dynamic",
         "@com_github_eigen_eigen//:eigen",
+        "//bark/commons/timer:timer",
     ],
     visibility = ["//visibility:public"],
 )

@@ -95,6 +95,15 @@ struct Shape {
     }
   }
 
+  Shape(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points,
+        int32_t id)
+      : obj_(), id_(id) {
+    auto row_num = points.rows();
+    for (auto rowIter = 0; rowIter < row_num; ++rowIter) {
+      AddPoint(T(points.coeff(rowIter, 0), points.coeff(rowIter, 1)));
+    }
+  }
+
   virtual ~Shape() {}
   virtual std::shared_ptr<Shape> Clone() const = 0;
   virtual std::string ShapeToString() const;
@@ -372,7 +381,7 @@ inline std::string Shape<G, T>::ShapeToString() const {
   return ss.str();
 }
 
-template<typename G, typename T>
+template <typename G, typename T>
 std::vector<Point2d> Intersection(const G& g1, const T& g2) {
   std::vector<Point2d> intersecting_points;
   bg::intersection(g1.obj_, g2.obj_, intersecting_points);

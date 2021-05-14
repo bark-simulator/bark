@@ -36,6 +36,8 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       : Shape<bg::model::linestring<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0) {
   }
 
+  Line_t(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
+
   virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 
   virtual std::shared_ptr<Shape<bg::model::linestring<T>, T>> Clone() const;
@@ -43,6 +45,13 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
   //! TODO(@all): do not recompute full s but only add one point
   bool AddPoint(const T& p) {
     return Shape<bg::model::linestring<T>, T>::AddPoint(p) && RecomputeS();
+  }
+
+  bool AddPoints(const std::vector<T>& pts) {
+    for (const auto& p : pts) {
+      Shape<bg::model::linestring<T>, T>::AddPoint(p);
+    }
+    return RecomputeS();
   }
 
   auto Length() const {
@@ -149,6 +158,13 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
 //! for better usage simple double defines
 using LinePoint = Point2d;
 using Line = Line_t<LinePoint>;
+
+template <typename T>
+inline Line_t<T>::Line_t(
+    const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points)
+    : Shape<bg::model::linestring<T>, T>(points, 0) {
+  RecomputeS();
+}
 
 template <>
 inline Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> Line::ToArray()
