@@ -18,7 +18,7 @@ ext_modules.append(temp_ext)
 
 setup(
     name = "bark-simulator",
-    version = "1.0.0",
+    version = "1.0.1",
     description = "A tool for Behavior benchmARKing",
     long_description_content_type="text/markdown",
     long_description=long_description,
