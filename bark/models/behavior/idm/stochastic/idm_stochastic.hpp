@@ -14,6 +14,12 @@ namespace bark {
 namespace models {
 namespace behavior {
 
+typedef enum YieldIntent {
+  NO_YIELD = 0,
+  YIELD = 1,
+  NOT_INITIALIZED = 2
+} YieldIntent;
+
 typedef std::unordered_map<
     std::string, std::pair<commons::RandomVariableValueType, commons::RandomVariableValueType>> ParameterRegions;
 class BehaviorIDMStochastic : public BehaviorIDMClassic {
@@ -33,13 +39,27 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
 
   ParameterRegions GetParameterRegions() const;
 
+  void HandleIntentionChange(const double& world_time);
+
  protected:
+  // represents distributions over standard IDM parameters
   bark::commons::DistributionPtr param_dist_headway_;
   bark::commons::DistributionPtr param_dist_spacing_;
   bark::commons::DistributionPtr param_dist_max_acc_;
   bark::commons::DistributionPtr param_dist_desired_vel_;
   bark::commons::DistributionPtr param_dist_comft_braking_;
   bark::commons::DistributionPtr param_dist_coolness_factor_;
+
+  // Handles stochastic change of yielding intent
+  bool use_intention_mechanism_;
+  YieldIntent current_yield_intent_;
+  double duration_until_intent_change_;
+  double world_time_at_last_intent_change_;
+  bark::commons::DistributionPtr param_yielding_duration_;
+  bark::commons::DistributionPtr param_no_yielding_duration_;
+
+  const double k_max_lat_diff_no_yield = 0.0;
+  const double k_max_lat_diff_yield = 5.0;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {
