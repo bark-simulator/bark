@@ -213,7 +213,7 @@ double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
 bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const {  
   auto GetMaxAccLat = [](const AgentPtr& agent,
                            const double& road_angle,
-                           const double& max_long_acc,
+                           const double& max_total_acc,
                            const bool& on_left_side_of_center_line) {
     auto single_track = std::dynamic_pointer_cast<models::dynamic::SingleTrackModel>(
       agent->GetDynamicModel());
@@ -222,7 +222,7 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
     const double a_max_lat = single_track->CalculateLatAccelerationMaxAtFrenetAngle(
                         state(StateDefinition::VEL_POSITION), 
                         state(StateDefinition::THETA_POSITION), 
-                        road_angle, max_long_acc,
+                        road_angle, max_total_acc,
                         on_left_side_of_center_line);
     return a_max_lat;
   };
