@@ -366,25 +366,28 @@ class ParameterServer(Params):
         rest_name = ""
         child_name = name
 
+        # resolve param hierarchy
         found = name.find(delim)
         if found > -1:
           child_name = name[0:found]
           rest_name = name[found + len(delim):]
 
         child = None
-        if child_name in self.store and not delete:
+        # overwrite existing child only if last child in hierarchy and delete enabled
+        if child_name in self.store and (not delete or len(rest_name)>0):
           child = self.store[child_name]
         else:
           self.store[child_name] = ParameterServer(log_if_default=self.log_if_default)
           child = self.store[child_name]
 
+        # handle lists of childs and last child in hierarchy recursively
         if len(rest_name) == 0:
           return child
         else:
           if isinstance(child, list) and all(type(el) is ParameterServer for el in child):
             child_list = []
             for ch in child:
-              child_list.append(ch.AddChild(rest_name))
+              child_list.append(ch.AddChild(rest_name, delete = delete))
             return child_list
           else:
-            return child.AddChild(rest_name)
+            return child.AddChild(rest_name, delete = delete)
