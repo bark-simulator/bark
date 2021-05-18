@@ -20,30 +20,31 @@ using bark::models::behavior::BehaviorMotionPrimitivesPtr;
 using bark::models::dynamic::State;
 using bark::world::AgentMap;
 
+FrontRearAgents ObservedWorld::GetAgentFrontRear(const LaneCorridorPtr& lane_corridor, const double& lateral_difference_threshold) const {
+  AgentId id = GetEgoAgentId();
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, lateral_difference_threshold);
+  return fr_agent;
+}
+
 FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
   const auto& lane_corridor = GetLaneCorridor();
   if (!lane_corridor) {
     return FrontRearAgents{AgentFrenetPair(nullptr, FrenetStateDifference()),
                            AgentFrenetPair(nullptr, FrenetStateDifference())};
   }
-
-  AgentId id = GetEgoAgentId();
-  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, GetLateralDifferenceThreshold());
-
-  return fr_agent;
+  return GetAgentFrontRear(lane_corridor, GetLateralDifferenceThreshold());
 }
 
-FrontRearAgents ObservedWorld::GetAgentFrontRear(
-    const LaneCorridorPtr& lane_corridor) const {
-  BARK_EXPECT_TRUE(lane_corridor != nullptr);
-  AgentId id = GetEgoAgentId();
-  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, GetLateralDifferenceThreshold());
-  return fr_agent;
+AgentFrenetPair ObservedWorld::GetAgentInFront(
+                const LaneCorridorPtr& lane_corridor,
+                const double& lateral_difference_threshold) const {
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor, lateral_difference_threshold);
+  return fr_agent.front;
 }
 
 AgentFrenetPair ObservedWorld::GetAgentInFront(
     const LaneCorridorPtr& lane_corridor) const {
-  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor, GetLateralDifferenceThreshold());
   return fr_agent.front;
 }
 
@@ -54,7 +55,7 @@ AgentFrenetPair ObservedWorld::GetAgentInFront() const {
 
 AgentFrenetPair ObservedWorld::GetAgentBehind(
     const LaneCorridorPtr& lane_corridor) const {
-  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor);
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor, GetLateralDifferenceThreshold());
   return fr_agent.rear;
 }
 

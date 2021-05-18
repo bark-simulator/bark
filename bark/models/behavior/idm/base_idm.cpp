@@ -67,7 +67,10 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params)
   param_coolness_factor_ = params->GetReal(
       "BehaviorIDMClassic::CoolnessFactor",
       "If non-zero, constant accleration heuristic is applied", 0.0f);
-
+  max_lat_difference_to_be_front_ = params->GetReal(
+      "BehaviorIDMClassic::MaxLatDifferenceToBeFront",
+      "When are vehicles considered as front vehicles,"
+      " 0.0 means overlap with driving corridor", 0.0f);
   acceleration_limits_ =
       bark::models::dynamic::AccelerationLimitsFromParamServer(params);
   acceleration_limits_.lon_acc_max =
@@ -181,7 +184,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   IDMRelativeValues rel_values;
 
   auto leading_vehicle =
-      observed_world.GetAgentInFront(lane_corr);
+      observed_world.GetAgentInFront(lane_corr, GetLaxMaxDifferenceToBeFront());
 
   // vehicles
   if (leading_vehicle.first) {
