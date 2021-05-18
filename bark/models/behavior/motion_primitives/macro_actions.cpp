@@ -125,6 +125,10 @@ inline std::shared_ptr<BehaviorModel> BehaviorMPMacroActions::Clone() const {
   return model_ptr;
 }
 
+bool BehaviorMPMacroActions::operator==(const BehaviorModelPtr& other_behavior) const {
+  
+}
+
 }  // namespace behavior
 }  // namespace models
 }  // namespace bark

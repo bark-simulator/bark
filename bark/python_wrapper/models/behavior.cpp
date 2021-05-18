@@ -225,6 +225,7 @@ void python_behavior(py::module m) {
            &BehaviorMPMacroActions::GetNumMotionPrimitives)
       .def("GetMotionPrimitives", &BehaviorMPMacroActions::GetMotionPrimitives)
       .def("AddMotionPrimitive", &BehaviorMPMacroActions::AddMotionPrimitive)
+      .def(py::self == py:self)
       .def("ClearMotionPrimitives",
            &BehaviorMPMacroActions::ClearMotionPrimitives)
       .def(py::pickle(
