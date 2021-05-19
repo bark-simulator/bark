@@ -49,5 +49,19 @@ std::string Params::Print() const {
   return ss.str();
 }
 
+bool Params::operator==(const Params& other) const {
+  const auto this_condensed_params = this->GetCondensedParamList();
+  const auto other_condensed_params = other.GetCondensedParamList();
+  if(this_condensed_params.size() != other_condensed_params.size()) return false;
+
+  for(std::size_t param_idx = 0; param_idx < this_condensed_params.size(); ++param_idx) {
+    if(this_condensed_params.at(param_idx).first != other_condensed_params.at(param_idx).first ||
+       this_condensed_params.at(param_idx).second != other_condensed_params.at(param_idx).second) {
+         return false;
+       }
+  }
+  return true;
+}
+
 }  // namespace commons
 }  // namespace bark

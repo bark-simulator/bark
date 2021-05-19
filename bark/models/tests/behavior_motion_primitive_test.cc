@@ -234,6 +234,44 @@ TEST(macro_actions, behavior_test) {
   }
 }
 
+TEST(macro_actions, equality_operator) {
+  using namespace bark::models::behavior::primitives;
+  using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
+
+  auto create_behavior_macro = [](const double& T) {
+    auto params = std::make_shared<SetterParams>();
+    params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", T);
+
+    std::vector<std::shared_ptr<Primitive>> prim_vec;
+
+    auto primitive = std::make_shared<PrimitiveConstAccStayLane>(params, 0.0);
+    prim_vec.push_back(primitive);
+
+    auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(params);
+    prim_vec.push_back(primitive_left);
+
+    auto primitive_right =
+        std::make_shared<PrimitiveConstAccChangeToRight>(params);
+    prim_vec.push_back(primitive_right);
+
+    BehaviorMPMacroActions behavior(params);
+    for (const auto& p : prim_vec) {
+      behavior.AddMotionPrimitive(p);
+    }
+    return behavior;
+  };
+
+  const auto behavior1 = create_behavior_macro(0.2);
+  const auto behavior2 = create_behavior_macro(0.2);
+
+  EXPECT_TRUE(behavior1 == behavior2);
+
+  const auto behavior3 = create_behavior_macro(0.2);
+  const auto behavior4 = create_behavior_macro(0.3);
+
+  EXPECT_FALSE(behavior3 == behavior4);
+}
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

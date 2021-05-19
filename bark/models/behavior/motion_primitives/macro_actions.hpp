@@ -48,7 +48,7 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   const std::vector<BehaviorMPMacroActions::MotionIdx>& GetValidPrimitives(
       const ObservedWorldPtr& observed_world);
   
-  bool operator==(const BehaviorModelPtr& other_behavior) const;
+  bool operator==(const BehaviorModel& other_behavior) const;
 
  private:
   MotionIdx GetNumMotionPrimitivesByCorridors(

@@ -53,6 +53,13 @@ class BehaviorIDMLaneTracking : public BaseIDM {
 
   friend class BaseIDM;
 
+  bool operator==(const BehaviorIDMLaneTracking& other) const {
+    return *GetParams()->AddChild("BehaviorIDMLaneTracking") ==
+          *other.GetParams()->AddChild("BehaviorIDMLaneTracking") &&
+         *GetParams()->AddChild("BehaviorIDMClassic") ==
+          *other.GetParams()->AddChild("BehaviorIDMClassic");
+  } 
+
  private:
   double crosstrack_error_gain_;
   bool limit_steering_rate_;

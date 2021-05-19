@@ -125,9 +125,24 @@ inline std::shared_ptr<BehaviorModel> BehaviorMPMacroActions::Clone() const {
   return model_ptr;
 }
 
-bool BehaviorMPMacroActions::operator==(const BehaviorModelPtr& other_behavior) const {
-  
+
+bool BehaviorMPMacroActions::operator==(const BehaviorModel& other_behavior) const {
+  try {
+    const auto other_macro_action_behavior = dynamic_cast<const BehaviorMPMacroActions&>(other_behavior);
+      if(check_validity_in_plan_ != other_macro_action_behavior.check_validity_in_plan_) return false;
+    if(motion_primitives_.size() != other_macro_action_behavior.motion_primitives_.size()) return false;
+
+    for(unsigned motion_idx = 0; motion_idx < motion_primitives_.size(); ++motion_idx ) {
+      if(*motion_primitives_.at(motion_idx) != *other_macro_action_behavior.motion_primitives_.at(motion_idx)) {
+        return false;
+      }
+    }
+    return true; 
+  } catch(std::bad_cast exp) {
+    return false;
+  }
 }
+
 
 }  // namespace behavior
 }  // namespace models

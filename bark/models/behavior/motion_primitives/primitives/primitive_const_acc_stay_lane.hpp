@@ -44,6 +44,13 @@ class PrimitiveConstAccStayLane : public Primitive,
                                         double rel_distance,
                                         double dt) const override;
   double acceleration_;
+
+ private:
+  bool isEqual(const Primitive& other) const override {
+    const PrimitiveConstAccStayLane& other_prim_acc_stay = static_cast<const PrimitiveConstAccStayLane&>(other);
+    return acceleration_ == other_prim_acc_stay.acceleration_ && 
+      static_cast<const BehaviorIDMLaneTracking&>(*this) == static_cast<const BehaviorIDMLaneTracking&>(other_prim_acc_stay);
+  }
 };
 
 }  // namespace primitives
