@@ -20,7 +20,9 @@ using bark::models::behavior::BehaviorMotionPrimitivesPtr;
 using bark::models::dynamic::State;
 using bark::world::AgentMap;
 
-FrontRearAgents ObservedWorld::GetAgentFrontRear(const LaneCorridorPtr& lane_corridor, const double& lateral_difference_threshold) const {
+FrontRearAgents ObservedWorld::GetAgentFrontRear(const LaneCorridorPtr& lane_corridor,
+                                                 const double& lateral_difference_threshold,
+                                                 const double& angular_difference_threshold) const {
   AgentId id = GetEgoAgentId();
   FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, lateral_difference_threshold);
   return fr_agent;
@@ -37,8 +39,11 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
 
 AgentFrenetPair ObservedWorld::GetAgentInFront(
                 const LaneCorridorPtr& lane_corridor,
-                const double& lateral_difference_threshold) const {
-  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor, lateral_difference_threshold);
+                const double& lateral_difference_threshold,
+                const double& angular_difference_threshold) const {
+  FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor,
+                                         lateral_difference_threshold,
+                                         angular_difference_threshold);
   return fr_agent.front;
 }
 

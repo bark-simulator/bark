@@ -51,9 +51,11 @@ BehaviorLaneChangeRuleBased::FrontRearAgents(
     const LaneCorridorPtr& lane_corr) const {
   AgentInformation front_info, rear_info;
   double lateral_difference_threshold = 100; // do not restrict regarding lateral diff
+  double angle_difference_treshold = bark::geometry::B_PI; // do not restrict regarding angular diff
   const auto& front_rear = observed_world.GetAgentFrontRearForId(observed_world.GetEgoAgentId(),
                                          lane_corr,
                                          lateral_difference_threshold,
+                                         angle_difference_treshold,
                                          true); // require to be in this lane corridor
   const auto& ego_agent = observed_world.GetEgoAgent();
   if (front_rear.front.first) {

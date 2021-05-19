@@ -170,6 +170,7 @@ class World : public commons::BaseType {
   FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
                                          const LaneCorridorPtr& lane_corridor,
                                          double lateral_difference_threshold,
+                                         double angle_difference_threshold = bark::geometry::B_PI,
                                          bool must_be_in_corridor = false) const;
 
   //! Setter

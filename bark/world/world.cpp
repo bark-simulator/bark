@@ -249,7 +249,8 @@ AgentMap World::GetAgentsIntersectingPolygon(
 
 FrontRearAgents World::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
-    double lateral_difference_threshold, bool must_be_in_corridor) const {
+    double lateral_difference_threshold, double angle_difference_threshold,
+    bool must_be_in_corridor) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 
@@ -293,8 +294,8 @@ FrontRearAgents World::GetAgentFrontRearForId(
     FrenetState frenet_other(it->second->GetCurrentState(), center_line);
     FrenetStateDifference difference(frenet_ego, ego_polygon, frenet_other, it->second->GetShape());
     double lat_difference = difference.lat_zeroed ? 0.0 : difference.lat;
-    if (std::abs(lat_difference) > lateral_difference_threshold) {
-      // agent seems to be not really in same lane
+    if (std::abs(lat_difference) > lateral_difference_threshold ||
+        std::abs(frenet_other.angle) > angle_difference_threshold)  {
       continue;
     }
 

@@ -48,11 +48,15 @@ class ObservedWorld : public World {
 
   FrontRearAgents GetAgentFrontRear() const;
 
-  FrontRearAgents GetAgentFrontRear(const LaneCorridorPtr& lane_corridor, const double& lateral_difference_threshold) const;
+  FrontRearAgents GetAgentFrontRear(const LaneCorridorPtr& lane_corridor,
+                                    const double& lateral_difference_threshold,
+                                    const double& angular_difference_threshold = bark::geometry::B_PI) const;
 
   AgentFrenetPair GetAgentInFront(const LaneCorridorPtr& lane_corridor) const;
 
-  AgentFrenetPair GetAgentInFront(const LaneCorridorPtr& lane_corridor, const double& lateral_difference_threshold) const;
+  AgentFrenetPair GetAgentInFront(const LaneCorridorPtr& lane_corridor,
+                                  const double& lateral_difference_threshold,
+                                  const double& angular_difference_threshold) const;
 
   AgentFrenetPair GetAgentInFront() const;
 

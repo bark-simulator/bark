@@ -69,8 +69,12 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params)
       "If non-zero, constant accleration heuristic is applied", 0.0f);
   max_lat_difference_to_be_front_ = params->GetReal(
       "BehaviorIDMClassic::MaxLatDifferenceToBeFront",
-      "When are vehicles considered as front vehicles,"
+      "When are vehicles considered distance-wise as front vehicles,"
       " 0.0 means overlap with driving corridor", 0.0f);
+  max_angle_difference_to_be_front_ = params->GetReal(
+      "BehaviorIDMClassic::MaxAngleDifferenceToBeFront",
+      "When are vehicles considered angular-wise as front vehicles,"
+      "PI means all angles considered", bark::geometry::B_PI*0.75);
   acceleration_limits_ =
       bark::models::dynamic::AccelerationLimitsFromParamServer(params);
   acceleration_limits_.lon_acc_max =
@@ -184,7 +188,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   IDMRelativeValues rel_values;
 
   auto leading_vehicle =
-      observed_world.GetAgentInFront(lane_corr, GetLaxMaxDifferenceToBeFront());
+      observed_world.GetAgentInFront(lane_corr, GetMaxLatDifferenceToBeFront(),
+                                             GetMaxAngleDifferenceToBeFront() );
 
   // vehicles
   if (leading_vehicle.first) {

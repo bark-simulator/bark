@@ -50,6 +50,10 @@ class BehaviorMPMacroActions : public BehaviorMotionPrimitives {
   
   bool operator==(const BehaviorModel& other_behavior) const;
 
+  bool IsEqualTo(const BehaviorModel& other_behavior) const {
+    return this->operator==(other_behavior);
+  }
+
  private:
   MotionIdx GetNumMotionPrimitivesByCorridors(
       const ObservedWorld& observed_world,
