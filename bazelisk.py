@@ -234,7 +234,8 @@ def download_bazel_into_directory(version, is_commit, directory):
   try:
     url = Request(url)
     url.add_header(
-      'Authorization', 'token %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+      'authorization: ', 'Bearer %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+    print("Setting authorization token.")
   except KeyError:
     pass
 
