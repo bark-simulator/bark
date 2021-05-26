@@ -1,7 +1,7 @@
 name: BUILD_WHEELS_37
 
 on:
-  pull_request:
+  push:
     tags:
       - '**'
 
