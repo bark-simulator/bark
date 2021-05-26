@@ -13,4 +13,4 @@ make install
 cd ../
 
 python setup.py clean
-python setup.py build_ext bdist_wheel sdist
+python setup.py sdist build_ext bdist_wheel
