@@ -231,19 +231,19 @@ def determine_url(version, is_commit, bazel_filename):
 def download_bazel_into_directory(version, is_commit, directory):
   bazel_filename = determine_bazel_filename(version)
   url = determine_url(version, is_commit, bazel_filename)
-  try:
-    url = Request(url)
-    url.add_header(
-      'authorization', 'bearer %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
-    print("Setting authorization token.")
-  except KeyError:
-    pass
 
   destination_path = os.path.join(directory, bazel_filename)
   if not os.path.exists(destination_path):
     sys.stderr.write("Downloading {}...\n".format(url))
     with tempfile.NamedTemporaryFile(
         prefix="bazelisk", dir=directory, delete=False) as t:
+      try:
+        url = Request(url)
+        url.add_header(
+          'Authorization', 'token %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+        print("Setting authorization token.")
+      except KeyError:
+        pass
       with closing(urlopen(url)) as response:
         shutil.copyfileobj(response, t)
       t.flush()
