@@ -1,5 +1,5 @@
 # use base manylinux image based on centOs 6
-FROM quay.io/pypa/manylinux2010_x86_64
+FROM quay.io/pypa/manylinux2014_x86_64
 USER root
 
 # setup jdk environment variables
@@ -13,7 +13,7 @@ ENV BASH_ENV="/usr/bin/scl_enable" \
 # install openjdk for bazel
 RUN yum install -y centos-release-scl unzip vim wget cmake3 doxygen ccache sudo \
     && yum install -y devtoolset-7 rh-python36 \
-    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel 
+    && yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel
 
 # install python 3 for compiling bazel. Its different from python
 # used for initializing virtual for bark.
@@ -54,7 +54,7 @@ RUN wget https://github.com/bazelbuild/bazel/releases/download/$BAZEL_VERSION/ba
     && ./compile.sh \
     && mv /bazel-$BAZEL_VERSION/output/bazel /usr/bin/bazel
 
-# install virtual env for bark using default python. switch to 
+# install virtual env for bark using default python. switch to
 # target when container is running.
 ENV PATH=/opt/rh/rh-python36/root/usr/bin:$PATH
 RUN pip3 install --upgrade pip

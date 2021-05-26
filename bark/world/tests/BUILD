@@ -107,7 +107,7 @@ cc_test(
 py_test(
   name = "py_world_tests",
   srcs = ["py_world_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime:runtime"],
@@ -117,7 +117,7 @@ py_test(
 py_library(
     name = "python_behavior_model",
     srcs = ["python_behavior_model.py"],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     imports = ['../../../python'],
     deps = ["//bark/runtime/commons:parameters"],
     visibility = ["//visibility:public"],
@@ -126,7 +126,7 @@ py_library(
 py_test(
   name = "py_system_tests",
   srcs = ["py_system_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           ':params2'],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",

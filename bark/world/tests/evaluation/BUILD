@@ -17,7 +17,7 @@ py_test(
         "//conditions:default": ["py_dummy_test.py"],
     }),
     data = [
-        "//bark/python_wrapper:core.so",
+        "//bark:generate_core",
         "//bark/runtime/tests:xodr_data",
     ],
     imports = ["../../../python/"],
@@ -38,7 +38,7 @@ py_test(
         "//conditions:default": ["py_dummy_test.py"],
     }),
     data = [
-        "//bark/python_wrapper:core.so",
+        "//bark:generate_core",
         "//bark/runtime/tests:xodr_data",
     ],
     imports = ["../../../python/"],

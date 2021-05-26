@@ -1,7 +1,8 @@
 package(default_visibility = ["//visibility:public"])
+load("@pybind11_bazel//:build_defs.bzl", "pybind_library", "pybind_extension")
 
-cc_binary(
-  name = "core.so",
+pybind_extension(
+  name = "core",
   srcs = glob([
     "*.cpp", "*.hpp",
     "commons/*.cpp", "commons/*.hpp",
@@ -11,8 +12,6 @@ cc_binary(
     "viewer/*.cpp", "viewer/*.hpp",
     "runtime.hpp"]),
   deps = [
-    "@python_linux//:python-lib",
-    "@pybind11//:pybind11",
     "@com_github_eigen_eigen//:eigen",
     "//bark/runtime/tests:py_param_server_test_helper",
     "//bark/geometry:geometry",
@@ -60,43 +59,38 @@ cc_binary(
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
   + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP", "-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"], "//conditions:default": []}),
-  linkshared = 1,
-  linkstatic = 1
+  linkopts = ["-L/usr/local/lib/"]
 )
 
 # needed for external python wrapping (planners)
-cc_library(
+pybind_library(
     name = "common",
     hdrs = ["common.hpp", "polymorphic_conversion.hpp"],
     deps = [
-    "@python_linux//:python-lib",
-    "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen",
+        "@com_github_eigen_eigen//:eigen",
     ],
     defines = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["LTL_RULES"], "//conditions:default": []}),
 )
 
 # needed to test external python wrapping of planners in their own bark
-cc_library(
+pybind_library(
     name = "behavior",
     hdrs = ["models/behavior.hpp"],
     srcs = ["models/behavior.cpp", "polymorphic_conversion.cpp"],
     deps = [
-    "//bark/python_wrapper/models/plan:planners",
-    ":common",
-    "@python_linux//:python-lib",
-    "@pybind11//:pybind11",
-    "@com_github_eigen_eigen//:eigen",
-    "//bark/models/behavior/constant_acceleration:constant_acceleration",
-    "//bark/models/behavior/motion_primitives:motion_primitives",
-    "//bark/models/behavior/dynamic_model:dynamic_model",
-    "//bark/models/behavior/idm:idm_classic",
-    "//bark/models/behavior/idm:idm_lane_tracking",
-    "//bark/models/behavior/static_trajectory",
-    "//bark/models/behavior/behavior_safety:behavior_safety",
-    "//bark/models/behavior/behavior_rss:behavior_rss",
-    "//bark/models/behavior/idm/stochastic:stochastic",
-    "//bark/world/evaluation/ltl/label_functions:label_function"
+        "//bark/python_wrapper/models/plan:planners",
+        ":common",
+        "@com_github_eigen_eigen//:eigen",
+        "//bark/models/behavior/constant_acceleration:constant_acceleration",
+        "//bark/models/behavior/motion_primitives:motion_primitives",
+        "//bark/models/behavior/dynamic_model:dynamic_model",
+        "//bark/models/behavior/idm:idm_classic",
+        "//bark/models/behavior/idm:idm_lane_tracking",
+        "//bark/models/behavior/static_trajectory",
+        "//bark/models/behavior/behavior_safety:behavior_safety",
+        "//bark/models/behavior/behavior_rss:behavior_rss",
+        "//bark/models/behavior/idm/stochastic:stochastic",
+        "//bark/world/evaluation/ltl/label_functions:label_function"
     ],
     copts = select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []}),
 )
