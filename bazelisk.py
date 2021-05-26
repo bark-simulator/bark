@@ -29,7 +29,7 @@ import tempfile
 import time
 
 try:
-  from urllib.request import urlopen
+  from urllib.request import urlopen, Request
 except ImportError:
   # Python 2.x compatibility hack.
   from urllib2 import urlopen
@@ -231,6 +231,13 @@ def determine_url(version, is_commit, bazel_filename):
 def download_bazel_into_directory(version, is_commit, directory):
   bazel_filename = determine_bazel_filename(version)
   url = determine_url(version, is_commit, bazel_filename)
+  try:
+    url = Request(url)
+    url.add_header(
+      'Authorization', 'token %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+  except KeyError:
+    pass
+
   destination_path = os.path.join(directory, bazel_filename)
   if not os.path.exists(destination_path):
     sys.stderr.write("Downloading {}...\n".format(url))
