@@ -29,16 +29,16 @@ def _configure_macos_deployment_target():
                         pkg_resources.parse_version(min_macos_target))):
     macos_target = min_macos_target
 
-  macos_target_override = os.getenv(key)
-  if macos_target_override:
-    if (pkg_resources.parse_version(macos_target_override) <
-        pkg_resources.parse_version(macos_target)):
-      print('%s=%s is set in environment but >= %s is required by this package '
-            'and >= %s is required by the current Python build' %
-            (key, macos_target_override, min_macos_target, python_macos_target))
-      sys.exit(1)
-    else:
-      macos_target = macos_target_override
+  # macos_target_override = os.getenv(key)
+  # if macos_target_override:
+  #   if (pkg_resources.parse_version(macos_target_override) <
+  #       pkg_resources.parse_version(macos_target)):
+  #     print('%s=%s is set in environment but >= %s is required by this package '
+  #           'and >= %s is required by the current Python build' %
+  #           (key, macos_target_override, min_macos_target, python_macos_target))
+  #     sys.exit(1)
+  #   else:
+  #     macos_target = macos_target_override
 
   # Set MACOSX_DEPLOYMENT_TARGET in the environment, because the `wheel` package
   # checks there.  Note that Bazel receives the version via a command-line
