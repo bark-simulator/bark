@@ -10,11 +10,44 @@ import setuptools.command.sdist
 import setuptools.dist
 from setuptools import dist
 from setuptools.command.install import install
+import sysconfig
+import tempfile
+import pkg_resources
 from distutils.command.build import build
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+def _configure_macos_deployment_target():
+  # TensorStore requires MACOSX_DEPLOYMENT_TARGET >= 10.14 in
+  # order to support sized/aligned operator new/delete.
+  min_macos_target = '10.14'
+  key = 'MACOSX_DEPLOYMENT_TARGET'
+  python_macos_target = str(sysconfig.get_config_var(key))
+  macos_target = python_macos_target
+  if (macos_target and (pkg_resources.parse_version(macos_target) <
+                        pkg_resources.parse_version(min_macos_target))):
+    macos_target = min_macos_target
+
+  macos_target_override = os.getenv(key)
+  if macos_target_override:
+    if (pkg_resources.parse_version(macos_target_override) <
+        pkg_resources.parse_version(macos_target)):
+      print('%s=%s is set in environment but >= %s is required by this package '
+            'and >= %s is required by the current Python build' %
+            (key, macos_target_override, min_macos_target, python_macos_target))
+      sys.exit(1)
+    else:
+      macos_target = macos_target_override
+
+  # Set MACOSX_DEPLOYMENT_TARGET in the environment, because the `wheel` package
+  # checks there.  Note that Bazel receives the version via a command-line
+  # option instead.
+  os.environ[key] = macos_target
+  return macos_target
+
+if 'darwin' in sys.platform:
+  _macos_deployment_target = _configure_macos_deployment_target()
 
 class CustomBuild(build):
   def run(self):
@@ -65,7 +98,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
         if 'darwin' in sys.platform:
           # Note: Bazel does not use the MACOSX_DEPLOYMENT_TARGET environment
           # variable.
-          # build_command += ['--macos_minimum_os=%s' % _macos_deployment_target]
+          build_command += ['--macos_minimum_os=%s' % _macos_deployment_target]
           pass
         if sys.platform == 'win32':
           # Disable newer exception handling from Visual Studio 2019, since it
@@ -89,21 +122,9 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
       ))
       shutil.copyfile(built_ext_path, copy_to)
 
-      # new_lines = []
-      # with open('bazel-bin/bark/pip_package.runfiles/MANIFEST', 'r') as reader:
-      #   line = reader.readline()
-      #   while line != '':
-      #     line = reader.readline()
-      #     line = line.replace("bark_project/", "")
-      #     new_lines.append(line)
-
-      # with open(copy_to_manifest, 'w') as fo:
-      #   for d in new_lines:
-      #     fo.write(str(d))
-
 setup(
     name = "bark-simulator",
-    version = "1.0.4",
+    version = "1.1.0",
     description = "A tool for Behavior benchmARKing",
     long_description_content_type="text/markdown",
     long_description=long_description,
@@ -130,7 +151,7 @@ setup(
       "cpplint>=1.4.4",
       "pygame>=1.9.6",
       "aabbtree>=2.3.1",
-      "ray>=0.8.5",
+      "ray>=1.3.0",
       "psutil>=5.7.2",
       "notebook>=6.0.3",
       "jupyter>=1.0.0",
@@ -147,6 +168,6 @@ setup(
     include_package_data=True,
     zip_safe=False,
     distclass=BinaryDistribution,
-    python_requires='>=3.6',
+    python_requires='>=3.7',
 )
 
