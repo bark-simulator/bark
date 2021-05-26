@@ -33,7 +33,7 @@ jobs:
           CIBW_BUILD_VERBOSITY": 1
 
       - name: Build wheels for macOS
-        if: matrix.os == 'macOS-latest' ||  matrix.os == 'macOS-10.15'
+        if: matrix.os == 'macOS-latest' || matrix.os == 'macOS-10.15'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD: bash tools/ci/pre_build.sh
