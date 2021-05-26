@@ -1,6 +1,9 @@
 name: BUILD_WHEELS_38
 
-on: [pull_request]
+on:
+  pull_request:
+    tags:
+      - '**'
 
 jobs:
   build_wheels:
