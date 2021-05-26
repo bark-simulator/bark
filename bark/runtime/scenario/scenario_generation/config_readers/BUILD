@@ -11,7 +11,7 @@ py_library(
      "goal_definition_config_readers.py",
      "observer_model_config_readers.py"
      ],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     imports = [],
     deps = [
         "//bark/runtime/scenario:scenario",

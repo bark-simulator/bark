@@ -1,0 +1,6 @@
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/core.so bark/core.so
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/examples/params/* bark/examples/params/*
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/examples/scenarios/* bark/examples/scenarios/*
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/examples/scenarios/* bark/examples/scenarios/*
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/runtime/tests/data/* bark/runtime/tests/data/*
+include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/benchmark/templates/* bark/benchmark/templates/*

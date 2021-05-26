@@ -1,7 +1,7 @@
 py_library(
     name = "runtime",
     srcs = ["runtime.py"],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     imports = ['../../../python'],
     deps = ["//bark/runtime/commons:commons",
             "//bark/runtime/viewer:pygame_viewer",

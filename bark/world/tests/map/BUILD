@@ -58,7 +58,7 @@ cc_test(
 py_test(
   name = "py_opendrive_tests",
   srcs = ["py_opendrive_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   imports = ['../../../../python/'],
   deps = [],
   visibility = ["//visibility:public"],
@@ -67,7 +67,7 @@ py_test(
 py_test(
   name = "py_map_interface_tests",
   srcs = ["py_map_interface_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data'],
   imports = ['../../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
@@ -79,7 +79,7 @@ py_test(
 py_test(
   name = "py_roadgraph_test",
   srcs = ["py_roadgraph_test.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data'],
   imports = ['../../../../python/'],
   deps = ["//bark/runtime/commons:commons"],
@@ -89,7 +89,7 @@ py_test(
 py_test(
   name = "py_road_corridor_tests",
   srcs = ["py_road_corridor_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data'],
   imports = ['../../../../python/'],
   deps = ["//bark/runtime/commons:parameters",

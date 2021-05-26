@@ -16,7 +16,7 @@ cc_test(
 py_test(
   name = "py_agent_tests",
   srcs = ["py_agent_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   imports = ['../../../../python/'],
   deps = ["//bark/runtime/commons:commons"],
   visibility = ["//visibility:public"],

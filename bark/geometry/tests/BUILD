@@ -14,7 +14,7 @@ cc_test(
 py_test(
   name = "py_geometry_tests",
   srcs = ["py_geometry_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   deps = [],
   visibility = ["//visibility:public"],
 )
