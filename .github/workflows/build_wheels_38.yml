@@ -41,6 +41,7 @@ jobs:
           CIBW_ARCHS_MACOS: x86_64
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_BUILD_VERBOSITY": 1
+          BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy wheels
         env:
