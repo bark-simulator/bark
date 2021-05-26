@@ -32,7 +32,7 @@ try:
   from urllib.request import urlopen, Request
 except ImportError:
   # Python 2.x compatibility hack.
-  from urllib2 import urlopen
+  from urllib2 import urlopen, Request
 
 ONE_HOUR = 1 * 60 * 60
 
@@ -153,6 +153,12 @@ def get_releases_json(bazelisk_directory):
 
 
 def read_remote_text_file(url):
+  try:
+    url = Request(url)
+    url.add_header(
+      'Authorization', 'token %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+  except KeyError:
+    pass
   with closing(urlopen(url)) as res:
     body = res.read()
     try:
@@ -237,6 +243,12 @@ def download_bazel_into_directory(version, is_commit, directory):
     sys.stderr.write("Downloading {}...\n".format(url))
     with tempfile.NamedTemporaryFile(
         prefix="bazelisk", dir=directory, delete=False) as t:
+      try:
+        url = Request(url)
+        url.add_header(
+          'Authorization', 'token %s' % os.environ["BAZELISK_GITHUB_TOKEN"])
+      except KeyError:
+        pass
       with closing(urlopen(url)) as response:
         shutil.copyfileobj(response, t)
       t.flush()
