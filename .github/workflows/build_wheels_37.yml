@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, macos-10.15]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
           CIBW_BUILD_VERBOSITY": 1
 
       - name: Build wheels for macOS
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macOS-latest' ||  matrix.os == 'macOS-10.15'
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_BEFORE_BUILD: bash tools/ci/pre_build.sh
