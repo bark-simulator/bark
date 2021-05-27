@@ -5,5 +5,5 @@ include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/examples/scenari
 include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/runtime/tests/data/* bark/runtime/tests/data/*
 include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/benchmark/templates/* bark/benchmark/templates/*
 include ./bazel-bin/bark/pip_package.runfiles/bark_project/bark/benchmark/templates/* bark/benchmark/templates/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/com_github_interaction_dataset_interaction_dataset/* com_github_interaction_dataset_interaction_dataset/*
-include ./bazel-bin/bark_ml/pip_package.runfiles/benchmark_database/* benchmark_database/*
+include ./bazel-bin/bark/pip_package.runfiles/com_github_interaction_dataset_interaction_dataset/* com_github_interaction_dataset_interaction_dataset/*
+include ./bazel-bin/bark/pip_package.runfiles/benchmark_database/* benchmark_database/*
