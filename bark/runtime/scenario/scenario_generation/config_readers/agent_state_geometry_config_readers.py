@@ -13,10 +13,9 @@ from collections import defaultdict
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
-    BarkStateFromMotionState, InitStateFromTrack
-
 try:
+  from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
+      BarkStateFromMotionState, InitStateFromTrack
   from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 except ImportError:
   pass
