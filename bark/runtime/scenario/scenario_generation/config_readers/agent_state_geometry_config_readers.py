@@ -16,7 +16,7 @@ from bark.runtime.scenario.scenario_generation.config_readers.config_readers_int
 from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
     BarkStateFromMotionState, InitStateFromTrack
 
-try
+try:
   from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 except ImportError:
   pass
