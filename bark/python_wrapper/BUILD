@@ -3,9 +3,8 @@ load("@pybind11_bazel//:build_defs.bzl", "pybind_library", "pybind_extension")
 
 config_setting(
     name = "op_sys",
-    define_values = { "build_plat": "macos" }
+    define_values = { "build_plattform": "macos" }
 )
-
 
 pybind_extension(
   name = "core",
