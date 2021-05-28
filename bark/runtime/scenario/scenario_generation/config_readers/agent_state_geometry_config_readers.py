@@ -13,16 +13,19 @@ from collections import defaultdict
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces \
        import ConfigReaderAgentStatesAndGeometries
 
-from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
-    BarkStateFromMotionState, InitStateFromTrack
-from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
+try:
+  from bark.runtime.scenario.interaction_dataset_processing import ShapeFromTrack, \
+      BarkStateFromMotionState, InitStateFromTrack
+  from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
+except ImportError:
+  pass
 
 from bark.core.geometry.standard_shapes import *
 from bark.core.geometry import *
 from bark.core.models.dynamic import *
 
 # this config reader defines agent states with distances sampled uniformly standard vehicle geometries models
-# it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes 
+# it can be specified with parameter "lane_position" being between 1 and num_road_corridor_lanes
 # in what lanes vehicles are placed, or if None in all lanes they are placed
 class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
   def create_from_config(self, config_param_object, road_corridor):
@@ -90,7 +93,7 @@ class UniformVehicleDistribution(ConfigReaderAgentStatesAndGeometries):
       # set agent state on linestring with random velocity
       xy_point =  GetPointAtS(linestring, s)
       angle = GetTangentAngleAtS(linestring, s)
-      
+
       velocity = self.sample_velocity_uniform(self._other_velocity_range)
       agent_state = [0, xy_point.x(), xy_point.y(), angle, velocity ]
 
@@ -138,7 +141,7 @@ class InteractionDataTrackIdsStatesGeometries(ConfigReaderAgentStatesAndGeometri
     return agent_states, agent_geometries, {"track_ids": track_ids, "tracks" : tracks, \
              "agent_ids" : track_ids, "xy_offset" : xy_offset, "start_time" : start_time, "end_time" : end_time, \
                "agent_lane_positions" : lane_positions}, config_param_object
-  
+
   def find_lane_positions(self, init_state, road_corridor):
     lps = []
     for idx, lane_corridor in enumerate(road_corridor.lane_corridors):
@@ -166,7 +169,7 @@ class InteractionDataWindowStatesGeometries(ConfigReaderAgentStatesAndGeometries
     minimum_numbers_per_lane = config_param_object["MinimumNumbersPerLane", "List where each element specifies how man vehicles must be at minimum at this lane,\
                                   lane position equals list index", [1, 0]]
 
-    window_start = InteractionDataWindowStatesGeometries.window_start 
+    window_start = InteractionDataWindowStatesGeometries.window_start
     window_end = InteractionDataWindowStatesGeometries.window_end
     track_dict_list = InteractionDataWindowStatesGeometries.track_dict_list
     current_track_file = InteractionDataWindowStatesGeometries.current_track_file
