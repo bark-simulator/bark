@@ -124,7 +124,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
 
 setup(
     name = "bark-simulator",
-    version = "1.1.8",
+    version = "1.1.9",
     description = "A tool for Behavior benchmARKing",
     long_description_content_type="text/markdown",
     long_description=long_description,
