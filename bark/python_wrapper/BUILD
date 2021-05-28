@@ -1,6 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 load("@pybind11_bazel//:build_defs.bzl", "pybind_library", "pybind_extension")
 
+config_setting(
+    name = "ops",
+    define_values = { "build_plat": "centos" }
+)
+
 pybind_extension(
   name = "core",
   srcs = glob([
@@ -59,7 +64,12 @@ pybind_extension(
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
   + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP", "-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"], "//conditions:default": []}),
-  linkstatic = 0
+  # linkopts = ["-L/usr/local/lib/"]
+  linkopts = select({
+    ":ops": ["-L/usr/local/lib/"],
+    "//conditions:default": [""],
+  }),
+  linkstatic=0
 )
 
 # needed for external python wrapping (planners)

@@ -101,8 +101,8 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
           build_command += ['--macos_minimum_os=%s' % _macos_deployment_target]
           pass
         if sys.platform == 'linux':
-          build_command += ["--linkopt=-L/usr/local/lib/"]
-          build_command += ["--copt=-fPIC"]
+          build_command += ["--define build_plat=centos"]
+          # build_command += ["--copt=-fPIC"]
         if sys.platform == 'win32':
           # Disable newer exception handling from Visual Studio 2019, since it
           # requires a newer C++ runtime than shipped with Python.
