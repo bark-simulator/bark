@@ -5,7 +5,7 @@ def bark_dependencies():
     _maybe(
         git_repository,
         name = "pybind11_bazel",
-        commit="b16a4527a25cb82ba2e6bd9f831cbe89f5f50fd2",
+        commit="1e92f105a084a3fc6ec2dc402d5ab39fe0749cae",
         remote = "https://github.com/bark-simulator/pybind11_bazel"
     )
 
