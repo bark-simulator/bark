@@ -59,7 +59,6 @@ pybind_extension(
   + select({"//bark/world/evaluation/ltl:_ltl_rules" : ["-D LTL_RULES"], "//conditions:default": []})
   + select({"//bark/world/evaluation/rss:_rss" : ["-D RSS"], "//conditions:default": []})
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP", "-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"], "//conditions:default": []}),
-  linkopts = ["-L/usr/local/lib/"],
   linkstatic = 0
 )
 
