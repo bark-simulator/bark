@@ -70,7 +70,10 @@ pybind_extension(
     ":cent_os": ["-L/usr/local/lib/"],
     "//conditions:default": [""],
   }),
-  linkstatic=0
+  linkstatic= select({
+    ":cent_os": [1],
+    "//conditions:default": [0],
+  })
 )
 
 # needed for external python wrapping (planners)
