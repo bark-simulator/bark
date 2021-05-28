@@ -75,6 +75,18 @@ load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
 rss_dependencies()
 # --------------------------------------------------
 
+# -------------------- BARKSCAPE -------------------
+load("@barkscape_project//utils:dependencies.bzl", "dependencies")
+dependencies()
+load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
+yarn_install(
+    # Name this npm so that Bazel Label references look like @npm//package
+    name = "npm",
+    package_json = "@barkscape_project//barkscape/web:package.json",
+    yarn_lock = "@barkscape_project//barkscape/web:yarn.lock",
+)
+# --------------------------------------------------
+
 # git_repository(
 #  name = "interaction_dataset_fortiss_internal",
 #  commit = "9ace5fde9260c20736b0463026e0f407b7d395ba",
