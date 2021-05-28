@@ -102,6 +102,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
           pass
         if sys.platform == 'linux':
           build_command += ["--linkopt=-L/usr/local/lib/"]
+          build_command += ["--copt=-fPIC"]
         if sys.platform == 'win32':
           # Disable newer exception handling from Visual Studio 2019, since it
           # requires a newer C++ runtime than shipped with Python.
