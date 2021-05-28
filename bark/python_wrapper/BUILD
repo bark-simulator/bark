@@ -70,7 +70,7 @@ pybind_extension(
     "//conditions:default": ["-L/usr/local/lib/"],
   }),
   linkstatic= select({
-    ":op_sys": 1,
+    ":op_sys": 0,
     "//conditions:default": 1,
   })
 )
