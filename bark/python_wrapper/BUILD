@@ -2,9 +2,10 @@ package(default_visibility = ["//visibility:public"])
 load("@pybind11_bazel//:build_defs.bzl", "pybind_library", "pybind_extension")
 
 config_setting(
-    name = "ops",
+    name = "cent_os",
     define_values = { "build_plat": "centos" }
 )
+
 
 pybind_extension(
   name = "core",
@@ -66,7 +67,7 @@ pybind_extension(
   + select({"//bark/models/behavior/plan:_planner_miqp" : ["-D PLANNER_MIQP", "-DIL_STD", "-fPIC", "-DILOUSEMT", "-D_REENTRANT"], "//conditions:default": []}),
   # linkopts = ["-L/usr/local/lib/"]
   linkopts = select({
-    ":ops": ["-L/usr/local/lib/"],
+    ":cent_os": ["-L/usr/local/lib/"],
     "//conditions:default": [""],
   }),
   linkstatic=0
