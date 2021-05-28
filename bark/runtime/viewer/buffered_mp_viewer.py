@@ -40,6 +40,7 @@ class BufferedMPViewer(BufferedViewer):
       elif type_name == "POINTS":
         self.DrawPoints(primitives)
     plt.tight_layout()
+    plt.axis('off')
     plt.pause(0.001)
 
   def ProcessEgoState(self, primitives):
