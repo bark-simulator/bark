@@ -71,8 +71,8 @@ pybind_extension(
     "//conditions:default": [""],
   }),
   linkstatic= select({
-    ":cent_os": [1],
-    "//conditions:default": [0],
+    ":cent_os": 1,
+    "//conditions:default": 0,
   })
 )
 
