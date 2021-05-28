@@ -9,6 +9,7 @@
 #ifndef BARK_MODELS_OBSERVER_OBSERVER_MODEL_NONE_HPP_
 #define BARK_MODELS_OBSERVER_OBSERVER_MODEL_NONE_HPP_
 
+#include <string>
 #include <memory>
 #include "bark/world/world.hpp"
 #include "bark/world/observed_world.hpp"
@@ -21,6 +22,7 @@ using bark::world::World;
 using bark::world::WorldPtr;
 using bark::world::objects::AgentId;
 using bark::world::ObservedWorld;
+using world::renderer::RendererPtr;
 
 /**
  * @brief  Observer creating an ObservedWorld given a World
@@ -45,6 +47,10 @@ class ObserverModelNone : public ObserverModel {
     const WorldPtr& world, const AgentId& agent_id) {
     // NOTE: this creates a standard observed world
     ObservedWorld observed_world(world, agent_id);
+    // NOTE: generate child renderer for the observed world
+    RendererPtr renderer = world->GetRenderer()->AddRendererChild(
+      std::to_string(agent_id));
+    observed_world.SetRenderer(renderer);
     return observed_world;
   }
 

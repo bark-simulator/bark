@@ -35,8 +35,7 @@ class BufferedViewer:
       "OtherStrokeColor", "", [128, 128, 128, 255]] 
     self._other_fc = self._vparams[
       "OtherFaceColor", "", [128, 128, 128, 128]] 
-    self._agent_height = self._vparams[
-      "AgentHeight", "", 2.] 
+    self._agent_height = self._vparams["AgentHeight", "", 2.] 
     
   def DrawAgents(self, world, eval_agent_id):
     ego_agent = world.agents[eval_agent_id]
@@ -57,12 +56,10 @@ class BufferedViewer:
   def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None):
     self.DrawMap(world)
     self.DrawAgents(world, eval_agent_ids[0])
-    # add ego state
     ego_agent = world.agents[eval_agent_ids[0]]
     ego_agent_state = ego_agent.state
     ego_vel_primitive = RenderPrimitive(ego_agent_state)
     world.renderer.Add("EGO_AGENT_STATE", ego_vel_primitive)
-    # TODO: e.g., set map origin
 
   def DrawMap(self, world):
     map = world.map.GetOpenDriveMap()
