@@ -51,6 +51,23 @@ LaneCorridorPtr RoadCorridor::GetNearestLaneCorridor(const Point2d& pt) const {
   return lc;
 }
 
+std::pair<LaneCorridorPtr, unsigned> RoadCorridor::GetNearestLaneCorridorAndIndex(const Point2d& pt) const {
+  using bark::commons::transformation::FrenetPosition;
+  auto lc_and_index = GetCurrentLaneCorridorAndIndex(pt);
+  if (!lc_and_index.first) {
+    double min_lat = std::numeric_limits<double>::infinity();
+    for (unsigned corr_idx = 0; corr_idx < unique_lane_corridors_.size(); ++corr_idx) {
+      FrenetPosition f(pt, unique_lane_corridors_.at(corr_idx)->GetCenterLine());
+      if (std::abs(f.lat) < min_lat) {
+        min_lat = std::abs(f.lat);
+        lc_and_index.first = unique_lane_corridors_.at(corr_idx);
+        lc_and_index.second = corr_idx;
+      }
+    }
+  }
+  return lc_and_index;
+}
+
 }  // namespace map
 }  // namespace world
 }  // namespace bark
