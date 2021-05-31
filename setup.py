@@ -99,7 +99,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
           # Note: Bazel does not use the MACOSX_DEPLOYMENT_TARGET environment
           # variable.
           build_command += ['--macos_minimum_os=%s' % _macos_deployment_target]
-          build_command += ['--define="build_plattform=macos"']
+          build_command += ['--define="build_platform=macos"']
           pass
         if sys.platform == 'win32':
           # Disable newer exception handling from Visual Studio 2019, since it
