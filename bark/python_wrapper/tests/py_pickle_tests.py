@@ -205,7 +205,24 @@ class PickleTests(unittest.TestCase):
         self.assertTrue(unpickled_rss_behavior.GetLateralRightResponse() == 1)
       except:
         print("Rerun test with --define rss=true")
+
+    def test_behavior_simplex(self):
+      from bark.core.models.behavior import BehaviorSimplexSampling
+      params = ParameterServer()
+      simplex_behavior = BehaviorSimplexSampling(params)
+      unpickled_simplex_behavior = pickle_unpickle(simplex_behavior)
       
+      try:
+        simplex_behavior.SetLongitudinalResponse(1)
+        simplex_behavior.SetLateralLeftResponse(1)
+        simplex_behavior.SetLateralRightResponse(1)
+        unpickled_simplex_behavior = pickle_unpickle(simplex_behavior)
+        self.assertTrue(unpickled_simplex_behavior.GetLongitudinalResponse() == 1)
+        self.assertTrue(unpickled_simplex_behavior.GetLateralLeftResponse() == 1)
+        self.assertTrue(unpickled_simplex_behavior.GetLateralRightResponse() == 1)
+      except:
+        print("Rerun test with --define rss=true")
+        
 
       
 if __name__ == '__main__':

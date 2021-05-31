@@ -104,6 +104,8 @@ class BehaviorRSSConformant : public BehaviorModel {
 
   virtual ~BehaviorRSSConformant() {}
 
+  bool PreprocessLaneInformation(const ObservedWorld& observed_world);
+
   Trajectory Plan(double min_planning_time,
                   const ObservedWorld& observed_world);
 
@@ -187,11 +189,12 @@ class BehaviorRSSConformant : public BehaviorModel {
     safety_polygons_ = sp;
   }
 
- private:
+ protected:
   std::shared_ptr<BehaviorModel> nominal_behavior_model_;
   std::shared_ptr<BehaviorSafety> behavior_safety_model_;
   std::shared_ptr<BaseEvaluator> rss_evaluator_;
   BehaviorRSSConformantStatus behavior_rss_status_;
+ private:  
   double world_time_of_last_rss_violation_;
   LaneCorridorPtr initial_lane_corr_;
   double minimum_safety_corridor_length_;

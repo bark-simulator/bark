@@ -145,7 +145,7 @@ EvaluationMap World::Evaluate() const {
   return evaluation_results;
 }
 
-std::vector<ObservedWorld> World::Observe(
+std::vector<ObservedWorld> World::Observe (
     const std::vector<AgentId>& agent_ids) const {
   WorldPtr current_world(this->Clone());
   std::vector<ObservedWorld> observed_worlds;

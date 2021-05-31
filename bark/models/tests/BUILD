@@ -178,3 +178,30 @@ cc_test(
         "@com_github_gflags_gflags//:gflags",
     ],
 )
+
+cc_test(
+    name = "behavior_simplex_test",
+    srcs = [
+        "behavior_simplex_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"] + select({
+        "//bark/world/evaluation/rss:_rss": ["-D RSS"],
+        "//conditions:default": [],
+    }),
+    deps = [        
+        "//bark/geometry",
+        "//bark/models/behavior/behavior_safety:behavior_safety",
+        "//bark/models/behavior/behavior_rss:behavior_rss",
+        "//bark/models/behavior/behavior_simplex:behavior_simplex_sampling",
+        "//bark/models/execution/interpolation:interpolation",
+        "//bark/world/tests:make_test_world",
+        "//bark/world/evaluation/rss:evaluator_rss",
+        "//bark/world/evaluation:evaluator_collision_ego_agent",
+        "//bark/models/behavior/idm:idm_lane_tracking",
+        "//bark/models/behavior/idm:idm_classic",
+        "//bark/models/observer:observer_model_parametric",
+        "//bark/world/tests:make_test_xodr_map",
+        "@gtest//:gtest_main",
+        "@com_github_gflags_gflags//:gflags",
+    ],
+)
