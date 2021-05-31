@@ -69,10 +69,7 @@ pybind_extension(
     ":op_sys": [""],
     "//conditions:default": ["-L/usr/local/lib/"],
   }),
-  linkstatic= select({
-    ":op_sys": 0,
-    "//conditions:default": 1,
-  })
+  linkstatic = 0
 )
 
 # needed for external python wrapping (planners)
