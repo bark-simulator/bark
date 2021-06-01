@@ -21,13 +21,11 @@ class BufferedMPViewer(BufferedViewer):
     self._vparams = self._params["Visualization"]
     self._dx = self._vparams["dx", "view range x", 20]
     self._dy = self._vparams["dy", "view range y", 20]
-
   def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None):
     self._ax.clear()
     super().drawWorld(world, eval_agent_ids, scenario_idx)
     self.render(world)
     world.renderer.Clear()
-
   def render(self, world):
     for type_name, primitives in world.renderer.primitives.items():
       if type_name == "EGO_AGENT_STATE":
