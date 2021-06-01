@@ -165,3 +165,5 @@ bark/runtime/viewer/models/car.mtl
 **.blend
 **.blend1
 **.mtl
+MANIFEST.in
+_build/**

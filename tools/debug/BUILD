@@ -4,7 +4,7 @@ py_binary(
         "analyze_map.py",
         "debug_settings.py"
         ],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data',
           '//bark/examples:params'],
   deps = ["//bark/runtime/commons:parameters",

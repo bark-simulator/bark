@@ -77,6 +77,6 @@ cc_test(
 py_test(
   name = "py_commons_tests",
   srcs = ["py_commons_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   deps = ["//bark/runtime/commons:commons"],
 )

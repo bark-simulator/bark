@@ -10,7 +10,7 @@ py_library(
             "drone_challenge.py",
             "interaction_dataset_scenario_generation.py",
             "interaction_dataset_scenario_generation_full.py"],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     deps = [
         "//bark/runtime/scenario:scenario",
         "@com_github_interaction_dataset_interaction_dataset//:interaction-tools",
