@@ -4,8 +4,7 @@ genrule(
   srcs = [
     "//bark/python_wrapper:core.so",
   ],
-  cmd = (" mv $(RULEDIR)/python_wrapper/core.so  $(location core.so)") ,
-  #]),
+  cmd = ("mv $(RULEDIR)/python_wrapper/core.so  $(location core.so)"),
   outs = [
     "core.so",
   ],
@@ -13,9 +12,9 @@ genrule(
 )
 
 
-# obtained tests using 
+# obtained tests using
 #bazel query 'filter(.tests.py, //...)'
-py_test (
+py_test(
     name="tests",
     data = [':generate_core'],
     srcs=["tests.py",

@@ -11,6 +11,7 @@ import time
 import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \
   LaneCorridorConfig, ConfigWithEase
@@ -74,10 +75,7 @@ scenarios = \
                  lane_corridor_configs=[left_lane, right_lane])
 
 # viewer
-viewer = MPViewer(params=param_server,
-                  x_range=[-35, 35],
-                  y_range=[-35, 35],
-                  follow_agent_id=True)
+viewer = BufferedMPViewer(params=param_server)
 
 sim_step_time = param_server["simulation"]["step_time",
                                            "Step-time used in simulation",

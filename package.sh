@@ -4,7 +4,7 @@ pkg_name='pip_package'
 workspace_name='bark_project'
 
 # activate virtual environment
-source ./bark/python_wrapper/venv/bin/activate 
+source ./bark/python_wrapper/venv/bin/activate
 
 echo "Building package"
 bazel run //bark:$pkg_name
@@ -53,8 +53,8 @@ echo "Moving to build directory"
 cd $build_dir/$workspace_name
 
 # build the wheel
-python3.7 setup.py clean
-python3.7 setup.py sdist bdist_wheel
+python3 setup.py clean
+python3 setup.py sdist bdist_wheel
 
 
 # check if manylinux argument passed. if so build
@@ -73,17 +73,20 @@ if [[ $# -gt 0 ]] ; then
             else
                 auditwheel repair "$whl"
             fi
-            
-            # install the package outside virtual environment
-            /opt/python/cp37-cp37m/bin/pip install $whl
-            /opt/python/cp37-cp37m/bin/pip3 install nose
-            
-            # run nose tests outside the virtual env to verify the installed package
-            echo "Running tests..."
-            cd /home
-            /opt/python/cp37-cp37m/bin/nosetests bark -e "py_benchmark_runner_tests|py_benchmark_process_tests|test_find_overlaps_configurable_scenario_generation"
-            test_status=$?
-            cd $_CURR_DIR
+
+            # # install the package outside virtual environment
+            # /opt/python/$1/bin/pip install $whl
+            # /opt/python/$1/bin/pip3 install nose
+
+            # # run nose tests outside the virtual env to verify the installed package
+            # echo "Running tests..."
+            # cd /home
+            # /opt/python/$1/bin/nosetests bark -e "py_benchmark_runner_tests|py_benchmark_process_tests|test_find_overlaps_configurable_scenario_generation"
+            # test_status=$?
+            # cd $_CURR_DIR
+            echo "Uploading package to PyPi..."
+            python3 -m twine upload --skip-existing wheelhouse/*
+            exit 0
         done
     fi
 fi
@@ -98,5 +101,5 @@ fi
 
 echo "Uploading package to PyPi..."
 # upload to pypi
-python3.7 -m twine upload --skip-existing $wheeldir/*
+python3 -m twine upload --skip-existing $wheeldir/*
 

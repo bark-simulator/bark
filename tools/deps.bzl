@@ -3,10 +3,10 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 
 def bark_dependencies():
     _maybe(
-    git_repository,
-    name = "bark_project",
-    branch = "master",
-    remote = "https://github.com/bark-simulator/bark"
+        git_repository,
+        name = "pybind11_bazel",
+        commit="b16a4527a25cb82ba2e6bd9f831cbe89f5f50fd2",
+        remote = "https://github.com/bark-simulator/pybind11_bazel"
     )
 
     _maybe(
@@ -68,23 +68,8 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "com_github_glog_glog",
-    commit = "c5dcae830670bfaea9573fa7b700e862833d14ff", 
+    commit = "c5dcae830670bfaea9573fa7b700e862833d14ff",
     remote = "https://github.com/google/glog.git"
-    )
-
-    _maybe(
-    native.new_local_repository,
-    name = "python_linux",
-    path = "./bark/python_wrapper/venv/",
-    build_file_content = """
-cc_library(
-    name = "python-lib",
-    srcs = glob(["lib/libpython3.*", "libs/python3.lib", "libs/python36.lib"]),
-    hdrs = glob(["include/**/*.h", "include/*.h"]),
-    includes = ["include/python3.6m", "include", "include/python3.7m", "include/python3.5m"], 
-    visibility = ["//visibility:public"],
-)
-    """
     )
 
     _maybe(
@@ -103,13 +88,25 @@ cc_library(
     """
     )
 
-
     _maybe(
     git_repository,
     name = "rule_monitor_project",
-    commit = "d1d7830e53213bc69d77c80ba0cc8397b0971c9d",
+    commit = "43fda8d3d545266e781f76d91e19c35a3fdd6c30",
     remote = "https://github.com/bark-simulator/rule-monitoring.git",
     )
+
+    _maybe(
+    git_repository,
+    name = "barkscape_project",
+    branch = "master",
+    remote = "https://github.com/bark-simulator/barkscape.git",
+    )
+
+    # _maybe(
+    #     native.local_repository,
+    #     name = "barkscape_project",
+    #     path = "/Users/hart/Development/barkscape",
+    # )
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():

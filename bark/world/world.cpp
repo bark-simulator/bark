@@ -50,6 +50,7 @@ World::World(const std::shared_ptr<World>& world)
       evaluators_(world->GetEvaluators()),
       observer_(world->GetObserverModel()),
       world_time_(world->GetWorldTime()),
+      renderer_(world->GetRenderer()),
       remove_agents_(world->GetRemoveAgents()),
       lateral_difference_threshold_(world->GetLateralDifferenceThreshold()),
       rtree_agents_(world->rtree_agents_) {
