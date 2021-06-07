@@ -19,7 +19,7 @@
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
 #include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
-#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist_long.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_safe_dist_drivable_area.hpp"
 
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
@@ -221,10 +221,10 @@ TEST(evaluator, static_safe_dist) {
 
 TEST(evaluator, dynamic_safe_dist) {
   auto params = std::make_shared<SetterParams>();
-  params->SetBool("EvaluatorDynamicSafeDistLong::ToRear", true);
-  params->SetReal("EvaluatorDynamicSafeDistLong::ReactionTime", 1.0f);
-  params->SetReal("EvaluatorDynamicSafeDistLong::MaxEgoDecceleration", 5.0f);
-  params->SetReal("EvaluatorDynamicSafeDistLong::MaxOtherDecceleration", 5.0f);
+  params->SetBool("EvaluatorDynamicSafeDist::ToRear", true);
+  params->SetReal("EvaluatorDynamicSafeDist::ReactionTime", 1.0f);
+  params->SetReal("EvaluatorDynamicSafeDist::MaxEgoDecceleration", 5.0f);
+  params->SetReal("EvaluatorDynamicSafeDist::MaxOtherDecceleration", 5.0f);
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
@@ -252,7 +252,7 @@ TEST(evaluator, dynamic_safe_dist) {
                                    velocity_difference, goal_definition_ptr);
   world->UpdateAgentRTree();
 
-  EvaluatorPtr safe_dist_checker(new EvaluatorDynamicSafeDistLong(params, world->GetAgents().begin()->first));
+  EvaluatorPtr safe_dist_checker(new EvaluatorDynamicSafeDist(params, world->GetAgents().begin()->first));
   world->AddEvaluator("safe_dist_agents", safe_dist_checker);
 
   // No other agent available -> safe = true

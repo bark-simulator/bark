@@ -213,7 +213,8 @@ void python_behavior(py::module m) {
   py::class_<Primitive, PyPrimitive, PrimitivePtr>(m, "Primitive")
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("Plan", &Primitive::Plan)
-      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
+      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied)
+      .def_property_readonly("name", &Primitive::GetName);
 
   py::class_<BehaviorMPMacroActions, BehaviorModel,
              shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
@@ -292,13 +293,14 @@ void python_behavior(py::module m) {
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccStayLane& b) {
-            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()));
+            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()), 
+                                    b.GetAcceleration());
           },
           [](py::tuple t) {
-            if (t.size() != 1)
+            if (t.size() != 2)
               throw std::runtime_error("Invalid behavior model state!");
             return new PrimitiveConstAccStayLane(
-                PythonToParams(t[0].cast<py::tuple>()));
+                PythonToParams(t[0].cast<py::tuple>()), t[1].cast<double>());
           }));
 
   py::class_<PrimitiveConstAccChangeToLeft, Primitive,

@@ -92,7 +92,7 @@ State FrenetStateToDynamicState(const FrenetState& frenet_state,
  * @param polygon 
  * @return A struct containing rear_dist, front_dist, left_dist, side_dist of rotated shape
  */
-auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
+ShapeExtension ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& polygon) { 
   // Assumes equal extension to sides for polygon
   BARK_EXPECT_TRUE(std::abs(polygon.right_dist_ - polygon.left_dist_) < 0.01);
   const double polygon_side_extend = polygon.left_dist_;
@@ -111,8 +111,7 @@ auto ShapeExtensionAtTangentAngle(const double& tangent_angle, const Polygon& po
   } else {
     std::swap(left_dist, right_dist);
   }
-  const struct{double front_dist; double rear_dist; double left_dist; double right_dist;}
-         shape_extension{front_dist, rear_dist, left_dist, right_dist};
+  ShapeExtension shape_extension{front_dist, rear_dist, left_dist, right_dist};
   return shape_extension;
 }
 
@@ -140,10 +139,12 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
   if(from.lon <= to.lon) {
     double diff_lon = to.lon - shape_extend_at_tangent2.rear_dist -
                         (from.lon + shape_extend_at_tangent1.front_dist);
+    lon_zeroed = diff_lon <= 0;
     lon = diff_lon > 0 ? diff_lon : to.lon - from.lon;
   } else {
     double diff_lon = to.lon + shape_extend_at_tangent2.front_dist -
                       (from.lon - shape_extend_at_tangent1.rear_dist);
+    lon_zeroed = diff_lon >= 0;
     lon = diff_lon < 0 ? diff_lon : to.lon - from.lon;
   }
 
@@ -154,11 +155,13 @@ FrenetStateDifference::FrenetStateDifference(const FrenetState& frenet_from, con
     double diff_lat = to.lat - shape_extend_at_tangent2.right_dist -
                       (from.lat + shape_extend_at_tangent1.left_dist);
     // if shape consideration leads to negative distance use only pure lateral difference
+    lat_zeroed = diff_lat <= 0;
     lat = diff_lat > 0 ? diff_lat : to.lat - from.lat;
   } else {
     // lateral difference is negative
-    double diff_lat = to.lat - shape_extend_at_tangent1.right_dist -
-                      (from.lat + shape_extend_at_tangent2.left_dist);
+    double diff_lat = to.lat + shape_extend_at_tangent1.right_dist -
+                      (from.lat - shape_extend_at_tangent2.right_dist);
+    lat_zeroed = diff_lat >= 0;
     lat = diff_lat < 0 ? diff_lat : to.lat - from.lat;
   }
   

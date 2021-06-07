@@ -49,7 +49,7 @@ class DatabaseRunnerTests(unittest.TestCase):
         safe_dist_params = ParameterServer(log_if_default=True)
         test_python_params = ParameterServer(log_if_default=True)
         evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
-                      "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDistLong", "params" : safe_dist_params},
+                      "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDist", "params" : safe_dist_params},
                       "safe_dist_lat" : {"type" : "EvaluatorStaticSafeDist", "params" : safe_dist_params},
                       "test_evaluator" : {"type" : "TestPythonEvaluator", "params" : test_python_params},
                       "test_evaluator_serializable" : TestPythonEvaluatorSerializable()}
@@ -173,7 +173,7 @@ class DatabaseRunnerTests(unittest.TestCase):
           db = BenchmarkDatabase(database_root=local_release_filename)
           safe_dist_params = ParameterServer(log_if_default=True)
           evaluators = {"success" : "EvaluatorGoalReached", "collision" : "EvaluatorCollisionEgoAgent",
-                        "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDistLong", "params" : safe_dist_params},
+                        "max_steps": "EvaluatorStepCount", "safe_dist_lon" : {"type" : "EvaluatorDynamicSafeDist", "params" : safe_dist_params},
                         "safe_dist_lat" : {"type" : "EvaluatorStaticSafeDist", "params" : safe_dist_params}}
           terminal_when = {"collision" :lambda x: x, "max_steps": lambda x : x>2, "safe_dist_lon" : lambda x: x }
           params = ParameterServer() # only for evaluated agents not passed to scenario!

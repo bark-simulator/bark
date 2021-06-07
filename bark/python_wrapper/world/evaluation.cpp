@@ -18,7 +18,7 @@
 #include "bark/world/evaluation/evaluator_velocity.hpp"
 #include "bark/world/evaluation/evaluator_gap_distance_front.hpp"
 #include "bark/world/evaluation/evaluator_number_of_agents.hpp"
-#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist_long.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_safe_dist_drivable_area.hpp"
 #include "bark/world/evaluation/commons.hpp"
@@ -150,11 +150,11 @@ void python_evaluation(py::module m) {
     }));
 
 
-  py::class_<EvaluatorDynamicSafeDistLong, BaseEvaluator,
-              std::shared_ptr<EvaluatorDynamicSafeDistLong>>(m, "EvaluatorDynamicSafeDistLong")
+  py::class_<EvaluatorDynamicSafeDist, BaseEvaluator,
+              std::shared_ptr<EvaluatorDynamicSafeDist>>(m, "EvaluatorDynamicSafeDist")
       .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
-      .def("__repr__", [](const EvaluatorDynamicSafeDistLong& g) {
-        return "bark.core.world.evaluation.EvaluatorDynamicSafeDistLong";
+      .def("__repr__", [](const EvaluatorDynamicSafeDist& g) {
+        return "bark.core.world.evaluation.EvaluatorDynamicSafeDist";
       });
 
   py::class_<EvaluatorStaticSafeDist, BaseEvaluator,

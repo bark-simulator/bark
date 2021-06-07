@@ -85,7 +85,7 @@ void python_ltl(py::module m) {
              std::shared_ptr<SafeDistanceLabelFunction>>(
       m, "SafeDistanceLabelFunction")
       .def(py::init<const std::string&, bool, double, double, double, double, bool,
-                    unsigned int, bool, double>())
+                    unsigned int, bool, double, bool>())
       .def("__repr__",
            [](const SafeDistanceLabelFunction& g) {
              return "bark.core.world.evaluation.ltl.SafeDistanceLabelFunction";
@@ -98,7 +98,8 @@ void python_ltl(py::module m) {
                                   b.GetConsiderCrossingCorridors(),
                                   b.GetMaxAgentsForCrossing(),
                                   b.GetUseFracLateralOffsetParam(),
-                                  b.GetLateralDifferenceThreshold());
+                                  b.GetLateralDifferenceThreshold(),
+                                  b.GetCheckLateralDist());
           },
           [](py::tuple t) {
             if (t.size() != 7)
@@ -107,7 +108,7 @@ void python_ltl(py::module m) {
                 t[0].cast<std::string>(), t[1].cast<bool>(),
                 t[2].cast<double>(), t[3].cast<double>(), t[4].cast<double>(),
                 t[5].cast<double>(), t[6].cast<bool>(), t[7].cast<unsigned int>(),
-                t[8].cast<bool>(), t[9].cast<double>());
+                t[8].cast<bool>(), t[9].cast<double>(), t[10].cast<bool>());
           }));
 
   py::class_<BelowSpeedLimitLabelFunction, BaseLabelFunction,

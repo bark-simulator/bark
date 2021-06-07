@@ -141,9 +141,15 @@ class World : public commons::BaseType {
 
   double GetLateralDifferenceThreshold() const { return lateral_difference_threshold_; }
 
+  unsigned GetMaxAgentsFrontRear() const { return max_agents_front_rear_; }
+
   void SetRemoveAgents(const bool& remove_agents) {
     remove_agents_ = remove_agents;
   }
+
+  void SetLateralDifferenceThreshold(double lateral_difference_threshold) {
+    lateral_difference_threshold_ = lateral_difference_threshold;
+  } 
 
   AgentMap GetNearestAgents(const bark::geometry::Point2d& position,
                             const unsigned int& num_agents) const;
@@ -163,7 +169,8 @@ class World : public commons::BaseType {
    */
   FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
                                          const LaneCorridorPtr& lane_corridor,
-                                         double lateral_difference_threshold) const;
+                                         double lateral_difference_threshold,
+                                         bool must_be_in_corridor = false) const;
 
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }
@@ -210,6 +217,7 @@ class World : public commons::BaseType {
   AgentRTree rtree_agents_;
   bool remove_agents_;
   double lateral_difference_threshold_;
+  unsigned max_agents_front_rear_;
 };
 
 typedef std::shared_ptr<world::World> WorldPtr;

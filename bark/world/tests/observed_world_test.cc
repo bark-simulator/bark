@@ -174,7 +174,7 @@ TEST(observed_world, agent_in_front_other_lane) {
   State init_state4(static_cast<int>(MIN_STATE_SIZE));
   init_state4 << 0.0, 5.0, -5.25, 0.0, 5.0;
   AgentPtr agent4(new Agent(init_state4, beh_model, dyn_model, exec_model,
-                            polygon, params, goal_ptr, map_interface,
+                            car_polygon, params, goal_ptr, map_interface,
                             Model3D()));  // NOLINT
 
   world->AddAgent(agent4);
@@ -183,10 +183,18 @@ TEST(observed_world, agent_in_front_other_lane) {
   WorldPtr current_world_state4(world->Clone());
   ObservedWorld obs_world4(current_world_state4, agent4->GetAgentId());
 
-  // there is no agent in front of agent4
+  // there is no agent directly in front of agent4
+  obs_world4.SetLateralDifferenceThreshold(0.2);
   std::pair<AgentPtr, FrenetStateDifference> leading_vehicle4 =
       obs_world4.GetAgentInFront();
   EXPECT_FALSE(static_cast<bool>(leading_vehicle4.first));
+
+
+  // adjust difference threshold to find agent on left lane
+  obs_world4.SetLateralDifferenceThreshold(4.0);
+  std::pair<AgentPtr, FrenetStateDifference> leading_vehicle5 =
+      obs_world4.GetAgentInFront();
+  EXPECT_TRUE(static_cast<bool>(leading_vehicle5.first));
 
   const auto& road_corridor4 = agent4->GetRoadCorridor();
   BARK_EXPECT_TRUE(road_corridor4 != nullptr);

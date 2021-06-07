@@ -28,6 +28,8 @@ using namespace bark::world::evaluation;
 using namespace bark::world::tests;
 using namespace bark::models::behavior;
 using namespace bark::models::behavior::primitives;
+using bark::world::goal_definition::GoalDefinitionPolygon;
+using namespace bark::geometry;
 
 using bark::commons::SetterParams;
 
@@ -57,7 +59,7 @@ TEST(label_test, left_of) {
   EXPECT_FALSE(labels2[label2]);
 }
 
-TEST(label_test, safe_distance) {
+TEST(label_test, safe_distance_longitudinal) {
   const int ego_id = 1;
   double v_0 = 8.0;
   double dv = 0.0;
@@ -67,7 +69,7 @@ TEST(label_test, safe_distance) {
   double lateral_difference_threshold = 2.0;
 
   auto evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 1.0));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 1.0, false));
   auto label = evaluator->GetLabel();
   double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
 
@@ -96,7 +98,7 @@ TEST(label_test, safe_distance) {
   delta = 0.5;
   dist = 4.5;
   evaluator = LabelFunctionPtr(
-      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 1.0));
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 1.0, false));
   auto world4 = make_test_world(1, dist, v_0, dv);
   auto observed_world4 = world4->Observe({ego_id})[0];
   auto labels4 = evaluator->Evaluate(observed_world4);
@@ -108,6 +110,76 @@ TEST(label_test, safe_distance) {
   auto observed_world5 = world5->Observe({ego_id})[0];
   auto labels5 = evaluator->Evaluate(observed_world5);
   EXPECT_TRUE(labels5[label]);
+}
+
+TEST(label_test, safe_distance_lateral) {
+  const int ego_id = 1;
+  double v_0 = 8.0;
+  double dv = 0.0;
+  double v_1 = v_0 + dv;
+  double delta = 1.0;
+  double a_e = -8.0;
+  double a_o = -8.0;
+  double lateral_difference_threshold = 2.0;
+  const double max_dyn_acc_lat = 4.0; // Params Single Track Default
+  
+
+  auto evaluator = LabelFunctionPtr(
+      new SafeDistanceLabelFunction("safe_distance", false, delta, delta, a_e, a_o, true, 4, false, 5.0, true));
+  auto label = evaluator->GetLabel();
+
+  // Longitudinal safe dist not violated -> lateral on same lane -> no violation
+  double stop_dist = v_0 * delta + v_0 * v_0 / (2.0 * -a_e);
+  assert(stop_dist > 1.0);
+  double dist_lat = 0.0;
+  double angle = 0.0;
+  auto world = make_test_world(1, stop_dist - 1.0, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  auto ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  auto observed_world = world->Observe({ego_agent_id})[0];
+  auto labels = evaluator->Evaluate(observed_world);
+  EXPECT_TRUE(labels[label]);
+
+  // Longitudinal safe dist violated -> lateral on same lane -> violated
+  double dist_long = 5.0;
+  dist_lat = 0.0;
+  angle = 0.0;
+  world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  EXPECT_FALSE(labels[label]);
+
+  // Longitudinal safe dist violated -> lateral on right of ego zero lat velocity -> not violated
+  dist_long = 0.0;
+  dist_lat = 2.5;
+  angle = 0.0;
+  world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  EXPECT_TRUE(labels[label]);
+
+
+  // Longitudinal safe dist violated -> lateral on left of ego, lat velocity away from ego -> not violated 
+  dist_long = 3.0;
+  angle = B_PI/4.0;
+  dist_lat = 3.5;
+  world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  EXPECT_TRUE(labels[label]);
+
+  // Longitudinal safe dist violated -> lateral on left of ego, lat velocity towards ego -> violated 
+  dist_long = 3.0;
+  angle = -B_PI/4.0;
+  dist_lat = 3.5;
+  world = make_test_world(1, dist_long, v_0, dv, std::make_shared<GoalDefinitionPolygon>(), 0.0, 0.0, dist_lat, angle);
+  ego_agent_id = world->GetAgents().begin()->second->GetAgentId();
+  observed_world = world->Observe({ego_agent_id})[0];
+  labels = evaluator->Evaluate(observed_world);
+  EXPECT_FALSE(labels[label]);
+
 }
 
 TEST(label_test, lane_change_right) {
