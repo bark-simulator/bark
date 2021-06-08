@@ -82,7 +82,8 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                num_cpus=None,
                memory_total=None,
                ip_head=None,
-               redis_password=None):
+               redis_password=None,
+               actor_type=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
@@ -116,7 +117,9 @@ class BenchmarkRunnerMP(BenchmarkRunner):
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
-        self.actors = [_BenchmarkRunnerActor.remote(serialized_evaluators=serialized_evaluators,
+        if not actor_type:
+          actor_type = _BenchmarkRunnerActor
+        self.actors = [actor_type.remote(serialized_evaluators=serialized_evaluators,
                                                     terminal_when=terminal_when,
                                                     benchmark_configs=self.benchmark_config_split[i],
                                                     logger_name="BenchmarkingActor{}".format(i),
