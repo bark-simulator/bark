@@ -81,19 +81,18 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                merge_existing=False,
                num_cpus=None,
                memory_total=None,
-               ip_head=None,
-               redis_password=None,
+               ray_init_args=None,
                actor_type=None):
         super().__init__(benchmark_database=benchmark_database,
                           evaluators=evaluators, terminal_when=terminal_when,
                           behaviors=behaviors, behavior_configs=behavior_configs, num_scenarios=num_scenarios,
                           benchmark_configs=benchmark_configs, scenario_generation=scenario_generation,
                           checkpoint_dir=checkpoint_dir, merge_existing=merge_existing)
-        num_cpus_available = psutil.cpu_count(logical=True)
-
-        if ip_head and redis_password:
-          ray.init(address=ip_head, redis_password=redis_password)
+        if ray_init_args:
+          ray.init(**ray_init_args)
+          num_cpus = ray_init_args["num_cpus"]
         else:
+          num_cpus_available = psutil.cpu_count(logical=True)
           if num_cpus and num_cpus <= num_cpus_available:
             pass
           else:
@@ -107,13 +106,13 @@ class BenchmarkRunnerMP(BenchmarkRunner):
             memory_total = memory_available
           
           ray.init(num_cpus=num_cpus, memory=memory_total*0.3, object_store_memory=memory_total*0.7, \
-             _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
+              _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
         serialized_evaluators = pickle.dumps(self.evaluators)
-        ray.register_custom_serializer(
+        ray.util.register_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
-        ray.register_custom_serializer(
+        ray.util.register_serializer(
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
