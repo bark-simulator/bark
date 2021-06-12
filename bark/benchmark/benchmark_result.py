@@ -254,9 +254,9 @@ class BenchmarkResult:
         result_file_name = "benchmark.results"
         zip_file_handle = zipfile.ZipFile(filename)
         if result_file_name in zip_file_handle.namelist():
-          zip_file_handle.close()
           cmd=['zip', '-Ar','-d', os.path.abspath(filename), result_file_name]
           subprocess.check_call(cmd)
+        zip_file_handle.close()
 
     def _dump_results(self, zip_file_handle):
         result_file_name = "benchmark.results"
