@@ -109,10 +109,10 @@ class BenchmarkRunnerMP(BenchmarkRunner):
               _internal_config='{"initial_reconstruction_timeout_milliseconds": 100000}') # we split memory between workers (30%) and objects (70%)
         
         serialized_evaluators = pickle.dumps(self.evaluators)
-        ray.util.register_serializer(
+        ray.register_custom_serializer(
           BenchmarkConfig, serializer=serialize_benchmark_config,
           deserializer=deserialize_benchmark_config)
-        ray.util.register_serializer(
+        ray.register_custom_serializer(
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
         self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
