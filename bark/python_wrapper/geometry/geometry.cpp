@@ -25,10 +25,13 @@ using Eigen::Matrix;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
-  m.def("GenerateCarLimousine", &bark::geometry::standard_shapes::GenerateCarLimousine);
+  m.def("GenerateCarLimousine",
+        &bark::geometry::standard_shapes::GenerateCarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
-  m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
-  m.def("GenerateGoalRectangle", &bark::geometry::standard_shapes::GenerateGoalRectangle);
+  m.def("GenerateCarRectangle",
+        &bark::geometry::standard_shapes::GenerateCarRectangle);
+  m.def("GenerateGoalRectangle",
+        &bark::geometry::standard_shapes::GenerateGoalRectangle);
 }
 
 void python_geometry(py::module m) {
@@ -53,10 +56,10 @@ void python_geometry(py::module m) {
 
   m.def("Distance", py::overload_cast<const Line&, const Point2d&>(&Distance),
         "Returns euclidean distance between Line2d and Point2d.");
-  
+
   m.def("SignedAngleDiff", &bark::geometry::SignedAngleDiff,
         "Signed angle diff");
-  
+
   m.def("SignedDistance",
         py::overload_cast<const Line&, const Point2d&, const double&>(
             &SignedDistance),
@@ -138,6 +141,8 @@ void python_geometry(py::module m) {
              line.AddPoint(
                  Point2d(list[0].cast<double>(), list[1].cast<double>()));
            })
+      .def(py::init<const Matrix<double, Dynamic, Dynamic>&>(),
+           "Create line from array")
       .def("__repr__",
            [](const Line& l) {
              std::stringstream ss;
@@ -235,10 +240,13 @@ void python_geometry(py::module m) {
                       t[0].cast<Matrix<double, Dynamic, Dynamic>>());
             return p;
           }));
-  m.def("CalculateBoundingBoxPolygon", &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
-  m.def("Intersection", &bark::geometry::Intersection<Polygon, Line>, "return intersection points");
-  m.def("Intersection", &bark::geometry::Intersection<Line, Line>, "return intersection points");
-  
+  m.def("CalculateBoundingBoxPolygon",
+        &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
+  m.def("Intersection", &bark::geometry::Intersection<Polygon, Line>,
+        "return intersection points");
+  m.def("Intersection", &bark::geometry::Intersection<Line, Line>,
+        "return intersection points");
+
   python_standard_shapes(
       m.def_submodule("standard_shapes",
                       "Define several standard car, pedestrians,... shapes"));

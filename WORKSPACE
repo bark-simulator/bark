@@ -12,6 +12,8 @@ bark_dependencies()
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
+load("@pybind11_bazel//:python_configure.bzl", "python_configure")
+python_configure(name = "local_config_python")
 
 # -------------------------------------------------
 
@@ -73,6 +75,18 @@ rule_monitor_dependencies()
 # ---------------------- RSS -----------------------
 load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
 rss_dependencies()
+# --------------------------------------------------
+
+# -------------------- BARKSCAPE -------------------
+load("@barkscape_project//utils:dependencies.bzl", "dependencies")
+dependencies()
+load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
+yarn_install(
+    # Name this npm so that Bazel Label references look like @npm//package
+    name = "npm",
+    package_json = "@barkscape_project//barkscape/web:package.json",
+    yarn_lock = "@barkscape_project//barkscape/web:yarn.lock",
+)
 # --------------------------------------------------
 
 # git_repository(

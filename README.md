@@ -7,7 +7,7 @@
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
 ![CI RSS Build](https://github.com/bark-simulator/bark/workflows/CI_RSS/badge.svg)
 ![NIGHTLY Rules MCTS Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_RULES_MCTS/badge.svg)
-
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/b9f484c42194487e9b9b33742381e992)](https://www.codacy.com/gh/bark-simulator/bark/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bark-simulator/bark&amp;utm_campaign=Badge_Grade)
 # BARK - a tool for **B**ehavior benchm**ARK**ing
 
 BARK is a semantic simulation framework for autonomous agents with a special focus on autonomous driving.

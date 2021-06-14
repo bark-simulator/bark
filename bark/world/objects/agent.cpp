@@ -72,11 +72,12 @@ Agent::Agent(const Agent& other_agent)
       first_valid_timestamp_(other_agent.first_valid_timestamp_),
       goal_definition_(other_agent.goal_definition_),
       road_corridor_road_ids_(other_agent.road_corridor_road_ids_),
-      road_corridor_driving_direction_(other_agent.road_corridor_driving_direction_) {}
+      road_corridor_driving_direction_(other_agent.road_corridor_driving_direction_),
+      sensed_world_(other_agent.sensed_world_) {}
 
 void Agent::PlanBehavior(const double& min_planning_dt,
                          const ObservedWorld& observed_world) {
-  behavior_model_->Plan(min_planning_dt, observed_world);
+  behavior_model_->PlanBehavior(min_planning_dt, observed_world);
 }
 
 void Agent::PlanExecution(const double& world_time) {
@@ -157,8 +158,9 @@ bool Agent::InsideRoadCorridor() const {
 }
 
 /**
- * @brief checks validity of agent. feature is required with simulating datasets in closed loop.
- * 
+ * @brief checks validity of agent. feature is required with simulating datasets
+ * in closed loop.
+ *
  * @param world_time ... current world time
  * @return true if agent is valid
  */

@@ -6,8 +6,8 @@ from .uniform_vehicle_distribution import UniformVehicleDistribution
 from .deterministic_drone_challenge import  DeterministicDroneChallengeGeneration
 from .configurable_scenario_generation import ConfigurableScenarioGeneration
 from .configurable_scenario_generation import add_config_reader_module
-from .interaction_dataset_scenario_generation import InteractionDatasetScenarioGeneration
-from .interaction_dataset_scenario_generation_full import InteractionDatasetScenarioGenerationFull
+# from .interaction_dataset_scenario_generation import InteractionDatasetScenarioGeneration
+# from .interaction_dataset_scenario_generation_full import InteractionDatasetScenarioGenerationFull
 
 
 __all__ = ["DeterministicScenarioGeneration",
@@ -17,6 +17,4 @@ __all__ = ["DeterministicScenarioGeneration",
           "UniformVehicleDistribution",
           "DeterministicDroneChallengeGeneration",
           "ConfigurableScenarioGeneration",
-          "add_config_reader_module",
-          "InteractionDatasetScenarioGeneration",
-          "InteractionDatasetScenarioGenerationFull"]
+          "add_config_reader_module"]
