@@ -84,7 +84,7 @@ ParameterRegions BehaviorIDMStochastic::GetParameterRegions() const {
 }
 
 void BehaviorIDMStochastic::HandleIntentionChange(const double& world_time) {
-  if(YieldIntent::NOT_INITIALIZED) {
+  if(current_yield_intent_ == YieldIntent::NOT_INITIALIZED) {
     world_time_at_last_intent_change_ = world_time;
     current_yield_intent_ = YieldIntent::YIELD;
     duration_until_intent_change_ = param_yielding_duration_->Sample()[0];
@@ -97,10 +97,12 @@ void BehaviorIDMStochastic::HandleIntentionChange(const double& world_time) {
       current_yield_intent_ = YieldIntent::NO_YIELD;
       max_lat_difference_to_be_front_ = k_max_lat_diff_no_yield;
       duration_until_intent_change_ = param_no_yielding_duration_->Sample()[0]; 
+      VLOG(5) << "Switched to no yielding intent";
     } else if(current_yield_intent_ == YieldIntent::NO_YIELD) {
       current_yield_intent_ = YieldIntent::YIELD;
       max_lat_difference_to_be_front_ = k_max_lat_diff_yield;
       duration_until_intent_change_ = param_yielding_duration_->Sample()[0]; 
+      VLOG(5) << "Switched to yielding intent";
     }
     world_time_at_last_intent_change_ = world_time;
   }
