@@ -194,12 +194,12 @@ class BenchmarkResult:
         files_to_load = []
         configs_not_found = set(config_idx_list)
         for file in total_file_list:
-            match = re.search("config_idx_(?P<from>[0-9]+)_to_(?P<to>[0-9]+).{}".format(filetype), file)
+            match = re.search("\d+(?:,\d+)*".format(filetype), file)
             if not match:
                 continue
-            range_dct = match.groupdict()
-            found_config = list(filter(lambda conf_idx: conf_idx >= int(range_dct["from"]) \
-                                 and conf_idx <= int(range_dct["to"]), config_idx_list))
+            matched_index_list = match.group(0)
+            file_configs = [int(idx) for idx in matched_index_list.split(",")]
+            found_config = list(filter(lambda conf_idx: conf_idx in file_configs, config_idx_list))
             configs_not_found -= set(found_config)
             if len(found_config) > 0:
                 files_to_load.append(file)
@@ -240,9 +240,10 @@ class BenchmarkResult:
                      for i in range(0, len(config_idx_list), num_configs_per_file)]
         for config_idx_split in config_idx_splits:
             iterable_to_write = { config_idx : pickable_iterable_dct[config_idx] \
-                                      for config_idx in config_idx_split}
-            filename = os.path.join(filetype, "config_idx_{}_to_{}.{}".format(
-                  config_idx_split[0], config_idx_split[-1], filetype))
+                                      for config_idx in config_idx_split}        
+            index_extension = ",".join(str(i) for i in list(iterable_to_write.keys()))
+            filename = os.path.join(filetype, "config_idx_{}".format(
+                  index_extension, filetype))
             if not filename in zip_file_handle.namelist():
                 zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
                                                 protocol=pickle.HIGHEST_PROTOCOL))
