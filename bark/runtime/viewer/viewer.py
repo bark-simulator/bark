@@ -446,7 +446,7 @@ class BaseViewer(Viewer):
             if self.draw_agent_id:
                 angle = min(pose[2], pose[2] - math.pi / 2.0)
                 self.drawText(position=(centerx, centery), rotation=180.0*(angle/math.pi), text="{}".format(agent.id),
-                              coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller")
+                              coordinate="not axes", ha='center', va="center", multialignment="center", size="smaller", clip_on=True)
             
             if self.draw_orientation_arrow:
               self.drawArrow(pose)
