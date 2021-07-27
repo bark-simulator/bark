@@ -242,7 +242,7 @@ class BenchmarkResult:
             iterable_to_write = { config_idx : pickable_iterable_dct[config_idx] \
                                       for config_idx in config_idx_split}        
             index_extension = ",".join(str(i) for i in list(iterable_to_write.keys()))
-            filename = os.path.join(filetype, "config_idx_{}".format(
+            filename = os.path.join(filetype, "{}_config_idx_{}".format(filetype,
                   index_extension, filetype))
             if not filename in zip_file_handle.namelist():
                 zip_file_handle.writestr( filename, pickle.dumps(iterable_to_write, \
