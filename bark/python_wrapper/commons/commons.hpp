@@ -69,6 +69,13 @@ class PyParams : public Params {
                            description, default_value);
   }
 
+  std::vector<int> GetListInt(
+      const std::string& param_name, const std::string& description,
+      const std::vector<int>& default_value) override {
+    PYBIND11_OVERLOAD_PURE(std::vector<int>, Params, GetListInt, param_name,
+                           description, default_value);
+  }
+
   void SetBool(const std::string& param_name, const bool& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetBool, param_name, value);
   }
@@ -94,6 +101,11 @@ class PyParams : public Params {
   void SetListFloat(const std::string& param_name,
                     const std::vector<double>& value) override {
     PYBIND11_OVERLOAD_PURE(void, Params, SetListFloat, param_name, value);
+  }
+
+  void SetListInt(const std::string& param_name,
+                    const std::vector<int>& value) override {
+    PYBIND11_OVERLOAD_PURE(void, Params, SetListInt, param_name, value);
   }
 
   void SetDistribution(const std::string& param_name,

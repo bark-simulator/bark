@@ -24,6 +24,7 @@ class SetterParams : public Params {
         params_int_(),
         params_listlist_double_(),
         params_list_double_(),
+        params_list_int_(),
         log_if_default_(log_if_default) {}
   SetterParams(bool log_if_default, const CondensedParamList& param_list);
 
@@ -64,6 +65,12 @@ class SetterParams : public Params {
     return get_parameter(params_list_double_, param_name, default_value);
   }
 
+  virtual std::vector<int> GetListInt(
+      const std::string& param_name, const std::string& description,
+      const std::vector<int>& default_value) {
+    return get_parameter(params_list_int_, param_name, default_value);
+  }
+
   virtual void SetBool(const std::string& param_name, const bool& value) {
     set_parameter(params_bool_, param_name, value);
   }
@@ -84,6 +91,10 @@ class SetterParams : public Params {
   virtual void SetListFloat(const std::string& param_name,
                             const std::vector<double>& value) {
     set_parameter(params_list_double_, param_name, value);
+  }
+  virtual void SetListInt(const std::string& param_name,
+                            const std::vector<int>& value) {
+    set_parameter(params_list_int_, param_name, value);
   }
 
   virtual void SetDistribution(const std::string& param_name,
@@ -190,6 +201,7 @@ class SetterParams : public Params {
   std::unordered_map<std::string, std::vector<std::vector<double>>>
       params_listlist_double_;
   std::unordered_map<std::string, std::vector<double>> params_list_double_;
+  std::unordered_map<std::string, std::vector<int>> params_list_int_;
   std::unordered_map<std::string, std::string> params_string_;
 
   bool log_if_default_;
@@ -206,6 +218,9 @@ struct ParamVisitor : public boost::static_visitor<> {
   }
   void operator()(const ListFloat& l) const {
     params_->SetListFloat(param_name_, l);
+  }
+  void operator()(const ListInt& l) const {
+    params_->SetListInt(param_name_, l);
   }
   void operator()(const std::string& s) const {
     params_->SetString(param_name_, s);
@@ -241,6 +256,12 @@ template <>
 inline std::unordered_map<std::string, std::vector<double>>&
 SetterParams::get_param_map() {
   return params_list_double_;
+}
+
+template <>
+inline std::unordered_map<std::string, std::vector<int>>&
+SetterParams::get_param_map() {
+  return params_list_int_;
 }
 
 template <>

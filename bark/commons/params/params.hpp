@@ -20,9 +20,10 @@ namespace commons {
 
 typedef std::vector<std::vector<double>> ListListFloat;
 typedef std::vector<double> ListFloat;
+typedef std::vector<int> ListInt;
 typedef unsigned int AgentId;
 
-typedef boost::variant<bool, double, int, std::string, ListListFloat, ListFloat>
+typedef boost::variant<bool, double, int, std::string, ListListFloat, ListFloat, ListInt>
     Parameter;
 typedef std::pair<std::string, Parameter> ParamPair;
 
@@ -64,6 +65,10 @@ class Params {
                                           const std::string& description,
                                           const ListFloat& default_value) = 0;
 
+  virtual std::vector<int> GetListInt(const std::string& param_name,
+                                          const std::string& description,
+                                          const ListInt& default_value) = 0;
+
   DistributionPtr GetDistributionFromType(
       const std::string& distribution_type,
       const std::shared_ptr<Params>& distr_params) const;
@@ -85,6 +90,8 @@ class Params {
                                 const ListListFloat& value) = 0;
   virtual void SetListFloat(const std::string& param_name,
                             const ListFloat& value) = 0;
+  virtual void SetListInt(const std::string& param_name,
+                            const ListInt& value) = 0;
   virtual void SetDistribution(const std::string& param_name,
                                const std::string& distribution_type) = 0;
 

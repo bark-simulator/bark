@@ -91,19 +91,51 @@ TEST(distribution_test, uniform_dist_1d) {
 // TODO(fortiss): fill our this test
 TEST(distribution_test, bernoulli_dist_1d) {
   auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
-  params_ptr->SetReal("Probability", 0.3);
-  params_ptr->SetInt("RandomSeed", 1000.0);
+  params_ptr->SetReal("Probability", 0.5);
+  params_ptr->SetInt("RandomSeed", 1234);
 
   auto dist_bernoulli = bark::commons::BernoulliDistribution1D(params_ptr);
 
   size_t samples = 100000;
-  double mean = 0.0;
+  double prob = 0.0;
   for (size_t i = 0; i < samples; ++i) {
-    mean += dist_bernoulli.Sample()[0];
+    prob += dist_bernoulli.Sample()[0];
   }
-  mean /= samples;
-  EXPECT_NEAR(mean, 0.3, 0.01);
+  prob /= samples;
+  EXPECT_NEAR(prob, 0.5, 0.01);
 }
+
+// TODO(fortiss): fill our this test
+TEST(distribution_test, discrete_dist_1d) {
+  auto params_ptr = std::make_shared<bark::commons::SetterParams>(true);
+  params_ptr->SetListInt("Weights", {2, 2, 1});
+  params_ptr->SetInt("RandomSeed", 1234);
+
+  auto dist_discrete = bark::commons::DiscreteDistribution1D(params_ptr);
+
+  size_t samples = 100000;
+  double prob[3];
+  for (int j = 0; j < 3; ++j) {
+    prob[j] = 0;
+  }
+  for (size_t i = 0; i < samples; ++i) {
+    int sample = dist_discrete.Sample()[0];
+    prob[sample] += 1;
+  }
+  for (int j = 0; j < 3; ++j) {
+    prob[j] = prob[j]/samples;
+  }
+
+  double prob_desired[3];
+  for (int j = 0; j < 3; ++j) {
+    prob_desired[j] = dist_discrete.Density({j});
+  }
+
+  for (int j = 0; j < 3; ++j) {
+    EXPECT_NEAR(prob[j], prob_desired[j], 0.01);
+  }
+}
+
 
 TEST(distribution_test, multivariate_distribution) {
   // First test zero covariances
