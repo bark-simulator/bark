@@ -73,15 +73,15 @@ TEST(behavior_simplex_sampling, violation_threshold) {
   WorldPtr world =
       make_test_world(1, rel_distance, ego_velocity, velocity_difference);
 
-  //2) Set observation uncertainty in x-direction only (test world aligned along x-axis) 
+  //2) Set observation uncertainty in x-direction only (test world aligned along x-axis)
   params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0, 0});
   params->SetListListFloat("ObserverModelParametric::EgoStateDeviationDist::Covariance",
-                             {{0.00001, 0.0}, 
+                             {{0.00001, 0.0},
                               {0.0, 0.000001}}); // no covariance for ego agent
 
   params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {0, 0});
   params->SetListListFloat("ObserverModelParametric::OtherStateDeviationDist::Covariance",
-                             {{rel_distance, 0.0}, 
+                             {{rel_distance, 0.0},
                               {0.0, 0.000001}}); // only covariance for other agents along x-directions
 
   auto observer_model_parametric= std::make_shared<ObserverModelParametric>(params);
@@ -89,7 +89,7 @@ TEST(behavior_simplex_sampling, violation_threshold) {
 
   params->SetReal("BehaviorSimplexSampling::ViolationThreshold", SAFETY_THRESHOLD);
   params->SetInt("BehaviorSimplexSampling::NumSamples", 1000);
-  
+
   //3) Create behavior and plan
   auto behavior_simplex = BehaviorSimplexSampling(params);
 
@@ -103,11 +103,11 @@ TEST(behavior_simplex_sampling, violation_threshold) {
       std::make_shared<DummySimplexEvaluator>(world->GetAgents().begin()->first);
   behavior_simplex_sampling->SetEvaluator(coll_eval);
 
-  uint max_samples = 1000;
+  uint max_samples = 100;
   int num_safety_maneuvers = 0;
   for(int i = 0; i < max_samples; ++i) {
       auto observed_world = observer_model_parametric->Observe(world, ego_agent->GetAgentId());
-      VLOG(3) << "Other state:" << std::next(observed_world.GetAgents().begin())->second->GetCurrentState() << 
+      VLOG(3) << "Other state:" << std::next(observed_world.GetAgents().begin())->second->GetCurrentState() <<
                  "Ego state" << observed_world.GetEgoAgent()->GetCurrentState();
       auto plan_result = behavior_simplex_sampling->Plan(time_step, observed_world);
     if(behavior_simplex_sampling->GetBehaviorRssStatus() == BehaviorRSSConformantStatus::SAFETY_BEHAVIOR) {
@@ -115,7 +115,7 @@ TEST(behavior_simplex_sampling, violation_threshold) {
     }
   }
 #ifdef RSS
-  EXPECT_NEAR(double(num_safety_maneuvers)/double(max_samples), SAFETY_THRESHOLD, 0.05);
+  EXPECT_NEAR(double(num_safety_maneuvers)/double(max_samples), SAFETY_THRESHOLD, 0.25);
 #endif
 }
 
