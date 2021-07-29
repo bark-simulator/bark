@@ -12,15 +12,17 @@ bark_dependencies()
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
 boost_deps()
 
+load("@pybind11_bazel//:python_configure.bzl", "python_configure")
+python_configure(name = "local_config_python")
 
 # -------------------------------------------------
 
 # ------ Planner UCT ------------------------------
-git_repository(
-  name = "planner_uct",
-  commit="bde9ccc9750fad5764afd84987fcfe15ff97dfbe",
-  remote = "https://github.com/bark-simulator/planner-mcts"
-)
+#git_repository(
+#  name = "planner_uct",
+#  commit="5af72cd8a2b0ae0417487e26fc899d2471552aa0",
+#  remote = "https://github.com/juloberno/bark_hypothesis_uct"
+#)
 #load("@planner_uct//util:deps.bzl", "planner_uct_rules_dependencies")
 #planner_uct_rules_dependencies()
 # --------------------------------------------------
@@ -37,7 +39,7 @@ git_repository(
 # ------ Planner Rules-MCTS ------------------------------
 git_repository(
   name = "planner_rules_mcts",
-  commit="d705d06902a1181c1e675169eaf2303ab98ed264",
+  commit="35b09a857d8c3f1c65e0ed80ee4df1b358e45bf4",
   remote = "https://github.com/bark-simulator/planner-rules-mcts"
 )
 load("@planner_rules_mcts//util:deps.bzl", "planner_rules_mcts_dependencies")
@@ -73,6 +75,18 @@ rule_monitor_dependencies()
 # ---------------------- RSS -----------------------
 load("@com_github_rules_rss//rss:rss.bzl", "rss_dependencies")
 rss_dependencies()
+# --------------------------------------------------
+
+# -------------------- BARKSCAPE -------------------
+load("@barkscape_project//utils:dependencies.bzl", "dependencies")
+dependencies()
+load("@build_bazel_rules_nodejs//:index.bzl", "yarn_install")
+yarn_install(
+    # Name this npm so that Bazel Label references look like @npm//package
+    name = "npm",
+    package_json = "@barkscape_project//barkscape/web:package.json",
+    yarn_lock = "@barkscape_project//barkscape/web:yarn.lock",
+)
 # --------------------------------------------------
 
 # git_repository(

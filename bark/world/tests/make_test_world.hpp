@@ -34,7 +34,8 @@ WorldPtr make_test_world(int num_other_agents, double rel_distance,
                          double ego_velocity, double velocity_difference,
                          const GoalDefinitionPtr& ego_goal_definition =
                              std::make_shared<GoalDefinitionPolygon>(),
-                         double ego_acc = 0.0, double other_acc = 0.0);
+                         double ego_acc = 0.0, double other_acc = 0.0,
+                         double lat_diff = 0.0, double others_theta = 0.0);
 
 ObservedWorld make_test_observed_world(
     int num_other_agents, double rel_distance, double ego_velocity,

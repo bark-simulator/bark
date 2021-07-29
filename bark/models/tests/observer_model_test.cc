@@ -47,7 +47,7 @@ TEST(observer_model_none, base_test) {
   EXPECT_EQ(observed_world.GetEgoAgentId(), AgentId(1));
 }
 
-TEST(observer_model_parametric, state_deviation_test) {
+TEST(observer_model_parametric, position_deviation_test) {
   auto params = std::make_shared<SetterParams>();
 
   // Create World with known agent positions
@@ -63,15 +63,19 @@ TEST(observer_model_parametric, state_deviation_test) {
   WorldPtr world = make_test_world(2, rel_distance, ego_velocity,
                                    velocity_difference, goal_definition_ptr);
 
-  params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0.7, 1.8});
+  params->SetListFloat("ObserverModelParametric::EgoStateDeviationDist::Mean", {0.7, 1.8, 0.0, 0.0});
   params->SetListListFloat("ObserverModelParametric::EgoStateDeviationDist::Covariance",
-                             {{0.2, 0.0}, 
-                              {0.0, 0.2}});
+                             {{0.2, 0.0, 0.0, 0.0}, 
+                              {0.0, 0.2, 0.0, 0.0},
+                              {0.0, 0.0, 0.01, 0.0},
+                              {0.0, 0.0, 0.0, 0.01}});
   
-  params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {1.2, 3.5});
+  params->SetListFloat("ObserverModelParametric::OtherStateDeviationDist::Mean", {0.7, 1.8, 0.0, 0.0});
   params->SetListListFloat("ObserverModelParametric::OtherStateDeviationDist::Covariance",
-                             {{0.3, 0.0}, 
-                              {0.0, 2.1}});
+                             {{0.2, 0.0, 0.0, 0.0}, 
+                              {0.0, 0.2, 0.0, 0.0},
+                              {0.0, 0.0, 0.01, 0.0},
+                              {0.0, 0.0, 0.0, 0.01}});
 
   ObserverModelParametric observer_parametric(params);
 

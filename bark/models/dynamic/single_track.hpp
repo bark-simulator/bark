@@ -88,6 +88,39 @@ class SingleTrackModel : public DynamicModel {
   double GetLatAccelerationMax() const {
     return acceleration_limits_.lat_acc_max;
   }
+
+  /**
+   * @brief Calculates maximum possible lateral evasive acceleration away from center line of a lane
+   *        assuming single track vehicle dynamics
+   * 
+   * @param v velocity of vehicle in global coordinate system
+   * @param theta orientation of vehicle in global coordinate system
+   * @param tangent_angle angle of center line in global coordinate system, assumed to be constant over time
+   * @param a_total_max maximum possible acceleration of vehicle into direction of orientation
+   * @param on_left_of_center_line to calculate evasive lateral maximum acceleration, flag indicates on which side
+   *                              of center line the vehicle is
+   * @return double maximum possible lateral evasive acceleration
+   */
+  double CalculateLatAccelerationMaxAtFrenetAngle(const double &v, const double& theta,
+                                                 const double& tangent_angle,
+                                                 const double a_total_max,
+                                                 bool on_left_of_center_line) const {
+    const auto max_acc_lat_dyn = GetLatAccelerationMax();
+    const double delta_max = std::atan2(max_acc_lat_dyn * wheel_base_, v * v);
+    double delta_max_evasive;
+    const double abs_angle_diff = std::abs(bark::geometry::SignedAngleDiff(theta, tangent_angle));
+    if ((on_left_of_center_line && abs_angle_diff < bark::geometry::B_PI_2) ||
+        (!on_left_of_center_line && abs_angle_diff > bark::geometry::B_PI_2)) {
+      delta_max_evasive = delta_max;
+    } else {
+      delta_max_evasive = delta_max;
+    }
+    const double max_lat_acc_from_steering = v*v*sin(delta_max_evasive)/wheel_base_*cos(tangent_angle+theta);
+    const double max_lat_acc_from_long_acc = std::abs(a_total_max)*(sin(tangent_angle-theta));
+    const double max_lat_acc = max_lat_acc_from_long_acc-max_lat_acc_from_steering;
+    return std::abs(max_lat_acc);
+  }
+
   double GetLonAccelerationMax(const State& x) const {
     return acceleration_limits_.lon_acc_max;
   }
@@ -145,6 +178,8 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
   using StateDefinition::THETA_POSITION;
   using StateDefinition::X_POSITION;
   using StateDefinition::Y_POSITION;
+  using bark::geometry::Point2d;
+  using bark::geometry::NormToPI;
 
   const double l = model->GetWheelBase();
 
@@ -156,7 +191,10 @@ inline double CalculateSteeringAngle(const SingleTrackModelPtr& model,
 
   FrenetState f_state = FrenetState(state_front, ref_line);
   double vel = state(StateDefinition::VEL_POSITION);
-  double delta = f_state.angle + atan2(-gain * f_state.lat, vel);
+  double delta = +NormToPI(f_state.angle) + atan2(-gain * f_state.lat, vel);
+
+  VLOG(5) << "del=" << delta << ", fa=" << f_state.angle << ", na=" << NormToPI(f_state.angle) <<
+              ", g=" << gain << ", lat=" << f_state.lat << ", v=" << vel;
 
   if (limit_steering) {
     double wb = model->GetWheelBase();

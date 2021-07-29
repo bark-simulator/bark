@@ -50,7 +50,11 @@ BehaviorLaneChangeRuleBased::FrontRearAgents(
     const ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr) const {
   AgentInformation front_info, rear_info;
-  const auto& front_rear = observed_world.GetAgentFrontRear(lane_corr);
+  double lateral_difference_threshold = 100; // do not restrict regarding lateral diff
+  const auto& front_rear = observed_world.GetAgentFrontRearForId(observed_world.GetEgoAgentId(),
+                                         lane_corr,
+                                         lateral_difference_threshold,
+                                         true); // require to be in this lane corridor
   const auto& ego_agent = observed_world.GetEgoAgent();
   if (front_rear.front.first) {
     // front info

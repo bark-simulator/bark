@@ -27,6 +27,10 @@ void python_renderer(py::module m) {
     .def(py::init<>())
     .def("Add", &Renderer::Add)
     .def("Clear", &Renderer::Clear)
+    .def("AddRendererChild", &Renderer::AddRendererChild)
+    .def("GetRendererChild", &Renderer::GetRendererChild)
+    .def("GetRendererChildren", &Renderer::GetRendererChildren)
+    .def("ClearRendererChildren", &Renderer::ClearRendererChildren)
     .def_property_readonly(
       "primitives", &Renderer::GetRenderPrimitives);
   

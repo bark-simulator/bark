@@ -155,7 +155,7 @@ TEST(safety_not_met, behavior_mobil) {
 }
 
 TEST(impolite_incentive_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", 0.1);
@@ -179,7 +179,7 @@ TEST(impolite_incentive_met_safety_met, behavior_mobil) {
 }
 
 TEST(polite_incentive_not_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", 0.2);
@@ -203,7 +203,7 @@ TEST(polite_incentive_not_met_safety_met, behavior_mobil) {
 }
 
 TEST(polite_incentive_met_safety_met, behavior_mobil) {
-  double vel_ego = 5.0;
+  double vel_ego = 4.0;
   auto params = std::make_shared<SetterParams>();
   params->SetReal("BehaviorIDMClassic::DesiredVelocity", vel_ego);
   params->SetReal("BehaviorMobilRuleBased::AThr", -5.0);  // HACK
@@ -426,6 +426,30 @@ TEST(behavior_mobil, clone) {
 
   auto cloned_model = BehaviorModelPtr(beh_model->Clone());
   ASSERT_EQ(BehaviorStatus::EXPIRED, cloned_model->GetBehaviorStatus());
+}
+
+TEST(behavior_mobil, measure_time) {
+  double vel = 5.0;
+  double ts = 0.2;
+  auto params = std::make_shared<SetterParams>();
+
+  ObservedWorld observed_world = make_observed_world_mobil(vel, params);
+
+  const BehaviorModelPtr behavior_model =
+      observed_world.GetEgoAgent()->GetBehaviorModel();
+  auto behavior_mobil =
+      std::dynamic_pointer_cast<BehaviorMobilRuleBased>(behavior_model);
+  behavior_mobil->SetLaneCorridor(observed_world.GetLaneCorridor());
+
+  // First: without measuring time, we expect initial invalid (negative) value
+  behavior_mobil->SetMeasureSolutionTime(false);
+  observed_world.Step(ts);
+  EXPECT_LE(behavior_mobil->GetLastSolutionTime(), 0.0);
+
+  // Second: with measuring time, we expect valid value
+  behavior_mobil->SetMeasureSolutionTime(true);
+  observed_world.Step(ts);
+  EXPECT_GT(behavior_mobil->GetLastSolutionTime(), 0.0);
 }
 
 int main(int argc, char** argv) {

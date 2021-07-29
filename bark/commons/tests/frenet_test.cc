@@ -8,6 +8,7 @@
 
 #include "bark/commons/transformation/frenet.hpp"
 #include "bark/commons/transformation/frenet_state.hpp"
+#include "bark/geometry/standard_shapes.hpp"
 #include "gtest/gtest.h"
 
 using namespace bark::commons::transformation;
@@ -126,6 +127,163 @@ TEST(frenet_state_two_way, straight_line_top_right) {
 
   // state on right side of path with orientation on path
   // test_state_two_way(-1, 5, B_PI_2, 5, line);
+}
+
+TEST(calculate_state_diff, zero_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{1.0, 2.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{5.0, 10.0, 4.0, 3.0, 0.0, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, 4.0 - (length1 - 0.5) - 0.5, 0.001);
+  EXPECT_NEAR(diff.lat, 8.0 - width1/2 - width2/2, 0.001);
+  EXPECT_NEAR(diff.vlat, -2.0, 0.001);
+  EXPECT_NEAR(diff.vlon, 1.0, 0.001);
+  EXPECT_NEAR(diff.angle, 0.0, 0.001);
+}
+
+TEST(calculate_state_diff, pi2_minuspi_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{5.0, 2.0, 3.0, 1.0, B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, -4.0 + width1/2.0 + 0.5, 0.001);
+  EXPECT_NEAR(diff.lat, 8.0 - 0.5 - width2/2, 0.001);
+  EXPECT_NEAR(diff.vlat, 1.0, 0.001);
+  EXPECT_NEAR(diff.vlon, -2.0, 0.001);
+  EXPECT_NEAR(diff.angle, B_PI_2, 0.001);
+}
+
+TEST(calculate_state_diff, pi2_minuspi_oriented_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{2.0, 2.0, 3.0, 1.0, B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 3.95, 1.0, 2.0, -B_PI, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, -1.0, 0.001);
+  EXPECT_NEAR(diff.lat, 1.95, 0.001);
+  EXPECT_NEAR(diff.vlat, 1.0, 0.001);
+  EXPECT_NEAR(diff.vlon, -2.0, 0.001);
+  EXPECT_NEAR(diff.angle, B_PI_2, 0.001);
+}
+
+TEST(calculate_state_diff, minus_pi2_minuspi4_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{8.0, 2.0, 3.0, 1.0, -B_PI_2, 0.0, 0.0};
+  FrenetState state2{1.0, 10.0, 1.0, 2.0, -B_PI_2/3, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 5.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, -7.0 + cos(B_PI_2/3)*3.5 + sin(B_PI_2/3)*1.5 + 1.0, 0.001);
+  EXPECT_NEAR(diff.lat, 8.0 - 0.5 - sin(B_PI_2/3)*3.5 - cos(B_PI_2/3)*1.5, 0.001);
+  EXPECT_NEAR(diff.vlat, 1.0, 0.001);
+  EXPECT_NEAR(diff.vlon, -2.0, 0.001);
+  EXPECT_NEAR(diff.angle, B_PI_2*2/3, 0.001);
+}
+
+TEST(calculate_state_diff, zero_minus_3pi4_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{2.0, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0};
+  FrenetState state2{11.0, -8.0, 1.0, 0.0, -3*B_PI/4, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 5.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, 11.0 - 2.0 - 4.5 + cos(3*B_PI/4)*3.5 - sin(3*B_PI/4)*1.5, 0.001);
+  EXPECT_NEAR(diff.lat, - (8.0 -1.0 - sin(3*B_PI/4)*3.5 + cos(3*B_PI/4)*1.5), 0.001);
+  EXPECT_NEAR(diff.vlat, -1.0, 0.001);
+  EXPECT_NEAR(diff.vlon, -2.0, 0.001);
+  EXPECT_NEAR(diff.angle, -3*B_PI/4, 0.001);
+}
+
+TEST(calculate_state_diff, lateral_zero_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{1.0, 0.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{5.0, 0.0, 4.0, 3.0, 0.0, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  const auto shape2 = Polygon(
+      Pose(0.5, width2/2, 0),
+      {Point2d(0, 0), Point2d(0, width2), Point2d(length2, width2),
+                           Point2d(length2, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape2);
+
+  EXPECT_NEAR(diff.lon, 4.0 - (length1 - 0.5) - 0.5, 0.001);
+  EXPECT_NEAR(diff.lat, 0.0, 0.001);
+  EXPECT_NEAR(diff.vlat, -2.0, 0.001);
+  EXPECT_NEAR(diff.vlon, 1.0, 0.001);
+  EXPECT_NEAR(diff.angle, 0.0, 0.001);
+}
+
+TEST(calculate_state_diff, both_zero_oriented_no_overlap) {
+  // some line with three points from x=1 to x=10, y=0
+  FrenetState state1{1.0, 4.0, 3.0, 5.0, 0.0, 0.0, 0.0};
+  FrenetState state2{1.0, 4.0, 4.0, 3.0, 0.0, 0.0, 0.0};
+
+  double width1 = 2.0, width2 = 3.0, length1 = 1.0, length2 = 4.0;
+  const auto shape1 = Polygon(
+      Pose(0.5, width1/2, 0),
+      {Point2d(0, 0), Point2d(0, width1), Point2d(length1, width1),
+                           Point2d(length1, 0), Point2d(0, 0)});
+  FrenetStateDifference diff(state1, shape1, state2, shape1);
+
+  EXPECT_NEAR(diff.lon, 0.0, 0.001);
+  EXPECT_NEAR(diff.lat, 0.0, 0.001);
+  EXPECT_NEAR(diff.vlat, -2.0, 0.001);
+  EXPECT_NEAR(diff.vlon, 1.0, 0.001);
+  EXPECT_NEAR(diff.angle, 0.0, 0.001);
 }
 
 TEST(transform_lat_acc_street_to_vehicle, straight_line_aligned) {

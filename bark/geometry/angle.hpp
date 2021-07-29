@@ -34,8 +34,8 @@ inline double Norm0To2PI(const double& angle) {
   return normalized;
 }
 
-inline double NormToPI(double x){
-    double normalized = fmod(x + B_PI, B_2PI);
+inline float NormToPI(const double& angle_0_2pi) {
+    double normalized = fmod(angle_0_2pi + B_PI, B_2PI);
     if (normalized < 0) {
       normalized += B_2PI;
     }

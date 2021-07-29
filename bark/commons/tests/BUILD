@@ -61,11 +61,22 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "timer_test",
+    srcs = [
+        "timer_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/commons/timer:timer",
+        "@gtest//:gtest_main",
+    ],
+)
 
 
 py_test(
   name = "py_commons_tests",
   srcs = ["py_commons_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   deps = ["//bark/runtime/commons:commons"],
 )

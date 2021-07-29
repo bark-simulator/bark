@@ -1,0 +1,51 @@
+name: BUILD_WHEELS_38
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, macos-10.15]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v2
+
+      - name: Install cibuildwheel
+        run: python -m pip install twine cibuildwheel==1.11.0
+
+      - name: Build wheels for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BEFORE_BUILD: bash tools/ci/pre_build.sh
+          CIBW_BUILD: cp38-manylinux_x86_64
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_BUILD_VERBOSITY": 1
+
+      - name: Build wheels for macOS
+        if: matrix.os == 'macOS-latest' || matrix.os == 'macOS-10.15'
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_BEFORE_BUILD: bash tools/ci/pre_build.sh
+          CIBW_BUILD: cp38-macosx_x86_64
+          CIBW_ARCHS_MACOS: x86_64
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_BUILD_VERBOSITY": 1
+          CIBW_ENVIRONMENT: BAZELISK_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy wheels
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run:	|
+          python -m twine upload --skip-existing wheelhouse/*

@@ -15,9 +15,9 @@ filegroup(
 py_test(
   name = "py_importer_tests",
   srcs = ["py_importer_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           ':xodr_data'],
-  
+
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"],
 )
@@ -25,7 +25,7 @@ py_test(
 py_test(
   name = "py_scenario_generation_tests",
   srcs = ["py_scenario_generation_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
             ':xodr_data'],
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime/scenario/interaction_dataset_processing:interaction_dataset_processing",
@@ -38,7 +38,7 @@ py_test(
 py_test(
   name = "py_runtime_tests",
   srcs = ["py_runtime_tests.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data',
           '//bark/examples:paths'],
   deps = ["//bark/runtime/commons:parameters",
@@ -62,7 +62,7 @@ cc_library(
 py_test(
   name = "py_param_server_tests",
   srcs = ["py_param_server_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   deps = [
           "//bark/runtime/commons:commons",
           "//tools/debug:debug_settings" ]
@@ -71,7 +71,7 @@ py_test(
 py_test(
   name = "py_evaluation_tests",
   srcs = ["py_evaluation_tests.py"],
-  data = ['//bark:generate_core'],
+  data = ["//bark:generate_core"],
   deps = ["//bark/runtime/commons:commons",
           "//bark/runtime:runtime"],
 )
@@ -79,7 +79,7 @@ py_test(
 py_test(
   name = "py_interaction_dataset_reader_test",
   srcs = ["py_interaction_dataset_reader_test.py"],
-  data = ['//bark:generate_core', 
+  data = ["//bark:generate_core",
           ':xodr_data',
          ],
   deps = ["//bark/runtime/commons:commons",
@@ -92,7 +92,7 @@ py_test(
 py_test(
   name = "py_interaction_dataset_decomposer_test",
   srcs = ["py_interaction_dataset_decomposer_test.py"],
-  data = ['//bark:generate_core', 
+  data = ["//bark:generate_core",
           ':xodr_data',
           ':track_data',
          ],
@@ -109,7 +109,7 @@ py_library(
     srcs = [
             "test_config_reader_module.py"
             ],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     deps = [
         "//bark/runtime/scenario/scenario_generation/config_readers:config_readers",
     ],

@@ -14,6 +14,7 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 #include "bark/models/behavior/motion_primitives/continuous_actions.hpp"
 #include "bark/models/behavior/motion_primitives/macro_actions.hpp"
+#include "bark/models/behavior/motion_primitives/random_macro_actions.hpp"
 #include "bark/models/behavior/motion_primitives/motion_primitives.hpp"
 #include "bark/models/behavior/motion_primitives/param_config/behav_macro_actions_from_param_server.hpp"
 #include "bark/models/behavior/rule_based/intersection_behavior.hpp"
@@ -214,7 +215,8 @@ void python_behavior(py::module m) {
   py::class_<Primitive, PyPrimitive, PrimitivePtr>(m, "Primitive")
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("Plan", &Primitive::Plan)
-      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied);
+      .def("IsPreConditionSatisfied", &Primitive::IsPreConditionSatisfied)
+      .def_property_readonly("name", &Primitive::GetName);
 
   py::class_<BehaviorMPMacroActions, BehaviorModel,
              shared_ptr<BehaviorMPMacroActions>>(m, "BehaviorMPMacroActions")
@@ -246,6 +248,31 @@ void python_behavior(py::module m) {
             return new BehaviorMPMacroActions(
                 PythonToParams(t[0].cast<py::tuple>()), prims);
           }));
+  
+  py::class_<BehaviorRandomMacroActions, BehaviorMPMacroActions,
+             shared_ptr<BehaviorRandomMacroActions>>(m, "BehaviorRandomMacroActions")
+      .def(py::init<const bark::commons::ParamsPtr&>())
+      .def(py::init<const bark::commons::ParamsPtr&,
+                    const std::vector<primitives::PrimitivePtr>&>())
+      .def(py::pickle(
+          [](const BehaviorRandomMacroActions& b) {
+            std::vector<py::tuple> prims;
+            for (const auto& p : b.GetMotionPrimitives()) {
+              prims.emplace_back(PrimitiveToPython(p));
+            }
+            return py::make_tuple(ParamsToPython(b.GetParams()), prims);
+          },
+          [](py::tuple t) {
+            if (t.size() != 2)
+              throw std::runtime_error("Invalid behavior model state!");
+            auto tuples = t[1].cast<std::vector<py::tuple>>();
+            std::vector<PrimitivePtr> prims;
+            for (const auto& tup : tuples) {
+              prims.emplace_back(PythonToPrimitive(tup));
+            }
+            return new BehaviorRandomMacroActions(
+                PythonToParams(t[0].cast<py::tuple>()), prims);
+          }));
 
   py::class_<PrimitiveGapKeeping, Primitive,
              std::shared_ptr<PrimitiveGapKeeping>>(m, "PrimitiveGapKeeping")
@@ -268,13 +295,14 @@ void python_behavior(py::module m) {
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def(py::pickle(
           [](const PrimitiveConstAccStayLane& b) {
-            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()));
+            return py::make_tuple(ParamsToPython(b.Primitive::GetParams()), 
+                                    b.GetAcceleration());
           },
           [](py::tuple t) {
-            if (t.size() != 1)
+            if (t.size() != 2)
               throw std::runtime_error("Invalid behavior model state!");
             return new PrimitiveConstAccStayLane(
-                PythonToParams(t[0].cast<py::tuple>()));
+                PythonToParams(t[0].cast<py::tuple>()), t[1].cast<double>());
           }));
 
   py::class_<PrimitiveConstAccChangeToLeft, Primitive,

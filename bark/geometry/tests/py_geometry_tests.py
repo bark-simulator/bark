@@ -174,6 +174,11 @@ class GeometryTests(unittest.TestCase):
         poly = Polygon2d([1, 3, 1], arr)
         self.assertTrue(poly.Valid())
 
+    def test_const_line_from_array(self):
+        arr = np.array([[0, 0], [0, 2], [4, 2], [4, 0], [0, 0]])
+        poly = Line2d(arr)
+        self.assertTrue(poly.Valid())
+
     def test_concatenate_polygons(self):
 
         poly1 = Polygon2d()

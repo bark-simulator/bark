@@ -69,6 +69,15 @@ ParameterRegions BehaviorIDMStochastic::GetParameterRegions() const {
   return parameter_regions;
 }
 
+void BehaviorIDMStochastic::ChangeSeed(const bark::commons::RandomSeed& new_seed) {
+  param_dist_headway_->ChangeSeed(new_seed);
+  param_dist_spacing_->ChangeSeed(new_seed);
+  param_dist_max_acc_->ChangeSeed(new_seed);
+  param_dist_desired_vel_->ChangeSeed(new_seed);
+  param_dist_comft_braking_->ChangeSeed(new_seed);
+  param_dist_coolness_factor_->ChangeSeed(new_seed);
+}
+
 Trajectory BehaviorIDMStochastic::Plan(double delta_time,
                                        const ObservedWorld& observed_world) {
   SampleParameters();

@@ -1,7 +1,7 @@
 py_library(
     name = "benchmark_runner",
     srcs = ["benchmark_runner.py"],
-    data = ['//bark:generate_core'],
+    data = ["//bark:generate_core"],
     imports = ['../../../python'],
     deps = [
         "//bark/runtime:runtime",

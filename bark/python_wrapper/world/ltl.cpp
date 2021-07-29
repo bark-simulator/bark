@@ -84,26 +84,31 @@ void python_ltl(py::module m) {
   py::class_<SafeDistanceLabelFunction, BaseLabelFunction,
              std::shared_ptr<SafeDistanceLabelFunction>>(
       m, "SafeDistanceLabelFunction")
-      .def(py::init<const std::string&, bool, double, double, double, bool,
-                    double>())
+      .def(py::init<const std::string&, bool, double, double, double, double, bool,
+                    unsigned int, bool, double, bool>())
       .def("__repr__",
            [](const SafeDistanceLabelFunction& g) {
              return "bark.core.world.evaluation.ltl.SafeDistanceLabelFunction";
            })
       .def(py::pickle(
           [](const SafeDistanceLabelFunction& b) {
-            return py::make_tuple(b.GetLabelStr(), b.GetToRear(), b.GetDelta(),
-                                  b.GetMaxDecelEgo(), b.GetMaxDecelOther(),
+            return py::make_tuple(b.GetLabelStr(), b.GetToRear(), b.GetDeltaEgo(),
+                                  b.GetDeltaOthers(), b.GetMaxDecelEgo(),
+                                  b.GetMaxDecelOther(), 
+                                  b.GetConsiderCrossingCorridors(),
+                                  b.GetMaxAgentsForCrossing(),
                                   b.GetUseFracLateralOffsetParam(),
-                                  b.GetFracLateralOffset());
+                                  b.GetLateralDifferenceThreshold(),
+                                  b.GetCheckLateralDist());
           },
           [](py::tuple t) {
-            if (t.size() != 7)
+            if (t.size() != 11)
               throw std::runtime_error("Invalid label evaluator state!");
             return new SafeDistanceLabelFunction(
                 t[0].cast<std::string>(), t[1].cast<bool>(),
                 t[2].cast<double>(), t[3].cast<double>(), t[4].cast<double>(),
-                t[5].cast<bool>(), t[6].cast<double>());
+                t[5].cast<double>(), t[6].cast<bool>(), t[7].cast<unsigned int>(),
+                t[8].cast<bool>(), t[9].cast<double>(), t[10].cast<bool>());
           }));
 
   py::class_<BelowSpeedLimitLabelFunction, BaseLabelFunction,
@@ -453,7 +458,7 @@ void python_ltl(py::module m) {
           [](const SucceedingAgentLabelFunction& b) {
             return py::make_tuple(b.GetLabelStr(),
                                   b.GetUseFracLateralOffsetParam(),
-                                  b.GetFracLateralOffset());
+                                  b.GetLateralDifferenceThreshold());
           },
           [](py::tuple t) {
             if (t.size() != 3)

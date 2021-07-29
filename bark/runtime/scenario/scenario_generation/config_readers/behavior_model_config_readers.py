@@ -9,8 +9,10 @@
 import numpy as np
 
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
-from bark.runtime.scenario.interaction_dataset_processing import BehaviorFromTrack
-
+try:
+  from bark.runtime.scenario.interaction_dataset_processing import BehaviorFromTrack
+except ImportError:
+  pass
 from bark.core.models.behavior import *
 from bark.runtime.commons.parameters import ParameterServer
 
@@ -82,24 +84,24 @@ class SampleBehaviorType(ConfigReaderBehaviorModels):
         behavior_params = model_params.AddChild(model_type)
         _, _ = self.model_from_model_type(model_type, behavior_params)
         #param server must be persisted for each behavior to enable serialization of parameters
-        
+
 
     #------ BEHAVIOR MODEL SAMPLING
     behavior_models = []
     behavior_model_types = []
     for _ in agent_states:
-        model_idx = self.random_state.randint(low=0, high=len(model_types), size=None) 
+        model_idx = self.random_state.randint(low=0, high=len(model_types), size=None)
         model_type = model_types[model_idx]
         model_type_params = model_params.AddChild(model_type)
         params = ParameterServer()
         bark_model, params = self.model_from_model_type(model_type, model_type_params)
-        self.param_servers.append(model_type_params) 
+        self.param_servers.append(model_type_params)
         behavior_models.append(bark_model)
         behavior_model_types.append(model_type)
     return behavior_models, {"behavior_model_types" : behavior_model_types}, config_param_object
 
   def model_from_model_type(self, model_type, params):
-    bark_model = eval("{}(params)".format(model_type))    
+    bark_model = eval("{}(params)".format(model_type))
     return bark_model, params
 
   def get_param_servers(self):

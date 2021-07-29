@@ -25,10 +25,13 @@ using Eigen::Matrix;
 
 void python_standard_shapes(py::module m) {
   m.def("CarLimousine", &bark::geometry::standard_shapes::CarLimousine);
-  m.def("GenerateCarLimousine", &bark::geometry::standard_shapes::GenerateCarLimousine);
+  m.def("GenerateCarLimousine",
+        &bark::geometry::standard_shapes::GenerateCarLimousine);
   m.def("CarRectangle", &bark::geometry::standard_shapes::CarRectangle);
-  m.def("GenerateCarRectangle", &bark::geometry::standard_shapes::GenerateCarRectangle);
-  m.def("GenerateGoalRectangle", &bark::geometry::standard_shapes::GenerateGoalRectangle);
+  m.def("GenerateCarRectangle",
+        &bark::geometry::standard_shapes::GenerateCarRectangle);
+  m.def("GenerateGoalRectangle",
+        &bark::geometry::standard_shapes::GenerateGoalRectangle);
 }
 
 void python_geometry(py::module m) {
@@ -53,10 +56,10 @@ void python_geometry(py::module m) {
 
   m.def("Distance", py::overload_cast<const Line&, const Point2d&>(&Distance),
         "Returns euclidean distance between Line2d and Point2d.");
-  
+
   m.def("SignedAngleDiff", &bark::geometry::SignedAngleDiff,
         "Signed angle diff");
-  
+
   m.def("SignedDistance",
         py::overload_cast<const Line&, const Point2d&, const double&>(
             &SignedDistance),
@@ -138,6 +141,8 @@ void python_geometry(py::module m) {
              line.AddPoint(
                  Point2d(list[0].cast<double>(), list[1].cast<double>()));
            })
+      .def(py::init<const Matrix<double, Dynamic, Dynamic>&>(),
+           "Create line from array")
       .def("__repr__",
            [](const Line& l) {
              std::stringstream ss;
@@ -152,6 +157,8 @@ void python_geometry(py::module m) {
       .def("Rotate", &Line::Rotate, "rotates object around center point.")
       .def("Translate", &Line::Translate, "translates object.")
       .def("Transform", &Line::Transform, "translates and rotates object.")
+      .def("Scale", &Line::Scale, "scales object.")
+      .def("Inflate", &Line::Inflate, "Inflates object.")
       .def("Length", &Line::Length, "calculates length of line.")
       .def("Reverse", &Line::Reverse, "reverse linestring in place")
       .def("AppendLinestring", &Line::AppendLinestring,
@@ -215,6 +222,8 @@ void python_geometry(py::module m) {
       .def("Rotate", &Polygon::Rotate, "rotates object around center point.")
       .def("Translate", &Polygon::Translate, "translates center point.")
       .def("Transform", &Polygon::Transform, "translates and rotates object.")
+      .def("Scale", &Polygon::Scale, "scales object.")
+      .def("Inflate", &Polygon::Inflate, "Inflates object.")
       .def_readonly("center", &Polygon::center_, "center point.")
       .def_readonly("right_dist", &Polygon::right_dist_, "right distance.")
       .def_readonly("left_dist", &Polygon::left_dist_, "left distance.")
@@ -231,10 +240,13 @@ void python_geometry(py::module m) {
                       t[0].cast<Matrix<double, Dynamic, Dynamic>>());
             return p;
           }));
-  m.def("CalculateBoundingBoxPolygon", &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
-  m.def("Intersection", &bark::geometry::Intersection<Polygon, Line>, "return intersection points");
-  m.def("Intersection", &bark::geometry::Intersection<Line, Line>, "return intersection points");
-  
+  m.def("CalculateBoundingBoxPolygon",
+        &bark::geometry::CalculateBoundingBoxPolygon, "caclulate bounding box");
+  m.def("Intersection", &bark::geometry::Intersection<Polygon, Line>,
+        "return intersection points");
+  m.def("Intersection", &bark::geometry::Intersection<Line, Line>,
+        "return intersection points");
+
   python_standard_shapes(
       m.def_submodule("standard_shapes",
                       "Define several standard car, pedestrians,... shapes"));

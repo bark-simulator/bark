@@ -91,7 +91,7 @@ cc_test(
         "behavior_mobil_test.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
-    deps = [        
+    deps = [
         "//bark/geometry",
         "//bark/models/behavior/rule_based:mobil_behavior",
         "//bark/models/behavior/constant_acceleration:constant_acceleration",
@@ -105,7 +105,7 @@ cc_test(
 py_test(
   name = "py_behavior_model_test",
   srcs = ["py_behavior_model_test.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data'],
 
   deps = ["//bark/runtime/commons:commons",
@@ -116,7 +116,7 @@ py_test(
 py_test(
   name = "py_observer_model_test",
   srcs = ["py_observer_model_test.py"],
-  data = ['//bark:generate_core',
+  data = ["//bark:generate_core",
           '//bark/runtime/tests:xodr_data'],
 
   deps = ["//bark/runtime/commons:commons",
@@ -164,7 +164,7 @@ cc_test(
         "//bark/world/evaluation/rss:_rss": ["-D RSS"],
         "//conditions:default": [],
     }),
-    deps = [        
+    deps = [
         "//bark/geometry",
         "//bark/models/behavior/behavior_safety:behavior_safety",
         "//bark/models/behavior/behavior_rss:behavior_rss",

@@ -18,6 +18,11 @@
 #include "bark/world/evaluation/evaluator_velocity.hpp"
 #include "bark/world/evaluation/evaluator_gap_distance_front.hpp"
 #include "bark/world/evaluation/evaluator_number_of_agents.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_safe_dist_drivable_area.hpp"
+#include "bark/world/evaluation/commons.hpp"
+
 #include "bark/world/world.hpp"
 
 #include "bark/python_wrapper/world/ltl.hpp"
@@ -144,6 +149,27 @@ void python_evaluation(py::module m) {
           t[3].cast<Polygon>(), t[4].cast<AgentId>(), t[5].cast<double>()};
     }));
 
+
+  py::class_<EvaluatorDynamicSafeDist, BaseEvaluator,
+              std::shared_ptr<EvaluatorDynamicSafeDist>>(m, "EvaluatorDynamicSafeDist")
+      .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
+      .def("__repr__", [](const EvaluatorDynamicSafeDist& g) {
+        return "bark.core.world.evaluation.EvaluatorDynamicSafeDist";
+      });
+
+  py::class_<EvaluatorStaticSafeDist, BaseEvaluator,
+              std::shared_ptr<EvaluatorStaticSafeDist>>(m, "EvaluatorStaticSafeDist")
+      .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
+      .def("__repr__", [](const EvaluatorStaticSafeDist& g) {
+        return "bark.core.world.evaluation.EvaluatorStaticSafeDist";
+      });
+
+  py::class_<EvaluatorSafeDistDrivableArea, BaseEvaluator,
+            std::shared_ptr<EvaluatorSafeDistDrivableArea>>(m, "EvaluatorSafeDistDrivableArea")
+    .def(py::init<const bark::commons::ParamsPtr&, const AgentId&>())
+    .def("__repr__", [](const EvaluatorSafeDistDrivableArea& g) {
+      return "bark.core.world.evaluation.EvaluatorSafeDistDrivableArea";
+    });
 
 #ifdef RSS
   py::class_<EvaluatorRSS, BaseEvaluator, std::shared_ptr<EvaluatorRSS>>(

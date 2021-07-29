@@ -32,6 +32,8 @@ class PrimitiveConstAccStayLane : public Primitive,
 
   std::string GetName() const override;
 
+  double GetAcceleration() const { return acceleration_; }
+
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
