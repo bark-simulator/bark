@@ -34,6 +34,10 @@ class PrimitiveConstAccStayLane : public Primitive,
 
   double GetAcceleration() const { return acceleration_; }
 
+  IDMRelativeValues CalcRelativeValues(
+    const world::ObservedWorld& observed_world,
+    const LaneCorridorPtr& lane_corr) const;
+
   LaneCorridorPtr SelectTargetCorridor(
       const ObservedWorld& observed_world,
       const AdjacentLaneCorridors& adjacent_corridors) override;
@@ -44,6 +48,7 @@ class PrimitiveConstAccStayLane : public Primitive,
                                         double rel_distance,
                                         double dt) const override;
   double acceleration_;
+  bool restrict_brake_for_lane_end_;
 
  private:
   bool isEqual(const Primitive& other) const override {
