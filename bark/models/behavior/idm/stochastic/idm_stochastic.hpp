@@ -58,8 +58,8 @@ class BehaviorIDMStochastic : public BehaviorIDMClassic {
   bark::commons::DistributionPtr param_yielding_duration_;
   bark::commons::DistributionPtr param_no_yielding_duration_;
 
-  const double k_max_lat_diff_no_yield = 0.0;
-  const double k_max_lat_diff_yield = 5.0;
+  const double k_max_lat_diff_no_yield = 1.0;
+  const double k_max_lat_diff_yield = 8.0;
 };
 
 inline std::shared_ptr<BehaviorModel> BehaviorIDMStochastic::Clone() const {
