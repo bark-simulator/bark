@@ -72,7 +72,7 @@ struct LaneCorridor {
   void SetMergedPolygon(const Polygon& poly) { merged_polygon_ = poly; }
   void SetLane(double s_start, const LanePtr& lane) { lanes_[s_start] = lane; }
 
-  bool operator==(const LaneCorridor other) {
+  bool operator==(const LaneCorridor& other) {
     return lanes_.size() == other.lanes_.size() &&
            std::equal(lanes_.begin(), lanes_.end(), other.lanes_.begin(),
                       [](const std::map<double, LanePtr>::value_type& a,
@@ -81,7 +81,7 @@ struct LaneCorridor {
                       });
   }
 
-  bool operator!=(const LaneCorridor other) { return !(*this == other); }
+  bool operator!=(const LaneCorridor& other) { return !(*this == other); }
 
   std::map<double, LanePtr> lanes_;  // s_end, LanePtr
   Line center_line_;

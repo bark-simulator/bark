@@ -91,7 +91,7 @@ typedef std::unordered_map<objects::AgentId, std::pair<bool, bool>>
 class RssInterface {
  public:
   RssInterface() {}
-  explicit RssInterface(std::string opendrive_file_name,
+  explicit RssInterface(const std::string& opendrive_file_name,
                         const commons::ParamsPtr& params) {
 
     // only adds child if it does not exist; otherwise returns child

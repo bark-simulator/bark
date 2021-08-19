@@ -267,7 +267,7 @@ inline Eigen::VectorXd Gradient(Eigen::VectorXd vec) {
   return g;
 }
 
-inline Eigen::VectorXd GetCurvature(Line l) {
+inline Eigen::VectorXd GetCurvature(const Line& l) {
   Eigen::MatrixXd larray = l.ToArray();
   Eigen::VectorXd dx = Gradient(larray.col(0));
   Eigen::VectorXd ddx = Gradient(dx);
@@ -353,14 +353,14 @@ inline double GetTangentAngleAtS(Line l, double s) {
   }
 }
 
-inline Point2d GetNormalAtS(Line l, double s) {
+inline Point2d GetNormalAtS(const Line& l, double s) {
   double tangent = GetTangentAngleAtS(l, s);
   // rotate unit vector anti-clockwise with angle = tangent by 1/2 pi
   Point2d t(cos(tangent + asin(1)), sin(tangent + asin(1)));
   return t;
 }
 
-inline Line GetLineFromSInterval(Line line, double begin, double end) {
+inline Line GetLineFromSInterval(const Line& line, double begin, double end) {
   Line new_line;
   new_line.AddPoint(GetPointAtS(line, begin));
   std::vector<Point2d> points = line.GetPointsInSInterval(begin, end);
@@ -383,7 +383,7 @@ inline Line GetLineShiftedLaterally(const Line& line, double lateral_shift) {
 }
 
 inline std::tuple<Point2d, double, uint> GetNearestPointAndS(
-    Line l, const Point2d& p) {  // GetNearestPoint
+    const Line& l, const Point2d& p) {  // GetNearestPoint
   // edge cases: empty or one-point line
   if (l.obj_.empty()) {
     return std::make_tuple(Point2d(0, 0), 0.0, 0);
@@ -461,13 +461,13 @@ inline std::tuple<Point2d, double, uint> GetNearestPointAndS(
   // return
   return std::make_tuple(retval, s, min_segment_idx);
 }
-inline Point2d GetNearestPoint(Line l, const Point2d& p) {
+inline Point2d GetNearestPoint(const Line& l, const Point2d& p) {
   return std::get<0>(GetNearestPointAndS(l, p));
 }
-inline double GetNearestS(Line l, const Point2d& p) {
+inline double GetNearestS(const Line& l, const Point2d& p) {
   return std::get<1>(GetNearestPointAndS(l, p));
 }
-inline uint FindNearestIdx(Line l, const Point2d& p) {
+inline uint FindNearestIdx(const Line& l, const Point2d& p) {
   return std::get<2>(GetNearestPointAndS(l, p));
 }
 //! Point - Line collision checker using boost::intersection

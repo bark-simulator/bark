@@ -55,7 +55,7 @@ void python_dynamic(py::module m) {
           [](const TripleIntegratorModel& m) -> std::string {
             return "TripleIntegratorModel";  // 0
           },
-          [](std::string s) {  // __setstate__
+          [](const std::string& s) {  // __setstate__
             if (s != "TripleIntegratorModel")
               throw std::runtime_error("Invalid dynamic modelstate!");
             return new TripleIntegratorModel(std::make_shared<SetterParams>());

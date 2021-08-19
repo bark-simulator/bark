@@ -133,7 +133,7 @@ ObservedWorldPtr ObservedWorld::Predict(
 // Predict each agent with specific behavior model (Note setup required)
 ObservedWorldPtr ObservedWorld::Predict(
     double time_span, BehaviorModelPtr ego_behavior_model,
-    const std::unordered_map<AgentId, BehaviorModelPtr> other_behaviors) const {
+    const std::unordered_map<AgentId, BehaviorModelPtr>& other_behaviors) const {
   std::shared_ptr<ObservedWorld> next_world =
       std::dynamic_pointer_cast<ObservedWorld>(ObservedWorld::Clone());
 
