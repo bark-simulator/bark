@@ -52,6 +52,7 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 *   [Formalizing Traffic Rules for Machine Interpretability](https://arxiv.org/abs/2007.00330) (CAVS 2020)
 *   [Robust Stochastic Bayesian Games for Behavior Space Coverage](https://arxiv.org/abs/2003.11281) (RSS 2020, Workshop on Interaction and Decision-Making in Autonomous-Driving)
 *   [Risk-Constrained Interactive Safety under Behavior Uncertainty for Autonomous Driving](https://arxiv.org/abs/2102.03053) (IV 2021)
+*   [Risk-Based Safety Envelopes for Autonomous Vehicles Under Perception Uncertainty](https://arxiv.org/abs/2107.09918) (Arxiv)
 
 
 ## BARK Ecosystem

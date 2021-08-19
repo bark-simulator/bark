@@ -47,4 +47,4 @@ from the root of the `BARK` repository and inside the BARK specific virtualenv.
 
 ## Contributor License Agreement
 
-All contributions are made under MIT license.
+All contributions are made under [MIT](https://choosealicense.com/licenses/mit/) license.
