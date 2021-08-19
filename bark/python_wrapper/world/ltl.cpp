@@ -102,7 +102,7 @@ void python_ltl(py::module m) {
                                   b.GetCheckLateralDist());
           },
           [](py::tuple t) {
-            if (t.size() != 7)
+            if (t.size() != 11)
               throw std::runtime_error("Invalid label evaluator state!");
             return new SafeDistanceLabelFunction(
                 t[0].cast<std::string>(), t[1].cast<bool>(),
