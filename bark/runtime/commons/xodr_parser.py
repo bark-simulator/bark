@@ -105,7 +105,7 @@ class XodrParser(object):
         for lane in lanes:
             lane_dict[int(lane.get("id"))] = lane
 
-        for id, lane in lane_dict.items():
+        for lid, lane in lane_dict.items():
             new_lane = {}
             new_lane["id"] = id
             # every type we cannot read is read in as sidewalk
@@ -133,7 +133,7 @@ class XodrParser(object):
                 if road_mark:  # if dict is not empty
                     new_lane["road_mark"] = road_mark
 
-            new_lane["width"] = self.parse_lane_widths_from_lane(lane, id)
+            new_lane["width"] = self.parse_lane_widths_from_lane(lane, lid)
 
             lane_section["lanes"].append(new_lane)
         return lane_section
@@ -314,8 +314,7 @@ class XodrParser(object):
             off_x = header["offset"]["x"]
             off_y = header["offset"]["y"]
             off_hdg = header["offset"]["hdg"]
-            logger.info("Transforming PlanView with given offset",
-                        header["offset"])
+            logger.info("Transforming PlanView with given offset {}".format(header["offset"]))
             new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
