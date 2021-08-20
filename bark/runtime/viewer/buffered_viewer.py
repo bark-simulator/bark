@@ -5,7 +5,7 @@
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
-import math
+
 from bark.core.geometry import *
 from bark.core.models.dynamic import *
 from bark.core.world.opendrive import *

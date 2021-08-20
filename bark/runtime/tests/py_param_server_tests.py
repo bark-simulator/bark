@@ -13,7 +13,6 @@ except:
 
 import unittest
 import pickle
-import numpy as np
 
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.commons import CppParamServerTestObject

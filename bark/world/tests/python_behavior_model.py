@@ -6,12 +6,6 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import unittest
-import numpy as np
-import time
-import copy
-import os
-
 from bark.core.models.dynamic import StateDefinition
 
 from bark.core.models.behavior import * 

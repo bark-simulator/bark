@@ -7,13 +7,11 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-import numpy as np
 from bark.core.geometry import *
 from bark.core.viewer import *
 from bark.core.models.dynamic import *
 from bark.runtime.viewer.viewer import BaseViewer
 import threading
-import time
 from timeit import default_timer as timer
 
 
@@ -50,12 +48,9 @@ class ThreadedViewer(BaseViewer, threading.Thread):
                 continue
             current_world = self.world_queue_list[self._closest_world_queue_index()]
             executed_world = current_world.GetWorldAtTime(self.render_time)
-            start = timer()
             self.renderer.drawWorld(executed_world)
-            end = timer()
             self.render_time += self.render_time_step
             self.renderer.show(block=False)
-            #time.sleep(self.render_time_step - (end-start)) # todo:measure rendering time
 
 
 

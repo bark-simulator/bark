@@ -6,8 +6,6 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark.runtime.commons.parameters import ParameterServer
-
 from bark.core.world.evaluation import *
 from bark.core.world import *
 

@@ -11,7 +11,6 @@ import numpy as np
 import time
 from bark.runtime.commons import ParameterServer
 from bark.runtime.viewer import MPViewer
-from bark.runtime.commons import XodrParser
 from bark.core.models.behavior import BehaviorConstantAcceleration, BehaviorIDMLaneTracking, BehaviorMobilRuleBased
 from bark.core.models.execution import ExecutionModelInterpolate
 from bark.core.models.dynamic import SingleTrackModel
@@ -19,7 +18,7 @@ from bark.core.world import World, MakeTestWorldHighway
 from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.world.agent import Agent
 from bark.core.world.map import MapInterface, Roadgraph
-from bark.core.geometry.standard_shapes import CarLimousine, CarRectangle
+from bark.core.geometry.standard_shapes import CarRectangle
 from bark.core.geometry import Point2d, Polygon2d
 from bark.core.world.evaluation import EvaluatorDrivableArea
 from bark.core.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \

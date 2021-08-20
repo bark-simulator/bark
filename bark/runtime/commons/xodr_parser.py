@@ -85,7 +85,7 @@ class XodrParser(object):
         new_lane_width["d"] = 0.0
         return new_lane_width
 
-    def parse_lane_widths_from_lane(self, lane, id):
+    def parse_lane_widths_from_lane(self, lane, lid):
         lane_width_list = []
         lane_widths = lane.findall("width")
 
@@ -94,7 +94,7 @@ class XodrParser(object):
                 lane_width = lane_width
                 lane_width_list.append(self.parse_lane_width(lane_width))
         else:
-            if int(id) == 0:
+            if int(lid) == 0:
                 lane_width_list.append(self.zero_lane_width())
 
         return lane_width_list
@@ -105,9 +105,9 @@ class XodrParser(object):
         for lane in lanes:
             lane_dict[int(lane.get("id"))] = lane
 
-        for id, lane in lane_dict.items():
+        for lid, lane in lane_dict.items():
             new_lane = {}
-            new_lane["id"] = id
+            new_lane["id"] = lid
             # every type we cannot read is read in as sidewalk
             new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in [
                 "driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk"]  # assign enum type
@@ -133,7 +133,7 @@ class XodrParser(object):
                 if road_mark:  # if dict is not empty
                     new_lane["road_mark"] = road_mark
 
-            new_lane["width"] = self.parse_lane_widths_from_lane(lane, id)
+            new_lane["width"] = self.parse_lane_widths_from_lane(lane, lid)
 
             lane_section["lanes"].append(new_lane)
         return lane_section
@@ -314,8 +314,7 @@ class XodrParser(object):
             off_x = header["offset"]["x"]
             off_y = header["offset"]["y"]
             off_hdg = header["offset"]["hdg"]
-            logger.info("Transforming PlanView with given offset",
-                        header["offset"])
+            logger.info("Transforming PlanView with given offset {}".format(header["offset"]))
             new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
@@ -469,9 +468,9 @@ class XodrParser(object):
             new_road.AddLaneSection(new_lane_section)
         return new_road
 
-    def GetMap_element(self, key, id):
+    def GetMap_element(self, key, el_id):
         for x in self._python_map[key]:
-            if x["id"] == id:
+            if x["id"] == el_id:
                 return x
 
     def create_cpp_junction(self, junction):
