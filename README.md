@@ -12,7 +12,6 @@
 
 BARK is a semantic simulation framework for autonomous driving. Its behavior model-centric design allows for the rapid development, training, and benchmarking of various decision-making algorithms. It is especially suited for computationally expensive tasks, such as reinforcement learning. A a good starting point, have a look at the content of our [BARK-Tutorial on IROS 2020](https://bark-simulator.github.io/tutorials/).
 
-
 ## Usage
 
 ### (A) Pip Package
@@ -27,9 +26,6 @@ After installing the package, you can have a look at the [examples](https://gith
 | Highway Example | Merging Example | Intersection Example |
 | --- | --- | --- |
 | ![Intersection](https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_highway.gif) | ![Intersection](https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_merging.gif) | ![Intersection](https://github.com/bark-simulator/bark/raw/master/docs/source/gifs/bark_intersection.gif) |
-| `import bark.examples.highway` | `import bark.examples.merging` | `import bark.examples.intersection` |
-
-
 ### (B) Build it from Source
 
 *For whom it is: C++ developers creating C++ behavior models, researchers performing benchmarks, or contributors to BARK.*
@@ -42,7 +38,6 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 
 [Example Benchmark](https://github.com/bark-simulator/example_benchmark) is a running example of how to use BARK for benchmarking for scientific purposes.
 
-
 ## Scientific Publications using BARK
 
 *   [BARK: Open Behavior Benchmarking in Multi-Agent Environments](https://arxiv.org/abs/2003.02604) (IROS 2020)
@@ -54,18 +49,16 @@ For a more detailed understanding of how BARK works, its concept and use cases h
 *   [Risk-Constrained Interactive Safety under Behavior Uncertainty for Autonomous Driving](https://arxiv.org/abs/2102.03053) (IV 2021)
 *   [Risk-Based Safety Envelopes for Autonomous Vehicles Under Perception Uncertainty](https://arxiv.org/abs/2107.09918) (Arxiv)
 
-
 ## BARK Ecosystem
 
 The BARK ecosystem is composed of multiple components that all share the common goal to develop and benchmark behavior models:
 
-* [BARK-ML](https://github.com/bark-simulator/bark-ml/): Machine learning library for decision-making in autonomous driving.
-* [BARK-MCTS](https://github.com/bark-simulator/planner-mcts): Integrates a template-based C++ Monte Carlo Tree Search Library into BARK to support development of both single- and multi-agent search methods.
-* [BARK-Rules-MCTS](https://github.com/bark-simulator/planner-rules-mcts): Integrates traffic rules within Monte Carlo Tree Search with lexicographic ordering.
-* [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Provides a framework to integrate multiple BARK scenario sets into a database. The database module supports binary serialization of randomly generated scenarios to ensure exact reproducibility of behavior benchmarks across systems. 
-* [BARK-Rule-Monitoring](https://github.com/bark-simulator/rule-monitoring): Provides runtime verification of Rules in Linear Temporal Logic (LTL) on simulated BARK traces.
-* [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
-
+*   [BARK-ML](https://github.com/bark-simulator/bark-ml/): Machine learning library for decision-making in autonomous driving.
+*   [BARK-MCTS](https://github.com/bark-simulator/planner-mcts): Integrates a template-based C++ Monte Carlo Tree Search Library into BARK to support development of both single- and multi-agent search methods.
+*   [BARK-Rules-MCTS](https://github.com/bark-simulator/planner-rules-mcts): Integrates traffic rules within Monte Carlo Tree Search with lexicographic ordering.
+*   [BARK-DB](https://github.com/bark-simulator/bark-databasse/): Provides a framework to integrate multiple BARK scenario sets into a database. The database module supports binary serialization of randomly generated scenarios to ensure exact reproducibility of behavior benchmarks across systems. 
+*   [BARK-Rule-Monitoring](https://github.com/bark-simulator/rule-monitoring): Provides runtime verification of Rules in Linear Temporal Logic (LTL) on simulated BARK traces.
+*   [CARLA-Interface](https://github.com/bark-simulator/carla-interface): A two-way interface between [CARLA ](https://github.com/carla-simulator/carla) and BARK. BARK behavior models can control CARLA vehicles. CARLA controlled vehicles are mirrored to BARK.
 
 ## Paper
 
@@ -81,12 +74,10 @@ If you use BARK, please cite us using the following [paper](https://arxiv.org/ab
 }
 ```
 
-
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
-
 
 ## License
 
