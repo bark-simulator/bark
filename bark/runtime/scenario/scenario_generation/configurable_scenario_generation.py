@@ -9,14 +9,11 @@
 from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation  import ScenarioGeneration
 from bark.runtime.scenario.scenario_generation.config_readers import *
-from bark.runtime.commons.parameters import ParameterServer
 
 from bark.core.geometry import *
 from bark.core.world.agent import Agent
 
 import numpy as np
-import math
-import copy
 import importlib
 import aabbtree
 from collections import defaultdict 
@@ -128,7 +125,6 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # and geometry information
     road_corridors = []
     kwargs_agent_states_geometry = []
-    sink_source_default_params = []
 
     for idx, sink_source_config in enumerate(self._sinks_sources):
       road_corridor = self.get_road_corridor_from_source_sink(sink_source_config, world.map)
@@ -136,14 +132,12 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
   
       #1) create agent states and geometries for this source
       args = [road_corridor]
-      agent_states, agent_geometries, kwargs_dict, default_params_state_geometry = \
+      agent_states, agent_geometries, kwargs_dict, _ = \
         self.eval_configuration( sink_source_config, "ConfigAgentStatesGeometries",
                               args, {})
       kwargs_agent_states_geometry.append(kwargs_dict)
 
       # collect default parameters of this config
-      #sink_source_default_params.append(sink_source_config)
-      #sink_source_default_params[idx]["ConfigAgentStatesGeometries"] = default_params_state_geometry.ConvertToDict()
       collected_sources_sinks_agent_states_geometries.append((agent_states, agent_geometries))
 
     agent_list = []

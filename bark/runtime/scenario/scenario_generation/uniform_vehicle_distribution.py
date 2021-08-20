@@ -12,14 +12,13 @@ from bark.runtime.commons import ModelJsonConversion
 from bark.core.world.agent import *
 from bark.core.models.behavior import *
 from bark.core.world import *
-from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon, GoalDefinitionStateLimits
+from bark.core.world.goal_definition import GoalDefinitionPolygon, GoalDefinitionStateLimits
 from bark.core.world.map import *
 from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 from bark.runtime.commons import ParameterServer
-from bark.runtime.commons import XodrParser
 
 import numpy as np
 import math
@@ -91,7 +90,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         see baseclass
     """
     scenario_list = []
-    for scenario_idx in range(0, num_scenarios):
+    for _ in range(0, num_scenarios):
       scenario = self.create_single_scenario()     
       scenario_list.append(scenario)
     return scenario_list
@@ -289,7 +288,6 @@ class UniformVehicleDistribution(ScenarioGeneration):
     behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)
     dynamic_model = SingleTrackModel(param_server)
-    map_interface = MapInterface()
 
     agent_2d_shape = CarLimousine()
     init_state = np.array([0, 0, 0, 0, 0])

@@ -1,17 +1,14 @@
 from setuptools import setup, find_packages, Extension
 import os,sys
 import os
-import shlex
 import shutil
 import setuptools.command.build_ext
 import setuptools.command.build_py
 import setuptools.command.install
 import setuptools.command.sdist
-import setuptools.dist
 from setuptools import dist
 from setuptools.command.install import install
 import sysconfig
-import tempfile
 import pkg_resources
 from distutils.command.build import build
 

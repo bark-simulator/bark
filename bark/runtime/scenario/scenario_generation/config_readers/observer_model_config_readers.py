@@ -7,11 +7,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 
-import numpy as np
-import math
-
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderObserverModel
-from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.observer import ObserverModelNone, ObserverModelParametric
 
 

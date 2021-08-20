@@ -16,9 +16,6 @@ import matplotlib as mpl
 if os.environ.get('DISPLAY', '') == '':
     print('no display found. Using non-interactive Agg backend')
     mpl.use('Agg')
-from bark.core.geometry import *
-from bark.core.geometry.standard_shapes import *
-import math
 
 #from bark.visualization import MPViewer
 

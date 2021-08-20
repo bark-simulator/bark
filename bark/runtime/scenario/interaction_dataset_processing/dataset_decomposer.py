@@ -60,15 +60,12 @@ class DatasetDecomposer:
             if first_ts_on_map is None:
                 logging.info(
                     "Skip, as agent {} not found on map".format(agent_id))
-                pass
             elif str(track.agent_type) != "car":
                 logging.info("Skip, as agent {} is of type {}".format(
                     agent_id, track.agent_type))
-                pass
             elif track.length > self._vehicle_length_max:
                 logging.info("Skip, as agent {} exceeds max length of {} with length {}".format(
                     agent_id, self._vehicle_length_max, track.length))
-                pass
             else:
                 start_time = first_ts_on_map
                 end_time = track.time_stamp_ms_last

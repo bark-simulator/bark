@@ -10,10 +10,8 @@
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderGoalDefinitions
 
 from bark.core.world.goal_definition import GoalDefinitionStateLimitsFrenet, GoalDefinitionSequential
-from bark.runtime.commons.parameters import ParameterServer
 
 from bark.core.geometry import *
-import logging
 
 # helper class to support various types of goals easily generated for the 
 # goal config readers

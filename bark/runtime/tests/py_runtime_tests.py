@@ -72,7 +72,7 @@ class PyRuntimeTest(unittest.TestCase):
   # def test_general_runtime(self):
   #   env = GenerateRuntime()
   #   env.reset()
-  #   for step in range(0, 5):
+  #   for _ in range(0, 5):
   #     env.step()
   
   def test_buffered_viewer(self):
@@ -80,7 +80,7 @@ class PyRuntimeTest(unittest.TestCase):
     buffered_viewer = BufferedViewer()
     env._viewer = buffered_viewer
     env.reset()
-    for step in range(0, 5):
+    for _ in range(0, 5):
       env.step()
       
 if __name__ == '__main__':

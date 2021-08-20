@@ -468,9 +468,9 @@ class XodrParser(object):
             new_road.AddLaneSection(new_lane_section)
         return new_road
 
-    def GetMap_element(self, key, id):
+    def GetMap_element(self, key, el_id):
         for x in self._python_map[key]:
-            if x["id"] == id:
+            if x["id"] == el_id:
                 return x
 
     def create_cpp_junction(self, junction):
