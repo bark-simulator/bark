@@ -9,10 +9,8 @@ from .configurable_scenario_generation import add_config_reader_module
 
 
 __all__ = ["DeterministicScenarioGeneration",
-          "DroneChallengeScenarioGeneration",
           "LaneCorridorConfig",
           "ScenarioGeneration",
           "UniformVehicleDistribution",
-          "DeterministicDroneChallengeGeneration",
           "ConfigurableScenarioGeneration",
           "add_config_reader_module"]
