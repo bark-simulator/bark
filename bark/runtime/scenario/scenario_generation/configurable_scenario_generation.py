@@ -339,7 +339,7 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
          self.parse_conflict_resolution(source_sink_desc_1, source_sink_desc_2)
 
       if not probablistic_conflict_resolution:
-        raise NotImplemented("Not implemented yet.")
+        raise NotImplementedError("Not implemented yet.")
 
       for pairwise_collision in pairwise_collisions:
         source_sink_idx_1 = pairwise_collision[0][0]
