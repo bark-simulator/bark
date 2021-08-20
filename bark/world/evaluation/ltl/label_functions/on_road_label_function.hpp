@@ -25,7 +25,7 @@ using bark::world::objects::AgentPtr;
 
 class OnRoadLabelFunction : public MultiAgentLabelFunction {
  public:
-  OnRoadLabelFunction(const std::string& label_str);
+  explicit OnRoadLabelFunction(const std::string& label_str);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
                      const AgentPtr& other_agent) const override;
 };

@@ -9,7 +9,6 @@
 import unittest
 import os
 import numpy as np
-import time
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.buffered_viewer import BufferedViewer

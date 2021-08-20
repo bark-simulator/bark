@@ -13,7 +13,6 @@ import shutil
 
 from bark.benchmark.scenario_dumper import ScenarioDumper
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig, BehaviorConfig
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 def dummy_benchmark_results():
     br = [

@@ -117,11 +117,6 @@ double BaseIDM::CalcNetDistance(
   // relative velocity and longitudinal distance
   const State ego_state = ego_agent->GetCurrentState();
   FrenetPosition frenet_ego = ego_agent->CurrentFrenetPosition();
-  const double ego_velocity = ego_state(StateDefinition::VEL_POSITION);
-
-  // Leading vehicle exists in driving corridor, we calculate interaction term
-  const State leading_state = leading_agent->GetCurrentState();
-  const double other_velocity = leading_state(StateDefinition::VEL_POSITION);
 
   // we need to use the lane corridor of the ego agent to be able to compare the
   // frenet values
@@ -186,8 +181,6 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
   // vehicles
   if (leading_vehicle.first) {
     leading_distance = leading_vehicle.second.lon;
-    dynamic::State other_vehicle_state =
-        leading_vehicle.first->GetCurrentState();
     leading_velocity = leading_vehicle.second.to.vlon;
     interaction_term_active = true;
     // Get acceleration action other
@@ -217,7 +210,7 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
     if (braking_required) {
       interaction_term_active = true;
       // if no leading vehicle
-      if (!leading_vehicle.first && braking_required) {
+      if (!leading_vehicle.first) {
         leading_distance = len_until_end;
         leading_velocity = 0.;
         // if there is a leading vehicle
@@ -331,7 +324,7 @@ double BaseIDM::CalcACCAcc(const double& net_distance, const double& vel_ego,
 std::pair<double, double> BaseIDM::GetTotalAcc(
     const world::ObservedWorld& observed_world,
     const IDMRelativeValues& rel_values, double rel_distance, double dt) const {
-  double acc, traveled_ego, traveled_other;
+  double acc, traveled_other;
   double vel_front = rel_values.leading_velocity;
   const auto& ego_vehicle_state = observed_world.CurrentEgoState();
   double vel_i = ego_vehicle_state(StateDefinition::VEL_POSITION);
@@ -344,7 +337,7 @@ std::pair<double, double> BaseIDM::GetTotalAcc(
     } else {
       acc = CalcIDMAcc(rel_distance, vel_i, vel_front);
     }
-    traveled_ego = 0.5 * acc * dt * dt + vel_i * dt;
+    double traveled_ego = 0.5 * acc * dt * dt + vel_i * dt;
     traveled_other = vel_front * dt;
     rel_distance += traveled_other - traveled_ego;
   } else {

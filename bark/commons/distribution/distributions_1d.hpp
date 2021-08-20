@@ -19,11 +19,10 @@ namespace commons {
 
 class FixedValue : public Distribution {
  public:
-  FixedValue(const ParamsPtr& params)
+  explicit FixedValue(const ParamsPtr& params)
       : Distribution(params),
         fixed_value_(params->GetListFloat(
-            "FixedValue", "Value always returned when called sample", {1.0})) {
-  }
+            "FixedValue", "Value always returned when called sample", {1.0})) {}
 
   virtual RandomVariate Sample() { return fixed_value_; }
 
@@ -47,7 +46,7 @@ class FixedValue : public Distribution {
 template <class BoostDistType>
 class BoostDistribution1D : public Distribution {
  public:
-  BoostDistribution1D(const ParamsPtr& params)
+  explicit BoostDistribution1D(const ParamsPtr& params)
       : Distribution(params),
         seed_(params->GetInt(
             "RandomSeed", "Specifies seed for mersenne twister engine", 1234)),
@@ -93,7 +92,8 @@ inline RandomVariate BoostDistribution1D<BoostDistType>::Sample() {
 using boost_normal = boost::math::normal_distribution<RandomVariableValueType>;
 using boost_uniform =
     boost::math::uniform_distribution<RandomVariableValueType>;
-using boost_bernoulli = boost::math::bernoulli_distribution<RandomVariableValueType>;
+using boost_bernoulli =
+    boost::math::bernoulli_distribution<RandomVariableValueType>;
 
 template <>
 inline boost_uniform BoostDistribution1D<boost_uniform>::DistFromParams(
@@ -118,8 +118,8 @@ inline boost_normal BoostDistribution1D<boost_normal>::DistFromParams(
 template <>
 inline boost_bernoulli BoostDistribution1D<boost_bernoulli>::DistFromParams(
     const ParamsPtr& params) const {
-  const RandomVariableValueType probability =
-      params->GetReal("Probability", "Probability in Bernoulli distribution", 0.5);
+  const RandomVariableValueType probability = params->GetReal(
+      "Probability", "Probability in Bernoulli distribution", 0.5);
   return boost_bernoulli(probability);
 }
 
@@ -140,8 +140,7 @@ inline RandomVariableSupport BoostDistribution1D<boost_normal>::GetSupport()
 template <>
 inline RandomVariableSupport BoostDistribution1D<boost_bernoulli>::GetSupport()
     const {
-  return RandomVariableSupport(
-      1, std::make_pair(0, 1));
+  return RandomVariableSupport(1, std::make_pair(0, 1));
 }
 
 using NormalDistribution1D = BoostDistribution1D<boost_normal>;

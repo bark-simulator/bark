@@ -36,7 +36,7 @@ class Line_t : public Shape<bg::model::linestring<T>, T> {
       : Shape<bg::model::linestring<T>, T>(Pose(0, 0, 0), std::vector<T>(), 0) {
   }
 
-  Line_t(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
+  explicit Line_t(const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>& points);
 
   virtual Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> ToArray() const;
 

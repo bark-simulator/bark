@@ -7,7 +7,6 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/world/evaluation/ltl/label_functions/rel_speed_label_function.hpp"
-
 #include "bark/world/observed_world.hpp"
 
 using bark::models::dynamic::StateDefinition;

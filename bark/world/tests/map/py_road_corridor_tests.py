@@ -7,19 +7,15 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-import time
-import math
 import itertools
-import filecmp
 import matplotlib.pyplot as plt
 from bark.core.world import World
 from bark.core.geometry import *
 from bark.runtime.commons.parameters import ParameterServer
-from bark.core.world.opendrive import XodrDrivingDirection, MakeXodrMapOneRoadTwoLanes
+from bark.core.world.opendrive import XodrDrivingDirection
 from bark.core.world.map import MapInterface
 from bark.runtime.commons.xodr_parser import XodrParser
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
-import numpy as np
 import os
 
 
