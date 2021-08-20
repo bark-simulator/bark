@@ -108,7 +108,7 @@ class SystemTests(unittest.TestCase):
             world.Step(sim_step_time)
             viewer.clear()
             video_renderer.drawWorld(world)
-            video_renderer.drawGoalDefinition(goal_definition)
+            video_renderer.drawGoalDefinition(goal_definition, "red", 0.5, "red")
             time.sleep(sim_step_time/sim_real_time_factor)
 
         video_renderer.export_video(
@@ -182,8 +182,7 @@ class SystemTests(unittest.TestCase):
             world.Step(sim_step_time)
             viewer.clear()
             video_renderer.drawWorld(world)
-            video_renderer.drawGoalDefinition(
-                goal_definition, "red", 0.5, "red")
+            video_renderer.drawGoalDefinition(goal_definition, "red", 0.5, "red")
             time.sleep(sim_step_time/sim_real_time_factor)
 
         video_renderer.export_video(
