@@ -19,7 +19,6 @@ if os.environ.get('DISPLAY', '') == '':
 from bark.core.geometry import *
 from bark.core.geometry.standard_shapes import *
 import math
-import numpy as np
 
 #from bark.visualization import MPViewer
 

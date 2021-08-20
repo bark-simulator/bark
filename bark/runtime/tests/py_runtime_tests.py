@@ -7,8 +7,6 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-import os
-import numpy as np
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.buffered_viewer import BufferedViewer
@@ -20,7 +18,6 @@ from bark.examples.paths import Data
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
 from bark.core.models.behavior import *
-from bark.core.commons import SetVerboseLevel
 
 # scenario
 class CustomLaneCorridorConfig(LaneCorridorConfig):

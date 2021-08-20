@@ -98,8 +98,8 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
        "ParameterServers" : config_reader.get_param_servers()}
     )
 
-  def add_config_module_dir(self, dir):
-    module = importlib.import_module(dir)
+  def add_config_module_dir(self, dir_path):
+    module = importlib.import_module(dir_path)
     self._imported_modules.append(module)
 
   def get_persisted_param_servers(self):

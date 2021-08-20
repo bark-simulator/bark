@@ -5,8 +5,6 @@ except:
     pass
 
 import unittest
-import pickle
-import numpy as np
 
 # BARK 
 from bark.core.world.renderer import *
