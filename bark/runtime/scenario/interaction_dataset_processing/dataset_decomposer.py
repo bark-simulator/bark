@@ -6,17 +6,13 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import os
-import shutil
 import logging
 
-from bark.runtime.commons.parameters import ParameterServer
 from bark.core.commons import FrenetState
 from bark.runtime.scenario.interaction_dataset_processing.interaction_dataset_reader import *
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
-from bark.runtime.scenario.scenario import Scenario
-from bark.core.geometry import Point2d, Collide, Within
+from bark.core.geometry import Within
 from bark.core.geometry.standard_shapes import *
 
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
@@ -47,8 +43,9 @@ class DatasetDecomposer:
                 inside_road = Within(agent_shape, self._road_corridor.polygon)
                 aligned_with_road = abs(frenet_state.angle) < 0.1
                 if inside_road and aligned_with_road:
-                    ms_to_s = 1e3 # scale from s (BARK) to ms (dataset)
-                    time_ego_first = state[0] * ms_to_s + self._starting_offset_ms
+                    ms_to_s = 1e3  # scale from s (BARK) to ms (dataset)
+                    time_ego_first = state[0] * \
+                        ms_to_s + self._starting_offset_ms
                     return time_ego_first
 
         return None
@@ -61,13 +58,16 @@ class DatasetDecomposer:
             first_ts_on_map = self.__find_first_ts_on_map__(agent_id)
             track = self._track_dict[agent_id]
             if first_ts_on_map is None:
-                logging.info("Skip, as agent {} not found on map".format(agent_id))
+                logging.info(
+                    "Skip, as agent {} not found on map".format(agent_id))
                 pass
             elif str(track.agent_type) != "car":
-                logging.info("Skip, as agent {} is of type {}".format(agent_id, track.agent_type))
+                logging.info("Skip, as agent {} is of type {}".format(
+                    agent_id, track.agent_type))
                 pass
             elif track.length > self._vehicle_length_max:
-                logging.info("Skip, as agent {} exceeds max length of {} with length {}".format(agent_id, self._vehicle_length_max, track.length))
+                logging.info("Skip, as agent {} exceeds max length of {} with length {}".format(
+                    agent_id, self._vehicle_length_max, track.length))
                 pass
             else:
                 start_time = first_ts_on_map

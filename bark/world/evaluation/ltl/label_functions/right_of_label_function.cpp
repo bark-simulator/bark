@@ -12,7 +12,6 @@ using bark::commons::transformation::FrenetPosition;
 bool bark::world::evaluation::RightOfLabelFunction::EvaluateAgent(
     const bark::world::ObservedWorld& observed_world,
     const AgentPtr& other_agent) const {
-  const auto ego_agent = observed_world.GetEgoAgent();
   const auto ego_lc = observed_world.GetLaneCorridor();
   if (other_agent) {
     const auto other_lc =

@@ -57,10 +57,6 @@ ObservedWorld ObserverModelParametric::Observe(
     return observed_world;
   }
   const auto previous_observed_world = world->GetAgents().at(agent_id)->GetSensedWorld();
-  double delta_time = 0.0f; // must only be valid when previous observed world exists
-  if(previous_observed_world) {
-      delta_time = world->GetWorldTime() - previous_observed_world->GetWorldTime();
-  }
   AddStateDeviationFrenet(observed_world.GetEgoAgent(), ego_state_deviation_dist_,
                         previous_observed_world);
   for (auto& agent : observed_world.GetOtherAgents()) {

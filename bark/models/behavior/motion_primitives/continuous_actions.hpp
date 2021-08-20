@@ -20,7 +20,7 @@ namespace behavior {
 // TODO(@esterle, @bernhard): Add documentationx
 class BehaviorMPContinuousActions : public BehaviorMotionPrimitives {
  public:
-  BehaviorMPContinuousActions(const commons::ParamsPtr& params)
+  explicit BehaviorMPContinuousActions(const commons::ParamsPtr& params)
       : BehaviorMotionPrimitives(params), motion_primitives_() {}
 
   virtual ~BehaviorMPContinuousActions() {}

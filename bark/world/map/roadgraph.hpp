@@ -58,7 +58,7 @@ struct XodrLaneEdge {
                  //! implementation!
   XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
-  XodrLaneEdge(XodrLaneEdgeType edge_type_in)
+  explicit XodrLaneEdge(XodrLaneEdgeType edge_type_in)
       : edge_type(edge_type_in),
         weight(edge_type_in == LANE_SUCCESSOR_EDGE ? 1 : 10) {}
 };
@@ -292,7 +292,7 @@ class Roadgraph {
   template <class TypeMap>
   class my_edge_writer_text {
    public:
-    my_edge_writer_text(TypeMap t) : tm(t) {}
+    explicit my_edge_writer_text(TypeMap t) : tm(t) {}
     template <class XodrLaneEdge>
     void operator()(std::ostream& out, const XodrLaneEdge& e) const {
       const char* color;

@@ -57,7 +57,6 @@ ExecutionModelInterpolate::CheckIfTimeExactIsInTrajectory(
 
 std::pair<int, bool> ExecutionModelInterpolate::FindClosestLowerTrajectoryRow(
     const Trajectory& trajectory, const double& world_time) const {
-  const double delta = 1e-3;
   int ret_idx = 0;
   bool found_closest_pt = false;
   for (int i = 0; i < trajectory.rows(); i++) {

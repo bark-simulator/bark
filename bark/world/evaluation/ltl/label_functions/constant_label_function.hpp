@@ -20,7 +20,7 @@ namespace evaluation {
 
 class ConstantLabelFunction : public BaseLabelFunction {
  public:
-  ConstantLabelFunction(const std::string& label_str)
+  explicit ConstantLabelFunction(const std::string& label_str)
       : BaseLabelFunction(label_str), value_(true) {}
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override {
     return {{Label(GetLabelStr()), value_}};

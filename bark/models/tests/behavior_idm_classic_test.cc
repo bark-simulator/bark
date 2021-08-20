@@ -210,7 +210,6 @@ TEST(drive_leading_vehicle, behavior_idm_classic) {
   BehaviorIDMClassic behavior(params);
   const double desired_velocity = behavior.GetDesiredVelocity();
   const double minimum_spacing = behavior.GetMinimumSpacing();
-  const double desired_time_headway = behavior.GetDesiredTimeHeadway();
 
   // First case, we start with the desired velocity. After num steps, we should
   // advance

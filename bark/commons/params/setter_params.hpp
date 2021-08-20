@@ -150,7 +150,7 @@ class SetterParams : public Params {
   }
 
   template <typename M, typename T>
-  T get_parameter(M map, std::string param_name, const T& default_value) {
+  T get_parameter(M map, const std::string& param_name, const T& default_value) {
     auto search_result =
         get_parameter_recursive(map, param_name, default_value);
     if (!search_result.second && log_if_default_) {

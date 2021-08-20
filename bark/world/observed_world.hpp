@@ -118,7 +118,7 @@ class ObservedWorld : public World {
 
   // No Prediction Setup Required -> pass all behavior models
   ObservedWorldPtr Predict(double time_span, BehaviorModelPtr ego_behavior_model,
-                           const std::unordered_map<AgentId, BehaviorModelPtr>
+                           const std::unordered_map<AgentId, BehaviorModelPtr>&
                                other_behaviors) const;
 
   template <class Behavior, class EgoBehavior>

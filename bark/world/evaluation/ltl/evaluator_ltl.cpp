@@ -73,11 +73,10 @@ EvaluationReturn EvaluatorLTL::Evaluate(
   LabelMap labels = EvaluateLabels(observed_world);
 
   unsigned int guarantee_violations = 0;
-  double penalty = 0.0;
   // Evaluate for every rule state
   for (auto& rs : rule_states_) {
     // Check for violations of safety properties
-    penalty = rs.GetAutomaton()->Evaluate(labels, rs);
+    double penalty = rs.GetAutomaton()->Evaluate(labels, rs);
     if (penalty != 0.0) {
       safety_violations_++;
       VLOG(1) << "Rule \"" << ltl_formula_str_ << "\" violated in timestep "

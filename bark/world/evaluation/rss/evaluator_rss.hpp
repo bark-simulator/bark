@@ -95,7 +95,6 @@ class EvaluatorRSS : public BaseEvaluator {
   }
 
   virtual EvaluationReturn Evaluate(const ObservedWorld& observed_world) {
-    auto result = rss_.GetSafetyReponse(observed_world);
     rss_proper_response_ = rss_.GetRSSResponse();
     rss_state_snapshot_ = rss_.GetRSSStateSnapshot();
     GenerateSafetyPolygons(observed_world);
