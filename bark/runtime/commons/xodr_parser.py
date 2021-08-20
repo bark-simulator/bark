@@ -85,7 +85,7 @@ class XodrParser(object):
         new_lane_width["d"] = 0.0
         return new_lane_width
 
-    def parse_lane_widths_from_lane(self, lane, id):
+    def parse_lane_widths_from_lane(self, lane, lid):
         lane_width_list = []
         lane_widths = lane.findall("width")
 
@@ -94,7 +94,7 @@ class XodrParser(object):
                 lane_width = lane_width
                 lane_width_list.append(self.parse_lane_width(lane_width))
         else:
-            if int(id) == 0:
+            if int(lid) == 0:
                 lane_width_list.append(self.zero_lane_width())
 
         return lane_width_list
@@ -107,7 +107,7 @@ class XodrParser(object):
 
         for lid, lane in lane_dict.items():
             new_lane = {}
-            new_lane["id"] = id
+            new_lane["id"] = lid
             # every type we cannot read is read in as sidewalk
             new_lane["type"] = XodrLaneType.__members__[str(lane.get("type"))] if str(lane.get("type")) in [
                 "driving", "border", "sidewalk"] else XodrLaneType.__members__["sidewalk"]  # assign enum type
