@@ -28,5 +28,5 @@ TEST(timer_test, timer_test10ms) {
   timer.Start();
   std::this_thread::sleep_for(10ms);
   double duration = timer.DurationInSeconds();
-  EXPECT_NEAR(duration, 10e-3, 1e-3);
+  EXPECT_NEAR(duration, 10e-3, 2e-3);
 }
