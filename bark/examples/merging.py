@@ -6,6 +6,11 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
+try:
+    import debug_settings
+except:
+    pass
+
 import time
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
