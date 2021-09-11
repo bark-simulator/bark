@@ -251,7 +251,7 @@ AgentMap World::GetAgentsIntersectingPolygon(
 FrontRearAgents World::GetAgentFrontRearForId(
     const AgentId& agent_id, const LaneCorridorPtr& lane_corridor,
     double lateral_difference_threshold, double angle_difference_threshold,
-    bool must_be_in_corridor) const {
+    bool must_be_in_corridor, double longitudinal_difference_treshold) const {
   using bark::geometry::Line;
   using bark::geometry::Polygon;
 
@@ -300,11 +300,11 @@ FrontRearAgents World::GetAgentFrontRearForId(
       continue;
     }
 
-    if (difference.lon >= 0.0f && difference.lon < nearest_difference_front.lon) {
+    if (difference.lon >= longitudinal_difference_treshold && difference.lon < nearest_difference_front.lon) {
       nearest_difference_front = difference;
       nearest_agent_front = it->second;
-    } else if (difference.lon < 0.0f &&
-               std::abs(difference.lon) < std::abs(nearest_difference_rear.lon)) {
+    } else if (difference.lon < longitudinal_difference_treshold &&
+               difference.lon < nearest_difference_rear.lon) {
       nearest_difference_rear = difference;
       nearest_agent_rear = it->second;
     }

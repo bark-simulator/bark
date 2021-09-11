@@ -124,6 +124,10 @@ class BaseIDM : virtual public BehaviorModel {
     return max_angle_difference_to_be_front_;
   }
 
+  const double GetMaxLonDifferenceToBeFront() const {
+    return max_lon_difference_to_be_front_;
+  }
+
   AccelerationLimits GetAccelerationLimits() const { return acceleration_limits_; }
 
   void SetAccelerationLimits(const AccelerationLimits& acc_lim) { 
@@ -157,6 +161,7 @@ class BaseIDM : virtual public BehaviorModel {
   // IDM extension to consider vehicles on other lanes
   double max_lat_difference_to_be_front_;
   double max_angle_difference_to_be_front_;
+  double max_lon_difference_to_be_front_;
 
   // constant acceleration heuristic
   // according chapter 11. Car-Following Models based on Driving Strategies

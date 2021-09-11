@@ -165,13 +165,19 @@ class World : public commons::BaseType {
    * @param lateral_difference_threshold Lane Width Fraction for maximum allowed lateral
    * offset in, should be larger than 0. value of 2 means that all agents
    * intersecting with lane will be considered
+   * @param angle_difference_threshold what is maximul frenet angle to other vehicles
+   *                                  to consider it as front
+   * @param must_be_in_corridor check only if in driving, and neglect threshold based detection
+   * @param lon_diff_treshold longitudinal difference from when a vehicle is considered as front,
+   *                          otherwise considered as rear
    * @return FrontRearAgents
    */
   FrontRearAgents GetAgentFrontRearForId(const AgentId& agent_id,
                                          const LaneCorridorPtr& lane_corridor,
                                          double lateral_difference_threshold,
                                          double angle_difference_threshold = bark::geometry::B_PI,
-                                         bool must_be_in_corridor = false) const;
+                                         bool must_be_in_corridor = false,
+                                         double longitudinal_difference_treshold = 0.0) const;
 
   //! Setter
   void SetMap(const world::map::MapInterfacePtr& map) { map_ = map; }

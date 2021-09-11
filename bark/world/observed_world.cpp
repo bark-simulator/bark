@@ -22,9 +22,11 @@ using bark::world::AgentMap;
 
 FrontRearAgents ObservedWorld::GetAgentFrontRear(const LaneCorridorPtr& lane_corridor,
                                                  const double& lateral_difference_threshold,
-                                                 const double& angular_difference_threshold) const {
+                                                 const double& angular_difference_threshold,
+                                                 const double& longitudinal_difference_treshold) const {
   AgentId id = GetEgoAgentId();
-  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor, lateral_difference_threshold);
+  FrontRearAgents fr_agent = GetAgentFrontRearForId(id, lane_corridor,
+             lateral_difference_threshold, angular_difference_threshold, false, longitudinal_difference_treshold);
   return fr_agent;
 }
 
@@ -40,10 +42,12 @@ FrontRearAgents ObservedWorld::GetAgentFrontRear() const {
 AgentFrenetPair ObservedWorld::GetAgentInFront(
                 const LaneCorridorPtr& lane_corridor,
                 const double& lateral_difference_threshold,
-                const double& angular_difference_threshold) const {
+                const double& angular_difference_threshold,
+                const double& longitudinal_difference_treshold) const {
   FrontRearAgents fr_agent = GetAgentFrontRear(lane_corridor,
                                          lateral_difference_threshold,
-                                         angular_difference_threshold);
+                                         angular_difference_threshold,
+                                         longitudinal_difference_treshold);
   return fr_agent.front;
 }
 

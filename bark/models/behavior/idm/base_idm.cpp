@@ -75,6 +75,10 @@ BaseIDM::BaseIDM(const commons::ParamsPtr& params)
       "BehaviorIDMClassic::MaxAngleDifferenceToBeFront",
       "When are vehicles considered angular-wise as front vehicles,"
       "PI means all angles considered", bark::geometry::B_PI*0.75);
+  max_lon_difference_to_be_front_ = params->GetReal(
+      "BehaviorIDMClassic::MaxLonDifferenceToBeFront",
+      "When are vehicles considered longitudinal-wise as front vehicles", 
+        0.0);
   acceleration_limits_ =
       bark::models::dynamic::AccelerationLimitsFromParamServer(params);
   acceleration_limits_.lon_acc_max =
@@ -189,7 +193,8 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
 
   auto leading_vehicle =
       observed_world.GetAgentInFront(lane_corr, GetMaxLatDifferenceToBeFront(),
-                                             GetMaxAngleDifferenceToBeFront() );
+                                             GetMaxAngleDifferenceToBeFront(),
+                                             GetMaxLonDifferenceToBeFront() );
 
   // vehicles
   if (leading_vehicle.first) {
