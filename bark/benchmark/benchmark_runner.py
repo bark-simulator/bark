@@ -346,7 +346,7 @@ class BenchmarkRunner:
                 self._append_exception(benchmark_config, e)
                 evaluation_dict = {}
                 break
-            terminal, terminal_why = self._is_terminal(evaluation_dict)
+            terminal, terminal_why = self._is_terminal(evaluation_dict, scenario_set_name)
             if not terminal:
                 try:
                     world.PlanAgents(step_time)
@@ -409,10 +409,23 @@ class BenchmarkRunner:
           evaluation_dict[evaluator_name] = evaluator_bark.Evaluate(world)
         return evaluation_dict
 
-    def _is_terminal(self, evaluation_dict):
+    def _is_terminal(self, evaluation_dict, scen_set_name):
+        if isinstance(list(self.terminal_when.values())[0], dict):
+          # multiple evaluator dicts are passed for scenario types
+          found_terminal_criteria = [val for key, val in self.terminal_when.items() if key in scen_set_name]
+          if len(found_terminal_criteria) > 1:
+            raise ValueError("Ambiguous scenario set mapping for terminal criteria.")
+          elif len(found_terminal_criteria) == 0:
+            raise ValueError("No scenario set mapping found for terminal criteria.")
+          return self._is_terminal_for_scen_set(found_terminal_criteria[0], evaluation_dict)
+        else:
+          # only a single evaluation dict is passed
+          return self._is_terminal_for_scen_set(self.terminal_when, evaluation_dict)
+
+    def _is_terminal_for_scen_set(self, terminal_criteria, evaluation_dict):
         terminal = False
         terminal_why = []
-        for evaluator_name, function in self.terminal_when.items():
+        for evaluator_name, function in terminal_criteria.items():
             if function(evaluation_dict[evaluator_name]):
                 terminal = True
                 terminal_why.append(evaluator_name)
