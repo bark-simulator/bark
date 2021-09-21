@@ -100,6 +100,7 @@ void python_agent(py::module m) {
             agent.SetAgentId(t[2].cast<AgentId>());
             agent.SetFirstValidTimestamp(t[9].cast<double>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+            agent.GetBehaviorModel()->SetLastTrajectory(t[4].cast<Trajectory>());
             agent.SetRoadCorridorRoadIds(t[11].cast<std::vector<bark::world::map::XodrRoadId>>());
             agent.SetRoadCorridorDrivingDirection(t[12].cast<bark::world::map::XodrDrivingDirection>());
             return agent;
