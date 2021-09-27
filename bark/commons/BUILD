@@ -11,6 +11,7 @@ cc_library(
         "//bark/commons/util:util",
         "//bark/commons/distribution:distribution",
         "//bark/commons/math:math",
+        "//bark/commons/timer:timer",
     ],
     visibility = ["//visibility:public"],
 )
@@ -32,6 +33,7 @@ cc_library(
         "//bark/commons/util:include",
         "//bark/commons/distribution:include",
         "//bark/commons/math:include",
+        "//bark/commons/timer:include",
         "@boost//:system",
         "@boost//:smart_ptr",
         "@boost//:move",
