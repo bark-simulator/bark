@@ -48,7 +48,8 @@ void python_map(py::module m) {
       .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
       .def("GetLane", &MapInterface::GetLane)
       .def("ComputeAllPathBoundaries", &MapInterface::ComputeAllPathBoundaries)
-      .def("FindLane", &MapInterface::FindXodrLane);
+      .def("FindLane", &MapInterface::FindXodrLane)
+      .def("ComputeJunctionArea", &MapInterface::ComputeJunctionArea);
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
       .def(py::init<>())

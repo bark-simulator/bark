@@ -251,6 +251,7 @@ class Roadgraph {
       const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
   std::pair<XodrLaneId, bool> GetRightBoundary(
       const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
+  PolygonPtr ComputeJunctionArea(uint32_t junction_id);
 
  private:
   XodrLaneGraph g_;

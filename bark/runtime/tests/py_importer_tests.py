@@ -61,6 +61,13 @@ class ImporterTests(unittest.TestCase):
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
+  def test_map_4way_intersection(self):
+    xodr_parser = XodrParser(os.path.join(os.path.dirname(__file__),"data/4way_intersection.xodr"))
+
+    map_interface = MapInterface()
+    map_interface.SetOpenDriveMap(xodr_parser.map)
+    # helper_plot(xodr_parser)
+
 
 if __name__ == '__main__':
   unittest.main()

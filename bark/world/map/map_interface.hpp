@@ -111,6 +111,7 @@ class MapInterface {
     XodrRoadId road_id = roadgraph_->GetRoadForLaneId(FindCurrentLane(pt));
     return road_id;
   }
+  bark::geometry::Polygon ComputeJunctionArea(uint32_t junction_id);
 
  private:
   OpenDriveMapPtr open_drive_map_;
