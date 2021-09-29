@@ -10,7 +10,6 @@ cc_library(
         "//bark/commons:commons",
         "//bark/models/dynamic:dynamic",
         "@com_github_eigen_eigen//:eigen",
-        "//bark/commons/timer:timer",
     ],
     visibility = ["//visibility:public"],
 )
