@@ -121,10 +121,8 @@ struct RoadCorridor {
   void SetRoadIds(const std::vector<XodrRoadId>& road_ids) {
     road_ids_ = road_ids;
   }
-  void AddPolygonToRoadCorridor(const Polygon& input, double buffer_dist = 0.3) {
-    Polygon buffered_input;
-    BufferPolygon(input, -buffer_dist, &buffered_input);
-    road_polygon_.ConcatenatePolygons(buffered_input);
+  void AddPolygonToRoadCorridor(const Polygon& input) {
+    road_polygon_.ConcatenatePolygons(input);
   }
   std::vector<uint32_t> GetJunctionIds() {
     std::vector<uint32_t> junctions;
