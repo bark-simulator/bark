@@ -30,8 +30,8 @@ python_configure(name = "local_config_python")
 # ------ Planner MIQP ------------------------------
 # git_repository(
 #     name = "planner_miqp",
-#     commit="4b40b797b64d096e528c473068af2a2e10a2a048",
-#     remote = "https://git.fortiss.org/esterle/miqp_logical_constraints.git"
+#     commit="cea69161e7763af59d76bad87d8b4d6e4d0d1a8c",
+#     remote = "https://github.com/bark-simulator/planner-miqp"
 # )
 # load("@planner_miqp//util:deps.bzl", "planner_miqp_dependencies")
 # planner_miqp_dependencies()
