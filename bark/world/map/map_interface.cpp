@@ -67,8 +67,8 @@ bool MapInterface::FindNearestXodrLanes(const Point2d& point,
 XodrLanePtr MapInterface::FindXodrLane(const Point2d& point) const {
   XodrLanePtr lane;
   std::vector<XodrLanePtr> nearest_lanes;
-  // TODO(@esterle): parameter (20) auslagern
-  if (!FindNearestXodrLanes(point, 20, nearest_lanes, false)) {
+  if (!FindNearestXodrLanes(point, num_points_nearest_lane_, nearest_lanes,
+                            false)) {
     return nullptr;
   }
   for (auto& close_lane : nearest_lanes) {
@@ -199,24 +199,26 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
       road_corridor->SetLaneCorridor(next_lane->GetId(), lane_corridor);
     }
 
-    // TODO(@hart): use parameter
-    // \note \kessler: setting max_dist too small can yield self-intersecting
-    // road polygons. why? in curves on the inner radius due to sampling
-    // inaccuracy the boundaries of two segments can overlap. The code below
-    // just copies each point to the lane polygon without checking this.
+    // \note \kessler: setting max_simplification_dist_ too small can yield
+    // self-intersecting road polygons. why? in curves on the inner radius due
+    // to sampling inaccuracy the boundaries of two segments can overlap. The
+    // code below just copies each point to the lane polygon without checking
+    // this.
 
-    const double max_dist = 0.4;
-    Line simplf_center = Simplify(lane_corridor->GetCenterLine(), max_dist);
+    Line simplf_center =
+        Simplify(lane_corridor->GetCenterLine(), max_simplification_dist_);
     lane_corridor->SetCenterLine(simplf_center);
 
     Line simplf_fine_center =
         Simplify(lane_corridor->GetFineCenterLine(), 0.001);
     lane_corridor->SetFineCenterLine(simplf_fine_center);
 
-    Line simplf_right = Simplify(lane_corridor->GetRightBoundary(), max_dist);
+    Line simplf_right =
+        Simplify(lane_corridor->GetRightBoundary(), max_simplification_dist_);
     lane_corridor->SetRightBoundary(simplf_right);
 
-    Line simplf_left = Simplify(lane_corridor->GetLeftBoundary(), max_dist);
+    Line simplf_left =
+        Simplify(lane_corridor->GetLeftBoundary(), max_simplification_dist_);
     lane_corridor->SetLeftBoundary(simplf_left);
 
     // TODO hier ist der self intersection bug: magic number 0.5 durch sampling
@@ -287,7 +289,6 @@ RoadPtr MapInterface::GenerateRoadCorridorRoad(const XodrRoadId& road_id) {
 void MapInterface::GenerateRoadCorridor(
     const std::vector<XodrRoadId>& road_ids,
     const XodrDrivingDirection& driving_direction) {
-  bool add_full_juction = true;  //!todo @tobias Parameter
   std::size_t road_corridor_hash =
       RoadCorridor::GetHash(driving_direction, road_ids);
 
@@ -378,7 +379,7 @@ void MapInterface::GenerateRoadCorridor(
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
-  if (add_full_juction) {
+  if (add_full_junction_area_) {
     for (auto& junction : road_corridor->GetJunctionIds()) {
       const Polygon poly = ComputeJunctionArea(junction);
       road_corridor->AddPolygonToRoadCorridor(std::move(poly));
@@ -458,7 +459,7 @@ RoadPtr MapInterface::GetNextRoad(
 
 bark::geometry::Polygon MapInterface::ComputeJunctionArea(
     uint32_t junction_id) {
-  PolygonPtr poly = roadgraph_->ComputeJunctionArea(junction_id); 
+  PolygonPtr poly = roadgraph_->ComputeJunctionArea(junction_id);
   return *poly.get();
 }
 

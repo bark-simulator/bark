@@ -142,6 +142,7 @@ class EnvironmentTests(unittest.TestCase):
         params = ParameterServer()
         world = World(params)
         map_interface = MapInterface()
+        map_interface.add_full_junction_area = True
         map_interface.SetOpenDriveMap(xodr_parser.map)
         world.SetMap(map_interface)
 
