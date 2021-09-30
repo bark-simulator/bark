@@ -80,6 +80,7 @@ class MPViewer(BaseViewer):
         line_style = kwargs.pop("linestyle", "-")
         marker = kwargs.pop("marker", None)
         marker_size = kwargs.pop("markersize", 12)
+        zorder = kwargs.pop("zorder", 1)
         if len(trajectory) > 0:
             self.axes.plot(
                 trajectory[:, int(StateDefinition.X_POSITION)],
@@ -88,7 +89,8 @@ class MPViewer(BaseViewer):
                 linewidth=line_width,
                 linestyle=line_style,
                 marker=marker,
-                markersize = marker_size)
+                markersize = marker_size,
+                zorder=zorder)
 
     def drawArrow(self, pose):
         plt.annotate(s='', xy=(pose[0]+3*math.cos(pose[2]),pose[1]+3*math.sin(pose[2])), xytext=(pose[0],pose[1]), arrowprops=dict(arrowstyle='->'))
@@ -137,8 +139,9 @@ class MPViewer(BaseViewer):
       height *= fig.dpi
       return width, height
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
-        self.clear()
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False, clear_first=True):
+        if clear_first:
+          self.clear()
         if not axes_visible:
             self.axes.set_axis_off()
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)

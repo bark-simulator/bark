@@ -64,6 +64,9 @@ class BaseViewer(Viewer):
                                                               "Draw history with alpha trace for each agent", False]
         self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace",
                                                                         "Flag to specify if face is drawn in history mode", True]
+        self._draw_goal_definition = params["Visualization"]["Agents"]["DrawGoalDefinition", "Flag to draw the goal definition polygon", True]
+        self._draw_agent = params["Visualization"]["Agents"]["DrawAgent", "Flag to draw the agent shape", True]
+
 
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color",
@@ -71,13 +74,12 @@ class BaseViewer(Viewer):
         self.alpha_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"][
             "Boundaries"]["Alpha", "Color of agents except ego vehicle", 1.0]
         self.plane_color = params["Visualization"]["Map"]["Plane"]["Color",
-                                                                   "Color of the background plane", (1, 1, 1, 1)]
+                                                                   "Color of the background plane", (0.5, 0.5, 0.5)]
         self.plane_alpha = params["Visualization"]["Map"]["Plane"]["Alpha",
                                                                    "Alpha of the background plane", 1.0]
         self.map_linewidth = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Linewidth",
                                                                                        "Linewidth of linestrings", 1.0]
         self._draw_aerial_image = params["Visualization"]["Map"]["DrawAerialImage", "Flag to draw aerial image behind map", False]
-
         self.draw_ltl_debug_info = params["Visualization"]["Evaluation"]["DrawLTLDebugInfo",
                                                                          "Flag to specify if debug info to ltl evaluators shall be plotted", False]
                                                                         
@@ -298,7 +300,8 @@ class BaseViewer(Viewer):
       for _, agent in world.agents.items():
           color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
           color_face = (1.0, 1.0, 1.0) # face color white
-          self.drawAgent(agent, color_line, alpha, color_face, hatch='', draw_agent_id=False)
+          if self._draw_agent:
+            self.drawAgent(agent, color_line, alpha, color_face, hatch='', draw_agent_id=False)
 
     def GetAgentColor(self, agent, eval_agent_ids):
       alpha = 1.0
@@ -328,35 +331,36 @@ class BaseViewer(Viewer):
         self._update_world_view_range(world, eval_agent_ids)
         if world.map:
             self.drawMap(world.map)
-
         if self._draw_aerial_image:
           self.drawMapAerialImage()
 
         # draw agent goals
-        for agent_id, agent in world.agents.items():
-            if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
-                    agent_id in eval_agent_ids:
-                color_line = self.color_eval_agents_line
-                color_face = self.color_eval_agents_face
-                alpha = self.alpha_eval_agent
-                self.drawGoalDefinition(
-                    agent.goal_definition, color_line, alpha, color_face)
+        if self._draw_goal_definition:
+          for agent_id, agent in world.agents.items():
+              if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
+                      agent_id in eval_agent_ids:
+                  color_line = self.color_eval_agents_line
+                  color_face = self.color_eval_agents_face
+                  alpha = self.alpha_eval_agent
+                  self.drawGoalDefinition(
+                      agent.goal_definition, color_line, alpha, color_face)
 
-        num_agents = len(world.agents.items())
-        for i, (agent_id, agent) in enumerate(world.agents.items()):
-            color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
-                    
-            if self.draw_history and agent.id in world.agents_valid:
-                if self.draw_history_draw_face:
-                    color_face_history = color_face
-                else:
-                    color_face_history = (1.0, 1.0, 1, .0)
-                self.drawHistory(agent, color_line, alpha,
-                                 color_face_history, zorder=5)
-            
-            hatch = '' if agent.id in world.agents_valid else 'o'
-            if agent.id in world.agents_valid or self.draw_invalid_agents:
-              self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
+        if self._draw_agent:
+          num_agents = len(world.agents.items())
+          for i, (agent_id, agent) in enumerate(world.agents.items()):
+              color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
+                      
+              if self.draw_history and agent.id in world.agents_valid:
+                  if self.draw_history_draw_face:
+                      color_face_history = color_face
+                  else:
+                      color_face_history = (1.0, 1.0, 1, .0)
+                  self.drawHistory(agent, color_line, alpha,
+                                  color_face_history, zorder=5)
+              
+              hatch = '' if agent.id in world.agents_valid else 'o'
+              if agent.id in world.agents_valid or self.draw_invalid_agents:
+                self.drawAgent(agent, color_line, alpha, color_face, hatch=hatch)
               
         if debug_text:
             self.drawText(position=(0.1, 0.9), text="Scenario: {}".format(
@@ -398,15 +402,15 @@ class BaseViewer(Viewer):
 
     def drawLanePolygon(self, lane, map_interface, color=None):
         if color is None:
-            self.color_lane_boundaries
+            color = self.color_lane_boundaries
         
         polygon = map_interface.GetRoadgraph().GetLanePolygonForLaneId(lane.lane_id)
         if not lane.lane_type == XodrLaneType.driving:
-          self.drawPolygon2d(polygon, ( 0.5, 0.5 , 0.5),
-                                1.0, ( 0.5, 0.5 , 0.5), linewidth=0.02,  zorder=1)
+          self.drawPolygon2d(polygon, color,
+                                self.alpha_lane_boundaries, self.plane_color, linewidth=0.05,  zorder=1)
         else:
-          self.drawPolygon2d(polygon, (0.7, 0.7, 0.7),
-                                1.0, (0.7, 0.7, 0.7), linewidth=0.02,  zorder=1, hatch="/")
+          self.drawPolygon2d(polygon, color,
+                                self.alpha_lane_boundaries, self.plane_color, linewidth=0.05,  zorder=1, hatch="")
 
     def drawXodrRoad(self, road, color=None):
         for lane_section in road.lane_sections:
@@ -421,14 +425,14 @@ class BaseViewer(Viewer):
             self.color_lane_boundaries
 
         dashed = False
-        color = ( 0.5, 0.5 , 0.5)
+        color = ( 0.5, 0.5, 0.5)
         # center line is type none and is drawn as broken
         if lane.road_mark.type == XodrRoadMarkType.broken:
             dashed = True
             color = (1, 1 ,1)
  
         if not lane.road_mark.type == XodrRoadMarkType.none:
-          self.drawLine2d(lane.line, color, self.alpha_lane_boundaries,
+          self.drawLine2d(lane.line, (0, 0, 0), self.alpha_lane_boundaries,
                           dashed, zorder=1, linewidth=1)
 
     def drawAgent(self, agent, color, alpha, facecolor, hatch='', draw_agent_id=True):
