@@ -812,9 +812,10 @@ PolygonPtr Roadgraph::ComputeJunctionArea(uint32_t junction_id) {
   std::vector<vertex_t> vertices = GetVertices();
   for (auto const& v : vertices) {
     const auto& lane = g_[v].lane;
-    if (lane->GetIsInJunction() && (lane->GetJunctionId() == junction_id)) {
+    if (lane->GetIsInJunction() && (lane->GetJunctionId() == junction_id) &&
+        lane->GetLaneType() == XodrLaneType::DRIVING) {
       PolygonPtr this_poly = g_[v].polygon;
-      if(this_poly) {
+      if (this_poly) {
         polygon->ConcatenatePolygons(*this_poly.get());
       }
     }
