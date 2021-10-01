@@ -16,7 +16,7 @@ from bark.core.world import *
 from bark.core.geometry import *
 from bark.core.runtime import PyRuntime
 from bark.core.models.dynamic import StateDefinition
-
+from bark.runtime.commons.parameters import ParameterServer
 
 class Runtime(PyRuntime):
   def __init__(self,
@@ -25,6 +25,8 @@ class Runtime(PyRuntime):
                scenario_generator=None,
                render=False,
                maintain_world_history=False):
+    self._params = ParameterServer()
+    PyRuntime.__init__(self, self._params)
     self._step_time = step_time
     self._viewer = viewer
     self._scenario_generator = scenario_generator
@@ -58,7 +60,7 @@ class Runtime(PyRuntime):
     if self._render:
         self.render()
     self._world.Execute(self._step_time)
-    
+
     if self._maintain_world_history:
       self._world_history.append(self._world.Copy())
 
@@ -98,6 +100,6 @@ class Runtime(PyRuntime):
         if act_arr.shape[1] > 2:
             logging.warning("Incorrect parsing of actions to timeseries")
     else:
-        d["acc"] = act_arr        
+        d["acc"] = act_arr
     df = pd.DataFrame(data=d)
     return df
