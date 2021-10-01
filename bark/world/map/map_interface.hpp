@@ -42,7 +42,7 @@ class MapInterface {
   MapInterface()
       : num_points_nearest_lane_(20),
         max_simplification_dist_(0.4),
-        add_full_junction_area_(false) {}
+        full_junction_area_(false) {}
 
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
 
@@ -116,8 +116,8 @@ class MapInterface {
     return road_id;
   }
   bark::geometry::Polygon ComputeJunctionArea(uint32_t junction_id);
-  void SetAddFullJunctionArea(bool in) { add_full_junction_area_ = in; }
-  bool GetAddFullJunctionArea() { return add_full_junction_area_; }
+  void SetFullJunctionArea(bool in) { full_junction_area_ = in; }
+  bool GetFullJunctionArea() { return full_junction_area_; }
 
  private:
   OpenDriveMapPtr open_drive_map_;
@@ -129,7 +129,7 @@ class MapInterface {
   // Parameters
   unsigned num_points_nearest_lane_;
   double max_simplification_dist_;
-  bool add_full_junction_area_;
+  bool full_junction_area_;
 
   static bool IsLaneType(rtree_lane_value const& m) {
     return (m.second->GetLaneType() == XodrLaneType::DRIVING);

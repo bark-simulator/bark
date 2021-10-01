@@ -130,7 +130,7 @@ class EnvironmentTests(unittest.TestCase):
       #viewer.show(block=True)
 
       area = poly.CalculateArea()
-      self.assertTrue(abs(area - 235.21) < 0.1)
+      self.assertTrue(abs(area - 228.41) < 0.1)
 
     def test_extended_road_corridor_with_junction_area(self):
         params = ParameterServer()
@@ -142,7 +142,7 @@ class EnvironmentTests(unittest.TestCase):
         params = ParameterServer()
         world = World(params)
         map_interface = MapInterface()
-        map_interface.add_full_junction_area = True
+        map_interface.full_junction_area = True
         map_interface.SetOpenDriveMap(xodr_parser.map)
         world.SetMap(map_interface)
 
