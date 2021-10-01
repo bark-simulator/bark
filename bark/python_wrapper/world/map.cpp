@@ -26,9 +26,9 @@ using bark::world::opendrive::XodrLaneId;
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
-      .def_property("add_full_junction_area",
-                    &MapInterface::GetAddFullJunctionArea,
-                    &MapInterface::SetAddFullJunctionArea)
+      .def_property("full_junction_area",
+                    &MapInterface::GetFullJunctionArea,
+                    &MapInterface::SetFullJunctionArea)
       .def("SetOpenDriveMap", &MapInterface::SetOpenDriveMap)
       .def("find_nearest_lanes",
            [](const MapInterface& m, const Point2d& point,

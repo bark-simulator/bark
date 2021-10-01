@@ -379,7 +379,7 @@ void MapInterface::GenerateRoadCorridor(
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
-  if (add_full_junction_area_) {
+  if (full_junction_area_) {
     for (auto& junction : road_corridor->GetJunctionIds()) {
       const Polygon poly = ComputeJunctionArea(junction);
       road_corridor->AddPolygonToRoadCorridor(std::move(poly));
