@@ -30,7 +30,7 @@ class MPViewer(BaseViewer):
         else:
           self.axes = plt.subplots()[1]
           # removes whitespace
-          # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
+          plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
         self._cmap = self.setupColormap()
 
     def drawPoint2d(self, point2d, color, alpha):
@@ -144,6 +144,9 @@ class MPViewer(BaseViewer):
           self.clear()
         if not axes_visible:
             self.axes.set_axis_off()
+        else:
+          self.axes.set_xlabel('x [m]')
+          self.axes.set_ylabel('y [m]')
         super(MPViewer, self).drawWorld(world, eval_agent_ids, filename, scenario_idx, debug_text)
         self._set_visualization_options(axes_visible)
         self.show()
@@ -151,7 +154,7 @@ class MPViewer(BaseViewer):
             self.axes.get_figure().savefig(filename)
 
     def saveFig(self, filename):
-      self.axes.get_figure().savefig(filename)
+      self.axes.get_figure().savefig(filename, bbox_inches='tight')
 
     def show(self, block=False):
         plt.draw()
