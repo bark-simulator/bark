@@ -159,5 +159,7 @@ class EnvironmentTests(unittest.TestCase):
         # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
         time.sleep(1)
 
+        self.assertTrue(road_corr)
+
 if __name__ == '__main__':
     unittest.main()
