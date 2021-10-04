@@ -432,8 +432,8 @@ class BaseViewer(Viewer):
             color = (1, 1 ,1)
  
         if not lane.road_mark.type == XodrRoadMarkType.none:
-          self.drawLine2d(lane.line, (0, 0, 0), self.alpha_lane_boundaries,
-                          dashed, zorder=1, linewidth=1)
+          self.drawLine2d(lane.line, (1, 1, 1), self.alpha_lane_boundaries,
+                          dashed, zorder=1, linewidth=0.5)
 
     def drawAgent(self, agent, color, alpha, facecolor, hatch='', draw_agent_id=True):
         shape = agent.shape
