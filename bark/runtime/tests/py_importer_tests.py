@@ -68,6 +68,9 @@ class ImporterTests(unittest.TestCase):
     map_interface.SetOpenDriveMap(xodr_parser.map)
     # helper_plot(xodr_parser)
 
+    self.assertTrue(map_interface)
+    
+
 
 if __name__ == '__main__':
   unittest.main()
