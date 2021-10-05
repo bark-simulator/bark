@@ -54,6 +54,10 @@ struct Polygon_t : public Shape<bg::model::polygon<T>, T> {
     }
   }
 
+  void ClearInners() {
+    this->obj_.inners().clear();
+  }
+
   void SetPrecision(int precision) {
     const double scale = pow(10, precision);
     for (auto it = this->obj_.outer().begin(); it != this->obj_.outer().end();

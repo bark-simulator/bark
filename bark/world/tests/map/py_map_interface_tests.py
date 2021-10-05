@@ -111,6 +111,55 @@ class EnvironmentTests(unittest.TestCase):
         self.assertTrue(
             switched_lane, "Eventually should have switched lanes!")
 
+    def test_junction_area(self):
+      xodr_parser = XodrParser(os.path.join(os.path.dirname(
+              __file__), "../../../runtime/tests/data/4way_intersection.xodr"))
+      np.set_printoptions(precision=8)
+      params = ParameterServer()
+      world = World(params)
+      map_interface = MapInterface()
+      map_interface.SetOpenDriveMap(xodr_parser.map)
+      world.SetMap(map_interface)
+
+      poly = map_interface.ComputeJunctionArea(4)
+      
+      #print(poly)
+      #viewer = MPViewer(params=params, use_world_bounds=True)
+      #viewer.drawWorld(world)
+      #viewer.drawPolygon(poly)
+      #viewer.show(block=True)
+
+      area = poly.CalculateArea()
+      self.assertTrue(abs(area - 228.41) < 0.1)
+
+    def test_extended_road_corridor_with_junction_area(self):
+        params = ParameterServer()
+        world = World(params)
+
+        xodr_parser = XodrParser(os.path.join(os.path.dirname(
+              __file__), "../../../runtime/tests/data/4way_intersection.xodr"))
+        np.set_printoptions(precision=8)
+        params = ParameterServer()
+        world = World(params)
+        map_interface = MapInterface()
+        map_interface.full_junction_area = True
+        map_interface.SetOpenDriveMap(xodr_parser.map)
+        world.SetMap(map_interface)
+
+        roads = [2, 6, 1]
+        driving_direction = XodrDrivingDirection.forward
+        map_interface.GenerateRoadCorridor(roads, driving_direction)
+        road_corr = map_interface.GetRoadCorridor(roads, driving_direction)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+        viewer.drawWorld(world)
+        viewer.drawRoadCorridor(road_corr)
+        # viewer.show(block=True)
+
+        # if this is not here, the second unit test is not executed (maybe parsing takes too long?)
+        time.sleep(1)
+
+        self.assertTrue(road_corr)
 
 if __name__ == '__main__':
     unittest.main()

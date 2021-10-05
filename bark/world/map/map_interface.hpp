@@ -39,6 +39,11 @@ using PathBoundaries = std::vector<std::pair<XodrLanePtr, XodrLanePtr>>;
 
 class MapInterface {
  public:
+  MapInterface()
+      : num_points_nearest_lane_(20),
+        max_simplification_dist_(0.4),
+        full_junction_area_(false) {}
+
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
 
   bool FindNearestXodrLanes(const Point2d& point, const unsigned& num_lanes,
@@ -103,7 +108,6 @@ class MapInterface {
     if (road_corridors_.count(rc_hash) == 0) return nullptr;
     return road_corridors_.at(rc_hash);
   }
-
   LaneId FindCurrentLane(const Point2d& pt) {
     return FindXodrLane(pt)->GetId();
   }
@@ -111,6 +115,9 @@ class MapInterface {
     XodrRoadId road_id = roadgraph_->GetRoadForLaneId(FindCurrentLane(pt));
     return road_id;
   }
+  bark::geometry::Polygon ComputeJunctionArea(uint32_t junction_id);
+  void SetFullJunctionArea(bool in) { full_junction_area_ = in; }
+  bool GetFullJunctionArea() { return full_junction_area_; }
 
  private:
   OpenDriveMapPtr open_drive_map_;
@@ -118,6 +125,11 @@ class MapInterface {
   rtree_lane rtree_lane_;
   std::pair<Point2d, Point2d> bounding_box_;
   std::map<std::size_t, RoadCorridorPtr> road_corridors_;
+
+  // Parameters
+  unsigned num_points_nearest_lane_;
+  double max_simplification_dist_;
+  bool full_junction_area_;
 
   static bool IsLaneType(rtree_lane_value const& m) {
     return (m.second->GetLaneType() == XodrLaneType::DRIVING);

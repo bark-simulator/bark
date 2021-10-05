@@ -36,7 +36,9 @@ class XodrLane {
         lane_type_(lane->lane_type_),
         driving_direction_(lane->driving_direction_),
         road_mark_(lane->road_mark_),
-        speed_(lane->speed_) {}
+        speed_(lane->speed_),
+        junction_id_(lane->junction_id_),
+        is_in_junction_(lane->is_in_junction_) {}
 
   ~XodrLane() {}
 
@@ -53,6 +55,8 @@ class XodrLane {
   void SetLanePosition(const XodrLanePosition& lane_position) {
     lane_position_ = lane_position;
   }
+  void SetJunctionId(const uint32_t id) { junction_id_ = id; }
+  void SetIsInJunction(const bool in) { is_in_junction_ = in; }
 
   bool append(Line previous_line, XodrLaneWidth lane_width_current,
               double s_inc);
@@ -69,13 +73,16 @@ class XodrLane {
   }
   XodrLaneId GetId() const { return lane_id_; }
   XodrLanePosition GetLanePosition() const { return lane_position_; }
+  uint32_t GetJunctionId() { return junction_id_; }
+  bool GetIsInJunction() { return is_in_junction_; }
 
  private:
   XodrLaneId lane_id_;
   XodrLanePosition lane_position_;
   XodrLaneLink link_;
   Line line_;
-
+  uint32_t junction_id_; //id of a junction this lane belongs to
+  bool is_in_junction_;
   XodrLaneType lane_type_;
   XodrDrivingDirection driving_direction_;
   XodrRoadMark road_mark_;

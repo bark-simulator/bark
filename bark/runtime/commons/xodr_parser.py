@@ -20,7 +20,6 @@ class XodrParser(object):
         self._s_inc_straight_line = kwargs.pop("s_inc_straight_line", None)
         self._s_inc_curves = kwargs.pop("s_inc_curves", 0.2)
         self._python_map = {}
-        
         self.parse_xml(self._xodr)
         self.map = OpenDriveMap()
         self.convert_to_map(self._python_map)
@@ -314,7 +313,8 @@ class XodrParser(object):
             off_x = header["offset"]["x"]
             off_y = header["offset"]["y"]
             off_hdg = header["offset"]["hdg"]
-            logger.info("Transforming PlanView with given offset {}".format(header["offset"]))
+            logger.info(
+                "Transforming PlanView with given offset {}".format(header["offset"]))
             new_plan_view.ApplyOffsetTransform(off_x, off_y, off_hdg)
 
         return new_plan_view
@@ -370,7 +370,7 @@ class XodrParser(object):
 
         return new_link
 
-    def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line, lane_offset):
+    def create_cpp_lane(self, new_lane_section, new_road, lane, s_end, reference_line, lane_offset, junction_id):
 
         try:
             new_lane = XodrLane(int(lane["id"]))
@@ -412,6 +412,12 @@ class XodrParser(object):
                 rm.width = float(lane['road_mark']['width'])
                 new_lane.road_mark = rm
 
+            if junction_id != -1: # magic number here, -1 indicated no junction
+              new_lane.is_in_junction = True
+              new_lane.junction_id = int(junction_id)
+            else:
+              new_lane.is_in_junction = False
+
             new_lane_section.AddLane(new_lane)
 
         except:
@@ -423,7 +429,8 @@ class XodrParser(object):
 
     def create_cpp_lane_section(self, new_road, road):
 
-        # In xodr the <lane> tag can have a <laneOffset> tag, that shifts all lanes by this 
+        junction_id = int(road["junction"])
+        # In xodr the <lane> tag can have a <laneOffset> tag, that shifts all lanes by this
         # constant offset. We here shift the inner lanes explicitly by the offset and the outer lanes
         #  (|id| > 1) are then shifted implicitly.
         lane_offset = road["lane_offset"]
@@ -443,11 +450,11 @@ class XodrParser(object):
                 if lane['id'] == 0:
                     # plan view
                     new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
-                        road["length"]), new_road.plan_view.GetReferenceLine(), no_lane_offset)
+                        road["length"]), new_road.plan_view.GetReferenceLine(), no_lane_offset, junction_id)
                 elif lane['id'] == -1 or lane['id'] == 1:
                     # use plan view for offset calculation
                     new_lane_section = self.create_cpp_lane(new_lane_section, new_road, lane, float(
-                        road["length"]), new_road.plan_view.GetReferenceLine(), lane_offset)
+                        road["length"]), new_road.plan_view.GetReferenceLine(), lane_offset, junction_id)
                 else:
                     # use previous line for offset calculation
                     #temp_lanes = new_lane_section.GetLanes()
@@ -456,12 +463,12 @@ class XodrParser(object):
                         previous_line = new_lane_section.GetLaneByPosition(
                             lane['id']-1).line
                         new_lane_section = self.create_cpp_lane(
-                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset)
+                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset, junction_id)
                     elif lane['id'] < 0:
                         previous_line = new_lane_section.GetLaneByPosition(
                             lane['id']+1).line
                         new_lane_section = self.create_cpp_lane(
-                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset)
+                            new_lane_section, new_road, lane, previous_line.Length(), previous_line, no_lane_offset, junction_id)
                     else:
                         logger.info("Calculating previous lane did not work.")
 
