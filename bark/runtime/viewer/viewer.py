@@ -129,7 +129,7 @@ class BaseViewer(Viewer):
     def get_aspect_ratio(self):
         pass
 
-    def _get_draw_eval_agent_ids(self, world, eval_agent_ids=None, ):
+    def _get_draw_eval_agent_ids(self, world, eval_agent_ids=None):
         if self.follow_agent_id is not None:
             if isinstance(self.follow_agent_id, bool) and \
                     eval_agent_ids is not None and \
@@ -378,9 +378,10 @@ class BaseViewer(Viewer):
                 self.drawRssSafetyResponses(world, eval_agent_ids[0])
 
         if self.draw_behavior_plan_eval_agent:
-          eval_agent = world.GetAgent(eval_agent_ids[0])
-          if eval_agent is not None:
-              self.drawBehaviorPlan(eval_agent)
+          for id in eval_agent_ids:
+            eval_agent = world.GetAgent(id)
+            if eval_agent is not None:
+                self.drawBehaviorPlan(eval_agent)
         
         if self._draw_ego_rss_safety_responses:
           self.DrawRSSEvaluatorState(world, eval_agent_ids[0])
