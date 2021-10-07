@@ -24,7 +24,8 @@ py_library(
 
 py_library(
   name = "benchmark_runner_mp",
-  srcs = ["benchmark_runner_mp.py"],
+  srcs = ["benchmark_runner_mp.py",
+          "benchmark_runner_mp_config.py"],
   data = ["//bark:generate_core"],
   deps = [
       "//bark/benchmark:benchmark_runner"

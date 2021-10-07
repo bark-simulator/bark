@@ -15,12 +15,15 @@ import inspect
 import os
 import sys
 
+
 from bark.core.commons import GLogInit
 logging.getLogger().setLevel(logging.INFO)
 
 from bark.runtime.scenario.scenario import Scenario
 from bark.benchmark.benchmark_result import BenchmarkResult, BenchmarkConfig
 from bark.benchmark.benchmark_runner import BenchmarkRunner 
+from bark.benchmark.benchmark_runner_mp_config import GetNumCpuPerActor 
+
 
 # implement a parallelized version of benchmark running based on ray
 
@@ -39,7 +42,7 @@ def deserialize_scenario(sc):
 
 
 # actor class running on a single core
-@ray.remote
+@ray.remote(num_cpus = GetNumCpuPerActor())
 class _BenchmarkRunnerActor(BenchmarkRunner):
     def __init__(self, serialized_evaluators, terminal_when, benchmark_configs, logger_name, log_eval_avg_every, checkpoint_dir, actor_id, glog_init_settings=None):
         evaluators = pickle.loads(serialized_evaluators) # unpickle
