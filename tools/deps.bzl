@@ -34,7 +34,7 @@ def bark_dependencies():
     _maybe(
     git_repository,
     name = "com_github_nelhage_rules_boost",
-    branch = "master",
+    commit = "fb9f3c9a6011f966200027843d894923ebc9cd0b",
     remote = "https://github.com/nelhage/rules_boost"
     )
 
