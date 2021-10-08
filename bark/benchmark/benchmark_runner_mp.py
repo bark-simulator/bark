@@ -14,7 +14,7 @@ import psutil
 import inspect
 import os
 import sys
-
+import math
 
 from bark.core.commons import GLogInit
 logging.getLogger().setLevel(logging.INFO)
@@ -67,6 +67,11 @@ class _BenchmarkRunnerActor(BenchmarkRunner):
     def get_checkpoint_file_name(self):
         return "benchmark_runner_actor{}.ckpnt".format(self.actor_id)
 
+    def run(self, viewer, maintain_history, checkpoint_every, process_init_func):
+      if process_init_func:
+        process_init_func()
+      return BenchmarkRunner.run(self, viewer, maintain_history, checkpoint_every)
+
 
 # runner spawning actors and distributing benchmark configs
 class BenchmarkRunnerMP(BenchmarkRunner):
@@ -118,7 +123,9 @@ class BenchmarkRunnerMP(BenchmarkRunner):
         ray.register_custom_serializer(
           Scenario, serializer=serialize_scenario,
           deserializer=deserialize_scenario)
-        self.benchmark_config_split = [self.configs_to_run[i::num_cpus] for i in range(0, num_cpus)]
+        num_actors = math.floor(num_cpus / GetNumCpuPerActor())
+        self.benchmark_config_split = [self.configs_to_run[i::num_actors] for i in range(0, num_actors)]
+
         if not actor_type:
           actor_type = _BenchmarkRunnerActor
         self.actors = [actor_type.remote(serialized_evaluators=serialized_evaluators,
@@ -128,10 +135,10 @@ class BenchmarkRunnerMP(BenchmarkRunner):
                                                     log_eval_avg_every=log_eval_avg_every,
                                                     checkpoint_dir=checkpoint_dir,
                                                     actor_id=i,
-                                                    glog_init_settings=glog_init_settings) for i in range(num_cpus) ]
+                                                    glog_init_settings=glog_init_settings) for i in range(num_actors) ]
 
-    def run(self, viewer = None, maintain_history = False, checkpoint_every=None):
-        results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every) for actor in self.actors])
+    def run(self, viewer = None, maintain_history = False, checkpoint_every=None, process_init_func=None):
+        results_tmp = ray.get([actor.run.remote(viewer, maintain_history, checkpoint_every, process_init_func) for actor in self.actors])
         intermediate_result = BenchmarkResult(file_name= \
                 os.path.abspath(os.path.join(self.checkpoint_dir, self.get_checkpoint_file_name())))
         for result_tmp in results_tmp:
