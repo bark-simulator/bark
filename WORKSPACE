@@ -30,7 +30,7 @@ python_configure(name = "local_config_python")
 # ------ Planner MIQP ------------------------------
 # git_repository(
 #     name = "planner_miqp",
-#     commit="cea69161e7763af59d76bad87d8b4d6e4d0d1a8c",
+#     commit="9a178a3a604bc2ba9d6287db39c85a15978a958a",
 #     remote = "https://github.com/bark-simulator/planner-miqp"
 # )
 # load("@planner_miqp//util:deps.bzl", "planner_miqp_dependencies")
