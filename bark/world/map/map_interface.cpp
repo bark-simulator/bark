@@ -11,6 +11,16 @@
 #include <memory>
 #include <random>
 
+// https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
+class CSVRange {
+  std::istream& stream;
+
+ public:
+  CSVRange(std::istream& str) : stream(str) {}
+  CSVIterator begin() const { return CSVIterator{stream}; }
+  CSVIterator end() const { return CSVIterator{}; }
+};
+
 namespace bark {
 namespace world {
 namespace map {
@@ -37,6 +47,26 @@ bool MapInterface::interface_from_opendrive(
   }
 
   bounding_box_ = open_drive_map_->BoundingBox();
+  return true;
+}
+
+bool MapInterface::interface_from_csvtable(const std::string csvfile) {
+  std::ifstream file(csvfile);
+  std::vector<double> cx, cy, lx, ly, rx, ry;
+  for(auto& row: CSVRange(file))
+  {
+    cx.push_back(row[1]);
+    cy.push_back(row[2]);
+    rx.push_back(row[3]);
+    ry.push_back(row[4]);
+    lx.push_back(row[5]);
+    ly.push_back(row[6]);
+  }
+
+  road_from_csvtable_ = true;
+  roadgraph_ = nullptr;
+  rtree_lane_.clear();
+  road_corridors_;
   return true;
 }
 
