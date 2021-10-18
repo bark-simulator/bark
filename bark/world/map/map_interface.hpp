@@ -28,6 +28,7 @@ using bark::world::opendrive::OpenDriveMapPtr;
 using bark::world::opendrive::XodrDrivingDirection;
 using bark::world::opendrive::XodrLaneId;
 using bark::world::opendrive::XodrLanePtr;
+using bark::world::map::Road;
 
 using rtree_lane_model = boost::geometry::model::segment<Point2d>;
 using rtree_lane_id = XodrLanePtr;

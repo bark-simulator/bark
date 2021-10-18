@@ -8,18 +8,9 @@
 
 #include "bark/world/map/map_interface.hpp"
 #include <math.h>
+#include <boost/tokenizer.hpp>
 #include <memory>
 #include <random>
-
-// https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
-class CSVRange {
-  std::istream& stream;
-
- public:
-  CSVRange(std::istream& str) : stream(str) {}
-  CSVIterator begin() const { return CSVIterator{stream}; }
-  CSVIterator end() const { return CSVIterator{}; }
-};
 
 namespace bark {
 namespace world {
@@ -51,22 +42,123 @@ bool MapInterface::interface_from_opendrive(
 }
 
 bool MapInterface::interface_from_csvtable(const std::string csvfile) {
+  // Read map data
   std::ifstream file(csvfile);
+  if (!file.is_open()) {
+    LOG(ERROR) << "Error reading mapfile " << csvfile;
+    return false;
+  }
   std::vector<double> cx, cy, lx, ly, rx, ry;
-  for(auto& row: CSVRange(file))
-  {
-    cx.push_back(row[1]);
-    cy.push_back(row[2]);
-    rx.push_back(row[3]);
-    ry.push_back(row[4]);
-    lx.push_back(row[5]);
-    ly.push_back(row[6]);
+  typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
+  std::string line;
+  std::vector<std::string> row;
+  bool toprow = true;
+  while (getline(file, line)) {
+    if (!toprow) {
+      Tokenizer tok(line);
+      row.assign(tok.begin(), tok.end());
+      cx.push_back(stod(row[1]));
+      cy.push_back(stod(row[2]));
+      rx.push_back(stod(row[3]));
+      ry.push_back(stod(row[4]));
+      lx.push_back(stod(row[5]));
+      ly.push_back(stod(row[6]));
+    } else {
+      toprow = false;
+    }
+  }
+  const int nr_points = cx.size();
+
+  // Generate centerline
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  Line centerline;
+  for (int idx = 0; idx < nr_points; ++idx) {
+    centerline.AddPoint(Point2d(cx[idx], cy[idx]));
   }
 
+  // Generate road polygon
+  using bark::geometry::Polygon;
+  Polygon lanepoly;
+  for (int idx = 0; idx < nr_points; ++idx) {
+    lanepoly.AddPoint(Point2d(lx[idx], ly[idx]));
+  }
+  for (int idx = nr_points; idx >= 0; --idx) {  // reverse
+    lanepoly.AddPoint(Point2d(rx[idx], ry[idx]));
+  }
+  // lanepoly.correct(); //@todo do we need this?
+
+  // Generate Lane
+  double speed = 30/3.6;
+  int laneid = 0;
+  XodrLanePtr xodrlane = std::make_shared<XodrLane>();
+  xodrlane->SetId(laneid);
+  xodrlane->SetLanePosition(-1); //@todo how to assign? Type: XodrLanePosition
+  //xodrlane->link_; //not needed
+  xodrlane->SetLine(centerline);
+  // xodrlane->junction_id_ //not needed
+  xodrlane->SetIsInJunction(false);
+  xodrlane->SetLaneType(XodrLaneType::DRIVING);
+  xodrlane->SetDrivingDirection(XodrDrivingDirection::FORWARD);
+  //xodrlane->road_mark_ // @todo do we need this to be assigned= Type: XodrRoadMark
+  xodrlane->SetSpeed(speed);
+  //xodrlane->lane_count//@todo how to assign?
+
+  LanePtr lane = std::make_shared<Lane>(xodrlane);
+  // lane->left_lane_ = nullptr; //@todo do we have to assign?
+  // lane->right_lane_ = nullptr; //@todo do we have to assign? 
+  // lane->next_lane_ = nullptr; //@todo do we have to assign? 
+  lane->center_line_ = centerline;
+  lane->polygon_ = lanepoly;
+  // Boundary left_boundary_; //@todo do we need this?
+  // Boundary right_boundary_; //@todo do we need this?
+
+  // Generate LaneCorridorPtr!
+  LaneCorridorPtr lanecorridor = std::make_shared<LaneCorridor>();
+  lanecorridor->lanes_[0] = lane;  // s_end: @todo what is the key? is zero ok??
+  lanecorridor->center_line_ = centerline;
+  lanecorridor->fine_center_line_ = centerline;
+  lanecorridor->merged_polygon_ = lanepoly;
+  // Line left_boundary_; //@todo do we need this?
+  // Line right_boundary_; //@todo do we need this?
+
+  // Generate PlanView
+  // @todo if we need the planview make a constructor from line!
+  PlanViewPtr xodrplanview = std::make_shared<PlanView>();
+
+  // Generate XodrLaneSection
+  double s = 0;
+  XodrLaneSectionPtr xodrlanesection = std::make_shared<XodrLaneSection>(s);
+  xodrlanesection->AddLane(lane);
+
+  // Generate XodrRoad
+  int roadid = 0;
+  XodrRoadPtr xodrroad = std::make_shared<XodrRoad>();
+  xodrroad->SetId(roadid);
+  xodrroad->SetName("dummy_name");
+  //xodrroad->SetLink(); //not needed
+  xodrroad->SetPlanView(xodrplanview);
+  xodrroad->AddLaneSection({xodrlanesection});
+
+  // Generate Road
+  RoadPtr road = std::make_shared<Road>(xodrroad);
+  road->next_road_ = nullptr;
+  road->lanes_[laneid] = lane;
+
+  // Generate road corridor
+  RoadCorridorPtr rc = std::make_shared<RoadCorridor>();
+  rc->roads_[roadid] = road;
+  rc->road_polygon_ = lanepoly;
+  rc->unique_lane_corridors_ = {lanecorridor};
+  rc->road_ids_ = {roadid};
+  rc->driving_direction_ = XodrDrivingDirection::FORWARD;
+  rc->lane_corridors_[laneid] = lanecorridor;
+
+  // Generate map interface
   road_from_csvtable_ = true;
-  roadgraph_ = nullptr;
-  rtree_lane_.clear();
-  road_corridors_;
+  roadgraph_ = nullptr; //@todo!!
+  rtree_lane_.clear(); //@todo!!
+  road_corridors_[0] = rc;
   return true;
 }
 
