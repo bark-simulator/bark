@@ -603,6 +603,19 @@ void Roadgraph::GeneratePolygonsForVertices() {
   }
 }
 
+bool Roadgraph::SetPolygonForVertexFromId(const XodrLaneId& lane_id,
+                                          PolygonPtr polygon) {
+  bool exists;
+  vertex_t v;
+  std::tie(v, exists) = GetVertexByLaneId(lane_id);
+  if (!exists) {
+    return false;
+  } else {
+    g_[v].polygon = polygon;
+    return true;
+  }
+}
+
 void Roadgraph::Generate(OpenDriveMapPtr map) {
   GenerateVertices(map);
 

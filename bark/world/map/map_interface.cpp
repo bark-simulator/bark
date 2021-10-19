@@ -89,25 +89,26 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   // lanepoly.correct(); //@todo do we need this?
 
   // Generate Lane
-  double speed = 30/3.6;
+  double speed = 30 / 3.6;
   int laneid = 0;
   XodrLanePtr xodrlane = std::make_shared<XodrLane>();
   xodrlane->SetId(laneid);
-  xodrlane->SetLanePosition(-1); //@todo how to assign? Type: XodrLanePosition
-  //xodrlane->link_; //not needed
+  xodrlane->SetLanePosition(-1);  //@todo how to assign? Type: XodrLanePosition
+  // xodrlane->link_; //not needed
   xodrlane->SetLine(centerline);
   // xodrlane->junction_id_ //not needed
   xodrlane->SetIsInJunction(false);
   xodrlane->SetLaneType(XodrLaneType::DRIVING);
   xodrlane->SetDrivingDirection(XodrDrivingDirection::FORWARD);
-  //xodrlane->road_mark_ // @todo do we need this to be assigned= Type: XodrRoadMark
+  // xodrlane->road_mark_ // @todo do we need this to be assigned= Type:
+  // XodrRoadMark
   xodrlane->SetSpeed(speed);
-  //xodrlane->lane_count//@todo how to assign?
+  // xodrlane->lane_count//@todo how to assign?
 
   LanePtr lane = std::make_shared<Lane>(xodrlane);
   // lane->left_lane_ = nullptr; //@todo do we have to assign?
-  // lane->right_lane_ = nullptr; //@todo do we have to assign? 
-  // lane->next_lane_ = nullptr; //@todo do we have to assign? 
+  // lane->right_lane_ = nullptr; //@todo do we have to assign?
+  // lane->next_lane_ = nullptr; //@todo do we have to assign?
   lane->center_line_ = centerline;
   lane->polygon_ = lanepoly;
   // Boundary left_boundary_; //@todo do we need this?
@@ -136,7 +137,7 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   XodrRoadPtr xodrroad = std::make_shared<XodrRoad>();
   xodrroad->SetId(roadid);
   xodrroad->SetName("dummy_name");
-  //xodrroad->SetLink(); //not needed
+  // xodrroad->SetLink(); //not needed
   xodrroad->SetPlanView(xodrplanview);
   xodrroad->AddLaneSection({xodrlanesection});
 
@@ -154,11 +155,41 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   rc->driving_direction_ = XodrDrivingDirection::FORWARD;
   rc->lane_corridors_[laneid] = lanecorridor;
 
+  // Generate roadgraph
+  RoadgraphPtr roadgraph(new Roadgraph());
+  roadgraph->AddLane(roadid, xodrlane);
+  bark::world::map::PolygonPtr lanepolyptr =
+      std::make_shared<Polygon>(lanepoly);
+  bool lanepoly_set = roadgraph->SetPolygonForVertexFromId(laneid, lanepolyptr);
+  if (!lanepoly_set) {
+    return false;
+  }
+
+  // Generate lane rtree
+  rtree_lane_.clear();
+  using LineSegment = boost::geometry::model::segment<Point2d>;
+  LineSegment lane_segment(
+      *centerline.begin(),
+      *(centerline.end() - 1));  //@todo ERROR! should be the boundary here, but
+                                 // which? I did not model the planview
+  rtree_lane_.insert(std::make_pair(lane_segment, lane));
+
+  // Generate bounding box
+  boost::geometry::model::box<Point2d> box;
+  boost::geometry::envelope(lanepoly.obj_, box);
+  boost::geometry::correct(box);
+  bounding_box_ = std::make_pair(
+      Point2d(boost::geometry::get<boost::geometry::min_corner, 0>(box),
+              bg::get<bg::min_corner, 1>(box)),
+      Point2d(boost::geometry::get<boost::geometry::max_corner, 0>(box),
+              bg::get<bg::max_corner, 1>(box)));
+
   // Generate map interface
   road_from_csvtable_ = true;
-  roadgraph_ = nullptr; //@todo!!
-  rtree_lane_.clear(); //@todo!!
+  roadgraph_ = roadgraph;
+  // rtree_lane_ assigned above
   road_corridors_[0] = rc;
+  // bounding_box_ assigned above
   return true;
 }
 
