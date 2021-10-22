@@ -42,6 +42,7 @@ void python_world(py::module m) {
       .def("Execute", &World::Execute)
       .def("Observe", &World::Observe)
       .def("AddAgent", &World::AddAgent)
+      .def("ClearAgents", &World::ClearAgents)
       .def("RemoveAgentById", &World::RemoveAgentById)
       .def("AddObject", &World::AddObject)
       .def("GetParams", &World::GetParams)
