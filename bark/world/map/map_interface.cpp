@@ -184,7 +184,12 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
       Point2d(boost::geometry::get<boost::geometry::max_corner, 0>(box),
               bg::get<bg::max_corner, 1>(box)));
 
+  // Generate (dummy) Open Drive Map
+  OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
+  open_drive_map->AddRoad(xodrroad);
+
   // Generate map interface
+  open_drive_map_ = open_drive_map;
   road_from_csvtable_ = true;
   roadgraph_ = roadgraph;
   // rtree_lane_ assigned above
