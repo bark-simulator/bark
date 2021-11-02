@@ -28,6 +28,7 @@ using bark::world::opendrive::OpenDriveMapPtr;
 using bark::world::opendrive::XodrDrivingDirection;
 using bark::world::opendrive::XodrLaneId;
 using bark::world::opendrive::XodrLanePtr;
+using bark::world::map::Road;
 
 using rtree_lane_model = boost::geometry::model::segment<Point2d>;
 using rtree_lane_id = XodrLanePtr;
@@ -42,9 +43,12 @@ class MapInterface {
   MapInterface()
       : num_points_nearest_lane_(20),
         max_simplification_dist_(0.4),
-        full_junction_area_(false) {}
+        full_junction_area_(false),
+        road_from_csvtable_(false) {}
 
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
+
+  bool interface_from_csvtable(const std::string csvfile);
 
   bool FindNearestXodrLanes(const Point2d& point, const unsigned& num_lanes,
                             std::vector<opendrive::XodrLanePtr>& lanes,
@@ -68,6 +72,10 @@ class MapInterface {
     open_drive_map_ = map;
     interface_from_opendrive(open_drive_map_);
     return true;
+  }
+
+  bool SetCsvMap(const std::string csvfile) {
+    return interface_from_csvtable(csvfile);
   }
 
   bool SetRoadgraph(RoadgraphPtr roadgraph) {
@@ -119,6 +127,9 @@ class MapInterface {
   void SetFullJunctionArea(bool in) { full_junction_area_ = in; }
   bool GetFullJunctionArea() { return full_junction_area_; }
 
+  void SetRoadFromCsvTable(bool in) { road_from_csvtable_ = in; }
+  bool GetRoadFromCsvTable() { return road_from_csvtable_; }
+
  private:
   OpenDriveMapPtr open_drive_map_;
   RoadgraphPtr roadgraph_;
@@ -130,6 +141,7 @@ class MapInterface {
   unsigned num_points_nearest_lane_;
   double max_simplification_dist_;
   bool full_junction_area_;
+  bool road_from_csvtable_;
 
   static bool IsLaneType(rtree_lane_value const& m) {
     return (m.second->GetLaneType() == XodrLaneType::DRIVING);

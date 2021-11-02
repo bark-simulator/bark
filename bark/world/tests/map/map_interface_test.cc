@@ -51,3 +51,17 @@ TEST(point_in_lane, map_interface) {
 
   BARK_EXPECT_TRUE(success);
 }
+
+TEST(csv_map, map_interface) {
+  using bark::geometry::Point2d;
+  using bark::world::map::MapInterface;
+  using bark::world::opendrive::OpenDriveMapPtr;
+  using bark::world::opendrive::XodrLanePtr;
+
+  std::string csvfile = "bark/world/tests/map/data/base_map_lanes_guerickestr_assymetric_48.csv";
+
+  bark::world::map::MapInterface map_interface;
+  bool success = map_interface.interface_from_csvtable(csvfile);
+
+  BARK_EXPECT_TRUE(success);
+}

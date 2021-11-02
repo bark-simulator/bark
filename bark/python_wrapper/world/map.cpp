@@ -30,6 +30,7 @@ void python_map(py::module m) {
                     &MapInterface::GetFullJunctionArea,
                     &MapInterface::SetFullJunctionArea)
       .def("SetOpenDriveMap", &MapInterface::SetOpenDriveMap)
+      .def("SetCsvMap", &MapInterface::SetCsvMap)
       .def("find_nearest_lanes",
            [](const MapInterface& m, const Point2d& point,
               const unsigned& num_lanes) {

@@ -62,7 +62,8 @@ cc_test(
         "//bark/world/evaluation/rss:_rss": ["-D RSS"],
         "//conditions:default": [],
     }),
-    data = ["//bark/runtime/tests:xodr_data"],
+    data = ["//bark/runtime/tests:xodr_data",
+            "//bark/world/tests/map:csv_map_data"],
     deps = [
         "//bark/geometry",
         "//bark/world:world",
@@ -107,7 +108,8 @@ cc_test(
 py_test(
   name = "py_world_tests",
   srcs = ["py_world_tests.py"],
-  data = ["//bark:generate_core"],
+  data = ["//bark:generate_core",
+          "//bark/world/tests/map:csv_map_data"],
   imports = ['../../../python/'],
   deps = ["//bark/runtime/commons:parameters",
           "//bark/runtime:runtime"],

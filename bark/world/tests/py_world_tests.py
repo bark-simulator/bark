@@ -23,6 +23,13 @@ from bark.core.geometry import Point2d, Polygon2d
 from bark.core.world.evaluation import EvaluatorDrivableArea
 from bark.core.world.opendrive import OpenDriveMap, XodrRoad, PlanView, \
     MakeXodrMapOneRoadTwoLanes, XodrLaneSection, XodrLane
+from bark.core.commons import SetVerboseLevel
+import logging
+
+
+
+# SetVerboseLevel(10)
+logging.getLogger().setLevel(logging.INFO)
 
 
 class WorldTests(unittest.TestCase):
@@ -120,7 +127,8 @@ class WorldTests(unittest.TestCase):
                           use_world_bounds=True)
 
         # Draw map
-        viewer.drawGoalDefinition(goal_polygon, color=(1,0,0), alpha=0.5, facecolor= (1,0,0))
+        viewer.drawGoalDefinition(goal_polygon, color=(
+            1, 0, 0), alpha=0.5, facecolor=(1, 0, 0))
         viewer.drawWorld(world)
         viewer.drawRoadCorridor(agent.road_corridor)
         viewer.show(block=False)
@@ -171,6 +179,47 @@ class WorldTests(unittest.TestCase):
         sim_real_time_factor = params["simulation"]["real_time_factor",
                                                     "execution in real-time or faster", 100]
 
+        # Draw map
+        for _ in range(0, 10):
+            viewer.clear()
+            world.Step(sim_step_time)
+            viewer.drawWorld(world)
+            viewer.show(block=False)
+            time.sleep(sim_step_time/sim_real_time_factor)
+
+    def test_csv_road(self):
+        # World Definition
+        params = ParameterServer()
+        world = World(params)
+
+        # Model Definitions
+        behavior_model = BehaviorMobilRuleBased(params)
+        execution_model = ExecutionModelInterpolate(params)
+        dynamic_model = SingleTrackModel(params)
+
+        # Map Definition
+        csvfile = "bark/world/tests/map/data/base_map_lanes_guerickestr_assymetric_48.csv"
+        map_interface = MapInterface()
+        map_interface.SetCsvMap(csvfile)
+        world.SetMap(map_interface)
+
+        agent_2d_shape = CarRectangle()
+        init_state = np.array([0.0, 692967.229902, 5339048.66012, -0.5010, 5.0])
+        agent_params = params.AddChild("agent1")
+        goal_polygon = Polygon2d(
+            [693115.891117, 5339064.33754, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
+
+        agent = Agent(init_state, behavior_model, dynamic_model, execution_model,
+                      agent_2d_shape, agent_params, GoalDefinitionPolygon(goal_polygon), map_interface)
+        world.AddAgent(agent)
+
+        viewer = MPViewer(params=params, use_world_bounds=True)
+
+        # World Simulation
+        sim_step_time = params["simulation"]["step_time",
+                                             "Step-time in simulation", 0.05]
+        sim_real_time_factor = params["simulation"]["real_time_factor",
+                                                    "execution in real-time or faster", 100]
         # Draw map
         for _ in range(0, 10):
             viewer.clear()

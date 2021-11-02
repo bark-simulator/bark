@@ -55,7 +55,7 @@ enum XodrLaneEdgeType {
 struct XodrLaneEdge {
   XodrLaneEdgeType edge_type;
   double weight;  //! @todo tobias: for shortest path calculation: a very basic
-                 //! implementation!
+                  //! implementation!
   XodrLaneEdgeType GetEdgeType() const { return edge_type; }
   XodrLaneEdge() : edge_type(LANE_SUCCESSOR_EDGE), weight(1) {}
   explicit XodrLaneEdge(XodrLaneEdgeType edge_type_in)
@@ -252,6 +252,8 @@ class Roadgraph {
   std::pair<XodrLaneId, bool> GetRightBoundary(
       const XodrLaneId& lane_id, const XodrDrivingDirection& driving_direction);
   PolygonPtr ComputeJunctionArea(uint32_t junction_id);
+
+  bool SetPolygonForVertexFromId(const XodrLaneId& lane_id, PolygonPtr polygon);
 
  private:
   XodrLaneGraph g_;

@@ -72,7 +72,8 @@ Agent::Agent(const Agent& other_agent)
       first_valid_timestamp_(other_agent.first_valid_timestamp_),
       goal_definition_(other_agent.goal_definition_),
       road_corridor_road_ids_(other_agent.road_corridor_road_ids_),
-      road_corridor_driving_direction_(other_agent.road_corridor_driving_direction_),
+      road_corridor_driving_direction_(
+          other_agent.road_corridor_driving_direction_),
       sensed_world_(other_agent.sensed_world_) {}
 
 void Agent::PlanBehavior(const double& min_planning_dt,
@@ -97,24 +98,34 @@ void Agent::UpdateStateAction() {
 }
 
 bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
-   if (goal_definition_ && road_corridor_road_ids_.empty()) {
-    road_corridor_ = map_interface->GenerateRoadCorridor(
-    GetCurrentPosition(),
-    goal_definition_->GetShape());
-    road_corridor_road_ids_ = road_corridor_->GetRoadIds();
-    road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
-  } else if(!road_corridor_road_ids_.empty()) {
-    VLOG(6) << "Road corridor from ids" << road_corridor_road_ids_;
-    map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
-                                  road_corridor_driving_direction_);
-    road_corridor_ = map_interface->GetRoadCorridor(road_corridor_road_ids_, 
-                                              road_corridor_driving_direction_);
-  } else {
-    LOG(INFO) << "Agent has map interface but no information to generate road corridor.";
-    return false;
+  if (!map_interface->GetRoadFromCsvTable()) {  // default xodr
+    LOG(INFO) << "Map Interface from XODR";
+    if (goal_definition_ && road_corridor_road_ids_.empty()) {
+      road_corridor_ = map_interface->GenerateRoadCorridor(
+          GetCurrentPosition(), goal_definition_->GetShape());
+      road_corridor_road_ids_ = road_corridor_->GetRoadIds();
+      road_corridor_driving_direction_ = road_corridor_->GetDrivingDirection();
+    } else if (!road_corridor_road_ids_.empty()) {
+      VLOG(6) << "Road corridor from ids" << road_corridor_road_ids_;
+      map_interface->GenerateRoadCorridor(road_corridor_road_ids_,
+                                          road_corridor_driving_direction_);
+      road_corridor_ = map_interface->GetRoadCorridor(
+          road_corridor_road_ids_, road_corridor_driving_direction_);
+    } else {
+      LOG(INFO) << "Agent has map interface but no information to generate "
+                   "road corridor.";
+      return false;
+    }
+  } else {  // road from csv
+    LOG(INFO) << "Map Interface from CSV";
+    road_corridor_road_ids_ = {static_cast<world::map::XodrRoadId>(0)};
+    road_corridor_driving_direction_ = bark::world::opendrive::
+      XodrDrivingDirection::FORWARD;
+    road_corridor_ = map_interface->GetRoadCorridor(
+      road_corridor_road_ids_, road_corridor_driving_direction_);
   }
 
-  if(!road_corridor_) {
+  if (!road_corridor_) {
     LOG(INFO) << "No corridor for agent found.";
     return false;
   }
@@ -181,7 +192,7 @@ std::shared_ptr<Object> Agent::Clone() const {
   if (execution_model_) {
     new_agent->execution_model_ = execution_model_->Clone();
   }
-  if(goal_definition_) {
+  if (goal_definition_) {
     new_agent->goal_definition_ = goal_definition_->Clone();
   }
   return std::dynamic_pointer_cast<Object>(new_agent);
