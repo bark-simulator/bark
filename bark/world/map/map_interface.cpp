@@ -83,7 +83,7 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   for (int idx = 0; idx < nr_points; ++idx) {
     lanepoly.AddPoint(Point2d(lx[idx], ly[idx]));
   }
-  for (int idx = nr_points; idx >= 0; --idx) {  // reverse
+  for (int idx = nr_points-1; idx >= 0; --idx) {  // reverse
     lanepoly.AddPoint(Point2d(rx[idx], ry[idx]));
   }
   // lanepoly.correct(); //@todo do we need this?
