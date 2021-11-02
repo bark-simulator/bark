@@ -127,8 +127,8 @@ class MapInterface {
   void SetFullJunctionArea(bool in) { full_junction_area_ = in; }
   bool GetFullJunctionArea() { return full_junction_area_; }
 
-  void SetRoadFromCsvtable(bool in) { road_from_csvtable_ = in; }
-  bool GetRoadFromsvtable() { return road_from_csvtable_; }
+  void SetRoadFromCsvTable(bool in) { road_from_csvtable_ = in; }
+  bool GetRoadFromCsvTable() { return road_from_csvtable_; }
 
  private:
   OpenDriveMapPtr open_drive_map_;

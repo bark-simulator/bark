@@ -193,12 +193,12 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   road_from_csvtable_ = true;
   roadgraph_ = roadgraph;
   // rtree_lane_ assigned above
-  
+
   // TODO THIS IS A HACK!!!
-  std::vector<XodrRoadId> road_ids = {static_cast<XodrRoadId>(0)};
+  std::vector<XodrRoadId> road_ids = {static_cast<XodrRoadId>(roadid)};
   XodrDrivingDirection driving_direction = XodrDrivingDirection::FORWARD;
   std::size_t road_corridor_hash = RoadCorridor::GetHash(driving_direction, road_ids);
-  
+
   road_corridors_[road_corridor_hash] = rc;
   // bounding_box_ assigned above
   return true;
