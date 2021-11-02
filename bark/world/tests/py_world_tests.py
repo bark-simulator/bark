@@ -221,11 +221,11 @@ class WorldTests(unittest.TestCase):
         sim_real_time_factor = params["simulation"]["real_time_factor",
                                                     "execution in real-time or faster", 100]
         # Draw map
-        for _ in range(0, 2):
+        for _ in range(0, 10):
             viewer.clear()
             world.Step(sim_step_time)
             viewer.drawWorld(world)
-            viewer.show(block=True)
+            viewer.show(block=False)
             time.sleep(sim_step_time/sim_real_time_factor)
 
 
