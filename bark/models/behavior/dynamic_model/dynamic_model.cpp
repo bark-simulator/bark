@@ -29,7 +29,11 @@ BehaviorDynamicModel::BehaviorDynamicModel(const commons::ParamsPtr& params)
     : BehaviorModel(params),
       integration_time_delta_(
           params->GetReal("BehaviorDynamicModel::IntegrationTimeDelta",
-                          "delta t for integration", 0.05)) {}
+                          "delta t for integration", 0.05)) {
+      Input inp(2);
+      inp << 0., 0.;
+      action_ = inp;
+  }
 
 dynamic::Trajectory BehaviorDynamicModel::Plan(
     double min_planning_time, const world::ObservedWorld& observed_world) {
