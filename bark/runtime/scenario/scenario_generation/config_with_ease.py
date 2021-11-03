@@ -39,7 +39,7 @@ class LaneCorridorConfig:
     # set these params
     self._road_ids = kwargs.pop("road_ids", None)
     self._lane_corridor_id = kwargs.pop("lane_corridor_id", None)
-    self._s_min = kwargs.pop("s_min", 0.) 
+    self._s_min = kwargs.pop("s_min", 0.)
     self._s_max = kwargs.pop("s_max", 60.)
     self._ds_min = kwargs.pop("ds_min", 10.)
     self._ds_max = kwargs.pop("ds_max", 20.)
@@ -69,13 +69,13 @@ class LaneCorridorConfig:
     self._road_ids = self._road_corridor.road_ids
     self._lane_corridor = self._road_corridor.GetCurrentLaneCorridor(
       start_point)
-    
+
   def state(self, world):
     """Returns a state of the agent
-    
+
     Arguments:
         world {bark.core.world}
-    
+
     Returns:
         np.array -- time, x, y, theta, velocity
     """
@@ -87,11 +87,11 @@ class LaneCorridorConfig:
 
   def ds(self):
     """Increment for placing the agents
-    
+
     Keyword Arguments:
         s_min {double} -- Min. lon. distance (default: {5.})
         s_max {double} -- Max. lon. distance (default: {10.})
-    
+
     Returns:
         double -- delta s-value
     """
@@ -99,14 +99,14 @@ class LaneCorridorConfig:
 
   def position(self, world):
     """Using the defined LaneCorridor it finds positions for the agents
-    
+
     Arguments:
         world {bark.core.world} -- BARK world
-    
+
     Keyword Arguments:
         min_s {double} -- Min. lon. value (default: {0.})
         max_s {double} -- Max. lon. value (default: {100.})
-    
+
     Returns:
         tuple -- (x, y, theta)
     """
@@ -185,10 +185,10 @@ class LaneCorridorConfig:
 
   def controlled_goal(self, world):
     """Goal for the controlled agent
-    
+
     Arguments:
         world {bark.core.world} -- BARK world
-    
+
     Returns:
         GoalDefinition -- Goal for the controlled agent
     """
@@ -196,7 +196,7 @@ class LaneCorridorConfig:
 
   def controlled_behavior_model(self, world):
     """Behavior model for controlled agent
-    
+
     Returns:
         BehaviorModel -- BARK behavior model
     """
@@ -219,10 +219,11 @@ class ConfigWithEase(ScenarioGeneration):
                params=None,
                random_seed=None,
                lane_corridor_configs=None,
-               observer_model=None):
+               observer_model=None,
+               map_interface=None):
     self._map_file_name = map_file_name
     self._lane_corridor_configs = lane_corridor_configs or []
-    self._map_interface = None
+    self._map_interface = map_interface or None
     self._observer_model = observer_model
     super(ConfigWithEase, self).__init__(params, num_scenarios)
     self.initialize_params(params)
@@ -238,7 +239,7 @@ class ConfigWithEase(ScenarioGeneration):
 
   def create_single_scenario(self):
     """Creates one scenario using the defined LaneCorridorConfig
-    
+
     Returns:
         Scenario -- Returns a BARK scenario
     """
@@ -272,10 +273,10 @@ class ConfigWithEase(ScenarioGeneration):
           agent_params = self._params.AddChild("agent")
           agent_goal = lc_config.goal(world)
           new_agent = Agent(
-            agent_state, 
-            agent_behavior, 
+            agent_state,
+            agent_behavior,
             agent_dyn,
-            agent_exec, 
+            agent_exec,
             agent_polygon,
             agent_params,
             agent_goal,
