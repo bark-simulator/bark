@@ -1,6 +1,8 @@
 name: CI_RSS
 
-on: [push]
+on:
+  schedule:
+  - cron: "0 2 * * 1-5"
 
 jobs:
   build:

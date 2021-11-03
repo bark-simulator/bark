@@ -99,7 +99,7 @@ void Agent::UpdateStateAction() {
 
 bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
   if (!map_interface->GetRoadFromCsvTable()) {  // default xodr
-    LOG(INFO) << "Map Interface from XODR";
+    VLOG(6) << "Map Interface from XODR";
     if (goal_definition_ && road_corridor_road_ids_.empty()) {
       road_corridor_ = map_interface->GenerateRoadCorridor(
           GetCurrentPosition(), goal_definition_->GetShape());
@@ -117,7 +117,7 @@ bool Agent::GenerateRoadCorridor(const MapInterfacePtr& map_interface) {
       return false;
     }
   } else {  // road from csv
-    LOG(INFO) << "Map Interface from CSV";
+    VLOG(6) << "Map Interface from CSV";
     road_corridor_road_ids_ = {static_cast<world::map::XodrRoadId>(0)};
     road_corridor_driving_direction_ = bark::world::opendrive::
       XodrDrivingDirection::FORWARD;
