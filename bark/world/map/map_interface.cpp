@@ -133,7 +133,7 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   xodrlanesection->AddLane(lane);
 
   // Generate XodrRoad
-  int roadid = 0;
+  const int roadid = 0;
   XodrRoadPtr xodrroad = std::make_shared<XodrRoad>();
   xodrroad->SetId(roadid);
   xodrroad->SetName("dummy_name");
