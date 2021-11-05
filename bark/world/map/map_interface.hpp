@@ -48,7 +48,8 @@ class MapInterface {
 
   bool interface_from_opendrive(const OpenDriveMapPtr& open_drive_map);
 
-  bool interface_from_csvtable(const std::string csvfile);
+  bool interface_from_csvtable(
+    const std::string csvfile, double x_offset = 0., double y_offset = 0.);
 
   bool FindNearestXodrLanes(const Point2d& point, const unsigned& num_lanes,
                             std::vector<opendrive::XodrLanePtr>& lanes,
@@ -74,8 +75,9 @@ class MapInterface {
     return true;
   }
 
-  bool SetCsvMap(const std::string csvfile) {
-    return interface_from_csvtable(csvfile);
+  bool SetCsvMap(
+    const std::string csvfile, double x_offset = 0., double y_offset = 0.) {
+    return interface_from_csvtable(csvfile, x_offset, y_offset);
   }
 
   bool SetRoadgraph(RoadgraphPtr roadgraph) {
