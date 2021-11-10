@@ -41,7 +41,8 @@ bool MapInterface::interface_from_opendrive(
   return true;
 }
 
-bool MapInterface::interface_from_csvtable(const std::string csvfile) {
+bool MapInterface::interface_from_csvtable(
+  const std::string csvfile, double x_offset, double y_offset) {
   // Read map data
   std::ifstream file(csvfile);
   if (!file.is_open()) {
@@ -53,16 +54,17 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   std::string line;
   std::vector<std::string> row;
   bool toprow = true;
+
   while (getline(file, line)) {
     if (!toprow) {
       Tokenizer tok(line);
       row.assign(tok.begin(), tok.end());
-      cx.push_back(stod(row[1]));
-      cy.push_back(stod(row[2]));
-      rx.push_back(stod(row[3]));
-      ry.push_back(stod(row[4]));
-      lx.push_back(stod(row[5]));
-      ly.push_back(stod(row[6]));
+      cx.push_back(stod(row[1]) - x_offset);
+      cy.push_back(stod(row[2]) - y_offset);
+      rx.push_back(stod(row[3]) - x_offset);
+      ry.push_back(stod(row[4]) - y_offset);
+      lx.push_back(stod(row[5]) - x_offset);
+      ly.push_back(stod(row[6]) - y_offset);
     } else {
       toprow = false;
     }
@@ -133,7 +135,7 @@ bool MapInterface::interface_from_csvtable(const std::string csvfile) {
   xodrlanesection->AddLane(lane);
 
   // Generate XodrRoad
-  int roadid = 0;
+  const int roadid = 0;
   XodrRoadPtr xodrroad = std::make_shared<XodrRoad>();
   xodrroad->SetId(roadid);
   xodrroad->SetName("dummy_name");
