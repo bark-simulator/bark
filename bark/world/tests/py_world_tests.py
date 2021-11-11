@@ -200,7 +200,7 @@ class WorldTests(unittest.TestCase):
         # Map Definition
         csvfile = "bark/world/tests/map/data/base_map_lanes_guerickestr_assymetric_48.csv"
         map_interface = MapInterface()
-        map_interface.SetCsvMap(csvfile)
+        map_interface.SetCsvMap(csvfile, 0., 0.)
         world.SetMap(map_interface)
 
         agent_2d_shape = CarRectangle()
