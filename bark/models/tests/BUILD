@@ -1,7 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_test(
-    name = "dynamic_tests",
+    name = "dynamic_test",
     srcs = [
         "dynamic_test.cc",
     ],

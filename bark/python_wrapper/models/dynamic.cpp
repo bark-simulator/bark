@@ -44,6 +44,27 @@ void python_dynamic(py::module m) {
                 PythonToParams(t[0].cast<py::tuple>()));
           }));
 
+  py::class_<SingleTrackSteeringRateModel, DynamicModel, std::shared_ptr<SingleTrackSteeringRateModel>>(
+      m, "SingleTrackSteeringRateModel")
+      .def("GetWheelBase", &SingleTrackSteeringRateModel::GetWheelBase)
+      .def(py::init<ParamsPtr>())
+      .def("__repr__",
+           [](const SingleTrackSteeringRateModel& m) {
+             return "bark.dynamic.SingleTrackSteeringRateModel";
+           })
+      .def(py::pickle(
+          [](const SingleTrackSteeringRateModel& m) {
+            return py::make_tuple(ParamsToPython(m.GetParams()));
+          },
+          [](py::tuple t) {
+            if (t.size() != 1)
+              throw std::runtime_error("Invalid single track model state!");
+            // param pointer must be set via python
+            /* Create a new C++ instance */
+            return new SingleTrackSteeringRateModel(
+                PythonToParams(t[0].cast<py::tuple>()));
+          }));
+
   py::class_<TripleIntegratorModel, DynamicModel,
              std::shared_ptr<TripleIntegratorModel>>(m, "TripleIntegratorModel")
       .def(py::init<ParamsPtr>())

@@ -15,6 +15,7 @@
 #include "bark/geometry/polygon.hpp"
 #include "bark/models/dynamic/integration.hpp"
 #include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/dynamic/single_track_steering_rate.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
 using namespace std;
@@ -39,6 +40,26 @@ TEST(single_track_model, dynamic_test) {
     x = euler_int(*m, x, u, dt);
     cout << x << endl;
   }
+}
+
+TEST(single_track_steering_rate_model, dynamic_test) {
+  State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE + 1));
+  x << 0, 0, 0, 0, 0, 5;
+
+  Input u(2);
+  u << 0.02, 0.1;
+
+  DynamicModel* m;
+  auto params = std::make_shared<SetterParams>();
+  SingleTrackSteeringRateModel single_track_model(params);
+  m = &single_track_model;
+
+  double dt = 0.1;
+  for (int i = 0; i < 10; i++) {
+    x = euler_int(*m, x, u, dt);
+    cout << x << endl;
+  }
+  delete m;
 }
 
 TEST(valid_state_test, dynamic_test) {
