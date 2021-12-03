@@ -8,7 +8,6 @@
 
 import unittest
 import os
-import ray
 
 try:
     debug = True
@@ -21,8 +20,7 @@ import matplotlib.pyplot as plt
 
 from benchmark_database.load.benchmark_database import BenchmarkDatabase
 from benchmark_database.serialization.database_serializer import DatabaseSerializer
-from bark.benchmark.benchmark_result import BenchmarkConfig, BenchmarkResult
-from bark.benchmark.benchmark_runner import BenchmarkRunner
+from bark.benchmark.benchmark_result import BenchmarkResult
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP
 from bark.benchmark.benchmark_analyzer import BenchmarkAnalyzer
 

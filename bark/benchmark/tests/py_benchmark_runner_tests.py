@@ -8,8 +8,6 @@
 
 import unittest
 import os
-import time
-import ray
 
 try:
     import debug_settings
@@ -18,15 +16,13 @@ except:
 
 from load.benchmark_database import BenchmarkDatabase
 from serialization.database_serializer import DatabaseSerializer
-from bark.benchmark.benchmark_result import BenchmarkResult
-from bark.benchmark.benchmark_runner import BenchmarkRunner, BenchmarkConfig, EvaluationConfig
+from bark.benchmark.benchmark_runner import BenchmarkRunner, EvaluationConfig
 from bark.benchmark.benchmark_runner_mp import BenchmarkRunnerMP, _BenchmarkRunnerActor, \
   deserialize_benchmark_config, serialize_benchmark_config
 
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from bark.core.world.evaluation import *
-from bark.core.world.evaluation.ltl import ConstantLabelFunction
 from bark.runtime.commons.parameters import ParameterServer
 from bark.core.models.behavior import BehaviorIDMClassic, BehaviorConstantAcceleration
 from bark.world.tests.python_behavior_model import PythonDistanceBehavior

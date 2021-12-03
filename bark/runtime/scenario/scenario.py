@@ -6,7 +6,6 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-from bark.core.world.agent import Agent
 from bark.core.world import World
 from bark.core.world.map import MapInterface
 from bark.runtime.commons.parameters import ParameterServer
@@ -81,7 +80,7 @@ class Scenario:
     def copy(self):
         observer_model = None
         if self._observer_model is not None:
-          observer_model = copy.deepcopy(self._observer_model)
+            observer_model = copy.deepcopy(self._observer_model)
         return Scenario(agent_list=copy.deepcopy(self._agent_list),
                         eval_agent_ids=self._eval_agent_ids.copy(),
                         map_file_name=self._map_file_name,
@@ -93,9 +92,9 @@ class Scenario:
         param_server = ParameterServer(json=self._json_params)
         world = World(param_server)
         if self._observer_model is not None:
-          world.observer_model = self._observer_model
-          world.observer_model.observe_only_for_agents = \
-                  self.eval_agent_ids
+            world.observer_model = self._observer_model
+            world.observer_model.observe_only_for_agents = \
+                self.eval_agent_ids
         if self._map_interface is None:
             self.CreateMapInterface(self.full_map_file_name)
             world.SetMap(self._map_interface)

@@ -28,7 +28,7 @@ using world::ObservedWorld;
 // becomes true in forward search and thus suddenly unexpectingly shows up)
 class BehaviorNotStarted : public BehaviorModel {
  public:
-  BehaviorNotStarted(const commons::ParamsPtr& params)
+  explicit BehaviorNotStarted(const commons::ParamsPtr& params)
       : BehaviorModel(params, BehaviorStatus::NOT_STARTED_YET) {
     SetLastAction(LonLatAction{0.0, 0.0});
   }

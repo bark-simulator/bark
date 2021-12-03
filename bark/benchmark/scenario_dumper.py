@@ -20,7 +20,6 @@ from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.viewer import MPViewer
 from bark.runtime.commons.parameters import ParameterServer
 from lxml import etree
-from pathlib import Path
 from bark.core.models.dynamic import StateDefinition
 
 class ScenarioDumper(BenchmarkAnalyzer):

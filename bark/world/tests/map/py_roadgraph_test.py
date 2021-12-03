@@ -9,7 +9,6 @@
 import unittest
 from bark.core.world.map import Roadgraph
 from bark.core.world.opendrive import XodrLane
-from bark.runtime.commons.xodr_parser import XodrParser
 
 
 class RoadgraphTests(unittest.TestCase):

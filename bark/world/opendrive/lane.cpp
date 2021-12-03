@@ -22,7 +22,9 @@ XodrLane::XodrLane()
       lane_type_(XodrLaneType::NONE),
       driving_direction_(XodrDrivingDirection::FORWARD),
       road_mark_(),
-      speed_() {}
+      speed_(),
+      junction_id_(),
+      is_in_junction_(false) {}
 
 XodrLane::XodrLane(const XodrLanePosition& lane_position)
     : lane_id_(++lane_count),
@@ -32,7 +34,9 @@ XodrLane::XodrLane(const XodrLanePosition& lane_position)
       lane_type_(XodrLaneType::NONE),
       driving_direction_(XodrDrivingDirection::FORWARD),
       road_mark_(),
-      speed_() {}
+      speed_(),
+      junction_id_(),
+      is_in_junction_(false) {}
 
 bool XodrLane::append(geometry::Line previous_line,
                       XodrLaneWidth lane_width_current, double s_inc) {

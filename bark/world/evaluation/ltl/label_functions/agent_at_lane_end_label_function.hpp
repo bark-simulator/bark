@@ -17,8 +17,8 @@ namespace evaluation {
 
 class AgentAtLaneEndLabelFunction : public MultiAgentLabelFunction {
  public:
-  AgentAtLaneEndLabelFunction(const std::string& string,
-                              const double distance_thres = 50.0);
+  explicit AgentAtLaneEndLabelFunction(const std::string& string,
+                                       const double distance_thres = 50.0);
   bool EvaluateAgent(const world::ObservedWorld& observed_world,
                      const AgentPtr& other_agent) const override;
   double GetDistanceThres() const { return distance_thres_; }

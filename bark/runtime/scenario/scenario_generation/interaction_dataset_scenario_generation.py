@@ -19,7 +19,6 @@ from bark.core.models.dynamic import *
 from bark.core.models.execution import *
 from bark.runtime.scenario.interaction_dataset_processing.scenario_track_info import ScenarioTrackInfo
 from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
-import os.path
 
 
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):

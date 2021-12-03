@@ -49,12 +49,9 @@ inline LaneCorridorPtr ChooseLaneCorridorBasedOnVehicleState(
   double deviation_angle = 0.2) {
     // ego info
     auto ego_agent = observed_world.GetEgoAgent();
-    auto ego_pose = ego_agent->GetCurrentPosition();
     auto ego_state = ego_agent->GetCurrentState();
-    auto theta = ego_state(StateDefinition::THETA_POSITION); 
     Polygon vehicle_shape = ego_agent->GetPolygonFromState(ego_state);
     auto curr_lane_corr = observed_world.GetLaneCorridor();
-    auto center_line = curr_lane_corr->GetCenterLine();
     FrenetState frenet_state(ego_state, target_corr->GetCenterLine());
 
     // if any point of the vehicle shape is within the target corr

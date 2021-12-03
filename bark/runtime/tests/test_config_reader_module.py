@@ -9,7 +9,6 @@
 from bark.runtime.scenario.scenario_generation.config_readers.config_readers_interfaces import ConfigReaderBehaviorModels
 
 from bark.core.models.behavior import *
-from bark.runtime.commons.parameters import ParameterServer
 
 class TestReaderFixedBehaviorType(ConfigReaderBehaviorModels):
   def __init__(self, *args, **kwargs):

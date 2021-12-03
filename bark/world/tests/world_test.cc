@@ -18,9 +18,9 @@
 #ifdef RSS
 #include "bark/world/evaluation/rss/evaluator_rss.hpp"
 #endif
-#include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_dynamic_safe_dist.hpp"
 #include "bark/world/evaluation/safe_distances/evaluator_safe_dist_drivable_area.hpp"
+#include "bark/world/evaluation/safe_distances/evaluator_static_safe_dist.hpp"
 
 #include "bark/world/goal_definition/goal_definition_polygon.hpp"
 #include "bark/world/map/map_interface.hpp"
@@ -45,8 +45,8 @@ using namespace bark::world::objects;
 using namespace bark::world;
 using namespace bark::world::evaluation;
 using namespace bark::world::goal_definition;
-using bark::world::tests::make_test_world;
 using bark::geometry::standard_shapes::GenerateGoalRectangle;
+using bark::world::tests::make_test_world;
 
 TEST(world, world_init) {
   auto params = std::make_shared<SetterParams>();
@@ -181,10 +181,10 @@ TEST(evaluator, static_safe_dist) {
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
 
-  Polygon polygon(
-      Pose(0.0, 0.0, 0),
-      std::vector<Point2d>{Point2d(-0.5, -0.5), Point2d(-0.5, 0.5), Point2d(0.5, 0.5),
-                           Point2d(0.5, -0.5), Point2d(-0.5, -0.5)});
+  Polygon polygon(Pose(0.0, 0.0, 0),
+                  std::vector<Point2d>{Point2d(-0.5, -0.5), Point2d(-0.5, 0.5),
+                                       Point2d(0.5, 0.5), Point2d(0.5, -0.5),
+                                       Point2d(-0.5, -0.5)});
 
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state1 << 0.0, 0.0, 0.0, 0.0, 5.0;
@@ -201,12 +201,13 @@ TEST(evaluator, static_safe_dist) {
   world->AddAgent(agent2);
   world->UpdateAgentRTree();
 
-  EvaluatorPtr safe_dist_checker(new EvaluatorStaticSafeDist(params, agent1->GetAgentId()));
+  EvaluatorPtr safe_dist_checker(
+      new EvaluatorStaticSafeDist(params, agent1->GetAgentId()));
   world->AddEvaluator("safe_dist_agents", safe_dist_checker);
 
   EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 0);
 
-  // safe dist gives polygon widths of 
+  // safe dist gives polygon widths of
   State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   init_state3 << 0.0, 1.5, 0.0, 0.0, 5.0;
   AgentPtr agent3(new Agent(init_state3, beh_model, dyn_model, exec_model,
@@ -217,7 +218,6 @@ TEST(evaluator, static_safe_dist) {
   EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 1);
   EXPECT_EQ(boost::get<int>(world->Evaluate()["safe_dist_agents"]), 2);
 }
-
 
 TEST(evaluator, dynamic_safe_dist) {
   auto params = std::make_shared<SetterParams>();
@@ -252,7 +252,8 @@ TEST(evaluator, dynamic_safe_dist) {
                                    velocity_difference, goal_definition_ptr);
   world->UpdateAgentRTree();
 
-  EvaluatorPtr safe_dist_checker(new EvaluatorDynamicSafeDist(params, world->GetAgents().begin()->first));
+  EvaluatorPtr safe_dist_checker(
+      new EvaluatorDynamicSafeDist(params, world->GetAgents().begin()->first));
   world->AddEvaluator("safe_dist_agents", safe_dist_checker);
 
   // No other agent available -> safe = true
@@ -302,7 +303,7 @@ TEST(evaluator, outside_drivable_area) {
 
   EvaluatorPtr evaluator_drivable_area(new EvaluatorDrivableArea());
 
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -327,7 +328,8 @@ TEST(world, rss_evaluator) {
   using bark::world::goal_definition::GoalDefinitionPolygon;
 
   auto params = std::make_shared<SetterParams>();
-  params->SetString("EvaluatorRss::MapFilename", "bark/runtime/tests/data/city_highway_straight.xodr");
+  params->SetString("EvaluatorRss::MapFilename",
+                    "bark/runtime/tests/data/city_highway_straight.xodr");
 
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
@@ -336,7 +338,7 @@ TEST(world, rss_evaluator) {
 
   EvaluatorPtr evaluator_rss(new EvaluatorRSS(params));
 
-  Polygon polygon = GenerateGoalRectangle(6,3);
+  Polygon polygon = GenerateGoalRectangle(6, 3);
   std::shared_ptr<Polygon> goal_polygon(
       std::dynamic_pointer_cast<Polygon>(polygon.Translate(
           Point2d(50, -2))));  // < move the goal polygon into the driving
@@ -354,7 +356,7 @@ TEST(world, rss_evaluator) {
 
   observed_world.AddEvaluator("rss", evaluator_rss);
   auto eval_res = observed_world.Evaluate()["rss"];
-  
+
   // no real test assertion, as maps do not match ...
 }
 #endif
@@ -529,4 +531,38 @@ TEST(world, agents_intersection_polygon) {
             init_state1);
   EXPECT_EQ(agents_intersect3[agent3->GetAgentId()]->GetCurrentState(),
             init_state3);
+}
+
+TEST(world, map_from_csv) {
+  std::string csvfile =
+      "bark/world/tests/map/data/base_map_lanes_guerickestr_assymetric_48.csv";
+  MapInterfacePtr map_interface(new MapInterface());
+  bool success = map_interface->interface_from_csvtable(csvfile);
+  EXPECT_TRUE(success);
+
+  auto params = std::make_shared<SetterParams>();
+  WorldPtr world(new World(params));
+  world->SetMap(map_interface);
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model(new BehaviorConstantAcceleration(params));
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state1 << 0.0, 692967.229902, 5339048.66012, -0.5010, 5.0; // 50th point of centerline
+  Polygon polygon(
+      Pose(693115.891117, 5339064.33754, 0),  // last pt of centerline
+      std::vector<Point2d>{Point2d(-0.5, -0.5), Point2d(-0.5, 0.5),
+                           Point2d(0.5, 0.5), Point2d(0.5, -0.5),
+                           Point2d(-0.5, -0.5)});
+  AgentPtr agent1(new Agent(init_state1, beh_model, dyn_model, exec_model,
+                            polygon, params));
+  world->UpdateAgentRTree();
+
+  //AgentMap nearest_agents = world->GetNearestAgents(Point2d(692967, 5339048), 1);
+  
+  for (int i = 0; i < 10; ++i) {
+    world->Step(1);
+    auto state = agent1->GetCurrentState();
+    LOG(INFO) << "x, y = " << state(StateDefinition::X_POSITION) << ", " << state(StateDefinition::Y_POSITION);
+  }
 }

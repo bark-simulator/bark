@@ -26,7 +26,11 @@ using bark::world::opendrive::XodrLaneId;
 void python_map(py::module m) {
   py::class_<MapInterface, std::shared_ptr<MapInterface>>(m, "MapInterface")
       .def(py::init<>())
+      .def_property("full_junction_area",
+                    &MapInterface::GetFullJunctionArea,
+                    &MapInterface::SetFullJunctionArea)
       .def("SetOpenDriveMap", &MapInterface::SetOpenDriveMap)
+      .def("SetCsvMap", &MapInterface::SetCsvMap)
       .def("find_nearest_lanes",
            [](const MapInterface& m, const Point2d& point,
               const unsigned& num_lanes) {
@@ -48,7 +52,8 @@ void python_map(py::module m) {
       .def("GetRoadCorridor", &MapInterface::GetRoadCorridor)
       .def("GetLane", &MapInterface::GetLane)
       .def("ComputeAllPathBoundaries", &MapInterface::ComputeAllPathBoundaries)
-      .def("FindLane", &MapInterface::FindXodrLane);
+      .def("FindLane", &MapInterface::FindXodrLane)
+      .def("ComputeJunctionArea", &MapInterface::ComputeJunctionArea);
 
   py::class_<Roadgraph, std::shared_ptr<Roadgraph>>(m, "Roadgraph")
       .def(py::init<>())
@@ -113,7 +118,8 @@ void python_map(py::module m) {
       .def(py::init<>())
       .def_property_readonly("polygon", &LaneCorridor::GetMergedPolygon)
       .def_property_readonly("center_line", &LaneCorridor::GetCenterLine)
-      .def_property_readonly("fine_center_line", &LaneCorridor::GetFineCenterLine)
+      .def_property_readonly("fine_center_line",
+                             &LaneCorridor::GetFineCenterLine)
       .def_property_readonly("left_boundary", &LaneCorridor::GetLeftBoundary)
       .def_property_readonly("right_boundary", &LaneCorridor::GetRightBoundary)
       .def_property_readonly("lanes", &LaneCorridor::GetLanes)

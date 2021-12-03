@@ -8,6 +8,7 @@
 
 #include "bark/world/map/map_interface.hpp"
 #include <math.h>
+#include <boost/tokenizer.hpp>
 #include <memory>
 #include <random>
 
@@ -40,6 +41,171 @@ bool MapInterface::interface_from_opendrive(
   return true;
 }
 
+bool MapInterface::interface_from_csvtable(
+  const std::string csvfile, double x_offset, double y_offset) {
+  // Read map data
+  std::ifstream file(csvfile);
+  if (!file.is_open()) {
+    LOG(ERROR) << "Error reading mapfile " << csvfile;
+    return false;
+  }
+  std::vector<double> cx, cy, lx, ly, rx, ry;
+  typedef boost::tokenizer<boost::escaped_list_separator<char>> Tokenizer;
+  std::string line;
+  std::vector<std::string> row;
+  bool toprow = true;
+
+  while (getline(file, line)) {
+    if (!toprow) {
+      Tokenizer tok(line);
+      row.assign(tok.begin(), tok.end());
+      cx.push_back(stod(row[1]) - x_offset);
+      cy.push_back(stod(row[2]) - y_offset);
+      rx.push_back(stod(row[3]) - x_offset);
+      ry.push_back(stod(row[4]) - y_offset);
+      lx.push_back(stod(row[5]) - x_offset);
+      ly.push_back(stod(row[6]) - y_offset);
+    } else {
+      toprow = false;
+    }
+  }
+  const int nr_points = cx.size();
+
+  // Generate centerline
+  using bark::geometry::Line;
+  using bark::geometry::Point2d;
+  Line centerline;
+  for (int idx = 0; idx < nr_points; ++idx) {
+    centerline.AddPoint(Point2d(cx[idx], cy[idx]));
+  }
+
+  // Generate road polygon
+  using bark::geometry::Polygon;
+  Polygon lanepoly;
+  for (int idx = 0; idx < nr_points; ++idx) {
+    lanepoly.AddPoint(Point2d(lx[idx], ly[idx]));
+  }
+  for (int idx = nr_points-1; idx >= 0; --idx) {  // reverse
+    lanepoly.AddPoint(Point2d(rx[idx], ry[idx]));
+  }
+  // lanepoly.correct(); //@todo do we need this?
+
+  // Generate Lane
+  double speed = 30 / 3.6;
+  int laneid = 0;
+  XodrLanePtr xodrlane = std::make_shared<XodrLane>();
+  xodrlane->SetId(laneid);
+  xodrlane->SetLanePosition(-1);  //@todo how to assign? Type: XodrLanePosition
+  // xodrlane->link_; //not needed
+  xodrlane->SetLine(centerline);
+  // xodrlane->junction_id_ //not needed
+  xodrlane->SetIsInJunction(false);
+  xodrlane->SetLaneType(XodrLaneType::DRIVING);
+  xodrlane->SetDrivingDirection(XodrDrivingDirection::FORWARD);
+  // xodrlane->road_mark_ // @todo do we need this to be assigned= Type:
+  // XodrRoadMark
+  xodrlane->SetSpeed(speed);
+  // xodrlane->lane_count//@todo how to assign?
+
+  LanePtr lane = std::make_shared<Lane>(xodrlane);
+  // lane->left_lane_ = nullptr; //@todo do we have to assign?
+  // lane->right_lane_ = nullptr; //@todo do we have to assign?
+  // lane->next_lane_ = nullptr; //@todo do we have to assign?
+  lane->center_line_ = centerline;
+  lane->polygon_ = lanepoly;
+  // Boundary left_boundary_; //@todo do we need this?
+  // Boundary right_boundary_; //@todo do we need this?
+
+  // Generate LaneCorridorPtr!
+  LaneCorridorPtr lanecorridor = std::make_shared<LaneCorridor>();
+  lanecorridor->lanes_[0] = lane;  // s_end: @todo what is the key? is zero ok??
+  lanecorridor->center_line_ = centerline;
+  lanecorridor->fine_center_line_ = centerline;
+  lanecorridor->merged_polygon_ = lanepoly;
+  // Line left_boundary_; //@todo do we need this?
+  // Line right_boundary_; //@todo do we need this?
+
+  // Generate PlanView
+  // @todo if we need the planview make a constructor from line!
+  PlanViewPtr xodrplanview = std::make_shared<PlanView>();
+
+  // Generate XodrLaneSection
+  double s = 0;
+  XodrLaneSectionPtr xodrlanesection = std::make_shared<XodrLaneSection>(s);
+  xodrlanesection->AddLane(lane);
+
+  // Generate XodrRoad
+  const int roadid = 0;
+  XodrRoadPtr xodrroad = std::make_shared<XodrRoad>();
+  xodrroad->SetId(roadid);
+  xodrroad->SetName("dummy_name");
+  // xodrroad->SetLink(); //not needed
+  xodrroad->SetPlanView(xodrplanview);
+  xodrroad->AddLaneSection({xodrlanesection});
+
+  // Generate Road
+  RoadPtr road = std::make_shared<Road>(xodrroad);
+  road->next_road_ = nullptr;
+  road->lanes_[laneid] = lane;
+
+  // Generate road corridor
+  RoadCorridorPtr rc = std::make_shared<RoadCorridor>();
+  rc->roads_[roadid] = road;
+  rc->road_polygon_ = lanepoly;
+  rc->unique_lane_corridors_ = {lanecorridor};
+  rc->road_ids_ = {roadid};
+  rc->driving_direction_ = XodrDrivingDirection::FORWARD;
+  rc->lane_corridors_[laneid] = lanecorridor;
+
+  // Generate roadgraph
+  RoadgraphPtr roadgraph(new Roadgraph());
+  roadgraph->AddLane(roadid, xodrlane);
+  bark::world::map::PolygonPtr lanepolyptr =
+      std::make_shared<Polygon>(lanepoly);
+  bool lanepoly_set = roadgraph->SetPolygonForVertexFromId(laneid, lanepolyptr);
+  if (!lanepoly_set) {
+    return false;
+  }
+
+  // Generate lane rtree
+  rtree_lane_.clear();
+  using LineSegment = boost::geometry::model::segment<Point2d>;
+  LineSegment lane_segment(
+      *centerline.begin(),
+      *(centerline.end() - 1));  //@todo ERROR! should be the boundary here, but
+                                 // which? I did not model the planview
+  rtree_lane_.insert(std::make_pair(lane_segment, lane));
+
+  // Generate bounding box
+  boost::geometry::model::box<Point2d> box;
+  boost::geometry::envelope(lanepoly.obj_, box);
+  boost::geometry::correct(box);
+  bounding_box_ = std::make_pair(
+      Point2d(boost::geometry::get<boost::geometry::min_corner, 0>(box),
+              bg::get<bg::min_corner, 1>(box)),
+      Point2d(boost::geometry::get<boost::geometry::max_corner, 0>(box),
+              bg::get<bg::max_corner, 1>(box)));
+
+  // Generate (dummy) Open Drive Map
+  OpenDriveMapPtr open_drive_map = std::make_shared<OpenDriveMap>();
+  open_drive_map->AddRoad(xodrroad);
+
+  // Generate map interface
+  open_drive_map_ = open_drive_map;
+  road_from_csvtable_ = true;
+  roadgraph_ = roadgraph;
+  // rtree_lane_ assigned above
+
+  // TODO THIS IS A HACK!!!
+  std::vector<XodrRoadId> road_ids = {static_cast<XodrRoadId>(roadid)};
+  XodrDrivingDirection driving_direction = XodrDrivingDirection::FORWARD;
+  std::size_t road_corridor_hash = RoadCorridor::GetHash(driving_direction, road_ids);
+
+  road_corridors_[road_corridor_hash] = rc;
+  // bounding_box_ assigned above
+  return true;
+}
+
 bool MapInterface::FindNearestXodrLanes(const Point2d& point,
                                         const unsigned& num_lanes,
                                         std::vector<XodrLanePtr>& lanes,
@@ -67,8 +233,8 @@ bool MapInterface::FindNearestXodrLanes(const Point2d& point,
 XodrLanePtr MapInterface::FindXodrLane(const Point2d& point) const {
   XodrLanePtr lane;
   std::vector<XodrLanePtr> nearest_lanes;
-  // TODO(@esterle): parameter (20) auslagern
-  if (!FindNearestXodrLanes(point, 20, nearest_lanes, false)) {
+  if (!FindNearestXodrLanes(point, num_points_nearest_lane_, nearest_lanes,
+                            false)) {
     return nullptr;
   }
   for (auto& close_lane : nearest_lanes) {
@@ -179,7 +345,7 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
           lane_corridor->GetCenterLine(), next_lane->GetCenterLine());
       lane_corridor->SetCenterLine(new_center);
       lane_corridor->SetFineCenterLine(new_center);
-      
+
       Line new_left = bark::geometry::ConcatenateLinestring(
           lane_corridor->GetLeftBoundary(), next_lane->GetLeftBoundary().line_);
       lane_corridor->SetLeftBoundary(new_left);
@@ -199,23 +365,26 @@ void MapInterface::CalculateLaneCorridors(RoadCorridorPtr& road_corridor,
       road_corridor->SetLaneCorridor(next_lane->GetId(), lane_corridor);
     }
 
-    // TODO(@hart): use parameter
-    // \note \kessler: setting max_dist too small can yield self-intersecting
-    // road polygons. why? in curves on the inner radius due to sampling
-    // inaccuracy the boundaries of two segments can overlap. The code below
-    // just copies each point to the lane polygon without checking this.
+    // \note \kessler: setting max_simplification_dist_ too small can yield
+    // self-intersecting road polygons. why? in curves on the inner radius due
+    // to sampling inaccuracy the boundaries of two segments can overlap. The
+    // code below just copies each point to the lane polygon without checking
+    // this.
 
-    const double max_dist = 0.4;
-    Line simplf_center = Simplify(lane_corridor->GetCenterLine(), max_dist);
+    Line simplf_center =
+        Simplify(lane_corridor->GetCenterLine(), max_simplification_dist_);
     lane_corridor->SetCenterLine(simplf_center);
 
-    Line simplf_fine_center = Simplify(lane_corridor->GetFineCenterLine(), 0.001);
+    Line simplf_fine_center =
+        Simplify(lane_corridor->GetFineCenterLine(), 0.001);
     lane_corridor->SetFineCenterLine(simplf_fine_center);
 
-    Line simplf_right = Simplify(lane_corridor->GetRightBoundary(), max_dist);
+    Line simplf_right =
+        Simplify(lane_corridor->GetRightBoundary(), max_simplification_dist_);
     lane_corridor->SetRightBoundary(simplf_right);
 
-    Line simplf_left = Simplify(lane_corridor->GetLeftBoundary(), max_dist);
+    Line simplf_left =
+        Simplify(lane_corridor->GetLeftBoundary(), max_simplification_dist_);
     lane_corridor->SetLeftBoundary(simplf_left);
 
     // TODO hier ist der self intersection bug: magic number 0.5 durch sampling
@@ -376,6 +545,12 @@ void MapInterface::GenerateRoadCorridor(
   road_corridor->SetRoads(roads);
   CalculateLaneCorridors(road_corridor, road_ids[0]);
   road_corridor->ComputeRoadPolygon();
+  if (full_junction_area_) {
+    for (auto& junction : road_corridor->GetJunctionIds()) {
+      const Polygon poly = ComputeJunctionArea(junction);
+      road_corridor->AddPolygonToRoadCorridor(std::move(poly));
+    }
+  }
   road_corridor->SetRoadIds(road_ids);
   road_corridor->SetDrivingDirection(driving_direction);
   road_corridors_[road_corridor_hash] = road_corridor;
@@ -446,6 +621,12 @@ RoadPtr MapInterface::GetNextRoad(
   auto it = std::find(road_ids.begin(), road_ids.end(), current_road_id);
   if (road_ids.back() == current_road_id) return nullptr;
   return roads.at(*std::next(it, 1));
+}
+
+bark::geometry::Polygon MapInterface::ComputeJunctionArea(
+    uint32_t junction_id) {
+  PolygonPtr poly = roadgraph_->ComputeJunctionArea(junction_id);
+  return *poly.get();
 }
 
 }  // namespace map

@@ -295,7 +295,7 @@ class BaseViewer(Viewer):
 
     def drawTrueWorld(self, world, eval_agent_ids):
       # draw only boundaries of agents in same color as observed agents
-      for i, (agent_id, agent) in enumerate(world.agents.items()):
+      for _, agent in world.agents.items():
           color_line, color_face, alpha = self.GetAgentColor(agent, eval_agent_ids)
           color_face = (1.0, 1.0, 1.0) # face color white
           self.drawAgent(agent, color_line, alpha, color_face, hatch='', draw_agent_id=False)

@@ -6,11 +6,13 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import numpy as np
+try:
+    import debug_settings
+except:
+    pass
+
 import time
-import os
 from bark.runtime.commons.parameters import ParameterServer
-from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.buffered_mp_viewer import BufferedMPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
 from bark.runtime.scenario.scenario_generation.config_with_ease import \

@@ -7,16 +7,12 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import pickle 
-import time
 import ray
 import logging
 import psutil
-import inspect
 import os
-import sys
 import math
 
-from bark.core.commons import GLogInit
 logging.getLogger().setLevel(logging.INFO)
 
 from bark.runtime.scenario.scenario import Scenario

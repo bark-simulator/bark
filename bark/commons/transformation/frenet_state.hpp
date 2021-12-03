@@ -24,7 +24,8 @@ struct FrenetState : public FrenetPosition {
   FrenetState() : FrenetPosition(),
                   vlon(std::numeric_limits<double>::max()),
                   vlat(std::numeric_limits<double>::max()),
-                  angle(std::numeric_limits<double>::max()) {}
+                  angle(std::numeric_limits<double>::max()),
+                  angleRoad(std::numeric_limits<double>::max()) {}
   FrenetState(const double& longitudinal, const double& lateral,
               const double& vlongitudinal, const double& vlateral,
               const double& angle, double angleRoad, double vLatRoad)

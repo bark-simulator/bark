@@ -6,9 +6,7 @@
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
-import numpy as np
 import time
-import os
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.video_renderer import VideoRenderer
@@ -39,8 +37,6 @@ class CustomLaneCorridorConfig(LaneCorridorConfig):
         super(CustomLaneCorridorConfig, self).__init__(params, **kwargs)
 
     def goal(self, world):
-        road_corr = world.map.GetRoadCorridor(
-            self._road_ids, XodrDrivingDirection.forward)
         lane_corr = self._road_corridor.lane_corridors[0]
         goal_polygon = Polygon2d([0, 0, 0], [Point2d(-1, -1), Point2d(-1, 1), Point2d(1, 1), Point2d(1, -1)])
         goal_polygon = goal_polygon.Translate(Point2d(lane_corr.center_line.ToArray()[-1, 0], lane_corr.center_line.ToArray()[-1, 1]))

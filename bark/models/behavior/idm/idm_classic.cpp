@@ -35,7 +35,6 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
     const world::ObservedWorld& observed_world,
     const LaneCorridorPtr& lane_corr, const IDMRelativeValues& rel_values,
     double dt) const {
-  double t_i = 0., acc = 0.;
   geometry::Line line = lane_corr->GetCenterLine();
   dynamic::Trajectory traj(GetNumTrajectoryTimePoints(),
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
@@ -55,6 +54,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
     double s_i = s_start;
 
     double rel_distance = rel_values.leading_distance;
+    double acc = 0.;
     // calc. traj.
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
       std::tie(acc, rel_distance) =
@@ -68,7 +68,7 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
       const double temp_velocity = vel_i + acc * dt;
       vel_i =
           std::max(std::min(temp_velocity, GetMaxVelocity()), GetMinVelocity());
-      t_i = static_cast<double>(i) * dt + start_time;
+      double t_i = static_cast<double>(i) * dt + start_time;
       geometry::Point2d traj_point = GetPointAtS(line, s_i);
       double traj_angle = GetTangentAngleAtS(line, s_i);
 

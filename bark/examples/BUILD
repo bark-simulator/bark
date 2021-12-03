@@ -59,6 +59,7 @@ py_test(
           "//bark/runtime/viewer:buffered_mp_viewer",
           "//bark/runtime/scenario/scenario_generation:scenario_generation",
           "//bark/runtime:runtime",
+          "//tools/debug:debug_settings",
           ":paths"],
 )
 

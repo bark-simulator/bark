@@ -1,3 +1,9 @@
+filegroup(
+   name="csv_map_data",
+   srcs=glob(["data/**"]),
+   visibility = ["//visibility:public"],
+)
+
 cc_test(
     name = "opendrive_tests",
     srcs = [
@@ -53,6 +59,7 @@ cc_test(
         "//bark/world/tests:make_test_xodr_map",
         "@gtest//:gtest_main",
     ],
+    data = [":csv_map_data"]
 )
 
 py_test(

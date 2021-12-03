@@ -1,17 +1,14 @@
 from setuptools import setup, find_packages, Extension
 import os,sys
 import os
-import shlex
 import shutil
 import setuptools.command.build_ext
 import setuptools.command.build_py
 import setuptools.command.install
 import setuptools.command.sdist
-import setuptools.dist
 from setuptools import dist
 from setuptools.command.install import install
 import sysconfig
-import tempfile
 import pkg_resources
 from distutils.command.build import build
 
@@ -125,7 +122,7 @@ class BuildExtCommand(setuptools.command.build_ext.build_ext):
 
 setup(
     name = "bark-simulator",
-    version = "1.3.0",
+    version = "1.4.8",
     description = "A tool for Behavior benchmARKing",
     long_description_content_type="text/markdown",
     long_description=long_description,

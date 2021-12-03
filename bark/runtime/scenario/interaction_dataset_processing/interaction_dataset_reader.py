@@ -12,7 +12,7 @@ import os
 from bark.core.world.agent import Agent
 from bark.core.models.behavior import BehaviorStaticTrajectory
 from bark.core.models.dynamic import StateDefinition
-from bark.core.world.goal_definition import GoalDefinition, GoalDefinitionPolygon
+from bark.core.world.goal_definition import GoalDefinitionPolygon
 from bark.core.geometry import Point2d, Polygon2d, NormToPI
 from bark.core.geometry.standard_shapes import *
 from bark.runtime.commons.model_json_conversion import ModelJsonConversion
@@ -20,8 +20,6 @@ from bark.runtime.commons.model_json_conversion import ModelJsonConversion
 from com_github_interaction_dataset_interaction_dataset.python.utils import dataset_reader
 from com_github_interaction_dataset_interaction_dataset.python.utils import dict_utils
 import numpy as np
-
-from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
 
 
 def BarkStateFromMotionState(state, xy_offset, time_offset=0):

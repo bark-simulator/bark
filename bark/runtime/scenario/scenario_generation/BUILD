@@ -6,8 +6,6 @@ py_library(
             "configurable_scenario_generation.py",
             "deterministic.py",
             "config_with_ease.py",
-            "deterministic_drone_challenge.py",
-            "drone_challenge.py",
             "interaction_dataset_scenario_generation.py",
             "interaction_dataset_scenario_generation_full.py"],
     data = ["//bark:generate_core"],

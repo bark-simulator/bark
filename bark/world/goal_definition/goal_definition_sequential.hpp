@@ -29,7 +29,7 @@ class GoalDefinitionSequential : public GoalDefinition {
         sequential_goals_(),
         last_sequential_goal_reached_(NO_GOAL_REACHED) {}
 
-  GoalDefinitionSequential(
+  explicit GoalDefinitionSequential(
       const std::vector<GoalDefinitionPtr>& sequential_goals)
       : GoalDefinition(),
         sequential_goals_(sequential_goals),
@@ -55,6 +55,7 @@ class GoalDefinitionSequential : public GoalDefinition {
   int LastSequentialGoal() const { return last_sequential_goal_reached_; }
 
   GoalDefinitionPtr Clone() const override;
+
  private:
   std::vector<GoalDefinitionPtr> sequential_goals_;
   int last_sequential_goal_reached_;

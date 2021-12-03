@@ -603,6 +603,19 @@ void Roadgraph::GeneratePolygonsForVertices() {
   }
 }
 
+bool Roadgraph::SetPolygonForVertexFromId(const XodrLaneId& lane_id,
+                                          PolygonPtr polygon) {
+  bool exists;
+  vertex_t v;
+  std::tie(v, exists) = GetVertexByLaneId(lane_id);
+  if (!exists) {
+    return false;
+  } else {
+    g_[v].polygon = polygon;
+    return true;
+  }
+}
+
 void Roadgraph::Generate(OpenDriveMapPtr map) {
   GenerateVertices(map);
 
@@ -805,6 +818,23 @@ std::pair<XodrLaneId, bool> Roadgraph::GetRightBoundary(
       return std::make_pair(inner_neighbor.first, true);
   }
   return std::make_pair(0, false);
+}
+
+PolygonPtr Roadgraph::ComputeJunctionArea(uint32_t junction_id) {
+  PolygonPtr polygon = std::make_shared<bark::geometry::Polygon>();
+  std::vector<vertex_t> vertices = GetVertices();
+  for (auto const& v : vertices) {
+    const auto& lane = g_[v].lane;
+    if (lane->GetIsInJunction() && (lane->GetJunctionId() == junction_id) &&
+        lane->GetLaneType() == XodrLaneType::DRIVING) {
+      PolygonPtr this_poly = g_[v].polygon;
+      if (this_poly) {
+        polygon->ConcatenatePolygons(*this_poly.get());
+      }
+    }
+  }
+  polygon->ClearInners();
+  return polygon;
 }
 
 }  // namespace map

@@ -57,8 +57,8 @@ inline std::ostream& operator<<(std::ostream& os,
 // this is LaneCorridor specific
 struct LaneCorridorInformation {
   explicit LaneCorridorInformation() {}
-  explicit LaneCorridorInformation(AgentInformation front,
-                                   AgentInformation rear,
+  explicit LaneCorridorInformation(const AgentInformation& front,
+                                   const AgentInformation& rear,
                                    LaneCorridorPtr lane_corridor,
                                    double remaining_distance)
       : front(front),

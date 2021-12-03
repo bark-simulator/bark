@@ -3,8 +3,6 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-from bark.runtime.scenario.interaction_dataset_processing.agent_track_info import AgentTrackInfo
-
 
 class ScenarioTrackInfo:
     def __init__(self, track_filename, ego_track_info, xy_offset, start_ts=None, end_ts=None, prec=-2):

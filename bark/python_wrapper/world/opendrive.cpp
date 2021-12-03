@@ -89,6 +89,10 @@ void python_opendrive(py::module m) {
       .def(py::init<>())
       .def(py::init<XodrLanePosition&>())
       .def_property("lane_id", &XodrLane::GetId, &XodrLane::SetId)
+      .def_property("junction_id", &XodrLane::GetJunctionId,
+                    &XodrLane::SetJunctionId)
+      .def_property("is_in_junction", &XodrLane::GetIsInJunction,
+                    &XodrLane::SetIsInJunction)
       .def_property("lane_position", &XodrLane::GetLanePosition,
                     &XodrLane::SetLanePosition)
       .def_property("lane_type", &XodrLane::GetLaneType, &XodrLane::SetLaneType)

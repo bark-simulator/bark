@@ -5,8 +5,8 @@ import os
 
 cwd = os.getcwd()
 workspace_folder = cwd
-repo_paths = ["bark_project", "bark_project/python", "benchmark_database", "com_github_interaction_dataset_interaction_dataset", \
-        "com_github_interaction_dataset_interaction_dataset/python", "phd"]
+repo_paths = ["bark_project", "benchmark_database", "com_github_interaction_dataset_interaction_dataset", \
+        "com_github_interaction_dataset_interaction_dataset/python"]
 
 executed_file = sys.argv[0]
 if executed_file.count("bark") == 2:

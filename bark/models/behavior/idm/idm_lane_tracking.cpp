@@ -51,7 +51,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
 
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   double start_time = observed_world.GetWorldTime();
-  double t_i = 0., acc = 0.;
+  
   geometry::Line line;
   if (constant_lane_corr_ != nullptr) {
     // std::cout << "using const. lane corr: " << constant_lane_corr_ <<
@@ -72,6 +72,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
     traj(0, StateDefinition::TIME_POSITION) = start_time;
 
     double rel_distance = rel_values.leading_distance;
+    double acc = 0.;
     for (int i = 1; i < GetNumTrajectoryTimePoints(); ++i) {
       std::tie(acc, rel_distance) =
           GetTotalAcc(observed_world, rel_values, rel_distance, dt);
@@ -88,7 +89,7 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       // Restrict allowed speed
       traj(i, StateDefinition::VEL_POSITION) =
           std::max(traj(i, StateDefinition::VEL_POSITION), GetMinVelocity());
-      t_i = static_cast<double>(i) * dt + start_time;
+      double t_i = static_cast<double>(i) * dt + start_time;
       traj(i, StateDefinition::TIME_POSITION) = t_i;
 
       double acc_lat = CalculateLateralAcceleration(

@@ -7,9 +7,6 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 import unittest
-import os
-import numpy as np
-import time
 from bark.runtime.commons.parameters import ParameterServer
 from bark.runtime.viewer.matplotlib_viewer import MPViewer
 from bark.runtime.viewer.buffered_viewer import BufferedViewer
@@ -21,7 +18,6 @@ from bark.examples.paths import Data
 from bark.core.world.opendrive import *
 from bark.core.world.goal_definition import *
 from bark.core.models.behavior import *
-from bark.core.commons import SetVerboseLevel
 
 # scenario
 class CustomLaneCorridorConfig(LaneCorridorConfig):
@@ -76,7 +72,7 @@ class PyRuntimeTest(unittest.TestCase):
   # def test_general_runtime(self):
   #   env = GenerateRuntime()
   #   env.reset()
-  #   for step in range(0, 5):
+  #   for _ in range(0, 5):
   #     env.step()
   
   def test_buffered_viewer(self):
@@ -84,7 +80,7 @@ class PyRuntimeTest(unittest.TestCase):
     buffered_viewer = BufferedViewer()
     env._viewer = buffered_viewer
     env.reset()
-    for step in range(0, 5):
+    for _ in range(0, 5):
       env.step()
       
 if __name__ == '__main__':

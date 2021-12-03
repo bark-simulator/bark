@@ -38,7 +38,7 @@ void python_execution(py::module m) {
           [](const ExecutionModelInterpolate& m) -> std::string {
             return "ExecutionModelInterpolate";
           },
-          [](std::string s) {
+          [](const std::string& s) {
             if (s != "ExecutionModelInterpolate")
               throw std::runtime_error("Invalid tyoe of execution model!");
             return new ExecutionModelInterpolate(nullptr);
