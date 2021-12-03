@@ -21,10 +21,9 @@ bark::models::behavior::primitives::PrimitiveConstAccStayLane::
 bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     PrimitiveConstAccStayLane(const bark::commons::ParamsPtr& params,
                               double acceleration)
-    : Primitive(params),
-      BehaviorModel(params),
-      BehaviorIDMLaneTracking(params),
-      acceleration_(acceleration) {}
+    : PrimitiveConstAccStayLane(params) {
+      acceleration_ = acceleration;
+    }
 
 bool bark::models::behavior::primitives::PrimitiveConstAccStayLane::
     IsPreConditionSatisfied(

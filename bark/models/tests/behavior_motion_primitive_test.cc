@@ -152,12 +152,12 @@ TEST(primitive_constant_acceleration, behavior_test) {
   AdjacentLaneCorridors corridors2 = GetCorridors(world2);
   EXPECT_FALSE(dec_primitive.IsPreConditionSatisfied(world2, corridors2));
 
-  PrimitiveConstAccStayLane acc_primitive(params, 4.0);
+  PrimitiveConstAccStayLane acc_primitive(params, 3.0);
   EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world1, corridors));
   auto traj3 = acc_primitive.Plan(0.5, world1, corridors.current);
   EXPECT_NEAR(
       traj3(traj3.rows() - 1, StateDefinition::X_POSITION),
-      traj3(0, StateDefinition::X_POSITION) + 5.0 * 0.5 + 4.0 / 2.0 * 0.5 * 0.5,
+      traj3(0, StateDefinition::X_POSITION) + 5.0 * 0.5 + 3.0 / 2.0 * 0.5 * 0.5,
       0.1);
 }
 
