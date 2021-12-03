@@ -30,16 +30,16 @@ class SingleTrackSteeringRateModel : public DynamicModel {
   virtual ~SingleTrackSteeringRateModel() {}
 
   State StateSpaceModel(const State& x, const Input& u) const {
-    State tmp(static_cast<int>(StateDefinition::MIN_STATE_SIZE + 1));
+    State tmp(static_cast<int>(StateDefinition::MIN_STATE_SIZE ) + 1);
     tmp << 1,
         x(StateDefinition::VEL_POSITION) *
             cos(x(StateDefinition::THETA_POSITION)),
         x(StateDefinition::VEL_POSITION) *
             sin(x(StateDefinition::THETA_POSITION)),
         x(StateDefinition::VEL_POSITION) * tan(
-          x[4]) / wheel_base_,
-        u(1),
-        u(0);
+          x[5]) / wheel_base_,
+        u(0),
+        u(1);
     return tmp;
   }
 
@@ -47,6 +47,10 @@ class SingleTrackSteeringRateModel : public DynamicModel {
     std::shared_ptr<SingleTrackSteeringRateModel> model_ptr =
         std::make_shared<SingleTrackSteeringRateModel>(*this);
     return std::dynamic_pointer_cast<DynamicModel>(model_ptr);
+  }
+
+  virtual int GetStateSize() const {
+    return static_cast<int>(StateDefinition::MIN_STATE_SIZE) + 1;
   }
 
   double GetWheelBase() const { return wheel_base_; }

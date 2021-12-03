@@ -68,6 +68,23 @@ cc_test(
 )
 
 cc_test(
+    name = "behavior_dynamic_model",
+    srcs = [
+        "behavior_dynamic_model.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/models/dynamic:dynamic",
+        "//bark/models/behavior/dynamic_model:dynamic_model",
+        "//bark/world:world",
+        "//bark/world/tests:make_test_world",
+        "@gtest//:gtest_main",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+)
+
+cc_test(
     name = "behavior_idm_classic_test",
     srcs = [
         "behavior_idm_classic_test.cc",
