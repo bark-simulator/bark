@@ -10,6 +10,7 @@
 #include <string>
 #include "bark/commons/params/setter_params.hpp"
 #include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/dynamic/single_track_steering_rate.hpp"
 #include "bark/models/dynamic/triple_integrator.hpp"
 
 #include "bark/python_wrapper/polymorphic_conversion.hpp"

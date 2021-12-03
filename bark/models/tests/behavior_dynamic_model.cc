@@ -28,6 +28,7 @@ using namespace bark::models::dynamic;
 using namespace bark::world;
 using namespace bark::geometry;
 using namespace bark::world::tests;
+using bark::geometry::standard_shapes::GenerateGoalRectangle;
 
 class DummyObservedWorld : public ObservedWorld {
  public:
@@ -77,8 +78,25 @@ TEST(behavior_motion_primitives_add, behavior_test) {
   behavior.ActionToBehavior(u);
   Trajectory traj1 = behavior.Plan(0.5, world1);
   EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION), 0.55, 0.1);
-  EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION), 0.028, 0.1);
+  EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION), 0.52, 0.1);
 
+  // real BARK world
+  double ego_velocity = 5.0, rel_distance = 5.0,
+        velocity_difference = 4;
+  double time_step = 0.02f;
+  int num_steps = 1000;
+  Polygon polygon = GenerateGoalRectangle(6, 3);
+  std::shared_ptr<Polygon> goal_polygon(
+    std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));
+
+  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(
+    *goal_polygon);
+
+  WorldPtr test_world = make_test_world(
+    1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
+
+  // set steering rate behavior model
+  // test_world->GetAgents()[0]->GetBehaviorModel() = behavior;
 
 }
 
