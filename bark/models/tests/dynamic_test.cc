@@ -43,7 +43,7 @@ TEST(single_track_model, dynamic_test) {
 }
 
 TEST(single_track_steering_rate_model, dynamic_test) {
-  State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE + 1));
+  State x(static_cast<int>(StateDefinition::MIN_STATE_SIZE) + 1);
   x << 0, 0, 0, 0, 0, 5;
 
   Input u(2);
@@ -59,7 +59,6 @@ TEST(single_track_steering_rate_model, dynamic_test) {
     x = euler_int(*m, x, u, dt);
     cout << x << endl;
   }
-  delete m;
 }
 
 TEST(valid_state_test, dynamic_test) {
