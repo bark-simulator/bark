@@ -64,7 +64,8 @@ TEST(behavior_motion_primitives_add, behavior_test) {
   DummyObservedWorld world0(init_state0, params, dyn);
   behavior.ActionToBehavior(u);
   Trajectory traj0 = behavior.Plan(0.5, world0);
-  // EXPECT_NEAR(traj3(traj3.rows() - 1, StateDefinition::X_POSITION), 0.5 * 2, 0.005);
+  EXPECT_NEAR(traj0(traj0.rows() - 1, StateDefinition::X_POSITION), 0.5, 0.1);
+  EXPECT_NEAR(traj0(traj0.rows() - 1, StateDefinition::Y_POSITION), 0.0, 0.1);
 
 
   // test single track steering rate model
@@ -72,11 +73,11 @@ TEST(behavior_motion_primitives_add, behavior_test) {
   State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE) + 1);
   init_state1 << 0.0, 0.0, 0.0, 0.0, 1.0, 0.0;
   DummyObservedWorld world1(init_state1, params, dyn_steering_rate);
-  u << 0., 0.1;
+  u << 0.5, 3.; // acceleration and steering-rate
   behavior.ActionToBehavior(u);
   Trajectory traj1 = behavior.Plan(0.5, world1);
-  std::cout << traj1 << std::endl;
-  // EXPECT_NEAR(traj3(traj3.rows() - 1, StateDefinition::X_POSITION), 0.5 * 2, 0.005);
+  EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION), 0.55, 0.1);
+  EXPECT_NEAR(traj1(traj1.rows() - 1, StateDefinition::X_POSITION), 0.028, 0.1);
 
 
 }
