@@ -125,7 +125,7 @@ This allows for a flexible implementation of a vareity of linear and non-linear 
 
 ### Single Track Model
 
-By far the most used dynamic model in BARK, it the single-track model.
+By far the most used dynamic model in BARK is the single-track model.
 It represents a simplified bicycle vehicle-model.
 
 The `SingleTrackModel` class overloads the `StateSpaceModel` function and is given by:
