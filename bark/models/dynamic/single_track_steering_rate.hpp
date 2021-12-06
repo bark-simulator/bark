@@ -18,7 +18,16 @@ namespace bark {
 namespace models {
 namespace dynamic {
 
-
+/**
+ * @brief  SingleTrack model using the steering-rate as input
+ *
+ * @note   The input space now consists of the acceleration a
+ *         and the steering-rate \dot{\delta}.
+ *         input = [a, \dot{\delta}].
+ *
+ *         The state-space now is comprised out of
+ *         x = [time, x, y, theta, v, \delta]
+ */
 class SingleTrackSteeringRateModel : public DynamicModel {
  public:
   explicit SingleTrackSteeringRateModel(const bark::commons::ParamsPtr& params)
@@ -50,7 +59,8 @@ class SingleTrackSteeringRateModel : public DynamicModel {
   }
 
   virtual int GetStateSize() const {
-    return static_cast<int>(StateDefinition::MIN_STATE_SIZE) + 1;
+    // state size is 6
+    return 6;
   }
 
   double GetWheelBase() const { return wheel_base_; }

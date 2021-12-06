@@ -68,9 +68,9 @@ cc_test(
 )
 
 cc_test(
-    name = "behavior_dynamic_model",
+    name = "behavior_dynamic_model_test",
     srcs = [
-        "behavior_dynamic_model.cc",
+        "behavior_dynamic_model_test.cc",
     ],
     copts = ["-Iexternal/gtest/include"],
     deps = [
