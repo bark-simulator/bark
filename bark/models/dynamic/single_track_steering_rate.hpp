@@ -21,12 +21,13 @@ namespace dynamic {
 /**
  * @brief  SingleTrack model using the steering-rate as input
  *
- * @note   The input space now consists of the acceleration a
- *         and the steering-rate \dot{\delta}.
- *         input = [a, \dot{\delta}].
+ * @note   The input space now consists of the acceleration $a$
+ *         and the steering-rate $\dot{\delta}$.
+ *
+ *         Model input: $input = [a, \dot{\delta}]$.
  *
  *         The state-space now is comprised out of
- *         x = [time, x, y, theta, v, \delta]
+ *         $x = [time, x, y, \theta, v, \delta]$
  */
 class SingleTrackSteeringRateModel : public DynamicModel {
  public:
