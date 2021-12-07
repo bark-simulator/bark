@@ -1,7 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 cc_test(
-    name = "dynamic_tests",
+    name = "dynamic_test",
     srcs = [
         "dynamic_test.cc",
     ],
@@ -60,6 +60,23 @@ cc_test(
         "//bark/models/dynamic:dynamic",
         "//bark/models/behavior/motion_primitives:motion_primitives",
         "//bark/models/behavior/idm:idm_lane_tracking",
+        "//bark/world:world",
+        "//bark/world/tests:make_test_world",
+        "@gtest//:gtest_main",
+        "@com_github_eigen_eigen//:eigen",
+    ],
+)
+
+cc_test(
+    name = "behavior_dynamic_model_test",
+    srcs = [
+        "behavior_dynamic_model_test.cc",
+    ],
+    copts = ["-Iexternal/gtest/include"],
+    deps = [
+        "//bark/geometry",
+        "//bark/models/dynamic:dynamic",
+        "//bark/models/behavior/dynamic_model:dynamic_model",
         "//bark/world:world",
         "//bark/world/tests:make_test_world",
         "@gtest//:gtest_main",

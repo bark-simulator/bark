@@ -43,6 +43,7 @@
 #include "bark/models/behavior/idm/stochastic/idm_stochastic.hpp"
 
 #include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/dynamic/single_track_steering_rate.hpp"
 
 #ifdef LTL_RULES
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
@@ -117,6 +118,7 @@ using bark::world::goal_definition::GoalDefinitionStateLimits;
 using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
 using bark::world::evaluation::EvaluatorCollisionEgoAgent;
 using bark::models::dynamic::SingleTrackModel;
+using bark::models::dynamic::SingleTrackSteeringRateModel;
 
 #ifdef LTL_RULES
 using bark::world::evaluation::SafeDistanceLabelFunction;
@@ -278,7 +280,7 @@ BehaviorModelPtr PythonToBehaviorModel(py::tuple t) {
   else if (behavior_model_name.compare("BehaviorMiqpAgent") == 0) {
     return std::make_shared<BehaviorMiqpAgent>(
         t[0].cast<BehaviorMiqpAgent>());
-  } 
+  }
 #endif
 #ifdef PLANNER_RULES_MCTS
   else if (behavior_model_name.compare("BehaviorRulesMctsUct") == 0) {
@@ -340,6 +342,8 @@ py::tuple DynamicModelToPython(DynamicModelPtr dynamic_model) {
   std::string dynamic_model_name;
   if (typeid(*dynamic_model) == typeid(SingleTrackModel)) {
     dynamic_model_name = "SingleTrackModel";
+  } else if (typeid(*dynamic_model) == typeid(SingleTrackSteeringRateModel)) {
+    dynamic_model_name = "SingleTrackSteeringRateModel";
   } else {
     LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
     throw;
@@ -351,6 +355,9 @@ DynamicModelPtr PythonToDynamicModel(py::tuple t) {
   if (goal_definition_name.compare("SingleTrackModel") == 0) {
     return std::make_shared<SingleTrackModel>(
         t[0].cast<SingleTrackModel>());
+  } else if (goal_definition_name.compare("SingleTrackSteeringRateModel") == 0) {
+    return std::make_shared<SingleTrackSteeringRateModel>(
+        t[0].cast<SingleTrackSteeringRateModel>());
   } else {
     LOG(ERROR) << "Unknown DynamicModelType for polymorphic conversion.";
     throw;

@@ -3,6 +3,7 @@ cc_library(
     hdrs = [
         "integration.hpp",
         "single_track.hpp",
+        "single_track_steering_rate.hpp",
         "dynamic_model.hpp",
         "triple_integrator.hpp",
     ],

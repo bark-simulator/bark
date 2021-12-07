@@ -40,10 +40,6 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
   SetBehaviorStatus(BehaviorStatus::VALID);
   const DynamicModelPtr dynamic_model =
       observed_world.GetEgoAgent()->GetDynamicModel();
-  auto single_track =
-      std::dynamic_pointer_cast<SingleTrackModel>(dynamic_model);
-  if (!single_track)
-    LOG(FATAL) << "Only SingleTrack as dynamic model supported!";
 
   dynamic::State ego_vehicle_state =
       observed_world.GetEgoAgent()->GetCurrentState();
@@ -52,8 +48,8 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
   int num_trajectory_points =
       static_cast<int>(std::ceil(min_planning_time / dt)) + 1;
 
-  dynamic::Trajectory traj(num_trajectory_points,
-                           static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  dynamic::Trajectory traj(
+    num_trajectory_points, dynamic_model->GetStateSize());
 
   // this action is set externally. e.g. by RL
   Input action = boost::get<Input>(action_);

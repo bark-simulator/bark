@@ -59,6 +59,10 @@ class DynamicModel : public commons::BaseType {
 
   virtual std::shared_ptr<DynamicModel> Clone() const = 0;
 
+  virtual int GetStateSize() const {
+    return static_cast<int>(StateDefinition::MIN_STATE_SIZE);
+  }
+
   int input_size_;
 };
 
