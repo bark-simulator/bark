@@ -34,6 +34,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
                             unsigned int max_agents_for_crossing,
                             bool use_frac_param_from_world,
                             double lateral_difference_threshold,
+                            double angle_difference_threshold,
                             bool check_lateral_dist);
   LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 
@@ -52,6 +53,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
     return use_frac_param_from_world_;
   }
   double GetLateralDifferenceThreshold() const { return lateral_difference_threshold_; }
+  double GetAngleDifferenceThreshold() const { return lateral_difference_threshold_; }
   bool GetConsiderCrossingCorridors() const { return consider_crossing_corridors_; }
   unsigned int GetMaxAgentsForCrossing() const { return max_agents_for_crossing_; }
   bool GetCheckLateralDist() const { return check_lateral_dist_; }
@@ -82,7 +84,8 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   double a_e_;    //! Max. deceleration of ego
   double a_o_;    //! Max. deceleration of front/rear agent
   bool use_frac_param_from_world_; // Flag to use passed frac param
-  double lateral_difference_threshold_;  //! Fraction term for lateral offset
+  double lateral_difference_threshold_;  //! Distance term for lateral offset
+  double angle_difference_threshold_;  //! Max frenet angle to consider as front
   bool consider_crossing_corridors_;
   unsigned int max_agents_for_crossing_;
   bool check_lateral_dist_;

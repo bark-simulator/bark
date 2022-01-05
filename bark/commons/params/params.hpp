@@ -93,6 +93,8 @@ class Params {
 
   virtual int operator[](const std::string& param_name) = 0;
   virtual std::shared_ptr<Params> AddChild(const std::string& name) = 0;
+
+  bool operator==(const Params& other) const;
 };
 
 typedef std::shared_ptr<Params> ParamsPtr;

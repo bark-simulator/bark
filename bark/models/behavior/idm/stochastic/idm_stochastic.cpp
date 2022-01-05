@@ -40,6 +40,20 @@ BehaviorIDMStochastic::BehaviorIDMStochastic(const commons::ParamsPtr& params)
           "BehaviorIDMStochastic::CoolnessFactorDistribution",
           "From what distribution is the comfortable braking sampled in each "
           "planning steo",
+          "UniformDistribution1D")),
+      use_intention_mechanism_(params->GetBool("BehaviorIDMStochastic::UseIntentionMechanism",
+      "True if intention changes yielding or no yielding are applied, "
+      "otherwise default intent no yield is used", false)),
+      current_yield_intent_(YieldIntent::NOT_INITIALIZED),
+      duration_until_intent_change_(),
+      world_time_at_last_intent_change_(),
+      param_yielding_duration_(params->GetDistribution(
+          "BehaviorIDMStochastic::YieldingDurationDistribution",
+          "From what distribution is duration of the next yielding intent sampled",
+          "UniformDistribution1D")),
+      param_no_yielding_duration_(params->GetDistribution(
+          "BehaviorIDMStochastic::NoYieldingDurationDistribution",
+          "From what distribution is duration of the next no yielding intent sampled",
           "UniformDistribution1D")) {}
 
 void BehaviorIDMStochastic::SampleParameters() {
@@ -69,6 +83,31 @@ ParameterRegions BehaviorIDMStochastic::GetParameterRegions() const {
   return parameter_regions;
 }
 
+void BehaviorIDMStochastic::HandleIntentionChange(const double& world_time) {
+  if(current_yield_intent_ == YieldIntent::NOT_INITIALIZED) {
+    world_time_at_last_intent_change_ = world_time;
+    current_yield_intent_ = YieldIntent::YIELD;
+    duration_until_intent_change_ = param_yielding_duration_->Sample()[0];
+    max_lat_difference_to_be_front_ = k_max_lat_diff_yield;
+    return;
+  } 
+
+  if(world_time - world_time_at_last_intent_change_ >= duration_until_intent_change_) {
+    if(current_yield_intent_ == YieldIntent::YIELD) {
+      current_yield_intent_ = YieldIntent::NO_YIELD;
+      max_lat_difference_to_be_front_ = k_max_lat_diff_no_yield;
+      duration_until_intent_change_ = param_no_yielding_duration_->Sample()[0]; 
+      VLOG(5) << "Switched to no yielding intent";
+    } else if(current_yield_intent_ == YieldIntent::NO_YIELD) {
+      current_yield_intent_ = YieldIntent::YIELD;
+      max_lat_difference_to_be_front_ = k_max_lat_diff_yield;
+      duration_until_intent_change_ = param_yielding_duration_->Sample()[0]; 
+      VLOG(5) << "Switched to yielding intent";
+    }
+    world_time_at_last_intent_change_ = world_time;
+  }
+}
+
 void BehaviorIDMStochastic::ChangeSeed(const bark::commons::RandomSeed& new_seed) {
   param_dist_headway_->ChangeSeed(new_seed);
   param_dist_spacing_->ChangeSeed(new_seed);
@@ -81,6 +120,9 @@ void BehaviorIDMStochastic::ChangeSeed(const bark::commons::RandomSeed& new_seed
 Trajectory BehaviorIDMStochastic::Plan(double delta_time,
                                        const ObservedWorld& observed_world) {
   SampleParameters();
+  if(use_intention_mechanism_) {
+    HandleIntentionChange(observed_world.GetWorldTime());
+  }
   return BehaviorIDMClassic::Plan(delta_time, observed_world);
 }
 

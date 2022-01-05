@@ -52,6 +52,11 @@ class PrimitiveGapKeeping : public Primitive, public BehaviorIDMLaneTracking {
     return observed_world.GetRoadCorridor()->GetCurrentLaneCorridor(
         observed_world.CurrentEgoPosition());
   }
+private:
+  bool isEqual(const Primitive& other) const override {
+    const PrimitiveGapKeeping& other_prim_gap_keep = static_cast<const PrimitiveGapKeeping&>(other);
+    return static_cast<const BehaviorIDMLaneTracking&>(*this) == static_cast<const BehaviorIDMLaneTracking&>(other_prim_gap_keep);
+  }
 };
 
 }  // namespace primitives

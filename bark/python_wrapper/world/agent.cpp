@@ -52,7 +52,7 @@ void python_agent(py::module m) {
       .def_property_readonly("execution_model", &Agent::GetExecutionModel)
       .def_property_readonly("dynamic_model", &Agent::GetDynamicModel)
       .def_property_readonly("model3d", &Agent::GetModel3d)
-      .def_property_readonly("state", &Agent::GetCurrentState)
+      .def_property("state", &Agent::GetCurrentState, &Agent::SetCurrentState)
       .def_property("road_corridor", &Agent::GetRoadCorridor,
                     &Agent::SetRoadCorridor)
       .def_property_readonly("road_corridor_road_ids", &Agent::GetRoadCorridorRoadIds)
@@ -100,6 +100,7 @@ void python_agent(py::module m) {
             agent.SetAgentId(t[2].cast<AgentId>());
             agent.SetFirstValidTimestamp(t[9].cast<double>());
             agent.SetStateInputHistory(t[0].cast<StateActionHistory>());
+            agent.GetBehaviorModel()->SetLastTrajectory(t[4].cast<Trajectory>());
             agent.SetRoadCorridorRoadIds(t[11].cast<std::vector<bark::world::map::XodrRoadId>>());
             agent.SetRoadCorridorDrivingDirection(t[12].cast<bark::world::map::XodrDrivingDirection>());
             return agent;

@@ -25,6 +25,8 @@ EvaluatorDynamicSafeDist::EvaluatorDynamicSafeDist(const bark::commons::ParamsPt
         params->GetInt("EvaluatorDynamicSafeDist::MaxAgentssCrossingCorridors", "How many nearest agents are lookup in other corridors", 4),
         params->GetBool("EvaluatorDynamicSafeDist::UseFracParamFromWorld", "True, if lateral distance threshold is overriden from world param", true),
         params->GetReal("EvaluatorDynamicSafeDist::LateralDistanceThreshold", "Lateral distance between vehicles to consider them as unsafe", 1.0),
+        params->GetReal("EvaluatorDynamicSafeDist::AngleDistanceThreshold",
+                       "Frenet angle difference between vehicles to consider them as unsafe", bark::geometry::B_PI),
         params->GetBool("EvaluatorDynamicSafeDist::CheckLateralSafeDist", "If lateral safe dist should be checked", false)) {}
 
 bool EvaluatorDynamicSafeDist::CheckSafeDistance(

@@ -152,12 +152,12 @@ TEST(primitive_constant_acceleration, behavior_test) {
   AdjacentLaneCorridors corridors2 = GetCorridors(world2);
   EXPECT_FALSE(dec_primitive.IsPreConditionSatisfied(world2, corridors2));
 
-  PrimitiveConstAccStayLane acc_primitive(params, 4.0);
+  PrimitiveConstAccStayLane acc_primitive(params, 3.0);
   EXPECT_TRUE(acc_primitive.IsPreConditionSatisfied(world1, corridors));
   auto traj3 = acc_primitive.Plan(0.5, world1, corridors.current);
   EXPECT_NEAR(
       traj3(traj3.rows() - 1, StateDefinition::X_POSITION),
-      traj3(0, StateDefinition::X_POSITION) + 5.0 * 0.5 + 4.0 / 2.0 * 0.5 * 0.5,
+      traj3(0, StateDefinition::X_POSITION) + 5.0 * 0.5 + 3.0 / 2.0 * 0.5 * 0.5,
       0.1);
 }
 
@@ -232,6 +232,44 @@ TEST(macro_actions, behavior_test) {
   for (const auto& p : prim_vec) {
     behavior.AddMotionPrimitive(p);
   }
+}
+
+TEST(macro_actions, equality_operator) {
+  using namespace bark::models::behavior::primitives;
+  using bark::models::behavior::primitives::PrimitiveConstAccStayLane;
+
+  auto create_behavior_macro = [](const double& T) {
+    auto params = std::make_shared<SetterParams>();
+    params->SetReal("BehaviorIDMClassic::DesiredTimeHeadway", T);
+
+    std::vector<std::shared_ptr<Primitive>> prim_vec;
+
+    auto primitive = std::make_shared<PrimitiveConstAccStayLane>(params, 0.0);
+    prim_vec.push_back(primitive);
+
+    auto primitive_left = std::make_shared<PrimitiveConstAccChangeToLeft>(params);
+    prim_vec.push_back(primitive_left);
+
+    auto primitive_right =
+        std::make_shared<PrimitiveConstAccChangeToRight>(params);
+    prim_vec.push_back(primitive_right);
+
+    BehaviorMPMacroActions behavior(params);
+    for (const auto& p : prim_vec) {
+      behavior.AddMotionPrimitive(p);
+    }
+    return behavior;
+  };
+
+  const auto behavior1 = create_behavior_macro(0.2);
+  const auto behavior2 = create_behavior_macro(0.2);
+
+  EXPECT_TRUE(behavior1 == behavior2);
+
+  const auto behavior3 = create_behavior_macro(0.2);
+  const auto behavior4 = create_behavior_macro(0.3);
+
+  EXPECT_FALSE(behavior3 == behavior4);
 }
 
 int main(int argc, char** argv) {

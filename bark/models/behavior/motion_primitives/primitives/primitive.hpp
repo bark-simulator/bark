@@ -77,11 +77,21 @@ class Primitive : public bark::commons::BaseType {
   Action GetLastAction() const { return last_action_; };
   void SetLastAction(const Action action) { last_action_ = action; };
 
+  bool operator==(const Primitive& other) const {
+    return typeid(*this) == typeid(other) && isEqual(other);
+  }
+
+  bool operator!=(const Primitive& other) const {
+    return !this->operator==(other);
+  }
+
  protected:
   double integration_time_delta_;
 
  private:
   Action last_action_;
+
+  virtual bool isEqual(const Primitive& other) const = 0;
 };
 
 typedef std::shared_ptr<Primitive> PrimitivePtr;

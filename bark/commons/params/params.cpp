@@ -49,5 +49,28 @@ std::string Params::Print() const {
   return ss.str();
 }
 
+bool Params::operator==(const Params& other) const {
+  auto this_condensed_params = this->GetCondensedParamList();
+  auto other_condensed_params = other.GetCondensedParamList();
+  if(this_condensed_params.size() != other_condensed_params.size()) return false;
+
+  std::sort(this_condensed_params.begin(), this_condensed_params.end(), [](const auto& first, const auto& second) {
+    return first.first < second.first;
+  });
+  std::sort(other_condensed_params.begin(), other_condensed_params.end(), [](const auto& first, const auto& second) {
+    return first.first < second.first;
+  });
+
+  for(std::size_t param_idx = 0; param_idx < this_condensed_params.size(); ++param_idx) {
+    if(this_condensed_params.at(param_idx).first != other_condensed_params.at(param_idx).first ||
+       this_condensed_params.at(param_idx).second != other_condensed_params.at(param_idx).second) {
+         LOG(INFO) << "unequal: " << this_condensed_params.at(param_idx).first << " = " << this_condensed_params.at(param_idx).second
+          << " and " << other_condensed_params.at(param_idx).first << " = " << other_condensed_params.at(param_idx).second;
+         return false;
+       }
+  }
+  return true;
+}
+
 }  // namespace commons
 }  // namespace bark

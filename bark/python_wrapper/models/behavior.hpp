@@ -75,6 +75,10 @@ class PyPrimitive : public Primitive {
                            SelectTargetCorridor, observed_world,
                            adjacent_corridors);
   }
+ private:
+  bool isEqual(const Primitive& other) const {
+    PYBIND11_OVERLOAD_PURE(bool, Primitive, isEqual, other);
+  }
 };
 
 void python_behavior(py::module m);

@@ -65,7 +65,17 @@ struct RoadCorridor {
     }
     return nullptr;
   }
+
+  std::pair<LaneCorridorPtr, unsigned> GetCurrentLaneCorridorAndIndex(const Point2d& pt) const {
+    for (unsigned corr_idx = 0; corr_idx < unique_lane_corridors_.size(); ++corr_idx) {
+      if (Collide(pt, unique_lane_corridors_.at(corr_idx)->GetMergedPolygon())) 
+            return std::make_pair(unique_lane_corridors_.at(corr_idx), corr_idx);
+    }
+    return std::make_pair(nullptr, -1);
+  }
+
   LaneCorridorPtr GetNearestLaneCorridor(const Point2d& pt) const;
+  std::pair<LaneCorridorPtr, unsigned> GetNearestLaneCorridorAndIndex(const Point2d& pt) const;
   std::pair<LaneCorridorPtr, LaneCorridorPtr> GetLeftRightLaneCorridor(
       const Point2d& pt) const;
 

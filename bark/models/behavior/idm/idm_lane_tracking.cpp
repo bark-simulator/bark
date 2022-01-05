@@ -86,9 +86,9 @@ std::tuple<Trajectory, Action> BehaviorIDMLaneTracking::GenerateTrajectory(
       traj.row(i) =
           dynamic::euler_int(*dynamic_model, traj.row(i - 1), input, dt);
 
-      // Do not allow negative speeds
+      // Restrict allowed speed
       traj(i, StateDefinition::VEL_POSITION) =
-          std::max(traj(i, StateDefinition::VEL_POSITION), 0.0);
+          std::max(traj(i, StateDefinition::VEL_POSITION), GetMinVelocity());
       double t_i = static_cast<double>(i) * dt + start_time;
       traj(i, StateDefinition::TIME_POSITION) = t_i;
 

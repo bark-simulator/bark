@@ -26,6 +26,7 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(const std::string& label_st
                             unsigned int max_agents_for_crossing,
                             bool use_frac_param_from_world,
                             double lateral_difference_threshold,
+                            double angle_difference_threshold,
                             bool check_lateral_dist)
     : BaseLabelFunction(label_str),
       to_rear_(to_rear),
@@ -35,6 +36,7 @@ SafeDistanceLabelFunction::SafeDistanceLabelFunction(const std::string& label_st
       a_o_(a_o),
       use_frac_param_from_world_(use_frac_param_from_world),
       lateral_difference_threshold_(lateral_difference_threshold),
+      angle_difference_threshold_(angle_difference_threshold),
       consider_crossing_corridors_(consider_crossing_corridors),
       max_agents_for_crossing_(max_agents_for_crossing),
       check_lateral_dist_(check_lateral_dist) {}
@@ -45,23 +47,6 @@ LabelMap SafeDistanceLabelFunction::Evaluate(const world::ObservedWorld& observe
     safe_dist = EvaluateCrossingCorridors(observed_world);
   }
   return {{GetLabel(), safe_dist}};
-}
-
-bool SafeDistanceLabelFunction::IsOncomingVehicle(const bark::world::AgentPtr& front_agent,
-           const bark::world::AgentPtr& rear_agent) const {
-  // Angular deviation allowed around orientation difference of 180
-  using bark::models::dynamic::StateDefinition;
-  const double max_angular_deviation = 5.0 / 360.0 * bark::geometry::B_2PI;
-  const double lower_angular_range = bark::geometry::B_PI - max_angular_deviation;
-  const double upper_angular_range = bark::geometry::B_PI + max_angular_deviation;
-  const double angle_difference = front_agent->GetCurrentState()[StateDefinition::THETA_POSITION] - 
-                                  rear_agent->GetCurrentState()[StateDefinition::THETA_POSITION];
-  const double normed_angle = bark::geometry::Norm0To2PI(angle_difference);
-  const bool is_oncoming = normed_angle < upper_angular_range &&
-         normed_angle > lower_angular_range;
-  VLOG(5) << "oncoming?:" << is_oncoming << ", lar=" << lower_angular_range << ", uar=" 
-          << upper_angular_range << ", na=" << normed_angle;
-  return is_oncoming;
 }
 
 bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
@@ -83,7 +68,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
                 ->GetNearestLaneCorridor(nearest_agent.second->GetCurrentPosition());
     auto fr_agents =
         observed_world.GetAgentFrontRearForId(
-            nearest_agent.second->GetAgentId(), lane_corridor, frac);
+            nearest_agent.second->GetAgentId(), lane_corridor, frac, angle_difference_threshold_);
 
     VLOG(5) << "Checking safe dist for nearest agent with id " << nearest_agent.first;
     bool distance_safe = CheckSafeDistanceLongitudinal(fr_agents, observed_world.GetEgoAgent());
