@@ -117,21 +117,28 @@ class Scenario:
 
     # TODO(@hart): should be a commons function
     def CreateMapInterface(self, map_file_name):
-        map_file_load_test = Path(map_file_name)
-        if map_file_load_test.is_file():
-            xodr_parser = XodrParser(map_file_name)
-        else:
-            print("Searching for map file {}".format(map_file_name))
-            objects_found = sorted(Path().rglob(map_file_name))
-            if len(objects_found) == 0:
-                raise ValueError("No Map found")
-            elif len(objects_found) > 1:
-                raise ValueError("Multiple Maps found")
-            else:
-                xodr_parser = XodrParser(objects_found[0].as_posix())
-
         map_interface = MapInterface()
-        map_interface.SetOpenDriveMap(xodr_parser.map)
+        map_file_load_test = Path(map_file_name)
+
+        if not map_file_load_test.is_file():
+          print("Searching for map file {}".format(map_file_name))
+          objects_found = sorted(Path().rglob(map_file_name))
+          if len(objects_found) == 0:
+              raise ValueError("No Map found")
+          elif len(objects_found) > 1:
+              raise ValueError("Multiple Maps found")
+          else:
+              map_file_name = objects_found[0].as_posix()
+
+        file_ext = os.path.splitext(map_file_name)[1]
+        if file_ext == ".json":
+          xodr_parser = XodrParser(map_file_name)
+          map_interface.SetOpenDriveMap(xodr_parser.map)
+        elif file_ext == ".csv":
+          map_interface.SetCsvMap(
+          map_file_name,
+          self._json_params["CSVMapOffsetX"],
+          self._json_params["CSVMapOffsetY"])
         self._map_interface = map_interface
 
     def GetDatasetScenarioDescription(self):
