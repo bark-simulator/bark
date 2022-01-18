@@ -10,6 +10,8 @@ from bark.runtime.scenario import Scenario
 from bark.runtime.scenario.scenario_generation  import ScenarioGeneration
 from bark.runtime.scenario.scenario_generation.config_readers import *
 
+from bark.core.world.opendrive import XodrDrivingDirection
+
 from bark.core.geometry import *
 from bark.core.world.agent import Agent
 
@@ -457,13 +459,10 @@ class ConfigurableScenarioGeneration(ScenarioGeneration):
     # generate road corridor between source and sink
     source_sink = source_sink_properties["SourceSink"]
     road_corridor = None
-    if isinstance(source_sink, tuple) and \
+    if isinstance(source_sink, list) and \
            isinstance(source_sink[0], int):
            # road id given for start and end of road corridor 
-           start_road_id = source_sink[0]
-           end_road_id = source_sink[1]
-           road_corridor = map_interface.GenerateRoadCorridor(start_road_id,
-                                                end_road_id)
+           road_corridor = map_interface.GenerateRoadCorridor( source_sink, XodrDrivingDirection.forward)
     elif isinstance(source_sink, list) and \
            isinstance(source_sink[0], list)  and \
            isinstance(source_sink[0][0], float):
