@@ -282,6 +282,8 @@ class BaseViewer(Viewer):
 
     def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
       sensed_world = None
+      if not eval_agent_ids[0] in world.agents:
+          eval_agent_ids = None
       if eval_agent_ids:
           sensed_world = world.agents[eval_agent_ids[0]].sensed_world
       if sensed_world:
