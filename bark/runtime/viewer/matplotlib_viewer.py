@@ -28,7 +28,7 @@ class MPViewer(BaseViewer):
         if 'axis' in kwargs:
           self.axes = kwargs.pop("axis")
         else:
-          self.axes = plt.subplots()[1]
+          self.axes = plt.subplots(figsize=(16, 9))[1]
           # removes whitespace
           # plt.subplots_adjust(bottom=0.0, left=0.0, right=1.0, top=1)
         self._cmap = self.setupColormap()
