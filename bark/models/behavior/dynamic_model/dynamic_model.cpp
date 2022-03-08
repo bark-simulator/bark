@@ -39,14 +39,14 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
     double min_planning_time, const world::ObservedWorld& observed_world) {
   SetBehaviorStatus(BehaviorStatus::VALID);
   const DynamicModelPtr dynamic_model =
-      observed_world.GetEgoAgent()->GetDynamicModel();
+    observed_world.GetEgoAgent()->GetDynamicModel();
 
   dynamic::State ego_vehicle_state =
-      observed_world.GetEgoAgent()->GetCurrentState();
+    observed_world.GetEgoAgent()->GetCurrentState();
   double start_time = observed_world.GetWorldTime();
   double dt = integration_time_delta_;
   int num_trajectory_points =
-      static_cast<int>(std::ceil(min_planning_time / dt)) + 1;
+    static_cast<int>(std::ceil(min_planning_time / dt)) + 2;
 
   dynamic::Trajectory traj(
     num_trajectory_points, dynamic_model->GetStateSize());
@@ -58,7 +58,7 @@ dynamic::Trajectory BehaviorDynamicModel::Plan(
   traj.row(0) = ego_vehicle_state;
   for (int i = 1; i < num_trajectory_points; i++) {
     auto next_state =
-        dynamic::euler_int(*dynamic_model, traj.row(i - 1), action, dt);
+      dynamic::euler_int(*dynamic_model, traj.row(i - 1), action, dt);
     traj.row(i) = next_state;
     traj(i, 0) = start_time + i * dt;
   }
