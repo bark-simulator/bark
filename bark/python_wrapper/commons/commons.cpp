@@ -81,6 +81,8 @@ void python_commons(py::module m) {
       .def_readwrite("lon", &transformation::FrenetStateDifference::lon)
       .def_readwrite("lat", &transformation::FrenetStateDifference::lat);
 
+  m.def("FrenetStateToDynamicState", &transformation::FrenetStateToDynamicState);
+
   m.def("SetLogLevel", [](int level) { FLAGS_minloglevel = level; });
   m.def("SetVerboseLevel", [](int level) { FLAGS_v = level; });
 
