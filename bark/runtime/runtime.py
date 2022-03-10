@@ -22,27 +22,54 @@ class Runtime(PyRuntime):
   def __init__(self,
                step_time,
                viewer,
-               scenario_generator=None,
+               art_part = 0.8,
+               num_scenarios=250,
+               art_scenario_generator=None,
+               odd_scenario_generator=None,
                render=False,
                maintain_world_history=False):
     self._params = ParameterServer()
     PyRuntime.__init__(self, self._params)
     self._step_time = step_time
     self._viewer = viewer
-    self._scenario_generator = scenario_generator
-    self._scenario_idx = None
+    self._art_scenario_generator = art_scenario_generator
+    self._odd_scenario_generator = odd_scenario_generator
+    self._scenario_idx = -1
     self._scenario = None
     self._render = render
     self._reset_has_been_called = False
     self._maintain_world_history = maintain_world_history
     self._world_history = []
+    # 80 percent of scenarios are artificial
+    self._art_part = art_part*10
+    self._num_scenarios = num_scenarios
 
   def reset(self, scenario=None):
     if scenario:
       self._scenario = scenario
     else:
-      self._scenario, self._scenario_idx = \
-        self._scenario_generator.get_next_scenario()
+      # pure odd scenarios
+      if (self._art_scenario_generator is None) and (self._odd_scenario_generator is not None):
+        self._scenario, self._scenario_idx = \
+          self._odd_scenario_generator.get_next_scenario()
+      # pure artificial scenario
+      if (self._odd_scenario_generator is None) and (self._art_scenario_generator is not None):
+        self._scenario, self._scenario_idx = \
+          self._art_scenario_generator.get_next_scenario()
+      # mixed odd and artificial scenario
+      if (self._odd_scenario_generator is not None) and (self._art_scenario_generator is not None):
+        cur_scen_idx = self._scenario_idx+1
+        if cur_scen_idx >= self._num_scenarios:
+          cur_scen_idx=0
+        if cur_scen_idx % 10 < self._art_part:
+          self._scenario, _ = \
+            self._art_scenario_generator.get_next_scenario()
+        else:
+          self._scenario, _ = \
+            self._odd_scenario_generator.get_next_scenario()
+
+        self._scenario_idx = cur_scen_idx
+
     self._world = self._scenario.GetWorldState()
     self._reset_has_been_called = True
     self._viewer.Reset()
