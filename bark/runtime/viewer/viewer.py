@@ -64,6 +64,8 @@ class BaseViewer(Viewer):
                                                               "Draw history with alpha trace for each agent", False]
         self.draw_history_draw_face = params["Visualization"]["Agents"]["DrawHistoryDrawFace",
                                                                         "Flag to specify if face is drawn in history mode", True]
+        self.draw_reference = params["Visualization"]["Agents"]["DrawReference",
+                                                              "Draw reference lines with alpha trace for each agent", False]
 
         # map
         self.color_lane_boundaries = params["Visualization"]["Map"]["XodrLanes"]["Boundaries"]["Color",
@@ -294,7 +296,7 @@ class BaseViewer(Viewer):
 
     def drawSensedWorld(self, sensed_world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
       self.drawWorldImplementation(sensed_world, eval_agent_ids, filename, scenario_idx, debug_text)
-
+    
     def drawTrueWorld(self, world, eval_agent_ids):
       # draw only boundaries of agents in same color as observed agents
       for _, agent in world.agents.items():
@@ -334,6 +336,10 @@ class BaseViewer(Viewer):
         if self._draw_aerial_image:
           self.drawMapAerialImage()
 
+        # draw centerline of ego lane
+        if self.draw_reference:
+            ego_ref_traj_= world.agents[eval_agent_ids[0]].road_corridor.lane_corridors[0].center_line
+            self.drawLine2d(ego_ref_traj_,dashed=True, color='red', linewidth='0.8', zorder=18)
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \

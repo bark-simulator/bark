@@ -45,7 +45,8 @@ class Runtime(PyRuntime):
         self._scenario_generator.get_next_scenario()
     self._world = self._scenario.GetWorldState()
     self._reset_has_been_called = True
-    self._viewer.Reset()
+    if self._viewer:
+      self._viewer.Reset()
     self._world_history = []
 
   def step(self):
@@ -65,12 +66,13 @@ class Runtime(PyRuntime):
       self._world_history.append(self._world.Copy())
 
   def render(self):
-    # self._viewer.clear()
-    self._viewer.drawWorld(
-      self._world,
-      self._scenario._eval_agent_ids,
-      scenario_idx=self._scenario_idx)
-    self._viewer.clear()
+    if self._viewer:
+      # self._viewer.clear()
+      self._viewer.drawWorld(
+        self._world,
+        self._scenario._eval_agent_ids,
+        scenario_idx=self._scenario_idx)
+      self._viewer.clear()
 
   def run(self, steps):
     for step_count in range(steps):
