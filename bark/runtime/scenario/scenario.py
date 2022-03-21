@@ -131,7 +131,7 @@ class Scenario:
               map_file_name = objects_found[0].as_posix()
 
         file_ext = os.path.splitext(map_file_name)[1]
-        if file_ext == ".json":
+        if file_ext == ".xodr":
           xodr_parser = XodrParser(map_file_name)
           map_interface.SetOpenDriveMap(xodr_parser.map)
         elif file_ext == ".csv":
@@ -139,6 +139,8 @@ class Scenario:
           map_file_name,
           self._json_params["CSVMapOffsetX"],
           self._json_params["CSVMapOffsetY"])
+        else:
+          print("Unknown map extension:", file_ext)
         self._map_interface = map_interface
 
     def GetDatasetScenarioDescription(self):
