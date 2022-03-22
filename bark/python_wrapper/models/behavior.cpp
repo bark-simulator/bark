@@ -47,7 +47,9 @@ void python_behavior(py::module m) {
       .def("GetLastSolutionTime", &BehaviorModel::GetLastSolutionTime)
       .def("ActionToBehavior", &BehaviorModel::ActionToBehavior)
       .def_property("last_trajectory", &BehaviorModel::GetLastTrajectory,
-                    &BehaviorModel::SetLastTrajectory);
+                    &BehaviorModel::SetLastTrajectory)
+      .def_property("behavior_status", &BehaviorModel::GetBehaviorStatus,
+                    &BehaviorModel::SetBehaviorStatus);;
 
   py::class_<BehaviorConstantAcceleration, BehaviorModel,
              shared_ptr<BehaviorConstantAcceleration>>(m,
@@ -521,4 +523,10 @@ void python_behavior(py::module m) {
         &BehaviorMacroActionsFromParamServer);
 
   python_behavior_plan(m);
+
+  py::enum_<BehaviorStatus>(m, "BehaviorStatus", py::arithmetic())
+    .value("NOT_STARTED_YET", NOT_STARTED_YET)
+    .value("VALID", VALID)
+    .value("EXPIRED", EXPIRED)
+    .export_values();
 }

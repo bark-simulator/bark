@@ -34,6 +34,7 @@ class Object : public commons::BaseType {
   virtual ~Object() {}
 
   geometry::Polygon GetShape() const { return shape_; }
+  void SetShape(const geometry::Polygon& polygon) { shape_ = polygon; } 
   geometry::Model3D GetModel3d() const { return model_3d_; }
 
   AgentId GetAgentId() const { return agent_id_; }

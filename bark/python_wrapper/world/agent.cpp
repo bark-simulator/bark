@@ -41,7 +41,7 @@ void python_agent(py::module m) {
            py::arg("map_interface") = nullptr, py::arg("model_3d") = Model3D())
       .def("__repr__", [](const Agent& a) { return "bark.agent.Agent"; })
       .def_property_readonly("history", &Agent::GetStateInputHistory)
-      .def_property_readonly("shape", &Agent::GetShape)
+      .def_property("shape", &Agent::GetShape, &Agent::SetShape)
       .def_property_readonly("id", &Agent::GetAgentId)
       .def_property_readonly("followed_trajectory",
                              &Agent::GetExecutionTrajectory)

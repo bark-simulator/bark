@@ -20,13 +20,14 @@ from bark.runtime.viewer.viewer import BaseViewer
 
 
 class VideoRenderer(BaseViewer):
-    def __init__(self, renderer, world_step_time, render_intermediate_steps=None , params=None, video_name=None, fig_path=None, clear_figures=True, **kwargs):
+    def __init__(self, renderer, world_step_time, render_intermediate_steps=None, params=None, video_name=None, fig_path=None, clear_figures=True, **kwargs):
         super(VideoRenderer, self).__init__(params=params)
         self.renderer = renderer
         self.world_step_time = world_step_time
         self.render_intermediate_steps = render_intermediate_steps
 
-        video_dir_name = "vid_render_frames_{}".format(uuid.uuid4()) if video_name is None else video_name
+        video_dir_name = "vid_render_frames_{}".format(
+            uuid.uuid4()) if video_name is None else video_name
         self.fig_path = fig_path if fig_path is not None else tempfile.gettempdir()
         self.video_frame_dir = os.path.join(self.fig_path, video_dir_name)
         if clear_figures and os.path.exists(self.video_frame_dir):
@@ -36,24 +37,27 @@ class VideoRenderer(BaseViewer):
 
         self.frame_count = 0
 
-    def drawWorld(self, world, eval_agent_ids=None, scenario_idx=None, debug_text=False):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
+        filename = os.path.join(
+            self.video_frame_dir, "{:03d}.png".format(self.frame_count))
         if self.render_intermediate_steps is None:
-            self._renderWorld(world, eval_agent_ids, scenario_idx)
+            self._renderWorld(world, eval_agent_ids, filename,
+                              scenario_idx, debug_text, axes_visible=False)
         else:
             world_time = world.time
             executed_world = world
-            for _ in range(0,self.render_intermediate_steps):
+            for _ in range(0, self.render_intermediate_steps):
                 executed_world = executed_world.GetWorldAtTime(world_time)
-                self._renderWorld(executed_world, eval_agent_ids, scenario_idx)
+                self._renderWorld(
+                    executed_world, eval_agent_ids, filename, scenario_idx)
                 world_time = world_time + self.world_step_time/self.render_intermediate_steps
 
     def drawText(self, **kwargs):
         self.renderer.drawText(**kwargs)
 
-    def _renderWorld(self, world, eval_agent_ids=None, scenario_idx=None, debug_text=False):
-        image_path = os.path.join(self.video_frame_dir, "{:03d}.png".format(self.frame_count))
+    def _renderWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=False, axes_visible=False):
         self.renderer.drawWorld(world=world, eval_agent_ids=eval_agent_ids,
-                                filename=image_path, scenario_idx=scenario_idx, debug_text=debug_text)
+                                filename=filename, scenario_idx=scenario_idx, debug_text=debug_text, axes_visible=axes_visible)
         self.frame_count = self.frame_count + 1
 
     def reset(self):
@@ -63,7 +67,7 @@ class VideoRenderer(BaseViewer):
         if self.render_intermediate_steps is None:
             framerate = 1/self.world_step_time
         else:
-            framerate =  1/(self.world_step_time/self.render_intermediate_steps)
+            framerate = 1/(self.world_step_time/self.render_intermediate_steps)
 
         if os.path.isfile(filename):
             os.remove(filename)
@@ -73,13 +77,10 @@ class VideoRenderer(BaseViewer):
             framerate, self.video_frame_dir, 1 / framerate, os.path.abspath(filename))
         retval = subprocess.call(cmd, shell=True)
         if retval:
-          logging.error("Error during video export.")
+            logging.error("Error during video export.")
 
         if remove_image_dir:
             shutil.rmtree(os.path.abspath(self.video_frame_dir))
 
     def clear(self):
-      self.renderer.clear()
-
-
-
+        self.renderer.clear()
