@@ -292,7 +292,7 @@ class BaseViewer(Viewer):
                         evaluator_type, k.label_str, k.agent_id, v)
         self.drawText(position=(0.7, 0.9), text=str)
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, **kwargs):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
         sensed_world = None
         if eval_agent_ids and (not eval_agent_ids[0] in world.agents):
             eval_agent_ids = None
@@ -306,7 +306,7 @@ class BaseViewer(Viewer):
             self.drawWorldImplementation(
                 world, eval_agent_ids, filename, scenario_idx, debug_text)
 
-    def drawSensedWorld(self, sensed_world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+    def drawSensedWorld(self, sensed_world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True,):
         self.drawWorldImplementation(
             sensed_world, eval_agent_ids, filename, scenario_idx, debug_text)
 
@@ -357,8 +357,8 @@ class BaseViewer(Viewer):
         if self.draw_reference and eval_agent_ids is not None:
             ego_ref_traj_ = world.agents[eval_agent_ids[0]
                                          ].road_corridor.lane_corridors[0].center_line
-            self.drawLine2d(ego_ref_traj_, color='red', alpha=self.alpha_lane_boundaries, dashed=True, 
-                            linewidth='0.8', zorder=18)
+            self.drawLine2d(ego_ref_traj_, color='red', alpha=self.alpha_lane_boundaries,
+                            dashed=True, zorder=18, linewidth='0.8')
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
