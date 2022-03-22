@@ -203,7 +203,7 @@ class BaseViewer(Viewer):
     def drawPoint2d(self, point2d, color, alpha):
         pass
 
-    def drawLine2d(self, line2d, color, alpha, dashed=False, zorder=2):
+    def drawLine2d(self, line2d, color, alpha, dashed=False, zorder=2, **kwargs):
         pass
 
     def drawPolygon2d(self, polygon, color, alpha, facecolor=None, zorder=10, hatch=''):
@@ -358,7 +358,7 @@ class BaseViewer(Viewer):
             ego_ref_traj_ = world.agents[eval_agent_ids[0]
                                          ].road_corridor.lane_corridors[0].center_line
             self.drawLine2d(ego_ref_traj_, color='red', alpha=self.alpha_lane_boundaries,
-                            dashed=True, zorder=18, linewidth='0.8')
+                            dashed=True, zorder=18, linewidth=0.8)
         # draw agent goals
         for agent_id, agent in world.agents.items():
             if eval_agent_ids and self.draw_eval_goals and agent.goal_definition and \
