@@ -37,12 +37,12 @@ class VideoRenderer(BaseViewer):
 
         self.frame_count = 0
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, axes_visible=False):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
         filename = os.path.join(
             self.video_frame_dir, "{:03d}.png".format(self.frame_count))
         if self.render_intermediate_steps is None:
             self._renderWorld(world, eval_agent_ids, filename,
-                              scenario_idx, debug_text, axes_visible)
+                              scenario_idx, debug_text, axes_visible=False)
         else:
             world_time = world.time
             executed_world = world

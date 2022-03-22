@@ -292,7 +292,7 @@ class BaseViewer(Viewer):
                         evaluator_type, k.label_str, k.agent_id, v)
         self.drawText(position=(0.7, 0.9), text=str)
 
-    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True):
+    def drawWorld(self, world, eval_agent_ids=None, filename=None, scenario_idx=None, debug_text=True, **kwargs):
         sensed_world = None
         if eval_agent_ids and (not eval_agent_ids[0] in world.agents):
             eval_agent_ids = None
@@ -357,7 +357,7 @@ class BaseViewer(Viewer):
         if self.draw_reference and eval_agent_ids is not None:
             ego_ref_traj_ = world.agents[eval_agent_ids[0]
                                          ].road_corridor.lane_corridors[0].center_line
-            self.drawLine2d(ego_ref_traj_, color='red', dashed=True, alpha=self.alpha_lane_boundaries,
+            self.drawLine2d(ego_ref_traj_, color='red', alpha=self.alpha_lane_boundaries, dashed=True, 
                             linewidth='0.8', zorder=18)
         # draw agent goals
         for agent_id, agent in world.agents.items():
