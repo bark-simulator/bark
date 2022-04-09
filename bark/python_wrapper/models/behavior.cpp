@@ -344,7 +344,8 @@ void python_behavior(py::module m) {
              shared_ptr<BehaviorDynamicModel>>(m, "BehaviorDynamicModel")
       .def(py::init<const bark::commons::ParamsPtr&>())
       .def("SetLastAction", &BehaviorModel::SetLastAction)
-      .def("GetAction", &BehaviorModel::GetAction)
+      .def("GetAction", &BehaviorDynamicModel::GetAction)
+      .def("ActionToBehavior", &BehaviorDynamicModel::ActionToBehavior)
       .def("__repr__",
            [](const BehaviorDynamicModel& b) {
              return "bark.behavior.BehaviorDynamicModel";

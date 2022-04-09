@@ -89,6 +89,7 @@ void python_map(py::module m) {
       .def_property_readonly("lanes", &RoadCorridor::GetLanes)
       .def_property_readonly("road_ids", &RoadCorridor::GetRoadIds)
       .def("GetRoad", &RoadCorridor::GetRoad)
+      .def("GetHash", &RoadCorridor::GetHash)
       .def_property_readonly("polygon", &RoadCorridor::GetPolygon)
       .def("GetLaneCorridor", &RoadCorridor::GetLaneCorridor)
       .def("GetCurrentLaneCorridor", &RoadCorridor::GetCurrentLaneCorridor)

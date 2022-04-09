@@ -246,6 +246,8 @@ void python_geometry(py::module m) {
         "return intersection points");
   m.def("Intersection", &bark::geometry::Intersection<Line, Line>,
         "return intersection points");
+  m.def("Intersection", &bark::geometry::Intersection<Polygon, Polygon>,
+        "return intersection points");
 
   python_standard_shapes(
       m.def_submodule("standard_shapes",

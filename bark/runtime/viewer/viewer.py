@@ -392,6 +392,19 @@ class BaseViewer(Viewer):
                 scenario_idx), fontsize=14)
             self.drawText(position=(0.1, 0.95),
                           text="Time: {:.2f}".format(world.time), fontsize=14)
+            if eval_agent_ids:
+                cur_state = world.agents[eval_agent_ids[0]].state
+                if isinstance(cur_state,np.ndarray):
+                    self.drawText(position=(0.1, 0.85), text="Velocity: {:.2f} m/s".format(
+                    cur_state[int(StateDefinition.VEL_POSITION)]), fontsize=14)
+            
+                curr_action = world.agents[eval_agent_ids[0]].behavior_model.GetLastAction()
+                if isinstance(curr_action,np.ndarray):
+                    self.drawText(position=(0.1, 0.8), text="Acceleration: {:.2f} m/s²".format(
+                    curr_action[0]), fontsize=14)
+                    self.drawText(position=(0.1, 0.75), text="SteeringRate: {:.2f} rad/s".format(
+                    curr_action[1]), fontsize=14)
+            
 
         if self.draw_ltl_debug_info:
             self.drawLTLDebugInfomation(world, eval_agent_ids[0])
