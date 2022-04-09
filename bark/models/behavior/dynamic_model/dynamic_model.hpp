@@ -6,9 +6,10 @@
 // This work is licensed under the terms of the MIT license.
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
-#ifndef BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
-#define BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
+#ifndef BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_DYNAMIC_MODEL_HPP_
+#define BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_DYNAMIC_MODEL_HPP_
 
+#include <memory>
 #include "bark/models/behavior/behavior_model.hpp"
 #include "bark/models/dynamic/dynamic_model.hpp"
 #include "bark/world/world.hpp"
@@ -37,7 +38,12 @@ class BehaviorDynamicModel : public BehaviorModel {
 
   virtual std::shared_ptr<BehaviorModel> Clone() const;
 
-  virtual void ActionToBehavior(const Action& action) { action_ = action; }
+  virtual void ActionToBehavior(const Action& action) {
+    action_ = action;
+    BehaviorModel::ActionToBehavior(action);
+    BehaviorModel::SetLastAction(action);
+    }
+  Action GetAction() const { return action_; }
 
  private:
   double integration_time_delta_;
@@ -54,4 +60,4 @@ inline std::shared_ptr<BehaviorModel> BehaviorDynamicModel::Clone() const {
 }  // namespace models
 }  // namespace bark
 
-#endif  // BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_HPP_
+#endif  // BARK_MODELS_BEHAVIOR_DYNAMIC_MODEL_DYNAMIC_MODEL_HPP_
