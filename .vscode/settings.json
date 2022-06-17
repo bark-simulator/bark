@@ -128,5 +128,6 @@
     "licenser.license": "MIT",
     "licenser.author": "fortiss GmbH",
     "licenser.projectName": "BARK",
-    "C_Cpp.dimInactiveRegions": false
+    "C_Cpp.dimInactiveRegions": false,
+    "python.linting.flake8Enabled": false
 }
