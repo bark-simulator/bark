@@ -56,7 +56,7 @@ class PygameViewer(BaseViewer):
             lanes_np = []
             lanes_dashed = []
 
-            for _, road in map.GetRoads().items():
+            for _, road in map.GetOpenDriveMap().GetRoads().items():
                 for lane_section in road.lane_sections:
                     for _, lane in lane_section.GetLanes().items():
                         lane_np = lane.line.ToArray()
@@ -138,7 +138,7 @@ class PygameViewer(BaseViewer):
             self.drawDashedLines(
                 s, self.getColor(color), transformed_lines, 3)
 
-    def drawPolygon2d(self, polygon, color="blue", alpha=1.0, facecolor=None):
+    def drawPolygon2d(self, polygon, color="red", alpha=1.0, facecolor=None, zorder=10, hatch=''):
         transformed_points = self.pointsToCameraCoordinate(polygon)
         s = self.createTransparentSurace(
             self.screen_dims, self.background_color, alpha)
