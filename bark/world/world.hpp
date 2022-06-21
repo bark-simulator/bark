@@ -201,6 +201,7 @@ class World : public commons::BaseType {
 
   void AddEvaluator(const std::string& name, const EvaluatorPtr& evaluator);
 
+  void UpdateAgentStateFromExtern(const float& delta_time, const AgentStateMap& state_map);
   //! Functions
   void ClearEvaluators() { evaluators_.clear(); }
   void ClearAgents() { agents_.clear(); }

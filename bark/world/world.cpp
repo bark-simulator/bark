@@ -23,6 +23,8 @@ using models::behavior::BehaviorStatus;
 using models::execution::ExecutionStatus;
 using bark::models::observer::ObserverModelNone;
 using bark::world::renderer::Renderer;
+using bark::models::behavior::Action;
+using bark::models::behavior::DiscreteAction;
 
 World::World(const commons::ParamsPtr& params)
     : commons::BaseType(params),
@@ -140,7 +142,28 @@ void World::AddEvaluator(const std::string& name,
                          const EvaluatorPtr& evaluator) {
   evaluators_[name] = evaluator;
 }
+void World::UpdateAgentStateFromExtern(const float& delta_time, const AgentStateMap& state_map){
+  // this function should be called before calling PlanAgents
+  // TODO: use StateActionPair as parameter
+  world_time_ += delta_time;
 
+  for (const auto& agent_state : state_map) {
+    AgentPtr agent = NULL;
+    agent = GetAgent(agent_state.first);
+
+    if (agent) {
+      // TODO: read control from Carla to get actions
+      StateActionPair pair;
+      pair.first = agent_state.second;
+      pair.second = Action(DiscreteAction(0));
+      agent->SetCurrentStateAction(pair);
+    } else {
+      std::cout << "Agent" << agent_state.first << " doesn't exist." << std::endl;
+    }
+  }
+
+  //UpdateHorizonDrivingCorridors();
+}
 EvaluationMap World::Evaluate() const {
   EvaluationMap evaluation_results;
   for (auto const& evaluator : evaluators_) {

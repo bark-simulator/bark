@@ -120,6 +120,8 @@ class Agent : public Object {
   }
 
   State GetCurrentState() const { return history_.back().first; }
+  Action GetCurrentAction() const { return history_.back().second; }
+  StateActionPair GetCurrentStateAction() const { return history_.back(); }
 
   Point2d GetCurrentPosition() const {
     const State& state = GetCurrentState();
@@ -173,6 +175,12 @@ class Agent : public Object {
 
   void SetCurrentState(const State& current_state) {
     history_.back().first = current_state;
+  }
+  void SetCurrentAction(const Action& current_action) {
+    history_.back().second = current_action;
+  }
+  void SetCurrentStateAction(const StateActionPair& current_state_action) {
+    history_.back() = current_state_action;
   }
 
   void SetRoadCorridor(const RoadCorridorPtr road_corridor) {

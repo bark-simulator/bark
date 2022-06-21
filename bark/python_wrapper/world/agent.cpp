@@ -53,6 +53,8 @@ void python_agent(py::module m) {
       .def_property_readonly("dynamic_model", &Agent::GetDynamicModel)
       .def_property_readonly("model3d", &Agent::GetModel3d)
       .def_property("state", &Agent::GetCurrentState, &Agent::SetCurrentState)
+      .def_property("action", &Agent::GetCurrentAction, &Agent::SetCurrentAction)
+      .def_property("state_action_pair", &Agent::GetCurrentStateAction, &Agent::SetCurrentStateAction)
       .def_property("road_corridor", &Agent::GetRoadCorridor,
                     &Agent::SetRoadCorridor)
       .def_property_readonly("road_corridor_road_ids", &Agent::GetRoadCorridorRoadIds)
