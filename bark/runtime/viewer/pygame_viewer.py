@@ -22,7 +22,7 @@ class PygameViewer(BaseViewer):
         self.screen_dims = kwargs.pop("screen_dims", np.array([600, 600]))
         self.screen_width = self.screen_dims[0]
         self.screen_height = self.screen_dims[1]
-        self.screen_map_ratio = None
+        self.screen_map_ratio = kwargs.pop("screen_map_ratio", 1.5)
         self.source_dest = None
         self.screen_surface = pg.Surface(
             self.screen_dims, pg.DOUBLEBUF | pg.HWSURFACE)

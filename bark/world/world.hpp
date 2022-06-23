@@ -84,6 +84,13 @@ class World : public commons::BaseType {
   void PlanAgents(const double& delta_time);
 
   /**
+   * @brief Calls the behavior and execution model of the agents and step world
+   * @param  delta_time: minimum planning time
+   * @param agent_ids: the specific agents to be planned and executed
+   */
+  void PlanAndExecuteAgentsWithID(const double& delta_time, const std::vector<int>& agent_ids);
+
+  /**
    * @brief  Updates the agent states
    */
   void Execute(const double& delta_time);
