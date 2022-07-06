@@ -1,6 +1,6 @@
 matplotlib==3.3.2
 numpy==1.18.1
-lxml==4.6.3
+lxml==4.9.1
 scipy==1.4.1
 sphinx==2.3.1
 recommonmark==0.6.0
