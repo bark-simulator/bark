@@ -25,6 +25,7 @@ Trajectory BehaviorModel::PlanBehavior(double min_planning_time,
   } else {
     traj = this->Plan(min_planning_time, observed_world);
   }
+  // std::cout<< "Planned Trajectory is: " << std::endl << traj << std::endl;
   return traj;
 }
 }  // namespace behavior

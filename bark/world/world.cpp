@@ -97,10 +97,14 @@ void World::PlanAndExecuteAgentsWithID(const double& delta_time, const std::vect
         current_world, agent_id);
       agent->SetSensedWorld(std::make_shared<ObservedWorld>(observed_world));
       agent->PlanBehavior(delta_time, observed_world);
-      if (agent->GetBehaviorStatus() == BehaviorStatus::VALID)
+      if (agent->GetBehaviorStatus() == BehaviorStatus::VALID){
+        LOG(INFO) << "Behavior generated successfully for agent " << agent_id << "!";
         agent->PlanExecution(inc_world_time);
-      if (agent->GetExecutionStatus() == ExecutionStatus::VALID)
+      }
+      if (agent->GetExecutionStatus() == ExecutionStatus::VALID){
+        // LOG(INFO) << "Execution generated successfully for agent " << agent_id << "!";
         agent->UpdateStateAction();
+      }
       // make sure all agents have the same world time
       // otherwise the simulation is not correct
       const auto& agent_state = agent->GetCurrentState();

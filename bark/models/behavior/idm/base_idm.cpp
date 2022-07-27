@@ -202,8 +202,14 @@ IDMRelativeValues BaseIDM::CalcRelativeValues(
           leading_vehicle.first->GetStateInputHistory().back().second;
       if (last_action.type() == typeid(Continuous1DAction)) {
         leading_acc = boost::get<Continuous1DAction>(last_action);
+        LOG(INFO) << "Continuous1DAction action type  in cah calculation: "
+                   << boost::apply_visitor(action_tostring_visitor(),
+                                           last_action);
       } else if (last_action.type() == typeid(LonLatAction)) {
         leading_acc = boost::get<LonLatAction>(last_action).acc_lon;
+        LOG(INFO) << "LatLon action type  in cah calculation: "
+                   << boost::apply_visitor(action_tostring_visitor(),
+                                           last_action);
       } else if (last_action.type() == typeid(Input)) {
         leading_acc = boost::get<Input>(last_action)(0);
       } else {
@@ -395,7 +401,10 @@ Trajectory BaseIDM::Plan(double min_planning_time,
   Trajectory traj = std::get<0>(traj_action);
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
+  std::cout<< "Planned Trajectory is: " << std::endl << traj << std::endl;
   SetLastAction(action);
+  // std::cout<< "Planned lateral is: " << boost::get<LonLatAction>(action).acc_lat << std::endl;
+  // std::cout<< "Planned action is: " << boost::get<LonLatAction>(action) << std::endl;
   return traj;
 }
 
