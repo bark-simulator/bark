@@ -84,7 +84,7 @@ void World::PlanAgents(const double& delta_time) {
     }
   }
 }
-void World::PlanAndExecuteAgentsWithID(const double& delta_time, const std::vector<int>& agent_ids){
+void World::PlanAndExecuteAgentsWithID(const double& delta_time, const std::vector<AgentId>& agent_ids){
   using models::dynamic::StateDefinition::TIME_POSITION;
   UpdateAgentRTree();
   WorldPtr current_world(this->Clone());
@@ -98,23 +98,22 @@ void World::PlanAndExecuteAgentsWithID(const double& delta_time, const std::vect
       agent->SetSensedWorld(std::make_shared<ObservedWorld>(observed_world));
       agent->PlanBehavior(delta_time, observed_world);
       if (agent->GetBehaviorStatus() == BehaviorStatus::VALID){
-        LOG(INFO) << "Behavior generated successfully for agent " << agent_id << "!";
         agent->PlanExecution(inc_world_time);
       }
       if (agent->GetExecutionStatus() == ExecutionStatus::VALID){
-        // LOG(INFO) << "Execution generated successfully for agent " << agent_id << "!";
         agent->UpdateStateAction();
-      }
-      // make sure all agents have the same world time
-      // otherwise the simulation is not correct
-      const auto& agent_state = agent->GetCurrentState();
-      BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) <
+        // make sure all agents have the same world time
+        // otherwise the simulation is not correct
+        const auto& agent_state = agent->GetCurrentState();
+        BARK_EXPECT_TRUE(fabs(agent_state(TIME_POSITION) - inc_world_time) <
                        0.01); 
+      }
     }
     else{
       std::cout << "Agent" << agent_id << " is not valid." << std::endl;
     }
   }
+  RemoveInvalidAgents();
   world_time_ = inc_world_time;
 }
 void World::Execute(const double& delta_time) {
@@ -174,17 +173,23 @@ void World::AddEvaluator(const std::string& name,
                          const EvaluatorPtr& evaluator) {
   evaluators_[name] = evaluator;
 }
-void World::UpdateAgentStateFromExtern(const float& delta_time, const AgentStateMap& state_map){
+void World::UpdateAgentStateFromExtern(const float& delta_time,
+                                       const AgentStateMap& state_map,
+                                       const std::vector<AgentId>& exclude_agent_ids) {
   // this function should be called before calling PlanAgents
-  // TODO: use StateActionPair as parameter
+  // TODO(@xliu): use StateActionPair as parameter
   world_time_ += delta_time;
 
   for (const auto& agent_state : state_map) {
+    if ((!exclude_agent_ids.empty()) &&
+        std::count(exclude_agent_ids.begin(), exclude_agent_ids.end(), agent_state.first)) {
+      continue;
+    }
     AgentPtr agent = NULL;
     agent = GetAgent(agent_state.first);
 
     if (agent) {
-      // TODO: read control from Carla to get actions
+      // TODO(@xliu): read control from Carla to get actions
       StateActionPair pair;
       pair.first = agent_state.second;
       pair.second = Action(DiscreteAction(0));

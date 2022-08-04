@@ -40,7 +40,6 @@ std::tuple<Trajectory, Action> BehaviorIDMClassic::GenerateTrajectory(
                            static_cast<int>(StateDefinition::MIN_STATE_SIZE));
   dynamic::State ego_vehicle_state = observed_world.CurrentEgoState();
   geometry::Point2d pose = observed_world.CurrentEgoPosition();
-
   double initial_acceleration = 0.0;
   if (!line.obj_.empty()) {
     // adding state at t=0

@@ -73,7 +73,7 @@ struct action_tostring_visitor : boost::static_visitor<std::string> {
   std::string operator()(
       bark::models::behavior::LonLatAction const& val) const {
     std::stringstream ss;
-    ss << "LonLatAction: acc_lon=" << val.acc_lat
+    ss << "LonLatAction: acc_lon=" << val.acc_lon
        << ", acc_lat=" << val.acc_lat;
     return ss.str();
   }

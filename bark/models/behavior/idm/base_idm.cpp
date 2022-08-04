@@ -401,10 +401,7 @@ Trajectory BaseIDM::Plan(double min_planning_time,
   Trajectory traj = std::get<0>(traj_action);
   Action action = std::get<1>(traj_action);
   SetLastTrajectory(traj);
-  std::cout<< "Planned Trajectory is: " << std::endl << traj << std::endl;
   SetLastAction(action);
-  // std::cout<< "Planned lateral is: " << boost::get<LonLatAction>(action).acc_lat << std::endl;
-  // std::cout<< "Planned action is: " << boost::get<LonLatAction>(action) << std::endl;
   return traj;
 }
 
