@@ -12,6 +12,9 @@
 
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/evaluation/ltl/evaluator_ltl.hpp"
+
+#include "bark/world/evaluation/ltl/robustness_stl.hpp"
+
 #include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_near_label_function.hpp"
@@ -54,6 +57,22 @@ void python_ltl(py::module m) {
       .def("__repr__", [](const EvaluatorLTL& g) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
+
+  py::class_<RobustnessSTL, EvaluatorLTL, std::shared_ptr<RobustnessSTL>>(
+      m, "RobustnessSTL")
+      .def(py::init<bark::world::objects::AgentId, const std::string&, const LabelFunctions&>(),
+           py::arg("agent_id"), py::arg("ltl_formula"), 
+           py::arg("label_functions"))
+      .def("Evaluate", &RobustnessSTL::Evaluate, py::arg("observed_world"))
+      .def("CalculateRobustness", &RobustnessSTL::CalculateRobustness)
+      .def("NormalizeRobustness", &RobustnessSTL::NormalizeRobustness, py::arg("robustness"))
+      .def("GetTotalRuleEvaluations", &RobustnessSTL::GetTotalRuleEvaluations)
+      .def("GetRuleViolationCount", &RobustnessSTL::GetRuleViolationCount)
+      .def("GetRulePassCount", &RobustnessSTL::GetRulePassCount)
+      .def("__repr__", [](const RobustnessSTL& g) {
+        return "bark.core.world.evaluation.ltl.RobustnessSTL";
+      });
+
 #endif
   // LABELS
 

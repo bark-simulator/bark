@@ -32,6 +32,49 @@ py_test(
 )
 
 py_test(
+    name = "py_evaluator_stl_tests",
+    srcs = select({
+        "//bark/world/evaluation/ltl:_ltl_rules": ["py_evaluator_stl_tests.py"],
+        "//conditions:default": ["py_dummy_test.py"],
+    }),
+    data = [
+        "//bark:generate_core",
+        "//bark/runtime/tests:xodr_data",
+    ],
+    imports = ["../../../python/"],
+    main = select({
+        "//bark/world/evaluation/ltl:_ltl_rules": "py_evaluator_stl_tests.py",
+        "//conditions:default": "py_dummy_test.py",
+    }),
+    deps = [
+        "//bark/runtime/commons:parameters",
+        "//bark/runtime/scenario/scenario_generation",
+    ],
+)
+
+# py_test(
+#     name = "py_evaluator_stl_tests",
+#     srcs = select({
+#         "//bark/world/evaluation/ltl:_ltl_rules": ["py_evaluator_stl_tests.py"],
+#         "//conditions:default": ["py_dummy_test.py"],"
+#     }),
+#     data = [
+#         "//bark:generate_core",
+#         "//bark/runtime/tests:xodr_data",
+#     ],
+#     imports = ["../../../python/"],
+#     main = select({
+#         "//bark/world/evaluation/ltl:_ltl_rules": "py_evaluator_stl_tests.py",
+#         "//conditions:default": "py_dummy_test.py",
+#     }),
+#     deps = [
+#         "//bark/runtime/commons:parameters",
+#         "//bark/runtime/scenario/scenario_generation",
+#     ],
+# )
+
+
+py_test(
     name = "py_evaluator_rss_tests",
     srcs = select({
         "//bark/world/evaluation/rss:_rss": ["py_evaluator_rss_tests.py"],
