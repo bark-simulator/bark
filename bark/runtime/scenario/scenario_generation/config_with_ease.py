@@ -37,25 +37,32 @@ class LaneCorridorConfig:
     self._lane_corridor = None
 
     # set these params
-    self._road_ids = kwargs.pop("road_ids", None)
-    self._lane_corridor_id = kwargs.pop("lane_corridor_id", None)
-    self._s_min = kwargs.pop("s_min", 0.)
-    self._s_max = kwargs.pop("s_max", 60.)
-    self._ds_min = kwargs.pop("ds_min", 10.)
-    self._ds_max = kwargs.pop("ds_max", 20.)
-    self._min_vel = kwargs.pop("min_vel", 8.)
-    self._max_vel = kwargs.pop("max_vel", 10.)
-    self._source_pos = kwargs.pop("source_pos", None)
-    self._sink_pos = kwargs.pop("sink_pos", None)
+    self._road_ids = kwargs.pop("road_ids", None) # list of road ids
+    self._lane_corridor_id = kwargs.pop("lane_corridor_id", None) # lane corridor id
+    self._s_min = kwargs.pop("s_min", 0.) # min start point ?
+    self._s_max = kwargs.pop("s_max", 60.) # max start point ?
+    self._ds_min = kwargs.pop("ds_min", 10.) # min distance increment
+    self._ds_max = kwargs.pop("ds_max", 20.) # max distance increment
+    self._min_vel = kwargs.pop("min_vel", 8.) # min velocity
+    self._max_vel = kwargs.pop("max_vel", 10.) # max velocity
+    self._source_pos = kwargs.pop("source_pos", None) # source position
+    self._sink_pos = kwargs.pop("sink_pos", None) # sink position
     self._behavior_model = \
-      kwargs.pop("behavior_model", BehaviorIDMClassic(self._params))
+      kwargs.pop("behavior_model", BehaviorIDMClassic(self._params)) # behavior model for other agents
     self._controlled_behavior_model = \
-      kwargs.pop("controlled_behavior_model", None)
-    self._controlled_ids = kwargs.pop("controlled_ids", None)
+      kwargs.pop("controlled_behavior_model", None) # behavior model for controlled agents
+    self._controlled_ids = kwargs.pop("controlled_ids", None) # ids of controlled agents
     self._wb = kwargs.pop("wb", 3) # wheelbase
     self._crad = kwargs.pop("crad", 1) # collision radius
 
   def InferRoadIdsAndLaneCorr(self, world):
+    """This function infers the road ids and lane corridor based on current world,
+    create start and end point from source and sink position and generate the road corridor.
+    get start point and end goal area, infer the road corridor and lane corridor from this information.
+
+    Args:
+        world (World): current bark world
+    """
     goal_polygon = Polygon2d([0, 0, 0],
                              [Point2d(-1,0),
                               Point2d(-1,1),
@@ -137,30 +144,30 @@ class LaneCorridorConfig:
     return np.random.uniform(low=self._min_vel, high=self._max_vel)
 
   def behavior_model(self, world):
-    """Returns behavior model
+    """Returns behavior model of other agents
     """
     return self._behavior_model
 
   @property
   def execution_model(self):
-    """Returns exec. model
+    """Returns exec. model, default is ExecutionModelInterpolate
     """
     return ExecutionModelInterpolate(self._params)
 
   @property
   def dynamic_model(self):
-    """Returns dyn. model
+    """Returns dyn. model, default is SingleTrackModel
     """
     return SingleTrackModel(self._params)
 
   @property
   def shape(self):
-    """Returns shape
+    """Returns shape, default is CarRectangle absed on wheelbase and collision radius
     """
     return GenerateCarRectangle(self._wb, self._crad)
 
   def goal(self, world):
-    """Returns goal def.
+    """Returns goal defination.
     """
     # TODO: by default should be based on agent's pos
     road_corr = world.map.GetRoadCorridor(
@@ -177,6 +184,7 @@ class LaneCorridorConfig:
 
   def controlled_ids(self, agent_list):
     """Returns an ID-List of controlled agents
+    if None, random agent is controlled
     """
     if self._controlled_ids is None:
       return []
@@ -204,14 +212,17 @@ class LaneCorridorConfig:
       return self.behavior_model(world)
 
   def reset(self):
-    """Resets the LaneCorridorConfig
+    """Resets the LaneCorridorConfig by resetting the current_s(current starting point) to None.
     """
     self._current_s = None
 
 
 class ConfigWithEase(ScenarioGeneration):
-  """Configure your scenarios with ease
-     &copy; Patrick Hart
+  """This class enables the configuration of multiple LaneCorridorConfigs, which are used to create scenarios.
+  The agent distribution is based on the uniform distribution.
+  The LaneCorridorConfigs are used to define the behavior of the agents, their positions and more.
+  Configure your scenarios with ease
+  &copy; Patrick Hart
   """
   def __init__(self,
                num_scenarios,
@@ -261,6 +272,8 @@ class ConfigWithEase(ScenarioGeneration):
     for lc_config in self._lane_corridor_configs:
       agent_state = True
       lc_agents = []
+      # if source and sink position are given, infer road ids and lane corridor
+      # so, they must be given.
       if lc_config._source_pos is not None and lc_config._sink_pos is not None:
         lc_config.InferRoadIdsAndLaneCorr(world)
       while agent_state is not None:

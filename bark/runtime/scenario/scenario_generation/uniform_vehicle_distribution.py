@@ -25,11 +25,19 @@ import math
 
 
 class UniformVehicleDistribution(ScenarioGeneration):
+  """An scenario generation class that generates a number of scenarios with uniformly sampling.
+  """
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(UniformVehicleDistribution, self).__init__(params, num_scenarios)
     self.initialize_params(params)
 
   def initialize_params(self, params):
+    """This function initializes the parameters of the scenario generation from the parameter server
+    based on the json file, where the parameters are stored under ["Scenario"]["Generation"]["UniformVehicleDistribution"].
+
+    Args:
+        params (ParameterServer): ParameterServer defined in Bark.
+    """
     params_temp = \
       self._params["Scenario"]["Generation"]["UniformVehicleDistribution"]
     self._random_seed = 1000 # since ScenarioGeneration UniformVehicleDistribution
@@ -96,11 +104,17 @@ class UniformVehicleDistribution(ScenarioGeneration):
     return scenario_list
 
   def create_single_scenario(self):
+    """This function creates a single scenario based on the parameters of the scenario generation and uniform sampling.
+
+    Returns:
+        Scenario: A single scenario based on bark defination with initial world condition.
+    """
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
     world = scenario.GetWorldState()
     agent_list = []
     # OTHER AGENTS
+    # generate road corridor between source and sink for each other agent.
     for idx, source in enumerate(self._others_source):
       connecting_center_line, s_start, s_end = \
         self.center_line_between_source_and_sink(world.map,
@@ -121,12 +135,15 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                            s_end,
                                            self._agent_params,
                                            goal_definition))
-
+    # save scenario description
     description=self._params.ConvertToDict()
     description["ScenarioGenerator"] = "UniformVehicleDistribution"
     
 
     # EGO AGENT
+    # generate road corridor between source and sink for ego agent
+    # if ego route is given, then use this route, otherwise select ego agent
+    # from the middle of the other agents at 1/4 position in the agent list.
     ego_agent=None
     if len(self._ego_route) == 0:
         # take agent in the middle of list 
@@ -137,7 +154,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
         self.center_line_between_source_and_sink(world.map,
                                                  self._ego_route[0],
                                                  self._ego_route[1])
-
+        # sample starting position on center line and velocity for ego vehicle uniformly
         sego = self.sample_srange_uniform([s_start, s_end])
         xy_point =  GetPointAtS(connecting_center_line, sego)
         angle = GetTangentAngleAtS(connecting_center_line, sego)
@@ -167,6 +184,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
     
     # EGO Agent Goal Definition
+    # if ego goal start is not given, then use ego goal end as center of polygon.
     if  len(self._ego_goal_start) == 0:
         if len(self._ego_route) == 0:
           # ego agent is one of the random agents, so the goal definition is
@@ -182,6 +200,7 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                                       self._ego_goal_end[1]))
           ego_agent.goal_definition = GoalDefinitionPolygon(goal_polygon)
     else:
+        # ego goal start and end are given, so we can build a state limits goal
         connecting_center_line, s_start, s_end = \
         self.center_line_between_source_and_sink(world.map,
                                                  self._ego_goal_start,
@@ -211,6 +230,12 @@ class UniformVehicleDistribution(ScenarioGeneration):
                                     s_end,
                                     agent_params,
                                     goal_definition):
+    """This function places agents along a linestring with a given start and end position.
+    The initial state (velocity and position) of the agents is sampled uniformly from the parameter defination.
+
+    Returns:
+        List: A list of distributed agents along the linestring.
+    """
     s = s_start
     if s_end < s_start:
       linestring.Reverse()
@@ -250,7 +275,16 @@ class UniformVehicleDistribution(ScenarioGeneration):
     return np.random.uniform(srange[0], srange[1])
 
   def center_line_between_source_and_sink(self, map_interface, source, sink):
-    # generate road corridor between source and sink
+    """generate road corridor between source and sink
+
+    Args:
+        map_interface (MapInterface): map interface in Bark
+        source (List): Starting point (coarse)
+        sink (List): End point (coarse)
+
+    Returns:
+        Tuple: returns the centerline, the exact starting and end point.
+    """
     goal_polygon = Polygon2d([0, 0, 0],
                                   [Point2d(-1,0),
                                   Point2d(-1,1),
@@ -284,6 +318,11 @@ class UniformVehicleDistribution(ScenarioGeneration):
 
 
   def default_agent_model(self):
+    """This function sets the default agent model for the scenario generation.
+
+    Returns:
+        Agent: Bark agent with default model.
+    """
     param_server = ParameterServer()
     behavior_model = BehaviorConstantAcceleration(param_server)
     execution_model = ExecutionModelInterpolate(param_server)

@@ -23,6 +23,9 @@ import numpy as np
 
 
 class DeterministicScenarioGeneration(ScenarioGeneration):
+  """This class generates deterministic scenarios of num_scenarios
+  from the json params under ["Scenario"]["Generation"]["DeterministicScenarioGeneration"].
+  """
   def __init__(self, num_scenarios, params=None, random_seed=None):
     super(DeterministicScenarioGeneration, self).__init__(params,
                                                           num_scenarios)
@@ -49,9 +52,19 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
     return scenario_list
 
   def create_single_scenario(self):
+    """This function create a single deterministic scenario from the json params under ["Agents"].
+
+    Returns:
+        Scenario: Scenario definition in bark
+    """
+
+    # create a dummy scenario to get the map interface
+    # TODO(@cesarliu): this is a hack, we should have a map interface creatMapInterface()
     scenario = Scenario(map_file_name=self._map_file_name,
                         json_params=self._params.ConvertToDict())
+    
     world = scenario.GetWorldState()
+    # create agents from json params under ["Agents"]
     agent_list = []
     scenario._agent_list = []
     for agent_json_ in self._local_params["Agents"]:
@@ -63,6 +76,8 @@ class DeterministicScenarioGeneration(ScenarioGeneration):
                                                     agent_json["goal"]["center_pose"][1]))
 
       sequential_goals = []
+      # default goal definition is GoalDefinitionPolygon,
+      # if goal_type is specified, use that instead GoalDefinitionStateLimits
       goal = GoalDefinitionPolygon(goal_polygon)
       if "goal_type" in agent_json["goal"]:
         goal_type = agent_json["goal"]["goal_type"]

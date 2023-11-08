@@ -11,7 +11,17 @@ import os
 from bark.runtime.commons.parameters import ParameterServer
 
 class ScenarioGeneration:
+  """This is the base class for scenario generation. It provides the interface for different methods.
+     The scenario generation is based on a random seed and a parameter set.
+  """
   def __init__(self, params=None, num_scenarios=None, random_seed=1000):
+    """The init function of the scenario generation class.
+
+    Args:
+        params (ParameterServer, optional): The parameter json file for scenario generation. Defaults to None.
+        num_scenarios (int, optional): The number of scenarios to be generated. Defaults to None.
+        random_seed (int, optional): random seed. Defaults to 1000.
+    """
     self._params = params
     self._current_scenario_idx = 0
     self._random_seed = random_seed
@@ -80,6 +90,7 @@ class ScenarioGeneration:
     return len(self._scenario_list)
 
   def dump_scenario_list(self, filename):
+    """Dumps the scenario list to a file using pickle."""
     with open(filename, "wb") as file:
       # print("SAVE PATH:", os.path.abspath(filename))
       pickle.dump(self._scenario_list, file)
