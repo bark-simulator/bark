@@ -22,20 +22,18 @@ from bark.runtime.scenario.interaction_dataset_processing.agent_track_info impor
 
 
 class InteractionDatasetScenarioGeneration(ScenarioGeneration):
-  """This class generates scenarios from the interaction dataset.
-  """
-
+    """This class generates scenarios from the interaction dataset."""
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
-        super().__init__(params, num_scenarios, random_seed)
+     super().__init__(params, num_scenarios, random_seed)
 
     def initialize_params(self, params):
-      """This function initializes the parameters of the scenario generation by processing interaction dataset. 
-      The parameters are extracted from the json file under ["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"].
-      Attention: This scenario geneartion can only generate one scenario at a time as mentioned here: reply mode.
-      If EgoTrackId is not given, this scenario generation will fail.
-      Args:
-          params (ParameterServer): Bark parameter server
-      """
+        """This function initializes the parameters of the scenario generation by processing interaction dataset. 
+        The parameters are extracted from the json file under ["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"].
+        Attention: This scenario geneartion can only generate one scenario at a time as mentioned here: reply mode.
+        If EgoTrackId is not given, this scenario generation will fail.
+        Args:
+            params (ParameterServer): Bark parameter server
+        """
         super().initialize_params(params)
         params_temp = \
             self._params["Scenario"]["Generation"]["InteractionDatasetScenarioGeneration"]

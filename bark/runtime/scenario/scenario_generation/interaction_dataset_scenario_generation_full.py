@@ -24,10 +24,10 @@ import logging
 
 
 class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
-  """This class reads in a track file from the interaction dataset
-  and generates a scenario for each agent as the eval agent. The parameters 
-  are extracted from the json file under ["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"].
-  """
+    """This class reads in a track file from the interaction dataset
+    and generates a scenario for each agent as the eval agent. The parameters 
+    are extracted from the json file under ["Scenario"]["Generation"]["InteractionDatasetScenarioGenerationFull"].
+    """
 
     def __init__(self, params=None, num_scenarios=None, random_seed=None):
         self._map_interface = None
@@ -165,13 +165,13 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         return agent_params
 
     def __create_map_interface__(self):
-      """Creates a map interface from the given parameters in json file
-      for the whole scenario generation process. A dummy scenario is created
-      to get the map interface from it.
+        """Creates a map interface from the given parameters in json file
+        for the whole scenario generation process. A dummy scenario is created
+        to get the map interface from it.
 
-      Returns:
-          MapInterface: The map interface for the scenario generation process in Bark.
-      """
+        Returns:
+            MapInterface: The map interface for the scenario generation process in Bark.
+        """
         params = ParameterServer()
         # we are creating a dummy scenario to get the map interface from it
         scenario = Scenario(map_file_name=self._map_file_name,
@@ -182,9 +182,9 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         return map_interface
 
     def __create_road_corridor__(self):
-      """Creates a road corridor from the given map interface and road ids.
-      If no map interface is given, an error is raised.
-      """
+        """Creates a road corridor from the given map interface and road ids.
+        If no map interface is given, an error is raised.
+        """
         if self._map_interface is not None:
             map_interface = self._map_interface
             map_interface.GenerateRoadCorridor(
@@ -194,14 +194,14 @@ class InteractionDatasetScenarioGenerationFull(ScenarioGeneration):
         return map_interface.GetRoadCorridor(self._road_ids, XodrDrivingDirection.forward)
 
     def __infer_goal_from_road__(self, lc):
-      """This internal function infers a goal definition from the road corridor with the given lane corridor id.
+        """This internal function infers a goal definition from the road corridor with the given lane corridor id.
 
-      Args:
-          lc (Int): lane corridor id
+        Args:
+            lc (Int): lane corridor id
 
-      Returns:
-          GoalDefinitionPolygon: The goal definition polygon.
-      """
+        Returns:
+            GoalDefinitionPolygon: The goal definition polygon.
+        """
         lane_corr = self._road_corridor.lane_corridors[lc]
         goal_polygon = Polygon2d([0, 0, 0], [
                                  Point2d(-10, -10), Point2d(-10, 10), Point2d(10, 10), Point2d(10, -10)])

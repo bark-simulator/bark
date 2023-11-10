@@ -116,7 +116,7 @@
     "python.pythonPath": "./bark/python_wrapper/venv/bin/python",
     "python.linting.pylintEnabled": true,
     "editor.insertSpaces": true,
-    "editor.detectIndentation": false,
+    "editor.detectIndentation": true,
     "python.linting.enabled": true,
     "python.formatting.provider": "autopep8",
     "[cpp]": {
