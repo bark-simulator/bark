@@ -83,3 +83,6 @@ Please make sure to update tests as appropriate.
 ## License
 
 BARK specific code is distributed under [MIT](https://choosealicense.com/licenses/mit/) License.
+
+## Info
+This branch is for integration of nv strive project.
