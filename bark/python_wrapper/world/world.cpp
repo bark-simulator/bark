@@ -59,6 +59,7 @@ void python_world(py::module m) {
       .def_property("time", &World::GetWorldTime, &World::SetWorldTime)
       .def_property_readonly("bounding_box", &World::BoundingBox)
       .def("GetAgent", &World::GetAgent)
+      .def("GetAgents", &World::GetAgents)
       .def_property("map", &World::GetMap, &World::SetMap)
       .def("Copy", &World::Clone)
       .def_property("observer_model", &World::GetObserverModel,
@@ -71,6 +72,7 @@ void python_world(py::module m) {
       .def("__repr__", [](const World& a) { return "bark.core.world.World"; });
 
   m.def("MakeTestWorldHighway", &bark::world::tests::MakeTestWorldHighway);
+  m.def("make_test_world", &bark::world::tests::make_test_world);
 
   py::class_<ObservedWorld, World, std::shared_ptr<ObservedWorld>>(
       m, "ObservedWorld")

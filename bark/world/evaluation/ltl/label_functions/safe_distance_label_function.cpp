@@ -46,6 +46,7 @@ LabelMap SafeDistanceLabelFunction::Evaluate(const world::ObservedWorld& observe
   if(consider_crossing_corridors_) {
     safe_dist = EvaluateCrossingCorridors(observed_world);
   }
+  
   return {{GetLabel(), safe_dist}};
 }
 
@@ -60,6 +61,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
   } else {
     frac = lateral_difference_threshold_;
   }
+
   for (const auto nearest_agent : nearest_agents) {
     if(nearest_agent.first == observed_world.GetEgoAgentId()) continue;
     // Find this agents front and back agent
@@ -77,6 +79,7 @@ bool SafeDistanceLabelFunction::EvaluateCrossingCorridors(
     }
     if(!distance_safe) return distance_safe; // Early termination of loop over nearest agents when violated
   }
+  
   return true;
 }
 
@@ -112,7 +115,6 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLongitudinal(FrontRearAgents& f
 bool SafeDistanceLabelFunction::CheckSafeDistanceLongitudinal(
     const float v_f, const float v_r, const float dist,
     const double a_r,  const double a_f, const double delta) const {
-
   if (dist < 0.0) {
     return true;
   }
@@ -145,57 +147,7 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLongitudinal(
   return distance_safe;
 }
 
-double SafeDistanceLabelFunction::CalcVelFrontStar(const double v_f,
-                                                   const double a_f,
-                                                   double delta) const {
-  // see Theorem 4 in "Formalising and Monitoring Traffic Rules for Autonomous
-  // Vehicles in Isabelle/HOL"
-  double v_f_star;
-  double t_stop_f = -v_f / a_f;
-  if (delta <= t_stop_f) {
-    v_f_star = v_f + a_f * delta;
-  } else {
-    v_f_star = 0.0;
-  }
-  return v_f_star;
-}
-
-double SafeDistanceLabelFunction::CalcSafeDistance0(const double v_r,
-                                                    const double a_r,
-                                                    const double delta) const {
-  return v_r * delta - pow(v_r, 2) / (2.0 * a_r);
-}
-
-double SafeDistanceLabelFunction::CalcSafeDistance1(const double v_r,
-                                                    const double v_f,
-                                                    const double a_r,
-                                                    const double a_f,
-                                                    const double delta) const {
-  return v_r * delta - pow(v_r, 2) / (2.0 * a_r) + pow(v_f, 2) / (2.0 * a_f);
-}
-
-double SafeDistanceLabelFunction::CalcSafeDistance2(const double v_r,
-                                                    const double v_f,
-                                                    const double a_r,
-                                                    const double a_f,
-                                                    const double delta) const {
-  double sqrt_numerator = v_f + a_f * delta - v_r;
-  return pow(sqrt_numerator, 2) / (2.0 * (a_f - a_r)) - v_f * delta -
-         0.5 * a_f * pow(delta, 2) + v_r * delta;
-}
-
-double SafeDistanceLabelFunction::CalcSafeDistance3(const double v_r,
-                                                    const double v_f,
-                                                    const double a_r,
-                                                    const double a_f,
-                                                    const double delta) const {
-  return v_r * delta - pow(v_r, 2) / (2.0 * a_r) - v_f * delta -
-         a_f * pow(delta, 2) / 2.0;
-}
-
-
-
-bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const {  
+bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const { 
   auto GetMaxAccLat = [](const AgentPtr& agent,
                            const double& road_angle,
                            const double& max_total_acc,
@@ -242,32 +194,10 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(FrontRearAgents& fr_age
   double delta1 = delta_others_; // First vehicle is other agent
   double delta2 = delta_ego_;
 
-  if(dist_lat_zeroed == 0.0) {
-    return false;
-  // Positive lateral velocity means driving from right to left with respect to center
-  // Negative lateral velocity means driving from left to right with respect to center
-  } else if(v_1_lat >= 0.0 && v_2_lat <= 0.0 && dist_lat_zeroed < 0.0) { // Vehicles move laterally away from each other...
-    // vehicle 2 to the right of vehicle 1
-    return true;
-  } else if (v_1_lat <= 0.0 && v_2_lat >= 0.0 && dist_lat_zeroed > 0.0) {
-    // vehicle 2 to the left of vehicle 1
-    return true;
-  } else { // vehicles move laterally towards each other or into common lateral direction
-    // For convention of RSS paper, make v_1_lat be larger (e.g. positive compared to v_2_lat) ...
-    if (v_1_lat < v_2_lat) {
-      std::swap(v_1_lat, v_2_lat);
-      std::swap(delta1, delta2);
-      std::swap(a_1_lat, a_2_lat);
-    }
-    // ... and lateral distance positive 
-    const double lateral_positive = std::abs(dist_lat_zeroed);
-    bool distance_safe = CheckSafeDistanceLateral(v_1_lat, v_2_lat, lateral_positive,
-      a_1_lat,  a_2_lat, delta1, delta2);
-    return distance_safe;
-  }
+  bool distance_safe = CheckSafeDistanceLateral(v_1_lat, v_2_lat, dist_lat_zeroed, a_1_lat,  a_2_lat, delta1, delta2);
+
+  return distance_safe;
 }
-
-
 
 /**
  * @brief Checks lateral safe distance according to lateral safe distance formulation in
@@ -291,11 +221,43 @@ bool SafeDistanceLabelFunction::CheckSafeDistanceLateral(
     const float v_1_lat, const float v_2_lat, const float dist_lat,
     const double a_1_lat,  const double a_2_lat, const double delta1,
      const double delta2) const {
+    if(dist_lat == 0.0) {
+      return false;
+    // Positive lateral velocity means driving from right to left with respect to center
+    // Negative lateral velocity means driving from left to right with respect to center
+    } else if(v_1_lat >= 0.0 && v_2_lat <= 0.0 && dist_lat < 0.0) { // Vehicles move laterally away from each other...
+      // vehicle 2 to the right of vehicle 1
+      return true;
+    } else if (v_1_lat <= 0.0 && v_2_lat >= 0.0 && dist_lat > 0.0) {
+      // vehicle 2 to the left of vehicle 1
+      return true;
+    } else { // vehicles move laterally towards each other or into common lateral direction
+      // For convention of RSS paper, make v_1_lat be larger (e.g. positive compared to v_2_lat) ...
+      float v_1_lat_non_const = v_1_lat;
+      float v_2_lat_non_const = v_2_lat;
 
-    const double min_lat_safe_dist = v_1_lat*delta1 + (v_1_lat == 0.0 ? 0.0 : v_1_lat*v_1_lat / (2 * a_1_lat)) - 
-                    (v_2_lat*delta2 -  (v_2_lat == 0.0 ? 0.0 : v_2_lat*v_2_lat / (2 * a_2_lat) ) );
-    VLOG(5) << "Min lat safe dist" <<min_lat_safe_dist;
-    return dist_lat > min_lat_safe_dist;
+      float delta1_non_const = delta1;
+      float delta2_non_const = delta2;
+
+      float a_1_lat_non_const = a_1_lat;
+      float a_2_lat_non_const = a_2_lat;
+
+      if (v_1_lat < v_2_lat) {
+        std::swap(v_1_lat_non_const, v_2_lat_non_const);
+        std::swap(delta1_non_const, delta2_non_const);
+        std::swap(a_1_lat_non_const, a_2_lat_non_const);
+      }
+      // ... and lateral distance positive 
+      const double lateral_positive = std::abs(dist_lat);
+
+      const double min_lat_safe_dist = v_1_lat_non_const*delta1_non_const 
+                                        + (v_1_lat_non_const == 0.0 ? 0.0 : v_1_lat_non_const*v_1_lat_non_const / (2 * a_1_lat_non_const)) 
+                                        - (v_2_lat_non_const*delta2_non_const 
+                                        - (v_2_lat_non_const == 0.0 ? 0.0 : v_2_lat_non_const*v_2_lat_non_const / (2 * a_2_lat_non_const)));
+      VLOG(5) << "Min lateral safe distance: " << min_lat_safe_dist;
+
+      return lateral_positive > min_lat_safe_dist;
+    }
 }
 
 }  // namespace evaluation

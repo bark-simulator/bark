@@ -44,9 +44,11 @@ class EvaluatorLTL : public BaseEvaluator {
   const LabelFunctions& GetLabelFunctions() const;
   unsigned int GetSafetyViolations() const;
 
- private:
+ protected:
   EvaluationReturn Evaluate(
       const world::ObservedWorld& observed_world) override;
+
+ private:
   std::vector<int> GetKnownAgents();
   void AddKnownAgents(const std::vector<int>& new_agents);
   void RemoveRuleStates(std::vector<int> current_agents);

@@ -36,7 +36,7 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
                             double lateral_difference_threshold,
                             double angle_difference_threshold,
                             bool check_lateral_dist);
-  LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
+  virtual LabelMap Evaluate(const world::ObservedWorld& observed_world) const override;
 
   bool EvaluateEgoCorridor(const world::ObservedWorld& observed_world) const;
   bool EvaluateCrossingCorridors(const world::ObservedWorld& observed_world) const;
@@ -58,25 +58,54 @@ class SafeDistanceLabelFunction : public BaseLabelFunction {
   unsigned int GetMaxAgentsForCrossing() const { return max_agents_for_crossing_; }
   bool GetCheckLateralDist() const { return check_lateral_dist_; }
 
- private:
-  bool CheckSafeDistanceLongitudinal(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
-  bool CheckSafeDistanceLongitudinal(
+  virtual bool CheckSafeDistanceLongitudinal(
     const float v_f, const float v_r, const float dist,
     const double a_r,  const double a_f, const double delta) const;
-  inline double CalcVelFrontStar(double v_f, double a_f, double delta) const;
-  inline double CalcSafeDistance0(double v_r, double a_r, double delta) const;
-  inline double CalcSafeDistance1(double v_r, double v_f, double a_r,
-                                  double a_f, double delta) const;
-  inline double CalcSafeDistance2(double v_r, double v_f, double a_r,
-                                  double a_f, double delta) const;
-  inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
-                                  double a_f, double delta) const;
 
-  bool CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
-  bool CheckSafeDistanceLateral(
+  virtual bool CheckSafeDistanceLateral(
     const float v_f_lat, const float v_r_lat, const float dist_lat,
     const double a_r_lat,  const double a_f_lat, const double delta1,
      const double delta2) const;
+
+ protected:
+  inline double CalcVelFrontStar(double v_f, double a_f, double delta) const {
+    // see Theorem 4 in "Formalising and Monitoring Traffic Rules for Autonomous
+    // Vehicles in Isabelle/HOL"
+    double v_f_star;
+    double t_stop_f = -v_f / a_f;
+    if (delta <= t_stop_f) {
+      v_f_star = v_f + a_f * delta;
+    } else {
+      v_f_star = 0.0;
+    }
+    return v_f_star;
+  }
+
+  inline double CalcSafeDistance0(double v_r, double a_r, double delta) const { 
+    return v_r * delta - pow(v_r, 2) / (2.0 * a_r);
+  }
+
+  inline double CalcSafeDistance1(double v_r, double v_f, double a_r,
+                                  double a_f, double delta) const {
+    return v_r * delta - pow(v_r, 2) / (2.0 * a_r) + pow(v_f, 2) / (2.0 * a_f);
+  }
+
+  inline double CalcSafeDistance2(double v_r, double v_f, double a_r,
+                                  double a_f, double delta) const {
+  double sqrt_numerator = v_f + a_f * delta - v_r;
+    return pow(sqrt_numerator, 2) / (2.0 * (a_f - a_r)) - v_f * delta - 
+            0.5 * a_f * pow(delta, 2) + v_r * delta;
+  }
+
+  inline double CalcSafeDistance3(double v_r, double v_f, double a_r,
+                                  double a_f, double delta) const {
+    return v_r * delta - pow(v_r, 2) / (2.0 * a_r) - v_f * delta -
+            a_f * pow(delta, 2) / 2.0;
+  }
+
+ private:  
+  bool CheckSafeDistanceLongitudinal(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
+  bool CheckSafeDistanceLateral(FrontRearAgents& fr_agents, const AgentPtr& ego_agent) const;
 
   bool to_rear_;
   double delta_ego_;  //! Reaction times

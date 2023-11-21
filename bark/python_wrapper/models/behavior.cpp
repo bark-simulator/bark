@@ -49,7 +49,7 @@ void python_behavior(py::module m) {
       .def_property("last_trajectory", &BehaviorModel::GetLastTrajectory,
                     &BehaviorModel::SetLastTrajectory)
       .def_property("behavior_status", &BehaviorModel::GetBehaviorStatus,
-                    &BehaviorModel::SetBehaviorStatus);;
+                    &BehaviorModel::SetBehaviorStatus);
 
   py::class_<BehaviorConstantAcceleration, BehaviorModel,
              shared_ptr<BehaviorConstantAcceleration>>(m,

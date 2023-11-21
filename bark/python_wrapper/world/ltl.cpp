@@ -7,13 +7,10 @@
 // For a copy, see <https://opensource.org/licenses/MIT>.
 
 #include "bark/python_wrapper/world/ltl.hpp"
-
 #include "bark/python_wrapper/world/evaluation.hpp"
 
 #include "bark/world/evaluation/evaluator_collision_ego_agent.hpp"
 #include "bark/world/evaluation/ltl/evaluator_ltl.hpp"
-
-#include "bark/world/evaluation/ltl/robustness_stl.hpp"
 
 #include "bark/world/evaluation/ltl/label_functions/agent_at_lane_end_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/agent_beyond_point_label_function.hpp"
@@ -38,6 +35,9 @@
 #include "bark/world/evaluation/ltl/label_functions/rightmost_lane_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/on_road_label_function.hpp"
 #include "bark/world/evaluation/ltl/label_functions/safe_distance_label_function.hpp"
+#include "bark/world/observed_world.hpp"
+
+using bark::world::ObservedWorldPtr;
 
 namespace py = pybind11;
 
@@ -50,6 +50,7 @@ void python_ltl(py::module m) {
       .def(py::init<AgentId, const std::string&, const LabelFunctions&>(),
            py::arg("agent_id"), py::arg("ltl_formula"),
            py::arg("label_functions"))
+      .def("Evaluate", py::overload_cast<const ObservedWorld&>(&PyEvaluatorLTL::Evaluate)) 
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
       .def_property_readonly("label_functions",
                              &EvaluatorLTL::GetLabelFunctions)
@@ -58,24 +59,8 @@ void python_ltl(py::module m) {
         return "bark.core.world.evaluation.ltl.EvaluatorLTL";
       });
 
-  py::class_<RobustnessSTL, EvaluatorLTL, std::shared_ptr<RobustnessSTL>>(
-      m, "RobustnessSTL")
-      .def(py::init<bark::world::objects::AgentId, const std::string&, const LabelFunctions&>(),
-           py::arg("agent_id"), py::arg("ltl_formula"), 
-           py::arg("label_functions"))
-      .def("Evaluate", &RobustnessSTL::Evaluate, py::arg("observed_world"))
-      .def("CalculateRobustness", &RobustnessSTL::CalculateRobustness)
-      .def("NormalizeRobustness", &RobustnessSTL::NormalizeRobustness, py::arg("robustness"))
-      .def("GetTotalRuleEvaluations", &RobustnessSTL::GetTotalRuleEvaluations)
-      .def("GetRuleViolationCount", &RobustnessSTL::GetRuleViolationCount)
-      .def("GetRulePassCount", &RobustnessSTL::GetRulePassCount)
-      .def("__repr__", [](const RobustnessSTL& g) {
-        return "bark.core.world.evaluation.ltl.RobustnessSTL";
-      });
-
 #endif
   // LABELS
-
   py::class_<BaseLabelFunction, PyBaseLabelFunction,
              std::shared_ptr<BaseLabelFunction>>(m, "BaseLabelFunction")
       .def(py::init<const std::string&>())
@@ -100,11 +85,19 @@ void python_ltl(py::module m) {
             return new ConstantLabelFunction(t[0].cast<std::string>());
           }));
 
-  py::class_<SafeDistanceLabelFunction, BaseLabelFunction,
-             std::shared_ptr<SafeDistanceLabelFunction>>(
-      m, "SafeDistanceLabelFunction")
+  py::class_<SafeDistanceLabelFunction, PySafeDistanceLabelFunction, BaseLabelFunction,
+             std::shared_ptr<SafeDistanceLabelFunction>>(m, "SafeDistanceLabelFunction")
       .def(py::init<const std::string&, bool, double, double, double, double, bool,
                     unsigned int, bool, double, double, bool>())
+      .def("CheckSafeDistanceLongitudinal", py::overload_cast<const float, const float, const float,
+            const double, const double, const double>(&SafeDistanceLabelFunction::CheckSafeDistanceLongitudinal, py::const_))
+      .def("CheckSafeDistanceLateral", py::overload_cast<const float, const float, const float,
+            const double, const double, const double, const double>(&SafeDistanceLabelFunction::CheckSafeDistanceLateral, py::const_))            
+      .def("CalcVelFrontStar", py::overload_cast<double, double, double>(&PySafeDistanceLabelFunction::CalcVelFrontStar, py::const_)) 
+      .def("CalcSafeDistance0", py::overload_cast<const double, const double, const double>(&PySafeDistanceLabelFunction::CalcSafeDistance0, py::const_))
+      .def("CalcSafeDistance1", py::overload_cast<const double, const double, const double, const double, const double>(&PySafeDistanceLabelFunction::CalcSafeDistance1, py::const_))
+      .def("CalcSafeDistance2", py::overload_cast<const double, const double, const double, const double, const double>(&PySafeDistanceLabelFunction::CalcSafeDistance2, py::const_))
+      .def("CalcSafeDistance3", py::overload_cast<const double, const double, const double, const double, const double>(&PySafeDistanceLabelFunction::CalcSafeDistance3, py::const_))
       .def("__repr__",
            [](const SafeDistanceLabelFunction& g) {
              return "bark.core.world.evaluation.ltl.SafeDistanceLabelFunction";
