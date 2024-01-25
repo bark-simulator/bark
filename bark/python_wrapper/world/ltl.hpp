@@ -74,6 +74,17 @@ class PySafeDistanceLabelFunction : public SafeDistanceLabelFunction {
 class PyEvaluatorLTL : public EvaluatorLTL { 
  public:
     using EvaluatorLTL::Evaluate; 
+    /* Inherit the constructors */
+    using EvaluatorLTL::EvaluatorLTL;
+
+    EvaluationReturn Evaluate(const ObservedWorld& observed_world) override {
+        PYBIND11_OVERLOAD(
+            EvaluationReturn,
+            EvaluatorLTL,     
+            Evaluate,       
+            observed_world
+        );
+    }
 };
 
 void python_ltl(py::module m);

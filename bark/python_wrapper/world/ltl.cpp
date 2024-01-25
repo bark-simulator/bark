@@ -45,12 +45,12 @@ void python_ltl(py::module m) {
   using namespace bark::world::evaluation;
 
 #ifdef LTL_RULES
-  py::class_<EvaluatorLTL, BaseEvaluator, std::shared_ptr<EvaluatorLTL>>(
+
+  py::class_<EvaluatorLTL, BaseEvaluator, PyEvaluatorLTL, std::shared_ptr<EvaluatorLTL>>(
       m, "EvaluatorLTL")
       .def(py::init<AgentId, const std::string&, const LabelFunctions&>(),
            py::arg("agent_id"), py::arg("ltl_formula"),
            py::arg("label_functions"))
-      .def("Evaluate", py::overload_cast<const ObservedWorld&>(&PyEvaluatorLTL::Evaluate)) 
       .def_property_readonly("rule_states", &EvaluatorLTL::GetRuleStates)
       .def_property_readonly("label_functions",
                              &EvaluatorLTL::GetLabelFunctions)
@@ -65,7 +65,7 @@ void python_ltl(py::module m) {
              std::shared_ptr<BaseLabelFunction>>(m, "BaseLabelFunction")
       .def(py::init<const std::string&>())
       .def("Evaluate", &BaseLabelFunction::Evaluate);
-
+  
   py::class_<ConstantLabelFunction, BaseLabelFunction,
              std::shared_ptr<ConstantLabelFunction>>(m, "ConstantLabelFunction")
       .def(py::init<const std::string&>())
