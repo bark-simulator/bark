@@ -2,6 +2,11 @@
 <img src="https://github.com/bark-simulator/bark/raw/master/docs/source/bark_logo.jpg" alt="BARK" />
 </p>
 
+$${\color{red}\text{BARK is not actively developed and maintained any longer.}}$$
+
+$${\color{red}\text{Feel free to fork the repository and continue using BARK under the terms of the MIT license.}}$$
+
+
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
 ![Ubtuntu-ManyLinux Build](https://github.com/bark-simulator/bark/workflows/ManyLinux/badge.svg)
 ![NIGHTLY LTL Build](https://github.com/bark-simulator/bark/workflows/NIGHTLY_LTL/badge.svg)
