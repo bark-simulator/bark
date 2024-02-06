@@ -4,7 +4,7 @@
 
 $${\color{red}\text{BARK is not actively developed and maintained any longer.}}$$
 
-$${\color{red}\text{Feel free to frok the repository and continue using BARK under the terms of the MIT license.}}$$
+$${\color{red}\text{Feel free to fork the repository and continue using BARK under the terms of the MIT license.}}$$
 
 
 ![Ubtuntu-CI Build](https://github.com/bark-simulator/bark/workflows/CI/badge.svg)
